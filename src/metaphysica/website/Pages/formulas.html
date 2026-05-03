@@ -2004,7 +2004,6 @@
 
             // Wait for PM constants to be loaded before rendering
             // This ensures parameter values are available for display
-            // Note: firebase-data.js may overwrite window.PM without the load function
             if (window.PM && typeof window.PM.load === 'function' && !window.PM._loaded) {
                 await window.PM.load();
             } else if (window.PM) {
