@@ -15,7 +15,15 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
+import pytest
+
+# matplotlib is only used for the diagnostic plot at the end of the test —
+# not for any assertion. It lives behind the `[plots]` extra so the slim
+# install doesn't carry it. Skip the whole module when it's absent.
+plt = pytest.importorskip(
+    "matplotlib.pyplot",
+    reason="matplotlib not installed — run `pip install metaphysica[plots]`",
+)
 from pathlib import Path
 import json
 
