@@ -34,12 +34,37 @@ def collect_module_paths():
 
 MODULE_PATHS = collect_module_paths()
 
+# Optional deps that live behind the package's [plots], [pdf], [sims] extras.
+# A module that fails to import solely because one of these is missing is
+# *not* a broken module — it's a module whose plot / PDF / sim path is
+# unavailable in the current install. Skip cleanly in that case.
+_OPTIONAL_DEPS = frozenset({
+    "matplotlib", "matplotlib.pyplot", "matplotlib.figure",
+    "pandas",
+    "xhtml2pdf", "reportlab",
+    "eml_spectral",
+})
+
 
 @pytest.mark.parametrize("module_path", MODULE_PATHS)
 def test_module_imports(module_path):
-    """Each simulation module should import without errors."""
+    """Each simulation module should import without errors.
+
+    Modules that import only because an optional extra dep (matplotlib,
+    pandas, xhtml2pdf, eml-spectral) is absent are skipped — those
+    extras are deliberately not part of the slim CI install.
+    """
     try:
         importlib.import_module(module_path)
+    except ModuleNotFoundError as e:
+        # ModuleNotFoundError carries the missing module name in `.name`.
+        # If it's a known optional extra, this is a graceful skip.
+        if (e.name or "").split(".")[0] in _OPTIONAL_DEPS:
+            pytest.skip(
+                f"{module_path}: optional dep '{e.name}' not installed "
+                f"(install metaphysica[full] for plot/sim/PDF paths)"
+            )
+        pytest.fail(f"ImportError in {module_path}: {e}")
     except ImportError as e:
         pytest.fail(f"ImportError in {module_path}: {e}")
     except Exception as e:

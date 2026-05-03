@@ -12,8 +12,20 @@ Run with:
 from __future__ import annotations
 
 import importlib
+import importlib.util
 
 import pytest
+
+
+# ── eml-spectral is an OPTIONAL dep ─────────────────────────────────────────
+# It lives behind the `metaphysica[sims]` extra. Skip every test that touches
+# it when the package isn't installed in the running environment (e.g. CI
+# matrices that only install the slim base + [dev]).
+_HAS_EML_SPECTRAL = importlib.util.find_spec("eml_spectral") is not None
+requires_eml_spectral = pytest.mark.skipif(
+    not _HAS_EML_SPECTRAL,
+    reason="eml-spectral not installed — install metaphysica[sims]",
+)
 
 
 # ── eml-math: stays in the slim core (v1.2.0+) ───────────────────────────────
@@ -133,12 +145,14 @@ def test_eml_math_name_resolves(module: str, name: str) -> None:
     assert hasattr(mod, name), f"{module}.{name} missing — eml-math API drifted"
 
 
+@requires_eml_spectral
 @pytest.mark.parametrize("module", EML_SPECTRAL_MODULES)
 def test_eml_spectral_module_imports(module: str) -> None:
     """Every eml-spectral sub-module PM uses must import."""
     importlib.import_module(module)
 
 
+@requires_eml_spectral
 @pytest.mark.parametrize("module,name", EML_SPECTRAL_NAMES)
 def test_eml_spectral_name_resolves(module: str, name: str) -> None:
     """Every name PM imports from eml-spectral must exist."""
@@ -149,10 +163,21 @@ def test_eml_spectral_name_resolves(module: str, name: str) -> None:
 @pytest.mark.parametrize("module", PM_MODULES_USING_EML)
 def test_pm_module_loads(module: str) -> None:
     """Every PM module that touches eml-math / eml-spectral must import
-    without error against the currently-installed package versions."""
-    importlib.import_module(module)
+    without error against the currently-installed package versions.
+
+    PM modules that *transitively* import eml-spectral are skipped when
+    the optional dep is not installed — only PM modules that load
+    against the slim base are required to import unconditionally.
+    """
+    try:
+        importlib.import_module(module)
+    except ModuleNotFoundError as e:
+        if e.name == "eml_spectral" and not _HAS_EML_SPECTRAL:
+            pytest.skip(f"{module} requires eml-spectral (install metaphysica[sims])")
+        raise
 
 
+@requires_eml_spectral
 @pytest.mark.parametrize("fn_name", EML_SPECTRAL_RUST_FNS)
 def test_eml_spectral_rust_accelerator(fn_name: str) -> None:
     """When _HAS_RUST is True the eml_spectral_core extension must
