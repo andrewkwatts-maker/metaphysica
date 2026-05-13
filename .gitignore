@@ -45,3 +45,7 @@ serviceAccountKey.json
 CLAUDE.md
 .claude/
 wheelhouse/
+
+# Rust backend
+target/
+Cargo.lock

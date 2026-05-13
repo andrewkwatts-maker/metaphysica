@@ -18,9 +18,32 @@ pip install metaphysica[plots]     # + matplotlib + pandas (plot regeneration)
 pip install metaphysica[pdf]       # + xhtml2pdf (PDF paper export)
 pip install metaphysica[full]      # everything above (recommended for `metaphysica-build`)
 pip install metaphysica[dev]       # + pytest, black, mypy, build, twine
+pip install metaphysica[rust]      # + optional Rust acceleration (see below)
 ```
 
 `metaphysica` ships with `py.typed`, so type checkers see it as fully typed.
+
+### Optional Rust acceleration
+
+`metaphysica` ships an optional Rust core (`rust/physica_core/`) that
+mirrors the Python public API behind a `_HAS_RUST` guard. The pure-Python
+install path is **always** the default; the Rust extension is strictly
+opt-in:
+
+```bash
+# Build via maturin (recommended for ad-hoc development):
+pip install maturin
+maturin develop --features python
+
+# Or via pip extras (uses the [tool.maturin] section in pyproject.toml):
+pip install metaphysica[rust]
+```
+
+When the extension is built, `metaphysica._physica_core` becomes
+importable and `metaphysica._HAS_RUST` flips to `True`; if it is missing
+(slim install, unsupported platform, or build skipped) every call
+transparently falls back to the pure-Python implementation. The slim
+`pip install metaphysica` path is unchanged and never invokes Rust.
 
 ## `Get()` — datasheet API
 

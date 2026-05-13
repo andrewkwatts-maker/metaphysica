@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metaphysica"
-version = "1.3.1"
+version = "1.4.0"
 description = "G2-manifold-derived theoretical physics framework: 125 derived constants, quark + constant datasheet API, bundled static-website generator."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -75,6 +75,23 @@ dev = [
     "build>=1.0.0",
     "twine>=4.0.0",
 ]
+# Optional Rust acceleration. The pure-Python install path above is the
+# default; the Rust core (under `rust/physica_core/`) is opt-in and built
+# via maturin. Either:
+#
+#     pip install metaphysica[rust]
+#
+# (which pulls in maturin and lets the build system pick up
+# `[tool.maturin]` below) or, for active development:
+#
+#     pip install maturin
+#     maturin develop --features python
+#
+# The Rust core mirrors the Python public API behind `_HAS_RUST`; if the
+# extension is unbuilt or unavailable, every call transparently falls back
+# to the pure-Python implementation. See `rust/physica_core/README.md` for
+# build details.
+rust = ["maturin>=1.7,<2.0"]
 
 [project.urls]
 Homepage = "https://principia-metaphysica.org"
@@ -119,3 +136,15 @@ addopts = "-v --tb=short"
 [tool.black]
 line-length = 100
 target-version = ["py39", "py310", "py311", "py312", "py313"]
+
+# ── Optional Rust acceleration (maturin) ────────────────────────────────────
+# Configuration is loaded only when maturin is the active build backend
+# (`pip install metaphysica[rust]` or `maturin develop --features python`).
+# When using the default setuptools backend declared in [build-system], this
+# block is silently ignored, so pure-Python users are unaffected.
+[tool.maturin]
+manifest-path = "rust/physica_core/Cargo.toml"
+module-name = "metaphysica._physica_core"
+features = ["python"]
+python-source = "src"
+strip = true

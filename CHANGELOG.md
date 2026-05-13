@@ -5,6 +5,64 @@ All notable changes to `metaphysica` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] — 2026-05-10
+
+EML / Arithmos / metaphysica / periodica synchronised v1.4.0 cut. Adds an
+**optional Rust acceleration core** mirroring eml-math's two-tier
+pattern, plus an opt-in Arithmos symbolic-substrate bridge for engine
+consumers. The pure-Python install path is unchanged.
+
+### Added
+
+- **`physica_core` Rust crate** at `rust/physica_core/` (cdylib + lib)
+  housing the performance-critical pieces of the simulation engine:
+  - `constants.rs` — `Constant{name, value, units, uncertainty, status,
+    derivation_chain}`, `FormulasRegistry` with the Ten Pillar Seeds
+    (`b3=24`, `chi_eff=72`, `n_gen=3`, `roots_total=288`,
+    `visible_sector=125`, `sterile_sector=163`, golden ratio φ,
+    Euler-Mascheroni γ, `JC_CONSTANT=153`, `LOGIC_CLOSURE=288`).
+  - `quarks.rs` / `ckm.rs` — quark predictions + CKM matrix +
+    unitarity check.
+  - `gates.rs` — `gate_28_iterative` (explicit state stack, never
+    recursive) so deep manifold logic doesn't risk stack overflow.
+  - `simulations.rs` / `g2_manifold.rs` / `validation.rs` — temporal
+    sync (RK4), G2 geometry primitives, CMB / isotropic-flow
+    validators.
+  - `pyfacade.rs` — PyO3 wrapper exposing `PyFormulasRegistry` to
+    Python under `metaphysica._physica_core`.
+  - `arithmos_bridge.rs` — gated `with-arithmos` opt-in for Arithmos
+    symbolic-derivation tree carriers.
+- **`[rust]` extra in pyproject** — `pip install metaphysica[rust]`
+  pulls in maturin and triggers the Rust build path. Without the
+  extra the slim install remains pure Python.
+- **`_HAS_RUST` runtime guard** in `src/metaphysica/__init__.py` —
+  flips to `True` when the maturin-built extension is available, so
+  callers can detect and prefer the Rust path.
+- **`[tool.maturin]` section** in `pyproject.toml` —
+  `manifest-path = "rust/physica_core/Cargo.toml"`,
+  `module-name = "metaphysica._physica_core"`,
+  `features = ["python"]`. Maturin is loaded only when the active
+  build backend is maturin (i.e. when the `[rust]` extra is enabled);
+  the default setuptools build ignores it.
+
+### Changed
+
+- `__version__` bumped from `1.0.0` → `1.4.0` so the package version
+  matches `pyproject.toml`'s `[project] version` and the family-wide
+  v1.4.0 cut.
+
+### Notes
+
+- Existing 281 Python files are untouched. The Rust core is strictly
+  additive — every Python codepath still works identically when
+  `_HAS_RUST` is `False`.
+- The Rust crate exposes a contract surface (`Constant`, `Quark
+  Prediction`, `CKMMatrix`, `TemporalState`); the algorithm bodies
+  populate as the hot-paths port (Yukawa φ-scaling, gate_28
+  iterative, RK4 temporal sync). v1.4.0 ships the public types +
+  PyO3 facade so downstream tooling can target the surface today
+  even where individual functions still return placeholder values.
+
 ## [1.3.1] — 2026-05-03
 
 PyPI re-publish. PyPI rejects re-upload of the 1.3.0 distributions (file-

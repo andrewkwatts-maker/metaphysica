@@ -44,8 +44,25 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union
 
-__version__ = "1.0.0"
+__version__ = "1.4.0"
 __author__ = "Andrew Keith Watts"
+
+
+# ── Optional Rust acceleration ───────────────────────────────────────────────
+# The Rust core (``metaphysica._physica_core``, built from
+# ``rust/physica_core/`` via maturin) is strictly opt-in — see the
+# README's "Optional Rust acceleration" section for build instructions.
+# When the extension is missing (the default slim install) we transparently
+# fall back to the pure-Python implementation, so importing this module is
+# always safe.
+_HAS_RUST = False
+try:
+    from metaphysica._physica_core import (  # type: ignore[import-not-found]
+        PyFormulasRegistry as _FormulasRegistry_Rust,
+    )
+    _HAS_RUST = True
+except ImportError:
+    _FormulasRegistry_Rust = None  # type: ignore[assignment]
 
 
 # ── Build pipeline ───────────────────────────────────────────────────────────
