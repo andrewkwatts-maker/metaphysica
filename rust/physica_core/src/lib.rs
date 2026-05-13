@@ -80,6 +80,6 @@ mod tests {
         // Kept in lock-step with `pyproject.toml`'s `[project] version`
         // in the parent metaphysica package — both must agree so wheel
         // metadata and Rust crate metadata report the same version.
-        assert_eq!(version(), "1.4.0");
+        assert_eq!(version(), "2.0.0-alpha.0");
     }
 }
