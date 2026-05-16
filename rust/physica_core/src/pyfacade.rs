@@ -106,12 +106,59 @@ impl PyCKMMatrix {
     }
 }
 
+/// Rust-accelerated twin of `metaphysica.list_constants`.
+///
+/// Returns all known constant names from the FormulasRegistry.
+#[pyfunction]
+fn py_list_constants() -> Vec<String> {
+    FormulasRegistry::new().known_names()
+}
+
+/// Rust-accelerated twin of `metaphysica.list_quarks`.
+///
+/// Returns all SM quark names from the QuarkRegistry.
+#[pyfunction]
+fn py_list_quarks() -> Vec<String> {
+    use crate::quarks::QuarkRegistry;
+    QuarkRegistry::standard_model().known_names()
+}
+
+/// Rust-accelerated twin of `metaphysica.Get` for the constants branch.
+///
+/// Returns a JSON-serialised dict with `name`, `value`, `units`,
+/// `uncertainty`, and `status` fields — matching the Python constant
+/// datasheet schema so callers don't need to branch.
+///
+/// Raises `PyKeyError` when `name` is not in the registry.
+#[pyfunction]
+fn py_get_constant(py: Python<'_>, name: &str) -> PyResult<PyObject> {
+    assert!(!name.is_empty(), "py_get_constant: name must be non-empty");
+    let reg = FormulasRegistry::new();
+    let c = reg
+        .get(name)
+        .map_err(|e| pyo3::exceptions::PyKeyError::new_err(e.to_string()))?;
+    let map = serde_json::json!({
+        "name": c.name,
+        "value": c.value,
+        "units": c.units,
+        "uncertainty": c.uncertainty,
+        "status": format!("{:?}", c.status),
+    });
+    let json_str = serde_json::to_string(&map)
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(e.to_string()))?;
+    let json_mod = py.import_bound("json")?;
+    json_mod.call_method1("loads", (json_str,))?.extract()
+}
+
 /// PyO3 module entry point. Wired as `metaphysica._physica_core`.
 #[pymodule]
 fn _physica_core(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyFormulasRegistry>()?;
     m.add_class::<PyQuarkRegistry>()?;
     m.add_class::<PyCKMMatrix>()?;
+    m.add_function(wrap_pyfunction!(py_list_constants, m)?)?;
+    m.add_function(wrap_pyfunction!(py_list_quarks, m)?)?;
+    m.add_function(wrap_pyfunction!(py_get_constant, m)?)?;
     m.add("__version__", crate::version())?;
     Ok(())
 }

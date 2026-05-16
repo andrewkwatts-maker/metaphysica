@@ -204,6 +204,13 @@ impl QuarkRegistry {
         self.entries.insert(p.name.clone(), p);
     }
 
+    /// All registered quark names in sorted order.
+    pub fn known_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = self.entries.keys().cloned().collect();
+        names.sort();
+        names
+    }
+
     /// Lookup by canonical (lower-case) name.
     pub fn get_quark(&self, name: &str) -> Result<&QuarkPrediction, QuarkError> {
         self.entries

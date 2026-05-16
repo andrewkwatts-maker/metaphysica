@@ -305,6 +305,13 @@ impl FormulasRegistry {
         self.entries.is_empty()
     }
 
+    /// All registered constant names in sorted order.
+    pub fn known_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = self.entries.iter().map(|kv| kv.key().clone()).collect();
+        names.sort();
+        names
+    }
+
     /// Fetch the registered constant by canonical name.
     pub fn get(&self, name: &str) -> Result<Constant, ConstantError> {
         self.entries
