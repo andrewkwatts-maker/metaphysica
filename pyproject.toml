@@ -1,6 +1,6 @@
-[build-system]
-requires = ["setuptools>=64.0", "wheel"]
-build-backend = "setuptools.build_meta"
+﻿[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
 
 [project]
 name = "metaphysica"
@@ -56,7 +56,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # Heavy / build-only deps live behind extras so plain `pip install metaphysica`
-# stays slim — the bundled Get() datasheet fast path needs none of these.
+# stays slim â€” the bundled Get() datasheet fast path needs none of these.
 # The full website builder should use `pip install metaphysica[full]`.
 sims  = ["eml-spectral>=1.3.0"]   # advanced algebra (E8 / Leech / Octonion / Clifford) for the sim engine
 pdf   = ["xhtml2pdf>=0.2.16"]      # PDF paper export
@@ -105,28 +105,6 @@ metaphysica-build = "metaphysica.build:main"
 # Regenerate the bundled quark + constant datasheets shipped in the wheel
 metaphysica-datasheets = "metaphysica.generators.generate_datasheets:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-# Ship every JSON / MD / HTML / CSS / JS / SVG / PNG bundled with the package
-# so generators can find their data files and the website can be reconstituted
-# anywhere via metaphysica-build --out PATH.
-"metaphysica" = [
-    "**/*.json",
-    "**/*.md",
-    "**/*.html",
-    "**/*.css",
-    "**/*.js",
-    "**/*.svg",
-    "**/*.png",
-    "**/*.txt",
-    "py.typed",
-]
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
@@ -137,7 +115,7 @@ addopts = "-v --tb=short"
 line-length = 100
 target-version = ["py39", "py310", "py311", "py312", "py313"]
 
-# ── Optional Rust acceleration (maturin) ────────────────────────────────────
+# â”€â”€ Optional Rust acceleration (maturin) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Configuration is loaded only when maturin is the active build backend
 # (`pip install metaphysica[rust]` or `maturin develop --features python`).
 # When using the default setuptools backend declared in [build-system], this
@@ -148,3 +126,5 @@ module-name = "metaphysica._physica_core"
 features = ["python"]
 python-source = "src"
 strip = true
+
+
