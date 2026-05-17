@@ -14,7 +14,6 @@ crate-type = ["cdylib", "lib"]
 [features]
 default = []
 python = ["pyo3"]
-with-arithmos = ["arithmos_core"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
@@ -25,7 +24,6 @@ parking_lot = "0.12"
 thiserror = "1.0"
 once_cell = "1.19"
 pyo3 = { version = "0.22", features = ["extension-module"], optional = true }
-arithmos_core = { path = "../../../Arithmos/rust/arithmos_core", optional = true }
 
 # NOTE: [profile.release] intentionally omitted â€” when this crate is built
 # inside the engine workspace it inherits the workspace-level profile;
