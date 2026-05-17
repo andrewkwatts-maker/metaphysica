@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "metaphysica"
-version = "2.0.0a0"
+version = "2.0.1"
 description = "G2-manifold-derived theoretical physics framework: 125 derived constants, quark + constant datasheet API, bundled static-website generator."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -51,7 +51,7 @@ dependencies = [
     "mpmath>=1.3.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
-    "eml-math>=1.3.0",
+    "eml-math>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -62,7 +62,7 @@ sims  = ["eml-spectral>=1.3.0"]   # advanced algebra (E8 / Leech / Octonion / Cl
 pdf   = ["xhtml2pdf>=0.2.16"]      # PDF paper export
 plots = ["matplotlib>=3.7.0", "pandas>=2.0.0"]   # plot regeneration
 full = [
-    "eml-spectral>=1.3.0",
+    "eml-spectral>=2.0.0",
     "xhtml2pdf>=0.2.16",
     "matplotlib>=3.7.0",
     "pandas>=2.0.0",
