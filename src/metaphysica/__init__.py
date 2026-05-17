@@ -44,7 +44,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union
 
-__version__ = "1.4.0"
+__version__ = "2.0.2"
 __author__ = "Andrew Keith Watts"
 
 
