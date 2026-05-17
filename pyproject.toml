@@ -100,10 +100,9 @@ Issues = "https://github.com/andrewkwatts-maker/metaphysica/issues"
 "Static-site host" = "https://github.com/andrewkwatts-maker/PrincipiaMetaphysica"
 
 [project.scripts]
-# Full website rebuild: runs sims + every generator + copies bundled site assets
-metaphysica-build = "metaphysica.build:main"
-# Regenerate the bundled quark + constant datasheets shipped in the wheel
+metaphysica-build      = "metaphysica.build:main"
 metaphysica-datasheets = "metaphysica.generators.generate_datasheets:main"
+metaphysica-app        = "metaphysica._launcher:launch"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
