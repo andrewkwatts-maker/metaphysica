@@ -2,17 +2,25 @@
 
 Searches for the metaphysica-app directory as a sibling of the library
 checkout (developer path). Falls back to ~/.metaphysica-app, cloning from
-GitHub if neither exists.
+GitHub at the matching version tag if neither exists.
 """
 import os
 import subprocess
 import sys
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 
 _APP_REPO   = "https://github.com/andrewkwatts-maker/metaphysica-app.git"
 _APP_FOLDER = "metaphysica-app"
 _APP_MODULE = "metaphysica_app"
 _LIB_FILE   = Path(__file__)
+
+
+def _library_version() -> str:
+    try:
+        return _pkg_version("metaphysica")
+    except Exception:
+        return ""
 
 
 def _find_or_clone() -> Path:
@@ -25,9 +33,14 @@ def _find_or_clone() -> Path:
     if home_dir.is_dir():
         return home_dir
 
-    print(f"Cloning {_APP_FOLDER} into {home_dir} ...")
-    if subprocess.run(["git", "clone", _APP_REPO, str(home_dir)]).returncode != 0:
-        sys.exit("git clone failed — is git installed?")
+    tag = f"v{_library_version()}"
+    print(f"Cloning {_APP_FOLDER} @ {tag} into {home_dir} ...")
+    result = subprocess.run(["git", "clone", "--branch", tag, _APP_REPO, str(home_dir)])
+    if result.returncode != 0:
+        print(f"Tag {tag} not found on app repo — cloning default branch ...")
+        if subprocess.run(["git", "clone", _APP_REPO, str(home_dir)]).returncode != 0:
+            sys.exit("git clone failed — is git installed?")
+
     print("Installing app dependencies ...")
     subprocess.run([sys.executable, "-m", "pip", "install", "-e", str(home_dir)], check=True)
     return home_dir
