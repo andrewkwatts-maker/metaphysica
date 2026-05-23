@@ -44,8 +44,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union
 
-__version__ = "2.0.2"
+__version__ = "2.0.3"
 __author__ = "Andrew Keith Watts"
+
+# Companion-app launcher — `metaphysica.Launch()` finds/clones metaphysica-app and runs it.
+from metaphysica._launcher import launch as Launch
 
 
 # ── Optional Rust acceleration ───────────────────────────────────────────────
@@ -165,4 +168,5 @@ __all__ = [
     "Get",
     "list_quarks",
     "list_constants",
+    "Launch",
 ]
