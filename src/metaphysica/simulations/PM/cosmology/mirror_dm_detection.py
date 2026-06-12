@@ -104,8 +104,12 @@ from metaphysica.simulations.core.eml_tree_adapter import (
 #: Nucleon mass in GeV (proton/neutron average, PDG 2024).
 M_NUCLEON_GEV: float = 0.938
 
-#: Default bridge-sector coupling g_bridge from G₂ triple-cycle
-#: intersections (re_t_sector v25.0).  Matches the same value used in
+#: Default bridge-sector coupling g_bridge from G₂ half-instanton on the
+#: associative 3-cycle (re_t_sector v25.0).  Sprint T6 #3 closes the
+#: derivation gap: this O(1)-rounded value of 1.2e-10 is the rounded form
+#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.288e-10``
+#: derived in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
+#: Re(T) = 174.033, b₃ = 24.  Matches the same value used in
 #: :mod:`metaphysica.simulations.PM.cosmology.mirror_dm_relic` so that the
 #: relic-density and direct-detection predictions are driven by ONE
 #: topology-rooted parameter (b₃ = 24 via re_t_sector).

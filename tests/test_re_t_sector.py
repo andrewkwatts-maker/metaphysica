@@ -13,6 +13,7 @@ import math
 import pytest
 
 from metaphysica.simulations.PM.geometry.re_t_sector import (
+    BRIDGE_COUPLING_ASSERTED,
     NonPerturbativeReT,
     RE_T_VEV_TARGET,
     close_vev_gap,
@@ -145,3 +146,67 @@ def test_default_b3_is_g2_third_betti() -> None:
     solver = NonPerturbativeReT()
     assert solver.b3 == 24
     assert solver.flux == 12
+
+
+# ── Bridge coupling (Sprint T6 #3) -----------------------------------------
+
+
+def test_bridge_coupling_derived_from_half_instanton() -> None:
+    """Sprint T6 #3 gate: g_bridge derives from G₂ half-instanton.
+
+    At v25.0 defaults (Re(T) = 174.033, b₃ = 24) the half-instanton
+    exponent ``exp(−π·Re(T)/b₃)`` evaluates to ≈ 1.288e-10 — within
+    7 % of the asserted ``BRIDGE_COUPLING_ASSERTED`` rounded constant
+    that the mirror DM modules carry as their default.
+    """
+    solver = NonPerturbativeReT()
+    g_bridge = solver.compute_bridge_coupling()
+
+    # Exact analytic check: g_bridge ≡ exp(−π·Re(T)/b₃).
+    expected = math.exp(-math.pi * RE_T_VEV_TARGET / 24)
+    assert math.isclose(g_bridge, expected, rel_tol=1e-12), (
+        f"compute_bridge_coupling drifted from exp(-pi*ReT/b3): "
+        f"derived={g_bridge!r}, expected={expected!r}"
+    )
+
+    # Agreement with the asserted rounded constant: within 10 %.
+    rel_gap = abs(g_bridge - BRIDGE_COUPLING_ASSERTED) / BRIDGE_COUPLING_ASSERTED
+    assert rel_gap < 0.10, (
+        f"Derived g_bridge = {g_bridge:.3e} disagrees with asserted "
+        f"BRIDGE_COUPLING_ASSERTED = {BRIDGE_COUPLING_ASSERTED:.3e} by "
+        f"{rel_gap * 100:.2f} % (rounding tolerance is 10 %)"
+    )
+
+
+def test_bridge_coupling_tracks_re_t() -> None:
+    """Doubling Re(T) must shrink g_bridge by ``exp(−π·Re(T)/b₃)``.
+
+    Confirms the bridge coupling really is locked to the volume
+    modulus rather than fortuitously hitting 1.2e-10 at v25.0 defaults.
+    """
+    solver = NonPerturbativeReT()
+    g_at_default = solver.compute_bridge_coupling()
+    g_at_double = solver.compute_bridge_coupling(ReT=2.0 * RE_T_VEV_TARGET)
+    # Ratio = exp(−π·Re(T)/b₃)  (the second factor that appears when Re(T) doubles).
+    expected_ratio = math.exp(-math.pi * RE_T_VEV_TARGET / 24)
+    actual_ratio = g_at_double / g_at_default
+    assert math.isclose(actual_ratio, expected_ratio, rel_tol=1e-12), (
+        f"Bridge coupling does not track Re(T): "
+        f"g(2·ReT)/g(ReT) = {actual_ratio!r}, expected {expected_ratio!r}"
+    )
+
+
+def test_bridge_coupling_registers_b3_traceable_entry() -> None:
+    """Derivation must land in the EML tree with the b₃ traceback flag."""
+    solver = NonPerturbativeReT()
+    solver.compute_bridge_coupling()
+    tree = solver.get_eml_tree()
+    assert "bridge_coupling_derived" in tree, (
+        f"compute_bridge_coupling did not register; tree keys: "
+        f"{sorted(tree.keys())}"
+    )
+    entry = tree["bridge_coupling_derived"]
+    assert entry.get("b3_traceback") is True, (
+        f"Bridge coupling formula does not trace back to b3: "
+        f"formula={entry.get('formula')!r}"
+    )

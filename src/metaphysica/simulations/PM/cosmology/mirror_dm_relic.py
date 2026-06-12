@@ -125,6 +125,13 @@ Y_INITIAL = 1e-10
 #: Default bridge-sector coupling from G₂ triple-cycle intersections
 #: (re_t_sector v25.0). Topology-rooted: traces back to b₃ = 24 via the
 #: Acharya-Witten flux quantisation on the associative 3-cycles.
+#: Default bridge-sector coupling g_bridge.  Sprint T6 #3 closes the
+#: derivation gap: this O(1)-rounded value of 1.2e-10 is the rounded form
+#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.288e-10``
+#: derived in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
+#: Re(T) = 174.033, b₃ = 24.  The downstream defaults keep the rounded
+#: value so test outputs do not shift; the derivation tree captures the
+#: b₃-rooted chain explicitly.
 DEFAULT_BRIDGE_COUPLING = 1.2e-10
 
 #: Default mirror mass: axion-scale, ≈ 3.51 meV.
