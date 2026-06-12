@@ -66,6 +66,18 @@ try:
     SCHEMA_AVAILABLE = True
 except ImportError:
     SCHEMA_AVAILABLE = False
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
 
 class MassRatioSolver:
     """
@@ -286,7 +298,10 @@ if SCHEMA_AVAILABLE:
                         "C_kaf": {"name": "Flux Constant", "value": 27.2},
                         "k_gimel": {"name": "Warp Factor", "value": 12.318310},
                         "holonomy_correction": {"name": "G2 Holonomy Transition Factor", "value": 1.58017}
-                    }
+                    },
+                    arithma=_arithma_num(1836.15267343),
+                    eml=_eml_scalar(1836.15267343),
+                    value=1836.15267343,
                 )
             ]
 

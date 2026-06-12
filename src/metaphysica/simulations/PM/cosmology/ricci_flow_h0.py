@@ -567,7 +567,7 @@ class RicciFlowH0V16(SimulationBase):
                 category="DERIVED",
                 description="Characteristic Ricci flow timescale from G2 topology",
                 eml_latex=r"\mathrm{ops.div}(k_{\gimel},\, \mathrm{eml\_scalar}(b_3))",
-                eml_tree_str="ops.div(k_gimel, eml_scalar(24.0))",
+                eml_tree_str="ops.div(k_gimel, b3_leaf())",
                 eml_description="EML: tau = ops.div(k_gimel, b3) — Ricci flow timescale from G2 topology",
                 inputParams=["topology.elder_kads", "constants.k_gimel"],
                 outputParams=["cosmology.ricci_flow_rate"],
@@ -606,8 +606,16 @@ class RicciFlowH0V16(SimulationBase):
                 category="DERIVED",
                 description="Hubble parameter interpolation from Ricci flow",
                 eml_latex=r"\mathrm{ops.add}(\mathrm{ops.mul}(H_0^{local}, f(z)),\, \mathrm{ops.mul}(H_0^{early},\, \mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.neg}(f(z)))))",
-                eml_tree_str="ops.add(ops.mul(H0_local, f_z), ops.mul(H0_early, ops.add(eml_scalar(1.0), ops.neg(f_z))))",
-                eml_description="EML: H(z) = ops.add(ops.mul(H0_local, f_z), ops.mul(H0_early, ops.add(1, ops.neg(f_z)))) — Ricci flow H(z) interpolation",
+                # f_z is itself f(z) = 1/(1 + (z/z_*)^2) with z_* = b_3/k_gimel;
+                # inlining the z_* expansion here roots the tree at b3_leaf so
+                # the dependency walker no longer stops at the opaque f_z var.
+                eml_tree_str=(
+                    "ops.add(ops.mul(H0_local, ops.inv(ops.add(eml_scalar(1.0), "
+                    "ops.pow(ops.div(z, ops.div(b3_leaf(), k_gimel)), eml_scalar(2.0))))), "
+                    "ops.mul(H0_early, ops.add(eml_scalar(1.0), ops.neg(ops.inv(ops.add(eml_scalar(1.0), "
+                    "ops.pow(ops.div(z, ops.div(b3_leaf(), k_gimel)), eml_scalar(2.0))))))))"
+                ),
+                eml_description="EML: H(z) = ops.add(ops.mul(H0_local, f_z), ops.mul(H0_early, ops.add(1, ops.neg(f_z)))) where f_z = 1/(1+(z/(b3_leaf()/k_gimel))^2) — Ricci flow H(z) interpolation with z_*=b_3/k_gimel",
                 inputParams=["cosmology.H0_local", "cosmology.H0_early"],
                 outputParams=[],
                 input_params=["cosmology.H0_local", "cosmology.H0_early"],
@@ -647,12 +655,19 @@ class RicciFlowH0V16(SimulationBase):
                 plain_text="f(z) = 1 / (1 + (z/z_*)^2)",
                 category="PREDICTED",
                 description="Interpolation function resolving Hubble tension",
-                eml_latex=r"\mathrm{ops.inv}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.pow}(\mathrm{ops.div}(z, z_*),\, \mathrm{eml\_scalar}(2))))",
-                eml_tree_str="ops.inv(ops.add(eml_scalar(1.0), ops.pow(ops.div(z, z_star), eml_scalar(2.0))))",
-                eml_description="EML: f(z) = ops.inv(ops.add(1, ops.pow(z/z_star, 2))) — Ricci flow interpolation function",
-                inputParams=["cosmology.z_transition"],
+                eml_latex=r"\mathrm{ops.inv}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.pow}(\mathrm{ops.div}(z,\, \mathrm{ops.div}(\mathrm{b3\_leaf}(), k_\gimel)),\, \mathrm{eml\_scalar}(2))))",
+                # z_* expanded inline as b_3 / k_gimel (~1.95) so the EML tree
+                # carries an explicit b3_leaf root — the dependency walker would
+                # otherwise stop at the opaque `z_star` variable (T2.3 fix).
+                eml_tree_str="ops.inv(ops.add(eml_scalar(1.0), ops.pow(ops.div(z, ops.div(b3_leaf(), k_gimel)), eml_scalar(2.0))))",
+                eml_description="EML: f(z) = ops.inv(ops.add(1, ops.pow(z/(b3_leaf()/k_gimel), 2))) — Ricci flow interpolation function with z_* = b_3/k_gimel",
+                # T2.3 fix: declare topology.elder_kads as a direct input — the
+                # EML tree now inlines z_* = b_3/k_gimel so b_3 is a real leaf
+                # of the f(z) interpolation, and downstream H_0 consumers can
+                # trace through this formula to the canonical b3 seed.
+                inputParams=["cosmology.z_transition", "topology.elder_kads", "geometry.k_gimel"],
                 outputParams=["cosmology.H0_local", "cosmology.H0_early"],
-                input_params=["cosmology.z_transition"],
+                input_params=["cosmology.z_transition", "topology.elder_kads", "geometry.k_gimel"],
                 output_params=["cosmology.H0_local", "cosmology.H0_early"],
                 derivation={
                     "steps": [

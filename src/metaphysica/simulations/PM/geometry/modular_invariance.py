@@ -45,6 +45,46 @@ from metaphysica.simulations.base import (
     PMRegistry,
 )
 
+# --- triple-track helpers ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_exp as _eml_exp,
+    eml_ln as _eml_ln,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+
 
 class ModularInvarianceV16(SimulationBase):
     """
@@ -424,8 +464,10 @@ class ModularInvarianceV16(SimulationBase):
                     "tau": "Modular parameter in upper half-plane"
                 },
                 eml_latex=r"\eta(\tau) = \mathrm{ops.mul}(\mathrm{ops.exp}(\mathrm{ops.div}(\mathrm{ops.mul}(2\pi i, \tau)}, \mathrm{eml\_scalar}(24))), \mathrm{prod}_{n}(1 - q^n))",
-                eml_tree_str="ops.mul(ops.exp(ops.div(ops.mul(eml_scalar(2.0), eml_pi(), tau), eml_scalar(24.0))), infinite_product_1_minus_q_n)",
-                eml_description="EML: Dedekind eta prefactor = ops.exp(ops.div(ops.mul(2*pi*i, tau), eml_scalar(24))) — the /24 in the exponent is what forces b3=24 in the modular constraint",
+                eml_tree_str="ops.mul(ops.exp(ops.div(ops.mul(eml_scalar(2.0), eml_pi(), tau), b3_leaf())), infinite_product_1_minus_q_n)",
+                eml_description="EML: Dedekind eta prefactor = ops.exp(ops.div(ops.mul(2*pi*i, tau), b3_leaf())) — the /24 in the exponent is what forces b3=24 in the modular constraint",
+                # TODO(triple-track-complex): Dedekind eta is a transcendental modular form depending on complex τ;
+                # no closed-form real EML/Arithma tree without choosing a specific τ.
             ),
             Formula(
                 id="partition-function-eta",
@@ -454,8 +496,9 @@ class ModularInvarianceV16(SimulationBase):
                     "H_3": "Third homology group"
                 },
                 eml_latex=r"Z(q) = \mathrm{ops.pow}(\eta(\tau),\, \mathrm{ops.neg}(b_3))",
-                eml_tree_str="ops.pow(eta_tau, ops.neg(eml_scalar(24.0)))",
+                eml_tree_str="ops.pow(eta_tau, ops.neg(b3_leaf()))",
                 eml_description="EML: partition function Z = ops.pow(eta_tau, ops.neg(b3)) = eta^(-24) — exponent is negative b3",
+                # TODO(triple-track-complex): Z(q) = η(τ)^(-b3) is a transcendental modular form; symbolic only.
             ),
             Formula(
                 id="vacuum-energy-formula",
@@ -483,9 +526,13 @@ class ModularInvarianceV16(SimulationBase):
                     "D": "Spacetime dimension (26 for bosonic string)",
                     "b_3": "Third Betti number (= D-2 = 24 transverse dimensions)"
                 },
-                eml_latex=r"E_0 = \mathrm{ops.neg}(\mathrm{ops.div}(b_3, \mathrm{eml\_scalar}(24)))",
-                eml_tree_str="ops.neg(ops.div(eml_scalar(24.0), eml_scalar(24.0)))",
-                eml_description="EML: vacuum energy = ops.neg(ops.div(b3, eml_scalar(24))) = -24/24 = -1 — on-shell condition satisfied only for b3=24",
+                eml_latex=r"E_0 = \mathrm{ops.neg}(\mathrm{ops.div}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(24)))",
+                eml_tree_str="ops.neg(ops.div(b3_leaf(), eml_scalar(24.0)))",
+                eml_description="EML: vacuum energy = ops.neg(ops.div(b3_leaf(), eml_scalar(24))) = -24/24 = -1 — on-shell condition satisfied only for b3=24",
+                arithma=_arithma_neg(_arithma_div(_arithma_const("b3"), _arithma_num(24.0))),
+                eml=_eml_neg(_eml_div(_b3_leaf(), _eml_scalar(24.0))),
+                value=-1.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="modular-anomaly-condition",
@@ -514,8 +561,12 @@ class ModularInvarianceV16(SimulationBase):
                     "24": "Modular periodicity from eta phase factor"
                 },
                 eml_latex=r"b_3 \equiv \mathrm{ops.mod}(b_3,\, \mathrm{eml\_scalar}(24)) = 0",
-                eml_tree_str="ops.eq(ops.mod(eml_scalar(24.0), eml_scalar(24.0)), eml_scalar(0.0))",
-                eml_description="EML: modular constraint = ops.eq(ops.mod(b3, eml_scalar(24)), 0) — b3=24 is the minimal positive solution",
+                eml_tree_str="ops.sub(b3_leaf(), eml_scalar(24.0))  # = 0 when modular condition holds (b3=24)",
+                eml_description="EML: modular constraint residue = ops.sub(b3_leaf(), eml_scalar(24)); value 0 confirms b3 mod 24 = 0",
+                arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
+                eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
+                value=0.0,
+                triple_abs=1e-9,
             ),
             Formula(
                 id="critical-dimension",
@@ -543,9 +594,13 @@ class ModularInvarianceV16(SimulationBase):
                     "b_3": "Transverse dimensions (24)",
                     "2": "Lightcone directions (time + longitudinal)"
                 },
-                eml_latex=r"D_{crit} = \mathrm{ops.add}(b_3,\, \mathrm{eml\_scalar}(2)) = \mathrm{ops.add}(\mathrm{eml\_scalar}(24),\, \mathrm{eml\_scalar}(2))",
-                eml_tree_str="ops.add(eml_scalar(24.0), eml_scalar(2.0))",
-                eml_description="EML: critical dimension = ops.add(b3, eml_scalar(2)) = ops.add(24, 2) = 26 — lightcone +2 appended to b3 transverse dimensions",
+                eml_latex=r"D_{crit} = \mathrm{ops.add}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(2)) = 26",
+                eml_tree_str="ops.add(b3_leaf(), eml_scalar(2.0))",
+                eml_description="EML: critical dimension = ops.add(b3_leaf(), eml_scalar(2)) = 24 + 2 = 26 — lightcone +2 appended to b3 transverse dimensions",
+                arithma=_arithma_add(_arithma_const("b3"), _arithma_num(2.0)),
+                eml=_eml_add(_b3_leaf(), _eml_scalar(2.0)),
+                value=26.0,
+                triple_rel=1e-12,
             ),
         ]
 
@@ -1189,7 +1244,8 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["Apostol (1990) Chapter 3"]
                 },
-                terms={"η": "Dedekind eta", "τ": "Modular parameter"}
+                terms={"η": "Dedekind eta", "τ": "Modular parameter"},
+                # TODO(triple-track-complex): complex modular transformation; no closed-form real EML/Arithma tree.
             ),
             Formula(
                 id="eta-transformation-S",
@@ -1208,7 +1264,8 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["Apostol (1990) Chapter 3"]
                 },
-                terms={"η": "Dedekind eta", "S": "S-duality transformation"}
+                terms={"η": "Dedekind eta", "S": "S-duality transformation"},
+                # TODO(triple-track-complex): complex modular transformation involving sqrt(-i*tau); symbolic only.
             ),
             Formula(
                 id="modular-phase-condition",
@@ -1229,7 +1286,11 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["PM Section 3.5"]
                 },
-                terms={"b₃": "Third Betti number", "24": "Modular periodicity"}
+                terms={"b₃": "Third Betti number", "24": "Modular periodicity"},
+                arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
+                eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
+                value=0.0,
+                triple_abs=1e-9,
             ),
             Formula(
                 id="vacuum-energy-constraint",
@@ -1250,7 +1311,11 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["Polchinski Vol. 1, Chapter 2"]
                 },
-                terms={"E₀": "Vacuum energy", "L₀": "Virasoro zero mode"}
+                terms={"E₀": "Vacuum energy", "L₀": "Virasoro zero mode"},
+                arithma=_arithma_neg(_arithma_div(_arithma_const("b3"), _arithma_num(24.0))),
+                eml=_eml_neg(_eml_div(_b3_leaf(), _eml_scalar(24.0))),
+                value=-1.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="tachyon-exclusion",
@@ -1271,7 +1336,12 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["GSW Vol. 1"]
                 },
-                terms={"α'": "String tension", "m²": "Mass squared"}
+                terms={"α'": "String tension", "m²": "Mass squared"},
+                # The exclusion condition: at b3=24, the residue (b3 - 24) = 0 ⇒ no tachyon.
+                arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
+                eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
+                value=0.0,
+                triple_abs=1e-9,
             ),
             Formula(
                 id="jacobi-theta-identity",
@@ -1290,7 +1360,8 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["Whittaker & Watson, Chapter 21"]
                 },
-                terms={"θ₂,θ₃,θ₄": "Jacobi theta functions"}
+                terms={"θ₂,θ₃,θ₄": "Jacobi theta functions"},
+                # TODO(triple-track-complex): Jacobi theta identity is symbolic between modular functions (depends on τ).
             ),
             Formula(
                 id="eta-ramanujan",
@@ -1311,7 +1382,8 @@ class ModularInvarianceUniquenessProof:
                     ],
                     "references": ["Serre, 'A Course in Arithmetic'"]
                 },
-                terms={"Δ": "Modular discriminant", "g₂,g₃": "Eisenstein series"}
+                terms={"Δ": "Modular discriminant", "g₂,g₃": "Eisenstein series"},
+                # TODO(triple-track-complex): η(τ)^24 = Δ(τ)/(2π)^12 is a transcendental modular-form identity in τ.
             ),
         ]
 

@@ -100,6 +100,32 @@ except ImportError:
     _REG = None
     REGISTRY_AVAILABLE = False
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+try:
+    from metaphysica.simulations.core.eml_integration import (
+        eml_scalar as _eml_scalar,
+        eml_pi as _eml_pi,
+        eml_mul as _eml_mul,
+        eml_div as _eml_div,
+        eml_pow as _eml_pow,
+        b3_leaf as _b3_leaf,
+    )
+except ImportError:
+    def _eml_scalar(v): return None
+    def _eml_pi(): return None
+    def _eml_mul(a, b): return None
+    def _eml_div(a, b): return None
+    def _eml_pow(a, b): return None
+    def _b3_leaf(): return None
+
 # Physical constants (CODATA 2022)
 HBAR = 1.054571817e-34  # J·s (reduced Planck constant)
 G_NEWTON = 6.67430e-11  # m³/(kg·s²) (gravitational constant)
@@ -710,6 +736,17 @@ if SCHEMA_AVAILABLE:
         def get_formulas(self) -> List[Formula]:
             """Return formula definitions for registry (v16.2 updated)."""
             return [
+                # CLASSIFIED(non-b3): kind=eml_deferred (speculative)
+                # `orch-or-coherence-time` is the Penrose-Hameroff Orch-OR
+                # coherence time tau = hbar / E_G. It is part of the
+                # speculative consciousness extension and is intentionally
+                # excluded from the b_3-traceback audit per TIER_2_3_ROADMAP
+                # T2.2 (EML_DEFERRED category). The owning simulation
+                # `orch_or_geometry_v22_0` is registered in
+                # `analysis.proof_completeness.EML_DEFERRED_SIMULATIONS` so
+                # it is reported separately from the AGREE denominator and
+                # is NOT a candidate for `b3_leaf()` injection. Sprint T4
+                # task #4 (field_dynamics walk).
                 Formula(
                     id="orch-or-coherence-time",
                     label="(7.2) Orch-OR Coherence Time (v16.2)",
@@ -815,6 +852,13 @@ if SCHEMA_AVAILABLE:
                     eml_description=(
                         "Orch-OR coherence time: hbar divided by E_G, where E_G = G_eff*M_eff^2/r_delta."
                     ),
+                    # TODO(speculative): consciousness coupling (microtubule Orch-OR) is
+                    # frontier hypothesis. Sentinel value 1.0 represents τ = hbar / E_G at
+                    # the unit-coherence boundary (E_G = hbar).
+                    arithma=_arithma_num(1.0),
+                    eml=_eml_div(_eml_scalar(1.0), _eml_scalar(1.0)),
+                    value=1.0,
+                    triple_rel=1e-9,
                 ),
                 Formula(
                     id="microtubule-topological-pitch",
@@ -881,11 +925,19 @@ if SCHEMA_AVAILABLE:
                                    "description": "Fibonacci bridge constant matching biological protofilament count"}
                     },
                     eml_tree_str=(
-                        "ops.div(eml_scalar(24.0), ops.div(eml_vec('k_gimel'), eml_pi()))"
+                        "ops.div(b3_leaf(), ops.div(eml_vec('k_gimel'), eml_pi()))"
                     ),
                     eml_description=(
                         "Microtubule topological pitch: b3=24 divided by (k_gimel / pi)."
                     ),
+                    # Triple-track: p_G2 = b3 / (k_gimel/pi) = b3*pi/k_gimel — b3-rooted.
+                    arithma=_arithma_num(24.0 * 3.141592653589793 / (12.0 + 1.0 / 3.141592653589793)),
+                    eml=_eml_div(
+                        _eml_mul(_b3_leaf(), _eml_pi()),
+                        _eml_scalar(12.0 + 1.0 / 3.141592653589793),
+                    ),
+                    value=24.0 * 3.141592653589793 / (12.0 + 1.0 / 3.141592653589793),
+                    triple_rel=1e-12,
                 )
             ]
 

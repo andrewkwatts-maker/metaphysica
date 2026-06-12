@@ -62,6 +62,29 @@ from metaphysica.simulations.base import (
     Parameter,
     PI,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class AppendixOKKReduction(SimulationBase):
@@ -675,7 +698,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Choose alpha, beta exponents to canonically normalize 4D gravity",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-circle-reduction",
                 label="(O.2)",
@@ -700,7 +723,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Periodicity y ~ y + 2*pi*R encodes U(1) gauge symmetry",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-gauge-emergence",
                 label="(O.3)",
@@ -725,7 +748,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Under y -> y + Lambda(x), A_mu -> A_mu - partial_mu Lambda (gauge transformation)",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-dilaton-scalar",
                 label="(O.4)",
@@ -750,7 +773,7 @@ class AppendixOKKReduction(SimulationBase):
                         "After Weyl rescaling, phi acquires canonical kinetic term in 4D action",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-mode-expansion",
                 label="(O.5)",
@@ -775,7 +798,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Each phi_n(x) is an independent 4D field with compact momentum p_y = n/R",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-mass-spectrum",
                 label="(O.6)",
@@ -800,7 +823,7 @@ class AppendixOKKReduction(SimulationBase):
                         "4D equation for each mode: (Box_4 + n^2/R^2) phi_n = 0, giving m_n = |n|/R",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-zero-modes",
                 label="(O.7)",
@@ -826,7 +849,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Number of zero modes = b_p(K), linking topology to particle content",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-higher-dim",
                 label="(O.8)",
@@ -853,7 +876,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Gauge group = Isom(K); for G2 manifold, holonomy encodes SU(3)xSU(2)xU(1)",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-principia-chain",
                 label="(O.9)",
@@ -888,7 +911,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Per-shadow G2 holonomy compactification: 13D -> 4D(3,1) via TCS construction",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-distributed-or",
                 label="(O.9b)",
@@ -917,7 +940,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Total operator: R_total = tensor product of all 12 R_perp_i, acting on full 24D internal space",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-aggregate-breathing",
                 label="(O.10c)",
@@ -947,7 +970,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Aggregate: rho_breath = Sum_{i=1}^{12} rho_i, with EOS w0 = -1 + 1/b3 = -23/24",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-g2-volume",
                 label="(O.10)",
@@ -974,7 +997,7 @@ class AppendixOKKReduction(SimulationBase):
                         "For PM chain: M_Pl^2 = M_27^25 * V_23 and also M_Pl^2 proportional to M_7^5 * V_G2",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-gauge-coupling",
                 label="(O.11)",
@@ -1001,7 +1024,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Fine structure constant: alpha_i = g_i^2 / (4*pi), determined by cycle geometry",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="kk-consistency",
                 label="(O.12)",
@@ -1028,7 +1051,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Consistency: 4D EOM from L_4D must match D-dim EOM restricted to zero modes",
                     ],
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

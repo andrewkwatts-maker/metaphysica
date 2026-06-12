@@ -286,7 +286,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.gaugino_lambda_eff"],
                 eml_latex=r"\mathrm{ops.exp}(\mathrm{ops.neg}(\mathrm{ops.div}(2\pi, N_1)))",
-                eml_tree_str="ops.exp(ops.neg(ops.div(ops.mul(2, pi), eml_scalar(24.0))))",
+                eml_tree_str="ops.exp(ops.neg(ops.div(ops.mul(2, pi), b3_leaf())))",
                 eml_description="λ_eff = exp(−2π/24) via EML: ops.exp(ops.neg(ops.div(ops.mul(2,pi),24)))",
                 derivation={
                     "method": "Yukawa suppression from racetrack minimum at N1=b3=24",
@@ -379,7 +379,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 eml_tree_str=(
                     "ops.pow("
                     "ops.abs(ops.add("
-                    "ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, eml_scalar(24)))))), "
+                    "ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, b3_leaf()))))), "
                     "ops.neg(ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, eml_scalar(23))))))))), "
                     "ops.inv(eml_scalar(3)))"
                 ),

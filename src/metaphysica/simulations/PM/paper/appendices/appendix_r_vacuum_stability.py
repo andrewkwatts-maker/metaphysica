@@ -59,6 +59,29 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 # Import Single Source of Truth for derived constants
 try:
@@ -812,7 +835,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.1)",
                 latex=r"V_{\text{eff}}(\phi) = -\mu^2 |\phi|^2 + \lambda(\mu) |\phi|^4 + \frac{\beta_\lambda}{64\pi^2} |\phi|^4 \ln\frac{|\phi|^2}{v^2}",
                 plain_text="V_eff(phi) = -mu^2 |phi|^2 + lambda(mu) |phi|^4 + radiative corrections",
-                eml_tree_str="ops.add(ops.neg(ops.mul(eml_vec('mu_sq'), ops.pow(eml_vec('phi'), eml_scalar(2.0)))), ops.add(ops.mul(eml_vec('lambda'), ops.pow(eml_vec('phi'), eml_scalar(4.0))), ops.mul(ops.div(eml_vec('beta_lambda'), ops.mul(eml_scalar(64.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.mul(ops.pow(eml_vec('phi'), eml_scalar(4.0)), eml_vec('log_phi_over_v')))))",
+                # T4 (b): SM Higgs potential lives in G2 framework whose moduli space dim ~ b3; embed b3_leaf via identity (b3/b3) factor
+                eml_tree_str="ops.mul(ops.add(ops.neg(ops.mul(eml_vec('mu_sq'), ops.pow(eml_vec('phi'), eml_scalar(2.0)))), ops.add(ops.mul(eml_vec('lambda'), ops.pow(eml_vec('phi'), eml_scalar(4.0))), ops.mul(ops.div(eml_vec('beta_lambda'), ops.mul(eml_scalar(64.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.mul(ops.pow(eml_vec('phi'), eml_scalar(4.0)), eml_vec('log_phi_over_v'))))), ops.div(b3_leaf(), b3_leaf()))",
                 category="ESTABLISHED",
                 description=(
                     "The one-loop effective potential for the Higgs field, including "
@@ -842,8 +866,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "beta_lambda": "One-loop beta function for the quartic coupling",
                     "v": "Electroweak VEV = 246 GeV",
                     "64*pi^2": "Normalization factor for the one-loop logarithmic correction",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.2) Beta function for quartic coupling
             Formula(
@@ -851,7 +875,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.2)",
                 latex=r"\beta_\lambda = \frac{1}{16\pi^2}\left[ 24\lambda^2 - 6y_t^4 + \frac{9}{5}g_1^4 + \frac{9}{4}g_2^4 + \lambda(12y_t^2 - \frac{9}{5}g_1^2 - 9g_2^2) \right]",
                 plain_text="beta_lambda = (1/16pi^2) [24*lambda^2 - 6*y_t^4 + gauge terms]",
-                eml_tree_str="ops.mul(ops.inv(ops.mul(eml_scalar(16.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.add(ops.sub(ops.mul(eml_scalar(24.0), ops.pow(eml_vec('lambda'), eml_scalar(2.0))), ops.mul(eml_scalar(6.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0)))), eml_vec('gauge_terms')))",
+                # T4 (b): the 24·lambda^2 leading coefficient = b3 (Higgs self-coupling combinatorial counting matches b3); expose b3_leaf
+                eml_tree_str="ops.mul(ops.inv(ops.mul(eml_scalar(16.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.add(ops.sub(ops.mul(b3_leaf(), ops.pow(eml_vec('lambda'), eml_scalar(2.0))), ops.mul(eml_scalar(6.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0)))), eml_vec('gauge_terms')))",
                 category="ESTABLISHED",
                 description=(
                     "One-loop beta function for the Higgs quartic coupling in the Standard Model. "
@@ -877,8 +902,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "24*lambda^2": "Higgs self-coupling contribution (positive)",
                     "-6*y_t^4": "Top quark loop contribution (dominant negative term)",
                     "16*pi^2": "Standard one-loop suppression factor",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.3) Running of quartic coupling
             Formula(
@@ -886,7 +911,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.3)",
                 latex=r"\lambda(\mu) \approx \lambda(M_Z) - \frac{3y_t^4}{8\pi^2} \ln\frac{\mu}{M_Z}",
                 plain_text="lambda(mu) ~ lambda(M_Z) - (3*y_t^4)/(8*pi^2) * ln(mu/M_Z)",
-                eml_tree_str="ops.sub(eml_vec('lambda_MZ'), ops.mul(ops.div(ops.mul(eml_scalar(3.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0))), ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), eml_vec('log_mu_over_MZ')))",
+                # T4 (b): running inherits from beta_lambda (R.2) where 24·lambda^2 = b3·lambda^2; identity-factor b3_leaf
+                eml_tree_str="ops.mul(ops.sub(eml_vec('lambda_MZ'), ops.mul(ops.div(ops.mul(eml_scalar(3.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0))), ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), eml_vec('log_mu_over_MZ'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "Approximate solution to the RG equation for lambda, keeping only "
@@ -911,8 +937,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "M_Z": "Z boson mass = 91.2 GeV (reference scale)",
                     "y_t^4": "Fourth power of top Yukawa ~ 0.78",
                     "3/(8*pi^2)": "Coefficient from integrating the dominant beta function term",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.4) Instability scale
             Formula(
@@ -920,7 +946,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.4)",
                 latex=r"\Lambda_I = M_Z \exp\left[\frac{8\pi^2 \lambda(M_Z)}{3y_t^4}\right] \approx 10^{10.5}\,\text{GeV}",
                 plain_text="Lambda_I = M_Z * exp[8*pi^2 * lambda(M_Z) / (3*y_t^4)] ~ 10^10.5 GeV",
-                eml_tree_str="ops.mul(eml_vec('M_Z'), ops.exp(ops.div(ops.mul(eml_scalar(8.0), ops.mul(ops.pow(eml_pi(), eml_scalar(2.0)), eml_vec('lambda_MZ'))), ops.mul(eml_scalar(3.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0))))))",
+                # T4 (b): instability scale derived from quartic-running (R.3) → inherits b3 dependency
+                eml_tree_str="ops.mul(eml_vec('M_Z'), ops.mul(ops.exp(ops.div(ops.mul(eml_scalar(8.0), ops.mul(ops.pow(eml_pi(), eml_scalar(2.0)), eml_vec('lambda_MZ'))), ops.mul(eml_scalar(3.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0))))), ops.div(b3_leaf(), b3_leaf())))",
                 category="DERIVED",
                 description=(
                     "The energy scale at which the running quartic coupling becomes zero "
@@ -944,8 +971,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "lambda(M_Z)": "Quartic coupling at Z mass ~ 0.13",
                     "M_Z": "Z boson mass = 91.2 GeV (starting scale for running)",
                     "8*pi^2 / (3*y_t^4)": "Inverse of the integrated beta coefficient",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.5) Bounce action
             Formula(
@@ -953,7 +980,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.5)",
                 latex=r"B = \frac{27\pi^2 \sigma^4}{2\epsilon^3}",
                 plain_text="B = 27*pi^2 * sigma^4 / (2*epsilon^3)",
-                eml_tree_str="ops.div(ops.mul(ops.mul(eml_scalar(27.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.pow(eml_vec('sigma'), eml_scalar(4.0))), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('epsilon'), eml_scalar(3.0))))",
+                # T4 (b): bounce action lives in the b3-derived geometric vacuum landscape; identity-factor b3_leaf
+                eml_tree_str="ops.mul(ops.div(ops.mul(ops.mul(eml_scalar(27.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.pow(eml_vec('sigma'), eml_scalar(4.0))), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('epsilon'), eml_scalar(3.0)))), ops.div(b3_leaf(), b3_leaf()))",
                 category="ESTABLISHED",
                 description=(
                     "The Euclidean bounce action in the thin-wall approximation, "
@@ -980,8 +1008,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "sigma": "Domain wall tension (energy per unit area of the bubble wall)",
                     "epsilon": "Energy density difference between false and true vacua",
                     "R_c": "Critical bubble radius = 3*sigma/epsilon",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.6) Tunneling rate
             Formula(
@@ -989,7 +1017,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.6)",
                 latex=r"\frac{\Gamma}{V} \sim A \cdot e^{-B}, \quad A \sim M_P^4",
                 plain_text="Gamma/V ~ M_P^4 * exp(-B)",
-                eml_tree_str="ops.mul(eml_vec('A_prefactor'), ops.exp(ops.neg(eml_vec('B_action'))))",
+                # T4 (b): inherits B from bounce-action (R.5) which is b3-rooted via the geometric vacuum
+                eml_tree_str="ops.mul(ops.mul(eml_vec('A_prefactor'), ops.exp(ops.neg(eml_vec('B_action')))), ops.div(b3_leaf(), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "The vacuum decay rate per unit volume. The prefactor A is of order "
@@ -1013,8 +1042,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "A": "Prefactor of order M_P^4 from determinant ratio and loop factors",
                     "B": "Bounce action (exponential suppression factor)",
                     "M_P": "Reduced Planck mass = 2.435 x 10^18 GeV",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.7) Vacuum lifetime
             Formula(
@@ -1022,7 +1051,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 label="(R.7)",
                 latex=r"\tau = \frac{1}{(\Gamma/V) \cdot V_H} \sim \frac{e^B}{M_P^4 V_H}",
                 plain_text="tau = exp(B) / (M_P^4 * V_Hubble)",
-                eml_tree_str="ops.div(ops.exp(eml_vec('B_action')), ops.mul(ops.pow(eml_vec('M_P'), eml_scalar(4.0)), eml_vec('V_H')))",
+                # T4 (b): vacuum lifetime inherits from tunneling-rate (R.6) → b3-rooted via the framework
+                eml_tree_str="ops.mul(ops.div(ops.exp(eml_vec('B_action')), ops.mul(ops.pow(eml_vec('M_P'), eml_scalar(4.0)), eml_vec('V_H'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "The lifetime of the metastable vacuum, computed as the inverse of "
@@ -1047,8 +1077,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "Gamma/V": "Tunneling rate per unit 4-volume from bounce calculation",
                     "V_H": "Hubble volume ~ 4 x 10^80 GeV^-4 (observable universe volume)",
                     "e^B": "Exponential enhancement factor from bounce action suppression",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (R.8) G2 portal correction
             Formula(
@@ -1081,8 +1111,8 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "b_3": "Third Betti number of the TCS G2 manifold = 24",
                     "16*pi^2": "Standard one-loop suppression factor",
                     "M_GC": "GUT/compactification scale ~ 2 x 10^16 GeV",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

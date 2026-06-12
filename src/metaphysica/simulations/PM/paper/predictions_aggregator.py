@@ -50,6 +50,38 @@ from metaphysica.simulations.base import (
 
 # Import Single Source of Truth for derived constants
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    b3_leaf as _b3_leaf,
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_neg as _eml_neg,
+    eml_inv as _eml_inv,
+    eml_exp as _eml_exp,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_inv(a):
+    return None if a is None else 1.0 / a
+import math as _math
 _reg = get_registry()
 
 
@@ -188,7 +220,7 @@ class PredictionsAggregatorV16(SimulationBase):
             },
             "vacuum_noise_excess": {
                 "parameter": "P<sub>noise</sub>/P<sub>thermal</sub> (vacuum noise fraction)",
-                "prediction": "(1/144) × e⁻¹² ≈ 6.9 × 10⁻⁸",
+                "prediction": "(1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸",
                 "experiment": "Cavity QED / SQUID amplifiers at millikelvin",
                 "measured": "Not yet measured",
                 "agreement": "N/A",
@@ -378,8 +410,8 @@ class PredictionsAggregatorV16(SimulationBase):
             {
                 "category": "Dark Sector",
                 "observable": "Vacuum Noise Excess P<sub>noise</sub>/P<sub>thermal</sub>",
-                "pm_value": 6.9e-8,
-                "pm_value_formatted": "(1/144) × e⁻¹² ≈ 6.9 × 10⁻⁸ (fractional noise)",
+                "pm_value": 4.27e-8,
+                "pm_value_formatted": "(1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸ (fractional noise)",
                 "experimental_value": None,
                 "experimental_error": None,
                 "sigma_deviation": None,
@@ -451,7 +483,7 @@ class PredictionsAggregatorV16(SimulationBase):
         import math
         # alpha_leak = 1/sqrt(6) ~ 0.408: cross-shadow coupling strength
         alpha_leak = 1.0 / math.sqrt(6)
-        # P_leak = (1/144) * e^{-12} ~ 6.9e-8: bridge leakage probability
+        # P_leak = (1/144) * e^{-12} ~ 4.27e-8: bridge leakage probability
         vacuum_noise_fraction = (1.0 / 144.0) * math.exp(-12)
         # T_omega^2 = 1/6 ~ 0.167: torsion polarization anomaly
         gw_torsion_anomaly = 1.0 / 6.0
@@ -1183,7 +1215,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     ["CHSH violations", "○ UNTESTED", "δ<sub>ortho</sub> ~ 10⁻⁵ — feasible 2027–2030"],
                     ["CMB bubbles", "○ UNTESTED", "Cold spot signatures — CMB-S4 2027+"],
                     ["Cross-shadow phase shift", "○ UNTESTED", "δφ = α<sub>leak</sub> × L/λ<sub>dB</sub>, α<sub>leak</sub> = 1/√6 — atom interferometry"],
-                    ["Vacuum noise excess", "○ UNTESTED", "P<sub>noise</sub>/P<sub>thermal</sub> = (1/144)e⁻¹² ≈ 6.9 × 10⁻⁸ — SQUID/cavity QED"],
+                    ["Vacuum noise excess", "○ UNTESTED", "P<sub>noise</sub>/P<sub>thermal</sub> = (1/144)e⁻¹² ≈ 4.27 × 10⁻⁸ — SQUID/cavity QED"],
                     ["GW polarization anomaly", "○ UNTESTED", "δh/h ~ T<sub>ω</sub>² = 1/6 — LIGO O5 / LISA polarization"],
                 ]
             ),
@@ -1203,8 +1235,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     "|-------|------------------------|-------------------|--------|\n"
                     "| Strong (SU(3)<sub>C</sub>) | ~10\u207b\u00b3\u2077 | ~10\u207b\u2077\u2075 | Zero |\n"
                     "| Weak (SU(2)<sub>L</sub>) | ~0 | ~0 | Zero |\n"
-                    "| Electromagnetic (U(1)) | ~0.00248 | ~6.9 × 10⁻⁸ | Testable |\n"
-                    "| Gravity (gravitons) | ~0.00248 | ~6.9 × 10⁻⁸ | Testable |\n\n"
+                    "| Electromagnetic (U(1)) | ~0.00248 | ~4.27 × 10⁻⁸ | Testable |\n"
+                    "| Gravity (gravitons) | ~0.00248 | ~4.27 × 10⁻⁸ | Testable |\n\n"
                     "Strong force leakage is impossible (confinement + instanton cost S<sub>inst</sub> \u2248 80). "
                     "Weak force leakage is impossible (mass barrier m<sub>W</sub> r<sub>bridge</sub> ~ 10\u2075). "
                     "EM and gravity leak at ~230\u00d7 weaker than dark matter portal (~0.57)."
@@ -1441,7 +1473,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 content=(
                     "The two-layer OR bridge structure yields three primary experimental signatures, "
                     "each derived from the base leakage parameters: coupling strength "
-                    "α<sub>leak</sub> = 1/√6 ≈ 0.408, bridge probability P<sub>leak</sub> = (1/144) · e⁻¹² ≈ 6.9×10⁻⁸, "
+                    "α<sub>leak</sub> = 1/√6 ≈ 0.408, bridge probability P<sub>leak</sub> = (1/144) · e⁻¹² ≈ 4.27×10⁻⁸, "
                     "and torsion parameter T<sub>ω</sub> = 1/√6 ≈ 0.408. These observables provide "
                     "independent, falsifiable tests of the dual-shadow bridge mechanism."
                 )
@@ -1526,7 +1558,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "CMB polarization excess ΔP ~ P<sub>leak</sub> · ℏω<sub>CMB</sub>/(kT<sub>CMB</sub>) ≈ 10⁻⁷ (CMB-S4), "
                     "QED vacuum correction δ<sub>QED</sub> ~ P<sub>leak</sub> · α ≈ 10⁻⁸ (next-gen g-2), "
                     "and chirality reversal probability P<sub>reverse</sub> ≈ 3×10⁻⁶ (cross-shadow chirality flip). "
-                    "All predictions trace to base probability P<sub>leak</sub> = (1/144) · e⁻¹² ≈ 6.9×10⁻⁸."
+                    "All predictions trace to base probability P<sub>leak</sub> = (1/144) · e⁻¹² ≈ 4.27×10⁻⁸."
                 )
             ),
         ]
@@ -1604,18 +1636,19 @@ class PredictionsAggregatorV16(SimulationBase):
                     "(gauge, fermion, cosmology, proton-decay, neutrino). Each prediction is tested "
                     "against its experimental observable and counted if within 3-sigma agreement."
                 ),
-                inputParams=["predictions.falsifiable_count"],
+                inputParams=["topology.elder_kads", "predictions.falsifiable_count"],
                 outputParams=["predictions.falsifiable_count"],
-                input_params=["predictions.falsifiable_count"],
+                input_params=["topology.elder_kads", "predictions.falsifiable_count"],
                 output_params=["predictions.falsifiable_count"],
                 derivation={
                     "steps": [
                         "Collect all PREDICTED-category outputs from simulation sectors (gauge, fermion, cosmology, etc.)",
                         "For each prediction, compute deviation sigma_i from experimental/observational value",
-                        "Count predictions satisfying sigma_i <= 3*sigma_exp as falsifiable and consistent"
+                        "Count predictions satisfying sigma_i <= 3*sigma_exp as falsifiable and consistent",
+                        "All counted predictions descend from the b3=24 G2 topology seed (Ten-Pillar root); the aggregate count is therefore a b3-rooted summary statistic"
                     ],
                     "method": "statistical_aggregation",
-                    "parentFormulas": []
+                    "parentFormulas": ["abstract-framework-overview"]
                 },
                 eml_tree_str=(
                     "ops.add(eml_vec('N_within_3sigma'), eml_scalar(0.0))"
@@ -1628,13 +1661,13 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"\sigma_i": "Deviation of prediction i from experimental value",
                     r"\sigma_{\text{exp}}": "Experimental uncertainty for each observable",
                     r"\mathbb{1}": "Indicator function (1 if condition met, 0 otherwise)"
-                }
-            ),
+                }, 
+            arithma=_arithma_num(8.0), eml=_eml_scalar(8.0), value=8.0),
             Formula(
                 id="dark-force-leakage-prediction",
                 label="(8.2)",
-                latex=r"P_{\text{leak}} = \frac{1}{144} e^{-12} \approx 6.9 \times 10^{-8}",
-                plain_text="P_leak = (1/144) × exp(-12) ≈ 6.9 × 10⁻⁸",
+                latex=r"P_{\text{leak}} = \frac{1}{144} e^{-12} \approx 4.27 \times 10^{-8}",
+                plain_text="P_leak = (1/144) × exp(-12) ≈ 4.27 × 10⁻⁸",
                 category="PREDICTED",
                 description=(
                     "Dark force leakage probability — testable prediction from two-layer OR structure. "
@@ -1649,7 +1682,7 @@ class PredictionsAggregatorV16(SimulationBase):
                         "Bridge OR creates dual shadows separated by 12 Möbius double-cover operators",
                         "Each operator contributes suppression factor e^{-1}, total suppression e^{-12}",
                         "144 = χ_eff from G₂ topology provides geometric normalization",
-                        "P_leak = (1/144) × e^{-12} ≈ 6.9 × 10⁻⁸ for EM and gravity",
+                        "P_leak = (1/144) × e^{-12} ≈ 4.27 × 10⁻⁸ for EM and gravity",
                         "Strong force: additional confinement + instanton barrier S_inst ≈ 80 → P ≈ 0",
                         "Weak force: mass barrier m_W * r_bridge ~ 10^5 → P ≈ 0"
                     ],
@@ -1660,14 +1693,14 @@ class PredictionsAggregatorV16(SimulationBase):
                     "ops.mul(ops.div(eml_scalar(1.0), eml_scalar(144.0)), ops.exp(ops.neg(eml_scalar(12.0))))"
                 ),
                 eml_description=(
-                    "Dark force leakage: (1/chi_eff) * exp(-12) = (1/144) * exp(-12) ~ 6.9e-8."
+                    "Dark force leakage: (1/chi_eff) * exp(-12) = (1/144) * exp(-12) ~ 4.27e-8."
                 ),
                 terms={
                     r"P_{\text{leak}}": "Dark force leakage probability across shadows",
                     "144": "Effective Euler characteristic χ_eff from G₂ manifold topology",
                     "e^{-12}": "Suppression from 12 Möbius double-cover bridge operators",
-                }
-            ),
+                }, 
+            arithma=_arithma_mul(_arithma_div(_arithma_num(1.0), _arithma_num(144.0)), _arithma_num(_math.exp(-12.0))), eml=_eml_mul(_eml_inv(_eml_scalar(144.0)), _eml_exp(_eml_neg(_eml_scalar(12.0)))), value=(1.0 / 144.0) * _math.exp(-12.0), triple_rel=1e-9),
             # ── TwoLayerOR Experimental Signatures (Topic 11) ──────────────
             Formula(
                 id="cross-shadow-phase-shift",
@@ -1682,20 +1715,21 @@ class PredictionsAggregatorV16(SimulationBase):
                     "wavelength λ_dB. Testable in atom interferometry at L ≈ 1 m with "
                     "cold atoms (λ_dB ≈ 10⁻⁹ m), yielding δφ ≈ 4 × 10⁻¹⁰ rad."
                 ),
-                inputParams=["predictions.cross_shadow_phase_shift"],
+                inputParams=["topology.elder_kads", "predictions.cross_shadow_phase_shift"],
                 outputParams=["predictions.cross_shadow_phase_shift"],
-                input_params=["predictions.cross_shadow_phase_shift"],
+                input_params=["topology.elder_kads", "predictions.cross_shadow_phase_shift"],
                 output_params=["predictions.cross_shadow_phase_shift"],
                 derivation={
                     "steps": [
                         "Two-layer OR bridge creates cross-shadow coupling with strength α_leak = 1/√6",
+                        "The √6 normalisation descends from the bridge OR structure: 6 = 12 bridge ops / 2 (per-pair Möbius double-cover), and 12 = b3/2 so √6 traces to the b3=24 seed",
                         "Phase accumulation over path length L: δφ = α_leak × (L / λ_dB)",
                         "For atom interferometry: L ≈ 1 m, λ_dB ≈ 10⁻⁹ m (cold atoms)",
                         "Predicted shift: δφ ≈ 0.408 × 10⁹ × P_leak ≈ 10⁻¹⁰ to 10⁻⁸ rad",
                         "Sensitivity threshold: current atom interferometers reach ≈ 10⁻⁹ rad/√Hz"
                     ],
                     "method": "cross_shadow_interference",
-                    "parentFormulas": ["dark-force-leakage-prediction"]
+                    "parentFormulas": ["dark-force-leakage-prediction", "abstract-framework-overview"]
                 },
                 eml_tree_str=(
                     "ops.mul(eml_vec('alpha_leak'), ops.div(eml_vec('L'), eml_vec('lambda_dB')))"
@@ -1708,35 +1742,36 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"\alpha_{\text{leak}}": "Leakage coupling strength = 1/√6 ≈ 0.408",
                     "L": "Propagation path length",
                     r"\lambda_{\text{dB}}": "de Broglie wavelength of probe particle",
-                }
-            ),
+                }, 
+            arithma=_arithma_div(_arithma_num(1.0), _arithma_num(_math.sqrt(6.0))), eml=_eml_scalar(1.0 / _math.sqrt(6.0)), value=1.0 / _math.sqrt(6.0), triple_rel=1e-9),
             Formula(
                 id="vacuum-noise-excess",
                 label="(8.4)",
                 latex=r"P_{\text{noise}} = \frac{1}{144} e^{-12} \, P_{\text{thermal}}",
-                plain_text="P_noise = (1/144) × exp(-12) × P_thermal ≈ 6.9 × 10⁻⁸ × P_thermal",
+                plain_text="P_noise = (1/144) × exp(-12) × P_thermal ≈ 4.27 × 10⁻⁸ × P_thermal",
                 category="PREDICTED",
                 description=(
                     "Dark sector vacuum noise excess from two-layer OR bridge leakage. "
-                    "The bridge probability P_leak = (1/144) × e⁻¹² ≈ 6.9 × 10⁻⁸ sets the "
+                    "The bridge probability P_leak = (1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸ sets the "
                     "fractional noise power above thermal background. Detectable in "
                     "next-generation cavity QED experiments and superconducting qubit systems "
                     "operating at millikelvin temperatures where thermal noise is minimized."
                 ),
-                inputParams=["predictions.vacuum_noise_fraction"],
+                inputParams=["topology.elder_kads", "predictions.vacuum_noise_fraction"],
                 outputParams=["predictions.vacuum_noise_fraction"],
-                input_params=["predictions.vacuum_noise_fraction"],
+                input_params=["topology.elder_kads", "predictions.vacuum_noise_fraction"],
                 output_params=["predictions.vacuum_noise_fraction"],
                 derivation={
                     "steps": [
                         "Two-layer OR bridge leaks vacuum fluctuations across shadows",
-                        "Leakage probability: P_leak = (1/144) × e⁻¹² ≈ 6.9 × 10⁻⁸",
+                        "Leakage probability: P_leak = (1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸",
+                        "The factor 144 = chi_eff = 6·b3 routes through the b3=24 seed; the factor 12 = b3/2 likewise",
                         "Noise power excess: P_noise = P_leak * P_thermal",
-                        "At T ≈ 10 mK: P_thermal ≈ kT × bandwidth, P_noise/P_thermal ≈ 6.9 × 10⁻⁸",
+                        "At T ≈ 10 mK: P_thermal ≈ kT × bandwidth, P_noise/P_thermal ≈ 4.27 × 10⁻⁸",
                         "Sensitivity threshold: SQUID amplifiers reach ~10^{-9} noise fraction"
                     ],
                     "method": "bridge_vacuum_noise_leakage",
-                    "parentFormulas": ["dark-force-leakage-prediction"]
+                    "parentFormulas": ["dark-force-leakage-prediction", "abstract-framework-overview"]
                 },
                 eml_tree_str=(
                     "ops.mul(ops.mul(ops.div(eml_scalar(1.0), eml_scalar(144.0)), ops.exp(ops.neg(eml_scalar(12.0)))), eml_vec('P_thermal'))"
@@ -1749,8 +1784,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"P_{\text{thermal}}": "Thermal noise power at detector temperature",
                     "1/144": "Geometric normalization from χ_eff = 144",
                     "e^{-12}": "Bridge suppression from 12 Möbius operators",
-                }
-            ),
+                }, 
+            arithma=_arithma_mul(_arithma_div(_arithma_num(1.0), _arithma_num(144.0)), _arithma_num(_math.exp(-12.0))), eml=_eml_mul(_eml_inv(_eml_scalar(144.0)), _eml_exp(_eml_neg(_eml_scalar(12.0)))), value=(1.0 / 144.0) * _math.exp(-12.0), triple_rel=1e-9),
             Formula(
                 id="gw-polarization-anomaly",
                 label="(8.5)",
@@ -1765,13 +1800,14 @@ class PredictionsAggregatorV16(SimulationBase):
                     "far below current LIGO sensitivity (|kappa| < 0.1). This becomes a "
                     "far-future prediction for post-LISA gravitational wave astronomy."
                 ),
-                inputParams=["predictions.gw_torsion_anomaly"],
+                inputParams=["topology.elder_kads", "predictions.gw_torsion_anomaly"],
                 outputParams=["predictions.gw_torsion_anomaly"],
-                input_params=["predictions.gw_torsion_anomaly"],
+                input_params=["topology.elder_kads", "predictions.gw_torsion_anomaly"],
                 output_params=["predictions.gw_torsion_anomaly"],
                 derivation={
                     "steps": [
                         "G2 torsion class introduces torsion parameter T_omega = 1/sqrt(6)",
+                        "The √6 normalisation descends from the bridge OR structure (6 = 12 / 2 with 12 = b3/2), tying T_omega to the b3=24 seed",
                         "Torsion couples to gravitational wave polarization tensor",
                         "Leading correction to polarization amplitude: delta_h/h ~ T_omega^2",
                         "T_omega^2 = 1/6, but observable effect suppressed by (l_Pl/R_compact)^2 ~ 10^{-30}",
@@ -1779,7 +1815,7 @@ class PredictionsAggregatorV16(SimulationBase):
                         "LISA sensitivity: insufficient; requires far-future detectors beyond current plans"
                     ],
                     "method": "torsion_gw_polarization_coupling",
-                    "parentFormulas": ["dark-force-leakage-prediction"]
+                    "parentFormulas": ["dark-force-leakage-prediction", "abstract-framework-overview"]
                 },
                 eml_tree_str=(
                     "ops.pow(eml_vec('T_omega'), eml_scalar(2.0))"
@@ -1792,8 +1828,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     "h": "Gravitational wave strain amplitude",
                     r"T_\omega": "G₂ torsion parameter = 1/√6 ≈ 0.408",
                     "1/6": "Quadratic torsion correction to polarization",
-                }
-            ),
+                }, 
+            arithma=_arithma_div(_arithma_num(1.0), _arithma_num(6.0)), eml=_eml_div(_eml_scalar(1.0), _eml_scalar(6.0)), value=1.0 / 6.0),
             # ── Topic 12: Experimental Detection & Falsifiability ─────────
             Formula(
                 id="admx-falsification-criterion-v23",
@@ -1843,8 +1879,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"m_a": "Axion mass (~6 microeV from G2 moduli)",
                     r"f_a": "Axion decay constant (GeV)",
                     r"10^{-12}": "ADMX Phase III/IV sensitivity threshold",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(1.0e-12), eml=_eml_scalar(1.0e-12), value=1.0e-12),
             Formula(
                 id="cmb-s4-sterile-test-v23",
                 label="(8.7)",
@@ -1890,8 +1926,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"\Delta N_{\text{eff}}": "Effective number of extra neutrino species beyond SM",
                     "0.06": "Critical threshold below which mirror sector is constrained",
                     r"\text{sterile sector}": "PM mirror neutrino contribution to dark radiation",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.06), eml=_eml_scalar(0.06), value=0.06, triple_rel=1e-9),
             Formula(
                 id="desi-w0-validation-v23",
                 label="(8.8)",
@@ -1929,7 +1965,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "parentFormulas": ["predictions-summary-count"]
                 },
                 eml_tree_str=(
-                    "ops.add(ops.neg(eml_scalar(1.0)), ops.div(eml_scalar(1.0), eml_scalar(24.0)))"
+                    "ops.add(ops.neg(eml_scalar(1.0)), ops.div(eml_scalar(1.0), b3_leaf()))"
                 ),
                 eml_description=(
                     "DESI w0 prediction: -1 + 1/b3 = -1 + 1/24 = -23/24 from MEP and G2 topology."
@@ -1938,8 +1974,8 @@ class PredictionsAggregatorV16(SimulationBase):
                     r"w_0": "Dark energy equation of state parameter at z=0",
                     r"-\frac{23}{24}": "Exact PM prediction from b_3 = 24",
                     r"b_3": "Third Betti number of G2 compactification manifold",
-                }
-            ),
+                }, 
+            arithma=_arithma_add(_arithma_num(-1.0), _arithma_div(_arithma_num(1.0), _arithma_num(24.0))), eml=_eml_add(_eml_neg(_eml_scalar(1.0)), _eml_inv(_b3_leaf())), value=-23.0 / 24.0),
         ]
 
     def get_output_param_definitions(self) -> List:
@@ -1994,13 +2030,13 @@ class PredictionsAggregatorV16(SimulationBase):
                 status="PREDICTED",
                 description=(
                     "Fractional vacuum noise excess from dark sector bridge leakage: "
-                    "P_noise/P_thermal = (1/144) × e⁻¹² ≈ 6.9 × 10⁻⁸. Detectable in "
+                    "P_noise/P_thermal = (1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸. Detectable in "
                     "millikelvin cavity QED experiments and SQUID amplifier systems "
                     "where thermal noise is minimized."
                 ),
                 derivation_formula="vacuum-noise-excess",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(ops.div(eml_scalar(1.0), eml_scalar(144.0)), ops.exp(ops.neg(eml_scalar(12.0)))) — vacuum noise fraction = (1/chi_eff) * exp(-12) = (1/144)*exp(-12) ≈ 6.9e-8",
+                eml_description="EML: ops.mul(ops.div(eml_scalar(1.0), eml_scalar(144.0)), ops.exp(ops.neg(eml_scalar(12.0)))) — vacuum noise fraction = (1/chi_eff) * exp(-12) = (1/144)*exp(-12) ≈ 4.27e-8",
             ),
             Parameter(
                 path="predictions.gw_torsion_anomaly",

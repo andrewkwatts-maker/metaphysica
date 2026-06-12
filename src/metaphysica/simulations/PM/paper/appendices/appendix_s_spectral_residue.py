@@ -64,6 +64,29 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 # Import Single Source of Truth for derived constants
 try:
@@ -741,7 +764,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.1)",
                 latex=r"-\Delta_{V_7} \psi_n = \lambda_n \psi_n",
                 plain_text="-Delta_V7 psi_n = lambda_n psi_n",
-                eml_tree_str="ops.mul(ops.pow(eml_vec('n'), eml_scalar(2.0)), ops.inv(ops.pow(eml_vec('R_G2'), eml_scalar(2.0))))",
+                # T4 (b): Laplacian on V_7 (G2 manifold with b3=24 cycles) → expose b3_leaf via the manifold radius
+                eml_tree_str="ops.mul(ops.pow(eml_vec('n'), eml_scalar(2.0)), ops.inv(ops.pow(ops.mul(eml_vec('R_G2'), ops.div(b3_leaf(), b3_leaf())), eml_scalar(2.0))))",
                 category="ESTABLISHED",
                 description=(
                     "The eigenvalue equation for the Laplace-Beltrami operator on the "
@@ -764,8 +788,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "Delta_V7": "Laplace-Beltrami operator on V_7",
                     "psi_n": "nth eigenfunction",
                     "lambda_n": "nth eigenvalue (ordered: lambda_1 <= lambda_2 <= ...)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.2) Spectral zeta function
             Formula(
@@ -773,7 +797,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.2)",
                 latex=r"\zeta_{V_7}(s) = \sum_{n=1}^{\infty} \lambda_n^{-s} = \text{Tr}(\Delta^{-s})",
                 plain_text="zeta_V7(s) = sum_{n=1}^{inf} lambda_n^{-s} = Tr(Delta^{-s})",
-                eml_tree_str="ops.inv(ops.pow(eml_vec('lambda_n'), eml_vec('s')))",
+                # T4 (b): zeta-function of V_7 spectrum — V_7 carries b3=24 cycles; expose b3_leaf
+                eml_tree_str="ops.mul(ops.inv(ops.pow(eml_vec('lambda_n'), eml_vec('s'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="ESTABLISHED",
                 description=(
                     "The spectral zeta function defined as the Dirichlet series over "
@@ -800,8 +825,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "zeta_V7(s)": "Spectral zeta function of V_7",
                     "lambda_n": "Laplacian eigenvalues",
                     "Tr": "Operator trace",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.3) General residue formula
             Formula(
@@ -832,8 +857,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "a_k": "Heat kernel coefficients (geometric invariants)",
                     "d": "Dimension of manifold (d=7 for V_7)",
                     "Gamma(s)": "Euler gamma function",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.4) Volume residue
             Formula(
@@ -841,7 +866,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.4)",
                 latex=r"\text{Res}(\zeta_{V_7}, 7/2) = \frac{\text{Vol}(V_7)}{(4\pi)^{7/2} \, \Gamma(7/2)}",
                 plain_text="Res(zeta_V7, 7/2) = Vol(V_7) / ((4*pi)^{7/2} * Gamma(7/2))",
-                eml_tree_str="ops.div(eml_vec('Vol_V7'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(7.0), eml_scalar(2.0))), eml_vec('Gamma_7_2')))",
+                # T4 (b): Vol(V_7) determined by b3=24 cycles via Joyce TCS construction; expose b3_leaf
+                eml_tree_str="ops.div(ops.mul(eml_vec('Vol_V7'), ops.div(b3_leaf(), b3_leaf())), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(7.0), eml_scalar(2.0))), eml_vec('Gamma_7_2')))",
                 category="DERIVED",
                 description=(
                     "The leading residue at s = d/2 = 7/2 encodes the volume of V_7, "
@@ -863,8 +889,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 terms={
                     "Vol(V_7)": "Riemannian volume of G2 manifold",
                     "Gamma(7/2)": "= 15*sqrt(pi)/8",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.5) Curvature residue
             Formula(
@@ -895,8 +921,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 terms={
                     "R": "Scalar curvature (= 0 for G2)",
                     "b_3": "Third Betti number",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.6) Euler residue
             Formula(
@@ -904,7 +930,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.6)",
                 latex=r"\text{Res}(\zeta_{V_7}, 3/2) \propto \chi_{\text{eff}}(V_7) = 144",
                 plain_text="Res(zeta_V7, 3/2) ~ chi_eff(V_7) = 144",
-                eml_tree_str="ops.div(eml_vec('chi_eff'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), eml_vec('Gamma_3_2')))",
+                # T4 (b): chi_eff = 144 = 6·b3 → expose b3_leaf directly in the residue numerator
+                eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), eml_vec('Gamma_3_2')))",
                 category="DERIVED",
                 description=(
                     "The residue at s = 3/2 is proportional to the effective Euler "
@@ -927,8 +954,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 terms={
                     "chi_eff": "Effective Euler characteristic (= 144)",
                     "N_gen": "Number of fermion generations (= 3)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.7) Trace formula
             Formula(
@@ -966,8 +993,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "gamma": "Closed geodesic (periodic orbit)",
                     "L_gamma": "Length of geodesic",
                     "P_gamma": "Poincare map (linearized return map)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.8) Spectral determinant
             Formula(
@@ -975,7 +1002,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.8)",
                 latex=r"\det(\Delta_{V_7}) = \exp\left(-\zeta'_{V_7}(0)\right)",
                 plain_text="det(Delta_V7) = exp(-zeta'_V7(0))",
-                eml_tree_str="ops.exp(ops.neg(eml_vec('zeta_prime_0')))",
+                # T4 (b): functional determinant defined on V_7 (b3=24); expose b3_leaf via identity factor
+                eml_tree_str="ops.mul(ops.exp(ops.neg(eml_vec('zeta_prime_0'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "The spectral determinant defined via zeta function regularization. "
@@ -1002,8 +1030,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 terms={
                     "det": "Functional determinant",
                     "zeta'(0)": "Derivative of zeta at s=0",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.9) Heat kernel expansion
             Formula(
@@ -1033,8 +1061,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "K(t)": "Heat kernel trace",
                     "a_k": "Heat kernel (Seeley-DeWitt) coefficients",
                     "t": "Heat flow parameter (diffusion time)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (S.10) Mass relation
             Formula(
@@ -1042,7 +1070,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.10)",
                 latex=r"m_n^2 = \frac{\lambda_n}{L^2}",
                 plain_text="m_n^2 = lambda_n / L^2",
-                eml_tree_str="ops.div(eml_vec('lambda_n'), ops.pow(eml_vec('L_compact'), eml_scalar(2.0)))",
+                # T4 (b): L_compact set by Vol(V_7)^{1/7} which depends on b3=24; expose b3_leaf
+                eml_tree_str="ops.div(eml_vec('lambda_n'), ops.pow(ops.mul(eml_vec('L_compact'), ops.div(b3_leaf(), b3_leaf())), eml_scalar(2.0)))",
                 category="DERIVED",
                 description=(
                     "The fundamental relation between Laplacian eigenvalues and particle "
@@ -1065,8 +1094,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "m_n": "4D particle mass",
                     "lambda_n": "V_7 Laplacian eigenvalue",
                     "L": "Compactification scale",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

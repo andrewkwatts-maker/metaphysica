@@ -1228,7 +1228,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
                     ],
                 },
                 eml_tree_str=(
-                    "ops.mul(ops.div(eml_scalar(144.0), ops.pow(eml_scalar(24.0), eml_scalar(3.0))), ops.pow(eml_vec('M_Pl'), eml_scalar(4.0)))"
+                    "ops.mul(ops.div(eml_scalar(144.0), ops.pow(b3_leaf(), eml_scalar(3.0))), ops.pow(eml_vec('M_Pl'), eml_scalar(4.0)))"
                 ),
                 eml_description=(
                     "Torsion potential: (chi_eff / b3^3) * M_Pl^4 = (144 / 24^3) * M_Pl^4."

@@ -1118,9 +1118,13 @@ class S8SuppressionV16(SimulationBase):
                 input_params=["desi.sigma8", "desi.Omega_m"],
                 output_params=["cosmology.s8_pm_predicted"],
                 eml_latex=r"S_8 = \mathrm{ops.mul}(\sigma_8,\; \mathrm{ops.sqrt}(\mathrm{ops.div}(\Omega_m,\; 0.3)))",
+                # T2.3 housekeeping: the previous eml_tree_str was a comment
+                # block that broke the parse_eml_tree() round-trip; the actual
+                # expression form (which is a pure algebraic identity over the
+                # observable inputs σ_8 and Ω_m — classification (a), so this
+                # formula is intentionally NOT b_3-rooted) is now provided.
                 eml_tree_str=(
-                    "# S8 definition in EML operator tree:\n"
-                    "# S8 = ops.mul(sigma8, ops.sqrt(ops.div(Omega_m, eml_scalar(0.3))))"
+                    "ops.mul(sigma8, ops.sqrt(ops.div(Omega_m, eml_scalar(0.3))))"
                 ),
                 eml_description=(
                     "EML: ops.mul(sigma8, ops.sqrt(ops.div(Omega_m, eml_scalar(0.3)))) — "

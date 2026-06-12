@@ -66,6 +66,7 @@ const NAV_LINKS = [
   { href: 'paper.html', label: 'Paper', id: 'paper' },
   { href: 'simulations.html', label: 'Simulations', id: 'simulations' },
   { href: 'certificates.html', label: 'Certificates', id: 'certificates' },
+  { href: 'falsification.html', label: 'Falsification', id: 'falsification' },
   { href: 'appendices.html', label: 'Appendices', id: 'appendices' },
   { href: 'philosophical-implications.html', label: 'Philosophy', id: 'philosophical-implications' },
   { href: 'consciousness-speculative.html', label: 'Consciousness', id: 'consciousness-speculative' },

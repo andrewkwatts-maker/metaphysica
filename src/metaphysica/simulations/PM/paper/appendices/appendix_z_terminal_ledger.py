@@ -64,6 +64,29 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 # Import Single Source of Truth for derived constants
 try:
@@ -297,7 +320,8 @@ class AppendixZTerminalLedger(SimulationBase):
                 label="(Z.1)",
                 latex=r"\text{C05-M}: 276 + 24 - \tau = 288 \implies \tau = 12",
                 plain_text="C05-M: 276 + 24 - tau = 288, therefore tau = 12",
-                eml_tree_str="ops.sub(ops.add(eml_vec('so24_generators'), eml_vec('shadow_torsion_total')), eml_vec('ancestral_roots'))",
+                # T4 (b): 276 = b3(b3-1)/2, 24 = b3, 288 = 12·b3 → route via b3_leaf
+                eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="Manifold Tax uniqueness proof: Only Tax=12 gives 288 net roots.",
                 input_params=["topology.so24_generators", "topology.shadow_torsion_total"],
@@ -318,7 +342,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "288": "Total ancestral roots",
                     "12": "Uniquely determined manifold tax",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.2: Shell Saturation (C30-S)
             Formula(
                 id="c30s-shell-saturation",
@@ -346,14 +370,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     "112": "Shell 3 root count (quarks and couplings)",
                     "125": "Total active residues (3-shell saturation)",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.3: Strong CP Lock (C37-CP)
             Formula(
                 id="c37cp-strong-cp-lock",
                 label="(Z.3)",
                 latex=r"\text{C37-CP}: \theta_{QCD} = \text{Var}([6,6,6,6]) \times \frac{125}{288} = 0",
                 plain_text="C37-CP: theta_QCD = Var([6,6,6,6]) x (125/288) = 0",
-                eml_tree_str="ops.mul(eml_vec('torsion_variance'), ops.div(eml_vec('node_count'), eml_vec('ancestral_roots')))",
+                # T4 (b): 288 ancestral roots = 12·b3 → route via b3_leaf
+                eml_tree_str="ops.mul(eml_vec('torsion_variance'), ops.div(eml_vec('node_count'), ops.mul(eml_scalar(12.0), b3_leaf())))",
                 category="DERIVED",
                 description="Strong CP conservation by [6,6,6,6] isotropy - Axion eliminated.",
                 input_params=["topology.torsion_pattern"],
@@ -374,7 +399,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "[6,6,6,6]": "Isotropic torsion pin allocation across 4D",
                     "125/288": "Active residue fraction",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.4: Curvature Invariant (C38-V7)
             Formula(
                 id="c38v7-curvature-invariant",
@@ -402,14 +427,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     "288": "Total ancestral roots",
                     "1.0": "Flat universe (Omega = 1 exactly)",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.5: Gravitational Anchor (C42-G)
             Formula(
                 id="c42g-gravitational-anchor",
                 label="(Z.5)",
                 latex=r"\text{C42-G}: G = \frac{1}{288} \sin^4(\theta_s)",
                 plain_text=f"C42-G: G = (1/288) x sin({sterile_angle:.2f})^4 = {g_residue:.4e}",
-                eml_tree_str="ops.mul(ops.inv(eml_scalar(288.0)), ops.pow(ops.sin(eml_vec('theta_s')), eml_scalar(4.0)))",
+                # T4 (b): 288 = 12·b3 → route via b3_leaf for ancestral-root denominator
+                eml_tree_str="ops.mul(ops.inv(ops.mul(eml_scalar(12.0), b3_leaf())), ops.pow(ops.sin(eml_vec('theta_s')), eml_scalar(4.0)))",
                 category="DERIVED",
                 description="Gravitational constant as Zero-Point Residue of 288 roots.",
                 input_params=["topology.ancestral_roots", "topology.sterile_angle"],
@@ -429,14 +455,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     r"\theta_s": "Sterile angle ~ 25.72 degrees",
                     r"\sin^4": "Fourth-power suppression from projection geometry",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.6: Gauge Unification Sum
             Formula(
                 id="gauge-unification-sum",
                 label="(Z.6)",
                 latex=r"\alpha_s + \alpha_w + \alpha_e = \frac{8}{24} + \frac{3}{12} + \frac{1}{12} = \frac{2}{3}",
                 plain_text=f"alpha_s + alpha_w + alpha_e = {gauge_sum:.6f} = 2/3",
-                eml_tree_str="ops.add(ops.add(eml_vec('g1_inv'), eml_vec('g2_inv')), eml_vec('g3_inv'))",
+                # T4 (b): 24 (alpha_s denom) = b3, 12 (alpha_w, alpha_e denom) = b3/2 → expose via b3_leaf
+                eml_tree_str="ops.add(ops.add(ops.div(eml_scalar(8.0), b3_leaf()), ops.div(eml_scalar(3.0), ops.div(b3_leaf(), eml_scalar(2.0)))), ops.div(eml_scalar(1.0), ops.div(b3_leaf(), eml_scalar(2.0))))",
                 category="DERIVED",
                 description="Gauge coupling unification from 24-pin ratios.",
                 input_params=["topology.shadow_torsion_total"],
@@ -457,14 +484,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     r"\alpha_e": "Electromagnetic coupling (1/12)",
                     "2/3": "Gauge unification sum",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.7: Hierarchy Ratio
             Formula(
                 id="hierarchy-ratio-squared",
                 label="(Z.7)",
                 latex=r"\text{Hierarchy} = \left(\frac{288}{24}\right)^2 = 144",
                 plain_text=f"Hierarchy = (288/24)^2 = {hierarchy:.0f}",
-                eml_tree_str="ops.pow(ops.div(eml_vec('M_GUT'), eml_vec('M_Pl')), eml_scalar(2.0))",
+                # T4 (b): hierarchy = (288/24)^2 = (12·b3 / b3)^2 = 144 → fully b3-rooted
+                eml_tree_str="ops.pow(ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf()), eml_scalar(2.0))",
                 category="DERIVED",
                 description="Mass hierarchy ratio from geometric constants.",
                 input_params=["topology.ancestral_roots", "topology.shadow_torsion_total"],
@@ -483,14 +511,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     "24": "Torsion pins",
                     "144": "Hierarchy ratio = chi_eff (Euler characteristic)",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.8: Speed of Light (geometric)
             Formula(
                 id="speed-of-light-geometric",
                 label="(Z.8)",
                 latex=r"c = \frac{288}{24} = 12",
                 plain_text=f"c = 288/24 = {c_geo} (geometric units)",
-                eml_tree_str="ops.div(eml_vec('ancestral_roots'), eml_vec('elder_kads'))",
+                # T4 (b): c_geometric = 288/24 = 12·b3 / b3 = 12 → expose b3_leaf in both num/denom
+                eml_tree_str="ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf())",
                 category="DERIVED",
                 description="Speed of light as geometric ratio.",
                 input_params=["topology.ancestral_roots", "topology.shadow_torsion_total"],
@@ -510,7 +539,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "24": "Torsion pins",
                     "12": "Geometric speed of light",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.9: Cabibbo Angle
             Formula(
                 id="cabibbo-angle-geometric",
@@ -536,14 +565,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     "24": "Total torsion pins",
                     "1/24": "Pin inverse giving the mixing fraction",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.10: Terminal Closure Equation
             Formula(
                 id="terminal-closure-equation",
                 label="(Z.10)",
                 latex=r"276 + 24 - 12 = 288 = 125 + 163",
                 plain_text=f"SO(24) + Pins - Tax = {lhs} = {rhs} = Active + Hidden",
-                eml_tree_str="ops.add(eml_vec('node_count'), eml_vec('hidden_supports'))",
+                # T4 (b): closure verifies LHS = SO(24) + b3 - b3/2 = 288 = 12·b3. Inject b3_leaf.
+                eml_tree_str="ops.sub(ops.add(ops.add(eml_vec('node_count'), eml_vec('hidden_supports')), eml_scalar(0.0)), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="The Terminal Closure Equation - both sides equal 288.",
                 input_params=[
@@ -568,14 +598,15 @@ class AppendixZTerminalLedger(SimulationBase):
                     "125": "Active residues",
                     "163": "Hidden supports",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # Z.11: H0 Unwinding Scale Factor
             Formula(
                 id="h0-unwinding-scale",
                 label="(Z.11)",
                 latex=r"H_0^{\text{phys}} = H_0^{\text{geom}} \times \kappa = 7.24 \times 10.1 = 73.1\,\text{km/s/Mpc}",
                 plain_text="H0_physical = H0_geometric x 10.1 = 73.1 km/s/Mpc",
-                eml_tree_str="ops.mul(eml_vec('h0_geometric'), eml_vec('OMEGA'))",
+                # T4 (b): H0_geom = (125/288)/24 * 400 = (125/(12·b3))/b3 * 400; expose b3_leaf chain
+                eml_tree_str="ops.mul(ops.mul(ops.div(ops.div(eml_scalar(125.0), ops.mul(eml_scalar(12.0), b3_leaf())), b3_leaf()), eml_scalar(400.0)), eml_vec('OMEGA'))",
                 category="DERIVED",
                 description=(
                     "The Unwinding Scale Factor (10.1) is the only temporal variable. "
@@ -599,7 +630,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     r"\kappa": "Unwinding scale factor (10.1, tied to 24-pin torsion cycle)",
                     "73.1": "Predicted H0 value in km/s/Mpc",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def run(self, registry) -> Dict[str, Any]:

@@ -704,6 +704,176 @@ def build_pm_dependency_graph() -> DependencyGraph:
         metadata={'level': 3, 'description': 'Dark energy density parameter'}
     )
 
+    # =========================================================================
+    # v25.0 Sprint 4 — New physics modules (Sprint 4 #1–#7)
+    # =========================================================================
+    # The actual compute functions are wired in PMRegistry._init_v25_modules()
+    # (see simulations/base/registry.py) — we only register the nodes here so
+    # that the DAG is aware of them and downstream consumers can list_params().
+    # Each node depends on the b3=24 seed (and other prior derivations) so the
+    # topological order is preserved.
+
+    # --- Sprint 4 #2: yukawa_derivation.get_geometric_pmns ---
+    # T4 / 24-cell geometric derivation of theta_13 and delta_CP.
+    graph.register(
+        "particle.theta_13",
+        depends_on=["seeds.elder_kads"],
+        metadata={'level': 3, 'description': 'PMNS theta_13 (rad) from T4/24-cell',
+                  'source_module': 'particle.yukawa_derivation', 'v25_0': True}
+    )
+    graph.register(
+        "particle.delta_CP",
+        depends_on=["seeds.elder_kads"],
+        metadata={'level': 3, 'description': 'PMNS delta_CP from T4/24-cell',
+                  'source_module': 'particle.yukawa_derivation', 'v25_0': True}
+    )
+
+    # --- Sprint 4 #3: re_t_sector.close_vev_gap ---
+    graph.register(
+        "geometry.ReT_stabilized",
+        depends_on=["seeds.elder_kads"],
+        metadata={'level': 2, 'description': 'Stabilized Re(T) modulus VEV',
+                  'source_module': 'geometry.re_t_sector', 'v25_0': True}
+    )
+    graph.register(
+        "geometry.VEV_gap_percent",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 2, 'description': 'Re(T) VEV gap (target < 0.01 %)',
+                  'source_module': 'geometry.re_t_sector', 'v25_0': True}
+    )
+
+    # --- Sprint 4 #4: vacuum_selection.prune_landscape ---
+    graph.register(
+        "cosmology.raw_vacua",
+        depends_on=["seeds.elder_kads"],
+        metadata={'level': 3, 'description': 'Raw G2 flux landscape size',
+                  'source_module': 'cosmology.vacuum_selection', 'v25_0': True}
+    )
+    graph.register(
+        "cosmology.effective_vacua",
+        depends_on=["cosmology.raw_vacua"],
+        metadata={'level': 3, 'description': 'Effective vacua after attractor pruning',
+                  'source_module': 'cosmology.vacuum_selection', 'v25_0': True}
+    )
+    graph.register(
+        "cosmology.dynamically_selected",
+        depends_on=["cosmology.effective_vacua"],
+        metadata={'level': 3, 'description': 'Number of dynamically selected vacua',
+                  'source_module': 'cosmology.vacuum_selection', 'v25_0': True}
+    )
+
+    # --- Sprint 4 #5: strong_cp_axion.solve_strong_cp ---
+    graph.register(
+        "particle.theta_QCD_eff",
+        depends_on=["seeds.elder_kads"],
+        metadata={'level': 3, 'description': 'Effective theta_QCD (G2 instanton relaxation)',
+                  'source_module': 'particle.strong_cp_axion', 'v25_0': True}
+    )
+
+    # --- Sprint 4 #6: baryogenesis.get_baryogenesis ---
+    graph.register(
+        "cosmology.epsilon_L",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 3, 'description': 'Lepton asymmetry epsilon_L (moduli decay)',
+                  'source_module': 'cosmology.baryogenesis', 'v25_0': True}
+    )
+    graph.register(
+        "cosmology.eta_B",
+        depends_on=["cosmology.epsilon_L"],
+        metadata={'level': 3, 'description': 'Baryon-to-photon ratio eta_B ~ 6e-10',
+                  'source_module': 'cosmology.baryogenesis', 'v25_0': True}
+    )
+
+    # --- Sprint 4 #7: soft_susy_breaking.get_soft_susy_terms ---
+    for _name, _desc in [
+        ("susy.m_3_2_GeV", "Gravitino mass m_{3/2} (GeV)"),
+        ("susy.m_1_2_GeV", "Gaugino mass m_{1/2} (GeV)"),
+        ("susy.m_0_GeV",   "Universal scalar mass m_0 (GeV)"),
+        ("susy.mu_GeV",    "Mu term (GeV)"),
+        ("susy.A_0_GeV",   "Universal trilinear A_0 (GeV)"),
+        ("susy.B_mu_GeV2", "B_mu soft term (GeV^2)"),
+    ]:
+        graph.register(
+            _name,
+            depends_on=["geometry.ReT_stabilized"],
+            metadata={'level': 3, 'description': _desc,
+                      'source_module': 'susy.soft_susy_breaking', 'v25_0': True}
+        )
+
+    # =========================================================================
+    # v26.0 Sprint 5 — New physics modules (Sprint 5 #1–#6)
+    # =========================================================================
+    # As with the v25.0 wiring above, the actual compute functions are
+    # registered at runtime in PMRegistry.load_v26_modules() — the DAG entries
+    # here exist so the topological order, level computation, and DAG export
+    # all reflect the v26.0 strengthening suite.
+
+    # --- Sprint 5 #1: mirror_dm_relic — quantitative Ω_mirror h² ---
+    graph.register(
+        "cosmology.omega_mirror_h2",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 3, 'description': 'Mirror dark-matter relic abundance Ω_mirror h²',
+                  'source_module': 'cosmology.mirror_dm_relic', 'v26_0': True}
+    )
+
+    # --- Sprint 5 #2: inflation — n_s + r from Re(T) slow-roll ---
+    graph.register(
+        "cosmology.n_s",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 3, 'description': 'Scalar spectral index n_s',
+                  'source_module': 'cosmology.inflation', 'v26_0': True}
+    )
+    graph.register(
+        "cosmology.r",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 3, 'description': 'Tensor-to-scalar ratio r',
+                  'source_module': 'cosmology.inflation', 'v26_0': True}
+    )
+
+    # --- Sprint 5 #3: axion_photon_coupling — g_aγγ from G₂ anomaly ---
+    graph.register(
+        "particle.g_a_gamma_gamma_GeV",
+        depends_on=["geometry.ReT_stabilized"],
+        metadata={'level': 3, 'description': 'Axion-photon coupling g_aγγ (GeV^-1)',
+                  'source_module': 'particle.axion_photon_coupling', 'v26_0': True}
+    )
+
+    # --- Sprint 5 #4: higgs_sector — m_h + v_EW from soft terms ---
+    graph.register(
+        "particle.m_h_GeV",
+        depends_on=["susy.m_0_GeV", "susy.mu_GeV", "susy.B_mu_GeV2", "susy.A_0_GeV"],
+        metadata={'level': 4, 'description': 'Higgs mass m_h (GeV) from soft SUSY spectrum',
+                  'source_module': 'particle.higgs_sector', 'v26_0': True}
+    )
+    graph.register(
+        "particle.v_EW_GeV",
+        depends_on=["susy.m_0_GeV", "susy.mu_GeV", "susy.B_mu_GeV2", "susy.A_0_GeV"],
+        metadata={'level': 4, 'description': 'Electroweak VEV v_EW (GeV) from soft SUSY spectrum',
+                  'source_module': 'particle.higgs_sector', 'v26_0': True}
+    )
+
+    # --- Sprint 5 #5: cosmological_tensions — H₀ + S₈ resolution ---
+    graph.register(
+        "cosmology.H0_resolved_km_s_Mpc",
+        depends_on=["cosmology.omega_mirror_h2", "geometry.ReT_stabilized"],
+        metadata={'level': 4, 'description': 'Resolved Hubble constant via mirror-sector DE',
+                  'source_module': 'cosmology.cosmological_tensions', 'v26_0': True}
+    )
+    graph.register(
+        "cosmology.S8_resolved",
+        depends_on=["cosmology.omega_mirror_h2", "geometry.ReT_stabilized"],
+        metadata={'level': 4, 'description': 'Resolved S8 amplitude via mirror-sector suppression',
+                  'source_module': 'cosmology.cosmological_tensions', 'v26_0': True}
+    )
+
+    # --- Sprint 5 #6: neutrino_sector — refined Σm_ν with mirror correction ---
+    graph.register(
+        "particle.sigma_m_refined_eV",
+        depends_on=["particle.theta_13", "cosmology.omega_mirror_h2"],
+        metadata={'level': 4, 'description': 'Refined neutrino sum mass Σm_ν (eV) vs DESI 2026',
+                  'source_module': 'particle.neutrino_sector', 'v26_0': True}
+    )
+
     return graph
 
 

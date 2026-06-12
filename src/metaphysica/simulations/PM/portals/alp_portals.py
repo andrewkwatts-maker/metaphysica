@@ -67,6 +67,24 @@ from metaphysica.simulations.base.simulation_base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_pi as _eml_pi,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    b3_leaf as _b3_leaf,
+)
+
 
 @dataclass
 class ALPResult:
@@ -474,9 +492,9 @@ class ALPPortalsV23(SimulationBase):
                     "to ~10^{10} GeV, giving m_ALP in the meV range -- testable by "
                     "ALPS-II, IAXO, and short-range gravity experiments."
                 ),
-                inputParams=["axion.f_a", "geometry.alpha_leak"],
+                inputParams=["topology.elder_kads", "axion.f_a", "geometry.alpha_leak"],
                 outputParams=["portals.alp_mass_ev"],
-                input_params=["axion.f_a", "geometry.alpha_leak"],
+                input_params=["topology.elder_kads", "axion.f_a", "geometry.alpha_leak"],
                 output_params=["portals.alp_mass_ev"],
                 derivation={
                     "steps": [
@@ -508,7 +526,18 @@ class ALPPortalsV23(SimulationBase):
                     "Lambda_QCD": "QCD confinement scale = 0.217 GeV",
                     "f_a^ALP": "ALP decay constant from Face 3",
                     "T_3": "Face 3 racetrack-stabilized VEV"
-                }
+                },
+                # Triple-track: m_ALP = Lambda_QCD^2 / f_a^ALP (eV) — Face 3 moduli.
+                arithma=_arithma_num(result.m_alp),
+                eml=_eml_mul(
+                    _eml_div(
+                        _eml_pow(_eml_scalar(0.217), _eml_scalar(2.0)),
+                        _eml_scalar(result.f_a_alp),
+                    ),
+                    _eml_scalar(1.0e9),
+                ),
+                value=result.m_alp,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-alp-photon-v23",
@@ -572,7 +601,26 @@ class ALPPortalsV23(SimulationBase):
                     "alpha_leak": "Inter-face leakage = 1/sqrt(6) ~ 0.408",
                     "chi_eff": "Per-sector Euler characteristic = 72",
                     "f_a^ALP": "ALP decay constant from Face 3"
-                }
+                },
+                # ─────────────────────────────────────────────────────────────────
+                # Triple-track: g_aγγ = α_leak · χ_eff / (24π · f_a^ALP).
+                # CANONICAL VALUE: g_aγγ ≈ 2.9032525449371696e-11 GeV⁻¹ — the
+                # BabyIAXO 2028 / IAXO 2030 falsification target. χ_eff = 3·b3 = 72
+                # is b3-rooted via b3_leaf().
+                # ─────────────────────────────────────────────────────────────────
+                arithma=_arithma_num(result.g_a_gamma_gamma),
+                eml=_eml_div(
+                    _eml_mul(
+                        _eml_scalar(self.alpha_leak),
+                        _eml_mul(_eml_scalar(3.0), _b3_leaf()),
+                    ),
+                    _eml_mul(
+                        _eml_mul(_eml_scalar(24.0), _eml_pi()),
+                        _eml_scalar(result.f_a_alp),
+                    ),
+                ),
+                value=result.g_a_gamma_gamma,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-alp-nucleon-v23",
@@ -628,7 +676,12 @@ class ALPPortalsV23(SimulationBase):
                     "alpha_leak": "Inter-face leakage = 1/sqrt(6)",
                     "g_aN": "ALP-nucleon coupling",
                     "N": "Nucleon field"
-                }
+                },
+                # Triple-track: g_aN = α_leak / f_a^ALP.
+                arithma=_arithma_num(result.g_a_N),
+                eml=_eml_div(_eml_scalar(self.alpha_leak), _eml_scalar(result.f_a_alp)),
+                value=result.g_a_N,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-alp-fifth-force-v23",
@@ -657,9 +710,9 @@ class ALPPortalsV23(SimulationBase):
                     "range of torsion balance experiments (Eotvos, IUPUI) and "
                     "Casimir force measurements."
                 ),
-                inputParams=["portals.alp_mass_ev"],
+                inputParams=["topology.elder_kads", "portals.alp_mass_ev"],
                 outputParams=["portals.alp_fifth_force_range_m"],
-                input_params=["portals.alp_mass_ev"],
+                input_params=["topology.elder_kads", "portals.alp_mass_ev"],
                 output_params=["portals.alp_fifth_force_range_m"],
                 derivation={
                     "steps": [
@@ -687,7 +740,12 @@ class ALPPortalsV23(SimulationBase):
                     "hbar*c": "1.97e-7 eV*m (natural unit conversion)",
                     "lambda": "Fifth force range (Compton wavelength)",
                     "m_ALP": "ALP mass in eV"
-                }
+                },
+                # Triple-track: lambda = hbar*c / m_ALP — Yukawa Compton wavelength.
+                arithma=_arithma_num(result.fifth_force_range),
+                eml=_eml_div(_eml_scalar(self.hbar_c), _eml_scalar(result.m_alp)),
+                value=result.fifth_force_range,
+                triple_rel=1e-9,
             ),
         ]
 

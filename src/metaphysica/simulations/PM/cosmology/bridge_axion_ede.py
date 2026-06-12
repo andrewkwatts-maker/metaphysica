@@ -1256,7 +1256,7 @@ class BridgeAxionEDE(SimulationBase):
                     "parentFormulas": ["bridge-ede-f-sub-v24"]
                 },
                 eml_tree_str=(
-                    "ops.mul(ops.sqrt(ops.mul(eml_scalar(12.0), eml_scalar(24.0))), eml_scalar(2.0))"
+                    "ops.mul(ops.sqrt(ops.mul(eml_scalar(12.0), b3_leaf())), eml_scalar(2.0))"
                 ),
                 eml_description=(
                     "KNP enhancement: sqrt(N_ax * b3) * kappa_sampler = sqrt(12*24) * 2."

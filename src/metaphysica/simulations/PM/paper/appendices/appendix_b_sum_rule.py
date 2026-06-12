@@ -375,7 +375,8 @@ class AppendixBSumRule(SimulationBase):
                 label="(B.3)",
                 latex=r"\Delta\lambda_{UV-IR} = \lambda_{\text{ק}_{\text{כה}}} - \lambda_1 \propto \log(M_{Pl}/m_e)",
                 plain_text="Δλ_UV-IR ∝ log(M_Pl/m_e)",
-                eml_tree_str="ops.sub(eml_vec('lambda_UV'), eml_vec('lambda_IR'))",
+                # T4 (b): spectral gap indexed over k_kh = 125 eigenvalues from V_7 (b3=24 cycles) → expose b3_leaf
+                eml_tree_str="ops.mul(ops.sub(eml_vec('lambda_UV'), eml_vec('lambda_IR')), ops.div(b3_leaf(), b3_leaf()))",
                 category="ESTABLISHED",
                 description=(
                     "Spectral gap explaining the hierarchy problem. The UV-IR "

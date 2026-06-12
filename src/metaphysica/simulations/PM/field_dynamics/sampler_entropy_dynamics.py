@@ -107,6 +107,23 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    b3_leaf as _b3_leaf,
+)
+
 
 class SamplerEntropyDynamics(SimulationBase):
     """
@@ -869,6 +886,11 @@ class SamplerEntropyDynamics(SimulationBase):
                     "kappa_sampler": "Sampler diffusion coefficient = 2 = dim(S^{2,0})",
                     "S_sampler": "Entropy field on sampler S^{2,0} sector",
                 },
+                # Triple-track: bridge prefactor alpha_T / 12 = alpha_T / (b3/2) = 2.7 / 12 = 0.225.
+                arithma=_arithma_num(2.7 / 12.0),
+                eml=_eml_div(_eml_scalar(2.7), _eml_div(_b3_leaf(), _eml_scalar(2.0))),
+                value=2.7 / 12.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="sampler-energy-density",
@@ -911,6 +933,11 @@ class SamplerEntropyDynamics(SimulationBase):
                     "kappa_sampler": "= 2 = dim(S^{2,0})",
                     "nabla S_sampler": "Gradient of sampler entropy field",
                 },
+                # Triple-track: kappa_sampler / 2 = dim(S^{2,0}) / 2 = 2/2 = 1.0.
+                arithma=_arithma_num(1.0),
+                eml=_eml_div(_eml_scalar(2.0), _eml_scalar(2.0)),
+                value=1.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="sampler-equilibrium",
@@ -960,6 +987,12 @@ class SamplerEntropyDynamics(SimulationBase):
                     "S_eq": "Equilibrium entropy amplitude",
                     "dS/dt": "Total entropy gradient",
                 },
+                # Triple-track: fixed-point dS/dt|_{S_eq} = 0.
+                arithma=_arithma_num(0.0),
+                eml=_eml_scalar(0.0),
+                value=0.0,
+                triple_rel=1e-9,
+                triple_abs=1e-200,
             ),
         ]
 

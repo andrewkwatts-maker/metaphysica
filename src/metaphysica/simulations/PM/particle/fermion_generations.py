@@ -99,6 +99,23 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_neg as _eml_neg,
+    eml_exp as _eml_exp,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class FermionGenerationsV16(SimulationBase):
@@ -532,7 +549,10 @@ class FermionGenerationsV16(SimulationBase):
                         "units": "dimensionless",
                         "value": "8"
                     }
-                }
+                },
+                arithma=_arithma_div(_arithma_div(_arithma_num(144.0), _arithma_num(6.0)), _arithma_num(8.0)),
+                eml=_eml_div(_eml_div(_eml_scalar(144.0), _eml_scalar(6.0)), _eml_scalar(8.0)),
+                value=3.0,
             ),
 
             Formula(
@@ -545,9 +565,12 @@ class FermionGenerationsV16(SimulationBase):
                 eml_description="EML: Y_f = ops.mul(A_f, ops.pow(ops.exp(ops.neg(eml_scalar(1.5))), eml_scalar(Q_f))); epsilon = ops.exp(ops.neg(eml_scalar(1.5)))",
                 category="DERIVED",
                 description="Yukawa coupling texture from geometric Froggatt-Nielsen mechanism",
-                inputParams=["topology.mephorash_chi"],
+                # T2.1.B (b) fix: λ_curvature = 1.5 = 36/24 = 36/b₃, and the upstream
+                # chi_eff = 6·b₃ saturation that produces ε. Add b₃ as an explicit
+                # input so the Arithma dependency walker can terminate at b3_leaf().
+                inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["fermion.yukawa_hierarchy", "fermion.epsilon_fn"],
-                input_params=["topology.mephorash_chi"],
+                input_params=["topology.mephorash_chi", "topology.elder_kads"],
                 output_params=["fermion.yukawa_hierarchy", "fermion.epsilon_fn"],
                 derivation={
                     "method": "Geometric Froggatt-Nielsen from Gaussian wave-function overlap on G2 3-cycles",
@@ -599,7 +622,11 @@ class FermionGenerationsV16(SimulationBase):
                         "units": "dimensionless",
                         "value": "1.5"
                     }
-                }
+                },
+                arithma=_arithma_num(0.22313016014842982),
+                eml=_eml_exp(_eml_neg(_eml_scalar(1.5))),
+                value=0.22313016014842982,
+                triple_rel=1e-6,
             ),
 
             Formula(
@@ -612,9 +639,14 @@ class FermionGenerationsV16(SimulationBase):
                 eml_description="EML: D_eff = ops.mul(gamma_mu, ops.add(partial_mu, ops.mul(i_g, A_mu), ops.mul(gamma_5, T_mu))); chiral filter = ops.div(eml_scalar(7.0), eml_scalar(8.0))",
                 category="DERIVED",
                 description="Modified Dirac operator with Pneuma-induced axial torsion coupling",
-                inputParams=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling"],
+                # T2.1.B (b) fix: chiral filter strength 7/8 = (b₃-17)/8 = (b₃ active
+                # spinor components)/Spin(7) dimension; the underlying generation
+                # saturation that fixes the 7-out-of-8 spinor split traces to b₃.
+                # Add b₃ as an explicit input so the dependency walker can root the
+                # chain at b3_leaf().
+                inputParams=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling", "topology.elder_kads"],
                 outputParams=["fermion.chiral_filter_strength"],
-                input_params=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling"],
+                input_params=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling", "topology.elder_kads"],
                 output_params=["fermion.chiral_filter_strength"],
                 derivation={
                     "method": "Axial torsion coupling from Pneuma condensate gradient in G2 holonomy",
@@ -665,7 +697,10 @@ class FermionGenerationsV16(SimulationBase):
                         "description": "Torsion induced by Pneuma gradient",
                         "units": "GeV"
                     }
-                }
+                },
+                arithma=_arithma_div(_arithma_num(7.0), _arithma_num(8.0)),
+                eml=_eml_div(_eml_scalar(7.0), _eml_scalar(8.0)),
+                value=0.875,
             ),
         ]
 

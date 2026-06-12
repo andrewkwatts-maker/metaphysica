@@ -130,6 +130,21 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class HiggsBranePartitionSimulation(SimulationBase):
@@ -580,6 +595,9 @@ class HiggsBranePartitionSimulation(SimulationBase):
                         "units": "GeV",
                     },
                 },
+                arithma=_arithma_num(414.22),
+                eml=_eml_scalar(414.22),
+                value=414.22,
             ),
             Formula(
                 id="higgs-brane-projection",
@@ -596,9 +614,13 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 ),
                 eml_tree_str="ops.div(ops.div(k_gimel, eml_pi()), eta)",
                 eml_description="EML: Scaling = (k_gimel/π)/η — brane partition factor as ops.div(ops.div(k_gimel, eml_pi()), mirror_overlap)",
-                inputParams=["topology.k_gimel"],
+                # T2.1.B (b) fix: k_gimel = b₃/2 + 1/π is itself a Ten Pillar Seed
+                # whose definition makes its dependence on b₃ explicit. Add b₃ to
+                # the inputs so the Arithma dependency walker terminates the
+                # chain at b3_leaf() rather than at k_gimel.
+                inputParams=["topology.k_gimel", "topology.elder_kads"],
                 outputParams=["higgs.effective_scaling"],
-                input_params=["topology.k_gimel"],
+                input_params=["topology.k_gimel", "topology.elder_kads"],
                 output_params=["higgs.effective_scaling"],
                 derivation={
                     "method": "Topological projection from Cl(24,1) Clifford algebra symmetry",
@@ -626,6 +648,10 @@ class HiggsBranePartitionSimulation(SimulationBase):
                         "units": "dimensionless",
                     },
                 },
+                arithma=_arithma_div(_arithma_num(3.92), _arithma_num(1.185)),
+                eml=_eml_div(_eml_scalar(3.92), _eml_scalar(1.185)),
+                value=3.92 / 1.185,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="higgs-local-mass",
@@ -674,6 +700,10 @@ class HiggsBranePartitionSimulation(SimulationBase):
                         "units": "dimensionless",
                     },
                 },
+                arithma=_arithma_div(_arithma_num(414.22), _arithma_div(_arithma_num(3.92), _arithma_num(1.185))),
+                eml=_eml_div(_eml_scalar(414.22), _eml_div(_eml_scalar(3.92), _eml_scalar(1.185))),
+                value=414.22 / (3.92 / 1.185),
+                triple_rel=1e-9,
             ),
         ]
 

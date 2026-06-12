@@ -1,0 +1,119 @@
+{
+  "version": "1.1",
+  "tolerance_pct": 2.0,
+  "tolerance_overrides": {
+    "g_a_gamma": 200.0,
+    "sigma_m_nu": 40.0,
+    "S8": 2.0
+  },
+  "observable_groups_checked": 8,
+  "n_conflicts": 0,
+  "n_consistent": 6,
+  "n_insufficient": 2,
+  "shadow_conflicts": [],
+  "consistent_observables": [
+    {
+      "observable": "theta_13",
+      "values": {
+        "nufit.theta_13": 8.54,
+        "geometry.theta_13": 8.54,
+        "neutrino.theta_13_pred": 8.647304725338865,
+        "pmns.theta_13_triality": 8.647304725338865,
+        "particle.theta_13_deg": 8.668576499284981
+      },
+      "max_pct_diff": 1.483248135326343,
+      "tolerance_pct": 2.0,
+      "tolerance_used": 2.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    },
+    {
+      "observable": "eta_B",
+      "values": {
+        "cosmology.eta_baryon_pred": 6.185164569435048e-10,
+        "cosmology.eta_baryon_geometric": 6.185164569435048e-10,
+        "cosmology.eta_B": 6.185164569435048e-10,
+        "geometry.eta_baryon": 6.185164569435048e-10
+      },
+      "max_pct_diff": 0.0,
+      "tolerance_pct": 2.0,
+      "tolerance_used": 2.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    },
+    {
+      "observable": "n_s",
+      "values": {
+        "cosmology.n_s_pred": 0.9636384168229182,
+        "cosmology.n_s": 0.9636384168229182,
+        "geometry.n_s": 0.9636384168229182
+      },
+      "max_pct_diff": 0.0,
+      "tolerance_pct": 2.0,
+      "tolerance_used": 2.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    },
+    {
+      "observable": "m_higgs",
+      "values": {
+        "pdg.m_higgs": 125.1,
+        "higgs.m_higgs_local": 125.10242591991029
+      },
+      "max_pct_diff": 0.0019391469769317984,
+      "tolerance_pct": 2.0,
+      "tolerance_used": 2.0,
+      "verdict": "CONSISTENT",
+      "skipped": {
+        "particle.m_h_GeV": "not_in_registry",
+        "higgs.m_h": "not_in_registry"
+      }
+    },
+    {
+      "observable": "g_a_gamma",
+      "values": {
+        "alp.coupling_GeV_inv": 1e-11,
+        "alp.coupling_GeV_inv_value": 2.8999999999999997e-11
+      },
+      "max_pct_diff": 65.51724137931035,
+      "tolerance_pct": 200.0,
+      "tolerance_used": 200.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    },
+    {
+      "observable": "sigma_m_nu",
+      "values": {
+        "geometry.sum_m_nu": 0.08168832953849638,
+        "spectral.sum_m_nu": 0.059831538171409335
+      },
+      "max_pct_diff": 26.75632062813431,
+      "tolerance_pct": 40.0,
+      "tolerance_used": 40.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    }
+  ],
+  "insufficient_data": [
+    {
+      "observable": "H0_local",
+      "values": {
+        "geometry.H0_local": 73.04
+      },
+      "skipped": {
+        "cosmology.H0_resolved_km_s_Mpc": "not_in_registry"
+      },
+      "tolerance_used": 2.0,
+      "verdict": "INSUFFICIENT_DATA"
+    },
+    {
+      "observable": "S8",
+      "values": {
+        "cosmology.s8_pm_predicted": 0.8029419470461436
+      },
+      "skipped": {},
+      "tolerance_used": 2.0,
+      "verdict": "INSUFFICIENT_DATA"
+    }
+  ]
+}

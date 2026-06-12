@@ -35,6 +35,19 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 
 @dataclass
 class ElectroweakMixingResult:
@@ -708,6 +721,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "g'": "U(1)_Y gauge coupling constant",
                     "M^2": "Neutral gauge boson mass-squared matrix in (W^3, B) basis",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="ew-weinberg-angle",
@@ -757,6 +771,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "C_W": "Associative 3-cycle wrapped by SU(2)_L gauge field in TCS G2 #187",
                     "C_Y": "Associative 3-cycle wrapped by U(1)_Y gauge field in TCS G2 #187",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="ew-boson-masses",
@@ -799,6 +814,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "m_Z": "Z boson mass, 91.1876 GeV (PDG 2024)",
                     "v": "Higgs VEV, 246.37 GeV",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

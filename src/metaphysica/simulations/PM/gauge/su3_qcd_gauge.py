@@ -35,6 +35,19 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 
 # SU(3) structure constants (f^{abc})
 # Standard values for completely antisymmetric f^{abc}
@@ -540,6 +553,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
                     "g_s": "Strong coupling constant",
                     "lambda^a": "Gell-Mann matrices (SU(3) generators in fundamental)",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su3-qcd-kinetic",
@@ -578,6 +592,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
                     "r_C": "Color cycle volume (G2 spectral residue), largest gauge cycle",
                     "G^a_{mn}": "SU(3)_C gluon field strength tensor",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su3-quark-coupling",
@@ -623,6 +638,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
                     "m_f": "Quark mass (from Yukawa coupling to Higgs)",
                     "alpha_s": "Strong coupling: alpha_s = g_s^2 / (4 pi) = 0.1180 at M_Z",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

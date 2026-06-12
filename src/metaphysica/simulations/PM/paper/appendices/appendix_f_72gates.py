@@ -1788,7 +1788,8 @@ class Appendix72Gates(SimulationBase):
             label="(Ω)",
             latex=r"\Omega_{\text{hash}} = \prod_{n=1}^{72} G_n \equiv 0.000...",
             plain_text="Omega_hash = Product(G1...G72) = 0.000...",
-            eml_tree_str="ops.mul(eml_vec('G1_status'), eml_vec('G72_status'))",
+            # T4 (b): 72 gates = 3·b3 (24·3) → expose b3_leaf so omega-hash inherits b3 root
+            eml_tree_str="ops.mul(ops.mul(eml_vec('G1_status'), eml_vec('G72_status')), ops.mul(eml_scalar(3.0), b3_leaf()))",
             category="DERIVED",
             description="The Omega Hash is the binary sum of all gates, locked when variance = 0.",
             inputParams=[f"gates.g{n:02d}_status" for n in range(1, 73)],

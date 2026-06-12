@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Geometric Anchors Simulation v16.2 - SimulationBase Wrapper
 =============================================================
@@ -30,6 +31,46 @@ from metaphysica.simulations.base.simulation_base import (
     Parameter,
 )
 from metaphysica.simulations.PM.geometry.geometric_anchors_core import GeometricAnchors
+
+# --- triple-track helpers ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_sqrt(a):
+    return None if a is None else a.sqrt()
 
 
 # Output parameter paths for this simulation
@@ -122,7 +163,7 @@ class GeometricAnchorsSimulation(SimulationBase):
     def __init__(self):
         super().__init__()
         self._metadata = SimulationMetadata(
-            id="geometric_anchors_v16_2",
+            id="geometric_anchors",
             version="16.2",
             domain="geometric",
             title="Geometric Anchors - Fundamental Constants from b3=24",
@@ -200,9 +241,19 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "description": "Archimedes constant: enters via the volume of the unit sphere in the holonomy projection from G2 to SO(4)"
                     }
                 },
-                eml_latex=r"k_\gimel = \mathrm{ops.add}(\mathrm{ops.div}(b_3, \mathrm{eml\_scalar}(2)),\, \mathrm{ops.inv}(\mathrm{eml\_pi}()))",
-                eml_tree_str="ops.add(ops.div(eml_scalar(24.0), eml_scalar(2.0)), ops.inv(eml_pi()))",
-                eml_description="EML: ops.add(ops.div(eml_scalar(24.0), eml_scalar(2.0)), ops.inv(eml_pi())) — Gimel constant from b3 and 1/π",
+                eml_latex=r"k_\gimel = \mathrm{ops.add}(\mathrm{ops.div}(\mathrm{b3\_leaf}(), \mathrm{eml\_scalar}(2)),\, \mathrm{ops.inv}(\mathrm{eml\_pi}()))",
+                eml_tree_str="ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.inv(eml_pi()))",
+                eml_description="EML: ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.inv(eml_pi())) — Gimel constant from b3 (via b3_leaf()) and 1/π",
+                arithma=_arithma_add(
+                    _arithma_div(_arithma_const("b3"), _arithma_num(2.0)),
+                    _arithma_div(_arithma_num(1.0), _arithma_const("pi")),
+                ),
+                eml=_eml_add(
+                    _eml_div(_b3_leaf(), _eml_scalar(2.0)),
+                    _eml_div(_eml_scalar(1.0), _eml_pi()),
+                ),
+                value=12.31830988618379,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="alpha-inverse-anchor",
@@ -257,7 +308,55 @@ class GeometricAnchorsSimulation(SimulationBase):
                     "ops.div(eml_scalar(1.6180), ops.mul(eml_scalar(4.0), eml_pi())), "
                     "ops.neg(ops.div(eml_scalar(7.0), ops.add(eml_scalar(10000.0), ops.neg(ops.mul(eml_scalar(3.0), eml_scalar(12.3183)))))))"
                 ),
-                eml_description="EML: alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi) - 7/(1e4 - 3*k_gimel); all terms ops.add/mul/div/neg/pow on eml_scalars",
+                eml_description="EML: alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi) - 7/(1e4 - 3*k_gimel); b3 enters via b3_leaf(); all terms ops.add/mul/div/neg/pow",
+                arithma=(lambda b3a, pia: (
+                    (lambda k_g, phi_a: (
+                        _arithma_sub(
+                            _arithma_add(
+                                _arithma_sub(
+                                    _arithma_pow(k_g, _arithma_num(2.0)),
+                                    _arithma_div(b3a, phi_a),
+                                ),
+                                _arithma_div(phi_a, _arithma_mul(_arithma_num(4.0), pia)),
+                            ),
+                            _arithma_div(
+                                _arithma_num(7.0),
+                                _arithma_sub(
+                                    _arithma_num(10000.0),
+                                    _arithma_mul(_arithma_num(3.0), k_g),
+                                ),
+                            ),
+                        )
+                    ))(
+                        _arithma_add(_arithma_div(b3a, _arithma_num(2.0)), _arithma_div(_arithma_num(1.0), pia)),
+                        _arithma_div(_arithma_add(_arithma_num(1.0), _arithma_sqrt(_arithma_num(5.0))), _arithma_num(2.0)),
+                    )
+                ))(_arithma_const("b3"), _arithma_const("pi")),
+                eml=(lambda b3e, pie: (
+                    (lambda k_g, phi_e: (
+                        _eml_sub(
+                            _eml_add(
+                                _eml_sub(
+                                    _eml_pow(k_g, _eml_scalar(2.0)),
+                                    _eml_div(b3e, phi_e),
+                                ),
+                                _eml_div(phi_e, _eml_mul(_eml_scalar(4.0), pie)),
+                            ),
+                            _eml_div(
+                                _eml_scalar(7.0),
+                                _eml_sub(
+                                    _eml_scalar(10000.0),
+                                    _eml_mul(_eml_scalar(3.0), k_g),
+                                ),
+                            ),
+                        )
+                    ))(
+                        _eml_add(_eml_div(b3e, _eml_scalar(2.0)), _eml_div(_eml_scalar(1.0), pie)),
+                        _eml_div(_eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))), _eml_scalar(2.0)),
+                    )
+                ))(_b3_leaf(), _eml_pi()),
+                value=137.03599917931578,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="w0-thawing-anchor",
@@ -287,9 +386,19 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "value": 24
                     }
                 },
-                eml_latex=r"w_0 = \mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(b_3)))",
-                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))",
-                eml_description="EML: ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0))) = -23/24 — Tzimtzum fraction 1/b3",
+                eml_latex=r"w_0 = \mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{b3\_leaf}()))",
+                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))",
+                eml_description="EML: ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf())) = -23/24 — Tzimtzum fraction 1/b3 via b3_leaf()",
+                arithma=_arithma_add(
+                    _arithma_neg(_arithma_num(1.0)),
+                    _arithma_div(_arithma_num(1.0), _arithma_const("b3")),
+                ),
+                eml=_eml_add(
+                    _eml_neg(_eml_scalar(1.0)),
+                    _eml_div(_eml_scalar(1.0), _b3_leaf()),
+                ),
+                value=-0.9583333333333334,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="spectral-index-anchor",
@@ -328,8 +437,28 @@ class GeometricAnchorsSimulation(SimulationBase):
                     }
                 },
                 eml_latex=r"n_s = \mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.neg}(\mathrm{ops.div}(\mathrm{eml\_scalar}(2), N_{\text{eff}})))",
-                eml_tree_str="ops.add(eml_scalar(1.0), ops.neg(ops.div(eml_scalar(2.0), ops.div(eml_scalar(144.0), ops.pow(eml_scalar(1.6180), eml_scalar(2.0))))))",
-                eml_description="EML: n_s = ops.add(eml_scalar(1), ops.neg(ops.div(eml_scalar(2), N_eff))) where N_eff=chi_eff/phi^2=55",
+                eml_tree_str="ops.add(eml_scalar(1.0), ops.neg(ops.div(eml_scalar(2.0), ops.div(eml_scalar(144.0), ops.pow(phi, eml_scalar(2.0))))))",
+                eml_description="EML: n_s = ops.add(eml_scalar(1), ops.neg(ops.div(eml_scalar(2), N_eff))) where N_eff=chi_eff/phi^2≈55",
+                arithma=(lambda phi_a: _arithma_sub(
+                    _arithma_num(1.0),
+                    _arithma_div(
+                        _arithma_num(2.0),
+                        _arithma_div(_arithma_num(144.0), _arithma_pow(phi_a, _arithma_num(2.0))),
+                    ),
+                ))(
+                    _arithma_div(_arithma_add(_arithma_num(1.0), _arithma_sqrt(_arithma_num(5.0))), _arithma_num(2.0))
+                ),
+                eml=(lambda phi_e: _eml_sub(
+                    _eml_scalar(1.0),
+                    _eml_div(
+                        _eml_scalar(2.0),
+                        _eml_div(_eml_scalar(144.0), _eml_pow(phi_e, _eml_scalar(2.0))),
+                    ),
+                ))(
+                    _eml_div(_eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))), _eml_scalar(2.0))
+                ),
+                value=0.9636384168229182,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="unity-seal-anchor",
@@ -357,9 +486,33 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "description": "Reduced Betti count: total associative 3-cycles minus the K3 matching fibres (24 - 4 = 20)"
                     }
                 },
-                eml_latex=r"I_{\text{unity}} = \mathrm{ops.div}(\mathrm{ops.mul}(k_\gimel, \varphi), \mathrm{eml\_scalar}(20))",
-                eml_tree_str="ops.div(ops.mul(eml_scalar(12.3183), eml_scalar(1.6180)), eml_scalar(20.0))",
-                eml_description="EML: ops.div(ops.mul(eml_scalar(k_gimel), eml_scalar(phi)), eml_scalar(20.0)) — internal consistency ratio ≈ 1",
+                eml_latex=r"I_{\text{unity}} = \mathrm{ops.div}(\mathrm{ops.mul}(k_\gimel, \varphi),\, \mathrm{ops.sub}(\mathrm{b3\_leaf}(), \mathrm{eml\_scalar}(4)))",
+                eml_tree_str="ops.div(ops.mul(k_gimel, phi), ops.sub(b3_leaf(), eml_scalar(4.0)))",
+                eml_description="EML: I_unity = ops.div(ops.mul(k_gimel, phi), ops.sub(b3_leaf(), eml_scalar(4))); b3 enters via b3_leaf() — internal consistency ratio ≈ 1",
+                arithma=(lambda b3a, pia, phi_a: _arithma_div(
+                    _arithma_mul(
+                        _arithma_add(_arithma_div(b3a, _arithma_num(2.0)), _arithma_div(_arithma_num(1.0), pia)),
+                        phi_a,
+                    ),
+                    _arithma_sub(b3a, _arithma_num(4.0)),
+                ))(
+                    _arithma_const("b3"),
+                    _arithma_const("pi"),
+                    _arithma_div(_arithma_add(_arithma_num(1.0), _arithma_sqrt(_arithma_num(5.0))), _arithma_num(2.0)),
+                ),
+                eml=(lambda b3e, pie, phi_e: _eml_div(
+                    _eml_mul(
+                        _eml_add(_eml_div(b3e, _eml_scalar(2.0)), _eml_div(_eml_scalar(1.0), pie)),
+                        phi_e,
+                    ),
+                    _eml_sub(b3e, _eml_scalar(4.0)),
+                ))(
+                    _b3_leaf(),
+                    _eml_pi(),
+                    _eml_div(_eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))), _eml_scalar(2.0)),
+                ),
+                value=0.9965722039899612,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="torsion-from-topology-derivation",
@@ -398,9 +551,17 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "value": 144
                     }
                 },
-                eml_latex=r"T_\omega = \mathrm{ops.sqrt}(\mathrm{ops.div}(b_3, \chi_{\text{eff}}))",
-                eml_tree_str="ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0)))",
-                eml_description="EML: ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0))) = ops.inv(ops.sqrt(eml_scalar(6.0))) — torsion from topology",
+                eml_latex=r"T_\omega = \mathrm{ops.sqrt}(\mathrm{ops.div}(\mathrm{b3\_leaf}(), \chi_{\text{eff}}))",
+                eml_tree_str="ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0)))",
+                eml_description="EML: ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0))) = ops.inv(ops.sqrt(eml_scalar(6.0))) — torsion from topology, b3 via b3_leaf()",
+                arithma=_arithma_sqrt(
+                    _arithma_div(_arithma_const("b3"), _arithma_num(144.0)),
+                ),
+                eml=_eml_sqrt(
+                    _eml_div(_b3_leaf(), _eml_scalar(144.0)),
+                ),
+                value=0.408248290463863,
+                triple_rel=1e-12,
             ),
         ]
 
@@ -677,8 +838,9 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "experimental_value": 6.12e-10,  # BBN/Planck 2018 (n_b/n_gamma)
                 "experimental_uncertainty": 0.04e-10,  # BBN/Planck precision
                 "experimental_source": "Planck2018_BBN",
-                # Theory uncertainty: ~5% from CP violation mechanism not fully derived
-                # Current value is topological estimate from b3/chi_eff
+                # Sprint T4 #6: canonical value is now BaryonAsymmetryV18
+                # (G2 cycle asymmetry + Jarlskog), 6.185e-10. Theory
+                # uncertainty ~5% from CP violation mechanism not fully derived.
                 "theory_uncertainty": 3e-11,  # 5% of eta_baryon value
                 "theory_uncertainty_source": "cp_violation_topological_estimate"
             },
@@ -1151,9 +1313,15 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — CMB temperature T_CMB = φ k_gimel/(2π+1) ≈ 2.737 K (Cert C18)"
                 ),
                 "eta_baryon": (
-                    "EML: ops.div(eml_vec('elder_kads'),"
-                    " ops.mul(eml_scalar(4.0), eml_scalar(1e10)))"
-                    " — baryon/photon ratio η = b₃/(4×10¹⁰) = 6.0×10⁻¹⁰"
+                    "EML: ops.mul(ops.div(J_jarlskog,"
+                    " ops.mul(eml_scalar(2.0),"
+                    " ops.sub(eml_vec('elder_kads'), eml_scalar(14.0)))),"
+                    " ops.mul(ops.mul(eml_scalar(0.12), eml_vec('elder_kads')),"
+                    " ops.mul(ops.div(eml_vec('elder_kads'), eml_scalar(72.0)),"
+                    " ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))),"
+                    " ops.exp(ops.neg(eml_scalar(7.086)))))))"
+                    " — Sprint T4 #6 canonical: η_B = (J/N_eff) × Δb₃ ×"
+                    " (b₃/χ_eff) × sin(δ_CP) × exp(-Re(T)) ≈ 6.185×10⁻¹⁰"
                 ),
                 "unity_seal": (
                     "EML: ops.div(ops.mul(eml_vec('k_gimel'), eml_vec('phi')),"

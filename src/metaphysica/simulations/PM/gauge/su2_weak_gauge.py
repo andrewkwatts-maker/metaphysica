@@ -35,6 +35,19 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 
 @dataclass
 class WeakGaugeResult:
@@ -507,6 +520,7 @@ class SU2WeakGaugeSimulation(SimulationBase):
                     "g_2": "SU(2)_L gauge coupling constant",
                     "tau^a": "Pauli matrices (SU(2) generators in fundamental rep)",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su2-weak-kinetic",
@@ -545,6 +559,7 @@ class SU2WeakGaugeSimulation(SimulationBase):
                     "r_W": "Weak cycle volume (G2 spectral residue), smaller than r_C",
                     "W^a_{mn}": "SU(2)_L field strength tensor",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su2-chiral-coupling",
@@ -590,6 +605,7 @@ class SU2WeakGaugeSimulation(SimulationBase):
                     "tau^a": "Pauli matrices (SU(2) generators)",
                     "gamma^5": "Dirac gamma-5 matrix defining chirality",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

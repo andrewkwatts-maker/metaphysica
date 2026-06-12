@@ -139,6 +139,22 @@ class Formula:
         eml_latex: LaTeX representation using EML operator notation (ops.div, ops.mul, ...)
         eml_tree_str: Python ops tree string for EML mode display
         eml_description: Description of the formula in EML/Mirror Phase Mathematics language
+
+        # Triple-track fields (Phase E.2, landed Sprint 2 #9)
+        arithma: Optional arithma.Expression for symbolic AST cross-check
+        eml: Optional eml_math.EMLPoint tree for universal-math cross-check
+        value: Optional canonical Python float for cross-check
+        triple_env: Variable bindings used when evaluating symbolic views
+        triple_rel: Relative tolerance for triple_assert (default 1e-12)
+        triple_abs: Absolute tolerance for triple_assert (default 0.0)
+        triple_status: After registration, one of
+            "OK" (all three legs agree), "ARITHMA_ONLY", "EML_ONLY",
+            "FLOAT_ONLY" (no symbolic views supplied), or "" (not yet checked).
+        arithma_latex: Lazily cached LaTeX rendering of ``arithma`` via .to_latex()
+        arithma_compact: Lazily cached compact-form serialization of ``arithma``
+            via .to_compact(). Captured only when Arithma's wheel exposes
+            ``to_compact()``; ``None`` otherwise so the field degrades gracefully.
+        eml_tree_compact: Lazily cached compact-form serialization of ``eml``
     """
     id: str
     label: str
@@ -156,6 +172,18 @@ class Formula:
     eml_latex: str = ""          # LaTeX in EML operator notation
     eml_tree_str: str = ""       # Python ops tree string for display
     eml_description: str = ""    # EML-mode description
+
+    # Triple-track fields (Phase E.2)
+    arithma: Optional[Any] = None
+    eml: Optional[Any] = None
+    value: Optional[float] = None
+    triple_env: Optional[Dict[str, float]] = None
+    triple_rel: float = 1e-12
+    triple_abs: float = 0.0
+    triple_status: str = ""
+    arithma_latex: str = ""
+    arithma_compact: Optional[Any] = None
+    eml_tree_compact: Optional[Any] = None
 
     def __post_init__(self):
         """Generate title from description if not provided. Sync param field conventions."""

@@ -847,6 +847,13 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # VIELBEIN FORMALISM FORMULAS
         # =================================================================
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # The vielbein-metric decomposition g_munu = eta_AB e^A_mu e^B_nu is a
+        # structural identity of (pseudo-)Riemannian geometry that holds in
+        # *any* spacetime, independent of the b3 Betti number. Per
+        # TIER_2_3_ROADMAP.md §T2.1.C this is bucket (a); no chain link to
+        # b3 is meaningful for the identity itself. The b3 dependence enters
+        # only at the action level via gr-newton-from-g2-v19.
         formulas.append(Formula(
             id="gr-metric-from-vielbein-v19",
             label="(2.2.1)",
@@ -881,6 +888,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # sqrt(-g) = det(e^A_mu) is a determinant identity of the vielbein
+        # decomposition (Carroll Ch. 3) and is independent of b3. Bucket (a)
+        # per §T2.1.C.
         formulas.append(Formula(
             id="gr-vielbein-determinant-v19",
             label="(2.2.2)",
@@ -910,6 +921,11 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # The tetrad postulate D_mu e^A_nu = 0 is the compatibility condition
+        # uniquely linking the spin connection omega and Christoffel symbols
+        # Gamma. It is a definitional identity of vielbein GR with no b3
+        # dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-tetrad-postulate-v19",
             label="(2.2.3)",
@@ -944,6 +960,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # SPIN CONNECTION FORMULAS
         # =================================================================
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # omega^AB_mu solved from the tetrad postulate -- a structural identity
+        # of vielbein GR (antisymmetry follows from metric compatibility). No
+        # b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-spin-connection-v19",
             label="(2.2.4)",
@@ -975,6 +995,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # T^A = de^A + omega^A_B ^ e^B = 0 is the torsion-free condition of
+        # Levi-Civita GR. Pure geometric identity; no b3 dependence.
+        # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-torsion-free-condition-v19",
             label="(2.2.5)",
@@ -1009,6 +1033,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # Metricity D_mu g_alpha,beta = 0 (equivalently D_mu eta_AB = 0) is
+        # the defining property of the Levi-Civita connection. No b3
+        # dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-metricity-condition-v19",
             label="(2.2.6)",
@@ -1044,6 +1072,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # RIEMANN/RICCI CONSTRUCTION FORMULAS
         # =================================================================
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # Standard Levi-Civita formula for Gamma^rho_munu in terms of metric
+        # derivatives -- a definitional identity of Riemannian geometry. No
+        # b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-christoffel-symbols-v19",
             label="(2.2.7)",
@@ -1080,6 +1112,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # R^rho_sigma_munu = d_mu Gamma^rho_nu_sigma - ... is the definition
+        # of the Riemann curvature tensor from the connection. Pure GR
+        # identity; no b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-riemann-tensor-v19",
             label="(2.2.8)",
@@ -1115,6 +1151,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # Ricci tensor R_munu = R^rho_mu_rho_nu is the canonical contraction
+        # of the Riemann tensor. Definitional GR identity; no b3 dependence.
+        # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-ricci-tensor-v19",
             label="(2.2.9)",
@@ -1145,6 +1185,9 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # R = g^munu R_munu is the canonical trace of Ricci. Definitional
+        # GR identity; no b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-ricci-scalar-v19",
             label="(2.2.10)",
@@ -1180,6 +1223,11 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # EINSTEIN-HILBERT AND FIELD EQUATIONS
         # =================================================================
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # S_EH = (1/16piG) int d^4x sqrt(-g) R is the 4D Einstein-Hilbert
+        # action -- a structural ansatz of GR (Hilbert 1915). The b3
+        # dependence of G_N is captured separately by gr-newton-from-g2-v19
+        # and gr-planck-from-compactification-v19. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-hilbert-4d-v19",
             label="(2.2.11)",
@@ -1218,6 +1266,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # G_munu = R_munu - (1/2) g_munu R is the canonical Einstein tensor.
+        # Definitional GR identity (Bianchi-conserved); no b3 dependence.
+        # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-tensor-v19",
             label="(2.2.12)",
@@ -1251,6 +1303,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             }
         ))
 
+        # CLASSIFIED(non-b3): algebraic identity (a)
+        # G_munu = 8 pi G T_munu is the canonical Einstein field equation
+        # from variation of S_EH. The b3 dependence enters only via G_N
+        # in gr-newton-from-g2-v19. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-field-equations-v19",
             label="(2.2.13)",
@@ -1306,7 +1362,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             input_params=["topology.mephorash_chi", "topology.elder_kads"],
             output_params=["gravity.newton_constant_theory"],
             eml_tree_str=(
-                "ops.inv(ops.mul(ops.pow(eml_vec('M_26D'), eml_scalar(24.0)), eml_vec('Vol_X22')))"
+                "ops.inv(ops.mul(ops.pow(eml_vec('M_26D'), b3_leaf()), eml_vec('Vol_X22')))"
             ),
             derivation={
                 "method": "Dimensional reduction of 26D gravitational action over compact space",

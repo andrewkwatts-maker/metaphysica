@@ -110,6 +110,38 @@ from metaphysica.simulations.base.simulation_base import (
     Formula,
     Parameter,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_pi as _eml_pi,
+    eml_sqrt as _eml_sqrt,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_b3():
+    return _arithma_num(24.0)
 
 
 @dataclass
@@ -381,7 +413,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                     ],
                 },
                 eml_tree_str=(
-                    "ops.mul(eml_vec('k_gimel'), ops.sub(eml_scalar(24.0), eml_scalar(4.0)))"
+                    "ops.mul(eml_vec('k_gimel'), ops.sub(b3_leaf(), eml_scalar(4.0)))"
                 ),
                 eml_description=(
                     "Higgs VEV: k_gimel times (b3 - 4), where b3=24 giving 20 non-trivial cycles."
@@ -401,7 +433,17 @@ class HiggsVEVRefinedV18(SimulationBase):
                         "value": "20",
                         "units": "dimensionless",
                     },
-                }
+                },
+                arithma=_arithma_mul(
+                    _arithma_add(_arithma_num(12.0), _arithma_div(_arithma_num(1.0), _arithma_num(np.pi))),
+                    _arithma_sub(_arithma_b3(), _arithma_num(4.0)),
+                ),
+                eml=_eml_mul(
+                    _eml_add(_eml_scalar(12.0), _eml_div(_eml_scalar(1.0), _eml_pi())),
+                    _eml_sub(_b3_leaf(), _eml_scalar(4.0)),
+                ),
+                value=(12.0 + 1.0 / np.pi) * 20.0,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="fermi-constant-tree-v18",
@@ -444,7 +486,23 @@ class HiggsVEVRefinedV18(SimulationBase):
                         "value": "~246 GeV",
                         "units": "GeV",
                     },
-                }
+                },
+                arithma=_arithma_div(
+                    _arithma_num(1.0),
+                    _arithma_mul(
+                        _arithma_num(np.sqrt(2.0)),
+                        _arithma_pow(_arithma_num((12.0 + 1.0 / np.pi) * 20.0), _arithma_num(2.0)),
+                    ),
+                ),
+                eml=_eml_div(
+                    _eml_scalar(1.0),
+                    _eml_mul(
+                        _eml_sqrt(_eml_scalar(2.0)),
+                        _eml_pow(_eml_scalar((12.0 + 1.0 / np.pi) * 20.0), _eml_scalar(2.0)),
+                    ),
+                ),
+                value=1.0 / (np.sqrt(2.0) * ((12.0 + 1.0 / np.pi) * 20.0) ** 2),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="fermi-constant-physical-v18",
@@ -487,7 +545,36 @@ class HiggsVEVRefinedV18(SimulationBase):
                         "value": "0.00116",
                         "units": "dimensionless",
                     },
-                }
+                },
+                arithma=_arithma_mul(
+                    _arithma_div(
+                        _arithma_num(1.0),
+                        _arithma_mul(
+                            _arithma_num(np.sqrt(2.0)),
+                            _arithma_pow(_arithma_num((12.0 + 1.0 / np.pi) * 20.0), _arithma_num(2.0)),
+                        ),
+                    ),
+                    _arithma_add(
+                        _arithma_num(1.0),
+                        _arithma_div(_arithma_num(1.0 / 137.035999084), _arithma_mul(_arithma_num(2.0), _arithma_num(np.pi))),
+                    ),
+                ),
+                eml=_eml_mul(
+                    _eml_div(
+                        _eml_scalar(1.0),
+                        _eml_mul(
+                            _eml_sqrt(_eml_scalar(2.0)),
+                            _eml_pow(_eml_scalar((12.0 + 1.0 / np.pi) * 20.0), _eml_scalar(2.0)),
+                        ),
+                    ),
+                    _eml_add(
+                        _eml_scalar(1.0),
+                        _eml_div(_eml_scalar(1.0 / 137.035999084), _eml_mul(_eml_scalar(2.0), _eml_pi())),
+                    ),
+                ),
+                value=(1.0 / (np.sqrt(2.0) * ((12.0 + 1.0 / np.pi) * 20.0) ** 2))
+                      * (1.0 + (1.0 / 137.035999084) / (2.0 * np.pi)),
+                triple_rel=1e-9,
             ),
         ]
 

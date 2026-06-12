@@ -544,7 +544,7 @@ class FRTTauGravityV18(SimulationBase):
                     "chi_eff": "Effective Euler characteristic = 144"
                 },
                 eml_latex=r"\alpha_F = \mathrm{ops.inv}(\mathrm{ops.pow}(\mathrm{eml\_scalar}(24), \mathrm{eml\_scalar}(2))),\quad \beta_F = \mathrm{ops.inv}(\mathrm{eml\_scalar}(144))",
-                eml_tree_str="ops.inv(ops.pow(eml_scalar(24.0), eml_scalar(2.0)))  # alpha_F = 1/b3^2",
+                eml_tree_str="ops.inv(ops.pow(b3_leaf(), eml_scalar(2.0)))  # alpha_F = 1/b3^2",
                 eml_description="EML: alpha_F = ops.inv(ops.pow(b3, 2)) = 1/576, beta_F = ops.inv(chi_eff) = 1/144",
             ),
             Formula(

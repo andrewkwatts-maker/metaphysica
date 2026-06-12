@@ -55,7 +55,7 @@ VALID_CERT_STATUSES = frozenset({"PASS", "FAIL", "OFFLINE"})
 
 # Simulation IDs that are allowed to have empty required_inputs (seed/root sims)
 EMPTY_INPUTS_ALLOWED = frozenset({
-    "geometric_anchors_v16_2",
+    "geometric_anchors",
 })
 
 MIN_DERIVATION_STEPS = 3

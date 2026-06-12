@@ -59,6 +59,29 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class AppendixUGammaCorrection(SimulationBase):
@@ -256,7 +279,7 @@ class AppendixUGammaCorrection(SimulationBase):
                     "Factor 2 from T^1 timelike fiber signature normalization. "
                     "alpha_T = D_total/D_string = 27/10 = 2.7 (algebraic identity)."
                 ),
-                eml_tree_str="ops.div(ops.mul(eml_scalar(27.0), eml_scalar(24.0)), ops.mul(eml_scalar(2.0), ops.mul(eml_scalar(10.0), eml_pi())))",
+                eml_tree_str="ops.div(ops.mul(eml_scalar(27.0), b3_leaf()), ops.mul(eml_scalar(2.0), ops.mul(eml_scalar(10.0), eml_pi())))",
                 eml_description=(
                     "EML gamma_correction: ops.div(ops.mul(D_total, b3), ops.mul(2, ops.mul(D_string, pi))). "
                     "= ops.div(ops.mul(27, 24), ops.mul(20, pi)). b3 and pi cancel in the alpha_T simplification."
@@ -279,7 +302,7 @@ class AppendixUGammaCorrection(SimulationBase):
                     "b3": "24 — G2 manifold Betti number",
                     "2": "T^1 timelike fiber signature normalization (Sp(2,R) equivalent)",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="alpha-t-simplification",
                 label="(U.2)",
@@ -312,7 +335,7 @@ class AppendixUGammaCorrection(SimulationBase):
                     "D_total": "27 — PM spacetime dimension",
                     "D_string": "10 — superstring dimension",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

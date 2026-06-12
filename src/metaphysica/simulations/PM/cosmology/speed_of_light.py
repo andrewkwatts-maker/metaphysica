@@ -541,10 +541,10 @@ class SpeedOfLightV17(SimulationBase):
                 ),
                 eml_tree_str=(
                     "# Speed of light chain in EML operator tree:\n"
-                    "# C_geo = ops.div(eml_scalar(18.0), eml_scalar(24.0))  # Δ_eff/b₃ = 3/4\n"
-                    "# S_f   = ops.add(eml_scalar(10.0), ops.div(eml_scalar(24.0), eml_scalar(10.0)))  # Z₆·b₃ + 1/Z₆\n"
+                    "# C_geo = ops.div(eml_scalar(18.0), b3_leaf())  # Δ_eff/b₃ = 3/4\n"
+                    "# S_f   = ops.add(eml_scalar(10.0), ops.div(b3_leaf(), eml_scalar(10.0)))  # Z₆·b₃ + 1/Z₆\n"
                     "# B_v   = ops.mul(ops.div(eml_scalar(288.0), eml_scalar(163.0)), ops.div(eml_scalar(153.0), eml_scalar(135.0)))\n"
-                    "# chi_gc = ops.div(ops.sub(eml_scalar(288.0), eml_scalar(24.0)), ops.add(eml_scalar(163.0), eml_scalar(1.0)))\n"
+                    "# chi_gc = ops.div(ops.sub(eml_scalar(288.0), b3_leaf()), ops.add(eml_scalar(163.0), eml_scalar(1.0)))\n"
                     "# P_3D  = ops.add(eml_scalar(1.0), ops.inv(eml_scalar(28800.0)))\n"
                     "# c = ops.mul(C_geo, ops.mul(S_f, ops.mul(B_v, ops.mul(chi_gc, ops.mul(eml_scalar(1e7), P_3D)))))"
                 ),

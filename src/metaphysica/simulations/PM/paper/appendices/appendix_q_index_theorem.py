@@ -55,6 +55,29 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 # Import FormulasRegistry as Single Source of Truth
 try:
@@ -754,8 +777,8 @@ class AppendixQIndexTheorem(SimulationBase):
                     "ind(D)": "Index of the Dirac operator",
                     "n+": "Number of positive chirality (left-handed) zero modes",
                     "n-": "Number of negative chirality (right-handed) zero modes",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.2) Atiyah-Singer index theorem
             Formula(
@@ -790,8 +813,8 @@ class AppendixQIndexTheorem(SimulationBase):
                     "A-hat(M)": "A-roof genus of manifold M",
                     "ch(E)": "Chern character of gauge bundle E",
                     "M": "Compact manifold (G2 in our case)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.3) A-roof genus
             Formula(
@@ -819,8 +842,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 terms={
                     "p_1": "First Pontryagin class",
                     "p_2": "Second Pontryagin class",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.4) Chern character
             Formula(
@@ -849,8 +872,8 @@ class AppendixQIndexTheorem(SimulationBase):
                     "rank(E)": "Rank of the vector bundle",
                     "c_1(E)": "First Chern class",
                     "c_2": "Second Chern class",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.5) Fermion zero modes
             Formula(
@@ -879,8 +902,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 terms={
                     "n": "Dimension of manifold M",
                     "TM": "Tangent bundle of M",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.6) Chiral anomaly
             Formula(
@@ -914,8 +937,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 terms={
                     "j^mu_5": "Axial vector current",
                     "F": "Field strength 2-form",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.7) Family index
             Formula(
@@ -944,8 +967,8 @@ class AppendixQIndexTheorem(SimulationBase):
                     "M": "Moduli space of the manifold",
                     "ker D": "Kernel bundle",
                     "coker D": "Cokernel bundle",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.8) G2 specialization
             Formula(
@@ -976,8 +999,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 },
                 terms={
                     "chi_eff": "Effective Euler characteristic (144 for TCS #187)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.9) Generation counting
             Formula(
@@ -1003,8 +1026,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 },
                 terms={
                     "N_gen": "Number of fermion generations",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.10) Principia result
             Formula(
@@ -1035,8 +1058,8 @@ class AppendixQIndexTheorem(SimulationBase):
                     "144": "Effective Euler characteristic",
                     "48": "Topological factor (6 x 8)",
                     "3": "Number of generations (exact)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.11) Euler-index relation
             Formula(
@@ -1062,8 +1085,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 },
                 terms={
                     "b_3": "Third Betti number (24 for TCS #187)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.12) Topological constraint
             Formula(
@@ -1091,8 +1114,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 terms={
                     "8": "Spinor DOF in 7D (Spin(7) representation)",
                     "24": "Third Betti number b_3",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

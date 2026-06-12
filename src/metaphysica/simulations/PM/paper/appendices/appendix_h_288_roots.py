@@ -483,7 +483,8 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.2)",
                 latex=r"\tau_{\text{total}} = \tau_A + \tau_B = 12 + 12 = 24",
                 plain_text="tau_total = 12 + 12 = 24",
-                eml_tree_str="ops.add(eml_vec('T_visible'), eml_vec('T_hidden'))",
+                # T4 (b): shadow torsion total = b3 (24 = 12+12 = b3) — route through b3_leaf
+                eml_tree_str="ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="GEOMETRIC",
                 description=(
                     "Total shadow torsion pins from the dual 13D shadow brane architecture. "
@@ -516,7 +517,8 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.3)",
                 latex=r"R_{\text{ancestral}} = 276 + 24 - 12 = 288",
                 plain_text="R_ancestral = 276 + 24 - 12 = 288",
-                eml_tree_str="ops.sub(ops.add(eml_vec('so24_generators'), eml_vec('shadow_torsion_total')), eml_vec('manifold_cost'))",
+                # T4 (b): expose b3 root — 276 = b3(b3-1)/2, 24 = b3, 12 = b3/2 → all in terms of b3_leaf
+                eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="DERIVED",
                 description=(
                     "Total ancestral root count from the 26D bulk symmetry budget. Each root "
@@ -590,7 +592,8 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.5)",
                 latex=r"N_{\text{hidden}} = 288 - 125 = 163",
                 plain_text="N_hidden = 288 - 125 = 163",
-                eml_tree_str="ops.sub(eml_vec('ancestral_roots'), eml_vec('node_count'))",
+                # T4 (b): 288 ancestral roots = 12·b3, so route via b3_leaf
+                eml_tree_str="ops.sub(ops.mul(eml_scalar(12.0), b3_leaf()), eml_vec('node_count'))",
                 category="DERIVED",
                 description=(
                     "Count of hidden structural supports (163) that enforce the Metric Lock. These "
@@ -621,7 +624,8 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.6)",
                 latex=r"R_{\text{ancestral}} = |E_8| + |\tilde{E}_8| = 240 + 48 = 288",
                 plain_text="R_ancestral = |E8| + |E8_tilde| = 240 + 48 = 288",
-                eml_tree_str="ops.add(eml_scalar(240.0), eml_scalar(48.0))",
+                # T4 (b): 288 = 12·b3 — keep E8 root counts as composition of b3-multiples (240 = 10·b3, 48 = 2·b3)
+                eml_tree_str="ops.add(ops.mul(eml_scalar(10.0), b3_leaf()), ops.mul(eml_scalar(2.0), b3_leaf()))",
                 category="GEOMETRIC",
                 description=(
                     "E8×E8 heterotic root decomposition showing how 288 ancestral roots arise from "

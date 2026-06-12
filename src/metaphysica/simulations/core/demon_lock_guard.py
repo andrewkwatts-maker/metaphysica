@@ -49,6 +49,57 @@ class DemonLockGuard:
     # v23.0+: EXPECTED_PARITY_SUM derived from: sophian_drag (163/239) + tzimtzum_pressure (23/24) = 1.6403...
     PARITY_TOLERANCE = 0.0001
 
+    # =========================================================================
+    # IMMUTABLE_PARAMS — v25.0 Sprint 4 additions
+    # =========================================================================
+    # Parameters that the Demon Lock treats as immutable once they have been
+    # registered.  Any attempt to silently re-set or mutate one of these in
+    # the PMRegistry must be flagged as a sterility violation.
+    #
+    # The list is split into two groups for clarity:
+    #   * legacy_seeds      — the Ten-Pillar / closure invariants that have
+    #                         been immutable since v17.x.
+    #   * v25_0_predictions — new physics parameters from Sprint 4
+    #                         (yukawa_derivation, re_t_sector,
+    #                         vacuum_selection, strong_cp_axion,
+    #                         baryogenesis, soft_susy_breaking).
+    IMMUTABLE_PARAMS = frozenset({
+        # Legacy seeds (Ten Pillar invariants)
+        "watts_constant",
+        "christ_constant",
+        "shadow_sector",
+        "sterile_sector",
+        "tzimtzum_pressure",
+        "sophian_drag",
+        # v25.0 Sprint 4 — proof-killer closures
+        "theta_13",
+        "delta_CP",
+        "ReT_stabilized",
+        "VEV_gap_percent",
+        "effective_vacua",
+        "dynamically_selected",
+        "raw_vacua",
+        "theta_QCD_eff",
+        "eta_B",
+        "epsilon_L",
+        "m_3_2_GeV",
+        "m_1_2_GeV",
+        "m_0_GeV",
+        "mu_GeV",
+        "A_0_GeV",
+        "B_mu_GeV2",
+        # v26.0 Sprint 5 — falsifiability strengthening suite
+        "omega_mirror_h2",
+        "n_s",
+        "r",
+        "g_aγγ_GeV",
+        "m_h_GeV",
+        "v_EW_GeV",
+        "H0_resolved_km_s_Mpc",
+        "S8_resolved",
+        "sigma_m_refined_eV",
+    })
+
     @property
     def EXPECTED_PARITY_SUM(self) -> float:
         """Parity sum target from FormulasRegistry (eta_S + sigma_T)."""

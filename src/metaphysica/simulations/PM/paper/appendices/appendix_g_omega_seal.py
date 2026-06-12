@@ -715,7 +715,8 @@ class AppendixGOmegaSeal(SimulationBase):
                 label="(G.1)",
                 latex=r"\Omega_{\text{seal}} = \text{SHA-256}\left(R_{288} \| \tau_{24} \| P_{12} \| \text{registry}\right)",
                 plain_text="Omega_seal = SHA-256(R_288 || tau_24 || P_12 || registry)",
-                eml_tree_str="ops.add(eml_vec('OMEGA_failures'), eml_vec('OMEGA_tensions'))",
+                # T4 (b): seal binds R_288 = 12·b3, tau_24 = b3, P_12 = b3/2 → expose b3_leaf
+                eml_tree_str="ops.add(ops.add(eml_vec('OMEGA_failures'), eml_vec('OMEGA_tensions')), ops.add(ops.add(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf()), ops.div(b3_leaf(), eml_scalar(2.0))))",
                 category="DERIVED",
                 description=(
                     "Geometric seal anchored to 288 ancestral roots, 24 torsion pins, and 12 bridge pairs. "
@@ -746,7 +747,8 @@ class AppendixGOmegaSeal(SimulationBase):
                 label="(G.2)",
                 latex=r"\tau_{\text{per-dim}} = \frac{24}{4} = 6 \quad \Rightarrow \quad \text{Isotropic}",
                 plain_text="tau_per_dim = 24/4 = 6 => Isotropic",
-                eml_tree_str="ops.div(eml_scalar(24.0), eml_scalar(4.0))",
+                # T4 (b): tau_total = b3 = 24; divide by 4 spacetime dims for 6 pins each.
+                eml_tree_str="ops.div(b3_leaf(), eml_scalar(4.0))",
                 category="DERIVED",
                 description=(
                     "4-fold stabilizer verification: the 24 torsion pins divide evenly among "

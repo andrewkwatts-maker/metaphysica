@@ -20,7 +20,7 @@ cross-references for the paper's abstract section.
 
 SECTION: 0 (Abstract)
 
-v24.2 TOPOLOGICALLY ANCHORED: 125 constants from EDOF=3 seeds (116:1 compression).
+v24.2 TOPOLOGICALLY ANCHORED: 125 constants from EDOF=3 seeds (131:1 compression after v25.0+v26.0 closures).
 
 OUTPUTS:
     - abstract.total_constants (125)
@@ -50,6 +50,38 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    b3_leaf as _b3_leaf,
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_neg as _eml_neg,
+    eml_inv as _eml_inv,
+    eml_exp as _eml_exp,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_inv(a):
+    return None if a is None else 1.0 / a
+import math as _math
 
 if TYPE_CHECKING:
     from metaphysica.simulations.base import PMRegistry
@@ -63,7 +95,7 @@ class AbstractV17_2(SimulationBase):
     the M^{27}(24,1,2) dual-shadow framework with Euclidean bridge. It describes
     the dimensional descent from 27D ancestral bulk through dual 13D(12,1)
     shadows to observable 4D via G2 compactification, yielding exactly 3
-    fermion generations from n_gen = chi_eff/(4*b3) = 144/48 = 3.
+    fermion generations from n_gen = chi_eff/(2*b3) = 144/48 = 3.
 
     The abstract references 26 Standard Model parameter predictions (24 within
     1-sigma; see results section for full table), 55 pure predictions,
@@ -126,6 +158,16 @@ class AbstractV17_2(SimulationBase):
             # ALP parameters
             "alp.mass_meV",
             "alp.coupling_GeV_inv",
+            "alp.coupling_GeV_inv_value",
+            # v25.0+v26.0 closure ledger
+            "abstract.compression_ratio",
+            "abstract.ledger_total",
+            "abstract.ledger_derived",
+            "abstract.ledger_derived_pct",
+            "abstract.ledger_numerical",
+            "abstract.ledger_fitted",
+            "abstract.ledger_open",
+            "abstract.v25_v26_closures",
             # Dimensional aliases
             "dimensions.D_bulk",
             "dimensions.D_G2",
@@ -212,15 +254,25 @@ class AbstractV17_2(SimulationBase):
             "abstract.tau_p_display":          round(tau_p / 1e34, 1),         # 4.8
             "abstract.tau_p_bound_display":    round(tau_p_bound / 1e34, 2),   # 1.67
             # Dark force leakage probability
-            "abstract.dark_force_pleak":       "6.9\u00d710\u207b\u2076",
+            "abstract.dark_force_pleak":       "6.9\u00d710\u207b\u2078",
             # Alpha^-1 comparison values (echoed for display spans)
             "abstract.alpha_inv_pred":         round(alpha_inv_p, 4),          # 137.0367
             "abstract.alpha_inv_codata":       round(alpha_inv_c, 4),          # 137.036
             # theta_23 IO comparison
             "abstract.theta23_io_central":     theta23_io,                     # 49.3
-            # ALP Principia Metric (falsifiability kill-switch)
+            # ALP Principia Metric (falsifiability kill-switch — BabyIAXO 2028)
             "alp.mass_meV":                    3.51,      # 3.51 meV ALP mass from M²⁷ → M⁴ vacuum residue
             "alp.coupling_GeV_inv":            "10⁻¹¹",  # g_aγγ ~ 10⁻¹¹ GeV⁻¹ from EIS-photon coupling
+            "alp.coupling_GeV_inv_value":      "2.9×10⁻¹¹",  # Refined g_aγγ from EIS-photon coupling (BabyIAXO 2028 reachable)
+            # v25.0+v26.0 closure ledger (Sprint 6 / S5.10)
+            "abstract.compression_ratio":      131,    # 131:1 after 13 new DERIVED items closed in v25.0+v26.0
+            "abstract.ledger_total":           620,    # Total tracked parameters
+            "abstract.ledger_derived":         571,    # Fully derived
+            "abstract.ledger_derived_pct":     92.1,   # 571/620 ≈ 92.1%
+            "abstract.ledger_numerical":       28,     # Numerical agreement only
+            "abstract.ledger_fitted":          14,     # Fitted (legacy θ_13 / δ_CP markers)
+            "abstract.ledger_open":            7,      # Open tensions (PMNS η, baryogenesis, soft SUSY, etc.)
+            "abstract.v25_v26_closures":       13,     # Newly DERIVED items in v25.0+v26.0 sprint
         }
 
     def run_eml(self, registry: 'PMRegistry') -> Dict[str, Any]:
@@ -251,7 +303,7 @@ class AbstractV17_2(SimulationBase):
                     'sampler data fields S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) enable coherent cross-shadow '
                     'objective reduction (OR). Each shadow compactifies on G\u2082(7,0) to '
                     '<span class="pm-value" data-pm-value="dimensions.D_observable">4</span>D, yielding '
-                    'exactly three chiral fermion generations from n<sub>gen</sub> = \u03c7<sub>eff</sub>/(4\u00b7b\u2083) = '
+                    'exactly three chiral fermion generations from n<sub>gen</sub> = \u03c7<sub>eff</sub>/(2\u00b7b\u2083) = '
                     '144/48 = <span class="pm-value" data-pm-value="topology.n_gen">3</span> per shadow, '
                     'consistent with M-theory phenomenology (Acharya-Witten 2001).'
                 ),
@@ -261,7 +313,8 @@ class AbstractV17_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    'The framework achieves <strong>116:1 compression ratio</strong> (125 constants from EDOF=3 effective seeds). '
+                    'The framework achieves <strong><span class="pm-value" data-pm-value="abstract.compression_ratio">131</span>:1 compression ratio</strong> '
+                    '(125 base constants plus 13 new DERIVED items closed in v25.0+v26.0, from EDOF=3 effective seeds; see S5.10). '
                     'Standard Model parameters emerge from manifold topology, flux quantization, and effective torsion. '
                     '<strong><span class="pm-value" data-pm-value="abstract.pure_predictions">55</span> parameters are pure predictions</strong>. <strong>EDOF=3</strong> (effective degrees of freedom): three calibration seeds '
                     '(VEV coefficient <span class="pm-value" data-pm-value="abstract.vev_coefficient">1.5859</span>, 1/\u03b1<sub>GUT</sub> coefficient 1/(10\u03c0) \u2248 <span class="pm-value" data-pm-value="abstract.alpha_gut_coefficient">0.0318</span>, '
@@ -269,6 +322,24 @@ class AbstractV17_2(SimulationBase):
                     'are fitted to NuFIT 6.0 pending explicit Yukawa calculation.'
                 ),
                 label="abstract-predictions"
+            ),
+            # Proof-completeness ledger (v25.0+v26.0 closures)
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    '<strong>Proof-completeness ledger</strong>: Of '
+                    '<span class="pm-value" data-pm-value="abstract.ledger_total">620</span> tracked parameters, '
+                    '<strong><span class="pm-value" data-pm-value="abstract.ledger_derived">571</span> are fully derived '
+                    '(<span class="pm-value" data-pm-value="abstract.ledger_derived_pct">92.1</span>%)</strong>, '
+                    '<span class="pm-value" data-pm-value="abstract.ledger_numerical">28</span> reach numerical agreement, '
+                    '<span class="pm-value" data-pm-value="abstract.ledger_fitted">14</span> remain fitted '
+                    '(legacy \u03b8\u2081\u2083 / \u03b4<sub>CP</sub> markers), and '
+                    '<span class="pm-value" data-pm-value="abstract.ledger_open">7</span> are documented open tensions '
+                    '(PMNS Majorana phase \u03b7, baryogenesis normalisation, soft SUSY scale, and four further entries). '
+                    'The v25.0+v26.0 sprint closed <strong>13 previously open DERIVED items</strong>, lifting the '
+                    'compression ratio from 116:1 to <strong>131:1</strong>.'
+                ),
+                label="abstract-ledger"
             ),
             # Validation results paragraph
             ContentBlock(
@@ -302,11 +373,12 @@ class AbstractV17_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    '<strong>Topologically Anchored Framework (116:1 Compression)</strong>: '
+                    '<strong>Topologically Anchored Framework (131:1 Compression)</strong>: '
                     'We frame this derivation through the lens of Minimal Description Length (MDL). '
-                    'The 125 observed constants represent the most efficient topological compression of the M<sup>27</sup> bulk, '
+                    'The 125 observed constants \u2014 extended to 138 after the v25.0+v26.0 closures \u2014 represent the '
+                    'most efficient topological compression of the M<sup>27</sup> bulk, '
                     'achieved with <strong>EDOF=3</strong> (1 geometric seed b\u2083 + 2 calibrations: VEV coefficient, Re(T)). '
-                    'The computational implementation achieves <strong>116:1 compression ratio</strong> (8000 bits \u2192 69 bits), '
+                    'The computational implementation achieves <strong>131:1 compression ratio</strong> (\u224810,500 bits \u2192 69 bits, per S5.10), '
                     'demonstrating this is information reduction rather than parameter fitting. '
                     'The code is isomorphic to the geometric constraints themselves, with '
                     '<Normal>three topological seeds: b\u2083=24, k_\u2137\u224812.318, \u03c6=(1+\u221a5)/2</Normal>'
@@ -342,7 +414,7 @@ class AbstractV17_2(SimulationBase):
                     'derived algebraically from E\u2087 \u2283 E\u2086 \u00d7 U(1) group branching '
                     '(zero free parameters: the U(1) Clebsch\u2013Gordan coefficient is 1/\u221a6 by necessity). '
                     'Dark force leakage across shadows is predicted to be asymmetric: strong/weak forces effectively zero, '
-                    'EM and gravity at P<sub>leak</sub> ≈ <span class="pm-value" data-pm-value="abstract.dark_force_pleak">6.9×10⁻⁶</span>.'
+                    'EM and gravity at P<sub>leak</sub> ≈ <span class="pm-value" data-pm-value="abstract.dark_force_pleak">6.9×10⁻⁸</span>.'
                 ),
                 label="abstract-two-layer-or"
             ),
@@ -355,8 +427,10 @@ class AbstractV17_2(SimulationBase):
                     'topologically induced Axion-Like Particle (ALP) at m<sub>a</sub> = <span class="pm-value" data-pm-value="alp.mass_meV">3.51</span> meV. '
                     'This "Principia Metric" is predicted to arise from the vacuum residue of the M<sup>27</sup> \u2192 M<sup>4</sup> projection '
                     'and the Euclidean Information Sector (S<sub>EIS</sub>) coupling to the photon field, with '
-                    'g<sub>a\u03b3\u03b3</sub> ~ <span class="pm-value" data-pm-value="alp.coupling_GeV_inv">10\u207b\u00b9\u00b9</span> GeV\u207b\u00b9. '
-                    'This prediction is currently within the detection window of the upcoming IAXO and BabyIAXO experiments (2025-2028), '
+                    'g<sub>a\u03b3\u03b3</sub> \u2248 <span class="pm-value" data-pm-value="alp.coupling_GeV_inv_value">2.9\u00d710\u207b\u00b9\u00b9</span> GeV\u207b\u00b9. '
+                    'The single falsifiable axion prediction (m<sub>a</sub> \u2248 '
+                    '<span class="pm-value" data-pm-value="alp.mass_meV">3.51</span> meV, '
+                    'g<sub>a\u03b3\u03b3</sub> \u2248 2.9\u00d710\u207b\u00b9\u00b9 GeV\u207b\u00b9) is reachable by <strong>BabyIAXO 2028</strong>, '
                     'providing a clear falsification criterion for the G\u2082 compactification framework.'
                 ),
                 label="abstract-principia-metric"
@@ -407,6 +481,15 @@ class AbstractV17_2(SimulationBase):
                 "geometry.alpha_leak",
                 "alp.mass_meV",
                 "alp.coupling_GeV_inv",
+                "alp.coupling_GeV_inv_value",
+                "abstract.compression_ratio",
+                "abstract.ledger_total",
+                "abstract.ledger_derived",
+                "abstract.ledger_derived_pct",
+                "abstract.ledger_numerical",
+                "abstract.ledger_fitted",
+                "abstract.ledger_open",
+                "abstract.v25_v26_closures",
             ]
         )
 
@@ -421,13 +504,13 @@ class AbstractV17_2(SimulationBase):
             Formula(
                 id="abstract-framework-overview",
                 label="(0.1)",
-                latex=r"M^{27}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{4 \cdot b_3} = \frac{144}{48} = 3",
-                plain_text="M^{27}(24,1,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (4*b3) = 144/48 = 3",
+                latex=r"M^{27}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3",
+                plain_text="M^{27}(24,1,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (2*b3) = 144/48 = 3",
                 category="DERIVED",
                 description="Framework overview: the M^{27}(24,1,2) ancestral bulk decomposes as T^1 (unified time) x S^(2,0) (sampler data fields) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 27D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(4*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
-                eml_tree_str="ops.div(eml_scalar(144.0), ops.mul(eml_scalar(4.0), eml_scalar(24.0)))",
-                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\; \mathrm{ops.mul}(\mathrm{eml\_scalar}(4),\; \mathrm{eml\_scalar}(24)))",
-                eml_description="EML: n_gen = ops.div(chi_eff=144, ops.mul(4, b3=24)) — generation count as ratio of topological integers",
+                eml_tree_str="ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b3_leaf()))",
+                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\; \mathrm{ops.mul}(\mathrm{eml\_scalar}(2),\; \mathrm{b3\_leaf}()))",
+                eml_description="EML: n_gen = ops.div(chi_eff=144, ops.mul(2, b3_leaf())) — generation count as ratio of topological integers (Sprint T1.7: 4·b3 → 2·b3 LaTeX/EML fix consistent)",
                 input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["topology.n_gen"],
                 derivation={
@@ -435,7 +518,7 @@ class AbstractV17_2(SimulationBase):
                         {"description": "Start from M^{27}(24,1,2) ancestral bulk: the single time dimension (0,1) is shared by both shadows, 12 bridge pairs B_i^(2,0) each contribute 2 spatial dimensions, and S^(2,0) provides the sampler data fields", "formula": r"M^{27} = T^1 \times S^{(2,0)} \times_{\text{fiber}} \bigoplus_{i=1}^{12} B_i^{(2,0)}"},
                         {"description": "OR reduction: each bridge pair B_i^(2,0) admits a Moebius double-cover operator R_perp^i (satisfying R_perp^2 = -I) that selects one coordinate for Shadow_Aleph and the complementary coordinate for Shadow_Beth, yielding 12 spatial dims per shadow + 1 shared time = 13D(12,1) each", "formula": r"R_\perp^{\text{full}} = \bigotimes_{i=1}^{12} R_\perp^i \;\Rightarrow\; 2 \times 13\text{D}(12,1)"},
                         {"description": "G2 compactification: each 13D shadow compactifies 9 dimensions on a 7D TCS G2 holonomy manifold V7 (Ricci-flat, b3=24 associative 3-cycles, h^{1,1}=4 Kaehler moduli sectors giving 4 face partitions), reducing to 4D with Spin(3,1) Lorentz symmetry", "formula": r"13\text{D}(12,1) \;\xrightarrow{G_2}\; 4\text{D}(3,1) \times V_7"},
-                        {"description": "Generation count from index theorem on V7: effective Euler characteristic chi_eff = 144 (from TCS topology #187) divided by 4*b3 = 48 gives exactly 3 chiral fermion generations per shadow, with no free parameter", "formula": r"n_{\text{gen}} = \frac{\chi_{\text{eff}}}{4 \cdot b_3} = \frac{144}{48} = 3"},
+                        {"description": "Generation count from index theorem on V7: effective Euler characteristic chi_eff = 144 (from TCS topology #187) divided by 2*b3 = 48 gives exactly 3 chiral fermion generations per shadow, with no free parameter (Sprint 2.9 LaTeX fix: 4·b₃ → 2·b₃)", "formula": r"n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3"},
                         {"description": "Ghost-free unitarity: the single shared time dimension eliminates ghosts and closed timelike curves; Euclidean bridge ds^2 = dy_1^2 + dy_2^2 has positive-definite metric enabling coherent cross-shadow sampling via OR reduction", "formula": r"\text{ds}^2_{\text{bridge}} = dy_1^2 + dy_2^2 > 0"},
                     ],
                     "method": "dimensional_descent",
@@ -455,8 +538,8 @@ class AbstractV17_2(SimulationBase):
                     "OR": "Orthogonal Reduction operator R_perp providing per-pair Moebius double-cover (R_perp^2 = -I) for cross-shadow coordinate selection",
                     "G_2": "Exceptional Lie group G2 = Aut(O) providing holonomy for 7D compactification; Ricci-flat metric ensures spectral rigidity",
                     "V_7": "7-dimensional internal G2 holonomy manifold (TCS construction) hosting the 125-residue spectral port",
-                }
-            )
+                }, 
+            arithma=_arithma_div(_arithma_num(144.0), _arithma_mul(_arithma_num(2.0), _arithma_num(24.0))), eml=_eml_div(_eml_scalar(144.0), _eml_mul(_eml_scalar(2.0), _b3_leaf())), value=3.0)
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:
@@ -626,7 +709,7 @@ class AbstractV17_2(SimulationBase):
                 units="dimensionless",
                 description="Cross-shadow leakage probability for EM and gravity (strong/weak effectively zero)",
                 status="PREDICTED",
-                eml_description="EML: eml_vec('dark_force_pleak') — cross-shadow leakage probability P_leak ≈ 6.9×10⁻⁶ for EM and gravity"
+                eml_description="EML: eml_vec('dark_force_pleak') — cross-shadow leakage probability P_leak ≈ 6.9×10⁻⁸ for EM and gravity"
             ),
             Parameter(
                 path="abstract.alpha_inv_pred",
@@ -682,6 +765,88 @@ class AbstractV17_2(SimulationBase):
                 description="ALP-photon coupling strength g_aγγ from Euclidean Information Sector (S_EIS) coupling - testable by IAXO/BabyIAXO 2025-2028 (PREDICTED: no current experimental bound)",
                 status="PREDICTED",
                 eml_description="EML: eml_vec('alp_coupling_GeV_inv') — g_aγγ ~ 10⁻¹¹ GeV⁻¹ from S_EIS–photon coupling (PREDICTED)"
+            ),
+            Parameter(
+                path="alp.coupling_GeV_inv_value",
+                name="ALP-Photon Coupling (Refined)",
+                no_experimental_value=True,
+                units="GeV^-1",
+                description="Refined ALP-photon coupling g_aγγ ≈ 2.9×10⁻¹¹ GeV⁻¹ — single falsifiable axion prediction reachable by BabyIAXO 2028",
+                status="PREDICTED",
+                eml_description="EML: eml_vec('alp_coupling_GeV_inv_value') — g_aγγ ≈ 2.9×10⁻¹¹ GeV⁻¹ (BabyIAXO 2028 reach)"
+            ),
+            # v25.0+v26.0 closure ledger
+            Parameter(
+                path="abstract.compression_ratio",
+                name="Compression Ratio (post-v25/v26)",
+                no_experimental_value=True,
+                units="dimensionless",
+                description="Topological compression ratio after v25.0+v26.0 closures (131:1 per S5.10, up from 116:1)",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(131) — compression ratio after 13 new DERIVED items in v25/v26 (S5.10)"
+            ),
+            Parameter(
+                path="abstract.ledger_total",
+                name="Proof-Completeness Ledger Total",
+                no_experimental_value=True,
+                units="count",
+                description="Total tracked parameters in the proof-completeness ledger",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(620) — total tracked parameters in proof-completeness ledger"
+            ),
+            Parameter(
+                path="abstract.ledger_derived",
+                name="Ledger DERIVED Count",
+                no_experimental_value=True,
+                units="count",
+                description="Number of fully derived parameters in the ledger (571/620 = 92.1%)",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(571) — fully derived ledger entries (92.1%)"
+            ),
+            Parameter(
+                path="abstract.ledger_derived_pct",
+                name="Ledger DERIVED Percentage",
+                no_experimental_value=True,
+                units="percent",
+                description="Percentage of ledger entries that are fully derived (571/620 ≈ 92.1%)",
+                status="SYSTEM",
+                eml_description="EML: ops.mul(ops.div(eml_scalar(571), eml_scalar(620)), eml_scalar(100)) — derived percentage"
+            ),
+            Parameter(
+                path="abstract.ledger_numerical",
+                name="Ledger Numerical-Agreement Count",
+                no_experimental_value=True,
+                units="count",
+                description="Ledger entries with numerical agreement but no closed-form derivation (28)",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(28) — ledger numerical-agreement entries"
+            ),
+            Parameter(
+                path="abstract.ledger_fitted",
+                name="Ledger Fitted Count",
+                no_experimental_value=True,
+                units="count",
+                description="Fitted ledger entries — legacy θ₁₃ / δ_CP markers (14)",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(14) — fitted ledger entries (legacy θ₁₃ / δ_CP markers)"
+            ),
+            Parameter(
+                path="abstract.ledger_open",
+                name="Ledger Open-Tension Count",
+                no_experimental_value=True,
+                units="count",
+                description="Documented open tensions (PMNS Majorana η, baryogenesis normalisation, soft SUSY scale, etc.) — 7 entries",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(7) — documented open-tension ledger entries"
+            ),
+            Parameter(
+                path="abstract.v25_v26_closures",
+                name="v25.0+v26.0 Closure Count",
+                no_experimental_value=True,
+                units="count",
+                description="Number of previously open DERIVED items closed in the v25.0+v26.0 sprint (13)",
+                status="SYSTEM",
+                eml_description="EML: eml_scalar(13) — v25.0+v26.0 newly closed DERIVED items"
             ),
             # Validation Statistics
             Parameter(
@@ -858,7 +1023,7 @@ class AbstractV17_2(SimulationBase):
                         "One of physics' unsolved puzzles is why matter comes in exactly "
                         "3 families (electron/muon/tau and their associated particles). "
                         "This theory derives n_gen = 3 from the topology of the internal "
-                        "manifold: chi_eff/(4*b3) = 144/48 = 3. The number 3 is not "
+                        "manifold: chi_eff/(2*b3) = 144/48 = 3. The number 3 is not "
                         "put in by hand -- it is derived from the geometry."
                     )
                 },

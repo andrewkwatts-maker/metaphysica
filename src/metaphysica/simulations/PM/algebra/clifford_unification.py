@@ -185,6 +185,12 @@ class CliffordUnificationSimulation(SimulationBase):
         return self.run(registry)
 
     def get_formulas(self) -> List[Formula]:
+        # CLASSIFIED(non-b3): algebraic identity
+        # The Clifford quadratic form v·v = Σ σᵢ vᵢ² is a structural identity
+        # of any Clifford algebra Cl(p,q). It is parameterised only by the
+        # signature σ ∈ {+1,-1}^n and does NOT depend on the b₃ Betti number.
+        # Per TIER_2_3_ROADMAP.md §T2.1.A this is bucket (a) — no chain link
+        # to b₃ is meaningful; leaving inputParams=[] is correct.
         return [
             Formula(
                 id="clifford-quadratic-unification",

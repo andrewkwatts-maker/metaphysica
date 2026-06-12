@@ -646,7 +646,7 @@ class CosmologicalConstantV16(SimulationBase):
                 input_params=["topology.elder_kads", "constants.k_gimel"],
                 output_params=["cosmology.entropy_density"],
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{eml\_scalar}(b_3),\, \mathrm{ops.log}(\mathrm{eml\_scalar}(k_{\gimel})))",
-                eml_tree_str="ops.mul(eml_scalar(24.0), ops.log(eml_scalar(12.318)))",
+                eml_tree_str="ops.mul(b3_leaf(), ops.log(eml_scalar(12.318)))",
                 eml_description="EML: S_G2 = ops.mul(b3, ops.log(k_gimel)) — G2 entropy from 3-cycle count",
                 derivation={
                     "steps": [
@@ -680,7 +680,7 @@ class CosmologicalConstantV16(SimulationBase):
                 plain_text="Lambda = (k_gimel * ln(k_gimel)^2 / b3^3) * (l_Pl/R_H)^2 * exp(-2*pi*D_crit)",
                 category="PREDICTED",
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{ops.div}(\mathrm{ops.mul}(k_{\gimel}, \mathrm{ops.pow}(\mathrm{ops.log}(k_{\gimel}), \mathrm{eml\_scalar}(2))), \mathrm{ops.pow}(b_3, \mathrm{eml\_scalar}(3))),\, \mathrm{ops.mul}(\mathrm{ops.pow}(l_{Pl}/R_H, \mathrm{eml\_scalar}(2)),\, \mathrm{ops.exp}(\mathrm{ops.neg}(\mathrm{ops.mul}(\mathrm{eml\_scalar}(2), \mathrm{ops.mul}(\mathrm{eml\_pi}(), \mathrm{eml\_scalar}(26))))))))",
-                eml_tree_str="ops.mul(ops.div(ops.mul(k_gimel, ops.pow(ops.log(k_gimel), eml_scalar(2.0))), ops.pow(eml_scalar(24.0), eml_scalar(3.0))), ops.mul(ops.pow(l_Pl_over_R_H, eml_scalar(2.0)), ops.exp(ops.neg(ops.mul(eml_scalar(2.0), ops.mul(eml_pi(), eml_scalar(26.0)))))))",
+                eml_tree_str="ops.mul(ops.div(ops.mul(k_gimel, ops.pow(ops.log(k_gimel), eml_scalar(2.0))), ops.pow(b3_leaf(), eml_scalar(3.0))), ops.mul(ops.pow(l_Pl_over_R_H, eml_scalar(2.0)), ops.exp(ops.neg(ops.mul(eml_scalar(2.0), ops.mul(eml_pi(), eml_scalar(26.0)))))))",
                 eml_description="EML: Lambda = ops.mul(ops.div(k_gimel*log(k_gimel)^2, b3^3), (l_Pl/R_H)^2 * exp(-2*pi*26))",
                 description=(
                     "v16.2: Cosmological constant with instanton suppression. "

@@ -53,6 +53,29 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class AppendixPG2Holonomy(SimulationBase):
@@ -623,8 +646,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "phi": "Associative 3-form",
                     "dx^{ijk}": "Wedge product dx^i ∧ dx^j ∧ dx^k",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="g2-4form-definition-v19",
                 label="(P.2)",
@@ -648,8 +671,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "psi": "Coassociative 4-form",
                     "*": "Hodge star operator",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="g2-as-so7-subgroup-v19",
                 label="(P.3)",
@@ -672,8 +695,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "G2": "Exceptional Lie group (14-dimensional)",
                     "SO(7)": "Special orthogonal group in 7D (21-dimensional)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="g2-holonomy-condition-v19",
                 label="(P.4)",
@@ -697,8 +720,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "nabla": "Levi-Civita connection",
                     "Hol(g)": "Holonomy group of metric g",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="g2-ricci-flat-v19",
                 label="(P.5)",
@@ -722,8 +745,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 },
                 terms={
                     "Ric(g)": "Ricci curvature tensor",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="octonion-multiplication-v19",
                 label="(P.6)",
@@ -748,8 +771,8 @@ class AppendixPG2Holonomy(SimulationBase):
                     "e_i": "Imaginary octonion units (i=1..7)",
                     "f_ijk": "Octonion structure constants",
                     "delta_ij": "Kronecker delta",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="g2-automorphism-v19",
                 label="(P.7)",
@@ -773,8 +796,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "Aut(O)": "Automorphism group of octonions",
                     "O": "Octonion algebra (8-dimensional)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="associative-3cycle-v19",
                 label="(P.8)",
@@ -799,8 +822,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "Sigma^3": "Associative 3-dimensional submanifold",
                     "vol": "Volume form on submanifold",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="coassociative-4cycle-v19",
                 label="(P.9)",
@@ -825,8 +848,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "Sigma^4": "Coassociative 4-dimensional submanifold",
                     "vol": "Volume form on submanifold",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="betti-number-relation-v19",
                 label="(P.10)",
@@ -851,8 +874,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "b_2": "Second Betti number (dimension of H^2)",
                     "M": "Compact G2 manifold",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="b3-from-euler-v19",
                 label="(P.11)",
@@ -876,8 +899,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "b_3": "Third Betti number",
                     "chi_eff": "Effective Euler characteristic (144)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="fermion-generations-v19",
                 label="(P.12)",
@@ -902,8 +925,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "n_gen": "Number of fermion generations",
                     "b_3": "Third Betti number (24)",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="su3-from-3cycles-v19",
                 label="(P.13)",
@@ -927,8 +950,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 terms={
                     "SU(3)_C": "Color gauge group",
                     "M2": "M-theory 2-brane",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="su2-from-4cycles-v19",
                 label="(P.14)",
@@ -953,8 +976,8 @@ class AppendixPG2Holonomy(SimulationBase):
                     "SU(2)_L": "Left-handed weak gauge group",
                     "M5": "M-theory 5-brane",
                     "chi(Sigma^4)": "Euler characteristic of 4-cycle",
-                }
-            ),
+                }, 
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

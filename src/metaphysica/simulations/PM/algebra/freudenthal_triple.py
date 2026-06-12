@@ -188,6 +188,13 @@ class FreudenthalTripleSimulation(SimulationBase):
                     r"q(A)": "Quartic invariant — E₇ quartic Casimir evaluated on the Pneuma condensate",
                 },
             ),
+            # CLASSIFIED(non-b3): algebraic identity
+            # The Freudenthal triple-product {x,y,z}_i is the linearisation of
+            # the Jordan triple system on J₃(𝕆) via the Jordan bilinear form.
+            # It is a structural identity of the triple system (Brown 1969)
+            # and does NOT depend on the b₃ Betti number — only on the J₃(𝕆)
+            # algebra structure. Per TIER_2_3_ROADMAP.md §T2.1.A this is
+            # bucket (a); no chain link to b₃ is meaningful.
             Formula(
                 id="freudenthal-triple-product",
                 label="(A2.3)",

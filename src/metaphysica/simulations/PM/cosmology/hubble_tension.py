@@ -13,7 +13,10 @@ Evidence:
    does NOT use KK modes. It uses a smooth interpolation formula:
    H(z) = H0_shoes * f(z) + H0_planck * (1 - f(z)), where f(z) is a
    sigmoid-like function. The local H0 is derived from a mixing angle:
-   H0_local = H0_planck * (1 + sin^2(31 deg)/2) ~ 72.96 km/s/Mpc.
+   H0_local = H0_planck * (1 + sin^2(31 deg)/2) ~ 76.34 km/s/Mpc
+   (overshoots SH0ES anchor 73.04 by ~4.5%; Sprint T3 #5 disposition:
+   documented_alternative path, registry-canonical late-time H0 stays
+   on the geometry.H0_local = 73.04 SH0ES anchor).
 
 2. MASS SCALE MISMATCH (47 ORDERS OF MAGNITUDE): Bridge geometry uses
    Planck-scale compactification (L1 = L2 = 1 Planck length). The lightest

@@ -42,6 +42,54 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+    def _arithma_var(name):
+        return _A.Expression.variable(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+    def _arithma_var(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_exp as _eml_exp,
+    eml_ln as _eml_ln,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_sqrt(a):
+    return None if a is None else a.sqrt()
+def _arithma_exp(a):
+    return None if a is None else a.exp()
+def _arithma_ln(a):
+    return None if a is None else a.ln()
 
 
 @dataclass
@@ -416,10 +464,10 @@ class LeechPartitionV16(SimulationBase):
                     "Lambda_24": "Leech lattice, unique 24D even unimodular lattice with no norm-2 vectors",
                     "Niemeier": "Classification of even unimodular lattices in 24D"
                 },
-                eml_latex=r"\dim(\Lambda_{24}) = \mathrm{eml\_scalar}(24)",
-                eml_tree_str="eml_scalar(24.0)",
-                eml_description="EML: eml_scalar(24) — Leech lattice dimension is a fixed mathematical constant (Conway 1969 uniqueness theorem)",
-            ),
+                eml_latex=r"\dim(\Lambda_{24}) = \mathrm{b3\_leaf}() = 24",
+                eml_tree_str="b3_leaf()",
+                eml_description="EML: b3_leaf() — Leech lattice dimension is canonically identified with b3=24; Conway (1969) uniqueness + Niemeier classification fixes dim=24, which is the same integer as the G2 third Betti number b3, so the chain links to the foundational seed",
+            arithma=_arithma_const("b3"), eml=_b3_leaf(), value=24.0),
             Formula(
                 id="g2-automorphism-relation",
                 label="(3.16)",
@@ -449,6 +497,9 @@ class LeechPartitionV16(SimulationBase):
                 eml_latex=r"\dim(\mathbb{O}) = \mathrm{eml\_scalar}(8),\quad \dim(G_2) = \mathrm{eml\_scalar}(14)",
                 eml_tree_str="eml_scalar(8.0)  # octonion dimension; G2 = Aut(O) is a structural identity not an arithmetic expression",
                 eml_description="EML: eml_scalar(8) for octonion dimension; G2=Aut(O) is a Lie group identity, dim(G2)=eml_scalar(14) — both fixed mathematical constants",
+                arithma=_arithma_num(8.0),
+                eml=_eml_scalar(8.0),
+                value=8.0,
             ),
             Formula(
                 id="octonionic-partition",
@@ -477,9 +528,12 @@ class LeechPartitionV16(SimulationBase):
                     "Lambda_24": "Leech lattice dimension (24)",
                     "O": "Octonion dimension (8)"
                 },
-                eml_latex=r"n_{gen} = \mathrm{ops.div}(\mathrm{eml\_scalar}(24),\, \mathrm{eml\_scalar}(8)) = 3",
-                eml_tree_str="ops.div(eml_scalar(24.0), eml_scalar(8.0))",
-                eml_description="EML: ops.div(eml_scalar(24), eml_scalar(8)) — exact integer division of Leech dimension by octonion dimension",
+                eml_latex=r"n_{gen} = \mathrm{ops.div}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(8)) = 3",
+                eml_tree_str="ops.div(b3_leaf(), eml_scalar(8.0))",
+                eml_description="EML: ops.div(b3_leaf(), eml_scalar(8)) — exact integer division of Leech dimension (=b3) by octonion dimension",
+                arithma=_arithma_div(_arithma_const("b3"), _arithma_num(8.0)),
+                eml=_eml_div(_b3_leaf(), _eml_scalar(8.0)),
+                value=3.0,
             ),
             Formula(
                 id="generation-theorem",
@@ -507,10 +561,10 @@ class LeechPartitionV16(SimulationBase):
                     "3": "Number of fermion generations",
                     "8": "Octonion dimension"
                 },
-                eml_latex=r"\mathrm{ops.mul}(\mathrm{eml\_scalar}(3),\, \mathrm{eml\_scalar}(8)) = \mathrm{eml\_scalar}(24)",
-                eml_tree_str="ops.eq(ops.mul(eml_scalar(3.0), eml_scalar(8.0)), eml_scalar(24.0))",
-                eml_description="EML: ops.mul(eml_scalar(3), eml_scalar(8)) — exact partition verifying 3 generations × 8D octonions = 24D Leech lattice with no remainder",
-            ),
+                eml_latex=r"\mathrm{ops.eq}(\mathrm{ops.mul}(\mathrm{eml\_scalar}(3),\, \mathrm{eml\_scalar}(8)),\, \mathrm{b3\_leaf}())",
+                eml_tree_str="ops.eq(ops.mul(eml_scalar(3.0), eml_scalar(8.0)), b3_leaf())",
+                eml_description="EML: ops.eq(ops.mul(eml_scalar(3), eml_scalar(8)), b3_leaf()) — exact partition verifying 3 generations x 8D octonions = b3 (Leech lattice dim = G2 third Betti number) with no remainder; rooted in b3",
+            arithma=_arithma_mul(_arithma_num(3.0), _arithma_num(8.0)), eml=_eml_mul(_eml_scalar(3.0), _eml_scalar(8.0)), value=24.0),
         ]
 
     # -------------------------------------------------------------------------

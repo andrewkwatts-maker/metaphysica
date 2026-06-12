@@ -666,7 +666,8 @@ class AppendixKSterileConstants(SimulationBase):
                 label="(K.1)",
                 latex=r"c = \frac{L_{\text{horizon}}}{6 \cdot t_{\text{Planck}}}",
                 plain_text="c = L_horizon / (6 * t_Planck)",
-                eml_tree_str="ops.div(eml_vec('L_horizon'), ops.mul(eml_scalar(6.0), eml_vec('t_Planck')))",
+                # T4 (b): 6 time-like pins = b3/4 (24/4 = 6 from 4-fold isotropy) → expose b3_leaf
+                eml_tree_str="ops.div(eml_vec('L_horizon'), ops.mul(ops.div(b3_leaf(), eml_scalar(4.0)), eml_vec('t_Planck')))",
                 category="GEOMETRIC",
                 description="Speed of light from time-like torsion pins.",
                 input_params=["topology.torsion_per_shadow"],

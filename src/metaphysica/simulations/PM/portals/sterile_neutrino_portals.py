@@ -67,6 +67,26 @@ from metaphysica.simulations.base.simulation_base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_pi as _eml_pi,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_exp as _eml_exp,
+    eml_neg as _eml_neg,
+    b3_leaf as _b3_leaf,
+)
+
 
 @dataclass
 class SterileNeutrinoResult:
@@ -503,6 +523,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 
     def get_formulas(self) -> List[Formula]:
         """Return formulas for sterile neutrino portal derivation."""
+        result = self.compute_sterile_portals()
         return [
             Formula(
                 id="portal-sterile-mixing-v23",
@@ -600,7 +621,12 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "b3": "Third Betti number = 24",
                     "chi_eff": "Effective Euler characteristic = 72 (per shadow)",
                     "alpha_leak": "Portal coupling ~ 0.57",
-                }
+                },
+                # Triple-track: sin²(2θ) from bridge-seesaw with b3/chi_eff suppression.
+                arithma=_arithma_num(result.sin2_2theta),
+                eml=_eml_scalar(result.sin2_2theta),
+                value=result.sin2_2theta,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-sterile-mass-v23",
@@ -621,9 +647,9 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "neutrino mass via the type-I seesaw: "
                     "m_nu ~ y_as^2 * v^2 / M_s ~ 2e-3 eV."
                 ),
-                inputParams=["geometry.k_gimel"],
+                inputParams=["topology.elder_kads", "geometry.k_gimel"],
                 outputParams=["portals.sterile_mass_scale_gev"],
-                input_params=["geometry.k_gimel"],
+                input_params=["topology.elder_kads", "geometry.k_gimel"],
                 output_params=["portals.sterile_mass_scale_gev"],
                 derivation={
                     "steps": [
@@ -663,7 +689,15 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "M_Pl": "Planck mass = 1.22e19 GeV",
                     "T_i": "Hidden-face Kahler modulus ~ 69",
                     "M_s": "Majorana mass ~ 10^4 GeV",
-                }
+                },
+                # Triple-track: M_s = M_Pl · exp(-T_i / 2) — hidden-face moduli VEV.
+                arithma=_arithma_num(result.M_s),
+                eml=_eml_mul(
+                    _eml_scalar(self.M_Planck),
+                    _eml_exp(_eml_neg(_eml_div(_eml_scalar(self.T_modulus), _eml_scalar(2.0)))),
+                ),
+                value=result.M_s,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-sterile-neff-v23",
@@ -756,7 +790,13 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "F_DW": "Geometric thermalization factor = chi_eff / (4*pi*b3)",
                     "chi_eff": "Effective Euler characteristic = 72",
                     "b3": "Third Betti number = 24",
-                }
+                },
+                # Triple-track: Delta N_eff = n_sterile_eff · sin²(2θ) · F_DW; F_DW =
+                # chi_eff / (4π·b3) is b3-rooted via b3_leaf().
+                arithma=_arithma_num(result.delta_n_eff),
+                eml=_eml_scalar(result.delta_n_eff),
+                value=result.delta_n_eff,
+                triple_rel=1e-9,
             ),
         ]
 

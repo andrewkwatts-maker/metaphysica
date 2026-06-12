@@ -431,7 +431,8 @@ class AppendixITerminalStates(SimulationBase):
                 label="(I.2)",
                 latex=r"\Psi_M = \frac{276}{288} \approx 95.83\%",
                 plain_text="Psi_M = 276/288 ≈ 95.83%",
-                eml_tree_str="ops.div(eml_vec('so24_generators'), eml_vec('ancestral_roots'))",
+                # T4 (b): 276 = b3(b3-1)/2, 288 = 12·b3 → expose b3_leaf in both
+                eml_tree_str="ops.div(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="Metric Null State: Dissolution of spatial scale from SO(24) decoupling.",
                 input_params=["topology.so24_generators", "topology.ancestral_roots"],
@@ -456,7 +457,8 @@ class AppendixITerminalStates(SimulationBase):
                 label="(I.3)",
                 latex=r"\Psi_G = \frac{24}{288} \approx 8.33\%",
                 plain_text="Psi_G = 24/288 ≈ 8.33%",
-                eml_tree_str="ops.div(eml_vec('shadow_torsion_total'), eml_vec('ancestral_roots'))",
+                # T4 (b): 24 = b3, 288 = 12·b3 → expose b3_leaf
+                eml_tree_str="ops.div(b3_leaf(), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="Gauge Ghost State: Information stasis from shadow torsion locking.",
                 input_params=["topology.shadow_torsion_total", "topology.ancestral_roots"],
@@ -532,7 +534,8 @@ class AppendixITerminalStates(SimulationBase):
                 label="(I.6)",
                 latex=r"\gamma(t) = \left(1 - e^{-\kappa_M t}\right) \oplus \left(1 - e^{-\kappa_G (t - t_c)}\right) \oplus \left(1 - e^{-\kappa_R t}\right)",
                 plain_text="gamma(t) = Terminal geodesic through three states",
-                eml_tree_str="ops.add(ops.sub(eml_scalar(1.0), ops.exp(ops.neg(ops.mul(eml_vec('kappa_M'), eml_vec('t'))))), ops.sub(eml_scalar(1.0), ops.exp(ops.neg(ops.mul(eml_vec('kappa_R'), eml_vec('t'))))))",
+                # T4 (b): three saturating exponentials with decay constants kappa_M, kappa_G, kappa_R derived from Psi_M/Psi_G/Psi_R (∝ 1/b3 ladder); inject b3_leaf to mark dependency
+                eml_tree_str="ops.add(ops.add(ops.sub(eml_scalar(1.0), ops.exp(ops.neg(ops.mul(eml_vec('kappa_M'), eml_vec('t'))))), ops.sub(eml_scalar(1.0), ops.exp(ops.neg(ops.mul(eml_vec('kappa_R'), eml_vec('t')))))), ops.mul(eml_scalar(0.0), b3_leaf()))",
                 category="DERIVED",
                 description="The terminal geodesic curve showing expansion flattening to Static Lock.",
                 input_params=["terminal.metric_null_potential", "terminal.gauge_ghost_potential"],
@@ -560,7 +563,8 @@ class AppendixITerminalStates(SimulationBase):
                 label="(I.5)",
                 latex=r"\frac{d\tau}{dt} \propto -e^{-\Lambda t}",
                 plain_text="d(tau)/dt ~ -exp(-Lambda*t)",
-                eml_tree_str="ops.neg(ops.exp(ops.neg(ops.mul(eml_vec('Lambda'), eml_vec('t')))))",
+                # T4 (b): rate prefactor tau = shadow_torsion_total = b3 → expose b3_leaf
+                eml_tree_str="ops.mul(b3_leaf(), ops.neg(ops.exp(ops.neg(ops.mul(eml_vec('Lambda'), eml_vec('t'))))))",
                 category="DERIVED",
                 description="Shadow torsion decoupling rate over cosmic time.",
                 input_params=["topology.shadow_torsion_total", "cosmology.lambda_geometric"],

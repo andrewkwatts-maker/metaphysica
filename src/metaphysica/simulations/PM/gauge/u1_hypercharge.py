@@ -35,6 +35,19 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 
 @dataclass
 class HyperchargeResult:
@@ -535,6 +548,7 @@ class U1HyperchargeSimulation(SimulationBase):
                     "B_mu": "Hypercharge gauge boson field",
                     "Y": "Weak hypercharge generator",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="u1-hypercharge-kinetic",
@@ -574,6 +588,7 @@ class U1HyperchargeSimulation(SimulationBase):
                     "B_{mn}": "U(1)_Y field strength tensor",
                     "g'": "U(1)_Y coupling, weakest SM gauge coupling",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="u1-electric-charge-formula",
@@ -614,6 +629,7 @@ class U1HyperchargeSimulation(SimulationBase):
                     "e": "Electromagnetic coupling constant (fine structure: alpha = e^2/(4pi))",
                     "theta_W": "Weinberg angle: tan(theta_W) = g'/g_2",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

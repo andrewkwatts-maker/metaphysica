@@ -100,6 +100,28 @@ from metaphysica.simulations.base import (
     SectionContent,
     ContentBlock,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_exp as _eml_exp,
+)
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
 
 
 class ProtonDecaySimulation(SimulationBase):
@@ -518,7 +540,11 @@ class ProtonDecaySimulation(SimulationBase):
                     "a modest but physically significant suppression that lifts the "
                     "predicted proton lifetime above the Super-K bound."
                 ),
-                inputParams=["topology.K_MATCHING"],
+                # T2.1.B (b) fix: K_MATCHING derives from b₂ which is paired with b₃
+                # in the betti-numbers producer (TCS Wirthmüller invariants for
+                # G2 #187). Add b₃ as explicit input so the dependency walker
+                # roots the chain at b3_leaf().
+                inputParams=["topology.K_MATCHING", "topology.elder_kads"],
                 outputParams=["proton_decay.suppression_factor", "proton_decay.d_over_R"],
                 derivation={
                     "parentFormulas": ["tcs-matching-condition"],
@@ -543,7 +569,11 @@ class ProtonDecaySimulation(SimulationBase):
                     "K": "K3 fibre matching number (K=4 for TCS G2 #187)",
                     "psi_matter": "Zero-mode wavefunction localized on associative matter 3-cycle",
                     "psi_Higgs": "Zero-mode wavefunction localized on coassociative Higgs 4-cycle",
-                }
+                },
+                arithma=_arithma_num(np.exp(1.0 / 4.0)),
+                eml=_eml_exp(_eml_div(_eml_scalar(1.0), _eml_scalar(4.0))),
+                value=np.exp(1.0 / 4.0),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="proton-lifetime",
@@ -576,10 +606,16 @@ class ProtonDecaySimulation(SimulationBase):
                     "stabilization, not RG extrapolation) for a testable Hyper-K "
                     "prediction."
                 ),
+                # T2.1.B (b) fix: τ_p ∝ M_GUT⁴ × α_GUT^{-2} × S. M_GUT_GEOMETRIC is
+                # the geometric/torsion-stabilized scale derived from G₂ moduli
+                # (chi_eff = 6·b₃) and α_GUT is the geometric unification value
+                # at the same scale; S = exp(1/K) traces via cycle-separation
+                # to topology.K_MATCHING -> b₂ -> betti-numbers -> b₃.
                 inputParams=[
                     "gauge.M_GUT_GEOMETRIC",
                     "gauge.ALPHA_GUT_GEOMETRIC",
                     "proton_decay.suppression_factor",
+                    "topology.elder_kads",
                 ],
                 outputParams=["proton_decay.tau_p_years"],
                 derivation={
@@ -613,7 +649,32 @@ class ProtonDecaySimulation(SimulationBase):
                     "C_6": "Wilson coefficient of dimension-6 operator, C_6 ~ alpha_GUT/M_GUT^2",
                     "alpha_H": "Hadronic matrix element from lattice QCD (~0.015 GeV^3)",
                     "O_6": "Dimension-6 baryon-number-violating operator (qqql structure)",
-                }
+                },
+                # τ_p = C × (M_GUT/10^16)^4 × (0.03/α_GUT)^2 × S.
+                # Exponents carefully tracked: M_GUT^4 / m_p^5 lives in the dim-6
+                # operator; here ops.pow(_, 4) and ops.pow(_, 2) are explicit.
+                arithma=_arithma_mul(
+                    _arithma_mul(
+                        _arithma_num(3.82e33),
+                        _arithma_pow(_arithma_div(_arithma_num(2.1e16), _arithma_num(1e16)), _arithma_num(4.0)),
+                    ),
+                    _arithma_mul(
+                        _arithma_pow(_arithma_mul(_arithma_num(0.03), _arithma_num(23.54)), _arithma_num(2.0)),
+                        _arithma_num(np.exp(1.0 / 4.0)),
+                    ),
+                ),
+                eml=_eml_mul(
+                    _eml_mul(
+                        _eml_scalar(3.82e33),
+                        _eml_pow(_eml_div(_eml_scalar(2.1e16), _eml_scalar(1e16)), _eml_scalar(4.0)),
+                    ),
+                    _eml_mul(
+                        _eml_pow(_eml_mul(_eml_scalar(0.03), _eml_scalar(23.54)), _eml_scalar(2.0)),
+                        _eml_exp(_eml_div(_eml_scalar(1.0), _eml_scalar(4.0))),
+                    ),
+                ),
+                value=3.82e33 * (2.1e16 / 1e16) ** 4 * (0.03 * 23.54) ** 2 * np.exp(1.0 / 4.0),
+                triple_rel=1e-6,
             ),
         ]
 

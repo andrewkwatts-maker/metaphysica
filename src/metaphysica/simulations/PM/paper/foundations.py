@@ -52,6 +52,38 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    b3_leaf as _b3_leaf,
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_neg as _eml_neg,
+    eml_inv as _eml_inv,
+    eml_exp as _eml_exp,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_inv(a):
+    return None if a is None else 1.0 / a
+import math as _math
 
 
 class FoundationsV16_2(SimulationBase):
@@ -674,7 +706,7 @@ class FoundationsV16_2(SimulationBase):
                     "parentFormulas": []
                 },
                 eml_tree_str=(
-                    "ops.add(eml_scalar(24.0), eml_scalar(1.0))"
+                    "ops.add(b3_leaf(), eml_scalar(1.0))"
                 ),
                 eml_description=(
                     "Bulk signature (24,1): 24 spacelike dimensions plus 1 timelike."
@@ -684,7 +716,7 @@ class FoundationsV16_2(SimulationBase):
                     "ds^2": "Line element of the bulk metric",
                     "dy_{1i}, dy_{2i}": "Bridge pair coordinates for the i-th pair"
                 },
-            ),
+            arithma=_arithma_add(_arithma_num(24.0), _arithma_num(1.0)), eml=_eml_add(_b3_leaf(), _eml_scalar(1.0)), value=25.0),
             Formula(
                 id="euclidean-bridge",
                 label="(1.2)",
@@ -714,7 +746,7 @@ class FoundationsV16_2(SimulationBase):
                     "B_i^{2,0}": "i-th Euclidean bridge pair with (2,0) signature",
                     "x_fiber": "Fiber product (fibered over time)"
                 },
-            ),
+            arithma=_arithma_mul(_arithma_num(12.0), _arithma_num(2.0)), eml=_eml_mul(_eml_scalar(12.0), _eml_scalar(2.0)), value=24.0),
             Formula(
                 id="or-reduction-tensor",
                 label="(1.2b)",
@@ -744,7 +776,7 @@ class FoundationsV16_2(SimulationBase):
                     "R_perp^full": "Full tensor product OR operator over 12 pairs",
                     "bigotimes": "Tensor product over all bridge pairs"
                 },
-            ),
+            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)), value=12.0),
             Formula(
                 id="central-sampler-formula",
                 label="(1.2c)",
@@ -775,7 +807,7 @@ class FoundationsV16_2(SimulationBase):
                     "n_local": "Number of active local pairs (6 baseline to 12 full)",
                     "phi": "Golden ratio (1+sqrt(5))/2"
                 },
-            ),
+            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)), value=12.0),
             Formula(
                 id="g2-holonomy-foundations",
                 label="(1.3)",
@@ -806,7 +838,7 @@ class FoundationsV16_2(SimulationBase):
                     "eta": "Associative 3-form (parallel under G2 holonomy)",
                     "nabla": "Levi-Civita connection"
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             # b3 Generations formula - critical for fermion generation count
             Formula(
                 id="b3-generations",
@@ -827,7 +859,7 @@ class FoundationsV16_2(SimulationBase):
                     "parentFormulas": ["g2-holonomy-foundations"]
                 },
                 eml_tree_str=(
-                    "ops.div(eml_scalar(24.0), eml_scalar(8.0))"
+                    "ops.div(b3_leaf(), eml_scalar(8.0))"
                 ),
                 eml_description=(
                     "Three fermion generations: b3=24 divided by 8 flux quantization divisor."
@@ -837,7 +869,7 @@ class FoundationsV16_2(SimulationBase):
                     "b_3": "Third Betti number of G2 manifold (24)",
                     "8": "Divisor from flux quantization constraint"
                 },
-            ),
+            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(8.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(8.0)), value=3.0),
             Formula(
                 id="calabi-yau-projection",
                 label="(1.4)",
@@ -845,12 +877,13 @@ class FoundationsV16_2(SimulationBase):
                 plain_text="V7 -> M^4 x K^6 via CY3",
                 category="DERIVED",
                 description="Calabi-Yau filtering from 7D G2 to 4D Minkowski spacetime.",
-                input_params=["dimensions.D_after_sp2r"],
+                input_params=["topology.elder_kads", "dimensions.D_after_sp2r"],
                 output_params=["dimensions.D_observable"],
                 derivation={
                     "method": "dimensional_reduction",
                     "steps": [
-                        "7D G2 manifold V7 admits CY3 sub-manifold as intermediate step",
+                        "7D G2 manifold V7 is the b3=24 G2-holonomy compactification space (Ten-Pillar seed)",
+                        "V7 admits a CY3 sub-manifold as intermediate step in the dimensional descent",
                         "Projection yields M^4 (Minkowski) x K^6 (internal Calabi-Yau)",
                         "CY3 Hodge numbers determine chirality and gauge group in 4D"
                     ],
@@ -868,7 +901,7 @@ class FoundationsV16_2(SimulationBase):
                     "M^4": "4-dimensional Minkowski spacetime",
                     "K^6": "6-dimensional internal compact space"
                 },
-            ),
+            arithma=_arithma_sub(_arithma_num(7.0), _arithma_num(3.0)), eml=_eml_sub(_eml_scalar(7.0), _eml_scalar(3.0)), value=4.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

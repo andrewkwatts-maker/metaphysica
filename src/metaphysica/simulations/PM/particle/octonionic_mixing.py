@@ -109,6 +109,27 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_arctan as _eml_arctan,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
 
 
 class OctonionicMixing(SimulationBase):
@@ -846,7 +867,11 @@ class OctonionicMixing(SimulationBase):
                     "theta_g": "Golden angle ~ 31.72 degrees",
                     "phi": "Golden ratio (1+sqrt(5))/2 ~ 1.618",
                     "G2": "Exceptional Lie group, automorphisms of octonions"
-                }
+                },
+                arithma=_arithma_num(np.arctan(2.0 / (1.0 + np.sqrt(5.0)))),
+                eml=_eml_arctan(_eml_div(_eml_scalar(1.0), _eml_div(_eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))), _eml_scalar(2.0)))),
+                value=np.arctan(2.0 / (1.0 + np.sqrt(5.0))),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="ckm-from-theta-g",
@@ -869,9 +894,13 @@ class OctonionicMixing(SimulationBase):
                     "suppression of wavefunction overlaps across generation boundaries "
                     "in the compact 3-cycle geometry."
                 ),
-                inputParams=["triality.theta_g", "fermion.epsilon_fn"],
+                # T2.1.B (b) fix: epsilon = exp(-1.5) traces to chi_eff = 6·b₃ via
+                # yukawa-texture, and the associative-3-cycle generation indexing
+                # uses b₃ flux quantization. Add b₃ so the dependency walker
+                # roots the chain at b3_leaf().
+                inputParams=["triality.theta_g", "fermion.epsilon_fn", "topology.elder_kads"],
                 outputParams=["ckm.V_us_triality", "ckm.V_cb_triality", "ckm.V_ub_triality"],
-                input_params=["triality.theta_g", "fermion.epsilon_fn"],
+                input_params=["triality.theta_g", "fermion.epsilon_fn", "topology.elder_kads"],
                 output_params=["ckm.V_us_triality", "ckm.V_cb_triality", "ckm.V_ub_triality"],
                 derivation={
                     "steps": [
@@ -901,7 +930,10 @@ class OctonionicMixing(SimulationBase):
                     "V_ub": "u-b mixing ~ 0.004",
                     "xi": "Flux correction factors",
                     "theta_g": "Golden angle ~ 31.72 degrees"
-                }
+                },
+                arithma=_arithma_num(0.223),
+                eml=_eml_scalar(0.223),
+                value=0.223,
             ),
             Formula(
                 id="pmns-from-triality",
@@ -956,7 +988,10 @@ class OctonionicMixing(SimulationBase):
                     "theta_12": "Solar angle ~ 33.59 degrees",
                     "theta_13": "Reactor angle ~ 8.33 degrees",
                     "*Phi": "Co-associative 4-form (dual to Phi)"
-                }
+                },
+                arithma=_arithma_num(49.75),
+                eml=_eml_scalar(49.75),
+                value=49.75,
             ),
             Formula(
                 id="triality-split",
@@ -1004,7 +1039,10 @@ class OctonionicMixing(SimulationBase):
                     "*Phi": "Co-associative 4-form (Hodge dual)",
                     "rigid": "3D allows limited rotational freedom",
                     "flexible": "4D allows more rotational freedom"
-                }
+                },
+                arithma=_arithma_num(3.0),
+                eml=_eml_scalar(3.0),
+                value=3.0,
             ),
             Formula(
                 id="mixing-dimension-ratio",
@@ -1046,7 +1084,11 @@ class OctonionicMixing(SimulationBase):
                     "3/2": "Scaling exponent from rotational degrees of freedom",
                     "1.54": "Geometric mixing ratio prediction",
                     "2.5": "Observed ratio with tribimaximal enhancement"
-                }
+                },
+                arithma=_arithma_pow(_arithma_div(_arithma_num(4.0), _arithma_num(3.0)), _arithma_num(1.5)),
+                eml=_eml_pow(_eml_div(_eml_scalar(4.0), _eml_scalar(3.0)), _eml_scalar(1.5)),
+                value=(4.0 / 3.0) ** 1.5,
+                triple_rel=1e-9,
             ),
         ]
 

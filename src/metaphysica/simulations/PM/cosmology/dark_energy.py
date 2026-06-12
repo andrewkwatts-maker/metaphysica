@@ -1001,7 +1001,7 @@ class DarkEnergyV16(SimulationBase):
                     "sigma": f"Standard deviation from DESI thawing measurement ({deviation:.2f}σ)"
                 },
                 eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(24)))",
-                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))",
+                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))",
                 eml_description="EML: w0 = ops.add(ops.neg(1), ops.inv(b3)) = -23/24 from G2 topology",
             ),
             Formula(
@@ -1048,7 +1048,7 @@ class DarkEnergyV16(SimulationBase):
                     "z": "Redshift"
                 },
                 eml_latex=r"\mathrm{ops.add}(w_0,\, \mathrm{ops.mul}(\mathrm{ops.neg}(\mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{eml\_scalar}(24)))),\, \mathrm{ops.sub}(\mathrm{eml\_scalar}(1), a)))",
-                eml_tree_str="ops.add(w0, ops.mul(ops.neg(ops.inv(ops.sqrt(eml_scalar(24.0)))), ops.sub(eml_scalar(1.0), a)))",
+                eml_tree_str="ops.add(w0, ops.mul(ops.neg(ops.inv(ops.sqrt(b3_leaf()))), ops.sub(eml_scalar(1.0), a)))",
                 eml_description="EML: w(a) = ops.add(w0, ops.mul(wa, ops.sub(1, a))) — CPL dark energy time evolution",
             ),
             # ── Breathing Dark Energy Formulas (DERIVED) ──────────────

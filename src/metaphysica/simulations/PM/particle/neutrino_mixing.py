@@ -159,6 +159,35 @@ from metaphysica.simulations.base import (
     MetadataBuilder,
     delta_cp_with_parity,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_div as _eml_div,
+    eml_pi as _eml_pi,
+    eml_sqrt as _eml_sqrt,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_b3():
+    return _arithma_num(24.0)
 
 
 class NeutrinoMixingSimulation(SimulationBase):
@@ -1064,7 +1093,18 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "n_gen": "Number of fermion generations",
                     "chi_eff": "Effective Euler characteristic",
                     "S_orient": "Flux orientation sum"
-                }
+                },
+                # TODO(v25.0): replace with T₄/24-cell geometric derivation (Sprint 4 #2).
+                arithma=_arithma_mul(
+                    _arithma_div(_arithma_num(np.sqrt(4.0 * 3.0)), _arithma_b3()),
+                    _arithma_add(_arithma_num(1.0), _arithma_div(_arithma_num(12.0), _arithma_mul(_arithma_num(2.0), _arithma_num(144.0)))),
+                ),
+                eml=_eml_mul(
+                    _eml_div(_eml_sqrt(_eml_mul(_eml_scalar(4.0), _eml_scalar(3.0))), _b3_leaf()),
+                    _eml_add(_eml_scalar(1.0), _eml_div(_eml_scalar(12.0), _eml_mul(_eml_scalar(2.0), _eml_scalar(144.0)))),
+                ),
+                value=(np.sqrt(12.0) / 24.0) * (1.0 + 12.0 / (2.0 * 144.0)),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="pmns-delta-cp",
@@ -1113,7 +1153,24 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "n_gen": "Number of fermion generations",
                     "b2": "Kähler moduli count",
                     "b3": "Associative 3-cycle count"
-                }
+                },
+                # TODO(v25.0): replace with T₄/24-cell geometric derivation (Sprint 4 #2).
+                arithma=_arithma_mul(
+                    _arithma_num(np.pi),
+                    _arithma_add(
+                        _arithma_div(_arithma_add(_arithma_num(3.0), _arithma_num(4.0)), _arithma_mul(_arithma_num(2.0), _arithma_num(3.0))),
+                        _arithma_div(_arithma_num(3.0), _arithma_b3()),
+                    ),
+                ),
+                eml=_eml_mul(
+                    _eml_pi(),
+                    _eml_add(
+                        _eml_div(_eml_add(_eml_scalar(3.0), _eml_scalar(4.0)), _eml_mul(_eml_scalar(2.0), _eml_scalar(3.0))),
+                        _eml_div(_eml_scalar(3.0), _b3_leaf()),
+                    ),
+                ),
+                value=np.pi * ((3.0 + 4.0) / (2.0 * 3.0) + 3.0 / 24.0),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="pmns-theta-12",
@@ -1174,7 +1231,23 @@ class NeutrinoMixingSimulation(SimulationBase):
                     r"n_{\text{gen}}": "Number of fermion generations (3)",
                     r"\chi_{\text{eff}}": "Effective Euler characteristic",
                     r"\delta": "Topological perturbation from TBM base"
-                }
+                },
+                arithma=_arithma_mul(
+                    _arithma_div(_arithma_num(1.0), _arithma_num(np.sqrt(3.0))),
+                    _arithma_sub(
+                        _arithma_num(1.0),
+                        _arithma_div(_arithma_sub(_arithma_b3(), _arithma_mul(_arithma_num(4.0), _arithma_num(3.0))), _arithma_mul(_arithma_num(2.0), _arithma_num(144.0))),
+                    ),
+                ),
+                eml=_eml_mul(
+                    _eml_div(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(3.0))),
+                    _eml_sub(
+                        _eml_scalar(1.0),
+                        _eml_div(_eml_sub(_b3_leaf(), _eml_mul(_eml_scalar(4.0), _eml_scalar(3.0))), _eml_mul(_eml_scalar(2.0), _eml_scalar(144.0))),
+                    ),
+                ),
+                value=(1.0 / np.sqrt(3.0)) * (1.0 - (24.0 - 4.0 * 3.0) / (2.0 * 144.0)),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="pmns-theta-23",
@@ -1258,7 +1331,29 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "n_gen": "Number of fermion generations",
                     "chi_eff": "Effective Euler characteristic",
                     "S_orient": "Flux orientation sum (Euclidean bridge OR reduction)"
-                }
+                },
+                arithma=_arithma_add(
+                    _arithma_num(45.0),
+                    _arithma_add(
+                        _arithma_div(_arithma_mul(_arithma_sub(_arithma_num(4.0), _arithma_num(3.0)), _arithma_num(3.0)), _arithma_num(4.0)),
+                        _arithma_mul(
+                            _arithma_div(_arithma_num(12.0), _arithma_b3()),
+                            _arithma_div(_arithma_mul(_arithma_num(4.0), _arithma_num(144.0)), _arithma_mul(_arithma_b3(), _arithma_num(3.0))),
+                        ),
+                    ),
+                ),
+                eml=_eml_add(
+                    _eml_scalar(45.0),
+                    _eml_add(
+                        _eml_div(_eml_mul(_eml_sub(_eml_scalar(4.0), _eml_scalar(3.0)), _eml_scalar(3.0)), _eml_scalar(4.0)),
+                        _eml_mul(
+                            _eml_div(_eml_scalar(12.0), _b3_leaf()),
+                            _eml_div(_eml_mul(_eml_scalar(4.0), _eml_scalar(144.0)), _eml_mul(_b3_leaf(), _eml_scalar(3.0))),
+                        ),
+                    ),
+                ),
+                value=45.0 + ((4.0 - 3.0) * 3.0 / 4.0) + (12.0 / 24.0) * ((4.0 * 144.0) / (24.0 * 3.0)),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="neutrino-mass-spectrum",
@@ -1310,7 +1405,10 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "Y_nu": "Neutrino Yukawa coupling matrix",
                     "M_nu": "Neutrino mass matrix (Majorana)",
                     "epsilon": "Off-diagonal mixing ~ b2/chi_eff"
-                }
+                },
+                arithma=_arithma_num(0.002),
+                eml=_eml_scalar(0.002),
+                value=0.002,
             ),
             Formula(
                 id="neutrino-mass-sum",
@@ -1364,7 +1462,11 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "m_base": "Geometric seesaw mass scale (~0.049 eV)",
                     "C_kaf": "Flux suppression parameter = b3/(b2×n_gen)",
                     "m3": "Light neutrino mass in Inverted Ordering"
-                }
+                },
+                arithma=_arithma_add(_arithma_num(0.049), _arithma_add(_arithma_num(0.049), _arithma_num(0.002))),
+                eml=_eml_add(_eml_scalar(0.049), _eml_add(_eml_scalar(0.049), _eml_scalar(0.002))),
+                value=0.049 + 0.049 + 0.002,
+                triple_rel=1e-9,
             ),
         ]
 

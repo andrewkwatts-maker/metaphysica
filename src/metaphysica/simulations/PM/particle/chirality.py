@@ -62,6 +62,24 @@ from metaphysica.simulations.base import (
     SectionContent,
     ContentBlock,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_b3():
+    return _arithma_num(24.0)
 
 
 class ChiralitySpinorSimulation(SimulationBase):
@@ -580,7 +598,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "∇_μ": "Levi-Civita spin connection",
                     "S": "Spinor bundle on G2 manifold",
                     "dim(S)": "Fiber dimension (8 real components)",
-                }
+                },
+                arithma=_arithma_num(8.0),
+                eml=_eml_scalar(8.0),
+                value=8.0,
             ),
 
             Formula(
@@ -629,7 +650,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "P_R": "Right-handed chirality projector",
                     "*Φ": "Hodge dual of associative 4-form (coassociative 3-form)",
                     "Φ": "Associative 4-form defining G2 structure",
-                }
+                },
+                arithma=_arithma_div(_arithma_num(1.0), _arithma_num(2.0)),
+                eml=_eml_div(_eml_scalar(1.0), _eml_scalar(2.0)),
+                value=0.5,
             ),
 
             Formula(
@@ -679,7 +703,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "∇_μ": "Spin connection (from G2 metric)",
                     "A_μ": "Gauge connection (from flux)",
                     "g": "Gauge coupling constant",
-                }
+                },
+                arithma=_arithma_div(_arithma_num(144.0), _arithma_b3()),
+                eml=_eml_div(_eml_scalar(144.0), _b3_leaf()),
+                value=6.0,
             ),
 
             Formula(
@@ -687,9 +714,9 @@ class ChiralitySpinorSimulation(SimulationBase):
                 label="(4.1.4)",
                 latex=r"\text{index}(\not{D}) = n_L - n_R = \frac{1}{(2\pi)^3} \int_{M_7} \Phi \wedge F \wedge F",
                 plain_text="index(∂/) = n_L - n_R = (2π)^(-3) ∫ Φ ∧ F ∧ F",
-                eml_tree_str="ops.div(chi_eff, eml_scalar(24.0))",
+                eml_tree_str="ops.div(chi_eff, b3_leaf())",
                 eml_latex=r"\mathrm{ops.div}(\chi_{\text{eff}},\; \mathrm{eml\_scalar}(24))",
-                eml_description="EML: index = ops.div(chi_eff, eml_scalar(24.0)) = ops.div(eml_scalar(144.0), eml_scalar(24.0)) = eml_scalar(6.0)",
+                eml_description="EML: index = ops.div(chi_eff, b3_leaf()) = ops.div(eml_scalar(144.0), b3_leaf()) = eml_scalar(6.0)",
                 category="DERIVED",
                 description=(
                     "Atiyah-Singer index theorem for Dirac operator on G2 manifold. "
@@ -731,7 +758,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "F": "Gauge field strength (curvature 2-form)",
                     "M_7": "Seven-dimensional G2 manifold",
                     "χ_eff": "Effective Euler characteristic (topological invariant)",
-                }
+                },
+                arithma=_arithma_div(_arithma_num(144.0), _arithma_b3()),
+                eml=_eml_div(_eml_scalar(144.0), _b3_leaf()),
+                value=6.0,
             ),
 
             Formula(
@@ -739,9 +769,9 @@ class ChiralitySpinorSimulation(SimulationBase):
                 label="(4.1.6)",
                 latex=r"n_{\text{gen}} = \frac{b_3}{\text{spinor DOF}} = \frac{24}{8} = 3",
                 plain_text="n_gen = b_3 / spinor_DOF = 24 / 8 = 3",
-                eml_tree_str="ops.div(eml_scalar(24.0), eml_scalar(8.0))",
+                eml_tree_str="ops.div(b3_leaf(), eml_scalar(8.0))",
                 eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(24),\; \mathrm{eml\_scalar}(8))",
-                eml_description="EML: n_gen = ops.div(b3, spinor_dof) = ops.div(eml_scalar(24.0), eml_scalar(8.0)) = eml_scalar(3.0)",
+                eml_description="EML: n_gen = ops.div(b3, spinor_dof) = ops.div(b3_leaf(), eml_scalar(8.0)) = eml_scalar(3.0)",
                 category="PREDICTED",
                 description=(
                     "Number of fermion generations from spinor saturation on G2 manifold. "
@@ -779,7 +809,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "n_gen": "Number of fermion generations",
                     "b_3": "Third Betti number (counts associative 3-cycles)",
                     "spinor_DOF": "Spinor degrees of freedom (8 for Spin(7))",
-                }
+                },
+                arithma=_arithma_div(_arithma_b3(), _arithma_num(8.0)),
+                eml=_eml_div(_b3_leaf(), _eml_scalar(8.0)),
+                value=3.0,
             ),
         ]
 

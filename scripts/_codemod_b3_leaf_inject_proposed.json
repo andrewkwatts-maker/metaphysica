@@ -1,0 +1,819 @@
+{
+  "tool": "codemod_b3_leaf_inject",
+  "version": "1.0.0",
+  "root": "H:/Github/metaphysica/src/metaphysica/simulations/PM",
+  "files_scanned": 170,
+  "files_with_proposals": 23,
+  "total_proposals": 39,
+  "total_scalar_24_hits": 49,
+  "applied": true,
+  "applied_replacements": 49,
+  "b_residual_ids_expected": [
+    "axion-decay-constant-v18",
+    "bounce-action-v19",
+    "c-torsion-derivation",
+    "calabi-yau-projection",
+    "dark-energy-eos",
+    "gauge-coupling-unification",
+    "gut-scale",
+    "higgs-brane-projection",
+    "hubble-tension-resolution",
+    "instability-scale-v19",
+    "kk-threshold",
+    "mass-spectrum-v18",
+    "moduli-damping-v18",
+    "s8-definition",
+    "shadow-torsion-sum",
+    "torsion-funnel-exit",
+    "tunneling-rate-v19",
+    "vacuum-lifetime-v19"
+  ],
+  "proposals": [
+    {
+      "file": "src/metaphysica/simulations/PM/algebra/gaugino_condensation.py",
+      "formula_id": "gaugino-lambda-eff",
+      "inventory_match": false,
+      "line_start": 275,
+      "line_end": 306,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "ops.neg(ops.div(ops.mul(2, pi), eml_scalar(24.0))))\"",
+          "after": "ops.neg(ops.div(ops.mul(2, pi), b3_leaf())))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/algebra/gaugino_condensation.py",
+      "formula_id": "gaugino-cabibbo-derived",
+      "inventory_match": false,
+      "line_start": 345,
+      "line_end": 419,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "ps.mul(eml_pi(), ops.div(T_min, eml_scalar(24)))))), \"\n                    \"op",
+          "after": "ps.mul(eml_pi(), ops.div(T_min, b3_leaf()))))), \"\n                    \"op"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/bridge_axion_ede.py",
+      "formula_id": "bridge-ede-knp-enhancement-v24",
+      "inventory_match": false,
+      "line_start": 1210,
+      "line_end": 1269,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": ".sqrt(ops.mul(eml_scalar(12.0), eml_scalar(24.0))), eml_scalar(2.0))\"\n          ",
+          "after": ".sqrt(ops.mul(eml_scalar(12.0), b3_leaf())), eml_scalar(2.0))\"\n          "
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/cosmological_constant.py",
+      "formula_id": "g2-entropy-density",
+      "inventory_match": false,
+      "line_start": 637,
+      "line_end": 675,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.mul(eml_scalar(24.0), ops.log(eml_scalar(12.318)))\"",
+          "after": "\"ops.mul(b3_leaf(), ops.log(eml_scalar(12.318)))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/cosmological_constant.py",
+      "formula_id": "cosmological-constant-geometric",
+      "inventory_match": false,
+      "line_start": 676,
+      "line_end": 731,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "el), eml_scalar(2.0))), ops.pow(eml_scalar(24.0), eml_scalar(3.0))), ops.mul(ops",
+          "after": "el), eml_scalar(2.0))), ops.pow(b3_leaf(), eml_scalar(3.0))), ops.mul(ops"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy.py",
+      "formula_id": "dark-energy-eos-derivation",
+      "inventory_match": false,
+      "line_start": 957,
+      "line_end": 1006,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "s.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))\"",
+          "after": "s.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy.py",
+      "formula_id": "dark-energy-time-evolution",
+      "inventory_match": false,
+      "line_start": 1007,
+      "line_end": 1053,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "ps.mul(ops.neg(ops.inv(ops.sqrt(eml_scalar(24.0)))), ops.sub(eml_scalar(1.0), a)",
+          "after": "ps.mul(ops.neg(ops.inv(ops.sqrt(b3_leaf()))), ops.sub(eml_scalar(1.0), a)"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy_thawing.py",
+      "formula_id": "thawing-w0-derivation",
+      "inventory_match": false,
+      "line_start": 815,
+      "line_end": 862,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "s.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))\"",
+          "after": "s.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy_thawing.py",
+      "formula_id": "thawing-wa-derivation",
+      "inventory_match": false,
+      "line_start": 863,
+      "line_end": 908,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.neg(ops.inv(ops.sqrt(eml_scalar(24.0))))\"",
+          "after": "\"ops.neg(ops.inv(ops.sqrt(b3_leaf())))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy_thawing.py",
+      "formula_id": "torsional-leakage-formula",
+      "inventory_match": false,
+      "line_start": 954,
+      "line_end": 993,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 2,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.mul(ops.div(eml_scalar(24.0), chi_eff), ops.sub(eml_scalar(1",
+          "after": "\"ops.mul(ops.div(b3_leaf(), chi_eff), ops.sub(eml_scalar(1"
+        },
+        {
+          "before": "l_scalar(1.0), ops.inv(ops.sqrt(eml_scalar(24.0)))))\"",
+          "after": "l_scalar(1.0), ops.inv(ops.sqrt(b3_leaf()))))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (2 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dark_energy_thawing.py",
+      "formula_id": "4face-w0-prediction",
+      "inventory_match": false,
+      "line_start": 1086,
+      "line_end": 1118,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": ".div(ops.neg(eml_scalar(23.0)), eml_scalar(24.0))\"",
+          "after": ".div(ops.neg(eml_scalar(23.0)), b3_leaf())\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/dynamical_lambda.py",
+      "formula_id": "dynamical-lambda-vtorsion",
+      "inventory_match": false,
+      "line_start": 1204,
+      "line_end": 1240,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": ".div(eml_scalar(144.0), ops.pow(eml_scalar(24.0), eml_scalar(3.0))), ops.pow(eml",
+          "after": ".div(eml_scalar(144.0), ops.pow(b3_leaf(), eml_scalar(3.0))), ops.pow(eml"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/evolution_engine.py",
+      "formula_id": "h-evolution-log-scaling",
+      "inventory_match": false,
+      "line_start": 726,
+      "line_end": 770,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "g(ops.add(eml_scalar(1.0), z)), eml_scalar(24.0))))\"",
+          "after": "g(ops.add(eml_scalar(1.0), z)), b3_leaf())))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/evolution_engine.py",
+      "formula_id": "relaxation-factor",
+      "inventory_match": false,
+      "line_start": 771,
+      "line_end": 810,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "g(ops.add(eml_scalar(1.0), z)), eml_scalar(24.0)))\"",
+          "after": "g(ops.add(eml_scalar(1.0), z)), b3_leaf()))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/f_r_t_tau_gravity.py",
+      "formula_id": "alpha-f-derivation-v18",
+      "inventory_match": false,
+      "line_start": 505,
+      "line_end": 549,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.inv(ops.pow(eml_scalar(24.0), eml_scalar(2.0)))  # alpha_F =",
+          "after": "\"ops.inv(ops.pow(b3_leaf(), eml_scalar(2.0)))  # alpha_F ="
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/multi_sector.py",
+      "formula_id": "moduli-potential",
+      "inventory_match": false,
+      "line_start": 734,
+      "line_end": 789,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 2,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": " sigma_width = ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0)))\\n\"\n       ",
+          "after": " sigma_width = ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0)))\\n\"\n       "
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "         \"EML: ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0))) \u2014 \"\n      ",
+          "after": "         \"EML: ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0))) \u2014 \"\n      "
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/ricci_flow_h0.py",
+      "formula_id": "effective-curvature-evolution",
+      "inventory_match": false,
+      "line_start": 562,
+      "line_end": 600,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.div(k_gimel, eml_scalar(24.0))\"",
+          "after": "\"ops.div(k_gimel, b3_leaf())\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/cosmology/speed_of_light.py",
+      "formula_id": "speed-of-light-derivation",
+      "inventory_match": false,
+      "line_start": 526,
+      "line_end": 622,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 3,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "geo = ops.div(eml_scalar(18.0), eml_scalar(24.0))  # \u0394_eff/b\u2083 = 3/4\\n\"\n         ",
+          "after": "geo = ops.div(eml_scalar(18.0), b3_leaf())  # \u0394_eff/b\u2083 = 3/4\\n\"\n         "
+        },
+        {
+          "before": "s.add(eml_scalar(10.0), ops.div(eml_scalar(24.0), eml_scalar(10.0)))  # Z\u2086\u00b7b\u2083 + ",
+          "after": "s.add(eml_scalar(10.0), ops.div(b3_leaf(), eml_scalar(10.0)))  # Z\u2086\u00b7b\u2083 + "
+        },
+        {
+          "before": ".div(ops.sub(eml_scalar(288.0), eml_scalar(24.0)), ops.add(eml_scalar(163.0), em",
+          "after": ".div(ops.sub(eml_scalar(288.0), b3_leaf()), ops.add(eml_scalar(163.0), em"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (3 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/derivations/gr_spacetime.py",
+      "formula_id": "gr-newton-from-g2-v19",
+      "inventory_match": false,
+      "line_start": 1351,
+      "line_end": 1383,
+      "eml_tree_str_present": true,
+      "eml_description_present": false,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "s.mul(ops.pow(eml_vec('M_26D'), eml_scalar(24.0)), eml_vec('Vol_X22')))\"\n       ",
+          "after": "s.mul(ops.pow(eml_vec('M_26D'), b3_leaf()), eml_vec('Vol_X22')))\"\n       "
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/field_dynamics/orch_or_geometry.py",
+      "formula_id": "microtubule-topological-pitch",
+      "inventory_match": false,
+      "line_start": 863,
+      "line_end": 941,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "                       \"ops.div(eml_scalar(24.0), ops.div(eml_vec('k_gimel'), em",
+          "after": "                       \"ops.div(b3_leaf(), ops.div(eml_vec('k_gimel'), em"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/field_dynamics/thermal_time.py",
+      "formula_id": "alpha-t-base",
+      "inventory_match": false,
+      "line_start": 616,
+      "line_end": 661,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0))\"",
+          "after": "mul(eml_scalar(2.0), eml_pi()), b3_leaf())\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/field_dynamics/thermal_time.py",
+      "formula_id": "alpha-t-derivation",
+      "inventory_match": false,
+      "line_start": 662,
+      "line_end": 726,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 0,
+      "bare_24_hits_in_tree": 1,
+      "diff_eml_tree_str": [],
+      "diff_eml_description": [],
+      "notes": "no eml_scalar(24) candidates -- manual review for bare `24` literal in eml_tree_str (1 hit(s))"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/gauge/gauge_unification.py",
+      "formula_id": "kk-threshold",
+      "inventory_match": true,
+      "line_start": 637,
+      "line_end": 675,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.mul(ops.div(ops.mul(k_i, eml_scalar(24.0)), ops.mul(eml_scalar(2.0), eml_",
+          "after": "\"ops.mul(ops.div(ops.mul(k_i, b3_leaf()), ops.mul(eml_scalar(2.0), eml_"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/gauge/gauge_unification.py",
+      "formula_id": "asymptotic-safety-fixed-point",
+      "inventory_match": false,
+      "line_start": 676,
+      "line_end": 713,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.inv(eml_scalar(24.0))  # alpha_star = 1/b3\"",
+          "after": "\"ops.inv(b3_leaf())  # alpha_star = 1/b3\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/geometry/four_face_structure.py",
+      "formula_id": "alpha-leak-coupling",
+      "inventory_match": false,
+      "line_start": 402,
+      "line_end": 489,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "sqrt(ops.div(eml_scalar(144.0), eml_scalar(24.0))))\"",
+          "after": "sqrt(ops.div(eml_scalar(144.0), b3_leaf())))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/geometry/four_face_structure.py",
+      "formula_id": "racetrack-moduli-vev",
+      "inventory_match": false,
+      "line_start": 490,
+      "line_end": 566,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.div(ops.mul(eml_scalar(24.0), eml_scalar(12.3183)), ops.mul(",
+          "after": "\"ops.div(ops.mul(b3_leaf(), eml_scalar(12.3183)), ops.mul("
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/geometry/modular_invariance.py",
+      "formula_id": "dedekind-eta-definition",
+      "inventory_match": false,
+      "line_start": 440,
+      "line_end": 471,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 2,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "ml_scalar(2.0), eml_pi(), tau), eml_scalar(24.0))), infinite_product_1_minus_q_n",
+          "after": "ml_scalar(2.0), eml_pi(), tau), b3_leaf())), infinite_product_1_minus_q_n"
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "p(ops.div(ops.mul(2*pi*i, tau), eml_scalar(24))) \u2014 the /24 in the exponent is ",
+          "after": "p(ops.div(ops.mul(2*pi*i, tau), b3_leaf())) \u2014 the /24 in the exponent is "
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/geometry/modular_invariance.py",
+      "formula_id": "partition-function-eta",
+      "inventory_match": false,
+      "line_start": 472,
+      "line_end": 502,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.pow(eta_tau, ops.neg(eml_scalar(24.0)))\"",
+          "after": "\"ops.pow(eta_tau, ops.neg(b3_leaf()))\""
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/appendices/appendix_u_gamma_correction.py",
+      "formula_id": "gamma-geometric-candidate",
+      "inventory_match": false,
+      "line_start": 271,
+      "line_end": 305,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "s.div(ops.mul(eml_scalar(27.0), eml_scalar(24.0)), ops.mul(eml_scalar(2.0), ops.",
+          "after": "s.div(ops.mul(eml_scalar(27.0), b3_leaf()), ops.mul(eml_scalar(2.0), ops."
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/foundations.py",
+      "formula_id": "26d-signature",
+      "inventory_match": false,
+      "line_start": 690,
+      "line_end": 719,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "(\n                    \"ops.add(eml_scalar(24.0), eml_scalar(1.0))\"\n            ",
+          "after": "(\n                    \"ops.add(b3_leaf(), eml_scalar(1.0))\"\n            "
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/foundations.py",
+      "formula_id": "b3-generations",
+      "inventory_match": false,
+      "line_start": 843,
+      "line_end": 872,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "(\n                    \"ops.div(eml_scalar(24.0), eml_scalar(8.0))\"\n            ",
+          "after": "(\n                    \"ops.div(b3_leaf(), eml_scalar(8.0))\"\n            "
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/predictions_aggregator.py",
+      "formula_id": "desi-w0-validation-v23",
+      "inventory_match": false,
+      "line_start": 1931,
+      "line_end": 1978,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "1.0)), ops.div(eml_scalar(1.0), eml_scalar(24.0)))\"\n                )",
+          "after": "1.0)), ops.div(eml_scalar(1.0), b3_leaf()))\"\n                )"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/results.py",
+      "formula_id": "w0-derivation",
+      "inventory_match": false,
+      "line_start": 671,
+      "line_end": 705,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 3,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "s.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))\\n\"\n                    \"#    ",
+          "after": "s.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))\\n\"\n                    \"#    "
+        },
+        {
+          "before": ".div(ops.neg(eml_scalar(23.0)), eml_scalar(24.0))\"\n                )",
+          "after": ".div(ops.neg(eml_scalar(23.0)), b3_leaf())\"\n                )"
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "1 + 1/b3 = -23/24; \u0394w = ops.inv(eml_scalar(24.0)) from flux-bearing cycles\"\n    ",
+          "after": "1 + 1/b3 = -23/24; \u0394w = ops.inv(b3_leaf()) from flux-bearing cycles\"\n    "
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (2 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/results.py",
+      "formula_id": "h0-topology-bridge",
+      "inventory_match": false,
+      "line_start": 742,
+      "line_end": 783,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "     \"# chi=eml_scalar(144), b3=eml_scalar(24)\"\n                )",
+          "after": "     \"# chi=eml_scalar(144), b3=b3_leaf()\"\n                )"
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/results.py",
+      "formula_id": "vacuum-floor",
+      "inventory_match": false,
+      "line_start": 784,
+      "line_end": 820,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 2,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "ssion = ops.exp(ops.neg(ops.mul(eml_scalar(24.0), eml_scalar(144.0))))\"\n        ",
+          "after": "ssion = ops.exp(ops.neg(ops.mul(b3_leaf(), eml_scalar(144.0))))\"\n        "
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "anta; \"\n                    \"b3=eml_scalar(24), chi=eml_scalar(144)\"\n         ",
+          "after": "anta; \"\n                    \"b3=b3_leaf(), chi=eml_scalar(144)\"\n         "
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/paper/results.py",
+      "formula_id": "holonomy-volume-constraint",
+      "inventory_match": false,
+      "line_start": 870,
+      "line_end": 899,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [],
+      "diff_eml_description": [
+        {
+          "before": "       \"chi=eml_scalar(144), b3=eml_scalar(24); V7 volume constrained by G2 to",
+          "after": "       \"chi=eml_scalar(144), b3=b3_leaf(); V7 volume constrained by G2 to"
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (0 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/particle/chirality.py",
+      "formula_id": "chirality-index-theorem",
+      "inventory_match": false,
+      "line_start": 712,
+      "line_end": 765,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 3,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.div(chi_eff, eml_scalar(24.0))\"",
+          "after": "\"ops.div(chi_eff, b3_leaf())\""
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "\"EML: index = ops.div(chi_eff, eml_scalar(24.0)) = ops.div(eml_scalar(144.0), e",
+          "after": "\"EML: index = ops.div(chi_eff, b3_leaf()) = ops.div(eml_scalar(144.0), e"
+        },
+        {
+          "before": ")) = ops.div(eml_scalar(144.0), eml_scalar(24.0)) = eml_scalar(6.0)\"",
+          "after": ")) = ops.div(eml_scalar(144.0), b3_leaf()) = eml_scalar(6.0)\""
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 2 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/particle/chirality.py",
+      "formula_id": "spinor-saturation-generations",
+      "inventory_match": false,
+      "line_start": 767,
+      "line_end": 816,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 2,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "\"ops.div(eml_scalar(24.0), eml_scalar(8.0))\"",
+          "after": "\"ops.div(b3_leaf(), eml_scalar(8.0))\""
+        }
+      ],
+      "diff_eml_description": [
+        {
+          "before": "s.div(b3, spinor_dof) = ops.div(eml_scalar(24.0), eml_scalar(8.0)) = eml_scalar(",
+          "after": "s.div(b3, spinor_dof) = ops.div(b3_leaf(), eml_scalar(8.0)) = eml_scalar("
+        }
+      ],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 1 description)"
+    },
+    {
+      "file": "src/metaphysica/simulations/PM/particle/higgs_vev_refined.py",
+      "formula_id": "higgs-vev-geometric-v18",
+      "inventory_match": false,
+      "line_start": 393,
+      "line_end": 447,
+      "eml_tree_str_present": true,
+      "eml_description_present": true,
+      "scalar_24_hits": 1,
+      "bare_24_hits_in_tree": 0,
+      "diff_eml_tree_str": [
+        {
+          "before": "mul(eml_vec('k_gimel'), ops.sub(eml_scalar(24.0), eml_scalar(4.0)))\"\n           ",
+          "after": "mul(eml_vec('k_gimel'), ops.sub(b3_leaf(), eml_scalar(4.0)))\"\n           "
+        }
+      ],
+      "diff_eml_description": [],
+      "notes": "auto-suggest eml_scalar(24[.0]) -> b3_leaf() (1 tree, 0 description)"
+    }
+  ]
+}

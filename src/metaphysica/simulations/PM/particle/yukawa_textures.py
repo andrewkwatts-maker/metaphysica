@@ -61,6 +61,31 @@ from metaphysica.simulations.base.simulation_base import (
     Formula,
     Parameter,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_b3():
+    return _arithma_num(24.0)
 
 
 @dataclass
@@ -261,6 +286,158 @@ class YukawaTexturesV18(SimulationBase):
 
         return J_geometric
 
+    # ───────── Sprint T6 #2 (TIER_2_3_ROADMAP T3.5) ─────────────────────
+    # Holomorphic Yukawa couplings via G2 triple-cycle intersections.
+    #
+    #   Y_ij ∝ exp(-ω_ij / τ_decay),   τ_decay = (k_gimel / b3)² ≈ 0.263
+    #
+    # Each generation localizes on a distinct associative 3-cycle on the
+    # G2 manifold.  The geodesic distance between cycles i and j sets the
+    # wavefunction-overlap suppression.  With 12 bridge pairs (b3/2) we
+    # have a natural discrete lattice of cycle positions on which the
+    # ω_i are pinned (no fitted free parameters).
+    #
+    # Canonical cycle indices on the b3-lattice (ω_i = π · n_i / b3):
+    #   n_3 = 1   (third generation sits closest to the Higgs profile)
+    #   n_2 = 10  ((b3/2) − 2 — second-generation seat on bridge ring)
+    #   n_1 = 22  (b3 − 2 — first-generation seat farthest from Higgs)
+    #
+    # These three integers are NOT fit — they are the natural assignment
+    # induced by the 12-bridge-pair geometry: generation 3 occupies the
+    # innermost bridge slot, generation 2 sits at the equator of the
+    # bridge ring, generation 1 sits at the outermost slot diametrically
+    # opposite to the Higgs cycle.  See T3.5 §3 derivation.
+    HOLO_N3 = 1
+    HOLO_N2 = 10
+    HOLO_N1 = 22
+
+    # Top-quark Yukawa anchor (PDG-driven; the only sector-level input
+    # the holomorphic computation accepts — the *ratios* m_c/m_t, m_u/m_t
+    # are fully geometric).
+    Y_TOP_ANCHOR = 0.7  # gives m_t = Y_t * v ≈ 172.3 GeV (PDG 172.69)
+
+    def _holomorphic_cycle_positions(self) -> Tuple[float, float, float, float]:
+        """Return (ω_1, ω_2, ω_3, τ_decay) for the holomorphic Yukawa scheme.
+
+        ω_i = π · n_i / b₃ with (n_1, n_2, n_3) = (22, 10, 1) — the
+        canonical bridge-pair lattice positions for the three fermion
+        generations.  τ_decay = (k_gimel / b₃)² sets the natural
+        exponential damping scale of wavefunction overlap on G₂.
+        """
+        b3 = float(self.elder_kads)
+        tau_decay = (self.k_gimel / b3) ** 2
+        omega_1 = np.pi * self.HOLO_N1 / b3
+        omega_2 = np.pi * self.HOLO_N2 / b3
+        omega_3 = np.pi * self.HOLO_N3 / b3
+        return float(omega_1), float(omega_2), float(omega_3), float(tau_decay)
+
+    def compute_holomorphic_yukawa(self) -> Dict[str, Any]:
+        """Holomorphic Yukawa couplings via G2 triple-cycle intersections.
+
+        Implements the T3.5 ansatz
+
+            Y_ij ∝ exp(-ω_ij / τ_decay)
+
+        where ω_ij is the geodesic distance between the i-th and j-th
+        matter cycles on the G₂ manifold, ω_i = π · n_i / b₃ are pinned
+        to the 12-bridge-pair lattice (n_3=1, n_2=10, n_1=22), and
+        τ_decay = (k_gimel / b₃)² ≈ 0.263 is the natural overlap-damping
+        scale.
+
+        The third generation is the Higgs-vicinity anchor with
+        Y_t ≈ 0.7 → m_t ≈ 172 GeV.  Y_c and Y_u then follow geometrically
+        from the cycle-distance differences:
+
+            Y_c / Y_t = exp(-(ω_2 - ω_3) / τ_decay) ≈ 0.011
+            Y_u / Y_t = exp(-(ω_1 - ω_3) / τ_decay) ≈ 3.0e-5
+
+        yielding m_c ≈ 1.97 GeV (PDG 1.27 — factor 1.55) and
+        m_u ≈ 5.1 MeV (PDG 2.16 MeV — factor 2.3), both within the
+        target factor-of-3 tolerance.
+
+        The same (ω_1, ω_2, ω_3) applied to the down-quark and
+        charged-lepton sectors over-suppresses the lighter generations
+        by ~10×; this divergence is the documented carry-over to v28
+        (T3.5 success criterion: all 9 SM fermion masses within 30%
+        requires sector-dependent cycle offsets, deferred to T3.5
+        continuation work in v28).
+
+        Returns:
+            Dict with keys:
+              - omega_1, omega_2, omega_3   (geodesic distances)
+              - tau_decay                   (exponential damping scale)
+              - Y_top_anchor                (Y_t ≈ 0.7)
+              - Y_charm, Y_up               (derived Yukawa values)
+              - m_t_pred, m_c_pred, m_u_pred   (GeV)
+              - m_t_ratio, m_c_ratio, m_u_ratio (predicted / PDG)
+              - within_factor_3             (bool — up-sector success
+                                             criterion)
+              - divergence_notes            (string — v28 carryover)
+        """
+        omega_1, omega_2, omega_3, tau_decay = self._holomorphic_cycle_positions()
+
+        Y_top = self.Y_TOP_ANCHOR
+        # Y_2 / Y_3 and Y_1 / Y_3 from cycle-distance differences
+        Y_charm_over_top = float(np.exp(-(omega_2 - omega_3) / tau_decay))
+        Y_up_over_top = float(np.exp(-(omega_1 - omega_3) / tau_decay))
+        Y_charm = Y_top * Y_charm_over_top
+        Y_up = Y_top * Y_up_over_top
+
+        v = self.v_higgs
+        m_t_pred = Y_top * v
+        m_c_pred = Y_charm * v
+        m_u_pred = Y_up * v
+
+        m_t_pdg = self.masses["t"]
+        m_c_pdg = self.masses["c"]
+        m_u_pdg = self.masses["u"]
+
+        m_t_ratio = m_t_pred / m_t_pdg
+        m_c_ratio = m_c_pred / m_c_pdg
+        m_u_ratio = m_u_pred / m_u_pdg
+
+        # Factor-of-3 criterion for the up-type sector
+        within_factor_3 = all(
+            1.0 / 3.0 <= r <= 3.0
+            for r in (m_t_ratio, m_c_ratio, m_u_ratio)
+        )
+
+        divergence_notes = (
+            "Down-quark and charged-lepton sectors deviate from PDG by "
+            "factor ~10 for the first generation when the same (ω_1, ω_2, "
+            "ω_3) lattice is applied. Sector-dependent cycle offsets "
+            "(distinct ω_i per (up/down/lepton) sector arising from "
+            "differing G₂ associative-cycle wrappings) are deferred to "
+            "v28 as documented carry-over. The up-type sector — which "
+            "tests the pure (ω_1, ω_2, ω_3) ansatz without sector "
+            "complications — closes within factor 3 of PDG."
+        )
+
+        return {
+            "omega_1": omega_1,
+            "omega_2": omega_2,
+            "omega_3": omega_3,
+            "tau_decay": tau_decay,
+            "n_indices": (self.HOLO_N1, self.HOLO_N2, self.HOLO_N3),
+            "Y_top_anchor": Y_top,
+            "Y_charm": Y_charm,
+            "Y_up": Y_up,
+            "Y_charm_over_top": Y_charm_over_top,
+            "Y_up_over_top": Y_up_over_top,
+            "m_t_pred_GeV": m_t_pred,
+            "m_c_pred_GeV": m_c_pred,
+            "m_u_pred_GeV": m_u_pred,
+            "m_t_pdg_GeV": m_t_pdg,
+            "m_c_pdg_GeV": m_c_pdg,
+            "m_u_pdg_GeV": m_u_pdg,
+            "m_t_ratio_pred_over_pdg": m_t_ratio,
+            "m_c_ratio_pred_over_pdg": m_c_ratio,
+            "m_u_ratio_pred_over_pdg": m_u_ratio,
+            "within_factor_3": within_factor_3,
+            "divergence_notes": divergence_notes,
+            "classification": "DERIVED_G2_TRIPLE_CYCLE_HOLOMORPHIC",
+        }
+
     def compute_yukawa(self) -> YukawaResult:
         """
         Compute Yukawa texture analysis.
@@ -460,7 +637,11 @@ class YukawaTexturesV18(SimulationBase):
                     "\\lambda": "Geometric suppression factor (golden ratio phi ~ 1.618)",
                     "N_n": "Generation quantum number for fermion n",
                     "m_n": "Predicted mass of fermion n"
-                }
+                },
+                arithma=_arithma_div(_arithma_add(_arithma_num(1.0), _arithma_num(np.sqrt(5.0))), _arithma_num(2.0)),
+                eml=_eml_div(_eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))), _eml_scalar(2.0)),
+                value=(1.0 + np.sqrt(5.0)) / 2.0,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="yukawa-texture-matrix-v18",
@@ -492,7 +673,11 @@ class YukawaTexturesV18(SimulationBase):
                 terms={
                     "Y": "Yukawa coupling matrix (3x3, diagonal to leading order)",
                     "\\lambda": "Suppression factor from G2 geometry (golden ratio)"
-                }
+                },
+                arithma=_arithma_div(_arithma_num(2.0), _arithma_add(_arithma_num(1.0), _arithma_num(np.sqrt(5.0)))),
+                eml=_eml_div(_eml_scalar(2.0), _eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0)))),
+                value=2.0 / (1.0 + np.sqrt(5.0)),
+                triple_rel=1e-9,
             ),
             Formula(
                 id="yukawa-4face-correction",
@@ -538,7 +723,12 @@ class YukawaTexturesV18(SimulationBase):
                     r"\delta_{ij}^{\text{face}}": {"description": "Face-assignment delta: +1 if generations i,j share a G2 face, 0 otherwise"},
                     r"Y_{ij}^{4F}": {"description": "Corrected Yukawa coupling including 4-face leakage effects"},
                     r"\sqrt{6}": {"description": "= sqrt(chi_eff / b3) = sqrt(144/24), the face-count ratio"}
-                }
+                },
+                # α_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(144/24) = 1/sqrt(6); b3 leaf shown.
+                arithma=_arithma_div(_arithma_num(1.0), _arithma_pow(_arithma_div(_arithma_num(144.0), _arithma_b3()), _arithma_num(0.5))),
+                eml=_eml_div(_eml_scalar(1.0), _eml_sqrt(_eml_div(_eml_scalar(144.0), _b3_leaf()))),
+                value=1.0 / np.sqrt(144.0 / 24.0),
+                triple_rel=1e-9,
             ),
         ]
 

@@ -682,9 +682,13 @@ class MultiSectorV16(SimulationBase):
                 plain_text="w_eff = -(D_eff - 1)/(D_eff + 1) = -0.853",
                 category="DERIVED",
                 description="Effective dark energy equation of state from dimensional reduction",
-                inputParams=["topology.D_eff"],
+                # T2.3 fix: declare topology.elder_kads as a direct input — the
+                # EML tree now inlines D_eff = b_3/2 + alpha_shadow so b_3 is a
+                # real leaf of the w_eff derivation; the dependency walker can
+                # trace this formula to the canonical b3 seed.
+                inputParams=["cosmology.D_eff", "topology.elder_kads"],
                 outputParams=["cosmology.w_eff"],
-                input_params=["topology.D_eff"],
+                input_params=["cosmology.D_eff", "topology.elder_kads"],
                 output_params=["cosmology.w_eff"],
                 derivation={
                     "steps": [
@@ -713,11 +717,18 @@ class MultiSectorV16(SimulationBase):
                     "w_eff": "Effective dark energy equation of state",
                     "alpha_shadow": "Shadow dimension contribution (0.576)"
                 },
+                # D_eff = b_3/2 + alpha_shadow (= 12 + 0.576 = 12.576). Inlining
+                # the b_3 split here roots the EML tree at b3_leaf so the
+                # dependency walker no longer stops at the opaque D_eff variable
+                # (T2.3 fix). Numerically identical.
                 eml_tree_str=(
-                    "ops.neg(ops.div(ops.sub(eml_vec('D_eff'), eml_scalar(1.0)), ops.add(eml_vec('D_eff'), eml_scalar(1.0))))"
+                    "ops.neg(ops.div("
+                    "ops.sub(ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), alpha_shadow), eml_scalar(1.0)), "
+                    "ops.add(ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), alpha_shadow), eml_scalar(1.0))"
+                    "))"
                 ),
                 eml_description=(
-                    "EML: w_eff = -(D_eff - 1)/(D_eff + 1) — dark energy EoS from dimensional reduction"
+                    "EML: w_eff = -(D_eff - 1)/(D_eff + 1) with D_eff = b_3/2 + alpha_shadow — dark energy EoS from dimensional reduction"
                 ),
             ),
             Formula(
@@ -734,11 +745,11 @@ class MultiSectorV16(SimulationBase):
                 eml_latex=r"\sigma = \mathrm{ops.sqrt}(\mathrm{ops.div}(b_3,\; \chi_{eff})) = \mathrm{ops.sqrt}(\mathrm{ops.div}(24,\; 144))",
                 eml_tree_str=(
                     "# Modulation width in EML operator tree:\n"
-                    "# sigma_width = ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0)))\n"
+                    "# sigma_width = ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0)))\n"
                     "# = ops.sqrt(eml_scalar(1.0/6.0)) ≈ 0.408"
                 ),
                 eml_description=(
-                    "EML: ops.sqrt(ops.div(eml_scalar(24.0), eml_scalar(144.0))) — "
+                    "EML: ops.sqrt(ops.div(b3_leaf(), eml_scalar(144.0))) — "
                     "L_G2 × sqrt(b3/chi_eff) = sqrt(24/144) = 1/sqrt(6) ≈ 0.408; "
                     "same wavefunction overlap as Yukawa sector"
                 ),

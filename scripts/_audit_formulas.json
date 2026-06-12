@@ -1,0 +1,3814 @@
+{
+  "totals": {
+    "MISSING_ALL": 407,
+    "EML_ONLY": 270
+  },
+  "n_formulas": 677,
+  "failures": [],
+  "per_formula": {
+    "clifford-quadratic-unification": {
+      "module": "metaphysica.simulations.PM.algebra.clifford_unification",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e7-alpha-leak": {
+      "module": "metaphysica.simulations.PM.algebra.e7_representation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e7-quartic-invariant": {
+      "module": "metaphysica.simulations.PM.algebra.e7_representation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e7-alp-mass": {
+      "module": "metaphysica.simulations.PM.algebra.e7_representation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e8x8-visible-action": {
+      "module": "metaphysica.simulations.PM.algebra.e8x8_splitting",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e8x8-hidden-condensate": {
+      "module": "metaphysica.simulations.PM.algebra.e8x8_splitting",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e8x8-portal-coupling": {
+      "module": "metaphysica.simulations.PM.algebra.e8x8_splitting",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "freudenthal-cubic-norm": {
+      "module": "metaphysica.simulations.PM.algebra.freudenthal_triple",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "freudenthal-quartic-invariant": {
+      "module": "metaphysica.simulations.PM.algebra.freudenthal_triple",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "freudenthal-triple-product": {
+      "module": "metaphysica.simulations.PM.algebra.freudenthal_triple",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gaugino-racetrack-superpotential": {
+      "module": "metaphysica.simulations.PM.algebra.gaugino_condensation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gaugino-lambda-eff": {
+      "module": "metaphysica.simulations.PM.algebra.gaugino_condensation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gaugino-cabibbo-proxy": {
+      "module": "metaphysica.simulations.PM.algebra.gaugino_condensation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gaugino-cabibbo-derived": {
+      "module": "metaphysica.simulations.PM.algebra.gaugino_condensation",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-theta13-derived": {
+      "module": "metaphysica.simulations.PM.algebra.neutrino_algebraic",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-delta-CP-derived": {
+      "module": "metaphysica.simulations.PM.algebra.neutrino_algebraic",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "css-code-parameters": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_t_qec_bridge",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "golay-self-duality": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_t_qec_bridge",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "four-dice-branch-count": {
+      "module": "metaphysica.simulations.PM.consciousness.four_dice_sampling",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gnosis-unlocking-probability": {
+      "module": "metaphysica.simulations.PM.consciousness.gnosis_unlocking",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gnosis-coherence-enhancement": {
+      "module": "metaphysica.simulations.PM.consciousness.gnosis_unlocking",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pair-shielding-enhancement": {
+      "module": "metaphysica.simulations.PM.consciousness.orch_or_pair_shielding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "attractor-potential-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.attractor_potential",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "decay-constant-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.attractor_potential",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "w0-attractor-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.attractor_potential",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-decay-constant-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-mass-qcd-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-relic-density-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-portal-gluon-coupling-v23": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-portal-photon-coupling-v23": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "axion-3face-relic-density-v23": {
+      "module": "metaphysica.simulations.PM.cosmology.axion_dm",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "baryon-asymmetry-cycle-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.baryon_asymmetry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cp-phase-sterile-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.baryon_asymmetry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "moduli-damping-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.baryon_asymmetry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-ede-f-sub-v24": {
+      "module": "metaphysica.simulations.PM.cosmology.bridge_axion_ede",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-ede-knp-enhancement-v24": {
+      "module": "metaphysica.simulations.PM.cosmology.bridge_axion_ede",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-ede-f-eff-v24": {
+      "module": "metaphysica.simulations.PM.cosmology.bridge_axion_ede",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-ede-mass-gap-v24": {
+      "module": "metaphysica.simulations.PM.cosmology.bridge_axion_ede",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-entropy-density": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmological_constant",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cosmological-constant-geometric": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmological_constant",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vacuum-energy-density": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmological_constant",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "lambda-hierarchy": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmological_constant",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "metric-13D": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "einstein-hilbert-14D": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sp2r-constraint": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "breathing-mode": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bps-bound": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-reduction": {
+      "module": "metaphysica.simulations.PM.cosmology.cosmology_intro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dimensional-reduction-cascade": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "effective-dimension": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-energy-eos-derivation": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-energy-time-evolution": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "breathing-rho-pair": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "breathing-aggregation": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "breathing-variance-reduction": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "thawing-w0-derivation": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "thawing-wa-derivation": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cpl-parametrization": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsional-leakage-formula": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ricci-thawing-mechanism": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "4face-w0-prediction": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "wa-nonlinear-correction": {
+      "module": "metaphysica.simulations.PM.cosmology.dark_energy_thawing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dynamical-lambda-veff": {
+      "module": "metaphysica.simulations.PM.cosmology.dynamical_lambda",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dynamical-lambda-vbare": {
+      "module": "metaphysica.simulations.PM.cosmology.dynamical_lambda",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dynamical-lambda-vtorsion": {
+      "module": "metaphysica.simulations.PM.cosmology.dynamical_lambda",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dynamical-lambda-entropy-naive": {
+      "module": "metaphysica.simulations.PM.cosmology.dynamical_lambda",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dynamical-lambda-torsion-funnel": {
+      "module": "metaphysica.simulations.PM.cosmology.dynamical_lambda",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "h-evolution-log-scaling": {
+      "module": "metaphysica.simulations.PM.cosmology.evolution_engine",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "relaxation-factor": {
+      "module": "metaphysica.simulations.PM.cosmology.evolution_engine",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ricci-flow-evolution": {
+      "module": "metaphysica.simulations.PM.cosmology.evolution_engine",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "f-r-t-tau-lagrangian-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.f_r_t_tau_gravity",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-f-derivation-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.f_r_t_tau_gravity",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "w0-from-modified-gravity-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.f_r_t_tau_gravity",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gw-speed-modified-gravity-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.f_r_t_tau_gravity",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-mode-dispersion-v18": {
+      "module": "metaphysica.simulations.PM.cosmology.f_r_t_tau_gravity",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ede-modified-friedmann": {
+      "module": "metaphysica.simulations.PM.cosmology.hubble_tension",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ede-sound-horizon": {
+      "module": "metaphysica.simulations.PM.cosmology.hubble_tension",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ede-h0-from-bao": {
+      "module": "metaphysica.simulations.PM.cosmology.hubble_tension",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "knp-axion-mass": {
+      "module": "metaphysica.simulations.PM.cosmology.hubble_tension",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-energy-eos": {
+      "module": "metaphysica.simulations.PM.cosmology.multi_sector",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "moduli-potential": {
+      "module": "metaphysica.simulations.PM.cosmology.multi_sector",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sector-temperature-ratio": {
+      "module": "metaphysica.simulations.PM.cosmology.multi_sector",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-matter-abundance": {
+      "module": "metaphysica.simulations.PM.cosmology.multi_sector",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ricci-flow-equation": {
+      "module": "metaphysica.simulations.PM.cosmology.ricci_flow_h0",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "effective-curvature-evolution": {
+      "module": "metaphysica.simulations.PM.cosmology.ricci_flow_h0",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hubble-evolution-ode": {
+      "module": "metaphysica.simulations.PM.cosmology.ricci_flow_h0",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hubble-tension-resolution": {
+      "module": "metaphysica.simulations.PM.cosmology.ricci_flow_h0",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "s8-definition": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "growth-rate-equation": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pm-dark-energy-density": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "growth-suppression-factor": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "s8-friction-suppression": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "s8-prediction-pm": {
+      "module": "metaphysica.simulations.PM.cosmology.s8_suppression",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "speed-of-light-derivation": {
+      "module": "metaphysica.simulations.PM.cosmology.speed_of_light",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-tensioner-z6": {
+      "module": "metaphysica.simulations.PM.cosmology.speed_of_light",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "decad3-projection": {
+      "module": "metaphysica.simulations.PM.cosmology.speed_of_light",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "speed-of-light-chain": {
+      "module": "metaphysica.simulations.PM.cosmology.speed_of_light",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dm-lagrangian-mirror-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dm-omega-sterile-ratio-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dm-z2-parity-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dm-thermal-relic-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "de-w0-tzimtzum-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "de-h0-odowd-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "de-frt-lagrangian-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "de-attractor-potential-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "de-hubble-tension-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cosmo-baryon-asymmetry-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cosmo-bbn-prediction-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cosmo-omega-matter-split-v19": {
+      "module": "metaphysica.simulations.PM.derivations.cosmology_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-qcd-lagrangian-g2-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-field-strength-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-gluon-count-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-confinement-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-weak-lagrangian-g2-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-field-strength-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-chirality-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-hypercharge-lagrangian-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-hypercharge-ratio-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-anomaly-cancellation-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-weinberg-angle-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-photon-field-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-z-boson-field-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-mixing-matrix-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gauge_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-metric-from-vielbein-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-vielbein-determinant-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-tetrad-postulate-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-spin-connection-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-torsion-free-condition-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-metricity-condition-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-christoffel-symbols-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-riemann-tensor-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-ricci-tensor-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-ricci-scalar-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-einstein-hilbert-4d-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-einstein-tensor-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-einstein-field-equations-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-newton-from-g2-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gr-planck-from-compactification-v19": {
+      "module": "metaphysica.simulations.PM.derivations.gr_spacetime",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vielbein-metric-relation": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tetrad-postulate": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spin-connection-definition": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "riemann-from-spin-connection": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "master-action-26d-full": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "einstein-hilbert-26d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yang-mills-26d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dirac-26d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-coupling": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euler-lagrange-gravity": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "einstein-equations-26d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "variation-metric": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sp2r-constraint-xp": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sp2r-constraint-x2": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sp2r-gauge-fixed-action": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "v22-bulk-structure": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "v22-metric-12-pair": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "v22-bridge-lagrangian": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "v22-distributed-or-reduction": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "v22-consciousness-io-gate": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ghost-elimination": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dof-reduction-sp2r": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy-constraint": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-three-form": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-ansatz-26-13": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-ansatz-13-7": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-ansatz-7-4": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-from-kk": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "root-lattice-288": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "racetrack-moduli-potential": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-correction-term": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-residue-dressing": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "master-action-two-layer-or": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "reduced-lagrangian-13d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "reduced-lagrangian-4d": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bulk-action-27d-v23": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "racetrack-moduli-potential-27d-v23": {
+      "module": "metaphysica.simulations.PM.derivations.lagrangian_master",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-potential-moduli-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-quartic-from-geometry-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-vev-minimization-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-mass-from-potential-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-doublet-emergence-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "fermion-generations-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-froggatt-nielsen-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-epsilon-cabibbo-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-top-normalization-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-hierarchy-texture-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "christ-constant-153-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "seesaw-type-i-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "majorana-scale-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "light-neutrino-masses-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "neutrino-mass-hierarchy-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-from-geometry-v19": {
+      "module": "metaphysica.simulations.PM.derivations.matter_sector_complete",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "orch-or-coherence-time": {
+      "module": "metaphysica.simulations.PM.field_dynamics.orch_or_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "microtubule-topological-pitch": {
+      "module": "metaphysica.simulations.PM.field_dynamics.orch_or_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-lagrangian": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-neural-gate": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-or-reduction": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-flow": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "null-constraints-2t": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "4d-fermion-lagrangian": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "lagrangian-hierarchy-complete": {
+      "module": "metaphysica.simulations.PM.field_dynamics.pneuma_mechanism",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sampler-entropy-gradient": {
+      "module": "metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sampler-energy-density": {
+      "module": "metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sampler-equilibrium": {
+      "module": "metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "modular-hamiltonian": {
+      "module": "metaphysica.simulations.PM.field_dynamics.thermal_time",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "thermal-flow": {
+      "module": "metaphysica.simulations.PM.field_dynamics.thermal_time",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "entropy-gradient": {
+      "module": "metaphysica.simulations.PM.field_dynamics.thermal_time",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-t-base": {
+      "module": "metaphysica.simulations.PM.field_dynamics.thermal_time",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-t-derivation": {
+      "module": "metaphysica.simulations.PM.field_dynamics.thermal_time",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-mass-matrix": {
+      "module": "metaphysica.simulations.PM.gauge.electroweak_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-weinberg-angle": {
+      "module": "metaphysica.simulations.PM.gauge.electroweak_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ew-boson-masses": {
+      "module": "metaphysica.simulations.PM.gauge.electroweak_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-initial-conditions": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-threshold": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "asymptotic-safety-fixed-point": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gut-scale": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-coupling-unification": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-rg-evolution": {
+      "module": "metaphysica.simulations.PM.gauge.gauge_unification",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-5d-metric-ansatz": {
+      "module": "metaphysica.simulations.PM.gauge.kk_reduction_gr_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-ricci-decomposition": {
+      "module": "metaphysica.simulations.PM.gauge.kk_reduction_gr_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-gauge-coupling-relation": {
+      "module": "metaphysica.simulations.PM.gauge.kk_reduction_gr_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-master-action-v23": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-12-pair-metric-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-lagrangian-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "distributed-or-reduction-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "breathing-aggregation-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-reduction-5d-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-qcd-lagrangian-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-weak-lagrangian-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-hypercharge-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "electroweak-mixing-v22": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euler-lagrange-metric-variation": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "stress-energy-variation": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chirality-reversal-operator": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-matter-portal-lagrangian": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "shadow-action-13d-v23": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "effective-action-4d-v23": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euler-lagrange-eom-v23": {
+      "module": "metaphysica.simulations.PM.gauge.master_action",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "na-kk-field-strength": {
+      "module": "metaphysica.simulations.PM.gauge.non_abelian_kk_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "na-kk-yang-mills-kinetic": {
+      "module": "metaphysica.simulations.PM.gauge.non_abelian_kk_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-weak-field-strength": {
+      "module": "metaphysica.simulations.PM.gauge.su2_weak_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-weak-kinetic": {
+      "module": "metaphysica.simulations.PM.gauge.su2_weak_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-chiral-coupling": {
+      "module": "metaphysica.simulations.PM.gauge.su2_weak_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-gluon-field-strength": {
+      "module": "metaphysica.simulations.PM.gauge.su3_qcd_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-qcd-kinetic": {
+      "module": "metaphysica.simulations.PM.gauge.su3_qcd_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-quark-coupling": {
+      "module": "metaphysica.simulations.PM.gauge.su3_qcd_gauge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-hypercharge-field-strength": {
+      "module": "metaphysica.simulations.PM.gauge.u1_hypercharge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-hypercharge-kinetic": {
+      "module": "metaphysica.simulations.PM.gauge.u1_hypercharge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "u1-electric-charge-formula": {
+      "module": "metaphysica.simulations.PM.gauge.u1_hypercharge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-leak-coupling": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "racetrack-moduli-vev": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-pair-decomposition": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "face-kk-mass-spectrum": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "shadow-asymmetry": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsional-leakage": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "two-layer-or-bridge-operator": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "two-layer-or-face-operator": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bridge-warping-potential": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "face-warping-potential": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "face-sampling-strength": {
+      "module": "metaphysica.simulations.PM.geometry.four_face_structure",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-inverse-geometric": {
+      "module": "metaphysica.simulations.PM.geometry.alpha_rigor",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy": {
+      "module": "metaphysica.simulations.PM.geometry.g2_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euler-characteristic": {
+      "module": "metaphysica.simulations.PM.geometry.g2_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "betti-numbers": {
+      "module": "metaphysica.simulations.PM.geometry.g2_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "three-generations": {
+      "module": "metaphysica.simulations.PM.geometry.g2_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cycle-matching": {
+      "module": "metaphysica.simulations.PM.geometry.g2_geometry",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "k-gimel-anchor": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-inverse-anchor": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "w0-thawing-anchor": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-index-anchor": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "unity-seal-anchor": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-from-topology-derivation": {
+      "module": "metaphysica.simulations.PM.geometry.geometric_anchors",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "leech-dimension-uniqueness": {
+      "module": "metaphysica.simulations.PM.geometry.leech_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-automorphism-relation": {
+      "module": "metaphysica.simulations.PM.geometry.leech_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "octonionic-partition": {
+      "module": "metaphysica.simulations.PM.geometry.leech_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "generation-theorem": {
+      "module": "metaphysica.simulations.PM.geometry.leech_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dedekind-eta-definition": {
+      "module": "metaphysica.simulations.PM.geometry.modular_invariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "partition-function-eta": {
+      "module": "metaphysica.simulations.PM.geometry.modular_invariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vacuum-energy-formula": {
+      "module": "metaphysica.simulations.PM.geometry.modular_invariance",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "modular-anomaly-condition": {
+      "module": "metaphysica.simulations.PM.geometry.modular_invariance",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "critical-dimension": {
+      "module": "metaphysica.simulations.PM.geometry.modular_invariance",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "abstract-framework-overview": {
+      "module": "metaphysica.simulations.PM.paper.abstract",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy-condition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "associative-calibration": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "coassociative-calibration": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "parallel-spinor-condition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "clifford-multiplication": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ricci-flatness-g2": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_math",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-eigenvalue-extraction": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_spectral_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "omega-hash-verification": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_spectral_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "node-distribution-function": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_spectral_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "log-harmonic-spacing": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_a_spectral_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "rg-beta-function": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "one-loop-beta": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-threshold-correction": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "asymptotic-safety-correction": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-rg-equation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "mass-running-equation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_methods",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "heat-kernel-partition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_sum_rule",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "global-sum-rule-appendix": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_sum_rule",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "trace-formula-closure": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_sum_rule",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hierarchy-spectral-gap": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_b_sum_rule",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "unification-condition-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-hierarchy-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tribimaximal-mixing-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-mass-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "proton-lifetime-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_derivations",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dimensional-projection-matrix": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_gauge_matrices",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-unitarity-condition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_gauge_matrices",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "symmetry-shattering-rule": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_c_gauge_matrices",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "clifford-appendix-quadratic": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_clifford_algebra",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chi-squared-convergence": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_d_alignment",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hubble-tension-resolution-appendix": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_d_alignment",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bao-alignment": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_d_alignment",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "node-coordinate-vector": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_brane_map",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "nodal-pinch-mass": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_brane_map",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "coordinate-uniqueness": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_brane_map",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "proton-decay-rate": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_proton",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "proton-decay-lifetime": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_proton",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "geometric-suppression-factor": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_e_proton",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g01-root-parity": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g02-holonomy": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g03-ancestral": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g04-projection-tax": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g05-metric-continuity": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g06-shadow-parity": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g07-torsion-orthogonal": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g08-sterile-angle": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g09-pin-distribution": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g10-tension-floor": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g11-strong-force": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g12-electroweak": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g13-photon-mass": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g14-sun-approx": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g15-gauge-invariant": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g16-dirac-mapping": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g17-triality": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g18-mass-gap": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g19-neutrino": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g20-chiral-limit": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g21-color-neutral": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g22-string-tension": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g23-proton-stability": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g24-sea-quark": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g25-asymptotic": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g26-electron-ratio": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g27-pmns": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g28-lepton-number": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g29-hypercharge": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g30-lepton-gap": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g31-higgs-vev": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g32-wz-ratio": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g33-goldstone": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g34-gluon-octet": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g35-photon-z": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g36-ckm": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g37-cp-violation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g38-gim": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g39-pmns-angles": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g40-sterile-mixing": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g41-gravity": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g42-equivalence": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g43-schwarzschild": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g44-frame-dragging": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g45-geodesic": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g46-lambda": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g47-hubble": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g48-w0": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g49-dark-matter": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g50-baryon-photon": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g51-unitary-time": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g52-entropy": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g53-causality": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g54-cpt": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g55-decoherence": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g56-compactification": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g57-calabi-yau": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g58-brane-boundary": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g59-moduli": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g60-desi": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g61-bit-parity": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g62-von-neumann": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g63-bell": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g64-holographic": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g65-landauer": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g66-chiral-ortho": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g67-phase-transition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g68-omega-point": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g69-soliton": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g70-spectral-gap": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g71-recursive": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g72-omega-hash": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "omega-hash-72": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_f_72gates",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "geometric-seal-288": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "4-fold-stabilizer-check": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "terminal-hash-generation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "holonomy-checksum": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dead-mans-switch": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sterile-rigidity-declaration": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_g_omega_seal",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "so24-generators": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "shadow-torsion-sum": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ancestral-roots-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sterile-projection-filter": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hidden-support-count": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "e8xe8-root-decomposition": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pressure-divisor-formula": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "metric-null-potential": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-ghost-potential": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ancestral-restoration": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-trace-saturation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "terminal-geodesic-curve": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "shadow-decoupling-rate": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_i_terminal_states",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-funnel-entry": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_j_torsion_funnel",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-funnel-bottleneck": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_j_torsion_funnel",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-funnel-exit": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_j_torsion_funnel",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "survival-rate-formula": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_j_torsion_funnel",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bottleneck-pressure": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_j_torsion_funnel",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c-torsion-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_k_sterile_constants",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "G-metric-anchor": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_k_sterile_constants",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-sterile-angle": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_k_sterile_constants",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "h-scale-factor": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_k_sterile_constants",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "w0-betti-derivation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_k_sterile_constants",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "metric-null-basin": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_l_omega_unwinding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-ghost-basin": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_l_omega_unwinding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ancestral-restoration-basin": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_l_omega_unwinding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "entropy-flow-equation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_l_omega_unwinding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "basin-selection-threshold": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_l_omega_unwinding",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-contravariant-transform-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-covariant-transform-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-metric-covariant-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-mixed-transform-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-einstein-summation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-index-lowering-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-index-raising-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-covariant-derivative-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-christoffel-first-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-christoffel-second-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-metric-compatible-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-parallel-transport-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-geodesic-equation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-riemann-commutator-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-riemann-components-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tensor-ricci-tensor-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vielbein-metric-relation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vielbein-orthonormality-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vielbein-inverse-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "completeness-spacetime-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "completeness-tangent-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spin-connection-definition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "torsion-free-condition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cartan-first-structure-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cartan-second-structure-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "riemann-from-spin-connection-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spinor-covariant-derivative-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "lorentz-generator-spinor-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spin-connection-christoffel-relation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-metric-ansatz": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-circle-reduction": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-gauge-emergence": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-dilaton-scalar": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-mode-expansion": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-mass-spectrum": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-zero-modes": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-higher-dim": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-principia-chain": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-distributed-or": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-aggregate-breathing": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-g2-volume": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-gauge-coupling": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "kk-consistency": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-3form-definition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-4form-definition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-as-so7-subgroup-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy-condition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-ricci-flat-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "octonion-multiplication-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-automorphism-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "associative-3cycle-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "coassociative-4cycle-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "betti-number-relation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "b3-from-euler-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su3-from-3cycles-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "su2-from-4cycles-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dirac-index-definition-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "as-index-theorem-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "a-roof-genus-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chern-character-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "fermion-zero-modes-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chiral-anomaly-index-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "family-index-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-index-specialization-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "generation-counting-index-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "principia-3-generations-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euler-index-relation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "topological-constraint-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-effective-potential-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "quartic-beta-function-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "quartic-running-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "instability-scale-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "bounce-action-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tunneling-rate-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vacuum-lifetime-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-portal-correction-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_r_vacuum_stability",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-laplacian-eigenvalue-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-zeta-function-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-residue-general-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-volume-residue-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-curvature-residue-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-euler-residue-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-trace-formula-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-determinant-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-heat-kernel-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-mass-relation-v19": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_s_spectral_residue",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "syndrome-extraction-formula": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_t_qec_bridge",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gamma-geometric-candidate": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_u_gamma_correction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "alpha-t-simplification": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_u_gamma_correction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c05m-manifold-tax": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c30s-shell-saturation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c37cp-strong-cp-lock": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c38v7-curvature-invariant": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "c42g-gravitational-anchor": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gauge-unification-sum": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hierarchy-ratio-squared": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "speed-of-light-geometric": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cabibbo-angle-geometric": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "terminal-closure-equation": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "h0-unwinding-scale": {
+      "module": "metaphysica.simulations.PM.paper.appendices.appendix_z_terminal_ledger",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "discussion-global-alignment": {
+      "module": "metaphysica.simulations.PM.paper.discussion",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "26d-signature": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "euclidean-bridge": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "or-reduction-tensor": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "central-sampler-formula": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-holonomy-foundations": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "b3-generations": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "calabi-yau-projection": {
+      "module": "metaphysica.simulations.PM.paper.foundations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hysteresis-lock": {
+      "module": "metaphysica.simulations.PM.paper.integrity",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "certificate-validation": {
+      "module": "metaphysica.simulations.PM.paper.integrity",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "omega-seal": {
+      "module": "metaphysica.simulations.PM.paper.integrity",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "intro-division-algebra-decomposition": {
+      "module": "metaphysica.simulations.PM.paper.introduction",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "laplacian-eigenvalue": {
+      "module": "metaphysica.simulations.PM.paper.methodology",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "trace-formula": {
+      "module": "metaphysica.simulations.PM.paper.methodology",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-trace-sterile-proof": {
+      "module": "metaphysica.simulations.PM.paper.methodology",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "global-sum-rule": {
+      "module": "metaphysica.simulations.PM.paper.methodology",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "predictions-summary-count": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dark-force-leakage-prediction": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cross-shadow-phase-shift": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vacuum-noise-excess": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gw-polarization-anomaly": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "admx-falsification-criterion-v23": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cmb-s4-sterile-test-v23": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "desi-w0-validation-v23": {
+      "module": "metaphysica.simulations.PM.paper.predictions_aggregator",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "w0-derivation": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "h0-alignment": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "h0-topology-bridge": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "vacuum-floor": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chi-squared-alignment": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "holonomy-volume-constraint": {
+      "module": "metaphysica.simulations.PM.paper.results",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "g2-spinor-preservation": {
+      "module": "metaphysica.simulations.PM.particle.chirality",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "associative-chirality-projector": {
+      "module": "metaphysica.simulations.PM.particle.chirality",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "dirac-zero-modes": {
+      "module": "metaphysica.simulations.PM.particle.chirality",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chirality-index-theorem": {
+      "module": "metaphysica.simulations.PM.particle.chirality",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spinor-saturation-generations": {
+      "module": "metaphysica.simulations.PM.particle.chirality",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ckm-overlap-integral": {
+      "module": "metaphysica.simulations.PM.particle.ckm_matrix",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ckm-hierarchy": {
+      "module": "metaphysica.simulations.PM.particle.ckm_matrix",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "jarlskog-invariant": {
+      "module": "metaphysica.simulations.PM.particle.ckm_matrix",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "wolfenstein-parametrization": {
+      "module": "metaphysica.simulations.PM.particle.ckm_matrix",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ckm-unitarity": {
+      "module": "metaphysica.simulations.PM.particle.ckm_matrix",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "generation-number": {
+      "module": "metaphysica.simulations.PM.particle.fermion_generations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-texture": {
+      "module": "metaphysica.simulations.PM.particle.fermion_generations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pneuma-chiral-filter": {
+      "module": "metaphysica.simulations.PM.particle.fermion_generations",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-bulk-attractor": {
+      "module": "metaphysica.simulations.PM.particle.higgs_brane_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-brane-projection": {
+      "module": "metaphysica.simulations.PM.particle.higgs_brane_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-local-mass": {
+      "module": "metaphysica.simulations.PM.particle.higgs_brane_partition",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-mass": {
+      "module": "metaphysica.simulations.PM.particle.higgs_mass",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-quartic-coupling": {
+      "module": "metaphysica.simulations.PM.particle.higgs_mass",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "racetrack-potential": {
+      "module": "metaphysica.simulations.PM.particle.higgs_mass",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "doublet-triplet-splitting": {
+      "module": "metaphysica.simulations.PM.particle.higgs_mass",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "higgs-vev-geometric-v18": {
+      "module": "metaphysica.simulations.PM.particle.higgs_vev_refined",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "fermi-constant-tree-v18": {
+      "module": "metaphysica.simulations.PM.particle.higgs_vev_refined",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "fermi-constant-physical-v18": {
+      "module": "metaphysica.simulations.PM.particle.higgs_vev_refined",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "mass-ratio-geometric": {
+      "module": "metaphysica.simulations.PM.particle.mass_ratio",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-theta-13": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-delta-cp": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-theta-12": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-theta-23": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "neutrino-mass-spectrum": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "neutrino-mass-sum": {
+      "module": "metaphysica.simulations.PM.particle.neutrino_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "golden-angle": {
+      "module": "metaphysica.simulations.PM.particle.octonionic_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "ckm-from-theta-g": {
+      "module": "metaphysica.simulations.PM.particle.octonionic_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pmns-from-triality": {
+      "module": "metaphysica.simulations.PM.particle.octonionic_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "triality-split": {
+      "module": "metaphysica.simulations.PM.particle.octonionic_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "mixing-dimension-ratio": {
+      "module": "metaphysica.simulations.PM.particle.octonionic_mixing",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "cycle-separation-suppression": {
+      "module": "metaphysica.simulations.PM.particle.proton_decay",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "proton-lifetime": {
+      "module": "metaphysica.simulations.PM.particle.proton_decay",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-hierarchy-v18": {
+      "module": "metaphysica.simulations.PM.particle.yukawa_textures",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-texture-matrix-v18": {
+      "module": "metaphysica.simulations.PM.particle.yukawa_textures",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "yukawa-4face-correction": {
+      "module": "metaphysica.simulations.PM.particle.yukawa_textures",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-alp-mass-v23": {
+      "module": "metaphysica.simulations.PM.portals.alp_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-alp-photon-v23": {
+      "module": "metaphysica.simulations.PM.portals.alp_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-alp-nucleon-v23": {
+      "module": "metaphysica.simulations.PM.portals.alp_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-alp-fifth-force-v23": {
+      "module": "metaphysica.simulations.PM.portals.alp_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-dm-coupling-v23": {
+      "module": "metaphysica.simulations.PM.portals.dark_matter_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-dm-cross-section-v23": {
+      "module": "metaphysica.simulations.PM.portals.dark_matter_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-dm-mediator-mass-v23": {
+      "module": "metaphysica.simulations.PM.portals.dark_matter_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-dm-relic-contribution-v23": {
+      "module": "metaphysica.simulations.PM.portals.dark_matter_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-sterile-mixing-v23": {
+      "module": "metaphysica.simulations.PM.portals.sterile_neutrino_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-sterile-mass-v23": {
+      "module": "metaphysica.simulations.PM.portals.sterile_neutrino_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "portal-sterile-neff-v23": {
+      "module": "metaphysica.simulations.PM.portals.sterile_neutrino_portals",
+      "classification": "EML_ONLY",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "avogadro-inverse-cubic": {
+      "module": "metaphysica.simulations.PM.qed.avogadro",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "compton-bulk-derivation": {
+      "module": "metaphysica.simulations.PM.qed.compton_wavelength",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "compton-inverse-cubic-projection": {
+      "module": "metaphysica.simulations.PM.qed.compton_wavelength",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "faraday-inverse-cubic": {
+      "module": "metaphysica.simulations.PM.qed.faraday",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hartree-bulk-derivation": {
+      "module": "metaphysica.simulations.PM.qed.hartree_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "hartree-inverse-double-gate": {
+      "module": "metaphysica.simulations.PM.qed.hartree_energy",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "flux-direct-expansion": {
+      "module": "metaphysica.simulations.PM.qed.magnetic_flux",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "molar-gas-neutral": {
+      "module": "metaphysica.simulations.PM.qed.molar_gas",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "stefan-quad-gate": {
+      "module": "metaphysica.simulations.PM.qed.stefan_boltzmann",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "rk-direct-expansion": {
+      "module": "metaphysica.simulations.PM.qed.von_klitzing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "weak-mixing-torsion": {
+      "module": "metaphysica.simulations.PM.qed.weak_mixing",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "laplacian-eigenvalue-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "mass-spectrum-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "spectral-zeta-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "neutrino-mass-seesaw-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "neutrino-sum-prediction-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "proton-decay-lifetime-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "gut-scale-g2-v18": {
+      "module": "metaphysica.simulations.PM.support.complete_residue_registry",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "chi-square-covariance": {
+      "module": "metaphysica.simulations.PM.validation.rigor_covariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "p-value-chi-square": {
+      "module": "metaphysica.simulations.PM.validation.rigor_covariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "reduced-chi-square": {
+      "module": "metaphysica.simulations.PM.validation.rigor_covariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "pull-definition": {
+      "module": "metaphysica.simulations.PM.validation.rigor_covariance",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "sigma-deviation-formula": {
+      "module": "metaphysica.simulations.PM.validation.rigorous_validator",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "tension-threshold": {
+      "module": "metaphysica.simulations.PM.validation.rigorous_validator",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "weyl-anomaly-cancellation": {
+      "module": "metaphysica.simulations.PM.validation.unitary_filter",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    },
+    "central-charge-unitarity": {
+      "module": "metaphysica.simulations.PM.validation.unitary_filter",
+      "classification": "MISSING_ALL",
+      "triple_status": "",
+      "dry_run_error": null
+    }
+  }
+}

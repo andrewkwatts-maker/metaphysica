@@ -405,6 +405,362 @@ class PMRegistry:
             if not entry.metadata.get('eml_description'):
                 entry.metadata['eml_description'] = eml_description
 
+    def update(
+        self,
+        values: Dict[str, Any],
+        *,
+        source: str = "v25.0",
+        status: str = "DERIVED",
+        path_prefix: str = "",
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """
+        Bulk-update the registry from a dict.
+
+        Convenience helper used by the v25.0 Sprint 4 module wiring
+        (yukawa_derivation, re_t_sector, vacuum_selection, strong_cp_axion,
+        baryogenesis, soft_susy_breaking).  Each key in *values* is registered
+        as ``"<path_prefix><key>"`` via :meth:`set_param` with the supplied
+        *source* / *status*.
+
+        Non-numeric values (strings, dicts, lists) are stored verbatim — useful
+        for status strings like ``"strong CP solved dynamically"``.
+
+        Args:
+            values:      Dict of {param_name: value} to register.
+            source:      Provenance source string (default "v25.0").
+            status:      Status label (default "DERIVED").
+            path_prefix: Optional dotted prefix prepended to every key.
+            metadata:    Shared metadata dict copied onto every entry.
+        """
+        if not values:
+            return
+        shared_meta = dict(metadata) if metadata else {}
+        for key, val in values.items():
+            full_path = f"{path_prefix}{key}" if path_prefix else key
+            try:
+                self.set_param(
+                    path=full_path,
+                    value=val,
+                    source=source,
+                    status=status,
+                    metadata=dict(shared_meta),
+                )
+            except Exception as exc:  # pragma: no cover - defensive
+                warnings.warn(f"PMRegistry.update: could not set {full_path!r}: {exc}")
+
+    # -------------------------------------------------------------------------
+    # v25.0 Sprint 4 module wiring (Sprint 4 task #8)
+    # -------------------------------------------------------------------------
+
+    def load_v25_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
+        """
+        Defensively load and register the v25.0 Sprint 4 physics modules.
+
+        Imports and calls each of the six new entry points behind a try/except
+        so the build never breaks when a module hasn't landed yet:
+
+            * particle.yukawa_derivation.get_geometric_pmns
+            * geometry.re_t_sector.close_vev_gap
+            * cosmology.vacuum_selection.prune_landscape
+            * particle.strong_cp_axion.solve_strong_cp
+            * cosmology.baryogenesis.get_baryogenesis
+            * susy.soft_susy_breaking.get_soft_susy_terms
+
+        Each result dict is funnelled through :meth:`update` so all v25.0
+        params land in the registry with consistent provenance.
+
+        Args:
+            verbose: If True, print a short report per module.
+
+        Returns:
+            Dict mapping module name -> the result dict (or {"error": ...}).
+        """
+        results: Dict[str, Any] = {}
+
+        def _try(module_label: str, importer, prefix: str):
+            try:
+                result = importer()
+            except Exception as exc:  # noqa: BLE001 - we want to swallow everything
+                if verbose:
+                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
+                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
+                return
+            if not isinstance(result, dict):
+                if verbose:
+                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
+                results[module_label] = {"error": "non-dict return"}
+                return
+            self.update(
+                values=result,
+                source=f"v25.0:{module_label}",
+                status="DERIVED",
+                path_prefix=prefix,
+                metadata={"v25_0_sprint4": True, "module": module_label},
+            )
+            results[module_label] = result
+            if verbose:
+                keys = ", ".join(sorted(result.keys()))
+                print(f"  [OK]   {module_label}: {keys}")
+
+        if verbose:
+            print("\n[INITIALIZATION] Loading v25.0 Sprint 4 modules")
+            print("-" * 80)
+
+        # Sprint 4 #2 — Yukawa / PMNS angles
+        def _yukawa():
+            from metaphysica.simulations.PM.particle.yukawa_derivation import (  # type: ignore
+                get_geometric_pmns,
+            )
+            return get_geometric_pmns()
+
+        # Sprint 4 #3 — Re(T) stabilization
+        def _ret():
+            from metaphysica.simulations.PM.geometry.re_t_sector import (  # type: ignore
+                close_vev_gap,
+            )
+            return close_vev_gap()
+
+        # Sprint 4 #4 — Landscape pruning
+        def _vacua():
+            from metaphysica.simulations.PM.cosmology.vacuum_selection import (  # type: ignore
+                prune_landscape,
+            )
+            return prune_landscape()
+
+        # Sprint 4 #5 — Strong CP / axion
+        def _strong_cp():
+            from metaphysica.simulations.PM.particle.strong_cp_axion import (  # type: ignore
+                solve_strong_cp,
+            )
+            return solve_strong_cp()
+
+        # Sprint 4 #6 — Baryogenesis
+        def _baryo():
+            from metaphysica.simulations.PM.cosmology.baryogenesis import (  # type: ignore
+                get_baryogenesis,
+            )
+            return get_baryogenesis()
+
+        # Sprint 4 #7 — Soft SUSY breaking
+        def _susy():
+            from metaphysica.simulations.PM.susy.soft_susy_breaking import (  # type: ignore
+                get_soft_susy_terms,
+            )
+            return get_soft_susy_terms()
+
+        _try("yukawa_derivation",  _yukawa,    prefix="particle.")
+        _try("re_t_sector",         _ret,       prefix="geometry.")
+        _try("vacuum_selection",    _vacua,     prefix="cosmology.")
+        _try("strong_cp_axion",     _strong_cp, prefix="particle.")
+        _try("baryogenesis",        _baryo,     prefix="cosmology.")
+        _try("soft_susy_breaking",  _susy,      prefix="susy.")
+
+        return results
+
+    # -------------------------------------------------------------------------
+    # v26.0 Sprint 5 module wiring (Sprint 5 task #9)
+    # -------------------------------------------------------------------------
+
+    def load_v26_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
+        """
+        Defensively load and register the v26.0 Sprint 5 physics modules.
+
+        Mirrors :meth:`load_v25_modules` but targets the six new
+        falsifiability-strengthening modules from PossibleImprovements.txt:
+
+            * cosmology.mirror_dm_relic.derive_mirror_dm_relic
+            * cosmology.inflation.derive_inflation_observables
+            * particle.axion_photon_coupling.derive_g_a_gamma_gamma
+            * particle.higgs_sector.derive_higgs_sector
+            * cosmology.cosmological_tensions.resolve_tensions
+            * particle.neutrino_sector.derive_neutrino_sector
+
+        Each result dict is funnelled through :meth:`update` so all v26.0
+        params land in the registry with consistent provenance.  Every import
+        and call is wrapped in a try/except so a missing or half-built module
+        skips cleanly without breaking the build.
+
+        Args:
+            verbose: If True, print a short report per module.
+
+        Returns:
+            Dict mapping module name -> the result dict (or {"error": ...}).
+        """
+        results: Dict[str, Any] = {}
+
+        def _try(module_label: str, importer, prefix: str):
+            try:
+                result = importer()
+            except Exception as exc:  # noqa: BLE001 - defensive: swallow everything
+                if verbose:
+                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
+                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
+                return
+            if not isinstance(result, dict):
+                if verbose:
+                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
+                results[module_label] = {"error": "non-dict return"}
+                return
+            # The legacy ``"status"`` key is kept in the result dict each
+            # ``derive_*`` returns (for human display / backwards
+            # compatibility), but every v26.0 module now also exposes a
+            # per-module ``<module>_status`` variant — that is what should
+            # land in the registry.  Dropping the generic ``"status"`` key
+            # here prevents the ``cosmology.status`` / ``particle.status``
+            # collisions that otherwise trigger UserWarnings on load.
+            values_for_registry = {
+                k: v for k, v in result.items() if k != "status"
+            }
+            self.update(
+                values=values_for_registry,
+                source=f"v26.0:{module_label}",
+                status="DERIVED",
+                path_prefix=prefix,
+                metadata={"v26_0_sprint5": True, "module": module_label},
+            )
+            results[module_label] = result
+            if verbose:
+                keys = ", ".join(sorted(result.keys()))
+                print(f"  [OK]   {module_label}: {keys}")
+
+        if verbose:
+            print("\n[INITIALIZATION] Loading v26.0 Sprint 5 modules")
+            print("-" * 80)
+
+        # Sprint 5 #1 — Mirror DM relic abundance
+        def _mirror_dm():
+            from metaphysica.simulations.PM.cosmology.mirror_dm_relic import (  # type: ignore
+                derive_mirror_dm_relic,
+            )
+            return derive_mirror_dm_relic()
+
+        # Sprint 5 #2 — Inflation observables (n_s, r)
+        def _inflation():
+            from metaphysica.simulations.PM.cosmology.inflation import (  # type: ignore
+                derive_inflation_observables,
+            )
+            return derive_inflation_observables()
+
+        # Sprint 5 #3 — Axion-photon coupling g_aγγ
+        def _axion_photon():
+            from metaphysica.simulations.PM.particle.axion_photon_coupling import (  # type: ignore
+                derive_g_a_gamma_gamma,
+            )
+            return derive_g_a_gamma_gamma()
+
+        # Sprint 5 #4 — Higgs sector (m_h, v_EW)
+        def _higgs():
+            from metaphysica.simulations.PM.particle.higgs_sector import (  # type: ignore
+                derive_higgs_sector,
+            )
+            return derive_higgs_sector()
+
+        # Sprint 5 #5 — Cosmological tensions (H0, S8)
+        def _tensions():
+            from metaphysica.simulations.PM.cosmology.cosmological_tensions import (  # type: ignore
+                resolve_tensions,
+            )
+            return resolve_tensions()
+
+        # Sprint 5 #6 — Neutrino sector refinement (Σm_ν)
+        def _neutrino():
+            from metaphysica.simulations.PM.particle.neutrino_sector import (  # type: ignore
+                derive_neutrino_sector,
+            )
+            return derive_neutrino_sector()
+
+        _try("mirror_dm_relic",        _mirror_dm,    prefix="cosmology.")
+        _try("inflation",              _inflation,    prefix="cosmology.")
+        _try("axion_photon_coupling",  _axion_photon, prefix="particle.")
+        _try("higgs_sector",           _higgs,        prefix="particle.")
+        _try("cosmological_tensions",  _tensions,     prefix="cosmology.")
+        _try("neutrino_sector",        _neutrino,     prefix="particle.")
+
+        return results
+
+    def load_v25_v26_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
+        """
+        Convenience wrapper that loads both v25.0 and v26.0 module suites.
+
+        Returns a merged dict keyed by ``"v25_0"`` and ``"v26_0"`` containing
+        the per-module result maps from :meth:`load_v25_modules` and
+        :meth:`load_v26_modules` respectively.
+        """
+        return {
+            "v25_0": self.load_v25_modules(verbose=verbose),
+            "v26_0": self.load_v26_modules(verbose=verbose),
+        }
+
+    # -------------------------------------------------------------------------
+    # v27.0 Sprint T6 module wiring (Sprint T6 Tier 3 architectural kickoffs)
+    # -------------------------------------------------------------------------
+
+    def load_v27_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
+        """
+        Defensively load and register the v27.0 Sprint T6 physics modules.
+
+        Mirrors :meth:`load_v25_modules` / :meth:`load_v26_modules` but targets
+        the Sprint T6 Tier 3 architectural kickoffs:
+
+            * particle.lhc_predictions.get_lhc_predictions  (Sprint T6 #4, T3.7)
+
+        Each result dict is funnelled through :meth:`update` so all v27.0
+        params land in the registry with consistent provenance.  Every import
+        and call is wrapped in a try/except so a missing or half-built module
+        skips cleanly without breaking the build.
+
+        Args:
+            verbose: If True, print a short report per module.
+
+        Returns:
+            Dict mapping module name -> the result dict (or {"error": ...}).
+        """
+        results: Dict[str, Any] = {}
+
+        def _try(module_label: str, importer, prefix: str):
+            try:
+                result = importer()
+            except Exception as exc:  # noqa: BLE001 - defensive: swallow everything
+                if verbose:
+                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
+                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
+                return
+            if not isinstance(result, dict):
+                if verbose:
+                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
+                results[module_label] = {"error": "non-dict return"}
+                return
+            values_for_registry = {
+                k: v for k, v in result.items() if k != "status"
+            }
+            self.update(
+                values=values_for_registry,
+                source=f"v27.0:{module_label}",
+                status="PREDICTED",
+                path_prefix=prefix,
+                metadata={"v27_0_sprint_t6": True, "module": module_label},
+            )
+            results[module_label] = result
+            if verbose:
+                keys = ", ".join(sorted(result.keys()))
+                print(f"  [OK]   {module_label}: {keys}")
+
+        if verbose:
+            print("\n[INITIALIZATION] Loading v27.0 Sprint T6 modules")
+            print("-" * 80)
+
+        # Sprint T6 #4 (Tier 3 T3.7) -- LHC / HL-LHC SUSY spectrum predictions
+        def _lhc():
+            from metaphysica.simulations.PM.particle.lhc_predictions import (  # type: ignore
+                get_lhc_predictions,
+            )
+            return get_lhc_predictions()
+
+        _try("lhc_predictions", _lhc, prefix="particle.")
+
+        return results
+
     # -------------------------------------------------------------------------
     # Dependency Resolution (v20)
     # -------------------------------------------------------------------------
@@ -700,14 +1056,122 @@ class PMRegistry:
     # Formula Management
     # -------------------------------------------------------------------------
 
-    def add_formula(self, formula: 'Formula', source: str = "") -> None:
+    def add_formula(
+        self,
+        formula: 'Formula' = None,
+        source: str = "",
+        *,
+        arithma: Any = None,
+        eml: Any = None,
+        value: Optional[float] = None,
+        env: Optional[Dict[str, float]] = None,
+        triple_rel: Optional[float] = None,
+        triple_abs: Optional[float] = None,
+    ) -> None:
         """
-        Add a formula to the registry.
+        Add a formula to the registry with optional triple-track cross-check.
+
+        Phase E.2 extension: when both a symbolic view (arithma or eml) and
+        a ``value`` are present, ``triple_validator.triple_assert`` runs at
+        registration time and halts the build on disagreement.
 
         Args:
             formula: Formula instance to add
             source: Source simulation file identifier
+            arithma: Optional arithma.Expression for symbolic cross-check.
+            eml: Optional eml_math.EMLPoint for universal-math cross-check.
+            value: Optional canonical float for cross-check.
+            env: Variable bindings used when evaluating symbolic views.
+            triple_rel: Relative tolerance override.
+            triple_abs: Absolute tolerance override.
         """
+        if formula is None:
+            raise ValueError("add_formula: formula argument is required")
+
+        # Merge kwarg overrides into the Formula record.
+        if arithma is not None:
+            formula.arithma = arithma
+        if eml is not None:
+            formula.eml = eml
+        if value is not None:
+            formula.value = value
+        if env is not None:
+            formula.triple_env = dict(env)
+        if triple_rel is not None:
+            formula.triple_rel = triple_rel
+        if triple_abs is not None:
+            formula.triple_abs = triple_abs
+
+        # Triple-track classification + cross-check.
+        has_arithma = getattr(formula, "arithma", None) is not None
+        has_eml = getattr(formula, "eml", None) is not None
+        has_value = getattr(formula, "value", None) is not None
+
+        if has_value and (has_arithma or has_eml):
+            try:
+                from metaphysica.simulations.core.triple_validator import (
+                    triple_assert,
+                )
+                triple_assert(
+                    formula.arithma,
+                    formula.eml,
+                    float(formula.value),
+                    env=formula.triple_env or {},
+                    rel=formula.triple_rel,
+                    abs_=formula.triple_abs,
+                    name=formula.id,
+                )
+            except ImportError:
+                pass
+
+            if has_arithma and has_eml:
+                formula.triple_status = "OK"
+            elif has_arithma:
+                formula.triple_status = "ARITHMA_ONLY"
+            else:
+                formula.triple_status = "EML_ONLY"
+        elif has_value:
+            formula.triple_status = "FLOAT_ONLY"
+        else:
+            formula.triple_status = ""
+
+        # Cache symbolic-side rendered representations once.
+        if has_arithma and not formula.arithma_latex:
+            try:
+                formula.arithma_latex = formula.arithma.to_latex()
+            except Exception:
+                formula.arithma_latex = ""
+
+        # Capture arithma.to_compact() when available. Sprint 3.1 adds
+        # to_compact/from_compact to the Arithma wheel; until that lands
+        # (or in dev envs where the wheel isn't built) we degrade gracefully
+        # to ``None`` rather than failing registration.
+        if has_arithma and formula.arithma_compact is None:
+            try:
+                if hasattr(formula.arithma, "to_compact"):
+                    formula.arithma_compact = formula.arithma.to_compact()
+                else:
+                    formula.arithma_compact = None
+            except Exception:
+                formula.arithma_compact = None
+
+        if has_eml and formula.eml_tree_compact is None:
+            compact_obj = None
+            for method in ("to_compact", "as_compact", "compact"):
+                fn = getattr(formula.eml, method, None)
+                if callable(fn):
+                    try:
+                        compact_obj = fn()
+                        break
+                    except Exception:
+                        compact_obj = None
+            if compact_obj is None:
+                try:
+                    compact_obj = repr(formula.eml)
+                except Exception:
+                    compact_obj = ""
+            formula.eml_tree_compact = compact_obj
+
         if formula.id in self._formulas:
             warnings.warn(f"Overwriting formula {formula.id}")
 
@@ -883,6 +1347,12 @@ class PMRegistry:
                 'eml_latex': getattr(f, 'eml_latex', ''),
                 'eml_tree_str': getattr(f, 'eml_tree_str', ''),
                 'eml_description': getattr(f, 'eml_description', ''),
+                # Triple-track fields (Phase E.2 + Sprint 3.2)
+                'arithma_latex': getattr(f, 'arithma_latex', ''),
+                'arithma_compact': getattr(f, 'arithma_compact', None),
+                'eml_tree_compact': getattr(f, 'eml_tree_compact', None),
+                'triple_status': getattr(f, 'triple_status', ''),
+                'value': getattr(f, 'value', None),
                 'source_simulation': entry.source,
                 'timestamp': entry.timestamp,
             }

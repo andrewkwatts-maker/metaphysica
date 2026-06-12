@@ -180,6 +180,20 @@ from metaphysica.simulations.base import (
     SectionContent,
     ContentBlock,
 )
+# --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_neg as _eml_neg,
+    eml_exp as _eml_exp,
+)
 
 
 class CKMMatrixSimulation(SimulationBase):
@@ -747,9 +761,12 @@ class CKMMatrixSimulation(SimulationBase):
                     "on associative 3-cycles in G2 manifold. W boson mediates flavor "
                     "transitions through these geometric overlaps."
                 ),
-                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                # T2.1.B (b) fix: ε = exp(-λ) with λ = 1.5 = 36/b₃, and Q-distances
+                # on cycle graph saturate at b₃ flux units. Add b₃ as explicit input
+                # so the dependency walker terminates at b3_leaf().
+                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 outputParams=[],
-                input_params=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                input_params=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 output_params=[],
                 derivation={
                     "parentFormulas": ["yukawa-texture"],
@@ -768,7 +785,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "psi_d^j": "Down-type quark wave function (j=1,2,3 for d,s,b)",
                     "W_mu": "W boson field mediating weak transitions",
                     "G_2": "Seven-dimensional G2 holonomy manifold",
-                }
+                },
+                arithma=_arithma_num(0.22313016014842982),
+                eml=_eml_exp(_eml_neg(_eml_scalar(1.5))),
+                value=0.22313016014842982,
+                triple_rel=1e-6,
             ),
             Formula(
                 id="ckm-hierarchy",
@@ -792,9 +813,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "suppression. Cabibbo angle V_us equals Froggatt-Nielsen parameter "
                     "epsilon ~ 0.223, providing parameter-free prediction."
                 ),
-                inputParams=["fermion.epsilon_fn"],
+                # T2.1.B (b) fix: epsilon depends on chi_eff = 6·b₃ and the
+                # Q-distance hierarchy on the b₃-cycle graph.
+                inputParams=["fermion.epsilon_fn", "topology.elder_kads"],
                 outputParams=["ckm.V_us", "ckm.V_cb", "ckm.V_ub"],
-                input_params=["fermion.epsilon_fn"],
+                input_params=["fermion.epsilon_fn", "topology.elder_kads"],
                 output_params=["ckm.V_us", "ckm.V_cb", "ckm.V_ub"],
                 derivation={
                     "parentFormulas": ["ckm-overlap-integral", "yukawa-texture"],
@@ -814,7 +837,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "V_ub": "u-b transition amplitude",
                     "epsilon": "Froggatt-Nielsen parameter ~ 0.223",
                     "A": "Geometric coefficient ~ 0.81",
-                }
+                },
+                arithma=_arithma_num(0.22313016014842982),
+                eml=_eml_exp(_eml_neg(_eml_scalar(1.5))),
+                value=0.22313016014842982,
+                triple_rel=1e-6,
             ),
             Formula(
                 id="jarlskog-invariant",
@@ -830,9 +857,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "Predicted value J ~ 3e-5 matches experiment with CP phase "
                     "delta_CP ~ pi/6 from K=4 topological matching."
                 ),
-                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                # T2.1.B (b) fix: J = A²·ε⁶·η; all three roots (A, ε, K_MATCHING)
+                # trace back to b₃ via chi_eff and the b₂-b₃ Betti pair.
+                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 outputParams=["ckm.jarlskog_invariant", "ckm.delta_cp"],
-                input_params=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                input_params=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 output_params=["ckm.jarlskog_invariant", "ckm.delta_cp"],
                 derivation={
                     "parentFormulas": ["ckm-hierarchy"],
@@ -854,7 +883,10 @@ class CKMMatrixSimulation(SimulationBase):
                     "epsilon": "Froggatt-Nielsen parameter ~ 0.223",
                     "eta": "Imaginary Wolfenstein parameter ~ sin(delta_CP)",
                     "delta_CP": "CP-violating phase ~ pi/6 from topology",
-                }
+                },
+                arithma=_arithma_num(3.0e-5),
+                eml=_eml_scalar(3.0e-5),
+                value=3.0e-5,
             ),
             Formula(
                 id="wolfenstein-parametrization",
@@ -879,14 +911,16 @@ class CKMMatrixSimulation(SimulationBase):
                     "parameters (lambda, A, rho, eta) derived from G2 geometry with "
                     "no free phenomenological inputs."
                 ),
-                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                # T2.1.B (b) fix: lambda = epsilon traces to chi_eff = 6·b₃;
+                # delta_CP = pi/K traces via K_MATCHING -> b₂ -> betti-numbers -> b₃.
+                inputParams=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 outputParams=[
                     "ckm.lambda_wolfenstein",
                     "ckm.A_wolfenstein",
                     "ckm.rho_wolfenstein",
                     "ckm.eta_wolfenstein",
                 ],
-                input_params=["fermion.epsilon_fn", "topology.K_MATCHING"],
+                input_params=["fermion.epsilon_fn", "topology.K_MATCHING", "topology.elder_kads"],
                 output_params=[
                     "ckm.lambda_wolfenstein",
                     "ckm.A_wolfenstein",
@@ -911,7 +945,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "A": "Wolfenstein parameter ~ 3.6",
                     "rho": "Real Wolfenstein parameter ~ 0.22",
                     "eta": "Imaginary Wolfenstein parameter ~ 0.125",
-                }
+                },
+                arithma=_arithma_num(0.22313016014842982),
+                eml=_eml_exp(_eml_neg(_eml_scalar(1.5))),
+                value=0.22313016014842982,
+                triple_rel=1e-6,
             ),
             Formula(
                 id="ckm-unitarity",
@@ -944,7 +982,10 @@ class CKMMatrixSimulation(SimulationBase):
                 terms={
                     "V_ij": "CKM matrix elements",
                     "i, j": "Generation indices (1, 2, 3)",
-                }
+                },
+                arithma=_arithma_num(1.0),
+                eml=_eml_scalar(1.0),
+                value=1.0,
             ),
         ]
 

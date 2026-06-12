@@ -301,12 +301,19 @@ class AxionDMV18(SimulationBase):
                 label="(7.1)",
                 latex=r"f_a = \frac{M_{\rm Pl}}{k_\gimel^6} \approx 3.5 \times 10^{12}\,\text{GeV}",
                 plain_text="f_a = M_Pl / k_gimel^6 ~ 3.5e12 GeV",
+                # k_gimel = b_3/2 + 1/π (the Holonomy warp factor). Inlining the
+                # b_3 split here roots the EML tree at b3_leaf so the dependency
+                # walker no longer stops at the opaque k_gimel variable
+                # (T2.3 fix). Numerically equivalent to k_gimel = 12.318.
                 eml_tree_str=(
-                    "ops.div(M_Pl, ops.pow(k_gimel, eml_scalar(6.0)))"
+                    "ops.div(M_Pl, ops.pow("
+                    "ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.inv(eml_pi())), "
+                    "eml_scalar(6.0)))"
                 ),
                 eml_description=(
-                    "EML: f_a = ops.div(M_Pl, ops.pow(k_gimel, eml_scalar(6.0))) "
-                    "— axion decay constant from 6D moduli space of the associative 3-cycle"
+                    "EML: f_a = ops.div(M_Pl, ops.pow(b3_leaf()/2 + 1/pi, eml_scalar(6.0))) "
+                    "— axion decay constant from 6D moduli space of the associative 3-cycle "
+                    "with k_gimel = b_3/2 + 1/π"
                 ),
                 category="PREDICTED",
                 description=(
@@ -319,9 +326,13 @@ class AxionDMV18(SimulationBase):
                     "within the anthropic window (10^11-10^13 GeV) where the axion "
                     "can explain 100% of observed dark matter with theta_i ~ O(1)."
                 ),
-                inputParams=["geometry.k_gimel"],
+                # T2.3 fix: declare topology.elder_kads as a direct input — the
+                # EML tree now inlines k_gimel = b_3/2 + 1/π so b_3 is a real
+                # leaf of f_a's derivation, and downstream f_a consumers can
+                # trace through this formula to the canonical b3 seed.
+                inputParams=["geometry.k_gimel", "topology.elder_kads"],
                 outputParams=["axion.f_a"],
-                input_params=["geometry.k_gimel"],
+                input_params=["geometry.k_gimel", "topology.elder_kads"],
                 output_params=["axion.f_a"],
                 derivation={
                     "steps": [

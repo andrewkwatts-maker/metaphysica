@@ -86,6 +86,35 @@ from metaphysica.simulations.base import (
     ContentBlock,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_b3():
+        # Labelled b3 constant for Arithma — Sprint 2 gauge instructions
+        # require b3-dependent formulas to use a labelled constant.
+        return _A.Expression.constant("b3")
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_b3():
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    b3_leaf as _b3_leaf,
+    eml_div as _eml_div,
+    eml_exp as _eml_exp,
+    eml_neg as _eml_neg,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_neg(a):
+    return None if a is None else a.neg()
+def _arithma_exp(a):
+    return None if a is None else a.exp()
+
 
 class AsymptoticSafetySimulation(SimulationBase):
     """
@@ -417,6 +446,13 @@ class AsymptoticSafetySimulation(SimulationBase):
                     "number (Hitchin functional moduli space dimension). "
                     "MOTIVATED_IDENTIFICATION — not a theorem."
                 ),
+                # Triple-track: α*⁻¹ = b₃ = 24. EML uses b3_leaf() (Sprint 2
+                # gauge: every b₃-dependent quantity routes through b3_leaf).
+                # Arithma uses a labelled b3 constant.
+                arithma=_arithma_b3(),
+                eml=_b3_leaf(),
+                value=24.0,
+                triple_env={"b3": 24.0},
             ),
             Formula(
                 id="as-operator-enhancement",
@@ -436,6 +472,14 @@ class AsymptoticSafetySimulation(SimulationBase):
                     "lambda_6_eff = exp(-chi_eff / b_3) = exp(-6): exponential suppression "
                     "from integer ratio 144/24 = 6. Proton lifetime enhanced by 1/lambda_6^2."
                 ),
+                # Triple-track: λ₆_eff = exp(-χ_eff/b₃) = exp(-144/24) = exp(-6).
+                arithma=_arithma_exp(
+                    _arithma_neg(_arithma_div(_arithma_num(144.0), _arithma_b3()))
+                ),
+                eml=_eml_exp(_eml_neg(_eml_div(_eml_scalar(144.0), _b3_leaf()))),
+                value=math.exp(-6.0),
+                triple_env={"b3": 24.0, "chi_eff": 144.0},
+                triple_rel=1e-10,
             ),
         ]
 

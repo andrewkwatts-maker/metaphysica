@@ -1,0 +1,246 @@
+{
+  "rename_map": {
+    "CosmologicalConstantV16": "CosmologicalConstant",
+    "CosmologyIntroV16": "CosmologyIntro",
+    "DarkEnergyV16": "DarkEnergy",
+    "EvolutionEngineV16": "EvolutionEngine",
+    "HubbleTensionV16": "HubbleTension",
+    "MultiSectorV16": "MultiSector",
+    "RicciFlowH0V16": "RicciFlowH0",
+    "S8SuppressionV16": "S8Suppression",
+    "SpeedOfLightV17": "SpeedOfLight",
+    "PneumaMechanismV16": "PneumaMechanism",
+    "ThermalTimeV16": "ThermalTime",
+    "G2GeometryV16": "G2Geometry",
+    "LeechPartitionV16": "LeechPartition",
+    "ModularInvarianceV16": "ModularInvariance",
+    "AbstractV17_2": "Abstract",
+    "DiscussionV16": "Discussion",
+    "FoundationsV16_2": "Foundations",
+    "IntegrityV16_2": "Integrity",
+    "IntroductionV16": "Introduction",
+    "MethodologyV16_2": "Methodology",
+    "PredictionsAggregatorV16": "PredictionsAggregator",
+    "ResultsV16_2": "Results",
+    "FermionGenerationsV16": "FermionGenerations",
+    "AvogadroV17": "Avogadro",
+    "ComptonWavelengthV17": "ComptonWavelength",
+    "FaradayV17": "Faraday",
+    "HartreeEnergyV17": "HartreeEnergy",
+    "MagneticFluxV17": "MagneticFlux",
+    "MolarGasV17": "MolarGas",
+    "StefanBoltzmannV17": "StefanBoltzmann",
+    "VonKlitzingV17": "VonKlitzing",
+    "WeakMixingV17": "WeakMixing",
+    "RigorCovarianceV16_1": "RigorCovariance",
+    "RigorousValidatorV16_1": "RigorousValidator"
+  },
+  "per_file": {
+    "cosmology\\cosmological_constant.py": [
+      [
+        "CosmologicalConstantV16",
+        "CosmologicalConstant"
+      ]
+    ],
+    "cosmology\\cosmology_intro.py": [
+      [
+        "CosmologyIntroV16",
+        "CosmologyIntro"
+      ]
+    ],
+    "cosmology\\dark_energy.py": [
+      [
+        "DarkEnergyV16",
+        "DarkEnergy"
+      ]
+    ],
+    "cosmology\\evolution_engine.py": [
+      [
+        "EvolutionEngineV16",
+        "EvolutionEngine"
+      ]
+    ],
+    "cosmology\\hubble_tension.py": [
+      [
+        "HubbleTensionV16",
+        "HubbleTension"
+      ]
+    ],
+    "cosmology\\multi_sector.py": [
+      [
+        "MultiSectorV16",
+        "MultiSector"
+      ]
+    ],
+    "cosmology\\ricci_flow_h0.py": [
+      [
+        "RicciFlowH0V16",
+        "RicciFlowH0"
+      ]
+    ],
+    "cosmology\\s8_suppression.py": [
+      [
+        "S8SuppressionV16",
+        "S8Suppression"
+      ]
+    ],
+    "cosmology\\speed_of_light.py": [
+      [
+        "SpeedOfLightV17",
+        "SpeedOfLight"
+      ]
+    ],
+    "field_dynamics\\pneuma_mechanism.py": [
+      [
+        "PneumaMechanismV16",
+        "PneumaMechanism"
+      ]
+    ],
+    "field_dynamics\\thermal_time.py": [
+      [
+        "ThermalTimeV16",
+        "ThermalTime"
+      ]
+    ],
+    "geometry\\g2_geometry.py": [
+      [
+        "G2GeometryV16",
+        "G2Geometry"
+      ]
+    ],
+    "geometry\\leech_partition.py": [
+      [
+        "LeechPartitionV16",
+        "LeechPartition"
+      ]
+    ],
+    "geometry\\modular_invariance.py": [
+      [
+        "ModularInvarianceV16",
+        "ModularInvariance"
+      ]
+    ],
+    "paper\\abstract.py": [
+      [
+        "AbstractV17_2",
+        "Abstract"
+      ]
+    ],
+    "paper\\discussion.py": [
+      [
+        "DiscussionV16",
+        "Discussion"
+      ]
+    ],
+    "paper\\foundations.py": [
+      [
+        "FoundationsV16_2",
+        "Foundations"
+      ]
+    ],
+    "paper\\integrity.py": [
+      [
+        "IntegrityV16_2",
+        "Integrity"
+      ]
+    ],
+    "paper\\introduction.py": [
+      [
+        "IntroductionV16",
+        "Introduction"
+      ]
+    ],
+    "paper\\methodology.py": [
+      [
+        "MethodologyV16_2",
+        "Methodology"
+      ]
+    ],
+    "paper\\predictions_aggregator.py": [
+      [
+        "PredictionsAggregatorV16",
+        "PredictionsAggregator"
+      ]
+    ],
+    "paper\\results.py": [
+      [
+        "ResultsV16_2",
+        "Results"
+      ]
+    ],
+    "particle\\fermion_generations.py": [
+      [
+        "FermionGenerationsV16",
+        "FermionGenerations"
+      ]
+    ],
+    "qed\\avogadro.py": [
+      [
+        "AvogadroV17",
+        "Avogadro"
+      ]
+    ],
+    "qed\\compton_wavelength.py": [
+      [
+        "ComptonWavelengthV17",
+        "ComptonWavelength"
+      ]
+    ],
+    "qed\\faraday.py": [
+      [
+        "FaradayV17",
+        "Faraday"
+      ]
+    ],
+    "qed\\hartree_energy.py": [
+      [
+        "HartreeEnergyV17",
+        "HartreeEnergy"
+      ]
+    ],
+    "qed\\magnetic_flux.py": [
+      [
+        "MagneticFluxV17",
+        "MagneticFlux"
+      ]
+    ],
+    "qed\\molar_gas.py": [
+      [
+        "MolarGasV17",
+        "MolarGas"
+      ]
+    ],
+    "qed\\stefan_boltzmann.py": [
+      [
+        "StefanBoltzmannV17",
+        "StefanBoltzmann"
+      ]
+    ],
+    "qed\\von_klitzing.py": [
+      [
+        "VonKlitzingV17",
+        "VonKlitzing"
+      ]
+    ],
+    "qed\\weak_mixing.py": [
+      [
+        "WeakMixingV17",
+        "WeakMixing"
+      ]
+    ],
+    "validation\\rigor_covariance.py": [
+      [
+        "RigorCovarianceV16_1",
+        "RigorCovariance"
+      ]
+    ],
+    "validation\\rigorous_validator.py": [
+      [
+        "RigorousValidatorV16_1",
+        "RigorousValidator"
+      ]
+    ]
+  },
+  "collisions": {},
+  "count": 34
+}

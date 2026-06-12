@@ -27,6 +27,7 @@ try:
     # Core EML node + operator library — the universal-math foundation.
     from eml_math import EMLPoint
     from eml_math import operators as ops
+    from eml_math import eml_pi as _eml_math_pi
     from eml_math.constants import PLANCK_D
     # Algebras + lattices + spacetime types live in the sister `eml-spectral`
     # package as of eml-math v1.2.0 (algebras moved out of the slim core).
@@ -85,6 +86,21 @@ def eml_lit(v: _Num) -> "EMLPoint":
     return eml_scalar(v)
 
 
+def b3_leaf() -> "EMLPoint":
+    """
+    Labelled b₃ leaf node for EML formula trees.
+
+    Returns an ``EMLPoint`` carrying the value of the G₂ third Betti number
+    b₃ = 24, sourced from the SSoT :class:`FormulasRegistry`. The value is
+    identical to ``eml_scalar(24.0)`` numerically, but this helper is the
+    *canonical site* for any kernel that depends on b₃.
+    """
+    require_eml()
+    # Lazy import to avoid circular dependency at module load time.
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+    return eml_scalar(float(get_registry().elder_kads))
+
+
 def eml_compute(expr: "EMLPoint") -> float:
     """Evaluate an EML expression tree to a float via .tension()."""
     require_eml()
@@ -96,7 +112,7 @@ def eml_compute(expr: "EMLPoint") -> float:
 def eml_pi() -> "EMLPoint":
     """π as an EMLPoint literal."""
     require_eml()
-    return eml_pi()
+    return _eml_math_pi()
 
 
 def eml_e() -> "EMLPoint":

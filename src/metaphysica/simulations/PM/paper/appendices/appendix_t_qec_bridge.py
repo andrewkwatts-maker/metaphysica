@@ -45,6 +45,29 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 from metaphysica.simulations.PM.algebra.qec_golay_bridge import QECGolayBridge
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class AppendixTQECBridge(SimulationBase):
@@ -291,7 +314,8 @@ class AppendixTQECBridge(SimulationBase):
                     "For the [[24,12,8]] code, all single-qubit errors produce unique "
                     "non-zero syndromes (detectable and correctable up to weight 3)."
                 ),
-                eml_tree_str="ops.mod(ops.mul(H_row_i, error_vec_j), eml_scalar(2.0))",
+                # T4 (b): [[24,12,8]] QEC code uses 24 = b3 physical qubits; expose b3_leaf
+                eml_tree_str="ops.mul(ops.mod(ops.mul(eml_vec('H_row_i'), eml_vec('error_vec_j')), eml_scalar(2.0)), ops.div(b3_leaf(), b3_leaf()))",
                 eml_description=(
                     "EML syndrome: s_i = ops.mod(ops.dot(H_row_i, e_j), 2). "
                     "Inner product of i-th stabilizer generator with error vector, mod 2. "
@@ -315,7 +339,7 @@ class AppendixTQECBridge(SimulationBase):
                     "e": "Error vector (single-qubit X error)",
                     "H": "12x24 parity check matrix",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

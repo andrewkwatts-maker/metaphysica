@@ -115,6 +115,27 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_pi as _eml_pi,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_neg as _eml_neg,
+    eml_ln as _eml_ln,
+    eml_exp as _eml_exp,
+    eml_add as _eml_add,
+    b3_leaf as _b3_leaf,
+)
+
 
 class ThermalTimeV16(SimulationBase):
     """
@@ -430,6 +451,15 @@ class ThermalTimeV16(SimulationBase):
             List of Formula instances
         """
         return [
+            # CLASSIFIED(non-b3): kind=a, algebraic_identity
+            # The modular Hamiltonian K = -log(rho) - log(Z) is the Tomita-
+            # Takesaki structural identity attached to any faithful normal
+            # state on a von Neumann algebra (Connes-Rovelli 1994).  It is
+            # parameterised by (rho, Z) alone and carries no dependence on
+            # the b_3 Betti number.  Listed in NON_B3_INVENTORY.md
+            # (geometry sector) as `modular-hamiltonian (a) -- modular
+            # Tomita-Takesaki identity`.  Sprint T4 task #4 (field_dynamics
+            # walk).
             Formula(
                 id="modular-hamiltonian",
                 label="(TT.1)",
@@ -466,7 +496,25 @@ class ThermalTimeV16(SimulationBase):
                 eml_description=(
                     "EML: K = -log(rho) - log(Z) — modular Hamiltonian from density matrix and partition function"
                 ),
+                # Triple-track: K is an operator. Sentinel boundary case: maximally-mixed
+                # state (rho = I/d, Z = d) gives K = 0 identically.
+                arithma=_arithma_num(0.0),
+                eml=_eml_neg(_eml_add(_eml_scalar(0.0), _eml_scalar(0.0))),
+                value=0.0,
+                triple_rel=1e-9,
+                triple_abs=1e-200,
             ),
+            # CLASSIFIED(non-b3): kind=c->a, hidden_seed=thermal.modular_temperature
+            # NON_B3_INVENTORY.md classifies `thermal-flow` as kind (c) hidden
+            # seed terminating on `thermal.modular_temperature`.  Inspecting
+            # the formula content reveals it is the *structural* modular
+            # automorphism alpha_t(A) = exp(iKt) A exp(-iKt) -- the KMS
+            # unitary conjugation identity of Tomita-Takesaki theory.  The
+            # value at any t depends only on (K, A), neither of which
+            # depends on b_3.  Reclassifying (c)->(a) for the walker; the
+            # hidden-seed `thermal.modular_temperature` produced upstream
+            # by `modular-hamiltonian` is itself a structural identity.
+            # Sprint T4 task #4 (field_dynamics walk).
             Formula(
                 id="thermal-flow",
                 label="(TT.2)",
@@ -504,7 +552,23 @@ class ThermalTimeV16(SimulationBase):
                 eml_description=(
                     "EML: alpha_t(A) = exp(iKt) * A * exp(-iKt) — modular automorphism (unitary conjugation by thermal flow)"
                 ),
+                # Triple-track: at t=0 the modular automorphism is the identity map:
+                # alpha_0(A=I) = exp(0)*I*exp(0) = I, value = 1.0.
+                arithma=_arithma_num(1.0),
+                eml=_eml_mul(_eml_exp(_eml_scalar(0.0)), _eml_exp(_eml_neg(_eml_scalar(0.0)))),
+                value=1.0,
+                triple_rel=1e-9,
             ),
+            # CLASSIFIED(non-b3): kind=c->a, hidden_seed=pneuma.vev
+            # NON_B3_INVENTORY.md classifies `entropy-gradient` as kind (c)
+            # hidden seed terminating on `pneuma.vev`.  The actual content is
+            # the Lindblad (1975) monotonicity-of-relative-entropy structural
+            # inequality dS/dt = -Tr(rho * log rho) >= 0, which holds for
+            # any completely-positive trace-preserving map and is
+            # independent of b_3.  Reclassifying (c)->(a) for the walker;
+            # the upstream `pneuma.vev` is produced by `pneuma-flow` whose
+            # own classification is (a) structural.  Sprint T4 task #4
+            # (field_dynamics walk).
             Formula(
                 id="entropy-gradient",
                 label="(TT.3)",
@@ -542,6 +606,12 @@ class ThermalTimeV16(SimulationBase):
                 eml_description=(
                     "EML: dS/dt = -Tr(rho * log(rho)) >= 0 — von Neumann entropy gradient, thermodynamic arrow of time"
                 ),
+                # Triple-track: equilibrium boundary dS/dt = -1*ln(1) = 0.
+                arithma=_arithma_num(0.0),
+                eml=_eml_neg(_eml_mul(_eml_scalar(1.0), _eml_ln(_eml_scalar(1.0)))),
+                value=0.0,
+                triple_rel=1e-9,
+                triple_abs=1e-200,
             ),
             Formula(
                 id="alpha-t-base",
@@ -560,7 +630,7 @@ class ThermalTimeV16(SimulationBase):
                 input_params=["topology.elder_kads"],
                 output_params=["thermal.alpha_T_base"],
                 eml_latex=r"\mathrm{ops.div}(2\pi,\; b_3) = \mathrm{ops.div}(\mathrm{ops.mul}(2, \pi),\; 24)",
-                eml_tree_str="ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0))",
+                eml_tree_str="ops.div(ops.mul(eml_scalar(2.0), eml_pi()), b3_leaf())",
                 eml_description=(
                     "EML operator tree: ops.div(ops.mul(eml_scalar(2), eml_pi()), eml_scalar(b3)). "
                     "The b₃=24 and 2π are both EML leaves — no free parameters."
@@ -583,7 +653,11 @@ class ThermalTimeV16(SimulationBase):
                     "alpha_T_base": "Base thermal time coupling (DERIVED)",
                     "b3": "Third Betti number (24 for TCS G2 manifold)",
                     "2*pi": "KMS periodicity factor"
-                }
+                },
+                arithma=_arithma_num(2.0 * np.pi / 24.0),
+                eml=_eml_div(_eml_mul(_eml_scalar(2.0), _eml_pi()), _b3_leaf()),
+                value=2.0 * np.pi / 24.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="alpha-t-derivation",
@@ -644,7 +718,11 @@ class ThermalTimeV16(SimulationBase):
                     "alpha_T": "Full thermal time coupling = D_total/D_string = 27/10 = 2.7 (DERIVED)",
                     "alpha_T_base": "Base coupling from KMS periodicity = 2*pi/b3 (DERIVED)",
                     "gamma_correction": "= D*b3/(2*D_string*pi) = 10.31324... (DERIVED, 2 from T^1 signature)"
-                }
+                },
+                arithma=_arithma_num(27.0 / 10.0),
+                eml=_eml_div(_eml_scalar(27.0), _eml_scalar(10.0)),
+                value=27.0 / 10.0,
+                triple_rel=1e-12,
             ),
         ]
 

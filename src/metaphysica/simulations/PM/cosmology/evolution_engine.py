@@ -765,7 +765,7 @@ class EvolutionEngineV16(SimulationBase):
                     "z": "Cosmological redshift"
                 },
                 eml_latex=r"\mathrm{ops.div}(\mathrm{ops.mul}(H_0^{late},\, \mathrm{ops.pow}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1), z),\, \mathrm{eml\_scalar}(1.5))),\, \mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.div}(\mathrm{ops.log}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1), z)),\, \mathrm{eml\_scalar}(24))))",
-                eml_tree_str="ops.div(ops.mul(H0_late, ops.pow(ops.add(eml_scalar(1.0), z), eml_scalar(1.5))), ops.add(eml_scalar(1.0), ops.div(ops.log(ops.add(eml_scalar(1.0), z)), eml_scalar(24.0))))",
+                eml_tree_str="ops.div(ops.mul(H0_late, ops.pow(ops.add(eml_scalar(1.0), z), eml_scalar(1.5))), ops.add(eml_scalar(1.0), ops.div(ops.log(ops.add(eml_scalar(1.0), z)), b3_leaf())))",
                 eml_description="EML: H(z) = ops.div(H0_late*(1+z)^1.5, ops.add(1, ops.div(log(1+z), b3))) — log-scaling Hubble evolution",
             ),
             Formula(
@@ -805,7 +805,7 @@ class EvolutionEngineV16(SimulationBase):
                     "b3": "Third Betti number (24)"
                 },
                 eml_latex=r"\mathrm{ops.add}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.div}(\mathrm{ops.log}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1), z)),\, \mathrm{eml\_scalar}(24)))",
-                eml_tree_str="ops.add(eml_scalar(1.0), ops.div(ops.log(ops.add(eml_scalar(1.0), z)), eml_scalar(24.0)))",
+                eml_tree_str="ops.add(eml_scalar(1.0), ops.div(ops.log(ops.add(eml_scalar(1.0), z)), b3_leaf()))",
                 eml_description="EML: relaxation(z) = ops.add(1, ops.div(log(1+z), b3)) — logarithmic Ricci flow relaxation",
             ),
             Formula(

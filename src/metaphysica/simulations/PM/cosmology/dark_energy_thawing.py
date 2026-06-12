@@ -857,7 +857,7 @@ class DarkEnergyEvolution(SimulationBase):
                     "Phi": "G2 associative 3-form"
                 },
                 eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(24)))",
-                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))",
+                eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))",
                 eml_description="EML: w0 = ops.add(ops.neg(1), ops.inv(b3)) — dark energy equation of state from b3 topology",
             ),
             Formula(
@@ -903,7 +903,7 @@ class DarkEnergyEvolution(SimulationBase):
                     "Ψ": "Co-associative 4-form, Ψ = *Φ"
                 },
                 eml_latex=r"\mathrm{ops.neg}(\mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{eml\_scalar}(24))))",
-                eml_tree_str="ops.neg(ops.inv(ops.sqrt(eml_scalar(24.0))))",
+                eml_tree_str="ops.neg(ops.inv(ops.sqrt(b3_leaf())))",
                 eml_description="EML: w_a = ops.neg(ops.inv(ops.sqrt(b3))) — dynamical dark energy amplitude",
             ),
             Formula(
@@ -988,7 +988,7 @@ class DarkEnergyEvolution(SimulationBase):
                     "chi_eff": "Effective Euler characteristic (144)"
                 },
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{ops.div}(\mathrm{eml\_scalar}(b_3), \chi_{\mathrm{eff}}),\, \mathrm{ops.sub}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{eml\_scalar}(24)))))",
-                eml_tree_str="ops.mul(ops.div(eml_scalar(24.0), chi_eff), ops.sub(eml_scalar(1.0), ops.inv(ops.sqrt(eml_scalar(24.0)))))",
+                eml_tree_str="ops.mul(ops.div(b3_leaf(), chi_eff), ops.sub(eml_scalar(1.0), ops.inv(ops.sqrt(b3_leaf()))))",
                 eml_description="EML: epsilon_T = ops.mul(ops.div(b3, chi_eff), ops.sub(1, ops.inv(ops.sqrt(b3)))) — torsional leakage coefficient",
             ),
             Formula(
@@ -1113,7 +1113,7 @@ class DarkEnergyEvolution(SimulationBase):
                     r"b_3": {"description": "Third Betti number = 24 (total associative 3-cycles across all faces)"}
                 },
                 eml_latex=r"\mathrm{ops.div}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(23)),\, \mathrm{eml\_scalar}(24))",
-                eml_tree_str="ops.div(ops.neg(eml_scalar(23.0)), eml_scalar(24.0))",
+                eml_tree_str="ops.div(ops.neg(eml_scalar(23.0)), b3_leaf())",
                 eml_description="EML: w0 = ops.div(ops.neg(23), 24) = -23/24 from face-ratio topology",
             ),
             Formula(

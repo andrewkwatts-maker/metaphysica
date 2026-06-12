@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 PRINCIPIA METAPHYSICA v16.0 - G2 Geometry and Topology
 ========================================================
@@ -60,6 +61,60 @@ from metaphysica.simulations.base import (
     ContentBlock,
     SectionContent,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+    def _arithma_var(name):
+        return _A.Expression.variable(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+    def _arithma_var(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_exp as _eml_exp,
+    eml_ln as _eml_ln,
+    eml_sin as _eml_sin,
+    eml_cos as _eml_cos,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_sqrt(a):
+    return None if a is None else a.sqrt()
+def _arithma_exp(a):
+    return None if a is None else a.exp()
+def _arithma_ln(a):
+    return None if a is None else a.ln()
+def _arithma_sin(a):
+    return None if a is None else a.sin()
+def _arithma_cos(a):
+    return None if a is None else a.cos()
 
 
 class G2GeometryV16(SimulationBase):
@@ -1287,7 +1342,7 @@ class G2GeometryV16(SimulationBase):
             eml_latex=r"\mathrm{ops.parallel\_spinor}(\eta,\, g) \Rightarrow \mathrm{Hol}(g) \subseteq G_2",
             eml_tree_str="eml_scalar(1.0)",
             eml_description="EML: parallel spinor condition encoded as operator predicate on spin bundle",
-        ))
+        arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0))
 
         # Euler characteristic
         formulas.append(Formula(
@@ -1339,9 +1394,18 @@ class G2GeometryV16(SimulationBase):
                     "value": "68"
                 }
             },
-            eml_latex=r"\mathrm{ops.mul}(\mathrm{eml\_scalar}(2),\, \mathrm{ops.add}(h^{11}, \mathrm{ops.neg}(h^{21}), h^{31}))",
-            eml_tree_str="ops.mul(eml_scalar(2.0), ops.add(eml_scalar(4.0), ops.neg(eml_scalar(0.0)), eml_scalar(68.0)))",
-            eml_description="EML: ops.mul(eml_scalar(2), ops.add(eml_scalar(4), ops.neg(eml_scalar(0)), eml_scalar(68)))",
+            eml_latex=r"\chi_{\text{eff}} = \mathrm{ops.mul}(\mathrm{eml\_scalar}(6),\, \mathrm{b3\_leaf}()) = 144,\ \text{verified by}\ 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144",
+            eml_tree_str="ops.mul(eml_scalar(6.0), b3_leaf())",
+            eml_description="EML: ops.mul(eml_scalar(6), b3_leaf()) — chi_eff = 6 * b3 = 144 is the chain-link expressing the Atiyah-Singer-derived effective Euler characteristic in terms of the foundational seed; the Hodge-number derivation 2*(h11 - h21 + h31) = 2*(4-0+68) = 144 is an independent verification consistent with 6*b3=144",
+            arithma=_arithma_mul(
+                _arithma_num(6.0),
+                _arithma_const("b3"),
+            ),
+            eml=_eml_mul(
+                _eml_scalar(6.0),
+                _b3_leaf(),
+            ),
+            value=144.0,
         ))
 
         # Betti numbers
@@ -1389,9 +1453,12 @@ class G2GeometryV16(SimulationBase):
                     "description": "Zeroth Betti number: number of connected components (always 1 for a connected manifold)"
                 }
             },
-            eml_latex=r"[b_k] = \mathrm{eml\_vec}(1, 0, 4, 24, 24, 4, 0, 1),\quad b_3 = \mathrm{eml\_scalar}(24)",
-            eml_tree_str="eml_vec([1, 0, 4, 24, 24, 4, 0, 1])  # b3 = eml_scalar(24.0) is the seed",
-            eml_description="EML: Betti sequence as vector; b3=eml_scalar(24) is the foundational seed",
+            eml_latex=r"b_3 = \mathrm{b3\_leaf}() = 24,\quad [b_k] = (1, 0, 4, b_3, b_3, 4, 0, 1)",
+            eml_tree_str="b3_leaf()",
+            eml_description="EML: b3_leaf() — third Betti number b3 is the foundational Ten-Pillar seed (=24); the full sequence (1, 0, 4, 24, 24, 4, 0, 1) is reconstructed from b3 plus Poincare duality and TCS pi1=0 simply-connected constraint",
+            arithma=_arithma_const("b3"),
+            eml=_b3_leaf(),
+            value=24.0,
         ))
 
         # Three generations
@@ -1439,9 +1506,18 @@ class G2GeometryV16(SimulationBase):
                     "description": "Normalization factor from the spinor representation dimension and topological index density in 7 dimensions"
                 }
             },
-            eml_latex=r"\mathrm{ops.div}(\chi_{\text{eff}},\, \mathrm{eml\_scalar}(48)) = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\, \mathrm{eml\_scalar}(48))",
-            eml_tree_str="ops.div(eml_scalar(144.0), eml_scalar(48.0))",
-            eml_description="EML: n_gen = ops.div(chi_eff, 48) = ops.div(eml_scalar(144), eml_scalar(48)) = 3",
+            eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{ops.mul}(\mathrm{eml\_scalar}(6),\, \mathrm{b3\_leaf}()),\, \mathrm{eml\_scalar}(48)) = 144/48 = 3",
+            eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), eml_scalar(48.0))",
+            eml_description="EML: n_gen = ops.div(ops.mul(eml_scalar(6), b3_leaf()), eml_scalar(48)) — chi_eff = 6*b3 propagates the foundational seed through the Atiyah-Singer index, yielding n_gen = 6*b3/48 = b3/8 = 3 generations",
+            arithma=_arithma_div(
+                _arithma_mul(_arithma_num(6.0), _arithma_const("b3")),
+                _arithma_num(48.0),
+            ),
+            eml=_eml_div(
+                _eml_mul(_eml_scalar(6.0), _b3_leaf()),
+                _eml_scalar(48.0),
+            ),
+            value=3.0,
         ))
 
         # Cycle matching
@@ -1489,6 +1565,9 @@ class G2GeometryV16(SimulationBase):
             eml_latex=r"K_{\text{matching}} = \mathrm{ops.id}(b_2) = \mathrm{ops.id}(\mathrm{eml\_scalar}(4))",
             eml_tree_str="ops.id(eml_scalar(4.0))  # K_matching = b2 = h11 = 4",
             eml_description="EML: K_matching is the identity map on b2; K_matching = ops.id(eml_scalar(4))",
+            arithma=_arithma_num(4.0),
+            eml=_eml_scalar(4.0),
+            value=4.0,
         ))
 
         return formulas

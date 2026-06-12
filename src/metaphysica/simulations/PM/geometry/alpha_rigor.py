@@ -158,6 +158,46 @@ except ImportError:
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 _REG = get_registry()
 
+# --- triple-track helpers ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_sqrt(a):
+    return None if a is None else a.sqrt()
+
 class AlphaRigorSolver:
     """
     Derives the Fine Structure Constant from G2 holonomy.
@@ -543,8 +583,64 @@ if SCHEMA_AVAILABLE:
                         }
                     },
                     eml_latex=r"\alpha^{-1} = \mathrm{ops.add}(\mathrm{ops.pow}(k_{\gimel}, 2),\, \mathrm{ops.neg}(\mathrm{ops.div}(b_3, \varphi)),\, \mathrm{ops.div}(\varphi, \mathrm{ops.mul}(4, \pi)))",
-                    eml_tree_str="ops.add(ops.pow(ops.add(ops.div(eml_scalar(24.0), eml_scalar(2.0)), ops.inv(eml_pi())), eml_scalar(2.0)), ops.neg(ops.div(eml_scalar(24.0), ops.div(ops.add(eml_scalar(1.0), ops.sqrt(eml_scalar(5.0))), eml_scalar(2.0)))), ops.div(ops.div(ops.add(eml_scalar(1.0), ops.sqrt(eml_scalar(5.0))), eml_scalar(2.0)), ops.mul(eml_scalar(4.0), eml_pi())))",
-                    eml_description="EML: alpha^-1 = ops.add(ops.pow(k_gimel, 2), ops.neg(ops.div(b3, phi)), ops.div(phi, 4*pi)) where k_gimel = ops.add(ops.div(b3, 2), ops.inv(pi)) — numerological fit using G2 Betti number b3=24",
+                    eml_tree_str="ops.add(ops.pow(ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.inv(eml_pi())), eml_scalar(2.0)), ops.neg(ops.div(b3_leaf(), ops.div(ops.add(eml_scalar(1.0), ops.sqrt(eml_scalar(5.0))), eml_scalar(2.0)))), ops.div(ops.div(ops.add(eml_scalar(1.0), ops.sqrt(eml_scalar(5.0))), eml_scalar(2.0)), ops.mul(eml_scalar(4.0), eml_pi())))",
+                    eml_description="EML: alpha^-1 = ops.add(ops.pow(k_gimel, 2), ops.neg(ops.div(b3_leaf(), phi)), ops.div(phi, 4*pi)) where k_gimel = ops.add(ops.div(b3_leaf(), 2), ops.inv(pi)) — numerological fit; b3 enters via the labelled b3_leaf() helper to make the topology dependency explicit",
+                    arithma=(
+                        _arithma_sub(
+                            _arithma_add(
+                                _arithma_pow(
+                                    _arithma_add(
+                                        _arithma_div(_arithma_const("b3"), _arithma_num(2.0)),
+                                        _arithma_div(_arithma_num(1.0), _arithma_const("pi")),
+                                    ),
+                                    _arithma_num(2.0),
+                                ),
+                                _arithma_div(
+                                    _arithma_div(
+                                        _arithma_add(_arithma_num(1.0), _arithma_sqrt(_arithma_num(5.0))),
+                                        _arithma_num(2.0),
+                                    ),
+                                    _arithma_mul(_arithma_num(4.0), _arithma_const("pi")),
+                                ),
+                            ),
+                            _arithma_div(
+                                _arithma_const("b3"),
+                                _arithma_div(
+                                    _arithma_add(_arithma_num(1.0), _arithma_sqrt(_arithma_num(5.0))),
+                                    _arithma_num(2.0),
+                                ),
+                            ),
+                        )
+                    ),
+                    eml=(
+                        _eml_add(
+                            _eml_sub(
+                                _eml_pow(
+                                    _eml_add(
+                                        _eml_div(_b3_leaf(), _eml_scalar(2.0)),
+                                        _eml_div(_eml_scalar(1.0), _eml_pi()),
+                                    ),
+                                    _eml_scalar(2.0),
+                                ),
+                                _eml_div(
+                                    _b3_leaf(),
+                                    _eml_div(
+                                        _eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))),
+                                        _eml_scalar(2.0),
+                                    ),
+                                ),
+                            ),
+                            _eml_div(
+                                _eml_div(
+                                    _eml_add(_eml_scalar(1.0), _eml_sqrt(_eml_scalar(5.0))),
+                                    _eml_scalar(2.0),
+                                ),
+                                _eml_mul(_eml_scalar(4.0), _eml_pi()),
+                            ),
+                        )
+                    ),
+                    value=137.03670177575597,
+                    triple_rel=1e-9,
                 )
             ]
 

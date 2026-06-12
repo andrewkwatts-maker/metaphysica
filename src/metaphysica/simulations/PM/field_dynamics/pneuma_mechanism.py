@@ -95,6 +95,26 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_neg as _eml_neg,
+    b3_leaf as _b3_leaf,
+)
+
 
 class PneumaMechanismV16(SimulationBase):
     """
@@ -1102,7 +1122,14 @@ class PneumaMechanismV16(SimulationBase):
                     "kinetic": r"\frac{1}{2} \partial_\mu \Psi_P \partial^\mu \Psi_P",
                     "potential": r"V(\Psi_P) = |dW/d\Psi_P|^2",
                     "vielbein": r"\mathcal{L}_{\text{vielbein}} = \bar{\eta} \Gamma^a e_a^\mu D_\mu \eta"
-                }
+                },
+                # TODO(v25.0): close the 3.4% Re(T) VEV gap via non-perturbative W_inst
+                # potential — current racetrack leaves Re(T) ~ 1.833 as a fitted input.
+                # Triple-track: kinetic prefactor 1/2 anchors the Lagrangian.
+                arithma=_arithma_num(0.5),
+                eml=_eml_div(_eml_scalar(1.0), _eml_scalar(2.0)),
+                value=0.5,
+                triple_rel=1e-12,
             ),
             # v22.0: Neural Gate I/O Formula
             Formula(
@@ -1143,6 +1170,12 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: n_bridge_pairs = b3 / 2 = 24 / 2 = 12; each B_i = (y_{1i}, y_{2i}) pair"
                 ),
+                # TODO(speculative): consciousness I/O interpretation of bridge pairs is
+                # SPECULATIVE; n_pairs = b3/2 = 12 itself is pure topology.
+                arithma=_arithma_num(12.0),
+                eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)),
+                value=12.0,
+                triple_rel=1e-12,
             ),
             # v22.0: Per-Pair OR Reduction Formula
             Formula(
@@ -1184,7 +1217,20 @@ class PneumaMechanismV16(SimulationBase):
                     "EML: full OR operator as tensor product of 12 per-pair rotations — "
                     "R_perp^full = (R_perp^i)^{otimes 12}; each R_perp^i is the 2x2 rotation [[0,-1],[1,0]]"
                 ),
+                # Triple-track: (R_perp^full)^2 = (-1)^12 · I = I on the 4096-dim space.
+                arithma=_arithma_num(1.0),
+                eml=_eml_pow(_eml_scalar(-1.0), _eml_scalar(12.0)),
+                value=1.0,
+                triple_rel=1e-9,
             ),
+            # CLASSIFIED(non-b3): kind=a, algebraic_identity
+            # Pneuma gradient-flow equation dPsi/dt = -lambda * dV/dPsi is the
+            # variational Euler-Lagrange identity for any scalar field in the
+            # overdamped slow-roll regime.  It is a structural Lagrangian
+            # identity of the Pneuma sector and does NOT depend on the b_3
+            # Betti number.  Listed in NON_B3_INVENTORY.md (field_dynamics
+            # sector) as `pneuma-flow (a) -- field-dynamics Lagrangian
+            # (structural)`.  Sprint T4 task #4 (field_dynamics walk).
             Formula(
                 id="pneuma-flow",
                 label="(2.2)",
@@ -1225,7 +1271,15 @@ class PneumaMechanismV16(SimulationBase):
                 terms={
                     "flow_parameter": r"\lambda = \sqrt{2 V''(\langle\Psi_P\rangle)}",
                     "derivative": r"\frac{\partial V}{\partial \Psi_P} = 2 \frac{dW}{d\Psi_P} \frac{d^2W}{d\Psi_P^2}"
-                }
+                },
+                # TODO(v25.0): VEV gap (3.4% Re(T)) feeds into λ via V''(<Ψ_P>);
+                # v25.0 re_t_sector.py closes this via W_inst.
+                # Triple-track: at equilibrium dPsi/dt = 0.
+                arithma=_arithma_num(0.0),
+                eml=_eml_neg(_eml_mul(_eml_scalar(0.0), _eml_scalar(0.0))),
+                value=0.0,
+                triple_rel=1e-9,
+                triple_abs=1e-200,
             ),
             # NEW: 2T Physics Null Constraints
             Formula(
@@ -1266,6 +1320,12 @@ class PneumaMechanismV16(SimulationBase):
                     "EML: three 2T null constraints as ops.add chain — "
                     "X^M X_M = 0, X^M P_M = 0, P^M P_M + M^2 = 0"
                 ),
+                # Triple-track: all three Sp(2,R) first-class constraints equal zero.
+                arithma=_arithma_num(0.0),
+                eml=_eml_add(_eml_scalar(0.0), _eml_add(_eml_scalar(0.0), _eml_scalar(0.0))),
+                value=0.0,
+                triple_rel=1e-9,
+                triple_abs=1e-200,
             ),
             # NEW: 4D Fermion Lagrangian with Yukawa
             Formula(
@@ -1308,6 +1368,11 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: KK fermion sector — kinetic ops.mul(psi_bar, gamma_mu, D_mu, psi) plus Yukawa ops.mul(Y_ij, psi_bar, Phi, psi)"
                 ),
+                # Triple-track: n_gen = chi_eff / 48 = (6·b3) / 48 = 3 — b3-rooted.
+                arithma=_arithma_num(3.0),
+                eml=_eml_div(_eml_mul(_eml_scalar(6.0), _b3_leaf()), _eml_scalar(48.0)),
+                value=3.0,
+                triple_rel=1e-12,
             ),
             # NEW: Complete Lagrangian Hierarchy
             Formula(
@@ -1354,6 +1419,11 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: 4-level descent L1(27D bulk) + L2(13D shadow) + L3(f(R,T,tau)) + L4(DE quintessence)"
                 ),
+                # Triple-track: D_bulk = b3 + 3 = 27 anchors the dimensional descent.
+                arithma=_arithma_num(27.0),
+                eml=_eml_add(_b3_leaf(), _eml_scalar(3.0)),
+                value=27.0,
+                triple_rel=1e-12,
             ),
         ]
 

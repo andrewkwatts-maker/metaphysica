@@ -80,6 +80,19 @@ from metaphysica.simulations.base.simulation_base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 # Import the v17 master action classes
 from .kk_reduction_gr_gauge import KKReductionGRGauge
 from .non_abelian_kk_gauge import NonAbelianKKGauge
@@ -426,7 +439,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "lambda": "Quartic self-interaction for condensation",
                     "L_bridge^i": "Bridge Lagrangian for pair i (12 total)",
                     "L_C": "Sampler data fields Lagrangian S^{2,0}"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="bridge-12-pair-metric-v22",
@@ -465,7 +479,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "t": "Timelike coordinate (signature -1)",
                     "y_{1i}, y_{2i}": "Bridge pair i coordinates (Euclidean, signature +1 each)",
                     "i": "Bridge pair index, i = 1, 2, ..., 12"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="bridge-lagrangian-v22",
@@ -504,7 +519,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "g_{(2,0)}^i": "Metric on 2D bridge pair i",
                     "rho_breath^i": "Breathing mode for pair i",
                     "OR^i(Psi_P)": "OR reduction operator for pair i"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="distributed-or-reduction-v22",
@@ -539,7 +555,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "R_perp^i": "2x2 rotation matrix for bridge pair i (pi/2 rotation)",
                     "tensor": "Tensor (Kronecker) product over 12 pairs",
                     "4096": "Total dimension = 2^12 (matches Pneuma spinor from Cl(24,1))"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="breathing-aggregation-v22",
@@ -579,7 +596,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "T_mirror^i": "Energy-momentum in mirror sector for pair i",
                     "R_perp^i": "Local OR rotation operator for pair i",
                     "1/12": "Averaging weight over 12 pairs"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             # =================================================================
             # Standard Gauge Sector Formulas (updated IDs to v22)
@@ -622,7 +640,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "A_mu": "U(1) gauge field from off-diagonal metric component g_{mu,5}",
                     "R": "Compact circle radius (determines gauge coupling via g^2 = 1/(2*pi*R))",
                     "k": "Gauge normalization parameter"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su3-qcd-lagrangian-v22",
@@ -661,7 +680,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "D_mu": "Color covariant derivative: D_mu = d_mu - i*g_s*T^a*G^a_mu",
                     "q_f": "Quark fields (6 flavors, 3 colors each)",
                     "g_s": "Strong coupling constant (from associative 3-cycle volume)"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="su2-weak-lagrangian-v22",
@@ -699,7 +719,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "W^a_mn": "Weak field strength tensor, a = 1,2,3 (adjoint of SU(2))",
                     "psi_L": "Left-handed fermion doublets (left-chiral projection)",
                     "g_2": "Weak isospin coupling (from co-associative 4-cycle volume)"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="u1-hypercharge-v22",
@@ -738,7 +759,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "B_mn": "Hypercharge field strength tensor (Abelian: B_mn = d_mu B_nu - d_nu B_mu)",
                     "Y": "Hypercharge quantum number (e.g., Y_L = -1/2, Y_eR = -1, Y_Q = 1/6)",
                     "g'": "Hypercharge coupling constant"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="electroweak-mixing-v22",
@@ -777,7 +799,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "g_2": "SU(2)_L weak isospin coupling",
                     "g'": "U(1)_Y hypercharge coupling",
                     "f_W/f_Y": "G2 cycle volume ratio that locks the mixing angle"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             # =================================================================
             # Euler-Lagrange Variation Formulas
@@ -844,7 +867,8 @@ class MasterActionSimulationV22(SimulationBase):
                     r"T_{\mu\nu}^{\text{Pneuma}}": {"description": "Moduli/scalar stress-energy including Kahler moduli and dilaton contributions"},
                     r"\Lambda_{\text{eff}}": {"description": "Effective cosmological constant from vacuum energy (moduli stabilisation)"},
                     r"G_{27}": {"description": "27D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="stress-energy-variation",
@@ -901,7 +925,8 @@ class MasterActionSimulationV22(SimulationBase):
                     r"S_{\text{matter}}": {"description": "Non-gravitational action (YM + Dirac + bridge + Pneuma sectors)"},
                     r"\nabla^\mu": {"description": "Covariant divergence with respect to the Levi-Civita connection"},
                     r"-2/\sqrt{-g}": {"description": "Normalisation factor ensuring canonical dimensions and symmetry of T_{mu nu}"}
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             # =================================================================
             # Two-Layer OR: Chirality Reversal and Dark Matter Portal (Sprint 2)
@@ -943,7 +968,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "P_LR": "Chiral projection operator selecting left or right handedness",
                     "R_face^(f)": "Face OR operator selecting visible face within a shadow (Layer 2)",
                     "P_reverse": "Cross-shadow chirality flip probability ~ 3e-6 (suppressed by volume ratio)"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="dark-matter-portal-lagrangian",
@@ -982,7 +1008,8 @@ class MasterActionSimulationV22(SimulationBase):
                     "phi_dark": "Hidden (dark) face scalar fields",
                     "phi_mod": "Shared moduli fields mediating cross-face coupling",
                     "alpha_leak": "Portal coupling ~ 0.57 from 1/sqrt(6) with torsion and flux corrections"
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             # =================================================================
             # Topics 04-05: 13D Shadow Action, 4D Effective Action, EOM
@@ -1053,7 +1080,8 @@ class MasterActionSimulationV22(SimulationBase):
                     r"D_m": {"description": "Covariant derivative on the 13D shadow including spin connection and gauge fields"},
                     r"V_{face}^{(f)}": {"description": "Face potential implementing local OR to select the visible face f from 4 TCS faces"},
                     r"\chi_{eff}/48 = 3": {"description": "Euler characteristic constraint fixing three fermion generations per shadow"},
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="effective-action-4d-v23",
@@ -1129,7 +1157,8 @@ class MasterActionSimulationV22(SimulationBase):
                     r"\mathcal{L}_{DM}": {"description": "Dark matter Lagrangian from hidden face fields, interacting via gravity and portal coupling"},
                     r"\Lambda": {"description": "Cosmological constant: Lambda = (int F wedge phi)^2 / Vol(V_7) ~ 10^{-52} m^{-2} from flux-moduli balance"},
                     r"\alpha_{leak}": {"description": "Portal coupling ~ 0.57, geometrically determined by 1/sqrt(6) with torsion and flux corrections"},
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="euler-lagrange-eom-v23",
@@ -1198,7 +1227,8 @@ class MasterActionSimulationV22(SimulationBase):
                     r"T_{\mu\nu}^{SM}": {"description": "Standard Model stress-energy: gauge (YM) + fermion (Dirac) + Higgs contributions"},
                     r"T_{\mu\nu}^{portal}": {"description": "Portal stress-energy from hidden face coupling: dark matter + sterile neutrino + ALP backreaction, suppressed by alpha_leak^2"},
                     r"M_{Pl}^2": {"description": "4D Planck mass squared from dimensional reduction: M_Pl^2 = M_*^{11} * Vol(V_7)"},
-                }
+                },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

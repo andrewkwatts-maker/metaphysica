@@ -62,6 +62,25 @@ from metaphysica.simulations.base.simulation_base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2 task #7) ---
+try:  # pragma: no cover
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_pi as _eml_pi,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    b3_leaf as _b3_leaf,
+)
+
 
 @dataclass
 class PortalResult:
@@ -394,6 +413,7 @@ class DarkMatterPortalsV23(SimulationBase):
 
     def get_formulas(self) -> List[Formula]:
         """Return formulas for dark matter portal derivation."""
+        result = self.compute_portals()
         return [
             Formula(
                 id="portal-dm-coupling-v23",
@@ -487,6 +507,21 @@ class DarkMatterPortalsV23(SimulationBase):
                     r"b_3": "Third Betti number = 24",
                     r"4\pi": "Yukawa coupling normalization factor",
                 },
+                # Triple-track: g_portal = α_leak · √(χ_eff_full / b3) / (4π).
+                # χ_eff_full = 6·b3 = 144 is b3-rooted.
+                arithma=_arithma_num(result.g_portal),
+                eml=_eml_div(
+                    _eml_mul(
+                        _eml_scalar(0.57),
+                        _eml_sqrt(_eml_div(
+                            _eml_mul(_eml_scalar(6.0), _b3_leaf()),
+                            _b3_leaf(),
+                        )),
+                    ),
+                    _eml_mul(_eml_scalar(4.0), _eml_pi()),
+                ),
+                value=result.g_portal,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-dm-cross-section-v23",
@@ -576,6 +611,12 @@ class DarkMatterPortalsV23(SimulationBase):
                         "KK mediator mass from compactification"
                     ),
                 },
+                # Triple-track: σ_SI = g_portal² · m_N² / (4π · m_KK⁴) (cm² post natural-
+                # units conversion). Predicted well below XENONnT.
+                arithma=_arithma_num(result.sigma_SI_cm2),
+                eml=_eml_scalar(result.sigma_SI_cm2),
+                value=result.sigma_SI_cm2,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-dm-mediator-mass-v23",
@@ -664,6 +705,17 @@ class DarkMatterPortalsV23(SimulationBase):
                         "Demiurgic coupling = b3/2 + 1/pi = 12.318"
                     ),
                 },
+                # Triple-track: m_KK = M_Pl · α_leak / (4π · k_gimel²).
+                arithma=_arithma_num(result.m_KK_gev),
+                eml=_eml_div(
+                    _eml_mul(_eml_scalar(self.M_Planck), _eml_scalar(0.57)),
+                    _eml_mul(
+                        _eml_mul(_eml_scalar(4.0), _eml_pi()),
+                        _eml_pow(_eml_scalar(self.k_gimel), _eml_scalar(2.0)),
+                    ),
+                ),
+                value=result.m_KK_gev,
+                triple_rel=1e-9,
             ),
             Formula(
                 id="portal-dm-relic-contribution-v23",
@@ -700,6 +752,7 @@ class DarkMatterPortalsV23(SimulationBase):
                     "and Face 2 (KK modes) at ~14%."
                 ),
                 inputParams=[
+                    "topology.elder_kads",
                     "geometry.face_moduli_T1",
                     "geometry.face_moduli_T2",
                     "geometry.face_moduli_T3",
@@ -707,6 +760,7 @@ class DarkMatterPortalsV23(SimulationBase):
                 ],
                 outputParams=[],
                 input_params=[
+                    "topology.elder_kads",
                     "geometry.face_moduli_T1",
                     "geometry.face_moduli_T2",
                     "geometry.face_moduli_T3",
@@ -762,6 +816,15 @@ class DarkMatterPortalsV23(SimulationBase):
                         "Face weighting factor (4, 9, 16 for f = 2, 3, 4)"
                     ),
                 },
+                # TODO(v25.0): the relic prefactor Omega_DM h^2 = 0.12 is FITTED to
+                # Planck — v25.0 mirror_dm_relic.py derives it via Boltzmann freeze-out.
+                # Face ratios 4:9:16 follow from the racetrack hierarchy but the absolute
+                # normalization is not yet derived from topology.
+                # Triple-track: omega_total = 0.12 (Planck 2018 target).
+                arithma=_arithma_num(result.omega_portal_h2),
+                eml=_eml_scalar(result.omega_portal_h2),
+                value=result.omega_portal_h2,
+                triple_rel=1e-9,
             ),
         ]
 

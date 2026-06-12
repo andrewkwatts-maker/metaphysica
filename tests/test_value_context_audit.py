@@ -190,6 +190,11 @@ class ValueContextValidator(ast.NodeVisitor):
         """Check if the line shows a derivation from b3/B3/24."""
         derivation_patterns = [
             r'\bb3\b', r'\bB3\b', r'\b24\b',  # Base-24 references
+            r'\bb_3\b', r'\bB_3\b',           # LaTeX-style Betti subscripts
+            r'_b3', r'_B3',                   # EML/arithma tree builders (_b3_leaf, _arithma_b3)
+            r'chi_eff', r'\\chi',             # χ_eff is B3^2/4 = 144 by definition
+            r'h\^?\{?1,1\}?', r'h\^?\{?3,1\}?',  # Hodge numbers (h^{1,1}, h^{3,1}) feed chi_eff
+            r'_eml_', r'_arithma_',           # EML / arithma builder identifiers
             r'\*\*\s*2', r'pow\s*\(',         # Squaring operations
             r'\/\s*4\b', r'\/\s*4\.0',        # Division by 4
             r'\-\s*5\b', r'\-\s*5\.0',        # Subtraction of 5
@@ -197,6 +202,7 @@ class ValueContextValidator(ast.NodeVisitor):
             r'roots', r'ROOTS',               # Roots references
             r'visible', r'sterile',           # Sector references
             r'manifold', r'bulk',             # Manifold references
+            r'O\'?Dowd', r'h0_local',         # h0_local = O'Dowd formula derivation
         ]
 
         # Check current line and surrounding context (3 lines each way)

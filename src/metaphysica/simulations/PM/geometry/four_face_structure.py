@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Four-Face G2 Sub-Sector Structure v23.7 - SimulationBase Wrapper
 =================================================================
@@ -54,6 +55,52 @@ from metaphysica.simulations.base.simulation_base import (
     Formula,
     Parameter,
 )
+
+# --- triple-track helpers ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+    def _arithma_const(name):
+        return _A.Expression.constant(name)
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+    def _arithma_const(name):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_div as _eml_div,
+    eml_mul as _eml_mul,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_neg as _eml_neg,
+    eml_pow as _eml_pow,
+    eml_sqrt as _eml_sqrt,
+    eml_exp as _eml_exp,
+    eml_ln as _eml_ln,
+    eml_pi as _eml_pi,
+    b3_leaf as _b3_leaf,
+)
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_neg(a):
+    return None if a is None else -a
+def _arithma_pow(a, b):
+    return None if a is None or b is None else a ** b
+def _arithma_sqrt(a):
+    return None if a is None else a.sqrt()
+def _arithma_exp(a):
+    return None if a is None else a.exp()
+def _arithma_ln(a):
+    return None if a is None else a.ln()
 
 
 # Output parameter paths for this simulation
@@ -141,7 +188,7 @@ class FourFaceG2Structure(SimulationBase):
 
     def get_dependencies(self) -> List[str]:
         """Depends on geometric anchors and G2 geometry."""
-        return ["geometric_anchors_v16_2", "g2_geometry_v16_0"]
+        return ["geometric_anchors", "g2_geometry_v16_0"]
 
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """
@@ -363,7 +410,7 @@ class FourFaceG2Structure(SimulationBase):
                     "alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6) = 0.4082"
                 ),
                 eml_latex=r"\mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{ops.div}(\chi_{\text{eff}}, b_3)))",
-                eml_tree_str="ops.inv(ops.sqrt(ops.div(eml_scalar(144.0), eml_scalar(24.0))))",
+                eml_tree_str="ops.inv(ops.sqrt(ops.div(eml_scalar(144.0), b3_leaf())))",
                 eml_description="EML: ops.inv(ops.sqrt(eml_scalar(6.0))) — E₇⊃E₆×U(1) Clebsch-Gordan coefficient from chi_eff/b3=6",
                 category="DERIVED",
                 description=(
@@ -429,6 +476,16 @@ class FourFaceG2Structure(SimulationBase):
                         "value": 24,
                     },
                 },
+                arithma=_arithma_div(
+                    _arithma_num(1.0),
+                    _arithma_sqrt(_arithma_div(_arithma_num(144.0), _arithma_const("b3"))),
+                ),
+                eml=_eml_div(
+                    _eml_scalar(1.0),
+                    _eml_sqrt(_eml_div(_eml_scalar(144.0), _b3_leaf())),
+                ),
+                value=1.0 / math.sqrt(6.0),
+                triple_rel=1e-12,
             ),
             Formula(
                 id="racetrack-moduli-vev",
@@ -440,7 +497,7 @@ class FourFaceG2Structure(SimulationBase):
                     "T_i = b3 * k_gimel / (i * pi) for face i = 1, 2, 3, 4"
                 ),
                 eml_latex=r"T_i = \mathrm{ops.div}(\mathrm{ops.mul}(b_3, k_\gimel), \mathrm{ops.mul}(i, \pi))",
-                eml_tree_str="ops.div(ops.mul(eml_scalar(24.0), eml_scalar(12.3183)), ops.mul(eml_scalar(1.0), eml_pi()))",
+                eml_tree_str="ops.div(ops.mul(b3_leaf(), eml_scalar(12.3183)), ops.mul(eml_scalar(1.0), eml_pi()))",
                 eml_description="EML: T_i = ops.div(ops.mul(eml_scalar(b3), eml_scalar(k_gimel)), ops.mul(eml_scalar(i), eml_pi())) — racetrack VEVs per face",
                 category="GEOMETRIC",
                 description=(
@@ -489,6 +546,23 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # Triple-tracked at the canonical i=1 face: T_1 = b3 * k_gimel / pi
+                arithma=(lambda b3a, pia: _arithma_div(
+                    _arithma_mul(
+                        b3a,
+                        _arithma_add(_arithma_div(b3a, _arithma_num(2.0)), _arithma_div(_arithma_num(1.0), pia)),
+                    ),
+                    pia,
+                ))(_arithma_const("b3"), _arithma_const("pi")),
+                eml=(lambda b3e, pie: _eml_div(
+                    _eml_mul(
+                        b3e,
+                        _eml_add(_eml_div(b3e, _eml_scalar(2.0)), _eml_div(_eml_scalar(1.0), pie)),
+                    ),
+                    pie,
+                ))(_b3_leaf(), _eml_pi()),
+                value=24.0 * (24.0 / 2.0 + 1.0 / math.pi) / math.pi,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="bridge-pair-decomposition",
@@ -590,6 +664,11 @@ class FourFaceG2Structure(SimulationBase):
                         "value": 144,
                     },
                 },
+                # Track n_pairs = chi_eff/12 = 12 as canonical scalar
+                arithma=_arithma_div(_arithma_num(144.0), _arithma_num(12.0)),
+                eml=_eml_div(_eml_scalar(144.0), _eml_scalar(12.0)),
+                value=12.0,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="face-kk-mass-spectrum",
@@ -646,6 +725,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): KK mass depends on M_Pl and V_G2^{1/7} which are
+                # phenomenological inputs / undetermined volume factors; not a closed-form scalar.
             ),
             Formula(
                 id="shadow-asymmetry",
@@ -689,6 +770,11 @@ class FourFaceG2Structure(SimulationBase):
                         "value": abs(T1 - T4) / T1,
                     },
                 },
+                # |T_1 - T_4|/T_1 = 1 - 1/4 = 3/4 exactly (cancellation of b3·k_gimel/pi)
+                arithma=_arithma_sub(_arithma_num(1.0), _arithma_div(_arithma_num(1.0), _arithma_num(4.0))),
+                eml=_eml_sub(_eml_scalar(1.0), _eml_div(_eml_scalar(1.0), _eml_scalar(4.0))),
+                value=0.75,
+                triple_rel=1e-12,
             ),
             Formula(
                 id="torsional-leakage",
@@ -770,6 +856,25 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # T_leak = (1/sqrt(144/b3)) * (k_gimel/b3); b3 enters via b3_leaf()
+                arithma=(lambda b3a, pia: _arithma_mul(
+                    _arithma_div(_arithma_num(1.0),
+                                 _arithma_sqrt(_arithma_div(_arithma_num(144.0), b3a))),
+                    _arithma_div(
+                        _arithma_add(_arithma_div(b3a, _arithma_num(2.0)), _arithma_div(_arithma_num(1.0), pia)),
+                        b3a,
+                    ),
+                ))(_arithma_const("b3"), _arithma_const("pi")),
+                eml=(lambda b3e, pie: _eml_mul(
+                    _eml_div(_eml_scalar(1.0),
+                             _eml_sqrt(_eml_div(_eml_scalar(144.0), b3e))),
+                    _eml_div(
+                        _eml_add(_eml_div(b3e, _eml_scalar(2.0)), _eml_div(_eml_scalar(1.0), pie)),
+                        b3e,
+                    ),
+                ))(_b3_leaf(), _eml_pi()),
+                value=alpha_leak * (k_gimel / b3),
+                triple_rel=1e-9,
             ),
             # ─── TwoLayerOR Integration: New formulas (Sprint 1) ───
             Formula(
@@ -823,6 +928,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): operator-valued tensor product over 12 Möbius operators;
+                # no scalar canonical form (EML has no tensor-product node type).
             ),
             Formula(
                 id="two-layer-or-face-operator",
@@ -880,6 +987,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): face operator carries a complex exp(-i λ_f t / b3) phase
+                # times an operator-valued R_OR; no real scalar canonical form.
             ),
             Formula(
                 id="bridge-warping-potential",
@@ -956,6 +1065,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): potential involves free Λ_i, a_i, κ and a sum of
+                # spatial-gradient terms — not a closed-form scalar.
             ),
             Formula(
                 id="face-warping-potential",
@@ -1031,6 +1142,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): face potential mirrors bridge potential with extra free
+                # screening / gradient coefficients — not a closed-form scalar.
             ),
             Formula(
                 id="face-sampling-strength",
@@ -1097,6 +1210,8 @@ class FourFaceG2Structure(SimulationBase):
                         ),
                     },
                 },
+                # TODO(triple-track-complex): sampling strength depends on free T_max, ΔF_f, F_0
+                # phenomenological inputs; no closed-form scalar.
             ),
         ]
 

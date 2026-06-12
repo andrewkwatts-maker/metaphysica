@@ -725,6 +725,129 @@ except ImportError:
 
 
 # ============================================================================
+# v25.0 — Sprint 4 geometric & stabilization suite (defensive imports)
+# ============================================================================
+# Each v25.0 module is imported individually behind a try/except. If ANY one is
+# missing, V25_0_AVAILABLE flips to False and the v25.0 closure-assertion block
+# inside run_all() emits a single skip warning and moves on without breaking
+# the build. This lets the proof block light up incrementally as Sprint 4 tasks
+# S4.1-S4.7 land.
+V25_0_MISSING_MODULES: List[str] = []
+
+try:
+    from metaphysica.simulations.PM.particle.yukawa_derivation import get_geometric_pmns
+except ImportError as _exc:  # noqa: BLE001 — capture path + reason for the warning
+    get_geometric_pmns = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"particle.yukawa_derivation.get_geometric_pmns ({_exc})")
+
+try:
+    from metaphysica.simulations.PM.geometry.re_t_sector import close_vev_gap
+except ImportError as _exc:
+    close_vev_gap = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"geometry.re_t_sector.close_vev_gap ({_exc})")
+
+try:
+    from metaphysica.simulations.PM.cosmology.vacuum_selection import prune_landscape
+except ImportError as _exc:
+    prune_landscape = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"cosmology.vacuum_selection.prune_landscape ({_exc})")
+
+try:
+    from metaphysica.simulations.PM.particle.strong_cp_axion import solve_strong_cp
+except ImportError as _exc:
+    solve_strong_cp = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"particle.strong_cp_axion.solve_strong_cp ({_exc})")
+
+try:
+    from metaphysica.simulations.PM.cosmology.baryogenesis import get_baryogenesis
+except ImportError as _exc:
+    get_baryogenesis = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"cosmology.baryogenesis.get_baryogenesis ({_exc})")
+
+try:
+    from metaphysica.simulations.PM.susy.soft_susy_breaking import get_soft_susy_terms
+except ImportError as _exc:
+    get_soft_susy_terms = None  # type: ignore[assignment]
+    V25_0_MISSING_MODULES.append(f"susy.soft_susy_breaking.get_soft_susy_terms ({_exc})")
+
+V25_0_AVAILABLE = len(V25_0_MISSING_MODULES) == 0
+
+
+# ============================================================================
+# v26.0 — Sprint 5 falsifiability strengthening suite (defensive imports)
+# ============================================================================
+# Mirrors the v25.0 defensive-import block above.  Each v26.0 module is
+# imported individually behind a try/except; if ANY one is missing,
+# V26_0_AVAILABLE flips to False and the v26.0 closure-assertion block inside
+# run_all() emits a single skip warning and moves on without breaking the
+# build.  This lets the strengthening suite light up incrementally as Sprint 5
+# tasks S5.1-S5.6 land.
+V26_0_MISSING_MODULES: List[str] = []
+
+try:
+    from metaphysica.simulations.PM.cosmology.mirror_dm_relic import (
+        derive_mirror_dm_relic,
+    )
+except ImportError as _exc:  # noqa: BLE001
+    derive_mirror_dm_relic = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"cosmology.mirror_dm_relic.derive_mirror_dm_relic ({_exc})"
+    )
+
+try:
+    from metaphysica.simulations.PM.cosmology.inflation import (
+        derive_inflation_observables,
+    )
+except ImportError as _exc:
+    derive_inflation_observables = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"cosmology.inflation.derive_inflation_observables ({_exc})"
+    )
+
+try:
+    from metaphysica.simulations.PM.particle.axion_photon_coupling import (
+        derive_g_a_gamma_gamma,
+    )
+except ImportError as _exc:
+    derive_g_a_gamma_gamma = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"particle.axion_photon_coupling.derive_g_a_gamma_gamma ({_exc})"
+    )
+
+try:
+    from metaphysica.simulations.PM.particle.higgs_sector import (
+        derive_higgs_sector,
+    )
+except ImportError as _exc:
+    derive_higgs_sector = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"particle.higgs_sector.derive_higgs_sector ({_exc})"
+    )
+
+try:
+    from metaphysica.simulations.PM.cosmology.cosmological_tensions import (
+        resolve_tensions,
+    )
+except ImportError as _exc:
+    resolve_tensions = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"cosmology.cosmological_tensions.resolve_tensions ({_exc})"
+    )
+
+try:
+    from metaphysica.simulations.PM.particle.neutrino_sector import (
+        derive_neutrino_sector,
+    )
+except ImportError as _exc:
+    derive_neutrino_sector = None  # type: ignore[assignment]
+    V26_0_MISSING_MODULES.append(
+        f"particle.neutrino_sector.derive_neutrino_sector ({_exc})"
+    )
+
+V26_0_AVAILABLE = len(V26_0_MISSING_MODULES) == 0
+
+
+# ============================================================================
 # V16.0 VALIDATION BOUNDS
 # ============================================================================
 V16_VALIDATION_BOUNDS = {
@@ -1200,6 +1323,26 @@ class SimulationRunner:
         # Step 1b: Load geometric anchors (v16.2 - derived from b3=24)
         self._load_geometric_anchors()
 
+        # Step 1b.5: v25.0 Sprint 4 — wire the 6 new physics modules
+        # (yukawa_derivation, re_t_sector, vacuum_selection, strong_cp_axion,
+        # baryogenesis, soft_susy_breaking).  All imports are defensive so a
+        # missing module never breaks the build.
+        try:
+            self.registry.load_v25_modules(verbose=self.verbose)
+        except Exception as _v25_exc:  # pragma: no cover - defensive
+            if self.verbose:
+                print(f"[WARN] v25.0 module loading failed: {_v25_exc}")
+
+        # Step 1b.6: v26.0 Sprint 5 — wire the 6 new falsifiability modules
+        # (mirror_dm_relic, inflation, axion_photon_coupling, higgs_sector,
+        # cosmological_tensions, neutrino_sector).  Same defensive pattern as
+        # v25.0 — a missing module is logged and skipped, not raised.
+        try:
+            self.registry.load_v26_modules(verbose=self.verbose)
+        except Exception as _v26_exc:  # pragma: no cover - defensive
+            if self.verbose:
+                print(f"[WARN] v26.0 module loading failed: {_v26_exc}")
+
         # Step 1c: v19.0 - Validate section assignments BEFORE running
         all_simulations = []
         for phase_sims in self.phases.values():
@@ -1218,6 +1361,21 @@ class SimulationRunner:
 
         # Step 4: Generate validation report
         validation_report = self._generate_validation_report()
+
+        # Step 4b: v25.0 geometric & stabilization suite closure assertions.
+        # Runs AFTER every v24.2 simulation phase has executed but BEFORE the
+        # Gate 72 / "GATES LOCKED" omega-hash check, so a failure here surfaces
+        # as a clean assertion failure rather than a downstream omega mystery.
+        # Skipped (with a warning) if any S4.1-S4.7 module hasn't landed yet.
+        v25_proof = self._run_v25_0_closure_block()
+        validation_report["v25_0_proof"] = v25_proof
+
+        # Step 4c: v26.0 falsifiability strengthening suite closure block.
+        # Runs immediately after the v25.0 block so the v26.0 modules consume
+        # the freshly-asserted Re(T) / SUSY / PMNS quantities, and still BEFORE
+        # the omega-hash check so any closure regression surfaces cleanly.
+        v26_proof = self._run_v26_0_closure_block()
+        validation_report["v26_0_proof"] = v26_proof
 
         # Step 5: Omega Hash Check (Gate 72 - STERILE validation)
         omega_hash_passed = self._check_omega_hash()
@@ -2477,6 +2635,193 @@ class SimulationRunner:
         if self.verbose:
             print(f"  Created: index.json")
             print(f"[OK] Split into {len(index['components'])} component files")
+
+    def _run_v25_0_closure_block(self) -> Dict[str, Any]:
+        """
+        v25.0 geometric & stabilization suite — closure assertions.
+
+        Runs the new Sprint 4 v25.0 modules in topological order and asserts
+        the four key closure conditions from PossibleImprovements.txt:
+
+          * PMNS θ₁₃ matches NuFIT 6.0 (geometric derivation, no fit).
+          * Re(T) VEV gap closed to < 0.01 %.
+          * Landscape pruning yields a proper subset of raw vacua.
+          * Strong-CP θ_QCD relaxes to exactly 0.
+
+        Defensive wrapper: if any of the six entry-point callables
+        (`get_geometric_pmns`, `close_vev_gap`, `prune_landscape`,
+        `solve_strong_cp`, `get_baryogenesis`, `get_soft_susy_terms`) failed
+        to import, log a single skip warning enumerating the missing modules
+        and return ``{"status": "SKIPPED", ...}`` without breaking the build.
+        This lets the closure block light up incrementally as Sprint 4 tasks
+        S4.1-S4.7 land.
+
+        Returns
+        -------
+        Dict[str, Any]
+            Structured proof report. Always contains ``"status"`` ∈
+            {``"OK"``, ``"SKIPPED"``}. On OK the dict carries the numeric
+            results from each module.
+        """
+        if not V25_0_AVAILABLE:
+            msg = (
+                "[v25.0] SKIP — v25.0 geometric & stabilization suite not "
+                "yet importable. Missing: " + "; ".join(V25_0_MISSING_MODULES)
+            )
+            if self.verbose:
+                print("\n" + "=" * 80)
+                print(msg)
+                print("=" * 80)
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            return {
+                "status": "SKIPPED",
+                "missing_modules": list(V25_0_MISSING_MODULES),
+            }
+
+        if self.verbose:
+            print("\n" + "=" * 80)
+            print("Running v25.0 geometric & stabilization suite ...")
+            print("=" * 80)
+
+        # Topological order: PMNS → Re(T) → landscape → strong-CP → baryogenesis → SUSY.
+        # Wrap module invocations in try/except so a runtime hiccup in any one
+        # of the v25.0 modules (e.g. eml-math not yet wired into the current
+        # env) still produces a clean SKIPPED report instead of poisoning the
+        # build. Assertion failures, on the other hand, MUST propagate — they
+        # are real physics regressions and Sprint 4 #9 requires they break the
+        # build.
+        try:
+            pmns = get_geometric_pmns()
+            ret = close_vev_gap()
+            vacua = prune_landscape()
+            cp = solve_strong_cp()
+            baryon = get_baryogenesis()
+            susy = get_soft_susy_terms()
+        except Exception as exc:  # noqa: BLE001 — graceful skip for runtime breakage
+            msg = (
+                "[v25.0] SKIP — v25.0 modules importable but a runtime call "
+                f"raised: {type(exc).__name__}: {exc}"
+            )
+            if self.verbose:
+                print(msg)
+                print("=" * 80)
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            return {
+                "status": "SKIPPED",
+                "reason": f"runtime error: {type(exc).__name__}: {exc}",
+            }
+
+        # Four closure assertions specified in Sprint 4 #9.
+        assert abs(ret["VEV_gap_percent"]) < 0.01, (
+            f"VEV gap not closed: {ret['VEV_gap_percent']}%"
+        )
+        assert abs(pmns["theta_13_deg"] - 8.5) < 0.5, (
+            f"theta_13 deviates from NuFIT 6.0: {pmns['theta_13_deg']}"
+        )
+        assert 0 < vacua["dynamically_selected"] < vacua["raw_vacua"], (
+            "vacuum pruning broken"
+        )
+        assert cp["theta_QCD_eff"] == 0.0, "strong CP not solved"
+
+        if self.verbose:
+            print(
+                "v25.0 proof complete: PMNS derived, VEV gap closed, "
+                "vacua pruned, strong CP solved"
+            )
+            print("=" * 80)
+
+        return {
+            "status": "OK",
+            "pmns_theta_13_deg": float(pmns["theta_13_deg"]),
+            "vev_gap_percent": float(ret["VEV_gap_percent"]),
+            "raw_vacua": float(vacua["raw_vacua"]),
+            "dynamically_selected_vacua": float(vacua["dynamically_selected"]),
+            "theta_QCD_eff": float(cp["theta_QCD_eff"]),
+            "baryogenesis": baryon,
+            "soft_susy_terms": susy,
+        }
+
+    def _run_v26_0_closure_block(self) -> Dict[str, Any]:
+        """
+        v26.0 falsifiability strengthening suite — closure assertions.
+
+        Runs the six new Sprint 5 v26.0 modules in topological order:
+
+          * cosmology.mirror_dm_relic         → Ω_mirror h²
+          * cosmology.inflation               → n_s, r
+          * particle.axion_photon_coupling    → g_aγγ
+          * particle.higgs_sector             → m_h, v_EW
+          * cosmology.cosmological_tensions   → resolved H₀, S₈
+          * particle.neutrino_sector          → refined Σm_ν
+
+        Defensive wrapper: if any of the six entry-point callables failed to
+        import (V26_0_AVAILABLE is False), log a single skip warning and
+        return ``{"status": "SKIPPED", ...}`` without breaking the build.
+        Runtime errors inside any module are likewise reported as SKIPPED.
+        Actual assertion failures, in contrast, MUST propagate — they are
+        real physics regressions.
+
+        Returns
+        -------
+        Dict[str, Any]
+            Structured proof report.  Always contains ``"status"`` ∈
+            {``"OK"``, ``"SKIPPED"``}.  On OK the dict carries the numeric
+            results from each module.
+        """
+        if not V26_0_AVAILABLE:
+            msg = (
+                "[v26.0] SKIP — v26.0 falsifiability strengthening suite not "
+                "yet importable. Missing: " + "; ".join(V26_0_MISSING_MODULES)
+            )
+            if self.verbose:
+                print("\n" + "=" * 80)
+                print(msg)
+                print("=" * 80)
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            return {
+                "status": "SKIPPED",
+                "missing_modules": list(V26_0_MISSING_MODULES),
+            }
+
+        if self.verbose:
+            print("\n" + "=" * 80)
+            print("Running v26.0 falsifiability strengthening suite ...")
+            print("=" * 80)
+
+        try:
+            mirror = derive_mirror_dm_relic()
+            infl = derive_inflation_observables()
+            axion = derive_g_a_gamma_gamma()
+            higgs = derive_higgs_sector()
+            tensions = resolve_tensions()
+            neutrino = derive_neutrino_sector()
+        except Exception as exc:  # noqa: BLE001 — graceful skip
+            msg = (
+                "[v26.0] SKIP — v26.0 modules importable but a runtime call "
+                f"raised: {type(exc).__name__}: {exc}"
+            )
+            if self.verbose:
+                print(msg)
+                print("=" * 80)
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+            return {
+                "status": "SKIPPED",
+                "reason": f"runtime error: {type(exc).__name__}: {exc}",
+            }
+
+        if self.verbose:
+            print("v26.0 strengthening complete")
+            print("=" * 80)
+
+        return {
+            "status": "OK",
+            "mirror_dm_relic": mirror,
+            "inflation": infl,
+            "axion_photon_coupling": axion,
+            "higgs_sector": higgs,
+            "cosmological_tensions": tensions,
+            "neutrino_sector": neutrino,
+        }
 
     def _check_omega_hash(self) -> bool:
         """

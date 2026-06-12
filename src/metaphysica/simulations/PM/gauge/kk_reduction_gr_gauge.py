@@ -55,6 +55,19 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 
+# --- triple-track helpers (Sprint 2) ---
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+)
+
 
 @dataclass
 class KKReductionResult:
@@ -592,6 +605,7 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                     "k": "Normalization constant for the gauge field",
                     "y": "Coordinate along the compact S^1 dimension",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="kk-ricci-decomposition",
@@ -641,6 +655,7 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                     "R^(4)": "4D Ricci scalar curvature (Einstein-Hilbert term)",
                     "F_{mn}": "U(1) field strength tensor: F_mn = partial_m A_n - partial_n A_m",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
             Formula(
                 id="kk-gauge-coupling-relation",
@@ -686,6 +701,7 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                     "M_*": "Fundamental (5D) mass scale",
                     "R": "Compactification radius",
                 },
+                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
         ]
 

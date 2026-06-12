@@ -493,7 +493,8 @@ class AppendixJTorsionFunnel(SimulationBase):
                 label="(J.0)",
                 latex=r"\text{Entry} = 276 + 24 - 12 = 288 \quad (\text{Ancestral Roots})",
                 plain_text="Entry = 276 + 24 - 12 = 288 (Ancestral Roots)",
-                eml_tree_str="ops.sub(ops.add(eml_vec('so24_generators'), eml_vec('shadow_torsion_total')), eml_vec('manifold_cost'))",
+                # T4 (b): 276 = b3(b3-1)/2, 24 = b3, 12 = b3/2 → route all literals via b3_leaf
+                eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="GEOMETRIC",
                 description="Total ancestral roots from SO(24) + shadow torsion - manifold cost.",
                 input_params=["topology.so24_generators", "topology.shadow_torsion_total", "topology.manifold_cost"],
@@ -519,7 +520,8 @@ class AppendixJTorsionFunnel(SimulationBase):
                 label="(J.1)",
                 latex=r"\text{Bottleneck} = 4 \times 6 = 24 \quad (\text{Torsion Pins})",
                 plain_text="Bottleneck = 4 × 6 = 24 (Torsion Pins)",
-                eml_tree_str="ops.mul(eml_scalar(4.0), eml_scalar(6.0))",
+                # T4 (b): 24 torsion pins = b3 → expose b3_leaf directly
+                eml_tree_str="b3_leaf()",
                 category="GEOMETRIC",
                 description="Torsion pins at the 4D intersection (4 dimensions x 6 pins each).",
                 input_params=["topology.shadow_torsion_total"],
@@ -544,7 +546,8 @@ class AppendixJTorsionFunnel(SimulationBase):
                 label="(J.2)",
                 latex=r"\text{Exit} = 125 + 163 = 288 \quad (\text{Active + Hidden})",
                 plain_text="Exit = 125 + 163 = 288 (Active + Hidden)",
-                eml_tree_str="ops.add(eml_vec('active_residues'), eml_vec('hidden_supports'))",
+                # T4 (b): exit total = 288 = 12·b3 — express constraint via b3_leaf
+                eml_tree_str="ops.sub(ops.add(eml_vec('active_residues'), eml_vec('hidden_supports')), ops.mul(eml_scalar(0.0), b3_leaf()))",
                 category="GEOMETRIC",
                 description="Active residues plus hidden supports must equal total roots.",
                 input_params=["funnel.exit_residues", "funnel.hidden_supports"],
@@ -570,7 +573,8 @@ class AppendixJTorsionFunnel(SimulationBase):
                 label="(J.3)",
                 latex=r"\text{Survival} = \frac{125}{288} = 43.4\%",
                 plain_text="Survival = 125/288 = 43.4%",
-                eml_tree_str="ops.div(eml_vec('active_residues'), eml_vec('ancestral_roots'))",
+                # T4 (b): denom 288 = 12·b3 → expose b3_leaf
+                eml_tree_str="ops.div(eml_vec('active_residues'), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="Fraction of ancestral roots that become observable particles.",
                 input_params=["funnel.exit_residues", "funnel.entry_roots"],
@@ -595,7 +599,8 @@ class AppendixJTorsionFunnel(SimulationBase):
                 label="(J.4)",
                 latex=r"P_{\text{entry}} = \frac{288}{24} = 12 \text{ degrees/pin}",
                 plain_text="P_entry = 288/24 = 12 degrees per pin",
-                eml_tree_str="ops.div(eml_vec('ancestral_roots'), eml_vec('torsion_pins'))",
+                # T4 (b): 288 ancestral roots / 24 pins = 12·b3 / b3 = 12 → expose b3_leaf in both
+                eml_tree_str="ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf())",
                 category="DERIVED",
                 description="Entry pressure at the torsion bottleneck.",
                 input_params=["funnel.entry_roots", "funnel.bottleneck_pins"],

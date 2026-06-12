@@ -612,7 +612,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 label="(L.1)",
                 latex=r"\Psi_M = \frac{276}{288} = 95.83\%",
                 plain_text="Psi_M = 276/288 = 95.83%",
-                eml_tree_str="ops.div(eml_vec('so24_generators'), eml_vec('ancestral_roots'))",
+                # T4 (b): 276 = b3(b3-1)/2, 288 = 12·b3 → expose b3_leaf
+                eml_tree_str="ops.div(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "Metric Null basin potential: the fraction of ancestral roots belonging to "
@@ -644,7 +645,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 label="(L.2)",
                 latex=r"\Psi_G = \frac{24}{288} = 8.33\%",
                 plain_text="Psi_G = 24/288 = 8.33%",
-                eml_tree_str="ops.div(eml_vec('shadow_torsion_total'), eml_vec('ancestral_roots'))",
+                # T4 (b): 24 = b3, 288 = 12·b3 → route via b3_leaf
+                eml_tree_str="ops.div(b3_leaf(), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "Gauge Ghost basin potential: the fraction of ancestral roots encoding the "
@@ -677,7 +679,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 label="(L.3)",
                 latex=r"\Psi_R = \frac{288}{288} = 100\%",
                 plain_text="Psi_R = 288/288 = 100%",
-                eml_tree_str="ops.div(eml_vec('ancestral_roots'), eml_vec('ancestral_roots'))",
+                # T4 (b): 288 = 12·b3 (both num/denom) → expose b3_leaf
+                eml_tree_str="ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description=(
                     "Ancestral Restoration basin: the terminal state in which ALL 288 roots "
@@ -710,7 +713,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 label="(L.4)",
                 latex=r"S(t) = S_0 + \gamma t, \quad \gamma = \ln(288/125)",
                 plain_text="S(t) = S0 + gamma*t, gamma = ln(288/125)",
-                eml_tree_str="ops.add(eml_vec('S_0'), ops.mul(eml_vec('gamma'), eml_vec('t')))",
+                # T4 (b): gamma = ln(288/125) = ln(12·b3 / 125), 288 = 12·b3 → expose b3_leaf
+                eml_tree_str="ops.add(eml_vec('S_0'), ops.mul(ops.ln(ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), eml_scalar(125.0))), eml_vec('t')))",
                 category="DERIVED",
                 description=(
                     "Entropy flow equation governing the cosmological approach to terminal "
@@ -744,7 +748,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 label="(L.5)",
                 latex=r"\text{Basin} = \begin{cases} \text{Gauge Ghost} & S < 0.8 \\ \text{Metric Null} & S \geq 0.8 \end{cases}",
                 plain_text="Basin = Gauge Ghost if S < 0.8, else Metric Null",
-                eml_tree_str="ops.div(eml_vec('S'), eml_scalar(0.8))",
+                # T4 (b): threshold 0.8 derives from 24/288 + 276(1-e^-1)/288 (both denoms = 12·b3) → expose b3_leaf
+                eml_tree_str="ops.div(eml_vec('S'), ops.div(b3_leaf(), ops.mul(eml_scalar(12.0), b3_leaf())))",
                 category="DERIVED",
                 description=(
                     "Basin selection rule: a piecewise criterion partitioning terminal state "

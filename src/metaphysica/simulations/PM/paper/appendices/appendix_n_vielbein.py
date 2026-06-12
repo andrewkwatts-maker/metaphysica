@@ -55,6 +55,29 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+try:  # pragma: no cover - optional during early migration
+    import arithma as _A
+    def _arithma_num(v):
+        return _A.Expression.number(float(v))
+except ImportError:  # pragma: no cover
+    _A = None  # type: ignore[assignment]
+    def _arithma_num(v):
+        return None
+from metaphysica.simulations.core.eml_integration import (
+    eml_scalar as _eml_scalar,
+    eml_add as _eml_add,
+    eml_sub as _eml_sub,
+    eml_mul as _eml_mul,
+    eml_div as _eml_div,
+)
+def _arithma_add(a, b):
+    return None if a is None or b is None else a + b
+def _arithma_sub(a, b):
+    return None if a is None or b is None else a - b
+def _arithma_mul(a, b):
+    return None if a is None or b is None else a * b
+def _arithma_div(a, b):
+    return None if a is None or b is None else a / b
 
 
 class VielbeinFormalism:
@@ -841,7 +864,7 @@ class AppendixNVielbein(SimulationBase):
                     "eta_AB": "Flat Minkowski metric diag(+1,-1,-1,-1)",
                     "e^A_mu": "Vielbein (tetrad) field mapping curved to flat indices",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="vielbein-orthonormality-v19",
                 label="(N.1)",
@@ -869,7 +892,7 @@ class AppendixNVielbein(SimulationBase):
                     "g_munu": "Curved spacetime metric",
                     "e^mu_A": "Vielbein with raised curved index",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="vielbein-inverse-v19",
                 label="(N.3a)",
@@ -896,7 +919,7 @@ class AppendixNVielbein(SimulationBase):
                     "E_A^mu": "Inverse vielbein (flat to curved index conversion)",
                     "e^A_mu": "Vielbein field",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="completeness-spacetime-v19",
                 label="(N.3)",
@@ -924,7 +947,7 @@ class AppendixNVielbein(SimulationBase):
                     "E_A^nu": "Inverse vielbein",
                     "delta^nu_mu": "Kronecker delta in spacetime",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="completeness-tangent-v19",
                 label="(N.4)",
@@ -952,7 +975,7 @@ class AppendixNVielbein(SimulationBase):
                     "E_B^mu": "Inverse vielbein",
                     "delta^A_B": "Kronecker delta in tangent (Lorentz) space",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="spin-connection-definition-v19",
                 label="(N.5)",
@@ -980,7 +1003,7 @@ class AppendixNVielbein(SimulationBase):
                     "A,B": "Flat tangent space (Lorentz) indices",
                     "mu": "Curved spacetime index",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="torsion-free-condition-v19",
                 label="(N.6)",
@@ -1008,7 +1031,7 @@ class AppendixNVielbein(SimulationBase):
                     "de^A": "Exterior derivative of vielbein 1-form",
                     "omega^A_B": "Spin connection 1-form",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="cartan-first-structure-v19",
                 label="(N.7)",
@@ -1036,7 +1059,7 @@ class AppendixNVielbein(SimulationBase):
                     "omega^A_{B mu}": "Spin connection components",
                     "e^B_nu": "Vielbein components",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="cartan-second-structure-v19",
                 label="(N.8)",
@@ -1064,7 +1087,7 @@ class AppendixNVielbein(SimulationBase):
                     "d omega": "Exterior derivative of spin connection",
                     "omega wedge omega": "Wedge product (non-abelian gauge contribution)",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="riemann-from-spin-connection-v19",
                 label="(N.9)",
@@ -1092,7 +1115,7 @@ class AppendixNVielbein(SimulationBase):
                     "partial_mu omega": "Partial derivatives of spin connection",
                     "omega^A_{C mu} omega^C_{B nu}": "Non-linear (gauge) contribution to curvature",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="spinor-covariant-derivative-v19",
                 label="(N.10)",
@@ -1120,7 +1143,7 @@ class AppendixNVielbein(SimulationBase):
                     "omega^{AB}_mu": "Spin connection components",
                     "Sigma_{AB}": "Lorentz generators in spinor representation",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="lorentz-generator-spinor-v19",
                 label="(N.11)",
@@ -1148,7 +1171,7 @@ class AppendixNVielbein(SimulationBase):
                     "gamma_A": "Dirac gamma matrix (flat index)",
                     "[gamma_A, gamma_B]": "Commutator of gamma matrices",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
             Formula(
                 id="spin-connection-christoffel-relation-v19",
                 label="(N.12)",
@@ -1176,7 +1199,7 @@ class AppendixNVielbein(SimulationBase):
                     "Gamma^nu_{rho mu}": "Christoffel symbols of second kind",
                     "e^A_nu, E_B^rho": "Vielbein and inverse vielbein",
                 },
-            ),
+            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:
