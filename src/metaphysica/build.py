@@ -141,6 +141,19 @@ STEPS: List[Tuple[str, List[str], bool]] = [
      [sys.executable, "-m", "metaphysica.generators.all_plots"],
      True),
 
+    # ── Sprint T6 #8: indices that the frontend page loaders fetch ───────────
+    # plots-manifest.json is consumed by js/pm-plots-loader.js;
+    # simulations-index.json is consumed by Pages/simulations.html +
+    # js/pm-simulation-loader.js. Both generators were landed earlier but
+    # not wired into the build until T6.8 visual-regression triage caught
+    # the fetch-404 on the visualization-index and simulations pages.
+    ("Build plots manifest",
+     [sys.executable, "-m", "metaphysica.generators.generate_plots_manifest"],
+     False),
+    ("Build simulations index",
+     [sys.executable, "-m", "metaphysica.generators.generate_simulations_index"],
+     False),
+
     # ── PDF paper export (renders bundled HTML pages to a single PDF) ────────
     ("Generate PDF paper",
      [sys.executable, "-m", "metaphysica.generators.generate_pdf_paper"],
