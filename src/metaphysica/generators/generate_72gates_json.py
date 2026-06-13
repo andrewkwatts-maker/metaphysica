@@ -451,7 +451,14 @@ def generate_json():
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
+    # Also write the unversioned alias for downstream consumers that
+    # reference the canonical name (legacy + simpler JSON URL).
+    alias_path = str(_autogen_dir() / "GATES_72.json")
+    with open(alias_path, 'w', encoding='utf-8') as f:
+        json.dump(output, f, indent=2, ensure_ascii=False)
+
     print(f"Generated: {output_path}")
+    print(f"            {alias_path}")
     print(f"Total gates: {len(GATES_72)}")
 
     return output_path

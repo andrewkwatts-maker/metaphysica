@@ -53,7 +53,20 @@ class DocumentationSynchronizer:
             output_dir: Directory for output files (defaults to project root)
         """
         self.registry = registry or get_registry()
-        self.output_dir = Path(output_dir) if output_dir else Path(__file__).parent.parent
+        # Honour METAPHYSICA_OUT first so sterility_report.json /
+        # FORMULAS.md / named_constants.json land in the active build
+        # output dir (wheel installs otherwise default to
+        # <site-packages>/metaphysica/simulations and the reports never
+        # reach the static site).
+        if output_dir is not None:
+            self.output_dir = Path(output_dir)
+        else:
+            import os as _os
+            _out_env = _os.environ.get("METAPHYSICA_OUT")
+            if _out_env:
+                self.output_dir = Path(_out_env)
+            else:
+                self.output_dir = Path(__file__).parent.parent
         self.timestamp = datetime.now()
 
     def generate_formulas_md(self) -> str:
