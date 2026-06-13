@@ -4,6 +4,85 @@ All notable changes to `metaphysica` will be documented in this file.
 
 ---
 
+## [2.2.0] — 2026-06-13
+
+Unified format-aware ``Get*`` dispatcher (Sprint plan S1-S7).  Every
+framework entity — formula, parameter, gate, certificate, paper section,
+plot, particle, derivation, reference, simulation — is now retrievable
+via a single ``metaphysica.get(name, fmt=...)`` call across eleven output
+formats: ``json``, ``yaml``, ``latex``, ``arithma``, ``eml``, ``float``,
+``svg``, ``png``, ``pdf``, ``html``, ``md``.
+
+### Added
+
+- **``metaphysica.get(name, fmt=..., kind=..., out_path=...)``** — the
+  primary dispatcher (S1).  Resolves *name* through a unified catalog,
+  dispatches to the appropriate format backend, and optionally writes
+  the result to disk.
+- **Typed alias helpers**: ``GetJSON``, ``GetYAML``, ``GetLaTeX``,
+  ``GetArithma``, ``GetEML``, ``GetFloat``, ``GetSVG``, ``GetPNG``,
+  ``GetPDF``, ``GetHTML``, ``GetMarkdown``.  Each returns the precise
+  type for its format (S1-S4).
+- **Format constants**: ``metaphysica.JSON``, ``YAML``, ``LATEX``,
+  ``ARITHMA``, ``EML``, ``FLOAT``, ``SVG``, ``PNG``, ``PDF``, ``HTML``,
+  ``MD`` — ``str``-subclass singletons so ``fmt=metaphysica.PNG`` and
+  ``fmt="png"`` are interchangeable.
+- **Catalog (``metaphysica._catalog``)**: lazily-built entity index over
+  bundled snapshot + build outputs.  Sources ``parameters.json``,
+  ``formulas.json``, ``formula_renders.json`` (multi-format sidecar),
+  ``GATES_72.json``, ``GATES_CERTIFICATES.json``, ``sections.json``,
+  ``plots-manifest.json``, ``references.json``, ``simulations-index.json``,
+  bundled quark + constant datasheets, and the derivations cache.
+- **Catalog + iteration helpers (S5)**: ``list_all()``, ``list_formulas()``,
+  ``list_parameters()``, ``list_gates()``, ``list_certificates()``,
+  ``list_sections()``, ``list_plots()``, ``list_derivations()``,
+  ``list_references()``, ``list_simulations()``, ``list_particles()``,
+  plus per-kind ``iter_*`` generators yielding ``EntityRef`` carriers
+  (id + payload + source).
+- **Interactive help (S6)**: ``metaphysica.help()`` prints an API
+  overview with kind counts; ``metaphysica.help(name)`` shows the
+  entity's metadata, supported formats, and example call sites.
+- **``metaphysica`` CLI (S6)**: new console script with subcommands
+  ``get`` / ``list`` / ``help`` / ``build``.  ``metaphysica get b3
+  --fmt latex --out b3.tex`` writes the LaTeX render to disk and exits
+  0.  ``metaphysica list`` enumerates the whole catalog per kind.
+- **Exception hierarchy (``metaphysica._errors``)**:
+  ``MetaphysicaError`` (base), ``MetaphysicaKeyError`` (also a
+  ``KeyError``), ``MetaphysicaAmbiguityError``,
+  ``MetaphysicaFormatError`` (also a ``ValueError``),
+  ``MetaphysicaBackendError`` (also a ``RuntimeError``).  Errors carry
+  ``difflib``-based "did you mean" hints.
+
+### Changed
+
+- ``metaphysica.build(out_dir=...)`` now plumbs the build target
+  through to the catalog so subsequent ``metaphysica.get()`` calls
+  see the freshest outputs without requiring ``METAPHYSICA_OUT`` to
+  also be set in the shell.
+- Format negotiation is now strict: asking for a format outside the
+  per-kind allowed set (e.g.  ``GetPNG('b3')`` — constants have no
+  image render) raises ``MetaphysicaFormatError`` listing the
+  supported formats.
+
+### Compatibility
+
+- The existing capital-``Get(name, as_json=False)`` API is preserved.
+  Quarks and curated constants still resolve via the lower-level
+  datasheet builders; new entity kinds (formula, gate, section, ...)
+  flow through the new ``get()`` dispatcher.
+- New file modules: ``metaphysica/_catalog.py``, ``_get.py``,
+  ``_errors.py``, ``_listing.py``, ``_help.py``.  Nothing existing was
+  removed.
+
+### Tests
+
+- ``tests/test_get_dispatcher.py``: 43 tests covering every
+  (kind × format) pair plus every error-model branch.
+- ``tests/test_get_help_cli.py``: 9 tests covering ``help()`` overview
+  + entity drill-in plus every CLI subcommand.
+
+---
+
 ## [2.1.1] — 2026-06-13
 
 Polish + release-audit follow-up to v2.1.0.  No physics changes; closes

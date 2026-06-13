@@ -44,7 +44,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union
 
-__version__ = "2.1.1"
+__version__ = "2.2.0"
 __author__ = "Andrew Keith Watts"
 
 # Companion-app launcher — `metaphysica.Launch()` finds/clones metaphysica-app and runs it.
@@ -72,7 +72,17 @@ def build(out_dir=None, *, fast: bool = False, skip_sims: bool = False, only=Non
     failing step's exit code).
     """
     from metaphysica.build import build as _build
-    return _build(out_dir=out_dir, fast=fast, skip_sims=skip_sims, only=only)
+    from metaphysica._catalog import set_last_build_dir
+    from pathlib import Path as _Path
+
+    rc = _build(out_dir=out_dir, fast=fast, skip_sims=skip_sims, only=only)
+    # On success, plumb the build target through to the catalog so
+    # subsequent ``metaphysica.get()`` calls see the freshly-built
+    # registries without requiring the user to also set METAPHYSICA_OUT.
+    if rc == 0:
+        target = _Path(out_dir).resolve() if out_dir is not None else _Path.cwd().resolve()
+        set_last_build_dir(target)
+    return rc
 
 
 def run_all(out_dir=None, *, quiet: bool = False) -> int:
@@ -222,6 +232,64 @@ def list_constants() -> list:
     return sorted(names)
 
 
+# ── Unified Get* dispatcher (v2.2.0 Sprint 1) ────────────────────────────────
+# Format-aware lookup that works across formulas, parameters, gates,
+# certificates, sections, plots, particles, derivations, references, and
+# simulations. See _get.py for the dispatcher and _catalog.py for the
+# entity index. Format constants (JSON / YAML / LATEX / ...) are
+# re-exported so ``metaphysica.PNG`` etc. tab-complete in IDEs.
+from metaphysica._get import (  # noqa: E402,F401
+    get,
+    GetJSON,
+    GetYAML,
+    GetLaTeX,
+    GetArithma,
+    GetEML,
+    GetFloat,
+    GetSVG,
+    GetPNG,
+    GetPDF,
+    GetHTML,
+    GetMarkdown,
+    JSON, YAML, LATEX, ARITHMA, EML, FLOAT, SVG, PNG, PDF, HTML, MD,
+    SUPPORTED_FORMATS,
+    get_supported_formats,
+)
+from metaphysica._catalog import (  # noqa: E402,F401
+    reset_catalog,
+    list_kind,
+    KINDS,
+)
+from metaphysica._listing import (  # noqa: E402,F401
+    list_formulas,
+    list_parameters,
+    list_gates,
+    list_certificates,
+    list_sections,
+    list_plots,
+    list_derivations,
+    list_references,
+    list_simulations,
+    list_particles,
+    list_all,
+    iter_kind,
+    iter_formulas,
+    iter_parameters,
+    iter_gates,
+    iter_sections,
+    iter_plots,
+    iter_all,
+)
+from metaphysica._errors import (  # noqa: E402,F401
+    MetaphysicaError,
+    MetaphysicaKeyError,
+    MetaphysicaAmbiguityError,
+    MetaphysicaFormatError,
+    MetaphysicaBackendError,
+)
+from metaphysica._help import help  # noqa: E402,F401
+
+
 __all__ = [
     "__version__",
     "build",
@@ -230,4 +298,52 @@ __all__ = [
     "list_quarks",
     "list_constants",
     "Launch",
+    # v2.2.0 Sprint 1 — unified dispatcher
+    "get",
+    "GetJSON",
+    "GetYAML",
+    "GetLaTeX",
+    "GetArithma",
+    "GetEML",
+    "GetFloat",
+    "GetSVG",
+    "GetPNG",
+    "GetPDF",
+    "GetHTML",
+    "GetMarkdown",
+    "JSON", "YAML", "LATEX", "ARITHMA", "EML", "FLOAT",
+    "SVG", "PNG", "PDF", "HTML", "MD",
+    "SUPPORTED_FORMATS",
+    "get_supported_formats",
+    "list_kind",
+    "reset_catalog",
+    "KINDS",
+    # S5 — per-kind list helpers
+    "list_formulas",
+    "list_parameters",
+    "list_gates",
+    "list_certificates",
+    "list_sections",
+    "list_plots",
+    "list_derivations",
+    "list_references",
+    "list_simulations",
+    "list_particles",
+    "list_all",
+    # S5 — entity iterators (yield EntityRef with payload + source)
+    "iter_kind",
+    "iter_formulas",
+    "iter_parameters",
+    "iter_gates",
+    "iter_sections",
+    "iter_plots",
+    "iter_all",
+    # Errors
+    "MetaphysicaError",
+    "MetaphysicaKeyError",
+    "MetaphysicaAmbiguityError",
+    "MetaphysicaFormatError",
+    "MetaphysicaBackendError",
+    # S6 — interactive help
+    "help",
 ]
