@@ -5,7 +5,8 @@ PRINCIPIA METAPHYSICA v24.2 - Section 4: System Integrity and Verification
 
 DOI: 10.5281/zenodo.18079602
 
-v24.2 STERILE MODEL: All 125 constants are geometric residues, not tuned.
+v24.2 candidate model: proposes 125 constants as geometric residues
+(model-internal claim; not independently validated).
 
 This simulation generates the content for Section 4 of the paper:
   4.1 The Hysteresis Seal: Topological Rigidity
@@ -150,12 +151,13 @@ class IntegrityV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Section 4.1 defines the primary defense mechanism of the v24.2 Sterile Model: "
-                    "the <strong>Hysteresis Seal</strong>. This is the physical and mathematical "
-                    "barrier that prevents the 125 residues from drifting or being subject to "
-                    "'fine-tuning.' It explains why the model's parameters are not just 'fixed' "
-                    "by convention, but are <strong>Topologically Frozen</strong> by the history "
-                    "of their dimensional descent."
+                    "Section 4.1 introduces the mechanism the v24.2 model proposes as its "
+                    "primary defense against fine-tuning: "
+                    "the <strong>Hysteresis Seal</strong>. This is the mathematical "
+                    "structure proposed to prevent the 125 candidate residues from drifting under "
+                    "adjustment. Within the model, parameters are proposed to be constrained by "
+                    "the history of their dimensional descent rather than fixed by convention. "
+                    "This mechanism is a model-internal proposal; it has not been independently validated."
                 )
             ),
             ContentBlock(

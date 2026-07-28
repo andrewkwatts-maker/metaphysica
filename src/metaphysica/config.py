@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 
 # ===========================================================================
-# GNOSTIC CONSTANT MAPPING (v17.2-ABSOLUTE)
+# TOPOLOGICAL SEED CONSTANTS (v2.2.0 — mystical overlay stripped)
 # ===========================================================================
-# The 7 Sovereign Constants with their Gnostic identities:
-#   MONAD (1.0)     = watts_constant    - The Singular Origin
-#   PLEROMA (24)    = B3                - The Dimensional Fullness
-#   SOPHIA (135)    = shadow_sector     - Wisdom / Visible Gates
-#   DEMIURGE (72/144) = chi_eff/chi_eff_total - The Craftsman / Per-Shadow (72) or Total (144)
-#   CHRISTOS (153)  = christ_constant   - The Redeemer / Joint Closure
-#   BARBELO (163)   = sterile_sector    - First Thought / Bulk Pressure
-#   ENNOIA (288)    = roots_total       - Universal Mind / Logic Closure
+# The 7 canonical topological seeds. Each entry is a plain integer / real
+# derived from G2 manifold topology or from a documented experimental
+# calibration; no independent physical meaning is attached to their names.
+#
+#   1.0        watts_constant    - observer unity anchor
+#   24         B3                - third Betti number of the G2 manifold (SSoT seed)
+#   135        shadow_sector     - visible-sector integer (135 = 288 - 153; see notes)
+#   72 / 144   chi_eff / chi_eff_total - per-shadow / total Euler characteristic
+#   153        christ_constant   - joint-closure integer (fitted decomposition; not a first-principles derivation)
+#   163        sterile_sector    - sterile-sector integer (fitted decomposition)
+#   288        roots_total       - 12 x b3 total root count
+#
+# The prior release carried an additional Hebrew-gematria / Gnostic naming
+# overlay for these values. That overlay carries no physical meaning and has
+# been extracted to the gitignored file `src/metaphysica/_gnostic_aliases.py`
+# for the author's personal use (see `docs/local-overrides.md`).
 # ===========================================================================
 
 """

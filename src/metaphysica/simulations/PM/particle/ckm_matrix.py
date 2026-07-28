@@ -9,34 +9,47 @@ Derives CKM matrix elements and quark mixing from G2 geometry phase structure
 via the Pneuma Mechanism.
 
 Key Physics:
-- CKM matrix elements from topological phase overlaps in G2 manifold
-- Jarlskog invariant J ~ 3.0e-5 for CP violation from topological phase
-- Wolfenstein parameterization (lambda, A, rho, eta) from G2 geometry
-- Connection to Yukawa texture epsilon ~ 0.223 from Froggatt-Nielsen
+- CKM matrix elements proposed from topological phase overlaps in G2 manifold
+- Cabibbo angle lambda ~ 0.223 is the only genuinely topology-first
+  candidate prediction; V_cb, V_ub, and J follow from the Wolfenstein
+  parameterisation with fitted A, rho, eta and are NOT independent
+  predictions of this model.
+- Jarlskog invariant J ~ 3.0e-5 is PHENOMENOLOGICALLY TUNED to the PDG
+  value via the fitted Wolfenstein parameters (labelling below the
+  earlier "topological phase pi/6 from K=4 matching" wording as a
+  reverse-engineered choice, not a first-principles derivation).
+- Connection to Yukawa texture epsilon ~ 0.223 from the Froggatt-Nielsen
+  ansatz (Froggatt & Nielsen, Nucl. Phys. B 147, 1979).
 
 Physical Picture:
-- Quark mass eigenstates localize on different associative 3-cycles
-- Weak eigenstates mix through overlap integrals in G2 internal space
-- CKM angles set by geometric phase factors from cycle separations
-- CP violation from non-trivial topology of G2 holonomy phases
+- Quark mass eigenstates are proposed to localise on different
+  associative 3-cycles in the G2 internal space.
+- Weak eigenstates mix through overlap integrals in G2 internal space.
+- CKM angles are proposed to be set by geometric phase factors from
+  cycle separations; only the Cabibbo leading order is topology-first.
+- The residual CP violation phase is fitted, not derived.
 
 MECHANISM:
 1. CKM elements from cycle overlap integrals:
    V_ij = integral(psi_u^i * W_boson * psi_d^j) over G2 manifold
 
-2. Leading order angles from Yukawa hierarchy:
-   lambda = V_us ~ epsilon ~ 0.223 (Cabibbo angle)
-   V_cb ~ epsilon^2 ~ 0.050
-   V_ub ~ epsilon^3 ~ 0.011
+2. Leading order angles from Yukawa hierarchy (Froggatt-Nielsen ansatz):
+   lambda = V_us ~ epsilon ~ 0.223 (Cabibbo angle — topology-first candidate)
+   V_cb ~ epsilon^2 ~ 0.050         (follows from ansatz + fitted A)
+   V_ub ~ epsilon^3 ~ 0.011         (follows from ansatz + fitted A)
 
-3. Jarlskog invariant from G2 holonomy phase:
+3. Jarlskog invariant (PHENOMENOLOGICALLY TUNED, not derived):
    J = Im(V_us V_cb V_ub* V_cs*) ~ epsilon^6 sin(delta_CP)
-   delta_CP from topological phase ~ pi/6 from K=4 matching
+   delta_CP fitted via TOPOLOGICAL_PHASE = pi/6 (30 deg), the value
+   chosen to reproduce PDG J ~ 3.0e-5. Prior wording called this
+   "from K=4 matching" but that was reverse-engineered from the
+   target J value; the model does not derive delta_CP from first
+   principles.
 
-4. Wolfenstein parameters:
-   lambda = epsilon = 0.223
-   A = 1/epsilon = 4.48
-   rho + i*eta from CP phase structure
+4. Wolfenstein parameters (mixture of Froggatt-Nielsen ansatz + fitted):
+   lambda = epsilon = 0.223  (ansatz-derived from mass hierarchy)
+   A      = 1/epsilon = 4.48 (fitted to PDG V_cb)
+   rho, eta from CP phase structure (fitted to PDG J and delta_CP)
 
 KEY RESULTS:
 - V_us = 0.2257 (matches Cabibbo angle = epsilon)

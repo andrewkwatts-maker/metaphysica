@@ -185,7 +185,7 @@ that produce numerically identical results:
 | Track     | Carrier                | Role                                      |
 |-----------|------------------------|-------------------------------------------|
 | Arithma   | `arithma_compact` tree | exact symbolic, ground-truth normal form  |
-| EML-Math  | `eml_tree_compact` tree| publication-grade rendering + audit       |
+| EML-Math  | `eml_tree_compact` tree| multi-format rendering + audit            |
 | Float     | `float` evaluation     | runtime numeric, downstream consumer view |
 
 At registration the framework calls `triple_assert(arithma, eml, float)`

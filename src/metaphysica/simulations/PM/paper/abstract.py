@@ -287,11 +287,33 @@ class AbstractV17_2(SimulationBase):
             SectionContent instance with the paper abstract
         """
         content_blocks = [
+            # v2.2.0 honesty polish: research-status callout before any
+            # claims. Every downstream renderer (paper.html, PDF paper,
+            # sections.json) picks this up automatically.
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    '<div style="border: 2px solid #ff9800; background: rgba(255,152,0,0.08); '
+                    'padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;">'
+                    '<strong style="color: #d84315; text-transform: uppercase; letter-spacing: 0.05em;">'
+                    '&#9888; Research status</strong>'
+                    '<p style="margin: 0.5rem 0 0; line-height: 1.5;">'
+                    '<strong>Principia Metaphysica is a speculative theoretical model.</strong> '
+                    'It has <strong>not</strong> been peer-reviewed and is <strong>not</strong> '
+                    'scientifically validated. All derivations, predictions, and \u201cclosures\u201d '
+                    'presented below are candidate proposals awaiting experimental confirmation '
+                    'and independent expert review. The framework is intended for exploration and '
+                    'research purposes only; no claim in this paper represents established '
+                    'scientific fact.'
+                    '</p></div>'
+                ),
+                label="abstract-research-status-notice"
+            ),
             # Lead paragraph - framework introduction
             ContentBlock(
                 type="paragraph",
                 content=(
-                    'We introduce a unified mathematical framework that proposes geometric expressions for <span class="pm-value" data-pm-value="abstract.total_constants">125</span> fundamental physical '
+                    'We introduce a candidate mathematical model that proposes geometric expressions for <span class="pm-value" data-pm-value="abstract.total_constants">125</span> physical '
                     'constants and cosmological observables from the topological invariants of a '
                     '<span class="pm-value" data-pm-value="dimensions.D_bulk">27</span>-dimensional manifold '
                     '<strong>M<sup>27</sup>(24,1,2)</strong>\u2014where <em>24</em> denotes the G\u2082 physics core '
@@ -299,9 +321,9 @@ class AbstractV17_2(SimulationBase):
                     'and <em>2</em> the <strong>sampler data fields</strong> S<sup>(2,0)</sup> '
                     '(an architecturally separate Euclidean sector providing global cross-shadow averaging). '
                     '<strong>Principia Metaphysica <span class="pm-value" data-pm-value="framework.version_label">v24.2</span></strong> '
-                    'realizes a dual-shadow structure where the unified time eliminates ghosts/CTCs, and the '
-                    'sampler data fields S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) enable coherent cross-shadow '
-                    'objective reduction (OR). Each shadow compactifies on G\u2082(7,0) to '
+                    'proposes a dual-shadow structure where the unified time is intended to eliminate ghosts/CTCs, and the '
+                    'sampler data fields S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) are used to model '
+                    'coherent cross-shadow objective reduction (OR). Each shadow compactifies on G\u2082(7,0) to '
                     '<span class="pm-value" data-pm-value="dimensions.D_observable">4</span>D, yielding '
                     'exactly three chiral fermion generations from n<sub>gen</sub> = \u03c7<sub>eff</sub>/(2\u00b7b\u2083) = '
                     '144/48 = <span class="pm-value" data-pm-value="topology.n_gen">3</span> per shadow, '
@@ -313,10 +335,11 @@ class AbstractV17_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    'The framework achieves <strong><span class="pm-value" data-pm-value="abstract.compression_ratio">131</span>:1 compression ratio</strong> '
-                    '(125 base constants plus 13 new DERIVED items closed in v25.0+v26.0, from EDOF=3 effective seeds; see S5.10). '
-                    'Standard Model parameters emerge from manifold topology, flux quantization, and effective torsion. '
-                    '<strong><span class="pm-value" data-pm-value="abstract.pure_predictions">55</span> parameters are pure predictions</strong>. <strong>EDOF=3</strong> (effective degrees of freedom): three calibration seeds '
+                    'The model proposes a <strong><span class="pm-value" data-pm-value="abstract.compression_ratio">131</span>:1 compression ratio</strong> '
+                    '(125 base constants plus 13 candidate new items proposed in v25.0+v26.0, from EDOF=3 effective seeds; see S5.10) &mdash; '
+                    'this ratio is an internal model artifact, not an independently validated result. '
+                    'Standard Model parameters are proposed to emerge from manifold topology, flux quantization, and effective torsion. '
+                    '<strong><span class="pm-value" data-pm-value="abstract.pure_predictions">55</span> parameters are candidate predictions</strong>. <strong>EDOF=3</strong> (effective degrees of freedom): three calibration seeds '
                     '(VEV coefficient <span class="pm-value" data-pm-value="abstract.vev_coefficient">1.5859</span>, 1/\u03b1<sub>GUT</sub> coefficient 1/(10\u03c0) \u2248 <span class="pm-value" data-pm-value="abstract.alpha_gut_coefficient">0.0318</span>, '
                     'Re(T) constrained from Higgs mass). Two PMNS parameters (\u03b8\u2081\u2083, \u03b4<sub>CP</sub>) '
                     'are fitted to NuFIT 6.0 pending explicit Yukawa calculation.'
@@ -374,16 +397,16 @@ class AbstractV17_2(SimulationBase):
                 type="paragraph",
                 content=(
                     '<strong>Topologically Anchored Framework (131:1 Compression)</strong>: '
-                    'We frame this derivation through the lens of Minimal Description Length (MDL). '
-                    'The 125 observed constants \u2014 extended to 138 after the v25.0+v26.0 closures \u2014 represent the '
-                    'most efficient topological compression of the M<sup>27</sup> bulk, '
-                    'achieved with <strong>EDOF=3</strong> (1 geometric seed b\u2083 + 2 calibrations: VEV coefficient, Re(T)). '
-                    'The computational implementation achieves <strong>131:1 compression ratio</strong> (\u224810,500 bits \u2192 69 bits, per S5.10), '
-                    'demonstrating this is information reduction rather than parameter fitting. '
-                    'The code is isomorphic to the geometric constraints themselves, with '
+                    'We frame this proposed derivation through the lens of Minimal Description Length (MDL). '
+                    'The 125 observed constants \u2014 extended to 138 after the candidate v25.0+v26.0 additions \u2014 are '
+                    'proposed as an efficient topological compression of the M<sup>27</sup> bulk, '
+                    'targeting <strong>EDOF=3</strong> (1 geometric seed b\u2083 + 2 calibrations: VEV coefficient, Re(T)). '
+                    'The computational implementation proposes a <strong>~131:1 compression ratio</strong> (\u224810,500 bits \u2192 69 bits, per S5.10) &mdash; '
+                    'this is a model-internal information-theoretic artifact, not an independently validated result. '
+                    'The code is isomorphic to the proposed geometric constraints, with '
                     '<Normal>three topological seeds: b\u2083=24, k_\u2137\u224812.318, \u03c6=(1+\u221a5)/2</Normal>'
                     '<EML>Seeds: eml_scalar(24) [b\u2083], ops.add(ops.div(24,2), ops.inv(pi)) [k_\u2137], ops.div(ops.add(1,ops.sqrt(5)),2) [\u03c6]</EML> '
-                    'encoding the 288/24/4 structure derived from G\u2082 topology (minimal phenomenological input).'
+                    'encoding the 288/24/4 structure proposed from G\u2082 topology (minimal phenomenological input).'
                 ),
                 label="abstract-mdl"
             ),

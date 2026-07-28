@@ -1,13 +1,25 @@
-"""metaphysica — G2-manifold-derived theoretical physics framework.
+"""metaphysica — Speculative G₂-manifold theoretical physics model.
 
+Research status
+---------------
+**Principia Metaphysica is a speculative theoretical model. It has not
+been peer-reviewed and is not scientifically validated.** All
+derivations, predictions, and "closures" produced by this package are
+candidate proposals awaiting experimental confirmation and independent
+expert review. The package is intended for exploration and research
+purposes only; no output represents established scientific fact.
+
+Overview
+--------
 The package bundles three things:
 
-* the simulation engine (under :mod:`metaphysica.simulations`) — derives
-  125 physical constants from G2 topology + a small number of seeds;
+* the simulation engine (under :mod:`metaphysica.simulations`) — proposes
+  candidate derivations for ~125 physical constants from G₂ topology
+  plus a small number of seeds;
 * the generators (under :mod:`metaphysica.generators`) that turn those
   simulation outputs into JSON, JS, HTML and plot artefacts;
 * the website templates (under :mod:`metaphysica.website`) — the static
-  HTML / CSS / JS files that render the theory in a browser.
+  HTML / CSS / JS files that render the model in a browser.
 
 The :func:`build` entry point composes all three: it runs the sims,
 runs every generator, and copies the bundled website assets into a

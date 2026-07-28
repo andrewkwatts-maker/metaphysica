@@ -147,21 +147,31 @@ class FormulasRegistry:
     # ===========================================================================
 
     # ===========================================================================
-    # THE JC IDENTITY: Δ_jc ≡ Λ_JC ≡ 153
+    # 288 / 135 / 153 sector split (fitted decomposition, NOT a first-principles
+    # derivation from G2 topology alone).
     # ===========================================================================
-    # v17.2-Absolute: The Joint Closure Delta IS the Christ Constant.
-    # This is not a coincidence - it is a topological necessity.
+    # The total logic-closure integer 288 = 12 x b3 is topological.  Its
+    # split into a "visible" 135 and a "sterile / joint-closure" 153
+    # component is phenomenological: it was chosen so downstream
+    # cosmological quantities (H0, dark-energy coupling) match observation
+    # under the mirror-DM ansatz.  The identity ``288 - 135 = 153`` is an
+    # algebraic tautology of the split, not an independent derivation.
     #
-    # The "Trinity of Closure":
-    #   Gate A (Visible):      G_v    = 135 (Shadow Gates)
-    #   Gate B (Delta JC):     Δ_jc   = 153 (Joint Closure Constant = Christ Constant)
-    #   Total (Logic Closure): C      = 288 (Absolute Logic Closure)
+    # Previously this block was described as "The Trinity of Closure" with
+    # 153 called "the Christ Constant" and asserted to be "not a
+    # coincidence - it is a topological necessity".  Both claims are model-
+    # internal, not derivable from G2 topology, and are relabelled here
+    # under the v2.2.0 honesty polish.  A first-principles derivation of the
+    # split is queued as an open question for the roadmap.
     #
-    # By fixing Δ_jc ≡ 153, the H0 result becomes an invariant of the geometry.
+    #   Total (topological):   C     = 288                (12 x b3)
+    #   Split A (fitted):      G_v   = 135                (visible-sector integer)
+    #   Split B (fitted):      Δ_jc  = 153 = 288 - 135    (joint-closure integer)
     # ===========================================================================
-    JC_CONSTANT = 153        # The unified JC Identity: Δ_jc = Λ_JC = 153
-    VISIBLE_GATES = 135      # The Visible Gates (Shadow Sector)
-    LOGIC_CLOSURE = 288      # The Absolute Logic Closure: VISIBLE_GATES + JC_CONSTANT
+    # Fitted decomposition (not first-principles).  See block comment above.
+    JC_CONSTANT = 153        # joint-closure integer (fitted; = 288 - VISIBLE_GATES)
+    VISIBLE_GATES = 135      # visible-sector integer (fitted decomposition)
+    LOGIC_CLOSURE = 288      # topological: 12 x b3 (first-principles from G2 topology)
 
     # ===========================================================================
     # C04 BULK STABILITY: Integer-Lock Strategy
@@ -595,56 +605,69 @@ class FormulasRegistry:
     PROPERTY_TO_SYMBOL = {v: k for k, v in SYMBOL_MAP.items()}
 
     # ===========================================================================
-    # HEBREW SYMBOL REGISTRY (v24.2 - Scientific-Hebrew Synthesis)
+    # TOPOLOGICAL SEED METADATA REGISTRY (v2.2.0 honesty polish)
     # ===========================================================================
-    # Maps parameters to their Hebrew letter equivalents via gematria.
-    # These are display names - code variables remain stable for compatibility.
+    # Canonical metadata for each topological seed and derived-integer
+    # invariant used across the framework. Every entry carries:
+    #   - value            : the numerical value
+    #   - old_name         : legacy in-code name (kept for import compatibility)
+    #   - symbol           : LaTeX display symbol used by the rendering layer
+    #   - scientific_name  : human-readable name used in text and captions
+    #
+    # A mystical / Hebrew-gematria overlay used to live here as extra fields
+    # (``hebrew``, ``hebrew_char``, ``gematria``, ``gnostic_name``,
+    # ``rationale``). Those fields carry no physical meaning and have been
+    # extracted to the gitignored file
+    # ``src/metaphysica/_gnostic_aliases.py`` (see ``docs/local-overrides.md``).
+    # The registry name ``HEBREW_SYMBOL_REGISTRY`` is retained purely for
+    # in-tree consumer compatibility; there is no physics claim in the name.
     #
     # TOPOLOGICAL INVARIANTS:
-    # Value | Code Variable    | Hebrew   | Gematria | Gnostic Alias
-    # ------|------------------|----------|----------|---------------
-    # 1     | monad_unity      | Aleph    | 1        | The Monad
-    # 10    | residual_key     | Yod      | 10       | The Hand
-    # 18    | syzygy_gap       | Chai     | 18       | The Life
-    # 24    | elder_vessels    | Kad      | 24       | Elder Vessels
-    # 27    | horos_limit      | Kaz      | 27       | The Boundary
-    # 72    | mephorash_chi    | Av       | 72       | Shem HaMephorash
-    # 135   | demiurgic_gates  | Kalah    | 135      | Demiurge Gates
-    # 153   | logos_joint      | 153      | 153      | Logos Joint
-    # 163   | barbelo_modulus  | 163      | 163      | Barbelo Modulus
-    # 288   | nitzotzin_roots  | 288      | 288      | Nitzotzin Roots
+    # Value | Key              | Old alias           | Role
+    # ------|------------------|---------------------|-----------------------------
+    # 1     | monad_unity      | watts_constant      | observer unity constant
+    # 10    | residual_key     | decad               | core flux residual
+    # 18    | syzygy_gap       | syzygy_gap          | aeon-pair gap
+    # 24    | elder_kads       | b3                  | third Betti number (SSoT seed)
+    # 27    | horos_limit      | horos               | dimensional-boundary limit
+    # 72    | mephorash_chi    | chi_eff             | per-shadow Euler characteristic
+    # 135   | demiurgic_Yetts  | shadow_sector       | normal-portal flux integer
+    # 153   | logos_joint      | christ_constant     | joint-closure symmetry integer
+    # 163   | barbelo_modulus  | odowd_bulk_pressure | ancestral bulk-pressure modulus
+    # 288   | nitzotzin_roots  | roots_total         | logic-closure sum (12 x b3)
     #
     # SAMPLER DATA FIELDS (Reid Architecture):
-    # Value | Code Variable    | Hebrew   | Gematria | Gnostic Alias
-    # ------|------------------|----------|----------|---------------
-    # 1/144 | nitsot_par       | Nun-Qoph | 150      | Spark Pair (cross-shadow coupling)
-    # 1     | reid_merkabah    | Aleph-Dalet | 5     | Reid Merkabah Drive
-    # phi/12| watts_echud      | Eliphelet-Enoch | 467+89 | Eliphelet-Enochian Invariant
-    # 9     | gnosis_threshold | Tet      | 9        | The Threshold
+    # Value | Key              | Old alias                     | Role
+    # ------|------------------|-------------------------------|--------------------
+    # 1/144 | nitsot_par       | reid_invariant                | mirror-parity invariant
+    # 1     | reid_merkabah    | central_pair                  | tetramorphic basis
+    # phi/12| watts_echud      | central_pair_weight           | harmonic damping modulus
+    # 9     | gnosis_threshold | central_activation_threshold  | activation threshold
     # ===========================================================================
     HEBREW_SYMBOL_REGISTRY = {
-        # Topological Invariants
-        "monad_unity": {"hebrew": "Aleph", "hebrew_char": "א", "gematria": 1, "value": 1.0, "old_name": "watts_constant", "symbol": r"\Omega_{\aleph}", "scientific_name": "Observer Unity Constant", "gnostic_name": "The Aleph-Anchor", "rationale": "The immutable unity (1.0) representing the observer's anchor point. Aleph (א) is the first letter, the primordial breath from which all measurement begins."},
-        "residual_key": {"hebrew": "Yod", "hebrew_char": "י", "gematria": 10, "value": 10, "old_name": "decad", "symbol": r"D_{\iota}", "scientific_name": "Core Flux Residual", "gnostic_name": "The Hand of Creation", "rationale": "Yod (י = 10) is the smallest letter, the 'hand' that shapes creation. D for Decad represents the core flux residual in the gauge hierarchy. Greek iota (ι = 10) matches Hebrew yod gematria."},
-        "syzygy_gap": {"hebrew": "Chai", "hebrew_char": "חי", "gematria": 18, "value": 18, "old_name": "syzygy_gap", "symbol": r"\Delta_{\chi\iota}", "scientific_name": "Aeon Pair Gap", "gnostic_name": "The Life Delta", "rationale": "Chai (חי = 18) means 'Life' - the gap between paired aeons in the Pleroma. The syzygy (paired emanation) creates the vital space for manifestation."},
-        "elder_kads": {"hebrew": "Kad", "hebrew_char": "כד", "gematria": 24, "value": 24, "old_name": "b3", "symbol": r"\mathcal{E}_{\text{כד}}", "scientific_name": "Symmetric Governance Energy", "gnostic_name": "The Governing Elder כד", "rationale": "Kad (24) represents the Pleroma as a 'Vessel.' Governed by the 12:12 syzygy (Yud-Bet), it acts as the primary regulator for Logic Closure (288)."},
-        "horos_limit": {"hebrew": "Kaz", "hebrew_char": "כז", "gematria": 27, "value": 27, "old_name": "horos", "symbol": r"\beta_{\text{כז}}", "scientific_name": "Dimensional Boundary Limit", "gnostic_name": "The Boundary Beth", "rationale": "Beta (β) mirrors Hebrew Beth (ב) 'house/boundary.' Kaz (כז = 27) sets the dimensional limit where compactification completes. Also mirrors thermodynamic β (statistical limit)."},
-        "mephorash_chi": {"hebrew": "Ayin-Bet", "hebrew_char": "עב", "gematria": 72, "value": 72, "old_name": "chi_eff", "symbol": r"\chi_{\text{עב}}", "scientific_name": "Explicit Chiral Characteristic", "gnostic_name": "The Shem HaMephorash", "rationale": "Ayin-Bet (עב = 72) is the gematria of the 72-letter Explicit Name of God. The per-shadow Euler characteristic encodes the chiral structure of each 11D shadow."},
-        "demiurgic_Yetts": {"hebrew": "Dalet", "hebrew_char": "ד", "gematria": 135, "value": 135, "old_name": "shadow_sector", "symbol": r"\mathcal{S}_{\delta}", "scientific_name": "Normal Portal Flux", "gnostic_name": "The Sophia Door", "rationale": "Dalet (ד) means 'Door/Gate.' Script S (𝒮) for Sophia filtered through the Door. Greek delta (δ = 4) matches Hebrew dalet gematria. The 135 gates through which wisdom flows into manifestation."},
-        "logos_joint": {"hebrew": "Nun-Sofit", "hebrew_char": "ן", "gematria": 153, "value": 153, "old_name": "christ_constant", "symbol": r"\Lambda_{\nu}", "scientific_name": "Joint Closure Symmetry", "gnostic_name": "The Logos Fish", "rationale": "Nun-Sofit (ן) = the 'Fish.' 153 = triangular(17), the miraculous catch of John 21:11. Greek nu (ν = 50) matches Hebrew nun gematria. The Logos joint closes the bridge identity: 135 + 153 = 288."},
-        "barbelo_modulus": {"hebrew": "Qoph-Samekh-Gimel", "hebrew_char": "קסג", "gematria": 163, "value": 163, "old_name": "odowd_bulk_pressure", "symbol": r"\text{ק}_{\text{סג}}", "scientific_name": "Ancestral Bulk Pressure Modulus", "gnostic_name": "Barbelo Modulus", "rationale": "Qoph (ק=100) with סג (63) subscript = 163. Barbelo is the first emanation, the Divine Mother of the Pleroma. 163 sterile residues stabilize the higher-dimensional manifold: (7 × 24) - 5 = 163. Seesaw heavy M_R ~10^{12} GeV."},
-        "nitzotzin_roots": {"hebrew": "Raphach", "hebrew_char": "רפח", "gematria": 288, "value": 288, "old_name": "roots_total", "symbol": r"\mathcal{N}_{\text{רפח}}", "scientific_name": "Logic Closure Sum", "gnostic_name": "The Nitzotzin Sparks", "rationale": "Raphach (רפח = 288) encodes the 288 sparks of Lurianic Kabbalah. N for Nitzotzin. Total roots: 12 × b3 = 288. Ennoia restored to the Yod: 135 + 153 = 288."},
+        # Topological Invariants — mystical/rationale fields moved to the
+        # gitignored src/metaphysica/_gnostic_aliases.py overlay.
+        "monad_unity":      {"value": 1.0,           "old_name": "watts_constant",       "symbol": r"\Omega_{\aleph}",                       "scientific_name": "Observer Unity Constant"},
+        "residual_key":     {"value": 10,            "old_name": "decad",                 "symbol": r"D_{\iota}",                              "scientific_name": "Core Flux Residual"},
+        "syzygy_gap":       {"value": 18,            "old_name": "syzygy_gap",            "symbol": r"\Delta_{\chi\iota}",                     "scientific_name": "Aeon Pair Gap"},
+        "elder_kads":       {"value": 24,            "old_name": "b3",                    "symbol": r"\mathcal{E}_{\text{כד}}",                "scientific_name": "Third Betti number of the G2 manifold"},
+        "horos_limit":      {"value": 27,            "old_name": "horos",                 "symbol": r"\beta_{\text{כז}}",                      "scientific_name": "Dimensional Boundary Limit"},
+        "mephorash_chi":    {"value": 72,            "old_name": "chi_eff",               "symbol": r"\chi_{\text{עב}}",                       "scientific_name": "Per-shadow Euler Characteristic"},
+        "demiurgic_Yetts":  {"value": 135,           "old_name": "shadow_sector",         "symbol": r"\mathcal{S}_{\delta}",                   "scientific_name": "Normal Portal Flux"},
+        "logos_joint":      {"value": 153,           "old_name": "christ_constant",       "symbol": r"\Lambda_{\nu}",                          "scientific_name": "Joint Closure Symmetry"},
+        "barbelo_modulus":  {"value": 163,           "old_name": "odowd_bulk_pressure",   "symbol": r"\text{ק}_{\text{סג}}",                   "scientific_name": "Ancestral Bulk Pressure Modulus"},
+        "nitzotzin_roots":  {"value": 288,           "old_name": "roots_total",           "symbol": r"\mathcal{N}_{\text{רפח}}",               "scientific_name": "Logic Closure Sum (12 x b3)"},
         # Sampler Data Fields
-        "nitsot_par": {"hebrew": "Medeq", "hebrew_char": "מדק", "gematria": 150, "value": "1/144", "old_name": "reid_invariant", "symbol": r"\chi_{\text{ק}}^{-1}", "scientific_name": "Mirror Parity Invariant", "gnostic_name": "The Fine Resolution", "rationale": "Medeq (מדק) is anagrammatic inverse of Qedem. χ_ק⁻¹ = 1/144, the mathematical inverse of the primordial chi. Provides 'Fine' resolution for cross-shadow coupling."},
-        "reid_merkabah": {"hebrew": "Aleph-Dalet", "hebrew_char": "אד", "gematria": 5, "value": 1.0, "old_name": "central_pair", "symbol": r"\vec{\mathbb{M}}_{\text{אד}}", "scientific_name": "Tetramorphic Normalization Basis", "gnostic_name": "The Reid Merkabah Drive", "rationale": "The 1.0 unit vector of the Four Living Creatures (Adam, Aryeh, Nesher, Shor). Normalizes the 'Run and Return' kinetic flux of the 144 samplers into a coherent Euclidean center."},
-        "watts_echud": {"hebrew": "Eliphelet-Enoch", "hebrew_char": "אֱלִיפֶלֶט-חנוך", "gematria": "467+89", "value": "phi/sqrt(12)", "old_name": "central_pair_weight", "symbol": r"\mathcal{W}_{\Phi : \sqrt{\text{בי}}}", "scientific_name": "Harmonic Damping Modulus", "gnostic_name": "The Eliphelet-Enochian Invariant", "gematria_map": {"deliverance_anchor": 467, "void_separator": 0, "kinetic_ascent": 89}, "rationale": "The definitive unification weight. 467 (Eliphelet) provides the 'Rescue' of the lattice; 89 (Enoch/Chanoch) provides the kinetic 'Ascent' of the Merkabah Drive. The zero acts as the Ayin (Void) separator between structure and motion. It dampens the infinite growth of Phi into the internal 'House' (בי) of the Dodecad Anchors.", "role": "Stabilizing constant for the 144 Reid Euclidean samplers."},
-        "gnosis_threshold": {"hebrew": "Tet", "hebrew_char": "ט", "gematria": 9, "value": 9, "old_name": "central_activation_threshold", "symbol": r"\Gamma_{\theta}", "scientific_name": "Central Activation Threshold", "gnostic_name": "The Gnosis Gate", "rationale": "Greek Gamma (Γ) for Gnosis. Greek theta (θ = 9) matches Hebrew tet gematria. Tet (ט = 9) represents the hidden good. The sampler data fields activate when n ≥ 9 pairs are present, enabling direct knowledge."},
-        # Additional v23.2 Hebrew names
-        "sophian_modulus": {"hebrew": "Qoph-Kaf-He", "hebrew_char": "קכה", "gematria": 125, "value": 125, "old_name": "visible_sector", "symbol": r"\text{ק}_{\text{כה}}", "scientific_name": "Visible Residue Modulus", "gnostic_name": "Sophia Assembly", "rationale": "Qoph (ק=100) with כה (25) subscript = 125. The 125 Standard Model parameters visible through Sophia's window (5³ = 125 = manifest volume)."},
-        "qedem_chi_sum": {"hebrew": "Qedem", "hebrew_char": "קדם", "gematria": 144, "value": 144, "old_name": "chi_eff_total", "symbol": r"\text{ק}_{\text{דם}}", "scientific_name": "Total Euler Characteristic", "gnostic_name": "Qedem Chi", "rationale": "Qoph (ק=100) with דם (44) subscript = 144. Qedem (קדם = 144) means 'ancient' or 'primordial.' Total χ_eff across both shadows: 72 + 72 = 144. Ancestral unity."},
-        "nitzotzin_sector": {"hebrew": "Mem", "hebrew_char": "מ", "gematria": 144, "value": 144, "old_name": "roots_per_sector", "symbol": r"\xi_{\mu}", "scientific_name": "Per-Sector Root Count", "gnostic_name": "The Water Roots", "rationale": "Xi (ξ) resembles a cascade/ripple, fitting the Mem (מ = Water) rationale. Greek mu (μ = 40) matches Hebrew mem gematria. Each sector contains 144 roots, half the total 288."},
-        "Dodecad_Anchors": {"hebrew": "Bet-Yod", "hebrew_char": "בי", "gematria": 12, "value": 12, "old_name": "total_local_pairs", "symbol": r"\mathbb{A}_{\text{יב}}", "scientific_name": "Local Bridge Pair Count", "gnostic_name": "The Dodecad House", "rationale": "A for Anchors. Bet-Yod (בי = 12) means 'in me' or 'house of.' The 12 local (2,0) bridge pairs that warp to create the dual shadows."},
-        "Echad_Prime": {"hebrew": "Yud-Gimel", "hebrew_char": "יג", "gematria": 13, "value": 13, "old_name": "total_effective_pairs", "symbol": r"\mathbb{U}_{\text{יג}}", "scientific_name": "Effective Bridge Pair Count", "gnostic_name": "The Unity Prime", "rationale": "U for Unity (Echad). Yud-Gimel (יג = 13) equals 'Echad' (אחד = 13, 'One'). The 13 effective pairs: 12 local + 1 sampler data fields."},
+        "nitsot_par":       {"value": "1/144",       "old_name": "reid_invariant",        "symbol": r"\chi_{\text{ק}}^{-1}",                   "scientific_name": "Mirror Parity Invariant"},
+        "reid_merkabah":    {"value": 1.0,           "old_name": "central_pair",          "symbol": r"\vec{\mathbb{M}}_{\text{אד}}",           "scientific_name": "Tetramorphic Normalization Basis"},
+        "watts_echud":      {"value": "phi/sqrt(12)","old_name": "central_pair_weight",   "symbol": r"\mathcal{W}_{\Phi : \sqrt{\text{בי}}}",  "scientific_name": "Harmonic Damping Modulus", "role": "Stabilizing constant for the 144 Reid Euclidean samplers."},
+        "gnosis_threshold": {"value": 9,             "old_name": "central_activation_threshold", "symbol": r"\Gamma_{\theta}",                 "scientific_name": "Central Activation Threshold"},
+        # Additional v23.2 metadata
+        "sophian_modulus":  {"value": 125,           "old_name": "visible_sector",        "symbol": r"\text{ק}_{\text{כה}}",                   "scientific_name": "Visible Residue Modulus"},
+        "qedem_chi_sum":    {"value": 144,           "old_name": "chi_eff_total",         "symbol": r"\text{ק}_{\text{דם}}",                   "scientific_name": "Total Euler Characteristic (72 + 72)"},
+        "nitzotzin_sector": {"value": 144,           "old_name": "roots_per_sector",      "symbol": r"\xi_{\mu}",                              "scientific_name": "Per-Sector Root Count"},
+        "Dodecad_Anchors":  {"value": 12,            "old_name": "total_local_pairs",     "symbol": r"\mathbb{A}_{\text{יב}}",                 "scientific_name": "Local Bridge Pair Count"},
+        "Echad_Prime":      {"value": 13,            "old_name": "total_effective_pairs", "symbol": r"\mathbb{U}_{\text{יג}}",                 "scientific_name": "Effective Bridge Pair Count (12 local + 1 sampler)"},
     }
 
     # ===========================================================================
@@ -889,9 +912,11 @@ class FormulasRegistry:
         if param_name in cls.HEBREW_SYMBOL_REGISTRY:
             entry = cls.HEBREW_SYMBOL_REGISTRY[param_name]
             term["value"] = entry.get("value")
-            sci = entry.get("scientific_name", "")
-            gno = entry.get("gnostic_name", "")
-            term["description"] = f"{sci} ({gno})" if gno else sci
+            # v2.2.0 honesty polish: stripped the "gnostic_name" mystical
+            # alias from the description string. Legacy overlay is kept in
+            # the gitignored src/metaphysica/_gnostic_aliases.py for the
+            # author's personal use.
+            term["description"] = entry.get("scientific_name", "")
             return term
 
         # Fallback description
@@ -4629,8 +4654,8 @@ class FormulasRegistry:
                     "domain": "Logic",
                     "gate": "G72",
                     "named_for": "Andrew Keith Watts",
-                    "gnostic_name": "The Monad",
-                    "gnostic_role": "The Singular Origin and absolute precision anchor",
+                    "legacy_alias": "The Monad",
+                    "legacy_description": "The Singular Origin and absolute precision anchor",
                     "pm_path": "constants.monad_unity"
                 },
                 "reid_invariant": {
@@ -4642,8 +4667,8 @@ class FormulasRegistry:
                     "domain": "Philosophy",
                     "gate": "G72",
                     "named_for": "Richard George Reid [074]",
-                    "gnostic_name": "The Pneuma",
-                    "gnostic_role": "The divine breath; quantum of meaning (1/Demiurge)",
+                    "legacy_alias": "The Pneuma",
+                    "legacy_description": "The divine breath; quantum of meaning (1/Demiurge)",
                     "pm_path": "constants.nitsot_par"
                 },
                 "weinstein_scale": {
@@ -4654,8 +4679,8 @@ class FormulasRegistry:
                     "domain": "Geometry",
                     "gate": "G30",
                     "named_for": "Eric Weinstein",
-                    "gnostic_name": "The Aeon",
-                    "gnostic_role": "The 12 cosmic spinor ranks; half the Pleroma",
+                    "legacy_alias": "The Aeon",
+                    "legacy_description": "The 12 cosmic spinor ranks; half the Pleroma",
                     "pm_path": "constants.weinstein_scale"
                 },
                 "hossenfelder_root": {
@@ -4667,8 +4692,8 @@ class FormulasRegistry:
                     "domain": "Quantum",
                     "gate": "G08",
                     "named_for": "Sabine Hossenfelder",
-                    "gnostic_name": "The Nous",
-                    "gnostic_role": "Divine intellect; the hidden root of the Pleroma",
+                    "legacy_alias": "The Nous",
+                    "legacy_description": "Divine intellect; the hidden root of the Pleroma",
                     "pm_path": "constants.hossenfelder_root"
                 },
                 "odowd_bulk_pressure": {
@@ -4680,8 +4705,8 @@ class FormulasRegistry:
                     "domain": "Relativity",
                     "gate": "G60",
                     "named_for": "Matt O'Dowd",
-                    "gnostic_name": "The Barbelo",
-                    "gnostic_role": "First Thought; the active force in 27D(24,1,2) bulk",
+                    "legacy_alias": "The Barbelo",
+                    "legacy_description": "First Thought; the active force in 27D(24,1,2) bulk",
                     "hubble_formula": f"(288/4) - (163/144) + 0.6819 = {self.h0_local:.2f}",
                     "pm_path": "constants.barbelo_modulus"
                 },
@@ -4694,8 +4719,8 @@ class FormulasRegistry:
                     "domain": "Consciousness",
                     "gate": "G13",
                     "named_for": "Sir Roger Penrose & Stuart Hameroff",
-                    "gnostic_name": "The Ogdoad",
-                    "gnostic_role": "The eightfold plus five; Fibonacci bridge to consciousness",
+                    "legacy_alias": "The Ogdoad",
+                    "legacy_description": "The eightfold plus five; Fibonacci bridge to consciousness",
                     "pm_path": "constants.penrose_hameroff_bridge"
                 },
                 "christ_constant": {
@@ -4709,8 +4734,8 @@ class FormulasRegistry:
                     "named_for": "Jesus Christ",
                     "scripture": "John 21:11 - The Miraculous Catch",
                     "identity": "Δ_jc ≡ Λ_JC ≡ 153 (The JC Identity)",
-                    "gnostic_name": "The Christos",
-                    "gnostic_role": "The Redeemer; repairs variance and restores symmetry",
+                    "legacy_alias": "The Christos",
+                    "legacy_description": "The Redeemer; repairs variance and restores symmetry",
                     "pm_path": "constants.logos_joint"
                 },
                 "delta_jc": {
@@ -4722,8 +4747,8 @@ class FormulasRegistry:
                     "domain": "Topology",
                     "identity_link": "christ_constant",
                     "note": "This is NOT a separate value - it IS the Christ Constant. The identity Δ_jc ≡ 153 ensures zero drift in the manifold.",
-                    "gnostic_name": "The Christos",
-                    "gnostic_role": "The Joint Closure Delta; topological necessity",
+                    "legacy_alias": "The Christos",
+                    "legacy_description": "The Joint Closure Delta; topological necessity",
                     "pm_path": "constants.delta_jc"
                 },
                 "sophian_drag": {
@@ -4735,8 +4760,8 @@ class FormulasRegistry:
                     "domain": "Cosmology",
                     "gate": "G64",
                     "named_for": "Sophia (Divine Wisdom)",
-                    "gnostic_name": "The Sophian Breath",
-                    "gnostic_role": "Friction from Sophia; the drag on cosmic expansion",
+                    "legacy_alias": "The Sophian Breath",
+                    "legacy_description": "Friction from Sophia; the drag on cosmic expansion",
                     "hubble_role": f"H0 = (288/4) - (163/144) + eta_S = {self.h0_local:.2f}",
                     "pm_path": "constants.sophian_drag"
                 },
@@ -4749,8 +4774,8 @@ class FormulasRegistry:
                     "domain": "Geometry",
                     "gate": "G46",
                     "named_for": "The Demiurge (Divine Craftsman)",
-                    "gnostic_name": "The Demiurgic Gear",
-                    "gnostic_role": "The mass-energy gearbox; Craftsman's coupling",
+                    "legacy_alias": "The Demiurgic Gear",
+                    "legacy_description": "The mass-energy gearbox; Craftsman's coupling",
                     "pm_path": "constants.demiurgic_coupling"
                 },
                 "tzimtzum_pressure": {
@@ -4759,8 +4784,8 @@ class FormulasRegistry:
                     "value": self.tzimtzum_pressure,
                     "formula": "23/24 = 1 - 1/B3",
                     "role": "Void Seal / Dark Energy w0",
-                    "gnostic_name": "The Tzimtzum Seal",
-                    "gnostic_role": "The void seal; Kabbalistic contraction that creates space",
+                    "legacy_alias": "The Tzimtzum Seal",
+                    "legacy_description": "The void seal; Kabbalistic contraction that creates space",
                     "domain": "Cosmology",
                     "gate": "G70",
                     "named_for": "Tzimtzum (Kabbalistic Contraction)",
@@ -4817,8 +4842,8 @@ class FormulasRegistry:
                     "latex": "\\text{Syzygy}",
                     "value": self.syzygy_gap,
                     "formula": "Christos - Sophia = 153 - 135 = 18",
-                    "gnostic_name": "The Syzygy",
-                    "gnostic_role": "The divine pairing gap; the Pneumatic Breath",
+                    "legacy_alias": "The Syzygy",
+                    "legacy_description": "The divine pairing gap; the Pneumatic Breath",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "topology.syzygy_gap"
                 },
@@ -4827,8 +4852,8 @@ class FormulasRegistry:
                     "latex": "\\text{Horos}",
                     "value": self.horos,
                     "formula": "D_bulk = 27 (dimensional boundary: 24 core + 2 sampler + 1 time)",
-                    "gnostic_name": "The Horos",
-                    "gnostic_role": "The Limit; boundary of 27D(24,1,2) bulk frame",
+                    "legacy_alias": "The Horos",
+                    "legacy_description": "The Limit; boundary of 27D(24,1,2) bulk frame",
                     "pm_path": "topology.pleroma_boundary"
                 },
                 # (Z.6) Pneuma Tensioner Constants
@@ -4837,8 +4862,8 @@ class FormulasRegistry:
                     "latex": "D_{10}",
                     "value": self.residual_key,
                     "formula": "BARBELO - CHRISTOS = 163 - 153 = 10",
-                    "gnostic_name": "The Decad",
-                    "gnostic_role": "The Residual Pressure Key; first group of Aeons organizing the Pleroma",
+                    "legacy_alias": "The Decad",
+                    "legacy_description": "The Residual Pressure Key; first group of Aeons organizing the Pleroma",
                     "derived_from": ["sterile_sector", "christ_constant"],
                     "pm_path": "topology.residual_key"
                 },
@@ -4848,8 +4873,8 @@ class FormulasRegistry:
                     "value": self.z6_pneuma,
                     "formula": "DECAD / PLEROMA = 10/24 = 0.41666...",
                     "expanded": f"The Pneuma Tensioner = {self.z6_pneuma:.10f}",
-                    "gnostic_name": "The Pneuma Tensioner",
-                    "gnostic_role": "Safety Valve; Phase-Shift Invariant between 13D branes",
+                    "legacy_alias": "The Pneuma Tensioner",
+                    "legacy_description": "Safety Valve; Phase-Shift Invariant between 13D branes",
                     "derived_from": ["decad", "b3"],
                     "pm_path": "topology.z6_pneuma"
                 },
@@ -4859,8 +4884,8 @@ class FormulasRegistry:
                     "value": self.geometric_ratio,
                     "formula": "SYZYGY_GAP / PLEROMA = 18/24 = 0.75",
                     "expanded": f"The 3/4 Harmonic base velocity = {self.geometric_ratio:.10f}",
-                    "gnostic_name": "The Geometric Base",
-                    "gnostic_role": "Base velocity ratio for speed of light derivation",
+                    "legacy_alias": "The Geometric Base",
+                    "legacy_description": "Base velocity ratio for speed of light derivation",
                     "derived_from": ["syzygy_gap", "b3"],
                     "pm_path": "topology.geometric_ratio"
                 },
@@ -4870,8 +4895,8 @@ class FormulasRegistry:
                     "value": self.stretching_factor,
                     "formula": "(Z.6 × PLEROMA) + (MONAD / Z.6) = 10 + 2.4 = 12.4",
                     "expanded": f"The Breath Expansion = {self.stretching_factor:.10f}",
-                    "gnostic_name": "The Stretching Factor",
-                    "gnostic_role": "Kinetic boost from Decad through Pleroma",
+                    "legacy_alias": "The Stretching Factor",
+                    "legacy_description": "Kinetic boost from Decad through Pleroma",
                     "derived_from": ["z6_pneuma", "b3", "watts_constant"],
                     "pm_path": "topology.stretching_factor"
                 },
@@ -4881,8 +4906,8 @@ class FormulasRegistry:
                     "value": self.gnostic_conversion,
                     "formula": "(ENNOIA - PLEROMA) / (BARBELO + MONAD) = 264/164 ≈ 1.609",
                     "expanded": f"The Brane-Shift Factor = {self.gnostic_conversion:.10f}",
-                    "gnostic_name": "The Gnostic Conversion",
-                    "gnostic_role": "Mile-to-KM conversion; Shadow-to-Visible brane shift",
+                    "legacy_alias": "The Gnostic Conversion",
+                    "legacy_description": "Mile-to-KM conversion; Shadow-to-Visible brane shift",
                     "derived_from": ["roots_total", "b3", "sterile_sector", "watts_constant"],
                     "pm_path": "topology.gnostic_conversion"
                 },
@@ -4892,8 +4917,8 @@ class FormulasRegistry:
                     "value": self.bulk_viscosity,
                     "formula": "(ENNOIA/BARBELO) × (CHRISTOS/SOPHIA) ≈ 2.00245",
                     "expanded": f"The Barbelo Drag = {self.bulk_viscosity:.10f}",
-                    "gnostic_name": "The Bulk Viscosity",
-                    "gnostic_role": "Resistance of 163 Barbelo pressure to 288 Logic Closure",
+                    "legacy_alias": "The Bulk Viscosity",
+                    "legacy_description": "Resistance of 163 Barbelo pressure to 288 Logic Closure",
                     "derived_from": ["roots_total", "sterile_sector", "christ_constant", "shadow_sector"],
                     "pm_path": "topology.bulk_viscosity"
                 },
@@ -4904,8 +4929,8 @@ class FormulasRegistry:
                     "unit": "m/s",
                     "formula": "(C_geo × S_f × B_v × χ_gc) × 10^7 × P_3D",
                     "expanded": f"0.75 × 12.4 × {self.bulk_viscosity:.4f} × {self.gnostic_conversion:.4f} × 10^7 × {self.spatial_projection:.10f} = {self.speed_of_light_derived:,.2f}",
-                    "gnostic_name": "The Manifest Speed",
-                    "gnostic_role": "Speed of Light derived from Sovereign Constants with Decad³ projection",
+                    "legacy_alias": "The Manifest Speed",
+                    "legacy_description": "Speed of Light derived from Sovereign Constants with Decad³ projection",
                     "codata_value": 299792458,
                     "variance_ms": abs(self.speed_of_light_derived - 299792458),
                     "accuracy_percent": (1 - abs(self.speed_of_light_derived - 299792458) / 299792458) * 100,
@@ -4918,8 +4943,8 @@ class FormulasRegistry:
                     "value": self.spatial_projection,
                     "formula": "1 + 1/(ENNOIA × DECAD²) = 1 + 1/28800",
                     "expanded": f"1 + 1/(288 × 100) = {self.spatial_projection:.10f}",
-                    "gnostic_name": "The Cubic Projection",
-                    "gnostic_role": "3D spatial expansion factor for propagation constants (c, G, h)",
+                    "legacy_alias": "The Cubic Projection",
+                    "legacy_description": "3D spatial expansion factor for propagation constants (c, G, h)",
                     "derived_from": ["watts_constant", "roots_total", "decad"],
                     "pm_path": "projection.spatial_projection"
                 },
@@ -4929,8 +4954,8 @@ class FormulasRegistry:
                     "value": self.torsion_compression,
                     "formula": "1 / P_3D = 28800/28801",
                     "expanded": f"1 / {self.spatial_projection:.10f} = {self.torsion_compression:.10f}",
-                    "gnostic_name": "The Torsion Compression",
-                    "gnostic_role": "Inverse projection for coupling constants (α, w0)",
+                    "legacy_alias": "The Torsion Compression",
+                    "legacy_description": "Inverse projection for coupling constants (α, w0)",
                     "derived_from": ["spatial_projection"],
                     "pm_path": "projection.torsion_compression"
                 },
@@ -4940,8 +4965,8 @@ class FormulasRegistry:
                     "value": self.metric_stabilizer,
                     "formula": "288 / (163 + 153) = 288/316",
                     "expanded": f"Logic Closure / (Bulk Pressure + JC Constant) = {self.metric_stabilizer:.10f}",
-                    "gnostic_name": "The Metric Stabilizer",
-                    "gnostic_role": "Prevents C04 Bulk Jitter; anchors metric to 153 Joint Closure",
+                    "legacy_alias": "The Metric Stabilizer",
+                    "legacy_description": "Prevents C04 Bulk Jitter; anchors metric to 153 Joint Closure",
                     "derived_from": ["roots_total", "sterile_sector", "christ_constant"],
                     "pm_path": "constants.metric_stabilizer"
                 },
@@ -4951,8 +4976,8 @@ class FormulasRegistry:
                     "value": self.torsion_gate,
                     "formula": "(153 / π^G12)^(1/24)",
                     "expanded": f"Throttles E8 lattice infinite potential to finite Hubble expansion = {self.torsion_gate:.10f}",
-                    "gnostic_name": "The Torsion Gate",
-                    "gnostic_role": "Calibrates H0 to the manifold; 53 maximal abelian E8 subgroup",
+                    "legacy_alias": "The Torsion Gate",
+                    "legacy_description": "Calibrates H0 to the manifold; 53 maximal abelian E8 subgroup",
                     "derived_from": ["christ_constant", "metric_stabilizer"],
                     "pm_path": "constants.torsion_gate"
                 },
@@ -4963,8 +4988,8 @@ class FormulasRegistry:
                     "value": self.gate_01_initial_action,
                     "formula": "163/288",
                     "expanded": f"Bulk Pressure / Logic Closure = {self.gate_01_initial_action:.10f}",
-                    "gnostic_name": "The Initial Action Potential",
-                    "gnostic_role": "Density Zero of manifold; base energy density of 27D(24,1,2) bulk action",
+                    "legacy_alias": "The Initial Action Potential",
+                    "legacy_description": "Density Zero of manifold; base energy density of 27D(24,1,2) bulk action",
                     "derived_from": ["sterile_sector", "roots_total"],
                     "pm_path": "gates.G01"
                 },
@@ -4974,8 +4999,8 @@ class FormulasRegistry:
                     "value": self.gate_02_symmetry_break,
                     "formula": "153/135",
                     "expanded": f"JC Constant / Visible Gates = {self.gate_02_symmetry_break:.10f}",
-                    "gnostic_name": "The Symmetry Break",
-                    "gnostic_role": "Primary driver of H0 expansion force; tension between JC and Visible",
+                    "legacy_alias": "The Symmetry Break",
+                    "legacy_description": "Primary driver of H0 expansion force; tension between JC and Visible",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "gates.G02"
                 },
@@ -4985,8 +5010,8 @@ class FormulasRegistry:
                     "value": self.gate_03_bulk_joint,
                     "formula": "sqrt(163² + 153²)",
                     "expanded": f"Pythagorean norm of Bulk and Joint forces = {self.gate_03_bulk_joint:.10f}",
-                    "gnostic_name": "The Bulk-Joint Intersection",
-                    "gnostic_role": "Hypotenuse of energy field; prevents Joint slip under bulk pressure",
+                    "legacy_alias": "The Bulk-Joint Intersection",
+                    "legacy_description": "Hypotenuse of energy field; prevents Joint slip under bulk pressure",
                     "derived_from": ["sterile_sector", "christ_constant"],
                     "pm_path": "gates.G03"
                 },
@@ -4996,8 +5021,8 @@ class FormulasRegistry:
                     "value": self.gate_04_curvature,
                     "formula": "G03/(288×π)",
                     "expanded": f"Manifold curvature constant = {self.gate_04_curvature:.10f}",
-                    "gnostic_name": "The Manifold Curvature",
-                    "gnostic_role": "Calibrates spherical topology; enables G(24,1) metric (v21)",
+                    "legacy_alias": "The Manifold Curvature",
+                    "legacy_description": "Calibrates spherical topology; enables G(24,1) metric (v21)",
                     "derived_from": ["gate_03_bulk_joint", "roots_total"],
                     "pm_path": "gates.G04"
                 },
@@ -5008,8 +5033,8 @@ class FormulasRegistry:
                     "value": self.gate_05_prime_frequency,
                     "formula": "153/ln(288)",
                     "expanded": f"JC Constant / ln(Logic Closure) = {self.gate_05_prime_frequency:.10f}",
-                    "gnostic_name": "The Prime Frequency",
-                    "gnostic_role": "Base resonance for 24D manifold; dampens logarithmic expansion",
+                    "legacy_alias": "The Prime Frequency",
+                    "legacy_description": "Base resonance for 24D manifold; dampens logarithmic expansion",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G05"
                 },
@@ -5019,8 +5044,8 @@ class FormulasRegistry:
                     "value": self.gate_06_sterile_symmetry,
                     "formula": "((135+153)/163)×e",
                     "expanded": f"Gate ratio × Euler's number = {self.gate_06_sterile_symmetry:.10f}",
-                    "gnostic_name": "The Sterile Symmetry",
-                    "gnostic_role": "Natural growth rate of Visible sector; no entropy loss zone",
+                    "legacy_alias": "The Sterile Symmetry",
+                    "legacy_description": "Natural growth rate of Visible sector; no entropy loss zone",
                     "derived_from": ["shadow_sector", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G06"
                 },
@@ -5030,8 +5055,8 @@ class FormulasRegistry:
                     "value": self.gate_07_torsion_alignment,
                     "formula": "(G53×24)/153",
                     "expanded": f"Torsion Gate × B3 / JC Constant = {self.gate_07_torsion_alignment:.10f}",
-                    "gnostic_name": "The Torsion Alignment",
-                    "gnostic_role": "Normalizes torsion across 24D; prevents G(24,1) warping (v21)",
+                    "legacy_alias": "The Torsion Alignment",
+                    "legacy_description": "Normalizes torsion across 24D; prevents G(24,1) warping (v21)",
                     "derived_from": ["torsion_gate", "b3", "christ_constant"],
                     "pm_path": "gates.G07"
                 },
@@ -5041,8 +5066,8 @@ class FormulasRegistry:
                     "value": self.gate_08_octonian_closure,
                     "formula": "⁸√(153×135)",
                     "expanded": f"8th root of JC × Visible Gates = {self.gate_08_octonian_closure:.10f}",
-                    "gnostic_name": "The Octonian Closure",
-                    "gnostic_role": "8-fold symmetry glue; E8 sub-lattice interlocking",
+                    "legacy_alias": "The Octonian Closure",
+                    "legacy_description": "8-fold symmetry glue; E8 sub-lattice interlocking",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "gates.G08"
                 },
@@ -5053,8 +5078,8 @@ class FormulasRegistry:
                     "value": self.gate_09_vacuum_flux,
                     "formula": "(288-153)/163 = 135/163",
                     "expanded": f"Zero Point energy density = {self.gate_09_vacuum_flux:.10f}",
-                    "gnostic_name": "The Vacuum Flux",
-                    "gnostic_role": "Pressure differential; ratio of Visible to Bulk",
+                    "legacy_alias": "The Vacuum Flux",
+                    "legacy_description": "Pressure differential; ratio of Visible to Bulk",
                     "derived_from": ["roots_total", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G09"
                 },
@@ -5064,8 +5089,8 @@ class FormulasRegistry:
                     "value": self.gate_10_dimensional_anchor,
                     "formula": "(153×24)/163",
                     "expanded": f"Weight of Joint Closure = {self.gate_10_dimensional_anchor:.10f}",
-                    "gnostic_name": "The Dimensional Anchor",
-                    "gnostic_role": "Anchors 24D manifold to G(24,1) unified time (v21)",
+                    "legacy_alias": "The Dimensional Anchor",
+                    "legacy_description": "Anchors 24D manifold to G(24,1) unified time (v21)",
                     "derived_from": ["christ_constant", "b3", "sterile_sector"],
                     "pm_path": "gates.G10"
                 },
@@ -5075,8 +5100,8 @@ class FormulasRegistry:
                     "value": self.gate_11_torsion_bridge,
                     "formula": "(π×153)/135",
                     "expanded": f"Circular topology bridge = {self.gate_11_torsion_bridge:.10f}",
-                    "gnostic_name": "The Torsion Bridge",
-                    "gnostic_role": "Introduces circular topology; prepares for G12 stabilization",
+                    "legacy_alias": "The Torsion Bridge",
+                    "legacy_description": "Introduces circular topology; prepares for G12 stabilization",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "gates.G11"
                 },
@@ -5087,8 +5112,8 @@ class FormulasRegistry:
                     "value": self.gate_13_lattice_displacement,
                     "formula": "153^2/(288*phi)",
                     "expanded": f"Lattice shift with Golden Ratio = {self.gate_13_lattice_displacement:.10f}",
-                    "gnostic_name": "The Lattice Displacement",
-                    "gnostic_role": "Non-repeating growth factor; prevents static crystallization",
+                    "legacy_alias": "The Lattice Displacement",
+                    "legacy_description": "Non-repeating growth factor; prevents static crystallization",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G13"
                 },
@@ -5098,8 +5123,8 @@ class FormulasRegistry:
                     "value": self.gate_14_entropy_shield,
                     "formula": "12th-root(135*163)",
                     "expanded": f"Entropy boundary filter = {self.gate_14_entropy_shield:.10f}",
-                    "gnostic_name": "The Entropy Shield",
-                    "gnostic_role": "High-pass filter for energy density; shields Sterile Configuration",
+                    "legacy_alias": "The Entropy Shield",
+                    "legacy_description": "High-pass filter for energy density; shields Sterile Configuration",
                     "derived_from": ["shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G14"
                 },
@@ -5109,8 +5134,8 @@ class FormulasRegistry:
                     "value": self.gate_15_flux_quantization,
                     "formula": "(G12+G13)/2",
                     "expanded": f"Quantized energy flow = {self.gate_15_flux_quantization:.10f}",
-                    "gnostic_name": "The Flux Quantization",
-                    "gnostic_role": "Averages Metric Stabilizer and Lattice Displacement",
+                    "legacy_alias": "The Flux Quantization",
+                    "legacy_description": "Averages Metric Stabilizer and Lattice Displacement",
                     "derived_from": ["metric_stabilizer", "gate_13_lattice_displacement"],
                     "pm_path": "gates.G15"
                 },
@@ -5120,8 +5145,8 @@ class FormulasRegistry:
                     "value": self.gate_16_quadrant_lock,
                     "formula": "288/(153-135) = 288/18 = 16",
                     "expanded": f"Quadrant divisor = {self.gate_16_quadrant_lock:.10f}",
-                    "gnostic_name": "The Quadrant Lock",
-                    "gnostic_role": "Integer symmetry lock; divides 288 into four gate sectors of 18",
+                    "legacy_alias": "The Quadrant Lock",
+                    "legacy_description": "Integer symmetry lock; divides 288 into four gate sectors of 18",
                     "derived_from": ["roots_total", "christ_constant", "shadow_sector"],
                     "integer_check": "G16 must equal exactly 16",
                     "pm_path": "gates.G16"
@@ -5133,8 +5158,8 @@ class FormulasRegistry:
                     "value": self.gate_17_gradient_flow,
                     "formula": "(288-163)/153 = 125/153",
                     "expanded": f"Manifold slope = {self.gate_17_gradient_flow:.10f}",
-                    "gnostic_name": "The Gradient Flow",
-                    "gnostic_role": "Energy slope toward Joint Closure; prevents instability pockets",
+                    "legacy_alias": "The Gradient Flow",
+                    "legacy_description": "Energy slope toward Joint Closure; prevents instability pockets",
                     "derived_from": ["roots_total", "sterile_sector", "christ_constant"],
                     "pm_path": "gates.G17"
                 },
@@ -5144,8 +5169,8 @@ class FormulasRegistry:
                     "value": self.gate_18_rotational_invariant,
                     "formula": "2*pi*sqrt(153/288)",
                     "expanded": f"Angular momentum = {self.gate_18_rotational_invariant:.10f}",
-                    "gnostic_name": "The Rotational Invariant",
-                    "gnostic_role": "Prevents twisting; spin-independent manifold properties",
+                    "legacy_alias": "The Rotational Invariant",
+                    "legacy_description": "Prevents twisting; spin-independent manifold properties",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G18"
                 },
@@ -5155,8 +5180,8 @@ class FormulasRegistry:
                     "value": self.gate_19_divergence_nullifier,
                     "formula": "(163+135)-288 = 10",
                     "expanded": f"Decadic Constant = {self.gate_19_divergence_nullifier:.10f}",
-                    "gnostic_name": "The Divergence Nullifier",
-                    "gnostic_role": "10D String Theory wrapped in 24D; logic check for drift",
+                    "legacy_alias": "The Divergence Nullifier",
+                    "legacy_description": "10D String Theory wrapped in 24D; logic check for drift",
                     "derived_from": ["sterile_sector", "shadow_sector", "roots_total"],
                     "integer_check": "G19 must equal exactly 10",
                     "pm_path": "gates.G19"
@@ -5167,8 +5192,8 @@ class FormulasRegistry:
                     "value": self.gate_20_tensor_tension,
                     "formula": "(G12*G16)/G19",
                     "expanded": f"Tensor tightening = {self.gate_20_tensor_tension:.10f}",
-                    "gnostic_name": "The Tensor Tension",
-                    "gnostic_role": "High-level tensor tightening manifold against Bulk pressure",
+                    "legacy_alias": "The Tensor Tension",
+                    "legacy_description": "High-level tensor tightening manifold against Bulk pressure",
                     "derived_from": ["metric_stabilizer", "gate_16_quadrant_lock", "gate_19_divergence_nullifier"],
                     "pm_path": "gates.G20"
                 },
@@ -5179,8 +5204,8 @@ class FormulasRegistry:
                     "value": self.gate_21_scalar_modulus,
                     "formula": "153/sqrt(135+163)",
                     "expanded": f"Scalar field magnitude = {self.gate_21_scalar_modulus:.10f}",
-                    "gnostic_name": "The Scalar Field Modulus",
-                    "gnostic_role": "Normalizes JC Constant to total energy density",
+                    "legacy_alias": "The Scalar Field Modulus",
+                    "legacy_description": "Normalizes JC Constant to total energy density",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G21"
                 },
@@ -5190,8 +5215,8 @@ class FormulasRegistry:
                     "value": self.gate_22_orthogonal_projection,
                     "formula": "cos(153/288)*163",
                     "expanded": f"Orthogonal projection = {self.gate_22_orthogonal_projection:.10f}",
-                    "gnostic_name": "The Orthogonal Projection",
-                    "gnostic_role": "Prevents dimension bleed; maintains 24D orthogonality",
+                    "legacy_alias": "The Orthogonal Projection",
+                    "legacy_description": "Prevents dimension bleed; maintains 24D orthogonality",
                     "derived_from": ["christ_constant", "roots_total", "sterile_sector"],
                     "pm_path": "gates.G22"
                 },
@@ -5201,8 +5226,8 @@ class FormulasRegistry:
                     "value": self.gate_23_parity_symmetry,
                     "formula": "(153+135+163)/3 = 451/3",
                     "expanded": f"Mean of three pillars = {self.gate_23_parity_symmetry:.10f}",
-                    "gnostic_name": "The Parity Symmetry",
-                    "gnostic_role": "Center of Mass for gate logic; L/R spin balance",
+                    "legacy_alias": "The Parity Symmetry",
+                    "legacy_description": "Center of Mass for gate logic; L/R spin balance",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G23"
                 },
@@ -5212,8 +5237,8 @@ class FormulasRegistry:
                     "value": self.gate_24_manifold_completion,
                     "formula": "(G12*24)/153",
                     "expanded": f"Manifold completion checkpoint = {self.gate_24_manifold_completion:.10f}",
-                    "gnostic_name": "The Manifold Completion",
-                    "gnostic_role": "Quadrant 1 checkpoint; signs off on first 24 gates",
+                    "legacy_alias": "The Manifold Completion",
+                    "legacy_description": "Quadrant 1 checkpoint; signs off on first 24 gates",
                     "derived_from": ["metric_stabilizer", "b3", "christ_constant"],
                     "pm_path": "gates.G24"
                 },
@@ -5224,8 +5249,8 @@ class FormulasRegistry:
                     "value": self.gate_25_bit_density,
                     "formula": "log2(153+135) = log2(288)",
                     "expanded": f"Information resolution = {self.gate_25_bit_density:.10f} bits",
-                    "gnostic_name": "The Bit-Density",
-                    "gnostic_role": "Simulation resolution; prevents Information Overload",
+                    "legacy_alias": "The Bit-Density",
+                    "legacy_description": "Simulation resolution; prevents Information Overload",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "gates.G25"
                 },
@@ -5235,8 +5260,8 @@ class FormulasRegistry:
                     "value": self.gate_26_holographic_boundary,
                     "formula": "153^2/163^3",
                     "expanded": f"Holographic projection = {self.gate_26_holographic_boundary:.10f}",
-                    "gnostic_name": "The Holographic Boundary",
-                    "gnostic_role": "2D surface encodes 3D volume; Holographic Principle",
+                    "legacy_alias": "The Holographic Boundary",
+                    "legacy_description": "2D surface encodes 3D volume; Holographic Principle",
                     "derived_from": ["christ_constant", "sterile_sector"],
                     "pm_path": "gates.G26"
                 },
@@ -5246,8 +5271,8 @@ class FormulasRegistry:
                     "value": self.gate_27_signal_to_noise,
                     "formula": "288/sqrt(163*pi)",
                     "expanded": f"Truth filter = {self.gate_27_signal_to_noise:.10f}",
-                    "gnostic_name": "The Signal-to-Noise",
-                    "gnostic_role": "Preserves Logic Closure truth against Bulk noise",
+                    "legacy_alias": "The Signal-to-Noise",
+                    "legacy_description": "Preserves Logic Closure truth against Bulk noise",
                     "derived_from": ["roots_total", "sterile_sector"],
                     "pm_path": "gates.G27"
                 },
@@ -5257,8 +5282,8 @@ class FormulasRegistry:
                     "value": self.gate_28_recursive_loop,
                     "formula": "G25*(153/163)",
                     "expanded": f"Self-referential index = {self.gate_28_recursive_loop:.10f}",
-                    "gnostic_name": "The Recursive Loop",
-                    "gnostic_role": "Feedback loop for manifold equilibrium",
+                    "legacy_alias": "The Recursive Loop",
+                    "legacy_description": "Feedback loop for manifold equilibrium",
                     "derived_from": ["gate_25_bit_density", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G28"
                 },
@@ -5269,8 +5294,8 @@ class FormulasRegistry:
                     "value": self.gate_29_viscosity_nullifier,
                     "formula": "(163-153)/288",
                     "expanded": f"Friction constant = {self.gate_29_viscosity_nullifier:.10f}",
-                    "gnostic_name": "The Viscosity Nullifier",
-                    "gnostic_role": "Frictionless logic flow through 288 gates",
+                    "legacy_alias": "The Viscosity Nullifier",
+                    "legacy_description": "Frictionless logic flow through 288 gates",
                     "derived_from": ["sterile_sector", "christ_constant", "roots_total"],
                     "pm_path": "gates.G29"
                 },
@@ -5280,8 +5305,8 @@ class FormulasRegistry:
                     "value": self.gate_30_phase_coherence,
                     "formula": "cos(153 deg) + sin(135 deg)",
                     "expanded": f"Phase coherence = {self.gate_30_phase_coherence:.10f}",
-                    "gnostic_name": "The Phase Coherence",
-                    "gnostic_role": "Unified field vibration across 72 gates",
+                    "legacy_alias": "The Phase Coherence",
+                    "legacy_description": "Unified field vibration across 72 gates",
                     "derived_from": ["christ_constant", "shadow_sector"],
                     "pm_path": "gates.G30"
                 },
@@ -5291,8 +5316,8 @@ class FormulasRegistry:
                     "value": self.gate_31_superfluid_density,
                     "formula": "(153*pi^2)/163",
                     "expanded": f"Superfluid density = {self.gate_31_superfluid_density:.10f}",
-                    "gnostic_name": "The Super-Fluid Density",
-                    "gnostic_role": "Logic-fluid pressure capacity",
+                    "legacy_alias": "The Super-Fluid Density",
+                    "legacy_description": "Logic-fluid pressure capacity",
                     "derived_from": ["christ_constant", "sterile_sector"],
                     "pm_path": "gates.G31"
                 },
@@ -5302,8 +5327,8 @@ class FormulasRegistry:
                     "value": self.gate_32_critical_temperature,
                     "formula": "288/(153*163)^(1/4)",
                     "expanded": f"Critical temperature = {self.gate_32_critical_temperature:.10f}",
-                    "gnostic_name": "The Critical Temperature",
-                    "gnostic_role": "Thermal equilibrium lock for sterile environment",
+                    "legacy_alias": "The Critical Temperature",
+                    "legacy_description": "Thermal equilibrium lock for sterile environment",
                     "derived_from": ["roots_total", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G32"
                 },
@@ -5314,8 +5339,8 @@ class FormulasRegistry:
                     "value": self.gate_33_permeability_anchor,
                     "formula": "(163*1e-7)/153",
                     "expanded": f"Permeability = {self.gate_33_permeability_anchor:.10e}",
-                    "gnostic_name": "The Permeability Anchor",
-                    "gnostic_role": "Vacuum permeability scaling for constant c",
+                    "legacy_alias": "The Permeability Anchor",
+                    "legacy_description": "Vacuum permeability scaling for constant c",
                     "derived_from": ["sterile_sector", "christ_constant"],
                     "pm_path": "gates.G33"
                 },
@@ -5325,8 +5350,8 @@ class FormulasRegistry:
                     "value": self.gate_34_dipole_symmetry,
                     "formula": "(153-135)/163 = 18/163",
                     "expanded": f"Charge differential = {self.gate_34_dipole_symmetry:.10f}",
-                    "gnostic_name": "The Dipole Symmetry",
-                    "gnostic_role": "Prevents manifold polarization",
+                    "legacy_alias": "The Dipole Symmetry",
+                    "legacy_description": "Prevents manifold polarization",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G34"
                 },
@@ -5336,8 +5361,8 @@ class FormulasRegistry:
                     "value": self.gate_35_gauge_invariance,
                     "formula": "(153/288)*2*pi",
                     "expanded": f"Gauge invariance = {self.gate_35_gauge_invariance:.10f}",
-                    "gnostic_name": "The Gauge Invariance",
-                    "gnostic_role": "Circular integral preserving Absolute Stasis",
+                    "legacy_alias": "The Gauge Invariance",
+                    "legacy_description": "Circular integral preserving Absolute Stasis",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G35"
                 },
@@ -5347,8 +5372,8 @@ class FormulasRegistry:
                     "value": self.gate_36_fine_structure_alignment,
                     "formula": "G34/alpha_inv",
                     "expanded": f"Fine structure alignment = {self.gate_36_fine_structure_alignment:.10e}",
-                    "gnostic_name": "The Fine Structure Alignment",
-                    "gnostic_role": "Coupling strength at 50% mark (36/72)",
+                    "legacy_alias": "The Fine Structure Alignment",
+                    "legacy_description": "Coupling strength at 50% mark (36/72)",
                     "derived_from": ["gate_34_dipole_symmetry", "alpha_inverse"],
                     "pm_path": "gates.G36"
                 },
@@ -5359,8 +5384,8 @@ class FormulasRegistry:
                     "value": self.gate_37_gluon_binding,
                     "formula": "(163*153)/288^2",
                     "expanded": f"Gluon binding = {self.gate_37_gluon_binding:.10f}",
-                    "gnostic_name": "The Gluon Binding",
-                    "gnostic_role": "Logic node confinement under Bulk Pressure",
+                    "legacy_alias": "The Gluon Binding",
+                    "legacy_description": "Logic node confinement under Bulk Pressure",
                     "derived_from": ["sterile_sector", "christ_constant", "roots_total"],
                     "pm_path": "gates.G37"
                 },
@@ -5370,8 +5395,8 @@ class FormulasRegistry:
                     "value": self.gate_38_color_symmetry,
                     "formula": "cbrt(135*153*163)",
                     "expanded": f"Color symmetry = {self.gate_38_color_symmetry:.10f}",
-                    "gnostic_name": "The Color Symmetry",
-                    "gnostic_role": "Three-sector energy balance (QCD analog)",
+                    "legacy_alias": "The Color Symmetry",
+                    "legacy_description": "Three-sector energy balance (QCD analog)",
                     "derived_from": ["shadow_sector", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G38"
                 },
@@ -5381,8 +5406,8 @@ class FormulasRegistry:
                     "value": self.gate_39_asymptotic_freedom,
                     "formula": "1/ln(153+163)",
                     "expanded": f"Asymptotic freedom = {self.gate_39_asymptotic_freedom:.10f}",
-                    "gnostic_name": "The Asymptotic Freedom",
-                    "gnostic_role": "Pressure relief valve preventing singularity",
+                    "legacy_alias": "The Asymptotic Freedom",
+                    "legacy_description": "Pressure relief valve preventing singularity",
                     "derived_from": ["christ_constant", "sterile_sector"],
                     "pm_path": "gates.G39"
                 },
@@ -5392,8 +5417,8 @@ class FormulasRegistry:
                     "value": self.gate_40_hadronization_lock,
                     "formula": "(288*G38)/153",
                     "expanded": f"Hadronization lock = {self.gate_40_hadronization_lock:.10f}",
-                    "gnostic_name": "The Hadronization Lock",
-                    "gnostic_role": "27D(24,1,2) to 4D particle manifestation threshold",
+                    "legacy_alias": "The Hadronization Lock",
+                    "legacy_description": "27D(24,1,2) to 4D particle manifestation threshold",
                     "derived_from": ["roots_total", "gate_38_color_symmetry", "christ_constant"],
                     "pm_path": "gates.G40"
                 },
@@ -5404,8 +5429,8 @@ class FormulasRegistry:
                     "value": self.gate_41_chiral_selection,
                     "formula": "153/(135+(163-153))",
                     "expanded": f"Chiral selection = {self.gate_41_chiral_selection:.10f}",
-                    "gnostic_name": "The Chiral Selection",
-                    "gnostic_role": "Left-handed logic flow preference (E8 parity)",
+                    "legacy_alias": "The Chiral Selection",
+                    "legacy_description": "Left-handed logic flow preference (E8 parity)",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G41"
                 },
@@ -5415,8 +5440,8 @@ class FormulasRegistry:
                     "value": self.gate_42_w_boson_ratio,
                     "formula": "288/(sqrt(163)*pi)",
                     "expanded": f"W-boson ratio = {self.gate_42_w_boson_ratio:.10f}",
-                    "gnostic_name": "The W-Boson Ratio",
-                    "gnostic_role": "Logic decay mediator mass",
+                    "legacy_alias": "The W-Boson Ratio",
+                    "legacy_description": "Logic decay mediator mass",
                     "derived_from": ["roots_total", "sterile_sector"],
                     "pm_path": "gates.G42"
                 },
@@ -5426,8 +5451,8 @@ class FormulasRegistry:
                     "value": self.gate_43_flavor_transition,
                     "formula": "(G12*153)/163",
                     "expanded": f"Flavor transition = {self.gate_43_flavor_transition:.10f}",
-                    "gnostic_name": "The Flavor Transition",
-                    "gnostic_role": "Dimensional re-indexing at constant energy",
+                    "legacy_alias": "The Flavor Transition",
+                    "legacy_description": "Dimensional re-indexing at constant energy",
                     "derived_from": ["metric_stabilizer", "christ_constant", "sterile_sector"],
                     "pm_path": "gates.G43"
                 },
@@ -5437,8 +5462,8 @@ class FormulasRegistry:
                     "value": self.gate_44_higgs_anchor,
                     "formula": "153^2/(288*phi)",
                     "expanded": f"Higgs anchor = {self.gate_44_higgs_anchor:.10f}",
-                    "gnostic_name": "The Higgs-Field Anchor",
-                    "gnostic_role": "Manifold weight against Bulk Pressure",
+                    "legacy_alias": "The Higgs-Field Anchor",
+                    "legacy_description": "Manifold weight against Bulk Pressure",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G44"
                 },
@@ -5449,8 +5474,8 @@ class FormulasRegistry:
                     "value": self.gate_45_ghost_flux,
                     "formula": "(163-(153-135))/288",
                     "expanded": f"Ghost flux = {self.gate_45_ghost_flux:.10f}",
-                    "gnostic_name": "The Ghost-Flux",
-                    "gnostic_role": "Hidden mass accounting in 27D(24,1,2) bulk action",
+                    "legacy_alias": "The Ghost-Flux",
+                    "legacy_description": "Hidden mass accounting in 27D(24,1,2) bulk action",
                     "derived_from": ["sterile_sector", "christ_constant", "shadow_sector", "roots_total"],
                     "pm_path": "gates.G45"
                 },
@@ -5460,8 +5485,8 @@ class FormulasRegistry:
                     "value": self.gate_46_sterile_oscillation,
                     "formula": "sin^2(153/163)",
                     "expanded": f"Sterile oscillation = {self.gate_46_sterile_oscillation:.10f}",
-                    "gnostic_name": "The Sterile Oscillation",
-                    "gnostic_role": "Neutrino-like mixing angle between sectors",
+                    "legacy_alias": "The Sterile Oscillation",
+                    "legacy_description": "Neutrino-like mixing angle between sectors",
                     "derived_from": ["christ_constant", "sterile_sector"],
                     "pm_path": "gates.G46"
                 },
@@ -5471,8 +5496,8 @@ class FormulasRegistry:
                     "value": self.gate_47_majorana_invariant,
                     "formula": "sqrt(153*135)/163",
                     "expanded": f"Majorana invariant = {self.gate_47_majorana_invariant:.10f}",
-                    "gnostic_name": "The Majorana Invariant",
-                    "gnostic_role": "Neutral logic state for zero-variance",
+                    "legacy_alias": "The Majorana Invariant",
+                    "legacy_description": "Neutral logic state for zero-variance",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G47"
                 },
@@ -5482,8 +5507,8 @@ class FormulasRegistry:
                     "value": self.gate_48_pauli_exclusion,
                     "formula": "(288/153)*e^(-1)",
                     "expanded": f"Pauli exclusion = {self.gate_48_pauli_exclusion:.10f}",
-                    "gnostic_name": "The Pauli Exclusion",
-                    "gnostic_role": "Coordinate uniqueness in Leech lattice",
+                    "legacy_alias": "The Pauli Exclusion",
+                    "legacy_description": "Coordinate uniqueness in Leech lattice",
                     "derived_from": ["roots_total", "christ_constant"],
                     "pm_path": "gates.G48"
                 },
@@ -5494,8 +5519,8 @@ class FormulasRegistry:
                     "value": self.gate_49_scale_factor_prime,
                     "formula": "(163/153)*sqrt(24)",
                     "expanded": f"Scale factor = {self.gate_49_scale_factor_prime:.10f}",
-                    "gnostic_name": "The Scale Factor Prime",
-                    "gnostic_role": "27D(24,1,2) to macroscopic magnification",
+                    "legacy_alias": "The Scale Factor Prime",
+                    "legacy_description": "27D(24,1,2) to macroscopic magnification",
                     "derived_from": ["sterile_sector", "christ_constant", "b3"],
                     "pm_path": "gates.G49"
                 },
@@ -5505,8 +5530,8 @@ class FormulasRegistry:
                     "value": self.gate_50_hubble_flow_stabilizer,
                     "formula": "288/(135+ln(163))",
                     "expanded": f"Hubble stabilizer = {self.gate_50_hubble_flow_stabilizer:.10f}",
-                    "gnostic_name": "The Hubble Flow Stabilizer",
-                    "gnostic_role": "Smooth Lambda-CDM expansion curve",
+                    "legacy_alias": "The Hubble Flow Stabilizer",
+                    "legacy_description": "Smooth Lambda-CDM expansion curve",
                     "derived_from": ["roots_total", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G50"
                 },
@@ -5516,8 +5541,8 @@ class FormulasRegistry:
                     "value": self.gate_51_dark_flow_resistance,
                     "formula": "(153/pi^2)*G12",
                     "expanded": f"Dark flow resistance = {self.gate_51_dark_flow_resistance:.10f}",
-                    "gnostic_name": "The Dark Flow Resistance",
-                    "gnostic_role": "Big Rip prevention back-pressure",
+                    "legacy_alias": "The Dark Flow Resistance",
+                    "legacy_description": "Big Rip prevention back-pressure",
                     "derived_from": ["christ_constant", "metric_stabilizer"],
                     "pm_path": "gates.G51"
                 },
@@ -5527,8 +5552,8 @@ class FormulasRegistry:
                     "value": self.gate_52_expansion_tension,
                     "formula": "sqrt((163+153+135)/288)",
                     "expanded": f"Expansion tension = {self.gate_52_expansion_tension:.10f}",
-                    "gnostic_name": "The Expansion Tension",
-                    "gnostic_role": "Metric strain (sleeve for G53)",
+                    "legacy_alias": "The Expansion Tension",
+                    "legacy_description": "Metric strain (sleeve for G53)",
                     "derived_from": ["sterile_sector", "christ_constant", "shadow_sector", "roots_total"],
                     "pm_path": "gates.G52"
                 },
@@ -5539,8 +5564,8 @@ class FormulasRegistry:
                     "value": self.gate_54_gravitational_coupling,
                     "formula": "(G53*135)/163",
                     "expanded": f"Gravitational coupling = {self.gate_54_gravitational_coupling:.10f}",
-                    "gnostic_name": "The Gravitational Coupling",
-                    "gnostic_role": "Weak visible, strong Bulk gravity",
+                    "legacy_alias": "The Gravitational Coupling",
+                    "legacy_description": "Weak visible, strong Bulk gravity",
                     "derived_from": ["torsion_gate", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G54"
                 },
@@ -5550,8 +5575,8 @@ class FormulasRegistry:
                     "value": self.gate_55_event_horizon_limit,
                     "formula": "288/(G53^2*153)",
                     "expanded": f"Event horizon limit = {self.gate_55_event_horizon_limit:.10f}",
-                    "gnostic_name": "The Event Horizon Limit",
-                    "gnostic_role": "Information cutoff boundary",
+                    "legacy_alias": "The Event Horizon Limit",
+                    "legacy_description": "Information cutoff boundary",
                     "derived_from": ["roots_total", "torsion_gate", "christ_constant"],
                     "pm_path": "gates.G55"
                 },
@@ -5561,8 +5586,8 @@ class FormulasRegistry:
                     "value": self.gate_56_metric_elasticity,
                     "formula": "(163+153)/(G54*phi)",
                     "expanded": f"Metric elasticity = {self.gate_56_metric_elasticity:.10f}",
-                    "gnostic_name": "The Metric Elasticity",
-                    "gnostic_role": "Non-linear manifold flex capacity",
+                    "legacy_alias": "The Metric Elasticity",
+                    "legacy_description": "Non-linear manifold flex capacity",
                     "derived_from": ["sterile_sector", "christ_constant", "gate_54_gravitational_coupling"],
                     "pm_path": "gates.G56"
                 },
@@ -5573,8 +5598,8 @@ class FormulasRegistry:
                     "value": self.gate_57_repulsion_limit,
                     "formula": "153/exp(163/288)",
                     "expanded": f"Repulsion limit = {self.gate_57_repulsion_limit:.10f}",
-                    "gnostic_name": "The Repulsion-Limit",
-                    "gnostic_role": "White Hole pressure minimum distance",
+                    "legacy_alias": "The Repulsion-Limit",
+                    "legacy_description": "White Hole pressure minimum distance",
                     "derived_from": ["christ_constant", "sterile_sector", "roots_total"],
                     "pm_path": "gates.G57"
                 },
@@ -5584,8 +5609,8 @@ class FormulasRegistry:
                     "value": self.gate_58_information_inversion,
                     "formula": "1/sqrt(G53*G57)",
                     "expanded": f"Information inversion = {self.gate_58_information_inversion:.10f}",
-                    "gnostic_name": "The Information Inversion",
-                    "gnostic_role": "Holographic optical lens",
+                    "legacy_alias": "The Information Inversion",
+                    "legacy_description": "Holographic optical lens",
                     "derived_from": ["torsion_gate", "gate_57_repulsion_limit"],
                     "pm_path": "gates.G58"
                 },
@@ -5595,8 +5620,8 @@ class FormulasRegistry:
                     "value": self.gate_59_flux_rebound,
                     "formula": "(153+135)*ln(G12)",
                     "expanded": f"Flux rebound = {self.gate_59_flux_rebound:.10f}",
-                    "gnostic_name": "The Flux Rebound",
-                    "gnostic_role": "High-energy event cushion",
+                    "legacy_alias": "The Flux Rebound",
+                    "legacy_description": "High-energy event cushion",
                     "derived_from": ["christ_constant", "shadow_sector", "metric_stabilizer"],
                     "pm_path": "gates.G59"
                 },
@@ -5606,8 +5631,8 @@ class FormulasRegistry:
                     "value": self.gate_60_schwarzschild_sovereignty,
                     "formula": "(2*163*153)/288^2",
                     "expanded": f"Schwarzschild sovereignty = {self.gate_60_schwarzschild_sovereignty:.10f}",
-                    "gnostic_name": "The Schwarzschild-Sovereignty",
-                    "gnostic_role": "Safe zone (must be < 1.0)",
+                    "legacy_alias": "The Schwarzschild-Sovereignty",
+                    "legacy_description": "Safe zone (must be < 1.0)",
                     "derived_from": ["sterile_sector", "christ_constant", "roots_total"],
                     "pm_path": "gates.G60"
                 },
@@ -5618,8 +5643,8 @@ class FormulasRegistry:
                     "value": self.gate_61_vacuum_energy_density,
                     "formula": "153^4/288^3",
                     "expanded": f"Vacuum energy density = {self.gate_61_vacuum_energy_density:.10f}",
-                    "gnostic_name": "The Vacuum Energy Density",
-                    "gnostic_role": "Cosmological constant baseline",
+                    "legacy_alias": "The Vacuum Energy Density",
+                    "legacy_description": "Cosmological constant baseline",
                     "derived_from": ["christ_constant", "roots_total"],
                     "pm_path": "gates.G61"
                 },
@@ -5629,8 +5654,8 @@ class FormulasRegistry:
                     "value": self.gate_62_lambda_offset,
                     "formula": "G61/(163*pi)",
                     "expanded": f"Lambda offset = {self.gate_62_lambda_offset:.10f}",
-                    "gnostic_name": "The Lambda-153 Offset",
-                    "gnostic_role": "Vacuum catastrophe prevention",
+                    "legacy_alias": "The Lambda-153 Offset",
+                    "legacy_description": "Vacuum catastrophe prevention",
                     "derived_from": ["gate_61_vacuum_energy_density", "sterile_sector"],
                     "pm_path": "gates.G62"
                 },
@@ -5640,8 +5665,8 @@ class FormulasRegistry:
                     "value": self.gate_63_dark_energy_scalar,
                     "formula": "sqrt((153-135)/163)*G53",
                     "expanded": f"Dark energy scalar = {self.gate_63_dark_energy_scalar:.10f}",
-                    "gnostic_name": "The Dark Energy Scalar",
-                    "gnostic_role": "24D torsion leaking to 4D",
+                    "legacy_alias": "The Dark Energy Scalar",
+                    "legacy_description": "24D torsion leaking to 4D",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector", "torsion_gate"],
                     "pm_path": "gates.G63"
                 },
@@ -5651,8 +5676,8 @@ class FormulasRegistry:
                     "value": self.gate_64_quintessence_lock,
                     "formula": "(G62+G63)/G12",
                     "expanded": f"Quintessence lock = {self.gate_64_quintessence_lock:.10f}",
-                    "gnostic_name": "The Quintessence Lock",
-                    "gnostic_role": "Fixed geometric acceleration",
+                    "legacy_alias": "The Quintessence Lock",
+                    "legacy_description": "Fixed geometric acceleration",
                     "derived_from": ["gate_62_lambda_offset", "gate_63_dark_energy_scalar", "metric_stabilizer"],
                     "pm_path": "gates.G64"
                 },
@@ -5663,8 +5688,8 @@ class FormulasRegistry:
                     "value": self.gate_65_entanglement_entropy,
                     "formula": "ln(153/135)*163",
                     "expanded": f"Entanglement entropy = {self.gate_65_entanglement_entropy:.10f}",
-                    "gnostic_name": "The Entanglement Entropy",
-                    "gnostic_role": "Long-distance logic coherence",
+                    "legacy_alias": "The Entanglement Entropy",
+                    "legacy_description": "Long-distance logic coherence",
                     "derived_from": ["christ_constant", "shadow_sector", "sterile_sector"],
                     "pm_path": "gates.G65"
                 },
@@ -5674,8 +5699,8 @@ class FormulasRegistry:
                     "value": self.gate_66_bell_symmetry_lock,
                     "formula": "(288/153)*sqrt(2)",
                     "expanded": f"Bell symmetry lock = {self.gate_66_bell_symmetry_lock:.10f}",
-                    "gnostic_name": "The Bell-Symmetry Lock",
-                    "gnostic_role": "Mandatory non-local connections",
+                    "legacy_alias": "The Bell-Symmetry Lock",
+                    "legacy_description": "Mandatory non-local connections",
                     "derived_from": ["roots_total", "christ_constant"],
                     "pm_path": "gates.G66"
                 },
@@ -5685,8 +5710,8 @@ class FormulasRegistry:
                     "value": self.gate_67_wormhole_metric,
                     "formula": "(G53*G12)/153",
                     "expanded": f"Wormhole metric = {self.gate_67_wormhole_metric:.10f}",
-                    "gnostic_name": "The Wormhole Metric",
-                    "gnostic_role": "ER=EPR entanglement bridge",
+                    "legacy_alias": "The Wormhole Metric",
+                    "legacy_description": "ER=EPR entanglement bridge",
                     "derived_from": ["torsion_gate", "metric_stabilizer", "christ_constant"],
                     "pm_path": "gates.G67"
                 },
@@ -5696,8 +5721,8 @@ class FormulasRegistry:
                     "value": self.gate_68_quantum_teleportation,
                     "formula": "(153+163)/288",
                     "expanded": f"Quantum teleportation = {self.gate_68_quantum_teleportation:.10f}",
-                    "gnostic_name": "The Quantum Teleportation",
-                    "gnostic_role": "Logical speed of light",
+                    "legacy_alias": "The Quantum Teleportation",
+                    "legacy_description": "Logical speed of light",
                     "derived_from": ["christ_constant", "sterile_sector", "roots_total"],
                     "pm_path": "gates.G68"
                 },
@@ -5708,8 +5733,8 @@ class FormulasRegistry:
                     "value": self.gate_69_recursive_feedback_suture,
                     "formula": "SUM(G01-G68)/(288*153)",
                     "expanded": f"Recursive feedback = {self.gate_69_recursive_feedback_suture:.10f}",
-                    "gnostic_name": "The Recursive Feedback Suture",
-                    "gnostic_role": "Full loop closure (no leakage)",
+                    "legacy_alias": "The Recursive Feedback Suture",
+                    "legacy_description": "Full loop closure (no leakage)",
                     "derived_from": ["all_gates_G01_to_G68"],
                     "pm_path": "gates.G69"
                 },
@@ -5719,8 +5744,8 @@ class FormulasRegistry:
                     "value": self.gate_70_entropy_reversal,
                     "formula": "(163/153)^24",
                     "expanded": f"Entropy reversal = {self.gate_70_entropy_reversal:.10f}",
-                    "gnostic_name": "The Entropy Reversal",
-                    "gnostic_role": "Entropy trap for Sterile Config",
+                    "legacy_alias": "The Entropy Reversal",
+                    "legacy_description": "Entropy trap for Sterile Config",
                     "derived_from": ["sterile_sector", "christ_constant", "b3"],
                     "pm_path": "gates.G70"
                 },
@@ -5730,8 +5755,8 @@ class FormulasRegistry:
                     "value": self.gate_71_sovereign_hash_anchor,
                     "formula": "(ln(288!)+ln(135))/153",
                     "expanded": f"Sovereign hash anchor = {self.gate_71_sovereign_hash_anchor:.10f}",
-                    "gnostic_name": "The Sovereign Hash Anchor",
-                    "gnostic_role": "Unique manifold DNA",
+                    "legacy_alias": "The Sovereign Hash Anchor",
+                    "legacy_description": "Unique manifold DNA",
                     "derived_from": ["roots_total", "shadow_sector", "christ_constant"],
                     "pm_path": "gates.G71"
                 },
@@ -5741,8 +5766,8 @@ class FormulasRegistry:
                     "value": self.gate_72_absolute_closure,
                     "formula": "((153+135)/288)*G12 = G12",
                     "expanded": f"Absolute closure = {self.gate_72_absolute_closure:.10f} = G12",
-                    "gnostic_name": "The Absolute Closure (Omega Gate)",
-                    "gnostic_role": "THE END IS THE BEGINNING",
+                    "legacy_alias": "The Absolute Closure (Omega Gate)",
+                    "legacy_description": "THE END IS THE BEGINNING",
                     "derived_from": ["christ_constant", "shadow_sector", "roots_total", "metric_stabilizer"],
                     "pm_path": "gates.G72"
                 }
@@ -5753,16 +5778,16 @@ class FormulasRegistry:
                     "value": self.elder_kads,
                     "name": "Betti Three",
                     "description": "Third Betti number of G2 manifold",
-                    "gnostic_name": "The Pleroma",
-                    "gnostic_role": "The Dimensional Totality; the Fullness",
+                    "legacy_alias": "The Pleroma",
+                    "legacy_description": "The Dimensional Totality; the Fullness",
                     "pm_path": "topology.elder_kads"
                 },
                 "chi_eff": {
                     "value": self.mephorash_chi,
                     "name": "Effective Chiral Index",
                     "formula": "|chi| = 72; n_gen = |chi|/24 = 3 (standard M-theory)",
-                    "gnostic_name": "The Demiurge",
-                    "gnostic_role": "The Effective Chiral Index; the Craftsman",
+                    "legacy_alias": "The Demiurge",
+                    "legacy_description": "The Effective Chiral Index; the Craftsman",
                     "pm_path": "topology.chi_effective",
                     "reference": "Acharya-Witten 2001 (arXiv:hep-th/0109152)"
                 },
@@ -5770,32 +5795,32 @@ class FormulasRegistry:
                     "value": self.nitzotzin_roots,
                     "name": "Logic Closure Total",
                     "description": "Octonionic/24D structure (288 = b3 * 12)",
-                    "gnostic_name": "The Ennoia",
-                    "gnostic_role": "Universal Mind; Logic Closure",
+                    "legacy_alias": "The Ennoia",
+                    "legacy_description": "Universal Mind; Logic Closure",
                     "pm_path": "topology.nitzotzin_roots"
                 },
                 "visible": {
                     "value": self.sophian_modulus,
                     "name": "Visible Sector",
                     "formula": "5^3 = 125 (SM parameters)",
-                    "gnostic_name": "The Visible",
-                    "gnostic_role": "The manifest Standard Model; 125 parameters",
+                    "legacy_alias": "The Visible",
+                    "legacy_description": "The manifest Standard Model; 125 parameters",
                     "pm_path": "topology.sophian_modulus"
                 },
                 "sterile": {
                     "value": self.barbelo_modulus,
                     "name": "Sterile Sector",
                     "formula": "ROOTS - VISIBLE = 288 - 125 = 163",
-                    "gnostic_name": "The Barbelo",
-                    "gnostic_role": "First Thought; the hidden bulk pressure",
+                    "legacy_alias": "The Barbelo",
+                    "legacy_description": "First Thought; the hidden bulk pressure",
                     "pm_path": "topology.barbelo_modulus"
                 },
                 "shadow_sector": {
                     "value": self.demiurgic_Yetts,
                     "name": "Shadow Sector",
                     "formula": "VISIBLE_GATES = 135",
-                    "gnostic_name": "The Sophia",
-                    "gnostic_role": "Wisdom; the Visible Gates of manifest knowledge",
+                    "legacy_alias": "The Sophia",
+                    "legacy_description": "Wisdom; the Visible Gates of manifest knowledge",
                     "pm_path": "topology.demiurgic_Yetts"
                 }
             },

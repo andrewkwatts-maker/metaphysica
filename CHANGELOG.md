@@ -2,6 +2,12 @@
 
 All notable changes to `metaphysica` will be documented in this file.
 
+> **Research status.** Principia Metaphysica is a speculative theoretical
+> model. It has not been peer-reviewed and is not scientifically
+> validated. This changelog documents development of a candidate research
+> hypothesis — no claim in this document represents established
+> scientific fact. See each release for its explicit status caveats.
+
 ---
 
 ## [2.2.0] — 2026-06-13
@@ -194,12 +200,14 @@ across 85 simulations and 765 parameters.
 
 ### Changed
 
-- **Compression ratio updated from 116:1 → 121:1** (honest count: 5 new
-  derived constants per 1 seed, from the genuine v25/v26 closures —
-  strong CP, Re(T) gap, vacuum pruning, mirror DM relic, Higgs mass).
-  The earlier `131:1` headline overcounted v25/v26 module entries that
-  were shadow-derivations of pre-existing formulas; see the Honest
-  accounting subsection below.
+- **Candidate compression ratio revised from 116:1 → 121:1** based on the
+  shadow-derivation audit (honest count: 5 candidate new constants per
+  1 seed from the v25/v26 additions — strong CP, Re(T) gap, vacuum
+  pruning, mirror DM relic, Higgs mass). The earlier `131:1` headline
+  overcounted v25/v26 module entries that were shadow-derivations of
+  pre-existing formulas; see the Honest accounting subsection below.
+  All compression ratios in this repo are model-internal artifacts, not
+  independently validated results.
 - **Stripped `V16` / `V17` / `V16_2` class suffixes** from 34 PM classes — the
   theory version belongs in metadata, not class identifiers.
 - **Renamed `core/eml_math.py` → `core/eml_tree_adapter.py`** to avoid shadowing

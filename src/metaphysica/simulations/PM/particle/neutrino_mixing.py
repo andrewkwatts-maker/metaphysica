@@ -13,17 +13,23 @@ PMNS uses chi_eff_total = 144 (both shadows combined) because neutrino oscillati
             WARP to create dual 13D(12,1) shadows via OR coordinate selection.
             Orientation sum from Euclidean bridge mechanism.
 
-Geometric computation of PMNS mixing angles from G2 manifold topology.
-Two parameters (parity_offset, m_base) are fitted; remaining angles follow from topological invariants.
+Candidate geometric computation of PMNS mixing angles from G2 manifold topology.
 
-This simulation implements the SimulationBase interface and computes:
-- theta_12: Solar mixing angle
-- theta_13: Reactor mixing angle
-- theta_23: Atmospheric mixing angle
-- delta_CP: CP-violating phase
+This module has TWO KINDS of outputs (see assessment further down):
 
-All four mixing parameters are computed from G2 associative 3-cycle geometry,
-with excellent agreement to NuFIT 6.0 global fit values.
+* CANDIDATE TOPOLOGY-FIRST PREDICTIONS (proposed from b_3, b_2, chi_eff):
+  - theta_12  (solar mixing angle)
+  - theta_13  (reactor mixing angle)
+  - theta_23  (atmospheric mixing angle)
+
+* FITTED / PHENOMENOLOGICAL INPUTS (calibrated to NuFIT 6.0):
+  - delta_CP (parity_offset = 45.9 deg is a hardcoded fit, not a derivation)
+  - m_base = 0.049 eV (fitted to the atmospheric mass splitting)
+
+The three mixing angles agree with NuFIT 6.0 within 0.5 sigma each in
+the current calibration, but this agreement is a proposed candidate
+result of an unvalidated model; it is not an independently established
+theoretical achievement.
 
 THEORETICAL BASIS:
     The PMNS mixing matrix arises from wavefunction overlaps on associative
