@@ -140,8 +140,13 @@ def main(argv: list[str] | None = None) -> int:
     output_json = autogen / "formula_renders.json"
 
     if not formulas_json.exists():
-        print(f"ERROR: {formulas_json} does not exist. Run simulations first.")
-        return 1
+        print(
+            f"  formulas.json not found — skipping formula renders "
+            f"(run simulations first: pip install metaphysica[sims])"
+        )
+        output_json.parent.mkdir(parents=True, exist_ok=True)
+        output_json.write_text('{"_v":1,"_formats":[],"f":{}}', encoding="utf-8")
+        return 0
 
     fmts = _parse_formats(args.renders)
     print(f"Rendering formats: {', '.join(fmts)}")
