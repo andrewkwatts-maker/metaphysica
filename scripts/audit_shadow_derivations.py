@@ -380,7 +380,14 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     try:
         params = _load_parameters()
-    except (FileNotFoundError, ValueError) as exc:
+    except FileNotFoundError:
+        print(
+            "  shadow_derivations: parameters.json not found — skipping "
+            "(run simulations first: pip install metaphysica[sims])",
+            file=sys.stderr,
+        )
+        return 0
+    except ValueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
 

@@ -44,8 +44,11 @@ def main() -> int:
     ag = autogen_dir()
     src = ag / "parameters.json"
     if not src.exists():
-        print(f"named_constants: parameters.json not found at {src}")
-        return 1
+        print(
+            f"  named_constants: parameters.json not found — skipping "
+            f"(run simulations first: pip install metaphysica[sims])"
+        )
+        return 0
 
     blob = json.loads(src.read_text(encoding="utf-8"))
     params = blob.get("parameters", {}) or {}

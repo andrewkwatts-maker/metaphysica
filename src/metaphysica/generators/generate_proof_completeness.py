@@ -37,10 +37,20 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping
 
 from metaphysica.generators._common import autogen_dir
-from metaphysica.simulations.PM.analysis.proof_completeness import (
-    STATUS_ORDER,
-    ProofLedger,
-)
+
+try:
+    from metaphysica.simulations.PM.analysis.proof_completeness import (
+        STATUS_ORDER,
+        ProofLedger,
+    )
+except ModuleNotFoundError as _exc:
+    if "pandas" not in str(_exc):
+        raise
+    print(
+        "  proof_completeness ledger skipped: pandas not installed "
+        "(install with pip install metaphysica[plots])"
+    )
+    sys.exit(0)
 
 
 PARAMETERS_FILENAME = "parameters.json"

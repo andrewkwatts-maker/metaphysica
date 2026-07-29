@@ -293,14 +293,21 @@ def main():
                        help='Show detailed output')
     args = parser.parse_args()
 
+    if not PARAMS_JSON.exists():
+        print(
+            f"  js_constants: parameters.json not found — skipping "
+            f"(run simulations first: pip install metaphysica[sims])"
+        )
+        return 0
+
     print("Loading parameters.json...")
     params = load_parameters()
     print(f"  Loaded {len(params)} parameters")
 
     print(f"\nLoading {TARGET_JS}...")
     if not TARGET_JS.exists():
-        print(f"  ERROR: Target file not found!")
-        return 1
+        print(f"  js_constants: theory-constants.js not found — skipping")
+        return 0
 
     js_content = TARGET_JS.read_text(encoding='utf-8')
     print(f"  Loaded {len(js_content)} bytes")
