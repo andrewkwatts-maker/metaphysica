@@ -259,14 +259,37 @@ export function injectHeader(activePageId = '', options = {}) {
   if (target) {
     target.insertAdjacentHTML('afterbegin', headerHTML);
 
-    // If breadcrumbs, inject after header inside main content area
+    // Inject research-status notice at the top of main content (v2.2.0 honesty
+    // polish — every sub-page must carry the not-peer-reviewed disclaimer).
+    const mainContent = document.querySelector('main') ||
+                       document.querySelector('.app-main') ||
+                       document.querySelector('.content-wrapper') ||
+                       document.querySelector('#main-content');
+    if (mainContent && !mainContent.querySelector('.pm-research-notice')) {
+      mainContent.insertAdjacentHTML('afterbegin',
+        '<div class="pm-research-notice" role="note" aria-label="Research status" ' +
+        'style="max-width:900px;margin:1rem auto 2rem;padding:1.25rem 1.5rem;' +
+        'background:rgba(255,170,46,0.10);border:2px solid rgba(255,170,46,0.55);' +
+        'border-radius:12px;color:var(--text-primary);text-align:left;">' +
+        '<p style="margin:0;font-weight:700;color:#ffb554;font-size:1.05rem;' +
+        'text-transform:uppercase;letter-spacing:0.06em;">&#9888; Research status</p>' +
+        '<p style="margin:0.5rem 0 0;line-height:1.55;color:var(--text-primary);">' +
+        '<strong>Principia Metaphysica is a speculative theoretical model.</strong> ' +
+        'It has <strong>not</strong> been peer-reviewed and is <strong>not</strong> ' +
+        'scientifically validated. All derivations, predictions, and “closures” ' +
+        'documented on this site are candidate proposals awaiting experimental ' +
+        'confirmation and independent expert review. The framework is intended ' +
+        'for exploration and research purposes only; no claim on this site ' +
+        'represents established scientific fact.</p></div>'
+      );
+    }
+
+    // If breadcrumbs, inject after notice inside main content area
     if (breadcrumbHTML) {
-      const mainContent = document.querySelector('.app-main') ||
-                         document.querySelector('.content-wrapper') ||
-                         document.querySelector('main') ||
-                         document.querySelector('#main-content');
-      if (mainContent) {
-        mainContent.insertAdjacentHTML('afterbegin', breadcrumbHTML);
+      const bcTarget = mainContent ||
+                       document.querySelector('#main-content');
+      if (bcTarget) {
+        bcTarget.insertAdjacentHTML('afterbegin', breadcrumbHTML);
       }
     }
   }

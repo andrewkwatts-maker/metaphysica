@@ -1,7 +1,7 @@
 /**
  * theory-constants.js - Principia Metaphysica Theory Constants
  *
- * v17.2 STERILE MODEL - All 125 constants are geometric residues, not tuned
+ * v17.2 STERILE MODEL - All 125 constants are geometric residues (topology-derived, not fitted parameters)
  * DOI: 10.5281/zenodo.18079602
  *
  * DYNAMIC BRIDGE - Loads values from parameters.json via PMTheoryBridge
