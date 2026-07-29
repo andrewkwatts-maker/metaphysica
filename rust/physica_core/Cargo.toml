@@ -1,6 +1,6 @@
 ﻿[package]
 name = "physica_core"
-version = "2.2.0"
+version = "2.2.1"
 edition = "2021"
 description = "G2-manifold-derived theoretical-physics core: 125 derived constants, quark predictions, CKM, gates, simulations."
 license = "Apache-2.0"
