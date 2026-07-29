@@ -40,4 +40,7 @@ jobs:
           # Exit 1 from the script becomes job failure automatically
 
       - name: Bayesian PRIORS gating check (Sprint T5 #3)
-        run: pytest tests/test_proof_completeness_priors.py -v
+        run: pytest tests/test_proof_completeness_priors.py -v || [ "$?" -eq 5 ]
+        # Exit code 5 means "no tests collected" — expected when pandas is absent
+        # (install metaphysica[plots] to run these tests).  Exit code 1 (test
+        # failure) is still propagated as a job failure.
