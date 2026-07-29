@@ -623,20 +623,29 @@
 
         .lightbox-close {
             position: absolute;
-            top: -50px;
-            right: 0;
-            background: none;
-            border: none;
+            /* Anchor inside the lightbox content rather than 50px above so
+               the button never sits outside the .lightbox-content flex box
+               (where the parent overlay could intercept the click). */
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 999px;
             color: white;
-            font-size: 2.5rem;
+            font-size: 2rem;
+            line-height: 1;
             cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s, transform 0.2s;
-            width: 50px;
-            height: 50px;
+            opacity: 0.9;
+            transition: opacity 0.2s, transform 0.2s, background 0.2s;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
+            /* Ensure clicks always reach the button even if a sibling
+               (image / caption) has a higher stacking context. */
+            z-index: 10;
+            pointer-events: auto;
         }
 
         .lightbox-close:hover {
