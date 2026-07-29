@@ -15,6 +15,8 @@ import inspect
 
 import pytest
 
+pytest.importorskip("eml_spectral", reason="eml-spectral not installed; install with pip install metaphysica[sims]")
+
 from metaphysica.simulations.core.eml_tree_adapter import eml_operator_tree
 
 

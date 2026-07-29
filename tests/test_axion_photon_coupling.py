@@ -16,6 +16,8 @@ import inspect
 
 import pytest
 
+pytest.importorskip("eml_spectral", reason="eml-spectral not installed; install with pip install metaphysica[sims]")
+
 
 # ── Validation window (BabyIAXO 2028 sensitivity) --------------------------
 

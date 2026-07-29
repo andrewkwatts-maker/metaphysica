@@ -13,6 +13,8 @@ import inspect
 
 import pytest
 
+pytest.importorskip("eml_spectral", reason="eml-spectral not installed; install with pip install metaphysica[sims]")
+
 
 def _import_module():
     from metaphysica.simulations.PM.particle import strong_cp_axion

@@ -44,6 +44,7 @@ from typing import Any, Dict, Mapping, Tuple
 
 import pytest
 
+pd = pytest.importorskip("pandas", reason="pandas not installed; install with pip install metaphysica[plots]")
 
 # Tolerance for Gaussian σ — 1000 draws → ~3 % finite-sample noise, plus
 # a 5 % buffer for the max(|v|, 1.0) clamp at sub-unit values. 10 % envelope.

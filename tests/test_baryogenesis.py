@@ -5,6 +5,8 @@ import math
 
 import pytest
 
+pytest.importorskip("eml_spectral", reason="eml-spectral not installed; install with pip install metaphysica[sims]")
+
 from metaphysica.simulations.PM.cosmology.baryogenesis import (
     ModuliBaryogenesis,
     get_baryogenesis,

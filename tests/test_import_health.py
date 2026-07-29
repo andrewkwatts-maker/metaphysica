@@ -66,6 +66,12 @@ def test_module_imports(module_path):
             )
         pytest.fail(f"ImportError in {module_path}: {e}")
     except ImportError as e:
+        msg = str(e)
+        if "eml-math" in msg or "eml-spectral" in msg or "eml_spectral" in msg:
+            pytest.skip(
+                f"{module_path}: eml-spectral not installed "
+                f"(install metaphysica[sims] for EML paths)"
+            )
         pytest.fail(f"ImportError in {module_path}: {e}")
     except Exception as e:
         # Some modules may fail for non-import reasons (missing data files, etc.)

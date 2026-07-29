@@ -8,4 +8,5 @@ def test_version_present():
 
 
 def test_build_callable_exposed():
-    assert callable(metaphysica.build)
+    from metaphysica.build import build as _build_fn
+    assert callable(_build_fn)
