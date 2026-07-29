@@ -16,12 +16,13 @@
 let _mathMode = null;
 async function _getMathModeModule() {
   if (_mathMode) return _mathMode;
-  const basePath = getBasePath();
-  // ES-module dynamic-import paths must start with ./, ../, or be absolute —
-  // bare paths like "js/math-mode.js" are treated as bare specifiers and
-  // fail in browsers without an import map. Force a leading "./" when
-  // basePath is empty (page is at site root).
-  const modPath = (basePath || './') + 'js/math-mode.js';
+  // math-mode.js sits next to pm-header.js in the same js/ directory, so
+  // resolve module-relative rather than page-relative. Previously this
+  // used getBasePath() + 'js/math-mode.js', which doubled the js/ segment
+  // (page fetched /js/pm-header.js, whose (basePath='')+'js/math-mode.js'
+  // computed against the *module URL* produced /js/js/math-mode.js -> 404,
+  // breaking the Normal Math / EML Math header toggle across the site).
+  const modPath = './math-mode.js';
   try {
     _mathMode = await import(modPath);
   } catch (err) {
