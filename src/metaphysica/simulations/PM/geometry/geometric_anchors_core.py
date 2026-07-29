@@ -9,7 +9,7 @@ This eliminates tuning by anchoring everything to G₂ topology.
 v16.2 UPDATE: Added anomaly correction factor (1 - 1/b3²) for Big G derivation.
 This BRST-required correction ensures ghost-free unitarity.
 
-ASSERTION AUDIT (2026-03-16, Claude Opus 4.6 + Gemini 2.5 Flash debate)
+ASSERTION AUDIT (2026-03-16, LLM (Opus) + Gemini 2.5 Flash debate)
 ------------------------------------------------------------------------
 Claim: base_instanton = 45.714 comes from "Planck-scale baseline from topology".
 Verdict: FITTED (not derived from topology).

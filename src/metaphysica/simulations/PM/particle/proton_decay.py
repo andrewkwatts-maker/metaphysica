@@ -30,7 +30,7 @@ References:
 - Corti-Haskins-Nordstrom-Pacini (2015): TCS G2 construction
 - Friedmann-Witten (2002): Brane models and proton stability
 
-Independent Assessment (Claude Opus 4.6 vs Gemini 2.5 Flash, 2026-03-16):
+Independent Assessment (LLM (Opus) vs Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 VERDICT: PHENOMENOLOGICAL -- standard SU(5) GUT with geometric window dressing.
 

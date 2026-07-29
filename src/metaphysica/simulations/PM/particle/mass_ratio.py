@@ -9,7 +9,7 @@ In PM, mass is the Eigenvalue of the Laplacian on the internal space.
 
 The ratio is therefore the ratio of these cycle volumes.
 
-INDEPENDENT ASSESSMENT (2026-03-16, Claude Opus 4.6 + Gemini 2.5 Flash)
+INDEPENDENT ASSESSMENT (2026-03-16, LLM (Opus) + Gemini 2.5 Flash)
 =========================================================================
 VERDICT: holonomy_correction = 1.5427971665 is FITTED, not derived.
 

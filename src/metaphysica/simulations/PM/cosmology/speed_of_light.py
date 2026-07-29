@@ -32,7 +32,7 @@ Where (all from G₂ topology, zero free parameters):
 Result: c = 299,792,423 m/s — 99.99999% of CODATA exact value.
 Residual ~35 m/s attributed to Ricci flow relaxation on the G₂ fiber.
 
-INDEPENDENT ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 VERDICT: NUMEROLOGICAL + REVERSE-ENGINEERED
 

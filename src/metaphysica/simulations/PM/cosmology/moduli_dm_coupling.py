@@ -55,7 +55,7 @@ FAILED ORIGINAL PROPOSAL:
   has dimensions of 1/time, not dimensionless) and the physical range for
   coupled quintessence beta is 0.01-0.3 at most.
 
-INDEPENDENT ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 Three-round adversarial debate on the epistemological status of this mechanism.
 
@@ -66,7 +66,7 @@ ROUND 1 (Gemini assessment):
   - beta ~ 0.05-0.1 is confirmed as the correct range for 8% S8 suppression
     per Amendola (2000) and Pettorino & Baccigalupi (2008).
 
-ROUND 2 (Claude critiques, Gemini responds):
+ROUND 2 (LLM critiques, Gemini responds):
   Critique 1: Is 1/(4pi) a SPECIFIC one-loop diagram in G2, or chosen for fit?
     -> Gemini: It is an "order-of-magnitude estimate based on EFT intuition,
        not a precise derivation from a specific G2 diagram." Could equally be
@@ -100,11 +100,11 @@ ROUND 3 (Classification):
   What is NOT fitted:
     - beta_eff = 0.065 is calculated, not adjusted to match S8 data
 
-  Consensus: Both Claude and Gemini classify as PLAUSIBLE. The mechanism is
+  Consensus: Both LLM and Gemini classify as PLAUSIBLE. The mechanism is
   physically motivated and produces the correct order of magnitude, but
   the 1/(4pi) factor is a modeling choice, not a unique derivation from G2.
 
-ENTROPY-MODULATED FRICTION DEBATE (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-20):
+ENTROPY-MODULATED FRICTION DEBATE (LLM (Opus) + Gemini 2.5 Flash, 2026-03-20):
 ====================================================================================
 Three-round adversarial debate on adding entropy-modulated time-dependent friction.
 
@@ -142,7 +142,7 @@ ROUND 3 (Classification of entropy extension):
     correction and reliance on parameters like alpha_T whose derivation
     is not provided, is primarily TUNED."
 
-CRITICAL NUMERICAL FINDING (Claude Opus 4.6, 2026-03-20):
+CRITICAL NUMERICAL FINDING (LLM (Opus), 2026-03-20):
   The entropy modulation is NUMERICALLY IRRELEVANT to S8. With phi_dot_frac=0.03:
     - beta = 0.065: S8 = 0.8004, suppression = 4.31%
     - beta = 0.070: S8 = 0.8004, suppression = 4.31%  (indistinguishable!)

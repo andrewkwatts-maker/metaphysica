@@ -68,7 +68,7 @@ FLUX CORRECTION MECHANISM (NEW):
     Formula: delta_flux = (S_orient/b3) × (b2×chi_eff)/(b3×n_gen)
            = (12/24) × (4×144)/(24×3) = 0.5 × 8 = 4.0°
 
-ASSERTION ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+ASSERTION ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =======================================================================
 Assertion: "PMNS mixing matrix derived from G2 holonomy / octonion structure."
 Verdict: PARTIALLY SUPPORTED -- stronger than CKM but with caveats.

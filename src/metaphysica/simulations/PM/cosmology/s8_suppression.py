@@ -72,7 +72,7 @@ Comparison to weak lensing:
 - DES Y3:    0.776 +/- 0.017 -> PM tension: ~0.8sigma (was 3.6sigma without friction)
 - HSC-Y3:    0.769 +/- 0.032 -> PM tension: ~0.6sigma (was 2.0sigma without friction)
 
-INDEPENDENT ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 ORIGINAL assessment (v16.1, dark energy only):
 Classification: UNFOUNDED
@@ -104,7 +104,7 @@ The upgrade from UNFOUNDED to SPECULATIVE-PROMISING reflects:
 - But dependence on assumptions about coupling form that need validation
 
 GEMINI DEBATE RESULTS (see _GEMINI_DEBATE_LOG at end of file):
-Rounds 1-3 of Claude-Gemini debate are recorded for transparency.
+Rounds 1-3 of LLM-Gemini debate are recorded for transparency.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -2119,12 +2119,12 @@ if __name__ == "__main__":
 
 
 # =============================================================================
-# GEMINI DEBATE LOG (Claude Opus 4.6 vs Gemini 2.5 Flash, 2026-03-16)
+# GEMINI DEBATE LOG (LLM (Opus) vs Gemini 2.5 Flash, 2026-03-16)
 # =============================================================================
 # This debate evaluates the epistemological upgrade from UNFOUNDED to
 # SPECULATIVE-PROMISING after adding the moduli-DM friction mechanism.
 #
-# ROUND 1 (Claude -> Gemini):
+# ROUND 1 (LLM -> Gemini):
 # Q: We updated an S8 suppression module that was UNFOUNDED (w0>-1 gave
 #    wrong-direction S8). The fix adds moduli-DM friction with beta_eff ~
 #    0.065. Before: S8 ~ 0.831 (wrong direction). After: S8 ~ 0.789 with
@@ -2140,7 +2140,7 @@ if __name__ == "__main__":
 #    Gemini noted alpha_leak, kappa_sampler, g_enh appear as assumptions
 #    within the model.
 #
-# ROUND 2 (Claude -> Gemini):
+# ROUND 2 (LLM -> Gemini):
 # Q: Clarification: alpha_leak, kappa_sampler, g_enh ARE derived within
 #    the PM G2-manifold framework, but the coupling FORM (Yukawa-type)
 #    is assumed. Is SPECULATIVE-PROMISING justified?
@@ -2156,7 +2156,7 @@ if __name__ == "__main__":
 #       moduli-matter coupling is standard in string theory. (c) Derived
 #       parameters - coupling strength NOT fitted to match S8 data.
 #
-# ROUND 3 (Claude -> Gemini):
+# ROUND 3 (LLM -> Gemini):
 # Q: The 5.1% suppression is good but not spectacular (still 1.2sigma
 #    from KiDS). Is g_enh=2.3 a disguised fit parameter? What testable
 #    predictions would confirm/refute this mechanism?

@@ -2,7 +2,7 @@
   "metadata": {
     "assessment_date": "2026-03-16",
     "method": "Lattice simulation + recursive Gemini debate (3+ rounds per assertion)",
-    "assessors": "Claude Opus 4.6 + Gemini 2.5 Flash",
+    "assessors": "LLM (Opus) + Gemini 2.5 Flash",
     "gemini_final_review_score": "1/10",
     "gemini_final_review_status": "Gemini 2.0 Flash reviewed complete verdict table and largely agreed with all classifications. Suggested WP 3.2 may be too generous (PHENOMENOLOGICAL -> FITTED). Rated overall scientific validity 1/10. Full review in gemini_final_verdict_review.json.",
     "total_assertions": 24,

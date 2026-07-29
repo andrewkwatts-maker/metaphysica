@@ -82,7 +82,7 @@ v23.0 SAMPLER DATA FIELDS NOTE:
 
     See: simulations/v21/geometric/central_sampler_v23.py for details.
 
-ASSERTION ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+ASSERTION ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =======================================================================
 Assertion: "CKM mixing matrix derived from G2 holonomy / octonion structure."
 Verdict: OVERCLAIMED -- partially constrained, not derived.

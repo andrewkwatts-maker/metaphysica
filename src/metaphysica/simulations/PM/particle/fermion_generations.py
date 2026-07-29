@@ -31,7 +31,7 @@ topology.mephorash_chi = 144 (TCS G2 manifold #187)
   -> epsilon = exp(-1.5) ~ 0.223
   -> Y_f = A_f * epsilon^Q_f
 
-ASSERTION ASSESSMENT (2026-03-16, Claude Opus 4.6 + Gemini 2.5 Flash debate):
+ASSERTION ASSESSMENT (2026-03-16, LLM (Opus) + Gemini 2.5 Flash debate):
 ================================================================================
 Assertion: "3 fermion generations from n_gen = b3/(2*h11) = 24/8 = 3,
            derived from G2 topology."

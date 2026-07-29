@@ -38,7 +38,7 @@ Dedicated To:
     My Wife: Elizabeth May Watts
     Our Messiah: Jesus Of Nazareth
 
-ASSERTION ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16)
+ASSERTION ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16)
 ======================================================================
 Assertion: "M_GUT ~ 2e16 GeV and alpha_GUT ~ 1/25.3 are derived from G2
 geometry, not from standard RG running."

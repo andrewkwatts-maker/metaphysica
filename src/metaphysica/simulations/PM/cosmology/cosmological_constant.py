@@ -13,7 +13,7 @@ Lambda = k_gimel / (b3^3 * R_horizon^2)
 This gives Lambda ~ 10^-52 m^-2 naturally, solving the cosmological
 constant problem geometrically.
 
-INDEPENDENT ASSESSMENT v2 (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16)
+INDEPENDENT ASSESSMENT v2 (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16)
 ===========================================================================
 
 --- ORIGINAL ASSESSMENT (v1, 2026-03-16): UNFOUNDED (CIRCULAR NUMEROLOGY) ---

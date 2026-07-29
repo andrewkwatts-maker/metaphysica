@@ -75,7 +75,7 @@ framework would benefit from either (a) deriving k_gimel from an actual G2
 spectral computation, or (b) reclassifying the formula status from GEOMETRIC
 to FITTED/HEURISTIC in the Parameter definitions and Formula categories.
 
-Assessed by: Claude Opus 4.6 + Gemini 2.0 Flash (3-round adversarial debate)
+Assessed by: LLM (Opus) + Gemini 2.0 Flash (3-round adversarial debate)
 
 WP5.3 UPDATE (2026-03-16): RG-DERIVED ALTERNATIVE PATH
 ========================================================
@@ -129,7 +129,7 @@ GEMINI DEBATE ON RG PATH (3 rounds, gemini-2.5-flash, 2026-03-16):
     to plausibly close the 20.65% gap." Not DERIVED (approximations remain),
     not DISCREPANT (gap is explainable by known missing physics).
 
-Assessed by: Claude Opus 4.6 + Gemini 2.5 Flash (3-round adversarial debate)
+Assessed by: LLM (Opus) + Gemini 2.5 Flash (3-round adversarial debate)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 

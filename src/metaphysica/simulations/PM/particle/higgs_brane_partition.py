@@ -37,7 +37,7 @@ OUTPUTS:
     higgs.m_higgs_local: 125.1 GeV (4D brane projection)
     higgs.brane_partition_ratio: 0.302 (local/bulk)
 
-ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
     Original Classification: UNFOUNDED
     Updated Classification: FITTED (WP6.1, 2026-03-18)
 

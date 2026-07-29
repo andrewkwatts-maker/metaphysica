@@ -34,7 +34,7 @@ TORSION FUNNEL CALIBRATION (v24.3, 2026-03-20):
     Gemini 2.5 Flash debate (3 rounds) classified this as FITTED.
     The mechanism remains PLAUSIBLE; the specific entropy value is FITTED.
 
-INDEPENDENT ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16)
+INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16)
 ========================================================================
 
 Gemini Debate (3 rounds):

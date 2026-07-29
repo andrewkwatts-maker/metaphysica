@@ -40,7 +40,7 @@ NOTE: v16.2 changed from the D_eff formula (w₀ = -(D-1)/(D+1) = -11/13) to
 the thawing quintessence formula (w₀ = -1 + 1/b₃ = -23/24) based on DESI 2025
 thawing cosmology constraints.
 
-INDEPENDENT ASSESSMENT (Claude Opus 4.6 + Gemini 2.5 Flash, 2026-03-16):
+INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 Assertion: "w₀ != -1 predicted from bridge moduli dynamics, providing a
 testable prediction."
