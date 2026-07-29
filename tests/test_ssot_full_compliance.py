@@ -30,6 +30,10 @@ from dataclasses import dataclass, field
 
 import pytest
 
+# NeutrinoMixingSimulation calls eml_scalar() at module level; skip the whole
+# file if eml-math is not installed (requires metaphysica[sims]).
+pytest.importorskip("eml_math", reason="eml-math not installed; install with pip install metaphysica[sims]")
+
 # ---------------------------------------------------------------------------
 # Path setup
 # ---------------------------------------------------------------------------

@@ -19,8 +19,9 @@ import json
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import pytest
+
+pd = pytest.importorskip("pandas", reason="pandas not installed; install with pip install metaphysica[plots]")
 
 
 # ── Test plumbing ───────────────────────────────────────────────────────────
