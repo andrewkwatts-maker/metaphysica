@@ -135,42 +135,22 @@ jobs:
           retention-days: 14
 
   # ---------------------------------------------------------------------------
-  # Release: publish every wheel + sdist to PyPI.
-  # Triggers only on tag push (v*) or manual dispatch with publish=true.
-  # ---------------------------------------------------------------------------
-  release:
-    name: Publish to PyPI
-    needs: [wheels, sdist]
-    runs-on: ubuntu-latest
-    if: >-
-      startsWith(github.ref, 'refs/tags/v') ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.publish == 'true')
-    environment:
-      name: pypi
-      url: https://pypi.org/project/metaphysica/
-    permissions:
-      id-token: write
-    steps:
-      - name: Download all wheel artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: wheel-*
-          path: dist
-          merge-multiple: true
-
-      - name: Download sdist artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: sdist
-          path: dist
-
-      - name: List release artifacts
-        run: ls -la dist/
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
-          packages-dir: dist/
-          skip-existing: true
-          verbose: true
+  # PyPI publish is intentionally NOT part of this workflow.
+  #
+  # PyPI's Trusted Publishing config for this project is registered
+  # against `.github/workflows/workflow.yml` (see PyPI project settings ->
+  # "Publishing" -> pending publisher). GitHub OIDC embeds the actual
+  # workflow filename in the ID token, so a publish attempt from THIS
+  # workflow file (`wheels.yml`) fails with `invalid-publisher`.
+  #
+  # Separation of concerns:
+  #   * wheels.yml  (this file) -- builds artifacts on every tag push +
+  #                                  uploads them as workflow-run artifacts
+  #                                  for CI inspection and manual download.
+  #   * workflow.yml            -- runs on `release: published` and does
+  #                                  the actual Trusted Publishing exchange
+  #                                  with PyPI.
+  #
+  # To ship a release: after this workflow finishes on a tag push, create a
+  # GitHub release on the same tag (`gh release create v<version>`) --
+  # workflow.yml will fire and publish to PyPI.
