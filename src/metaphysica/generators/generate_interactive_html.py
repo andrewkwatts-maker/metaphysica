@@ -172,6 +172,10 @@ def generate_euler_characteristic_html() -> str:
 
 def process_formulas():
     """Process formulas.json and add html fields."""
+    if not os.path.exists(FORMULAS_JSON):
+        print(f"  formulas.json not found — skipping interactive HTML generation "
+              f"(run simulations first: pip install metaphysica[sims])")
+        return
 
     print(f"Loading formulas from: {FORMULAS_JSON}")
 

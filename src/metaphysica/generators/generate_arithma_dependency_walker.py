@@ -99,7 +99,12 @@ def _build_chain(fid, formulas, producer_of, seen, depth_cap=12):
 
 def main() -> int:
     ag = autogen_dir()
-    with open(ag / "formulas.json", encoding="utf-8") as fp:
+    formulas_json = ag / "formulas.json"
+    if not formulas_json.exists():
+        print(f"  formulas.json not found — skipping dependency walk "
+              f"(run simulations first: pip install metaphysica[sims])")
+        return 0
+    with open(formulas_json, encoding="utf-8") as fp:
         formulas = json.load(fp).get("formulas", {})
 
     eml_trees = {}

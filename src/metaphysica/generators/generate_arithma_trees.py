@@ -62,8 +62,9 @@ def _classify(latex_str: str) -> str:
 
 def main() -> int:
     if not FORMULAS_JSON.exists():
-        print(f"ERROR: {FORMULAS_JSON} not found. Run the simulation build first.")
-        return 1
+        print(f"  formulas.json not found — skipping Arithma tree generation "
+              f"(run simulations first: pip install metaphysica[sims])")
+        return 0
 
     with open(FORMULAS_JSON, encoding="utf-8") as f:
         data = json.load(f)

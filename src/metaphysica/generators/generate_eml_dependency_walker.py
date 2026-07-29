@@ -153,8 +153,9 @@ def main() -> int:
     out_path      = ag / "eml_dependency_chains.json"
 
     if not formulas_path.exists():
-        print(f"ERROR: {formulas_path} not found. Run the simulation build first.")
-        return 1
+        print(f"  formulas.json not found — skipping EML dependency walk "
+              f"(run simulations first: pip install metaphysica[sims])")
+        return 0
 
     with open(formulas_path, encoding="utf-8") as fp:
         formulas = json.load(fp).get("formulas", {})

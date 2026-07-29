@@ -62,7 +62,11 @@ def _get_expr(formula: dict) -> str | None:
     return None
 
 
-def main() -> None:
+def main() -> int:
+    if not FORMULAS_JSON.exists():
+        print(f"  formulas.json not found — skipping EML tree generation "
+              f"(run simulations first: pip install metaphysica[sims])")
+        return 0
     with open(FORMULAS_JSON, encoding="utf-8") as f:
         data = json.load(f)
 
@@ -122,6 +126,7 @@ def main() -> None:
         print(f"  JS sync: {FLOW_JS_PATH.name} -> {js_target.relative_to(ROOT)}")
     except Exception as exc:
         print(f"  WARN: could not sync eml_flow.js — {exc}")
+    return 0
 
 
 if __name__ == "__main__":
