@@ -96,7 +96,13 @@ def _mk(
 
 
 def beacon_km_unitarity() -> ConsistencyBeacon:
-    """CKM row-1 unitarity: |V_ud|^2 + |V_us|^2 + |V_ub|^2 = 1."""
+    """CKM row-1 unitarity: |V_ud|^2 + |V_us|^2 + |V_ub|^2 = 1.
+
+    Tolerance is tight (0.01% ≈ ppm) because CKM unitarity is a
+    Standard-Model postulate observed to hold to ~5x10^-4 experimentally.
+    Anything larger than 0.01% here would indicate a data-entry drift,
+    not a physics disagreement.
+    """
     V_ud = 0.97435
     V_us = 0.22500
     V_ub = 0.00382
@@ -107,8 +113,8 @@ def beacon_km_unitarity() -> ConsistencyBeacon:
         reference="PDG 2024 CKM review, Eq. 12.16",
         value=row_sum,
         expected=1.0,
-        tolerance=0.5,
-        note="Sum |V_ud|^2 + |V_us|^2 + |V_ub|^2 for the CKM matrix's first row must equal 1.",
+        tolerance=0.01,
+        note="Sum |V_ud|^2 + |V_us|^2 + |V_ub|^2 for the CKM matrix's first row must equal 1 (tolerance 0.01% = ppm-scale).",
     )
 
 
@@ -187,24 +193,32 @@ def beacon_alpha_em_running() -> ConsistencyBeacon:
 
 
 def beacon_jarlskog_bound() -> ConsistencyBeacon:
-    """Jarlskog invariant order-of-magnitude bound.
+    """Jarlskog invariant vs Wolfenstein prediction.
 
-    In the standard KM picture,
-    J_CP ~ epsilon^6 (with epsilon = sin(theta_Cabibbo) ~ 0.223).
-    The bound: J_CP must lie within a factor of ~3 of 0.223^6 ~ 1.24e-4
-    if we're in the standard 3-generation Wolfenstein regime.
+    In the standard Wolfenstein parameterisation
+    J_CP = A^2 * eta * lambda^6
+    with lambda ~ 0.2251, A ~ 0.826, eta ~ 0.357 (PDG 2024). Plugging in
+    gives J_CP_Wolf ~ 3.08e-5 — which matches the direct measurement to
+    within a few percent. This beacon compares the measured PDG J_CP to
+    the Wolfenstein-parameter-derived value; tolerance 5 % is the size
+    of the PDG uncertainty on eta.
     """
-    epsilon = 0.223
-    upper_bound = epsilon ** 4    # loose upper bound
+    lam = 0.2251
+    A = 0.826
+    eta = 0.357
+    J_wolfenstein = (A ** 2) * eta * (lam ** 6)
     J_pdg = 3.08e-5
     return _mk(
         beacon_id="beacon.jarlskog_bound",
-        name="Jarlskog invariant order-of-magnitude bound",
+        name="Jarlskog invariant vs Wolfenstein parameterisation",
         reference="PDG 2024 CKM review, Sec. 12.3; Jarlskog (1985)",
         value=J_pdg,
-        expected=upper_bound / 100.0,   # observed ~ 3e-5, textbook bound scales as eps^6
-        tolerance=100.0,                # loose textbook bound
-        note="PDG J_CP (~3e-5) must sit well below the eps^4 bound (~2.5e-3).",
+        expected=J_wolfenstein,
+        tolerance=5.0,
+        note=(
+            "PDG J_CP compared to Wolfenstein J = A^2 * eta * lambda^6; "
+            "tolerance 5% matches PDG uncertainty on eta."
+        ),
     )
 
 
