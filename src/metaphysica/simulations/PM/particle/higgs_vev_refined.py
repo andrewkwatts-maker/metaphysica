@@ -556,7 +556,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                     ),
                     _arithma_add(
                         _arithma_num(1.0),
-                        _arithma_div(_arithma_num(1.0 / 137.035999084), _arithma_mul(_arithma_num(2.0), _arithma_num(np.pi))),
+                        _arithma_div(_arithma_num(1.0 / 137.035999177), _arithma_mul(_arithma_num(2.0), _arithma_num(np.pi))),  # CODATA 2022
                     ),
                 ),
                 eml=_eml_mul(
@@ -569,11 +569,11 @@ class HiggsVEVRefinedV18(SimulationBase):
                     ),
                     _eml_add(
                         _eml_scalar(1.0),
-                        _eml_div(_eml_scalar(1.0 / 137.035999084), _eml_mul(_eml_scalar(2.0), _eml_pi())),
+                        _eml_div(_eml_scalar(1.0 / 137.035999177), _eml_mul(_eml_scalar(2.0), _eml_pi())),  # CODATA 2022
                     ),
                 ),
                 value=(1.0 / (np.sqrt(2.0) * ((12.0 + 1.0 / np.pi) * 20.0) ** 2))
-                      * (1.0 + (1.0 / 137.035999084) / (2.0 * np.pi)),
+                      * (1.0 + (1.0 / 137.035999177) / (2.0 * np.pi)),  # CODATA 2022
                 triple_rel=1e-9,
             ),
         ]

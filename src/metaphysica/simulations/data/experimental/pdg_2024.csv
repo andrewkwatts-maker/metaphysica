@@ -16,7 +16,7 @@ m_charm,1.27,0.02,,,GeV,PDG2024,quarks,Charm quark mass
 m_bottom,4.18,0.03,,,GeV,PDG2024,quarks,Bottom quark mass
 m_top,172.69,0.30,,,GeV,PDG2024,quarks,Top quark mass
 alpha_s_MZ,0.1180,0.0010,,,dimensionless,PDG2024,couplings,Strong coupling at M_Z
-sin2_theta_W,0.23121,0.00004,,,dimensionless,PDG2024,couplings,Weak mixing angle
+sin2_theta_W,0.23122,0.00003,,,dimensionless,PDG2024,couplings,Weak mixing angle
 m_proton,0.938272088,0.000000058,,,GeV,PDG2024,baryons,Proton mass
 m_neutron,0.939565421,0.000000057,,,GeV,PDG2024,baryons,Neutron mass
 V_ud,0.97367,0.00032,,,dimensionless,PDG2024,ckm_matrix,CKM element Vud

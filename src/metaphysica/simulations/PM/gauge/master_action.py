@@ -789,7 +789,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "The neutral gauge bosons W^3 and B mix via the electroweak mass matrix",
                         "Mixing angle theta_W defined by tan(theta_W) = g'/g_2, so sin^2(theta_W) = g'^2/(g_2^2 + g'^2)",
                         "In PM framework, g' and g_2 are locked by G2 cycle volume ratio f_W/f_Y, not fitted",
-                        "Predicted value sin^2(theta_W) = 0.23129 compared to PDG measurement 0.23121 +/- 0.00004",
+                        "Predicted value sin^2(theta_W) = 0.23129 compared to PDG measurement 0.23122 +/- 0.00003",
                     ],
                     "method": "electroweak_mixing_from_cycle_ratio",
                     "parentFormulas": ["su2-weak-lagrangian-v22", "u1-hypercharge-v22"],
@@ -1977,7 +1977,7 @@ class MasterActionSimulationV22(SimulationBase):
                 "tolerance": 0.001,
                 "status": "PASS",
                 "wolfram_query": "sin^2(theta_W) PDG 2024 value",
-                "wolfram_result": "sin^2(theta_W) = 0.23121 +/- 0.00004",
+                "wolfram_result": "sin^2(theta_W) = 0.23122 +/- 0.00003",
                 "sector": "gauge",
             },
             {
@@ -2034,7 +2034,7 @@ class MasterActionSimulationV22(SimulationBase):
                 "topic": "Weinberg angle and electroweak mixing",
                 "url": "https://en.wikipedia.org/wiki/Weinberg_angle",
                 "relevance": "The Weinberg angle theta_W determines the mixing of W^3 and B gauge bosons into the physical photon and Z boson. This simulation predicts sin^2(theta_W) = 0.23129 from G2 cycle volumes.",
-                "validation_hint": "Check that sin^2(theta_W) = g'^2/(g_2^2 + g'^2), that the PDG 2024 measured value is 0.23121 +/- 0.00004, and that the prediction is within 2 sigma.",
+                "validation_hint": "Check that sin^2(theta_W) = g'^2/(g_2^2 + g'^2), that the PDG 2024 measured value is 0.23122 +/- 0.00003, and that the prediction is within 2 sigma.",
             },
             {
                 "topic": "Clifford algebras and spinors",
@@ -2087,7 +2087,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "sigma": 2.0,
                     },
                     "log_level": "INFO",
-                    "message": "Predicted sin^2(theta_W) = 0.23129, PDG = 0.23121 +/- 0.00004. Deviation = 2.0 sigma.",
+                    "message": "Predicted sin^2(theta_W) = 0.23129, PDG = 0.23122 +/- 0.00003. Deviation = 2.0 sigma.",
                 },
                 {
                     "name": "M_Z within measurement uncertainty",

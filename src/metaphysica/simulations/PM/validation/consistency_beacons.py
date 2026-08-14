@@ -178,7 +178,7 @@ def beacon_alpha_em_running() -> ConsistencyBeacon:
     framework should not be inconsistent with well-measured QED
     running.
     """
-    alpha_thomson_inv = 137.035999084
+    alpha_thomson_inv = 137.035999177  # CODATA 2022
     alpha_MZ_inv = 128.0   # standard PDG value
     ratio = alpha_thomson_inv / alpha_MZ_inv
     return _mk(
@@ -186,7 +186,7 @@ def beacon_alpha_em_running() -> ConsistencyBeacon:
         name="alpha_em Thomson-vs-M_Z running ratio",
         reference="Peskin-Schroeder, Introduction to QFT, Ch. 10; PDG 2024",
         value=ratio,
-        expected=1.070593742,
+        expected=1.070593744,  # 137.035999177/128.0, CODATA 2022
         tolerance=0.5,
         note="Ratio alpha_em(0) / alpha_em(M_Z) ~ 1.071 is a QED-running consistency check.",
     )

@@ -278,12 +278,12 @@ class EstablishedPhysics:
             ),
             EstablishedParameter(
                 path="pdg.sin2_theta_W",
-                value=0.23121,
-                uncertainty=0.00004,
+                value=0.23122,
+                uncertainty=0.00003,
                 units="dimensionless",
                 source="ESTABLISHED:PDG2024",
-                description="Weak mixing angle",
-                eml_description="EML: eml_scalar(0.23121) — weak mixing angle sin²θ_W (PDG 2024)"
+                description="Weak mixing angle sin²θ_W at Z-pole, MS-bar scheme (PDG 2024)",
+                eml_description="EML: eml_scalar(0.23122) — weak mixing angle sin²θ_W (PDG 2024)"
             ),
             # W and Z masses
             EstablishedParameter(

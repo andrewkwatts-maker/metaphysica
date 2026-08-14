@@ -5,7 +5,7 @@ Weak Mixing Angle Derivation v17.2
 The Weak Mixing Angle uses INVERSE CUBIC (Torsion Gate) 1/(1+epsilon)
 because sin^2(theta_W) is a coupling ratio that contracts.
 
-CODATA/SM Value: sin^2(theta_W) = 0.23121 (at Z-pole)
+CODATA/SM Value: sin^2(theta_W) = 0.23122 (MS-bar at Z-pole, PDG 2024)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -22,7 +22,7 @@ from metaphysica.simulations.base import (
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 _REG = get_registry()
-CODATA_WEAK = 0.23121  # sin^2(theta_W) at Z-pole
+CODATA_WEAK = 0.23122  # sin^2(theta_W) at Z-pole, MS-bar (PDG 2024)
 
 
 class WeakMixingV17(SimulationBase):
@@ -129,13 +129,13 @@ class WeakMixingV17(SimulationBase):
                         "Start from the Decad-Cubic Projection Engine: epsilon = 1/(ENNOIA * DECAD^2) = 1/28800",
                         "Compute bulk weak mixing: sin^2(theta_W_bulk) = CODATA_value * (1 + epsilon), the pre-contraction coupling ratio",
                         "Apply inverse cubic contraction: sin^2(theta_W)_manifest = sin^2(theta_W_bulk) / (1 + epsilon), because coupling ratios contract as 3D space expands",
-                        "Verify round-trip: sin^2(theta_W)_manifest = 0.23121 to numerical precision"
+                        "Verify round-trip: sin^2(theta_W)_manifest = 0.23122 to numerical precision"
                     ],
                     "method": "Inverse Cubic Projection (Torsion Gate) via Decad-Cubic Engine",
                     "parentFormulas": ["decad-cubic-epsilon", "torsion-gate-contraction"]
                 },
                 terms={
-                    "sin^2(theta_W)": "Weak mixing angle (manifest, at Z-pole), 0.23121 (PDG 2024: 0.23122 +/- 0.00004)",
+                    "sin^2(theta_W)": "Weak mixing angle (manifest, at Z-pole), 0.23122 (PDG 2024: 0.23122 +/- 0.00003)",
                     "sin^2(theta_W_bulk)": "Weak mixing angle in bulk Pleroma before torsion gate",
                     "epsilon": "Projection parameter 1/28800 ~ 3.4722e-5",
                     "theta_W": "Weinberg angle parametrizing electroweak symmetry breaking"

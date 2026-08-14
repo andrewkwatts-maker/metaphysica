@@ -329,18 +329,17 @@ class AlphaRigorSolver:
 
     def derive_alpha_inverse(self) -> float:
         """
-        Derives the inverse fine structure constant using pure geometry.
+        Returns the inverse fine structure constant from the numerological formula.
 
-        v17.2: Uses the Geometric Anchors formula with NO magic numbers.
+        Formula: α⁻¹ = k_gimel² - b3/φ + φ/(4π) ≈ 137.0367
 
-        Formula: α⁻¹ = k_gimel² - b3/φ + φ/(4π) = 137.0367...
-
-        This is an HONEST derivation that does NOT reverse-engineer
-        from experimental data. The ~0.0007 deviation from CODATA
-        (137.035999084) represents genuine predictive precision.
+        Status: NUMEROLOGICAL_FIT — see derive_alpha_inverse_geometric() and
+        module docstring for detailed assessment.  The formula matches CODATA
+        2022 (137.035999177) to ~0.0005% but has no derivation from QFT,
+        spectral geometry, or M-theory compactification.
 
         Returns:
-            float: The derived value of alpha^-1 (≈ 137.0367)
+            float: α⁻¹ ≈ 137.0367 (numerological fit)
         """
         return self.derive_alpha_inverse_geometric()
 

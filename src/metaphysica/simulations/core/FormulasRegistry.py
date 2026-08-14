@@ -1296,7 +1296,7 @@ class FormulasRegistry:
         #   - Total: 24 core + 1 time + 2 sampler = (24,1,2)
         #
         # Generation formula (per shadow):
-        #   n_gen = chi_eff / (4 * b3) = 144 / 48 = 3
+        #   n_gen = chi_eff / (2 * b3) = 144 / 48 = 3
         #   (From per-shadow G2 compactification)
         #
         # Dark Energy (breathing mechanism):
@@ -2150,7 +2150,7 @@ class FormulasRegistry:
         This should equal alpha_inverse since it's the same physical quantity.
 
         Geometric derivation gives: α⁻¹ = 137.0367...
-        CODATA 2022: 1/α = 137.035999084(21)
+        CODATA 2022: 1/α = 137.035999177(21)
         Deviation: ~0.0007 (about 33σ using CODATA uncertainty)
 
         Note: This is an HONEST derivation from pure geometry, not
@@ -2188,7 +2188,7 @@ class FormulasRegistry:
     CODATA_AVOGADRO = 6.02214076e23         # mol⁻¹ (exact)
     CODATA_FARADAY = 96485.33212            # C mol⁻¹
     CODATA_MOLAR_GAS = 8.314462618          # J mol⁻¹ K⁻¹ (exact)
-    CODATA_WEAK_MIXING = 0.23121            # sin²θ_W at Z-pole
+    CODATA_WEAK_MIXING = 0.23122            # sin²θ_W at Z-pole, MS-bar (PDG 2024)
 
     @property
     def bulk_compton_wavelength(self) -> float:

@@ -84,8 +84,8 @@
     },
     "weak_interaction": {
       "sin2_theta_W": {
-        "value": 0.23121,
-        "uncertainty": 0.00004,
+        "value": 0.23122,
+        "uncertainty": 0.00003,
         "units": "dimensionless",
         "source": "PDG2024",
         "description": "Weak mixing angle (on-shell)"

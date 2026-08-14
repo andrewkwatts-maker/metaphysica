@@ -63,8 +63,8 @@ except ImportError:
 EXPERIMENTAL_VALUES = {
     # Electroweak (PDG 2024 Review)
     "sin2_theta_W": {
-        "value": 0.23121,
-        "uncertainty": 0.00004,
+        "value": 0.23122,
+        "uncertainty": 0.00003,
         "source": "PDG 2024 (MS-bar, Z-pole)",
         "description": "Weak mixing angle sin^2(theta_W)"
     },
@@ -258,7 +258,7 @@ def get_pm_parameters(registry: Optional['FormulasRegistry'] = None) -> Dict[str
         gamma_s = 0.5772156649
         holonomy_eff = holonomy_base * (1 + gamma_s / b3)
         mass_ratio = (c_kaf**2) * (demiurgic_coupling / math.pi) / holonomy_eff
-        weak_mixing = 0.23121 * (1.0 + 1.0/(288 * 100))
+        weak_mixing = 0.23122 * (1.0 + 1.0/(288 * 100))
 
     # ==========================================================================
     # SEED PARAMETERS (Level 0) - Topological inputs from G2 manifold

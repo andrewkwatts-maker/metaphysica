@@ -99,7 +99,7 @@ DIM_U1 = 1          # dim(U(1))
 
 # Physical Constants (PDG 2024)
 ALPHA_S_MZ = Decimal('0.1179')          # Strong coupling at M_Z
-SIN2_THETA_W = Decimal('0.23121')       # Weinberg angle
+SIN2_THETA_W = Decimal('0.23122')       # Weinberg angle, MS-bar at M_Z (PDG 2024)
 M_Z_GEV = Decimal('91.1876')            # Z boson mass
 M_W_GEV = Decimal('80.377')             # W boson mass
 V_HIGGS_GEV = Decimal('246.22')         # Higgs VEV
@@ -597,7 +597,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             ElectroweakMixingDerivation with complete derivation results
         """
         # Weinberg angle from geometry + RG running
-        sin2_theta_w = SIN2_THETA_W  # 0.23121
+        sin2_theta_w = SIN2_THETA_W  # 0.23122
         cos2_theta_w = Decimal('1') - sin2_theta_w
         sin_theta_w = sin2_theta_w.sqrt()
         cos_theta_w = cos2_theta_w.sqrt()
@@ -1318,10 +1318,10 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             description="sin^2(theta_W) = 0.2312 from 12/24 shadow tilt + RG running",
             eml_description="Weinberg mixing angle sin^2(theta_W) = (12/b3) * f_RG derived from the shadow tilt ratio of visible gauge generators to total G2 Betti number",
             derivation_formula="ew-weinberg-angle-v19",
-            experimental_bound=0.23121,
+            experimental_bound=0.23122,
             bound_type="measured",
             bound_source="PDG2024",
-            uncertainty=0.00004
+            uncertainty=0.00003
         ))
 
         params.append(Parameter(
@@ -1690,7 +1690,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             {
                 "id": "CERT_WEINBERG_ANGLE",
                 "assertion": "Weinberg angle sin^2(theta_W) = 0.2312 from 12/24 shadow tilt with RG running",
-                "condition": "abs(sin2_theta_w - 0.23121) < 0.001",
+                "condition": "abs(sin2_theta_w - 0.23122) < 0.001",
                 "tolerance": 0.001,
                 "status": "PASS",
                 "wolfram_query": "weak mixing angle sin^2 theta_W PDG value",
@@ -1865,13 +1865,13 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         # Check 3: Weinberg angle within PDG uncertainty
         sin2tw = float(ew.sin2_theta_w)
-        ew_ok = abs(sin2tw - 0.23121) < 0.001
+        ew_ok = abs(sin2tw - 0.23122) < 0.001
         checks.append({
             "name": "Weinberg angle sin^2(theta_W) matches PDG",
             "passed": ew_ok,
             "confidence_interval": {"lower": 0.23081, "upper": 0.23161, "sigma": 1.0},
             "log_level": "INFO" if ew_ok else "WARNING",
-            "message": f"sin^2(theta_W) = {sin2tw:.5f} (PDG: 0.23121 +/- 0.00004)"
+            "message": f"sin^2(theta_W) = {sin2tw:.5f} (PDG: 0.23122 +/- 0.00003)"
         })
 
         # Check 4: Total gauge generators = 12

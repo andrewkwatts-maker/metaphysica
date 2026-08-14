@@ -453,7 +453,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     coupling_data = [
         (57, "alpha_em", 1/137.036, 1/137.036, 5e-10, "Fine structure constant"),
         (58, "alpha_s", 0.1179, 0.1179, 0.0009, "Strong coupling at M_Z"),
-        (59, "sin2_theta_W", 0.23121, 0.23121, 0.00004, "Weak mixing angle"),
+        (59, "sin2_theta_W", 0.23122, 0.23122, 0.00003, "Weak mixing angle"),
         (60, "G_F", 1.1663788e-5, 1.1663788e-5, 6e-12, "Fermi constant (GeV^-2)"),
     ]
 

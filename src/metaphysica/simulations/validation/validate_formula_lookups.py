@@ -192,7 +192,7 @@ def find_hardcoded_values(html_content: str) -> List[Tuple[int, str, str]]:
         "-0.8528": "dark_energy_w0",
         "23.54": "alpha_GUT_inv",
         "1/23.54": "alpha_GUT_inv",
-        "0.23121": "sin2_theta_W",
+        "0.23122": "sin2_theta_W",
         "172.7": "top_quark_mass",
         "125.1": "higgs_mass",
         "5.0 TeV": "kk_graviton_mass",

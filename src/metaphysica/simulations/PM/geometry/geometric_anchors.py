@@ -262,9 +262,9 @@ class GeometricAnchorsSimulation(SimulationBase):
                 plain_text="alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi) - D_G2/(10^4 - 3*k_gimel) = 137.035999",
                 category="DERIVED",
                 description=(
-                    "Inverse fine structure constant from geometric anchors (v22.5 Exact Alignment). "
-                    "The 7D suppression delta = D_G2/(10^4 - 3*k_gimel) arises from projecting G2 "
-                    "holonomy onto 4D, with 3 generations coupling through k_gimel. "
+                    "NUMEROLOGICAL_FIT: Inverse fine structure constant from geometric anchors (v22.5). "
+                    "The 4th term D_G2/(10^4 - 3*k_gimel) was added to cancel the 3-term residual; "
+                    "the denominator 10^4 has no known derivation from QFT or M-theory (see alpha_rigor.py). "
                     "CODATA 2022: 137.035999177. PM v22.5: 137.035999179 (rel. err: 1.7e-11)."
                 ),
                 derivation={
@@ -1486,8 +1486,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                 path="geometry.alpha_inverse",
                 name="Inverse Fine Structure Constant",
                 units="dimensionless",
-                status="DERIVED",
-                description="alpha^-1 derived from G2 topology: k_gimel^2 - b3/phi + phi/(4*pi) - D_G2/(10^4 - 3*k_gimel). v22.5 alignment yields 137.035999179 vs CODATA 2022: 137.035999177 (relative error: 1.7e-11).",
+                status="CALIBRATED",
+                description="NUMEROLOGICAL_FIT: alpha^-1 formula k_gimel^2 - b3/phi + phi/(4*pi) - D_G2/(10^4 - 3*k_gimel) yields 137.035999179 vs CODATA 2022 137.035999177 (rel. err. 1.7e-11). The 4th-term denominator 10^4 was chosen to cancel the 3-term residual; no QFT or M-theory derivation of this structure exists. See alpha_rigor.py for full assessment.",
                 derivation_formula="alpha-inverse-anchor",
                 experimental_bound=137.035999177,  # alpha inverse (CODATA 2022 full)
                 bound_type="measured",

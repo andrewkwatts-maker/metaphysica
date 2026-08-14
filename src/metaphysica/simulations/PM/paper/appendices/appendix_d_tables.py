@@ -176,7 +176,7 @@ class AppendixDParameterTables(SimulationBase):
             {"name": "Muon Mass", "symbol": "m_μ", "value": 0.1057, "uncertainty": 0.00000001, "units": "GeV", "source": "PDG 2024"},
             {"name": "Electron Mass", "symbol": "m_e", "value": 0.000511, "uncertainty": 0.000000001, "units": "GeV", "source": "PDG 2024"},
             {"name": "Strong Coupling", "symbol": "α_s(M_Z)", "value": 0.1180, "uncertainty": 0.0010, "units": "dimensionless", "source": "PDG 2024"},  # alpha_s at M_Z (PDG)
-            {"name": "Weak Mixing Angle", "symbol": "sin²θ_W(M_Z)", "value": 0.23121, "uncertainty": 0.00004, "units": "dimensionless", "source": "PDG 2024"},
+            {"name": "Weak Mixing Angle", "symbol": "sin²θ_W(M_Z)", "value": 0.23122, "uncertainty": 0.00003, "units": "dimensionless", "source": "PDG 2024"},
             {"name": "CKM θ₁₂", "symbol": "θ₁₂^CKM", "value": 13.04, "uncertainty": 0.05, "units": "degrees", "source": "PDG 2024"},
             {"name": "CKM θ₂₃", "symbol": "θ₂₃^CKM", "value": 2.38, "uncertainty": 0.06, "units": "degrees", "source": "PDG 2024"},
             {"name": "CKM θ₁₃", "symbol": "θ₁₃^CKM", "value": 0.201, "uncertainty": 0.011, "units": "degrees", "source": "PDG 2024"},

@@ -380,7 +380,7 @@ def test_eml_deferred_classification_via_source_simulation(
         },
         # Control: non-deferred sim with EML tree → fully_derived.
         "constants.alpha_em": {
-            "value": 1 / 137.035999084,
+            "value": 1 / 137.035999177,  # CODATA 2022
             "source": "alpha_geometric_v23",
             "eml_tree": "EML: eml_scalar(1/137.036)",
             "status": "DERIVED",

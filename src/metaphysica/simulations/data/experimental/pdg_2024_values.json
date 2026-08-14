@@ -124,8 +124,8 @@
       "description": "Fine structure constant at M_Z (1/127.95)"
     },
     "sin2_theta_W": {
-      "value": 0.23121,
-      "uncertainty": 0.00004,
+      "value": 0.23122,
+      "uncertainty": 0.00003,
       "units": "dimensionless",
       "description": "Weak mixing angle"
     }
@@ -186,10 +186,10 @@
   },
   "gauge": {
     "sin2_theta_W": {
-      "value": 0.23121,
-      "uncertainty": 0.00004,
+      "value": 0.23122,
+      "uncertainty": 0.00003,
       "units": "dimensionless",
-      "description": "Weak mixing angle (on-shell)"
+      "description": "Weak mixing angle (MS-bar, Z-pole, PDG 2024)"
     },
     "sin2_theta_W_gut": {
       "value": 0.375,

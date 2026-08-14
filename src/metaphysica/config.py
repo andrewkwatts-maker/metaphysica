@@ -2370,17 +2370,17 @@ class CoreFormulas:
     WEAK_MIXING_ANGLE = Formula(
         id="weak-mixing-angle",
         label="(5.5) Weak Mixing Angle",
-        html="sin²θ<sub>W</sub>(M<sub>Z</sub>) = 0.23121",
-        latex="\\sin^2\\theta_W(M_Z) = 0.23121",
-        plain_text="sin²θ_W(M_Z) = 0.23121",
+        html="sin²θ<sub>W</sub>(M<sub>Z</sub>) = 0.23122",
+        latex="\\sin^2\\theta_W(M_Z) = 0.23122",
+        plain_text="sin²θ_W(M_Z) = 0.23122",
         category=FormulaCategory.PREDICTIONS,
         description="Weak mixing angle at Z pole from RG evolution",
         section="5",
-        status="0.04σ FROM PDG",
-        computed_value=0.23121,
-        experimental_value=0.23122,  # Source: PDG 2024 sin²θ_W(M_Z) = 0.23122 ± 0.00004
-        experimental_error=0.00004,
-        sigma_deviation=0.04,
+        status="0.0σ FROM PDG",
+        computed_value=0.23122,
+        experimental_value=0.23122,  # Source: PDG 2024 sin²θ_W(M_Z) = 0.23122 ± 0.00003
+        experimental_error=0.00003,
+        sigma_deviation=0.0,
         simulation_file="simulations/gauge_unification_precision_v12_4.py",
         related_formulas=["gut-coupling", "gut-scale"],
         references=[

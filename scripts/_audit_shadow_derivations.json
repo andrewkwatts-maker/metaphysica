@@ -8,8 +8,8 @@
   },
   "observable_groups_checked": 8,
   "n_conflicts": 0,
-  "n_consistent": 6,
-  "n_insufficient": 2,
+  "n_consistent": 7,
+  "n_insufficient": 1,
   "shadow_conflicts": [],
   "consistent_observables": [
     {
@@ -17,8 +17,8 @@
       "values": {
         "nufit.theta_13": 8.54,
         "geometry.theta_13": 8.54,
-        "neutrino.theta_13_pred": 8.647304725338865,
-        "pmns.theta_13_triality": 8.647304725338865,
+        "neutrino.theta_13_pred": 8.647304725338863,
+        "pmns.theta_13_triality": 8.647304725338863,
         "particle.theta_13_deg": 8.668576499284981
       },
       "max_pct_diff": 1.483248135326343,
@@ -55,17 +55,29 @@
       "skipped": {}
     },
     {
+      "observable": "H0_local",
+      "values": {
+        "geometry.H0_local": 73.04,
+        "cosmology.H0_resolved_km_s_Mpc": 73.0400000000035
+      },
+      "max_pct_diff": 4.786240772096831e-12,
+      "tolerance_pct": 2.0,
+      "tolerance_used": 2.0,
+      "verdict": "CONSISTENT",
+      "skipped": {}
+    },
+    {
       "observable": "m_higgs",
       "values": {
         "pdg.m_higgs": 125.1,
+        "particle.m_h_GeV": 125.07986037465686,
         "higgs.m_higgs_local": 125.10242591991029
       },
-      "max_pct_diff": 0.0019391469769317984,
+      "max_pct_diff": 0.018037656014660067,
       "tolerance_pct": 2.0,
       "tolerance_used": 2.0,
       "verdict": "CONSISTENT",
       "skipped": {
-        "particle.m_h_GeV": "not_in_registry",
         "higgs.m_h": "not_in_registry"
       }
     },
@@ -95,17 +107,6 @@
     }
   ],
   "insufficient_data": [
-    {
-      "observable": "H0_local",
-      "values": {
-        "geometry.H0_local": 73.04
-      },
-      "skipped": {
-        "cosmology.H0_resolved_km_s_Mpc": "not_in_registry"
-      },
-      "tolerance_used": 2.0,
-      "verdict": "INSUFFICIENT_DATA"
-    },
     {
       "observable": "S8",
       "values": {
