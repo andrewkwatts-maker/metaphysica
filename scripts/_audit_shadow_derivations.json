@@ -69,11 +69,11 @@
     {
       "observable": "m_higgs",
       "values": {
-        "pdg.m_higgs": 125.1,
+        "pdg.m_higgs": 125.2,
         "particle.m_h_GeV": 125.07986037465686,
         "higgs.m_higgs_local": 125.10242591991029
       },
-      "max_pct_diff": 0.018037656014660067,
+      "max_pct_diff": 0.09595816720698291,
       "tolerance_pct": 2.0,
       "tolerance_used": 2.0,
       "verdict": "CONSISTENT",
