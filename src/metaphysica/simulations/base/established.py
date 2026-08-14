@@ -176,8 +176,8 @@ class EstablishedPhysics:
             # Higgs boson
             EstablishedParameter(
                 path="pdg.m_higgs",
-                value=125.10,
-                uncertainty=0.14,
+                value=125.20,
+                uncertainty=0.11,
                 units="GeV",
                 source="ESTABLISHED:PDG2024",
                 description="Higgs boson mass",

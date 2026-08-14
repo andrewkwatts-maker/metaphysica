@@ -906,23 +906,23 @@ class HiggsMassSimulation(SimulationBase):
                 status="CALIBRATED",
                 description=(
                     "Higgs mass computed using phenomenologically constrained Re(T). "
-                    "This uses the experimental value m_h = 125.10 GeV as input to fix "
+                    "This uses the experimental value m_h = 125.20 GeV (PDG 2024) as input to fix "
                     "Re(T) = 9.865, then verifies consistency."
                 ),
                 eml_description="EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(v_yukawa, eml_scalar(2.0)), lambda_eff_pheno))) — Higgs mass from phenomenological moduli",
                 derivation_formula="higgs-mass",
-                experimental_bound=125.25,  # Higgs mass (PDG 2024)
+                experimental_bound=125.20,  # Higgs mass (PDG 2024)
                 bound_type="measured",
                 bound_source="PDG 2024 (ATLAS+CMS combined)",
-                uncertainty=0.17,
+                uncertainty=0.11,
                 theory_uncertainty=4.0,  # Missing 2-loop QCD: O(alpha_s * y_t^2) shifts m_h by 3-5 GeV
                 validation={
-                    "experimental_value": 125.25,
-                    "uncertainty": 0.17,
+                    "experimental_value": 125.20,
+                    "uncertainty": 0.11,
                     "bound_type": "measured",
                     "status": "FAIL",
                     "source": "PDG2024",
-                    "notes": "PDG2024: m_h = 125.25 ± 0.17 GeV (ATLAS+CMS combined). PM phenomenological: 739.7 GeV (FAIL). This is INPUT not prediction."
+                    "notes": "PDG2024: m_h = 125.20 ± 0.11 GeV (ATLAS+CMS combined). PM phenomenological: 739.7 GeV (FAIL). This is INPUT not prediction."
                 }
             ),
             Parameter(
@@ -996,7 +996,7 @@ class HiggsMassSimulation(SimulationBase):
                 path="higgs.lambda_eff_pheno",
                 name="Effective Quartic (Phenomenological)",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "Effective Higgs quartic coupling with moduli corrections, using "
                     "phenomenologically constrained Re(T) = 9.865."

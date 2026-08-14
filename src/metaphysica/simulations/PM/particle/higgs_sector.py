@@ -129,8 +129,8 @@ _M_Z_GEV: float = 91.1876
 _DELTA_RADIATIVE_GEV: float = 87.5
 
 # Observed Higgs mass (PDG 2024; ATLAS+CMS combined).
-_M_H_OBSERVED_GEV: float = 125.10
-_M_H_OBSERVED_UNCERTAINTY_GEV: float = 0.14
+_M_H_OBSERVED_GEV: float = 125.20
+_M_H_OBSERVED_UNCERTAINTY_GEV: float = 0.11
 
 
 class HiggsSector:

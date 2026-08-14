@@ -165,7 +165,7 @@ class AppendixDParameterTables(SimulationBase):
         return [
             {"name": "Z Boson Mass", "symbol": "m_Z", "value": 91.188, "uncertainty": 0.002, "units": "GeV", "source": "PDG 2024"},
             {"name": "W Boson Mass", "symbol": "m_W", "value": 80.3692, "uncertainty": 0.0133, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Higgs Mass", "symbol": "m_h", "value": 125.25, "uncertainty": 0.17, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Higgs Mass", "symbol": "m_h", "value": 125.20, "uncertainty": 0.11, "units": "GeV", "source": "PDG 2024"},
             {"name": "Top Quark Mass", "symbol": "m_t", "value": 172.69, "uncertainty": 0.30, "units": "GeV", "source": "PDG 2024"},
             {"name": "Bottom Quark Mass", "symbol": "m_b(m_b)", "value": 4.18, "uncertainty": 0.03, "units": "GeV", "source": "PDG 2024"},
             {"name": "Charm Quark Mass", "symbol": "m_c(m_c)", "value": 1.27, "uncertainty": 0.02, "units": "GeV", "source": "PDG 2024"},

@@ -1045,7 +1045,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.V_cb",
                 name="CKM Matrix Element V_cb",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "c-b quark transition amplitude. Predicted as V_cb ~ A*epsilon^2 "
                     "~ 0.040 from second generation geometric overlap. "
@@ -1132,7 +1132,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.jarlskog_invariant",
                 name="Jarlskog Invariant J",
                 units="dimensionless",
-                status="PREDICTED",
+                status="FITTED",
                 description=(
                     "Rephasing-invariant measure of CP violation in quark sector. "
                     "Predicted as J ~ 3e-5 from topological CP phase delta_CP ~ pi/6 "
@@ -1167,7 +1167,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.A_wolfenstein",
                 name="Wolfenstein Parameter A",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "Wolfenstein A parameter derived from geometric overlap "
                     "coefficient. Geometric derivation parameter, no direct experimental measurement."
@@ -1180,7 +1180,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.rho_wolfenstein",
                 name="Wolfenstein Parameter rho",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "Real Wolfenstein parameter rho. Emerges from geometric "
                     "CP phase structure. Geometric derivation parameter from unitarity triangle."
@@ -1193,7 +1193,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.eta_wolfenstein",
                 name="Wolfenstein Parameter eta",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "Imaginary Wolfenstein parameter eta. Controls CP violation "
                     "magnitude, derived from topological phase delta_CP ~ pi/6. "
@@ -1207,7 +1207,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.delta_cp",
                 name="CP-Violating Phase",
                 units="radians",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
                     "CP-violating phase in CKM matrix. Emerges as delta_CP ~ pi/6 ~ 30 degrees "
                     "from K=4 topological matching fibres in TCS G2 manifold. "

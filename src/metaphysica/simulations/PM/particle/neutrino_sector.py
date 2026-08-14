@@ -15,7 +15,7 @@ Physics basis
   :mod:`metaphysica.simulations.PM.particle.neutrino_mixing` and the
   Yukawa derivation in :mod:`yukawa_derivation`), so the sum-mass derives
   directly from the lightest-state seed ``m_lightest`` plus the measured
-  splittings ``Δm21²`` (≈ 7.5e-5 eV²) and ``Δm31²`` (≈ 2.5e-3 eV²).
+  splittings ``Δm21²`` (≈ 7.42e-5 eV²) and ``Δm31²`` (≈ 2.510e-3 eV², NuFIT 6.0 NO).
 - A *minimal* Z₂ mirror-sector correction — controlled by the existing
   bridge coupling that already enters the dark-matter relic and proof
   ledger — is included as an optional relaxation term. It introduces
@@ -80,11 +80,11 @@ DEFAULT_M_LIGHTEST: float = 1.0e-3
 DEFAULT_BRIDGE_COUPLING: float = 1.2e-10
 
 #: Solar mass-squared splitting Δm21² in eV². NuFIT 6.0 central value.
-DELTA_M21_SQ: float = 7.5e-5
+DELTA_M21_SQ: float = 7.42e-5
 
-#: Atmospheric mass-squared splitting Δm31² (inverted-ordering magnitude),
-#: in eV². NuFIT 6.0 central value.
-DELTA_M31_SQ: float = 2.5e-3
+#: Atmospheric mass-squared splitting Δm31² (normal-ordering magnitude),
+#: in eV². NuFIT 6.0 central value (NO: 2.510e-3; IO: |Δm32²| = 2.404e-3).
+DELTA_M31_SQ: float = 2.510e-3
 
 #: Mirror-correction prefactor. Tuned so that the canonical
 #: ``g_b · 10¹⁰ = 1.2`` yields an O(0.018 eV) shift, sufficient to drop

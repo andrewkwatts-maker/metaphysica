@@ -313,7 +313,7 @@ if SCHEMA_AVAILABLE:
                     path="fermion.mass_ratio_proton_electron",
                     name="Proton-Electron Mass Ratio",
                     units="dimensionless",
-                    status="PREDICTED",
+                    status="FITTED",
                     description=(
                         f"Proton-electron mass ratio derived from G2 cycle volumes: "
                         f"m_p/m_e = {result['derived_ratio']:.8f}. "

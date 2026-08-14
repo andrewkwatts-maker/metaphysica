@@ -167,8 +167,8 @@ class HiggsBranePartitionSimulation(SimulationBase):
     """
 
     # Experimental target
-    M_HIGGS_EXPERIMENTAL = 125.25  # GeV (PDG 2024, ATLAS+CMS combined)
-    M_HIGGS_UNCERTAINTY = 0.17     # GeV
+    M_HIGGS_EXPERIMENTAL = 125.20  # GeV (PDG 2024, ATLAS+CMS combined)
+    M_HIGGS_UNCERTAINTY = 0.11     # GeV
 
     def __init__(self):
         """Initialize the Higgs brane-partition simulation."""

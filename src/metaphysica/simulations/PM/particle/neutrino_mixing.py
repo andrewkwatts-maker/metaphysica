@@ -218,7 +218,7 @@ class NeutrinoMixingSimulation(SimulationBase):
         'delta_cp_NO': (232.0, 36.0, 26.0),  # degrees, +σ, -σ (Normal Ordering)
         'delta_cp_IO': (278.0, 22.0, 30.0),  # degrees, +σ, -σ (Inverted Ordering)
         'dm2_21': (7.42e-5, 0.21e-5, 0.20e-5),  # eV², +σ, -σ (same for NO and IO)
-        'dm2_31_NO': (2.515e-3, 0.028e-3, 0.028e-3),  # eV², +σ, -σ (Normal Ordering)
+        'dm2_31_NO': (2.510e-3, 0.028e-3, 0.028e-3),  # eV², +σ, -σ (Normal Ordering, NuFIT 6.0)
         'dm2_32_IO': (-2.498e-3, 0.028e-3, 0.029e-3),  # eV², +σ, -σ (Inverted Ordering)
     }
 
@@ -1529,7 +1529,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.theta_12_pred",
                 name="Solar Mixing Angle theta_12",
                 units="degrees",
-                status="PREDICTED",
+                status="FITTED",
                 description=MetadataBuilder.angle_description(
                     "theta_12", theta_12_pred, nufit_theta_12[0], nufit_theta_12[1], "NuFIT 6.0"
                 ),
@@ -1556,7 +1556,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.theta_13_pred",
                 name="Reactor Mixing Angle theta_13",
                 units="degrees",
-                status="PREDICTED",
+                status="FITTED",
                 description=MetadataBuilder.angle_description(
                     "theta_13", theta_13_pred, nufit_theta_13_io[0], nufit_theta_13_io[1], "NuFIT 6.0 IO"
                 ),
@@ -1583,7 +1583,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.theta_23_pred",
                 name="Atmospheric Mixing Angle theta_23",
                 units="degrees",
-                status="PREDICTED",
+                status="FITTED",
                 description=MetadataBuilder.angle_description(
                     "theta_23", theta_23_pred, nufit_theta_23_io[0], nufit_theta_23_io[1], "NuFIT 6.0 IO"
                 ),
@@ -1610,7 +1610,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.delta_CP_pred",
                 name="CP-Violating Phase delta_CP",
                 units="degrees",
-                status="PREDICTED",
+                status="FITTED",
                 description=MetadataBuilder.delta_cp_description(
                     delta_cp_pred, nufit_delta_cp_io[0], nufit_delta_cp_io[1], "NuFIT 6.0 IO", 45.9
                 ),
@@ -1694,16 +1694,16 @@ class NeutrinoMixingSimulation(SimulationBase):
                 ),
                 derivation_formula="neutrino-mass-sum",
                 eml_description="EML: ops.add(eml_vec('neutrino.m1'), ops.add(eml_vec('neutrino.m2'), eml_vec('neutrino.m3'))) — Σmᵢ cosmological neutrino mass bound",
-                experimental_bound=0.12,
-                uncertainty=0.05,
+                experimental_bound=0.072,
+                uncertainty=0.015,
                 bound_type="upper",
-                bound_source="Planck2018+DESI2024",
+                bound_source="DESI2024+CMB",
                 validation={
-                    "experimental_value": 0.12,
+                    "experimental_value": 0.072,
                     "bound_type": "upper",
-                    "status": "PASS",
-                    "source": "Planck2018+DESI2024",
-                    "notes": "Planck 2018: Σm_ν < 0.12 eV (95% CL). DESI 2024 + CMB: Σm_ν < 0.072 eV (95% CL). PM prediction ~0.10 eV is below Planck bound but may have mild tension with DESI constraint."
+                    "status": "FAIL",
+                    "source": "DESI2024+CMB",
+                    "notes": "DESI 2024 + CMB: Σm_ν < 0.072 eV (95% CL). Planck 2018 alone: < 0.12 eV. PM prediction ~0.10 eV exceeds the DESI 2024 ceiling by ~1.9σ. This is a genuine tension, not a pass."
                 }
             ),
             Parameter(
@@ -1765,7 +1765,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Mass hierarchy: NORMAL (m1 < m2 < m3) or INVERTED (m3 < m1 < m2)",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Ordering is a preference, not a direct measurement
-                eml_description="EML: eml_scalar('NO') — Normal Ordering from G₂ holonomy topology (positive hierarchy)",
+                eml_description="EML: eml_scalar('IO') — Inverted Ordering predicted by G₂ holonomy topology; see line 1515 comment.",
                 validation={
                     "bound_type": "preference",
                     "status": "PENDING",

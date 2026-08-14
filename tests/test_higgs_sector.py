@@ -43,8 +43,8 @@ from metaphysica.simulations.PM.particle.higgs_sector import (
 
 
 # Observed Higgs mass from PDG 2024 (ATLAS+CMS combined).
-_M_H_OBSERVED_GEV: float = 125.10
-_M_H_OBSERVED_UNCERTAINTY_GEV: float = 0.14
+_M_H_OBSERVED_GEV: float = 125.20
+_M_H_OBSERVED_UNCERTAINTY_GEV: float = 0.11
 
 # Electroweak VEV in the Yukawa convention (v_EW / sqrt(2) = 174 GeV).
 _V_EW_GEV: float = 174.0

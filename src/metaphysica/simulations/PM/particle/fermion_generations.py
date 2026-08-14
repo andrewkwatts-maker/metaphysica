@@ -718,10 +718,11 @@ class FermionGenerationsV16(SimulationBase):
                 path="fermion.n_generations",
                 name="Number of Generations",
                 units="dimensionless",
-                status="PREDICTED",
+                status="ANSATZ",
                 description=(
-                    "Number of fermion generations derived from G2 topology via spinor "
-                    "saturation. Computed as n_gen = N_flux / spinor_DOF = 24 / 8 = 3."
+                    "ANSATZ: spinor_DOF = 8 was chosen so that b3/spinor_DOF = 24/8 = 3 "
+                    "reproduces the observed number of generations; the input is not derived "
+                    "independently of the desired output. See module docstring for full assessment."
                 ),
                 eml_description="EML: ops.div(ops.div(eml_scalar(144.0), eml_scalar(6.0)), eml_scalar(8.0)) — chi_eff flux then spinor saturation",
                 derivation_formula="generation-number",

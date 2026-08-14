@@ -1,17 +1,17 @@
 {
   "name": "m_higgs",
   "canonical_path": "pdg.m_higgs",
-  "value": 125.1,
+  "value": 125.2,
   "units": null,
-  "uncertainty": 0.14,
+  "uncertainty": 0.11,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
   "description": null,
-  "eml_expression": "EML: eml_scalar(125.1) — Higgs boson mass in GeV (PDG 2024)",
+  "eml_expression": "EML: eml_scalar(125.2) — Higgs boson mass in GeV (PDG 2024)",
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:16:35.847145+00:00",
+    "generated_at": "2026-08-14T04:29:21.998577+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

@@ -5,7 +5,7 @@ G_NEWTON,6.70883e-39,3e-44,,,GeV^-2,PDG2024,fundamental_constants,Newton's gravi
 HBAR,6.582119569e-25,1e-33,,,GeV·s,PDG2024,fundamental_constants,Reduced Planck constant
 m_W,80.3692,0.0133,,,GeV,PDG2024,gauge_bosons,W boson mass (world average)
 m_Z,91.1876,0.0021,,,GeV,PDG2024,gauge_bosons,Z boson mass
-m_higgs,125.10,0.14,,,GeV,PDG2024,gauge_bosons,Higgs boson mass
+m_higgs,125.20,0.11,,,GeV,PDG2024,gauge_bosons,Higgs boson mass (ATLAS+CMS combined)
 m_electron,0.5109989461e-3,3.1e-12,,,GeV,PDG2024,leptons,Electron mass
 m_muon,105.6583745e-3,2.4e-6,,,GeV,PDG2024,leptons,Muon mass
 m_tau,1.77686,0.00012,,,GeV,PDG2024,leptons,Tau mass

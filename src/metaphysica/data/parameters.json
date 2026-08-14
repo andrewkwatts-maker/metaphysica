@@ -112,15 +112,15 @@
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
     },
     "pdg.m_higgs": {
-      "value": 125.1,
+      "value": 125.2,
       "source": "ESTABLISHED:PDG2024",
-      "uncertainty": 0.14,
+      "uncertainty": 0.11,
       "status": "ESTABLISHED",
       "timestamp": "2026-04-27T20:18:39.182848",
       "metadata": {
         "description": "Higgs boson mass",
         "units": "GeV",
-        "eml_description": "EML: eml_scalar(125.1) \u2014 Higgs boson mass in GeV (PDG 2024)"
+        "eml_description": "EML: eml_scalar(125.2) \u2014 Higgs boson mass in GeV (PDG 2024)"
       },
       "experimental_value": 125.1,
       "experimental_uncertainty": 0.14,
@@ -128,7 +128,7 @@
       "bound_type": "measured",
       "sigma_deviation": 0.0,
       "validation_status": "PASS",
-      "eml_description": "EML: eml_scalar(125.1) \u2014 Higgs boson mass in GeV (PDG 2024)",
+      "eml_description": "EML: eml_scalar(125.2) \u2014 Higgs boson mass in GeV (PDG 2024)",
       "source_simulation": "ESTABLISHED:PDG2024",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
@@ -1042,9 +1042,9 @@
       "status": "ESTABLISHED",
       "timestamp": "2026-04-27T20:18:39.188648",
       "metadata": {
-        "description": "Re(T) constrained by m_H = 125.10 GeV (phenomenological input)",
+        "description": "Re(T) constrained by m_H = 125.20 GeV (phenomenological input)",
         "units": "dimensionless",
-        "eml_description": "EML: eml_scalar(9.865) \u2014 Re(T) constrained by m_H = 125.10 GeV with v_yukawa = 174 GeV (observational constraint)"
+        "eml_description": "EML: eml_scalar(9.865) \u2014 Re(T) constrained by m_H = 125.20 GeV with v_yukawa = 174 GeV (observational constraint)"
       },
       "experimental_value": 9.865,
       "experimental_uncertainty": 0.1,
@@ -1052,7 +1052,7 @@
       "bound_type": "measured",
       "sigma_deviation": 0.0,
       "validation_status": "PASS",
-      "eml_description": "EML: eml_scalar(9.865) \u2014 Re(T) constrained by m_H = 125.10 GeV with v_yukawa = 174 GeV (observational constraint)",
+      "eml_description": "EML: eml_scalar(9.865) \u2014 Re(T) constrained by m_H = 125.20 GeV with v_yukawa = 174 GeV (observational constraint)",
       "source_simulation": "CONSTRAINED:HIGGS_MASS",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
@@ -6582,11 +6582,11 @@
       "timestamp": "2026-04-27T20:18:39.870374",
       "metadata": {
         "units": "GeV",
-        "description": "Higgs mass computed using phenomenologically constrained Re(T). This uses the experimental value m_h = 125.10 GeV as input to fix Re(T) = 9.865, then verifies consistency.",
+        "description": "Higgs mass computed using phenomenologically constrained Re(T). This uses the experimental value m_h = 125.20 GeV (PDG 2024) as input to fix Re(T) = 9.865, then verifies consistency.",
         "theory_uncertainty": 4.0,
         "eml_description": "EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(v_yukawa, eml_scalar(2.0)), lambda_eff_pheno))) \u2014 Higgs mass from phenomenological moduli"
       },
-      "experimental_value": 125.25,
+      "experimental_value": 125.20,
       "experimental_uncertainty": 0.17,
       "experimental_source": "PDG 2024 (ATLAS+CMS combined)",
       "bound_type": "measured",
@@ -6716,7 +6716,7 @@
       "metadata": {
         "units": "dimensionless",
         "description": "Status of moduli stabilization: RESOLVED if phenomenological calculation matches experiment, NEEDS_REVIEW otherwise.",
-        "eml_description": "EML: eml_vec('is_ghost_free') \u2014 moduli stabilization status: RESOLVED when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.25))), eml_scalar(1.0))"
+        "eml_description": "EML: eml_vec('is_ghost_free') \u2014 moduli stabilization status: RESOLVED when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.20))), eml_scalar(1.0))"
       },
       "experimental_value": null,
       "experimental_uncertainty": null,
@@ -6724,7 +6724,7 @@
       "bound_type": null,
       "sigma_deviation": null,
       "validation_status": "NO_DATA",
-      "eml_description": "EML: eml_vec('is_ghost_free') \u2014 moduli stabilization status: RESOLVED when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.25))), eml_scalar(1.0))",
+      "eml_description": "EML: eml_vec('is_ghost_free') \u2014 moduli stabilization status: RESOLVED when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.20))), eml_scalar(1.0))",
       "source_simulation": "higgs_mass_v16_0",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
@@ -6784,7 +6784,7 @@
         "description": "Observable Higgs mass as 4D brane projection of bulk tension. M_H_local = M_H_bulk / (k_gimel/\u03c0/\u03b7) = 414.2/3.31 = 125.1 GeV",
         "eml_description": "EML: ops.div(M_H_bulk, ops.div(ops.div(k_gimel, eml_pi()), eta)) \u2014 4D brane-projected Higgs mass (FITTED: 3 free params for 1 output)"
       },
-      "experimental_value": 125.25,
+      "experimental_value": 125.20,
       "experimental_uncertainty": 0.17,
       "experimental_source": "PDG2024",
       "bound_type": "measured",
@@ -6891,8 +6891,8 @@
       "timestamp": "2026-04-27T20:18:39.901073",
       "metadata": {
         "units": "dimensionless",
-        "description": "Standard deviation from PDG 2024 measurement: |M_local - 125.25| / 0.17",
-        "eml_description": "EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.25))), eml_scalar(0.17)) \u2014 sigma = |M_local \u2212 125.25| / 0.17 vs PDG 2024"
+        "description": "Standard deviation from PDG 2024 measurement: |M_local - 125.20| / 0.11",
+        "eml_description": "EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.20))), eml_scalar(0.11)) \u2014 sigma = |M_local \u2212 125.20| / 0.11 vs PDG 2024"
       },
       "experimental_value": null,
       "experimental_uncertainty": null,
@@ -6900,7 +6900,7 @@
       "bound_type": null,
       "sigma_deviation": null,
       "validation_status": "NO_DATA",
-      "eml_description": "EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.25))), eml_scalar(0.17)) \u2014 sigma = |M_local \u2212 125.25| / 0.17 vs PDG 2024",
+      "eml_description": "EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.20))), eml_scalar(0.11)) \u2014 sigma = |M_local \u2212 125.20| / 0.11 vs PDG 2024",
       "source_simulation": "higgs_brane_partition_v16_2",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
