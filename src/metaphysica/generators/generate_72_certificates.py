@@ -263,11 +263,11 @@ DERIVATION_STATUS = {
     48: "DERIVED",      # DERIVED - From moduli decay
     49: "DERIVED",      # DERIVED - Tensor-to-scalar ratio
     50: "DERIVED",      # DERIVED - From holographic bound
-    51: "DERIVED",      # DERIVED - c from dimensional analysis
-    52: "DERIVED",      # DERIVED - From M_Pl
-    53: "DERIVED",      # DERIVED - From M_Pl
-    54: "DERIVED",      # DERIVED - From RS geometry
-    55: "DERIVED",      # DERIVED - From kRc
+    51: "INPUT",        # INPUT - QM axiom (unitary evolution); in NOT_TESTABLE_GATES; not derived from PM topology
+    52: "INPUT",        # INPUT - Thermodynamic axiom (second law); in NOT_TESTABLE_GATES; not derivable from PM
+    53: "INPUT",        # INPUT - Relativistic axiom (v<=c); in NOT_TESTABLE_GATES; standard physics input
+    54: "INPUT",        # INPUT - CPT invariance; in NOT_TESTABLE_GATES; foundational symmetry assumption
+    55: "INPUT",        # INPUT - QM axiom (decoherence threshold); in NOT_TESTABLE_GATES; interpretation boundary
 
     # Phase 5: Dimensional & Logical Closure (G56-G72) - Mostly GEOMETRIC
     56: "RIGOROUS",     # GEOMETRIC - Bosonic string theory

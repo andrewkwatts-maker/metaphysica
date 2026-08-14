@@ -92,17 +92,16 @@ class StatisticalRigorValidator:
         Generate the 125×27 Jacobian matrix representing how each of the
         125 physical constants depends on the 27 ancestral dimensions.
 
-        In the full implementation, this would be computed by perturbing
-        the 27D G₂ manifold parameters and observing changes in the 125
-        output constants.
-
-        For now, we use a topologically-motivated surrogate based on:
-        - Bridge structure: 12×(2,0) = 24D
-        - Sampler data fields: S^{2,0} = 2D
-        - Time fiber: (0,1) = 1D
+        STUB: Entries are drawn from np.random.uniform, not computed by
+        perturbing real PM manifold parameters.  SVD rank and correlation
+        results derived from this matrix are therefore artefacts of the
+        random seed, not properties of the physics.  In a real implementation
+        each entry J[i,d] should be the numerical derivative
+        dO_i/dθ_d evaluated at the nominal parameter point via finite
+        differences on the actual simulation chain.
 
         Returns:
-            125×27 Jacobian matrix
+            125×27 Jacobian matrix (STUB - random placeholder entries)
         """
         logger.info("Generating 125×27 Jacobian matrix...")
 
@@ -251,7 +250,11 @@ class StatisticalRigorValidator:
             - Baker & Cousins (1984), "Clarification of use of chi-square"
             - Gemini Session 3: "EDOF Rigorous Justification" (2026-02-14)
         """
-        # Rigorous count per Gemini guidance: b₃, φ, θ₁₃
+        # ANSATZ: EDOF=3 is a judgment (b₃, φ, θ₁₃ are the proposed independent
+        # seeds) not a numerical computation.  The claim that all other parameters
+        # are derived from these three is the theory's central assertion; accepting
+        # it as proven would beg the question.  A genuine EDOF estimate would
+        # require computing the rank of the real Jacobian (see generate_jacobian_matrix).
         return 3
 
     def calculate_p_value_with_edof(self) -> Dict[str, Any]:
@@ -649,6 +652,18 @@ class StatisticalRigorValidator:
             "framework": "Principia Metaphysica v24.1",
             "test_date": datetime.now().isoformat(),
             "test_name": "Statistical Rigor Validation with Effective DOF (EDOF)",
+            "scaffold_notes": {
+                "jacobian_stub": (
+                    "The 125x27 Jacobian is populated with random uniform entries, not "
+                    "numerical derivatives of real PM observables.  SVD rank (full=27) and "
+                    "correlation results are artefacts of the random seed, not physics."
+                ),
+                "edof_ansatz": (
+                    "EDOF=3 is a qualitative judgment (b3, phi, theta_13 as independent seeds), "
+                    "not computed from the Jacobian rank.  The p-value and chi-squared results "
+                    "depend entirely on this hardcoded value and should be treated as illustrative."
+                ),
+            },
             "edof_analysis": edof_results,
             "theory_uncertainty_correction_deprecated": uncertainty_results,
             "summary": {

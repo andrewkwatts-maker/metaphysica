@@ -75,16 +75,20 @@ class FalsificationOracle:
         These are the "bets" the theory makes on experimental outcomes.
         """
         return {
-            # ALP (Axion-Like Particle) - THE PRINCIPIA METRIC
-            # This is THE primary falsifiability kill-switch for the entire framework
+            # ALP (Axion-Like Particle) - PRIMARY FALSIFIABILITY TEST
+            # LABEL: SPECULATIVE ANSATZ - m_a and g_agg are not uniquely derived
+            # from the M27 topology; they are estimates chosen to fall within
+            # near-future experimental reach.  If IAXO/BabyIAXO excludes this
+            # mass/coupling region it constrains the EIS sector, but non-detection
+            # cannot falsify the full framework without an independent derivation.
             "ALP_Principia_Metric": {
                 "name": "The Principia Metric",
                 "mass_eV": 3.51e-3,  # 3.51 meV
                 "mass_uncertainty_eV": 0.02e-3,  # ±0.02 meV
                 "coupling_g_agg_GeV_inv": 1.0e-11,  # ~10⁻¹¹ GeV⁻¹
                 "source": "M²⁷ → M⁴ vacuum residue, Euclidean Information Sector (S_EIS)",
-                "derivation": "Unavoidable consequence of (24+1)⊕(0,2) decomposition",
-                "falsification_status": "CRITICAL - This is the Eddington Eclipse moment",
+                "derivation": "SPECULATIVE ANSATZ: estimated from EIS sector topology; not a unique prediction of the (24+1)⊕(0,2) decomposition",
+                "falsification_status": "TESTABLE within BabyIAXO/IAXO window (2025-2028)",
                 "timeline": "2025-2028 (IAXO/BabyIAXO detection window)"
             },
 
@@ -430,13 +434,13 @@ class FalsificationOracle:
             "experimental_timeline": self.experimental_timeline,
             "peer_review_response": {
                 "principia_metric_statement": (
-                    "THE PRINCIPIA METRIC: This framework predicts a topologically induced ALP at "
-                    "m_a = 3.51 ± 0.02 meV with coupling g_aγγ ~ 10⁻¹¹ GeV⁻¹. This is not a tunable "
-                    "parameter—it is the unavoidable consequence of the M²⁷ → M⁴ dimensional projection "
-                    "and the (24+1)⊕(0,2) decomposition. BabyIAXO (2025) and IAXO (2028) will test this "
-                    "prediction. If they exclude this mass range at the predicted coupling strength, "
-                    "the G₂ compactification framework is falsified. This is the 'Eddington Eclipse' "
-                    "moment for Principia Metaphysica."
+                    "THE PRINCIPIA METRIC (SPECULATIVE ANSATZ): This framework estimates a "
+                    "topologically motivated ALP at m_a = 3.51 ± 0.02 meV with coupling "
+                    "g_aγγ ~ 10⁻¹¹ GeV⁻¹. These values are estimated from EIS sector topology "
+                    "and fall within BabyIAXO/IAXO sensitivity (2025-2028), making this the "
+                    "primary near-term experimental test. Note: m_a and g_agg are not uniquely "
+                    "fixed by the M²⁷ decomposition; non-detection would constrain the EIS sector "
+                    "but an independent derivation is needed to elevate this to a firm prediction."
                 ),
                 "falsifiability_criterion": (
                     f"This theory makes {len(kill_switches)} predictions testable within 5 years, "

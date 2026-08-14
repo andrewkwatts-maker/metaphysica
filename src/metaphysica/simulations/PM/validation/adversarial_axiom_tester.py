@@ -3,15 +3,16 @@
 Adversarial Axiom Tester - v24.1 Principia Metaphysica
 =======================================================
 
-Attempts to falsify the 'Unity Identity' by searching for 27D manifold
-configurations that satisfy topological constraints but violate
-Standard Model residue mappings.
+SCAFFOLD STATUS: This module is a structural placeholder.  The holonomy
+constraints in spectral_loss() are constructed specifically to keep the
+manifold configuration near the target alpha_inv value, so a "0% failure
+rate" result is a consequence of the search design, not evidence of
+topological stability.  The _load_registry() method returns synthetic
+logspace data, not actual PM residue values.  Until those two items are
+replaced with real physics, reports generated here should be treated as
+illustrative only, not as validation evidence.
 
-This is a "Red Team" approach to mathematical validation - actively trying
-to break the Unity Identity to prove it's a global attractor, not a
-cherry-picked result.
-
-Purpose:
+Original purpose:
     Stochastic search for "Shadow States" that violate the 125-residue registry.
     If the identity holds under random perturbations, the "circularity" criticism
     is disproven by the model's inherent stability.
@@ -55,7 +56,8 @@ class AdversarialAxiomTester:
         Initialize the adversarial tester.
 
         Args:
-            target_alpha_inv: CODATA 2018 fine structure constant inverse
+            target_alpha_inv: CODATA 2022 fine structure constant inverse
+                (PDG 2024: alpha^-1 = 137.035999177; CODATA 2022 value)
         """
         self.target_alpha_inv = target_alpha_inv
         self.target_alpha = 1.0 / target_alpha_inv
@@ -75,16 +77,14 @@ class AdversarialAxiomTester:
         """
         Load the 125-residue registry from PM framework.
 
-        In the full implementation, this would load from theory_output.json.
-        For now, we use topologically-derived values.
+        STUB: Returns synthetic logspace placeholder values spanning QCD to
+        Planck scale.  In a real implementation this should load actual PM
+        residue values from theory_output.json or parameters.json and verify
+        that each entry corresponds to a computed physical observable.  The
+        current placeholder is NOT used in the adversarial search logic; it
+        exists only to reserve the interface.
         """
-        # Residue structure from PM v24.2:
-        # - 55 pure predictions (geometric)
-        # - 3 calibration inputs
-        # - 2 fitted PMNS
-        # - 65 established/measured
-
-        # Geometric residues span from QCD scale to Planck scale
+        # STUB PLACEHOLDER - not actual PM residues; replace with real data
         residues = np.logspace(-3, 19, 125)  # GeV
         return residues
 
@@ -131,7 +131,8 @@ class AdversarialAxiomTester:
         # Represents the vacuum polarization screening effect
         k_rad = 1 + (alpha_s_z / np.pi)
 
-        # Base geometric reduction factor (from G₂ descent dynamics)
+        # Base geometric reduction factor (ANSATZ - tuned so that
+        # 144 * k_geometric_base ≈ 137; not derived from G₂ topology)
         k_geometric_base = 0.9514
 
         # Apply radiative correction: the screening effect divides the baseline
@@ -482,8 +483,15 @@ class AdversarialAxiomTester:
             "test_date": "2026-02-22",
             "target_value": {
                 "alpha_inv_codata": self.target_alpha_inv,
-                "source": "CODATA 2018"
+                "source": "CODATA 2022 / PDG 2024"
             },
+            "scaffold_note": (
+                "SCAFFOLD: _load_registry() returns synthetic logspace data, not PM residues. "
+                "k_geometric_base=0.9514 is an ansatz tuned to reproduce alpha_inv~137, "
+                "not derived from G2 topology. Holonomy constraints are designed to keep "
+                "configurations near the target, so the failure rate is not an independent "
+                "test of topological stability. Results are illustrative only."
+            ),
             "topology": {
                 "manifold": "M²⁷(24,1,2)",
                 "structure": "12×(2,0) + S^(2,0) + (0,1)",
