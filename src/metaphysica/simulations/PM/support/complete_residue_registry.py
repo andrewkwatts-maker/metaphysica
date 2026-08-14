@@ -118,9 +118,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
         lambda_n=k_gimel * 3.26,  # ~ 40.2
         category=ResidueCategory.GAUGE_BOSON,
         particle="W+",
-        mass_gev=80.377,
-        experimental_mass=80.377,
-        uncertainty=0.012,
+        mass_gev=80.3692,
+        experimental_mass=80.3692,
+        uncertainty=0.0133,
         description="W+ boson from SU(2)_L symmetry breaking"
     )
 
@@ -129,9 +129,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
         lambda_n=k_gimel * 3.26,
         category=ResidueCategory.GAUGE_BOSON,
         particle="W-",
-        mass_gev=80.377,
-        experimental_mass=80.377,
-        uncertainty=0.012,
+        mass_gev=80.3692,
+        experimental_mass=80.3692,
+        uncertainty=0.0133,
         description="W- boson from SU(2)_L symmetry breaking"
     )
 
@@ -1920,21 +1920,21 @@ class CompleteResidueRegistryV18(SimulationBase):
         # Check 5: W boson mass within PDG range
         # ------------------------------------------------------------------
         w_boson = self.get_residue(2)
-        w_dev = abs(w_boson.mass_gev - 80.377) if w_boson else float('inf')
-        w_sigma = w_dev / 0.012 if w_boson else float('inf')
+        w_dev = abs(w_boson.mass_gev - 80.3692) if w_boson else float('inf')
+        w_sigma = w_dev / 0.0133 if w_boson else float('inf')
         w_ok = w_boson is not None and w_dev < 0.1
         checks.append({
             "name": "w_boson_mass_within_pdg",
             "passed": w_ok,
             "confidence_interval": {
-                "lower": 80.377 - 0.012,
-                "upper": 80.377 + 0.012,
+                "lower": 80.3692 - 0.0133,
+                "upper": 80.3692 + 0.0133,
                 "sigma": round(w_sigma, 2) if np.isfinite(w_sigma) else None
             },
             "log_level": "WARNING" if not w_ok else "INFO",
             "message": (
                 f"W boson registry mass: {w_boson.mass_gev if w_boson else 'N/A'} GeV "
-                f"(PDG 2024: 80.377 +/- 0.012 GeV, deviation: {w_sigma:.1f} sigma)."
+                f"(PDG 2024: 80.3692 +/- 0.0133 GeV, deviation: {w_sigma:.1f} sigma)."
             )
         })
 

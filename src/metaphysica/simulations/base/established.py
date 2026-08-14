@@ -288,12 +288,12 @@ class EstablishedPhysics:
             # W and Z masses
             EstablishedParameter(
                 path="pdg.m_W",
-                value=80.377,
-                uncertainty=0.012,
+                value=80.3692,
+                uncertainty=0.0133,
                 units="GeV",
                 source="ESTABLISHED:PDG2024",
-                description="W boson mass",
-                eml_description="EML: eml_scalar(80.377) — W boson mass in GeV (PDG 2024)"
+                description="W boson mass (PDG 2024 world average, excluding CDF 2022)",
+                eml_description="EML: eml_scalar(80.3692) — W boson mass in GeV (PDG 2024)"
             ),
             EstablishedParameter(
                 path="pdg.m_Z",

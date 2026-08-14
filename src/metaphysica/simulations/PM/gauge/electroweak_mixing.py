@@ -92,8 +92,8 @@ class ElectroweakMixing:
 
         # On-shell definition: sin²θ_W = 1 - M_W²/M_Z²
         # This is the tree-level relation used for mass calculations
-        # From experimental masses: sin²θ_W = 1 - (80.377/91.1876)² = 0.22305
-        self.sin2_theta_W = Decimal('0.22305')  # On-shell value for mass calculation
+        # From experimental masses: sin²θ_W = 1 - (80.3692/91.1876)² = 0.22320 (PDG 2024)
+        self.sin2_theta_W = Decimal('0.22320')  # On-shell value for mass calculation
         self.cos2_theta_W = Decimal('1') - self.sin2_theta_W
         self.sin_theta_W = self.sin2_theta_W.sqrt()
         self.cos_theta_W = self.cos2_theta_W.sqrt()
@@ -109,8 +109,8 @@ class ElectroweakMixing:
         self.delta_rho = Decimal('0.0094')  # Top quark loop correction
 
         # Couplings derived from experimental masses for consistency
-        # g_2 = 2 × M_W / v = 2 × 80.377 / 246.37 = 0.6525
-        self.g_2 = Decimal('0.6525')  # Weak coupling (from M_W)
+        # g_2 = 2 × M_W / v = 2 × 80.3692 / 246.37 = 0.6524 (PDG 2024)
+        self.g_2 = Decimal('0.6524')  # Weak coupling (from M_W)
         self.g_prime = self.g_2 * (self.sin_theta_W / self.cos_theta_W)
 
     def compute_pre_breaking_kinetics(self) -> Dict[str, str]:
@@ -183,7 +183,7 @@ class ElectroweakMixing:
 
         # Experimental values for comparison
         m_Z_exp = Decimal('91.1876')
-        m_W_exp = Decimal('80.377')
+        m_W_exp = Decimal('80.3692')  # PDG 2024
 
         return {
             'm_photon': Decimal('0'),
@@ -571,7 +571,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                 ),
                 "validation_hint": (
                     "Verify sin^2(theta_W) = 0.23122 (MS-bar at M_Z) matches PDG 2024. "
-                    "Check that the on-shell value 0.22305 = 1 - (M_W/M_Z)^2 is distinct."
+                    "Check that the on-shell value 0.22320 = 1 - (80.3692/91.1876)^2 is distinct (PDG 2024)."
                 ),
             },
             {
@@ -596,7 +596,7 @@ class ElectroweakMixingSimulation(SimulationBase):
         m_Z_pred = float(eigen["m_Z"])
         m_W_pred = float(eigen["m_W"])
         m_Z_exp = 91.1876  # Z boson mass (PDG)
-        m_W_exp = 80.377
+        m_W_exp = 80.3692  # PDG 2024
 
         z_err = abs(m_Z_pred - m_Z_exp) / m_Z_exp
         w_err = abs(m_W_pred - m_W_exp) / m_W_exp
@@ -810,7 +810,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "parentFormulas": ["ew-mass-matrix", "ew-weinberg-angle"],
                 },
                 terms={
-                    "m_W": "W boson mass, ~ 80.377 GeV (PDG 2024)",
+                    "m_W": "W boson mass, 80.3692 GeV (PDG 2024)",
                     "m_Z": "Z boson mass, 91.1876 GeV (PDG 2024)",
                     "v": "Higgs VEV, 246.37 GeV",
                 },
@@ -829,7 +829,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                 status="DERIVED",
                 description=(
                     "On-shell weak mixing angle defined as 1 - M_W^2/M_Z^2. "
-                    "Value 0.22305 derived from experimental boson masses."
+                    "Value 0.22320 derived from PDG 2024 boson masses: 1 - (80.3692/91.1876)^2."
                 ),
                 derivation_formula="ew-weinberg-angle",
                 experimental_bound=0.23122,
@@ -874,7 +874,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "v = 246.37 GeV and weak coupling g_2 = 0.6525."
                 ),
                 derivation_formula="ew-boson-masses",
-                experimental_bound=80.377,
+                experimental_bound=80.3692,
                 bound_type="measured",
                 bound_source="PDG2024",
                 uncertainty=0.012,

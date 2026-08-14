@@ -94,7 +94,7 @@ class SU2WeakGauge:
         self.normalization_k = Decimal('2.0')
 
         # Weinberg angle prediction
-        self.sin2_theta_W = Decimal('0.23129')
+        self.sin2_theta_W = Decimal('0.23122')  # PDG 2024 MS-bar at M_Z
 
     def compute_weak_field_strength(self) -> Dict[str, str]:
         """
@@ -455,7 +455,7 @@ class SU2WeakGaugeSimulation(SimulationBase):
                 "details": {
                     "gauge_group": "SU(2)_L",
                     "boson_count": 3,
-                    "sin2_theta_W": 0.23129,
+                    "sin2_theta_W": 0.23122,
                     "chirality": "left-handed only (V-A)",
                 },
             },
@@ -629,16 +629,18 @@ class SU2WeakGaugeSimulation(SimulationBase):
                 path="gauge.su2_sin2_theta_W",
                 name="Weinberg Angle from G2 Cycles",
                 units="dimensionless",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
-                    "Weak mixing angle sin^2(theta_W) = 0.23129 determined by the ratio of "
-                    "G2 cycle volumes r_W / r_Y. Locked by geometry, not a free parameter."
+                    "ANSATZ: Weak mixing angle sin^2(theta_W) = 0.23122 asserted from the "
+                    "ratio of G2 cycle volumes r_W / r_Y. No analytic derivation of this ratio "
+                    "from moduli exists in this module; the value is set to match PDG 2024 "
+                    "(0.23122 +/- 0.00003, MS-bar at Z-pole)."
                 ),
                 derivation_formula="su2-chiral-coupling",
                 experimental_bound=0.23122,
                 bound_type="central_value",
                 bound_source="PDG2024",
-                uncertainty=0.00004,
+                uncertainty=0.00003,
                 eml_description=(
                     "ops.div(ops.pow(eml_vec('g_prime'), eml_scalar(2.0)), "
                     "ops.add(ops.pow(eml_vec('g_2'), eml_scalar(2.0)), ops.pow(eml_vec('g_prime'), eml_scalar(2.0)))) "
@@ -712,7 +714,7 @@ class SU2WeakGaugeSimulation(SimulationBase):
                     type="paragraph",
                     content=(
                         "After electroweak symmetry breaking by the Higgs mechanism, W^1 and W^2 "
-                        "combine into charged W+/- bosons with mass M_W = 80.377 GeV, while W^3 "
+                        "combine into charged W+/- bosons with mass M_W = 80.3692 GeV, while W^3 "
                         "mixes with the U(1)_Y boson B to form the massive Z boson and the massless "
                         "photon. The mixing angle is precisely the Weinberg angle theta_W."
                     ),

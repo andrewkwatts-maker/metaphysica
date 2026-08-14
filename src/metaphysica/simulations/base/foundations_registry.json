@@ -329,8 +329,8 @@
       "category": "particle_masses",
       "year": 2024,
       "author": "PDG 2024",
-      "latex": "m_W = 80.377(12) \\text{ GeV/c}^2",
-      "description": "W boson mass from Particle Data Group.",
+      "latex": "m_W = 80.3692(133) \\text{ GeV/c}^2",
+      "description": "W boson mass from Particle Data Group (PDG 2024 world average).",
       "source": "PDG 2024",
       "references": ["https://pdg.lbl.gov/"]
     },

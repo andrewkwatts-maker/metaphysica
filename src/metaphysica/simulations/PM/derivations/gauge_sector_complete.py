@@ -101,7 +101,7 @@ DIM_U1 = 1          # dim(U(1))
 ALPHA_S_MZ = Decimal('0.1179')          # Strong coupling at M_Z
 SIN2_THETA_W = Decimal('0.23122')       # Weinberg angle, MS-bar at M_Z (PDG 2024)
 M_Z_GEV = Decimal('91.1876')            # Z boson mass
-M_W_GEV = Decimal('80.377')             # W boson mass
+M_W_GEV = Decimal('80.3692')            # W boson mass (PDG 2024)
 V_HIGGS_GEV = Decimal('246.22')         # Higgs VEV
 
 # Gell-Mann Matrices Normalization

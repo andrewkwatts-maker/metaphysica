@@ -34,10 +34,10 @@
   },
   "gauge_bosons": {
     "m_W": {
-      "value": 80.377,
-      "uncertainty": 0.012,
+      "value": 80.3692,
+      "uncertainty": 0.0133,
       "units": "GeV",
-      "description": "W boson mass"
+      "description": "W boson mass (PDG 2024 world average)"
     },
     "m_Z": {
       "value": 91.1876,

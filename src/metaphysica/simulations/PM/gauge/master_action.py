@@ -1437,10 +1437,10 @@ class MasterActionSimulationV22(SimulationBase):
                 units="GeV",
                 status="DERIVED",
                 description="M_W from electroweak symmetry breaking",
-                experimental_bound=80.377,
+                experimental_bound=80.3692,
                 bound_type="measured",
                 bound_source="PDG2024",
-                uncertainty=0.012,
+                uncertainty=0.0133,
                 eml_description=(
                     "EML: ops.div(ops.mul(eml_vec('g_2'), eml_vec('v')), eml_scalar(2.0)) "
                     "— M_W = g_2 * v / 2 from SU(2)_L symmetry breaking."

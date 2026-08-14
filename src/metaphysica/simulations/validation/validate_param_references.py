@@ -94,7 +94,7 @@ BUILTIN_ELECTROWEAK = {
     'v_higgs': 246.22,
     'v_ew': 246.22,
     'm_z': 91.1876,
-    'm_w': 80.377
+    'm_w': 80.3692
 }
 
 
