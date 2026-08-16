@@ -74,3 +74,6 @@ wheelhouse/
 # Rust backend
 target/
 Cargo.lock
+
+# Dev-time visual-regression screenshots (large PNGs, local only)
+/visual_candidate_smoke/
