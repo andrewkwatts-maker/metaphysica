@@ -94,6 +94,37 @@ class EstablishedPhysics:
         cls._load_theory_constants(registry)
         cls._load_codata_values(registry)
 
+    # ------------------------------------------------------------------
+    # SSOT helpers: the experimental JSONs under simulations/data/
+    # experimental/ are authoritative. The literals passed as fallbacks
+    # exist ONLY for environments where the loader can't run — every
+    # value below should be read through these, never typed inline.
+    # ------------------------------------------------------------------
+
+    @classmethod
+    def _pdg(cls, category: str, name: str,
+             fb_value: float, fb_unc: float) -> tuple:
+        """(value, uncertainty) from pdg_2024_values.json via the loader."""
+        if DATA_LOADER_AVAILABLE:
+            try:
+                d = get_loader().get_pdg(category, name)
+                return d.value, (d.uncertainty if d.uncertainty is not None else fb_unc)
+            except Exception:
+                pass
+        return fb_value, fb_unc
+
+    @classmethod
+    def _nufit(cls, name: str, ordering: str,
+               fb_value: float, fb_unc: float) -> tuple:
+        """(value, uncertainty) from nufit JSON (NuFIT 5.2-era; see file metadata)."""
+        if DATA_LOADER_AVAILABLE:
+            try:
+                d = get_loader().get_nufit(name, ordering)
+                return d.value, (d.uncertainty if d.uncertainty is not None else fb_unc)
+            except Exception:
+                pass
+        return fb_value, fb_unc
+
     @classmethod
     def _load_constants(cls, registry: 'PMRegistry') -> None:
         """Load fundamental constants (Planck mass, alpha_em, etc.).
@@ -110,204 +141,75 @@ class EstablishedPhysics:
             This should be compared against codata.M_PLANCK (full), NOT constants.M_PLANCK (reduced).
             The 97.65σ error occurred when comparing 1.2207e19 against 2.435e18 (wrong quantity).
         """
-        if CONFIG_AVAILABLE:
-            M_PLANCK = getattr(PhenomenologyParameters, 'M_PLANCK_REDUCED', 2.435e18)
-            ALPHA_EM = getattr(PhenomenologyParameters, 'ALPHA_EM', 1/137.036)
-        else:
-            M_PLANCK = 2.435e18
-            ALPHA_EM = 1/137.036
-
-        params = [
-            EstablishedParameter(
-                path="constants.M_PLANCK",
-                value=M_PLANCK,
-                uncertainty=3.0e15,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Reduced Planck mass (M_Pl / sqrt(8*pi)) - INPUT for 26D string tension",
-                eml_description="EML: eml_scalar(2.435e18) — reduced Planck mass M_Pl/√(8π) in GeV (input)"
-            ),
-            EstablishedParameter(
-                path="constants.alpha_em",
-                value=ALPHA_EM,
-                uncertainty=1.5e-10,
-                units="dimensionless",
-                source="ESTABLISHED:CODATA2018",
-                description="Fine structure constant",
-                eml_description="EML: eml_scalar(7.2973525693e-3) — fine structure constant α ≈ 1/137 (CODATA 2018 input)"
-            ),
-            EstablishedParameter(
-                path="constants.m_proton",
-                value=0.938272,
-                uncertainty=0.000001,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Proton mass",
-                eml_description="EML: eml_scalar(0.938272) — proton mass in GeV (PDG 2024 input)"
-            ),
-            # Additional fundamental constants
-            EstablishedParameter(
-                path="constants.HBAR",
-                value=6.582119569e-25,  # GeV·s
-                uncertainty=1e-33,
-                units="GeV·s",
-                source="ESTABLISHED:CODATA2018",
-                description="Reduced Planck constant",
-                eml_description="EML: eml_scalar(6.582119569e-25) — reduced Planck constant ℏ in GeV·s (CODATA 2018 input)"
-            ),
-            EstablishedParameter(
-                path="constants.G_NEWTON",
-                value=6.70883e-39,  # GeV^-2 (in natural units)
-                uncertainty=3e-44,
-                units="GeV^-2",
-                source="ESTABLISHED:CODATA2018",
-                description="Newton's gravitational constant",
-                eml_description="EML: eml_scalar(6.70883e-39) — Newton's gravitational constant G in GeV⁻² (CODATA 2018 input)"
-            ),
+        # SSOT: values read from pdg_2024_values.json (fundamental_constants /
+        # baryons categories); literals are offline fallbacks only.
+        table = [
+            ("constants.M_PLANCK", "fundamental_constants", "M_PLANCK_REDUCED", "GeV",
+             "Reduced Planck mass (M_Pl / sqrt(8*pi)) - INPUT for the bulk string tension",
+             2.435e18, 3.0e15),
+            ("constants.alpha_em", "fundamental_constants", "alpha_em", "dimensionless",
+             "Fine structure constant (CODATA 2022)",
+             7.2973525643e-3, 1.1e-12),
+            ("constants.m_proton", "baryons", "m_proton", "GeV",
+             "Proton mass",
+             0.93827208943, 2.9e-10),
+            ("constants.HBAR", "fundamental_constants", "HBAR", "GeV·s",
+             "Reduced Planck constant (exact since 2019 SI redefinition)",
+             6.582119569e-25, 0.0),
+            ("constants.G_NEWTON", "fundamental_constants", "G_NEWTON", "GeV^-2",
+             "Newton's gravitational constant",
+             6.70883e-39, 1.5e-43),
         ]
 
-        for param in params:
-            cls._register_param(registry, param)
+        for path, category, name, units, desc, fb_value, fb_unc in table:
+            value, unc = cls._pdg(category, name, fb_value, fb_unc)
+            cls._register_param(registry, EstablishedParameter(
+                path=path,
+                value=value,
+                uncertainty=unc,
+                units=units,
+                source="ESTABLISHED:PDG2024",
+                description=desc,
+                eml_description=f"EML: eml_scalar({value:g}) — {desc} ({units}; from pdg_2024_values.json)"
+            ))
 
     @classmethod
     def _load_pdg_values(cls, registry: 'PMRegistry') -> None:
-        """Load PDG 2024 experimental values."""
-        params = [
-            # Higgs boson
-            EstablishedParameter(
-                path="pdg.m_higgs",
-                value=125.20,
-                uncertainty=0.11,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Higgs boson mass",
-                eml_description="EML: eml_scalar(125.1) — Higgs boson mass in GeV (PDG 2024)"
-            ),
-            # Leptons
-            EstablishedParameter(
-                path="pdg.m_electron",
-                value=0.5109989461e-3,
-                uncertainty=3.1e-12,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Electron mass",
-                eml_description="EML: eml_scalar(0.000511) — electron mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_muon",
-                value=105.6583745e-3,
-                uncertainty=2.4e-6,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Muon mass",
-                eml_description="EML: eml_scalar(0.1057) — muon mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_tau",
-                value=1.77686,
-                uncertainty=0.00012,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Tau mass",
-                eml_description="EML: eml_scalar(1.77686) — tau lepton mass in GeV (PDG 2024)"
-            ),
-            # Quarks
-            EstablishedParameter(
-                path="pdg.m_up",
-                value=2.16e-3,
-                uncertainty=0.49e-3,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Up quark mass (MS-bar, 2 GeV)",
-                eml_description="EML: eml_scalar(2.16e-3) — up quark MS-bar mass at 2 GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_down",
-                value=4.67e-3,
-                uncertainty=0.48e-3,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Down quark mass (MS-bar, 2 GeV)",
-                eml_description="EML: eml_scalar(4.67e-3) — down quark MS-bar mass at 2 GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_strange",
-                value=93.4e-3,
-                uncertainty=8.6e-3,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Strange quark mass",
-                eml_description="EML: eml_scalar(0.0934) — strange quark MS-bar mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_charm",
-                value=1.27,
-                uncertainty=0.02,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Charm quark mass",
-                eml_description="EML: eml_scalar(1.27) — charm quark MS-bar mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_bottom",
-                value=4.18,
-                uncertainty=0.03,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Bottom quark mass",
-                eml_description="EML: eml_scalar(4.18) — bottom quark MS-bar mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_top",
-                value=172.69,
-                uncertainty=0.30,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Top quark mass",
-                eml_description="EML: eml_scalar(172.69) — top quark pole mass in GeV (PDG 2024)"
-            ),
-            # Gauge couplings
-            EstablishedParameter(
-                path="pdg.alpha_s_MZ",
-                value=0.1180,
-                uncertainty=0.0010,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="Strong coupling at M_Z",
-                eml_description="EML: eml_scalar(0.118) — strong coupling constant α_s at M_Z scale (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.sin2_theta_W",
-                value=0.23122,
-                uncertainty=0.00003,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="Weak mixing angle sin²θ_W at Z-pole, MS-bar scheme (PDG 2024)",
-                eml_description="EML: eml_scalar(0.23122) — weak mixing angle sin²θ_W (PDG 2024)"
-            ),
-            # W and Z masses
-            EstablishedParameter(
-                path="pdg.m_W",
-                value=80.3692,
-                uncertainty=0.0133,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="W boson mass (PDG 2024 world average, excluding CDF 2022)",
-                eml_description="EML: eml_scalar(80.3692) — W boson mass in GeV (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.m_Z",
-                value=91.1876,
-                uncertainty=0.0021,
-                units="GeV",
-                source="ESTABLISHED:PDG2024",
-                description="Z boson mass",
-                eml_description="EML: eml_scalar(91.19) — Z boson mass in GeV (PDG 2024)"
-            ),
+        """Load PDG 2024 experimental values.
+
+        SSOT: every value/uncertainty is read from pdg_2024_values.json via
+        :meth:`_pdg`; the literals below are offline fallbacks only. The
+        table drives (path, JSON category, JSON name, units, description,
+        fallback value, fallback uncertainty).
+        """
+        table = [
+            ("pdg.m_higgs",     "gauge_bosons", "m_higgs",     "GeV", "Higgs boson mass",                             125.20,          0.11),
+            ("pdg.m_electron",  "leptons",      "m_electron",  "GeV", "Electron mass",                                5.1099895069e-4, 3.1e-12),
+            ("pdg.m_muon",      "leptons",      "m_muon",      "GeV", "Muon mass",                                    0.1056583755,    2.3e-9),
+            ("pdg.m_tau",       "leptons",      "m_tau",       "GeV", "Tau mass",                                     1.77693,         9e-5),
+            ("pdg.m_up",        "quarks",       "m_up",        "GeV", "Up quark mass (MS-bar, 2 GeV)",                2.16e-3,         0.49e-3),
+            ("pdg.m_down",      "quarks",       "m_down",      "GeV", "Down quark mass (MS-bar, 2 GeV)",              4.67e-3,         0.48e-3),
+            ("pdg.m_strange",   "quarks",       "m_strange",   "GeV", "Strange quark mass",                           93.4e-3,         8.6e-3),
+            ("pdg.m_charm",     "quarks",       "m_charm",     "GeV", "Charm quark mass",                             1.27,            0.02),
+            ("pdg.m_bottom",    "quarks",       "m_bottom",    "GeV", "Bottom quark mass",                            4.18,            0.03),
+            ("pdg.m_top",       "quarks",       "m_top",       "GeV", "Top quark mass",                               172.57,          0.29),
+            ("pdg.alpha_s_MZ",  "couplings",    "alpha_s_MZ",  "dimensionless", "Strong coupling at M_Z",             0.1180,          0.0009),
+            ("pdg.sin2_theta_W","couplings",    "sin2_theta_W","dimensionless", "Weak mixing angle sin²θ_W at Z-pole, MS-bar scheme (PDG 2024)", 0.23122, 0.00003),
+            ("pdg.m_W",         "gauge_bosons", "m_W",         "GeV", "W boson mass (PDG 2024 world average, excluding CDF 2022)", 80.3692, 0.0133),
+            ("pdg.m_Z",         "gauge_bosons", "m_Z",         "GeV", "Z boson mass",                                 91.1880,         0.0020),
         ]
 
-        for param in params:
-            cls._register_param(registry, param)
+        for path, category, name, units, desc, fb_value, fb_unc in table:
+            value, unc = cls._pdg(category, name, fb_value, fb_unc)
+            cls._register_param(registry, EstablishedParameter(
+                path=path,
+                value=value,
+                uncertainty=unc,
+                units=units,
+                source="ESTABLISHED:PDG2024",
+                description=desc,
+                eml_description=f"EML: eml_scalar({value:g}) — {desc} ({units}, PDG 2024, from pdg_2024_values.json)"
+            ))
 
     @classmethod
     def _load_ckm_values(cls, registry: 'PMRegistry') -> None:
@@ -317,152 +219,66 @@ class EstablishedPhysics:
         These are established values that serve as validation targets for the
         octonionic mixing simulation (simulations.v16.fermion.octonionic_mixing_v16_2).
         """
-        # PDG 2024 CKM values
-        # Source: https://pdg.lbl.gov/
-        params = [
-            EstablishedParameter(
-                path="pdg.V_us",
-                value=0.2245,
-                uncertainty=0.0008,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="CKM |V_us| Cabibbo angle",
-                eml_description="EML: eml_scalar(0.2245) — CKM matrix element |V_us| Cabibbo angle (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.V_cb",
-                value=0.0410,
-                uncertainty=0.0014,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="CKM |V_cb|",
-                eml_description="EML: eml_scalar(0.041) — CKM matrix element |V_cb| (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.V_ub",
-                value=0.00382,
-                uncertainty=0.00024,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="CKM |V_ub|",
-                eml_description="EML: eml_scalar(0.00382) — CKM matrix element |V_ub| (PDG 2024)"
-            ),
-            EstablishedParameter(
-                path="pdg.J_ckm",
-                value=3.08e-5,
-                uncertainty=0.15e-5,
-                units="dimensionless",
-                source="ESTABLISHED:PDG2024",
-                description="Jarlskog invariant J",
-                eml_description="EML: eml_scalar(3.08e-5) — CKM Jarlskog CP-violation invariant J (PDG 2024)"
-            ),
+        # SSOT: values read from pdg_2024_values.json (ckm category);
+        # literals are offline fallbacks only.
+        table = [
+            ("pdg.V_us",  "V_us",     "CKM |V_us| Cabibbo angle",              0.22500, 0.00067),
+            ("pdg.V_cb",  "V_cb",     "CKM |V_cb|",                            0.04182, 0.00085),
+            ("pdg.V_ub",  "V_ub",     "CKM |V_ub|",                            0.00369, 0.00011),
+            ("pdg.J_ckm", "jarlskog", "Jarlskog invariant J",                  3.12e-5, 0.13e-5),
         ]
 
-        for param in params:
-            cls._register_param(registry, param)
+        for path, name, desc, fb_value, fb_unc in table:
+            value, unc = cls._pdg("ckm", name, fb_value, fb_unc)
+            cls._register_param(registry, EstablishedParameter(
+                path=path,
+                value=value,
+                uncertainty=unc,
+                units="dimensionless",
+                source="ESTABLISHED:PDG2024",
+                description=desc,
+                eml_description=f"EML: eml_scalar({value:g}) — {desc} (PDG 2024, from pdg_2024_values.json)"
+            ))
 
     @classmethod
     def _load_nufit_values(cls, registry: 'PMRegistry') -> None:
-        """Load NuFIT 6.0 (2024) neutrino oscillation parameters."""
-        if CONFIG_AVAILABLE:
-            theta_12 = getattr(NeutrinoParameters, 'THETA_12_NUFIT', 33.41)
-            theta_23 = getattr(NeutrinoParameters, 'THETA_23_NUFIT', 45.0)
-            theta_13 = getattr(NeutrinoParameters, 'THETA_13_NUFIT', 8.54)
-            delta_cp = getattr(NeutrinoParameters, 'DELTA_CP_NUFIT', 194.0)
-            delta_m21_sq = getattr(NeutrinoParameters, 'DELTA_M_SQUARED_21', 7.42e-5)
-            delta_m31_sq = getattr(NeutrinoParameters, 'DELTA_M_SQUARED_31', 2.515e-3)
-        else:
-            theta_12, theta_23, theta_13 = 33.41, 45.0, 8.54
-            delta_cp = 194.0
-            delta_m21_sq, delta_m31_sq = 7.42e-5, 2.515e-3
+        """Load NuFIT neutrino oscillation parameters.
 
-        params = [
-            EstablishedParameter(
-                path="nufit.theta_12",
-                value=theta_12,
-                uncertainty=0.75,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0",
-                description="Solar mixing angle",
-                eml_description="EML: eml_scalar(33.41) — solar mixing angle θ₁₂ in degrees (NuFIT 6.0)"
-            ),
-            EstablishedParameter(
-                path="nufit.theta_23",
-                value=theta_23,
-                uncertainty=1.0,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0",
-                description="Atmospheric mixing angle",
-                eml_description="EML: eml_scalar(45.0) — atmospheric mixing angle θ₂₃ in degrees (NuFIT 6.0 NO)"
-            ),
-            EstablishedParameter(
-                path="nufit.theta_13",
-                value=theta_13,
-                uncertainty=0.12,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0",
-                description="Reactor mixing angle",
-                eml_description="EML: eml_scalar(8.54) — reactor mixing angle θ₁₃ in degrees (NuFIT 6.0)"
-            ),
-            EstablishedParameter(
-                path="nufit.delta_CP",
-                value=delta_cp,
-                uncertainty=25.0,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0",
-                description="CP-violating phase",
-                eml_description="EML: eml_scalar(194.0) — Dirac CP-violating phase δ_CP in degrees (NuFIT 6.0 NO)"
-            ),
-            EstablishedParameter(
-                path="nufit.delta_m21_sq",
-                value=delta_m21_sq,
-                uncertainty=0.21e-5,
-                units="eV^2",
-                source="ESTABLISHED:NuFIT6.0",
-                description="Solar mass splitting",
-                eml_description="EML: eml_scalar(7.42e-5) — solar neutrino mass splitting Δm²₂₁ in eV² (NuFIT 6.0)"
-            ),
-            EstablishedParameter(
-                path="nufit.delta_m31_sq",
-                value=delta_m31_sq,
-                uncertainty=0.028e-3,
-                units="eV^2",
-                source="ESTABLISHED:NuFIT6.0",
-                description="Atmospheric mass splitting (Normal Ordering convention)",
-                eml_description="EML: eml_scalar(2.515e-3) — atmospheric mass splitting Δm²₃₁ in eV² (NuFIT 6.0 NO)"
-            ),
-            # Inverted Ordering values - PM predicts IO
-            EstablishedParameter(
-                path="nufit.delta_m32_sq_IO",
-                value=-2.404e-3,  # NuFIT 6.0 IO value
-                uncertainty=0.028e-3,
-                units="eV^2",
-                source="ESTABLISHED:NuFIT6.0_IO",
-                description="Atmospheric mass splitting (Inverted Ordering: dm2_32 < 0)",
-                eml_description="EML: eml_scalar(-2.404e-3) — atmospheric mass splitting Δm²₃₂ in eV² (NuFIT 6.0 IO)"
-            ),
-            EstablishedParameter(
-                path="nufit.theta_23_IO",
-                value=49.3,  # NuFIT 6.0 IO upper octant
-                uncertainty=1.0,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0_IO",
-                description="Atmospheric mixing angle (IO best fit, upper octant)",
-                eml_description="EML: eml_scalar(49.3) — atmospheric mixing angle θ₂₃ in degrees (NuFIT 6.0 IO upper octant)"
-            ),
-            EstablishedParameter(
-                path="nufit.delta_CP_IO",
-                value=278.0,  # NuFIT 6.0 IO value
-                uncertainty=26.0,
-                units="degrees",
-                source="ESTABLISHED:NuFIT6.0_IO",
-                description="CP-violating phase (Inverted Ordering)",
-                eml_description="EML: eml_scalar(278.0) — Dirac CP-violating phase δ_CP in degrees (NuFIT 6.0 IO)"
-            ),
+        SSOT: values read from nufit_6_0_parameters.json via :meth:`_nufit`
+        (the file carries NuFIT 5.2-era values — see its metadata note).
+        The literals below are offline fallbacks only. Reading the IO block
+        from the JSON also fixes the previous hard-coded −2.404e-3 (a model
+        echo) — the dataset's honest IO value is −2.498e-3.
+        """
+        no_table = [
+            ("nufit.theta_12",     "theta_12",      "degrees", "Solar mixing angle",                                   33.41,   0.75),
+            ("nufit.theta_23",     "theta_23",      "degrees", "Atmospheric mixing angle",                             42.2,    1.0),
+            ("nufit.theta_13",     "theta_13",      "degrees", "Reactor mixing angle",                                 8.58,    0.12),
+            ("nufit.delta_CP",     "delta_CP",      "degrees", "CP-violating phase",                                   232.0,   25.0),
+            ("nufit.delta_m21_sq", "delta_m21_sq",  "eV^2",    "Solar mass splitting",                                 7.42e-5, 0.21e-5),
+            ("nufit.delta_m31_sq", "delta_m31_sq",  "eV^2",    "Atmospheric mass splitting (Normal Ordering convention)", 2.515e-3, 0.028e-3),
+        ]
+        io_table = [
+            ("nufit.delta_m32_sq_IO", "delta_m32_sq", "eV^2",    "Atmospheric mass splitting (Inverted Ordering: dm2_32 < 0)", -2.498e-3, 0.028e-3),
+            ("nufit.theta_23_IO",     "theta_23",     "degrees", "Atmospheric mixing angle (IO best fit, upper octant)",       49.3,      1.0),
+            ("nufit.delta_CP_IO",     "delta_CP",     "degrees", "CP-violating phase (Inverted Ordering)",                     278.0,     26.0),
         ]
 
-        for param in params:
-            cls._register_param(registry, param)
+        for ordering, source, table in (
+            ("normal_ordering",   "ESTABLISHED:NuFIT",    no_table),
+            ("inverted_ordering", "ESTABLISHED:NuFIT_IO", io_table),
+        ):
+            for path, name, units, desc, fb_value, fb_unc in table:
+                value, unc = cls._nufit(name, ordering, fb_value, fb_unc)
+                cls._register_param(registry, EstablishedParameter(
+                    path=path,
+                    value=value,
+                    uncertainty=unc,
+                    units=units,
+                    source=source,
+                    description=desc,
+                    eml_description=f"EML: eml_scalar({value:g}) — {desc} ({units}; from nufit_6_0_parameters.json {ordering})"
+                ))
 
     @classmethod
     def _load_desi_values(cls, registry: 'PMRegistry') -> None:

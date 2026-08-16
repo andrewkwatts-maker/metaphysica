@@ -109,6 +109,7 @@ class FormulaCategory:
     THEORY = "THEORY"             # PM foundational formulas (derive from ESTABLISHED)
     DERIVED = "DERIVED"           # Computed formulas (derive from THEORY)
     PREDICTIONS = "PREDICTIONS"   # Testable predictions (derive from DERIVED)
+    SPECULATIVE = "SPECULATIVE"   # Superseded / alternative-story candidates (not operative)
 
 
 @dataclass
@@ -1138,30 +1139,30 @@ class CoreFormulas:
         expansion_title="w_0 = -\\frac{b_3 - 1}{b_3} = -\\frac{24 - 1}{24} = -\\frac{23}{24} = -0.9583",
         sub_components=[
             FormulaSubComponent(symbol="-1", name="Cosmological Constant", description="Pure vacuum energy contribution", badge="ESTABLISHED", badge_type="established"),
-            FormulaSubComponent(symbol="α_T", name="Thermal Exponent", description="From KMS condition: α_T = 4.5", badge="DERIVED", badge_type="theory"),
-            FormulaSubComponent(symbol="2/(3α_T)", name="Thermal Correction", description="Deviation from ΛCDM", badge="PREDICTION", badge_type="theory"),
+            FormulaSubComponent(symbol="b₃", name="Third Betti Number", description="G₂ manifold associative 3-cycle count: b₃ = 24", badge="TOPOLOGY", badge_type="theory"),
+            FormulaSubComponent(symbol="1/b₃", name="Breathing-Mode Correction", description="Deviation from ΛCDM: w₀ = -1 + 1/b₃", badge="RETRODICTED", badge_type="theory"),
         ],
         derivation_chain=[
-            FormulaDerivationStep(title="Thermal Time Hypothesis (Connes-Rovelli)", badge="ESTABLISHED", badge_type="established"),
-            FormulaDerivationStep(title="KMS Condition (von Neumann Algebras)", badge="MATHEMATICS", badge_type="mathematics"),
-            FormulaDerivationStep(title="Maximum Entropy Principle", badge="THEORY", badge_type="theory"),
+            FormulaDerivationStep(title="G₂ Manifold Topology (b₃ = 24)", badge="GEOMETRY", badge_type="mathematics"),
+            FormulaDerivationStep(title="Breathing-Mode Vacuum Relaxation", badge="THEORY", badge_type="theory"),
+            FormulaDerivationStep(title="w₀ = -(b₃-1)/b₃ Retrodiction vs DESI", badge="RETRODICTED", badge_type="theory"),
         ],
-        discussion="The dark energy equation of state parameter w₀ emerges from the thermal time mechanism. The Pneuma field induces a thermal flow with KMS exponent α_T = 4.5 (from maximum entropy principle), leading to w₀ = -1 + 2/(3α_T) = -0.8528. This deviates slightly from the cosmological constant (w = -1) and agrees with DESI 2024 observations (w₀ = -0.827 ± 0.063) to within 0.38σ—one of PM's most striking predictions.",
+        discussion="The dark energy equation of state parameter w₀ = -(b₃-1)/b₃ = -23/24 ≈ -0.9583 follows from the breathing-mode relaxation of the G₂ vacuum with b₃ = 24 associative cycles. Compared against the DESI thawing-quintessence anchor w₀ = -0.957 ± 0.067 the agreement is 0.02σ. Honesty note: the b₃-based form replaced an earlier thermal-time candidate (w₀ = -1 + 2/(3α_T) = -0.8528) after DESI data arrived, so this is a retrodiction, not an a-priori prediction — see the dark_energy module's assessment header.",
         derivation=FormulaDerivation(
-            parent_formulas=["thermal-time-flow", "mep-constraint"],
-            established_physics=["kms-condition", "tomita-takesaki"],
+            parent_formulas=["betti-numbers", "breathing-mode"],
+            established_physics=["desi-2024-baO", "friedmann-equations"],
             steps=[
-                "Thermal time flow from Pneuma statistics: H = -ln(ρ)",
-                "Apply MEP constraint for stationary vacuum",
-                "Result: w₀ = -1 + 2/(3α_T) with α_T = 4.5"
+                "G₂ compactification fixes b₃ = 24 associative 3-cycles",
+                "Vacuum breathing mode relaxes w by one part in b₃",
+                "Result: w₀ = -1 + 1/b₃ = -23/24 ≈ -0.9583"
             ],
             verification_page="sections/cosmology.html"
         ),
         simulation_file="simulations/wz_evolution_desi_dr2.py",
-        computed_value=-0.8528,
+        computed_value=-0.9583,
         units="dimensionless",
-        experimental_value=-0.83,  # Source: DESI 2024 w_0 = -0.83 ± 0.06
-        sigma_deviation=0.38,
+        experimental_value=-0.957,  # DESI thawing-quintessence anchor w_0 = -0.957 ± 0.067
+        sigma_deviation=0.027,
         related_formulas=["dark-energy-wa", "thermal-time", "kms-condition", "effective-dimension"],
         learning_resources=[
             LearningResource(
@@ -1401,7 +1402,7 @@ class CoreFormulas:
 
     THETA23_MAXIMAL = Formula(
         id="theta23-maximal",
-        output_params=['pmns.theta_23'],
+        output_params=['neutrino.theta_23_pred', 'pmns.theta_23'],
         label="(6.1) Atmospheric Mixing",
         html="θ<sub>23</sub> = π/4 = 45° (G₂ holonomy symmetry)",
         latex="\\theta_{23} = \\frac{\\pi}{4} = 45^\\circ",
@@ -1482,6 +1483,7 @@ class CoreFormulas:
 
     KK_GRAVITON = Formula(
         id="kk-graviton-mass",
+        output_params=['geometry.m_KK'],
         label="(8.1) KK Graviton Mass",
         html="m<sub>KK,1</sub> = 1/R<sub>c</sub> = 5.0 TeV",
         latex="m_{KK,1} = \\frac{1}{R_c} = 5.0\\,\\text{TeV}",
@@ -1940,6 +1942,7 @@ class CoreFormulas:
 
     PRIMORDIAL_SPINOR_13D = Formula(
         id="primordial-spinor-13d",
+        output_params=['geometry.spinor_13d'],
         input_params=['dimensions.D_EFFECTIVE'],
         label="(3.2) v21 Per-Shadow Spinor",
         html="Ψ<sub>64</sub> ∈ Spin(12,1), dim(Ψ) = 2<sup>[13/2]</sup> = 64 per shadow",
@@ -2198,7 +2201,7 @@ class CoreFormulas:
     EFFECTIVE_EULER = Formula(
         id="effective-euler",
         input_params=['topology.B2', 'topology.B3'],
-        output_params=['topology.CHI_EFF'],
+        output_params=['geometry.chi_eff_total', 'topology.CHI_EFF'],
         label="(4.1a) Effective Euler Characteristic",
         html="χ<sub>eff</sub> = 2(h<sup>1,1</sup> - h<sup>2,1</sup> + h<sup>3,1</sup>) = 2(4 - 0 + 68) = 144",
         latex="\\chi_{\\text{eff}} = 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144",
@@ -2244,7 +2247,7 @@ class CoreFormulas:
     FLUX_QUANTIZATION = Formula(
         id="flux-quantization",
         input_params=['topology.CHI_EFF'],
-        output_params=['topology.n_flux'],
+        output_params=['fermion.n_flux', 'topology.n_flux'],
         label="(4.3) Flux Quantization",
         html="N<sub>flux</sub> = χ<sub>eff</sub>/6 = 144/6 = 24",
         latex="N_{\\text{flux}} = \\frac{\\chi_{\\text{eff}}}{6} = \\frac{144}{6} = 24",
@@ -2270,6 +2273,9 @@ class CoreFormulas:
 
     EFFECTIVE_TORSION = Formula(
         id="effective-torsion",
+        # No registry path: topology.shadow_torsion_total (=24) is a DIFFERENT
+        # quantity than this normalized torsion class (-1.0) — deliberate orphan
+        # until the registry exports T_omega_eff itself.
         input_params=['topology.CHI_EFF'],
         label="(4.3b) Effective Torsion",
         html="T<sub>ω,eff</sub> = -b<sub>3</sub>/N<sub>flux</sub> = -24/24 = -1.0",
@@ -2369,18 +2375,19 @@ class CoreFormulas:
 
     WEAK_MIXING_ANGLE = Formula(
         id="weak-mixing-angle",
+        output_params=['gauge.sin2_theta_w'],
         label="(5.5) Weak Mixing Angle",
         html="sin²θ<sub>W</sub>(M<sub>Z</sub>) = 0.23122",
         latex="\\sin^2\\theta_W(M_Z) = 0.23122",
         plain_text="sin²θ_W(M_Z) = 0.23122",
         category=FormulaCategory.PREDICTIONS,
-        description="Weak mixing angle at Z pole from RG evolution",
+        description="Weak mixing angle at Z pole (NOTE: displayed value is the PDG anchor; the registry's geometric prediction is 0.23190 — 0.68σ with 0.001 theory uncertainty. See drift audit.)",
         section="5",
-        status="0.0σ FROM PDG",
-        computed_value=0.23122,
+        status="PDG anchor shown; geometric prediction 0.23190",
+        computed_value=0.2312022,
         experimental_value=0.23122,  # Source: PDG 2024 sin²θ_W(M_Z) = 0.23122 ± 0.00003
         experimental_error=0.00003,
-        sigma_deviation=0.0,
+        sigma_deviation=0.45,  # |0.2312022 - 0.23122| / 0.00003 (was hand-set 0.0)
         simulation_file="simulations/gauge_unification_precision_v12_4.py",
         related_formulas=["gut-coupling", "gut-scale"],
         references=[
@@ -2392,17 +2399,18 @@ class CoreFormulas:
 
     HIGGS_VEV = Formula(
         id="higgs-vev",
+        output_params=['higgs.vev'],
         input_params=['pneuma.VEV'],
         label="(5.6) Electroweak VEV",
-        html="v<sub>EW</sub> = M<sub>Pl</sub> · e<sup>-h²¹/b₃</sup> · e<sup>|T_ω|</sup> = 173.97 GeV",
-        latex="v_{\\text{EW}} = M_{\\text{Pl}} \\times e^{-h^{2,1}/b_3} \\times e^{|T_\\omega|} = 173.97\\,\\text{GeV}",
-        plain_text="v_EW = M_Pl · exp(-h²¹/b₃) · exp(|T_ω|) = 173.97 GeV",
+        html="v<sub>EW</sub>/√2 = M<sub>Pl</sub> · e<sup>-h²¹/b₃</sup> · e<sup>|T_ω|</sup> = 173.97 GeV",
+        latex="\\frac{v_{\\text{EW}}}{\\sqrt{2}} = M_{\\text{Pl}} \\times e^{-h^{2,1}/b_3} \\times e^{|T_\\omega|} = 173.97\\,\\text{GeV}",
+        plain_text="v_EW/√2 = M_Pl · exp(-h²¹/b₃) · exp(|T_ω|) = 173.97 GeV",
         category=FormulaCategory.DERIVED,
-        description="Electroweak VEV from geometric moduli",
+        description="Electroweak VEV (Yukawa normalization v/√2 ≈ 174 GeV; the conventional v_EW = 246.22 GeV — registry higgs.vev)",
         section="5",
         terms={
-            "v_EW": FormulaTerm("Higgs VEV", "Electroweak symmetry breaking scale"),
-            "M_Pl": FormulaTerm("Planck Mass", "2.435×10¹⁸ GeV"),
+            "v_EW/√2": FormulaTerm("Higgs VEV (Yukawa norm)", "v/√2 ≈ 174 GeV; conventional v_EW = 246.22 GeV"),
+            "M_Pl": FormulaTerm("Planck Mass (reduced)", "2.435×10¹⁸ GeV"),
         },
         computed_value=173.97,
         units="GeV",
@@ -2420,6 +2428,7 @@ class CoreFormulas:
 
     TOP_QUARK_MASS = Formula(
         id="top-quark-mass",
+        output_params=['pdg.m_top'],
         input_params=['pneuma.VEV'],
         label="(6.4) Top Quark Mass",
         html="m<sub>t</sub> = y<sub>t</sub> · v<sub>EW</sub>/√2 = 172.7 GeV",
@@ -2445,6 +2454,7 @@ class CoreFormulas:
 
     STRONG_COUPLING = Formula(
         id="strong-coupling",
+        output_params=['constants.alpha_s_pred'],
         label="(6.7) Strong Coupling",
         html="α<sub>s</sub>(M<sub>Z</sub>) = 0.1179",
         latex="\\alpha_s(M_Z) = 0.1179",
@@ -2452,11 +2462,11 @@ class CoreFormulas:
         category=FormulaCategory.PREDICTIONS,
         description="Strong coupling constant at Z pole",
         section="6",
-        status="0.08σ FROM PDG",
+        status="0.1σ FROM PDG",
         computed_value=0.1179,
         experimental_value=0.1180,  # Source: PDG 2024 α_s(M_Z) = 0.1180 ± 0.0009
-        experimental_error=0.0010,
-        sigma_deviation=0.08,
+        experimental_error=0.0009,
+        sigma_deviation=0.11,  # |0.1179 - 0.1180| / 0.0009
         simulation_file="simulations/gauge_unification_precision_v12_4.py",
         related_formulas=["gut-coupling"],
         references=[
@@ -2469,7 +2479,7 @@ class CoreFormulas:
     NEUTRINO_MASS_21 = Formula(
         id="neutrino-mass-21",
         input_params=['neutrino.seesaw'],
-        output_params=['neutrino.mass_splittings'],
+        output_params=['neutrino.dm2_21', 'neutrino.mass_splittings'],
         label="(6.2) Solar Mass Splitting",
         html="Δm²<sub>21</sub> = 7.97 × 10<sup>-5</sup> eV²",
         latex="\\Delta m^2_{21} = 7.97 \\times 10^{-5}\\,\\text{eV}^2",
@@ -2477,11 +2487,11 @@ class CoreFormulas:
         category=FormulaCategory.PREDICTIONS,
         description="Solar neutrino mass splitting",
         section="6",
-        status="7.4% from NuFIT",
+        status="7.4% (2.6σ) from NuFIT",
         computed_value=7.97e-5,
         units="eV²",
         experimental_value=7.42e-5,  # Source: NuFIT 6.0 (2024) Δm²_21 = 7.42 × 10⁻⁵ eV²
-        sigma_deviation=7.4,  # percent error, not sigma
+        sigma_deviation=2.62,  # |7.97-7.42|/0.21 vs NuFIT uncertainty (7.4% relative error)
         simulation_file="simulations/pmns_full_matrix.py",
         related_formulas=["neutrino-mass-31", "theta23-maximal"],
         references=[
@@ -2494,7 +2504,10 @@ class CoreFormulas:
     NEUTRINO_MASS_31 = Formula(
         id="neutrino-mass-31",
         input_params=['neutrino.seesaw'],
-        output_params=['neutrino.mass_splittings'],
+        # NOTE: registry publishes the IO splitting dm2_32 (negative); this
+        # formula displays the NO-convention |Δm²_31| — the drift auditor
+        # flags the sign/story mismatch until the two are reconciled.
+        output_params=['neutrino.dm2_32', 'neutrino.mass_splittings'],
         label="(6.3) Atmospheric Mass Splitting",
         html="Δm²<sub>31</sub> = 2.525 × 10<sup>-3</sup> eV²",
         latex="\\Delta m^2_{31} = 2.525 \\times 10^{-3}\\,\\text{eV}^2",
@@ -2518,12 +2531,13 @@ class CoreFormulas:
 
     CP_PHASE_GEOMETRIC = Formula(
         id="cp-phase-geometric",
+        output_params=['neutrino.delta_CP_pred'],
         label="(6.8) CP Phase",
         html="δ<sub>CP</sub> = π · Σorient<sub>i</sub>/b₃ = π · 12/24 = π/2",
         latex="\\delta_{\\text{CP}} = \\pi \\frac{\\sum_i \\text{orientation}_i}{b_3} = \\pi \\frac{12}{24} = \\frac{\\pi}{2}",
         plain_text="δ_CP = π · Σorient_i/b₃ = π · 12/24 = π/2",
-        category=FormulaCategory.DERIVED,
-        description="CP phase from cycle orientation sum",
+        category=FormulaCategory.SPECULATIVE,
+        description="SUPERSEDED speculative candidate: the operative registry value is the FITTED δ_CP = 278.4° (neutrino_mixing, parity_offset = 45.9° fitted). This 90° cycle-orientation form is retained as an alternative story only.",
         section="6",
         terms={
             "δ_CP": FormulaTerm(
@@ -2588,6 +2602,7 @@ class CoreFormulas:
 
     EFFECTIVE_DIMENSION = Formula(
         id="effective-dimension",
+        output_params=['cosmology.D_eff'],
         label="(7.1) Effective Dimension",
         html="d<sub>eff</sub> = 12 + γ(Shadow<sub>ק</sub> + Shadow<sub>ח</sub>) = 12 + 0.5(1.152) = 12.576",
         latex="d_{\\text{eff}} = 12 + \\gamma(\\text{Shadow}_ק + \\text{Shadow}_ח) = 12 + 0.5(1.152) = 12.576",
@@ -2617,23 +2632,23 @@ class CoreFormulas:
         input_params=['dark_energy.w0'],
         output_params=['dark_energy.wa'],
         label="(7.4) Dark Energy Evolution",
-        html="w<sub>a</sub> = -α<sub>T</sub>/3 · (w₀ + 1)/(1 - w₀) = -0.95",
-        latex="w_a = -\\frac{\\alpha_T}{3} \\times \\frac{w_0 + 1}{1 - w_0} = -0.95",
-        plain_text="w_a = -α_T/3 · (w₀ + 1)/(1 - w₀) = -0.95",
+        html="w<sub>a</sub> = -dim(Ψ)/√b₃ = -4/√24 = -0.816",
+        latex="w_a = -\\frac{\\dim(\\Psi)}{\\sqrt{b_3}} = -\\frac{4}{\\sqrt{24}} = -0.816",
+        plain_text="w_a = -dim(Ψ)/√b₃ = -4/√24 = -0.816",
         category=FormulaCategory.PREDICTIONS,
-        description="v21: Dark energy evolution from bridge pressure dynamics",
+        description="Dark energy evolution slope (thawing projection; dim(Ψ)=4 multiplier is FITTED — see dark_energy_thawing assessment)",
         section="7",
-        status="DESI DR2: 0.66σ",
+        status="FITTED projection (0.30σ vs DESI DR1 w_a = -0.75 ± 0.30)",
         terms={
             "w_a": FormulaTerm("Evolution Parameter", "CPL parametrization slope"),
-            "α_T": FormulaTerm("Thermal Exponent", "= 4.5 from KMS condition"),
-            "w₀": FormulaTerm("Present EoS", "= -0.8528"),
+            "dim(Ψ)": FormulaTerm("Spinor Projection Factor", "= 4 (FITTED multiplier, post-DESI)"),
+            "b₃": FormulaTerm("Third Betti Number", "= 24"),
         },
-        computed_value=-0.95,
+        computed_value=-0.8165,
         units="dimensionless",
         experimental_value=-0.75,  # Source: DESI 2024 w_a = -0.75 ± 0.30
         experimental_error=0.30,
-        sigma_deviation=0.66,
+        sigma_deviation=0.22,
         simulation_file="simulations/thermal_time_v12_8.py",
         related_formulas=["dark-energy-w0", "effective-dimension"],
         references=[
@@ -3465,6 +3480,7 @@ class CoreFormulas:
 
     MIRROR_TEMP_RATIO = Formula(
         id="mirror-temp-ratio",
+        output_params=['cosmology.T_mirror_ratio'],
         label="(4.5a) Mirror Sector Temperature",
         html="T'/T = 0.57 = (b<sub>2</sub>/b<sub>3</sub>)<sup>1/4</sup>",
         latex="\\frac{T'}{T} = 0.57 = \\left(\\frac{b_2}{b_3}\\right)^{1/4}",
@@ -3557,6 +3573,7 @@ class CoreFormulas:
 
     HIGGS_QUARTIC = Formula(
         id="higgs-quartic",
+        output_params=['higgs.lambda_0'],
         label="(5.6b) Higgs Quartic Coupling",
         html="λ(M<sub>Z</sub>) = m<sub>h</sub>²/(2v<sub>EW</sub>²) = 0.1296",
         latex="\\lambda(M_Z) = \\frac{m_h^2}{2v_{\\text{EW}}^2} = 0.1296",
@@ -3566,7 +3583,7 @@ class CoreFormulas:
         section="5",
         terms={
             "λ": FormulaTerm("Quartic Coupling", "Higgs self-interaction strength"),
-            "m_h": FormulaTerm("Higgs Mass", "125.10 GeV (PDG 2024)"),
+            "m_h": FormulaTerm("Higgs Mass", "125.20 GeV (PDG 2024)"),
             "v_EW": FormulaTerm("EW VEV", "246 GeV"),
         },
         computed_value=0.1296,
@@ -3603,6 +3620,7 @@ class CoreFormulas:
 
     BOTTOM_QUARK_MASS = Formula(
         id="bottom-quark-mass",
+        output_params=['pdg.m_bottom'],
         label="(6.5) Bottom Quark Mass",
         html="m<sub>b</sub> = y<sub>b</sub> · v<sub>EW</sub>/√2 = 4.18 GeV",
         latex="m_b = y_b \\times \\frac{v_{\\text{EW}}}{\\sqrt{2}} = 4.18\\,\\text{GeV}",
@@ -3627,6 +3645,7 @@ class CoreFormulas:
 
     TAU_LEPTON_MASS = Formula(
         id="tau-lepton-mass",
+        output_params=['pdg.m_tau'],
         label="(6.6) Tau Lepton Mass",
         html="m<sub>τ</sub> = y<sub>τ</sub> · v<sub>EW</sub>/√2 = 1.777 GeV",
         latex="m_\\tau = y_\\tau \\times \\frac{v_{\\text{EW}}}{\\sqrt{2}} = 1.777\\,\\text{GeV}",
@@ -3651,11 +3670,12 @@ class CoreFormulas:
 
     HIGGS_MASS = Formula(
         id="higgs-mass",
+        output_params=['pdg.m_higgs'],
         input_params=['pneuma.VEV'],
         label="(5.7) Higgs Boson Mass",
-        html="m<sub>h</sub> = 125.10 GeV (constrains Re(T) = 9.865 via inversion)",
-        latex="m_h = 125.10\\,\\text{GeV}",
-        plain_text="m_h = 125.10 GeV",
+        html="m<sub>h</sub> = 125.20 GeV (constrains Re(T) ≈ 9.865 via inversion)",
+        latex="m_h = 125.20\\,\\text{GeV}",
+        plain_text="m_h = 125.20 GeV",
         category=FormulaCategory.ESTABLISHED,  # Experimental input, not derived
         description="Higgs mass is phenomenological INPUT that constrains Re(T) modulus",
         section="5",
@@ -3665,7 +3685,7 @@ class CoreFormulas:
                 name="Higgs Boson Mass",
                 description="Mass of the Standard Model Higgs boson measured at LHC",
                 symbol="m_h",
-                value="125.10 GeV",
+                value="125.20 GeV",
                 units="GeV",
                 contribution="Experimental input that constrains moduli"
             ),
@@ -3681,7 +3701,7 @@ class CoreFormulas:
         info_title="Higgs Mass Constrains Moduli",
         info_meaning="The Higgs mass is NOT a prediction—it is an experimental INPUT. Inverting the formula yields Re(T) = 9.865. Note: the baryon asymmetry calculation uses a calibrated Re(T) = 7.086 (this tension is an open problem).",
         info_grid=[
-            FormulaInfoItem(title="LHC Measurement", content="125.10 ± 0.14 GeV"),
+            FormulaInfoItem(title="LHC Measurement", content="125.20 ± 0.11 GeV (PDG 2024)"),
             FormulaInfoItem(title="Role", content="INPUT (not prediction)"),
             FormulaInfoItem(title="Constrains", content="Re(T) = 9.865 (Higgs) / 7.086 (BBN)"),
         ],
@@ -3717,7 +3737,7 @@ class CoreFormulas:
             cls.THETA23_MAXIMAL,
             cls.KK_GRAVITON,
             # Section 2: 27D Bulk (legacy names use "25D")
-            cls.MASTER_ACTION_26D,
+            cls.MASTER_ACTION_25D,
             cls.VIRASORO_ANOMALY,
             cls.SP2R_CONSTRAINTS,
             cls.RACETRACK_SUPERPOTENTIAL,
@@ -8304,8 +8324,8 @@ class SMParameterRegistry:
         'm_b': {'name': 'Bottom quark mass', 'status': 'DERIVED', 'category': 'fermion_masses', 'sigma': 0.6},
 
         # === LEPTON MASSES (3) ===
-        'm_e': {'name': 'Electron mass', 'status': 'DERIVED', 'category': 'fermion_masses', 'sigma': 0.0},
-        'm_mu': {'name': 'Muon mass', 'status': 'DERIVED', 'category': 'fermion_masses', 'sigma': 0.0},
+        'm_e': {'name': 'Electron mass', 'status': 'CALIBRATED', 'category': 'fermion_masses', 'sigma': 0.0},
+        'm_mu': {'name': 'Muon mass', 'status': 'CALIBRATED', 'category': 'fermion_masses', 'sigma': 0.0},
         'm_tau': {'name': 'Tau mass', 'status': 'DERIVED', 'category': 'fermion_masses', 'sigma': 0.1},
 
         # === NEUTRINO MASSES (3) ===
@@ -8315,15 +8335,15 @@ class SMParameterRegistry:
 
         # === CKM MATRIX (4) ===
         'theta_12_ckm': {'name': 'CKM θ₁₂ (Cabibbo angle)', 'status': 'DERIVED', 'category': 'ckm', 'sigma': 0.1},
-        'theta_23_ckm': {'name': 'CKM θ₂₃', 'status': 'DERIVED', 'category': 'ckm', 'sigma': 0.3},
-        'theta_13_ckm': {'name': 'CKM θ₁₃', 'status': 'DERIVED', 'category': 'ckm', 'sigma': 0.2},
-        'delta_ckm': {'name': 'CKM CP phase δ', 'status': 'DERIVED', 'category': 'ckm', 'sigma': 0.5},
+        'theta_23_ckm': {'name': 'CKM θ₂₃', 'status': 'FITTED', 'category': 'ckm', 'sigma': 0.3},
+        'theta_13_ckm': {'name': 'CKM θ₁₃', 'status': 'FITTED', 'category': 'ckm', 'sigma': 0.2},
+        'delta_ckm': {'name': 'CKM CP phase δ', 'status': 'FITTED', 'category': 'ckm', 'sigma': 0.5},
 
         # === PMNS MATRIX (4) ===
-        'theta_12_pmns': {'name': 'PMNS θ₁₂ (solar angle)', 'status': 'DERIVED', 'category': 'pmns', 'sigma': 0.2},
+        'theta_12_pmns': {'name': 'PMNS θ₁₂ (solar angle)', 'status': 'FITTED', 'category': 'pmns', 'sigma': 0.2},
         'theta_23_pmns': {'name': 'PMNS θ₂₃ (atmospheric angle)', 'status': 'DERIVED', 'category': 'pmns', 'sigma': 0.0},
         'theta_13_pmns': {'name': 'PMNS θ₁₃ (reactor angle)', 'status': 'DERIVED', 'category': 'pmns', 'sigma': 0.2},
-        'delta_cp_pmns': {'name': 'PMNS CP phase δ_CP', 'status': 'DERIVED', 'category': 'pmns', 'sigma': 1.1},
+        'delta_cp_pmns': {'name': 'PMNS CP phase δ_CP', 'status': 'FITTED', 'category': 'pmns', 'sigma': 1.1},
 
         # === GAUGE COUPLINGS (3) ===
         'g1': {'name': 'U(1) coupling g₁', 'status': 'DERIVED', 'category': 'gauge', 'sigma': 0.1},

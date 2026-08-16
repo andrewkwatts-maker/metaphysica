@@ -123,6 +123,17 @@ STEPS: List[Tuple[str, List[str], bool]] = [
      [sys.executable, str(Path(__file__).resolve().parents[2] / "scripts" / "audit_shadow_derivations.py")],
      False),
 
+    # ── SSOT guard: config.py hand-typed literals vs the registry ────────────
+    # Report-only cross-check of every config Formula's computed_value /
+    # experimental_value / sigma_deviation against parameters.json, so the
+    # display layer can't silently drift from the derivation chain.
+    ("Audit config literals against registry (SSOT)",
+     [sys.executable, "-m", "metaphysica.generators.generate_config_drift_audit"],
+     False),
+    ("Audit hardcoded experimental constants (SSOT)",
+     [sys.executable, "-m", "metaphysica.generators.generate_hardcode_audit"],
+     False),
+
     # ── Generate quark + constant datasheets (JSON snapshots for Get()) ──────
     ("Generate quark + constant datasheets",
      [sys.executable, "-m", "metaphysica.generators.generate_datasheets"],
