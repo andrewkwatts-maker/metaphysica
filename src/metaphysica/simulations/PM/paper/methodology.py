@@ -813,7 +813,7 @@ class MethodologyV16_2(SimulationBase):
                 content=(
                     "<h4>How <code>triple_assert</code> Caught the v24.1 n<sub>gen</sub> Bug</h4>"
                     "<p>In v24.1, the abstract's displayed LaTeX read "
-                    "<code>n<sub>gen</sub> = χ<sub>eff</sub>/(4·b₃) = 144/48 = 3</code> — but the Arithma and "
+                    "<code>n<sub>gen</sub> = χ<sub>eff</sub>/(2·b₃) = 144/48 = 3</code> — but the Arithma and "
                     "EML trees both evaluated <code>χ<sub>eff</sub>/(2·b₃) = 144/48 = 3</code>. The Python float "
                     "agreed with the trees (denominator 48), so the numeric output was correct, but the LaTeX "
                     "rendering said <code>4·b₃</code> instead of <code>2·b₃</code>. Because the LaTeX is generated "

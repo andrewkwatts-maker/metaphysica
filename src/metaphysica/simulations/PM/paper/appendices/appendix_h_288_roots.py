@@ -390,7 +390,7 @@ class AppendixH288Roots(SimulationBase):
                 type="paragraph",
                 content=(
                     "The factor of 4 reflects the quaternionic polarization structure inherent to G2 holonomy. "
-                    "This 144 directly determines the generation count via the index theorem: n<sub>gen</sub> = χ<sub>eff</sub> / (4·b₃) = 144/48 = 3, "
+                    "This 144 directly determines the generation count via the index theorem: n<sub>gen</sub> = χ<sub>eff</sub> / (2·b₃) = 144/48 = 3, "
                     "providing a geometric derivation of the three fermion families with zero free parameters."
                 )
             ),

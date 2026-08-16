@@ -510,7 +510,7 @@ class FoundationsV16_2(SimulationBase):
                     "<strong>7-dimensional Riemannian manifold (7,0)</strong>. This per-shadow structure "
                     "provides the geometric rigidity that prevents the constants of nature from drifting. "
                     "The G₂ manifold is the 'Hard-Lock' that ensures each 4D condensate is a unique, "
-                    "non-negotiable state with n<sub>gen</sub> = χ<sub>eff</sub>/(4·b₃) = 144/48 = 3 generations per shadow."
+                    "non-negotiable state with n<sub>gen</sub> = χ<sub>eff</sub>/(2·b₃) = 144/48 = 3 generations per shadow."
                 )
             ),
             ContentBlock(
@@ -853,7 +853,7 @@ class FoundationsV16_2(SimulationBase):
                     "method": "topological_index",
                     "steps": [
                         "G2 manifold TCS #187 has third Betti number b3 = 24",
-                        "Fermion zero modes counted by chi_eff/(4*b3) = 144/48 = 3",
+                        "Fermion zero modes counted by chi_eff/(2*b3) = 144/48 = 3",
                         "Alternatively simplified: b3/8 = 24/8 = 3 generations per shadow"
                     ],
                     "parentFormulas": ["g2-holonomy-foundations"]
