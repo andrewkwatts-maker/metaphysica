@@ -87,6 +87,14 @@ def build(out_dir=None, *, fast: bool = False, skip_sims: bool = False, only=Non
     from metaphysica._catalog import set_last_build_dir
     from pathlib import Path as _Path
 
+    # First-time import of the ``metaphysica.build`` SUBMODULE above makes
+    # the import machinery bind that module object over this wrapper on the
+    # package namespace (parent setattr happens after submodule exec). Rebind
+    # the wrapper so ``metaphysica.build`` stays callable for later callers —
+    # without this, any call to build() breaks the public API for the rest
+    # of the process.
+    globals()["build"] = _build_wrapper
+
     rc = _build(out_dir=out_dir, fast=fast, skip_sims=skip_sims, only=only)
     # On success, plumb the build target through to the catalog so
     # subsequent ``metaphysica.get()`` calls see the freshly-built
@@ -95,6 +103,10 @@ def build(out_dir=None, *, fast: bool = False, skip_sims: bool = False, only=Non
         target = _Path(out_dir).resolve() if out_dir is not None else _Path.cwd().resolve()
         set_last_build_dir(target)
     return rc
+
+
+# Stable reference to the wrapper for the rebind inside build() above.
+_build_wrapper = build
 
 
 def run_all(out_dir=None, *, quiet: bool = False) -> int:
