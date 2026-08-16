@@ -45,7 +45,7 @@ VERIFIABLE_GATES = {
 
     # Block B: Gauge/Particle physics (G11-G20)
     11: {"proof_id": "strong_force_saturation", "wl_code": "8/125", "result": "0.064", "note": "Topological ratio 8/125 verified"},
-    12: {"proof_id": "electroweak_alignment", "wl_code": "Sin[ArcTan[12/24]]^2", "result": "0.2312", "note": "sin²θ_W matches PDG value"},
+    12: {"proof_id": "electroweak_alignment", "wl_code": "sin2_theta_W_geometric = 0.23190; pdg = 0.23122 (MS-bar, Z-pole)", "result": "0.23190 vs 0.23122 (0.68 sigma with 0.001 theory uncertainty)", "note": "Geometric sin²θ_W = 0.23190 vs PDG 2024 0.23122±0.00003 — 0.68σ using the module's 0.001 theory uncertainty. (Previous cert showed Sin[ArcTan[12/24]]²=0.20 labelled 0.2312 — removed as arithmetically false.)"},
     13: {"proof_id": "photon_zero_mass", "wl_code": "m_photon = 0", "result": "0", "note": "Experimental fact confirmed"},
     14: {"proof_id": "su_n_approximation", "wl_code": "72 * 3", "result": "216"},
     17: {"proof_id": "generation_triality", "wl_code": "n_gen = 3", "result": "3", "note": "n_gen=3 exact"},
@@ -82,7 +82,7 @@ VERIFIABLE_GATES = {
         "proof_id": "hubble_unwinding_rate",
         "wl_code": "N[(288/4) - (163/144) + 0.6819]",
         "result": "71.55",
-        "note": "H0 from O'Dowd formula: (288/4) - (P_O/chi_eff) + eta_S = 72 - 1.1319 + 0.6819 = 71.55 km/s/Mpc. Within 1.43 sigma of SH0ES 2025 (73.04 +/- 1.04)"
+        "note": "H0 from O'Dowd formula: (288/4) - (163/144) + eta_S = 72 - 1.1319 + 0.6819 = 71.55 km/s/Mpc. Within 1.43 sigma of SH0ES 2022 (Riess et al., 73.04 +/- 1.04). NOTE: the ricci-flow module publishes a competing H0 = 76.34 (3.17 sigma) — see validation_report.json; canonicalization pending."
     },
     48: {
         "proof_id": "w0_equation_of_state",
@@ -96,7 +96,7 @@ VERIFIABLE_GATES = {
         "proof_id": "moduli_stabilization",
         "wl_code": "vacuum_stability_monitor.py",
         "result": "dV/dT = 0 at T_min, stable vacuum",
-        "note": "Racetrack potential minimized via scipy.optimize. Re(T)=7.086 derived from Higgs mass constraint (m_h=125.1 GeV). Vacuum stable with bounce action B > 400."
+        "note": "Racetrack potential minimized via scipy.optimize. Re(T)=7.086 anchored to the Higgs mass (m_h=125.20 GeV, PDG 2024). Vacuum stable with bounce action B > 400. NOTE: sector modules quote other Re(T) values (3.739, 9.865, 37.85, 174.03) — canonicalization pending (see geometry audit)."
     },
     49: {
         "proof_id": "dark_matter_bulk_pressure",
@@ -107,16 +107,16 @@ VERIFIABLE_GATES = {
     50: {
         "proof_id": "baryon_to_photon_ratio",
         "wl_code": "baryogenesis_derivations.py",
-        "result": "eta_B = 6.1e-10 (sigma < 0.01)",
-        "note": "Derived from G2 CP phase delta_CP=235 deg via leptogenesis: epsilon=(3/16pi)*(M_N1*m_nu)/v^2*sin(delta_CP), eta_B=c_sph*epsilon*kappa. Matches Planck 2018: 6.1e-10 +/- 0.04e-10"
+        "result": "eta_B = 6.19e-10 canonical (1.63 sigma vs Planck 6.12+/-0.04e-10)",
+        "note": "Leptogenesis chain: epsilon=(3/16pi)*(M_N1*m_nu)/v^2*sin(delta_CP), eta_B=c_sph*epsilon*kappa. The module's direct computation gives 2.30e-10 (factor ~2.7 below Planck); the canonical 6.19e-10 display value sits 1.63 sigma from Planck 2018 (6.12 +/- 0.04e-10). Previous cert claimed sigma < 0.01 — removed as arithmetically false."
     },
 
     # Block F: Extra Dimensions - Compactification Radius (G56)
     56: {
         "proof_id": "compactification_radius",
-        "wl_code": "R_c = 1/M_KK; M_KK = M_Pl/(b3 * k_gimel^2); N[M_KK/1000, 4]",
-        "result": "M_KK ~ 5 TeV (R ~ 2e-4 GeV^-1)",
-        "note": "Compactification radius derived from G2 manifold geometry: m_KK = M_Pl/(b3 * k_gimel^2) ~ 4.1-5.0 TeV. R_shared = 1/M_KK ~ 2e-4 GeV^-1 from TCS topology. LHC bound: > 3.5 TeV (ATLAS/CMS). See geometric_anchors_v16_1.py and config.py SharedDimensionsParameters."
+        "wl_code": "m_KK(warped) = M_Pl_red * Exp[-k_eff * Pi]",
+        "result": "M_KK ~ 4.5 TeV (warped/exponential form)",
+        "note": "TeV-scale KK mass comes from the warped/exponential suppression m_KK = M_Pl_red*exp(-k_eff*pi) ~ 4.5 TeV. NOTE: the ratio form M_Pl/(b3*k_gimel^2) previously quoted here evaluates to ~3.4e15 GeV, not TeV — removed as arithmetically false (see geometric_anchors_core audit note). LHC bound: > 3.5 TeV (ATLAS/CMS)."
     },
 
     # Block F: DESI Dark Energy (G60)

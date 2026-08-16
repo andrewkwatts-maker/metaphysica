@@ -463,7 +463,7 @@ class ModularInvarianceV16(SimulationBase):
                     "q": "Nome q = exp(2*pi*i*tau)",
                     "tau": "Modular parameter in upper half-plane"
                 },
-                eml_latex=r"\eta(\tau) = \mathrm{ops.mul}(\mathrm{ops.exp}(\mathrm{ops.div}(\mathrm{ops.mul}(2\pi i, \tau)}, \mathrm{eml\_scalar}(24))), \mathrm{prod}_{n}(1 - q^n))",
+                eml_latex=r"\eta(\tau) = \mathrm{ops.mul}(\mathrm{ops.exp}(\mathrm{ops.div}(\mathrm{ops.mul}(2\pi i, \tau), \mathrm{eml\_scalar}(24))), \mathrm{prod}_{n}(1 - q^n))",
                 eml_tree_str="ops.mul(ops.exp(ops.div(ops.mul(eml_scalar(2.0), eml_pi(), tau), b3_leaf())), infinite_product_1_minus_q_n)",
                 eml_description="EML: Dedekind eta prefactor = ops.exp(ops.div(ops.mul(2*pi*i, tau), b3_leaf())) — the /24 in the exponent is what forces b3=24 in the modular constraint",
                 # TODO(triple-track-complex): Dedekind eta is a transcendental modular form depending on complex τ;

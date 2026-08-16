@@ -354,7 +354,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ContentBlock(
                     type="formula",
                     content=r"\frac{d}{R} \approx \frac{1}{2\pi K} = \frac{1}{8\pi} \approx 0.12",
-                    formula_id="cycle-separation",
+                    formula_id="cycle-separation-suppression",
                     label="(4.6.1)"
                 ),
                 ContentBlock(
@@ -489,7 +489,6 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
             ],
             formula_refs=[
-                "cycle-separation",
                 "cycle-separation-suppression",
                 "proton-lifetime",
             ],

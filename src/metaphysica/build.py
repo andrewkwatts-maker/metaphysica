@@ -134,6 +134,21 @@ STEPS: List[Tuple[str, List[str], bool]] = [
      [sys.executable, "-m", "metaphysica.generators.generate_hardcode_audit"],
      False),
 
+    # ── Computed validation layer (2026-08 coverage audit) ───────────────────
+    # Per-parameter value-vs-experiment certificates with honest failure
+    # counts, generated from parameters.json sigma data. Replaces the
+    # permanent placeholder validation_report.json the certificates page
+    # was fetching.
+    ("Generate per-parameter validation certificates",
+     [sys.executable, "-m", "metaphysica.generators.generate_validation_certificates"],
+     False),
+    # Dead-link check: every {{formula:id}} / formula_id / formula_refs
+    # reference in sections must resolve in formulas.json (audit found 4
+    # broken ids shipping silently).
+    ("Validate formula-id references resolve",
+     [sys.executable, "-m", "metaphysica.generators.generate_reference_check"],
+     False),
+
     # ── Generate quark + constant datasheets (JSON snapshots for Get()) ──────
     ("Generate quark + constant datasheets",
      [sys.executable, "-m", "metaphysica.generators.generate_datasheets"],

@@ -144,7 +144,7 @@ _OUTPUT_PARAMS = [
 
 # Output formula IDs
 _OUTPUT_FORMULAS = [
-    "pneuma-master-action-v22",
+    "pneuma-master-action-v23",
     "bridge-12-pair-metric-v22",
     "bridge-lagrangian-v22",
     "distributed-or-reduction-v22",

@@ -470,6 +470,16 @@ class UnitaryClosureChecker:
             "framework": "Principia Metaphysica v24.1",
             "test_date": datetime.now().isoformat(),
             "test_name": "Unitary Closure and Ghost-Freedom Verification",
+            "scaffold_note": (
+                "STRUCTURAL/ILLUSTRATIVE: S = exp(iH) with Hermitian H is "
+                "unitary by construction (the unitarity and spectral tests "
+                "cannot fail); the ghost scan samples random Gaussians that "
+                "essentially never align with the single timelike direction; "
+                "the BRST anomaly is asserted 0 with n_gen = 3 hardcoded. "
+                "This report demonstrates intended structure — it is not an "
+                "executed falsification test. See validation_report.json for "
+                "computed value-vs-experiment checks."
+            ),
             "manifold": {
                 "structure": f"M^{{{self.n_dimensions}}}({self.signature[0]},{self.signature[1]},{self.signature[2]})",
                 "bridges": f"{self.n_bridges} × ({self.bridge_dim},0)",

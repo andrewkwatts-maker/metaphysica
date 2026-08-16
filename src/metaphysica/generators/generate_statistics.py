@@ -260,15 +260,30 @@ def generate_statistics() -> Dict[str, Any]:
             all_sigma_deviations.extend(gate_sigmas)
             print(f"  - Found {len(gate_sigmas)} sigma deviations from GATES_CERTIFICATES.json")
 
+    # Fallback to the registry itself (2026-08 audit): the legacy
+    # CERTIFICATES_v16_2_FINAL.json no longer exists, which used to leave
+    # this generator emitting all-zero statistics while still declaring
+    # MAJORITY_VERIFIED from the declarative gate counts. parameters.json
+    # carries the genuinely computed sigma set — use it whenever the other
+    # sources produced nothing.
+    if not all_sigma_deviations and parameters_data:
+        param_sigmas = extract_sigma_deviations_from_parameters(parameters_data)
+        all_sigma_deviations.extend(param_sigmas)
+        print(f"  - Fallback: {len(param_sigmas)} sigma deviations from parameters.json")
+
     # Compute main validation statistics
     validation_stats = compute_statistics(all_sigma_deviations)
 
     # Count gate statuses
     gate_counts = count_gate_statuses(gates_data)
 
-    # Determine overall status
-    if gate_counts["verified"] >= 30:
-        status = "MAJORITY_VERIFIED"
+    # Determine overall status. The gate counts are DECLARATIVE
+    # certificates (see validation audit), so the status string must not
+    # imply computed verification when the sigma set is empty.
+    if validation_stats["total_predictions"] == 0:
+        status = "NO_COMPUTED_SIGMAS (gate counts are declarative only)"
+    elif gate_counts["verified"] >= 30:
+        status = "MAJORITY_VERIFIED (gate certificates declarative; sigma stats computed)"
     elif gate_counts["verified"] >= 20:
         status = "SUBSTANTIAL_PROGRESS"
     elif gate_counts["verified"] >= 10:

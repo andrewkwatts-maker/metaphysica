@@ -1119,9 +1119,11 @@ class PneumaMechanismV16(SimulationBase):
                     ]
                 },
                 terms={
-                    "kinetic": r"\frac{1}{2} \partial_\mu \Psi_P \partial^\mu \Psi_P",
-                    "potential": r"V(\Psi_P) = |dW/d\Psi_P|^2",
-                    "vielbein": r"\mathcal{L}_{\text{vielbein}} = \bar{\eta} \Gamma^a e_a^\mu D_\mu \eta"
+                    # Wrapped in \( \) so MathJax typesets them inside the
+                    # term cards (bare backslash commands render as raw text).
+                    "kinetic": r"\( \frac{1}{2} \partial_\mu \Psi_P \partial^\mu \Psi_P \)",
+                    "potential": r"\( V(\Psi_P) = |dW/d\Psi_P|^2 \)",
+                    "vielbein": r"\( \mathcal{L}_{\text{vielbein}} = \bar{\eta} \Gamma^a e_a^\mu D_\mu \eta \)"
                 },
                 # TODO(v25.0): close the 3.4% Re(T) VEV gap via non-perturbative W_inst
                 # potential — current racetrack leaves Re(T) ~ 1.833 as a fitted input.

@@ -344,10 +344,19 @@ class ObserverIntegrator:
             "topological_constants_invariant": bool(delta_alpha < 1e-10),
             "geometric_constants_nearly_invariant": bool(delta_m_e < 0.1),
             "status": status,
+            "scaffold_note": (
+                "STRUCTURAL CHECK: the alpha test compares the constant 144.0 "
+                "with itself (topological invariance holds by construction here, "
+                "it is not computed from two observer states), and the geometric "
+                "sub-check is excluded from all_tests_pass. The mass_variation "
+                "figure IS computed and can exceed the 10% narrative — read it, "
+                "not the prose."
+            ),
             "interpretation": (
-                "Topological invariants (α⁻¹ ≈ 144) are exactly observer-independent. "
-                "Geometric constants have small (~10%) observer-dependence due to "
-                "quantum fluctuations, but this is suppressed at low energies."
+                "Topological invariants are observer-independent by construction "
+                "in this scaffold. Geometric constants show the computed "
+                "mass_variation above — the '~10%' framing applies only when "
+                "that number is actually ≤ 0.1."
             )
         }
 
@@ -383,6 +392,14 @@ class ObserverIntegrator:
             "framework": "Principia Metaphysica v24.1",
             "test_date": datetime.now().isoformat(),
             "test_name": "Observer Integration and Measurement Back-Reaction",
+            "scaffold_note": (
+                "STRUCTURAL/ILLUSTRATIVE: the observer-independence alpha test "
+                "asserts a constant against itself and the geometric sub-check "
+                "is excluded from all_tests_pass — this report demonstrates the "
+                "framework's intended structure, it is not an executed "
+                "falsification test. See validation_report.json for computed "
+                "value-vs-experiment checks."
+            ),
             "manifold": {
                 "structure": f"M^{{{self.n_dimensions}}}({self.signature[0]},{self.signature[1]})",
                 "bridges": f"{self.n_bridges} × ({self.bridge_dim},0)",

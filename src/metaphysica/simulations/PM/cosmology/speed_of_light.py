@@ -623,6 +623,102 @@ class SpeedOfLightV17(SimulationBase):
                 }
             ),
             Formula(
+                id="harmonic-cycle-fraction",
+                label="(5.60a)",
+                latex=r"C_{\text{geo}} = \frac{\Delta_{\text{eff}}}{b_3} = \frac{b_3 - 6}{b_3} = \frac{18}{24} = \frac{3}{4}",
+                plain_text="C_geo = Δ_eff/b₃ = 18/24 = 3/4",
+                category="GEOMETRIC",
+                description=(
+                    "Harmonic cycle fraction: of the b₃ = 24 harmonic 3-cycles, "
+                    "6 are locked by the G₂ structure group, leaving 18 effective "
+                    "propagation channels — C_geo = 3/4."
+                ),
+                inputParams=["topology.elder_kads"],
+                outputParams=[],
+                input_params=["topology.elder_kads"],
+                output_params=[],
+                derivation={
+                    "steps": [
+                        {"description": "G₂ manifold carries b₃ = 24 independent harmonic 3-cycles",
+                         "formula": r"b_3 = 24"},
+                        {"description": "6 cycles are locked by the G₂ structure group (fiber stabilizer generators)",
+                         "formula": r"\Delta_{\text{eff}} = b_3 - 6 = 18"},
+                        {"description": "Fraction of cycles available for propagation",
+                         "formula": r"C_{\text{geo}} = \Delta_{\text{eff}}/b_3 = 18/24 = 3/4"},
+                    ],
+                    "method": "G2_holonomy_cycle_counting",
+                },
+                terms={
+                    "C_geo": "Harmonic cycle fraction = 3/4",
+                    "b_3": {"description": "Third Betti number of G₂ manifold", "value": 24},
+                },
+            ),
+            Formula(
+                id="bulk-metric-ratio",
+                label="(5.60b)",
+                latex=r"B_v = \frac{N_{\text{root}}}{N_{\text{bdy}}} \cdot \frac{N_{\text{shadow}}}{N_{\text{vis}}} = \frac{288}{163} \cdot \frac{153}{135} = 2.00245",
+                plain_text="B_v = (288/163)·(153/135) = 2.00245",
+                category="FITTED",
+                description=(
+                    "Bulk metric ratio from the root-lattice sector counts. "
+                    "NOTE: 288 = 135 + 153 is a fitted integer decomposition "
+                    "(see FormulasRegistry SSoT note), so this factor is FITTED, "
+                    "not topology-first."
+                ),
+                inputParams=["topology.nitzotzin_roots"],
+                outputParams=[],
+                input_params=["topology.nitzotzin_roots"],
+                output_params=[],
+                derivation={
+                    "steps": [
+                        {"description": "Adopt the extended root count N_root = 288 with the FITTED sector decomposition 288 = 135 (visible) + 153 (shadow); boundary count N_bdy = 163",
+                         "formula": r"N_{\text{root}} = 288,\; N_{\text{vis}} = 135,\; N_{\text{shadow}} = 153,\; N_{\text{bdy}} = 163"},
+                        {"description": "Bulk factor: root count normalized by boundary count",
+                         "formula": r"N_{\text{root}}/N_{\text{bdy}} = 288/163 = 1.76687"},
+                        {"description": "Sector-asymmetry factor and product",
+                         "formula": r"B_v = (288/163)\cdot(153/135) = 2.00245"},
+                    ],
+                    "method": "fitted_root_decomposition",
+                },
+                terms={
+                    "N_root": {"description": "Extended root count", "value": 288},
+                    "N_bdy": {"description": "Boundary count (fitted decomposition)", "value": 163},
+                    "N_shadow": {"description": "Shadow-sector count (fitted)", "value": 153},
+                    "N_vis": {"description": "Visible-sector count (fitted)", "value": 135},
+                },
+            ),
+            Formula(
+                id="metric-conversion",
+                label="(5.60c)",
+                latex=r"\chi_{\text{gc}} = \frac{N_{\text{root}} - b_3}{N_{\text{bdy}} + 1} = \frac{264}{164} = 1.60976",
+                plain_text="χ_gc = (288-24)/(163+1) = 264/164 = 1.60976",
+                category="FITTED",
+                description=(
+                    "Weyl rescaling factor converting the internal G₂ metric to "
+                    "the Einstein-frame 4D metric (non-topological root count "
+                    "over extended boundary). Depends on the fitted 163 boundary "
+                    "count — FITTED."
+                ),
+                inputParams=["topology.nitzotzin_roots", "topology.elder_kads"],
+                outputParams=[],
+                input_params=["topology.nitzotzin_roots", "topology.elder_kads"],
+                output_params=[],
+                derivation={
+                    "steps": [
+                        {"description": "Non-topological root count: roots not captured by harmonic 3-forms",
+                         "formula": r"N_{\text{root}} - b_3 = 288 - 24 = 264"},
+                        {"description": "Extended boundary: fitted boundary count plus the overall volume modulus",
+                         "formula": r"N_{\text{bdy}} + 1 = 163 + 1 = 164"},
+                        {"description": "Weyl rescaling factor for the G₂ → Einstein-frame conversion",
+                         "formula": r"\chi_{\text{gc}} = 264/164 = 1.60976"},
+                    ],
+                    "method": "weyl_rescaling_ratio",
+                },
+                terms={
+                    r"\chi_{gc}": "Weyl rescaling = 264/164 ≈ 1.60976",
+                },
+            ),
+            Formula(
                 id="pneuma-tensioner-z6",
                 label="(5.61)",
                 latex=r"Z_6 = \frac{D_{10}}{b_3} = \frac{10}{24} = 0.41\overline{6}",
