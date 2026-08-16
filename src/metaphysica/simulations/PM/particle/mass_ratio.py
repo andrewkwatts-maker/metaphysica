@@ -193,7 +193,7 @@ if SCHEMA_AVAILABLE:
                 version="23.0",
                 domain="fermion",
                 title="Proton-Electron Mass Ratio Derivation",
-                description="Derives m_p/m_e = 1836.15 from G2 manifold topology with zero free parameters",
+                description="Derives m_p/m_e = 1836.15 from G2 manifold topology with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
                 section_id="4",
                 subsection_id="4.8"  # v19.0: Unique subsection (4.2 used by fermion_generations)
             )
@@ -229,7 +229,8 @@ if SCHEMA_AVAILABLE:
                 abstract=(
                     "The proton-to-electron mass ratio is NOT a free parameter in PM. "
                     "It emerges from the ratio of associative 3-cycle to co-associative 4-cycle volumes "
-                    "on the G2 manifold, yielding m_p/m_e = 1836.15 with zero adjustable parameters."
+                    "on the G2 manifold, yielding m_p/m_e = 1836.15 with one fitted parameter "
+                    "(holonomy_correction = 1.5428, back-computed from CODATA)."
                 ),
                 content_blocks=[
                     ContentBlock(
@@ -276,7 +277,7 @@ if SCHEMA_AVAILABLE:
                     eml_latex=r"\frac{m_p}{m_e} = \mathrm{ops.div}(\mathrm{ops.mul}(\mathrm{ops.pow}(C_{kaf},\; 2),\; \mathrm{ops.div}(k_{gimel},\; \pi)),\; h_{\text{corr}})",
                     eml_description="EML: ops.div(ops.mul(ops.pow(C_kaf, eml_scalar(2.0)), ops.div(k_gimel, eml_pi())), holonomy_correction) — proton/electron mass ratio from G2 cycle volumes",
                     category="GEOMETRIC",
-                    description="Proton-electron mass ratio derived from G2 cycle volume ratio with zero free parameters",
+                    description="Proton-electron mass ratio derived from G2 cycle volume ratio with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
                     inputParams=["topology.elder_kads", "topology.k_gimel", "topology.c_kaf"],
                     outputParams=["fermion.mass_ratio_proton_electron"],
                     derivation={
@@ -397,7 +398,7 @@ if SCHEMA_AVAILABLE:
                 },
                 {
                     "id": "CERT_MASS_RATIO_GEOMETRIC",
-                    "assertion": "Mass ratio derives from b3=24 G2 topology with zero free parameters",
+                    "assertion": "Mass ratio derives from b3=24 G2 topology with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
                     "condition": "b3 = 24, k_gimel = b3/2 + 1/pi, C_kaf = b3*(b3-7)/(b3-9)",
                     "tolerance": 1e-6,
                     "status": "PASS",

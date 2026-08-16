@@ -167,7 +167,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                     "method": "E8 root generator action on 27D Pneuma condensate",
                     "parentFormulas": ["freudenthal-cubic-norm"],
                     "steps": [
-                        "E₈ has 240 root vectors of unit length in ℝ⁸ forming the E₈ root lattice",
+                        "E₈ has 240 root vectors of length √2 (norm² = 2) in ℝ⁸ forming the E₈ root lattice",
                         "The 27D Pneuma condensate Ψ₂₇ is embedded in the 248D E₈ adjoint via E₈ ⊃ E₆ × SU(3)",
                         "Each root generator eᵣ acts on Ψ₂₇ by the adjoint representation: Ψ → Ψ + ε[eᵣ, Ψ]",
                         "The SM gauge boson spectrum arises from the 78 generators of the E₆ sub-algebra",

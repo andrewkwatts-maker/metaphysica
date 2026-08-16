@@ -157,7 +157,8 @@ class G2GeometryV16(SimulationBase):
         """
         Ensures the G2 manifold is stabilized against Planck-collapse.
         Identity: (C_kaf * b3) / k_gimel must remain within
-        Stability Bound [52.9, 53.1] (Joyce-Stability bound)
+        Stability Bound [52.9, 53.1] (internal consistency window,
+        ANSATZ — not a bound from Joyce)
         """
         stability_ratio = (self._c_kaf * self._b3) / self._k_gimel
         # 27.2 * 24 / 12.318 = 52.99
@@ -180,7 +181,7 @@ class G2GeometryV16(SimulationBase):
         Returns True if stable.
         """
         r_7d = np.sqrt(self._k_gimel) * 1.616e-35
-        return r_7d > 1e-35  # Returns True if stable
+        return r_7d > 1.616255e-35  # Planck length in meters; returns True if stable
 
     def verify_lattice_consistency(self) -> Dict[str, Any]:
         """Supplementary cross-check of TCS #187 values against lattice chain.
@@ -492,7 +493,9 @@ class G2GeometryV16(SimulationBase):
 
     def _validate_torsion_free(self) -> float:
         """
-        Certified check for G₂ holonomy: d(φ) = 0 AND d(*φ) = 0.
+        Structural check for G₂ holonomy: d(φ) = 0 AND d(*φ) = 0.
+        (Identities assumed: the exterior-derivative helpers return
+        zero-valued placeholders, so this check cannot fail by construction.)
 
         For a G₂ manifold to have true G₂ holonomy (not just G₂ structure),
         the defining 3-form φ must satisfy:
@@ -831,7 +834,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="For V₉ ~ (1/M<sub>GUT</sub>)⁹ with M<sub>GUT</sub> = 2.118 × 10<sup>16</sup> GeV (Grand Unification scale -- geometrically derived from G₂ topology and gauge coupling unification), and M<sub>Pl</sub> = 2.435 × 10<sup>19</sup> GeV (measured, PDG 2024), we obtain M<sub>*</sub> ~ M<sub>GUT</sub>. This natural emergence of the GUT scale provides a consistency check on the framework."
+                content="For V₉ ~ (1/M<sub>GUT</sub>)⁹ with M<sub>GUT</sub> = 2.118 × 10<sup>16</sup> GeV (Grand Unification scale -- geometrically derived from G₂ topology and gauge coupling unification), and M<sub>Pl</sub>(reduced) = 2.435 × 10<sup>18</sup> GeV (measured, PDG 2024), we obtain M<sub>*</sub> ~ M<sub>GUT</sub>. This natural emergence of the GUT scale provides a consistency check on the framework."
             ),
         ])
 
@@ -935,7 +938,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="b₃ formula (Theorem 7.2 of arXiv:1809.09083)",
-                content="With b₃(Z₊) = 14 (adjusted via genus), b₃(Z₋) = 14, orthogonality terms = 0, rk(N₊+N₋) = 2: b₃(M) = 14 + 14 + 0 + 0 + 23 - 2 = 24 (after genus adjustment of C₊)"
+                content="b₃(M) = 24 (TCS value asserted from the framework's manifold choice; the CHNP Thm 7.2 building-block inputs reproducing 24 are not computed here)"
             ),
             ContentBlock(
                 type="callout",
@@ -1039,7 +1042,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Racetrack Stabilization Result",
-                content="Minimizing the scalar potential ∂V/∂T = 0 yields the stabilized modulus value: ⟨Re(T)⟩ = 7.086. This value directly determines the ratio of internal cycle volumes. The inverse of this ratio gives the Froggatt-Nielsen suppression parameter: ε ≈ 0.2257. Key Result: This value of ε ≈ 0.2257 matches the Cabibbo angle (sin θ_C ≈ 0.225), demonstrating that flavor physics is derived from flux dynamics with zero tuning. The parameter λ = T_min ≈ 1.4885 is an output of moduli stabilization, not an input."
+                content="Minimizing the scalar potential ∂V/∂T = 0 yields the stabilized modulus value: ⟨Re(T)⟩ = 7.086. This value directly determines the ratio of internal cycle volumes. The inverse of this ratio gives the Froggatt-Nielsen suppression parameter: ε ≈ 0.2257 (CALIBRATED: quoted constants do not reproduce this value; gaugino_condensation.py derives 0.2502/0.2079 honestly). Key Result: This value of ε ≈ 0.2257 matches the Cabibbo angle (sin θ_C ≈ 0.225). The parameter λ = T_min ≈ 1.4885 is an output of moduli stabilization, not an input."
             ),
             ContentBlock(
                 type="paragraph",
@@ -1114,7 +1117,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Unified Derivation Chain — No Circular Inputs",
-                content="The KK mass scale is derived from flux quantisation and moduli stabilisation: N<sub>flux</sub> = 24 (from χ<sub>eff</sub> = 144) → racetrack coefficients a, b → T<sub>min</sub> (constrained from Higgs mass; value under tension) → ε = exp(−π(b−a)T<sub>min</sub>) ~ 0.2257 → k<sub>eff</sub> = b₃/(2+ε) ~ 10.80 → M<sub>KK</sub> = M<sub>Pl</sub> × exp(−k<sub>eff</sub> π) ~ 4.5 TeV. Deep Connection: The parameter λ = T<sub>min</sub> ~ 1.4885 is the OUTPUT of racetrack moduli stabilisation, not an input. Flux dynamics directly generates the Cabibbo angle with zero tuning, unifying UV topology → moduli dynamics → flavour physics → IR phenomenology."
+                content="The KK mass scale is derived from flux quantisation and moduli stabilisation: N<sub>flux</sub> = 24 (from χ<sub>eff</sub> = 144) → racetrack coefficients a, b → T<sub>min</sub> (constrained from Higgs mass; value under tension) → ε = exp(−π(b−a)T<sub>min</sub>) ~ 0.2257 (CALIBRATED: quoted constants do not reproduce this value; gaugino_condensation.py derives 0.2502/0.2079 honestly) → k<sub>eff</sub> = b₃/(2+ε) ~ 10.80 → M<sub>KK</sub> = M<sub>Pl</sub> × exp(−k<sub>eff</sub> π) ~ 4.5 TeV. Deep Connection: The parameter λ = T<sub>min</sub> ~ 1.4885 is the OUTPUT of racetrack moduli stabilisation, not an input. Flux dynamics generates the Cabibbo angle, unifying UV topology → moduli dynamics → flavour physics → IR phenomenology."
             ),
             ContentBlock(
                 type="callout",
@@ -1241,7 +1244,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Key Result",
-                content="M_Pl² = M_*^11 × V_9 where V_9 = V_7(G₂) × V_2(T²) = 1.488×10^-138 GeV^-9, with M_Pl = 2.435×10^19 GeV measured (PDG 2024), not derived. Critical Distinction: Stage 2 (OR reduction) is gravitational ghost elimination, NOT compactification. The 13D is an effective projection/shadow of 26D after OR reduction, not 26D with 13 dimensions compactified."
+                content="M_Pl² = M_*^11 × V_9 where V_9 = V_7(G₂) × V_2(T²) = 1.488×10^-138 GeV^-9 (value not reproducible from the quoted expression; retained as framework input), with M_Pl(reduced) = 2.435×10^18 GeV measured (PDG 2024), not derived. Critical Distinction: Stage 2 (OR reduction) is gravitational ghost elimination, NOT compactification. The 13D is an effective projection/shadow of 26D after OR reduction, not 26D with 13 dimensions compactified."
             ),
             ContentBlock(
                 type="table",
@@ -1426,7 +1429,7 @@ class G2GeometryV16(SimulationBase):
                     "By Poincare duality on a compact oriented 7-manifold: b_k(M^7) = b_{7-k}(M^7)",
                     "TCS G2 manifolds are simply connected (pi_1 = 0), so b_0 = b_7 = 1 and b_1 = b_6 = 0",
                     "Compute b_2 from Kahler moduli: b_2 = h^{1,1} = rank of Picard group intersection = 4",
-                    "Compute b_3 using Theorem 7.2 of Corti-Haskins-Nordstrom-Pacini: b_3(M) = b_3(Z_+) + b_3(Z_-) + dim(K) - rk(N_+ + N_-) + 23 = 24",
+                    "Assert b_3(M) = 24 (TCS value asserted from the framework's manifold choice; the CHNP Thm 7.2 building-block inputs reproducing 24 are not computed here)",
                     "Apply Poincare duality: b_4 = b_3 = 24 and b_5 = b_2 = 4"
                 ],
                 "method": "Mayer-Vietoris spectral sequence for TCS decomposition with Poincare duality constraints",
@@ -2015,7 +2018,8 @@ class G2GeometryV16(SimulationBase):
             {
                 "id": "CERT_G2_HOLONOMY_RICCI",
                 "gate_id": "G_G2_GEOM_04",
-                "status": "PASS",
+                "status": "STRUCTURAL",
+                "note": "identities assumed (zero-valued placeholders), not computed — cannot fail by construction",
                 "sigma": 0.0,
                 "test_description": (
                     "Verify G2 holonomy implies Ricci-flatness R_{mu nu} = 0 "
@@ -2056,7 +2060,8 @@ class G2GeometryV16(SimulationBase):
             {
                 "id": "CERT_G2_TORSION_FREE",
                 "gate_id": "G_G2_GEOM_06",
-                "status": "PASS",
+                "status": "STRUCTURAL",
+                "note": "identities assumed (zero-valued placeholders), not computed — cannot fail by construction",
                 "sigma": 0.0,
                 "test_description": (
                     "Verify TCS G2 structure is torsion-free: the defining 3-form Phi "
@@ -2254,7 +2259,7 @@ class G2GeometryV16(SimulationBase):
         # Check 6: Stability bound
         stability = self.verify_stability()
         checks.append({
-            "name": "Joyce-Stability bound (52.9 < ratio < 53.1)",
+            "name": "Stability window (52.9 < ratio < 53.1; internal consistency window, ANSATZ — not a bound from Joyce)",
             "passed": stability["is_stable"],
             "confidence_interval": {"lower": 52.9, "upper": 53.1, "value": stability["ratio"]},
             "log_level": "INFO",
@@ -2390,10 +2395,11 @@ class G2GeometryV16(SimulationBase):
             },
             {
                 "id": "discovery_stability_bound",
-                "title": "Joyce-Stability Bound for G2 Manifold",
+                "title": "Stability Window for G2 Manifold",
                 "description": (
                     "The stability ratio (C_kaf * b3) / k_gimel = 52.99 lies within the "
-                    "narrow stability window [52.9, 53.1], ensuring the G2 manifold is "
+                    "narrow stability window [52.9, 53.1] (internal consistency window, "
+                    "ANSATZ — not a bound from Joyce), ensuring the G2 manifold is "
                     "stabilized against Planck-scale collapse."
                 ),
                 "significance": "MEDIUM",
@@ -2440,7 +2446,7 @@ def main():
     print(f"{'='*70}")
     stability_result = sim.verify_stability()
     print(f"  Stability Ratio:          {stability_result['ratio']:.4f}")
-    print(f"  Joyce-Stability Bound:    [52.9, 53.1]")
+    print(f"  Stability Window:         [52.9, 53.1] (internal ANSATZ, not from Joyce)")
     print(f"  Is Stable:                {stability_result['is_stable']}")
     print(f"  7D Radius:                {stability_result['radius_7d']:.6e} meters")
     print(f"  7D Radius (Planck units): {stability_result['planck_units']:.6f}")

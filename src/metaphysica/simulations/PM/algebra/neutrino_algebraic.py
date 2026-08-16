@@ -414,8 +414,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"Gap: ~12%; DERIVED approximation, zero free parameters."
                 ),
                 eml_description=(
-                    "EML: ops.arcsin(ops.div(eml_scalar(1.0), ops.sqrt(eml_scalar(24.0)))) — "
-                    "θ₁₃ = arcsin(1/√b₃) from b₃=24 torsion structure"
+                    "EML: ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0))) — "
+                    "θ₁₃ = asin(1/6) = asin(α_leak/√(2·n_gen)) ≈ 9.59°"
                 ),
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=_THETA13_NUFIT,

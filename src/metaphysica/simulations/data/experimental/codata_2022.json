@@ -8,17 +8,19 @@
   "fundamental_constants": {
     "alpha_inverse": {
       "value": 137.035999177,
-      "uncertainty": 0.01,
+      "uncertainty": 2.1e-8,
+      "theory_uncertainty": 0.01,
       "units": "dimensionless",
       "description": "Inverse fine structure constant",
-      "note": "Theory uncertainty 0.01, exp precision exceeds theory"
+      "note": "uncertainty is the CODATA 2022 experimental sigma; PM theory uncertainty (0.01) moved to theory_uncertainty"
     },
     "proton_electron_mass_ratio": {
-      "value": 1836.15267343,
-      "uncertainty": 2.0,
+      "value": 1836.152673426,
+      "uncertainty": 3.2e-8,
+      "theory_uncertainty": 2.0,
       "units": "dimensionless",
       "description": "mu_pe",
-      "note": "Theory uncertainty 2.0"
+      "note": "CODATA 2022: mu_pe = 1836.152673426(32); uncertainty is the experimental sigma, PM theory uncertainty (2.0) moved to theory_uncertainty"
     },
     "M_PLANCK": {
       "value": 1.220890e19,
@@ -32,12 +34,13 @@
       "uncertainty": 3.0e14,
       "units": "GeV",
       "description": "Reduced Planck mass (M_Pl / sqrt(8*pi)) - INPUT for PM 26D string tension",
-      "note": "This is constants.M_PLANCK in the registry - the 26D INPUT, not the comparison target"
+      "note": "This is constants.M_PLANCK in the registry - the 26D INPUT, not the comparison target. This file stores full precision 2.435323e18; other data files (pdg_2024_values.json M_PLANCK_REDUCED, data/constants/m_planck.json) use the rounded 2.435e18"
     }
   },
   "alpha_inverse": {
     "value": 137.035999177,
-    "uncertainty": 0.01,
+    "uncertainty": 2.1e-8,
+    "theory_uncertainty": 0.01,
     "units": "dimensionless",
     "description": "Inverse fine structure constant"
   },
@@ -48,8 +51,9 @@
     "description": "Full Planck mass (sqrt(hbar*c/G))"
   },
   "mu_pe": {
-    "value": 1836.15267343,
-    "uncertainty": 2.0,
+    "value": 1836.152673426,
+    "uncertainty": 3.2e-8,
+    "theory_uncertainty": 2.0,
     "units": "dimensionless",
     "description": "Proton-to-electron mass ratio"
   }

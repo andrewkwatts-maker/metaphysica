@@ -1939,7 +1939,8 @@ class FormulasRegistry:
         Light propagates THROUGH 3D space, so it experiences this expansion.
         This closes the gap from ~10,444 m/s to ~35 m/s!
 
-        Accuracy: 99.99999% (35 m/s variance, ~0.1 sigma)
+        Accuracy: −34.8 m/s from the exact SI value (c is exact by
+        definition — no experimental σ exists)
         """
         geo_c = self.geometric_ratio          # 0.75
         sf = self.stretching_factor           # 12.4
@@ -2048,7 +2049,9 @@ class FormulasRegistry:
     #
     # 4. Refined Alpha: bulk_alpha × torsion_compression
     #
-    # This reduces the deviation from ~320,467σ to ~19σ!
+    # This reduces the deviation from ~320,467σ to ≈3.3×10⁴σ
+    # (residual 0.0007 vs CODATA σ = 2.1×10⁻⁸; an earlier "~19σ" figure
+    # here used a ~10³× too-large σ).
 
     @property
     def sophian_gamma(self) -> float:
@@ -2151,7 +2154,7 @@ class FormulasRegistry:
 
         Geometric derivation gives: α⁻¹ = 137.0367...
         CODATA 2022: 1/α = 137.035999177(21)
-        Deviation: ~0.0007 (about 33σ using CODATA uncertainty)
+        Deviation: ≈ 3.3×10⁴σ (0.0007 vs CODATA σ = 2.1×10⁻⁸)
 
         Note: This is an HONEST derivation from pure geometry, not
         a reverse-engineered fit to match experimental data.
@@ -2161,7 +2164,11 @@ class FormulasRegistry:
     # ===========================================================================
     # QED MANIFOLD CONSTANTS (Compton, Rydberg, Bohr, etc.)
     # ===========================================================================
-    # These constants are derived from the Decad-Cubic Projection Engine.
+    # STATUS: ILLUSTRATIVE (identity round-trip of CODATA value — not an
+    # independent derivation). Each bulk_* value is CODATA × (1±ε) and each
+    # manifest_* value divides the same factor back out, returning the CODATA
+    # input by construction. The layer illustrates the Decad-Cubic Projection
+    # bookkeeping; it does not predict these constants.
     # Each constant has a "Bulk Seed" (higher-dimensional value) that is
     # projected into our 3D manifold via the appropriate gate:
     #
@@ -2174,13 +2181,13 @@ class FormulasRegistry:
     # - Neutral (no adjustment): R (Molar Gas Constant - NA×k cancellation)
 
     # CODATA 2022 Reference Values
-    CODATA_COMPTON = 2.42631023867e-12      # m (electron Compton wavelength)
+    CODATA_COMPTON = 2.42631023538e-12      # m (electron Compton wavelength, CODATA 2022)
     CODATA_COMPTON_SIGMA = 7.3e-22          # m (uncertainty)
-    CODATA_RYDBERG = 10973731.568160        # m⁻¹ (Rydberg constant)
+    CODATA_RYDBERG = 10973731.568157        # m⁻¹ (Rydberg constant, CODATA 2022)
     CODATA_RYDBERG_SIGMA = 0.000021         # m⁻¹ (uncertainty)
-    CODATA_BOHR_RADIUS = 5.29177210903e-11  # m (Bohr radius)
+    CODATA_BOHR_RADIUS = 5.29177210544e-11  # m (Bohr radius, CODATA 2022)
     CODATA_BOHR_SIGMA = 8.0e-21             # m (uncertainty)
-    CODATA_HARTREE = 4.3597447222071e-18    # J (Hartree energy)
+    CODATA_HARTREE = 4.3597447222060e-18    # J (Hartree energy, CODATA 2022)
     CODATA_HARTREE_SIGMA = 8.5e-30          # J (uncertainty)
     CODATA_STEFAN_BOLTZMANN = 5.670374419e-8  # W m⁻² K⁻⁴
     CODATA_MAGNETIC_FLUX = 2.067833848e-15  # Wb (magnetic flux quantum)
@@ -3830,7 +3837,8 @@ class FormulasRegistry:
         """
         eta_S: H0 Friction Coefficient.
 
-        STATUS: DERIVED from G2 topology (v23.0+)
+        STATUS: FITTED (post-hoc integer rationalization 163/239 of the
+        previously fitted 0.6819; 0.016% match)
         FORMULA: eta_S = sterile_sector / (b3 * 10 - 1) = 163/239 = 0.68200836820...
 
         Components:
@@ -3839,8 +3847,6 @@ class FormulasRegistry:
 
         Result: H0 = 72 - 163/144 + eta_S = 71.550 km/s/Mpc
         Error: 0.016% from old fitted value 0.6819
-
-        This derivation upgrades G43 (Hubble Constant) from FITTED to DERIVED status.
         """
         return self._sophian_drag
 
@@ -4219,7 +4225,12 @@ class FormulasRegistry:
 
     @property
     def h0_early(self) -> float:
-        """H0 for early universe (Planck CMB measurement)."""
+        """H0 for early universe.
+
+        STATUS: ESTABLISHED:Planck2018 — hardcoded Planck 2018 CMB
+        measurement (67.4 km/s/Mpc), NOT a PM derivation. Exported via
+        get_all_derived() for reference/comparison only.
+        """
         return 67.4
 
     def calculate_w0(self) -> float:
@@ -4707,7 +4718,7 @@ class FormulasRegistry:
                     "named_for": "Matt O'Dowd",
                     "legacy_alias": "The Barbelo",
                     "legacy_description": "First Thought; the active force in 27D(24,1,2) bulk",
-                    "hubble_formula": f"(288/4) - (163/144) + 0.6819 = {self.h0_local:.2f}",
+                    "hubble_formula": f"(288/4) - (163/144) + 163/239 = {self.h0_local:.2f}",
                     "pm_path": "constants.barbelo_modulus"
                 },
                 "penrose_hameroff_bridge": {
@@ -4834,7 +4845,7 @@ class FormulasRegistry:
                     "symbol": "alpha_inv",
                     "latex": "\\alpha^{-1}",
                     "value": self.alpha_inverse,
-                    "formula": "(C_kaf * B3^2) / (kappa_Delta * pi * s3_projection)",
+                    "formula": "k_gimel^2 - b3/phi + phi/(4*pi) - 7/9963",
                     "pm_path": "qed.alpha_inverse"
                 },
                 "syzygy_gap": {

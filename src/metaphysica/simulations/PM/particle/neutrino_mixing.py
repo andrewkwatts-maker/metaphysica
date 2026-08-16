@@ -17,12 +17,14 @@ Candidate geometric computation of PMNS mixing angles from G2 manifold topology.
 
 This module has TWO KINDS of outputs (see assessment further down):
 
-* CANDIDATE TOPOLOGY-FIRST PREDICTIONS (proposed from b_3, b_2, chi_eff):
+* theta_12/theta_13/theta_23: topology-candidate formulas evaluated with zero
+  per-angle tuning, registered status FITTED pending the honesty convention's
+  tiered vocabulary:
   - theta_12  (solar mixing angle)
   - theta_13  (reactor mixing angle)
   - theta_23  (atmospheric mixing angle)
 
-* FITTED / PHENOMENOLOGICAL INPUTS (calibrated to NuFIT 6.0):
+* delta_CP and m_base are FITTED inputs (calibrated to NuFIT 6.0):
   - delta_CP (parity_offset = 45.9 deg is a hardcoded fit, not a derivation)
   - m_base = 0.049 eV (fitted to the atmospheric mass splitting)
 
@@ -50,7 +52,7 @@ TOPOLOGICAL INPUTS (TCS #187):
     - orientation_sum = 12 (from Euclidean bridge OR reduction, single bridge)
 
 PREDICTIONS vs NuFIT 6.0 (chi_eff_total=144):
-    theta_12 = 33.44° (NuFIT: 33.41 ± 0.75°) → 0.04σ
+    theta_12 = 33.59° (NuFIT: 33.41 ± 0.75°) → 0.24σ
     theta_13 = 8.65°  (NuFIT: 8.63 ± 0.11°)  → 0.16σ  [chi_eff_total=144]
     theta_23 = 49.75° (NuFIT: 49.0 ± 1.5° upper octant) → 0.50σ  [chi_eff_total=144]
     delta_CP = 278.4° (NuFIT IO: 278 ± 22°)  → 0.02σ  [with 13D parity offset]
@@ -80,7 +82,7 @@ Parameter-by-parameter classification (6 PMNS mixing parameters):
        topological constants (chi_eff=b3^2/4, n_gen=chi_eff/48).
      - Tribimaximal base 1/sqrt(3) is from discrete symmetry (A4/S4),
        not uniquely octonionic.
-     - Prediction: 33.44 deg vs NuFIT 33.41 +/- 0.75 deg (0.04 sigma).
+     - Prediction: 33.59 deg vs NuFIT 33.41 +/- 0.75 deg (0.24 sigma).
   6. PMNS theta_13: GENUINELY PREDICTED (if b2, b3 accepted)
      - sin(theta_13) = sqrt(b2*n_gen)/b3 * (1 + S_orient/(2*chi_eff))
      - Formula appears ad hoc -- not found in published literature.
@@ -244,7 +246,8 @@ class NeutrinoMixingSimulation(SimulationBase):
             domain="neutrino",
             title="PMNS Neutrino Mixing from G2 Geometry",
             description="Derives all four PMNS mixing parameters (theta_12, theta_13, "
-                       "theta_23, delta_CP) from G2 manifold topology without calibration",
+                       "theta_23, delta_CP) from G2 manifold topology without calibration "
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)",
             section_id="4",
             subsection_id="4.5"
         )
@@ -794,7 +797,8 @@ class NeutrinoMixingSimulation(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content="The TCS G₂ manifold construction #187 provides all necessary topological "
-                       "inputs to compute the mixing angles without any free parameters or calibration."
+                       "inputs to compute the mixing angles without any free parameters or calibration "
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)."
             ),
             ContentBlock(
                 type="formula",
@@ -853,10 +857,11 @@ class NeutrinoMixingSimulation(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content="With the TCS #187 values (b₂=4, b₃=24, χ_eff=144, n_gen=3, S_orient=12), "
-                       "we obtain: θ₁₂=33.59°, θ₁₃=8.33°, θ₂₃=49.75°, δ_CP=278.4°. "
+                       "we obtain: θ₁₂=33.59°, θ₁₃=8.65°, θ₂₃=49.75°, δ_CP=278.4°. "
                        "The δ_CP includes a 45.9° parity offset from 13D→4D projection. "
                        "These predictions agree with NuFIT 6.0 (IO) global fit values to within 1σ, "
-                       "with no calibration or free parameters."
+                       "with no calibration or free parameters "
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)."
             ),
             ContentBlock(
                 type="heading",
@@ -1019,7 +1024,8 @@ class NeutrinoMixingSimulation(SimulationBase):
                 "from the topological structure of associative 3-cycles on the G2 manifold. All four "
                 "mixing parameters (theta_12, theta_13, theta_23, delta_CP) emerge from wavefunction "
                 "overlaps on cycle intersections, with no free parameters or calibration to experimental "
-                "data. The cross-shadow architecture (chi_eff_total = 144 from both 13D shadows) "
+                "data (except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED). "
+                "The cross-shadow architecture (chi_eff_total = 144 from both 13D shadows) "
                 "naturally produces the characteristically large PMNS mixing angles, in contrast to "
                 "the small CKM angles arising from single-shadow quark confinement."
             ),
@@ -1116,10 +1122,15 @@ class NeutrinoMixingSimulation(SimulationBase):
                 id="pmns-delta-cp",
                 label="(4.14)",
                 latex=r"\delta_{CP} = \pi \left(\frac{n_{\text{gen}} + b_2}{2n_{\text{gen}}} "
-                      r"+ \frac{n_{\text{gen}}}{b_3}\right)",
-                plain_text="delta_CP = pi * ((n_gen + b2)/(2*n_gen) + n_gen/b3)",
-                category="DERIVED",
-                description="CP-violating phase from cycle intersection complex structure",
+                      r"+ \frac{n_{\text{gen}}}{b_3}\right) + \delta_{\text{parity}} "
+                      r"\quad (\delta_{\text{parity}} = 45.9^\circ,\ \text{FITTED})",
+                plain_text="delta_CP = pi * ((n_gen + b2)/(2*n_gen) + n_gen/b3) + delta_parity (delta_parity = 45.9 deg, FITTED)",
+                category="FITTED",
+                description=(
+                    "CP-violating phase from cycle intersection complex structure. The bare "
+                    "topological expression gives 232.5 deg; the registered output 278.4 deg "
+                    "includes the FITTED +45.9 deg parity offset."
+                ),
                 inputParams=["topology.b2", "topology.elder_kads", "topology.n_gen"],
                 outputParams=["neutrino.delta_CP_pred"],
                 input_params=["topology.b2", "topology.elder_kads", "topology.n_gen"],
@@ -1153,7 +1164,9 @@ class NeutrinoMixingSimulation(SimulationBase):
                 eml_description=(
                     "EML: ops.mul(eml_pi(), ops.add("
                     "ops.div(ops.add(n_gen, b2), ops.mul(eml_scalar(2.0), n_gen)), "
-                    "ops.div(n_gen, b3))) — CP phase from cycle intersection complex structure"
+                    "ops.div(n_gen, b3))) — CP phase from cycle intersection complex structure; "
+                    "registered output additionally adds the FITTED +45.9° parity offset (δ_parity) "
+                    "not shown in this expression"
                 ),
                 terms={
                     "n_gen": "Number of fermion generations",
@@ -1539,7 +1552,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(33.44), ops.div(eml_pi(), eml_scalar(180.0))) "
+                    "EML: ops.mul(eml_scalar(33.59), ops.div(eml_pi(), eml_scalar(180.0))) "
                     "— CALIBRATED to NuFIT 6.0"
                 ),
                 validation={
@@ -1566,7 +1579,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(8.57), ops.div(eml_pi(), eml_scalar(180.0))) "
+                    "EML: ops.mul(eml_scalar(8.65), ops.div(eml_pi(), eml_scalar(180.0))) "
                     "— CALIBRATED to NuFIT 6.0"
                 ),
                 validation={
@@ -1593,7 +1606,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(49.2), ops.div(eml_pi(), eml_scalar(180.0))) "
+                    "EML: ops.mul(eml_scalar(49.75), ops.div(eml_pi(), eml_scalar(180.0))) "
                     "— CALIBRATED to NuFIT 6.0"
                 ),
                 validation={
@@ -1622,7 +1635,8 @@ class NeutrinoMixingSimulation(SimulationBase):
                 eml_description=(
                     "EML: ops.mul(eml_pi(), ops.add("
                     "ops.div(ops.add(n_gen, b2), ops.mul(eml_scalar(2.0), n_gen)), "
-                    "ops.div(n_gen, b3))) — CALIBRATED to NuFIT 6.0 IO"
+                    "ops.div(n_gen, b3))) + FITTED +45.9° parity offset (δ_parity) "
+                    "— CALIBRATED to NuFIT 6.0 IO"
                 ),
                 validation={
                     "experimental_value": nufit_delta_cp_io[0],
@@ -1686,11 +1700,14 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.mass_sum",
                 name="Neutrino Mass Sum",
                 units="eV",
-                status="PREDICTED",
+                status="FITTED",
                 description=(
                     "Sum of neutrino masses Σm_ν = m1 + m2 + m3. Cosmologically constrained quantity. "
                     "Planck 2018: Σm_ν < 0.12 eV (95% CL). DESI 2024 + CMB: Σm_ν < 0.072 eV (95% CL). "
-                    "PM predicts Σm_ν ≈ 0.10 eV from geometric seesaw mechanism."
+                    "PM predicts Σm_ν ≈ 0.10 eV from geometric seesaw mechanism (scales with the FITTED "
+                    "m_base = 0.049 eV). NOTE: companion module (neutrino_sector.py) publishes a different "
+                    "Σm_ν under the opposite mass ordering — the two scenarios are alternatives, not "
+                    "simultaneous predictions."
                 ),
                 derivation_formula="neutrino-mass-sum",
                 eml_description="EML: ops.add(eml_vec('neutrino.m1'), ops.add(eml_vec('neutrino.m2'), eml_vec('neutrino.m3'))) — Σmᵢ cosmological neutrino mass bound",
@@ -1710,7 +1727,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 path="neutrino.dm2_21",
                 name="Solar Mass Splitting Delta m^2_21",
                 units="eV^2",
-                status="PREDICTED",
+                status="FITTED",
                 description="Solar neutrino mass-squared difference (m2^2 - m1^2)",
                 derivation_formula="neutrino-mass-spectrum",
                 experimental_bound=7.42e-5,
@@ -1739,7 +1756,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Atmospheric neutrino mass-squared difference (m3^2 - m2^2). Negative for Inverted Ordering.",
                 derivation_formula="neutrino-mass-spectrum",
                 # PM predicts Inverted Ordering: use IO experimental value
-                experimental_bound=-2.404e-3,  # NuFIT 6.0 IO value
+                experimental_bound=-2.498e-3,  # NuFIT 6.0 IO value
                 uncertainty=0.028e-3,  # ±0.028
                 bound_type="measured",
                 bound_source="NuFIT6.0_IO",
@@ -1748,13 +1765,13 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "ops.neg(ops.pow(m2, eml_scalar(2.0)))) — atmospheric splitting (negative = IO)"
                 ),
                 validation={
-                    "experimental_value": -2.404e-3,
+                    "experimental_value": -2.498e-3,
                     "uncertainty_plus": 0.028e-3,
                     "uncertainty_minus": 0.028e-3,
                     "bound_type": "measured",
-                    "status": "PASS",
+                    "status": "TENSION",
                     "source": "NuFIT6.0_IO",
-                    "notes": "NuFIT 6.0 (2024) IO: Delta m^2_32 = (-2.404 ± 0.028) x 10^-3 eV^2. Negative sign indicates Inverted Ordering (m3 lightest)."
+                    "notes": "NuFIT 6.0 (2024) IO: Delta m^2_32 = (-2.498 ± 0.028) x 10^-3 eV^2. Negative sign indicates Inverted Ordering (m3 lightest). PM's fitted-m_base value is -2.404e-3 eV^2 → 3.35σ tension."
                 }
             ),
             Parameter(
@@ -1782,7 +1799,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Geometric seesaw scale parameter from G2 topology: k_gimel = chi_eff / (b2 * b3)",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Pure topological parameter, not experimentally measurable
-                eml_description="EML: ops.add(ops.div(eml_scalar(24.0), eml_scalar(2.0)), ops.inv(eml_pi())) — k_gimel = b₃/2 + 1/π ≈ 12.318 (spectral gap)",
+                eml_description="EML: ops.div(chi_eff, ops.mul(b2, b3)) — k_gimel = χ/(b₂·b₃) = 144/(4·24) = 1.5 (this module's local k_gimel — name collision with the Higgs-VEV k_gimel = b₃/2 + 1/π ≈ 12.318)",
                 validation={
                     "bound_type": "theoretical",
                     "status": "GEOMETRIC",
@@ -1797,7 +1814,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Flux suppression parameter from G2 topology: C_kaf = b3 / (b2 * n_gen)",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Pure topological parameter, not experimentally measurable
-                eml_description="EML: ops.div(eml_scalar(1.0), ops.mul(eml_scalar(4.0), eml_pi())) — C_kaf = 1/(4π) Kaf coupling from G₂ spectral structure",
+                eml_description="EML: ops.div(b3, ops.mul(b2, n_gen)) — C_kaf = b₃/(b₂·n_gen) = 24/(4·3) = 2.0 (module value)",
                 validation={
                     "bound_type": "theoretical",
                     "status": "GEOMETRIC",
@@ -1837,8 +1854,8 @@ class NeutrinoMixingSimulation(SimulationBase):
                 "condition": "|theta_12 - 33.41| / 0.75 < 1.0",
                 "tolerance": 1.0,
                 "status": "PASS",
-                "wolfram_query": "Abs[33.44 - 33.41] / 0.75",
-                "wolfram_result": "0.04",
+                "wolfram_query": "Abs[33.59 - 33.41] / 0.75",
+                "wolfram_result": "0.24",
                 "sector": "particle"
             },
             {
@@ -1907,7 +1924,7 @@ class NeutrinoMixingSimulation(SimulationBase):
         checks = []
 
         # theta_12 check
-        theta12_pred = 33.44
+        theta12_pred = 33.59
         theta12_exp = 33.41
         theta12_err = 0.75
         sigma12 = abs(theta12_pred - theta12_exp) / theta12_err
@@ -1973,7 +1990,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
-                    "theta_12_deg": 33.44,
+                    "theta_12_deg": 33.59,
                     "theta_13_deg": 8.65,
                     "theta_23_deg": 49.75,
                     "delta_CP_deg": 278.4,
@@ -2082,8 +2099,8 @@ class NeutrinoMixingSimulation(SimulationBase):
                 "match global neutrino oscillation data (NuFIT 6.0) within experimental uncertainties."
             ),
             "technicalDetail": (
-                "θ₁₃: sin(θ₁₃) = [√(b₂×n_gen)/b₃] × [1 + S_orient/(2χ_eff)] = [√12/24] × [1 + 12/288] = 0.145 → 8.33° "
-                "(NuFIT: 8.54 ± 0.11°). δ_CP: π[(n_gen+b₂)/(2n_gen) + n_gen/b₃] = π[7/6 + 1/8] = 278.4° (NuFIT: 230° ± 28°)."
+                "θ₁₃: sin(θ₁₃) = [√(b₂×n_gen)/b₃] × [1 + S_orient/(2χ_eff)] = [√12/24] × [1 + 12/288] = 0.1503 → 8.65° "
+                "(NuFIT: 8.63 ± 0.11°). δ_CP: π[(n_gen+b₂)/(2n_gen) + n_gen/b₃] + 45.9° (FITTED offset) = 278.4° (NuFIT: 278° ± 22°)."
                 "θ₁₂: (1/√3)[1 - (b₃-b₂n_gen)/(2χ_eff)] = 0.577 × 0.958 → 33.59° (NuFIT: 33.41 ± 0.75°). θ₂₃: 45° + "
                 "(b₂-n_gen)×n_gen/b₂ + (S_orient/b₃)×(b₂χ_eff)/(b₃n_gen) = 45° + 0.75° + 4.0° = 49.75° (NuFIT: 49° ± 1.5°). "
                 "The G2 ~ Aut(O) connection explains maximal base mixing, while G4-flux creates winding number "
@@ -2220,8 +2237,8 @@ _theta_12_test = np.degrees(np.arcsin(_sin_theta_12))
 assert not np.isnan(_theta_12_test), "NeutrinoMixing: theta_12 calculation produced NaN"
 assert not np.isinf(_theta_12_test), "NeutrinoMixing: theta_12 calculation produced Inf"
 assert 0 < _theta_12_test < 90, f"NeutrinoMixing: theta_12 out of range: {_theta_12_test}"
-# theta_12 = 33.44° (EXCELLENT match to experimental 33.41°, only 0.04σ)
-assert abs(_theta_12_test - 33.44) < 0.5, f"NeutrinoMixing: theta_12 unexpected value: {_theta_12_test}"
+# theta_12 = 33.59° (matches experimental 33.41° at 0.24σ)
+assert abs(_theta_12_test - 33.59) < 0.5, f"NeutrinoMixing: theta_12 unexpected value: {_theta_12_test}"
 
 # Test theta_23 calculation
 # flux = (12/24) × (4 × 144) / (24 × 3) = 0.5 × 576/72 = 0.5 × 8 = 4.0

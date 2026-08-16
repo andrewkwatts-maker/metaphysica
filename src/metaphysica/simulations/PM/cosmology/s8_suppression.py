@@ -15,17 +15,19 @@ The tension arises because:
 
 Key Physics:
 PM's w0 = -1 + 1/b3 = -23/24 ~ -0.9583 is between LCDM (w=-1) and quintessence (w>-1).
-Since -0.9583 > -1, it provides LESS acceleration than LCDM at early times,
-allowing MORE structure growth. This actually predicts HIGHER S8 than LCDM,
-which is opposite to what's needed to resolve the tension.
+Since w0 > -1, dark energy carries MORE density at early times than in LCDM,
+slightly SUPPRESSING structure growth (growth factor 0.994, a ~0.6% effect) --
+the direction matches the lensing-side pull, though the magnitude alone is far
+below the ~8% needed.
 
-However, the time evolution w_a ~ 0.29 means w becomes more negative at high z,
-providing early dark energy that can suppress growth. The net effect depends on
+The registry-canonical evolution parameter is w_a = -0.204 (registry canonical;
+an earlier draft of this header quoted w_a ~ +0.29). The net effect depends on
 the integrated expansion history.
 
 v16.2 UPDATE: Moduli-DM Friction Mechanism
 ===========================================
-The wrong-direction problem above (S8 ~ 0.837 > Planck 0.832) is addressed by
+The remaining gap (baseline S8 ~ 0.831, near Planck 0.832, vs weak-lensing
+~0.77) is addressed by
 adding a moduli-DM friction term from the bridge moduli coupling to dark matter.
 The moduli fields phi_i in the G2 compactification couple to DM through:
 
@@ -38,23 +40,34 @@ where beta_eff = alpha_leak / (4*pi) * kappa_sampler is derived from:
 This friction creates a drag force on DM peculiar velocities:
     dv_DM/dt + H*v_DM + beta_eff * grad(phi)/M_Pl = -grad(Phi)/a
 
-The drag suppresses DM infall into potential wells, reducing sigma_8 by:
-    sigma_8_friction = sigma_8_baseline * exp(-beta_eff * I(z))
-where I(z) is an integrated friction kernel over the growth history.
+The drag suppresses DM infall into potential wells, reducing sigma_8 by
+(implemented form):
+    sigma_8_friction = sigma_8_baseline
+                       * exp(-beta_eff * sqrt(12) * (Delta_a + I(z)) / 2)
+where I(z) is an integrated friction kernel over the growth history and
+Delta_a = z_eff/(1+z_eff).
+NOTE: doc-vs-code divergence flagged by audit -- the implemented
+sqrt(12)-coherence form including Delta_a is the operative definition; the
+simple exp(-beta_eff*I) form quoted previously gives 0.86% suppression, not
+the 5.1% used here.
 
-BEFORE friction: S8 ~ 0.831 (wrong direction, near Planck 0.832)
+BEFORE friction: S8 ~ 0.831 (near Planck 0.832)
 AFTER friction:  S8 ~ 0.789 (5.1% suppression, within 1.2sigma of weak lensing)
+NOTE: canonical S8 for this mechanism = 0.8004 (growth-ODE, moduli_dm_coupling);
+the analytic-exponential 0.789 in s8_suppression is a cross-check variant.
 
 PARAMETER CLASSIFICATION:
 - w0 = -23/24:           DERIVED (from b3 = 24, topological)
-- beta_eff ~ 0.065:      DERIVED (from alpha_leak and kappa_sampler, see moduli_dm_coupling.py)
+- beta_eff ~ 0.065:      PHENOMENOLOGICAL (order-of-magnitude loop factor --
+                         see moduli_dm_coupling.py epistemological note)
 - Friction kernel I(z):  DERIVED (numerical integration of growth + Hubble evolution)
 - Overall S8 shift:      PREDICTED (not fitted to match observations)
 
 WHAT IS ASSUMED vs DERIVED:
 - ASSUMED: The moduli-DM coupling takes Yukawa form (standard for moduli in string compactifications)
 - ASSUMED: Linear perturbation theory is sufficient (valid for S8 at 8 Mpc scales)
-- DERIVED: beta_eff value from PM topological quantities (not free parameter)
+- PHENOMENOLOGICAL: beta_eff is an order-of-magnitude loop factor (see
+  moduli_dm_coupling.py epistemological note)
 - DERIVED: Friction kernel from standard cosmological perturbation theory
 - NOT FITTED: No parameters were adjusted to match weak lensing S8 values
 
@@ -76,7 +89,7 @@ INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
 ORIGINAL assessment (v16.1, dark energy only):
 Classification: UNFOUNDED
-The w0 = -23/24 > -1 gives S8 ~ 0.837, HIGHER than Planck. Growth suppression
+The w0 = -23/24 > -1 gives S8 ~ 0.831, near Planck 0.832. Growth suppression
 factor beta = 0.994 (0.6%) is far below the ~8% required.
 
 UPDATED assessment (v16.2, with moduli-DM friction):
@@ -284,7 +297,7 @@ class S8SuppressionV16(SimulationBase):
 
         # Read inputs
         w0_pm = registry.get_param("cosmology.w0_derived")  # -1 + 1/b₃ = -23/24 = -0.9583
-        wa_pm = registry.get_param("cosmology.wa_derived")  # ~0.29
+        wa_pm = registry.get_param("cosmology.wa_derived")  # w_a = -0.204 (registry canonical)
         sigma8_desi = registry.get_param("desi.sigma8")     # 0.827 ± 0.011
         Omega_m = registry.get_param("desi.Omega_m")        # 0.3069 ± 0.005
 
@@ -603,28 +616,30 @@ class S8SuppressionV16(SimulationBase):
 
         The moduli fields from G2 compactification couple to dark matter,
         creating a drag force on DM peculiar velocities that suppresses
-        structure growth. The coupling strength beta_eff is derived from
-        PM topological quantities:
-
-            beta_eff = alpha_leak / (4*pi) * kappa_sampler
-
-        where:
-            alpha_leak = 1/(4*pi)  [sampler field loop correction]
-            kappa_sampler = 1/sqrt(b3) = 1/sqrt(24)  [sampler-bridge mixing]
+        structure growth. The coupling strength beta_eff ~ 0.065 is an
+        order-of-magnitude loop factor taken from moduli_dm_coupling.py
+        (actual formula there: (1/sqrt(6)) / (4*pi) * 2).
 
         The friction modifies the growth equation:
             D'' + [2 + dlnH/dlna + Gamma_friction] D' = (3/2) Omega_m(a) D
 
         where Gamma_friction = beta_eff^2 * (rho_DM / (3 H^2 M_Pl^2))
 
-        At the linear level, this suppresses sigma_8 by:
-            sigma_8_friction = sigma_8_baseline * exp(-beta_eff * I(z_eff))
+        Implemented suppression (see Step 3 below):
+            sigma_8_friction = sigma_8_baseline
+                * exp(-beta_eff * sqrt(N_bridges) * (Delta_a + I(z_eff)) / 2)
+
+        NOTE: doc-vs-code divergence flagged by audit -- the implemented
+        sqrt(12)-coherence form including Delta_a is the operative
+        definition; the simple exp(-beta_eff * I) form quoted previously
+        gives 0.86% suppression, not the 5.1% used here.
 
         where I(z) is the integrated friction kernel:
             I(z) = integral_0^z [beta_eff * Omega_DM(z') / H(z')] dz'/(1+z')
 
         CLASSIFICATION OF EACH INPUT:
-        - beta_eff:    DERIVED from alpha_leak and kappa_sampler (topological)
+        - beta_eff:    PHENOMENOLOGICAL (order-of-magnitude loop factor --
+                       see moduli_dm_coupling.py epistemological note)
         - I(z):        DERIVED from numerical integration (standard cosmology)
         - Functional form (Yukawa coupling): ASSUMED (standard in string compactifications)
 
@@ -778,40 +793,15 @@ class S8SuppressionV16(SimulationBase):
         Returns:
             Effective coupling strength beta_eff ~ 0.065
         """
-        # Fundamental quantities (all from PM topology)
-        b3 = 24                         # G2 Betti number (Pillar Seed)
-        alpha_leak = 1.0 / (4.0 * np.pi)   # Sampler loop correction
-        kappa_sampler = 1.0 / np.sqrt(b3)   # Sampler-bridge mixing
-
-        # Single-bridge coupling
-        beta_single = alpha_leak / (4.0 * np.pi) * kappa_sampler
-
-        # Collective enhancement from 12 bridges
-        N_bridges = 12  # Number of bridge pairs (from M^27 architecture)
-        # The enhancement factor sqrt(N) comes from coherent superposition
-        # of moduli couplings across bridge pairs. The additional factor
-        # g_enh ~ 2.3 comes from the G2 holonomy constraint on moduli
-        # kinetic mixing (derived in moduli_dm_coupling.py Eq. 3.7).
-        # CLASSIFICATION: g_enh is DERIVED from G2 holonomy, not fitted.
-        g_enh = 2.3  # G2 holonomy enhancement (see moduli_dm_coupling.py)
-        beta_eff = beta_single * np.sqrt(N_bridges) * g_enh
-
-        # Expected: beta_eff ~ 0.065
-        # Actual: let's compute and check
-        # beta_single ~ 1/(16*pi^2*sqrt(24)) ~ 0.00129
-        # beta_eff ~ 0.00129 * sqrt(12) * 2.3 ~ 0.00129 * 3.464 * 2.3 ~ 0.0103
-        # This is lower than the full computation because the fallback omits
-        # higher-order corrections. We scale to match the WP3.1 result.
-
-        # The full moduli_dm_coupling.py result includes:
-        # 1. Two-loop corrections to alpha_leak (factor ~2.1)
-        # 2. Resonant moduli oscillation enhancement (factor ~3.0)
-        # These are DERIVED, not fitted. See moduli_dm_coupling.py for details.
-        #
-        # For the fallback, we use the expected WP3.1 result directly:
-        beta_eff_wp31 = 0.065  # From moduli_dm_coupling.py expected output
-
-        return beta_eff_wp31
+        # Audit fix: mirror moduli_dm_coupling.py's actual formula,
+        #     beta_eff = (1/sqrt(6)) / (4*pi) * 2 ~ 0.0650
+        # (an order-of-magnitude loop factor; PHENOMENOLOGICAL — see the
+        # epistemological note in moduli_dm_coupling.py). The previous
+        # fallback computed 0.0103 via beta_single*sqrt(12)*g_enh, then
+        # discarded it and returned a hardcoded 0.065 attributed to
+        # "two-loop (~2.1)" and "resonant (~3.0)" factors that do not
+        # exist in moduli_dm_coupling.py.
+        return (1.0 / np.sqrt(6.0)) / (4.0 * np.pi) * 2.0
 
     def _compute_friction_kernel(
         self,
@@ -925,7 +915,7 @@ class S8SuppressionV16(SimulationBase):
                 "and weak lensing surveys (KiDS-1000: 0.766 \u00b1 0.020, DES Y3: 0.776 \u00b1 0.017) "
                 "is a significant challenge for ΛCDM cosmology. We analyze PM's prediction "
                 "for S₈ given dynamical dark energy with w₀ = -1 + 1/b₃ = -23/24 and DESI 2025's "
-                "\u03c3₈ = 0.827 \u00b1 0.011. PM predicts S₈ \u2248 0.837, intermediate between Planck "
+                "\u03c3₈ = 0.827 \u00b1 0.011. PM predicts S₈ \u2248 0.831, intermediate between Planck "
                 "and weak lensing, representing the integrated expansion history with "
                 "time-evolving dark energy."
             ),
@@ -1027,7 +1017,7 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) = 0.827 \times 1.011 \times 0.994 \approx 0.837",
+                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) = 0.827 \times 1.011 \times 0.994 \approx 0.831",
                     formula_id="s8-prediction-pm",
                     label="(5.22)"
                 ),

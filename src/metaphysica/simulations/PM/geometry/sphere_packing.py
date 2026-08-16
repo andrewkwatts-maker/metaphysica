@@ -64,8 +64,8 @@ class E8SpherePacking:
     def optimal_density() -> float:
         """Optimal 8D sphere packing density Δ₈ = π⁴/384.
 
-        Proven by Viazovska (2017) using modular forms and
-        the Cohn-Elkies linear programming bound.
+        Proven by Viazovska (2016; published Annals 2017) using modular
+        forms and the Cohn-Elkies linear programming bound.
         """
         return math.pi ** 4 / 384.0
 

@@ -752,10 +752,10 @@ class AttractorPotentialV18(SimulationBase):
                         "potential minimum by a fraction 1/b3 = 1/24 of the oscillation "
                         "period. The Maximum Entropy Principle applied to the G2 moduli "
                         "space selects this fractional displacement, giving the equation "
-                        "of state w_0 = -(1 - 1/b3) = -23/24 ~ -0.9583. The "
-                        "sub-leading CPL parameter w_a ~ 0.1 arises from the "
-                        "time-variation of the modulus as it continues to roll toward "
-                        "the attractor. The derivation gives:"
+                        "of state w_0 = -(1 - 1/b3) = -23/24 ~ -0.9583. An earlier "
+                        "draft quoted a sub-leading CPL parameter w_a ~ +0.1 from the "
+                        "time-variation of the modulus (SUPERSEDED: registry canonical "
+                        "w_a = -1/sqrt(24) = -0.204). The derivation gives:"
                     )
                 ),
                 ContentBlock(
@@ -768,14 +768,17 @@ class AttractorPotentialV18(SimulationBase):
                     title="Quintessence Prediction and DESI Comparison",
                     content=(
                         "The attractor dynamics predict w_0 = -23/24 = -0.9583 exactly, "
-                        "with w_a ~ 0.1 from residual modulus evolution. "
+                        "with w_a ~ +0.1 from residual modulus evolution (SUPERSEDED: "
+                        "registry canonical w_a = -1/sqrt(24) = -0.204; DESI prefers "
+                        "w_a < 0, so the positive-w_a discriminator failed). "
                         "DESI DR1 (2024) combined with CMB and SNIa gives w_0 ~ -0.83 +/- 0.07, "
                         "in 1.8 sigma tension with LCDM. The PM prediction w_0 = -0.9583 is "
                         "within 1.8 sigma of DESI and within 0.3 sigma of the Planck+BAO "
                         "w = -1.01 +/- 0.04 constraint. Future surveys (DESI full DR, Euclid, "
-                        "Roman) will precisely measure w_a; a positive detection w_a > 0 "
-                        "at 3 sigma would be a strong discriminator for the PM quintessence "
-                        "mechanism over the cosmological constant."
+                        "Roman) will precisely measure w_a; the originally proposed "
+                        "positive-w_a discriminator (w_a > 0 at 3 sigma) failed -- DESI "
+                        "measures w_a < 0, consistent in sign with the registry-canonical "
+                        "w_a = -0.204."
                     )
                 ),
             ],

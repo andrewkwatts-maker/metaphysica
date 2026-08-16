@@ -147,7 +147,7 @@ class FermionGenerationsV16(SimulationBase):
 
         # Experimental fermion masses (GeV) for validation
         self.exp_masses = {
-            'top': 172.7,
+            'top': 172.57,  # PDG 2024 direct-measurement average
             'bottom': 4.18,
             'charm': 1.27,
             'strange': 0.093,

@@ -48,14 +48,14 @@ MECHANISM:
 
 4. Wolfenstein parameters (mixture of Froggatt-Nielsen ansatz + fitted):
    lambda = epsilon = 0.223  (ansatz-derived from mass hierarchy)
-   A      = 1/epsilon = 4.48 (fitted to PDG V_cb)
+   A      = 0.81 (fitted)
    rho, eta from CP phase structure (fitted to PDG J and delta_CP)
 
 KEY RESULTS:
-- V_us = 0.2257 (matches Cabibbo angle = epsilon)
-- V_cb = 0.0405 (PDG: 0.0410 ± 0.0014)
-- V_ub = 0.0037 (PDG: 0.00382 ± 0.00024)
-- J = 3.08e-5 (PDG: 3.0 ± 0.3 × 10^-5)
+- V_us = 0.22313 (= epsilon; PDG 2024: 0.22500 ± 0.00067 → 2.79σ)
+- V_cb = 0.04033 (PDG 2024: 0.04182 ± 0.00085 → 1.75σ)
+- V_ub = 0.003476 (PDG 2024: 0.00369 ± 0.00011 → 1.95σ)
+- J = 2.91e-5 (computed; PDG 2024: 3.08 ± 0.13 × 10^-5 → 1.27σ)
 - Unitarity: |V_ud|^2 + |V_us|^2 + |V_ub|^2 = 1.000 (exact)
 
 DERIVATION CHAIN:
@@ -91,7 +91,7 @@ Parameter-by-parameter classification (4 CKM mixing parameters):
   1. CKM theta_12 (V_us = lambda): GENUINELY PREDICTED
      - lambda = epsilon = exp(-3/2) = 0.2231, claimed from G2 curvature scale.
      - This is the single genuine topological prediction in the CKM sector.
-     - Matches PDG V_us = 0.2245 +/- 0.0008 at 1.71 sigma.
+     - epsilon = 0.22313 vs V_us(PDG24) = 0.22500 +/- 0.00067 -> 2.79 sigma.
   2. CKM theta_23 (V_cb = A*lambda^2): FITTED
      - A = 0.81 is hardcoded as GEOMETRIC_A class constant.
      - Git history confirms A=0.81 present from earliest commits, never derived.
@@ -130,7 +130,7 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES
 # Output: ckm.V_us, ckm.lambda_wolfenstein
-# Deviation: 1.71 sigma from experimental (PDG 2024: V_us = 0.2245 +/- 0.0008)
+# Deviation: 2.79 sigma from experimental (PDG 2024: V_us = 0.22500 +/- 0.00067)
 #
 # Classification: PRECISION FRONTIER (octonionic mixing resolution)
 #
@@ -140,20 +140,20 @@ Dedicated To:
 #     V_us = epsilon = exp(-3/2) ~ 0.2231
 #     lambda_wolfenstein = epsilon ~ 0.2231
 #
-#   The PDG 2024 value V_us = 0.2245 +/- 0.0008 differs by:
-#     (0.2245 - 0.2231) / 0.0008 = 1.71 sigma
+#   The PDG 2024 value V_us = 0.22500 +/- 0.00067 differs by:
+#     epsilon = 0.22313 vs V_us(PDG24) = 0.22500 +/- 0.00067 -> 2.79 sigma
 #
-#   This is a GOOD fit -- within 2 sigma of one of the most precisely
+#   This is a 2.79 sigma tension with one of the most precisely
 #   measured flavor parameters in particle physics.
 #
-# Why 1.71 sigma:
+# Why 2.79 sigma:
 #   - The Froggatt-Nielsen parameter epsilon = exp(-3/2) is derived from
 #     the G2 curvature scale, with the exponent 3/2 from triality
 #   - The exact value depends on:
 #     a) The G2 cycle volume ratios (leading order: exp(-3/2))
 #     b) Threshold corrections from KK modes (subleading: ~1-2%)
 #     c) RG running of Yukawa couplings from M_GUT to M_Z (~0.5%)
-#   - The 0.6% discrepancy (0.0014 in V_us) is consistent with
+#   - The 0.84% discrepancy (0.00187 in V_us) is consistent with
 #     missing sub-leading corrections
 #
 # Improvement path:
@@ -164,16 +164,16 @@ Dedicated To:
 #   3. Include octonionic mixing phases beyond leading Froggatt-Nielsen
 #   4. Incorporate v23 sampler data fields ancestral flux corrections
 #      (currently disabled to avoid regression, see docstring)
-#   5. The other CKM elements (V_cb, V_ub, J) are all within 1 sigma,
-#      so the improvement is specifically needed for V_us
+#   5. The other CKM elements (V_cb, V_ub, J) also show mild tension vs
+#      PDG 2024, so improvement is needed beyond V_us alone
 #
-# Note: All other CKM observables are within 1 sigma:
-#   V_cb = 0.0405 vs PDG 0.0410 +/- 0.0014 (0.36 sigma)
-#   V_ub = 0.0037 vs PDG 0.00382 +/- 0.00024 (0.50 sigma)
-#   J = 3.08e-5 vs PDG 3.0 +/- 0.3 x 10^-5 (0.27 sigma)
-#   The V_us tension is the ONLY significant deviation in the CKM sector.
+# Note: vs PDG 2024, the other CKM observables are NOT all within 1 sigma:
+#   V_cb = 0.04033 vs PDG24 0.04182 +/- 0.00085 (1.75 sigma)
+#   V_ub = 0.003476 vs PDG24 0.00369 +/- 0.00011 (1.95 sigma)
+#   J = 2.91e-5 (computed) vs PDG24 3.08 +/- 0.13 x 10^-5 (1.27 sigma)
+#   V_us (2.79 sigma) is the largest deviation in the CKM sector.
 #
-# Status: GOOD FIT - minor precision improvement possible
+# Status: MILD TENSION vs PDG 2024 - precision improvement needed
 # ============================================================================
 
 import numpy as np
@@ -221,24 +221,27 @@ class CKMMatrixSimulation(SimulationBase):
     5. Verify unitarity and compare with PDG experimental values
     """
 
-    # PDG 2024 experimental values for validation (from pdg_2024_values.json)
-    PDG_V_us = 0.2245
-    PDG_V_us_err = 0.0008
-    PDG_V_cb = 0.0410
-    PDG_V_cb_err = 0.0014
-    PDG_V_ub = 0.00382
-    PDG_V_ub_err = 0.00024
+    # PDG 2024 experimental values for validation
+    PDG_V_us = 0.22500
+    PDG_V_us_err = 0.00067
+    PDG_V_cb = 0.04182
+    PDG_V_cb_err = 0.00085
+    PDG_V_ub = 0.00369
+    PDG_V_ub_err = 0.00011
     PDG_V_td = 0.0084
     PDG_V_td_err = 0.0006
     PDG_V_ts = 0.0400
     PDG_V_ts_err = 0.0027
     PDG_V_tb = 0.999
     PDG_V_tb_err = 0.003
-    PDG_J = 3.0e-5
-    PDG_J_err = 0.3e-5
+    PDG_J = 3.08e-5
+    PDG_J_err = 0.13e-5
 
     # Geometric coefficients from G2 phase structure
     GEOMETRIC_A = 0.81  # Geometric overlap coefficient (dimensionless)
+    # NOTE: exported/displayed delta_cp = pi/6 is inconsistent with
+    # atan2(eta, rho) = atan2(0.36, 0.14) = 68.7 deg — the pi/6 display value
+    # is a legacy ansatz (numeric kept unchanged for downstream consumers).
     TOPOLOGICAL_PHASE = np.pi / 6  # CP phase from K=4 matching (30 degrees)
 
     @property
@@ -323,6 +326,8 @@ class CKMMatrixSimulation(SimulationBase):
 
         # CP phase from topological phase structure
         # delta_CP ~ pi/6 from K=4 matching fibres
+        # (inconsistent with atan2(eta, rho) = 68.7 deg — delta display value
+        # is a legacy ansatz; numeric unchanged for downstream consumers)
         delta_cp = self.TOPOLOGICAL_PHASE
 
         # Wolfenstein parameters rho and eta from CP phase
@@ -478,6 +483,8 @@ class CKMMatrixSimulation(SimulationBase):
 
         lam = float(epsilon)
         A_w = self.GEOMETRIC_A
+        # delta_cp = pi/6 display value (inconsistent with atan2(eta, rho) =
+        # 68.7 deg — legacy ansatz; numeric unchanged for downstream consumers)
         delta_cp = self.TOPOLOGICAL_PHASE
         eta_w = 0.36
         rho_w = 0.14
@@ -623,8 +630,9 @@ class CKMMatrixSimulation(SimulationBase):
                     content=(
                         "where A ~ 0.81 is a geometric coefficient from angular overlaps in "
                         "the associative 3-cycle configuration. The remarkable feature is that "
-                        "the Cabibbo angle V<sub>us</sub> = 0.2245 ± 0.0008 (PDG 2024) matches precisely "
-                        "the Froggatt-Nielsen parameter ε, unifying quark masses and mixing."
+                        "the Cabibbo angle V<sub>us</sub> = 0.22500 ± 0.00067 (PDG 2024) is within "
+                        "0.84% (2.79σ) of the Froggatt-Nielsen parameter ε = 0.22313, linking quark "
+                        "masses and mixing."
                     )
                 ),
                 ContentBlock(
@@ -651,14 +659,14 @@ class CKMMatrixSimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"J \approx 3.08 \times 10^{-5}",
+                    content=r"J \approx 2.91 \times 10^{-5}",
                     label="(4.3.4)"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This matches the experimental value J = (3.0 ± 0.3) × 10<sup>−5</sup> (PDG 2024) "
-                        "with no free parameters. "
+                        "This is within 1.3σ of the experimental value J = (3.08 ± 0.13) × 10<sup>−5</sup> (PDG 2024); "
+                        "the fitted A and η enter this result. "
                         "<Speculation>The CP phase is claimed to emerge purely from the topology "
                         "of the compact G₂ manifold via the K=4 matching fibres, though the "
                         "specific connection between K=4 and delta_CP = pi/6 has not been derived "
@@ -841,7 +849,7 @@ class CKMMatrixSimulation(SimulationBase):
                         "V_ub: third generation, distance Q = 3, V_ub ~ A*epsilon^3",
                         "A ~ 0.81 from angular overlap geometry",
                         "epsilon = exp(-1.5) ~ 0.223 from G2 curvature scale",
-                        "Prediction: V_us = 0.223 vs PDG = 0.2257 ± 0.0009 (1.4% agreement)",
+                        "Prediction: V_us = 0.223 vs PDG 2024: 0.22500 ± 0.00067 (0.84% / 2.79σ)",
                     ]
                 },
                 terms={
@@ -864,11 +872,11 @@ class CKMMatrixSimulation(SimulationBase):
                 eml_tree_str="ops.mul(ops.pow(A_param, eml_scalar(2.0)), ops.mul(ops.pow(lambda_W, eml_scalar(6.0)), eta_bar))",
                 eml_latex=r"J = \mathrm{ops.mul}(\mathrm{ops.pow}(A,\; 2),\; \mathrm{ops.mul}(\mathrm{ops.pow}(\epsilon,\; 6),\; \eta))",
                 eml_description="EML: J = ops.mul(ops.pow(eml_scalar(A), eml_scalar(2.0)), ops.mul(ops.pow(lambda_W, eml_scalar(6.0)), eml_scalar(eta)))",
-                category="PREDICTED",
+                category="FITTED",
                 description=(
                     "Jarlskog invariant measuring CP violation in quark sector. "
-                    "Predicted value J ~ 3e-5 matches experiment with CP phase "
-                    "delta_CP ~ pi/6 from K=4 topological matching."
+                    "J = A²λ⁶η uses the FITTED A and η; computed value 2.91e-5 "
+                    "vs PDG 2024 (3.08 ± 0.13)e-5."
                 ),
                 # T2.1.B (b) fix: J = A²·ε⁶·η; all three roots (A, ε, K_MATCHING)
                 # trace back to b₃ via chi_eff and the b₂-b₃ Betti pair.
@@ -884,15 +892,15 @@ class CKMMatrixSimulation(SimulationBase):
                         "J ~ A^2 * epsilon^6 * sin(delta_CP) in Wolfenstein expansion",
                         "CP phase delta_CP ~ pi/K from K3 matching fibres",
                         "K = 4 gives delta_CP ~ pi/6 ~ 30 degrees",
-                        "eta = sin(delta_CP) ~ 0.5 (imaginary Wolfenstein parameter)",
-                        "J = A^2 * epsilon^6 * eta ~ (3.6)^2 * (0.223)^6 * 0.5 ~ 3.08e-5",
-                        "PDG value: J = (3.0 ± 0.3) × 10^-5 (agreement within 3%)",
+                        "eta = 0.36 (FITTED; not sin(delta_CP) = 0.5)",
+                        "J = A²λ⁶η = 0.81² × 0.22313⁶ × 0.36 ≈ 2.91×10⁻⁵",
+                        "PDG 2024 value: J = (3.08 ± 0.13) × 10^-5 (1.27 sigma)",
                     ]
                 },
                 terms={
                     "J": "Jarlskog invariant (CP violation measure)",
                     "V_us, V_cb, V_ub, V_cs": "CKM matrix elements",
-                    "A": "Wolfenstein parameter A ~ 3.6",
+                    "A": "A = 0.81 (fitted)",
                     "epsilon": "Froggatt-Nielsen parameter ~ 0.223",
                     "eta": "Imaginary Wolfenstein parameter ~ sin(delta_CP)",
                     "delta_CP": "CP-violating phase ~ pi/6 from topology",
@@ -918,11 +926,11 @@ class CKMMatrixSimulation(SimulationBase):
                 eml_tree_str="ops.pow(racetrack_epsilon, ops.inv(eml_scalar(3.0)))",
                 eml_latex=r"\lambda = \mathrm{ops.pow}(\epsilon_{\text{racetrack}},\; \mathrm{ops.inv}(\mathrm{eml\_scalar}(3)))",
                 eml_description="EML: lambda = ops.pow(racetrack_epsilon, ops.inv(n_gen)); A = ops.div(Vcb, ops.pow(lambda_W, eml_scalar(2.0)))",
-                category="DERIVED",
+                category="FITTED",
                 description=(
-                    "Complete CKM matrix in Wolfenstein parametrization. All four "
-                    "parameters (lambda, A, rho, eta) derived from G2 geometry with "
-                    "no free phenomenological inputs."
+                    "Complete CKM matrix in Wolfenstein parametrization. "
+                    "λ is proposed topology-first (ε = e^{-3/2}); A, ρ, η are "
+                    "FITTED phenomenological inputs."
                 ),
                 # T2.1.B (b) fix: lambda = epsilon traces to chi_eff = 6·b₃;
                 # delta_CP = pi/K traces via K_MATCHING -> b₂ -> betti-numbers -> b₃.
@@ -945,19 +953,18 @@ class CKMMatrixSimulation(SimulationBase):
                     "method": "Wolfenstein expansion with geometric parameters",
                     "steps": [
                         "lambda = epsilon = exp(-1.5) ~ 0.223 (Cabibbo angle)",
-                        "A = 0.81/epsilon ~ 3.6 (geometric overlap coefficient)",
-                        "delta_CP = pi/K = pi/6 ~ 30 degrees (topological phase)",
-                        "eta = sin(delta_CP) * (epsilon^3/lambda^3) ~ 0.125",
-                        "rho = cos(delta_CP) * (epsilon^3/lambda^3) - (1 - lambda^2/2) ~ 0.22",
+                        "A = 0.81 (FITTED geometric overlap coefficient)",
+                        "delta_CP = pi/K = pi/6 ~ 30 degrees display value (inconsistent with atan2(eta, rho) = 68.7 deg — legacy ansatz)",
+                        "eta = 0.36, rho = 0.14 (both FITTED)",
                         "Construct full 3×3 matrix with unitarity constraint",
                         "All 9 elements determined from 4 geometric parameters",
                     ]
                 },
                 terms={
                     "lambda": "Wolfenstein parameter (Cabibbo angle) ~ 0.223",
-                    "A": "Wolfenstein parameter ~ 3.6",
-                    "rho": "Real Wolfenstein parameter ~ 0.22",
-                    "eta": "Imaginary Wolfenstein parameter ~ 0.125",
+                    "A": "Wolfenstein parameter = 0.81 (fitted)",
+                    "rho": "Real Wolfenstein parameter = 0.14 (fitted)",
+                    "eta": "Imaginary Wolfenstein parameter = 0.36 (fitted)",
                 },
                 arithma=_arithma_num(0.22313016014842982),
                 eml=_eml_exp(_eml_neg(_eml_scalar(1.5))),
@@ -1032,12 +1039,12 @@ class CKMMatrixSimulation(SimulationBase):
                     "V_us = epsilon ~ 0.2231 from Froggatt-Nielsen geometric suppression, "
                     "connecting quark mixing to Yukawa hierarchy. "
                     f"PDG 2024: {self.PDG_V_us} ± {self.PDG_V_us_err}. "
-                    "Geometric prediction differs by 1.2% (2.9 sigma), within theoretical uncertainties."
+                    "Geometric prediction differs by 0.84% (2.79σ vs PDG 2024 0.22500 ± 0.00067)."
                 ),
                 eml_description="EML: ops.exp(ops.neg(eml_scalar(1.5))) — V_us = ε = exp(-1.5) from G₂ Froggatt-Nielsen suppression",
                 derivation_formula="ckm-hierarchy",
-                experimental_bound=0.2245,
-                uncertainty=0.0008,
+                experimental_bound=0.22500,
+                uncertainty=0.00067,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1054,8 +1061,8 @@ class CKMMatrixSimulation(SimulationBase):
                 ),
                 eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(2.0))) — V_cb = Aλ² from 2nd-gen geometric overlap",
                 derivation_formula="ckm-hierarchy",
-                experimental_bound=0.0410,
-                uncertainty=0.0014,
+                experimental_bound=0.04182,
+                uncertainty=0.00085,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1063,7 +1070,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.V_ub",
                 name="CKM Matrix Element V_ub",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "u-b quark transition amplitude. Predicted as V_ub ~ A*epsilon^3 "
                     "~ 0.004 from third generation geometric overlap. "
@@ -1072,8 +1079,8 @@ class CKMMatrixSimulation(SimulationBase):
                 ),
                 eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(3.0))) — V_ub = Aλ³ from 3rd-gen geometric suppression",
                 derivation_formula="ckm-hierarchy",
-                experimental_bound=0.00382,
-                uncertainty=0.00024,
+                experimental_bound=0.00369,
+                uncertainty=0.00011,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1081,7 +1088,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.V_td",
                 name="CKM Matrix Element V_td",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "t-d quark transition amplitude. Predicted from Wolfenstein "
                     "parametrization with geometric CP phase. "
@@ -1098,7 +1105,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.V_ts",
                 name="CKM Matrix Element V_ts",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "t-s quark transition amplitude. Predicted as V_ts ~ A*epsilon^2 "
                     "~ 0.040 from geometric overlap structure. "
@@ -1115,7 +1122,7 @@ class CKMMatrixSimulation(SimulationBase):
                 path="ckm.V_tb",
                 name="CKM Matrix Element V_tb",
                 units="dimensionless",
-                status="DERIVED",
+                status="FITTED",
                 description=(
                     "t-b quark transition amplitude. Nearly unity due to third "
                     "generation diagonal dominance in CKM matrix. "
@@ -1158,8 +1165,8 @@ class CKMMatrixSimulation(SimulationBase):
                 ),
                 eml_description="EML: ops.exp(ops.neg(eml_scalar(1.5))) — from N1=24/N2=23 racetrack; lambda_wolfenstein = racetrack_epsilon^(1/3)",
                 derivation_formula="wolfenstein-parametrization",
-                experimental_bound=0.2245,
-                uncertainty=0.0008,
+                experimental_bound=0.22500,
+                uncertainty=0.00067,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1209,9 +1216,10 @@ class CKMMatrixSimulation(SimulationBase):
                 units="radians",
                 status="ANSATZ",
                 description=(
-                    "CP-violating phase in CKM matrix. Emerges as delta_CP ~ pi/6 ~ 30 degrees "
-                    "from K=4 topological matching fibres in TCS G2 manifold. "
-                    "Topological derivation parameter."
+                    "CP-violating phase in CKM matrix. Registered as delta_CP ~ pi/6 ~ 30 degrees "
+                    "from K=4 topological matching fibres in TCS G2 manifold "
+                    "(inconsistent with atan2(eta, rho) = 68.7 deg — the pi/6 display value is a "
+                    "legacy ansatz; numeric kept for downstream consumers)."
                 ),
                 eml_description="EML: ops.div(eml_pi(), eml_scalar(6.0)) — δ_CP = π/6 from K=4 TCS matching fibres topology",
                 derivation_formula="jarlskog-invariant",
@@ -1246,30 +1254,30 @@ class CKMMatrixSimulation(SimulationBase):
             {
                 "id": "CERT_CKM_VUS",
                 "assertion": "V_us matches PDG 2024 within 3-sigma",
-                "condition": f"|V_us - 0.2245| / 0.0008 < 3.0",
+                "condition": f"|V_us - 0.22500| / 0.00067 < 3.0",
                 "tolerance": 3.0,
                 "status": "PASS" if abs(V_us - self.PDG_V_us) / self.PDG_V_us_err < 3.0 else "FAIL",
-                "wolfram_query": f"Abs[{V_us:.6f} - 0.2245] / 0.0008",
+                "wolfram_query": f"Abs[{V_us:.6f} - 0.22500] / 0.00067",
                 "wolfram_result": f"{abs(V_us - self.PDG_V_us) / self.PDG_V_us_err:.2f}",
                 "sector": "particle"
             },
             {
                 "id": "CERT_CKM_VCB",
                 "assertion": "V_cb matches PDG 2024 within 3-sigma",
-                "condition": f"|V_cb - 0.0410| / 0.0014 < 3.0",
+                "condition": f"|V_cb - 0.04182| / 0.00085 < 3.0",
                 "tolerance": 3.0,
                 "status": "PASS" if abs(V_cb - self.PDG_V_cb) / self.PDG_V_cb_err < 3.0 else "FAIL",
-                "wolfram_query": f"Abs[{V_cb:.6f} - 0.0410] / 0.0014",
+                "wolfram_query": f"Abs[{V_cb:.6f} - 0.04182] / 0.00085",
                 "wolfram_result": f"{abs(V_cb - self.PDG_V_cb) / self.PDG_V_cb_err:.2f}",
                 "sector": "particle"
             },
             {
                 "id": "CERT_CKM_JARLSKOG",
                 "assertion": "Jarlskog invariant matches PDG 2024 within 3-sigma",
-                "condition": f"|J - 3.0e-5| / 0.3e-5 < 3.0",
+                "condition": f"|J - 3.08e-5| / 0.13e-5 < 3.0",
                 "tolerance": 3.0,
                 "status": "PASS" if abs(J - self.PDG_J) / self.PDG_J_err < 3.0 else "FAIL",
-                "wolfram_query": f"Abs[{J:.2e} - 3.0*10^-5] / (0.3*10^-5)",
+                "wolfram_query": f"Abs[{J:.2e} - 3.08*10^-5] / (0.13*10^-5)",
                 "wolfram_result": f"{abs(J - self.PDG_J) / self.PDG_J_err:.2f}",
                 "sector": "particle"
             },
@@ -1724,7 +1732,7 @@ class CKMMatrixSimulation(SimulationBase):
         results["overall_verdict"] = (
             "FAILED: Bridge phase averaging is not a CKM prediction mechanism. "
             "Uniform phases give zero resultant; random phases give random angles. "
-            "The existing lambda = exp(-3/2) prediction (1.71 sigma from PDG) is "
+            "The existing lambda = exp(-3/2) prediction (2.79 sigma from PDG 2024) is "
             "better motivated than any phase-averaging scheme. The CKM sector "
             "remains OVERCLAIMED at 1/4 predicted parameters."
         )

@@ -200,10 +200,10 @@ def _arithma_sqrt(a):
 
 class AlphaRigorSolver:
     """
-    Derives the Fine Structure Constant from G2 holonomy.
+    Computes the Fine Structure Constant via the Geometric Anchors formula.
 
-    The Fine Structure Constant is NOT a free parameter in PM - it emerges
-    from pure geometry using the Geometric Anchors formula:
+    Back-computed calibration (FITTED — see file header's audit note).
+    The formula used is:
 
         α⁻¹ = k_gimel² - b3/φ + φ/(4π) ≈ 137.0367
 
@@ -211,9 +211,6 @@ class AlphaRigorSolver:
         - k_gimel = b3/2 + 1/π (Holonomy Precision Limit)
         - φ = (1 + √5)/2 (Golden Ratio - mathematical constant)
         - b3 = 24 (Third Betti number - topological invariant)
-
-    This is an HONEST geometric derivation with NO magic numbers.
-    The ~0.0007 deviation from CODATA is a real prediction.
     """
 
     def __init__(self, b3: int = 24):

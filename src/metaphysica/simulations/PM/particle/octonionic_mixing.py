@@ -51,7 +51,8 @@ PMNS FROM TRIALITY (LEPTONS ON 4-FORM):
 
 PREDICTION vs EXPERIMENT:
     CKM:
-        V_us = 0.2245 (PDG 2024: 0.2245 +/- 0.0008) [<0.1 sigma]
+        V_us = 0.2245 (CALIBRATED: 0.037 cusp coefficient fitted to the 2020-era
+                       PDG central 0.2245; PDG 2024: 0.22500 +/- 0.00067 → 0.75 sigma)
         V_cb = 0.0409 (PDG 2024: 0.0410 +/- 0.0014) [0.09 sigma]
         V_ub = 0.00375 (PDG 2024: 0.00382 +/- 0.00024) [0.29 sigma]
 
@@ -150,15 +151,15 @@ class OctonionicMixing(SimulationBase):
     PHI = (1 + np.sqrt(5)) / 2  # ~ 1.618
     THETA_G = np.arctan(1 / PHI)  # ~ 31.72 deg (0.5536 rad)
 
-    # PDG 2024 CKM values (from pdg_2024_values.json - single source of truth)
-    PDG_V_us = 0.2245
-    PDG_V_us_err = 0.0008
-    PDG_V_cb = 0.0410
-    PDG_V_cb_err = 0.0014
-    PDG_V_ub = 0.00382
-    PDG_V_ub_err = 0.00024
-    PDG_J = 3.0e-5
-    PDG_J_err = 0.3e-5
+    # PDG 2024 CKM values
+    PDG_V_us = 0.22500
+    PDG_V_us_err = 0.00067
+    PDG_V_cb = 0.04182
+    PDG_V_cb_err = 0.00085
+    PDG_V_ub = 0.00369
+    PDG_V_ub_err = 0.00011
+    PDG_J = 3.08e-5
+    PDG_J_err = 0.13e-5
 
     # NuFIT 6.0 PMNS values (Inverted Ordering)
     NUFIT_THETA_12 = 33.41
@@ -361,8 +362,9 @@ class OctonionicMixing(SimulationBase):
         This accounts for the triality cusp at the G2 singular point.
 
         FORMULAS:
-            V_us = sin(theta_g / 2) * flux_correction * cusp_correction
-                 ~ sin(15.86 deg) * 0.818 * 1.02 ~ 0.228
+            V_us = ε × (1 + 0.037/√(b₃+k_gimel)) — 0.037 coefficient FITTED to
+                   PDG 2024 (the golden-angle factor cancels algebraically:
+                   epsilon_match = ε/sin(θ_g/2), so sin(θ_g/2) drops out)
 
             V_cb = V_us^2 / geometric_factor
                  ~ 0.228^2 / 1.24 ~ 0.042
@@ -386,6 +388,8 @@ class OctonionicMixing(SimulationBase):
 
         # Flux correction from 3-form structure
         # The associative 3-form introduces a damping factor
+        # NOTE: computed but unused (dead code) — docstring formula does not
+        # match operative path (V_us below uses epsilon_match, not this factor)
         flux_correction = 1 - self._orientation_sum / (4 * self._chi_eff)
         # = 1 - 12 / 576 = 1 - 0.0208 ~ 0.979
 
@@ -1102,15 +1106,15 @@ class OctonionicMixing(SimulationBase):
                 path="ckm.V_us_triality",
                 name="CKM V_us from Triality",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "Cabibbo angle derived from golden angle on associative 3-form. "
                     "V_us = sin(theta_g/2) * xi ~ 0.223. The 3D rigidity constrains mixing."
                 ),
                 eml_description="EML: ops.mul(ops.sin(ops.div(eml_vec('theta_g'), eml_scalar(2.0))), eml_vec('xi_epsilon')) — V_us from sin(θ_g/2) × flux correction",
                 derivation_formula="ckm-from-theta-g",
-                experimental_bound=0.2245,
-                uncertainty=0.0008,
+                experimental_bound=0.22500,
+                uncertainty=0.00067,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1118,14 +1122,14 @@ class OctonionicMixing(SimulationBase):
                 path="ckm.V_cb_triality",
                 name="CKM V_cb from Triality",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "c-b mixing from second power of golden angle. V_cb = V_us^2 * xi_b ~ 0.040."
                 ),
                 eml_description="EML: ops.mul(ops.pow(eml_vec('V_us_triality'), eml_scalar(2.0)), eml_vec('xi_b')) — V_cb ~ V_us² × geometric correction",
                 derivation_formula="ckm-from-theta-g",
-                experimental_bound=0.0410,
-                uncertainty=0.0014,
+                experimental_bound=0.04182,
+                uncertainty=0.00085,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1133,14 +1137,14 @@ class OctonionicMixing(SimulationBase):
                 path="ckm.V_ub_triality",
                 name="CKM V_ub from Triality",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "u-b mixing from third power of golden angle. V_ub = V_us^3 * xi_t ~ 0.004."
                 ),
                 eml_description="EML: ops.mul(ops.pow(eml_vec('V_us_triality'), eml_scalar(3.0)), eml_vec('xi_t')) — V_ub ~ V_us³ × geometric correction",
                 derivation_formula="ckm-from-theta-g",
-                experimental_bound=0.00382,
-                uncertainty=0.00024,
+                experimental_bound=0.00369,
+                uncertainty=0.00011,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1148,14 +1152,14 @@ class OctonionicMixing(SimulationBase):
                 path="ckm.jarlskog_triality",
                 name="Jarlskog Invariant from Triality",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CP violation measure from octonionic structure. J ~ V_us * V_cb * V_ub * sin(delta)."
                 ),
                 eml_description="EML: ops.mul(eml_vec('V_us_triality'), ops.mul(eml_vec('V_cb_triality'), ops.mul(eml_vec('V_ub_triality'), ops.sin(eml_vec('delta_cp'))))) — J = V_us·V_cb·V_ub·sin(δ)",
                 derivation_formula="ckm-from-theta-g",
-                experimental_bound=3.0e-5,
-                uncertainty=0.3e-5,
+                experimental_bound=3.08e-5,
+                uncertainty=0.13e-5,
                 bound_type="measured",
                 bound_source="PDG2024"
             ),
@@ -1164,7 +1168,7 @@ class OctonionicMixing(SimulationBase):
                 path="pmns.theta_12_triality",
                 name="PMNS theta_12 from Triality",
                 units="degrees",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "Solar mixing angle from tribimaximal base on 4-form. "
                     "theta_12 = arcsin(1/sqrt(3)) * (1 - delta) ~ 33.59 degrees."
@@ -1180,7 +1184,7 @@ class OctonionicMixing(SimulationBase):
                 path="pmns.theta_23_triality",
                 name="PMNS theta_23 from Triality",
                 units="degrees",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "Atmospheric mixing angle from maximal base + golden enhancement. "
                     "theta_23 = pi/4 + theta_g/2 + corrections ~ 49.75 degrees."
@@ -1196,7 +1200,7 @@ class OctonionicMixing(SimulationBase):
                 path="pmns.theta_13_triality",
                 name="PMNS theta_13 from Triality",
                 units="degrees",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "Reactor mixing angle from cycle intersection geometry. "
                     "theta_13 = sqrt(b2*n_gen)/b3 * correction ~ 8.33 degrees."

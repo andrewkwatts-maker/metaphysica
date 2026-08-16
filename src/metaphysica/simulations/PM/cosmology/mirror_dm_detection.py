@@ -107,7 +107,7 @@ M_NUCLEON_GEV: float = 0.938
 #: Default bridge-sector coupling g_bridge from G₂ half-instanton on the
 #: associative 3-cycle (re_t_sector v25.0).  Sprint T6 #3 closes the
 #: derivation gap: this O(1)-rounded value of 1.2e-10 is the rounded form
-#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.288e-10``
+#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.278e-10``
 #: derived in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
 #: Re(T) = 174.033, b₃ = 24.  Matches the same value used in
 #: :mod:`metaphysica.simulations.PM.cosmology.mirror_dm_relic` so that the
@@ -115,7 +115,9 @@ M_NUCLEON_GEV: float = 0.938
 #: topology-rooted parameter (b₃ = 24 via re_t_sector).
 DEFAULT_G_BRIDGE: float = 1.2e-10
 
-#: Default mirror sector mass in GeV (axion-scale, ≈ 3.51 meV).
+#: Default mirror sector mass: 3.51e-3 = 3.51 MeV in this file's GeV
+#: convention (NOTE: the axion-sector 3.51 meV claim elsewhere is a
+#: different quantity — see e7_representation ALP notes).
 #: Matches ``mirror_dm_relic.DEFAULT_M_MIRROR``.
 DEFAULT_M_MIRROR_GEV: float = 3.51e-3
 

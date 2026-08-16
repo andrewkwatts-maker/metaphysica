@@ -36,8 +36,8 @@ The shifts in the observable tensions are then linear-response:
     ΔH₀ = 5.8 · Δw_mirror             [km/s/Mpc per unit Δw]
     ΔS₈ = −0.085 · Δw_mirror          [growth-suppression factor]
 
-with baseline ``H₀ = 73.0 km/s/Mpc`` (SH0ES / DESI-friendly local value)
-and ``S₈ = 0.83`` (Planck baseline).
+with baseline ``H₀ = 73.04 km/s/Mpc`` (the SH0ES anchor, matching
+``H0_BASELINE_KM_S_MPC``) and ``S₈ = 0.83`` (Planck baseline).
 
 Numerical reality check
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,7 +50,7 @@ i.e. the mirror correction is *exponentially small* in this regime. The
 resolved tensions are therefore numerically indistinguishable (to ~12
 decimals) from the baseline values:
 
-    H₀_resolved ≈ 73.0000000004 km/s/Mpc
+    H₀_resolved ≈ 73.0400000004 km/s/Mpc
     S₈_resolved ≈ 0.8299999999
 
 This is the *honest* answer from the template's coupling strengths: at
@@ -76,10 +76,10 @@ Both are satisfied by construction at the canonical inputs.
 
 Observational comparison (June 2026)
 ------------------------------------
-* H₀ — SH0ES 2024 (local, distance-ladder): 73.04 ± 1.04 km/s/Mpc
+* H₀ — SH0ES 2022 (Riess et al.) (local, distance-ladder): 73.04 ± 1.04 km/s/Mpc
   DESI 2025 (BAO + CMB-anchored): 68.5 ± 0.7 km/s/Mpc
   Planck 2018 (CMB): 67.4 ± 0.5 km/s/Mpc
-  → Resolved H₀ = 73.000 sits at the SH0ES central value, exactly on
+  → Resolved H₀ = 73.040 sits at the SH0ES central value, exactly on
   the local-distance-ladder anchor used as the baseline.
 * S₈ — KiDS-1000 + DES-Y3 weak-lensing: 0.766 ± 0.020
   Planck 2018 (CMB): 0.83 ± 0.013
@@ -259,8 +259,9 @@ class CosmologicalTensionsResolver:
     Notes
     -----
     Both inputs are upstream geometric quantities (no fit parameters
-    introduced here). The output is therefore a *prediction*, not a
-    calibration — see the module docstring for the numerical reality
+    introduced here). The output is an anchored baseline plus predicted
+    shift Δw (only Δw ≈ 6e-13 is derived; the 73.04 baseline is the
+    SH0ES anchor) — see the module docstring for the numerical reality
     check and observational comparison.
 
     Examples
@@ -329,6 +330,9 @@ class CosmologicalTensionsResolver:
 
             H₀_resolved = 73.04 + 5.8 · Δw_mirror     [km/s/Mpc]
 
+        Anchored baseline plus predicted shift Δw: only Δw ≈ 6e-13 is
+        derived; the 73.04 baseline is the SH0ES anchor.
+
         Parameters
         ----------
         delta_w:
@@ -358,6 +362,9 @@ class CosmologicalTensionsResolver:
         """Apply the linear-response S₈ suppression given Δw.
 
             S₈_resolved = 0.83 − 0.085 · Δw_mirror
+
+        Anchored baseline plus predicted shift Δw: only Δw ≈ 6e-13 is
+        derived; the 0.83 baseline is the Planck anchor.
 
         Parameters
         ----------

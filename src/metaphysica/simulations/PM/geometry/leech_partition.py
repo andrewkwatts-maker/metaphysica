@@ -97,7 +97,7 @@ class LatticeProperties:
     """Properties of the Leech lattice."""
     dimension: int = 24
     kissing_number: int = 196560  # Number of nearest neighbors
-    covering_radius_squared: int = 2  # Minimal norm
+    covering_radius_squared: int = 2  # Covering radius squared (min norm² of Leech is 4)
     is_even: bool = True  # All norms are even
     is_unimodular: bool = True  # Determinant = 1
 
@@ -247,7 +247,7 @@ class LeechPartitionV16(SimulationBase):
             self.leech.dimension == 24,
             self.leech.is_even,
             self.leech.is_unimodular,
-            self.leech.covering_radius_squared == 2,  # No norm-2 vectors
+            self.leech.covering_radius_squared == 2,  # Covering radius² = 2 (min norm² is 4)
         ]
         return all(checks)
 

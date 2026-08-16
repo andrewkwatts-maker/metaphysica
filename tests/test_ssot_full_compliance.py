@@ -49,9 +49,19 @@ from metaphysica.simulations.base.simulation_base import SimulationBase
 # ===========================================================================
 VALID_FORMULA_CATEGORIES = frozenset({
     "DERIVED", "ESTABLISHED", "GEOMETRIC", "PREDICTED",
+    # 2026-08 honesty-audit vocabulary: quantities produced by inserting or
+    # tuning to the experimental target are labelled truthfully rather than
+    # presented as derivations. FITTED = tuned to data; ANSATZ = assumed
+    # functional form; CALIBRATED = anchored to a measured value;
+    # RETRODICTED = formula adopted after the measurement it matches;
+    # SPECULATIVE = superseded/alternative-story candidate.
+    "FITTED", "ANSATZ", "CALIBRATED", "RETRODICTED", "SPECULATIVE",
 })
 
-VALID_CERT_STATUSES = frozenset({"PASS", "FAIL", "OFFLINE"})
+# STRUCTURAL (2026-08 audit): certificate whose check asserts an identity
+# from placeholder/zero-valued inputs — cannot fail by construction, so it
+# must not masquerade as an evaluated PASS.
+VALID_CERT_STATUSES = frozenset({"PASS", "FAIL", "OFFLINE", "STRUCTURAL"})
 
 # Simulation IDs that are allowed to have empty required_inputs (seed/root sims)
 EMPTY_INPUTS_ALLOWED = frozenset({

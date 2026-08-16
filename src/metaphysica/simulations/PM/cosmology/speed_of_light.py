@@ -383,7 +383,8 @@ class SpeedOfLightV17(SimulationBase):
                         f"extended E₈ × E₈ lattice, comprising 240 E₈ roots plus 48 Weyl orbit "
                         f"generators), N_bdy = 163 (the boundary count between visible and shadow "
                         f"sectors), N_shadow = 153 (shadow sector roots), and N_vis = 135 (visible "
-                        f"sector roots, with 135 + 153 = 288 as the total root decomposition):"
+                        f"sector roots; 288 = 135 + 153 is a fitted integer decomposition — "
+                        f"see FormulasRegistry SSoT note):"
                     )
                 ),
                 ContentBlock(
@@ -486,7 +487,8 @@ class SpeedOfLightV17(SimulationBase):
                         f"**Variance:** {variance:.2f} m/s ({sigma_equiv:.2f}σ equivalent)\n\n"
                         f"**Accuracy:** {accuracy:.5f}%\n\n"
                         f"**Geometric inputs:** b₃=24, N_root=288, N_bdy=163, N_shadow=153, "
-                        f"N_vis=135, d_residual=10 — all topological invariants with no free parameters."
+                        f"N_vis=135, d_residual=10 — the 288 = 135 + 153 split is a fitted "
+                        f"integer decomposition (see FormulasRegistry SSoT note)."
                     )
                 ),
             ],
@@ -528,7 +530,7 @@ class SpeedOfLightV17(SimulationBase):
                 label="(5.60)",
                 latex=r"c = \frac{\Delta_{\text{eff}}}{b_3} \cdot \mathcal{S}(Z_6) \cdot \frac{N_{\text{root}}}{N_{\text{bdy}}} \cdot \frac{N_{\text{shadow}}}{N_{\text{vis}}} \cdot \frac{N_{\text{root}} - b_3}{N_{\text{bdy}} + 1} \cdot 10^7 \cdot P_{3D}",
                 plain_text="c = (Δ_eff/b₃) · S(Z₆) · (N_root/N_bdy)(N_shadow/N_vis) · (N_root-b₃)/(N_bdy+1) · 10⁷ · P_3D",
-                category="PREDICTED",
+                category="FITTED",
                 description=(
                     f"Speed of light derived from G₂ manifold topology: the harmonic "
                     f"cycle fraction, Ricci flow stretching, bulk metric ratio, and "
@@ -719,8 +721,12 @@ class SpeedOfLightV17(SimulationBase):
                     rf"{c_derived:,.0f} \text{{ m/s}}"
                 ),
                 plain_text=f"c = {c_derived:,.2f} m/s",
-                category="PREDICTED",
-                description=f"Numerical evaluation of speed of light derivation chain",
+                category="FITTED",
+                description=(
+                    f"Numerical evaluation of speed of light derivation chain "
+                    f"(FITTED: depends on the 288 = 135 + 153 fitted integer "
+                    f"decomposition — see FormulasRegistry SSoT note)"
+                ),
                 inputParams=["topology.elder_kads", "topology.b2", "topology.ancestral_roots", "topology.nitzotzin_roots"],
                 outputParams=["cosmology.speed_of_light_derived"],
                 input_params=["topology.elder_kads", "topology.b2", "topology.ancestral_roots", "topology.nitzotzin_roots"],

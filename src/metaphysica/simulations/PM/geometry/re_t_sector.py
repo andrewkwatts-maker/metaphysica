@@ -165,6 +165,11 @@ class NonPerturbativeReT:
     Closes the 3.4 % VEV gap from v24.2 to ``|VEV_gap_percent| < 0.01``
     (validated in :mod:`tests.test_re_t_sector`).
 
+    STATUS: CALIBRATED (tautological anchor: W_inst ≈ 1e-20 makes the
+    equation an identity — the root reproduces v_target by construction).
+    Re(T) is a modulus and is dimensionless; the GeV labels used
+    previously referred to the v_target anchor, not to Re(T) itself.
+
     Parameters
     ----------
     b3:
@@ -301,7 +306,8 @@ class NonPerturbativeReT:
         dict
             ``{"ReT": <solved>, "VEV_gap_percent": <|gap| %>}``.
 
-            * ``ReT`` — the stabilized Re(T) value (float, GeV).
+            * ``ReT`` — the stabilized Re(T) value (float, dimensionless
+              modulus — not GeV).
             * ``VEV_gap_percent`` — ``|ReT − v_target| / v_target · 100``
               expressed as a percentage. Sprint 4 gate requires this to
               be ``< 0.01``.
@@ -319,7 +325,9 @@ class NonPerturbativeReT:
             formula=(
                 "solve(D_T W = 0 | W_flux + W_inst − v_target) "
                 "where W_flux = ReT, "
-                "W_inst = (flux·A / b3) · exp(−2π·ReT / b3), b3 = 24"
+                "W_inst = (flux·A / b3) · exp(−2π·ReT / b3), b3 = 24 "
+                "— CALIBRATED (tautological anchor: W_inst ≈ 1e-20 makes "
+                "the equation an identity)"
             ),
             value=ReT_sol,
         )
@@ -382,7 +390,7 @@ class NonPerturbativeReT:
         Parameters
         ----------
         ReT:
-            Optional override Re(T) (GeV).  When ``None`` (default) the
+            Optional override Re(T) (dimensionless).  When ``None`` (default) the
             value is taken from :data:`RE_T_VEV_TARGET`; tests can pass a
             different solved Re(T) to confirm the bridge coupling tracks
             the modulus.

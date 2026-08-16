@@ -18,11 +18,12 @@ Evidence:
    documented_alternative path, registry-canonical late-time H0 stays
    on the geometry.H0_local = 73.04 SH0ES anchor).
 
-2. MASS SCALE MISMATCH (47 ORDERS OF MAGNITUDE): Bridge geometry uses
+2. MASS SCALE MISMATCH (~57 ORDERS OF MAGNITUDE): Bridge geometry uses
    Planck-scale compactification (L1 = L2 = 1 Planck length). The lightest
-   KK mass is 4.44 Planck masses ~ 10^19 eV. Early dark energy resolution
-   of Hubble tension requires m ~ H(z~1000) ~ 10^{-28} eV. The gap is
-   ~10^{47} -- KK modes at this scale have zero cosmological relevance.
+   KK mass is 4.44 Planck masses ~ 5x10^28 eV (10^19 GeV). Early dark
+   energy resolution of Hubble tension requires m ~ H(z~1000) ~ 10^{-28} eV.
+   The gap is ~57 orders -- KK modes at this scale have zero cosmological
+   relevance.
 
 3. BRIDGE RADII CANNOT BE LARGE ENOUGH: The stabilize_moduli() method
    bounds L1, L2 to (0.1, 10.0) Planck lengths. Even at the upper bound,
@@ -47,7 +48,7 @@ Evidence:
 
 GEMINI CONSENSUS (3-round debate, 2026-03-16):
    "PM does not present a viable mechanism for resolving the Hubble tension.
-   The KK mode claim is quantitatively unsupportable (47 orders of magnitude
+   The KK mode claim is quantitatively unsupportable (~57 orders of magnitude
    mass mismatch). The actual implementations rely on inconsistent,
    phenomenological adjustments -- interpolation with a fitted mixing angle,
    ad-hoc formulas with numerological constants, or phenomenological boost
@@ -59,7 +60,7 @@ SIMULATION OUTPUT (2026-03-16):
                                     6.28, 6.28, 6.28, 6.28] (Planck units)
    Lightest KK mass: 4.442883 Planck masses
    Required for EDE: ~10^{-28} eV
-   Mismatch: ~47 orders of magnitude
+   Mismatch: ~57 orders of magnitude
 
 CLASSIFICATION: ASSERTION WITHOUT QUANTITATIVE BACKING
    The KK-mode mechanism is claimed but never implemented. The working
@@ -173,7 +174,7 @@ M_PLANCK_EV = 2.435e27    # Reduced Planck mass (eV)
 
 # Conversion: H0 in km/s/Mpc to eV
 # H0 = 67.4 km/s/Mpc = 67.4 / (3.086e19 km) * (6.582e-16 eV*s)
-H0_EV_FACTOR = 2.133e-33  # H0 / (km/s/Mpc) in eV
+H0_EV_FACTOR = 2.1331e-35  # H0 / (km/s/Mpc) in eV
 
 
 # =============================================================================
@@ -225,7 +226,7 @@ def compute_knp_parameters(b3=24):
     H_z_peak_eV = H0_PLANCK * H0_EV_FACTOR * np.sqrt(
         OMEGA_R * (1 + 3500)**4 + OMEGA_M * (1 + 3500)**3
     )
-    m_required_eV = 3.0 * H_z_peak_eV  # ~ 3.6e-28 eV
+    m_required_eV = 3.0 * H_z_peak_eV  # ~ 7.1e-28 eV
 
     # Racetrack superpotential mass
     # m_a ~ (M_string^2 / f_eff) * exp(-S)
@@ -676,7 +677,7 @@ class HubbleTensionV16(SimulationBase):
                 f"With b3=24 giving N=12 axion species and f_eff = {f_eff:.2e} GeV, "
                 f"the EDE fraction f_EDE = {f_ede:.2e} is ~8 orders of magnitude "
                 f"below the 5-10% required for Hubble tension resolution. "
-                f"This mechanism is quantitatively insufficient (46-order mass gap)."
+                f"This mechanism is quantitatively insufficient (~57-order mass gap)."
             ),
             content_blocks=[
                 ContentBlock(
@@ -684,7 +685,7 @@ class HubbleTensionV16(SimulationBase):
                     content=(
                         f"The racetrack superpotential requires instanton action "
                         f"S = {S_req:.1f} to achieve the target axion mass "
-                        f"m ~ 3.6e-28 eV. Typical instanton actions in G2 "
+                        f"m ~ 7.1e-28 eV. Typical instanton actions in G2 "
                         f"compactifications are S ~ 1-10, making S ~ {S_req:.0f} "
                         f"an extreme fine-tuning. The sound horizon shifts from "
                         f"r_s = {r_s_lcdm_val:.2f} Mpc (LCDM) to "
@@ -933,7 +934,7 @@ class HubbleTensionV16(SimulationBase):
                 status="PREDICTED",
                 description=(
                     f"Instanton action required in racetrack superpotential to achieve "
-                    f"EDE axion mass m ~ 3.6e-28 eV: S = {knp['S_required']:.1f}. "
+                    f"EDE axion mass m ~ 7.1e-28 eV: S = {knp['S_required']:.1f}. "
                     f"Typical values in G2 compactifications are S ~ 1-10."
                 ),
                 derivation_formula="knp-axion-mass",
@@ -1001,7 +1002,7 @@ class HubbleTensionV16(SimulationBase):
             f"   PM EDE tension = {(H0_SHOES - H0_ede_val) / H0_SHOES_ERR:.1f} sigma",
             "",
             "6. COMPARISON WITH ORIGINAL ASSESSMENT",
-            f"   Original KK gap:     47 orders of magnitude",
+            f"   Original KK gap:     ~57 orders of magnitude",
             f"   KNP instanton tuning: S ~ {knp['S_required']:.0f} (extreme)",
             f"   EDE fraction:        {f_ede:.2e} (need ~0.05)",
             f"   Verdict:             STILL REFUTED",

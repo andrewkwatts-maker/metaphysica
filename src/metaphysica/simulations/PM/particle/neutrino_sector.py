@@ -25,6 +25,9 @@ Physics basis
   which for the canonical ``g_b = 1.2e-10`` drops the sum from
   ``≈ 0.060 eV`` to ``≈ 0.042 eV`` — comfortably under the DESI 2026
   ceiling and falsifiable against KATRIN / next-generation cosmology.
+- NOTE: companion module (neutrino_mixing.py) publishes a different Σm_ν
+  under the opposite mass ordering — the two scenarios are alternatives,
+  not simultaneous predictions.
 - Fully EML-traceable; every step is registered through
   ``eml_operator_tree("neutrino_sector")`` and the b3 = 24 seed appears in
   the symbolic provenance via :func:`b3_leaf`.
@@ -83,7 +86,7 @@ DEFAULT_BRIDGE_COUPLING: float = 1.2e-10
 DELTA_M21_SQ: float = 7.42e-5
 
 #: Atmospheric mass-squared splitting Δm31² (normal-ordering magnitude),
-#: in eV². NuFIT 6.0 central value (NO: 2.510e-3; IO: |Δm32²| = 2.404e-3).
+#: in eV². NuFIT 6.0 central value (NO: 2.510e-3; IO: |Δm32²| = 2.498e-3).
 DELTA_M31_SQ: float = 2.510e-3
 
 #: Mirror-correction prefactor. Tuned so that the canonical

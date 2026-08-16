@@ -19,17 +19,18 @@ PHYSICS:
 GEOMETRIC ANSATZ:
     The Golden Ratio phi provides the best fit:
     m_n = v * phi^(-N_n) where N_n is the generation quantum number.
+    N from the phi-scaling fit (ANSATZ); base phi (not phi^2). v = 246.22 GeV.
 
-    Generation quantum numbers (derived from G2 wavefunction overlap):
-    - Top (N=0): m_t = v * phi^0 = 246 GeV
-    - Bottom (N=4): m_b = v * phi^(-4) ~ 4.2 GeV
-    - Charm (N=5): m_c = v * phi^(-5) ~ 2.6 GeV
-    - Tau (N=5): m_tau = v * phi^(-5) ~ 2.6 GeV
-    - Strange (N=8): m_s = v * phi^(-8) ~ 0.10 GeV
-    - Muon (N=8): m_mu = v * phi^(-8) ~ 0.10 GeV
-    - Down (N=11): m_d = v * phi^(-11) ~ 4.5 MeV
-    - Up (N=12): m_u = v * phi^(-12) ~ 2.8 MeV
-    - Electron (N=13): m_e = v * phi^(-13) ~ 1.7 MeV
+    Generation quantum numbers (from the runtime phi-fit, N = round(ln(v/m)/ln(phi))):
+    - Top (N=1): m_t = v * phi^(-1) ~ 152.2 GeV (obs 172.69)
+    - Bottom (N=8): m_b = v * phi^(-8) ~ 5.24 GeV (obs 4.18)
+    - Charm (N=11): m_c = v * phi^(-11) ~ 1.24 GeV (obs 1.27)
+    - Tau (N=10): m_tau = v * phi^(-10) ~ 2.00 GeV (obs 1.777)
+    - Strange (N=16): m_s = v * phi^(-16) ~ 0.112 GeV (obs 0.093)
+    - Muon (N=16): m_mu = v * phi^(-16) ~ 0.112 GeV (obs 0.1057)
+    - Down (N=23): m_d = v * phi^(-23) ~ 3.84 MeV (obs 4.67)
+    - Up (N=24): m_u = v * phi^(-24) ~ 2.37 MeV (obs 2.16)
+    - Electron (N=27): m_e = v * phi^(-27) ~ 0.56 MeV (obs 0.511)
 
 v19.0 ENHANCEMENT:
     Now includes Jarlskog invariant calculation from texture geometry.
@@ -106,6 +107,8 @@ class YukawaResult:
 # Experimental masses (PDG 2024, in GeV)
 FERMION_MASSES = {
     # Quarks (MS-bar at 2 GeV for light, pole for heavy)
+    # PDG 2024 direct-measurement average is m_t = 172.57 ± 0.29 GeV;
+    # 172.69 (earlier PDG average) retained as the published phi-fit input.
     "t": 172.69,
     "b": 4.18,
     "c": 1.27,
@@ -257,6 +260,9 @@ class YukawaTexturesV18(SimulationBase):
         # In phi-scaling: this becomes phi^(-delta_N/2)
 
         # Get quark N values
+        # NOTE: the .get() fallback defaults below are stale legacy (v18) seeds;
+        # at runtime the phi-fit always supplies n_values (t:1, b:8, c:11,
+        # s:16, d:23, u:24), so the fallbacks are never used.
         N_u = n_values.get("u", 12)
         N_d = n_values.get("d", 11)
         N_s = n_values.get("s", 8)
@@ -264,24 +270,26 @@ class YukawaTexturesV18(SimulationBase):
         N_b = n_values.get("b", 4)
         N_t = n_values.get("t", 0)
 
-        # CKM-like mixing angles from N differences
-        # |V_us| ~ phi^(-(N_s-N_d)/2) ~ 0.22 (Cabibbo)
-        # |V_cb| ~ phi^(-(N_b-N_s)/2) ~ 0.04
-        # |V_ub| ~ phi^(-(N_b-N_d)/2) ~ 0.004
+        # CKM-like mixing angles from N differences (runtime phi-fit values)
+        # |V_us| ~ phi^(-(N_s-N_d)/2) ~ 0.19 (Cabibbo analogue)
+        # |V_cb| ~ phi^(-(N_b-N_s)/2) ~ 0.15
+        # |V_ub| ~ phi^(-(N_b-N_d)/2) ~ 0.027
 
-        delta_12 = abs(N_s - N_d)  # ~ 3
-        delta_23 = abs(N_b - N_s)  # ~ 4
-        delta_13 = abs(N_b - N_d)  # ~ 7
+        delta_12 = abs(N_s - N_d)  # = 7 with runtime phi-fit N values
+        delta_23 = abs(N_b - N_s)  # = 8 with runtime phi-fit N values
+        delta_13 = abs(N_b - N_d)  # = 15 with runtime phi-fit N values
 
-        lambda_12 = self.phi ** (-delta_12 / 2)  # ~ 0.48
-        lambda_23 = self.phi ** (-delta_23 / 2)  # ~ 0.35
-        lambda_13 = self.phi ** (-delta_13 / 2)  # ~ 0.14
+        lambda_12 = self.phi ** (-delta_12 / 2)  # = 0.186
+        lambda_23 = self.phi ** (-delta_23 / 2)  # = 0.146
+        lambda_13 = self.phi ** (-delta_13 / 2)  # = 0.027
 
         # CP phase from G2 triality
         sin_delta = np.sin(self.cp_phase)  # = 0.5
 
         # Jarlskog invariant: J = s12*c12*s23*c23*s13*c13^2*sin(delta)
         # Simplified using our geometric mixing:
+        # With runtime phi-fit values: J_geometric ≈ 9.9e-6, which agrees with
+        # PDG J = 3.08e-5 at order of magnitude only (factor ~3 low).
         J_geometric = sin_delta * lambda_12 * lambda_23 * (lambda_13 ** 2)
 
         return J_geometric
@@ -515,7 +523,7 @@ class YukawaTexturesV18(SimulationBase):
             path="yukawa.lambda_eff",
             value=result.lambda_effective,
             source=self._metadata.id,
-            status="DERIVED",
+            status="ANSATZ",
             metadata={
                 "derivation": f"Best fit from {result.best_scaling} scaling",
                 "units": "dimensionless",
@@ -527,7 +535,7 @@ class YukawaTexturesV18(SimulationBase):
             path="yukawa.best_scaling",
             value=result.best_scaling,
             source=self._metadata.id,
-            status="DERIVED",
+            status="ANSATZ",
             metadata={
                 "derivation": "Minimum RMS log-error fit",
                 "alternatives": ["phi", "gimel", "sqrt_b3"]
@@ -538,7 +546,7 @@ class YukawaTexturesV18(SimulationBase):
             path="yukawa.phi_fit",
             value=result.phi_fit_quality,
             source=self._metadata.id,
-            status="DERIVED",
+            status="ANSATZ",
             metadata={
                 "derivation": "RMS log10 error for phi scaling",
                 "units": "dex"
@@ -739,7 +747,7 @@ class YukawaTexturesV18(SimulationBase):
                 path="yukawa.lambda_eff",
                 name="Effective Suppression Factor",
                 units="dimensionless",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
                     "Inter-generation Yukawa suppression factor. "
                     "Best fit: λ = φ ≈ 1.618 (Golden Ratio)."
@@ -751,7 +759,7 @@ class YukawaTexturesV18(SimulationBase):
                 path="yukawa.best_scaling",
                 name="Best Scaling Ansatz",
                 units="categorical",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
                     "Which geometric factor best explains the mass hierarchy. "
                     "Options: phi, gimel, sqrt_b3."
@@ -784,7 +792,9 @@ class YukawaTexturesV18(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Geometric Jarlskog CP-violation invariant from texture N-values and G2 triality phase. "
-                    "J = sin(π/6) × λ_12 × λ_23 × λ_13² where λ_ij = φ^(−ΔN_ij/2)."
+                    "J = sin(π/6) × λ_12 × λ_23 × λ_13² where λ_ij = φ^(−ΔN_ij/2). "
+                    "With runtime φ-fit N values J_geometric ≈ 9.9e-6, agreeing with "
+                    "PDG J = 3.08e-5 at order of magnitude only (factor ~3 low)."
                 ),
                 eml_description="EML: ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.mul(eml_vec('lambda_12'), ops.mul(eml_vec('lambda_23'), ops.pow(eml_vec('lambda_13'), eml_scalar(2.0))))) — J = sin(δ_CP) × λ_12 × λ_23 × λ_13² from G2 triality phase and phi-scaling CKM mixing angles",
                 no_experimental_value=False,

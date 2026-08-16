@@ -102,7 +102,7 @@ class GeometricAnchors:
     @property
     def delta_lamed(self) -> float:
         """Threshold correction: Logarithmic loop refinement"""
-        return np.log(self.k_gimel) / (2 * np.pi / self.elder_kads)  # ≈ 1.2
+        return np.log(self.k_gimel) / (2 * np.pi / self.elder_kads)  # ≈ 9.59
 
     @property
     def mephorash_chi(self) -> int:
@@ -144,7 +144,9 @@ class GeometricAnchors:
     @property
     def nitzotzin_roots(self) -> int:
         """
-        Total roots from E8xE8 = 288 (v20.6).
+        Sector count b₃ × 12 = 288 (v20.6) (NOT an E8×E8 root count —
+        E8×E8 has 480 roots; see FormulasRegistry 288 = 135+153
+        fitted-decomposition note).
         nitzotzin_roots = b3 * D_shadow_space = 24 * 12 = 288
         """
         return self.elder_kads * D_SHADOW_SPACE  # 24 * 12 = 288
@@ -376,9 +378,11 @@ class GeometricAnchors:
         m_KK = 1 / R_G2 where R_G2 is the G2 manifold radius.
         Phenomenological: m_KK ~ 3.5-5.0 TeV (LHC bounds).
 
-        Geometric: m_KK = M_Pl / (b3 * k_gimel^2) ~ 4.1 TeV
+        Geometric: m_KK = M_Pl / (b3 * k_gimel^2) ≈ 3.4e15 GeV
+        (NOTE: the TeV-scale KK claim elsewhere uses the warped/exponential
+        form M_Pl·exp(−k_eff·π), not this ratio)
         """
-        return self.m_planck_4d / (self.elder_kads * self.k_gimel**2)  # ~ 4.1 TeV
+        return self.m_planck_4d / (self.elder_kads * self.k_gimel**2)  # ≈ 3.4e15 GeV
 
     @property
     def m_KK_central(self) -> float:
@@ -422,7 +426,8 @@ class GeometricAnchors:
         NOTE: Uses D_shadow_space (12) for spatial projection ratio,
         NOT D_shadow_total (13). This is intentional for EoS derivation.
 
-        With Leech lattice enhancement: 0.685
+        With Leech lattice enhancement: 0.70 (clamped; raw product 0.94 —
+        cap is an ANSATZ, observed Ω_Λ = 0.685)
         """
         # Geometric bare value
         bare = (self.D_shadow / self.D_bulk) * (1 + 1/self.elder_kads)
@@ -444,11 +449,13 @@ class GeometricAnchors:
         """
         Baryon density parameter.
 
-        Ω_b = b₃ / (5 × b₃ + 1) = 24/121 ≈ 0.0496
+        Ω_b = b₃ / (5 × b₃ + 1) = 24/121 ≈ 0.1983
+        (NOTE: observed Ω_b ≈ 0.0493 — this anchor over-predicts ×4;
+        see DM_to_baryon_ratio)
 
         Physical: Baryons are 1/(5n+1) of total for n=b₃ cycles.
         """
-        return self.elder_kads / (5 * self.elder_kads + 1)  # ≈ 0.0496
+        return self.elder_kads / (5 * self.elder_kads + 1)  # = 24/121 ≈ 0.1983
 
     @property
     def Omega_DM(self) -> float:
@@ -457,7 +464,7 @@ class GeometricAnchors:
 
         Ω_DM = Ω_m - Ω_b
         """
-        return self.Omega_matter - self.Omega_baryon  # ≈ 0.265
+        return self.Omega_matter - self.Omega_baryon  # = 0.315 - 0.198 ≈ 0.117
 
     @property
     def Omega_radiation(self) -> float:
@@ -474,9 +481,10 @@ class GeometricAnchors:
         Dark matter to baryon ratio: Ω_DM / Ω_b.
 
         Observed: ~5.4
+        Computed here: ≈ 0.59 (mismatch — Ω_b anchor over-predicts)
         Geometric: (5×b₃ + 1 - b₃) / b₃ = 4 + 1/b₃ ≈ 4.04 (bare)
         """
-        return self.Omega_DM / self.Omega_baryon  # ≈ 5.35
+        return self.Omega_DM / self.Omega_baryon  # ≈ 0.59
 
     @property
     def H0_early(self) -> float:
@@ -532,7 +540,7 @@ class GeometricAnchors:
         """
         String scale from G2 compactification.
 
-        M_s = M_Pl / √(Vol_G2) ≈ 10¹⁷ GeV
+        M_s = M_Pl / √(Vol_G2) ≈ 1.1×10¹⁸ GeV
         """
         return self.m_planck_4d / np.sqrt(self.k_gimel * 10)  # ≈ 1.1×10¹⁸ GeV
 
@@ -566,7 +574,7 @@ class GeometricAnchors:
         """
         Thermal time scaling parameter.
 
-        α_T = 2π × k_gimel / (b₃ - 1) ≈ 2.7
+        α_T = 2π × k_gimel / (b₃ - 1) ≈ 3.365
 
         Used in Ricci flow evolution of the G2 manifold.
         """
@@ -583,7 +591,7 @@ class GeometricAnchors:
         """
         Modified gravity R² coefficient.
 
-        α_R² = 1 / (b₃ × k_gimel)² ≈ 0.0045
+        α_R² = 1 / (b₃ × k_gimel)² ≈ 1.14e-5
 
         Controls Starobinsky-type corrections in early universe.
         """
@@ -793,7 +801,7 @@ class GeometricAnchors:
         """
         Landscape vacuum entropy from G2 counting.
 
-        S = b₃ × ln(b₃!) ≈ 1151
+        S = b₃ × ln(b₃!) ≈ 1315
 
         Number of distinct G2 compactifications.
         """
@@ -938,16 +946,20 @@ class GeometricAnchors:
 
         where:
         - M_Pl_26D = 2.435×10¹⁸ GeV (bare reduced Planck mass)
-        - χ = √V₇ ≈ 5.0132 (G2 manifold volume factor)
+        - χ = √(8π) ≈ 5.0133 (standard reduced→full Planck-mass conversion;
+          not a G2 volume factor)
         """
         M_Pl_26D = 2.43521e18  # GeV
-        chi = 5.0132  # G2 volume factor
+        chi = 5.0132  # ≈ √(8π): standard reduced→full Planck-mass conversion (not a G2 volume factor)
         return M_Pl_26D * chi  # ≈ 1.2207×10¹⁹ GeV
 
     @property
     def mu_pe(self) -> float:
         """
         Certificate C13: Proton-to-Electron Mass Ratio
+
+        STATUS: FITTED — holonomy_correction back-computed from CODATA
+        target (see alpha_rigor.py).
 
         μ = (C_kaf² × k_gimel/π) / holonomy_correction
 
@@ -1204,7 +1216,8 @@ class GeometricAnchors:
         """
         Ensures the G2 manifold is stabilized against Planck-collapse.
         Identity: (C_kaf * b3) / k_gimel must remain within
-        Stability Bound [52.9, 53.1] (Joyce-Stability bound)
+        Stability Bound [52.9, 53.1] (internal consistency window,
+        ANSATZ — not a bound from Joyce)
         """
         stability_ratio = (self.c_kaf * self.elder_kads) / self.k_gimel
         # 27.2 * 24 / 12.318 = 52.99
@@ -1227,7 +1240,7 @@ class GeometricAnchors:
         Returns True if stable.
         """
         r_7d = np.sqrt(self.k_gimel) * 1.616e-35
-        return r_7d > 1e-35  # Returns True if stable
+        return r_7d > 1.616255e-35  # Planck length in meters; returns True if stable
 
     def get_all_anchors(self) -> Dict[str, Any]:
         """Return all geometric anchors as dictionary."""
@@ -1383,8 +1396,13 @@ class GeometricAnchors:
 
     def register_anchors(self) -> None:
         """
-        Register all geometric anchors to the PMRegistry with GEOMETRIC status.
+        Register all geometric anchors to the PMRegistry.
         This enables tracking and validation across the simulation framework.
+
+        Status is per-parameter: raw experimental/observational inputs
+        (Planck, SH0ES, NuFIT, PDG, ATLAS/CMS values) are registered as
+        MEASURED (no tuning_free claim); genuinely geometric expressions
+        (pure b3/k_gimel/phi combinations) keep GEOMETRIC status.
         """
         try:
             from metaphysica.simulations.base import PMRegistry
@@ -1392,20 +1410,56 @@ class GeometricAnchors:
             registry = PMRegistry.get_instance()
             anchors = self.get_all_anchors()
 
-            # Register each anchor with GEOMETRIC status
+            # Raw experimental/observational inputs — NOT derived from b3=24.
+            measured_params = {
+                "Omega_matter",         # 0.315 (Planck 2018)
+                "Omega_radiation",      # 8.5e-5 (Planck 2018)
+                "H0_early",             # 67.4 km/s/Mpc (Planck 2018)
+                "H0_local",             # 73.04 km/s/Mpc (SH0ES 2022)
+                "theta_12",             # 33.41 deg (NuFIT)
+                "theta_13",             # 8.54 deg (NuFIT)
+                "theta_23",             # 49.0 deg (NuFIT)
+                "delta_CP_PMNS",        # 278.4 deg (NuFIT IO)
+                "dm21_squared",         # 7.42e-5 eV^2 (NuFIT)
+                "dm31_squared",         # 2.51e-3 eV^2 (NuFIT)
+                "A_Wolfenstein",        # 0.81 (PDG)
+                "J_CKM",                # 3.0e-5 (PDG-level value, hardcoded)
+                "M_GUT_geometric",      # 2.1e16 GeV (phenomenological, proton decay limits)
+                "m_KK_bound",           # 3.5 TeV (ATLAS/CMS bound)
+                "alpha_T_phenomenological",   # 2.7 (fit to data)
+                "alpha_R_squared_phenom",     # 0.0045 (phenomenological)
+                "w0_observed_DESI",     # DESI 2025
+                "w0_error_DESI",        # DESI 2025
+                "wa_observed_DESI",     # DESI 2025
+                "omega_Lambda_Planck",  # Planck 2018
+            }
+
+            # Register each anchor with per-parameter status
             for name, value in anchors.items():
                 param_path = f"geometry.{name}"
-                registry.set_param(
-                    path=param_path,
-                    value=value,
-                    source="geometric_anchors_v16_1",
-                    status="GEOMETRIC",
-                    metadata={
-                        "derivation": "Derived from b3=24 topological invariant",
-                        "fundamental": True,
-                        "tuning_free": True
-                    }
-                )
+                if name in measured_params:
+                    registry.set_param(
+                        path=param_path,
+                        value=value,
+                        source="geometric_anchors_v16_1",
+                        status="MEASURED",
+                        metadata={
+                            "derivation": "Experimental/observational input (see property docstring)",
+                            "fundamental": False
+                        }
+                    )
+                else:
+                    registry.set_param(
+                        path=param_path,
+                        value=value,
+                        source="geometric_anchors_v16_1",
+                        status="GEOMETRIC",
+                        metadata={
+                            "derivation": "Derived from b3=24 topological invariant",
+                            "fundamental": True,
+                            "tuning_free": True
+                        }
+                    )
 
             print(f"Successfully registered {len(anchors)} geometric anchors to PMRegistry")
 
@@ -1433,7 +1487,7 @@ if __name__ == "__main__":
 
     stability_result = anchors.verify_stability()
     print(f"  Stability Ratio: {stability_result['ratio']:.4f}")
-    print(f"  Joyce-Stability Bound: [52.9, 53.1]")
+    print(f"  Stability Window: [52.9, 53.1] (internal consistency window, ANSATZ — not a bound from Joyce)")
     print(f"  Is Stable: {stability_result['is_stable']}")
     print(f"  7D Radius: {stability_result['radius_7d']:.6e} meters")
     print(f"  7D Radius (Planck units): {stability_result['planck_units']:.6f}")

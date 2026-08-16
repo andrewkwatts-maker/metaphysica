@@ -163,10 +163,10 @@ class FreudenthalTripleSimulation(SimulationBase):
                 label="(A2.2)",
                 latex=r"q(A) = \frac{\mathrm{Tr}(A)^2 \cdot \langle A, A \rangle}{4}",
                 plain_text="q(A) = Tr(A)^2 * <A,A> / 4",
-                category="DERIVED",
-                description="Quartic invariant of the Freudenthal triple system. "
-                            "Proxy for the E₇ quartic Casimir; encodes the ALP mass scale "
-                            "and 125 spectral residue proxy.",
+                category="ANSATZ",
+                description="Quartic proxy (non-standard form; the standard Freudenthal "
+                            "quartic lives in e7_representation.py). Encodes the ALP mass "
+                            "scale and 125 spectral residue proxy.",
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.freudenthal_quartic"],
                 eml_latex=r"\mathrm{ops.div}(\mathrm{ops.mul}(\mathrm{Tr}^2, \langle A,A\rangle), 4)",
@@ -176,7 +176,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                     "parentFormulas": ["freudenthal-cubic-norm"],
                     "steps": [
                         "The quadratic form ⟨A,A⟩ on J₃(𝕆) is the Jordan inner product Tr(A²)",
-                        "The quartic invariant q(A) = Tr(A)²·⟨A,A⟩/4 is the leading E₇ Casimir on J₃(𝕆)",
+                        "The quartic proxy q(A) = Tr(A)²·⟨A,A⟩/4 is a non-standard form (the standard Freudenthal quartic lives in e7_representation.py)",
                         "For a symmetric condensate with equal diagonals cᵢ = s, Tr(A) = 3s and ⟨A,A⟩ = 3s²",
                         "This gives q(A) = (3s)²·(3s²)/4 = 27s⁴/4, encoding the ALP mass scale",
                     ],
@@ -185,7 +185,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 terms={
                     r"\mathrm{Tr}(A)": "Jordan trace = c₁ + c₂ + c₃ of the 27D condensate element",
                     r"\langle A, A \rangle": "Jordan inner product Tr(A²) — norm-squared of the condensate",
-                    r"q(A)": "Quartic invariant — E₇ quartic Casimir evaluated on the Pneuma condensate",
+                    r"q(A)": "Quartic proxy (non-standard form; the standard Freudenthal quartic lives in e7_representation.py)",
                 },
             ),
             # CLASSIFIED(non-b3): algebraic identity
@@ -239,11 +239,11 @@ class FreudenthalTripleSimulation(SimulationBase):
             ),
             Parameter(
                 path="algebra.freudenthal_quartic",
-                name="Freudenthal Quartic Invariant q(A)",
+                name="Freudenthal Quartic Proxy q(A)",
                 units="dimensionless",
-                status="DERIVED",
-                description="Quartic invariant of the Freudenthal triple system. "
-                            "Proxy for E₇ quartic Casimir; encodes ALP mass scale.",
+                status="ANSATZ",
+                description="Quartic proxy (non-standard form; the standard Freudenthal "
+                            "quartic lives in e7_representation.py); encodes ALP mass scale.",
                 derivation_formula="freudenthal-quartic-invariant",
                 no_experimental_value=True,
                 eml_description="EML: ops.div(ops.mul(ops.pow(eml_vec('algebra.freudenthal_jordan_trace'), eml_scalar(2.0)), ops.mul(eml_scalar(3.0), ops.pow(eml_scalar(condensate_scale), eml_scalar(2.0)))), eml_scalar(4.0)) — quartic q(A) = Tr(A)²·3s²/4",

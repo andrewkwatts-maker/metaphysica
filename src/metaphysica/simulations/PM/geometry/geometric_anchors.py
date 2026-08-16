@@ -1030,7 +1030,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "roots_total": (
                     "EML: ops.mul(eml_vec('elder_kads'), eml_scalar(12.0))"
-                    " — E8×E8 root total = b₃ × D_shadow_space = 24×12 = 288"
+                    " — sector count b₃ × D_shadow_space = 24×12 = 288"
+                    " (NOT an E8×E8 root count — E8×E8 has 480 roots)"
                 ),
                 "roots_per_sector": (
                     "EML: ops.div(eml_vec('roots_total'), eml_scalar(2.0))"
@@ -1041,7 +1042,9 @@ class GeometricAnchorsSimulation(SimulationBase):
                     "EML: ops.div(eml_vec('m_planck_4d'),"
                     " ops.mul(eml_vec('elder_kads'),"
                     " ops.pow(eml_vec('k_gimel'), eml_scalar(2.0))))"
-                    " — KK mass m_KK = M_Pl/(b₃ × k_gimel²) ≈ 4.1 TeV"
+                    " — KK mass m_KK = M_Pl/(b₃ × k_gimel²) ≈ 3.4e15 GeV"
+                    " (NOTE: the TeV-scale KK claim elsewhere uses the warped"
+                    " form M_Pl·exp(−k_eff·π), not this ratio)"
                 ),
                 "m_KK_central": (
                     "EML: eml_scalar(5.0) — central KK mass prediction = 5.0 TeV"
@@ -1056,7 +1059,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Cosmology: density parameters
                 "Omega_Lambda": (
                     "EML: eml_vec('Omega_Lambda') — dark energy density Ω_Λ"
-                    " from G₂ topology with Leech enhancement ≈ 0.685"
+                    " from G₂ topology with Leech enhancement = 0.70 (clamped;"
+                    " raw product 0.94 — cap is an ANSATZ, observed Ω_Λ = 0.685)"
                 ),
                 "Omega_matter": (
                     "EML: eml_scalar(0.315) — total matter density Ω_m = 0.315 (Planck 2018)"
@@ -1065,11 +1069,12 @@ class GeometricAnchorsSimulation(SimulationBase):
                     "EML: ops.div(eml_vec('elder_kads'),"
                     " ops.add(ops.mul(eml_scalar(5.0), eml_vec('elder_kads')),"
                     " eml_scalar(1.0)))"
-                    " — baryon density Ω_b = b₃/(5b₃+1) ≈ 0.0496"
+                    " — baryon density Ω_b = b₃/(5b₃+1) = 24/121 ≈ 0.1983"
+                    " (NOTE: observed Ω_b ≈ 0.0493 — this anchor over-predicts ×4)"
                 ),
                 "Omega_DM": (
                     "EML: ops.sub(eml_vec('Omega_matter'), eml_vec('Omega_baryon'))"
-                    " — dark matter density Ω_DM = Ω_m - Ω_b ≈ 0.265"
+                    " — dark matter density Ω_DM = Ω_m - Ω_b = 0.315 - 0.198 ≈ 0.117"
                 ),
                 "Omega_radiation": (
                     "EML: eml_scalar(8.5e-05) — radiation density Ω_r ≈ 8.5×10⁻⁵"
@@ -1077,7 +1082,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "DM_to_baryon_ratio": (
                     "EML: ops.div(eml_vec('Omega_DM'), eml_vec('Omega_baryon'))"
-                    " — DM/baryon ratio Ω_DM/Ω_b ≈ 5.35"
+                    " — DM/baryon ratio Ω_DM/Ω_b ≈ 0.59"
+                    " (observed ~5.4 — mismatch, Ω_b anchor over-predicts)"
                 ),
                 "H0_early": (
                     "EML: eml_scalar(67.4) — early-universe H₀ = 67.4 km/s/Mpc (Planck 2018)"

@@ -5,7 +5,7 @@
   "units": null,
   "uncertainty": null,
   "source": "neutrino_mixing_v17_2",
-  "status": "PREDICTED",
+  "status": "FITTED",
   "description": null,
   "eml_expression": "EML: ops.add(ops.pow(m3, eml_scalar(2.0)), ops.neg(ops.pow(m2, eml_scalar(2.0)))) — atmospheric splitting (negative = IO)",
   "kind": "physics",

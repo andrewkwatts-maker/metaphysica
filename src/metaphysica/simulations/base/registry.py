@@ -56,6 +56,9 @@ class RegistryEntry:
 
         # Validation results (computed from theory vs experiment)
         sigma_deviation: Number of sigmas between theory and experiment
+            (None for one-sided bounds, where no experimental sigma exists)
+        relative_margin: Relative margin (theory-exp)/exp for one-sided
+            "lower"/"upper" bounds — NOT a sigma count
         validation_status: "PASS", "MARGINAL", "TENSION", "FAIL", or "NO_DATA"
     """
     value: Any
@@ -73,6 +76,7 @@ class RegistryEntry:
 
     # Validation results
     sigma_deviation: Optional[float] = None
+    relative_margin: Optional[float] = None  # one-sided bounds: (theory-exp)/exp margin
     validation_status: Optional[str] = None  # "PASS", "MARGINAL", "TENSION", "FAIL", "NO_DATA"
 
 
@@ -308,6 +312,7 @@ class PMRegistry:
 
         # Compute sigma deviation if we have experimental data
         sigma_deviation = None
+        relative_margin = None
         validation_status = "NO_DATA"
 
         if experimental_value is not None and value is not None:
@@ -350,22 +355,27 @@ class PMRegistry:
                             validation_status = "FAIL"
 
                 elif bound_type == "lower":
-                    # Theory must exceed lower bound
+                    # Theory must exceed lower bound.
+                    # One-sided bounds have no experimental sigma: store the
+                    # relative margin (theory-exp)/exp separately and leave
+                    # sigma_deviation = None.
                     if theory_val > exp_val:
                         validation_status = "PASS"
-                        sigma_deviation = (theory_val - exp_val) / exp_val if exp_val != 0 else None
+                        relative_margin = (theory_val - exp_val) / exp_val if exp_val != 0 else None
                     else:
                         validation_status = "FAIL"
-                        sigma_deviation = (exp_val - theory_val) / exp_val if exp_val != 0 else None
+                        relative_margin = (exp_val - theory_val) / exp_val if exp_val != 0 else None
+                    sigma_deviation = None
 
                 elif bound_type == "upper":
-                    # Theory must be below upper bound
+                    # Theory must be below upper bound (same margin convention).
                     if theory_val < exp_val:
                         validation_status = "PASS"
-                        sigma_deviation = (exp_val - theory_val) / exp_val if exp_val != 0 else None
+                        relative_margin = (exp_val - theory_val) / exp_val if exp_val != 0 else None
                     else:
                         validation_status = "FAIL"
-                        sigma_deviation = (theory_val - exp_val) / exp_val if exp_val != 0 else None
+                        relative_margin = (theory_val - exp_val) / exp_val if exp_val != 0 else None
+                    sigma_deviation = None
 
             except (TypeError, ValueError):
                 # Non-numeric values, can't compute sigma
@@ -382,6 +392,7 @@ class PMRegistry:
             experimental_source=experimental_source,
             bound_type=bound_type,
             sigma_deviation=sigma_deviation,
+            relative_margin=relative_margin,
             validation_status=validation_status
         )
 
@@ -1282,7 +1293,10 @@ class PMRegistry:
             - experimental_source: Citation for experimental value
             - bound_type: Type of bound (measured, upper, lower, range)
             - sigma_deviation: Number of sigmas between theory and experiment
+              (None for one-sided bounds)
+            - relative_margin: Relative margin (theory-exp)/exp for one-sided bounds
             - validation_status: PASS, MARGINAL, TENSION, FAIL, or NO_DATA
+            - units: Units string from entry metadata (if any)
         """
         result = {}
         for path, entry in self._parameters.items():
@@ -1303,9 +1317,12 @@ class PMRegistry:
                 'bound_type': entry.bound_type,
                 # Validation results
                 'sigma_deviation': entry.sigma_deviation,
+                'relative_margin': getattr(entry, 'relative_margin', None),
                 'validation_status': entry.validation_status,
                 # EML Mirror Phase description
                 'eml_description': eml_desc,
+                # Units live in metadata; surface them for datasheet consumers
+                'units': (entry.metadata or {}).get('units'),
             }
         return result
 

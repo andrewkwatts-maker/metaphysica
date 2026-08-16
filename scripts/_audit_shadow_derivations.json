@@ -17,8 +17,8 @@
       "values": {
         "nufit.theta_13": 8.54,
         "geometry.theta_13": 8.54,
-        "neutrino.theta_13_pred": 8.647304725338863,
-        "pmns.theta_13_triality": 8.647304725338863,
+        "neutrino.theta_13_pred": 8.647304725338865,
+        "pmns.theta_13_triality": 8.647304725338865,
         "particle.theta_13_deg": 8.668576499284981
       },
       "max_pct_diff": 1.483248135326343,
@@ -69,11 +69,11 @@
     {
       "observable": "m_higgs",
       "values": {
-        "pdg.m_higgs": 125.2,
+        "pdg.m_higgs": 125.1,
         "particle.m_h_GeV": 125.07986037465686,
         "higgs.m_higgs_local": 125.10242591991029
       },
-      "max_pct_diff": 0.09595816720698291,
+      "max_pct_diff": 0.018037656014660067,
       "tolerance_pct": 2.0,
       "tolerance_used": 2.0,
       "verdict": "CONSISTENT",

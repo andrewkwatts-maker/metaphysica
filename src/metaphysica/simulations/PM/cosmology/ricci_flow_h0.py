@@ -11,7 +11,7 @@ between early-universe (Planck/CMB) and late-universe (SH0ES) values.
 
 Key Result: Hubble Tension Resolution
 - H0_early = 67.4 km/s/Mpc (Planck 2018)
-- H0_local = 73.04 km/s/Mpc (SH0ES 2025)
+- H0_local = 73.04 km/s/Mpc (SH0ES 2022 (Riess et al.))
 - z_transition ~ 0.5-1.0 (where interpolation occurs)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -24,7 +24,7 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES
 # Output: cosmology.H0_local
-# Deviation: 3.17 sigma from experimental (SH0ES 2025: 73.04 +/- 1.04 km/s/Mpc)
+# Deviation: 3.17 sigma from experimental (SH0ES 2022 (Riess et al.): 73.04 +/- 1.04 km/s/Mpc)
 #
 # Classification: ACTIVE PHYSICS (Hubble tension is an open problem)
 #
@@ -34,7 +34,7 @@ Dedicated To:
 #   expands, modifying the effective volume and curvature. This produces an
 #   H(z) that naturally interpolates between:
 #     - H0_early ~ 67.4 km/s/Mpc (Planck 2018 CMB)
-#     - H0_local ~ 73.04 km/s/Mpc (SH0ES 2025 distance ladder)
+#     - H0_local ~ 73.04 km/s/Mpc (SH0ES 2022 (Riess et al.) distance ladder)
 #
 #   The 3.17 sigma deviation reflects the HUBBLE TENSION itself -- the
 #   well-known 4-6 sigma discrepancy between early and late universe H0
@@ -233,7 +233,7 @@ class RicciFlowH0V16(SimulationBase):
         self.z_transition = self._find_transition_redshift(z_array, H_array)
 
         # Step 4: Compute Hubble tension diagnostic
-        # SH0ES 2025: H0 = 73.04 +/- 1.04 km/s/Mpc
+        # SH0ES 2022 (Riess et al.): H0 = 73.04 +/- 1.04 km/s/Mpc
         # Planck 2018: H0 = 67.4 +/- 0.5 km/s/Mpc
         H0_shoes = registry.get("observational.H0_shoes", default=73.04)
         H0_planck = registry.get("observational.H0_planck", default=67.4)
@@ -318,7 +318,7 @@ class RicciFlowH0V16(SimulationBase):
         # See CERTIFICATES_v16_2.py derive_c1_hubble() for derivation
         H0_planck = registry.get("observational.H0_planck", default=67.4)   # km/s/Mpc (early, Planck CMB value)
         theta_mixing = registry.get("geometry.theta_mixing_13D_25D", default=31.0) * np.pi / 180  # 13D/25D volume mixing angle in radians
-        H0_geometric = H0_planck * (1 + np.sin(theta_mixing)**2 / 2)  # ≈ 72.96 km/s/Mpc
+        H0_geometric = H0_planck * (1 + np.sin(theta_mixing)**2 / 2)  # ≈ 76.34 km/s/Mpc
         H0_shoes = H0_geometric  # Use geometric derivation, not hardcoded 73.04
 
         # Characteristic transition redshift from Ricci flow
@@ -490,7 +490,7 @@ class RicciFlowH0V16(SimulationBase):
                     callout_type="success",
                     title="Hubble Tension Resolution",
                     content=(
-                        "At z=0 (local): H0 = 73.04 km/s/Mpc (matches SH0ES). "
+                        "At z=0 (local): H0 = 76.34 km/s/Mpc (3.17 sigma above SH0ES 73.04 +/- 1.04). "
                         "At z=1089 (CMB): H0 = 67.4 km/s/Mpc (matches Planck). "
                         "The tension is not a contradiction but a natural consequence "
                         "of G2 Ricci flow evolution."
@@ -637,7 +637,7 @@ class RicciFlowH0V16(SimulationBase):
                     ],
                     "references": [
                         "Planck 2018 - CMB measurements",
-                        "SH0ES 2025 - Local distance ladder"
+                        "SH0ES 2022 (Riess et al.) - Local distance ladder"
                     ],
                     "method": "interpolation_from_ricci_flow",
                     "parentFormulas": ["effective-curvature-evolution"]
@@ -704,7 +704,13 @@ class RicciFlowH0V16(SimulationBase):
 
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions for outputs."""
-        H0_local = self.H0_local if self.H0_local else 73.04
+        # Audit fix: unrun fallback must reproduce the module's own geometric
+        # prediction 67.4*(1+sin^2(31 deg)/2) = 76.34, NOT the SH0ES anchor
+        # 73.04 (which let certificates PASS at 0.00 sigma from an unrun module).
+        H0_local = (
+            self.H0_local if self.H0_local
+            else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
+        )
         H0_early = self.H0_early if self.H0_early else 67.4
         z_trans = self.z_transition if self.z_transition else 1.95
 
@@ -717,12 +723,12 @@ class RicciFlowH0V16(SimulationBase):
                 description=(
                     f"Hubble constant at z=0 from Ricci flow evolution: "
                     f"H0 = {H0_local:.2f} km/s/Mpc. "
-                    "SH0ES 2025: 73.04 +/- 1.04 km/s/Mpc."
+                    "SH0ES 2022 (Riess et al.): 73.04 +/- 1.04 km/s/Mpc."
                 ),
                 derivation_formula="hubble-evolution-ode",
                 experimental_bound=73.04,
                 bound_type="central_value",
-                bound_source="SH0ES 2025",
+                bound_source="SH0ES 2022 (Riess et al.)",
                 uncertainty=1.04,
                 eml_description="EML: ops.add(H0_GR, ops.mul(alpha_leak, ops.mul(H0_torsion, epsilon_T))) — Ricci flow correction to Hubble tension"
             ),
@@ -789,7 +795,12 @@ class RicciFlowH0V16(SimulationBase):
 
     def get_certificates(self) -> List[Dict[str, Any]]:
         """Return certificate assertions for Ricci flow Hubble evolution."""
-        H0_local = self.H0_local if self.H0_local is not None else 73.04
+        # Audit fix: fallback = geometric prediction (76.34), not the SH0ES
+        # anchor, so certificates cannot PASS at 0.00 sigma from an unrun module.
+        H0_local = (
+            self.H0_local if self.H0_local is not None
+            else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
+        )
         H0_early = self.H0_early if self.H0_early is not None else 67.4
 
         shoes_H0 = 73.04
@@ -885,7 +896,12 @@ class RicciFlowH0V16(SimulationBase):
 
     def validate_self(self) -> Dict[str, Any]:
         """Run self-validation checks on Ricci flow Hubble model."""
-        H0_local = self.H0_local if self.H0_local is not None else 73.04
+        # Audit fix: fallback = geometric prediction (76.34), not the SH0ES
+        # anchor (see get_certificates note).
+        H0_local = (
+            self.H0_local if self.H0_local is not None
+            else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
+        )
         H0_early = self.H0_early if self.H0_early is not None else 67.4
         z_trans = self.z_transition if self.z_transition is not None else 1.95
 
@@ -940,7 +956,12 @@ class RicciFlowH0V16(SimulationBase):
 
     def get_gate_checks(self) -> List[Dict[str, Any]]:
         """Return gate check results for Hubble evolution."""
-        H0_local = self.H0_local if self.H0_local is not None else 73.04
+        # Audit fix: fallback = geometric prediction (76.34), not the SH0ES
+        # anchor, so gate checks cannot PASS at 0.00 sigma from an unrun module.
+        H0_local = (
+            self.H0_local if self.H0_local is not None
+            else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
+        )
         H0_early = self.H0_early if self.H0_early is not None else 67.4
 
         shoes_sigma = 1.04

@@ -3,7 +3,7 @@
   "canonical_path": "constants.G_NEWTON",
   "value": 6.70883e-39,
   "units": null,
-  "uncertainty": 3e-44,
+  "uncertainty": 1.5e-43,
   "source": "ESTABLISHED:CODATA2018",
   "status": "ESTABLISHED",
   "description": null,

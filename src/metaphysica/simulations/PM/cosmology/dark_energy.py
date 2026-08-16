@@ -81,7 +81,7 @@ Evidence:
 CLASSIFICATION: The numerical value w₀ = -0.9583 is testable and
 distinguishable from Lambda-CDM (w₀ = -1) with next-generation surveys.
 However, the prediction was retrofitted to DESI 2025 data, not derived
-a priori. The w_a prediction (-0.204 vs DESI -0.6 +/- 0.3, ~2.5 sigma
+a priori. The w_a prediction (-0.204 vs DESI DR2 -0.86 +/- 0.22, ~3.0 sigma
 tension) was NOT adjusted, suggesting it may be a more honest test of
 the framework -- and it performs poorly.
 
@@ -99,7 +99,10 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES
 # Output: cosmology.wa_derived
-# Deviation: 2.46 sigma from experimental (DESI 2025: w_a = -0.6 +/- 0.3)
+# Deviation: 2.98 sigma from experimental (DESI DR2 BAO+CMB+DESY5: w_a = -0.86 +/- 0.22)
+#   [audit note: earlier text paired "2.46 sigma" with the -0.6 +/- 0.3 anchor,
+#    an inconsistent pairing -- |-0.204+0.6|/0.3 = 1.32 sigma vs -0.6 +/- 0.3;
+#    2.46 sigma was computed vs the older -0.99 +/- 0.32 anchor]
 #
 # Classification: PREDICTION (geometric derivation vs new DESI 2025 data)
 #
@@ -110,17 +113,16 @@ Dedicated To:
 #     w_a = -1/sqrt(b_3) = -1/sqrt(24) ~ -0.2041
 #
 #   The w_0 prediction agrees well with DESI 2025 data (within ~1 sigma).
-#   However, the w_a prediction (-0.204) differs from the DESI 2025
-#   central value (-0.6 +/- 0.3) by 2.46 sigma.
+#   However, the w_a prediction (-0.204) differs from the DESI DR2
+#   central value (-0.86 +/- 0.22, BAO+CMB+DESY5) by 2.98 sigma.
 #
-# Why 2.46 sigma on w_a:
+# Why 2.98 sigma on w_a:
 #   - The w_a formula w_a = -1/sqrt(b_3) is a LEADING-ORDER approximation
 #     from the 2T projection of the thawing quintessence field
 #   - It captures the sign (negative, thawing) and order of magnitude
-#   - The DESI 2025 w_a measurement has large uncertainties (+/- 0.3)
+#   - The DESI w_a measurement has sizeable uncertainties (+/- 0.22)
 #     and may shift with future data releases
-#   - The 2.46 sigma is at the boundary of "interesting tension" vs
-#     "statistical fluctuation"
+#   - The 2.98 sigma deviation is a genuine open tension
 #
 # Improvement path:
 #   1. Include non-linear thawing corrections beyond leading order
@@ -545,8 +547,9 @@ class DarkEnergyV16(SimulationBase):
         - wa < 0 means w DECREASES going to higher z (back in time)
         - So w INCREASES going forward in time (thawing toward w > -1)
 
-        Note: DESI 2025 also measures wa < 0 (wa ~ -0.99), confirming
-        thawing behavior is observed in nature.
+        Note: DESI also measures wa < 0 (DESI DR2 BAO+CMB+DESY5:
+        wa = -0.86 +/- 0.22), confirming thawing behavior is observed
+        in nature.
 
         Args:
             reduction_data: Dimensional reduction cascade data
@@ -721,12 +724,11 @@ class DarkEnergyV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The PM prediction w₀ = -23/24 = -0.9583 is validated against "
-                        "DESI 2024 BAO measurements (DESI Collaboration 2024, arXiv:2404.03002). "
-                        "DESI Year 1 data, combined with CMB and Type Ia supernovae, reports "
-                        "a thawing quintessence fit with w₀ = -0.957 \u00b1 0.067. The PM value "
-                        "falls within the BAO-only uncertainty range, providing "
-                        "experimental support for the G₂ thawing mechanism."
+                        "The PM prediction w₀ = -23/24 = -0.9583 is compared against the "
+                        "thawing-quintessence anchor (framework's adopted anchor; DESI DR1 "
+                        "w0waCDM BAO+CMB+SN headline is w₀ = -0.827 +/- 0.063, against "
+                        "which -23/24 is 2.1 sigma): w₀ = -0.957 \u00b1 0.067. The PM value "
+                        "falls within the adopted anchor's uncertainty range."
                     )
                 ),
                 ContentBlock(
@@ -960,7 +962,12 @@ class DarkEnergyV16(SimulationBase):
                 latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -\frac{{{numerator}}}{{{b3}}} \approx {w0:.4f}",
                 plain_text=f"w_0 = -1 + 1/b3 = {w0_frac} ≈ {w0:.4f}",
                 category="PREDICTED",
-                description=f"Dark energy equation of state derived from G2 thawing dynamics (b₃={b3})",
+                description=(
+                    f"Dark energy equation of state derived from G2 thawing dynamics (b₃={b3}). "
+                    f"RETRODICTED: -23/24 adopted after DESI (see assessment header; "
+                    f"the registry FormulaCategory set has no RETRODICTED value, so the "
+                    f"category field retains PREDICTED)."
+                ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["cosmology.w0_derived"],
                 input_params=["topology.elder_kads"],
@@ -1037,7 +1044,7 @@ class DarkEnergyV16(SimulationBase):
                     "method": "CPL_parametrization_with_2T_projection",
                     "parentFormulas": ["dark-energy-eos-derivation"],
                     "references": [
-                        "DESI 2025: w_a = -0.99 +/- 0.32",
+                        "DESI DR2 BAO+CMB+DESY5: w_a = -0.86 +/- 0.22",
                         "Chevallier-Polarski-Linder parametrization"
                     ]
                 },
@@ -1213,18 +1220,19 @@ class DarkEnergyV16(SimulationBase):
                 description=(
                     f"Time evolution parameter for dark energy EoS from 2T projection of "
                     f"G2 thawing dynamics: w_a = -1/sqrt(b₃) = {wa_derived:.6f} (leading-order "
-                    f"approximation). DESI 2025 central value: w_a = -0.99 +/- 0.32. "
-                    f"Deviation: {MetadataBuilder.compute_sigma(wa_derived, -0.99, 0.32):.2f} sigma. "
-                    f"The ~2.5 sigma tension is at the boundary of statistical significance; "
+                    f"approximation). DESI DR2 central value (BAO+CMB+DESY5): "
+                    f"w_a = -0.86 +/- 0.22. "
+                    f"Deviation: {MetadataBuilder.compute_sigma(wa_derived, -0.86, 0.22):.2f} sigma. "
+                    f"The ~3.0 sigma tension is a genuine open tension; "
                     f"the prediction captures the correct thawing sign (w_a < 0) and order "
                     f"of magnitude. Non-linear corrections from moduli-quintessence coupling "
                     f"may reduce this tension."
                 ),
                 derivation_formula="dark-energy-time-evolution",
-                experimental_bound=-0.99,
+                experimental_bound=-0.86,
                 bound_type="central_value",
-                bound_source="DESI2025",
-                uncertainty=0.32
+                bound_source="DESI DR2 BAO+CMB+DESY5",
+                uncertainty=0.22
             ),
             Parameter(
                 path="cosmology.D_eff",
@@ -1446,11 +1454,12 @@ class DarkEnergyV16(SimulationBase):
         w0, w0_frac, _ = w0_from_b3(b3)
         wa, _ = wa_from_b3(b3)
 
-        # DESI 2025 thawing constraint
+        # w0: framework's adopted thawing anchor (unchanged, registry-wide).
+        # wa: standardized DESI DR2 w0waCDM anchor (BAO+CMB+DESY5), audit #18.
         desi_w0 = -0.957
         desi_w0_sigma = 0.067
-        desi_wa = -0.99
-        desi_wa_sigma = 0.32
+        desi_wa = -0.86
+        desi_wa_sigma = 0.22
         w0_dev = MetadataBuilder.compute_sigma(w0, desi_w0, desi_w0_sigma)
         wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
 
@@ -1473,7 +1482,7 @@ class DarkEnergyV16(SimulationBase):
                 "id": "CERT_WA_DESI_EVOLUTION",
                 "assertion": (
                     f"Dark energy evolution parameter wa = {wa:.6f} is within "
-                    f"DESI 2025 constraint wa = {desi_wa} +/- {desi_wa_sigma} "
+                    f"DESI DR2 (BAO+CMB+DESY5) constraint wa = {desi_wa} +/- {desi_wa_sigma} "
                     f"(deviation: {wa_dev:.2f}sigma)"
                 ),
                 "condition": f"abs({wa:.6f} - ({desi_wa})) / {desi_wa_sigma} < 3.0",
@@ -1589,8 +1598,9 @@ class DarkEnergyV16(SimulationBase):
 
         desi_w0 = -0.957
         desi_w0_sigma = 0.067
-        desi_wa = -0.99
-        desi_wa_sigma = 0.32
+        # wa: standardized DESI DR2 w0waCDM anchor (BAO+CMB+DESY5), audit #18.
+        desi_wa = -0.86
+        desi_wa_sigma = 0.22
         w0_dev = MetadataBuilder.compute_sigma(w0, desi_w0, desi_w0_sigma)
         wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
 
@@ -1641,7 +1651,7 @@ class DarkEnergyV16(SimulationBase):
         # Check 5: DESI wa deviation < 3 sigma
         wa_consistent = wa_dev < 3.0
         checks.append({
-            "name": "wa deviation from DESI 2025 < 3sigma",
+            "name": "wa deviation from DESI DR2 (BAO+CMB+DESY5) < 3sigma",
             "passed": wa_consistent,
             "confidence_interval": {"lower": desi_wa - 3 * desi_wa_sigma,
                                     "upper": desi_wa + 3 * desi_wa_sigma,

@@ -234,12 +234,10 @@ class ElectroweakMixing:
         dual to C_W and C_Y gives Vol(C_W)/Vol(C_Y) directly.
 
         GUT CONNECTION:
-        At the GUT scale, SU(5) predicts sin^2(theta_W) = 3/8 = 0.375. The G2
-        geometry encodes the full RG evolution from GUT to electroweak scale:
-        the cycle volumes r_W, r_Y implicitly include the effects of all massive
-        KK modes, threshold corrections, and the particle content running between
-        M_GUT and M_Z. This is why the G2 cycle ratio directly gives the low-energy
-        value sin^2(theta_W) = 0.23122 without separate RG integration.
+        At the GUT scale, SU(5) predicts sin^2(theta_W) = 3/8 = 0.375. The spectral
+        ratio narrative above is a proposed mechanism only: sin^2(theta_W) = 0.23122
+        is the PDG 2024 MS-bar input (ANSATZ here: no spectral-ratio computation
+        exists in this module — cf. su2_weak_gauge.py's honest framing).
         (See Acharya, B.S. et al., arXiv:0801.0478 for gauge couplings from G2;
         Raby, S. (2016) "Grand Unified Theories", World Scientific.)
         """
@@ -258,13 +256,14 @@ class ElectroweakMixing:
                 'Vol(C_W)/Vol(C_Y) and is a topological invariant of TCS G2 #187.'
             ),
             'residue_locking': (
-                'sin^2(theta_W) = 0.23122 from spectral ratio of G2 Laplacian '
-                'eigenvalues on weak and hypercharge cycles (MS-bar at M_Z)'
+                'sin^2(theta_W) = 0.23122 is the PDG 2024 MS-bar input (ANSATZ here: '
+                'no spectral-ratio computation exists in this module — cf. '
+                'su2_weak_gauge.py\'s honest framing)'
             ),
             'gut_connection': (
-                'At GUT scale: sin^2(theta_W) = 3/8 (SU(5)). The G2 cycle volumes '
-                'implicitly encode full RG evolution including KK threshold corrections, '
-                'giving low-energy value directly without separate RG integration.'
+                'At GUT scale: sin^2(theta_W) = 3/8 (SU(5)). The claim that G2 cycle '
+                'volumes encode the full RG evolution is a proposed mechanism; this '
+                'module performs no such computation and uses the PDG value as input.'
             ),
             'no_tuning': 'Fixed by manifold topology (not renormalization group running)',
             'unification_hint': 'Shared high-scale residues suggest unified coupling at M_GUT',

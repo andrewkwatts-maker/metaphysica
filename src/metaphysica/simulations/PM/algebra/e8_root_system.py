@@ -54,7 +54,7 @@ class E8RootSystem:
     Attributes:
         roots: (240, 8) array of root vectors
         positive_roots: (120, 8) array of positive roots
-        simple_roots: (8, 8) array of simple roots (Bourbaki ordering)
+        simple_roots: (8, 8) array of simple roots (fixed internal ordering)
         cartan_matrix: (8, 8) integer Cartan matrix
     """
 
@@ -123,7 +123,7 @@ class E8RootSystem:
 
     @staticmethod
     def _compute_simple_roots() -> np.ndarray:
-        """Return the 8 simple roots of E8 (Bourbaki convention).
+        """Return the 8 simple roots of E8 (fixed internal convention).
 
         α₁ = (1, -1, 0, 0, 0, 0, 0, 0)
         α₂ = (0, 1, -1, 0, 0, 0, 0, 0)

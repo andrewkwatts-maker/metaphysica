@@ -14,22 +14,23 @@
       "description": "Reduced Planck mass"
     },
     "alpha_em": {
-      "value": 7.2973525693e-3,
+      "value": 7.2973525643e-3,
       "uncertainty": 1.1e-12,
       "units": "dimensionless",
-      "description": "Fine structure constant (1/137.036)"
+      "description": "Fine structure constant (1/137.036, CODATA 2022)"
     },
     "G_NEWTON": {
       "value": 6.70883e-39,
-      "uncertainty": 3e-44,
+      "uncertainty": 1.5e-43,
       "units": "GeV^-2",
-      "description": "Newton's gravitational constant"
+      "description": "Newton's gravitational constant (CODATA relative uncertainty 2.2e-5)"
     },
     "HBAR": {
       "value": 6.582119569e-25,
-      "uncertainty": 1e-33,
+      "uncertainty": 0,
       "units": "GeV·s",
-      "description": "Reduced Planck constant"
+      "description": "Reduced Planck constant",
+      "note": "exact since 2019 SI redefinition"
     }
   },
   "gauge_bosons": {
@@ -40,8 +41,8 @@
       "description": "W boson mass (PDG 2024 world average)"
     },
     "m_Z": {
-      "value": 91.1876,
-      "uncertainty": 0.0021,
+      "value": 91.1880,
+      "uncertainty": 0.0020,
       "units": "GeV",
       "description": "Z boson mass"
     },
@@ -54,20 +55,20 @@
   },
   "leptons": {
     "m_electron": {
-      "value": 0.5109989461e-3,
+      "value": 0.51099895069e-3,
       "uncertainty": 3.1e-12,
       "units": "GeV",
-      "description": "Electron mass"
+      "description": "Electron mass (CODATA 2022)"
     },
     "m_muon": {
-      "value": 105.6583745e-3,
-      "uncertainty": 2.4e-6,
+      "value": 105.6583755e-3,
+      "uncertainty": 2.3e-9,
       "units": "GeV",
       "description": "Muon mass"
     },
     "m_tau": {
-      "value": 1.77686,
-      "uncertainty": 0.00012,
+      "value": 1.77693,
+      "uncertainty": 0.00009,
       "units": "GeV",
       "description": "Tau mass"
     }
@@ -104,8 +105,8 @@
       "description": "Bottom quark mass"
     },
     "m_top": {
-      "value": 172.69,
-      "uncertainty": 0.30,
+      "value": 172.57,
+      "uncertainty": 0.29,
       "units": "GeV",
       "description": "Top quark mass"
     }
@@ -127,13 +128,13 @@
       "value": 0.23122,
       "uncertainty": 0.00003,
       "units": "dimensionless",
-      "description": "Weak mixing angle"
+      "description": "Weak mixing angle (MS-bar, Z-pole, PDG 2024)"
     }
   },
   "ckm": {
     "V_us": {
-      "value": 0.2245,
-      "uncertainty": 0.0008,
+      "value": 0.22500,
+      "uncertainty": 0.00067,
       "units": "dimensionless",
       "description": "CKM |V_us| Cabibbo angle"
     },
@@ -150,10 +151,10 @@
       "description": "CKM |V_ub|"
     },
     "jarlskog": {
-      "value": 3.08e-5,
-      "uncertainty": 0.15e-5,
+      "value": 3.12e-5,
+      "uncertainty": 0.13e-5,
       "units": "dimensionless",
-      "description": "Jarlskog invariant J"
+      "description": "Jarlskog invariant J (PDG 2024)"
     }
   },
   "baryons": {

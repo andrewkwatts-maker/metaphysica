@@ -3,7 +3,9 @@ Spectral Geometry — Dirac Operator and Eigenvalue Problems
 ============================================================
 Implements the discretized Dirac operator on flat tori T^n,
 computes eigenvalue spectra, heat kernel traces, spectral zeta
-functions, and verifies Weyl asymptotics.
+functions, and tabulates Weyl-asymptotic quantities (NOTE: eigenvalue
+multiplicities count distinct norms only — lattice mode degeneracy not
+included; small-t comparison not performed).
 
 Starts with flat T⁷ (analytic validation) as the base case.
 
@@ -210,13 +212,18 @@ class FlatTorusDirac:
     # ------------------------------------------------------------------
 
     def heat_kernel_asymptotics(self, max_mode: int = 3) -> dict:
-        """Compute and verify heat kernel asymptotic behavior.
+        """Compute and tabulate heat kernel asymptotic quantities.
 
         As t → ∞: K(t) → number of zero modes = 2^{⌊d/2⌋}
         As t → 0: K(t) ~ 2^{⌊d/2⌋} · V / (4πt)^{d/2}
 
+        NOTE: K_predicted_small_t is tabulated but not compared against
+        K_small_t (small-t comparison not performed), and eigenvalue
+        multiplicities count distinct norms only — lattice mode
+        degeneracy is not included.
+
         Returns:
-            Dict with asymptotic values and verification
+            Dict with asymptotic values (large-t check only)
         """
         K_large_t = self.heat_kernel_trace(100.0, max_mode)
         K_small_t = self.heat_kernel_trace(0.001, max_mode)

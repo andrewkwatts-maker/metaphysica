@@ -1,11 +1,11 @@
 {
   "metadata": {
-    "source": "NuFIT Collaboration",
+    "source": "NuFIT 5.2-era values (arXiv:2007.14792 series); file name retained for compatibility — NOT NuFIT 6.0 (2410.05380)",
     "version": "6.0",
     "date": "2024-11",
     "website": "http://www.nu-fit.org/",
     "paper": "NuFIT 6.0 (2024)",
-    "arxiv": "2111.03086",
+    "arxiv": "2007.14792",
     "retrieved": "2025-01-15",
     "notes": "Global fit of neutrino oscillation parameters"
   },
@@ -101,29 +101,5 @@
   "verification": {
     "checksum_sha256": "pending",
     "last_verified": "2025-01-15"
-  },
-  "theta_12": {
-    "value": 33.41,
-    "uncertainty": 0.75,
-    "units": "degrees",
-    "description": "Solar mixing angle (NO)"
-  },
-  "theta_13": {
-    "value": 8.54,
-    "uncertainty": 0.12,
-    "units": "degrees",
-    "description": "Reactor mixing angle (NO)"
-  },
-  "theta_23_IO": {
-    "value": 49.3,
-    "uncertainty": 1.0,
-    "units": "degrees",
-    "description": "Atmospheric mixing angle (IO, upper octant)"
-  },
-  "delta_CP_IO": {
-    "value": 278,
-    "uncertainty": 26,
-    "units": "degrees",
-    "description": "CP-violating phase (IO)"
   }
 }

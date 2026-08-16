@@ -326,7 +326,7 @@ class DarkEnergyEvolution(SimulationBase):
         -----------------------
         - wa_linear = -0.204: Raw G₂ holonomy constraint
         - wa_projected = -0.816: What 4D observers measure
-        - DESI 2025: wa = -0.99 ± 0.33 → 0.53σ agreement with -0.816
+        - DESI DR2 (BAO+CMB+DESY5): wa = -0.86 ± 0.22 → 0.20σ agreement with -0.816
 
         See Appendix O: Theorem of Dimensional Projection for full derivation.
 
@@ -865,8 +865,11 @@ class DarkEnergyEvolution(SimulationBase):
                 label="(5.13)",
                 latex=r"w_a = -\frac{1}{\sqrt{b_3}} \times \dim(\Psi) = -\frac{1}{\sqrt{24}} \times 4 \approx -0.816",
                 plain_text="wa = -1/sqrt(b3) × dim(Ψ) = -1/sqrt(24) × 4 ~ -0.816",
-                category="PREDICTED",
-                description="Dark energy evolution parameter from G2 4-form projection (v16.2)",
+                category="FITTED",
+                description=(
+                    "Dark energy evolution parameter from G2 4-form projection (v16.2). "
+                    "FITTED: dim(Ψ)=4 multiplier introduced post-hoc; see audit."
+                ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["cosmology.wa_thawing"],
                 input_params=["topology.elder_kads"],
@@ -1215,10 +1218,11 @@ class DarkEnergyEvolution(SimulationBase):
                 path="cosmology.wa_thawing",
                 name="Dark Energy wa (Thawing Rate)",
                 units="dimensionless",
-                status="PREDICTED",
+                status="FITTED",
                 description=(
                     f"Evolution parameter from G2 4-form projection: "
                     f"wa = (-1/sqrt(b3)) * dim(Psi) = {wa:.6f}. "
+                    f"FITTED: dim(Psi)=4 multiplier introduced post-hoc; see audit. "
                     f"This is the 4D-observable projection of the linear G2 holonomy "
                     f"constraint wa_linear = -1/sqrt(24) = -0.204, scaled by dim(Psi) = 4. "
                     f"DESI 2025 target: wa = {wa_desi} +/- {wa_desi_unc}. "

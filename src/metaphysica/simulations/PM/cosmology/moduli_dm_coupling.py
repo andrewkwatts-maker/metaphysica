@@ -28,6 +28,10 @@ phi_dot_frac = 0.03. This is consistent with the coupled quintessence
 literature (Amendola 2000, Pettorino & Baccigalupi 2008) where
 beta ~ 0.05-0.1 is the physical range.
 
+NOTE: canonical S8 for this mechanism = 0.8004 (growth-ODE,
+moduli_dm_coupling); the analytic-exponential 0.789 in s8_suppression is a
+cross-check variant.
+
 Entropy-Modulated Extension (v24.3):
 ------------------------------------
 An entropy-modulated correction from the SamplerEntropyDynamics module:
@@ -150,6 +154,8 @@ CRITICAL NUMERICAL FINDING (LLM (Opus), 2026-03-20):
   The friction term Gamma = beta * phi_dot/(H*M_Pl) is tiny because phi_dot_frac=0.03
   is small. S8 suppression is dominated by the dark energy EoS, not by beta.
   No physically reasonable modification to beta can bridge S8 from 0.80 to 0.77.
+  NOTE: canonical S8 for this mechanism = 0.8004 (growth-ODE, this module);
+  the analytic-exponential 0.789 in s8_suppression is a cross-check variant.
 
 References:
   - Amendola, L. (2000). "Coupled quintessence." PRD 62, 043511.

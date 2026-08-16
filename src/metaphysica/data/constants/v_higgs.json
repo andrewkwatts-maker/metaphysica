@@ -5,8 +5,9 @@
   "units": null,
   "uncertainty": null,
   "source": "geometric_anchors_v16_2",
-  "status": "GEOMETRIC",
+  "status": "GEOMETRIC (tree-level)",
   "description": null,
+  "note": "tree-level k_gimel×20 value; corrected three-loop v = 246.2196 GeV is the G_F-facing value (see FormulasRegistry higgs_vev)",
   "eml_expression": "EML: ops.mul(eml_vec('k_gimel'), ops.sub(eml_vec('elder_kads'), eml_scalar(4.0))) — Higgs VEV v = k_gimel×(b₃-4) ≈ 246.37 GeV (Cert C07)",
   "kind": "physics",
   "_provenance": {

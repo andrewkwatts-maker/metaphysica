@@ -53,8 +53,8 @@ Numerical pin (default Sprint 4 / Sprint 5 inputs:
     delta_rad     = 87.5 GeV (heavy-stop ~5 TeV with large A_t)
     m_h           ~ 125.08 GeV
 
-versus the PDG 2024 measurement ``m_h = 125.10 +/- 0.14 GeV`` --
-agreement well inside the 1-sigma experimental band.
+versus the PDG 2024 measurement ``m_h = 125.20 +/- 0.11 GeV`` --
+0.12 GeV below the PDG central value (1.09 sigma).
 
 Previous template-formula divergence (now superseded)
 -----------------------------------------------------
@@ -124,8 +124,8 @@ _M_Z_GEV: float = 91.1876
 #                                             + X_t^2/m_stop^2
 #                                             - X_t^4/(12 m_stop^4)]
 # leading-log + threshold approximation.  We pick 87.5 GeV so the
-# combined m_h sits at 125.08 GeV (within 0.14 GeV of the PDG central
-# value), matching the heavy-stop G_2-MSSM benchmark.
+# combined m_h sits at 125.08 GeV (0.12 GeV below the PDG 2024 central
+# value 125.20 +/- 0.11, 1.09 sigma), matching the heavy-stop G_2-MSSM benchmark.
 _DELTA_RADIATIVE_GEV: float = 87.5
 
 # Observed Higgs mass (PDG 2024; ATLAS+CMS combined).
@@ -260,8 +260,8 @@ class HiggsSector:
             m_h         = sqrt( m_h_tree^2 + delta_rad^2 )
 
         On the default inputs (``B_mu = 6.4e5 GeV^2``, ``tan beta = 10``)
-        this yields ``m_h ~ 125.08 GeV``, in agreement with the observed
-        ``125.10 +/- 0.14 GeV``.
+        this yields ``m_h ~ 125.08 GeV``, 0.12 GeV below the observed
+        ``125.20 +/- 0.11 GeV (PDG 2024)`` (1.09 sigma).
 
         The ``v`` argument is retained for interface stability (it
         records the minimum of the potential the diagonalisation is
@@ -314,9 +314,9 @@ class HiggsSector:
             * ``m_h_GeV`` -- predicted Higgs mass from the MSSM CP-even
               diagonalisation (~125.08 GeV on default inputs).
             * ``status`` -- human-readable summary of how the predicted
-              value compares to the observed 125.10 +/- 0.14 GeV.
+              value compares to the observed 125.20 +/- 0.11 GeV (PDG 2024).
               Returns ``"matches observed 125 GeV within radiative
-              corrections"`` when ``|m_h - 125.10| < 1 GeV`` and an
+              corrections"`` when ``|m_h - 125.20| < 1 GeV`` and an
               explicit divergence message otherwise.
 
         Side effects
@@ -354,7 +354,7 @@ class HiggsSector:
                 "m_h_divergence",
                 (
                     "MSSM CP-even diagonalisation + stop-loop "
-                    "correction vs observed 125.10 GeV"
+                    "correction vs observed 125.20 GeV (PDG 2024)"
                 ),
                 {
                     "predicted_GeV": float(m_h),

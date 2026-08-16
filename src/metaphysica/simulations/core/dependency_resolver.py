@@ -590,9 +590,9 @@ def build_pm_dependency_graph() -> DependencyGraph:
     graph.register("seeds.mephorash_chi", depends_on=[],
                    metadata={'level': 0, 'description': 'Effective chi = 144'})
     graph.register("seeds.logos_joint", depends_on=[],
-                   metadata={'level': 0, 'description': 'The Christ Constant = 153'})
+                   metadata={'level': 0, 'description': 'The Christ Constant = 153 (fitted decomposition; see FormulasRegistry)'})
     graph.register("seeds.visible_gates", depends_on=[],
-                   metadata={'level': 0, 'description': 'Visible Gates = 135'})
+                   metadata={'level': 0, 'description': 'Visible Gates = 135 (fitted decomposition; see FormulasRegistry)'})
     graph.register("seeds.bulk_pressure", depends_on=[],
                    metadata={'level': 0, 'description': 'O\'Dowd Bulk Pressure = 163'})
     graph.register("seeds.logic_closure", depends_on=[],

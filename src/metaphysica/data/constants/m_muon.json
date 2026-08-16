@@ -1,9 +1,9 @@
 {
   "name": "m_muon",
   "canonical_path": "pdg.m_muon",
-  "value": 0.1056583745,
+  "value": 0.1056583755,
   "units": null,
-  "uncertainty": 2.4e-06,
+  "uncertainty": 2.3e-09,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
   "description": null,

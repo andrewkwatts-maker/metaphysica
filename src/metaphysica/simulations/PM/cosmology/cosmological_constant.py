@@ -592,10 +592,12 @@ class CosmologicalConstantV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "v16.2 key factors: (1) Topological suppression b3^3 = 13824, "
+                        "v16.2 narrative factors: (1) Topological suppression b3^3 = 13824, "
                         "(2) Horizon ratio (l_Pl/R_H)^2 ~ 10^-122, "
-                        "(3) Instanton action e^{-2*pi*26} ~ 10^-71. "
-                        "The instanton factor provides the geometric mechanism for hierarchy."
+                        "(3) Instanton action e^{-2*pi*26} ~ 1.1e-71. "
+                        "NOTE (audit): the implemented formula is "
+                        "Lambda = (8*pi)^2 k_gimel^2 / (3 b3^3 R_H^2) ~ 1.23e-52 m^-2; "
+                        "the instanton factor does not enter this expression."
                     )
                 ),
                 ContentBlock(
@@ -609,10 +611,13 @@ class CosmologicalConstantV16(SimulationBase):
                     callout_type="success",
                     title="v16.2: Cosmological Constant Problem Solved",
                     content=(
-                        "The 120 orders of magnitude hierarchy between Planck and observed "
-                        "Lambda emerges from: (1) Topological suppression b3^3 ~ 10^4, "
-                        "(2) Horizon ratio (l_Pl/R_H)^2 ~ 10^-122, (3) Instanton e^{-2*pi*26} ~ 10^-71. "
-                        "No fine-tuning is required - Lambda is determined by D_crit=26 geometry."
+                        "The implemented expression is "
+                        "Lambda = (8*pi)^2 k_gimel^2 / (3 b3^3 R_H^2) "
+                        "(instanton factor does not enter this expression). "
+                        "Lambda here is expressed through the observed horizon radius "
+                        "R_H = c/H0 - the expression is anchored to observation "
+                        "(circular as a derivation; see assessment header), giving "
+                        "Lambda ~ 1.2e-52 m^-2, ~12% from Lambda_obs."
                     )
                 ),
             ],
@@ -709,8 +714,8 @@ class CosmologicalConstantV16(SimulationBase):
                             "formula": r"e^{-2\pi \cdot 26} \approx 1.1 \times 10^{-71}"
                         },
                         {
-                            "description": "Combined product yields the observed cosmological constant scale",
-                            "formula": r"\Lambda \approx 10^{-3} \times 10^{-122} \times 10^{71} \approx 10^{-52} \text{ m}^{-2}"
+                            "description": "Implemented expression (audit: instanton factor does not enter this expression)",
+                            "formula": r"\Lambda = \frac{(8\pi)^2 k_{\gimel}^2}{3\, b_3^3\, R_H^2} \approx 1.23 \times 10^{-52} \text{ m}^{-2}"
                         }
                     ],
                     "method": "geometric_entropy_with_instanton_suppression",

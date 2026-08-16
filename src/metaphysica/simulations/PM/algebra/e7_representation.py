@@ -161,8 +161,8 @@ class E7RepresentationSimulation(SimulationBase):
                 description=(
                     "Dark-force portal coupling α_leak = 1/√6 from E₇ ⊃ E₆ × U(1) algebraic branching. "
                     "The 56D rep branches as 56 → 27(+1/3) + 27*(−1/3) + 1(+1) + 1(−1). "
-                    "The U(1) Clebsch-Gordan coefficient 1/√6 is fixed by dim(27) = 27 alone — "
-                    "zero free parameters, purely algebraic."
+                    "The 1/√6 value is a normalization ANSATZ used consistently repo-wide; "
+                    "the charge-sum argument previously stated (54·q² = 56) does not hold arithmetically."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.e7_alpha_leak"],
@@ -173,12 +173,10 @@ class E7RepresentationSimulation(SimulationBase):
                     "steps": [
                         "E₇ has a maximal subgroup E₆ × U(1)",
                         "The 56D fundamental rep of E₇ branches: 56 → 27₊ + 27*₋ + 1₊₊ + 1₋₋ under E₆ × U(1)",
-                        "The U(1) charge normalization is fixed by: Σ dim(irrep) × charge² = dim(56) = 56",
-                        "For 27 + 27*: 27 × q² + 27 × q² = 54q² (the +1, −1 scalars contribute negligibly at leading order)",
-                        "Normalizing q² = 1/6 gives q = 1/√6 — the Clebsch-Gordan coefficient for the U(1) factor",
+                        "normalization ANSATZ: α_leak = 1/√6 is used consistently repo-wide, but the charge-sum argument stated previously (54·q² = 56) does not hold arithmetically",
                         "This is the portal coupling between the visible 27-plet and the dark sector 27*",
                     ],
-                    "method": "E₇ ⊃ E₆ × U(1) representation branching (algebraic, zero tuning)",
+                    "method": "E₇ ⊃ E₆ × U(1) representation branching (normalization ANSATZ — see steps)",
                     "references": [
                         "Brown, R.B. (1969) 'Groups of type E7'. J. Reine Angew. Math. 236, 79–102",
                         "Günaydin, Sierra, Townsend (1983) 'The geometry of N=2 Maxwell-Einstein supergravity'",
@@ -232,7 +230,9 @@ class E7RepresentationSimulation(SimulationBase):
                 description=(
                     "ALP mass from the E₇ quartic invariant. "
                     "Replaces semi-fitted axion scale with derived E₇ invariant. "
-                    "Predicts m_a ≈ 3.51 meV from the Pneuma condensate spectral structure."
+                    "Predicts m_a ≈ 3.51 meV from the Pneuma condensate spectral structure "
+                    "(NOTE: √q/M_Pl here gives 1.6e-7 meV — the 3.51 meV figure comes from "
+                    "the mirror-DM sector normalization, not this expression)."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.e7_alp_mass_gev"],
@@ -252,7 +252,7 @@ class E7RepresentationSimulation(SimulationBase):
                 terms={
                     r"m_a": "ALP (axion-like particle) mass derived from the E₇ quartic invariant",
                     r"q_{E_7}": "E₇ quartic invariant evaluated on the Pneuma condensate pair (x,y) ∈ J₃(𝕆)⊕J₃(𝕆)*",
-                    r"M_{\text{Planck}}": "Reduced Planck mass ≈ 1.22×10¹⁹ GeV (experimental input)",
+                    r"M_{\text{Planck}}": "Planck mass ≈ 1.22×10¹⁹ GeV (experimental input)",
                 },
             ),
         ]
@@ -298,7 +298,7 @@ class E7RepresentationSimulation(SimulationBase):
             Parameter(
                 path="algebra.e7_alp_mass_gev",
                 name="ALP Mass from E₇ Quartic (GeV)",
-                units="GeV",
+                units="GeV (nominal; √q/M_Pl is GeV⁻¹-dimensioned — normalization ANSATZ)",
                 status="DERIVED",
                 description=(
                     "ALP mass m_a = √|q_E₇| / M_Planck derived from the E₇ quartic invariant. "
@@ -361,7 +361,8 @@ class E7RepresentationSimulation(SimulationBase):
                     "The E₇ quartic invariant q(x,y) = ⟨x,y⟩² − 4N(x)N(y) on the Pneuma condensate pair "
                     f"evaluates to q = {quartic:.6g}. "
                     "The ALP mass follows as m_a = √|q| / M_Planck"
-                    f" ≈ {alp_mass_mev:.4g} meV (predicted 3.51 meV from spectral residue structure). "
+                    f" ≈ {alp_mass_mev:.4g} meV (NOTE: √q/M_Pl here gives ≈1.6e-7 meV — the "
+                    "3.51 meV figure comes from the mirror-DM sector normalization, not this expression). "
                     "</Normal>"
                     "<EML>"
                     "In EML mirror-phase notation: "

@@ -7,6 +7,7 @@
   "source": "ricci_flow_h0_v16_1",
   "status": "PREDICTED",
   "description": null,
+  "note": "CONFLICT: FormulasRegistry.h0_local publishes 71.55 (O'Dowd formula) for the same canonical path; canonicalization pending — this entry is the ricci-flow variant (76.34, >3σ from SH0ES)",
   "eml_expression": "EML: ops.add(H0_GR, ops.mul(alpha_leak, ops.mul(H0_torsion, epsilon_T))) — Ricci flow correction to Hubble tension",
   "kind": "physics",
   "_provenance": {

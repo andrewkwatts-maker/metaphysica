@@ -111,7 +111,8 @@ THETA_23 = Decimal('49.0')              # degrees (upper octant)
 THETA_13 = Decimal('8.58')              # degrees
 DELTA_CP_NUFIT = Decimal('268.4')       # degrees (IO preference)
 
-# Christ Constant (153 = 144 + 9 = chi_eff + Cartan(SU(3)))
+# Christ Constant: 153 = 144 + 9 (fitted decomposition — see FormulasRegistry;
+# NOTE: 9 is not the SU(3) Cartan dimension — rank(SU(3)) = 2, dim = 8)
 CHRIST_CONSTANT = 153
 
 # Froggatt-Nielsen Parameter
@@ -1062,8 +1063,9 @@ class MatterSectorCompleteDerivations(SimulationBase):
             plain_text="153 = chi_eff + 9 = 144 + 9 = 12^2 + 3^2",
             category="GEOMETRIC",
             description=(
-                "Christ constant 153 encodes flavor structure: chi_eff = 144 (geometric) "
-                "plus dim(SU(3))=9 (flavor Cartan). Appears in total flavor parameter count."
+                "Christ constant 153 = 144 + 9 (fitted decomposition — see "
+                "FormulasRegistry; NOTE: 9 is not the SU(3) Cartan dimension — "
+                "rank(SU(3)) = 2, dim = 8). Appears in total flavor parameter count."
             ),
             eml_tree_str=(
                 "ops.add(eml_vec('chi_eff'), eml_scalar(9.0))"
@@ -1072,7 +1074,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             outputParams=[],
             terms={
                 "chi_eff": "Effective Euler characteristic = 144",
-                "9": "Dimension of SU(3) = 8 + 1 Cartan"
+                "9": "Fitted remainder 153 - 144 (not an SU(3) invariant: rank(SU(3)) = 2, dim = 8)"
             }
         ))
 

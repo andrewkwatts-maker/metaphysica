@@ -1158,10 +1158,12 @@ class FourFaceG2Structure(SimulationBase):
                     "* (1 + Delta_F_f/F0)^(-1/2) approx 0.57"
                 ),
                 eml_tree_str="ops.mul(ops.exp(ops.neg(ops.div(eml_vec('T_face'), ops.mul(eml_scalar(2.0), eml_vec('T_max'))))), ops.mul(ops.inv(ops.sqrt(eml_scalar(6.0))), ops.pow(ops.add(eml_scalar(1.0), ops.div(eml_vec('Delta_F'), eml_vec('F0'))), ops.neg(eml_scalar(0.5)))))",
-                category="GEOMETRIC",
+                category="ANSATZ",
                 description=(
                     "Sampling strength from visible sector to hidden faces — "
-                    "derived from G2 volume ratio, torsion, and flux asymmetry"
+                    "α_sample ≈ 0.57 (ANSATZ: inserted value; the stated "
+                    "suppression-factor product bounds it ≤ 1/√6 ≈ 0.41 "
+                    "unless ΔF/F₀ < 0)"
                 ),
                 input_params=["geometry.alpha_leak", "topology.mephorash_chi", "topology.elder_kads"],
                 output_params=["geometry.face_sampling_strength"],
@@ -1176,7 +1178,9 @@ class FourFaceG2Structure(SimulationBase):
                         "leakage coupling alpha_leak from the inter-face overlap",
                         "Factor 3: (1 + Delta_F_f/F0)^{-1/2} is the flux asymmetry "
                         "correction from unequal G-flux distribution across faces",
-                        "Combined: alpha_sample approx 0.57, which is the dark matter "
+                        "Combined: alpha_sample approx 0.57 (ANSATZ: inserted value; "
+                        "the stated suppression-factor product bounds it <= 1/sqrt(6) "
+                        "approx 0.41 unless Delta_F/F0 < 0), which is the dark matter "
                         "portal coupling from hidden faces — this sets the strength of "
                         "dark matter interactions with visible matter",
                     ],
@@ -1194,7 +1198,7 @@ class FourFaceG2Structure(SimulationBase):
                         "description": (
                             "Face sampling strength: effective coupling between the visible "
                             "sector and hidden face f, serving as the dark matter portal "
-                            "coupling (approx 0.57)"
+                            "coupling (approx 0.57, ANSATZ: inserted value)"
                         ),
                         "value": 0.57,
                     },
@@ -1626,13 +1630,14 @@ class FourFaceG2Structure(SimulationBase):
                     type="paragraph",
                     content=(
                         "The sampling strength α<sub>sample</sub> ~ 0.57 is the dark matter "
-                        "portal coupling from hidden faces. It is derived from three factors: "
+                        "portal coupling from hidden faces (ANSATZ: inserted value; the "
+                        "stated suppression-factor product bounds it ≤ 1/√6 ≈ 0.41 unless "
+                        "ΔF/F₀ &lt; 0). It combines three factors: "
                         "(1) moduli screening exp(−T<sub>i</sub>/(2T<sub>max</sub>)) from the face warping "
                         "potential, (2) the topological leakage coupling 1/√6 from the "
                         "inter-face overlap, and (3) a flux asymmetry correction from unequal "
                         "G-flux distribution across faces. This coupling sets the strength of "
-                        "dark matter interactions with visible matter, and is entirely "
-                        "determined by the G₂ geometry without free parameters."
+                        "dark matter interactions with visible matter."
                     ),
                 ),
             ],

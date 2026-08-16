@@ -3,10 +3,11 @@
   "canonical_path": "constants.HBAR",
   "value": 6.582119569e-25,
   "units": null,
-  "uncertainty": 1e-33,
+  "uncertainty": 0,
   "source": "ESTABLISHED:CODATA2018",
   "status": "ESTABLISHED",
   "description": null,
+  "note": "exact since 2019 SI redefinition",
   "eml_expression": "EML: eml_scalar(6.582119569e-25) — reduced Planck constant ℏ in GeV·s (CODATA 2018 input)",
   "kind": "physics",
   "_provenance": {
