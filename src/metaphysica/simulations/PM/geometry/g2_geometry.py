@@ -1032,7 +1032,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="The Mashiach Field",
-                content="In the Principia Metaphysica framework, the overall volume modulus r_K is identified with the \"Mashiach field\" φ_M. Its dynamics drive late-time cosmic acceleration through a quintessence-like mechanism, as elaborated in Section 6. Volume Modulus Stabilization: The Mashiach field is identified with φM = Re(T), the real part of the Kähler modulus T. Its VEV ⟨Re(T)⟩ is stabilized via the standard racetrack mechanism from hidden sector gaugino condensation, with the value constrained by the Higgs mass (m_h = 125.10 GeV). Open problem: Higgs inversion yields Re(T) ≈ 9.865; the BBN-calibrated value is 7.086; the geometric value is 1.833. This prevents decompactification runaway and ensures natural lightness through exponential suppression in the non-perturbative superpotential."
+                content="In the Principia Metaphysica framework, the overall volume modulus r_K is identified with the \"Mashiach field\" φ_M. Its dynamics drive late-time cosmic acceleration through a quintessence-like mechanism, as elaborated in Section 6. Volume Modulus Stabilization: The Mashiach field is identified with φM = Re(T), the real part of the Kähler modulus T. Its VEV ⟨Re(T)⟩ is stabilized via the standard racetrack mechanism from hidden sector gaugino condensation, with the value constrained by the Higgs mass (m_h = 125.20 GeV). Open problem: Higgs inversion yields Re(T) ≈ 9.865; the BBN-calibrated value is 7.086; the geometric value is 1.833. This prevents decompactification runaway and ensures natural lightness through exponential suppression in the non-perturbative superpotential."
             ),
             ContentBlock(
                 type="paragraph",
@@ -1064,7 +1064,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="While the racetrack mechanism is the dominant stabilizer (as derived in Section 2.7 and confirmed by the Higgs mass constraint m_h = 125.10 GeV constraining Re(T)), the Casimir contribution ensures that the vacuum remains stable even in the presence of perturbations that might momentarily shift the modulus away from its racetrack-determined minimum."
+                content="While the racetrack mechanism is the dominant stabilizer (as derived in Section 2.7 and confirmed by the Higgs mass constraint m_h = 125.20 GeV constraining Re(T)), the Casimir contribution ensures that the vacuum remains stable even in the presence of perturbations that might momentarily shift the modulus away from its racetrack-determined minimum."
             ),
             ContentBlock(
                 type="callout",
@@ -1275,7 +1275,7 @@ class G2GeometryV16(SimulationBase):
             section_id="2",
             subsection_id=None,
             title="Geometric Framework",
-            abstract="This section establishes the mathematical foundation of the Principia Metaphysica framework. We introduce the 26-dimensional action with signature (24,2) decomposing as M_26 = M_A^14 ⊗_T M_B^14, where each 14D half has signature (12,2) with 2 shared timelike dimensions. Sp(2,R) gauge symmetry eliminates ghost states from the two-time structure, projecting onto an effective 13D (12,1) shadow. We derive the 4D effective action through Kaluza-Klein dimensional reduction on a TCS (Twisted Connected Sum) G₂ manifold with h1,1=4 Kähler moduli sectors. Racetrack moduli stabilization across these sectors dynamically derives ε ≈ 0.2257 (Cabibbo angle) from flux quantization N₁=24, N₂=23. The 26D→13D shadow framework provides a Z₂ mirror brane structure with geometrically-derived generation count n_gen = 3. The Pneuma-Vielbein bridge (v15.1) validates metric emergence from spinor bilinears with Lorentzian signature (-,+,+,+).",
+            abstract="This section establishes the mathematical foundation of the Principia Metaphysica framework. We introduce the 26-dimensional action with signature (24,2) decomposing as M_26 = M_A^14 ⊗_T M_B^14, where each 14D half has signature (12,2) with 2 shared timelike dimensions. Sp(2,R) gauge symmetry eliminates ghost states from the two-time structure, projecting onto an effective 13D (12,1) shadow. We derive the 4D effective action through Kaluza-Klein dimensional reduction on a TCS (Twisted Connected Sum) G₂ manifold with h1,1=4 Kähler moduli sectors. Racetrack moduli stabilization across these sectors dynamically derives ε ≈ 0.2257 (racetrack variant of the Cabibbo angle; canonical e^{-3/2} = 0.22313) from flux quantization N₁=24, N₂=23. The 26D→13D shadow framework provides a Z₂ mirror brane structure with geometrically-derived generation count n_gen = 3. The Pneuma-Vielbein bridge (v15.1) validates metric emergence from spinor bilinears with Lorentzian signature (-,+,+,+).",
             content_blocks=blocks,
             formula_refs=["g2-holonomy", "euler-characteristic", "betti-numbers", "three-generations", "cycle-matching"],
             param_refs=["topology.b2", "topology.elder_kads", "topology.mephorash_chi", "topology.n_gen", "topology.K_MATCHING", "topology.d_over_R"]

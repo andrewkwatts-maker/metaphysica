@@ -656,7 +656,7 @@ class GateRegistry:
             name="Hubble Unwinding Rate",
             phase=4,
             block="E",
-            logic="H0 = 70.42 as V7 unfolding rate",
+            logic="H0 = 70.42 (sterile-extraction variant; canonical composite 71.55) as V7 unfolding rate",
             validation="Resolves Hubble tension",
             formula_id="g47-hubble"
         )
@@ -1212,7 +1212,7 @@ class GateRegistry:
             msg = f"Λ stability: {lambda_scale:.2e} (12/{roots}^4)"
 
         elif gate_id == 47:  # Hubble Unwinding Rate
-            # H0 = 70.42 from V7 radial growth
+            # H0 = 70.42 (sterile-extraction variant; canonical composite 71.55) from V7 radial growth
             h0_geometric = 70.42
             passed = True  # Geometric Hubble value
             msg = f"Hubble rate: {h0_geometric} km/s/Mpc (geometric)"

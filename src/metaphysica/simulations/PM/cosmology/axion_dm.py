@@ -581,7 +581,7 @@ class AxionDMV18(SimulationBase):
                     "axion-to-photon conversion in magnetic fields, the detection "
                     "principle of helioscope experiments (IAXO) and haloscope "
                     "experiments (ADMX). For f_a ~ 3.5e12 GeV the predicted coupling "
-                    "is g_{a gamma gamma} ~ 4.8e-16 GeV^{-1}, within projected IAXO "
+                    "is g_{a gamma gamma} ~ 4.8e-16 GeV^{-1}, three-to-four orders of magnitude BELOW projected IAXO (~1e-12 GeV^{-1}) "
                     "sensitivity."
                 ),
                 inputParams=["axion.f_a"],

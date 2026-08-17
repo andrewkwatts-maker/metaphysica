@@ -1115,7 +1115,7 @@ class MasterActionSimulationV22(SimulationBase):
                 description=(
                     "4D effective action after face/local OR and compactification of the "
                     "internal 9 dimensions of the 13D shadow. The 4D Planck mass is determined "
-                    "by M_Pl^2 = M_*^{11} * Vol(V_7), where M_* is the fundamental 11D Planck "
+                    "by M_Pl^2 = M_*^{9} * Vol(V_7), where M_* is the fundamental 11D Planck "
                     "mass and Vol(V_7) is the volume of the compact G2 7-manifold. The SM gauge "
                     "group SU(3)_C x SU(2)_L x U(1)_Y emerges from G2 flux on the 4-face "
                     "structure: SU(3)_C from associative 3-cycles, SU(2)_L from co-associative "
@@ -1141,7 +1141,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Decompose 13D = 4D spacetime + 9D internal: ds_13^2 = g_{mu nu} dx^mu dx^nu + g_{mn}^{int} dy^m dy^n",
                         "The 9 internal dimensions include the 7D G2 manifold (V_7) plus 2 residual bridge dimensions",
                         "Integrate over the internal 9D volume to obtain the 4D effective action",
-                        "The 4D Planck mass emerges as M_Pl^2 = M_*^{11} * Vol(V_7) from the dimensional reduction of the Einstein-Hilbert term",
+                        "The 4D Planck mass emerges as M_Pl^2 = M_*^{9} * Vol(V_7) from the dimensional reduction of the Einstein-Hilbert term",
                         "SM gauge group SU(3)_C x SU(2)_L x U(1)_Y emerges from harmonic forms on G2 cycles: 3-cycles -> SU(3)_C, 4-cycles -> SU(2)_L, residual -> U(1)_Y",
                         "The cosmological constant Lambda = (int F wedge phi)^2 / Vol(V_7) ~ 10^{-52} m^{-2} is set by the flux-moduli balance on the G2 manifold",
                         "Portal Lagrangian L_portal = alpha_leak * (phi_vis phi_dark phi_mod + sterile nu mixing + ALP coupling) connects visible and hidden faces",
@@ -1156,7 +1156,7 @@ class MasterActionSimulationV22(SimulationBase):
                     ],
                 },
                 terms={
-                    r"M_{Pl}^2": {"description": "4D Planck mass squared: M_Pl^2 = M_*^{11} * Vol(V_7), where M_* is the fundamental scale and V_7 is the G2 volume"},
+                    r"M_{Pl}^2": {"description": "4D Planck mass squared: M_Pl^2 = M_*^{9} * Vol(V_7), where M_* is the fundamental scale and V_7 is the G2 volume"},
                     r"R": {"description": "4D Ricci scalar from the spacetime metric g_{mu nu}"},
                     r"\mathcal{L}_{SM}": {"description": "Standard Model Lagrangian: SU(3)_C x SU(2)_L x U(1)_Y gauge + fermion + Higgs sectors from G2 flux"},
                     r"\mathcal{L}_{portal}": {"description": "Portal Lagrangian: alpha_leak * (dark matter + sterile nu + ALP interactions) coupling visible to hidden faces"},
@@ -1232,7 +1232,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"\Lambda": {"description": "Cosmological constant from flux-moduli balance: Lambda ~ 10^{-52} m^{-2}"},
                     r"T_{\mu\nu}^{SM}": {"description": "Standard Model stress-energy: gauge (YM) + fermion (Dirac) + Higgs contributions"},
                     r"T_{\mu\nu}^{portal}": {"description": "Portal stress-energy from hidden face coupling: dark matter + sterile neutrino + ALP backreaction, suppressed by alpha_leak^2"},
-                    r"M_{Pl}^2": {"description": "4D Planck mass squared from dimensional reduction: M_Pl^2 = M_*^{11} * Vol(V_7)"},
+                    r"M_{Pl}^2": {"description": "4D Planck mass squared from dimensional reduction: M_Pl^2 = M_*^{9} * Vol(V_7)"},
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),

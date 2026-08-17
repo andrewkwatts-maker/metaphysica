@@ -13,7 +13,7 @@ This simulation computes:
 5. KK spatial projection correction for 3D propagation
 6. Validation against CODATA 2022 exact value
 
-Key prediction: c = 299,792,423 m/s (34.84 m/s from CODATA, ~0.1σ equivalent)
+Key prediction: c = 299,792,423 m/s (34.84 m/s = 0.12 ppm below the exact defined CODATA value; c is exact — no σ exists)
 
 DERIVATION CHAIN:
 -----------------

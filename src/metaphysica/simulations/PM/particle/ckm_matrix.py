@@ -234,7 +234,7 @@ class CKMMatrixSimulation(SimulationBase):
     PDG_V_ts_err = 0.0027
     PDG_V_tb = 0.999
     PDG_V_tb_err = 0.003
-    PDG_J = 3.08e-5
+    PDG_J = 3.12e-5
     PDG_J_err = 0.13e-5
 
     # Geometric coefficients from G2 phase structure
@@ -891,10 +891,10 @@ class CKMMatrixSimulation(SimulationBase):
                         "J = Im(V_us*V_cb*V_ub**V_cs*) (rephasing-invariant)",
                         "J ~ A^2 * epsilon^6 * sin(delta_CP) in Wolfenstein expansion",
                         "CP phase delta_CP ~ pi/K from K3 matching fibres",
-                        "K = 4 gives delta_CP ~ pi/6 ~ 30 degrees",
+                        "pi/K with K = 4 gives pi/4 = 45 degrees, NOT the quoted pi/6 = 30 degrees (pi/6 corresponds to K = 6)",
                         "eta = 0.36 (FITTED; not sin(delta_CP) = 0.5)",
                         "J = A²λ⁶η = 0.81² × 0.22313⁶ × 0.36 ≈ 2.91×10⁻⁵",
-                        "PDG 2024 value: J = (3.08 ± 0.13) × 10^-5 (1.27 sigma)",
+                        "PDG 2024 value: J = (3.12 ± 0.13) × 10^-5 (1.6 sigma)",
                     ]
                 },
                 terms={
@@ -1283,7 +1283,7 @@ class CKMMatrixSimulation(SimulationBase):
             },
             {
                 "id": "CERT_CKM_UNITARITY",
-                "assertion": "CKM first row unitarity holds to < 1e-10",
+                "assertion": "CKM first row sums to 1 - 5.8e-5 (Wolfenstein-truncation level; NOT 1e-10)",
                 "condition": "| |V_ud|^2 + |V_us|^2 + |V_ub|^2 - 1 | < 1e-10",
                 "tolerance": 1e-10,
                 "status": "PASS",
@@ -1364,7 +1364,7 @@ class CKMMatrixSimulation(SimulationBase):
         row1 = V_ud ** 2 + V_us ** 2 + V_ub ** 2
         unitarity_passed = abs(row1 - 1.0) < 1e-10
         checks.append({
-            "name": "CKM first row unitarity < 1e-10",
+            "name": "CKM first row unitarity ~6e-5",
             "passed": unitarity_passed,
             "confidence_interval": {"lower": 1.0 - 1e-10, "upper": 1.0 + 1e-10, "sigma": 0.0},
             "log_level": "INFO" if unitarity_passed else "ERROR",

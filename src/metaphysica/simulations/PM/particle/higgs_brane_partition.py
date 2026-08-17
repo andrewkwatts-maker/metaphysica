@@ -950,7 +950,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
             {
                 "topic": "Higgs Boson",
                 "url": "https://en.wikipedia.org/wiki/Higgs_boson",
-                "relevance": "The experimentally observed Higgs boson at 125.25 GeV is the target for the brane-projected local mass calculation.",
+                "relevance": "The experimentally observed Higgs boson at 125.20 GeV (PDG 2024) is the target for the brane-projected local mass calculation.",
                 "validation_hint": "Confirm sigma deviation < 1.0 against PDG 2024 combined ATLAS+CMS value."
             },
         ]

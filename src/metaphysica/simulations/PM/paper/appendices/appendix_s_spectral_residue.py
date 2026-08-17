@@ -325,8 +325,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     type="note",
                     content=(
                         "<strong>Central Result:</strong> The 125 eigenvalues of the V<sub>7</sub> "
-                        "Laplacian map bijectively to the 125 physical parameters of the "
-                        "Standard Model extended with neutrino masses."
+                        "Laplacian map bijectively to the 125 registry parameters (the ~26 couplings of the "
+                        "Standard Model extended with neutrino masses, plus cosmological and derived constants)."
                     ),
                     label="spectral-central-result"
                 ),

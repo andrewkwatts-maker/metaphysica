@@ -720,7 +720,7 @@ class PrincipiaValidator:
                 "formula": "H0_eff(z) = H0_late*f(z) + H0_early*(1-f(z)), f=1/(1+(z/z*)^2)",
                 "source_param": "cosmology.H0_early_normalized",
                 "source_simulation": "evolution_engine_v16_2",
-                "H0_late_source": "SH0ES 2025 (73.04 km/s/Mpc, ESTABLISHED)",
+                "H0_late_source": "SH0ES 2022 (73.04 km/s/Mpc, ESTABLISHED)",
                 "b3_source": "Pillar Seed (FormulasRegistry)",
                 "experimental_ref": "Planck 2018: 67.4 +/- 0.5 km/s/Mpc",
                 "fitted_params": 0,

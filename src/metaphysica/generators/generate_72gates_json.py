@@ -268,7 +268,7 @@ GATES_72 = [
      "sterile_source": "FormulasRegistry.roots_total"},
     {"id": 47, "name": "Hubble Unwinding Rate", "phase": 4, "block": "E",
      "logic": f"H0 = ({REG.roots_total}/4) - ({REG.odowd_bulk_pressure}/{REG.chi_eff}) + {REG.sophian_drag} = {REG.h0_local:.2f} (O'Dowd formula)",
-     "validation": "Within 1.4σ of SH0ES 2025",
+     "validation": "Within 1.4σ of SH0ES 2022",
      "formula": f"H₀ = {REG.h0_local:.2f} km/s/Mpc", "domain": "Cosmology",
      "derived": round(REG.h0_local, 2), "experimental": 73.04, "units": "km/s/Mpc",
      "sterile_source": "FormulasRegistry.h0_local"},

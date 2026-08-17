@@ -509,7 +509,7 @@ if SCHEMA_AVAILABLE:
                         type="paragraph",
                         content=(
                             "The derived value α<sup>−1</sup> = 137.036 matches the CODATA 2022 "
-                            "experimental value to within 0.008%. "
+                            "experimental value to within 0.0005%. "
                             "<Speculation>This proximity suggests that electromagnetism may be "
                             "a structural property of the b₃ = 24 G₂ manifold, though the "
                             "formula is currently classified as a numerological fit without a "

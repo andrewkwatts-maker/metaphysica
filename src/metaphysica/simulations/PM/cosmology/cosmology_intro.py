@@ -663,7 +663,7 @@ class CosmologyIntroV16(SimulationBase):
                 derivation={
                     "steps": [
                         {"description": "Separate volume dependence", "formula": r"g_{mn} = e^{2σ} g_{mn}^{(0)}"},
-                        {"description": "Volume modulus T from racetrack", "formula": r"W = A e^{-aT} + B e^{-bT}"},
+                        {"description": "Volume modulus T from racetrack", "formula": r"W = A e^{-aT} - B e^{-bT}"},
                         {"description": "Minimize potential", "formula": r"\partial_T V = 0 \Rightarrow T_{min} = 1.4885"},
                         {"description": "Breathing mode VEV", "formula": r"\langle σ \rangle = \phi_0 \approx 0.075 M_{\text{Pl}}"}
                     ],

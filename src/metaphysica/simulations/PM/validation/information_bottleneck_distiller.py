@@ -468,9 +468,9 @@ class InformationBottleneckDistiller:
                 "L(Data|Theory) = 0 bits (deterministic mapping). "
                 "Total = 32,640 bits. "
                 "Without theory: L(Data) = 125 constants × 64 bits = 8000 bits (but no predictive power). "
-                "MDL satisfied because theory enables PREDICTIONS beyond initial data."
+                "As tallied, L(Theory) = 32,640 bits EXCEEDS L(Data) = 8000 bits — the naive MDL test fails; the claim rests on the 69-bit seed accounting only."
             ),
-            "mdl_status": "SATISFIED"
+            "mdl_status": "FAILS_AS_TALLIED (holds only under 69-bit seed accounting)"
         }
 
         # 2. Topological Compression
@@ -544,7 +544,7 @@ class InformationBottleneckDistiller:
         structure_288_24_4 = {
             "288": {
                 "origin": "Total roots in dual-shadow G₂ × G₂ structure",
-                "derivation": "Each G₂ has 14 roots, dual shadows with 12 bridges → 144 per shadow → 288 total",
+                "derivation": "chi_eff = 144 per shadow (6·b₃), two shadows → 288; G₂ itself has 12 roots (dim 14) — 288 is not a root count",
                 "topological_invariant": "YES (fixed by G₂ Lie algebra structure)"
             },
             "24": {

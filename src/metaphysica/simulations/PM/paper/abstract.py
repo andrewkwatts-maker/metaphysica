@@ -437,7 +437,7 @@ class AbstractV17_2(SimulationBase):
                     'derived algebraically from E\u2087 \u2283 E\u2086 \u00d7 U(1) group branching '
                     '(zero free parameters: the U(1) Clebsch\u2013Gordan coefficient is 1/\u221a6 by necessity). '
                     'Dark force leakage across shadows is predicted to be asymmetric: strong/weak forces effectively zero, '
-                    'EM and gravity at P<sub>leak</sub> ≈ <span class="pm-value" data-pm-value="abstract.dark_force_pleak">6.9×10⁻⁸</span>.'
+                    'EM and gravity at P<sub>leak</sub> ≈ <span class="pm-value" data-pm-value="abstract.dark_force_pleak">4.27×10⁻⁸</span>.'
                 ),
                 label="abstract-two-layer-or"
             ),
@@ -732,7 +732,7 @@ class AbstractV17_2(SimulationBase):
                 units="dimensionless",
                 description="Cross-shadow leakage probability for EM and gravity (strong/weak effectively zero)",
                 status="PREDICTED",
-                eml_description="EML: eml_vec('dark_force_pleak') — cross-shadow leakage probability P_leak ≈ 6.9×10⁻⁸ for EM and gravity"
+                eml_description="EML: eml_vec('dark_force_pleak') — cross-shadow leakage probability P_leak ≈ 4.27×10⁻⁸ for EM and gravity"
             ),
             Parameter(
                 path="abstract.alpha_inv_pred",

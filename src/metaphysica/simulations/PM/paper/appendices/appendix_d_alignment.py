@@ -171,9 +171,9 @@ class AppendixDAlignment(SimulationBase):
                 type="paragraph",
                 content=(
                     "The primary test of the w₀ = -0.9583 residue (Node 002) is the BAO distance scale "
-                    "provided by DESI Year 5 data. The DESI 2025 data shows preference for w₀ > -1, "
+                    "provided by DESI DR2 (2025) BAO data, which shows preference for w₀ > -1, "
                     "moving away from standard ΛCDM. The v24.2 residue sits precisely within the "
-                    "1σ contour of the DESI Y5 w₀/wₐ plane."
+                    "1σ contour of the DESI DR2 w₀/wₐ plane."
                 )
             ),
             ContentBlock(
@@ -212,7 +212,7 @@ class AppendixDAlignment(SimulationBase):
                 content=(
                     "<table style='width:100%'>"
                     "<tr><th>Source</th><th>H₀ (km/s/Mpc)</th><th>Variance from v24.2</th></tr>"
-                    "<tr><td>Planck (CMB - Early Universe)</td><td>67.4 ± 0.5</td><td>2.8σ</td></tr>"
+                    "<tr><td>Planck (CMB - Early Universe)</td><td>67.4 ± 0.5</td><td>6.04σ</td></tr>"
                     "<tr><td>SH0ES (Cepheids - Local)</td><td>73.0 ± 1.0</td><td>2.6σ</td></tr>"
                     "<tr><td>v24.2 Sterile Extraction</td><td>70.42 (Fixed)</td><td>0.48σ (Combined)</td></tr>"
                     "</table>"
@@ -281,10 +281,10 @@ class AppendixDAlignment(SimulationBase):
                 id="hubble-tension-resolution-appendix",
                 label="(D.3)",
                 latex=r"H_0^{\text{geo}} = 70.42 \text{ km/s/Mpc}",
-                plain_text="H0_geo = 70.42 km/s/Mpc",
+                plain_text="H0_geo = 70.42 km/s/Mpc (sterile-extraction variant; canonical 71.55)",
                 eml_tree_str="ops.mul(eml_scalar(70.42), eml_vec('H0_ratio'))",
                 category="PREDICTED",
-                description="Geometric Hubble residue derived from the V7 manifold's spectral structure, offering a resolution to the Planck-SH0ES Hubble tension. The value H0 = 70.42 km/s/Mpc emerges as a fixed geometric quantity, positioned between the early-universe (Planck CMB: 67.4) and local-universe (SH0ES Cepheids: 73.0) measurements, aligning with both within combined statistical uncertainties.",
+                description="Geometric Hubble residue derived from the V7 manifold's spectral structure, offering a resolution to the Planck-SH0ES Hubble tension. The value H0 = 70.42 (sterile-extraction variant; canonical composite 71.55) km/s/Mpc emerges as a fixed geometric quantity, positioned between the early-universe (Planck CMB: 67.4) and local-universe (SH0ES Cepheids: 73.0) measurements, aligning with both within combined statistical uncertainties.",
                 input_params=["topology.elder_kads"],
                 output_params=["cosmology.H0_geometric"],
                 terms={
@@ -296,7 +296,7 @@ class AppendixDAlignment(SimulationBase):
                     "steps": [
                         "Extract the cosmological node eigenvalue from the V7 spectral registry, representing a fundamental topological parameter related to the universe's expansion rate",
                         "Map the eigenvalue to physical units via the torsion pin calibration, which establishes the correspondence between abstract spectral quantities and observable cosmological measurements",
-                        "Obtain H0 = 70.42 km/s/Mpc as a fixed geometric residue, positioned between Planck (67.4) and SH0ES (73.0) values, suggesting a geometric resolution to the Hubble tension",
+                        "Obtain H0 = 70.42 (sterile-extraction variant; canonical composite 71.55) km/s/Mpc as a fixed geometric residue, positioned between Planck (67.4) and SH0ES (73.0) values, suggesting a geometric resolution to the Hubble tension",
                     ],
                 },
             ),
@@ -312,7 +312,7 @@ class AppendixDAlignment(SimulationBase):
                 output_params=["validation.sigma_global"],
                 terms={
                     "w0_geo": "Geometric dark energy equation of state (-23/24 = -0.9583)",
-                    "w0_DESI": "DESI Year 5 BAO measurement of w0",
+                    "w0_DESI": "DESI DR2 (2025) BAO measurement of w0",
                     "sigma_DESI": "DESI measurement uncertainty on w0",
                 },
                 derivation={
@@ -456,7 +456,7 @@ class AppendixDAlignment(SimulationBase):
             {
                 "gate_id": "G47",
                 "simulation_id": self.metadata.id,
-                "assertion": "Hubble Unwinding Rate: H0 = 70.42 km/s/Mpc geometric",
+                "assertion": "Hubble Unwinding Rate: H0 = 70.42 (sterile-extraction variant; canonical composite 71.55) km/s/Mpc geometric",
                 "result": "PASS",
                 "timestamp": ts,
                 "details": "Geometric H0 resolves Planck-SH0ES tension at 0.48 sigma.",

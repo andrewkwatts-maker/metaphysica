@@ -265,7 +265,7 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "In the Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, with <strong>116:1 compression ratio</strong>), "
-                    "the 125 parameters of the Standard Model and ΛCDM are not 'points' in a data table, "
+                    "the 125 registry parameters (~26 SM+ν and ~6 ΛCDM parameters plus derived constants) are not 'points' in a data table, "
                     "but <strong>Physical Junctions</strong> in the higher-dimensional manifold. This section defines the Brane-Node Intersection "
                     "Lattice, the geometric structure that hosts the spectral eigenvalues derived in Section 2.1."
                 )
@@ -587,7 +587,7 @@ class MethodologyV16_2(SimulationBase):
                     "Without the theory, encoding the 125 constants independently requires "
                     "125 × 64 bits = 8000 bits of storage, but provides <em>no predictive power</em>. "
                     "PM satisfies MDL because the theory enables predictions beyond the initial data, "
-                    "achieving <strong>116:1 data compression ratio</strong>."
+                    "the 116:1 ratio uses only the 69-bit seed, not the 32,640-bit ledger (see 2.6.4)."
                 )
             ),
 
@@ -612,7 +612,7 @@ class MethodologyV16_2(SimulationBase):
                     "<h4>Why 288/24/4 is Not Arbitrary</h4>"
                     "<p>The key structural numbers emerge from pure topology:</p>"
                     "<ul>"
-                    "<li><strong>288:</strong> Total roots in dual-shadow G₂ × G₂ (14 roots per G₂, "
+                    "<li><strong>288:</strong> 2 × χ<sub>eff</sub> = 2 × 144 (G₂ has 12 roots — 14 is dim G₂ — so 288 is not a root count; "
                     "dual shadows with 12 bridges → 144 per shadow → 288 total)</li>"
                     "<li><strong>24:</strong> Third Betti number b₃ of G₂ manifold (topological invariant, "
                     "Joyce 2000)</li>"
@@ -680,8 +680,8 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "This compression ratio is consistent with the MDL criterion against overfitting. Overfitting would "
-                    "require L(Theory) > L(Data), whereas the framework achieves L(Theory) &lt;&lt; L(Data). The result "
-                    "satisfies the MDL bound, providing evidence against parameter overfitting."
+                    "require L(Theory) > L(Data); the ledger above gives L(Theory) = 32,640 bits &gt; L(Data) = 8000 bits, so the naive test FAILS as printed. The result "
+                    "favors the theory only under the 69-bit axiom-seed accounting of 2.6.4, with the 116 constraints charged to shared mathematics; the full-ledger MDL comparison does not support the compression claim."
                 )
             ),
 

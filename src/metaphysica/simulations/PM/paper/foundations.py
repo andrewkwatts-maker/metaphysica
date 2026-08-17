@@ -521,8 +521,8 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The V₇ manifold is unique because it is the only 7D structure that supports a "
-                    "<strong>torsion-free, Ricci-flat metric</strong>. This G₂ holonomy implies that "
+                    "The V₇ manifold is distinguished as a 7D space with holonomy exactly G₂, carrying a "
+                    "<strong>torsion-free, Ricci-flat metric</strong> (T⁷ and K3×T³ are also Ricci-flat, with larger spinor content). This G₂ holonomy implies that "
                     "the extraction of physical residues is 'Path Independent.' Whether a particle mass "
                     "is derived through the lepton sector or the gauge sector, the resulting value is "
                     "identical because it is anchored to the manifold's global geometry. This eliminates "

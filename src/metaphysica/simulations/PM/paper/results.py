@@ -199,7 +199,7 @@ class ResultsV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "The PM prediction H₀ = 71.55 km/s/Mpc is 1.4σ below SH0ES 2022 and "
-                    "1.6σ above Planck 2018. It lies within the DESI 2025 BAO-only range "
+                    "8.3σ above Planck 2018. It lies within the DESI 2025 BAO-only range "
                     "(H₀ = 68.5 ± 2.0 km/s/Mpc) at 1.5σ. The global alignment of the "
                     "framework across Planck 2018, DESI 2025, and NuFIT 6.0 gives a weighted "
                     "mean deviation of 0.48σ across all 26 compared Standard Model parameters. "
@@ -214,7 +214,7 @@ class ResultsV16_2(SimulationBase):
                 content=(
                     "<h4>Caveat: Hubble Tension Status</h4>"
                     "<p>PM predicts H₀ = 71.55 km/s/Mpc from the G₂ topology without a free "
-                    "parameter. This is 1.4σ from SH0ES and 1.6σ from Planck. The 0.48σ global "
+                    "parameter. This is 1.4σ from SH0ES and 8.3σ from Planck. The 0.48σ global "
                     "alignment figure refers to the full 26-parameter comparison table, not to "
                     "H₀ alone. Independent resolution of the Hubble tension would require the "
                     "O'Dowd formula derivation to match both CMB and local distance ladder — "
@@ -488,7 +488,7 @@ class ResultsV16_2(SimulationBase):
                     "<Normal>θ₁₃ ≈ "
                     "<span class=\"pm-value\" data-pm-value=\"particle.theta_13_deg\">8.67</span>°</Normal>; "
                     "older <code>neutrino.theta_13_pred</code> (octonionic mixing) gives 8.65°. "
-                    "Both within ~1σ of NuFIT 6.0 IO (8.54° ± 0.12°).",
+                    "Both within ~1σ of NuFIT 6.0 IO (8.63° ± 0.11°).",
                     "<strong>Strong CP θ_QCD.</strong> Both the new <code>strong_cp_axion</code> module "
                     "and the older <code>physics.theta_qcd</code> assignment give exactly 0; the new "
                     "module supplies the geometric mechanism the older value lacked.",
@@ -525,7 +525,7 @@ class ResultsV16_2(SimulationBase):
                     "<code>inflation.derive_observables</code> Re(T) slow-roll formula gives "
                     "<Normal>n_s = "
                     "<span class=\"pm-value\" data-pm-value=\"cosmology.n_s\">0.9996</span></Normal>, "
-                    "which is 8.5σ from Planck 2018 (0.9649 ± 0.0042). The older "
+                    "which is 8.3σ from Planck 2018 (0.9649 ± 0.0042). The older "
                     "<code>cosmology.n_s_pred = 0.9636</code> is Planck-compatible at &lt;0.4σ. The "
                     "older derivation remains canonical pending higher-order slow-roll corrections "
                     "(Tier 3 item T3.3).",
@@ -614,11 +614,11 @@ class ResultsV16_2(SimulationBase):
                     ["w₀ (dark energy EoS)", "−23/24 ≈ −0.9583", "DESI BAO 2025: −0.957 ± 0.067", "0.02σ (BAO-only)", "CONSISTENT"],
                     ["α⁻¹ (fine structure)", "137.0367 (geometric)", "CODATA 2018: 137.035999177", "~0.05σ (theory-level)", "CONSISTENT"],
                     ["n<sub>gen</sub> (fermion generations)", "3 (χ<sub>eff</sub>/48 = 144/48)", "LEP Z-width: 3 exactly", "Exact", "CONSISTENT"],
-                    ["sin θ<sub>C</sub> (Cabibbo angle)", "exp(−π/2) ≈ 0.208 (racetrack, N₁=24, k=6)", "PDG 2024: 0.2257 ± 0.0010", "~8% (topology only)", "CONSISTENT"],
+                    ["sin θ<sub>C</sub> (Cabibbo angle)", "exp(−π/2) ≈ 0.208 (racetrack, N₁=24, k=6)", "PDG 2024: 0.22500 ± 0.00067", "~8% (topology only)", "CONSISTENT"],
                     ["Ω<sub>DM</sub>/Ω<sub>b</sub> (DM ratio)", "5.4 (T'/T ~ 0.57)", "Planck 2018: 5.38 ± 0.15", "0.1σ", "CONSISTENT"],
                     ["θ₂₃ (PMNS atmospheric)", "49.75° (G₂ holonomy SU(3))", "NuFIT 6.0 IO: 49.3° ± ~1°", "0.45σ", "CONSISTENT"],
                     ["H₀ (Hubble constant)", "71.55 km/s/Mpc (geometric)", "SH0ES 2022: 73.04 ± 1.04", "1.4σ", "CONSISTENT"],
-                    ["τ<sub>p</sub> (proton decay lifetime)", "≈ 4.8 × 10³⁴ yr", "Super-K: > 1.67 × 10³⁴ yr", "Above current bound", "UNTESTED"],
+                    ["τ<sub>p</sub> (proton decay lifetime)", "≈ 4.8 × 10³⁴ yr", "Super-K: > 2.4 × 10³⁴ yr (p→e⁺π⁰, PDG 2024)", "Above current bound", "UNTESTED"],
                     ["m<sub>KK</sub> (KK graviton)", "~4.5 TeV (G₂ KK scale)", "LHC: no signal to ~1 TeV", "—", "UNTESTED"],
                     ["m<sub>a</sub> (QCD axion mass)", "~6 μeV (face-3 moduli)", "ADMX scanning 2–40 μeV", "—", "UNTESTED"],
                     ["Σm<sub>ν</sub> (neutrino mass sum)", "~0.06 eV (normal hierarchy)", "Planck+BAO 2018: < 0.12 eV", "Within bound", "UNTESTED"],
@@ -643,7 +643,7 @@ class ResultsV16_2(SimulationBase):
                     "E₇ quartic invariant; and the Cabibbo angle is constrained to within 8% by racetrack topology "
                     "(<Normal>sin θ<sub>C</sub> = exp(−π/2) ≈ 0.208</Normal>"
                     "<EML>sin θ<sub>C</sub> = ops.exp(ops.neg(ops.div(pi, 2))) ≈ 0.208</EML> "
-                    "vs measured 0.2257).</p>"
+                    "vs measured 0.22500).</p>"
                 ),
                 label="predictions-interpretation"
             ),

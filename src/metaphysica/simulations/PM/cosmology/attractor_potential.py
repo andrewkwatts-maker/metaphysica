@@ -185,7 +185,7 @@ class AttractorPotentialV18(SimulationBase):
 
         # f: Decay constant
         # The "natural" scale for modulus variations
-        # f = M_Pl / sqrt(chi_eff) ~ super-Planckian
+        # f = M_Pl / sqrt(chi_eff) = M_Pl/12 ~ sub-Planckian
         f = self.M_Planck / np.sqrt(self.mephorash_chi)  # ~ 2.03e17 GeV
 
         # phi_star: Attractor fixed point
@@ -320,7 +320,7 @@ class AttractorPotentialV18(SimulationBase):
             metadata={
                 "derivation": "M_Pl / sqrt(chi_eff)",
                 "units": "GeV",
-                "note": "Super-Planckian decay constant"
+                "note": "Sub-Planckian decay constant"
             }
         )
 
@@ -462,9 +462,9 @@ class AttractorPotentialV18(SimulationBase):
                 plain_text="f = M_Pl / sqrt(chi_eff) ~ 2.03e17 GeV",
                 category="DERIVED",
                 description=(
-                    "Super-Planckian decay constant from effective Euler characteristic chi_eff = 144. "
+                    "Sub-Planckian decay constant from effective Euler characteristic chi_eff = 144. "
                     "f = M_Pl/sqrt(chi_eff) = 2.435e18/12 ~ 2.03e17 GeV sets the natural scale for "
-                    "modulus field variations. The super-Planckian value (f > M_Pl/12) ensures "
+                    "modulus field variations. The sub-Planckian value f = M_Pl/12 is asserted to keep "
                     "slow-roll is maintained with O(1) potential coefficients."
                 ),
                 inputParams=["topology.mephorash_chi"],
@@ -496,7 +496,7 @@ class AttractorPotentialV18(SimulationBase):
                 terms={
                     "M_Pl": "Reduced Planck mass = 2.435e18 GeV",
                     "chi_eff": "Effective Euler characteristic = 144",
-                    "f": "Super-Planckian decay constant for modulus field"
+                    "f": "Sub-Planckian decay constant for modulus field"
                 },
                 eml_latex=r"\mathrm{ops.div}(M_{\rm Pl},\, \mathrm{ops.sqrt}(\mathrm{eml\_scalar}(144)))",
                 eml_tree_str="ops.div(M_Pl, ops.sqrt(eml_scalar(144.0)))",
@@ -602,12 +602,12 @@ class AttractorPotentialV18(SimulationBase):
                 units="GeV",
                 status="DERIVED",
                 description=(
-                    "Super-Planckian decay constant from Planck mass reduction by G2 topology: "
+                    "Sub-Planckian decay constant from Planck mass reduction by G2 topology: "
                     "f = M_Pl/sqrt(chi_eff) = 2.435e18/12 ~ 2.03e17 GeV. Sets the natural "
                     "scale for modulus field variations; f > M_Pl/12 ensures slow-roll stability."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('M_Planck'), ops.sqrt(eml_vec('chi_eff'))) — f = M_Pl/√χ_eff ~ 2.03×10¹⁷ GeV super-Planckian decay constant"
+                eml_description="EML: ops.div(eml_vec('M_Planck'), ops.sqrt(eml_vec('chi_eff'))) — f = M_Pl/√χ_eff ~ 2.03×10¹⁷ GeV sub-Planckian (M_Pl/12) decay constant"
             ),
             Parameter(
                 path="cosmology.phi_star_attractor",
@@ -721,17 +721,17 @@ class AttractorPotentialV18(SimulationBase):
                 ),
                 ContentBlock(
                     type="heading",
-                    content="Super-Planckian Decay Constant",
+                    content="Sub-Planckian Decay Constant",
                     level=3
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
                         "The decay constant f = M_Pl / sqrt(chi_eff) ~ 2.03e17 GeV is "
-                        "super-Planckian by a factor of 1/sqrt(144) ~ 1/12. This is a "
+                        "sub-Planckian by a factor of 1/sqrt(144) ~ 1/12. This is a "
                         "generic feature of string-theory axion-like fields, where "
                         "the periodicity of the internal-space geometry sets an "
-                        "effective Planck-suppressed decay constant. The super-Planckian "
+                        "effective Planck-suppressed decay constant. This sub-Planckian "
                         "value ensures slow-roll (epsilon_V << 1) is maintained over "
                         "cosmological timescales without fine-tuning the initial conditions."
                     )
@@ -753,7 +753,7 @@ class AttractorPotentialV18(SimulationBase):
                         "period. The Maximum Entropy Principle applied to the G2 moduli "
                         "space selects this fractional displacement, giving the equation "
                         "of state w_0 = -(1 - 1/b3) = -23/24 ~ -0.9583. An earlier "
-                        "draft quoted a sub-leading CPL parameter w_a ~ +0.1 from the "
+                        "draft quoted a sub-leading CPL parameter w_a ~ +0.1 (SUPERSEDED attractor estimate; canonical w_a = -1/√24) from the "
                         "time-variation of the modulus (SUPERSEDED: registry canonical "
                         "w_a = -1/sqrt(24) = -0.204). The derivation gives:"
                     )
@@ -768,7 +768,7 @@ class AttractorPotentialV18(SimulationBase):
                     title="Quintessence Prediction and DESI Comparison",
                     content=(
                         "The attractor dynamics predict w_0 = -23/24 = -0.9583 exactly, "
-                        "with w_a ~ +0.1 from residual modulus evolution (SUPERSEDED: "
+                        "with w_a ~ +0.1 (SUPERSEDED attractor estimate; canonical w_a = -1/√24) from residual modulus evolution (SUPERSEDED: "
                         "registry canonical w_a = -1/sqrt(24) = -0.204; DESI prefers "
                         "w_a < 0, so the positive-w_a discriminator failed). "
                         "DESI DR1 (2024) combined with CMB and SNIa gives w_0 ~ -0.83 +/- 0.07, "
@@ -897,7 +897,7 @@ class AttractorPotentialV18(SimulationBase):
             {
                 "id": "CERT_ATTRACTOR_DECAY_SUPER_PLANCKIAN",
                 "assertion": (
-                    f"Decay constant f = {result.f:.3e} GeV is super-Planckian "
+                    f"Decay constant f = {result.f:.3e} GeV is sub-Planckian (M_Pl/12) "
                     f"(f > M_Pl / chi_eff^0.5)"
                 ),
                 "condition": f"{result.f:.3e} > 0",
@@ -940,7 +940,7 @@ class AttractorPotentialV18(SimulationBase):
                     "achieving stabilization without additional mechanisms."
                 ),
                 "validation_hint": (
-                    "Check that the decay constant f is super-Planckian (f > M_Pl/12). "
+                    "Check that the decay constant f equals M_Pl/12 (sub-Planckian). "
                     "Verify that the attractor phi_star satisfies V'(phi_star) = 0."
                 )
             },
@@ -1003,7 +1003,7 @@ class AttractorPotentialV18(SimulationBase):
             "message": f"A = {result.A:.6f} (expected 1/sqrt(24) = {expected_A:.6f}, must satisfy 0 < A < 1)"
         })
 
-        # Check 4: Decay constant is super-Planckian with correct value
+        # Check 4: Decay constant is sub-Planckian (M_Pl/12) with correct value
         expected_f = self.M_Planck / np.sqrt(self.mephorash_chi)
         f_ok = result.f > 1e17 and abs(result.f - expected_f) / expected_f < 1e-10
         checks.append({

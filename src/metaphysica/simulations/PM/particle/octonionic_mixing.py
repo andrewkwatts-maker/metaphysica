@@ -970,7 +970,7 @@ class OctonionicMixing(SimulationBase):
                         "Base mixing: pi/4 = 45 degrees (maximal from G2 ~ Aut(O))",
                         "Golden enhancement: theta_g/2 ~ 15.86 degrees",
                         "Flux + Kahler corrections: Delta ~ 4.75 degrees",
-                        "theta_23 = 45 + 15.86 - 11.1 ~ 49.75 degrees",
+                        "theta_23 = 45 + 4.75 = 49.75 degrees (the theta_g/2 = 15.86 route needs an undisclosed -11.1 offset; not used)",
                         "theta_12: tribimaximal arcsin(1/sqrt(3)) ~ 35.26 deg, corrected to 33.59",
                         "theta_13: cycle intersection sqrt(12)/24 * 1.04 ~ 8.33 degrees",
                         "4D flexibility explains large mixing angles"
@@ -1187,7 +1187,7 @@ class OctonionicMixing(SimulationBase):
                 status="CALIBRATED",
                 description=(
                     "Atmospheric mixing angle from maximal base + golden enhancement. "
-                    "theta_23 = pi/4 + theta_g/2 + corrections ~ 49.75 degrees."
+                    "theta_23 = pi/4 + theta_g/2 = 60.9 degrees raw, reduced to ~49.75 by flux/Kahler corrections."
                 ),
                 eml_description="EML: ops.mul(ops.add(ops.div(eml_pi(), eml_scalar(4.0)), ops.div(eml_vec('theta_g_rad'), eml_scalar(2.0))), eml_scalar(57.2958)) — θ₂₃ = π/4 + θ_g/2 ≈ 49.75°",
                 derivation_formula="pmns-from-triality",

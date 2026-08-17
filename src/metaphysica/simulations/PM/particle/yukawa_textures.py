@@ -715,7 +715,7 @@ class YukawaTexturesV18(SimulationBase):
                         "The inter-face leakage coupling alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(144/24) = 1/sqrt(6) ~ 0.4082",
                         "The face-assignment matrix delta_ij^face = +1 if generations i,j share a face, 0 otherwise",
                         "Corrected Yukawa: Y_ij^(4F) = Y_ij^(0) * (1 + alpha_leak * delta_ij^face)",
-                        "Diagonal entries (same-generation) receive ~4% enhancement; off-diagonal entries unchanged",
+                        "Diagonal entries (same-generation) receive ~41% enhancement; off-diagonal entries unchanged",
                         "This is a prediction of the 4-face geometry, not currently applied to mass fits (toggle OFF by default)"
                     ],
                     "method": "Inter-face leakage correction from four-face G2 sub-sector structure",
@@ -904,10 +904,10 @@ class YukawaTexturesV18(SimulationBase):
             {
                 "id": "CERT_YUKAWA_4FACE_CORRECTION",
                 "gate_id": "G18_mass_gap_quantization",
-                "assertion": "Four-face correction is perturbatively small (~4%) and preserves mass hierarchy",
+                "assertion": "Four-face correction is ~41% on diagonal entries (not perturbatively small) and preserves mass hierarchy",
                 "test_description": (
                     "The 4-face leakage coupling alpha_leak = 1/sqrt(6) ~ 0.4082 "
-                    "produces a ~4% correction to same-face diagonal Yukawa entries. "
+                    "produces a ~41% correction to same-face diagonal Yukawa entries. "
                     "This is perturbatively small (alpha_leak^2 ~ 0.167), ensuring "
                     "that the phi^(-N) hierarchy is preserved when the correction is enabled."
                 ),
@@ -1103,7 +1103,7 @@ class YukawaTexturesV18(SimulationBase):
                         "fermion generations is: gen1 -> face1, gen2 -> face2, gen3 -> face3. "
                         "The 4th face carries no dedicated generation but mediates "
                         "cross-generation mixing. The leakage coupling "
-                        "alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6) ~ 0.4082 produces a ~4% "
+                        "alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6) ~ 0.4082 produces a ~41% "
                         "correction to same-face (diagonal) Yukawa entries while leaving "
                         "cross-face entries unchanged."
                     )

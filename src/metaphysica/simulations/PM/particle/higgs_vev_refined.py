@@ -399,7 +399,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                 description=(
                     "Higgs VEV from holonomy warp factor times non-trivial cycle count. "
                     "This is a genuine geometric prediction achieving 0.06% accuracy "
-                    "(0.3σ deviation from PDG value 246.22 GeV)."
+                    "(0.06% above the PDG value 246.22 GeV; PDG uncertainty is ~1e-4 GeV, so no meaningful σ can be quoted)."
                 ),
                 inputParams=["geometry.k_gimel", "topology.elder_kads"],
                 outputParams=["higgs.vev_geometric"],
@@ -730,7 +730,7 @@ class HiggsVEVRefinedV18(SimulationBase):
         return [
             {
                 "id": "CERT_VEV_GEOMETRIC_246",
-                "assertion": "Geometric VEV v = k_gimel * (b3-4) matches PDG within 0.3 sigma",
+                "assertion": "Geometric VEV v = k_gimel * (b3-4) matches PDG within 0.06% (PDG σ ~1e-4 GeV; % is the honest metric)",
                 "condition": "|v_geometric - 246.22| / 0.5 < 1.0",
                 "tolerance": 0.5,
                 "status": "PASS",

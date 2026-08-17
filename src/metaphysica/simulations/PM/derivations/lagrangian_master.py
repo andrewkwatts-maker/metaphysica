@@ -2472,7 +2472,7 @@ class LagrangianMasterDerivation(SimulationBase):
             category="geometric",
             description=(
                 "4D effective Lagrangian -- after face/local OR in dominant visible face. "
-                "M_Pl^2 = M_*^{11} Vol(V_7), Lambda = (integral F wedge phi)^2 / Vol."
+                "M_Pl^2 = M_*^{9} Vol(V_7), Lambda = (integral F wedge phi)^2 / Vol."
             ),
             inputParams=["constants.M_STAR"],
             outputParams=[],
@@ -2481,7 +2481,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Begin with the 13D per-shadow Lagrangian after bridge OR",
                     "Apply face OR (V_face^(f)(local OR)): this selects the dominant visible face from the 4 faces of the TCS G2 manifold",
                     "Perform G2 Kaluza-Klein reduction on the selected face: 13D -> 4D, compactifying the 7D G2 internal space V_7",
-                    "The 4D Planck mass emerges from the volume: M_Pl^2 = M_*^{11} Vol(V_7)",
+                    "The 4D Planck mass emerges from the volume: M_Pl^2 = M_*^{9} Vol(V_7)",
                     "The cosmological constant arises from flux: Lambda = (integral F wedge phi)^2 / Vol",
                     "The resulting 4D effective theory is the Standard Model (gauge + Higgs + Yukawa) plus GR plus dark energy"
                 ],
@@ -2489,7 +2489,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["reduced-lagrangian-13d", "kk-ansatz-7-4"]
             },
             terms={
-                "M_Pl": "4D Planck mass, derived from M_*^{11} Vol(V_7)",
+                "M_Pl": "4D Planck mass, derived from M_*^{9} Vol(V_7)",
                 "R_4": "4D Ricci scalar (Einstein gravity)",
                 "chi": "4D fermion fields from Pneuma spinor decomposition",
                 "phi": "Higgs doublet from moduli sector",
@@ -3202,7 +3202,7 @@ class LagrangianMasterDerivation(SimulationBase):
                         "integrates out the 7 internal dimensions of V_7. The resulting "
                         "4D(3,1) theory is the complete Standard Model coupled to Einstein "
                         "gravity plus a cosmological constant from flux. The 4D Planck mass "
-                        "M_Pl^2 = M_*^{11} Vol(V_7) and the cosmological constant "
+                        "M_Pl^2 = M_*^{9} Vol(V_7) and the cosmological constant "
                         "Lambda = (integral F wedge phi)^2 / Vol are both determined "
                         "by the internal geometry, with no free parameters."
                     )

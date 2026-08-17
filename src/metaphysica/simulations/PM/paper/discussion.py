@@ -295,7 +295,7 @@ class DiscussionV16(SimulationBase):
                 type="highlight_box",
                 content=(
                     "<strong>Geometric Unification Complete:</strong> The constraint of Re(T) from "
-                    "the measured Higgs mass (125.25 GeV) completes the geometric unification program. The "
+                    "the measured Higgs mass (125.20 GeV, PDG 2024) completes the geometric unification program. The "
                     "modulus T is no longer a free parameter but is determined by experimental data, while "
                     "λ₀ comes from SO(10) matching. In v15.0, the Cabibbo angle ε = 0.2257 emerges directly "
                     "from racetrack moduli stabilization with zero tuning—flux dynamics alone fix all parameters. "
@@ -305,9 +305,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="list",
                 items=[
-                    "✅ Higgs mass: 125.25 GeV (matches PDG 2024)",
+                    "✅ Higgs mass anchor: 125.20 GeV (PDG 2024: 125.20 ± 0.11)",
                     "✅ VEV: 246.22 GeV (0.017% error)",
-                    "✅ 1/α<sub>GUT</sub>: 23.54 (matches NuFIT 6.0)",
+                    "✅ 1/α<sub>GUT</sub>: 23.54 (geometric unification value; no direct measurement exists — NuFIT constrains neutrino mixing, not gauge couplings)",
                     "✅ w₀: −0.8528 (0.38σ from DESI)",
                     "✅ Proton lifetime: 8.15×10³⁴ years",
                     "✅ Swampland valid: Δφ<sub>Higgs</sub> = 1.958 > 0.816",
@@ -481,8 +481,8 @@ class DiscussionV16(SimulationBase):
                 type="list",
                 items=[
                     "<strong>Proton decay NOT observed by 2035:</strong> Framework falsified if τ<sub>p</sub> > 10³⁶ years (upper bound from geometric uncertainties)",
-                    "<strong>KK gravitons NOT detected at HL-LHC:</strong> Requires M<sub>KK</sub> > 7 TeV, challenging geometric derivation",
-                    "<strong>DESI DR3 finds w₀ < −0.95 or w₀ > −0.75:</strong> Would require re-examination of MEP derivation from 13D shadow",
+                    "<strong>KK gravitons NOT detected at HL-LHC:</strong> Non-detection up to ~7 TeV would exclude the predicted 4.5–5 TeV mode, falsifying the geometric derivation",
+                    "<strong>DESI DR3 excludes w₀ = −23/24 ≈ −0.958 (e.g. finds w₀ < −1.02 or w₀ > −0.88):</strong> Would require re-examination of MEP derivation from 13D shadow",
                     "<strong>JUNO measures Σm<sub>ν</sub> > 0.10 eV:</strong> Inverted hierarchy or additional sterile neutrinos required",
                     "<strong>LISA finds n ≠ 2 in GW dispersion:</strong> Alternative compactification geometry required"
                 ]
@@ -842,7 +842,7 @@ class DiscussionV16(SimulationBase):
             # Derivation: KK Graviton Mass
             ContentBlock(
                 type="heading",
-                content="Derivation: KK Graviton Mass M<sub>KK</sub> = 5.0 TeV",
+                content="Derivation sketch: KK Graviton Mass M<sub>KK</sub> (canonical 4.5 TeV, warped form)",
                 level=3
             ),
             ContentBlock(
@@ -852,7 +852,7 @@ class DiscussionV16(SimulationBase):
                     "<strong>Step 2:</strong> Modulus from Higgs constraint: Re(T) (open problem: 9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)",
                     "<strong>Step 3:</strong> Compactification radius: R<sub>c</sub> = V<sub>G₂</sub><sup>1/7</sup> = Re(T) × ℓ<sub>P</sub>",
                     "<strong>Step 4:</strong> First KK mode mass: m<sub>KK,1</sub> = ℏc/R<sub>c</sub>",
-                    "<strong>Step 5:</strong> Result: m<sub>KK,1</sub> ≈ 5.0 TeV (within HL-LHC reach)"
+                    "<strong>Step 5:</strong> As printed, Steps 1–4 give ℏc/R<sub>c</sub> ≈ 1.7 × 10¹⁸ GeV, not TeV; the 4.5 TeV value comes from the warped form M<sub>Pl</sub>e<sup>−k<sub>eff</sub>π</sup>, not this chain"
                 ]
             ),
             ContentBlock(
@@ -1055,7 +1055,7 @@ class DiscussionV16(SimulationBase):
                 type="list",
                 items=[
                     "<strong>PMNS θ₁₃.</strong> New T<sub>4</sub>/24-cell texture gives 8.67°; older "
-                    "octonionic-mixing chain gives 8.65°. Both within ~1σ of NuFIT 6.0 IO 8.54° ± 0.12°.",
+                    "octonionic-mixing chain gives 8.65°. Both within ~1σ of NuFIT 6.0 IO 8.63° ± 0.11°.",
                     "<strong>θ_QCD.</strong> New geometric mechanism and older assignment both give 0.",
                     "<strong>Re(T) stabilization.</strong> New ReT⋆ minimum agrees with the existing "
                     "<code>moduli</code> location.",
@@ -1082,7 +1082,7 @@ class DiscussionV16(SimulationBase):
                 type="list",
                 items=[
                     "<strong>n<sub>s</sub>:</strong> new Re(T) slow-roll formula gives 0.9996 "
-                    "(8.5σ from Planck); older <code>cosmology.n_s_pred = 0.9636</code> is "
+                    "(8.3σ from Planck); older <code>cosmology.n_s_pred = 0.9636</code> is "
                     "Planck-compatible. Status: <strong>OPEN</strong> &mdash; older derivation remains "
                     "canonical pending higher-order slow-roll corrections (Tier 3 T3.3).",
                     "<strong>η_B:</strong> new G<sub>2</sub>-entropy-dilution formula gives "
@@ -1401,7 +1401,7 @@ class DiscussionV16(SimulationBase):
                     ["KK Graviton Mass", "5σ HL-LHC discovery", "m<sub>KK</sub> > 3.5 TeV (LHC Run 2)", "TESTABLE"],
                     ["Dark Energy w₀", "GEOMETRIC via MEP", "DESI DR2", "Agreement"],
                     ["θ₂₃ PMNS Angle", "45.0° (asymmetric coupling)", "42.1°−50.0° (NuFIT 6.0)", "Agreement"],
-                    ["θ₁₃ PMNS Angle", "8.61° (cycle asymmetry)", "8.60° ± 0.12° (NuFIT 6.0)", "Agreement"],
+                    ["θ₁₃ PMNS Angle", "8.61° (cycle asymmetry)", "8.63° ± 0.11° (NuFIT 6.0 IO)", "Agreement"],
                     ["Proton Lifetime", "τ<sub>p</sub> = 8.15×10³⁴ years", "> 1.67×10³⁴ years (Super-K)", "Above bound"],
                     ["GW Speed", "|c<sub>GW</sub>/c − 1| ~ M<sub>Pl</sub>⁻¹", "< 10⁻¹⁵ (GW170817)", "Consistent"]
                 ]

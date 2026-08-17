@@ -418,7 +418,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     instanton_suppression = np.exp(-chi_eff / 12)  # ~ exp(-12) ~ 6e-6
 
     # Effective GUT scale with suppression
-    M_GUT_eff = M_GUT_G2 * (instanton_suppression ** 0.25)  # ~ 2e17 GeV
+    M_GUT_eff = M_GUT_G2 * (instanton_suppression ** 0.25)  # ~ 1.24e17 GeV
 
     # Lifetime calculation
     tau_base_gev = (M_GUT_eff ** 4) / (alpha_GUT ** 2 * m_p ** 5)  # in GeV^-1
@@ -1120,7 +1120,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 description=(
                     "Proton lifetime from dimension-6 operators with G2 instanton suppression. "
                     "Base GUT scale M_GUT ~ M_Pl/sqrt(b3) ~ 2.5e18 GeV is suppressed by "
-                    "G2 instantons, giving effective scale ~2e17 GeV and lifetime ~10^34 yr. "
+                    "G2 instantons, giving effective scale ~1.2e17 GeV and lifetime ~10^34 yr. "
                     "Testable by Hyper-Kamiokande (sensitivity to 10^35 yr)."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
@@ -1148,8 +1148,8 @@ class CompleteResidueRegistryV18(SimulationBase):
             Formula(
                 id="gut-scale-g2-v18",
                 label="(2.14)",
-                latex=r"M_{\rm GUT}^{\rm eff} = \frac{M_{\rm Pl}}{\sqrt{b_3}} \cdot e^{-\chi_{\rm eff}/48} \approx 2 \times 10^{17}\,\text{GeV}",
-                plain_text="M_GUT_eff = M_Pl/sqrt(b3) * exp(-chi_eff/48) ~ 2e17 GeV",
+                latex=r"M_{\rm GUT}^{\rm eff} = \frac{M_{\rm Pl}}{\sqrt{b_3}} \cdot e^{-\chi_{\rm eff}/48} \approx 1.2 \times 10^{17}\,\text{GeV}",
+                plain_text="M_GUT_eff = M_Pl/sqrt(b3) * exp(-chi_eff/48) ~ 1.24e17 GeV",
                 eml_tree_str="ops.mul(ops.div(eml_vec('M_Pl'), ops.sqrt(eml_vec('b3'))), ops.exp(ops.neg(ops.div(eml_vec('chi_eff'), eml_scalar(48.0)))))",
                 category="DERIVED",
                 description=(
@@ -1334,7 +1334,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 status="DERIVED",
                 description=(
                     "PM-derived effective GUT scale from G2 geometry: "
-                    "M_Pl/sqrt(b3) with instanton suppression (~2e17 GeV). "
+                    "M_Pl/sqrt(b3) with instanton suppression (~1.24e17 GeV). "
                     "The standard GUT unification scale (~2e16 GeV) is cited as a "
                     "theoretical reference point, not a fitted value."
                 ),
@@ -1375,7 +1375,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             subsection_id="2.3",
             title="Complete Spectral Decomposition",
             abstract=(
-                "The 125 fundamental physical constants of the Standard Model and cosmology "
+                "The 125 registry constants (SM+ν couplings, ΛCDM parameters, and derived quantities) "
                 "are proposed to emerge as spectral residues of the Laplace-Beltrami operator "
                 "on the compact G₂ holonomy manifold V₇. This section presents the mathematical "
                 "framework underlying that identification, catalogs the 125 residues with their "
@@ -1452,8 +1452,8 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "χ_eff = 144 zero modes in the full compactification. After accounting for "
                         "the dual-shadow OR reduction and the S^(2,0) sampler data fields (which removes "
                         "19 redundant ghost modes), 125 physical modes remain. This matches the "
-                        "dimension of the exceptional Jordan algebra J₃(O) over the octonions—a "
-                        "coincidence with deep algebraic significance (see Appendix B)."
+                        "claimed dimension of the exceptional Jordan algebra J₃(O) — but dim J₃(O) = 27, not 125; no such "
+                        "algebraic identification holds (see Appendix B)."
                     )
                 ),
                 # ============================================================

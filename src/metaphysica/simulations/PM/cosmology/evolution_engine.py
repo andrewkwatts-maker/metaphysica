@@ -229,7 +229,7 @@ class EvolutionEngineV16(SimulationBase):
 
         Args:
             b3: Third Betti number (topological invariant)
-            H0_late: Local Hubble constant (SH0ES 2025)
+            H0_late: Local Hubble constant (SH0ES 2022)
             H0_early: Early universe Hubble constant (Planck 2018)
             z_max: Maximum redshift for evolution
             n_points: Number of redshift points
@@ -871,7 +871,7 @@ class EvolutionEngineV16(SimulationBase):
                 derivation_formula="h-evolution-log-scaling",
                 experimental_bound=73.04,
                 bound_type="central_value",
-                bound_source="SH0ES 2025",
+                bound_source="SH0ES 2022",
                 uncertainty=1.04,
                 eml_description="EML: ops.div(H0_late * ops.pow(1+z, 1.5), ops.add(1, ops.div(log(1+z), b3))) at z=0 — unified evolution engine H0"
             ),

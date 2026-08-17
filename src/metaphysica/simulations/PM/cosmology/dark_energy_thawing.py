@@ -1052,7 +1052,7 @@ class DarkEnergyEvolution(SimulationBase):
                     "The 12 pairs arise from b3/2 = 24/2 = 12, equivalently 4 faces x 3 "
                     "generations. Each of the 12 pairs has 4 face channels (from h^{1,1} = 4), "
                     "giving 48 = chi_eff/3 independent oscillations. By the central limit "
-                    "theorem, effective variance reduces by sqrt(48), stabilizing w0 near -23/24."
+                    "theorem over the 12 independent pair averages, variance reduces by sqrt(12) ~ 3.5x, stabilizing w0 near -23/24."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=[],

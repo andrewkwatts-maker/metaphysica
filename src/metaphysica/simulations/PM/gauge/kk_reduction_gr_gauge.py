@@ -167,7 +167,7 @@ class KKReductionGRGauge:
 
         # 1. Planck mass from dimensional reduction
         # M_Pl^2 ~ M_*^3 * 2 pi R (for 5D -> 4D)
-        # In 13D -> 4D: M_Pl^2 ~ M_*^11 * Vol(K_G2)
+        # In 13D -> 4D: M_Pl^2 ~ M_*^11 * Vol_9(K_G2 x T^2) — a 9D internal volume
         two_pi = Decimal(str(2 * np.pi))
         planck_factor = (M_star ** 3) * two_pi * R
 

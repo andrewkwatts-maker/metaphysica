@@ -348,7 +348,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "where η is the parallel spinor, ∇ is the Levi-Civita connection, "
                         "and S is the spinor bundle. The existence of exactly one "
                         "parallel spinor (up to scaling) is equivalent to G2 holonomy. "
-                        "This is in contrast to generic 7-manifolds (with Spin(7) holonomy) "
+                        "This is in contrast to generic 7-manifolds (with full SO(7) holonomy) "
                         "which preserve no spinors, or Calabi-Yau 3-folds (with SU(3) holonomy) "
                         "which preserve two spinors of opposite chirality."
                     )
@@ -581,7 +581,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "G2 ⊂ Spin(7) is the stabilizer of a unit spinor η",
                         "Parallel transport preserves η: ∇_μ η = 0",
                         "This is unique up to scaling: dim(ker ∇) = 1",
-                        "Contrast: SU(3) preserves 2 spinors, generic Spin(7) preserves 0"
+                        "Contrast: SU(3) preserves 2 spinors, Spin(7) holonomy (8-manifolds) preserves 1, generic SO(7) preserves 0"
                     ],
                     "assumptions": [
                         "G2 holonomy (not just G2 structure)",
@@ -858,7 +858,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "Number of parallel spinors preserved by G2 holonomy. This is "
                     "exactly 1 (up to scaling), which is the defining characteristic "
                     "of G2 manifolds. Contrast with SU(3) (2 spinors) or generic "
-                    "Spin(7) (0 spinors). Theoretical geometric constant."
+                    "SO(7) (0 spinors); Spin(7) holonomy proper preserves 1. Theoretical geometric constant."
                 ),
                 eml_description="EML: eml_scalar(1.0) — G2 holonomy singlet from 8=1+7 Spin(7) decomposition",
                 derivation_formula="g2-spinor-preservation",

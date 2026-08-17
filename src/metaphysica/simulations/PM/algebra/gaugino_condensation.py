@@ -123,7 +123,7 @@ class GauginoCondensationSimulation(SimulationBase):
         # Refined estimate: first-generation suppression uses N1/4 cycles out of N1 total.
         # Physical argument: E₆ has 4 SM-like gauge sectors (SU(3)×SU(2)×U(1)×hidden);
         # first-generation Yukawa sees N1/4 = 6 racetrack suppressions.
-        # cabibbo_refined = λ_eff^(N1/4) = exp(-π/2) ≈ 0.2079 (cf. PDG λ_W ≈ 0.2257).
+        # cabibbo_refined = λ_eff^(N1/4) = exp(-π/2) ≈ 0.2079 (cf. PDG λ_W ≈ 0.2250).
         cabibbo_refined = math.exp(-math.pi / 2.0)   # = exp(-2π*6/24) = exp(-π/2)
 
         # Algebraic Cabibbo derivation from racetrack moduli minimum.
@@ -312,7 +312,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 category="DERIVED",
                 description=(
                     f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f}. "
-                    "Coarse proxy for the Wolfenstein parameter λ_W ≈ 0.2257; "
+                    "Coarse proxy for the Wolfenstein parameter λ_W ≈ 0.2250; "
                     "exact value requires racetrack minimization with full matter content. "
                     "Promotes Cabibbo angle from CALIBRATED toward DERIVED."
                 ),
@@ -325,7 +325,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "method": "Cabibbo proxy from cubic power of Yukawa suppression",
                     "parentFormulas": ["gaugino-lambda-eff"],
                     "steps": [
-                        "The Wolfenstein parametrization gives the Cabibbo angle as the leading CKM parameter λ_W ≈ 0.2257",
+                        "The Wolfenstein parametrization gives the Cabibbo angle as the leading CKM parameter λ_W ≈ 0.2250",
                         "From the racetrack, λ_eff ≈ 0.7697 is the fundamental suppression scale",
                         "The third power ε ≈ λ_eff³ ≈ 0.456 is the coarse proxy for Cabibbo suppression",
                         "The exact matching λ_W ≈ λ_eff^p requires minimization with SM matter content (p ≈ 3.4)",
@@ -334,7 +334,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 },
                 terms={
                     r"\varepsilon_{\text{proxy}}": {
-                        "description": "Coarse proxy for Wolfenstein λ_W ≈ 0.2257; "
+                        "description": "Coarse proxy for Wolfenstein λ_W ≈ 0.2250; "
                                        "exact derivation needs racetrack minimization with SM matter content",
                     },
                     r"\lambda_{\text{eff}}": {
@@ -470,7 +470,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo parameter λ_W ≈ 0.2257. "
+                    "Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo parameter λ_W ≈ 0.2250. "
                     "Promotes Cabibbo angle from CALIBRATED toward DERIVED. "
                     "Note: exact value requires racetrack minimization with SM matter content."
                 ),
@@ -602,7 +602,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 content=(
                     f"W_np(N₁=24) = {W1:.8f},  W_np(N₂=23) = {W2:.8f}\n"
                     f"λ_eff = exp(−2π/24) = {leff:.8f}\n"
-                    f"Cabibbo proxy ε ≈ λ_eff³ = {cab:.6f}  (cf. PDG Wolfenstein λ_W ≈ 0.2257)\n"
+                    f"Cabibbo proxy ε ≈ λ_eff³ = {cab:.6f}  (cf. PDG Wolfenstein λ_W ≈ 0.2250)\n"
                     f"Racetrack minimum T_min ≈ {T_min:.6f}\n"
                     f"Algebraic: ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f},  "
                     f"λ_W = ε_rt^(1/3) = {cab_derived:.6f}  [DERIVED, PDG: 0.2257, ~{abs(cab_derived-0.2257)/0.2257*100:.0f}% error]"

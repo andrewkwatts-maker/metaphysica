@@ -439,7 +439,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 ),
                 eml_description=(
                     "EML: ops.div(eml_pi(), eml_scalar(6.0)) — "
-                    "δ_CP = π/6 from K=4 TCS matching fibres"
+                    "δ_CP = π/6 (N.B. π/K with K=4 gives π/4; π/6 needs K=6 — superseded by fitted δ_CP = 278.4°)"
                 ),
                 derivation_formula="pmns-delta-CP-derived",
                 experimental_bound=_DELTA_CP_NUFIT,

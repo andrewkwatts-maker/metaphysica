@@ -83,6 +83,18 @@ def run_audit() -> Dict[str, Any]:
         for token in idx
     }
 
+    # Context-conditional tokens (encode the naming rulings precisely):
+    # 0.57 is LEGITIMATE as alpha_sample — flag only when presented as
+    # alpha_leak; 0.2257 is legitimate as the labelled racetrack variant —
+    # flag only when unannotated (no canonical cross-reference nearby).
+    def _is_real_hit(token: str, context: str) -> bool:
+        c = context.lower()
+        if token == "0.57":
+            return "leak" in c and "sample" not in c
+        if token == "0.2257":
+            return not any(k in c for k in ("canonical", "variant", "calibrated", "e^{-3/2}", "0.22313", "superseded"))
+        return True
+
     hits: List[Dict[str, Any]] = []
     for sec_id, sec in (sections.items() if isinstance(sections, dict) else enumerate(sections)):
         strings: List[str] = []
@@ -91,12 +103,15 @@ def run_audit() -> Dict[str, Any]:
             for token, rx in patterns.items():
                 m = rx.search(s)
                 if m:
-                    start = max(0, m.start() - 45)
+                    start = max(0, m.start() - 60)
+                    ctx = s[start:m.end() + 60].strip()
+                    if not _is_real_hit(token, ctx):
+                        continue
                     hits.append({
                         "section": str(sec_id),
                         "token": token,
                         "ruling": idx[token],
-                        "context": s[start:m.end() + 45].strip(),
+                        "context": ctx,
                     })
 
     # Deduplicate identical (section, token, context) triples

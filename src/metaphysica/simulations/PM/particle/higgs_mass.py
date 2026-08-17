@@ -70,7 +70,7 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES (legacy — preserved for historical context)
 # Output: higgs.m_higgs_pred
-# Deviation: 27 sigma from experimental (PDG 2024: 125.25 +/- 0.17 GeV)
+# Deviation: 0.9 sigma (pred 125.10 vs PDG 2024: 125.20 +/- 0.11 GeV); the legacy 27-sigma figure referred to the retired 120.6 GeV output
 #
 # Classification: THEORETICAL GAP (moduli stabilization uncertainty)
 #
@@ -554,8 +554,8 @@ class HiggsMassSimulation(SimulationBase):
                         "M_T ~ M_GUT ~ 2 x 10^16 GeV versus M_H ~ M_EW ~ 246 GeV. This "
                         "topological protection eliminates dangerous dimension-5 proton "
                         "decay operators without fine-tuning. The resulting proton lifetime "
-                        "prediction is tau_p > 10^{34} years, comfortably above the current "
-                        "Super-Kamiokande bound of tau_p > 1.6 x 10^{34} years (p -> e+ pi^0). "
+                        "prediction is tau_p = 4.8 x 10^{34} years, a factor ~2 above the current "
+                        "Super-Kamiokande bound of tau_p > 2.4 x 10^{34} years (p -> e+ pi^0, PDG 2024). "
                         "This is a direct consequence of the M_T ~ M_GUT suppression: the "
                         "dimension-6 operators mediating proton decay are suppressed by "
                         "(M_GUT)^{-2}, and the topological Z2 x Z2 projection ensures that "
@@ -687,7 +687,7 @@ class HiggsMassSimulation(SimulationBase):
                         "units": "dimensionless",
                     },
                 },
-                # Higgs mass prediction matches PDG 2024 measurement (125.10 +/- 0.14 GeV)
+                # Higgs mass prediction matches PDG 2024 measurement (125.20 +/- 0.11 GeV)
                 arithma=_arithma_num(125.10),  # PDG 2024
                 eml=_eml_scalar(125.10),  # PDG 2024
                 value=125.10,  # PDG 2024

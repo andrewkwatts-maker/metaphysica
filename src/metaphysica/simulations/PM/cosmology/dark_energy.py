@@ -759,7 +759,7 @@ class DarkEnergyV16(SimulationBase):
                         "V_bridge through torsion T_\u03c9 = 1/\u221a6. The two-layer OR structure provides:\n\n"
                         "- 12 bridge pairs \u00d7 4 faces per shadow = 48 channels (= \u03c7_eff/3)\n"
                         "- Breathing variance reduction: \u03c3_eff = \u03c3_single/\u221a12 from 4-face \u00d7 3-generation pairing\n"
-                        "- Bridge warping potential V_bridge \u2192 w₀ = -1 + T_\u03c9\u00b2/(4\u03c0) \u2248 -1 + 1/24 = -23/24\n\n"
+                        "- Bridge warping potential V_bridge \u2192 w₀ = -1 + T_\u03c9\u00b2/(4\u03c0) \u2248 -1 + 1/(24 pi) = -0.987, NOT -23/24 (the bridge form is off by pi); canonical route: Delta-w = 1/b3\n\n"
                         "Dark matter as hidden faces: The three hidden faces (f = 2, 3, 4) per shadow provide "
                         "multi-component dark matter with portal coupling \u03b1_leak = 1/\u221a6 \u2248 0.408 from G₂ volume ratio (\u03b1_sample \u2248 0.57 with flux corrections)."
                     )
@@ -880,7 +880,7 @@ class DarkEnergyV16(SimulationBase):
                             "formula": r"D_{bosonic} = 26"
                         },
                         {
-                            "description": "Heterotic string asymmetric construction: left-movers in 26D (bosonic), right-movers in 10D (superstring), yielding D_eff = (26+10)/2 = 13",
+                            "description": "Heterotic string asymmetric construction: left-movers in 26D (bosonic), right-movers in 10D (superstring), but (26+10)/2 = 18 — this average does NOT give 13; D = 13 comes from 1+4+8 = dim(R)+dim(H)+dim(O)",
                             "formula": r"D_{heterotic} = \frac{26 + 10}{2} = 13 \text{ (effectively)}"
                         },
                         {

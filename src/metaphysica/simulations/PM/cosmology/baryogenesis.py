@@ -266,7 +266,7 @@ class ModuliBaryogenesis:
             },
             "observed_comparison": (
                 "eta_B ~ 6.19e-10 (canonical, v18 geometric) vs. observed "
-                "6.12e-10 -- within 3 % (1.6 sigma)"
+                "6.12e-10 -- within 1.1 % (2.2 sigma)"
             ),
         }
 

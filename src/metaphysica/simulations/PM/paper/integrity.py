@@ -427,7 +427,7 @@ class IntegrityV16_2(SimulationBase):
                      "DERIVED (cross-consistent) — <span class=\"pm-value\" data-pm-value=\"particle.theta_13_deg\">8.67</span>°",
                      "T<sub>4</sub>/24-cell Yukawa texture (<code>particle/yukawa_derivation.py</code>) "
                      "agrees with older <code>neutrino.theta_13_pred = 8.65°</code>; both within ~1σ of "
-                     "NuFIT 6.0 IO 8.54°"],
+                     "NuFIT 6.0 IO 8.63°"],
                     ["PMNS δ<sub>CP</sub>", "OPEN (fitted to NuFIT 6.0)",
                      "DERIVED (cross-consistent) — <span class=\"pm-value\" data-pm-value=\"particle.delta_CP_over_pi\">1.47</span>π",
                      "Same T<sub>4</sub>/24-cell texture; 0.7σ off NuFIT central. Second free b<sub>3</sub>-rooted "
@@ -460,7 +460,7 @@ class IntegrityV16_2(SimulationBase):
                      "no overclosure against Planck 2018 bound"],
                     ["Inflation n_s, r", "QUALITATIVE (slow-roll asserted)",
                      "OPEN (older derivation Planck-compatible) — new <code>inflation</code> module gives "
-                     "n_s = 0.9996 (8.5σ from Planck); older <code>cosmology.n_s_pred = 0.9636</code> "
+                     "n_s = 0.9996 (Re(T) slow-roll variant, FALSIFIED at 8.3 sigma; canonical n_s = 0.964) (8.3σ from Planck); older <code>cosmology.n_s_pred = 0.9636</code> "
                      "Planck-compatible",
                      "Older chain remains canonical pending higher-order slow-roll corrections "
                      "(Tier 3 T3.3); r prediction unchanged"],

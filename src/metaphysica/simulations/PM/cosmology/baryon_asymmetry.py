@@ -370,7 +370,7 @@ class BaryonAsymmetryV18(SimulationBase):
                     "Baryon asymmetry eta_b from G2 cycle imbalance with Jarlskog "
                     "CP violation. Five factors with distinct physical origins: "
                     "(i) delta_b3 = 0.12*b3 from torsion-induced flux mismatch "
-                    "between associative/coassociative 3-cycles (B-L violation); "
+                    "between associative/coassociative 4-cycles (B-L violation); "
                     "(ii) b3/chi_eff = 24/72 = 1/3 topological suppression; "
                     "(iii) sin(delta_CP) = sin(pi/6) = 0.5 from Z3 triality of "
                     "the G2 root system acting on fermion generations; "
@@ -505,7 +505,7 @@ class BaryonAsymmetryV18(SimulationBase):
                     "steps": [
                         {
                             "description": "Racetrack superpotential for moduli stabilization",
-                            "formula": r"W = A e^{-aT} + B e^{-bT}"
+                            "formula": r"W = A e^{-aT} - B e^{-bT}"
                         },
                         {
                             "description": "Minimize the scalar potential to find T_min",
@@ -584,7 +584,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 name="B3 Cycle Asymmetry",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Flux mismatch fraction between associative and coassociative 3-cycles (0.12).",
+                description="Flux mismatch fraction between associative 3-cycles and coassociative 4-cycles (0.12).",
                 no_experimental_value=True,
                 eml_description=(
                     "EML: ops.div(eml_scalar(1.0), eml_vec('b3')) — δ_b3 = 1/b₃ = 1/24 topological baryon asymmetry seed"
@@ -598,7 +598,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 description="G2 triality-linked CP phase δ_CP = π/6 from Z3 triality of the G2 root system.",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(eml_pi(), eml_scalar(6.0)) — δ_CP_sterile = π/6 from K=4 TCS matching fibres (same as quark sector)"
+                    "EML: ops.div(eml_pi(), eml_scalar(6.0)) — δ_CP_sterile = π/6 from Z₃ triality (a K=4 fibre count would give π/4)"
                 ),
             ),
         ]
@@ -612,7 +612,7 @@ class BaryonAsymmetryV18(SimulationBase):
             abstract=(
                 "The observed matter-antimatter asymmetry \u03b7_b \u2248 6 \u00d7 10\u207b\u00b9\u2070 is "
                 "derived from a flux mismatch between associative and "
-                "coassociative 3-cycles in the TCS G₂ manifold, coupled with "
+                "coassociative 4-cycles in the TCS G₂ manifold, coupled with "
                 "CP violation quantified by the Jarlskog invariant J \u2248 3.08 \u00d7 10\u207b\u2075. "
                 "The cycle imbalance (\u0394b₃ = 0.12 \u00d7 b₃) provides the B\u2212L "
                 "violation; the CP-violating phase \u03b4_CP = \u03c0/6 arises from "
@@ -635,7 +635,7 @@ class BaryonAsymmetryV18(SimulationBase):
                         "three Sakharov conditions are satisfied by distinct geometric "
                         "mechanisms: (1) B\u2212L violation arises from the cycle asymmetry "
                         "\u0394b₃ = 0.12 \u00d7 b₃, a flux mismatch between the 24 associative "
-                        "and coassociative 3-cycles of the TCS G₂ manifold \u2014 the "
+                        "and coassociative 4-cycles of the TCS G₂ manifold \u2014 the "
                         "torsion in the neck region of the twisted connected sum "
                         "breaks the symmetry between cycle types, generating a net "
                         "baryon-number-violating current; (2) CP violation enters "

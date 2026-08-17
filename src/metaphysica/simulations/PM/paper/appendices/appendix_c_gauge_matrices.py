@@ -155,14 +155,14 @@ class AppendixCGaugeMatrices(SimulationBase):
                 content=(
                     "Where P<sub>13→4</sub> is a rank-ordered tensor that maps the internal "
                     "degrees of freedom of the V₁₃ bulk onto the 4D Minkowski space. In the "
-                    "v24.2 model, this matrix is <strong>unitary and lossless</strong>, meaning "
+                    "v24.2 model, this matrix is a rank-4 <strong>co-isometry</strong> (PP† = I₄; 9 of 13 directions are discarded), and "
                     "the 'Energy Budget' of the 25D ancestral state is perfectly accounted for "
                     "in the 125 residues."
                 )
             ),
             ContentBlock(
                 type="formula",
-                content=r"\mathbf{P}_{13 \to 4}^\dagger \mathbf{P}_{13 \to 4} = \mathbf{I}_{13}",
+                content=r"\mathbf{P}_{13 \to 4} \mathbf{P}_{13 \to 4}^\dagger = \mathbf{I}_{4}",
                 formula_id="gauge-unitarity-condition",
                 label="(C.2)"
             ),
@@ -270,7 +270,7 @@ class AppendixCGaugeMatrices(SimulationBase):
                 category="ESTABLISHED",
                 description=(
                     "Dimensional projection from 13D ancestral registry to 4D observables. "
-                    "The gauge filter ensures lossless symmetry reduction."
+                    "The gauge filter preserves the retained 4D block; 9 directions are projected out."
                 ),
                 input_params=["dimensions.D_after_sp2r", "dimensions.D_observable"],
                 output_params=["gauge.projection_rank"],
@@ -293,12 +293,12 @@ class AppendixCGaugeMatrices(SimulationBase):
             Formula(
                 id="gauge-unitarity-condition",
                 label="(C.2)",
-                latex=r"\mathbf{P}_{13 \to 4}^\dagger \mathbf{P}_{13 \to 4} = \mathbf{I}_{13}",
-                plain_text="P_dagger * P = I_13",
+                latex=r"\mathbf{P}_{13 \to 4} \mathbf{P}_{13 \to 4}^\dagger = \mathbf{I}_{4}",
+                plain_text="P * P_dagger = I_4",
                 # T4 (b): I_13 has rank 13 = b3/2 + 1 = 12+1; carry b3_leaf into the identity dimension
                 eml_tree_str="ops.mul(ops.mul(eml_vec('P_dagger'), eml_vec('P_13_to_4')), ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), eml_scalar(1.0)))",
                 category="DERIVED",
-                description="Unitarity condition ensuring lossless projection from 13D to 4D.",
+                description="Co-isometry condition: PP† = I₄ on the retained 4D block; 9 internal directions are projected out (not lossless).",
                 input_params=["gauge.projection_matrix_13_to_4", "dimensions.D_after_sp2r"],
                 output_params=["gauge.unitarity_verified"],
                 terms={

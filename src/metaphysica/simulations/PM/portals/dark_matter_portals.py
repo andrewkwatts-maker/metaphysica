@@ -974,8 +974,8 @@ class DarkMatterPortalsV23(SimulationBase):
                         "(4π · m<sub>KK</sub>⁴) is computed in the Born approximation from "
                         "t-channel moduli exchange. The m<sub>N</sub>² factor comes from the nucleon "
                         "matrix element of the moduli coupling operator. The predicted "
-                        "σ<sub>SI</sub> is well below the current XENONnT bound but within the "
-                        "projected sensitivity of DARWIN and XLZD, making this a testable "
+                        "σ<sub>SI</sub> (~10⁻⁹³ cm²) is ~46 orders below the XENONnT bound — far beyond the "
+                        "reach of any planned detector (DARWIN/XLZD gain ~1 order); direct detection cannot test this "
                         "prediction of the PM framework."
                     ),
                 ),
@@ -1015,7 +1015,7 @@ class DarkMatterPortalsV23(SimulationBase):
                         "- Cross-section: σ<sub>SI</sub> below XENONnT bound\n"
                         "- Multi-component DM: KK + ALP + sterile ν\n"
                         "- Total relic: Ω<sub>DM</sub> h² = 0.120\n"
-                        "Testable by: DARWIN, XLZD (next-generation direct detection)"
+                        "Not testable by planned direct detection (~46 orders below current bounds)"
                     ),
                 ),
             ],

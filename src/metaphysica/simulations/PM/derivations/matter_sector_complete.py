@@ -855,7 +855,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             inputParams=["higgs.m_higgs_experimental"],
             outputParams=["higgs.lambda_quartic"],
             terms={
-                "m_H": "Higgs mass = 125.10 GeV (PDG 2024)",
+                "m_H": "Higgs mass = 125.20 GeV (PDG 2024)",
                 "v": "Higgs VEV = 246.22 GeV"
             }
         ))
@@ -986,7 +986,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             label="(3.4.8)",
             latex=(
                 r"\varepsilon = e^{-\lambda} = e^{-1.5} \approx 0.2231 "
-                r"\approx \sin\theta_C = 0.2257"
+                r"\approx \sin\theta_C = 0.2250"
             ),
             plain_text="epsilon = exp(-1.5) ~ 0.223 ~ sin(theta_C) ~ 0.226",
             category="DERIVED",
@@ -1324,7 +1324,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             description="epsilon = exp(-1.5) ~ 0.223 ~ Cabibbo angle",
             eml_description="Froggatt-Nielsen suppression parameter epsilon = exp(-3/2) derived from the G2 associative cycle geodesic length; numerically equals the Cabibbo angle",
             derivation_formula="yukawa-epsilon-cabibbo-v19",
-            experimental_bound=0.2257,
+            experimental_bound=0.22500,
             bound_type="measured",
             bound_source="PDG2024_Vus"
         ))
@@ -1758,7 +1758,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             "passed": higgs_ok,
             "confidence_interval": {"lower": 124.96, "upper": 125.24, "sigma": 1.0},
             "log_level": "INFO" if higgs_ok else "WARNING",
-            "message": f"m_H = {m_h:.2f} GeV (PDG: 125.10 +/- 0.14)"
+            "message": f"m_H = {m_h:.2f} GeV (PDG: 125.20 +/- 0.11)"
         })
 
         # Check 3: Top Yukawa near unity

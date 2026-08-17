@@ -55,7 +55,7 @@ OUTPUT_DIR = Path(__file__).parent.parent.parent / "images"
 # Cosmological constants
 H0_PLANCK = 67.4  # km/s/Mpc (Planck 2018)
 H0_PLANCK_SIGMA = 0.5
-H0_SHOES = 73.04  # km/s/Mpc (SH0ES 2025)
+H0_SHOES = 73.04  # km/s/Mpc (SH0ES 2022)
 H0_SHOES_SIGMA = 1.04
 OMEGA_M = 0.311  # Matter density
 OMEGA_DE = 0.689  # Dark energy density

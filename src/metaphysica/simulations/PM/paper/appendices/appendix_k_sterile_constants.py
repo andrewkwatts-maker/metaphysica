@@ -549,7 +549,7 @@ class AppendixKSterileConstants(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "G is the first eigenvalue of the V₇ Laplacian—the 'Metric Anchor' that sets "
+                    "G is set by the V₇ volume via (K.2) — not by the Laplacian's first eigenvalue, which is λ₁ = 0 — the 'Metric Anchor' that sets "
                     "the strength of gravitational coupling. It is Node 001 in the spectral registry."
                 )
             ),
@@ -669,7 +669,7 @@ class AppendixKSterileConstants(SimulationBase):
                 # T4 (b): 6 time-like pins = b3/4 (24/4 = 6 from 4-fold isotropy) → expose b3_leaf
                 eml_tree_str="ops.div(eml_vec('L_horizon'), ops.mul(ops.div(b3_leaf(), eml_scalar(4.0)), eml_vec('t_Planck')))",
                 category="GEOMETRIC",
-                description="Speed of light from time-like torsion pins.",
+                description="ILLUSTRATIVE identity only: numerically L_horizon/(6 t_Planck) ~ 10^69 m/s, not c; not a derivation of the speed of light.",
                 input_params=["topology.torsion_per_shadow"],
                 output_params=["sterile.c_origin"],
                 derivation={
@@ -677,7 +677,7 @@ class AppendixKSterileConstants(SimulationBase):
                     "steps": [
                         "The 4x6 torsion matrix assigns 6 pins to the time dimension",
                         "These 6 pins define the causal span: maximum information transfer rate across the manifold",
-                        "Speed of light c = L_horizon / (6 * t_Planck), set by torsion geometry",
+                        "CAVEAT: L_horizon/(6 t_Planck) ~ 10^69 m/s, ~61 orders above c — the relation is symbolic, not quantitative",
                     ],
                     "parentFormulas": ["shadow-torsion-sum"],
                 },

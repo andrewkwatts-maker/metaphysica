@@ -63,7 +63,7 @@ With b₃ = 24:
     ξ = cos(π/24)        = 0.991445…
     η · ξ                = 0.183013…   ( = sin(π/12)/√2 )
     ξ²                   = 0.982963…   ( = (1+cos(π/12))/2 )
-    θ₁₃ = 8.6686° (NuFIT 6.0 8.54 ± 0.13 → 0.99σ, within 1σ)
+    θ₁₃ = 8.6686° (NuFIT 6.0 NO 8.58 ± 0.13 → 0.68σ, within 1σ)
     δ_CP = 1.5408 π  (NuFIT 6.0 1.54π ± 0.17π → 0.005σ, within 1σ)
 
 θ_13 and δ_CP **both land within 1σ** of NuFIT 6.0 simultaneously
@@ -213,7 +213,7 @@ def _eta_from_b3(b3: int) -> float:
 
     For b₃ = 24 (the SSoT G₂ third Betti number) this evaluates to
     0.184592… and lands θ₁₃ = arcsin(√(2/3)·η) at 8.669°, i.e.
-    0.99σ from the NuFIT 6.0 best fit (8.54° ± 0.13, asymmetric upper
+    0.68σ from the NuFIT 6.0 NO best fit (8.58° ± 0.13, asymmetric upper
     1σ bound). See the module docstring for the geometric provenance
     of the √2 (24-cell octahedral diagonal) and sin(π/b₃) (T₄ vertex-
     orbit half-angle).
@@ -299,7 +299,7 @@ DELTA_CP_XI2_COEF: float = 0.05
 #: δ_CP the 1σ window is ~0.17π (asymmetric in NuFIT 6.0; the value
 #: here is the symmetric proxy used for the documented-divergence
 #: σ-deviation report).
-NUFIT_THETA_13_DEG: float = 8.54
+NUFIT_THETA_13_DEG: float = 8.58
 NUFIT_THETA_13_SIGMA: float = 0.13
 NUFIT_DELTA_CP_RAD: float = 1.54 * math.pi      # NuFIT 6.0 best fit ≈ 1.54 π
 NUFIT_DELTA_CP_SIGMA_PI: float = 0.17           # NuFIT 6.0 1σ width in units of π

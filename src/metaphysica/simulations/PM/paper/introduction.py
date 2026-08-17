@@ -201,7 +201,7 @@ class IntroductionV16(SimulationBase):
             ],
             "why_it_matters": (
                 "The power of this approach is that it derives many measured values (like the "
-                "Yukawa hierarchy parameter ε ≈ 0.223, which matches the Cabibbo angle V<sub>us</sub> ≈ 0.2257 "
+                "Yukawa hierarchy parameter ε ≈ 0.223, which matches the Cabibbo angle V<sub>us</sub> ≈ 0.2250 "
                 "to within 1%) from pure geometry, rather than treating them as arbitrary input parameters."
             )
         }
@@ -307,7 +307,7 @@ class IntroductionV16(SimulationBase):
                     "and NuFIT 6.0 experimental data, including dark energy <strong>w₀ = -23/24</strong> "
                     'consistent with DESI 2025 thawing dark energy constraints and <strong>H₀ = '
                     '<span class="pm-value" data-pm-value="cosmology.H0_local">71.55</span> km/s/Mpc</strong> within '
-                    "1.4σ of SH0ES 2025. New results: thermal time coupling "
+                    "1.4σ of SH0ES 2022. New results: thermal time coupling "
                     "<strong>α<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 27/10</strong> "
                     "(DERIVED, zero free parameters), CSS <strong>[[24,12,8]]</strong> quantum code "
                     "from self-dual Golay (protects ≤3 moduli errors), and breathing dark energy "
@@ -543,7 +543,7 @@ class IntroductionV16(SimulationBase):
                     "Sum) G₂ manifold</strong> K<sub>Pneuma</sub> with <strong>h<sup>1,1</sup>=4 Kähler "
                     "moduli sectors</strong>—not a static background but a dynamic geometric structure "
                     "formed from Pneuma condensates. Racetrack moduli stabilization across these four "
-                    "sectors dynamically determines the vacuum structure and derives ε ≈ 0.2257.</p>"
+                    "sectors dynamically determines the vacuum structure and derives ε ≈ 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313).</p>"
                 ),
                 label="pneuma-postulate"
             ),
@@ -852,7 +852,7 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "<h4>Key Feature: Derived Modulus</h4>"
                     "<p>A significant advancement was achieved by inverting the Higgs mass formula to "
-                    "constrain Re(T) from the measured Higgs mass (125.25 GeV), rather than choosing "
+                    "constrain Re(T) from the measured Higgs mass (125.20 GeV, PDG 2024), rather than choosing "
                     "it arbitrarily. (Open problem: Higgs inversion yields Re(T) ≈ 9.865; the BBN-calibrated value 7.086 "
                     "and geometric value 1.833 remain in tension.) This ensures swampland compliance and completes "
                     "the geometric unification where both λ₀ (from SO(10) matching) and Re(T) (from "
@@ -864,7 +864,7 @@ class IntroductionV16(SimulationBase):
                     "With the proposed derivations of KK scale (M<sub>KK</sub> ≈ 4.5 TeV from k<sub>eff</sub> = b₃/(2+ε)), "
                     "Yukawa textures (ε = exp(-λ) with λ=1.5, an ansatz following Froggatt-Nielsen 1979), and CP phase (δ<sub>CP</sub> = π/2 from topological orientations), "
                     "this leaves <strong>~58 Standard Model + compactification parameters as candidate topology-first predictions</strong>. "
-                    "Racetrack moduli stabilization proposes the Cabibbo angle ε = 0.2257 from flux competition "
+                    "Racetrack moduli stabilization proposes a racetrack variant ε = 0.2257 of the Cabibbo angle from flux competition (canonical: e^{-3/2} = 0.22313) "
                     "(minimal phenomenological input). Yukawa overlap magnitudes are cross-checked via 7D Monte Carlo on explicit G₂ associative cycles.</p>"
                 ),
                 label="derived-modulus"
@@ -912,7 +912,7 @@ class IntroductionV16(SimulationBase):
                     "(2) chiral structure via a proposed dual-shadow Möbius mechanism, "
                     "(3) emergence of time from modular flow, "
                     "(4) <strong>candidate values w₀ = -1 + 1/b₃ = -23/24, wₐ ≈ -0.204, M<sub>KK</sub> ≈ 4.5 TeV, "
-                    "Yukawa textures (ε<sup>Q</sup> hierarchy with ε = 0.2257 from racetrack moduli stabilization; Yukawa φ-scaling is an ansatz following Froggatt-Nielsen 1979), "
+                    "Yukawa textures (ε<sup>Q</sup> hierarchy with ε = 0.2257 (racetrack variant; canonical e^{-3/2}) from racetrack moduli stabilization; Yukawa φ-scaling is an ansatz following Froggatt-Nielsen 1979), "
                     "δ<sub>CP</sub> = π/2 as candidate topology-first predictions</strong> from topology (b₃=24, λ=1.5 with minimal phenomenological input), "
                     "and <Speculation>(5) may address aspects of the quantum measurement problem through geometric correlations in the mirror shadow.</Speculation></p>"
                 ),
