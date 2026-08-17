@@ -43,7 +43,10 @@ from metaphysica.generators._common import autogen_dir
 PATH_ALIASES: Dict[str, str] = {
     "dark_energy.w0": "cosmology.w0_derived",
     "dark_energy.wa": "cosmology.wa_derived",
-    "gauge.M_GUT": "gauge.M_GUT_geometric",
+    # gauge.M_GUT deliberately NOT aliased to gauge.M_GUT_geometric:
+    # the canonical ruling names three distinct scales (geometric 6.3e15,
+    # RG-crossing 2.1e16, threshold 1.24e17) — binding the config's RG
+    # value to the geometric registry path compared different quantities.
     "proton_decay.tau_p_years": "proton_decay.lifetime_years",
 }
 

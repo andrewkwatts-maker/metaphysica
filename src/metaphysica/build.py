@@ -148,6 +148,10 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Emit canonical-value rulings",
      [sys.executable, "-m", "metaphysica.generators.generate_canonical_values"],
      False),
+    # S-1 guard: superseded numerals must not reappear in section prose.
+    ("Audit prose for superseded values",
+     [sys.executable, "-m", "metaphysica.generators.generate_prose_drift_audit"],
+     False),
     # Dead-link check: every {{formula:id}} / formula_id / formula_refs
     # reference in sections must resolve in formulas.json (audit found 4
     # broken ids shipping silently).

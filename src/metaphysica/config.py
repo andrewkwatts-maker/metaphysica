@@ -1348,7 +1348,9 @@ class CoreFormulas:
             verification_page="sections.html#gauge-unification"
         ),
         simulation_file="simulations/proton_decay_geometric_v13_0.py",
-        computed_value=8.15e34,
+        # Canonical ruling: registry proton_decay chain value (the old
+        # 8.15e34 literal was a stale config-only number).
+        computed_value=4.757e34,
         units="years",
         related_formulas=["gut-scale", "gut-coupling", "proton-branching", "doublet-triplet"],
         learning_resources=[
@@ -1407,10 +1409,16 @@ class CoreFormulas:
         html="θ<sub>23</sub> = π/4 = 45° (G₂ holonomy symmetry)",
         latex="\\theta_{23} = \\frac{\\pi}{4} = 45^\\circ",
         plain_text="θ_23 = π/4 = 45° (G₂ holonomy symmetry)",
-        category=FormulaCategory.DERIVED,
-        description="Maximal atmospheric mixing from G₂ holonomy",
+        category=FormulaCategory.SPECULATIVE,
+        description=(
+            "FALSIFIED elegant candidate (2026-08 ruling): maximal mixing "
+            "θ_23 = π/4 = 45° from G₂ Z₂ symmetry is the zero-spare-variable "
+            "form, but NuFIT places θ_23 in the upper octant (IO 49.3° ± 1.0 "
+            "→ 4.3σ; NO 42.2° → 2.8σ). Retained on the books as falsified; "
+            "the operative registry value is neutrino.theta_23_pred = 49.75°."
+        ),
         section="6",
-        status="EXACT MATCH",
+        status="FALSIFIED candidate (4.3σ vs NuFIT IO); registry uses 49.75°",
         terms={
             "θ_23": FormulaTerm("Atmospheric Angle", "PMNS mixing angle"),
             "G₂": FormulaTerm("G₂ Holonomy", "7D exceptional holonomy group"),
@@ -1420,16 +1428,16 @@ class CoreFormulas:
             established_physics=[],
             steps=[
                 "G₂ holonomy provides Z₂ symmetry between 2nd and 3rd generation",
-                "This discrete symmetry enforces θ_23 = π/4 exactly",
-                "Result: maximal atmospheric mixing (45°)"
+                "This discrete symmetry would enforce θ_23 = π/4 exactly",
+                "NuFIT upper-octant data falsify exact maximality (4.3σ IO)"
             ],
             verification_page="sections/fermion-sector.html"
         ),
         simulation_file="simulations/derive_theta23_g2_v12_8.py",
         computed_value=45.0,
         units="degrees",
-        experimental_value=45.2,  # Source: NuFIT 6.0 (2024) θ_23 = 45.2° ± 1.2°
-        sigma_deviation=0.15,
+        experimental_value=49.3,  # NuFIT IO best fit θ_23 = 49.3° ± 1.0°
+        sigma_deviation=4.3,
         related_formulas=["neutrino-mass-21", "neutrino-mass-31", "tcs-topology", "cp-phase-geometric", "ckm-elements"],
         learning_resources=[
             LearningResource(
@@ -1483,7 +1491,10 @@ class CoreFormulas:
 
     KK_GRAVITON = Formula(
         id="kk-graviton-mass",
-        output_params=['geometry.m_KK'],
+        # Deliberate orphan: registry geometry.m_KK is the ratio-form
+        # quantity (~3.4e15 GeV, mislabelled per the canonical ruling) —
+        # binding it here would compare two different quantities. The
+        # canonical 4.5 TeV comes from the warped/exponential form.
         label="(8.1) KK Graviton Mass",
         html="m<sub>KK,1</sub> = 1/R<sub>c</sub> = 5.0 TeV",
         latex="m_{KK,1} = \\frac{1}{R_c} = 5.0\\,\\text{TeV}",
@@ -1507,7 +1518,10 @@ class CoreFormulas:
             verification_page="sections.html#predictions"
         ),
         simulation_file="simulations/kk_spectrum_full.py",
-        computed_value=5.0,
+        # Canonical ruling: 4.5 TeV warped/exponential form (registry
+        # geometry.m_KK is the mislabelled ratio-form quantity — deliberate
+        # non-binding; see canonical_values MKK entry).
+        computed_value=4.5,
         units="TeV",
         related_formulas=["gut-scale", "tcs-topology", "planck-mass-derivation"],
         learning_resources=[
@@ -2383,11 +2397,11 @@ class CoreFormulas:
         category=FormulaCategory.PREDICTIONS,
         description="Weak mixing angle at Z pole (NOTE: displayed value is the PDG anchor; the registry's geometric prediction is 0.23190 — 0.68σ with 0.001 theory uncertainty. See drift audit.)",
         section="5",
-        status="PDG anchor shown; geometric prediction 0.23190",
-        computed_value=0.2312022,
+        status="ESTABLISHED input (scheme ruling); geometric candidate 0.23190 at gauge.sin2_theta_w_geometric",
+        computed_value=0.23122,   # gauge.sin2_theta_w now carries the PDG MS-bar input (2026-08 scheme ruling)
         experimental_value=0.23122,  # Source: PDG 2024 sin²θ_W(M_Z) = 0.23122 ± 0.00003
         experimental_error=0.00003,
-        sigma_deviation=0.45,  # |0.2312022 - 0.23122| / 0.00003 (was hand-set 0.0)
+        sigma_deviation=0.0,
         simulation_file="simulations/gauge_unification_precision_v12_4.py",
         related_formulas=["gut-coupling", "gut-scale"],
         references=[
@@ -2402,17 +2416,17 @@ class CoreFormulas:
         output_params=['higgs.vev'],
         input_params=['pneuma.VEV'],
         label="(5.6) Electroweak VEV",
-        html="v<sub>EW</sub>/√2 = M<sub>Pl</sub> · e<sup>-h²¹/b₃</sup> · e<sup>|T_ω|</sup> = 173.97 GeV",
-        latex="\\frac{v_{\\text{EW}}}{\\sqrt{2}} = M_{\\text{Pl}} \\times e^{-h^{2,1}/b_3} \\times e^{|T_\\omega|} = 173.97\\,\\text{GeV}",
-        plain_text="v_EW/√2 = M_Pl · exp(-h²¹/b₃) · exp(|T_ω|) = 173.97 GeV",
+        html="v<sub>EW</sub> = √2 · M<sub>Pl</sub> · e<sup>-h²¹/b₃</sup> · e<sup>|T_ω|</sup> = 246.03 GeV (v/√2 = 173.97)",
+        latex="v_{\\text{EW}} = \\sqrt{2}\\, M_{\\text{Pl}} \\times e^{-h^{2,1}/b_3} \\times e^{|T_\\omega|} = 246.03\\,\\text{GeV}",
+        plain_text="v_EW = √2 · M_Pl · exp(-h²¹/b₃) · exp(|T_ω|) = 246.03 GeV (v/√2 = 173.97)",
         category=FormulaCategory.DERIVED,
-        description="Electroweak VEV (Yukawa normalization v/√2 ≈ 174 GeV; the conventional v_EW = 246.22 GeV — registry higgs.vev)",
+        description="Electroweak VEV in the conventional normalization (machine value = v_EW so the registry binding compares like-for-like; the Yukawa-normalization v/√2 = 173.97 GeV is shown alongside)",
         section="5",
         terms={
             "v_EW/√2": FormulaTerm("Higgs VEV (Yukawa norm)", "v/√2 ≈ 174 GeV; conventional v_EW = 246.22 GeV"),
             "M_Pl": FormulaTerm("Planck Mass (reduced)", "2.435×10¹⁸ GeV"),
         },
-        computed_value=173.97,
+        computed_value=246.03,   # v_EW conventional normalization (= 173.97 × √2)
         units="GeV",
         related_formulas=["top-quark-mass"],
         references=[

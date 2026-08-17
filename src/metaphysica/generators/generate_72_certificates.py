@@ -55,11 +55,11 @@ VERIFIABLE_GATES = {
     # Block C: QCD/Electroweak verification (G21-G30)
     21: {"proof_id": "color_charge_neutrality", "wl_code": "R + G + B = 0", "result": "True", "note": "All 3-node clusters sum to color-neutral"},
     22: {"proof_id": "gluon_string_tension", "wl_code": "sigma = 24/288", "result": "0.0833", "note": "Quark separation energy from 24-pin density"},
-    23: {"proof_id": "proton_stability_floor", "wl_code": "tau_p > 10^34", "result": "3.9e34 yr", "note": "proton_decay_v16_0.py confirms tau_p ~ 3.9e34 years > Super-K bound"},
+    23: {"proof_id": "proton_stability_floor", "wl_code": "tau_p > 2.4*10^34", "result": "4.757e34 yr (ratio 2.0 above the bound)", "note": "Canonical tau_p = 4.757e34 yr vs Super-K p->e+pi0 bound 2.4e34 yr (PDG 2024) — evaluated against the live registry value."},
     24: {"proof_id": "sea_quark_polarization", "wl_code": "m_B includes 163 sea", "result": "True", "note": "Virtual nodes from 163 bulk included"},
     25: {"proof_id": "asymptotic_freedom", "wl_code": "gauge_unification_v16_0.py", "result": "UV fixed point alpha* = 1/24", "note": "3-loop RG + asymptotic safety fixed point from G2 topology"},
     26: {"proof_id": "electron_mass_to_charge", "wl_code": "mass_ratio_v16_1.py", "result": "m_p/m_e = 1836.15", "note": "Derives m_p/m_e from G2 cycle volumes with < 0.001% error vs CODATA 2022"},
-    27: {"proof_id": "pmns_matrix_lock", "wl_code": "neutrino_mixing_v16_0.py", "result": "theta_12=33.59, theta_13=8.33, theta_23=49.75, delta_CP=278.4", "note": "All 4 PMNS parameters match NuFIT 6.0"},
+    27: {"proof_id": "pmns_matrix_lock", "wl_code": "neutrino_mixing_v16_0.py", "result": "theta_12=33.59, theta_13=8.65, theta_23=49.75, delta_CP=278.4", "note": "PMNS parameters vs NuFIT dataset (registry-tier evaluation; theta_13 and delta_CP carry FITTED inputs per the honesty convention)"},
     28: {"proof_id": "lepton_number_conservation", "wl_code": "L_total = 0", "result": "True", "note": "Every lepton has anti-node in 163"},
     29: {"proof_id": "weak_hypercharge", "wl_code": "Y_W = 125/144", "result": "0.868", "note": "U(1) hypercharge from Shadow handedness"},
     30: {"proof_id": "leptonic_hierarchical_gap", "wl_code": "m_mu/m_e ~ chi_eff", "result": "chi_eff = 144", "note": "m_mu/m_e ~ chi_eff = 144, m_tau/m_mu ~ b3/2 = 12"},
@@ -68,7 +68,7 @@ VERIFIABLE_GATES = {
     31: {"proof_id": "higgs_field_vev", "wl_code": "v = k_gimel × (b3-4) = 12.318 × 20", "result": "v = 246.37 GeV", "note": "DERIVED: Appendix J derives v = k_gimel × (b3-4) from G2 topology. k_gimel = b3/2 + 1/π = 12.318; (b3-4) = 20 = EW DOF. 0.06% from PDG 2024 (246.22 GeV). No kRc tuning required."},
     32: {"proof_id": "w_z_mass_ratio", "wl_code": "gauge_unification_v16_0.py", "result": "sin²θ_W_GUT = 3/8", "note": "W/Z mass ratio from SO(10) prediction"},
     35: {"proof_id": "photon_z_mixing", "wl_code": "theta_W = ArcTan[shadow/chi]", "result": "28.7 deg", "note": "Weinberg angle from shadow sector geometry"},
-    36: {"proof_id": "ckm_matrix_unitarity", "wl_code": "ckm_matrix_v16_0.py", "result": "deviation < 10^-10", "note": "V_us=0.2231, V_cb=0.040, V_ub=0.004 match PDG 2024"},
+    36: {"proof_id": "ckm_matrix_unitarity", "wl_code": "ckm_matrix_v16_0.py", "result": "row-1 unitarity deviation ~ 5.8e-5", "note": "Module's own unitarity test outputs 5.8e-5 (previous cert claimed < 1e-10 — corrected). V_us = exp(-3/2) = 0.22313 vs PDG 0.22500 +/- 0.00067 is 2.79 sigma (honest)."},
     37: {"proof_id": "cp_violation_phase", "wl_code": "ckm_matrix_v16_0.py", "result": "J = 3.08e-5", "note": "Jarlskog invariant from K=4 topology, PDG 2024: J=(3.0±0.3)e-5"},
     39: {"proof_id": "pmns_angle_saturation", "wl_code": "24-pin cage geometry", "result": "theta_12~33, theta_23~45, theta_13~8.5", "note": "PMNS angles from 24-pin cage geometry"},
     40: {"proof_id": "sterile_active_mixing", "wl_code": "theta = 163/288", "result": "0.566", "note": "Sterile-active mixing bounded seal for observable universe"},
@@ -122,9 +122,16 @@ VERIFIABLE_GATES = {
     # Block F: DESI Dark Energy (G60)
     60: {
         "proof_id": "desi_static_anchor",
-        "wl_code": "With[{b3=24}, wa = -4/Sqrt[b3]; desi_wa = -0.99; sigma = (wa - desi_wa)/0.32; {N[wa,4], N[sigma,2]}]",
-        "result": "{-0.8165, 0.54sigma}",
-        "note": "PM w0=-0.9583 (0.02sigma vs DESI w0=-0.957+/-0.067); PM wa=-0.816 vs DESI wa=-0.99+/-0.32, 0.54sigma agreement (thawing quintessence from G2 4-form projection)"
+        "wl_code": "wa = -1/Sqrt[24]",
+        "result": "-0.2041",
+        "note": (
+            "CANONICAL ruling (2026-08): wa = -1/sqrt(b3) = -0.204, the pure "
+            "zero-spare-variable form — 1.88 sigma from DESI DR1 "
+            "(-0.75 +/- 0.29), an honest tension. The x4 co-associative "
+            "projection (-0.8165, 0.23 sigma) was a post-DESI graft and is "
+            "retained only as the RETRODICTED variant "
+            "cosmology.wa_projection_x4."
+        )
     },
 
     # Block F: Chiral Orthogonality (G66)
@@ -317,6 +324,148 @@ def generate_hash(content):
     """Generate a hash for the certificate."""
     return hashlib.sha256(json.dumps(content, sort_keys=True).encode()).hexdigest()[:16]
 
+# ═══════════════════════════════════════════════════════════════════════
+# Executed evaluation layer (2026-08 review, M-5.1/M-5.2)
+# ═══════════════════════════════════════════════════════════════════════
+# The certificates were declarative: wl_code strings that never ran. Two
+# evaluation tiers now execute what can be executed:
+#   arithmetic tier — Wolfram-lite expressions translated to Python and
+#     evaluated in a restricted namespace, compared to the stated result;
+#   registry tier — module-backed gates compared against the LIVE
+#     parameters.json value and its experimental anchor.
+# Gates neither tier can reach are explicitly DECLARATIVE. The result is
+# additive (`evaluation` + `evaluation_status` fields) so existing
+# consumers of verification_status keep working. G72 becomes a computed
+# AND over every evaluated gate instead of an asserted seal.
+
+import math as _math
+import re as _re
+
+_ARITH_ALLOWED = _re.compile(r"^[\w\s\.\+\-\*/\(\)=<>!,;]*$")
+
+
+def _safe_arith_eval(wl_code):
+    """Evaluate Wolfram-lite arithmetic safely; None when not arithmetic."""
+    t = wl_code.strip()
+    if any(tok in t for tok in ("If[", ".py", "Consequence", "With[")):
+        return None
+    t = _re.sub(r"N\[([^\]]+?)(?:,\s*\d+)?\]", r"(\1)", t)
+    for a, b in (("Log10[", "_math.log10("), ("Sqrt[", "_math.sqrt("),
+                 ("ArcSin[", "_math.asin("), ("ArcTan[", "_math.atan("),
+                 ("Sin[", "_math.sin("), ("Cos[", "_math.cos("),
+                 ("Exp[", "_math.exp("), ("Pi", "_math.pi"),
+                 ("]", ")"), ("^", "**"), ("&&", " and "), ("||", " or ")):
+        t = t.replace(a, b)
+    if not _ARITH_ALLOWED.match(t.replace("_math.", "")):
+        return None
+    ns = {"_math": _math, "__builtins__": {}}
+    parts = [p.strip() for p in t.split(";") if p.strip()]
+    try:
+        for p in parts[:-1]:
+            if "==" in p or "=" not in p:
+                # bare expression before the last one — evaluate and drop
+                eval(p, ns)
+            else:
+                exec(p, ns)
+        return eval(parts[-1], ns)
+    except Exception:
+        return None
+
+
+_REGISTRY_MEMO = None
+
+
+def _load_registry_params():
+    global _REGISTRY_MEMO
+    if _REGISTRY_MEMO is None:
+        try:
+            path = _autogen_dir() / "parameters.json"
+            with open(path, encoding="utf-8") as f:
+                _REGISTRY_MEMO = json.load(f).get("parameters", {})
+        except Exception:
+            _REGISTRY_MEMO = {}
+    return _REGISTRY_MEMO
+
+
+# Registry tier: gate_id -> live-value comparison spec. Only gates whose
+# claim maps cleanly onto a registered parameter and a named experimental
+# anchor. kind: 'sigma' (|v-exp|/unc < max_sigma) or 'lower_bound'
+# (v > bound) or 'rel' (|v-exp|/exp < rel_tol).
+GATE_EVAL_SPECS = {
+    23: {"path": "proton_decay.lifetime_years", "kind": "lower_bound",
+         "bound": 2.4e34, "source": "Super-K p->e+pi0 bound (PDG 2024)"},
+    27: {"multi": [
+            ("neutrino.theta_12_pred", 33.41, 0.75),
+            ("neutrino.theta_13_pred", 8.63, 0.11),
+            ("neutrino.theta_23_pred", 49.3, 1.0),
+            ("neutrino.delta_CP_pred", 278.0, 26.0),
+         ], "kind": "sigma", "max_sigma": 3.0,
+         "source": "NuFIT dataset (5.2-era values, IO block)"},
+    31: {"path": "geometry.higgs_vev", "kind": "rel", "exp": 246.22,
+         "rel_tol": 0.002, "source": "PDG 2024 v_EW"},
+    47: {"path": "cosmology.H0_local", "kind": "sigma", "exp": 73.04,
+         "unc": 1.04, "max_sigma": 2.0, "source": "SH0ES 2022"},
+    48: {"path": "cosmology.w0_derived", "kind": "sigma", "exp": -0.957,
+         "unc": 0.067, "max_sigma": 2.0, "source": "DESI thawing anchor"},
+    50: {"path": "geometry.eta_baryon", "kind": "sigma", "exp": 6.12e-10,
+         "unc": 0.04e-10, "max_sigma": 3.0, "source": "Planck 2018"},
+    60: {"path": "cosmology.wa_derived", "kind": "sigma", "exp": -0.75,
+         "unc": 0.29, "max_sigma": 3.0, "source": "DESI DR1 w0waCDM"},
+}
+
+
+def _eval_registry_spec(spec, registry):
+    checks = []
+    entries = spec.get("multi") or [(spec["path"], spec.get("exp"), spec.get("unc"))]
+    for path, exp, unc in entries:
+        rec = registry.get(path)
+        v = rec.get("value") if isinstance(rec, dict) else None
+        if not isinstance(v, (int, float)):
+            return None  # path missing -> cannot evaluate
+        if spec["kind"] == "lower_bound":
+            ok = v > spec["bound"]
+            checks.append({"path": path, "value": v, "bound": spec["bound"],
+                           "ratio": v / spec["bound"], "ok": ok})
+        elif spec["kind"] == "rel":
+            rel = abs(v - exp) / abs(exp)
+            checks.append({"path": path, "value": v, "expected": exp,
+                           "rel": rel, "ok": rel < spec["rel_tol"]})
+        else:
+            sigma = abs(v - exp) / unc
+            checks.append({"path": path, "value": v, "expected": exp,
+                           "sigma": sigma, "ok": sigma < spec.get("max_sigma", 3.0)})
+    return {"tier": "registry", "source": spec["source"], "checks": checks,
+            "status": "COMPUTED_PASS" if all(c["ok"] for c in checks) else "COMPUTED_FAIL"}
+
+
+def evaluate_gate(gate_id, verif, registry):
+    """Return the evaluation block for a verifiable gate."""
+    # Tier 2 first: live-registry comparison is the stronger check.
+    spec = GATE_EVAL_SPECS.get(gate_id)
+    if spec:
+        result = _eval_registry_spec(spec, registry)
+        if result is not None:
+            return result
+    # Tier 1: arithmetic identity.
+    value = _safe_arith_eval(verif.get("wl_code", ""))
+    if value is not None:
+        stated = verif.get("result", "")
+        outcome = {"tier": "arithmetic", "computed": value}
+        if isinstance(value, bool):
+            outcome["status"] = "COMPUTED_PASS" if value else "COMPUTED_FAIL"
+        else:
+            try:
+                target = float(str(stated).split()[0].replace(",", ""))
+                delta = abs(value - target) / max(abs(target), 1e-30)
+                outcome.update({"stated": target, "rel_delta": delta,
+                                "status": "COMPUTED_PASS" if delta < 1e-2 else "COMPUTED_FAIL"})
+            except (ValueError, IndexError):
+                outcome["status"] = "COMPUTED_INFO"
+        return outcome
+    return {"tier": "none", "status": "DECLARATIVE",
+            "note": "no executable form; certificate is a declared statement"}
+
+
 def create_certificate(gate, existing_certs):
     """Create a certificate for a gate."""
     gate_id = gate['id']
@@ -332,6 +481,7 @@ def create_certificate(gate, existing_certs):
     if gate_id in VERIFIABLE_GATES:
         verif = VERIFIABLE_GATES[gate_id]
         note = verif.get('note', gate.get('validation', ''))
+        evaluation = evaluate_gate(gate_id, verif, _load_registry_params())
         cert = {
             "proof_id": proof_id,
             "gate_id": gate_id,
@@ -345,6 +495,8 @@ def create_certificate(gate, existing_certs):
             "result": verif.get('result', 'N/A'),
             "formula": gate.get('formula', 'N/A'),
             "verification_status": "VERIFIED",
+            "evaluation_status": evaluation["status"],
+            "evaluation": evaluation,
             "derivation_status": get_derivation_status(gate_id),
             "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
             "timestamp": timestamp,
@@ -468,6 +620,34 @@ def main():
         if ds in derivation_counts:
             derivation_counts[ds] += 1
 
+    # ── G72: computed AND over every executed evaluation (2026-08) ─────
+    # Previously an asserted "verification seal"; now it aggregates the
+    # actual evaluation outcomes. Declarative gates neither pass nor
+    # fail it — G72 asserts only over what was executed.
+    evaluated = [c for c in all_certificates
+                 if c.get('evaluation_status', '').startswith('COMPUTED')
+                 and c['gate_id'] != 72]
+    eval_fails = [c['gate_id'] for c in evaluated
+                  if c['evaluation_status'] == 'COMPUTED_FAIL']
+    for cert in all_certificates:
+        if cert['gate_id'] == 72:
+            cert['evaluation_status'] = ('COMPUTED_FAIL' if eval_fails
+                                          else 'COMPUTED_PASS')
+            cert['evaluation'] = {
+                "tier": "aggregate",
+                "basis": f"AND over {len(evaluated)} executed gate evaluations "
+                         f"(arithmetic + registry tiers); declarative gates "
+                         f"are excluded from the seal, not assumed true",
+                "failed_gates": eval_fails,
+                "status": cert['evaluation_status'],
+            }
+            cert['note'] = (
+                f"Gate 72: computed aggregate over {len(evaluated)} executed "
+                f"evaluations — {'ALL PASS' if not eval_fails else f'FAILS: {eval_fails}'}. "
+                "No longer an asserted seal."
+            )
+
+    for gate, cert in zip(gates, all_certificates):
         # Save individual certificate
         cert_filename = f"G{gate['id']:02d}_{cert['proof_id'].split('_', 1)[-1][:30]}.json"
         cert_path = os.path.join(CERT_DIR, cert_filename)
@@ -485,6 +665,25 @@ def main():
             "pending_lock": pending_count,
             "not_testable": not_testable_count,
             "mathematical": mathematical_count
+        },
+        "evaluation_summary": {
+            "description": (
+                "Executed evaluation layer (2026-08): gates are no longer "
+                "purely declarative. arithmetic tier = wl_code executed in "
+                "a restricted namespace; registry tier = live parameters.json "
+                "value vs experimental anchor; DECLARATIVE = no executable "
+                "form exists (statement only). G72 is the computed AND over "
+                "executed evaluations."
+            ),
+            "computed_pass": sum(1 for c in all_certificates
+                                  if c.get('evaluation_status') == 'COMPUTED_PASS'),
+            "computed_fail": sum(1 for c in all_certificates
+                                  if c.get('evaluation_status') == 'COMPUTED_FAIL'),
+            "computed_info": sum(1 for c in all_certificates
+                                  if c.get('evaluation_status') == 'COMPUTED_INFO'),
+            "declarative": sum(1 for c in all_certificates
+                                if c.get('evaluation_status') == 'DECLARATIVE'),
+            "failed_gate_ids": eval_fails,
         },
         "derivation_summary": {
             "description": "Derivation status indicates how each gate's formula was obtained",
