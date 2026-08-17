@@ -99,6 +99,7 @@ _OUTPUT_PARAMS = [
     "geometry.pneuma_width",
     "geometry.w_zero",
     "geometry.wa",
+    "geometry.wa_projection_x4",
     "geometry.s8_viscosity_scale",
     # v16.2 anomaly correction
     "geometry.anomaly_correction",
@@ -1413,6 +1414,7 @@ class GeometricAnchorsSimulation(SimulationBase):
             "geometry.m_planck_4d": "cosmology.M_Pl_4D",
             "geometry.w_zero": "cosmology.w0_derived",
             "geometry.wa": "cosmology.wa_derived",
+            "geometry.wa_projection_x4": "cosmology.wa_projection_x4",
             "geometry.n_s": "cosmology.n_s_pred",
             "geometry.T_CMB": "cosmology.T_CMB_pred",
             "geometry.sigma8": "cosmology.sigma8_pred",

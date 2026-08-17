@@ -161,7 +161,8 @@ class RicciFlowH0V16(SimulationBase):
     def output_params(self) -> List[str]:
         """Return output parameter paths."""
         return [
-            "cosmology.H0_local",        # Local (late-time) Hubble constant
+            "cosmology.H0_local",        # Canonical composite (O'Dowd 71.55)
+            "cosmology.H0_ricci_variant",  # This module's own value (76.34, variant)
             "cosmology.H0_early",        # Early (CMB) Hubble constant
             "cosmology.z_transition",    # Transition redshift
             "cosmology.H0_tension_sigma",  # Sigma deviation from measurements
@@ -246,8 +247,16 @@ class RicciFlowH0V16(SimulationBase):
         # Combined tension metric (should be < 2 for resolution)
         tension_sigma = max(local_deviation, early_deviation)
 
+        # 2026-08 canonical ruling (core/canonical_values.py): H0 is not a
+        # topology-first prediction. This module's computed value (~76.34,
+        # 3.17σ from SH0ES) registers as the RICCI VARIANT; the canonical
+        # cosmology.H0_local is the O'Dowd composite from FormulasRegistry
+        # (71.55, 1.43σ SH0ES), registered here so the path has exactly
+        # one owner and the former dual-registration conflict is closed.
+        _REG = get_registry()
         return {
-            "cosmology.H0_local": self.H0_local,
+            "cosmology.H0_ricci_variant": self.H0_local,
+            "cosmology.H0_local": float(_REG.h0_local),
             "cosmology.H0_early": self.H0_early,
             "cosmology.z_transition": self.z_transition,
             "cosmology.H0_tension_sigma": tension_sigma,
@@ -716,14 +725,17 @@ class RicciFlowH0V16(SimulationBase):
 
         return [
             Parameter(
-                path="cosmology.H0_local",
-                name="Local Hubble Constant (z=0)",
+                path="cosmology.H0_ricci_variant",
+                name="Local Hubble Constant — Ricci-flow variant (z=0)",
                 units="km/s/Mpc",
-                status="PREDICTED",
+                status="RETRODICTED_VARIANT",
                 description=(
-                    f"Hubble constant at z=0 from Ricci flow evolution: "
-                    f"H0 = {H0_local:.2f} km/s/Mpc. "
-                    "SH0ES 2022 (Riess et al.): 73.04 +/- 1.04 km/s/Mpc."
+                    f"Ricci-flow evolution value at z=0: H0 = {H0_local:.2f} "
+                    "km/s/Mpc — 3.17 sigma above SH0ES 2022 (73.04 +/- 1.04). "
+                    "NOT the canonical H0: per the 2026-08 canonical ruling, "
+                    "cosmology.H0_local carries the O'Dowd composite (71.55, "
+                    "1.43 sigma SH0ES); this variant is retained for the "
+                    "record."
                 ),
                 derivation_formula="hubble-evolution-ode",
                 experimental_bound=73.04,
@@ -731,6 +743,27 @@ class RicciFlowH0V16(SimulationBase):
                 bound_source="SH0ES 2022 (Riess et al.)",
                 uncertainty=1.04,
                 eml_description="EML: ops.add(H0_GR, ops.mul(alpha_leak, ops.mul(H0_torsion, epsilon_T))) — Ricci flow correction to Hubble tension"
+            ),
+            Parameter(
+                path="cosmology.H0_local",
+                name="Local Hubble Constant (canonical composite)",
+                units="km/s/Mpc",
+                status="FITTED_COMPOSITE",
+                description=(
+                    "Canonical H0 display value: O'Dowd composite "
+                    "288/4 - 163/144 + eta_S = 71.55 km/s/Mpc (1.43 sigma "
+                    "from SH0ES 2022, 8.3 sigma from Planck). Explicitly NOT "
+                    "a topology-first prediction — the composite uses the "
+                    "fitted 163-residue split and the post-hoc eta_S. See "
+                    "core/canonical_values.py for the ruling and the retired "
+                    "candidates."
+                ),
+                derivation_formula="odowd-h0-composite",
+                experimental_bound=73.04,
+                bound_type="central_value",
+                bound_source="SH0ES 2022 (Riess et al.)",
+                uncertainty=1.04,
+                eml_description="EML: ops.add(ops.sub(ops.div(eml_scalar(288.0), eml_scalar(4.0)), ops.div(eml_scalar(163.0), eml_scalar(144.0))), eml_vec('eta_S')) — O'Dowd composite (fitted inputs)"
             ),
             Parameter(
                 path="cosmology.H0_early",

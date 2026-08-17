@@ -142,6 +142,12 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Generate per-parameter validation certificates",
      [sys.executable, "-m", "metaphysica.generators.generate_validation_certificates"],
      False),
+    # Canonical-value rulings (2026-08 review C-1): the single table
+    # resolving every multi-valued quantity, cross-checked against the
+    # registry so superseded values can't silently return.
+    ("Emit canonical-value rulings",
+     [sys.executable, "-m", "metaphysica.generators.generate_canonical_values"],
+     False),
     # Dead-link check: every {{formula:id}} / formula_id / formula_refs
     # reference in sections must resolve in formulas.json (audit found 4
     # broken ids shipping silently).

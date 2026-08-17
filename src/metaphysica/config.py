@@ -2632,23 +2632,27 @@ class CoreFormulas:
         input_params=['dark_energy.w0'],
         output_params=['dark_energy.wa'],
         label="(7.4) Dark Energy Evolution",
-        html="w<sub>a</sub> = -dim(Ψ)/√b₃ = -4/√24 = -0.816",
-        latex="w_a = -\\frac{\\dim(\\Psi)}{\\sqrt{b_3}} = -\\frac{4}{\\sqrt{24}} = -0.816",
-        plain_text="w_a = -dim(Ψ)/√b₃ = -4/√24 = -0.816",
+        html="w<sub>a</sub> = -1/√b₃ = -1/√24 = -0.204",
+        latex="w_a = -\\frac{1}{\\sqrt{b_3}} = -\\frac{1}{\\sqrt{24}} = -0.204",
+        plain_text="w_a = -1/√b₃ = -1/√24 = -0.204",
         category=FormulaCategory.PREDICTIONS,
-        description="Dark energy evolution slope (thawing projection; dim(Ψ)=4 multiplier is FITTED — see dark_energy_thawing assessment)",
+        description=(
+            "Dark energy evolution slope — CANONICAL pure form (zero spare "
+            "variables; 2026-08 ruling). The ×4 co-associative projection "
+            "(-0.816, 0.23σ) was a post-DESI graft and is retained only as "
+            "the RETRODICTED variant cosmology.wa_projection_x4."
+        ),
         section="7",
-        status="FITTED projection (0.30σ vs DESI DR1 w_a = -0.75 ± 0.30)",
+        status="PREDICTED (1.88σ vs DESI DR1 w_a = -0.75 ± 0.29 — honest tension)",
         terms={
             "w_a": FormulaTerm("Evolution Parameter", "CPL parametrization slope"),
-            "dim(Ψ)": FormulaTerm("Spinor Projection Factor", "= 4 (FITTED multiplier, post-DESI)"),
             "b₃": FormulaTerm("Third Betti Number", "= 24"),
         },
-        computed_value=-0.8165,
+        computed_value=-0.2041,
         units="dimensionless",
-        experimental_value=-0.75,  # Source: DESI 2024 w_a = -0.75 ± 0.30
-        experimental_error=0.30,
-        sigma_deviation=0.22,
+        experimental_value=-0.75,  # Source: DESI 2024 DR1 w_a = -0.75 ± 0.29
+        experimental_error=0.29,
+        sigma_deviation=1.88,
         simulation_file="simulations/thermal_time_v12_8.py",
         related_formulas=["dark-energy-w0", "effective-dimension"],
         references=[

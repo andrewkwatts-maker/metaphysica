@@ -131,6 +131,7 @@ _OUTPUT_PARAMS = [
     "gauge.hypercharge_canonical",
     # Electroweak mixing
     "gauge.sin2_theta_w",
+    "gauge.sin2_theta_w_geometric",
     "gauge.m_z_gev",
     "gauge.m_w_gev",
     "gauge.rho_parameter",
@@ -349,11 +350,16 @@ class MasterActionSimulationV22(SimulationBase):
 
         # Electroweak mixing
         ew_result = self._ew_mixing.compute_reduction()
-        # Geometric prediction: sin²θ_W = 3/(k_gimel + φ - 1) from G2 cycle ratio
-        # This is the tree-level MS-bar-equivalent value from G2 topology
+        # 2026-08 scheme ruling (core/canonical_values.py): the geometric
+        # candidate 3/(k_gimel + φ - 1) = 0.23190 registers under its own
+        # name; gauge.sin2_theta_w carries the PDG 2024 MS-bar input
+        # 0.23122 that the EW formulas actually consume. Comparing the
+        # tree ratio of (g', g2) against MS-bar without Δr had
+        # manufactured a fake 267σ internal clash.
         _phi = (1 + math.sqrt(5)) / 2
         _k_gimel = 12 + 1 / math.pi
-        results["gauge.sin2_theta_w"] = 3.0 / (_k_gimel + _phi - 1)
+        results["gauge.sin2_theta_w_geometric"] = 3.0 / (_k_gimel + _phi - 1)
+        results["gauge.sin2_theta_w"] = 0.23122  # PDG 2024 MS-bar at M_Z (ESTABLISHED input)
         results["gauge.m_z_gev"] = float(ew_result.eigenvalues['m_Z'])
         results["gauge.m_w_gev"] = float(ew_result.eigenvalues['m_W'])
         results["gauge.rho_parameter"] = float(ew_result.rho_parameter)
@@ -1395,14 +1401,17 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
             ),
             Parameter(
-                path="gauge.sin2_theta_w",
-                name="Weak Mixing Angle",
+                path="gauge.sin2_theta_w_geometric",
+                name="Weak Mixing Angle — geometric candidate",
                 units="dimensionless",
-                status="DERIVED",
+                status="TOPOLOGY_CANDIDATE",
                 description=(
-                    "sin^2(theta_W) = 3/(k_gimel + phi - 1) = 0.23189 from G2 cycle ratio. "
-                    "Tree-level geometric prediction. Theory uncertainty ~0.001 from missing "
-                    "EW loop corrections and threshold effects."
+                    "sin^2(theta_W) = 3/(k_gimel + phi - 1) = 0.23190 from G2 cycle "
+                    "ratio — tree-level geometric CANDIDATE (0.68 sigma from PDG "
+                    "with the ~0.001 theory uncertainty from missing EW loop and "
+                    "threshold corrections). Registered under its own name per the "
+                    "2026-08 scheme ruling; the PDG MS-bar value that EW formulas "
+                    "consume lives at gauge.sin2_theta_w."
                 ),
                 experimental_bound=0.23122,
                 bound_type="measured",
@@ -1413,6 +1422,29 @@ class MasterActionSimulationV22(SimulationBase):
                     "EML: ops.div(eml_scalar(3.0), "
                     "ops.sub(ops.add(eml_vec('k_gimel'), eml_vec('phi')), eml_scalar(1.0))) "
                     "— sin^2(theta_W) = 3/(k_gimel + phi - 1) from G2 cycle ratio."
+                ),
+            ),
+            Parameter(
+                path="gauge.sin2_theta_w",
+                name="Weak Mixing Angle (MS-bar, Z-pole)",
+                units="dimensionless",
+                status="ESTABLISHED",
+                description=(
+                    "sin^2(theta_W) = 0.23122 (PDG 2024, MS-bar at M_Z) — the "
+                    "scheme value electroweak formulas consume. The geometric "
+                    "candidate is gauge.sin2_theta_w_geometric; the tree ratio of "
+                    "the registered (g', g2) is scheme-inequivalent to this "
+                    "without Delta-r corrections and must not be compared "
+                    "directly (that comparison manufactured a fake 267-sigma "
+                    "internal clash — 2026-08 canonical ruling)."
+                ),
+                experimental_bound=0.23122,
+                bound_type="measured",
+                bound_source="PDG2024",
+                uncertainty=0.00003,
+                eml_description=(
+                    "EML: eml_scalar(0.23122) — PDG 2024 MS-bar weak mixing "
+                    "angle at the Z pole (ESTABLISHED input)."
                 ),
             ),
             Parameter(
@@ -1973,7 +2005,7 @@ class MasterActionSimulationV22(SimulationBase):
             {
                 "id": "CERT_MASTER_ACTION_SIN2_THETA_W",
                 "assertion": "Weinberg angle sin^2(theta_W) = 0.23189 from G2 cycle ratio (tree-level, <1% of PDG)",
-                "condition": "abs(sin2_theta_w - 0.23122) < 0.001",
+                "condition": "abs(sin2_theta_w_geometric - 0.23122) < 0.001",
                 "tolerance": 0.001,
                 "status": "PASS",
                 "wolfram_query": "sin^2(theta_W) PDG 2024 value",

@@ -1089,17 +1089,28 @@ class GeometricAnchors:
 
     @property
     def wa(self) -> float:
-        """
-        v16.2: Dark energy evolution parameter with 4-form scaling.
+        """Dark-energy evolution parameter — CANONICAL pure form.
 
-        wa_linear = -1/√b₃ = -1/√24 ≈ -0.204
-        wa_projected = wa_linear × 4 = -0.816 (4-form scaling)
+        wa = -1/√b₃ = -1/√24 ≈ -0.204  (zero spare variables)
 
-        DESI 2025: wa = -0.99 ± 0.33 (thawing quintessence)
+        2026-08 canonical ruling (see core/canonical_values.py): the ×4
+        "4-form projection" previously returned here was introduced after
+        DESI to close the gap to wa ≈ -0.75 and is exactly the spare
+        variable the minimal-derivation principle excludes. It remains
+        available as :meth:`wa_projection_x4`, status RETRODICTED. The
+        pure form sits at 1.88σ from DESI DR1 (-0.75 ± 0.29) — an honest
+        tension, displayed as such.
         """
-        wa_linear = -1.0 / np.sqrt(self.elder_kads)  # -0.204
-        dim_psi = 4  # Co-associative 4-form dimension
-        return wa_linear * dim_psi  # -0.816
+        return -1.0 / np.sqrt(self.elder_kads)  # -0.204
+
+    @property
+    def wa_projection_x4(self) -> float:
+        """RETRODICTED variant: wa × dim(Ψ)=4 co-associative projection.
+
+        Fits DESI better (0.23σ) but the multiplier is post-hoc; kept as
+        a labelled variant, never the canonical prediction.
+        """
+        return self.wa * 4.0  # -0.816
 
     @property
     def sigma8(self) -> float:
@@ -1273,6 +1284,7 @@ class GeometricAnchors:
             "pneuma_width": self.pneuma_width,
             "w_zero": self.w_zero,
             "wa": self.wa,
+            "wa_projection_x4": self.wa_projection_x4,
             "s8_viscosity_scale": self.s8_viscosity_scale,
 
             # v16.2 anomaly correction
