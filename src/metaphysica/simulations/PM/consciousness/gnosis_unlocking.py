@@ -211,12 +211,10 @@ def coherence_time(n: int, tau_0: float = TAU_0, k: float = K_COHERENCE) -> floa
        - Integration across pairs provides collective protection
        - Normalized to baseline: (n/6)^2 = 1 at baseline
 
-    Reference values:
-    - tau(6) = tau_0 * exp(k*0.707) * 1.0 ~ tau_0 * 3.57
-    - tau(12) = tau_0 * exp(k*1.0) * 4.0 ~ tau_0 * 24.2
-    - Boost: tau(12)/tau(6) ~ 6.8 for k=3.2
-
-    With k=3.2, we achieve tau(12)/tau(6) > 10x SUCCESS CRITERION
+    Reference values (k=3.2):
+    - tau(6)  = tau_0 * exp(3.2*0.707) * 1.0 ~ tau_0 * 9.61  (≈ 240 ms)
+    - tau(12) = tau_0 * exp(3.2*1.0)   * 4.0 ~ tau_0 * 98.1  (≈ 2453 ms)
+    - Boost: tau(12)/tau(6) ~ 10.2x (SUCCESS CRITERION: > 10x)
 
     Args:
         n: Number of active pairs
@@ -1205,7 +1203,7 @@ if SCHEMA_AVAILABLE:
                     id="gnosis-coherence-enhancement",
                     label="(7.4b)",
                     latex=r"\tau(n) = \tau_0 \cdot e^{3.2\sqrt{n/12}} \cdot \left(\frac{n}{6}\right)^2",
-                    plain_text="tau(n) = tau_0 * exp(1.8 * sqrt(n/12)) * (n/6)^2",
+                    plain_text="tau(n) = tau_0 * exp(3.2 * sqrt(n/12)) * (n/6)^2",
                     category="PREDICTED",  # SPECULATIVE consciousness hypothesis
                     description=(
                         f"Coherence time enhancement with active pairs. "
@@ -1236,6 +1234,10 @@ if SCHEMA_AVAILABLE:
                     ),
                 )
             ]
+
+        def run_eml(self, registry: 'PMRegistry') -> Dict[str, Any]:
+            """EML Math computation path; parameter values identical to run()."""
+            return self.run(registry)
 
 
 # =============================================================================
@@ -1352,15 +1354,3 @@ if __name__ == "__main__":
 
     # Show plots
     plt.show()
-
-
-    def run_eml(self, registry: 'PMRegistry') -> Dict[str, Any]:
-        """
-        EML Math computation path.
-
-        This simulation produces consciousness outputs. The EML Math representation
-        for this module is in the section text via <EML>...</EML> blocks in
-        get_section_content(). The computed parameter values are identical
-        between Normal Math and EML Math modes.
-        """
-        return self.run(registry)

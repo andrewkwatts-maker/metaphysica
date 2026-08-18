@@ -225,10 +225,12 @@ class StatisticalRigorValidator:
 
         Expected p-value with EDOF = 3:
         --------------------------------
-        χ² = 5.751, EDOF = 3 → reduced χ² = 1.917 → p ≈ 0.11 (Trust Zone)
+        With the current validation_report chi_sq ≈ 0.23 (EDOF = 3):
+          reduced χ² = 0.23/3 = 0.077 → p (upper tail) ≈ 0.97 → TOO_GOOD
 
-        This p-value is in the optimal "Trust Zone" [0.05, 0.95], indicating
-        good fit without overfitting.
+        The code correctly returns "TOO_GOOD" for this input.  The earlier
+        figure "χ² = 5.751 → p ≈ 0.11 (Trust Zone)" was from a prior
+        validation snapshot and no longer matches the live chi_sq.
 
         Peer Review Defense:
         --------------------
@@ -261,11 +263,12 @@ class StatisticalRigorValidator:
         """
         Calculate p-value using Effective Degrees of Freedom (EDOF).
 
-        Traditional approach (WRONG for PM):
-            DOF = 25 → reduced χ² = 5.75/25 = 0.230 → p ≈ 1.0 (too good!)
+        Traditional approach:
+            DOF = 25 → reduced χ² = chi_sq/25 → p (upper tail) ≈ 1.0 (too good!)
 
-        EDOF approach (CORRECT for PM):
-            EDOF = 3 → reduced χ² = 5.75/3 = 1.917 → p ≈ 0.11 (Trust Zone!)
+        EDOF approach:
+            EDOF = 3 → reduced χ² = chi_sq/3 → p (upper tail, chi_sq≈0.23) ≈ 0.97 (TOO_GOOD)
+            [Prior snapshot: χ²=5.75 → reduced 1.917 → p≈0.11 (Trust Zone) — no longer current]
 
         This fixes the "suspiciously perfect fit" problem by properly accounting
         for the topological correlation structure.
