@@ -177,7 +177,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 },
                 terms={
                     r"E_8^{\text{vis}}": "Visible E₈ gauge factor of the heterotic E₈×E₈ string",
-                    r"\Psi_{27}": "27D Pneuma condensate element of J₃(𝕆) — the fundamental matter multiplet",
+                    r"\Psi_{27}": "Pneuma condensate in the 27-dimensional Jordan algebra element of J₃(𝕆) — the fundamental matter multiplet",
                     r"\text{SM gauge fields}": "Standard Model gauge bosons emerging from E₆ ⊂ E₈ generators acting on Ψ₂₇",
                 },
             ),

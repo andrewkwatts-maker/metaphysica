@@ -700,8 +700,8 @@ class HiggsBranePartitionSimulation(SimulationBase):
                         "M_H_bulk = 414.22 GeV (from attractor)",
                         "Effective_scaling = 3.31 (from brane partition)",
                         "M_H_local = 414.22 / 3.31 = 125.1 GeV",
-                        "Compare to PDG 2024: 125.25 ± 0.17 GeV",
-                        "Sigma = |125.1 - 125.25| / 0.17 = 0.88"
+                        "Compare to PDG 2024: 125.20 ± 0.11 GeV",
+                        "Sigma = |125.1 - 125.20| / 0.11 = 0.91"
                     ],
                 },
                 terms={
@@ -827,8 +827,8 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 name="Local Higgs Sigma Deviation",
                 units="dimensionless",
                 status="DERIVED",
-                description="Standard deviation from PDG 2024 measurement: |M_local - 125.25| / 0.17",
-                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.25))), eml_scalar(0.17)) — sigma = |M_local − 125.25| / 0.17 vs PDG 2024",
+                description="Standard deviation from PDG 2024 measurement: |M_local - 125.20| / 0.11",
+                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('higgs.m_higgs_local'), eml_scalar(125.20))), eml_scalar(0.11)) — sigma = |M_local − 125.20| / 0.11 vs PDG 2024",
                 derivation_formula="higgs-local-mass",
                 no_experimental_value=True,
             ),

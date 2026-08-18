@@ -711,7 +711,7 @@ class OctonionicMixing(SimulationBase):
                     r"\begin{aligned}"
                     r"\theta_{23} &= 45^\circ + \Delta_{\text{Kahler}} + \Delta_{\text{flux}} \approx 49.75^\circ \\"
                     r"\theta_{12} &= \arcsin\left(\frac{1}{\sqrt{3}}\right)(1 - \delta) \approx 33.59^\circ \\"
-                    r"\theta_{13} &= \frac{\sqrt{b_2 \times n_{gen}}}{b_3}(1 + \eta) \approx 8.33^\circ"
+                    r"\theta_{13} &= \frac{\sqrt{b_2 \times n_{gen}}}{b_3}(1 + \eta) \approx 8.33^\circ\ (\text{octonionic estimate; canonical } 8.65^\circ)"
                     r"\end{aligned}"
                 ),
                 formula_id="pmns-from-triality",

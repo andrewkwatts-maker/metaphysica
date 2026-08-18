@@ -1012,7 +1012,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Dimensional Reduction: 26D(24,2) = 12×(2,0) + (0,1) → 2×13D(12,1)",
-                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows with shared time. S<sup>(2,0)</sup> shadow-time directions provide geometric averaging. Spinor dimension: 2<sup>12</sup> = 4096 from Cl<sub>(24,1)</sub> &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> stabilize moduli via KKLT/LVS mechanisms. The complex structure modulus Re(T) is constrained from the measured Higgs mass (125.10 GeV); the exact value is an open problem (9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)."
+                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows, each with its own time ((12,1) + (12,1) = (24,2)). Spinor dimension: Weyl 2<sup>13</sup>/2 = 4096 of Cl(24,2) &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> stabilize moduli via KKLT/LVS mechanisms. The complex structure modulus Re(T) is constrained from the measured Higgs mass (input 125.10 GeV; PDG 2024: 125.20 &plusmn; 0.11); the exact value is an open problem (9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)."
             ),
             ContentBlock(
                 type="heading",

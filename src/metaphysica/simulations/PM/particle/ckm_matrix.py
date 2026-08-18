@@ -1547,7 +1547,7 @@ class CKMMatrixSimulation(SimulationBase):
                 "slightly differently, which is why the universe has more matter than antimatter today."
             ),
             "keyTakeaway": (
-                "The famous Cabibbo angle (V_us ~ 0.2257) is identical to the Yukawa hierarchy parameter "
+                "The famous Cabibbo angle (V_us: PDG 2024 0.22500; racetrack variant 0.2257) is identical to the Yukawa hierarchy parameter "
                 "epsilon ~ 0.223, unifying quark masses and quark mixing with a single geometric origin."
             ),
             "technicalDetail": (

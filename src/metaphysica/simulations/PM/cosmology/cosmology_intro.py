@@ -172,8 +172,12 @@ class CosmologyIntroV16(SimulationBase):
         # Step 3: Volume modulus stabilization from racetrack
         # T_min = 1.4885 from minimizing W = A·exp(-aT) + B·exp(-bT)
         T_min = 1.4885
-        Vol_K3_over_S3 = 4.43  # From T_min
-        epsilon_KK = 0.2257  # Emerges dynamically from volume ratio
+        Vol_K3_over_S3 = float(np.exp(T_min))   # = e^{T_min} = 4.4305
+        epsilon_KK = float(np.exp(-T_min))      # = e^{-T_min} = 0.22572
+        # Note: epsilon_KK is the KK spectrum spacing, numerically close to
+        # but DISTINCT from the CKM Cabibbo parameter (canonical candidate
+        # e^{-3/2} = 0.22313; PDG 2024 lambda = 0.22500). T_min = 1.4885 is
+        # itself within 1% of 3/2, which is why the two nearly coincide.
 
         # Step 4: Breathing mode VEV from racetrack
         # <sigma> = phi_0 ~ 0.075 M_Pl
@@ -237,7 +241,7 @@ class CosmologyIntroV16(SimulationBase):
                 "Kaluza-Klein dimensional reduction. The cascade M²⁶(24,2) → dual 13D(12,1) shadows → 4D proceeds via "
                 "Euclidean bridge connection and G₂ compactification per shadow, naturally generating both gravity "
                 "and gauge fields from pure geometry. Volume modulus stabilization via racetrack "
-                "superpotential determines ε = 0.2257 dynamically, making it a prediction rather "
+                "superpotential determines ε = e^{-T_min} ≈ 0.22572 dynamically (KK spectrum parameter, distinct from the CKM Cabibbo parameter; canonical Cabibbo candidate e^{-3/2} = 0.22313), making it a prediction rather "
                 "than an input. BPS brane configurations ensure quantum stability."
             ),
             content_blocks=[
@@ -348,7 +352,7 @@ class CosmologyIntroV16(SimulationBase):
                     items=[
                         "4D gravity: The 4D Planck mass M_Pl\u00b2 = M_*\u00b9\u00b9 \u00d7 V₉ where V₉ = V₇(G₂) \u00d7 V₂(T\u00b2) is the 9-dimensional internal volume. NOTE: M_Pl = 1.22 \u00d7 10\u00b9\u2079 GeV is MEASURED (PDG 2024), not derived.",
                         "Gauge fields: The off-diagonal metric components become SO(10) gauge bosons A_\u03bc\u1d43",
-                        "Scalar moduli: The internal metric fluctuations become scalar fields \u03c6\u1d62 in 4D. The volume modulus T is stabilized via racetrack superpotential W = A\u00b7exp(\u2212aT) + B\u00b7exp(\u2212bT), giving T_min = 1.4885 and determining \u03b5 = 0.2257 dynamically (see Section 6.3)"
+                        "Scalar moduli: The internal metric fluctuations become scalar fields \u03c6\u1d62 in 4D. The volume modulus T is stabilized via racetrack superpotential W = A\u00b7exp(\u2212aT) + B\u00b7exp(\u2212bT), giving T_min = 1.4885 and determining \u03b5 = e^{-T_min} \u2248 0.22572 dynamically (racetrack variant; canonical Cabibbo candidate e^{-3/2} = 0.22313; see Section 6.3)"
                     ]
                 ),
 
@@ -384,7 +388,7 @@ class CosmologyIntroV16(SimulationBase):
                     content=(
                         "The breathing mode VEV \u27e8\u03c3\u27e9 is fixed by the racetrack superpotential minimization. "
                         "At T_min = 1.4885, the volume ratio Vol(K₃)/Vol(S³) = 4.43 determines the stabilized "
-                        "size of K_Pneuma. This in turn fixes the Kaluza-Klein spectrum parameter \u03b5 = 0.2257, "
+                        "size of K_Pneuma. This in turn fixes the Kaluza-Klein spectrum parameter \u03b5 = e^{-T_min} \u2248 0.22572 (distinct from the CKM Cabibbo parameter), "
                         "making it a derived quantity rather than a free input. See Section 6.3 for the complete "
                         "moduli stabilization mechanism."
                     )
@@ -784,8 +788,10 @@ class CosmologyIntroV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "KK spectrum parameter epsilon = 0.2257 emerges from the volume ratio "
-                    "Vol(K3)/Vol(S3) = 4.43 within the G2 holonomy manifold K_Pneuma. "
+                    "KK spectrum parameter epsilon = e^{-T_min} = 0.22572 from the volume "
+                    "ratio Vol(K3)/Vol(S3) = e^{T_min} = 4.43 within the G2 holonomy "
+                    "manifold K_Pneuma. Distinct from the CKM Cabibbo parameter "
+                    "(canonical candidate e^{-3/2} = 0.22313; PDG 2024: 0.22500). "
                     "The K3 and S3 substructures arise as calibrated cycles in the TCS "
                     "(twisted connected sum) construction of the G2 manifold, where "
                     "K3 x S1 provides one building block. Their volume ratio determines "
@@ -793,7 +799,7 @@ class CosmologyIntroV16(SimulationBase):
                 ),
                 derivation_formula="breathing-mode",
                 no_experimental_value=True,
-                eml_description="EML: ops.inv(ops.pow(eml_vec('Vol_K3_over_S3'), eml_scalar(1.0))) — ε_KK = 0.2257 from Vol(K3)/Vol(S3)=4.43 via racetrack stabilization at T_min=1.4885"
+                eml_description="EML: ops.exp(ops.neg(eml_vec('T_min'))) — ε_KK = e^{-T_min} = 0.22572 (= 1/Vol ratio) via racetrack stabilization at T_min=1.4885"
             ),
             Parameter(
                 path="cosmology.D_eff_shadow",
@@ -1102,10 +1108,10 @@ class CosmologyIntroV16(SimulationBase):
         })
 
         # Check 5: Epsilon_KK value
-        eps_kk = 0.2257
-        eps_ok = abs(eps_kk - 0.2257) < 1e-4
+        eps_kk = float(np.exp(-1.4885))
+        eps_ok = abs(eps_kk - 0.22572) < 1e-4
         checks.append({
-            "name": "epsilon_KK = 0.2257 from volume ratio",
+            "name": "epsilon_KK = e^{-T_min} = 0.22572 from volume ratio",
             "passed": eps_ok,
             "confidence_interval": {"lower": 0.22, "upper": 0.23, "sigma": 0.0},
             "log_level": "INFO" if eps_ok else "WARNING",

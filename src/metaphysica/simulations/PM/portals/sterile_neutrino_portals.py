@@ -875,7 +875,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 "architecture. Shadow 1 hosts left-handed SU(2)<sub>L</sub> doublets; "
                 "Shadow 2 hosts right-handed doublets that are sterile under "
                 "the Standard Model gauge group. The bridge OR operator "
-                "generates a Dirac Yukawa y<sub>as</sub> ~ α<sub>leak</sub> ~ 0.57 through "
+                "generates a Dirac Yukawa y<sub>as</sub> ~ α<sub>sample</sub> ~ 0.57 (ANSATZ) through "
                 "cross-shadow wave-function overlap. Hidden-face Kähler moduli "
                 "generate a Majorana mass M<sub>s</sub> ~ 10⁴ GeV via exponential "
                 "suppression of the Planck scale. The type-I seesaw then "
@@ -910,7 +910,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                         "cross-shadow fermion mixing. The overlap integral of the left-handed "
                         "active neutrino wave function (Shadow 1) with the right-handed "
                         "sterile neutrino wave function (Shadow 2) generates a Dirac Yukawa "
-                        "coupling y<sub>as</sub> ~ α<sub>leak</sub> ~ 0.57, entirely determined by the "
+                        "coupling y<sub>as</sub> ~ α<sub>sample</sub> ~ 0.57 (ANSATZ), entirely determined by the "
                         "geometric portal coupling."
                     )
                 ),

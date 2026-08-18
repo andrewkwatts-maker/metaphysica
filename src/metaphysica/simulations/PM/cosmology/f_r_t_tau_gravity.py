@@ -29,7 +29,7 @@ DERIVATION FROM G2 COMPACTIFICATION:
 
 PHYSICAL PREDICTIONS:
     The modified gravity yields:
-    1. Late-time dark energy equation of state w_0 = -0.980
+    1. Attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583, DESI 0.027σ)
     2. Gravitational slip eta_G = 1 + O(10^-5)
     3. Effective Newton constant G_eff = G_N * (1 + corrections)
 
@@ -124,7 +124,7 @@ class FRTTauGravityV18(SimulationBase):
             description=(
                 "Derives modified gravity Lagrangian from G2 compactification. "
                 "Coefficients emerge from b3=24 cycles and flux stabilization. "
-                "Predicts dark energy w_0 = -0.980 from attractor dynamics."
+                "Attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583)."
             ),
             section_id="5",
             subsection_id="5.1.1"
@@ -210,7 +210,8 @@ class FRTTauGravityV18(SimulationBase):
         # w_0 = -1 + 2/(3*chi_eff^0.5) * (1 - alpha_F * R_0)
         # where R_0 ~ H_0^2 is the Hubble scale curvature
         #
-        # Numerically, we find w_0 ≈ -0.980 from the full dynamics
+        # Numerically the full dynamics give ≈ -0.980 — a variant of the
+        # canonical w0 = -23/24 = -0.9583 (the canonical value is the ruling)
 
         # Simplified attractor result:
         # w_0 = -1 + (2/3) * (1/sqrt(chi_eff)) * correction_factor
@@ -813,7 +814,7 @@ class FRTTauGravityV18(SimulationBase):
                 "The effective 4D gravity Lagrangian emerges from dimensional reduction "
                 "of 11D M-theory over the G2 manifold. Higher-curvature corrections (R^2) "
                 "and scalar-tensor couplings arise from flux stabilization on the b3=24 "
-                "associative cycles, predicting dark energy equation of state w_0 = -0.980."
+                "associative cycles, predicting an attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583)."
             ),
             content_blocks=[
                 ContentBlock(
@@ -863,7 +864,7 @@ class FRTTauGravityV18(SimulationBase):
                     callout_type="info",
                     title="Dark Energy Prediction",
                     content=(
-                        "The modified gravity attractor dynamics predict w_0 = -0.980, "
+                        "The modified gravity attractor dynamics predict a variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583), "
                         "consistent with Planck 2018 + BAO observations (w_0 = -1.03 +/- 0.03). "
                         "The tau modulus acts as quintessence, with the potential driving "
                         "the attractor behavior toward w = -1."

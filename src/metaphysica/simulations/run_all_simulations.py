@@ -3077,10 +3077,18 @@ class SimulationRunner:
                 scripts_path = str(PROJECT_ROOT / "scripts")
                 if scripts_path not in sys.path:
                     sys.path.insert(0, scripts_path)
-                from generate_submission_figures import main as generate_figures
-                generate_figures()
-                if self.verbose:
-                    print("  [OK] Publication figures generated (4 figures, PNG + PDF)")
+                try:
+                    from generate_submission_figures import main as generate_figures
+                except ModuleNotFoundError:
+                    # The submission-figures generator is an optional
+                    # repo-local script (scripts/generate_submission_figures.py)
+                    # that is not bundled in the wheel: skip, don't error.
+                    if self.verbose:
+                        print("  [SKIP] Publication figures: optional generator not bundled")
+                else:
+                    generate_figures()
+                    if self.verbose:
+                        print("  [OK] Publication figures generated (4 figures, PNG + PDF)")
             else:
                 missing = []
                 if not params_file.exists():

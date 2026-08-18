@@ -4,7 +4,7 @@ Gaugino Condensation — Cabibbo Angle from N₁=24/N₂=23 Racetrack (DERIVED)
 
 Hidden E₈' gaugino condensation with competing fluxes on associative 3-cycles
 generates a non-perturbative racetrack superpotential. The Cabibbo-like
-suppression ε ≈ 0.2257 emerges from the competition between:
+suppression ε ≈ 0.22500 emerges from the competition between:
 
     W_np(N₁=24) = A·exp(−2π/N₁)   dominant term (from b₃=24 topology)
     W_np(N₂=23) = A·exp(−2π/N₂)   sub-dominant term (N₁−1)
@@ -25,7 +25,7 @@ Algebraic Cabibbo derivation (DERIVED):
         ε_racetrack = |W₁ − W₂| ≈ 0.01566
     Step 4 — Generation correction (n_gen=3 eigenvalues in the Yukawa matrix):
         λ_W ≈ ε_racetrack^(1/n_gen) = 0.01566^(1/3) ≈ 0.2502
-        cf. PDG Wolfenstein λ_W = 0.2257  (11% agreement — DERIVED, not fitted)
+        cf. PDG Wolfenstein λ_W = 0.22500  (11% agreement — DERIVED, not fitted)
 
 Key: N₁=24 comes directly from b₃=24 (G₂ Betti number — topological invariant),
 N₂=N₁−1=23, n_gen=3 from G₂ geometry. No free parameters.
@@ -357,7 +357,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 plain_text=(
                     f"T_min = (N1*N2)/(2pi*(N1-N2)) * ln(N1/N2) = {T_min_val:.4f}; "
                     f"epsilon_rt = |exp(-2pi*T_min/N1) - exp(-2pi*T_min/N2)| = {epsilon_rt:.6f}; "
-                    f"lambda_W = epsilon_rt^(1/n_gen) = {cab_derived:.6f} (cf. PDG 0.2257)"
+                    f"lambda_W = epsilon_rt^(1/n_gen) = {cab_derived:.6f} (cf. PDG 0.22500)"
                 ),
                 category="DERIVED",
                 description=(
@@ -365,7 +365,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23. "
                     f"ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f} is the off-diagonal Yukawa texture. "
                     f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "PDG: 0.2257. Agreement ≈ 89% — DERIVED, zero free parameters. "
+                    "PDG: 0.22500. Agreement ≈ 89% — DERIVED, zero free parameters. "
                     "N₁=b₃=24 (topological), N₂=N₁−1=23, n_gen=3 (G₂ geometry)."
                 ),
                 inputParams=["topology.elder_kads", "topology.n_gen"],
@@ -400,7 +400,7 @@ class GauginoCondensationSimulation(SimulationBase):
                         f"Off-diagonal Yukawa texture: ε_rt = |W₁ - W₂| = {epsilon_rt:.6f}",
                         "The Wolfenstein parametrization of the CKM matrix has 3 eigenvalues (n_gen=3)",
                         f"Leading mixing angle: λ_W = ε_rt^(1/n_gen) = {epsilon_rt:.6f}^(1/3) = {cab_derived:.6f}",
-                        "PDG Wolfenstein λ_W = 0.2257 — agreement ≈ 89%, DERIVED (no fitting)",
+                        "PDG Wolfenstein λ_W = 0.22500 — agreement ≈ 89%, DERIVED (no fitting)",
                     ],
                     "references": [
                         "Krasnikov (1987); de Carlos, Casas, Quevedo (1993) 'Supersymmetry breaking'",
@@ -412,7 +412,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     r"T_{\min}": f"Racetrack moduli minimum ≈ {T_min_val:.4f} from ∂W/∂T = 0",
                     r"\varepsilon_{\text{rt}}": f"Off-diagonal Yukawa texture = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.6f}",
                     r"n_{\text{gen}}": "Number of fermion generations = 3 (from G₂ geometry)",
-                    r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: 0.2257)",
+                    r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: 0.22500)",
                     r"N_1 = 24": "Dominant flux quanta = b₃ (G₂ Betti number, topological)",
                     r"N_2 = 23": "Sub-dominant flux quanta = N₁ − 1",
                 },
@@ -479,10 +479,10 @@ class GauginoCondensationSimulation(SimulationBase):
                     "EML: ops.pow(eml_vec('algebra.gaugino_lambda_eff'), eml_scalar(3.0)) "
                     "— Cabibbo proxy = λ_eff³ from racetrack minimum"
                 ),
-                experimental_bound=0.2257,
+                experimental_bound=0.22500,
                 bound_type="central_value",
                 bound_source="CKM_PDG2024",
-                uncertainty=0.0002,
+                uncertainty=0.00067,
                 no_experimental_value=False,
             ),
             Parameter(
@@ -494,7 +494,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "Refined Cabibbo-like estimate: exp(-pi/2) = lambda_eff^(N1/4) ≈ 0.2079. "
                     "Physical argument: first-generation Yukawa suppression involves N1/4=6 racetrack "
                     "cycles out of N1=24 total (E6 has 4 SM-like gauge sectors). "
-                    "Closer to PDG Wolfenstein lambda_W ≈ 0.2257 than the coarse proxy lambda_eff^3 ≈ 0.456. "
+                    "Closer to PDG Wolfenstein lambda_W ≈ 0.22500 than the coarse proxy lambda_eff^3 ≈ 0.456. "
                     "Residual gap (0.208 vs 0.226) from loop corrections and SU(5) embedding."
                 ),
                 derivation_formula="gaugino-cabibbo-proxy",
@@ -502,10 +502,10 @@ class GauginoCondensationSimulation(SimulationBase):
                     "EML: ops.exp(ops.neg(ops.div(eml_pi(), eml_scalar(2.0)))) "
                     "— refined Cabibbo angle = exp(−π/2) = λ_eff^(N₁/4) from racetrack minimum with 6 cycles"
                 ),
-                experimental_bound=0.2257,
+                experimental_bound=0.22500,
                 bound_type="central_value",
                 bound_source="CKM_PDG2024",
-                uncertainty=0.0002,
+                uncertainty=0.00067,
                 no_experimental_value=False,
             ),
             Parameter(
@@ -545,7 +545,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "λ_W = |exp(-2π·T_min/N₁) - exp(-2π·T_min/N₂)|^(1/n_gen) ≈ 0.2502. "
                     "T_min = (N₁·N₂)/(2π·(N₁-N₂))·ln(N₁/N₂) is the racetrack moduli minimum. "
                     "N₁=b₃=24 (topological), N₂=23, n_gen=3 (G₂ geometry). "
-                    "PDG Wolfenstein λ_W = 0.2257 — 11% agreement, zero free parameters. "
+                    "PDG Wolfenstein λ_W = 0.22500 — 11% agreement, zero free parameters. "
                     "Status: DERIVED (not CALIBRATED)."
                 ),
                 derivation_formula="gaugino-cabibbo-derived",
@@ -555,7 +555,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "ops.neg(ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(eml_vec('T_min'), eml_scalar(23))))))))), "
                     "ops.inv(eml_scalar(3)))"
                 ),
-                experimental_bound=0.2257,
+                experimental_bound=0.22500,
                 bound_type="central_value",
                 bound_source="CKM_PDG2024_Wolfenstein_lambda",
                 uncertainty=0.00067,
@@ -605,7 +605,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"Cabibbo proxy ε ≈ λ_eff³ = {cab:.6f}  (cf. PDG Wolfenstein λ_W ≈ 0.2250)\n"
                     f"Racetrack minimum T_min ≈ {T_min:.6f}\n"
                     f"Algebraic: ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f},  "
-                    f"λ_W = ε_rt^(1/3) = {cab_derived:.6f}  [DERIVED, PDG: 0.2257, ~{abs(cab_derived-0.2257)/0.2257*100:.0f}% error]"
+                    f"λ_W = ε_rt^(1/3) = {cab_derived:.6f}  [DERIVED, PDG: 0.22500, ~{abs(cab_derived-0.22500)/0.22500*100:.0f}% error]"
                 ),
             ),
             ContentBlock(
@@ -620,7 +620,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"The off-diagonal Yukawa texture ε_rt = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.5f} "
                     "encodes the condensate splitting at the minimum. "
                     f"With n_gen = 3 fermion generations, λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "The PDG value is 0.2257 — agreement ≈ 89%, purely from topology (N₁=b₃=24, N₂=23, n_gen=3). "
+                    "The PDG value is 0.22500 — agreement ≈ 89%, purely from topology (N₁=b₃=24, N₂=23, n_gen=3). "
                     "This is a DERIVED result: zero free parameters."
                     "</Normal>"
                     "<EML>"
@@ -652,7 +652,7 @@ class GauginoCondensationSimulation(SimulationBase):
             abstract=(
                 "Hidden E₈' gaugino condensation with b₃=24 topology gives N₁=24/N₂=23 racetrack. "
                 f"The algebraic Wolfenstein parameter λ_W = ε_rt^(1/3) ≈ {cab_derived:.4f} "
-                "(PDG: 0.2257) follows from the racetrack moduli minimum — DERIVED, zero free parameters."
+                "(PDG: 0.22500) follows from the racetrack moduli minimum — DERIVED, zero free parameters."
             ),
             content_blocks=blocks,
             formula_refs=[

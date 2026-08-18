@@ -488,7 +488,7 @@ class AxionDMV18(SimulationBase):
                     "Axion-gluon portal coupling from G2 flux threading. In the G2 "
                     "compactification, the axion couples to gluons via flux quantization "
                     "on the associative 3-cycles. The coupling strength is set by two "
-                    "geometric factors: (i) the inter-face leakage alpha_leak ~ 0.57 "
+                    "geometric factors: (i) the inter-face leakage alpha_sample ~ 0.57 (ANSATZ) "
                     "from the visible-to-hidden face overlap, suppressed by pi*f_a from "
                     "the Peccei-Quinn scale; and (ii) the topological multiplicity "
                     "chi_eff/24 = 144/24 = 6 counting the number of independent flux "
@@ -521,7 +521,7 @@ class AxionDMV18(SimulationBase):
                                 "QCD sector"
                             ),
                             "formula": (
-                                r"\alpha_{\text{leak}} \approx 0.57"
+                                r"\alpha_{\text{sample}} \approx 0.57"
                             )
                         },
                         {
@@ -546,7 +546,7 @@ class AxionDMV18(SimulationBase):
                 },
                 terms={
                     "g_agg": "Axion-gluon coupling = 1.08/f_a",
-                    "alpha_leak": "Inter-face leakage coupling ~ 0.57",
+                    "alpha_sample": "Inter-face sampling coupling ~ 0.57 (ANSATZ; alpha_leak = 1/sqrt(6) ≈ 0.408)",
                     "chi_eff": "Effective Euler characteristic = 144",
                     "f_a": "Axion decay constant"
                 }
@@ -667,7 +667,7 @@ class AxionDMV18(SimulationBase):
                     "each host independent axion moduli with misalignment angles "
                     "theta_f. The energy density per hidden face is "
                     "rho_a^(f) = (1/2) m_a^2 (f_a theta_i)^2, and each face leaks "
-                    "into the visible sector with coupling alpha_leak ~ 0.57. The "
+                    "into the visible sector with coupling alpha_sample ~ 0.57 (ANSATZ). The "
                     "factor of 3 counts the hidden faces; the alpha_leak^2 factor "
                     "reflects that the relic density observable in the visible sector "
                     "is suppressed by the square of the leakage amplitude. For "
@@ -696,10 +696,10 @@ class AxionDMV18(SimulationBase):
                         {
                             "description": (
                                 "Each hidden face leaks into the visible sector "
-                                "with coupling alpha_leak ~ 0.57"
+                                "with coupling alpha_sample ~ 0.57 (ANSATZ)"
                             ),
                             "formula": (
-                                r"\alpha_{\text{leak}} \approx 0.57"
+                                r"\alpha_{\text{sample}} \approx 0.57"
                             )
                         },
                         {
@@ -739,7 +739,7 @@ class AxionDMV18(SimulationBase):
                 },
                 terms={
                     "3": "Number of hidden faces (f=2,3,4) in the four-face architecture",
-                    "alpha_leak": "Inter-face leakage coupling ~ 0.57",
+                    "alpha_sample": "Inter-face sampling coupling ~ 0.57 (ANSATZ; alpha_leak = 1/sqrt(6) ≈ 0.408)",
                     "m_a": "Axion mass from QCD dynamics",
                     "f_a": "Axion decay constant",
                     "0.12": "Planck 2018 dark matter relic density"
@@ -870,13 +870,13 @@ class AxionDMV18(SimulationBase):
                         "Each of the chi_eff/24 = 6 independent associative 3-cycles "
                         "threads one unit of G-flux that couples to the QCD field "
                         "strength. Combined with the inter-face leakage coupling "
-                        "alpha_leak ~ 0.57, this gives the axion-gluon vertex "
+                        "alpha_sample ~ 0.57 (ANSATZ), this gives the axion-gluon vertex "
                         "g_agg = (alpha_leak / (pi * f_a)) * (chi_eff/24) = 1.08/f_a. "
                         "The Primakoff coupling to photons follows from electromagnetic "
                         "dressing: g_{a gamma gamma} = g_agg * (alpha_em/pi) * (E/N) "
                         "where E/N ~ 1.92 is the electromagnetic-to-color anomaly ratio "
                         "from the G2 chiral fermion charge assignments. The axion-nucleon "
-                        "coupling is g_aN ~ alpha_leak / f_a ~ 0.57/f_a. These portal "
+                        "coupling is g_aN ~ alpha_sample / f_a ~ 0.57/f_a. These portal "
                         "couplings are entirely determined by the G2 topology and carry "
                         "no free parameters."
                     )

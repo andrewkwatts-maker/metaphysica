@@ -1680,7 +1680,7 @@ class MasterActionSimulationV22(SimulationBase):
                     type="paragraph",
                     content=(
                         "The Higgs mechanism mixes W³ and B into the massless photon "
-                        "and massive Z boson. The Weinberg angle sin²(θ<sub>W</sub>) = 0.23189 "
+                        "and massive Z boson. The geometric tree-level Weinberg angle sin²(θ<sub>W</sub>)<sup>geo</sup> = 0.23189 (MS-bar Z-pole: 0.23122; scheme ruling) "
                         "is locked by the G₂ cycle volume ratio, not fit to data."
                     )
                 ),
@@ -1845,7 +1845,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "The dark matter portal coupling emerges from the hidden face geometry "
                         "of the TCS G₂ manifold. Face OR (Layer 2) selects one face as visible, "
                         "leaving three hidden faces. The hidden face fields couple to visible "
-                        "fields through shared moduli, with a portal coupling α<sub>leak</sub> ~ 0.57 "
+                        "fields through shared moduli, with a portal coupling α<sub>sample</sub> ~ 0.57 (ANSATZ; α<sub>leak</sub> = 1/√6 ≈ 0.408) "
                         "determined by the volume ratio 1/√6, torsion corrections from the "
                         "G₂ contorsion tensor, and flux asymmetry between visible and hidden faces."
                     )

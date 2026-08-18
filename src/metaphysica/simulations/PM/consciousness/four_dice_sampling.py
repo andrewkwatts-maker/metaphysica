@@ -868,7 +868,7 @@ if _SCHEMA_AVAILABLE:
                     "consciousness interpretation is speculative."
                 ),
                 section_id="7",
-                subsection_id="7.5"
+                subsection_id="7.8"
             )
 
         @property
@@ -887,7 +887,10 @@ if _SCHEMA_AVAILABLE:
             return ["four-dice-branch-count"]
 
         def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
-            self._sampler = FourDiceSampler()
+            # Fixed seed: the entropy estimate is Monte Carlo, and the build
+            # (and the EML cross-check, which calls run twice) must be
+            # deterministic and reproducible.
+            self._sampler = FourDiceSampler(seed=24)
             result = self._sampler.calculate_branch_probability(0, n_samples=1000)
             entropy = result["entropy"]
             return {
@@ -956,6 +959,12 @@ if _SCHEMA_AVAILABLE:
                 },
             ]
 
+        def run_eml(self, registry: 'PMRegistry'):
+            """EML Math path mirrors run(): the EML representation lives
+            in the section text and the computed parameter values are
+            identical between Normal Math and EML Math modes."""
+            return self.run(registry)
+
         def get_learning_materials(self):
             """Return learning materials."""
             return [
@@ -969,7 +978,7 @@ if _SCHEMA_AVAILABLE:
         def get_section_content(self):
             return SectionContent(
                 section_id="7",
-                subsection_id="7.5",
+                subsection_id="7.8",
                 title="4-Dice Consciousness Branch Selection",
                 abstract=(
                     "The 12 bridge pairs are grouped into 4 'dice' of 3 pairs each. "
@@ -1059,14 +1068,3 @@ if __name__ == "__main__":
     # Optionally generate visualizations (uncomment to run)
     # generate_visualizations(show=True)
 
-
-    def run_eml(self, registry: 'PMRegistry') -> Dict[str, Any]:
-        """
-        EML Math computation path.
-
-        This simulation produces consciousness outputs. The EML Math representation
-        for this module is in the section text via <EML>...</EML> blocks in
-        get_section_content(). The computed parameter values are identical
-        between Normal Math and EML Math modes.
-        """
-        return self.run(registry)

@@ -2179,7 +2179,7 @@ class FormulasRegistry:
     # - Neutral (no adjustment): R (Molar Gas Constant - NA×k cancellation)
 
     # CODATA 2022 Reference Values
-    CODATA_COMPTON = 2.42631023538e-12      # m (electron Compton wavelength, CODATA 2022)
+    CODATA_COMPTON = 2.42631023867e-12      # m (electron Compton wavelength, CODATA 2022)
     CODATA_COMPTON_SIGMA = 7.3e-22          # m (uncertainty)
     CODATA_RYDBERG = 10973731.568157        # m⁻¹ (Rydberg constant, CODATA 2022)
     CODATA_RYDBERG_SIGMA = 0.000021         # m⁻¹ (uncertainty)

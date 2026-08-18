@@ -297,7 +297,7 @@ class DiscussionV16(SimulationBase):
                     "<strong>Geometric Unification Complete:</strong> The constraint of Re(T) from "
                     "the measured Higgs mass (125.20 GeV, PDG 2024) completes the geometric unification program. The "
                     "modulus T is no longer a free parameter but is determined by experimental data, while "
-                    "λ₀ comes from SO(10) matching. In v15.0, the Cabibbo angle ε = 0.2257 emerges directly "
+                    "λ₀ comes from SO(10) matching. In v15.0, the Cabibbo angle ε = 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313) emerges directly "
                     "from racetrack moduli stabilization with zero tuning—flux dynamics alone fix all parameters. "
                     "Together they form a fully predictive, swampland-compliant framework."
                 )
@@ -314,7 +314,7 @@ class DiscussionV16(SimulationBase):
                     "✅ Calibration: Minimal inputs (58+ parameters predictive)",
                     "✅ Dual consistency: UV ↔ IR agreement < 1%",
                     "✅ v15.0: M<sub>KK</sub> = 5.0 TeV geometric (R<sub>c</sub>⁻¹, no phenomenological fits)",
-                    "✅ v15.0: Racetrack moduli stabilization — ε = 0.2257 DERIVED (not input)",
+                    "✅ v15.0: Racetrack moduli stabilization — ε = 0.2257 racetrack variant (canonical e^{-3/2} = 0.22313; PDG 2024: 0.22500)",
                     "✅ v15.0: Perturbation test validates active geometry (Ricci-flatness enforced)",
                     "✅ v15.0: 7D Monte Carlo for Yukawa overlaps (no approximations)",
                     "✅ v15.0: All 9 fermion masses from geometric Froggatt-Nielsen (ε dynamically derived)",
@@ -525,7 +525,7 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="list",
                 items=[
-                    "v15.0 - Racetrack stabilization: Cabibbo angle ε = 0.2257 now DERIVED from moduli dynamics with zero tuning",
+                    "v15.0 - Racetrack stabilization: Cabibbo angle racetrack variant ε = 0.2257 (canonical e^{-3/2} = 0.22313) from moduli dynamics with zero tuning",
                     "v15.0 - Perturbation tests: Ricci-flatness actively enforced through geometric consistency checks",
                     "v15.0 - 7D Monte Carlo: Full 7-dimensional integration for Yukawa couplings (no approximations)",
                     "v15.1 - Pneuma-Vielbein bridge: Metric emergence validated, Lorentzian signature (-,+,+,+) verified",
@@ -771,7 +771,7 @@ class DiscussionV16(SimulationBase):
                     "dual 13D(12,1) shadows via OR reduction R<sub>⊥</sub>. The framework predicts a mirror sector (Z₂) "
                     "and yields w₀ = −1 + 1/b₃ = −23/24 via the Maximum Entropy Principle, "
                     "n<sub>gen</sub> = 3 from G₂ topology (χ<sub>eff</sub>/48 = 144/48 = 3), and the Cabibbo angle "
-                    "ε = 0.2257 from racetrack moduli stabilization. The framework makes sharp, "
+                    "ε = 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313) from racetrack moduli stabilization. The framework makes sharp, "
                     "falsifiable predictions testable by JUNO, DESI DR3, Hyper-K, and ALPS-II."
                 )
             ),
@@ -1081,7 +1081,7 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>n<sub>s</sub>:</strong> new Re(T) slow-roll formula gives 0.9996 "
+                    "<strong>n<sub>s</sub>:</strong> the Re(T) slow-roll variant (FALSIFIED) gives 0.9996 "
                     "(8.3σ from Planck); older <code>cosmology.n_s_pred = 0.9636</code> is "
                     "Planck-compatible. Status: <strong>OPEN</strong> &mdash; older derivation remains "
                     "canonical pending higher-order slow-roll corrections (Tier 3 T3.3).",
@@ -1157,7 +1157,7 @@ class DiscussionV16(SimulationBase):
                 type="list",
                 items=[
                     "<strong>Inflation potential:</strong> The flux term V<sub>flux</sub> exp(−a·φ<sub>M</sub>) provides a flat potential at large field values",
-                    "<strong>Spectral index:</strong> n<sub>s</sub> = 1 − 2/N<sub>e</sub> = 0.967 for N<sub>e</sub> = 60 e-folds (Planck: 0.965 ± 0.004)",
+                    "<strong>Spectral index:</strong> n<sub>s</sub> = 1 − 2/N<sub>e</sub> = 0.9667 for N<sub>e</sub> = 60 e-folds (Planck: 0.965 ± 0.004)",
                     "<strong>Tensor-to-scalar:</strong> r ~ 0.003 (below Planck/BICEP limits)",
                     "<strong>Reheating:</strong> Pneuma field decay to SM particles at T<sub>R</sub> ~ 10⁹ GeV"
                 ]

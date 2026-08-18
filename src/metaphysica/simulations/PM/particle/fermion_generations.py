@@ -428,7 +428,7 @@ class FermionGenerationsV16(SimulationBase):
                     "where lambda = 1.5 is the G2 curvature scale, Q_f is the topological "
                     "distance (graph hops in the cycle network), and A_f are O(1) geometric "
                     "coefficients encoding angular overlaps. The value epsilon ~ 0.223 agrees "
-                    "with the Cabibbo angle V_us = 0.2257, providing a geometric origin for "
+                    "with the Cabibbo angle V_us = 0.22500 (PDG 2024), providing a geometric origin for "
                     "the flavor hierarchy m_t >> m_c >> m_u. "
                     "<Speculation>The numerical coincidence between epsilon = exp(-3/2) and the "
                     "Cabibbo angle may reflect a deeper connection between G2 compactification "
@@ -1033,7 +1033,7 @@ class FermionGenerationsV16(SimulationBase):
             ),
             "prediction": (
                 "The value ε ≈ 0.223 is not adjustable - it's the exponential of the G2 curvature. This "
-                "predicts that the Cabibbo angle V_us ≈ 0.2257 (mixing between first two generations) "
+                "predicts that the Cabibbo angle V_us ≈ 0.22500 (PDG 2024; mixing between first two generations) "
                 "should equal ε, which it does to within 1%! This connection between quark mixing and "
                 "extra-dimensional geometry has never been explained in the Standard Model."
             )
@@ -1079,7 +1079,7 @@ def run_fermion_generations(verbose: bool = True) -> Dict[str, Any]:
         print(f"\nGeneration Count: {results['fermion.n_generations']}")
         print(f"Exact match: {results['_matches_observed']}")
         print(f"\nYukawa hierarchy parameter: epsilon = {results['fermion.yukawa_hierarchy']:.5f}")
-        print(f"Cabibbo angle (V_us): 0.2257 (agreement: {abs(results['fermion.yukawa_hierarchy'] - 0.2257)/0.2257 * 100:.1f}%)")
+        print(f"Cabibbo angle (V_us): 0.22500 (agreement: {abs(results['fermion.yukawa_hierarchy'] - 0.22500)/0.22500 * 100:.1f}%)")
         print(f"\nChiral filter strength: {results['fermion.chiral_filter_strength']:.4f} (= 7/8)")
         print("\n" + "=" * 70)
 

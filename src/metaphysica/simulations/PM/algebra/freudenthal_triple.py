@@ -38,7 +38,7 @@ from metaphysica.simulations.base import (
 
 class FreudenthalTripleSimulation(SimulationBase):
     """
-    Freudenthal triple system on J₃(𝕆) — 27D Pneuma condensate.
+    Freudenthal triple system on J₃(𝕆) — Pneuma condensate in the 27-dimensional Jordan algebra.
 
     Computes cubic norm, quartic invariant, and triple product structure
     of the Pneuma condensate element derived from b₃ = 24 topology.
@@ -51,7 +51,7 @@ class FreudenthalTripleSimulation(SimulationBase):
             version="1.0",
             domain="algebra",
             title="Freudenthal Triple System (26D Pneuma Condensate)",
-            description="J₃(𝕆) cubic norm and quartic invariant from the 27D Pneuma condensate",
+            description="J₃(𝕆) cubic norm and quartic invariant from the Pneuma condensate in the 27-dimensional Jordan algebra",
             section_id="A2",
             appendix=True,
         )
@@ -231,7 +231,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 name="Freudenthal Cubic Norm N(A)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Cubic norm (Jordan determinant) of the 27D Pneuma condensate element in J₃(𝕆). "
+                description="Cubic norm (Jordan determinant) of the Pneuma condensate in the 27-dimensional Jordan algebra element in J₃(𝕆). "
                             "Equals V_bridge / V_face in the racetrack potential.",
                 derivation_formula="freudenthal-cubic-norm",
                 no_experimental_value=True,
@@ -253,7 +253,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 name="Freudenthal Jordan Trace Tr(A)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Jordan trace = c₁ + c₂ + c₃ of the 27D Pneuma condensate. "
+                description="Jordan trace = c₁ + c₂ + c₃ of the Pneuma condensate in the 27-dimensional Jordan algebra. "
                             "Equals 3 × (b₃/27) = b₃/9.",
                 derivation_formula="freudenthal-cubic-norm",
                 no_experimental_value=True,
@@ -318,7 +318,7 @@ class FreudenthalTripleSimulation(SimulationBase):
             section_id="A2",
             subsection_id=None,
             title="Freudenthal Triple System: 26D Pneuma Condensate",
-            abstract="The exceptional Jordan algebra J₃(𝕆) models the 27D Pneuma condensate; "
+            abstract="The exceptional Jordan algebra J₃(𝕆) models the Pneuma condensate in the 27-dimensional Jordan algebra; "
                      "its cubic norm encodes the racetrack potential and its quartic invariant "
                      "gives the ALP mass scale.",
             content_blocks=blocks,

@@ -3735,9 +3735,9 @@ class CoreFormulas:
         discussion="The Higgs mass m_h = 125.10 GeV is experimental INPUT. Inverting the scalar potential yields Re(T) = 9.865. The baryon asymmetry uses a different calibrated value Re(T) = 7.086 — this tension is an open problem.",
         computed_value=125.10,  # PDG 2024: m_H = 125.20 +/- 0.11 GeV (INPUT, not prediction)
         units="GeV",
-        experimental_value=125.10,  # Source: PDG 2024 m_H = 125.10 ± 0.14 GeV (ATLAS+CMS combined)
-        experimental_error=0.14,
-        sigma_deviation=0.0,
+        experimental_value=125.20,  # Source: PDG 2024 m_H = 125.20 ± 0.11 GeV
+        experimental_error=0.11,
+        sigma_deviation=0.91,  # input 125.10 (2022 ATLAS+CMS vintage) vs PDG 2024 125.20 ± 0.11
         notes="NOT a prediction — m_h is INPUT. Higgs inversion gives Re(T) = 9.865; baryon asymmetry uses calibrated 7.086.",
         related_formulas=["higgs-vev", "higgs-potential"],
         simulation_file="simulations/higgs_mass_v12_4_moduli_stabilization.py"
@@ -8048,7 +8048,7 @@ class GeometricYukawaParameters:
     EPSILON_FN = 0.22313        # exp(-1.5) - matches Cabibbo angle
 
     # Experimental Cabibbo angle for comparison
-    EPSILON_EXP = 0.2257        # V_us  # Source: PDG 2024 |V_us| = 0.2243 ± 0.0008
+    EPSILON_EXP = 0.22500       # Wolfenstein lambda  # Source: PDG 2024 lambda = 0.22500 ± 0.00067
 
     # Froggatt-Nielsen charges (radial positions)
     FN_CHARGES = {

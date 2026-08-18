@@ -230,7 +230,7 @@ class IntroductionV16(SimulationBase):
             ),
             "moduli_stabilization": (
                 "Racetrack superpotential with h<sup>1,1</sup>=4 Kähler moduli dynamically "
-                "fixes geometric parameters, deriving ε ≈ 0.2257 (Cabibbo angle) "
+                "fixes geometric parameters, deriving ε ≈ 0.2257 (racetrack variant of the Cabibbo angle; canonical e^{-3/2} = 0.22313) "
                 "without free parameters."
             ),
             "thermal_time": (
@@ -828,7 +828,7 @@ class IntroductionV16(SimulationBase):
                     "stabilization. <strong>Section 3 (Cosmological Results)</strong>: Hubble tension, S<sub>8</sub> suppression; "
                     "Planck 2018 and DESI 2025 alignment. <strong>Section 4 "
                     "(CKM/PMNS from G\u2082 Triality)</strong>: Unified CKM and PMNS matrices from G\u2082 triality; "
-                    "Yukawa hierarchies (\u03b5 = 0.2257 from racetrack); mixing angle derivations. "
+                    "Yukawa hierarchies (racetrack variant \u03b5 = 0.2257; canonical e^{-3/2} = 0.22313); mixing angle derivations. "
                     "<strong>Section 5 (Dark Energy Attractor)</strong>: w\u2080 = -1 + 1/b\u2083 = -23/24, w\u2090 \u2248 -0.204 derived; "
                     "breathing dark energy potential. "
                     "<strong>Section 6 (Baryon Asymmetry)</strong>: Baryon asymmetry from G\u2082 cycles and Jarlskog invariant. "
@@ -977,7 +977,13 @@ class IntroductionV16(SimulationBase):
                     "second time — where an extra spacelike dimension would instead permit superluminal "
                     "shortcuts — which is the mechanism PM invokes for inter-shadow correlation. This yields a "
                     "falsifiable signature: Bell-type correlations between cross-shadow pairs (SPECULATIVE; "
-                    "see the falsification program).</p>"
+                    "see the falsification program). No <em>third</em> bulk time is needed for a shared clock: "
+                    "the Sp(2,ℝ)-invariant combination t₊ = (t₁+t₂)/√2 survives gauge fixing as the common "
+                    "time along which the OR reduction balances the 12 bridge pairs, while the relative time "
+                    "t₋ = (t₁−t₂)/√2 is pure gauge. A literal third timelike direction would give "
+                    "D = 27 ≠ D_crit = 26, destroy the Weyl chirality of Cl(24,2) (odd-dimensional Clifford "
+                    "algebras admit no chiral spinors), and fall outside the Sp(2,ℝ) two-time theorem, which "
+                    "singles out exactly two times.</p>"
                 ),
                 label="historical-two-time-context"
             ),
@@ -1133,7 +1139,7 @@ class IntroductionV16(SimulationBase):
                 "structure (24,2) = 12\u00d7(2,0) + S<sup>(2,0)</sup> + (0,1)\u2014with 12 bridge pairs warping to create dual 13D(12,1) shadows\u2014"
                 "eliminating ghost modes while preserving phenomenological richness. Compactification occurs "
                 "on a TCS (Twisted Connected Sum) G\u2082 manifold with h<sup>1,1</sup>=4 K\u00e4hler moduli sectors, enabling "
-                "racetrack moduli stabilization that dynamically derives \u03b5 \u2248 0.2257 (the Cabibbo angle) without "
+                "racetrack moduli stabilization that dynamically derives \u03b5 \u2248 0.2257 (racetrack variant of the Cabibbo angle; canonical e^{-3/2} = 0.22313) without "
                 "tuning. The Primordial Spinor Field-Vielbein bridge validates metric emergence from spinor bilinears with "
                 "Lorentzian signature (-,+,+,+). Key predictions include w\u2080 = -1 + 1/b\u2083 = -23/24 and w\u2090 \u2248 -0.204, "
                 "consistent with DESI 2025 thawing observations."

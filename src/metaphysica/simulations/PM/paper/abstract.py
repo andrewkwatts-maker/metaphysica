@@ -716,13 +716,15 @@ class AbstractV17_2(SimulationBase):
             Parameter(
                 path="abstract.tau_p_bound_display",
                 name="Proton Lifetime Super-K Bound Display",
-                no_experimental_value=False,
                 units="1e34_years",
-                description="Super-Kamiokande lower bound on proton lifetime in units of 10^34 years",
-                experimental_bound=1.67,
-                bound_type="lower",
-                bound_source="SuperK2020",
+                description=(
+                    "Super-Kamiokande lower bound on proton lifetime in units "
+                    "of 10^34 years (display echo of the experimental bound "
+                    "itself; the prediction proton_decay.lifetime_years is "
+                    "validated against it separately)"
+                ),
                 status="SYSTEM",
+                no_experimental_value=True,
                 eml_description="EML: eml_scalar(1.67) — Super-K lower bound on τ_p in units of 10³⁴ yr (PDG 2024 input)"
             ),
             Parameter(

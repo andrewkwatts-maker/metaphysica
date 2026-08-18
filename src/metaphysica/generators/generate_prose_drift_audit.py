@@ -111,14 +111,37 @@ def run_audit() -> Dict[str, Any]:
     # 0.57 is LEGITIMATE as alpha_sample — flag only when presented as
     # alpha_leak; 0.2257 is legitimate as the labelled racetrack variant —
     # flag only when unannotated (no canonical cross-reference nearby).
+    # Prose that already labels a stale/variant value is not drift: the
+    # auditor hunts UNlabelled quotes. Generic label vocabulary first, then
+    # per-token context keys.
+    _LABEL_KEYS = ("superseded", "retired", "falsified", "canonical",
+                   "variant", "calibrated", "historical", "formerly")
+    _TOKEN_KEYS = {
+        "0.2257": ("0.22500", "e^{-3/2}", "0.22313"),
+        "0.57": ("ansatz", "alpha_sample", "sample"),
+        "8.33": ("%", "24/288", "ghost", "octonionic estimate"),
+        "0.9996": ("8.3", "planck"),
+        "0.967": ("0.9667",),
+        "9.5941": ("nufit",),
+        "76.34": ("sh0es",),
+        "70.42": ("sh0es", "sterile", "combined"),
+        "125.10": ("input", "pdg 2024"),
+        "125.25": ("pdg 2024:",),
+        "0.23189": ("0.23122", "tree-level", "scheme"),
+        "-0.980": ("-23/24", "attractor"),
+    }
+
     def _is_real_hit(token: str, context: str) -> bool:
         c = context.lower()
+        if any(k in c for k in _LABEL_KEYS):
+            return False
+        for key in _TOKEN_KEYS.get(token, ()):
+            if key.lower() in c:
+                return False
         if token == "0.57":
-            return "leak" in c and "sample" not in c
-        if token == "0.2257":
-            return not any(k in c for k in ("canonical", "variant", "calibrated", "e^{-3/2}", "0.22313", "superseded"))
+            return "leak" in c
         if token in _MIGRATION_TOKENS:
-            return not any(k in c for k in ("superseded", "retired", "two-time", "sampler-pair formulation", "formerly"))
+            return not any(k in c for k in ("two-time", "sampler-pair formulation"))
         return True
 
     hits: List[Dict[str, Any]] = []

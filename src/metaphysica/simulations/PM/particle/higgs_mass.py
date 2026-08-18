@@ -595,11 +595,12 @@ class HiggsMassSimulation(SimulationBase):
                         "This demonstrates that while the framework provides a concrete "
                         "mechanism connecting the Higgs mass to moduli stabilization, the "
                         "experimentally measured value serves as a phenomenological constraint "
-                        "on the compactification geometry. The 27-sigma tension with the PDG "
-                        "2024 combined value m_h = 125.25 +/- 0.17 GeV is consistent with "
-                        "missing two-loop QCD corrections to the effective potential, which "
-                        "typically shift the predicted Higgs mass upward by 3 to 5 GeV in "
-                        "MSSM-like scenarios (see Sensitivity Analysis notes)."
+                        "on the compactification geometry. The retired 120.6 GeV output sat "
+                        "27 sigma from experiment; the current output m_h = 125.10 GeV sits "
+                        "0.9 sigma below the PDG 2024 combined value 125.20 +/- 0.11 GeV, "
+                        "with missing two-loop QCD corrections (typically +3 to 5 GeV in "
+                        "MSSM-like scenarios) the leading systematic (see Sensitivity "
+                        "Analysis notes)."
                     )
                 ),
             ],

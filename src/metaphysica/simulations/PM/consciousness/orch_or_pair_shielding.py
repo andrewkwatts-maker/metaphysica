@@ -962,6 +962,12 @@ if _SCHEMA_AVAIL:
                 },
             ]
 
+        def run_eml(self, registry: 'PMRegistry'):
+            """EML Math path mirrors run(): the EML representation lives
+            in the section text and the computed parameter values are
+            identical between Normal Math and EML Math modes."""
+            return self.run(registry)
+
         def get_learning_materials(self):
             """Return learning materials."""
             return [
@@ -1074,14 +1080,3 @@ if _SCHEMA_AVAIL:
                 ),
             ]
 
-
-    def run_eml(self, registry: 'PMRegistry') -> Dict[str, Any]:
-        """
-        EML Math computation path.
-
-        This simulation produces consciousness outputs. The EML Math representation
-        for this module is in the section text via <EML>...</EML> blocks in
-        get_section_content(). The computed parameter values are identical
-        between Normal Math and EML Math modes.
-        """
-        return self.run(registry)

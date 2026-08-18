@@ -981,7 +981,7 @@ if SCHEMA_AVAILABLE:
                     "practice as driving stochastic unlocking with coherence enhancement."
                 ),
                 section_id="7",
-                subsection_id="7.4"
+                subsection_id="7.7"
             )
 
         @property
@@ -1022,7 +1022,7 @@ if SCHEMA_AVAILABLE:
             """Return section content for paper."""
             return SectionContent(
                 section_id="7",
-                subsection_id="7.4",
+                subsection_id="7.7",
                 title="Gnosis Unlocking: Progressive Pair Activation (6→12)",
                 abstract=(
                     "Models progressive activation of consciousness channels from "

@@ -355,11 +355,12 @@ class PMRegistry:
                             validation_status = "FAIL"
 
                 elif bound_type == "lower":
-                    # Theory must exceed lower bound.
-                    # One-sided bounds have no experimental sigma: store the
-                    # relative margin (theory-exp)/exp separately and leave
-                    # sigma_deviation = None.
-                    if theory_val > exp_val:
+                    # Theory must meet or exceed the lower bound (equality
+                    # satisfies it; margin 0 is a pass, e.g. a display echo
+                    # of the bound itself). One-sided bounds have no
+                    # experimental sigma: store the relative margin
+                    # (theory-exp)/exp separately, sigma_deviation = None.
+                    if theory_val >= exp_val:
                         validation_status = "PASS"
                         relative_margin = (theory_val - exp_val) / exp_val if exp_val != 0 else None
                     else:
@@ -368,8 +369,8 @@ class PMRegistry:
                     sigma_deviation = None
 
                 elif bound_type == "upper":
-                    # Theory must be below upper bound (same margin convention).
-                    if theory_val < exp_val:
+                    # Theory must not exceed the upper bound (equality passes).
+                    if theory_val <= exp_val:
                         validation_status = "PASS"
                         relative_margin = (exp_val - theory_val) / exp_val if exp_val != 0 else None
                     else:

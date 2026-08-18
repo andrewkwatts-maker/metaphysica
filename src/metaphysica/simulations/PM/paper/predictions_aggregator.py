@@ -180,7 +180,7 @@ class PredictionsAggregatorV16(SimulationBase):
             },
             "cabibbo_angle": {
                 "parameter": "sin θ<sub>C</sub> (ε)",
-                "prediction": "0.2257 (racetrack moduli)",
+                "prediction": "0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313)",
                 "experiment": "PDG 2024",
                 "measured": "0.22500 ± 0.00067",
                 "agreement": "Exact match (central value)",
@@ -350,7 +350,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 "category": "Particle Physics",
                 "observable": "Cabibbo Angle sin θ<sub>C</sub>",
                 "pm_value": 0.2257,
-                "pm_value_formatted": "0.2257 (racetrack stabilization)",
+                "pm_value_formatted": "0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313)",
                 "experimental_value": 0.22500,
                 "experimental_error": 0.0010,
                 "sigma_deviation": 0.0,
@@ -679,7 +679,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "The complete Kaluza-Klein tower follows the characteristic spacing pattern from two "
                     "shared dimensions: m<sub>KK,n,m</sub> = √(n² + m²) × M<sub>KK</sub> where M<sub>KK</sub> ≈ 4.5 TeV is derived. "
                     "v24.2 Derivation: M<sub>KK</sub> is derived geometrically via k<sub>eff</sub> = b₃/(2+ε) ≈ 10.80, where "
-                    "ε ≈ 0.2257 is the dynamically derived Cabibbo angle from the racetrack superpotential "
+                    "ε ≈ 0.2257 is the racetrack variant of the Cabibbo angle (canonical e^{-3/2} = 0.22313) from the racetrack superpotential "
                     "(T<sub>min</sub> minimization → ε). This gives M<sub>KK</sub> = M<sub>Pl</sub> × exp(−k<sub>eff</sub> π) ≈ 4.5 TeV without "
                     "circular inputs."
                 )
@@ -1122,13 +1122,13 @@ class PredictionsAggregatorV16(SimulationBase):
                     ["Σm<sub>ν</sub>", "0.060 eV", "NOT UNIQUE", "From oscillation data + m₁ → 0; standard result"],
                     ["n<sub>gen</sub> = 3", "χ<sub>eff</sub>/48 = 144/48", "DERIVED", "Genuine prediction from 𝔻 framework formula"],
                     ["Normal Hierarchy", "m₁ < m₂ < m₃", "PREDICTION", "Only genuinely unique falsifiable prediction"],
-                    ["CKM parameters (v24.2)", "ε = 0.2257, δ<sub>CP</sub> = π/2, J = 3.06 × 10⁻⁵", "DERIVED", "From racetrack superpotential minimization (ε), cycle orientations (δ<sub>CP</sub>), geometric computation (J)"],
+                    ["CKM parameters (v24.2)", "ε = 0.2257 (racetrack variant; canonical e^{-3/2}), δ<sub>CP</sub> = π/2, J = 3.06 × 10⁻⁵", "DERIVED", "From racetrack superpotential minimization (ε), cycle orientations (δ<sub>CP</sub>), geometric computation (J)"],
                 ]
             ),
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>v24.2 CKM Breakthrough:</strong> Cabibbo angle ε = 0.2257 is now <em>derived</em> from racetrack superpotential minimization (not an input parameter). CP phase δ<sub>CP</sub> = π/2 (maximal) emerges from cycle orientations. Jarlskog invariant J = 3.06 × 10⁻⁵ computed geometrically from CKM structure.",
+                    "<strong>v24.2 CKM Breakthrough:</strong> Cabibbo angle racetrack variant ε = 0.2257 (canonical e^{-3/2} = 0.22313) is <em>derived</em> from racetrack superpotential minimization (not an input parameter). CP phase δ<sub>CP</sub> = π/2 (maximal) emerges from cycle orientations. Jarlskog invariant J = 3.06 × 10⁻⁵ computed geometrically from CKM structure.",
                     "<strong>DESI Compatibility:</strong> Both w₀ = −23/24 (from MEP) and w<sub>a</sub> = −0.75 (from unified time dynamics) are now derived. The w<sub>a</sub> value is consistent with DESI 2025 (thawing) observations.",
                     "<strong>Neutrino Mass Sum is NOT Unique:</strong> Any model predicting NH + minimal m₁ gives Σm<sub>ν</sub> ≈ 0.06 eV. This value has no discriminatory power.",
                     "<strong>Mirror Sector Predictions:</strong> The unified time framework introduces qualitative predictions for the mirror sector, testable via precision cosmology (Euclid, Roman).",
@@ -1206,7 +1206,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     ["Neutrino mixing", "✓ CONFIRMED", "NuFIT 6.0: all angles 0.00–0.24σ"],
                     ["Fermion generations", "✓ CONFIRMED", "n<sub>gen</sub> = 3 (exact from χ<sub>eff</sub>/48)"],
                     ["Dark matter ratio", "✓ CONFIRMED", "Planck 2018: Ω<sub>DM</sub>/Ω<sub>b</sub> = 5.38 ± 0.15 vs 5.4"],
-                    ["CKM parameters", "✓ CONFIRMED", "ε = 0.2257, within 0.1σ (v24.2 derived)"],
+                    ["CKM parameters", "✓ CONFIRMED", "ε = 0.2257 racetrack variant, ≈1.1σ vs PDG 2024 0.22500 (canonical e^{-3/2} = 0.22313)"],
                     ["Proton decay", "⊙ CONSISTENT", "τ<sub>p</sub> = 8.15 × 10³⁴ yr (4.9× Super-K bound)"],
                     ["Neutrino hierarchy", "⊙ PREDICTED", "Normal hierarchy (76% confidence) — JUNO/DUNE 2027–2030"],
                     ["KK gravitons", "○ UNTESTED", "m<sub>KK</sub> = 5.0 TeV — HL-LHC searches 2029–2030"],
@@ -1239,7 +1239,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "| Gravity (gravitons) | ~0.00248 | ~4.27 × 10⁻⁸ | Testable |\n\n"
                     "Strong force leakage is impossible (confinement + instanton cost S<sub>inst</sub> \u2248 80). "
                     "Weak force leakage is impossible (mass barrier m<sub>W</sub> r<sub>bridge</sub> ~ 10\u2075). "
-                    "EM and gravity leak at ~230\u00d7 weaker than dark matter portal (~0.57)."
+                    "EM and gravity leak at ~230\u00d7 weaker than the dark matter portal (\u03b1_sample ~ 0.57, ANSATZ)."
                 )
             ),
             # ===== TOPIC 12: EXPERIMENTAL DETECTION & FALSIFIABILITY =====
