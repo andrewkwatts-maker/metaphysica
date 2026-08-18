@@ -6,14 +6,14 @@ DOI: 10.5281/zenodo.18079602
 
 Licensed under the MIT License. See LICENSE file for details.
 
-v24.2: M^{27}(24,1,2) structure with S^(2,0) sampler data fields.
-       4096-component Primordial Spinor Field from Cl(26,1).
+v24.2: M^{26}(24,2) structure with two shadow-time directions.
+       4096-component Primordial Spinor Field from Cl(24,2).
        Dual 13D(12,1) shadows with OR reduction operator R_perp.
 
 Provides section content for the Abstract (Section 0).
 
 This simulation provides the abstract narrative for Principia Metaphysica v24.2,
-the M^{27}(24,1,2) dual-shadow framework with Euclidean bridge where 125 physical
+the M^{26}(24,2) dual-shadow framework with Euclidean bridge where 125 physical
 constants are proposed to emerge as spectral residues of G2 manifold compactification. It does
 not compute physics parameters, but instead generates the narrative content and
 cross-references for the paper's abstract section.
@@ -92,8 +92,8 @@ class AbstractV17_2(SimulationBase):
     Abstract section (Section 0) for Principia Metaphysica v24.2.
 
     This simulation provides the abstract narrative content that summarizes
-    the M^{27}(24,1,2) dual-shadow framework with Euclidean bridge. It describes
-    the dimensional descent from 27D ancestral bulk through dual 13D(12,1)
+    the M^{26}(24,2) dual-shadow framework with Euclidean bridge. It describes
+    the dimensional descent from 26D ancestral bulk through dual 13D(12,1)
     shadows to observable 4D via G2 compactification, yielding exactly 3
     fermion generations from n_gen = chi_eff/(2*b3) = 144/48 = 3.
 
@@ -116,7 +116,7 @@ class AbstractV17_2(SimulationBase):
             version="24.2",
             domain="abstract",
             title="Abstract",
-            description="Paper abstract for Principia Metaphysica v24.2 M^{27}(24,1,2) dual-shadow framework with Euclidean bridge - 125 spectral residues from G2 compactification with EDOF=3 (1 geometric + 2 calibrations)",
+            description="Paper abstract for Principia Metaphysica v24.2 M^{26}(24,2) dual-shadow framework with Euclidean bridge - 125 spectral residues from G2 compactification with EDOF=3 (1 geometric + 2 calibrations)",
             section_id="0",
             subsection_id=None
         )
@@ -218,7 +218,7 @@ class AbstractV17_2(SimulationBase):
 
         return {
             # Dimensional aliases (canonical paths for HTML data-pm-value attributes)
-            "dimensions.D_bulk":               27,   # Total manifold dimensions M^{27}(24,1,2)
+            "dimensions.D_bulk":               26,   # Total manifold dimensions M^{26}(24,2)
             "dimensions.D_G2":                 7,    # G₂ compactification manifold dimension
             "dimensions.D_physics":            24,   # Physics core (12×(2,0) bridge pairs)
             # Ten Pillar Seed display aliases (for HTML display of canonical seeds)
@@ -261,7 +261,7 @@ class AbstractV17_2(SimulationBase):
             # theta_23 IO comparison
             "abstract.theta23_io_central":     theta23_io,                     # 49.3
             # ALP Principia Metric (falsifiability kill-switch — BabyIAXO 2028)
-            "alp.mass_meV":                    3.51,      # 3.51 meV ALP mass from M²⁷ → M⁴ vacuum residue
+            "alp.mass_meV":                    3.51,      # 3.51 meV ALP mass from M²⁶ → M⁴ vacuum residue
             "alp.coupling_GeV_inv":            "10⁻¹¹",  # g_aγγ ~ 10⁻¹¹ GeV⁻¹ from EIS-photon coupling
             "alp.coupling_GeV_inv_value":      "2.9×10⁻¹¹",  # Refined g_aγγ from EIS-photon coupling (BabyIAXO 2028 reachable)
             # v25.0+v26.0 closure ledger (Sprint 6 / S5.10)
@@ -315,14 +315,14 @@ class AbstractV17_2(SimulationBase):
                 content=(
                     'We introduce a candidate mathematical model that proposes geometric expressions for <span class="pm-value" data-pm-value="abstract.total_constants">125</span> physical '
                     'constants and cosmological observables from the topological invariants of a '
-                    '<span class="pm-value" data-pm-value="dimensions.D_bulk">27</span>-dimensional manifold '
-                    '<strong>M<sup>27</sup>(24,1,2)</strong>\u2014where <em>24</em> denotes the G\u2082 physics core '
+                    '<span class="pm-value" data-pm-value="dimensions.D_bulk">26</span>-dimensional manifold '
+                    '<strong>M<sup>26</sup>(24,2)</strong>\u2014where <em>24</em> denotes the G\u2082 physics core '
                     '(12\u00d7(2,0) bridge pairs creating dual 13D shadows), <em>1</em> the unified timelike fiber T\u00b9, '
-                    'and <em>2</em> the <strong>sampler data fields</strong> S<sup>(2,0)</sup> '
+                    'and <em>2</em> the <strong>shadow-time directions</strong> S<sup>(2,0)</sup> '
                     '(an architecturally separate Euclidean sector providing global cross-shadow averaging). '
                     '<strong>Principia Metaphysica <span class="pm-value" data-pm-value="framework.version_label">v24.2</span></strong> '
                     'proposes a dual-shadow structure where the unified time is intended to eliminate ghosts/CTCs, and the '
-                    'sampler data fields S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) are used to model '
+                    'shadow-time directions S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) are used to model '
                     'coherent cross-shadow objective reduction (OR). Each shadow compactifies on G\u2082(7,0) to '
                     '<span class="pm-value" data-pm-value="dimensions.D_observable">4</span>D, yielding '
                     'exactly three chiral fermion generations from n<sub>gen</sub> = \u03c7<sub>eff</sub>/(2\u00b7b\u2083) = '
@@ -399,7 +399,7 @@ class AbstractV17_2(SimulationBase):
                     '<strong>Topologically Anchored Framework (131:1 Compression)</strong>: '
                     'We frame this proposed derivation through the lens of Minimal Description Length (MDL). '
                     'The 125 observed constants \u2014 extended to 138 after the candidate v25.0+v26.0 additions \u2014 are '
-                    'proposed as an efficient topological compression of the M<sup>27</sup> bulk, '
+                    'proposed as an efficient topological compression of the M<sup>26</sup> bulk, '
                     'targeting <strong>EDOF=3</strong> (1 geometric seed b\u2083 + 2 calibrations: VEV coefficient, Re(T)). '
                     'The computational implementation proposes a <strong>~131:1 compression ratio</strong> (\u224810,500 bits \u2192 69 bits, per S5.10) &mdash; '
                     'this is a model-internal information-theoretic artifact, not an independently validated result. '
@@ -426,7 +426,7 @@ class AbstractV17_2(SimulationBase):
                 content=(
                     '<strong>Two-Layer Objective Reduction</strong>: '
                     'The theory introduces a hierarchical two-layer OR structure: '
-                    '(i) Bridge/Global OR (R<sub>\u22a5</sub><sup>global</sup>) creates dual shadows from the 27D bulk via tensor product '
+                    '(i) Bridge/Global OR (R<sub>\u22a5</sub><sup>global</sup>) creates dual shadows from the 26D bulk via tensor product '
                     'of 12 M\u00f6bius double-cover operators, and '
                     '(ii) Face/Local OR (R<sub>face</sub><sup>(f)</sup>) selects the visible sector within each shadow from 4 K\u00e4hler '
                     'moduli faces. The master action explicitly captures both layers through warping potentials '
@@ -448,7 +448,7 @@ class AbstractV17_2(SimulationBase):
                     '<strong>The Principia Metric</strong>: '
                     'Finally, we present a testable prediction: the existence of a '
                     'topologically induced Axion-Like Particle (ALP) at m<sub>a</sub> = <span class="pm-value" data-pm-value="alp.mass_meV">3.51</span> meV. '
-                    'This "Principia Metric" is predicted to arise from the vacuum residue of the M<sup>27</sup> \u2192 M<sup>4</sup> projection '
+                    'This "Principia Metric" is predicted to arise from the vacuum residue of the M<sup>26</sup> \u2192 M<sup>4</sup> projection '
                     'and the Euclidean Information Sector (S<sub>EIS</sub>) coupling to the photon field, with '
                     'g<sub>a\u03b3\u03b3</sub> \u2248 <span class="pm-value" data-pm-value="alp.coupling_GeV_inv_value">2.9\u00d710\u207b\u00b9\u00b9</span> GeV\u207b\u00b9. '
                     'The single falsifiable axion prediction (m<sub>a</sub> \u2248 '
@@ -467,7 +467,7 @@ class AbstractV17_2(SimulationBase):
             abstract=(
                 "Unified mathematical framework proposing geometric expressions for 125 fundamental "
                 "physical constants and cosmological observables as spectral residues of a "
-                "M^{27}(24,1,2) dual-shadow G2 manifold compactification with Euclidean bridge. "
+                "M^{26}(24,2) dual-shadow G2 manifold compactification with Euclidean bridge. "
                 "Predicts 26 Standard Model parameters (24 within 1-sigma) and proton "
                 "decay lifetime testable by Hyper-K. All derivation chains recorded in "
                 "reproducibility certificates."
@@ -527,10 +527,10 @@ class AbstractV17_2(SimulationBase):
             Formula(
                 id="abstract-framework-overview",
                 label="(0.1)",
-                latex=r"M^{27}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3",
-                plain_text="M^{27}(24,1,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (2*b3) = 144/48 = 3",
+                latex=r"M^{26}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3",
+                plain_text="M^{26}(24,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (2*b3) = 144/48 = 3",
                 category="DERIVED",
-                description="Framework overview: the M^{27}(24,1,2) ancestral bulk decomposes as T^1 (unified time) x S^(2,0) (sampler data fields) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 27D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(2*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
+                description="Framework overview: the M^{26}(24,2) ancestral bulk decomposes as T^1 (unified time) x S^(2,0) (shadow-time directions) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 26D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(2*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
                 eml_tree_str="ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b3_leaf()))",
                 eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\; \mathrm{ops.mul}(\mathrm{eml\_scalar}(2),\; \mathrm{b3\_leaf}()))",
                 eml_description="EML: n_gen = ops.div(chi_eff=144, ops.mul(2, b3_leaf())) — generation count as ratio of topological integers (Sprint T1.7: 4·b3 → 2·b3 LaTeX/EML fix consistent)",
@@ -538,7 +538,7 @@ class AbstractV17_2(SimulationBase):
                 output_params=["topology.n_gen"],
                 derivation={
                     "steps": [
-                        {"description": "Start from M^{27}(24,1,2) ancestral bulk: the single time dimension (0,1) is shared by both shadows, 12 bridge pairs B_i^(2,0) each contribute 2 spatial dimensions, and S^(2,0) provides the sampler data fields", "formula": r"M^{27} = T^1 \times S^{(2,0)} \times_{\text{fiber}} \bigoplus_{i=1}^{12} B_i^{(2,0)}"},
+                        {"description": "Start from M^{26}(24,2) ancestral bulk: the single time dimension (0,1) is shared by both shadows, 12 bridge pairs B_i^(2,0) each contribute 2 spatial dimensions, and S^(2,0) provides the shadow-time directions", "formula": r"M^{26} = T^1 \times S^{(2,0)} \times_{\text{fiber}} \bigoplus_{i=1}^{12} B_i^{(2,0)}"},
                         {"description": "OR reduction: each bridge pair B_i^(2,0) admits a Moebius double-cover operator R_perp^i (satisfying R_perp^2 = -I) that selects one coordinate for Shadow_Aleph and the complementary coordinate for Shadow_Beth, yielding 12 spatial dims per shadow + 1 shared time = 13D(12,1) each", "formula": r"R_\perp^{\text{full}} = \bigotimes_{i=1}^{12} R_\perp^i \;\Rightarrow\; 2 \times 13\text{D}(12,1)"},
                         {"description": "G2 compactification: each 13D shadow compactifies 9 dimensions on a 7D TCS G2 holonomy manifold V7 (Ricci-flat, b3=24 associative 3-cycles, h^{1,1}=4 Kaehler moduli sectors giving 4 face partitions), reducing to 4D with Spin(3,1) Lorentz symmetry", "formula": r"13\text{D}(12,1) \;\xrightarrow{G_2}\; 4\text{D}(3,1) \times V_7"},
                         {"description": "Generation count from index theorem on V7: effective Euler characteristic chi_eff = 144 (from TCS topology #187) divided by 2*b3 = 48 gives exactly 3 chiral fermion generations per shadow, with no free parameter (Sprint 2.9 LaTeX fix: 4·b₃ → 2·b₃)", "formula": r"n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3"},
@@ -552,9 +552,9 @@ class AbstractV17_2(SimulationBase):
                     ]
                 },
                 terms={
-                    "M^{27}(24,1,2)": "27-dimensional ancestral bulk with structure (24 physics core, 1 temporal, 2 sampler data fields), decomposed as 12x(2,0) bridge pairs + (0,1) unified time + S^(2,0) sampler data fields",
+                    "M^{26}(24,2)": "26-dimensional ancestral bulk with structure (24 physics core, 1 temporal, 2 shadow-time directions), decomposed as 12x(2,0) bridge pairs + (0,1) unified time + two shadow-time directions",
                     "13D(12,1)": "13-dimensional observable shadow with signature (12 spatial from bridge, 1 shared temporal); each shadow compactifies independently on G2",
-                    "S^(2,0)": "2-dimensional sampler data fields with positive-definite metric ds^2 = ds_1^2 + ds_2^2 enabling cross-shadow coherence via OR reduction",
+                    "S^(2,0)": "2-dimensional shadow-time directions with positive-definite metric ds^2 = ds_1^2 + ds_2^2 enabling cross-shadow coherence via OR reduction",
                     "n_gen": "Number of chiral fermion generations per shadow, topologically fixed at 3",
                     "chi_eff": "Effective Euler characteristic of the G2 manifold (chi_eff = 144), computed from TCS topology #187",
                     "b_3": "Third Betti number of the G2 manifold V7; 4*b_3 = 48 appears in the generation formula denominator",
@@ -776,9 +776,9 @@ class AbstractV17_2(SimulationBase):
                 name="ALP Mass (Principia Metric)",
                 no_experimental_value=True,
                 units="meV",
-                description="Axion-Like Particle mass from M²⁷ → M⁴ vacuum residue - the primary falsifiability kill-switch for the G₂ compactification framework (PREDICTED: awaiting IAXO/BabyIAXO 2025-2028)",
+                description="Axion-Like Particle mass from M²⁶ → M⁴ vacuum residue - the primary falsifiability kill-switch for the G₂ compactification framework (PREDICTED: awaiting IAXO/BabyIAXO 2025-2028)",
                 status="PREDICTED",
-                eml_description="EML: eml_scalar(3.51) — ALP mass in meV from M²⁷ → M⁴ vacuum residue (Principia Metric kill-switch)"
+                eml_description="EML: eml_scalar(3.51) — ALP mass in meV from M²⁶ → M⁴ vacuum residue (Principia Metric kill-switch)"
             ),
             Parameter(
                 path="alp.coupling_GeV_inv",
@@ -932,7 +932,7 @@ class AbstractV17_2(SimulationBase):
                 name="Bulk Spacetime Dimension",
                 no_experimental_value=True,
                 units="dimensionless",
-                description="Total ancestral bulk dimension M^{27}(24,1,2) = 24 physics core + 1 time + 2 sampler fields",
+                description="Total ancestral bulk dimension M^{26}(24,2) = 24 physics core + 1 time + 2 sampler fields",
                 status="GEOMETRIC",
                 eml_description="EML: eml_scalar(27.0) — ancestral manifold dimension D_bulk = 24+1+2 = 27"
             ),
@@ -1142,7 +1142,7 @@ class AbstractV17_2(SimulationBase):
             },
             {
                 "id": "CERT_ABSTRACT_KEY_TERMS",
-                "assertion": "Abstract references key framework terms (27D, G2, dual-shadow, 125 constants, certificates)",
+                "assertion": "Abstract references key framework terms (26D, G2, dual-shadow, 125 constants, certificates)",
                 "condition": f"all key terms present: {has_key_terms}",
                 "tolerance": "exact",
                 "status": "PASS" if has_key_terms else "FAIL",
@@ -1336,7 +1336,7 @@ class AbstractV17_2(SimulationBase):
                     "formula_count": len(formulas),
                     "reference_count": len(refs),
                     "section_type": "narrative_abstract",
-                    "note": "Paper abstract for Principia Metaphysica v24.2 M^{27}(24,1,2) dual-shadow framework"
+                    "note": "Paper abstract for Principia Metaphysica v24.2 M^{26}(24,2) dual-shadow framework"
                 }
             },
         ]

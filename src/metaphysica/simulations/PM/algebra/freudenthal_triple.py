@@ -1,8 +1,8 @@
 """
-Freudenthal Triple System — 27D Pneuma Condensate
+Freudenthal Triple System — 26D Pneuma Condensate
 ===================================================
 
-The 27D Pneuma condensate in M²⁷(24,1,2) is identified with elements of the
+The 26D Pneuma condensate in M²⁶(24,2) is identified with elements of the
 Freudenthal triple system over the exceptional Jordan algebra J₃(𝕆): 3×3
 Hermitian matrices over the octonions with 27 real degrees of freedom.
 
@@ -50,7 +50,7 @@ class FreudenthalTripleSimulation(SimulationBase):
             id="freudenthal_triple_v1_0",
             version="1.0",
             domain="algebra",
-            title="Freudenthal Triple System (27D Pneuma Condensate)",
+            title="Freudenthal Triple System (26D Pneuma Condensate)",
             description="J₃(𝕆) cubic norm and quartic invariant from the 27D Pneuma condensate",
             section_id="A2",
             appendix=True,
@@ -213,7 +213,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                         "The Freudenthal triple system T(J) is the Jordan algebra J ⊕ J* equipped with a symplectic form",
                         "The triple product {x,y,z} is defined from the trilinear form of the cubic norm N",
                         "Linearizing: {x,y,z}_i = ⟨x,y⟩_J z_i + ⟨z,y⟩_J x_i − ⟨x,z⟩_J y_i",
-                        "This structure governs the Pneuma field three-point functions in M²⁷",
+                        "This structure governs the Pneuma field three-point functions in M²⁶",
                     ],
                     "references": ["Brown, R.B. (1969) 'Groups of type E7'. J. Reine Angew. Math. 236, 79–102"],
                 },
@@ -278,11 +278,11 @@ class FreudenthalTripleSimulation(SimulationBase):
         quartic = (trace ** 2 * (3.0 * condensate_scale ** 2)) / 4.0
 
         blocks = [
-            ContentBlock(type="heading", content="Freudenthal Triple System and the 27D Pneuma Condensate", level=2),
+            ContentBlock(type="heading", content="Freudenthal Triple System and the 26D Pneuma Condensate", level=2),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The 27-dimensional Pneuma condensate in the M²⁷(24,1,2) bulk is identified with "
+                    "The 27-dimensional Pneuma condensate in the M²⁶(24,2) bulk is identified with "
                     "an element of the Freudenthal triple system over the exceptional Jordan algebra "
                     "J₃(𝕆): 3×3 Hermitian matrices over the octonions. "
                     "This 27-dimensional algebra has dimension 3 + 3×8 = 27, matching the bulk dimension exactly."
@@ -317,7 +317,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         return SectionContent(
             section_id="A2",
             subsection_id=None,
-            title="Freudenthal Triple System: 27D Pneuma Condensate",
+            title="Freudenthal Triple System: 26D Pneuma Condensate",
             abstract="The exceptional Jordan algebra J₃(𝕆) models the 27D Pneuma condensate; "
                      "its cubic norm encodes the racetrack potential and its quartic invariant "
                      "gives the ALP mass scale.",

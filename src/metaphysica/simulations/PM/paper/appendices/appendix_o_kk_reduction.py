@@ -16,8 +16,8 @@ dimensional chain with 12x(2,0) paired bridges.
 
 v24.2 KEY DIMENSIONAL CASCADE:
 =============================
-    Level 0: 27D (24,1,2) Ancestral bulk - UNIFIED TIME
-    Level 1: M^{27}(24,1,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0} - 12 PAIRS + SAMPLER DATA FIELDS
+    Level 0: 26D (24,2) Ancestral bulk - UNIFIED TIME
+    Level 1: M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0} - 12 PAIRS + SAMPLER DATA FIELDS
              24 G2 dimensions decompose into 12 × 2D Euclidean pairs
     Level 2: 12×(2,0) + (0,1) WARP to create 2×13D(12,1) shadows
     Level 3: 7D (7,0) per shadow - G2 HOLONOMY (Riemannian)
@@ -34,7 +34,7 @@ Topics covered:
     6. Mass spectrum from internal eigenvalues
     7. Zero modes and massless fields
     8. Generalization to higher dimensions
-    9. The v24.2 Principia chain: 27D -> 12-pair bridges -> 4D
+    9. The v24.2 Principia chain: 26D -> 12-pair bridges -> 4D
     10. Distributed OR Reduction: R_total = ⊗ᵢ R_⊥_i
     11. Aggregate breathing dark energy: ρ_breath = Σᵢ ρ_i
     12. Consistency conditions for truncation
@@ -93,13 +93,13 @@ class AppendixOKKReduction(SimulationBase):
 
     Provides pedagogical derivations of dimensional reduction using an intuitive,
     step-by-step approach -- building from simple examples before generalizing
-    to the full 27D framework.
+    to the full 26D framework.
 
     v24.2 Key Features:
     - 12×(2,0) paired bridges as consciousness channels
     - Distributed OR Reduction: R_total = ⊗ᵢ₌₁¹² R_⊥_i
     - Aggregate breathing dark energy: ρ_breath = Σᵢ ρ_i
-    - Dimension counting: 1 time + 12×2 spatial + 2 central = 27D manifest coords
+    - Dimension counting: 1 time + 12×2 spatial + 2 central = 26D manifest coords
 
     The key insight: Extra dimensions are not exotic - they simply encode
     gauge symmetries geometrically. A particle moving in a circle (compact
@@ -147,7 +147,7 @@ class AppendixOKKReduction(SimulationBase):
             domain="appendices",
             title="Appendix O: Kaluza-Klein Reduction Steps (v24.2)",
             description=(
-                "Pedagogical derivation of v24.2 dimensional reduction from 27D string theory "
+                "Pedagogical derivation of v24.2 dimensional reduction from 26D string theory "
                 "to 4D spacetime via 12 paired (2,0) bridges and G₂ holonomy compactification"
             ),
             section_id="O",
@@ -485,7 +485,7 @@ class AppendixOKKReduction(SimulationBase):
             # O.8 The v24.2 Principia Chain
             ContentBlock(
                 type="heading",
-                content="O.8 The v24.2 Principia Chain: 27D to 4D with 12-Pair Bridges",
+                content="O.8 The v24.2 Principia Chain: 26D to 4D with 12-Pair Bridges",
                 level=3
             ),
             ContentBlock(
@@ -497,7 +497,7 @@ class AppendixOKKReduction(SimulationBase):
             ),
             ContentBlock(
                 type="formula",
-                content=r"M^{27}(24,1,2) = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0} \xrightarrow{\text{G}_2} 4D_{(3,1)}",
+                content=r"M^{26}(24,2) = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0} \xrightarrow{\text{G}_2} 4D_{(3,1)}",
                 formula_id="kk-principia-chain",
                 label="(O.9)"
             ),
@@ -505,7 +505,7 @@ class AppendixOKKReduction(SimulationBase):
                 type="note",
                 content=(
                     "<ul>"
-                    "<li><strong>27D(24,1,2)</strong>: Bosonic string with unified time, 24 G<sub>2</sub> spatial = 12&times;2, 2 sampler data fields</li>"
+                    "<li><strong>26D(24,2)</strong>: Bosonic string with unified time, 24 G<sub>2</sub> spatial = 12&times;2, 2 shadow-time directions</li>"
                     "<li><strong>12 Bridge Pairs</strong>: Each B<sub>i</sub><sup>2,0</sup> enables OR Reduction between normal/mirror shadows "
                     "<Speculation>(interpreted as consciousness channels in the speculative Orch-OR extension)</Speculation></li>"
                     "<li><strong>Distributed OR</strong>: R<sub>total</sub> = &otimes;<sub>i</sub> R<sub>&perp;,i</sub> (tensor product of 12 rotations)</li>"
@@ -661,7 +661,7 @@ class AppendixOKKReduction(SimulationBase):
             abstract=(
                 "Pedagogical derivation of how extra dimensions give rise to gauge fields "
                 "and scalars, from the simplest 5D circle example to the full Principia "
-                "Metaphysica v24.2 12-pair bridge system: 27D -> 12×(2,0) bridges -> 4D."
+                "Metaphysica v24.2 12-pair bridge system: 26D -> 12×(2,0) bridges -> 4D."
             ),
             content_blocks=content_blocks,
             formula_refs=self.FORMULA_REFS,
@@ -880,21 +880,21 @@ class AppendixOKKReduction(SimulationBase):
             Formula(
                 id="kk-principia-chain",
                 label="(O.9)",
-                latex=r"M^{27}(24,1,2) = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0} \xrightarrow{G_2} 4D_{(3,1)}",
-                plain_text="v24.2 chain: 27D(24,1,2) = T^1 x (12 x B^{2,0}) + S^{2,0} -> 4D(3,1)",
+                latex=r"M^{26}(24,2) = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0} \xrightarrow{G_2} 4D_{(3,1)}",
+                plain_text="v24.2 chain: 26D(24,2) = T^1 x (12 x B^{2,0}) + S^{2,0} -> 4D(3,1)",
                 category="ESTABLISHED",
                 description=(
                     "The v24.2 Principia Metaphysica dimensional reduction chain. Starting from "
-                    "27D string theory (1 time + 26 spatial), the 24 G2 dimensions decompose "
+                    "26D string theory (1 time + 26 spatial), the 24 G2 dimensions decompose "
                     "into 12 paired (2,0) Euclidean bridges (consciousness channels), represented "
-                    "as a fiber product over a shared time T^1, with 2 additional sampler data fields "
+                    "as a fiber product over a shared time T^1, with 2 additional shadow-time directions "
                     "dimensions S^{2,0}. Each bridge pair B_i is a 2D Euclidean torus carrying a "
                     "reduction operator R_perp_i. Per-shadow G₂ holonomy compactification then "
                     "reduces each 13D shadow to 4D spacetime, incorporating specific boundary "
                     "conditions from flux quantization."
                 ),
                 terms={
-                    "27D(24,1,2)": "Bosonic string with unified time and sampler data fields",
+                    "26D(24,2)": "Bosonic string with unified time and shadow-time directions",
                     "T^1": "Shared time fiber",
                     "B_i^{2,0}": "12 Euclidean bridge pairs (consciousness channels)",
                     "S^{2,0}": "Sampler data fields dimensions",
@@ -902,10 +902,10 @@ class AppendixOKKReduction(SimulationBase):
                     "4D(3,1)": "Observable Minkowski spacetime",
                 },
                 derivation={
-                    "method": "v24.2 dimensional cascade from 27D bosonic string",
+                    "method": "v24.2 dimensional cascade from 26D bosonic string",
                     "parentFormulas": ["kk-metric-ansatz", "kk-higher-dim"],
                     "steps": [
-                        "Begin with 27D(24,1,2): bosonic string theory with unified time and sampler data fields",
+                        "Begin with 26D(24,2): bosonic string theory with unified time and shadow-time directions",
                         "Decompose 24 G2 dimensions into 12 paired (2,0) Euclidean bridges",
                         "Each bridge pair carries OR reduction operator R_perp_i, warping to 2 x 13D(12,1) shadows",
                         "Per-shadow G2 holonomy compactification: 13D -> 4D(3,1) via TCS construction",
@@ -983,7 +983,7 @@ class AppendixOKKReduction(SimulationBase):
                 ),
                 terms={
                     "M_Pl": "4D Planck mass",
-                    "M_27": "27D fundamental scale",
+                    "M_27": "26D fundamental scale",
                     "V_23": "Volume of 23 compact dimensions (27 -> 4)",
                     "M_7": "7D fundamental scale",
                     "V_G2": "Volume of G_2 manifold (7 -> 4)",
@@ -1314,7 +1314,7 @@ if __name__ == "__main__":
     print("  - 12×(2,0) paired bridges as consciousness channels")
     print("  - Distributed OR: R_total = ⊗ᵢ R_⊥_i (tensor product)")
     print("  - Aggregate breathing: ρ_breath = Σᵢ ρ_i")
-    print("  - Dimension counting: 1 time + 12×2 spatial + 2 central = 27D manifest")
+    print("  - Dimension counting: 1 time + 12×2 spatial + 2 central = 26D manifest")
     print()
     results = sim.run(registry)
     print("Results:")

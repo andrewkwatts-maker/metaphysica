@@ -5,7 +5,7 @@ Higgs Brane-Partition Simulation v21.0 (Demon-Lock)
 
 Licensed under the MIT License. See LICENSE file for details.
 
-v22 COMPATIBILITY: Uses Cl(24,1) Clifford algebra with unified time signature.
+v22 COMPATIBILITY: Uses Cl(24,2) Clifford algebra with unified time signature.
                    4-brane partition from (24,1) bulk symmetry structure.
                    Euclidean bridge enables mirror brane overlap calculation.
 
@@ -178,7 +178,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
     2. The LOCAL Higgs mass (125 GeV) - 4D brane projection
 
     The key insight is that the 26D vacuum tension is EQUIPARTITIONED
-    across the 4 primary 4D branes of the Cl(24,1) Clifford algebra.
+    across the 4 primary 4D branes of the Cl(24,2) Clifford algebra.
 
     Geometric Chain:
         b3 = 24 → k_gimel = b3/2 + 1/π = 12.318
@@ -414,7 +414,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
         # STEP 2: THE BRANE PROJECTION FACTOR
         # ==========================================
         # The 26D bulk partitions into 4 observable 4D branes
-        # (from Cl(24,1) Clifford algebra symmetry: 24 = 4 × 6)
+        # (from Cl(24,2) Clifford algebra symmetry: 24 = 4 × 6)
         #
         # Projection factor = k_gimel / π
         # This is the "torsional correction" from G2 holonomy
@@ -498,9 +498,9 @@ class HiggsBranePartitionSimulation(SimulationBase):
             title="Higgs Mass from 4-Brane Partition",
             abstract=(
                 "We derive the observed Higgs mass (125 GeV) from the 26D bulk vacuum "
-                "tension (414 GeV) via a brane partition mechanism rooted in the Cl(24,1) "
+                "tension (414 GeV) via a brane partition mechanism rooted in the Cl(24,2) "
                 "Clifford algebra structure of the 26D spacetime. The Clifford algebra "
-                "Cl(24,1) naturally admits a graded decomposition whose even subalgebra "
+                "Cl(24,2) naturally admits a graded decomposition whose even subalgebra "
                 "factors into four equivalent 4D brane sectors, providing a mathematical "
                 "justification for partitioning the bulk energy across branes. This resolves "
                 "the apparent hierarchy problem by showing that the observed Higgs mass is "
@@ -537,7 +537,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "However, we observe only a 4D slice of this tension. The Cl(24,1) Clifford "
+                        "However, we observe only a 4D slice of this tension. The Cl(24,2) Clifford "
                         "algebra, which governs the spinorial structure of the 26D bulk, admits a "
                         "graded decomposition whose even subalgebra partitions naturally into sectors "
                         "corresponding to 4D brane configurations. This algebraic structure provides "
@@ -633,8 +633,8 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 plain_text="Effective_scaling = (k_gimel/π) / η = 3.92 / 1.185 ≈ 3.31",
                 category="GEOMETRIC",
                 description=(
-                    "Brane partition scaling factor derived from the Cl(24,1) Clifford algebra "
-                    "structure. The graded decomposition of Cl(24,1) partitions the 26D bulk "
+                    "Brane partition scaling factor derived from the Cl(24,2) Clifford algebra "
+                    "structure. The graded decomposition of Cl(24,2) partitions the 26D bulk "
                     "spinorial degrees of freedom into sectors that project onto 4D branes, "
                     "with the ratio k_gimel/pi encoding the G2 holonomy contribution and the "
                     "mirror overlap eta capturing the dual-shadow geometry correction."
@@ -650,7 +650,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 input_params=["topology.k_gimel", "topology.elder_kads"],
                 output_params=["higgs.effective_scaling"],
                 derivation={
-                    "method": "Topological projection from Cl(24,1) Clifford algebra symmetry",
+                    "method": "Topological projection from Cl(24,2) Clifford algebra symmetry",
                     "parentFormulas": ["higgs-bulk-attractor"],
                     "steps": [
                         "k_gimel = b3/2 + 1/pi = 12.318 (G2 holonomy anchor from associative 3-cycle count and torsional correction)",
@@ -974,7 +974,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
             {
                 "topic": "Clifford Algebra",
                 "url": "https://en.wikipedia.org/wiki/Clifford_algebra",
-                "relevance": "The Cl(24,1) algebra provides the symmetry structure that partitions the 26D bulk into 4 observable branes.",
+                "relevance": "The Cl(24,2) algebra provides the symmetry structure that partitions the 26D bulk into 4 observable branes.",
                 "validation_hint": "Verify the Clifford algebra dimension matches the claimed 26D -> 4x(4D) partition."
             },
             {

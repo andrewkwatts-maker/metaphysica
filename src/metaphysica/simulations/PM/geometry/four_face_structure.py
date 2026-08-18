@@ -891,7 +891,7 @@ class FourFaceG2Structure(SimulationBase):
                 category="GEOMETRIC",
                 description=(
                     "Bridge/Global OR operator — tensor product of 12 Mobius "
-                    "double-cover operators, creates dual shadows from 27D bulk"
+                    "double-cover operators, creates dual shadows from 26D bulk"
                 ),
                 input_params=["topology.mephorash_chi", "dimensions.D_bulk"],
                 output_params=["geometry.or_operator_rank"],
@@ -917,7 +917,7 @@ class FourFaceG2Structure(SimulationBase):
                     r"R_\perp^{\text{global}}": {
                         "description": (
                             "Global Bridge OR operator: tensor product of all 12 local "
-                            "Mobius double-cover operators, implementing Layer 1 (27D to 2x13D) "
+                            "Mobius double-cover operators, implementing Layer 1 (26D to 2x13D) "
                             "orthogonal reduction"
                         ),
                     },
@@ -1029,7 +1029,7 @@ class FourFaceG2Structure(SimulationBase):
                         "penalizing spatial variations of bridge moduli (stabilization)",
                         "God-level limit: when all T_{bridge,i} -> infinity, the "
                         "exponential terms vanish and V -> 0, meaning the two shadows "
-                        "merge back into the undifferentiated 27D bulk",
+                        "merge back into the undifferentiated 26D bulk",
                     ],
                     "method": (
                         "Racetrack + torsion + gradient construction for bridge moduli "
@@ -1542,7 +1542,7 @@ class FourFaceG2Structure(SimulationBase):
                     type="paragraph",
                     content=(
                         "The OR mechanism operates in two hierarchically nested layers. "
-                        "Layer 1 (Bridge/Global OR) reduces the 27D bulk into two 13D "
+                        "Layer 1 (Bridge/Global OR) reduces the 26D bulk into two 13D "
                         "shadows via the global operator R<sub>⊥</sub><sup>global</sup>, which is the "
                         "tensor product of 12 local Mobius double-cover operators "
                         "(one per bridge pair). Layer 2 (Face/Local OR) then selects "
@@ -1595,7 +1595,7 @@ class FourFaceG2Structure(SimulationBase):
                         "mass term weighted by χ<sub>eff</sub>/b₃ = 6, and gradient energy for "
                         "moduli stabilisation. In the God-level limit where all bridge "
                         "moduli T<sub>bridge,i</sub> tend to infinity, V<sub>bridge</sub> tends to zero and the "
-                        "two shadows merge back into the undifferentiated 27D bulk."
+                        "two shadows merge back into the undifferentiated 26D bulk."
                     ),
                 ),
                 ContentBlock(

@@ -19,7 +19,7 @@ DERIVATION (PossibleImprovements.txt section 3, v25.0 mandate):
 
         log N_raw = b3 * log(flux_modes) + 8 * log(10)
 
-    where flux_modes = 12 (the 12 bridge pairs of M^{27}(24,1,2)).
+    where flux_modes = 12 (the 12 bridge pairs of M^{26}(24,2)).
     With b3=24 and flux_modes=12, this gives log N_raw ~ 78 (natural
     log), i.e. N_raw ~ 10^34 distinct flux vacua before selection.
 

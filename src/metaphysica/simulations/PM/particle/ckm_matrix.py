@@ -73,7 +73,7 @@ References:
 - Acharya et al. (2008): Yukawa couplings from M-theory on G2 manifolds
 
 v23.0 SAMPLER DATA FIELDS NOTE:
-    The (2,0) sampler data fields provides a potential precision enhancement via
+    The (2,0) shadow-time directions provides a potential precision enhancement via
     ancestral flux averaging: p_anc = (1/12)*sum(p_i) + sqrt(n_local/12)*phi.
 
     GATE CONDITION: The current CKM fits are validated within 1sigma of PDG.
@@ -162,7 +162,7 @@ Dedicated To:
 #   2. Full RG running of CKM elements from M_GUT to M_Z
 #      (known to shift V_us by ~0.2% -- goes in the right direction)
 #   3. Include octonionic mixing phases beyond leading Froggatt-Nielsen
-#   4. Incorporate v23 sampler data fields ancestral flux corrections
+#   4. Incorporate v23 shadow-time directions ancestral flux corrections
 #      (currently disabled to avoid regression, see docstring)
 #   5. The other CKM elements (V_cb, V_ub, J) also show mild tension vs
 #      PDG 2024, so improvement is needed beyond V_us alone

@@ -91,7 +91,7 @@ class CosmologyIntroV16(SimulationBase):
             domain="cosmology",
             title="Deriving 4D Gravity from Kaluza-Klein Reduction",
             description=(
-                "Complete derivation of 4D gravity from M^{27}(24,1,2) → dual 13D(12,1) shadows → 4D dimensional"
+                "Complete derivation of 4D gravity from M^{26}(24,2) → dual 13D(12,1) shadows → 4D dimensional"
                 "reduction via 12×(2,0) Euclidean bridge pairs, including breathing mode with 12-pair "
                 "aggregation (ρ_breath = 1/12 ∑ρ_i), BPS branes, and Pneuma field."
             ),
@@ -234,7 +234,7 @@ class CosmologyIntroV16(SimulationBase):
             title="Deriving 4D Gravity from Kaluza-Klein Reduction",
             abstract=(
                 "We derive 4D gravity from the 26-dimensional superstring framework through "
-                "Kaluza-Klein dimensional reduction. The cascade M²⁷(24,1,2) → dual 13D(12,1) shadows → 4D proceeds via "
+                "Kaluza-Klein dimensional reduction. The cascade M²⁶(24,2) → dual 13D(12,1) shadows → 4D proceeds via "
                 "Euclidean bridge connection and G₂ compactification per shadow, naturally generating both gravity "
                 "and gauge fields from pure geometry. Volume modulus stabilization via racetrack "
                 "superpotential determines ε = 0.2257 dynamically, making it a prediction rather "
@@ -327,7 +327,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "Starting from the per-shadow Einstein-Hilbert action (one 13D(12,1) shadow of the full "
-                        "M²⁷(24,1,2) dual-shadow framework):"
+                        "M²⁶(24,2) dual-shadow framework):"
                     )
                 ),
                 ContentBlock(
@@ -393,14 +393,14 @@ class CosmologyIntroV16(SimulationBase):
                 # Subsection: 26D → Dual Shadow Projection
                 ContentBlock(
                     type="subsection",
-                    content="27D \u2192 Dual 13D(12,1) Shadow Projection via 12\u00d7(2,0) Euclidean Bridge Pairs"
+                    content="26D \u2192 Dual 13D(12,1) Shadow Projection via 12\u00d7(2,0) Euclidean Bridge Pairs"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The v24.2 framework begins with an M²⁷(24,1,2) spacetime: 12\u00d7(2,0) bridge pairs, "
-                        "the S²·⁰ sampler data fields, and a unified T¹ time fiber. This structure "
-                        "eliminates ghost modes and closed timelike curves. The 27D bulk splits into dual 13D(12,1) shadows "
+                        "The v24.2 framework begins with an M²⁶(24,2) spacetime: 12\u00d7(2,0) bridge pairs, "
+                        "the S²·⁰ shadow-time directions, and a unified T¹ time fiber. This structure "
+                        "eliminates ghost modes and closed timelike curves. The 26D bulk splits into dual 13D(12,1) shadows "
                         "via the OR reduction operator R_\u22a5. The 12 pairs arise from b₃ = 24/2 = 12, "
                         "where each pair couples one normal-sector 3-cycle to one mirror-sector 3-cycle. "
                         "The full metric is ds² = \u2212dt² + \u2211ᵢ (dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂²."
@@ -415,7 +415,7 @@ class CosmologyIntroV16(SimulationBase):
                         "ds²₂₆ = G_MN dX^M dX^N, M, N = 0, 1, ..., 25\n"
                         "With unified time signature (24,1): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
                         "Step 2: Dual Shadow Split via 12\u00d7(2,0) Euclidean Bridge Pairs\n"
-                        "M²⁷(24,1,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
+                        "M²⁶(24,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
                         "Each shadow: 12 spatial (from bridge coordinate selection) + 1 shared time = 13D(12,1)\n"
                         "Dimensional structure: T¹ \u00d7_fiber (\u2295ᵢ₌₁¹² Bᵢ²·⁰)\n"
                         "WHY 12 PAIRS: From b₃ = 24 associative 3-cycles, each pair couples normal \u2194 mirror.\n\n"
@@ -631,7 +631,7 @@ class CosmologyIntroV16(SimulationBase):
                 derivation={
                     "steps": [
                         {"description": "Unified time structure (24,1)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
-                        {"description": "v22: 12-pair Euclidean bridge split", "formula": r"M^{27}(24,1,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
+                        {"description": "v22: 12-pair Euclidean bridge split", "formula": r"M^{26}(24,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
                         {"description": "Dimensional structure", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
                         {"description": "Aggregate metric", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
                         {"description": "Per-pair OR reduction", "formula": r"R_{\perp,i}^2 = -I \text{ (Möbius per pair)}"},
@@ -1186,7 +1186,7 @@ class CosmologyIntroV16(SimulationBase):
                 "12 channels averaging together, reducing noise just like averaging multiple measurements."
             ),
             "keyTakeaway": (
-                "v22 Kaluza-Klein reduction: M^{27}(24,1,2) = 12×(2,0) + (0,1) + S^{2,0} → 12 bridge pairs warp to create 2×13D(12,1) shadows → 4D per shadow (via G₂ compactification). "
+                "v22 Kaluza-Klein reduction: M^{26}(24,2) = 12×(2,0) + (0,1) + S^{2,0} → 12 bridge pairs warp to create 2×13D(12,1) shadows → 4D per shadow (via G₂ compactification). "
                 "12-pair aggregation: ρ_breath = (1/12) ∑ρ_i reduces variance by √12, stabilizing w ≈ -0.958 ± 0.003."
             ),
             "technicalDetail": (

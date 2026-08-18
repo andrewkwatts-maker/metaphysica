@@ -122,7 +122,7 @@ DEFAULT_G_BRIDGE: float = 1.2e-10
 DEFAULT_M_MIRROR_GEV: float = 3.51e-3
 
 #: Default KK mediator mass in GeV (≈ 5 TeV).  Inherited from the
-#: bridge-fibre KK reduction of M^{27}(24,1,2); see Sprint 5.1 moduli
+#: bridge-fibre KK reduction of M^{26}(24,2); see Sprint 5.1 moduli
 #: stabilisation analysis.
 DEFAULT_M_MEDIATOR_GEV: float = 5.0e3
 

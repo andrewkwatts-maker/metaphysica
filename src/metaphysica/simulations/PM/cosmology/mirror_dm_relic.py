@@ -9,7 +9,7 @@ Boltzmann freeze-out + bridge-sector coupling.
 DERIVATION (PossibleImprovements.txt §v26.0 mirror_dm_relic):
 
     The Z₂ mirror sector is already encoded in your 12×(2,0) bridge +
-    S²⁰ sampler architecture of M^{27}(24,1,2); it provides a natural
+    S²⁰ sampler architecture of M^{26}(24,2); it provides a natural
     dark-matter candidate decoupled from the visible sector except via
     the bridge coupling derived from G₂ triple-cycle intersections.
 

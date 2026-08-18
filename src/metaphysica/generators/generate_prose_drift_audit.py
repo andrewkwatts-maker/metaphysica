@@ -27,7 +27,7 @@ from metaphysica.generators._common import autogen_dir
 from metaphysica.simulations.core.canonical_values import all_canonical
 
 # Values that are too generic to scan for (fire everywhere).
-_SKIP = {"45.0", "45.2", "5.0", "0.25", "42", "196", "24", "72", "144"}
+_SKIP = {"45.0", "45.2", "5.0", "0.25", "42", "196", "24", "72", "144", "27", "25"}
 
 # Extra retired numerals not carried in the table's superseded keys
 # (prose-only spellings of the same retirements).
@@ -39,6 +39,24 @@ _EXTRA = {
     "33.44": "stale theta12 (canonical 33.59)",
     "8.33": "stale theta13 section text (canonical 8.65)",
     "0.23189": "geometric sin2 presented as sin2_theta_w (scheme ruling)",
+}
+
+# Two-time migration tokens (2026-08-19 bulk ruling): the 27D sampler-pair
+# formulation is superseded — these string tokens flag any prose still on
+# the old bulk. Matched as substrings (not numerals). "27" alone is NEVER
+# matched: dim J3(O) = 27 is a legitimate Jordan-algebra 27.
+_MIGRATION_TOKENS = {
+    "27D": "superseded bulk (two-time ruling: 26D (24,2))",
+    "M^27": "superseded bulk notation (canonical M^26(24,2))",
+    "M²⁷": "superseded bulk notation (canonical M²⁶(24,2))",
+    "(24,1,2)": "superseded sampler-pair signature (canonical (24,2))",
+    "d²⁷X": "superseded measure (canonical d²⁶X)",
+    "d^27": "superseded measure (canonical d^26)",
+    "Cl(24,1)": "superseded spinor construction (canonical: Weyl of Cl(24,2))",
+    "Cl(26,1)": "wrong Clifford algebra (canonical: Weyl of Cl(24,2))",
+    "27-dimensional spacetime": "superseded bulk (26-dimensional (24,2))",
+    "27-dimensional bulk": "superseded bulk (26-dimensional (24,2))",
+    "27/10": "superseded alpha_T ratio (two-time: 26/10 = 2.6)",
 }
 
 
@@ -82,6 +100,12 @@ def run_audit() -> Dict[str, Any]:
         token: re.compile(r"(?<![\d.])" + re.escape(token) + r"(?![\d])")
         for token in idx
     }
+    # Migration tokens are plain substrings (notation, not numerals);
+    # suppressed when the surrounding text already annotates the
+    # supersession (same convention as the 0.2257 racetrack rule).
+    for token, why in _MIGRATION_TOKENS.items():
+        idx[token] = why
+        patterns[token] = re.compile(re.escape(token))
 
     # Context-conditional tokens (encode the naming rulings precisely):
     # 0.57 is LEGITIMATE as alpha_sample — flag only when presented as
@@ -93,6 +117,8 @@ def run_audit() -> Dict[str, Any]:
             return "leak" in c and "sample" not in c
         if token == "0.2257":
             return not any(k in c for k in ("canonical", "variant", "calibrated", "e^{-3/2}", "0.22313", "superseded"))
+        if token in _MIGRATION_TOKENS:
+            return not any(k in c for k in ("superseded", "retired", "two-time", "sampler-pair formulation", "formerly"))
         return True
 
     hits: List[Dict[str, Any]] = []

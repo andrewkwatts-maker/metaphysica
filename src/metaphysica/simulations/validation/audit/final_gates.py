@@ -178,7 +178,7 @@ class FinalGates:
         """
         C41: Gauge Unification.
 
-        Verifies that all forces converge at 27D.
+        Verifies that all forces converge at 26D.
         """
         result = self.coupling.verify_unification_point()
         return {

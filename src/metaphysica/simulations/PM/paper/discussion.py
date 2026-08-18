@@ -5,9 +5,9 @@ PRINCIPIA METAPHYSICA v24.2 - Discussion, Conclusions, and Theory Analysis
 
 Licensed under the MIT License. See LICENSE file for details.
 
-v24.2: M^{27}(24,1,2) structure with S^(2,0) sampler data fields.
-       12×(2,0) bridges + S^(2,0) sampler data fields + T¹ time → 2×13D(12,1) shadows via OR reduction.
-       4096-component Primordial Spinor Field from Cl(26,1).
+v24.2: M^{26}(24,2) structure with two shadow-time directions.
+       12×(2,0) bridges + two shadow-time directions + T¹ time → 2×13D(12,1) shadows via OR reduction.
+       4096-component Primordial Spinor Field from Cl(24,2).
 
 Provides comprehensive section content for:
 - Section 7: Conclusion (Summary, Predictions, Future Research)
@@ -105,7 +105,7 @@ class DiscussionV16(SimulationBase):
             version="24.2",
             domain="discussion",
             title="Discussion, Conclusions, and Theory Analysis",
-            description="Comprehensive discussion including theoretical implications, predictions, falsifiability, validation, and future directions for v24.2 dual-shadow framework (27D, 26,1)",
+            description="Comprehensive discussion including theoretical implications, predictions, falsifiability, validation, and future directions for v24.2 dual-shadow framework (26D, 26,1)",
             section_id="7",
             subsection_id=None
         )
@@ -187,8 +187,8 @@ class DiscussionV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "The Principia Metaphysica framework presents a unified geometric description of "
-                    "fundamental physics, deriving the Standard Model and gravity from a 27D structure "
-                    "with structure (24,1,2). The 12×(2,0) bridge pairs plus S<sup>(2,0)</sup> sampler data fields "
+                    "fundamental physics, deriving the Standard Model and gravity from a 26D structure "
+                    "with structure (24,2). The 12×(2,0) bridge pairs plus S<sup>(2,0)</sup> shadow-time directions "
                     "plus T¹ time fiber create dual 13D(12,1) shadows via OR coordinate selection (R<sub>⊥</sub>). "
                     "Each shadow compactifies on a 7D G₂ manifold to yield a 6D effective bulk with "
                     "heterogeneous branes, from which all observable physics emerges. The key results are:"
@@ -196,14 +196,14 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="M²⁷(24,1,2) Dual-Shadow Framework",
+                content="M²⁶(24,2) Dual-Shadow Framework",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The full theory lives in 27D with structure (24,1,2): twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup>, "
-                    "2D sampler data fields S<sup>(2,0)</sup>, and a single timelike fiber T¹. The OR reduction "
+                    "The full theory lives in 26D with structure (24,2): twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup>, "
+                    "2D shadow-time directions S<sup>(2,0)</sup>, and a single timelike fiber T¹. The OR reduction "
                     "operator R<sub>⊥</sub> creates dual 13D(12,1) observable shadows, enabling mirror-sector "
                     "dynamics (Z₂ symmetry) and proposing cosmological observables from pure topology."
                 )
@@ -242,7 +242,7 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "All four fundamental forces emerge from the M<sup>27</sup>(24,1,2) geometric structure projecting to 13D "
+                    "All four fundamental forces emerge from the M<sup>26</sup>(24,2) geometric structure projecting to 13D "
                     "observable shadow. The SO(10) gauge symmetry arises from D₅-type ADE singularities on "
                     "the G₂ manifold, unifying with gravity at the compactification scale. KK gravitons at "
                     "M<sub>KK</sub> ≈ 4.5 TeV (derived from topology via k<sub>eff</sub> = b₃/(2+ε) ≈ 10.80) provide near-term test."
@@ -331,8 +331,8 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Central Equation (27D Dual-Shadow Framework with G₂ Compactification):</strong> "
-                    "The M<sup>27</sup>(24,1,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) shadows → 7D G₂ → 6D bulk → 4D dimensional reduction "
+                    "<strong>Central Equation (26D Dual-Shadow Framework with G₂ Compactification):</strong> "
+                    "The M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) shadows → 7D G₂ → 6D bulk → 4D dimensional reduction "
                     "yields the unified framework central equation."
                 )
             ),
@@ -446,7 +446,7 @@ class DiscussionV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "<strong>The Principia Metric - Primary Kill-Switch:</strong> "
-                    "The structural integrity of the M²⁷ framework rests on the detection of a "
+                    "The structural integrity of the M²⁶ framework rests on the detection of a "
                     "topologically induced Axion-Like Particle (ALP) at m<sub>a</sub> = 3.51 ± 0.02 meV. "
                     "This particle is a predicted consequence of the Euclidean Information Sector (S<sub>EIS</sub>) "
                     "coupling to the photon field, yielding g<sub>aγγ</sub> ~ 10⁻¹¹ GeV⁻¹. We define the following "
@@ -469,7 +469,7 @@ class DiscussionV16(SimulationBase):
                     "provides a falsifiable, time-bound test: if IAXO reaches its projected sensitivity of "
                     "g<sub>aγγ</sub> ~ 10⁻¹² GeV⁻¹ by 2028 and finds no signal in the predicted mass range, "
                     "the theory is falsified. This is not a free parameter—it is the direct "
-                    "output of the 27D → 4D dimensional projection within this framework."
+                    "output of the 26D → 4D dimensional projection within this framework."
                 )
             ),
             ContentBlock(
@@ -610,8 +610,8 @@ class DiscussionV16(SimulationBase):
                 type="list",
                 items=[
                     "OR reduction operator R<sub>⊥</sub> with Möbius property (R<sub>⊥</sub>² = −I)",
-                    "Physical state spectrum with ghost-free dynamics from (24,1,2) structure",
-                    "Fibered time structure: M²⁷ = T¹ ×<sub>fiber</sub> (⊕<sub>i=1</sub><sup>12</sup> B<sub>i</sub><sup>(2,0)</sup> ⊕ S<sup>(2,0)</sup>)",
+                    "Physical state spectrum with ghost-free dynamics from (24,2) structure",
+                    "Fibered time structure: M²⁶ = T¹ ×<sub>fiber</sub> (⊕<sub>i=1</sub><sup>12</sup> B<sub>i</sub><sup>(2,0)</sup> ⊕ S<sup>(2,0)</sup>)",
                     "Emergent causality from bridge coordinate sampling"
                 ]
             ),
@@ -766,8 +766,8 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The Principia Metaphysica framework (v24.2) presents a M<sup>27</sup>(24,1,2) unified vision: "
-                    "twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup> plus S<sup>(2,0)</sup> sampler data fields plus T¹ time create "
+                    "The Principia Metaphysica framework (v24.2) presents a M<sup>26</sup>(24,2) unified vision: "
+                    "twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup> plus S<sup>(2,0)</sup> shadow-time directions plus T¹ time create "
                     "dual 13D(12,1) shadows via OR reduction R<sub>⊥</sub>. The framework predicts a mirror sector (Z₂) "
                     "and yields w₀ = −1 + 1/b₃ = −23/24 via the Maximum Entropy Principle, "
                     "n<sub>gen</sub> = 3 from G₂ topology (χ<sub>eff</sub>/48 = 144/48 = 3), and the Cabibbo angle "
@@ -1410,13 +1410,13 @@ class DiscussionV16(SimulationBase):
             # DESI Agreement
             ContentBlock(
                 type="heading",
-                content="DESI Agreement: M<sup>27</sup>(24,1,2) Dual-Shadow Framework",
+                content="DESI Agreement: M<sup>26</sup>(24,2) Dual-Shadow Framework",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The M<sup>27</sup>(24,1,2) dual-shadow framework proposes cosmological observables from the "
+                    "The M<sup>26</sup>(24,2) dual-shadow framework proposes cosmological observables from the "
                     "G₂ modulus dynamics and the Maximum Entropy Principle on the moduli space:"
                 )
             ),
@@ -1427,7 +1427,7 @@ class DiscussionV16(SimulationBase):
                     "w<sub>a</sub> ~ 0.1 (PREDICTED from residual modulus roll toward attractor)",
                     "de Sitter attractor preserved (w → −1 as t → ∞ at Ricci-flat fixed point)",
                     "Z₂ mirror sector provides dark matter candidate from the dual shadow",
-                    "No ghost/tachyon instabilities: (24,1,2) structure + OR reduction ensures stability"
+                    "No ghost/tachyon instabilities: (24,2) structure + OR reduction ensures stability"
                 ]
             ),
 
@@ -1578,7 +1578,7 @@ class DiscussionV16(SimulationBase):
                 type="table",
                 headers=["Framework", "Dimensions", "Fundamental Object", "Testability"],
                 rows=[
-                    ["Principia Metaphysica", "M<sup>27</sup>(24,1,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) → 4D via G₂", "4096-spinor Pneuma + TCS G₂ manifold", "Near-term (2027-2030s)"],
+                    ["Principia Metaphysica", "M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) → 4D via G₂", "4096-spinor Pneuma + TCS G₂ manifold", "Near-term (2027-2030s)"],
                     ["Type IIA/IIB String", "10", "Strings (1D)", "Far-term (M<sub>Pl</sub> scale)"],
                     ["M-Theory", "11", "M2/M5 branes", "Far-term (M<sub>Pl</sub> scale)"],
                     ["Loop Quantum Gravity", "4", "Spin networks", "Far-term (Planck scale)"]
@@ -1724,7 +1724,7 @@ class DiscussionV16(SimulationBase):
             title="Discussion, Conclusions, and Theory Analysis",
             abstract=(
                 "Comprehensive discussion covering: (1) Summary of results including the complete geometric "
-                "unification from 27D dual-shadow framework to 4D observables, (2) Predictions and falsifiability "
+                "unification from 26D dual-shadow framework to 4D observables, (2) Predictions and falsifiability "
                 "criteria with precision calculations for proton decay and GW dispersion, (3) Future research "
                 "directions in phenomenology, mathematical rigor, cosmology, and quantum gravity, (4) Predictions "
                 "and testability including the 58 derived Standard Model parameters and hidden sector particles, "
@@ -1829,7 +1829,7 @@ class DiscussionV16(SimulationBase):
                 "pages": "85-126",
                 "arxiv": "hep-th/9503124",
                 "url": "https://arxiv.org/abs/hep-th/9503124",
-                "notes": "M-theory duality web; underpins the discussion of 11D vs 27D bulk structures"
+                "notes": "M-theory duality web; underpins the discussion of 11D vs 26D bulk structures"
             },
             {
                 "id": "penrose1994",
@@ -1902,8 +1902,8 @@ class DiscussionV16(SimulationBase):
             {
                 "topic": "M-theory and string dualities",
                 "url": "https://en.wikipedia.org/wiki/M-theory",
-                "relevance": "Discussion evaluates how the 27D PM framework relates to 11D M-theory via duality and compactification",
-                "validation_hint": "M-theory unifies five superstring theories in 11D; PM extends to 27D via dual-shadow structure"
+                "relevance": "Discussion evaluates how the 26D PM framework relates to 11D M-theory via duality and compactification",
+                "validation_hint": "M-theory unifies five superstring theories in 11D; PM extends to 26D via dual-shadow structure"
             },
             {
                 "topic": "Orchestrated objective reduction (Orch-OR)",

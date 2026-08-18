@@ -14,7 +14,7 @@ Physics summary
 ---------------
 The G₂ + Z₂ mirror framework predicts that the mirror sector contributes
 an extra component to the dark-energy density at late times (or as early
-dark energy from the 27D bulk during the radiation/matter era). This
+dark energy from the 26D bulk during the radiation/matter era). This
 extra component modifies the expansion history H(z) and the linear
 growth rate fσ₈:
 
@@ -188,13 +188,13 @@ S8_LINEAR_RESPONSE: float = 0.085
 #
 # Sprint 5.5's mirror-coupling Δw is ~10^13 too small; T3.4 identifies the
 # physical origin of the larger coupling. Mechanism (b) is early dark energy
-# (EDE) from a tower of 27D-bulk Kaluza-Klein modes with mass scale m_KK ~
+# (EDE) from a tower of 26D-bulk Kaluza-Klein modes with mass scale m_KK ~
 # 1/R_27 set by the compactification radius. When m_KK crosses the
 # radiation temperature T at z ~ 3000 the modes become non-relativistic and
 # briefly dominate as dark energy, raising the inferred H₀ (Karwal &
 # Kamionkowski 2016, Schoneberg et al. 2022 "H₀ Olympics").
 
-#: Number of KK modes in the bridge sector. The naive 27D framework count
+#: Number of KK modes in the bridge sector. The naive 26D framework count
 #: is 12 bridges · b₃ = 288 (one mode per bridge × per b₃ Betti generator);
 #: see :data:`N_KK_BRIDGES` for the physical-tower count used in the
 #: honest mechanism below.
@@ -203,7 +203,7 @@ N_KK_FULL_TOWER: int = 288
 #: Number of *physically active* KK modes near m_KK ~ T_recomb. The b₃ =
 #: 24 cohomology classes are *labels*, not independent thermal degrees of
 #: freedom — only the 12 bridge pairs supply distinct KK towers in the
-#: 27D bulk. The natural EDE multiplicity is therefore 12, not 288.
+#: 26D bulk. The natural EDE multiplicity is therefore 12, not 288.
 N_KK_BRIDGES: int = 12
 
 #: Radiation-era effective relativistic degrees of freedom at z ~ 1100
@@ -397,13 +397,13 @@ class CosmologicalTensionsResolver:
         T_recomb: float = T_RECOMB_EV,
         m_kk_recomb: float = 0.5,
     ) -> Dict[str, Any]:
-        """Early dark energy from the 27D-bulk Kaluza-Klein tower.
+        """Early dark energy from the 26D-bulk Kaluza-Klein tower.
 
         Reference: TIER_2_3_ROADMAP.md §T3.4, mechanism (b).
 
         Physical picture
         ----------------
-        The 27D bulk admits a Kaluza-Klein tower with mass scale
+        The 26D bulk admits a Kaluza-Klein tower with mass scale
         ``m_KK ~ 1 / R_27 ~ M_GUT``. Most KK modes are far above any
         cosmological temperature scale and decouple, but if the lightest
         modes have eV-scale masses they cross ``m_KK ~ T`` at z ~ 3000
@@ -692,7 +692,7 @@ class CosmologicalTensionsResolver:
         self.tension_tree.register_derivation(
             param="full_cosmological_tension_resolution",
             formula=(
-                "mirror DE / early DE from 27D bulk + Re(T); "
+                "mirror DE / early DE from 26D bulk + Re(T); "
                 "Re(T) anchored at b3 = 24 (Sprint 4 #3); "
                 "DOCUMENTED_TENSION -- magnitudes ~10^13x too small"
             ),

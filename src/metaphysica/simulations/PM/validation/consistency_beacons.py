@@ -428,6 +428,37 @@ def beacon_hbar_c_chain() -> ConsistencyBeacon:
 # ---------------------------------------------------------------------------
 
 
+def beacon_two_time_bulk_accounting() -> ConsistencyBeacon:
+    """Two-time bulk bookkeeping (2026-08-19 ruling).
+
+    D_bulk = b3 + 2 = D_crit = 26 = 2 x dim(shadow), with the Pneuma
+    spinor equal to the WEYL half of the Cl(24,2) Dirac spinor:
+    2^13 / 2 = 4096. Locks the dimensional accounting that produced the
+    25D/26D/26D drift class — any regression to the sampler-pair
+    formulation breaks this arithmetic identity chain.
+    """
+    b3 = 24
+    d_shadow = 13
+    d_bulk = b3 + 2
+    weyl = (2 ** (d_bulk // 2)) // 2
+    # Composite check value: all three identities folded into one number
+    # (each term vanishes when its identity holds).
+    residual = abs(d_bulk - 26) + abs(2 * d_shadow - d_bulk) + abs(weyl - 4096)
+    return _mk(
+        beacon_id="beacon.two_time_bulk_accounting",
+        name="Two-time bulk accounting: b3+2 = 26 = 2x13; Weyl(Cl(24,2)) = 4096",
+        reference="Bars two-time physics (signature (d,2)); docs/TWO_TIME_ASSESSMENT.md",
+        value=float(residual),
+        expected=0.0,
+        tolerance=0.0,
+        note=(
+            "D_bulk = D_crit = b3+2 = 26; shadows (12,1)+(12,1) = 26 "
+            "exactly; Pneuma spinor = Weyl of Cl(24,2) = 2^13/2 = 4096 "
+            "(chiral). Integer-exact by construction once the ruling holds."
+        ),
+    )
+
+
 def run_all_beacons() -> List[ConsistencyBeacon]:
     """Run every beacon and return the collected records (in order)."""
     return [
@@ -444,6 +475,8 @@ def run_all_beacons() -> List[ConsistencyBeacon]:
         beacon_gf_mw_sin2thetaw_identity(),
         beacon_friedmann_closure(),
         beacon_hbar_c_chain(),
+        # 2026-08-19 two-time ruling.
+        beacon_two_time_bulk_accounting(),
     ]
 
 

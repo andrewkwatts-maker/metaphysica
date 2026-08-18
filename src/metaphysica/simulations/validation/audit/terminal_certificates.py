@@ -23,7 +23,7 @@ HEBREW LETTER NAMING CONVENTIONS:
     Projection Hierarchy: Yod (288) → Nun (24) → Dalet (4)
 
 THE 42 CERTIFICATES:
-    Vault I   (C01-C14): Ancestral - 27D bulk and SO(24) generators
+    Vault I   (C01-C14): Ancestral - 26D bulk and SO(24) generators
     Vault II  (C15-C28): Torsion   - Nun (24) pins and Dalet (4) pattern
     Vault III (C29-C42): Residue   - Yod_active (125) particles and Omega closure
 
@@ -239,7 +239,7 @@ class TerminalCertificates:
 
     def c06_bulk_dimension(self) -> Certificate:
         """C06: Bulk Dimensionality."""
-        # 27D = 26 + 1 (26 spatial + 1 unified time)
+        # 26D = 26 + 1 (26 spatial + 1 unified time)
         # 26 spatial = 24 G2 core + 2 Euclidean bridge
         bulk_dim = 27
         is_correct = bulk_dim == 26 + 1
@@ -253,7 +253,7 @@ class TerminalCertificates:
             status=GateStatus.HARD_LOCKED if is_correct else GateStatus.FAILED,
             derived_value=bulk_dim,
             expected_value=27,
-            message="27D(24,1,2) bulk embedding"
+            message="26D(24,2) bulk embedding"
         )
 
     def c07_hidden_support(self) -> Certificate:

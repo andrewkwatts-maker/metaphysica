@@ -18,7 +18,7 @@ Round 1 (Physical motivation):
 
 Round 2 (Counter-arguments on kappa_sampler and sign conventions):
     On kappa_sampler=2: Gemini argued this is NOT a free parameter but a
-    "consequence of the sampler's intrinsic dimensionality within M^{27}(24,1,2)."
+    "consequence of the sampler's intrinsic dimensionality within M^{26}(24,2)."
     The value dim(S^{2,0})=2 is a defining characteristic of the sampler's
     dynamics within its designated sector, not a tunable choice. On signs:
     Gemini confirmed that S = -Tr(rho ln rho) is the standard axiomatic
@@ -28,20 +28,20 @@ Round 2 (Counter-arguments on kappa_sampler and sign conventions):
 Round 3 (Classification):
     Gemini classified the formula as between PLAUSIBLE and DERIVED. The
     kappa_sampler=2=dim(S^{2,0}) value is derived from dimensional accounting
-    of M^{27}=24+1+2, not fitted. The Laplacian term is standard from
+    of M^{26}=24+1+2, not fitted. The Laplacian term is standard from
     conservation laws. To make the full formula rigorously DERIVED would
     require: (1) proving the entropy gradient follows from the G2 action
-    principle on M^{27}, (2) deriving alpha_T/12 prefactor from modular
+    principle on M^{26}, (2) deriving alpha_T/12 prefactor from modular
     flow normalization on 12 bridge pairs, (3) showing Gamma_collapse
     emerges from the OR mechanism without free parameters.
 
     CLASSIFICATION: PLAUSIBLE (kappa_sampler itself is DERIVED from topology).
 
 Implements the Sampler S^{2,0} entropy dynamics for the 27-dimensional
-spacetime M^{27}(24,1,2):
+spacetime M^{26}(24,2):
     - 24D physics core: 12 bridge pairs x 2 dimensions
     - 1D unified time: T^1 fiber
-    - 2D sampler data fields: S^{2,0} (global averaging sector)
+    - 2D shadow-time directions: S^{2,0} (global averaging sector)
 
 The entropy gradient equation governs entropy flow across the sampler sector:
 
@@ -78,7 +78,7 @@ REFERENCES:
     - Connes, Rovelli (1994) arXiv:gr-qc/9406019
     - Penrose (1996) "On Gravity's Role in Quantum State Reduction"
     - Joyce (2000) "Compact Manifolds with Special Holonomy"
-    - PM framework: M^{27}(24,1,2) dimensional architecture
+    - PM framework: M^{26}(24,2) dimensional architecture
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -129,11 +129,11 @@ class SamplerEntropyDynamics(SimulationBase):
     """
     Sampler S^{2,0} Entropy Dynamics Engine (v24.2).
 
-    Computes the entropy gradient across the sampler sector of M^{27}(24,1,2),
+    Computes the entropy gradient across the sampler sector of M^{26}(24,2),
     combining bridge thermodynamics, OR collapse information, and sampler
     diffusion into a unified entropy evolution equation.
 
-    The sampler data fields S^{2,0} occupy the 2 extra dimensions beyond
+    The shadow-time directions S^{2,0} occupy the 2 extra dimensions beyond
     the 24D G2 physics core and 1D unified time. Their entropy dynamics
     govern global averaging and equilibrium selection.
 
@@ -170,7 +170,7 @@ class SamplerEntropyDynamics(SimulationBase):
             domain="sampler_entropy",
             title="Sampler S^{2,0} Entropy Dynamics Engine",
             description=(
-                "Compute entropy gradient across the sampler sector of M^{27}(24,1,2). "
+                "Compute entropy gradient across the sampler sector of M^{26}(24,2). "
                 "Three contributions: bridge thermodynamics (alpha_T/12 * von Neumann), "
                 "OR collapse (Shannon entropy * Gamma_collapse), and sampler diffusion "
                 "(kappa_sampler * laplacian(S)). kappa_sampler = 2 = dim(S^{2,0}) is "
@@ -609,7 +609,7 @@ class SamplerEntropyDynamics(SimulationBase):
         if registry.has_param("thermal.alpha_T"):
             alpha_T = registry.get_param("thermal.alpha_T")
         else:
-            alpha_T = 2.7  # Default from thermal_time.py
+            alpha_T = 2.6  # Default from thermal_time.py (two-time: 26/10)
 
         # Get G2 topology parameter
         b3 = registry.get_param("topology.elder_kads")  # = 24
@@ -687,8 +687,8 @@ class SamplerEntropyDynamics(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The sampler data fields S<sup>(2,0)</sup> occupy the two dimensions "
-                    "of M<sup>27</sup>(24,1,2) beyond the 24D G&#8322; physics core and "
+                    "The shadow-time directions S<sup>(2,0)</sup> occupy the two dimensions "
+                    "of M<sup>26</sup>(24,2) beyond the 24D G&#8322; physics core and "
                     "1D unified time. These dimensions provide a global averaging sector "
                     "whose entropy dynamics govern equilibrium selection across the 12 "
                     "bridge pairs. The entropy gradient equation combines three physically "
@@ -745,7 +745,7 @@ class SamplerEntropyDynamics(SimulationBase):
                     "S<sub>sampler</sub> governs entropy spreading across the S<sup>(2,0)</sup> "
                     "sector. The coefficient &kappa;<sub>sampler</sub> = 2 = dim(S<sup>(2,0)</sup>) "
                     "is topologically fixed by the dimensional accounting "
-                    "M<sup>27</sup> = 24 + 1 + 2. The associated energy density "
+                    "M<sup>26</sup> = 24 + 1 + 2. The associated energy density "
                     "&rho;<sub>sampler</sub> takes the standard kinetic form."
                 ),
             ),
@@ -773,8 +773,8 @@ class SamplerEntropyDynamics(SimulationBase):
             subsection_id=None,
             title="Sampler S^{2,0} Entropy Dynamics",
             abstract=(
-                "We derive the entropy gradient equation for the sampler data fields "
-                "S^{2,0} in M^{27}(24,1,2). The gradient combines von Neumann bridge "
+                "We derive the entropy gradient equation for the shadow-time directions "
+                "S^{2,0} in M^{26}(24,2). The gradient combines von Neumann bridge "
                 "entropy, OR collapse Shannon entropy, and a diffusion term with "
                 "topologically fixed coefficient kappa_sampler = 2 = dim(S^{2,0}). "
                 "The second law dS/dt >= 0 is validated across random initial conditions."
@@ -823,7 +823,7 @@ class SamplerEntropyDynamics(SimulationBase):
                 category="PLAUSIBLE",
                 description=(
                     "Full entropy gradient equation for the sampler S^{2,0} sector of "
-                    "M^{27}(24,1,2). Combines bridge thermodynamics (von Neumann entropy "
+                    "M^{26}(24,2). Combines bridge thermodynamics (von Neumann entropy "
                     "weighted by thermal evolution rate), OR collapse information (Shannon "
                     "entropy from measurement outcomes), and sampler diffusion (Laplacian "
                     "with topologically fixed coefficient kappa_sampler = 2). Gemini debate "
@@ -867,7 +867,7 @@ class SamplerEntropyDynamics(SimulationBase):
                     "references": [
                         "Connes, Rovelli (1994) arXiv:gr-qc/9406019",
                         "Penrose (1996) On Gravity's Role in Quantum State Reduction",
-                        "PM framework: M^{27}(24,1,2) sampler sector",
+                        "PM framework: M^{26}(24,2) sampler sector",
                     ],
                 },
                 eml_tree_str=(
@@ -877,7 +877,7 @@ class SamplerEntropyDynamics(SimulationBase):
                     "Entropy gradient: (alpha_T/12)*S_bridge plus S_or plus kappa_sampler*laplacian(S_sampler)."
                 ),
                 terms={
-                    "alpha_T": "Thermal time coupling (~2.7 from G2 topology)",
+                    "alpha_T": "Thermal time coupling (2.6 = 26/10, two-time)",
                     "S_vN(rho_i)": "Von Neumann entropy of bridge i density matrix",
                     "dbeta_i/dt": "Rate of inverse temperature change for bridge i",
                     "N_OR": "Number of OR reduction events",
@@ -886,10 +886,10 @@ class SamplerEntropyDynamics(SimulationBase):
                     "kappa_sampler": "Sampler diffusion coefficient = 2 = dim(S^{2,0})",
                     "S_sampler": "Entropy field on sampler S^{2,0} sector",
                 },
-                # Triple-track: bridge prefactor alpha_T / 12 = alpha_T / (b3/2) = 2.7 / 12 = 0.225.
-                arithma=_arithma_num(2.7 / 12.0),
-                eml=_eml_div(_eml_scalar(2.7), _eml_div(_b3_leaf(), _eml_scalar(2.0))),
-                value=2.7 / 12.0,
+                # Triple-track: bridge prefactor alpha_T / 12 = alpha_T / (b3/2) = 2.6 / 12 = 0.21667 (two-time).
+                arithma=_arithma_num(2.6 / 12.0),
+                eml=_eml_div(_eml_scalar(2.6), _eml_div(_b3_leaf(), _eml_scalar(2.0))),
+                value=2.6 / 12.0,
                 triple_rel=1e-12,
             ),
             Formula(
@@ -1140,7 +1140,7 @@ class SamplerEntropyDynamics(SimulationBase):
                 "title": "Sampler S^{2,0} Entropy Dynamics",
                 "category": "thermodynamics",
                 "description": (
-                    "Entropy evolution on the sampler data fields sector of M^{27}(24,1,2), "
+                    "Entropy evolution on the shadow-time directions sector of M^{26}(24,2), "
                     "combining bridge thermodynamics, OR collapse, and diffusion"
                 ),
             },
@@ -1176,7 +1176,7 @@ class SamplerEntropyDynamics(SimulationBase):
                 "id": "CERT_SAMPLER_KAPPA_TOPOLOGICAL",
                 "assertion": (
                     "kappa_sampler = 2 = dim(S^{2,0}) is topologically fixed by "
-                    "M^{27} = 24 + 1 + 2 dimensional accounting"
+                    "M^{26} = 24 + 1 + 2 dimensional accounting"
                 ),
                 "condition": "sampler_entropy.kappa_sampler == 2",
                 "tolerance": 0.0,

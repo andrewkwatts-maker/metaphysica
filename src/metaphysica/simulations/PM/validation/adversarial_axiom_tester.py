@@ -45,7 +45,7 @@ logger = logging.getLogger("AdversarialTester")
 class AdversarialAxiomTester:
     """
     Attempts to falsify the 'Unity Identity' (α⁻¹ ≈ 137.036 from G₂ topology)
-    by searching for 27D manifold configurations that satisfy topological
+    by searching for 26D manifold configurations that satisfy topological
     constraints but produce different physics constants.
 
     The test PASSES if no violations are found under extensive random perturbation.
@@ -98,7 +98,7 @@ class AdversarialAxiomTester:
 
         Physical Justification:
             The 1/(1 + alpha_s/π) term represents vacuum polarization screening
-            from the 27D bulk down to the 4D Dalet projection. QCD vacuum
+            from the 26D bulk down to the 4D Dalet projection. QCD vacuum
             polarization at the Z-pole introduces topological friction that
             slightly suppresses the effective coupling.
 
@@ -185,19 +185,18 @@ class AdversarialAxiomTester:
         topological invariants (G₂ cycles) stable.
 
         Args:
-            manifold_params: 27D manifold configuration
+            manifold_params: 26D manifold configuration
 
         Returns:
             Negative deviation (adversary tries to MAXIMIZE deviation)
             OR large positive penalty if G₂ holonomy is violated
         """
         # PM v24.1 dimensional structure:
-        # M²⁷(24,1,2) = 12×(2,0) bridges + S^(2,0) + (0,1) time
+        # M²⁶(24,2) = 12×(2,0) bridges + (0,2) shadow times (one per 13D shadow)
 
         # Extract bridge contributions (24D)
         bridge_params = manifold_params[:24].reshape(12, 2)
-        central_params = manifold_params[24:26]  # S^(2,0)
-        time_param = manifold_params[26]  # (0,1)
+        time_params = manifold_params[24:26]  # (0,2) shadow times
 
         # ENFORCE G₂ HOLONOMY CONSTRAINT
         holonomy_violation = self.verify_g2_holonomy(bridge_params)
@@ -224,12 +223,11 @@ class AdversarialAxiomTester:
 
         holonomy_correction = np.mean(bridge_deviations) / optimal_bridge_norm  # Fractional deviation
 
-        # Central sampler modulation (should be small for stability)
-        central_amplitude = np.linalg.norm(central_params)
-        central_correction = central_amplitude  # Deviation from zero
-
-        # Time fiber perturbation
-        time_correction = abs(time_param)
+        # Shadow-time modulation (both timelike components; should be
+        # small for stability of the vacuum configuration)
+        time_amplitude = np.linalg.norm(time_params)
+        central_correction = time_amplitude  # Deviation from zero
+        time_correction = time_amplitude
 
         # Total correction to Unity Identity
         # The "perfect" G₂ configuration (balanced bridges, zero central, zero time) gives α⁻¹ ≈ 137.036
@@ -254,14 +252,14 @@ class AdversarialAxiomTester:
         """
         Generate a stable G₂ configuration as baseline.
 
-        This creates a 27D configuration that exactly satisfies holonomy constraints:
+        This creates a 26D configuration that exactly satisfies holonomy constraints:
         - Σ|bridge|² = b₃ = 24
         - Bridges are balanced (equal energy distribution)
 
         Returns:
-            27D baseline configuration
+            26D baseline configuration
         """
-        baseline = np.zeros(27)
+        baseline = np.zeros(26)
 
         # 1. Bridge pairs: Distribute energy equally across 12 bridges
         # Each bridge should have energy = b₃/12 = 2.0
@@ -274,11 +272,8 @@ class AdversarialAxiomTester:
             baseline[2*i] = r * np.cos(angle)
             baseline[2*i + 1] = r * np.sin(angle)
 
-        # 2. Central sampler: Small Euclidean values
+        # 2. Shadow times: small timelike components (one per shadow)
         baseline[24:26] = np.random.randn(2) * 0.1
-
-        # 3. Time: Small (0,1) value
-        baseline[26] = np.random.randn() * 0.01
 
         # Verify this satisfies holonomy
         bridge_params = baseline[:24].reshape(12, 2)
@@ -291,19 +286,19 @@ class AdversarialAxiomTester:
 
     def generate_holonomy_preserving_perturbation(self, magnitude: float = 0.05) -> np.ndarray:
         """
-        Generate a 27D configuration that preserves G₂ holonomy.
+        Generate a 26D configuration that preserves G₂ holonomy.
 
         Args:
             magnitude: Size of perturbation from stable baseline
 
         Returns:
-            27D configuration near holonomy-preserving baseline
+            26D configuration near holonomy-preserving baseline
         """
         # Start with stable G₂ configuration
         baseline = self.generate_stable_g2_configuration()
 
         # Add small perturbation in tangent space
-        perturbation = np.random.randn(27) * magnitude
+        perturbation = np.random.randn(26) * magnitude
 
         # For bridges: perturb angles (not radii) to preserve energy
         bridge_baseline = baseline[:24].reshape(12, 2)
@@ -326,9 +321,8 @@ class AdversarialAxiomTester:
 
         baseline[:24] = bridge_baseline.flatten()
 
-        # Central sampler and time: allow small perturbations
+        # Shadow times: allow small perturbations
         baseline[24:26] += perturbation[24:26] * 0.5
-        baseline[26] += perturbation[26] * 0.1
 
         return baseline
 
@@ -347,7 +341,7 @@ class AdversarialAxiomTester:
             np.random.seed(seed)
 
         logger.info(f"Starting Adversarial Search ({iterations} iterations)...")
-        logger.info("Objective: Find 27D configurations that violate Unity Identity")
+        logger.info("Objective: Find 26D configurations that violate Unity Identity")
         logger.info("Constraint: Preserve G₂ holonomy (associative 3-cycles)")
 
         results = []
@@ -493,7 +487,7 @@ class AdversarialAxiomTester:
                 "test of topological stability. Results are illustrative only."
             ),
             "topology": {
-                "manifold": "M²⁷(24,1,2)",
+                "manifold": "M²⁶(24,2)",
                 "structure": "12×(2,0) + S^(2,0) + (0,1)",
                 "b3": int(self.b3),
                 "chi_eff": int(self.chi_eff)
@@ -511,7 +505,7 @@ class AdversarialAxiomTester:
             "interpretation": {
                 "peer_review_response": (
                     f"The Unity Identity was subjected to {total} adversarial perturbations "
-                    f"in 27D configuration space. Status: {stability_analysis['status']} "
+                    f"in 26D configuration space. Status: {stability_analysis['status']} "
                     f"(failure rate: {stability_analysis['failure_rate_percent']:.2f}%). "
                     "This demonstrates the identity emerges from global topological constraints, "
                     "not from parameter tuning or circular reasoning."

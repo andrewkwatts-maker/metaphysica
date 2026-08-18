@@ -476,7 +476,7 @@ class HubbleTensionV16(SimulationBase):
             title="Hubble Tension: KNP-Aligned Bridge Axion EDE",
             description=(
                 "Computes Early Dark Energy from KNP-aligned bridge axions in "
-                "M^{27}(24,1,2). With 12 axions from b3=24 and f_eff ~ 1.19e14 GeV, "
+                "M^{26}(24,2). With 12 axions from b3=24 and f_eff ~ 1.19e14 GeV, "
                 "the EDE fraction f_EDE ~ 7.2e-9 is insufficient for Hubble tension "
                 "resolution. Original 47-order KK gap remains unresolved by KNP."
             ),

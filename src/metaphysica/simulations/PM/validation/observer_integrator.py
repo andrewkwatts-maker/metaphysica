@@ -3,14 +3,14 @@
 Observer Integrator - v24.1 Principia Metaphysica
 ==================================================
 
-Models quantum measurement back-reaction on the 27D bulk manifold.
+Models quantum measurement back-reaction on the 26D bulk manifold.
 Proves that observation doesn't destabilize the topological geometry.
 
 This addresses the peer review concern: "Does measurement in 4D collapse
-the 27D structure? Are physical constants observer-dependent?"
+the 26D structure? Are physical constants observer-dependent?"
 
 Purpose:
-    - Model quantum measurement process in 27D→4D projection
+    - Model quantum measurement process in 26D→4D projection
     - Calculate back-reaction of 4D observation on 26D bulk
     - Test if measurement destabilizes G₂ holonomy
     - Verify observer-independence of physical constants
@@ -41,7 +41,7 @@ logger = logging.getLogger("ObserverIntegrator")
 
 class ObserverIntegrator:
     """
-    Models the back-reaction of quantum measurement on the 27D bulk manifold.
+    Models the back-reaction of quantum measurement on the 26D bulk manifold.
 
     Tests whether observation in 4D effective theory destabilizes the
     underlying G₂ topological structure that derives physical constants.
@@ -50,7 +50,7 @@ class ObserverIntegrator:
     1. Measurement back-reaction is perturbative (ΔE << E_Planck)
     2. G₂ holonomy remains stable under measurement
     3. Physical constants are observer-independent
-    4. 27D→4D projection is not disturbed by measurement
+    4. 26D→4D projection is not disturbed by measurement
     """
 
     def __init__(self, n_measurements=1000):
@@ -61,8 +61,8 @@ class ObserverIntegrator:
             n_measurements: Number of measurement events to simulate
         """
         # PM framework structure
-        self.n_dimensions = 27
-        self.signature = (26, 1)
+        self.n_dimensions = 26
+        self.signature = (24, 2)
         self.n_bridges = 12
         self.bridge_dim = 2
 
@@ -79,12 +79,12 @@ class ObserverIntegrator:
 
     def generate_vacuum_state(self) -> np.ndarray:
         """
-        Generate the vacuum state |0⟩ in the 27D Hilbert space.
+        Generate the vacuum state |0⟩ in the 26D Hilbert space.
 
         Returns:
-            27D vacuum state vector
+            26D vacuum state vector
         """
-        # Vacuum state is the ground state of the 27D metric
+        # Vacuum state is the ground state of the 26D metric
         # For G₂ manifold, this is the state of minimal holonomy
 
         # Start with Gaussian-distributed vacuum fluctuations
@@ -97,7 +97,7 @@ class ObserverIntegrator:
 
     def generate_measurement_operator(self, observable: str = "position") -> np.ndarray:
         """
-        Generate quantum measurement operator in 27D space.
+        Generate quantum measurement operator in 26D space.
 
         Args:
             observable: Type of observable ("position", "momentum", "energy")
@@ -117,7 +117,7 @@ class ObserverIntegrator:
             M = (M - M.T) * 1j  # Anti-Hermitian → Hermitian via i× factor
 
         elif observable == "energy":
-            # Energy (Hamiltonian) in 27D
+            # Energy (Hamiltonian) in 26D
             # H = -∇² + V(x) where V is the G₂ potential
             # Typical measurements happen at EWSB scale or lower (~10⁻¹⁶ E_Planck)
             H = np.diag(np.random.uniform(0, self.E_ewsb, self.n_dimensions))
@@ -192,7 +192,7 @@ class ObserverIntegrator:
         # G₂ holonomy is characterized by the associative 3-form φ
         # φ = dx¹∧dx²∧dx³ + ... (specific structure on 7D G₂ manifold)
 
-        # For the 27D = 12×(2,0) + C^(2,0) + (0,1) framework,
+        # For the 26D = 12×(2,0) + C^(2,0) + (0,1) framework,
         # holonomy stability means bridge structure is preserved
 
         # Test: Compute overlap with bridge eigenstates
@@ -209,14 +209,13 @@ class ObserverIntegrator:
         # Total bridge overlap (should be close to 1 for stable holonomy)
         total_bridge_overlap = sum(bridge_overlaps)
 
-        # Central sampler overlap (dimensions 24:26)
-        central_overlap = np.abs(psi_perturbed[24])**2 + np.abs(psi_perturbed[25])**2
-
-        # Time fiber overlap (dimension 26)
-        time_overlap = np.abs(psi_perturbed[26])**2
+        # Shadow-time overlap (dimensions 24:26 — the two timelike
+        # directions, one per 13D shadow, under the two-time ruling; there
+        # is no separate 27th time-fiber dimension)
+        time_overlap = np.abs(psi_perturbed[24])**2 + np.abs(psi_perturbed[25])**2
 
         # Stability metric: total should equal 1 (norm preservation)
-        stability = total_bridge_overlap + central_overlap + time_overlap
+        stability = total_bridge_overlap + time_overlap
 
         # Status
         if abs(stability - 1.0) < 1e-6:
@@ -228,7 +227,7 @@ class ObserverIntegrator:
 
         return {
             "total_bridge_overlap": float(total_bridge_overlap),
-            "central_sampler_overlap": float(central_overlap),
+            "shadow_time_overlap": float(time_overlap),
             "time_fiber_overlap": float(time_overlap),
             "stability_metric": float(stability),
             "status": status,
@@ -378,7 +377,7 @@ class ObserverIntegrator:
 
         if all_tests_pass:
             overall_status = "MEASUREMENT-STABLE (Observer back-reaction is perturbative)"
-            conclusion = "Quantum measurement does not destabilize 27D topology or physical constants"
+            conclusion = "Quantum measurement does not destabilize 26D topology or physical constants"
         else:
             failed = []
             if not is_perturbative: failed.append("back-reaction too large")
@@ -428,10 +427,10 @@ class ObserverIntegrator:
                     f"(max {measurement_analysis['max_backreaction_E_planck']:.2e}), which is perturbative. "
                     f"G₂ holonomy remains stable in {measurement_analysis['fraction_holonomy_stable']:.1%} of measurements. "
                     f"Topological constants (α⁻¹) are exactly observer-independent. "
-                    "This proves measurement does not collapse the 27D→4D projection."
+                    "This proves measurement does not collapse the 26D→4D projection."
                 ),
                 "physical_picture": (
-                    "Observers in 4D effective theory measure projections of 27D fields. "
+                    "Observers in 4D effective theory measure projections of 26D fields. "
                     "The measurement process couples to the bulk, but the coupling is weak "
                     "(suppressed by Planck scale). Topological invariants (b₃, χ_eff) are "
                     "protected by G₂ holonomy and remain constant across all observer frames."
@@ -463,7 +462,7 @@ def main():
     print("=" * 70)
     print(" OBSERVER INTEGRATOR - v24.1")
     print("=" * 70)
-    print(" Objective: Model measurement back-reaction on 27D bulk")
+    print(" Objective: Model measurement back-reaction on 26D bulk")
     print(" Tests: Back-reaction energy, holonomy stability, observer-independence")
     print("=" * 70)
 

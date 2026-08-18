@@ -280,7 +280,7 @@ class AppendixAMathFoundations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "- Bridge+time bulk: 25D with signature (24,1) = 12×(2,0) + (0,1) automatically satisfies Virasoro anomaly cancellation [full 27D(24,1,2) includes additional S<sup>(2,0)</sup> sampler data fields]\n\n"
+                        "- Bridge+time bulk: 25D with signature (24,1) = 12×(2,0) + (0,1) automatically satisfies Virasoro anomaly cancellation [full 26D(24,2) includes additional S<sup>(2,0)</sup> shadow-time directions]\n\n"
                         "- Euclidean bridge: Reduces the 12×(2,0) pairs to shadows (12,1) via OR reconstruction\n\n"
                         "- Shadow reduction: Yields 13-dimensional intermediate spacetime with unified time\n\n"
                         "- Compactification: 9 spatial dimensions (from bridge reduction) + 13 shadow dimensions compactify on T<sup>15</sup> × G₂(7D)\n\n"

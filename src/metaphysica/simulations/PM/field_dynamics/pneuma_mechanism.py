@@ -477,7 +477,7 @@ class PneumaMechanismV16(SimulationBase):
         content_blocks.extend([
             ContentBlock(
                 type="paragraph",
-                content="The Pneuma Lagrangian is the fundamental fermionic field term that sources all of physics — from spacetime geometry to matter content. It represents a generalized Dirac action for a fundamental fermionic field living in the full 27-dimensional spacetime M<sup>27</sup>(24,1,2) with signature (24,1) plus Euclidean bridge and S<sup>(2,0)</sup> sampler data fields."
+                content="The Pneuma Lagrangian is the fundamental fermionic field term that sources all of physics — from spacetime geometry to matter content. It represents a generalized Dirac action for a fundamental fermionic field living in the full 26-dimensional spacetime M<sup>26</sup>(24,2) with signature (24,1) plus Euclidean bridge and S<sup>(2,0)</sup> shadow-time directions."
             ),
             ContentBlock(
                 type="formula",
@@ -496,7 +496,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The Pneuma Lagrangian is a generalized Dirac action for a fundamental fermionic field living in the full 27D(24,1,2) spacetime M<sup>27</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). The spinor field couples to the 12&times;(2,0) bridge pairs and the T<sup>1</sup> time fiber — the Clifford algebra is Cl<sub>(24,1)</sub> (the bridge+time subalgebra, since S<sup>(2,0)</sup> is Euclidean and contributes scalar degrees of freedom). The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction. Each component has specific physical meaning:"
+                content="The Pneuma Lagrangian is a generalized Dirac action for a fundamental fermionic field living in the full 26D(24,2) spacetime M<sup>26</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). The spinor field couples to the 12&times;(2,0) bridge pairs and the T<sup>1</sup> time fiber — the Clifford algebra is Cl<sub>(24,1)</sub> (the bridge+time subalgebra, since S<sup>(2,0)</sup> is Euclidean and contributes scalar degrees of freedom). The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction. Each component has specific physical meaning:"
             ),
             ContentBlock(
                 type="heading",
@@ -512,7 +512,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="A 4096-component Dirac spinor in the 27D(24,1,2) bulk (2<sup>12</sup> = 4096 from Cl<sub>(24,1)</sub> sub-algebra of the bridge+time sector; the Euclidean S<sup>(2,0)</sup> sampler data fields contribute scalar rather than spinor modes). Reduces to a 64-component effective spinor via OR reduction. Further decomposes as 64 = 4 &times; 16 under the 4D spacetime &times; internal manifold split."
+                content="A 4096-component Dirac spinor in the 26D(24,2) bulk (2<sup>12</sup> = 4096 from Cl<sub>(24,1)</sub> sub-algebra of the bridge+time sector; the Euclidean S<sup>(2,0)</sup> shadow-time directions contribute scalar rather than spinor modes). Reduces to a 64-component effective spinor via OR reduction. Further decomposes as 64 = 4 &times; 16 under the 4D spacetime &times; internal manifold split."
             ),
             ContentBlock(
                 type="heading",
@@ -520,7 +520,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The covariant Dirac operator: &Gamma;<sup>M</sup>D<sub>M</sub> where M runs over the 25 bridge+time dimensions (12&times;2+1; the Euclidean S<sup>(2,0)</sup> sampler data fields decouple from spinor kinetics). &Gamma;<sup>M</sup> are 4096&times;4096 matrices in Cl<sub>(24,1)</sub>, reducing to 64&times;64 in the effective dual shadow Cl<sub>(12,1)</sub> after OR reduction."
+                content="The covariant Dirac operator: &Gamma;<sup>M</sup>D<sub>M</sub> where M runs over the 25 bridge+time dimensions (12&times;2+1; the Euclidean S<sup>(2,0)</sup> shadow-time directions decouple from spinor kinetics). &Gamma;<sup>M</sup> are 4096&times;4096 matrices in Cl<sub>(24,1)</sub>, reducing to 64&times;64 in the effective dual shadow Cl<sub>(12,1)</sub> after OR reduction."
             ),
             ContentBlock(
                 type="heading",
@@ -554,11 +554,11 @@ class PneumaMechanismV16(SimulationBase):
         content_blocks.extend([
             ContentBlock(
                 type="heading",
-                content="The Gamma Matrices: 27D(24,1,2) to 13D"
+                content="The Gamma Matrices: 26D(24,2) to 13D"
             ),
             ContentBlock(
                 type="paragraph",
-                content="In the 27D(24,1,2) bulk, the spinor field uses the bridge+time subalgebra Cl<sub>(24,1)</sub> (dimension 2<sup>12</sup> = 4096) since the Euclidean S<sup>(2,0)</sup> sampler data fields contribute only scalar fluctuations. Upon OR reduction (R<sub>&perp;</sub> acting on bridge pairs), we obtain the effective Cl<sub>(12,1)</sub> algebra of the 13D observable shadow:"
+                content="In the 26D(24,2) bulk, the spinor field uses the bridge+time subalgebra Cl<sub>(24,1)</sub> (dimension 2<sup>12</sup> = 4096) since the Euclidean S<sup>(2,0)</sup> shadow-time directions contribute only scalar fluctuations. Upon OR reduction (R<sub>&perp;</sub> acting on bridge pairs), we obtain the effective Cl<sub>(12,1)</sub> algebra of the 13D observable shadow:"
             ),
             ContentBlock(
                 type="heading",
@@ -566,7 +566,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,1)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 shared time)."
+                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,1)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
             ),
             ContentBlock(
                 type="paragraph",
@@ -584,8 +584,8 @@ class PneumaMechanismV16(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Dimensional Reduction: Cl(24,1) &rarr; Cl(12,1)",
-                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,1)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 shared time)."
+                title="Dimensional Reduction: Cl(24,2) &rarr; Cl(12,1)",
+                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,1)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
             ),
         ])
 
@@ -848,7 +848,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Complementary to the Pneuma field Lagrangian, we can formulate the theory in terms of extended objects (p-branes) propagating in the full 27D(24,1,2) spacetime M<sup>27</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). This formulation makes manifest the higher-dimensional origin and the role of OR reduction via the R<sub>&perp;</sub> operator: 12 bridge pairs create dual 13D(12,1) shadows."
+                content="Complementary to the Pneuma field Lagrangian, we can formulate the theory in terms of extended objects (p-branes) propagating in the full 26D(24,2) spacetime M<sup>26</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). This formulation makes manifest the higher-dimensional origin and the role of OR reduction via the R<sub>&perp;</sub> operator: 12 bridge pairs create dual 13D(12,1) shadows."
             ),
             ContentBlock(
                 type="heading",
@@ -862,7 +862,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Dual-Shadow Physics Framework",
-                content="This action is formulated in the full 27D(24,1,2) spacetime. The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction (each shadow: 12 spatial + 1 shared time) while maintaining covariance. The Euclidean S<sup>(2,0)</sup> sampler data fields contribute geometric averaging."
+                content="This action is formulated in the full 26D(24,2) spacetime. The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction (each shadow: 12 spatial + 1 time (its own)) while maintaining covariance. The Euclidean S<sup>(2,0)</sup> shadow-time directions contribute geometric averaging."
             ),
             ContentBlock(
                 type="heading",
@@ -870,7 +870,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The Pneuma sector consists of four distinct p-branes embedded in the 27D spacetime. Before gauge fixing, each brane has two timelike dimensions:"
+                content="The Pneuma sector consists of four distinct p-branes embedded in the 26D spacetime. Before gauge fixing, each brane has two timelike dimensions:"
             ),
             ContentBlock(
                 type="heading",
@@ -907,8 +907,8 @@ class PneumaMechanismV16(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="OR Reduction: 27D(24,1,2) → 12×(2,0) bridge pairs → 2×13D(12,1)",
-                content="Starting configuration: 25D with signature (24,1) = 12&times;(2,0) + (0,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + 1 shared time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action. The S<sup>(2,0)</sup> sampler data fields provide additional geometric averaging."
+                title="OR Reduction: 26D(24,2) → 12×(2,0) bridge pairs → 2×13D(12,1)",
+                content="Starting configuration: 25D with signature (24,1) = 12&times;(2,0) + (0,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + 1 shared time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action. The S<sup>(2,0)</sup> shadow-time directions provide additional geometric averaging."
             ),
             ContentBlock(
                 type="heading",
@@ -992,7 +992,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The fundamental action in full 27D(24,1,2) spacetime, emphasizing fermionic primacy:"
+                content="The fundamental action in full 26D(24,2) spacetime, emphasizing fermionic primacy:"
             ),
             ContentBlock(
                 type="callout",
@@ -1006,13 +1006,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="After OR reduction from 27D(24,1,2) = 12&times;(2,0) + (0,1) to dual 13D(12,1) shadows with unified time, the 4096-component spinor from Cl<sub>(24,1)</sub> reduces to effective 64 components:"
+                content="After OR reduction from 26D(24,2) = 12&times;(2,0) + (0,1) to dual 13D(12,1) shadows with unified time, the 4096-component spinor from Cl<sub>(24,1)</sub> reduces to effective 64 components:"
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Dimensional Reduction: 27D(24,1,2) = 12×(2,0) + (0,1) → 2×13D(12,1)",
-                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows with shared time. S<sup>(2,0)</sup> sampler data fields provide geometric averaging. Spinor dimension: 2<sup>12</sup> = 4096 from Cl<sub>(24,1)</sub> &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> stabilize moduli via KKLT/LVS mechanisms. The complex structure modulus Re(T) is constrained from the measured Higgs mass (125.10 GeV); the exact value is an open problem (9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)."
+                title="Dimensional Reduction: 26D(24,2) = 12×(2,0) + (0,1) → 2×13D(12,1)",
+                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows with shared time. S<sup>(2,0)</sup> shadow-time directions provide geometric averaging. Spinor dimension: 2<sup>12</sup> = 4096 from Cl<sub>(24,1)</sub> &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> stabilize moduli via KKLT/LVS mechanisms. The complex structure modulus Re(T) is constrained from the measured Higgs mass (125.10 GeV); the exact value is an open problem (9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)."
             ),
             ContentBlock(
                 type="heading",
@@ -1042,13 +1042,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The complete descent from fundamental 27D physics to 4D observables:"
+                content="The complete descent from fundamental 26D physics to 4D observables:"
             ),
             ContentBlock(
                 type="formula",
                 content=r"""\begin{aligned}
-\textbf{Level 1} \; (27D): \quad & S_{27} = \int d^{27}X \sqrt{-G} \left[ R_{27} + \bar{\Psi}_P (i\Gamma^M D_M - m_P)\Psi_P \right] \\
-& \text{Signature: } (24,1,2) = 12 \times (2,0) \oplus S^{2,0} \oplus (0,1) \\[6pt]
+\textbf{Level 1} \; (26D): \quad & S_{27} = \int d^{26}X \sqrt{-G} \left[ R_{27} + \bar{\Psi}_P (i\Gamma^M D_M - m_P)\Psi_P \right] \\
+& \text{Signature: } (24,2) = 12 \times (2,0) \oplus S^{2,0} \oplus (0,1) \\[6pt]
 & \downarrow \; \text{OR reduction via } R_\perp = \bigotimes_{i=1}^{12} R_\perp^{(i)} \\[6pt]
 \textbf{Level 2} \; (2 \times 13D): \quad & \mathcal{L}_{13} = M_*^{11} R_{13} + \bar{\Psi}_{64} (i\gamma^\mu \nabla_\mu - m_{\text{eff}})\Psi_{64} + \mathcal{L}_{\text{flux}} \\
 & \text{Dual shadows: } 2 \times 13D(12,1) \text{ with shared } T^1 \\[6pt]
@@ -1248,11 +1248,11 @@ class PneumaMechanismV16(SimulationBase):
                 eml_tree_str=(
                     "# Pneuma gradient flow in EML operator tree:\n"
                     "# dPsi_dt = ops.neg(ops.mul(lambda_P, dV_dPsi))\n"
-                    "# 27D condensate scale: ops.mul(phi_0, ops.exp(ops.neg(ops.div(m_phi, H_0))))"
+                    "# 26D condensate scale: ops.mul(phi_0, ops.exp(ops.neg(ops.div(m_phi, H_0))))"
                 ),
                 eml_description=(
                     "EML: ops.neg(ops.mul(lambda_P, dV_dPsi)) — gradient flow on racetrack potential; "
-                    "27D condensate scale: ops.mul(phi_0, ops.exp(ops.neg(ops.div(m_phi, H_0))))"
+                    "26D condensate scale: ops.mul(phi_0, ops.exp(ops.neg(ops.div(m_phi, H_0))))"
                 ),
                 derivation={
                     "source": "Gradient flow on potential",
@@ -1380,20 +1380,20 @@ class PneumaMechanismV16(SimulationBase):
             Formula(
                 id="lagrangian-hierarchy-complete",
                 label="(3.10)",
-                latex=r"\begin{aligned} \textbf{L1}\;(27D): & \; S_{27} = \int d^{27}X \sqrt{-G} [R_{27} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = M_*^{11}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
-                plain_text="L1(27D): S_27 bulk action; L2(13D): dual shadow effective; L3(4D): f(R,T,τ) gravity; L4(DE): quintessence",
+                latex=r"\begin{aligned} \textbf{L1}\;(26D): & \; S_{27} = \int d^{26}X \sqrt{-G} [R_{27} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = M_*^{11}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
+                plain_text="L1(26D): S_27 bulk action; L2(13D): dual shadow effective; L3(4D): f(R,T,τ) gravity; L4(DE): quintessence",
                 category="DERIVED",
-                description="Complete dimensional descent: 27D → 13D x 2 -> 4D -> dark energy sector",
+                description="Complete dimensional descent: 26D → 13D x 2 -> 4D -> dark energy sector",
                 input_params=["topology.elder_kads", "topology.mephorash_chi", "topology.D_bulk"],
                 output_params=["cosmology.w0_derived"],
                 derivation={
-                    "source": "Successive dimensional reduction from 27D bulk to 4D effective theory",
+                    "source": "Successive dimensional reduction from 26D bulk to 4D effective theory",
                     "method": "dimensional_descent",
                     "parentFormulas": ["pneuma-lagrangian", "null-constraints-2t"],
                     "steps": [
-                        "L1 (27D): Construct 2T bulk action S_27 with Pneuma spinor Psi_P in Cl(24,1) Clifford algebra; bulk dimension D_bulk = b3 + 3 = 27 with signature (24,1,2) = 12x(2,0) + S^{2,0} + (0,1)",
+                        "L1 (26D): Construct 2T bulk action S_26 with Pneuma spinor Psi_P in Cl(24,2) Clifford algebra; bulk dimension D_bulk = b3 + 2 = 26 with signature (24,2): one time per 13D shadow, (12,1) + (12,1) = 26",
                         "L1 -> L2: Apply OR reduction via R_perp = tensor_{i=1}^{12} R_perp^{(i)} to reduce 12 bridge pairs, yielding dual 13D(12,1) shadows with shared T^1 time fiber",
-                        "L2 (13D): In each shadow, the 4096-component spinor from Cl(24,1) reduces to 64-component effective spinor from Cl(12,1); flux terms L_flux stabilize moduli via KKLT mechanism",
+                        "L2 (13D): In each shadow, the 4096-component Weyl spinor of Cl(24,2) reduces to a 64-component effective spinor of Cl(12,1) per shadow (64 × 64 = 4096: the two shadow spinors tensor to the bulk Weyl spinor); flux terms L_flux stabilize moduli via KKLT mechanism",
                         "L2 -> L3: Perform Kaluza-Klein reduction over the 9-dimensional G2 x T^2 internal space, integrating out massive KK modes to obtain 4D effective field theory",
                         "L3 (4D): The resulting 4D theory is f(R,T,tau) modified gravity with coefficients alpha_F (Starobinsky R^2 from one-loop corrections), beta_F (matter-geometry coupling), gamma_F (residual 2T invariant), delta_F (dynamical evolution term)",
                         "L4 (DE): Remaining flat direction in moduli space yields the Mashiach scalar field phi_M with attractor potential V(phi_M) = V_0[1 + A cos(omega phi_M / f_phi)], providing dark energy with w -> -1.0 at late times"
@@ -1406,8 +1406,8 @@ class PneumaMechanismV16(SimulationBase):
                     ]
                 },
                 terms={
-                    "S_27": {"symbol": "S_{27}", "description": "27D bulk action with Pneuma spinor"},
-                    "Ψ_P": {"symbol": "\\Psi_P", "description": "4096-component Pneuma spinor from Cl(24,1)"},
+                    "S_27": {"symbol": "S_{27}", "description": "26D bulk action with Pneuma spinor"},
+                    "Ψ_P": {"symbol": "\\Psi_P", "description": "4096-component Weyl Pneuma spinor of Cl(24,2)"},
                     "L_13": {"symbol": "\\mathcal{L}_{13}", "description": "13D shadow effective Lagrangian (64 spinor components)"},
                     "M_*": {"symbol": "M_*", "description": "Fundamental mass scale (string scale)", "param_id": "constants.M_STAR"},
                     "α_F": {"symbol": "\\alpha_F", "description": "Starobinsky coefficient", "param_id": "gravity.alpha_F"},
@@ -1419,9 +1419,9 @@ class PneumaMechanismV16(SimulationBase):
                     "ops.add(eml_vec('S_27_bulk'), ops.add(eml_vec('L_13_shadow'), ops.add(ops.add(eml_vec('R_4D'), ops.mul(eml_vec('alpha_F'), ops.pow(eml_vec('R_4D'), eml_scalar(2.0)))), ops.neg(ops.add(ops.mul(eml_scalar(0.5), ops.pow(eml_vec('partial_phi'), eml_scalar(2.0))), eml_vec('V_phi_M'))))))"
                 ),
                 eml_description=(
-                    "EML: 4-level descent L1(27D bulk) + L2(13D shadow) + L3(f(R,T,tau)) + L4(DE quintessence)"
+                    "EML: 4-level descent L1(26D bulk) + L2(13D shadow) + L3(f(R,T,tau)) + L4(DE quintessence)"
                 ),
-                # Triple-track: D_bulk = b3 + 3 = 27 anchors the dimensional descent.
+                # Two-time: D_bulk = b3 + 2 = 26 anchors the dimensional descent.
                 arithma=_arithma_num(27.0),
                 eml=_eml_add(_b3_leaf(), _eml_scalar(3.0)),
                 value=27.0,
@@ -1517,7 +1517,7 @@ class PneumaMechanismV16(SimulationBase):
                 no_experimental_value=True,
                 eml_description=(
                     "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(2.0)) — "
-                    "n = b3/2 = 12 bridge pairs from 12×(2,0) paired bridge system in M²⁷"
+                    "n = b3/2 = 12 bridge pairs from 12×(2,0) paired bridge system in M²⁶"
                 ),
             ),
             Parameter(

@@ -16,8 +16,8 @@ Current Production Framework: v22.0 (12-PAIR-BRIDGE)
 -----------------------------------------------------
 All production simulations use the v22 framework with SOLID architecture:
 
-v24.2 Key Updates (M^{27}(24,1,2) Framework):
-- Bulk: M^{27}(24,1,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
+v24.2 Key Updates (M^{26}(24,2) Framework):
+- Bulk: M^{26}(24,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
 - Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²) + (ds₁² + ds₂²)
 - Distributed OR: ⊗_{i=1}^{12} R_⊥_i (objective reduction across bridge pairs)
 - Topological activation: 6→12 bridge pairs via geometric coupling
@@ -167,8 +167,8 @@ def _bind_output_dir():
               file=_sys.stderr)
 
 _bind_output_dir()
-# v24.2: M^{27}(24,1,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
-# 24 physics dims (12 bridge pairs) + 1 time + 2 sampler data fields
+# v24.2: M^{26}(24,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
+# 24 physics dims (12 bridge pairs) + 1 time + 2 shadow-time directions
 # Sampler data fields S^{2,0}: global cross-shadow OR averaging sector
 # OR coherence via distributed ⊗_{i=1}^{12} R_⊥_i (objective reduction)
 

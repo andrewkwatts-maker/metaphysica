@@ -3,12 +3,12 @@
 
 Audits consistency of physics terminology across formulas.json, sections.json,
 and parameters.json. Flags entries that mention deprecated or inconsistent
-notation for the M^{27}(24,1,2) dimensional architecture (e.g. legacy
-``27D(26,1)`` references, old 26-spatial signatures, etc.).
+notation for the M^{26}(24,2) dimensional architecture (e.g. legacy
+``26D(26,1)`` references, old 26-spatial signatures, etc.).
 
 Every flagged item ultimately traces back to the single seed b₃ = 24:
 the 27-dim manifold is 24 (= b₃) bridge dimensions + 1 unified time +
-2 sampler dimensions. Terminology drift = drift from that one seed.
+two shadow times. Terminology drift = drift from that one seed.
 """
 from __future__ import annotations
 
@@ -21,23 +21,23 @@ from typing import Any, Dict, List
 from metaphysica.generators._common import autogen_dir
 
 CANONICAL = {
-    "manifold": "M^{27}(24,1,2)",
-    "signature": "(26,1)",
-    "decomposition": "24 (G2 core, = b3) + 1 (unified time T^1) + 2 (sampler S^{2,0})",
+    "manifold": "M^{26}(24,2)",
+    "signature": "(24,2)",
+    "decomposition": "24 (G2 core, = b3) + 2 (times, one per 13D shadow)",
     "seed": "b3 = 24",
 }
 
 # Patterns that indicate stale / inconsistent notation.
 DEPRECATED_PATTERNS = [
-    (r"\b27D\(26,1\)\b", "Use M^{27}(24,1,2)"),
-    (r"\b25D\b", "v23+ uses 27D = 24 + 1 + 2"),
-    (r"\b26D\(25,1\)\b", "Pre-v24 notation; use M^{27}(24,1,2)"),
+    (r"\b26D\(26,1\)\b", "Use M^{26}(24,2)"),
+    (r"\b25D\b", "v23+ uses 26D = 24 + 1 + 2"),
+    (r"\b26D\(25,1\)\b", "Pre-v24 notation; use M^{26}(24,2)"),
     (r"Consciousness Field", "Use S_EIS (Euclidean Information Sector)"),
     (r"\bn_gen\s*=\s*chi_eff\s*/\s*\(4\*b3\)", "Verify chi_eff=144, b3=24 -> 3"),
 ]
 
 CANONICAL_KEYWORDS = [
-    "M^{27}",
+    "M^{26}",
     "24+1+2",
     "b3 = 24",
     "G2 holonomy",
@@ -105,7 +105,7 @@ def main() -> int:
     status = "REVISION REQUIRED" if all_flags else "CONSISTENT"
     report = {
         "framework": "Principia Metaphysica",
-        "audit_type": "27D Terminology Compliance",
+        "audit_type": "26D Terminology Compliance",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "total_files_scanned": len(files_scanned),
         "files_scanned": files_scanned,

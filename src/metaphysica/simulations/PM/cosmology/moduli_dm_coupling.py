@@ -40,7 +40,7 @@ An entropy-modulated correction from the SamplerEntropyDynamics module:
                = 0.065 * (1 + 0.0825) = 0.0704
 
 This uses |dS_total/dt| = 0.0825 (dimensionless entropy gradient from the
-sampler's von Neumann entropy dynamics with alpha_T = 2.7).
+sampler's von Neumann entropy dynamics with alpha_T = 2.6).
 
 HONEST ASSESSMENT OF ENTROPY EXTENSION:
   - The entropy gradient provides only an 8.2% enhancement to beta (0.065 -> 0.070).
@@ -138,7 +138,7 @@ ROUND 2 (Corrected formula using |entropy_gradient| directly):
 ROUND 3 (Classification of entropy extension):
   VERDICT: TUNED
   - Gemini classifies the entropy extension as TUNED, not DERIVED.
-  - The entropy_gradient depends on alpha_T = 2.7 from the sampler module,
+  - The entropy_gradient depends on alpha_T = 2.6 from the sampler module,
     whose derivation is not provided -- making it a tunable parameter.
   - The formula change from dS/dt/S_eq to |dS/dt| was "an ad hoc rescue"
     to avoid the absurd beta=57 result.
@@ -472,7 +472,7 @@ class ModuliDMCouplingV24(SimulationBase):
             "gemini_verdict": (
                 "TUNED: The entropy extension introduces an ad hoc formula "
                 "correction (dropping S_eq to avoid beta=57) and relies on "
-                "alpha_T=2.7 whose derivation is not provided. Moreover, the "
+                "alpha_T=2.6 whose derivation is not provided. Moreover, the "
                 "correction is numerically irrelevant: changing beta from "
                 "0.065 to 0.070 does not measurably change S8."
             ),

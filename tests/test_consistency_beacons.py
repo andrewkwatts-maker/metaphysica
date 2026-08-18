@@ -25,14 +25,16 @@ from metaphysica.simulations.PM.validation.consistency_beacons import (
 )
 
 
-def test_run_all_beacons_returns_twelve_records():
+def test_run_all_beacons_returns_thirteen_records():
     """12 beacons: 8 textbook checks + 4 LIVE registry beacons added by the
     2026-08 validation-coverage audit (PMNS unitarity, G_F-M_W-sin2thetaW
     identity, Friedmann closure, hbar*c unit chain) — the LIVE beacons read
     one side from the build's parameters.json so they can actually catch
-    framework drift."""
+    framework drift — plus the 2026-08-19 two-time bulk-accounting beacon
+    (b3+2 = 26 = 2x13; Weyl(Cl(24,2)) = 4096) locking the dimensional
+    ruling."""
     beacons = run_all_beacons()
-    assert len(beacons) == 12
+    assert len(beacons) == 13
     for b in beacons:
         assert isinstance(b, ConsistencyBeacon)
         assert b.id.startswith("beacon.")

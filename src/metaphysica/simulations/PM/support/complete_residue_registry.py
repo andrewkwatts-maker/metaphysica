@@ -708,7 +708,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 "Catalogues 125 PM-derived spectral residues from the G₂ manifold "
                 "Laplace-Beltrami operator and maps each eigenvalue to its physical "
                 "interpretation (particle masses, mixing angles, couplings, cosmological "
-                "parameters) under v24.2 M^{27}(24,1,2) dual-shadow framework. Registry entries "
+                "parameters) under v24.2 M^{26}(24,2) dual-shadow framework. Registry entries "
                 "include PDG/NuFIT reference values for orientation but are not "
                 "independent experimental fits."
             ),
@@ -1520,7 +1520,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "The holonomy group G₂ ⊂ SO(7) decomposes the tangent bundle of V₇ into "
                         "representations of the 14-dimensional Lie group G₂, generating exactly "
                         "χ_eff = 144 zero modes in the full compactification. After accounting for "
-                        "the dual-shadow OR reduction and the S^(2,0) sampler data fields (which removes "
+                        "the dual-shadow OR reduction and the two shadow-time directions (which removes "
                         "19 redundant ghost modes), 125 physical modes remain. This matches the "
                         "claimed dimension of the exceptional Jordan algebra J₃(O) — but dim J₃(O) = 27, not 125; no such "
                         "algebraic identification holds (see Appendix B)."

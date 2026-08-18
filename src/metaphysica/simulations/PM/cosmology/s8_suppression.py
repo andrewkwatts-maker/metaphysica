@@ -703,7 +703,7 @@ class S8SuppressionV16(SimulationBase):
         #
         # The sqrt(N_bridges) factor comes from coherent coupling of DM
         # to all 12 bridge moduli simultaneously. This is DERIVED from the
-        # M^27(24,1,2) architecture where all bridges participate.
+        # M^26(24,2) architecture where all bridges participate.
         #
         # The friction damps DM peculiar velocities, reducing the rate of
         # gravitational infall and hence structure growth. The integrated
@@ -723,7 +723,7 @@ class S8SuppressionV16(SimulationBase):
         # - sqrt(N_bridges) enhancement: DERIVED (coherent bridge sum)
         # - Exponential damping form: ESTABLISHED (standard perturbation theory)
         # - Friction active range: ASSUMED (z=0 to z=z_eff, conservative)
-        N_bridges = 12  # Bridge pairs in M^27 architecture (topological)
+        N_bridges = 12  # Bridge pairs in M^26 architecture (topological)
 
         # Effective friction rate (dimensionless, in units of H)
         Gamma_fric = beta_eff * np.sqrt(N_bridges)

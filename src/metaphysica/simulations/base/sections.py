@@ -44,7 +44,7 @@ PAPER_SECTIONS: Dict[str, SectionInfo] = {
     "0": SectionInfo(
         id="0",
         title="Abstract",
-        description="27D(24,1,2) dual-shadow framework with sampler data fields S^{2,0} deriving 125 constants from G2 manifold spectral residues.",
+        description="26D(24,2) dual-shadow framework with shadow-time directions S^{2,0} deriving 125 constants from G2 manifold spectral residues.",
         section_type="abstract",
         simulation_source="abstract_v17_2"  # Abstract content (updated for v24.2)
     ),
@@ -52,9 +52,9 @@ PAPER_SECTIONS: Dict[str, SectionInfo] = {
     "1": SectionInfo(
         id="1",
         title="Foundations of Dimensional Descent",
-        description="The 27D(24,1,2) bulk with unified time, dual shadows, sampler data fields S^{2,0}, G2 compactification, and condensate projection.",
+        description="The 26D(24,2) bulk with unified time, dual shadows, shadow-time directions S^{2,0}, G2 compactification, and condensate projection.",
         section_type="section",
-        simulation_source="merged_descent_v21"  # v24.2 refactor: 27D(24,1,2) dual-shadow model
+        simulation_source="merged_descent_v21"  # v24.2 refactor: 26D(24,2) dual-shadow model
     ),
     "2": SectionInfo(
         id="2",
@@ -172,7 +172,7 @@ PAPER_SECTIONS: Dict[str, SectionInfo] = {
     "F": SectionInfo(
         id="F",
         title="Dimensional Decomposition",
-        description="27D to 4D reduction via 13D shadow (PM chain: 27D→13D→6D→4D)",
+        description="26D to 4D reduction via 13D shadow (PM chain: 26D→13D→6D→4D)",
         section_type="appendix"
     ),
     "G": SectionInfo(

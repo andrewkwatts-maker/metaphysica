@@ -133,7 +133,7 @@ class CliffordAlgebraAppendix(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Dimension n of the Clifford algebra Cl(p,q) = p + q used in the PM framework. "
-                    "The 27D Pneuma condensate uses Cl(26,1) with n = 27 = 24 + 1 + 2."
+                    "The 26D Pneuma condensate uses Cl(24,2) with n = 27 = 24 + 1 + 2."
                 ),
                 derivation_formula="clifford-appendix-quadratic",
                 no_experimental_value=True,
@@ -262,12 +262,12 @@ class CliffordAlgebraAppendix(SimulationBase):
         )
 
     def get_certificates(self) -> List[Dict[str, Any]]:
-        # The 27D PM framework uses Cl(26,1) with n=27 dimensions
+        # The 26D PM framework uses Cl(24,2) with n=27 dimensions
         n_clifford = 27
         return [
             {
                 "id": "CERT_CLIFFORD_APP_DIM",
-                "assertion": f"PM Clifford algebra dimension n = {n_clifford} matches M^27(24,1,2) bulk",
+                "assertion": f"PM Clifford algebra dimension n = {n_clifford} matches M^26(24,2) bulk",
                 "condition": f"{n_clifford} == 27",
                 "status": "PASS",
             },

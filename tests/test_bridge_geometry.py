@@ -1,7 +1,7 @@
 """
 Unit Tests for Bridge Geometry and (2,0) Field Sampling
 =========================================================
-Tests the 12 bridge pair system, 27D metric assembly,
+Tests the 12 bridge pair system, 26D metric assembly,
 moduli stabilization, KK spectrum, and sampler fields.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -123,52 +123,54 @@ class TestBridgeSystem:
     def test_bridge_dimensions_24(self, system):
         assert system.total_bridge_dimensions == 24
 
-    def test_total_dimensions_27(self, system):
-        """24 (bridges) + 1 (time) + 2 (sampler) = 27."""
-        assert system.total_bridge_dimensions + 3 == 27
+    def test_total_dimensions_26(self, system):
+        """24 (bridges) + 2 (shadow times) = 26 — two-time ruling."""
+        assert system.total_bridge_dimensions + 2 == 26
 
 
-class TestMetric27D:
-    """Tests for the full 27D metric."""
+class TestMetric26D:
+    """Tests for the full 26D metric."""
 
     @pytest.fixture(scope="class")
     def system(self):
         return BridgeSystem()
 
     def test_metric_shape(self, system):
-        g = system.assemble_27d_metric()
-        assert g.shape == (27, 27)
+        g = system.assemble_26d_metric()
+        assert g.shape == (26, 26)
 
     def test_metric_symmetric(self, system):
-        g = system.assemble_27d_metric()
+        g = system.assemble_26d_metric()
         np.testing.assert_allclose(g, g.T)
 
-    def test_signature_26_1(self, system):
-        """Metric should have signature (26, 1) — Lorentzian."""
+    def test_signature_24_2(self, system):
+        """Metric signature (24, 2): two timelike directions, one per shadow."""
         sig = system.metric_signature()
-        assert sig == (26, 1)
+        assert sig == (24, 2)
 
-    def test_time_component_negative(self, system):
-        g = system.assemble_27d_metric()
-        assert g[0, 0] == -1.0
+    def test_time_components_negative(self, system):
+        """The two shadow-time directions (indices 24-25) are timelike."""
+        g = system.assemble_26d_metric()
+        assert g[24, 24] == -1.0
+        assert g[25, 25] == -1.0
 
     def test_bridge_blocks_positive(self, system):
-        """Each 2×2 bridge block is positive definite."""
-        g = system.assemble_27d_metric()
+        """Each 2×2 bridge block is positive definite (indices 0-23)."""
+        g = system.assemble_26d_metric()
         for i in range(12):
-            block = g[1 + 2 * i:3 + 2 * i, 1 + 2 * i:3 + 2 * i]
+            block = g[2 * i:2 * i + 2, 2 * i:2 * i + 2]
             eigvals = np.linalg.eigvalsh(block)
             assert np.all(eigvals > 0)
 
-    def test_sampler_fields_positive(self, system):
+    def test_legacy_alias(self, system):
+        """Pre-two-time method name still resolves to the 26D assembly."""
         g = system.assemble_27d_metric()
-        assert g[25, 25] == 1.0
-        assert g[26, 26] == 1.0
+        assert g.shape == (26, 26)
 
-    def test_metric_determinant_negative(self, system):
-        """Lorentzian metric has negative determinant."""
-        g = system.assemble_27d_metric()
-        assert np.linalg.det(g) < 0
+    def test_metric_determinant_positive(self, system):
+        """With two timelike directions (−1)² = +1, so det g > 0."""
+        g = system.assemble_26d_metric()
+        assert np.linalg.det(g) > 0
 
 
 # ------------------------------------------------------------------
@@ -262,7 +264,7 @@ class TestCouplingMatrix:
 # ------------------------------------------------------------------
 
 class TestSamplerFields:
-    """Tests for S^{2,0} sampler data fields."""
+    """Tests for two shadow-time directions."""
 
     @pytest.fixture(scope="class")
     def system(self):

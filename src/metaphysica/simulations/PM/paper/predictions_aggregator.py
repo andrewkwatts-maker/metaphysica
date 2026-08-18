@@ -770,7 +770,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 rows=[
                     ["w₀", "−23/24 ≈ -0.9583 (from b₃ = 24)", "DERIVED (MEP)", "DESI 2025 BAO-only: w₀ = -0.957 ± 0.067 (consistent)"],
                     ["w<sub>a,eff</sub>", "0.27 (from α<sub>T</sub> = 2.7)", "DERIVED", "DESI: −0.75 ± 0.30 — 3.4σ away (disfavored; canonical w_a = −1/√24 ≈ −0.204 sits at 1.9σ)"],
-                    ["α<sub>T</sub>", "≈ 2.7 (Z₂-corrected)", "DERIVED", "Consistent with w(z) logarithmic form"],
+                    ["α<sub>T</sub>", "= 2.6 = 26/10 (two-time)", "DERIVED", "Consistent with w(z) logarithmic form"],
                     ["Planck tension", "Reduced 6σ → 1.3σ", "RESOLVED", "Frozen field mechanism via logarithmic w(z) evolution"],
                 ]
             ),
@@ -1153,7 +1153,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 type="table",
                 headers=["Parameter", "Value", "Status", "Derivation Source"],
                 rows=[
-                    ["α<sub>T</sub>", "≈ 2.7 (Z₂-corrected)", "DERIVED", "Two-time Γ/H scaling"],
+                    ["α<sub>T</sub>", "= 2.6 = 26/10 (two-time)", "DERIVED", "Two-time Γ/H scaling"],
                     ["w<sub>a</sub>/w₀ ratio", "≈ 0.89", "DERIVED", "α<sub>T</sub>/3 from thermal time"],
                     ["sign(w<sub>a</sub>)", "< 0", "DERIVED", "Thermal friction mechanism"],
                     ["n<sub>gen</sub>", "3", "DERIVED", "χ<sub>eff</sub>/48 = 144/48 from 𝔻 framework"],

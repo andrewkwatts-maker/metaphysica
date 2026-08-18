@@ -758,7 +758,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="where Ψ<sub>P</sub> is the Pneuma spinor with 4096 components before OR reduction (from Cl(24,1), with dimension 2<sup>12</sup> = 4096), and L<sub>OR</sub> contains the gravitational self-energy constraints that eliminate ghosts via objective reduction. After OR reduction, this reduces to 64 physical components (2<sup>6</sup>). The OR reduction conditions are:"
+                content="where Ψ<sub>P</sub> is the Pneuma spinor with 4096 components before OR reduction (from Cl(24,2), with dimension 2<sup>12</sup> = 4096), and L<sub>OR</sub> contains the gravitational self-energy constraints that eliminate ghosts via objective reduction. After OR reduction, this reduces to 64 physical components (2<sup>6</sup>). The OR reduction conditions are:"
             ),
             ContentBlock(
                 type="formula",

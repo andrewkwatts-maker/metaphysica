@@ -1,24 +1,24 @@
 """
 Bridge Geometry and (2,0) Field Sampling
 ==========================================
-Implements the 12 bridge pair geometry B_i^{2,0} for the 27D spacetime
-M^{27}(24,1,2). Each bridge is a 2D surface with complex structure,
+Implements the 12 bridge pair geometry B_i^{2,0} for the 26D spacetime
+M^{26}(24,2). Each bridge is a 2D surface with complex structure,
 moduli stabilization via racetrack superpotential, KK spectrum,
-and sampler data fields S^{2,0}.
+and shadow-time directions S^{2,0}.
 
 Dimensional Architecture:
-  M^{27}(24,1,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
+  M^{26}(24,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
   - 24 = 12 bridge pairs × 2D each
   - 1  = timelike fiber T¹
-  - 2  = sampler data fields S^{2,0}
-  - Total: 24 + 1 + 2 = 27D, signature (26,1)
+  - 2  = shadow-time directions S^{2,0}
+  - Total: 24 + 1 + 2 = 26D, signature (24,2)
 
 Mathematical Objects:
   - 12 bridge manifolds B_i (2D tori with complex structure τ_i)
   - Racetrack superpotential W = Σ A_j exp(−a_j T_i)
   - KK spectrum: m_n = n/R_i per bridge
   - Laplacian eigenmodes on T² (sampler fields)
-  - Full 27D metric assembly
+  - Full 26D metric assembly
 
 References:
   - Kachru, Kallosh, Linde, Trivedi (2003) "de Sitter Vacua in String Theory"
@@ -113,7 +113,7 @@ class BridgeManifold:
 class BridgeSystem:
     """System of 12 bridge manifolds forming the 24D bridge sector.
 
-    M^{27}(24,1,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
+    M^{26}(24,2) = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
     """
 
     def __init__(self, moduli: Optional[np.ndarray] = None):
@@ -212,7 +212,7 @@ class BridgeSystem:
 
         # Signature still (26,1)
         sig = self.metric_signature()
-        checks['signature_26_1'] = sig == (26, 1)
+        checks['signature_24_2'] = sig == (24, 2)
 
         # All bridge areas positive
         checks['all_areas_positive'] = all(b.area > 0 for b in self.bridges)
@@ -237,7 +237,7 @@ class BridgeSystem:
     # Racetrack parameters derived from G2 geometry
     # Two condensing gauge groups: SU(N_a) x SU(N_b) on the TCS G2 manifold
     # N_a = b3 = 24 (from Leech lattice / third Betti number)
-    # N_b = 26 (spacelike dimensions of M^27(24,1,2), giving a - b > 0 for a SUSY minimum)
+    # N_b = 26 (spacelike dimensions of M^26(24,2), giving a - b > 0 for a SUSY minimum)
     RACETRACK_A = 1.0       # Prefactor from first instanton sector
     RACETRACK_B = -0.5      # Prefactor from second instanton sector
     RACETRACK_a = 2 * math.pi / 24   # a = 2pi/N_a = 2pi/b3 ~ 0.2618
@@ -300,7 +300,7 @@ class BridgeSystem:
             - Absolute scale T_min: PLAUSIBLE (depends on A, B prefactors and N_b
               choice, which are not uniquely fixed by topology)
             - SUSY AdS minimum existence: DERIVED (standard KKLT result for a != b)
-            - N_b=26 choice: Framework-specific (matches 26 spacelike dims of M^27),
+            - N_b=26 choice: Framework-specific (matches 26 spacelike dims of M^26),
               but core predictions (ratios, alpha_leak) are N_b-independent.
 
         Args:
@@ -556,38 +556,38 @@ class BridgeSystem:
         return np.diag(areas)
 
     # ------------------------------------------------------------------
-    # 27D metric
+    # 26D metric
     # ------------------------------------------------------------------
 
-    def assemble_27d_metric(self) -> np.ndarray:
-        """Assemble the full 27D metric.
+    def assemble_26d_metric(self) -> np.ndarray:
+        """Assemble the full 26D metric (two-time ruling).
 
-        ds² = −dt² + Σ_{i=1}^{12} ds²_i + ds²_S
+        ds² = Σ_{i=1}^{12} ds²_i − dt₁² − dt₂²
 
         Structure:
-          - Index 0: time (signature −1)
-          - Indices 1-24: 12 bridge pairs (2 each)
-          - Indices 25-26: sampler fields S^{2,0}
+          - Indices 0-23: 12 bridge pairs (2 each, positive definite)
+          - Indices 24-25: the two shadow times, one per 13D shadow
+            (signature −1 each; (12,1) + (12,1) = (24,2))
 
         Returns:
-            (27, 27) metric tensor
+            (26, 26) metric tensor
         """
-        g = np.zeros((27, 27), dtype=np.float64)
+        g = np.zeros((26, 26), dtype=np.float64)
 
-        # Time component: g_{00} = -1
-        g[0, 0] = -1.0
-
-        # Bridge components: indices 1-24
+        # Bridge components: indices 0-23
         for i, bridge in enumerate(self.bridges):
             g_bridge = bridge.metric_2d
-            row = 1 + 2 * i
+            row = 2 * i
             g[row:row + 2, row:row + 2] = g_bridge
 
-        # Sampler field components: indices 25-26
-        g[25, 25] = 1.0
-        g[26, 26] = 1.0
+        # Shadow-time components: indices 24-25 (timelike)
+        g[24, 24] = -1.0
+        g[25, 25] = -1.0
 
         return g
+
+    # Legacy alias (pre-two-time method name)
+    assemble_27d_metric = assemble_26d_metric
 
     def metric_signature(self) -> Tuple[int, int]:
         """Compute the metric signature (p, q) where p = positive, q = negative eigenvalues."""
@@ -621,12 +621,12 @@ class BridgeSystem:
         """Verify bridge geometry properties."""
         results = {}
 
-        # Dimension count: 12×2 + 1 + 2 = 27
-        results['total_dim_27'] = self.total_bridge_dimensions + 3 == 27
+        # Dimension count (two-time): 12×2 + 2 times = 26
+        results['total_dim_26'] = self.total_bridge_dimensions + 2 == 26
 
-        # Metric signature (26, 1)
+        # Metric signature (24, 2): two times, one per shadow
         sig = self.metric_signature()
-        results['signature_26_1'] = sig == (26, 1)
+        results['signature_24_2'] = sig == (24, 2)
 
         # All bridge areas positive
         results['all_areas_positive'] = all(b.area > 0 for b in self.bridges)
@@ -646,12 +646,13 @@ class BridgeSystem:
         results['moduli_stabilized'] = pot_val < 1.0  # Small potential at minimum
         results['moduli_positive'] = bool(np.all(opt_moduli[:, :2] > 0))
 
-        # Metric determinant (should be negative for Lorentzian)
-        g = self.assemble_27d_metric()
+        # Metric determinant: with TWO timelike directions (−1)² = +1,
+        # so a (24,2) metric has POSITIVE determinant (unlike one-time Lorentzian)
+        g = self.assemble_26d_metric()
         det_g = np.linalg.det(g)
-        results['metric_det_negative'] = det_g < 0
+        results['metric_det_positive'] = det_g > 0
 
         return results
 
     def __repr__(self):
-        return f"BridgeSystem(bridges={len(self.bridges)}, dim={self.total_bridge_dimensions + 3})"
+        return f"BridgeSystem(bridges={len(self.bridges)}, dim={self.total_bridge_dimensions + 2})"

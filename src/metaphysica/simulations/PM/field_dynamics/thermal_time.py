@@ -11,17 +11,17 @@ CLASSIFICATION SEPARATION:
     and b3 = 24 cycles give the base coupling. This is standard Connes-Rovelli
     thermal time applied to G2 topology.
 
-    gamma_correction = 27*24/(20*pi) = 10.31324... — DERIVED.
+    gamma_correction = 26*24/(20*pi) = 9.93127... — DERIVED.
     gamma = D_total*b3/(2*D_string*pi), which simplifies to
-    alpha_T = D_total/D_string = 27/10 = 2.7 (b3 and pi cancel completely).
+    alpha_T = D_total/D_string = 26/10 = 2.6 (b3 and pi cancel completely).
 
-    The factor 2 in 2*D_string arises from the signature of the timelike
-    fiber T^1 in M^{27}(24,1,2): the single timelike dimension contributes
+    The factor 2 in 2*D_string is D_time = 2: two timelike directions
+    fiber T^1 in M^{26}(24,2): the single timelike dimension contributes
     a real-vs-complex normalization factor of 2 to the modular automorphism
     (equivalently, from the Sp(2,R) gauge symmetry of the two-time sector).
 
-    Full alpha_T = D_total/D_string = 27/10 = 2.7 — DERIVED (zero free
-    parameters: D_total=27 from architecture, D_string=10 from M-theory target).
+    Full alpha_T = D_total/D_string = 26/10 = 2.6 — DERIVED (zero free
+    parameters: D_total=26 from architecture, D_string=10 from M-theory target).
 
 CONSCIOUSNESS CONNECTION (SPECULATIVE):
     The 12 bridge pairs provide 12 I/O channels through which the entropy
@@ -53,7 +53,7 @@ Implements the thermal time hypothesis with unified time framework:
 This simulation computes:
 1. Modular Hamiltonian from Pneuma thermal state
 2. Thermal time base coupling alpha_T_base = 2*pi/b3 (DERIVED)
-3. Full thermal time coupling alpha_T = D_total/D_string = 27/10 = 2.7 (DERIVED)
+3. Full thermal time coupling alpha_T = D_total/D_string = 26/10 = 2.6 (DERIVED)
 4. Entropy gradient and arrow of time (dS/dt >= 0)
 5. Two-time metric structure with 12-pair aggregation
 
@@ -65,13 +65,13 @@ THEORETICAL FOUNDATION:
     - t_therm: Observable thermal time from modular flow (unified time)
     - 12x(2,0) Euclidean bridges: (y1_i, y2_i) coordinates for timeless substrate
     - alpha_T_base: Base coupling from KMS periodicity on b3 cycles (DERIVED)
-    - alpha_T: Full coupling = D_total/D_string = 27/10 = 2.7 (DERIVED)
+    - alpha_T: Full coupling = D_total/D_string = 26/10 = 2.6 (DERIVED)
 
 SECTION: 5 (Thermal Time)
 
 OUTPUTS:
     - thermal.alpha_T_base: Base thermal coupling = 2*pi/b3 (DERIVED)
-    - thermal.alpha_T: Full thermal coupling = D/D_s = 27/10 = 2.7 (DERIVED)
+    - thermal.alpha_T: Full thermal coupling = D/D_s = 26/10 = 2.6 (DERIVED)
     - thermal.modular_temperature: Effective modular temperature
     - thermal.entropy_gradient: dS/dt (arrow of time)
     - thermal.two_time_metric_signature: (24,1) metric signature with 12x(2,0) bridge pairs
@@ -81,7 +81,7 @@ FORMULAS:
     - thermal-flow: alpha_t(A) = exp(iKt) A exp(-iKt)
     - entropy-gradient: dS_Pneuma/dt_thermal >= 0
     - alpha-t-base: alpha_T_base = 2*pi/b3 (DERIVED)
-    - alpha-t-derivation: alpha_T = D_total/D_string = 27/10 = 2.7 (DERIVED)
+    - alpha-t-derivation: alpha_T = D_total/D_string = 26/10 = 2.6 (DERIVED)
 
 REFERENCES:
     - Connes, Rovelli (1994) arXiv:gr-qc/9406019
@@ -257,23 +257,23 @@ class ThermalTimeV16(SimulationBase):
 
         # ─── Step 2 (DERIVED): Full coupling with gamma correction ───
         # gamma_correction = D_total * b3 / (2 * D_string * pi)
-        #                  = 27 * 24 / (20 * pi) = 10.31324031...
+        #                  = 26 * 24 / (20 * pi) = 9.9312684489...
         #
         # Where:
-        #   D_total  = 27 : PM spacetime dimension M^{27}(24,1,2)
+        #   D_total  = 26 : PM spacetime dimension M^{26}(24,2)
         #   D_string = 10 : Type IIA/IIB superstring dimension (M-theory target)
-        #   2        : from T^1 timelike fiber signature normalization
-        #              (real-vs-complex modular automorphism, equivalently Sp(2,R))
+        #   2        : D_time — two timelike directions, one per 13D shadow
+        #              (the Sp(2,R) doublet of times; a literal dimension count)
         #
         # Substituting into alpha_T:
-        #   alpha_T = (2*pi/b3) * (D*b3)/(2*D_string*pi) = D_total/D_string = 27/10 = 2.7
+        #   alpha_T = (2*pi/b3) * (D*b3)/(2*D_string*pi) = D_total/D_string = 26/10 = 2.6
         #   b3 and pi cancel completely (algebraic identity, not numerical fit).
         #
         # See Appendix U for full derivation and analysis.
-        D_TOTAL = 27   # PM spacetime dimension M^{27}(24,1,2)
+        D_TOTAL = 26   # PM spacetime dimension M^{26}(24,2), two-time (24,2)
         D_STRING = 10  # Type IIA/IIB superstring dimension
-        gamma_correction = D_TOTAL * b3 / (2.0 * D_STRING * np.pi)  # = 10.31324... (DERIVED)
-        alpha_T = alpha_T_base * gamma_correction  # = D_TOTAL/D_STRING = 2.7 (DERIVED)
+        gamma_correction = D_TOTAL * b3 / (2.0 * D_STRING * np.pi)  # = 9.93127... (DERIVED)
+        alpha_T = alpha_T_base * gamma_correction  # = D_TOTAL/D_STRING = 2.6 (DERIVED)
 
         # ─── Step 3 (DERIVED): Entropy gradient (arrow of time) ───
         # dS/dt >= 0 from Lindblad monotonicity (established physics).
@@ -283,8 +283,8 @@ class ThermalTimeV16(SimulationBase):
         # experienced as the subjective forward flow of conscious time.
         entropy_gradient = self.k_B * alpha_T * (modular_temperature / M_PLANCK)
 
-        # Metric signature: M^{27}(24,1,2) with 12x(2,0) Euclidean bridge pairs
-        two_time_metric = "(24,1)+12x(2,0)"
+        # Metric signature: M^{26}(24,2) with 12x(2,0) Euclidean bridge pairs
+        two_time_metric = "(24,2) = (12,1)+(12,1)"
 
         return {
             "thermal.alpha_T_base": float(alpha_T_base),
@@ -357,15 +357,15 @@ class ThermalTimeV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "In Principia Metaphysica v24.2, we extend this to a dual-shadow unified time framework with "
-                    "M<sup>27</sup>(24,1,2) structure and 12&times;(2,0) Euclidean bridge pairs plus the S<sup>(2,0)</sup> sampler data fields. "
+                    "M<sup>26</sup>(24,2) structure and 12&times;(2,0) Euclidean bridge pairs plus the S<sup>(2,0)</sup> shadow-time directions. "
                     "The observable thermal time t<sub>therm</sub> emerges "
                     "from the Pneuma field's modular flow, while 12 bridge pair coordinates (y<sub>1i</sub>, y<sub>2i</sub>) plus "
-                    "sampler data fields coordinates (s<sub>1</sub>, s<sub>2</sub>) provide a Euclidean substrate via OR reduction "
+                    "shadow-time directions coordinates (s<sub>1</sub>, s<sub>2</sub>) provide a Euclidean substrate via OR reduction "
                     "through R<sub>&perp;</sub> operators. The 12 pairs arise from b&#8323; = 24/2 = 12, coupling normal &harr; mirror sectors. "
                     "Aggregation reduces variance by &radic;12. "
                     "The base coupling &alpha;<sub>T,base</sub> = 2&pi;/b&#8323; follows from the modular periodicity "
                     "of the KMS state on b&#8323; associative 3-cycles (DERIVED). The full coupling "
-                    "&alpha;<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 27/10 = 2.7 where &gamma; = D&middot;b&#8323;/(2D<sub>s</sub>&pi;) "
+                    "&alpha;<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 26/10 = 2.6 where &gamma; = D&middot;b&#8323;/(2D<sub>s</sub>&pi;) "
                     "is DERIVED (b&#8323; and &pi; cancel algebraically; factor 2 from T&sup1; signature). "
                     "The 12 bridge pairs provide 12 I/O channels through which "
                     "the entropy gradient dS/dt &ge; 0 establishes a thermodynamic arrow of time. "
@@ -376,7 +376,7 @@ class ThermalTimeV16(SimulationBase):
             ),
             ContentBlock(
                 type="formula",
-                content=r"\alpha_T = \frac{D_{\text{total}}}{D_{\text{string}}} = \frac{27}{10} = 2.7",
+                content=r"\alpha_T = \frac{D_{\text{total}}}{D_{\text{string}}} = \frac{26}{10} = 2.6",
                 formula_id="alpha-t-derivation",
                 label="(TT.4)"
             ),
@@ -385,7 +385,7 @@ class ThermalTimeV16(SimulationBase):
                 content=(
                     "<Normal>"
                     "The algebraic cancellation in α_T is exact: "
-                    "α_T = (2π/b₃) × (D·b₃ / (2·D_s·π)) = D/D_s = 27/10. "
+                    "α_T = (2π/b₃) × (D·b₃ / (2·D_s·π)) = D/D_s = 26/10. "
                     "The b₃=24 and π factors appear in both numerator and denominator "
                     "and cancel completely — this is an algebraic identity, not a numerical coincidence."
                     "</Normal>"
@@ -396,7 +396,7 @@ class ThermalTimeV16(SimulationBase):
                     "alpha_T     = ops.mul(alpha_T_base, gamma)\n"
                     "            = ops.mul(ops.div(ops.mul(2,π),b₃), ops.div(ops.mul(D,b₃),ops.mul(2,D_s,π)))\n"
                     "            = ops.div(D, D_s)  ← b₃ and π cancel in the EML tree\n"
-                    "            = ops.div(27, 10)  = 2.7\n"
+                    "            = ops.div(26, 10)  = 2.6\n"
                     "The EML operator tree makes the cancellation explicit: the b₃ leaf in "
                     "alpha_T_base's denominator and the b₃ leaf in gamma's numerator are "
                     "identical subtrees that reduce to 1 under EML simplification."
@@ -428,8 +428,8 @@ class ThermalTimeV16(SimulationBase):
                 "Metaphysica framework. Time emerges from the Pneuma field's thermodynamic "
                 "properties via the modular Hamiltonian. The base coupling "
                 "&alpha;<sub>T,base</sub> = 2&pi;/b&#8323; is derived from KMS periodicity on "
-                "G&#8322; topology (DERIVED). The full coupling &alpha;<sub>T</sub> = 2.7 "
-                "= D<sub>total</sub>/D<sub>string</sub> = 27/10 (DERIVED, zero free parameters). The entropy gradient "
+                "G&#8322; topology (DERIVED). The full coupling &alpha;<sub>T</sub> = 2.6 "
+                "= D<sub>total</sub>/D<sub>string</sub> = 26/10 (DERIVED, zero free parameters). The entropy gradient "
                 "dS/dt &ge; 0 provides the thermodynamic arrow of time."
             ),
             content_blocks=content_blocks,
@@ -662,13 +662,13 @@ class ThermalTimeV16(SimulationBase):
             Formula(
                 id="alpha-t-derivation",
                 label="(TT.4b)",
-                latex=r"\alpha_T = \frac{D_{\text{total}}}{D_{\text{string}}} = \frac{27}{10} = 2.7",
-                plain_text="alpha_T = D_total/D_string = 27/10 = 2.7",
-                category="DERIVED",  # gamma = D*b3/(2*D_string*pi), alpha_T = D/D_string = 27/10
+                latex=r"\alpha_T = \frac{D_{\text{total}}}{D_{\text{string}}} = \frac{26}{10} = 2.6",
+                plain_text="alpha_T = D_total/D_string = 26/10 = 2.6",
+                category="DERIVED",  # gamma = D*b3/(2*D_string*pi), alpha_T = D/D_string = 26/10
                 description=(
                     "Full thermal time coupling from dimensional ratio. "
                     "gamma = D_total*b3/(2*D_string*pi) where 2 arises from T^1 timelike "
-                    "fiber signature. alpha_T = D_total/D_string = 27/10 = 2.7 exactly "
+                    "fiber signature. alpha_T = D_total/D_string = 26/10 = 2.6 exactly "
                     "(b3 and pi cancel — algebraic identity, not numerical fit). DERIVED."
                 ),
                 inputParams=["topology.elder_kads", "thermal.alpha_T_base"],
@@ -677,7 +677,7 @@ class ThermalTimeV16(SimulationBase):
                 output_params=["thermal.alpha_T"],
                 eml_latex=(
                     r"\alpha_T = \mathrm{ops.div}(D_{\text{total}}, D_{\text{string}}) "
-                    r"= \mathrm{ops.div}(27, 10) = 2.7"
+                    r"= \mathrm{ops.div}(26, 10) = 2.6"
                     "\n"
                     r"\text{Cancellation: } "
                     r"\frac{2\pi}{b_3} \cdot \frac{D \cdot b_3}{2 D_s \pi} "
@@ -692,11 +692,11 @@ class ThermalTimeV16(SimulationBase):
                     "#         = ops.div(D, D_s)   ← b3 and pi cancel in the EML tree"
                 ),
                 eml_description=(
-                    "EML symbolic proof of α_T = 27/10: "
+                    "EML symbolic proof of α_T = 26/10: "
                     "alpha_T_base = ops.div(2π, b₃); "
                     "gamma = ops.div(ops.mul(D, b₃), ops.mul(2, D_s, π)); "
                     "alpha_T = ops.mul(alpha_T_base, gamma) → b₃ and π cancel exactly in the EML tree "
-                    "→ ops.div(D_total, D_string) = ops.div(27, 10) = 2.7. "
+                    "→ ops.div(D_total, D_string) = ops.div(26, 10) = 2.6. "
                     "This is an algebraic identity — the cancellation is exact, not numerical."
                 ),
                 derivation={
@@ -707,7 +707,7 @@ class ThermalTimeV16(SimulationBase):
                         "gamma = D_total*b3/(2*D_string*pi); factor 2 from T^1 timelike fiber signature",
                         "alpha_T = (2*pi/b3)*(D*b3)/(2*D_string*pi) = D_total/D_string (b3 and pi cancel exactly)",
                         "EML tree: ops.mul(ops.div(2π,b3), ops.div(D·b3, 2·D_s·π)) = ops.div(D, D_s)",
-                        "Result: alpha_T = 27/10 = 2.7 (DERIVED — ratio of PM and string dimensions; b3 and pi cancel)"
+                        "Result: alpha_T = 26/10 = 2.6 (DERIVED — ratio of PM and string dimensions; b3 and pi cancel)"
                     ],
                     "references": [
                         "PM framework: Thermal time calibration",
@@ -715,13 +715,13 @@ class ThermalTimeV16(SimulationBase):
                     ]
                 },
                 terms={
-                    "alpha_T": "Full thermal time coupling = D_total/D_string = 27/10 = 2.7 (DERIVED)",
+                    "alpha_T": "Full thermal time coupling = D_total/D_string = 26/10 = 2.6 (DERIVED)",
                     "alpha_T_base": "Base coupling from KMS periodicity = 2*pi/b3 (DERIVED)",
-                    "gamma_correction": "= D*b3/(2*D_string*pi) = 10.31324... (DERIVED, 2 from T^1 signature)"
+                    "gamma_correction": "= D*b3/(2*D_string*pi) = 9.93127... (DERIVED, 2 = D_time: one time per shadow)"
                 },
-                arithma=_arithma_num(27.0 / 10.0),
-                eml=_eml_div(_eml_scalar(27.0), _eml_scalar(10.0)),
-                value=27.0 / 10.0,
+                arithma=_arithma_num(26.0 / 10.0),
+                eml=_eml_div(_eml_scalar(26.0), _eml_scalar(10.0)),
+                value=26.0 / 10.0,
                 triple_rel=1e-12,
             ),
         ]
@@ -758,16 +758,16 @@ class ThermalTimeV16(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Full thermal time coupling: alpha_T = D_total/D_string = 27/10 = 2.7. "
+                    "Full thermal time coupling: alpha_T = D_total/D_string = 26/10 = 2.6. "
                     "DERIVED: gamma = D*b3/(2*D_string*pi) where factor 2 from T^1 timelike "
                     "fiber signature. b3 and pi cancel algebraically (exact identity)."
                 ),
                 derivation_formula="alpha-t-derivation",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(eml_scalar(27.0), eml_scalar(10.0)) — D_total/D_string = 27/10; "
+                    "EML: ops.div(eml_scalar(26.0), eml_scalar(10.0)) — D_total/D_string = 26/10; "
                     "b₃ and π cancel algebraically in the full tree: "
-                    "ops.mul(ops.div(2π,b₃), ops.div(D·b₃, 2·D_s·π)) = ops.div(27,10)"
+                    "ops.mul(ops.div(2π,b₃), ops.div(D·b₃, 2·D_s·π)) = ops.div(26,10)"
                 ),
             ),
             Parameter(
@@ -810,11 +810,11 @@ class ThermalTimeV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "v24.2 M²⁷(24,1,2): 24 physics core from 12×(2,0) bridge pairs + 1 unified time + 2 S⁽²˒⁰⁾ sampler data fields. "
+                    "v24.2 M²⁶(24,2): 24 physics core from 12×(2,0) bridge pairs + 1 unified time + 2 S⁽²˒⁰⁾ shadow-time directions. "
                     "Dimensional structure: T¹ ×_fiber (⊕ᵢ₌₁¹² Bᵢ⁽²˒⁰⁾ ⊕ S⁽²˒⁰⁾). 12 pairs from b₃ = 24/2. "
                     "Metric: ds² = -dt² + ∑ᵢ₌₁¹²(dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂²."
                 ),
-                eml_description="EML: ops.add(ops.mul(eml_scalar(12.0), eml_scalar(2.0)), ops.add(eml_scalar(1.0), eml_scalar(2.0))) — M²⁷ = 12×2 + 1 + 2 = 27D metric signature (24,1,2)",
+                eml_description="EML: ops.add(ops.mul(eml_scalar(12.0), eml_scalar(2.0)), ops.add(eml_scalar(1.0), eml_scalar(2.0))) — M²⁶ = 12×2 + 1 + 2 = 26D metric signature (24,2)",
                 no_experimental_value=True,
             ),
         ]
@@ -916,10 +916,10 @@ class ThermalTimeV16(SimulationBase):
             {
                 "id": "CERT_THERMAL_ALPHA_T_VALUE",
                 "assertion": "Thermal time coupling alpha_T = (2*pi/24) * gamma_correction is consistent with G2 topology b3 = 24",
-                "condition": "abs(thermal.alpha_T - 2.7) < 0.1",
+                "condition": "abs(thermal.alpha_T - 2.6) < 0.1",
                 "tolerance": 0.1,
                 "status": "PASS",
-                "wolfram_query": "(2*Pi/24) * 10.313240",
+                "wolfram_query": "(2*Pi/24) * (26*24/(20*Pi))",
                 "wolfram_result": "2.700",
                 "sector": "thermal",
             },
@@ -1026,15 +1026,15 @@ class ThermalTimeV16(SimulationBase):
 
         # Check 1: alpha_T value consistency
         b3 = 24
-        gamma_correction = 10.313240
+        gamma_correction = 26.0 * b3 / (20.0 * np.pi)  # two-time: 26*24/(20*pi)
         expected_alpha_T = (2.0 * np.pi / b3) * gamma_correction
-        alpha_T_ok = abs(expected_alpha_T - 2.7) < 0.1
+        alpha_T_ok = abs(expected_alpha_T - 2.6) < 0.1
         checks.append({
-            "name": "alpha_T = (2*pi/b3) * gamma_correction is approximately 2.7",
+            "name": "alpha_T = (2*pi/b3) * gamma_correction is approximately 2.6",
             "passed": alpha_T_ok,
             "confidence_interval": {"lower": 2.6, "upper": 2.8, "sigma": 0.05},
             "log_level": "INFO" if alpha_T_ok else "ERROR",
-            "message": f"alpha_T = {expected_alpha_T:.6f} (expected ~2.7)",
+            "message": f"alpha_T = {expected_alpha_T:.6f} (expected ~2.6)",
         })
 
         # Check 2: Entropy gradient non-negativity
@@ -1105,14 +1105,14 @@ class ThermalTimeV16(SimulationBase):
             {
                 "gate_id": "G_THERMAL_ALPHA_T_TOPOLOGY",
                 "simulation_id": self.metadata.id,
-                "assertion": "alpha_T = 2.7 is derived from G2 topology b3 = 24 and gamma_correction = 10.313",
+                "assertion": "alpha_T = 2.6 is derived from G2 topology b3 = 24 and gamma_correction = 26*24/(20*pi) = 9.931",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
                     "b3": 24,
                     "formula": "alpha_T = (2*pi / b3) * gamma_correction",
-                    "gamma_correction": 10.313240,
-                    "result": 2.7,
+                    "gamma_correction": 26.0 * 24.0 / (20.0 * 3.14159265358979),
+                    "result": 2.6,
                     "12_pair_aggregation": "sigma_eff = sigma_single / sqrt(12) variance reduction",
                 },
             },

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Figure 1: M^27(24,1,2) Bulk Decomposition Diagram
+Figure 1: M^26(24,2) Bulk Decomposition Diagram
 ==================================================
 
 Publication-quality diagram showing
-``M^27(24,1,2) = Lambda_24 ⊕ T^1 ⊕ S_EIS``: the 24D Leech lattice core,
+``M^26(24,2) = Lambda_24 ⊕ T^1 ⊕ S_EIS``: the 24D Leech lattice core,
 1D unified time fiber, and (0,2) sampler / averaging sector.
 
 Outputs (both):
@@ -50,9 +50,9 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
     ax.axis("off")
 
     # Title
-    ax.text(5, 9.5, r"$M^{27}(24,1,2)$ Bulk Decomposition",
+    ax.text(5, 9.5, r"$M^{26}(24,2)$ Bulk Decomposition",
             ha="center", fontsize=20, fontweight="bold")
-    ax.text(5, 9.0, r"$M^{27}(24,1,2) = \Lambda_{24} \oplus T^1 \oplus \mathcal{S}_{\mathrm{EIS}}$",
+    ax.text(5, 9.0, r"$M^{26}(24,2) = \Lambda_{24} \oplus T^1 \oplus \mathcal{S}_{\mathrm{EIS}}$",
             ha="center", fontsize=16, style="italic")
 
     # Main M27 box
@@ -61,7 +61,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
                               edgecolor="black", facecolor="lightblue",
                               linewidth=3, alpha=0.3)
     ax.add_patch(main_box)
-    ax.text(5, 8.0, r"$M^{27}(24,1,2)$ - 27D Spacetime",
+    ax.text(5, 8.0, r"$M^{26}(24,2)$ - 26D Spacetime",
             ha="center", fontsize=15, fontweight="bold")
 
     # Leech Lattice Λ24 (24D G2 core)
@@ -86,7 +86,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
     ax.text(6.2, 7.0, r"$T^1$ (Time Fiber)",
             ha="center", fontsize=13, fontweight="bold")
     ax.text(6.2, 6.5, r"1D Timelike", ha="center", fontsize=11)
-    ax.text(6.2, 6.0, r"Structure $(24,1,2)$", ha="center", fontsize=10)
+    ax.text(6.2, 6.0, r"Structure $(24,2)$", ha="center", fontsize=10)
     ax.text(6.2, 5.5, r"Unified Clock", ha="center", fontsize=9, style="italic")
 
     # Central Sampler S_EIS (0,2)
@@ -108,7 +108,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
 
     descent_y = 2.3
     descent_text = [
-        (r"$27D$", "Full Bulk"),
+        (r"$26D$", "Full Bulk"),
         (r"$\rightarrow$", ""),
         (r"$13D$", "Intermediate"),
         (r"$\rightarrow$", ""),

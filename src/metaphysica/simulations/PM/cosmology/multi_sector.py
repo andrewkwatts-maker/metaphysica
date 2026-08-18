@@ -606,7 +606,7 @@ class MultiSectorV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The multi-sector cosmological model maps naturally onto the "
-                        "dual-shadow architecture of the 27D framework. Each of the two "
+                        "dual-shadow architecture of the 26D framework. Each of the two "
                         "shadows (signature 12+1 each, sharing a single time dimension) "
                         "hosts an independent copy of the Standard Model gauge group, "
                         "with inter-shadow communication occurring exclusively through "

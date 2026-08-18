@@ -14,10 +14,10 @@ DERIVATION CHAIN (v22):
 3. Spin connection and torsion-free condition
 4. Riemann/Ricci tensor construction
 5. v22 Dimensional reduction:
-   27D(24,1,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1) -> 4D(3,1)
+   26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1) -> 4D(3,1)
    - (0,1): Shared unified time fiber
    - 12x(2,0): 12 Euclidean bridge pairs
-   - 2x13D(12,1): Dual shadows (12 spatial + 1 shared time each)
+   - 2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
 6. Einstein-Hilbert action emergence
 7. Newton's constant from G2 compactification volume
 8. Einstein field equations from variation
@@ -180,10 +180,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
     6. Einstein field equations follow from variational principle
 
     v22 FRAMEWORK:
-    Structure: 27D(24,1,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
+    Structure: 26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
     - (0,1): Shared unified time fiber
     - 12x(2,0): 12 Euclidean bridge pairs
-    - 2x13D(12,1): Dual shadows (12 spatial + 1 shared time each)
+    - 2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
     Dimensional check: 12x2 + 1 = 25 EXACT
 
     The derivations follow Carroll's GR Notes and eigenchris pedagogy for
@@ -201,14 +201,14 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         self.D_4 = D_SPACETIME
 
         # Signature - v22 dual-shadow structure
-        # v22 FRAMEWORK: 27D(24,1,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
+        # v22 FRAMEWORK: 26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
         # Components:
         #   (0,1): Shared unified time fiber
         #   12x(2,0): 12 Euclidean bridge pairs
-        #   2x13D(12,1): Dual shadows (12 spatial + 1 shared time each)
+        #   2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
         # Dimensional check: 12x2 + 1 = 25 EXACT
         self.sig_25 = (24, 1)  # (spatial, temporal) - v22: unified time
-        self.sig_shadow = (12, 1)  # v22: Shadow is 13D (12 spatial + 1 shared time)
+        self.sig_shadow = (12, 1)  # v22: Shadow is 13D (12 spatial + 1 time (its own))
         self.sig_bridge = (2, 0)   # Each of 12 Euclidean bridge pairs - v22
         self.sig_time = (0, 1)     # Shared unified time - v22
         self.sig_7 = (7, 0)    # G2 (Riemannian)

@@ -3,7 +3,7 @@
 Statistical Rigor Validator - v24.1 Principia Metaphysica
 ==========================================================
 
-Computes the 'Independence Rank' of the 27D ancestral geometry.
+Computes the 'Independence Rank' of the 26D ancestral geometry.
 Proves that the 125 residues are distinct topological invariants.
 
 This addresses the critical peer review concern: "χ²_reduced = 0.23 is too good
@@ -42,7 +42,7 @@ logger = logging.getLogger("StatisticalRigor")
 
 class StatisticalRigorValidator:
     """
-    Computes the 'Independence Rank' of the 27D ancestral geometry.
+    Computes the 'Independence Rank' of the 26D ancestral geometry.
     Proves that the 125 residues are distinct topological invariants.
     """
 
@@ -81,7 +81,7 @@ class StatisticalRigorValidator:
 
         # PM framework constants
         self.n_residues = 125  # Total physical constants
-        self.n_dimensions = 27  # M²⁷(26,1) manifold
+        self.n_dimensions = 27  # M²⁶(26,1) manifold
         self.n_testable = 26  # Parameters with experimental comparison
 
         logger.info(f"PM Framework: {self.n_residues} residues, {self.n_dimensions}D manifold")
@@ -122,10 +122,10 @@ class StatisticalRigorValidator:
             J[i, bridge_pair*2] = np.random.uniform(0.8, 1.2)
             J[i, bridge_pair*2 + 1] = np.random.uniform(0.8, 1.2)
 
-            # Weak coupling to sampler data fields
+            # Weak coupling to shadow-time directions
             J[i, 24:26] = np.random.uniform(0.1, 0.3, 2)
 
-        # Calibration inputs (55-57): Depend on sampler data fields
+        # Calibration inputs (55-57): Depend on shadow-time directions
         for i in range(55, 58):
             J[i, 24:26] = np.random.uniform(0.9, 1.1, 2)
             # Weak coupling to time
@@ -213,7 +213,7 @@ class StatisticalRigorValidator:
 
         Justification:
         --------------
-        The 25 output parameters all derive from projections of the same M²⁷ bulk
+        The 25 output parameters all derive from projections of the same M²⁶ bulk
         geometry with only 3 independent inputs:
         - b₃ (selects the G₂ manifold topology)
         - φ (controls minimal surface geometry)
@@ -691,7 +691,7 @@ class StatisticalRigorValidator:
                 "solution": "Effective Degrees of Freedom (EDOF) approach",
                 "analysis": (
                     f"PM's 25 testable parameters are NOT statistically independent - they all derive from "
-                    f"the same M²⁷ bulk topology with only 3 independent inputs: b₃ (Betti number), φ (golden ratio), "
+                    f"the same M²⁶ bulk topology with only 3 independent inputs: b₃ (Betti number), φ (golden ratio), "
                     f"and θ₁₃ (fitted mixing angle). All other 'seeds' are mathematically derived: χ_eff = 6×b₃, "
                     f"k_gimel = b₃/2 + 1/φ², δ_CP = 2π/φ². Traditional DOF = 25 assumes independence, which violates "
                     f"PM's fundamental premise. EDOF = {edof_results.get('effective_dof', 3)} reflects the true "

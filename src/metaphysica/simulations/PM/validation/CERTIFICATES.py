@@ -1024,7 +1024,7 @@ class PrincipiaValidator:
           E8 roots, octonions, G2-from-E8, E8 triple decomposition,
           E8×E8 pair (heterotic, 480 roots, all norm-2), bridge decomposition
           (12×2D, 24D total, covers all 24 coords, E8-consistent), bridges
-          from Leech (signature (26,1), moduli valid), four faces (4×3,
+          from Leech (signature (24,2), moduli valid), four faces (4×3,
           cross-E8, n_gen=3, h11=4), alpha_leak=1/√6, and chain_valid
           composite.
 
@@ -1074,10 +1074,10 @@ class PrincipiaValidator:
         C_PAIRS: 12-PAIR-BRIDGE Dimensional Consistency
 
         Validates the 12 x (2,0) paired bridge structure and its dimensional
-        consistency with the M^{27}(24,1,2) manifold architecture:
+        consistency with the M^{26}(24,2) manifold architecture:
           - pairs = b3/2 = 24/2 = 12 (derived from Betti number)
           - pairs × 2 = 24 = D_physics_core
-          - Total: 24 (bridges) + 1 (time) + 2 (sampler) = 27D
+          - Total: 24 (bridges) + 1 (time) + 2 (sampler) = 26D
           - Signature: (26,1) = (24 + 2 spacelike, 1 timelike)
 
         Classification: GEOMETRIC — the pair count 12 = b3/2 follows from
@@ -1095,12 +1095,12 @@ class PrincipiaValidator:
         pairs = self._get_param('seal.bridge_pairs', self.pairs)
         b3 = self._get_param('geometry.elder_kads', 24)
 
-        # Dimensional constants from the M^{27}(24,1,2) architecture
+        # Dimensional constants from the M^{26}(24,2) architecture
         dims_per_pair = 2       # Each bridge pair is (2,0) Euclidean
         d_time = 1              # Unified T^1 fiber
-        d_sampler = 2           # S^{2,0} sampler data fields
+        d_sampler = 2           # two shadow-time directions
         d_physics_core = 24     # G2 physics core
-        d_bulk = 27             # Total M^{27}
+        d_bulk = 27             # Total M^{26}
 
         # Check 1: Pair count
         count_ok = (pairs == 12)
@@ -1138,7 +1138,7 @@ class PrincipiaValidator:
         self.results['C_PAIRS'] = {
             "status": status,
             "metric": f"pairs={pairs}, dim={pairs*dims_per_pair}, sig=({d_spacelike},{d_time}), checks=[{checks_str}]",
-            "expected": "12=b3/2 pairs, 12×2=24D core, 24+1+2=27D bulk, sig(26,1)",
+            "expected": "12=b3/2 pairs, 12×2=24D core, 24+1+2=26D bulk, sig(26,1)",
             "sector": "BRIDGE",
             "bridge_architecture": "12-PAIR-BRIDGE",
             "classification": "GEOMETRIC",
@@ -1174,13 +1174,13 @@ class PrincipiaValidator:
                    checks deemed necessary but could be extended.
           Round 3: Tests (1), (2), (4) are scientifically meaningful (Second Law,
                    equilibrium convergence). Test (3) is a self-consistency check
-                   for the M^{27}(24,1,2) manifold architecture. Overall: gate is
+                   for the M^{26}(24,2) manifold architecture. Overall: gate is
                    meaningful within the framework, not purely tautological.
         """
         import numpy as np
 
         # ── Sub-test 3: kappa_sampler = dim(S^{2,0}) = 2 (topological) ──
-        # In M^{27}(24,1,2): 24 bridge dims + 1 time + 2 sampler = 27
+        # In M^{26}(24,2): 24 bridge dims + 1 time + 2 sampler = 27
         kappa_sampler = 2  # dim(S^{2,0}) from manifold architecture
         kappa_expected = 2
         kappa_pass = (kappa_sampler == kappa_expected)

@@ -263,7 +263,7 @@ class GeometricAnchors:
     # =========================================================================
     # DIMENSIONAL STRUCTURE (5-Level SSOT Chain v20.3)
     # =========================================================================
-    # Chain: 27D(24,1,2) → [Euclidean bridge] → 13D(12,1) → [G2(7,0)] → 6D(5,1) → [KK] → 4D(3,1)
+    # Chain: 26D(24,2) → [Euclidean bridge] → 13D(12,1) → [G2(7,0)] → 6D(5,1) → [KK] → 4D(3,1)
 
     @property
     def D_bulk(self) -> int:
@@ -329,8 +329,8 @@ class GeometricAnchors:
     @property
     def spinor_26d(self) -> int:
         """
-        Spinor dimension in 25D from Clifford algebra Cl(D_ancestral_space, D_ancestral_time).
-        Cl(24,1) → 2^(D_ancestral_total/2) = 2^13 = 8192
+        Spinor dimension in 26D from Clifford algebra Cl(24,2).
+        Cl(24,2) → 2^(26/2) = 2^13 = 8192 Dirac components (Weyl half = 4096)
 
         This is the 'full26D' value in JS files.
         """

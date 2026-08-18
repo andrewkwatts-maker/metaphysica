@@ -109,7 +109,7 @@ class MethodologyV16_2(SimulationBase):
             version="24.2",
             domain="methodology",
             title="The Sterile Extraction Methodology",
-            description="Topologically Anchored spectral geometry methodology with EDOF=3 (v24.2 dual-shadow framework, 27D/26,1)",
+            description="Topologically Anchored spectral geometry methodology with EDOF=3 (v24.2 dual-shadow framework, 26D/26,1)",
             section_id="2",
             subsection_id="2.6"  # v24.2: Code-Theoretical Integrity section
         )
@@ -174,7 +174,7 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "Just as the physical dimensions and tension of a drumhead determine its specific "
-                    "acoustic modes, the topological constraints of the 27D(24,1,2) dual-shadow descent dictate the "
+                    "acoustic modes, the topological constraints of the 26D(24,2) dual-shadow descent dictate the "
                     "'vibrational' modes of the resulting 4D spacetime. In this framework, a "
                     "<strong>fundamental constant</strong> is simply a point of stationary resonance "
                     "within the 7-dimensional G₂ structure per shadow."
@@ -234,7 +234,7 @@ class MethodologyV16_2(SimulationBase):
                     "The completeness of the 125-residue registry is verified via the "
                     "<strong>Selberg-type Trace Formula</strong>. This ensures that the sum of the "
                     "extracted residues accounts for the total 'Symmetry Budget' inherited from "
-                    "the 27D ancestral bulk:"
+                    "the 26D ancestral bulk:"
                 )
             ),
             ContentBlock(
@@ -389,7 +389,7 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "The Metric Lock is maintained through <strong>Topological Hysteresis</strong>. "
-                    "As the 27D(24,1,2) bulk splits into dual shadows connected by the Euclidean bridge "
+                    "As the 26D(24,2) bulk splits into dual shadows connected by the Euclidean bridge "
                     "and compactifies into 4D, the manifold undergoes a phase transition similar to "
                     "crystallization. The OR reduction operator (R<sub>⊥</sub>) 'memorizes' the geometric "
                     "configuration, creating a 'Hysteresis Seal' that locks the 125 residues into a "
@@ -458,7 +458,7 @@ class MethodologyV16_2(SimulationBase):
                 items=[
                     "<strong>Layer 1 (Bridge/Global OR):</strong> "
                     "R<sub>\u22a5</sub><sup>global</sup> = \u2297<sub>i=1</sub><sup>12</sup> R<sub>\u22a5,i</sub> creates dual shadows "
-                    "from the 27D bulk. The warping potential V<sub>bridge</sub> governs shadow separation.",
+                    "from the 26D bulk. The warping potential V<sub>bridge</sub> governs shadow separation.",
                     "<strong>Layer 2 (Face/Local OR):</strong> "
                     "R<sub>face</sub><sup>(f)</sup> selects the visible sector within each shadow "
                     "from 4 K\u00e4hler moduli faces. The warping potential V<sub>face</sub> governs face selection."

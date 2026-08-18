@@ -338,7 +338,7 @@ class AppendixBSumRule(SimulationBase):
                     "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "topology.sophian_modulus"},
                     "ω_n": {"symbol": "\\omega_n", "description": "Weighting factor from Laplacian spectrum position"},
                     "R_n": {"symbol": "\\mathcal{R}_n", "description": "Spectral residue at eigenvalue n"},
-                    "Φ_G2": {"symbol": "\\Phi_{G_2}", "description": "G₂ holonomy invariant (total geometric closure from 27D bulk)"},
+                    "Φ_G2": {"symbol": "\\Phi_{G_2}", "description": "G₂ holonomy invariant (total geometric closure from 26D bulk)"},
                 }
             ),
             Formula(

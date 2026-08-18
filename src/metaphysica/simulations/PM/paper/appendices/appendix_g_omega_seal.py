@@ -939,7 +939,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "Number of (2,0) Euclidean bridge pairs in the 12-PAIR-BRIDGE architecture. "
                     "Each pair couples one Normal shadow coordinate to one Mirror shadow coordinate."
                 ),
-                eml_description="Integer count of (2,0) Euclidean paired bridges in the 12-PAIR-BRIDGE architecture; always equals 12 by construction of the M^{27}(24,1,2) framework.",
+                eml_description="Integer count of (2,0) Euclidean paired bridges in the 12-PAIR-BRIDGE architecture; always equals 12 by construction of the M^{26}(24,2) framework.",
                 experimental_bound=12,
                 bound_type="exact",
                 bound_source="Geometric necessity",

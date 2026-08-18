@@ -1002,7 +1002,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "spinor_26d": (
                     "EML: ops.pow(eml_scalar(2.0), eml_scalar(13.0))"
-                    " — Clifford Cl(24,1) spinor dimension = 2^13 = 8192"
+                    " — Clifford Cl(24,2) spinor dimension = 2^13 = 8192"
                 ),
                 "spinor_4d": (
                     "EML: ops.pow(eml_scalar(2.0), eml_scalar(2.0))"
@@ -1131,8 +1131,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — thermal time scaling α_T = 2π k_gimel/(b₃-1) ≈ 3.36"
                 ),
                 "alpha_T_phenomenological": (
-                    "EML: eml_scalar(2.7) — phenomenological thermal time parameter"
-                    " α_T = 2.7 (fit to observations)"
+                    "EML: eml_scalar(2.6) — thermal time parameter"
+                    " α_T = 2.6 = 26/10 (two-time ruling)"
                 ),
                 "alpha_R_squared": (
                     "EML: ops.div(eml_scalar(1.0),"

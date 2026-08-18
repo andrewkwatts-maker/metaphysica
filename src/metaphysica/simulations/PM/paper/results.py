@@ -252,7 +252,7 @@ class ResultsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In the M<sup>27</sup>(24,1,2) bulk, the 12×(2,0) bridge pairs carry residual flux after "
+                    "In the M<sup>26</sup>(24,2) bulk, the 12×(2,0) bridge pairs carry residual flux after "
                     "OR reduction creates the dual 13D(12,1) shadows. This flux is localized "
                     "within the b₃ = 24 associative 3-cycles of the G₂ manifold — the same "
                     "Betti number that determines the fermion generation count. By the maximum "
@@ -329,7 +329,7 @@ class ResultsV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "In the v24.2 framework, the vacuum energy is the ground-state residue of "
-                    "the M<sup>27</sup>(24,1,2) bulk after dimensional descent. The 27D bulk tension "
+                    "the M<sup>26</sup>(24,2) bulk after dimensional descent. The 26D bulk tension "
                     "(ρ<sub>bulk</sub> ∝ M<sub>Pl</sub>⁴ ≈ 10⁷⁴ GeV⁴) is exponentially screened by the "
                     "b₃ × χ = 24 × 144 = 3456 flux quanta threading the G₂ manifold cycles. "
                     "The residual vacuum energy density is:"
@@ -360,15 +360,15 @@ class ResultsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "A key structural claim of the v24.2 model is that the M<sup>27</sup>(24,1,2) → 4D "
+                    "A key structural claim of the v24.2 model is that the M<sup>26</sup>(24,2) → 4D "
                     "descent via G₂ compactification admits <em>at most one</em> stable vacuum "
                     "consistent with the OR reduction operator R⊥ satisfying R⊥² = −I. "
-                    "The dual-shadow topology with S<sup>(2,0)</sup> sampler data fields eliminates "
+                    "The dual-shadow topology with S<sup>(2,0)</sup> shadow-time directions eliminates "
                     "the landscape degeneracy that plagues flux compactifications in string "
                     "theory: the OR reduction operator selects a unique chirality assignment "
                     "for the internal manifold, fixing the sign of the cosmological constant "
                     "residue. The v24.2 model asserts that any universe descending from a "
-                    "M<sup>27</sup>(24,1,2) bulk via per-shadow G₂ compactification with this topology "
+                    "M<sup>26</sup>(24,2) bulk via per-shadow G₂ compactification with this topology "
                     "must exhibit a positive cosmological constant of this specific magnitude "
                     "(within an O(1) factor set by the dilaton VEV)."
                 )

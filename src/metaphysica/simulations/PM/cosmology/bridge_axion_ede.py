@@ -4,7 +4,7 @@ Bridge Axion EDE: KNP Alignment of 12 Bridge Axions for Early Dark Energy
 ==========================================================================
 
 Implements Kim-Nilles-Peloso (KNP) alignment of 12 bridge axions from the
-G2 compactification M^{27}(24,1,2) as a candidate mechanism for Early Dark
+G2 compactification M^{26}(24,2) as a candidate mechanism for Early Dark
 Energy (EDE) to address the Hubble tension.
 
 PHYSICS:
@@ -59,7 +59,7 @@ Round 1 (KNP legitimacy):
 Round 2 (Counter-arguments and mass gap):
     Gemini accepted kappa_sampler=2 as "an intrinsic feature of your
     compactification scheme" once it was explained as dim(S^{2,0}) fixed
-    by M^{27}=24+1+2 dimensional accounting. On the mass gap: Gemini
+    by M^{26}=24+1+2 dimensional accounting. On the mass gap: Gemini
     confirmed the "41-46 order" remaining gap is "numerically correct"
     and that the honest framing is "entirely correct and commendable."
     Gemini noted a critical inconsistency in round 1's Lambda calculation
@@ -269,7 +269,7 @@ class BridgeAxionEDE(SimulationBase):
     """
     KNP alignment of 12 bridge axions for Early Dark Energy.
 
-    Physics: The 12 bridge tori B_i^{2,0} of M^{27}(24,1,2) each carry
+    Physics: The 12 bridge tori B_i^{2,0} of M^{26}(24,2) each carry
     an axion field phi_i = Im(T_i). The KNP mechanism aligns these 12
     axions to produce an effective field with enhanced decay constant
     f_eff = f_sub * sqrt(N_ax * b3) * kappa_sampler.
@@ -812,7 +812,7 @@ class BridgeAxionEDE(SimulationBase):
         # 5. Entropy damping computation
         from metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics import SamplerEntropyDynamics
         sed = SamplerEntropyDynamics()
-        alpha_T = 2.700
+        alpha_T = 2.600
         rho_matrices = [np.eye(2) / 2 for _ in range(12)]  # maximally mixed
         gradient = sed.compute_entropy_gradient(alpha_T, rho_matrices)
         entropy_rate = abs(gradient['entropy_gradient'])  # ~ 0.0825
@@ -1223,7 +1223,7 @@ class BridgeAxionEDE(SimulationBase):
                     "factor arises from the alignment matrix determinant of 12 "
                     "axions in the 24D Leech lattice ambient space. The factor "
                     "kappa_sampler=2=dim(S^{2,0}) accounts for the sampler sector "
-                    "contribution, topologically fixed by M^{27}=24+1+2."
+                    "contribution, topologically fixed by M^{26}=24+1+2."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["bridge_ede.enhancement"],
@@ -1513,7 +1513,7 @@ class BridgeAxionEDE(SimulationBase):
             title="Bridge Axion Early Dark Energy",
             abstract=(
                 "We apply KNP alignment to the 12 bridge axions of "
-                "M^{27}(24,1,2) to seek an ultralight axion for Early Dark "
+                "M^{26}(24,2) to seek an ultralight axion for Early Dark "
                 "Energy. The enhancement factor sqrt(N_ax*b3)*kappa_sampler ~ 34 "
                 "provides ~3 orders of mass suppression, but the remaining gap "
                 "to EDE-relevant masses (~10^{-27} eV) is ~46 orders of magnitude. "
@@ -1538,7 +1538,7 @@ class BridgeAxionEDE(SimulationBase):
             ContentBlock(
                 type="text",
                 content=(
-                    "The 12 bridge tori $B_i^{2,0}$ of $M^{27}(24,1,2)$ each carry "
+                    "The 12 bridge tori $B_i^{2,0}$ of $M^{26}(24,2)$ each carry "
                     "an axion field $\\phi_i = \\text{Im}(T_i)$ from the racetrack "
                     "superpotential. We apply the Kim-Nilles-Peloso (KNP) alignment "
                     "mechanism to these 12 axions, seeking an effective ultralight "

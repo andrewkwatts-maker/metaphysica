@@ -3,7 +3,7 @@
 Information Bottleneck Distiller - v24.1 Principia Metaphysica
 ===============================================================
 
-Proves that the 27D→125 residue mapping is Topological Compression via
+Proves that the 26D→125 residue mapping is Topological Compression via
 Algorithmic Symmetry, not parameter expansion. Demonstrates that geometric
 constraints achieve Minimal Description Length (MDL).
 
@@ -16,7 +16,7 @@ Theoretical Framework:
     - The 288/24/4 structure is derived, not arbitrary
 
 Purpose:
-    - Calculate Kolmogorov complexity of 27D input vs 125 output constants
+    - Calculate Kolmogorov complexity of 26D input vs 125 output constants
     - Prove 125 residues are maximally compressed topological representation
     - Show Algorithmic Symmetry reduces description length
     - Demonstrate information bottleneck principle via MDL
@@ -66,7 +66,7 @@ class InformationBottleneckDistiller:
     def __init__(self):
         """Initialize information bottleneck distiller."""
         # PM framework structure
-        self.n_input_dims = 27  # M^{27}(24,1,2) manifold dimensions
+        self.n_input_dims = 27  # M^{26}(24,2) manifold dimensions
         self.n_output_params = 125  # Physical constants
         self.n_formulas = 116  # Topological formulas (from PM v23.9)
 
@@ -111,27 +111,27 @@ class InformationBottleneckDistiller:
 
     def analyze_input_description_length(self) -> Dict[str, Any]:
         """
-        Calculate description length of the 27D input manifold.
+        Calculate description length of the 26D input manifold.
 
-        The "input" is the topological structure M^{27}(24,1,2) = 12×(2,0) + S^(2,0) + (0,1)
+        The "input" is the topological structure M^{26}(24,2) = 12×(2,0) + S^(2,0) + (0,1)
 
         Returns:
             Input description complexity
         """
-        logger.info("Analyzing input (27D manifold) description length...")
+        logger.info("Analyzing input (26D manifold) description length...")
 
-        # The 27D manifold is FULLY specified by:
+        # The 26D manifold is FULLY specified by:
         # 1. G₂ holonomy group (Lie group, 14-dimensional)
         # 2. Third Betti number b₃ = 24 (integer)
         # 3. Bridge structure: 12 pairs (integer)
-        # 4. Structure: (24,1,2) (3 integers)
+        # 4. Structure: (24,2) (3 integers)
         # 5. Sampler data fields signature: (2,0) (2 integers)
 
-        # Description: "G2 manifold with b3=24, structure (24,1,2), 12 bridges (2,0), sampler (2,0)"
+        # Description: "G2 manifold with b3=24, structure (24,2), 12 bridges (2,0), sampler (2,0)"
         description = (
-            "Manifold M^{27}(24,1,2) = Twisted Connected Sum of two G₂ holonomy 7-manifolds, "
+            "Manifold M^{26}(24,2) = Twisted Connected Sum of two G₂ holonomy 7-manifolds, "
             "connected by 12 bridge pairs with signature (2,0), "
-            "plus sampler data fields S^{(2,0)} with Euclidean signature (2,0), "
+            "plus shadow-time directions S^{(2,0)} with Euclidean signature (2,0), "
             "plus unified time fiber T¹ with signature (0,1). "
             f"Third Betti number b₃ = 24. "
             "G₂ holonomy fixes Ricci-flatness and induces associative 3-cycles."
@@ -146,7 +146,7 @@ class InformationBottleneckDistiller:
         universal_parameters = {
             "g2_structure_constants": 14,  # Lie algebra structure (universal, not free)
             "betti_number_b3": 1,  # Integer specification
-            "signature": 3,  # (24,1,2) = 3 integers
+            "signature": 3,  # (24,2) = 3 integers
             "bridge_count": 1,  # 12 bridges = 1 integer
             "bridge_signature": 2,  # (2,0) = 2 integers
             "central_signature": 2,  # (2,0) = 2 integers
@@ -156,7 +156,7 @@ class InformationBottleneckDistiller:
 
         # Information content: log₂(parameter space volume)
         # For b₃ = 24: log₂(1) = 0 bits (fixed by topology)
-        # For structure (24,1,2): log₂(1) = 0 bits (fixed by construction)
+        # For structure (24,2): log₂(1) = 0 bits (fixed by construction)
         # For 12 bridges: log₂(1) = 0 bits (derived from b₃/2)
 
         # True free parameters: ZERO (all topological invariants)
@@ -236,7 +236,7 @@ class InformationBottleneckDistiller:
         logger.info("Calculating mutual information I(Input; Output)...")
 
         # The PM framework is a DETERMINISTIC mapping:
-        # 27D topology → 125 constants (via formulas)
+        # 26D topology → 125 constants (via formulas)
 
         # For deterministic mapping: H(Output | Input) = 0
         # Therefore: I(Input; Output) = H(Output)
@@ -346,7 +346,7 @@ class InformationBottleneckDistiller:
         """
         logger.info("Calculating Topological Compression ratio (MDL criterion)...")
 
-        # Input: 27D topology specified by ~100 characters + G₂ structure
+        # Input: 26D topology specified by ~100 characters + G₂ structure
         # Output: 125 constants, IF independent, would require 125 × 64 bits
 
         # But PM achieves Algorithmic Symmetry:

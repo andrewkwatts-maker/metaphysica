@@ -288,13 +288,15 @@ class TestLeechToBridges:
         assert len(system.bridges) == 12
 
     def test_bridge_system_signature(self, leech):
+        # Two-time ruling: signature (24,2), one time per shadow
         system = BridgeSystem.from_leech_decomposition(leech)
         sig = system.metric_signature()
-        assert sig == (26, 1)
+        assert sig == (24, 2)
 
-    def test_bridge_system_27d(self, leech):
+    def test_bridge_system_26d(self, leech):
+        # Two-time ruling: 24 bridge dims + 2 shadow times = 26
         system = BridgeSystem.from_leech_decomposition(leech)
-        assert system.total_bridge_dimensions + 3 == 27
+        assert system.total_bridge_dimensions + 2 == 26
 
     def test_verify_leech_origin(self, leech):
         system = BridgeSystem.from_leech_decomposition(leech)
@@ -424,7 +426,7 @@ class TestFullChain:
 
     def test_bridges_from_leech(self, connector):
         r = connector._results['bridges_from_leech']
-        assert r['signature_26_1']
+        assert r['signature_24_2']
         assert r['moduli_valid']
 
     def test_four_faces(self, connector):

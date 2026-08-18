@@ -23,9 +23,9 @@ MATHEMATICAL FRAMEWORK (v22 - 12×(2,0) Paired Bridge System):
    - Spin connection omega_mu^ab for covariant derivatives in non-coordinate bases
    - Torsion-free + metric compatibility uniquely determine spin connection
 
-2. 27D Master Action (v24.2 with 12 bridge pairs + 1 sampler data fields):
+2. 26D Master Action (v24.2 with 12 bridge pairs + 1 shadow-time directions):
    - S_27 = integral d^27x sqrt(-g_27) [R_27 + L_matter + L_gauge + L_bridge + pneuma]
-   - Structure (24,1,2) unified time eliminates ghosts and CTCs
+   - Structure (24,2) unified time eliminates ghosts and CTCs
    - L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
    - Step-by-step Euler-Lagrange derivation
 
@@ -278,7 +278,7 @@ class LagrangianMasterDerivation(SimulationBase):
             "torsion-correction-term",
             "spectral-residue-dressing",
 
-            # Part F2: 27D Master Lagrangian (Topic 03)
+            # Part F2: 26D Master Lagrangian (Topic 03)
             "bulk-action-27d-v23",
             "racetrack-moduli-potential-27d-v23",
         ]
@@ -557,18 +557,18 @@ class LagrangianMasterDerivation(SimulationBase):
         {Gamma^a, Gamma^b} = 2 eta^ab
 
         Spinor dimension in 26D (v21 with (24,1) signature):
-        - Clifford algebra Cl(24,1) has dimension 2^25
+        - Clifford algebra Cl(24,2) has dimension 2^26
         - Spinor module: 2^{(25-1)/2} = 2^12 = 4096 complex
-        - v21: Unified time (24,1) gives Cl(24,1) structure
+        - Two-time (24,2) gives Cl(24,2) structure
         - Weyl (chiral): Available in odd spatial dimensions
         """)
 
-        # v21: For Cl(24,1), spinor dim is 2^12 = 4096
-        spinor_dim = 2 ** 12  # v21: from Cl(24,1)
+        # Two-time: Weyl spinor of Cl(24,2) is 2^13/2 = 4096
+        spinor_dim = 2 ** 13 // 2  # Weyl of Cl(24,2)
 
         print(f"\nSpinor structure in {D}D (v21):")
-        print(f"  Clifford algebra Cl(24,1) dimension: 2^25 = {2**25}")
-        print(f"  Spinor dimension: 2^12 = {spinor_dim} (from Cl(24,1))")
+        print(f"  Clifford algebra Cl(24,2) dimension: 2^26 = {2**26}")
+        print(f"  Weyl spinor dimension: 2^13/2 = {spinor_dim} (from Cl(24,2))")
         print(f"  Gamma matrices: {D} generators")
 
         results["spinor_dim_26d"] = spinor_dim
@@ -838,11 +838,11 @@ class LagrangianMasterDerivation(SimulationBase):
         - Each pair has coordinates (y₁ᵢ, y₂ᵢ)
 
         Dimensional Check:
-        - Dimensions: 1 (time) + 12×2 (bridges) + 1×2 (central) = 27D total
+        - Dimensions: 1 (time) + 12×2 (bridges) + 1×2 (central) = 26D total
         - Spatial: 12×2 + 2 = 26 (24 core + 2 central)
         - Temporal: 1 (shared) (CORRECT)
 
-        Total structure: (24,1,2) - v24.2 with sampler data fields
+        Total structure: (24,2) - v24.2 with shadow-time directions
 
         Key v22 Features:
         - 12 bridge pairs: Each B_i^{2,0} has (y₁ᵢ=input, y₂ᵢ=output)
@@ -960,11 +960,11 @@ class LagrangianMasterDerivation(SimulationBase):
 
         # DOF counting (retained for comparison)
         dof_graviton_26 = 26 * (26 - 3) // 2  # = 299
-        dof_graviton_27 = 27 * (27 - 3) // 2  # = 324 (v22: 27D effective)
+        dof_graviton_27 = 27 * (27 - 3) // 2  # = 324 (v22: 26D effective)
 
         print(f"\nGraviton DOF (v22):")
         print(f"  26D graviton: {dof_graviton_26} polarizations")
-        print(f"  27D graviton (effective): {dof_graviton_27} polarizations")
+        print(f"  26D graviton (effective): {dof_graviton_27} polarizations")
         print(f"  Bridge DOF: {n_bridge_pairs} × 2 = {D_bridge_total} scalar modes")
 
         results["dof_graviton_26"] = dof_graviton_26
@@ -986,15 +986,15 @@ class LagrangianMasterDerivation(SimulationBase):
         Each term (∂y_{1,2}ᵢ)² contributes 1 scalar DOF.
         Total bridge DOF: 12 × 2 = 24 scalar modes.
 
-        Full 27D Action (v22):
+        Full 26D Action (v22):
         =====================
         S_25 = ∫ d²⁵x √(-g_25) [R_25 + L_gauge + L_fermion + L_bridge + L_pneuma]
 
         DOF Transformation:
         ===================
-        Step 1: 27D Bridge Structure
+        Step 1: 26D Bridge Structure
         - M^{24,1} = T¹ × (⊕ᵢ B_i^{2,0})
-        - 1 time + 26 spatial = 27D effective
+        - 1 time + 26 spatial = 26D effective
         - Bridge pairs: 12 × 2 = 24 spatial DOF
 
         Step 2: E8 Root Structure (retained from v21)
@@ -1143,21 +1143,21 @@ class LagrangianMasterDerivation(SimulationBase):
         """)
 
         # v22 dimension chain (updated 2026-01-19)
-        # Chain: M^{27}(24,1,2) = 12×(2,0) bridges + (0,1) time + S^(2,0) sampler data fields → 2×13D(12,1) → [G2(7,0)] → 4D(3,1)
+        # Chain: M^{26}(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions → 2×13D(12,1) → [G2(7,0)] → 4D(3,1)
         # v22: 12 bridge pairs WARP to create 2×13D(12,1) shadows
         print("\nv22 Dimensional Cascade:")
-        print("  M^{27}(24,1,2) = 12×(2,0) bridges + (0,1) time + S^(2,0) sampler data fields → 2×13D(12,1) → 4D(3,1)")
+        print("  M^{26}(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions → 2×13D(12,1) → 4D(3,1)")
         print("")
-        print("  Level 0 (ANCESTRAL): 27D with structure (24,1,2) - unified time")
+        print("  Level 0 (ANCESTRAL): 26D with structure (24,2) - unified time")
         print("  Level 1 (STRUCTURE): 12×(2,0) + (0,1)")
         print("    - (0,1): Shared time fiber")
         print("    - 12×(2,0): 12 Euclidean bridge pairs")
         print("  Level 2 (SHADOW): 12×(2,0) + (0,1) WARP to create 2×13D(12,1)")
-        print("    - Each shadow: 13D(12,1) = 12 spatial + 1 shared time")
+        print("    - Each shadow: 13D(12,1) = 12 spatial + 1 time (its own)")
         print("  Level 3 (G2): 7D per shadow, signature (7,0) - RIEMANNIAN")
         print("  Level 4 (VISIBLE): 4D with signature (3,1) - Minkowski")
 
-        results["reduction_chain"] = [27, 13, 7, 4]  # v22: 27D -> 13D shadow -> G2 -> 4D
+        results["reduction_chain"] = [27, 13, 7, 4]  # v22: 26D -> 13D shadow -> G2 -> 4D
 
         # ------------------------------------------------------------------
         # E.4: Gauge Fields from Extra Dimensions
@@ -1611,7 +1611,7 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "Dirac action in 26D with spinor covariant derivative D_M = d_M + (1/4) omega_M^ab "
                 "Gamma_ab. The curved gamma matrices Gamma^M = e^M_a Gamma^a use the vielbein to "
-                "map from the flat Clifford algebra Cl(24,1). Spinor dimension is 2^12 = 4096 "
+                "map from the flat Clifford algebra Cl(24,2). Weyl spinor dimension is 2^13/2 = 4096 "
                 "from the Clifford algebra in 26D with (24,1) signature (3 derivation steps)."
             ),
             inputParams=[],
@@ -1626,7 +1626,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["vielbein-metric-relation", "spin-connection-definition"]
             },
             terms={
-                "Psi": "26D Dirac spinor field (dimension 2^12 = 4096 from Cl(24,1))",
+                "Psi": "26D Weyl spinor field (dimension 2^13/2 = 4096 from Cl(24,2))",
                 "Gamma^M": "Curved gamma matrices via vielbein",
                 "D_M": "Spinor covariant derivative including spin connection"
             }
@@ -1992,19 +1992,19 @@ class LagrangianMasterDerivation(SimulationBase):
             }
         ))
 
-        # Ghost elimination formula (v22 base, with v24.2 sampler data fields extension noted)
+        # Ghost elimination formula (v22 base, with v24.2 shadow-time directions extension noted)
         formulas.append(Formula(
             id="ghost-elimination",
             label="(2.1.21)",
-            latex=r"M^{27}_{(24,1,2)} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0}",
-            plain_text="M^{27}(24,1,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}",
+            latex=r"M^{26}_{(24,2)} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0}",
+            plain_text="M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}",
             category="DERIVED",
             description=(
                 "Ghost elimination via unified time signature (24,1). The v22 12x(2,0) bridge "
-                "pair system plus the S^(2,0) sampler data fields (introduced in v24.2 as an "
-                "extension) gives the full 27D structure. The (24,1) unified time signature "
+                "pair system plus the two shadow-time directions (introduced in v24.2 as an "
+                "extension) gives the full 26D structure. The (24,1) unified time signature "
                 "eliminates negative-norm ghost states and closed timelike curves (CTCs) that "
-                "would arise from multi-time signatures. Note: the sampler data fields S^(2,0) are "
+                "would arise from multi-time signatures. Note: the shadow-time directions S^(2,0) are "
                 "a v24.2 extension of the base v22 framework (3 derivation steps)."
             ),
             inputParams=[],
@@ -2012,7 +2012,7 @@ class LagrangianMasterDerivation(SimulationBase):
             derivation={
                 "steps": [
                     "Start from the v22 bulk M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0}) with 12 bridge pairs providing 24 spatial + 1 time = 25 dimensions",
-                    "Add the sampler data fields S^{2,0} (v24.2 extension) providing 2 additional spatial dimensions, for 27 total dimensions with (24,1,2) structure",
+                    "Add the shadow-time directions S^{2,0} (v24.2 extension) providing 2 additional spatial dimensions, for 27 total dimensions with (24,2) structure",
                     "Verify ghost elimination: the unified time (single timelike direction) ensures all physical states have positive norm and prevents CTCs"
                 ],
                 "method": "Dimensional counting with signature analysis for ghost and CTC elimination",
@@ -2022,7 +2022,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "T^1": "Unified time fiber (single timelike direction)",
                 "B_i^{2,0}": "Euclidean bridge pairs (12 total, each 2D)",
                 "S^{2,0}": "Sampler data fields (v24.2 extension, 2D Euclidean)",
-                "(24,1,2)": "Structure with 24 physics core, 1 timelike, and 2 sampler data field dimensions (no ghosts)"
+                "(24,2)": "Structure with 24 physics core, 1 timelike, and 2 shadow-time direction dimensions (no ghosts)"
             }
         ))
 
@@ -2313,7 +2313,7 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="delta_L_torsion = (1/2 kappa^2) T^abc T_abc + (lambda/6) T^abc phi_abc, T = Gamma - Gamma_LC",
             category="PREDICTED",
             description=(
-                "Torsion correction to the 27D master Lagrangian from G2 structure deformation. "
+                "Torsion correction to the 26D master Lagrangian from G2 structure deformation. "
                 "In G2 holonomy the associative 3-form phi defines a preferred torsion class. "
                 "The contorsion T^a_{bc} measures the deviation of the full connection from the "
                 "torsion-free Levi-Civita connection. The first term (T^2) is the standard "
@@ -2339,7 +2339,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             terms={
                 r"T^{abc}": {"description": "Contorsion tensor: antisymmetric part of the full connection minus the Levi-Civita connection"},
-                r"\kappa": {"description": "Gravitational coupling constant in 27D, kappa^2 = 8 pi G_27"},
+                r"\kappa": {"description": "Gravitational coupling constant in 26D, kappa^2 = 8 pi G_27"},
                 r"\varphi_{abc}": {"description": "G2 associative 3-form restricted to the internal 7-manifold"},
                 r"\lambda": {"description": "Dimensionless coupling between torsion and the G2 3-form (Fernandez-Gray tau_1 class)"},
                 r"\mathring{\Gamma}": {"description": "Torsion-free Levi-Civita connection (Christoffel symbols)"}
@@ -2404,7 +2404,7 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="S = integral sqrt(-g) [ R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
             category="geometric",
             description=(
-                "Full 27D master action with explicit two-layer OR warping potentials. "
+                "Full 26D master action with explicit two-layer OR warping potentials. "
                 "V_bridge governs shadow creation (Layer 1), V_face governs face selection "
                 "(Layer 2). All terms sterile."
             ),
@@ -2412,18 +2412,18 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "Start from the 27D master action S_27 with Einstein-Hilbert gravity R, Pneuma spinor kinetic and torsion coupling, moduli kinetic and potential terms, and flux integral",
+                    "Start from the 26D master action S_27 with Einstein-Hilbert gravity R, Pneuma spinor kinetic and torsion coupling, moduli kinetic and potential terms, and flux integral",
                     "Add the KK tower fermion sum over spectral residues R_n with Dirac kinetic terms for each mode",
                     "Include the volume breathing term -ln(Vol) dt_phys that tracks the dynamical evolution of the internal volume",
                     "Introduce V_bridge^(global OR): the bridge potential that governs shadow creation and separation (Layer 1 of the two-layer OR hierarchy)",
                     "Introduce sum_f V_face^(f)(local OR): the per-face potential that governs face selection within each shadow (Layer 2 of the two-layer OR hierarchy)",
                     "The two-layer structure is hierarchical: bridge OR must act first to create shadows, then face OR selects the visible face within each shadow"
                 ],
-                "method": "Two-layer OR extension of the 27D master action",
+                "method": "Two-layer OR extension of the 26D master action",
                 "parentFormulas": ["master-action-26d-full", "v22-distributed-or-reduction"]
             },
             terms={
-                "R": "27D Ricci scalar (Einstein-Hilbert gravity)",
+                "R": "26D Ricci scalar (Einstein-Hilbert gravity)",
                 "Psi_P": "Pneuma spinor field with torsion coupling T_omega^M",
                 "Phi_M": "Moduli scalar fields with potential V(Phi_M)",
                 "F wedge phi": "G-flux integral through the G2 associative 3-form",
@@ -2447,19 +2447,19 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "Begin with the full 27D master action including both OR layers",
+                    "Begin with the full 26D master action including both OR layers",
                     "Apply bridge OR (V_bridge^(global OR)): this integrates out the bridge directions, creating two 13D shadows",
                     "Each 13D shadow inherits its own copy of the face OR potential V_face^(f)(local OR)",
                     "The 13D per-shadow action retains gravity R_13, the Pneuma spinor with torsion coupling, and the face OR potential",
                     "Bridge directions are frozen at their OR-selected values; only face degrees of freedom remain dynamical"
                 ],
-                "method": "Bridge OR dimensional reduction: 27D to 13D per shadow",
+                "method": "Bridge OR dimensional reduction: 26D to 13D per shadow",
                 "parentFormulas": ["master-action-two-layer-or"]
             },
             terms={
                 "R_13": "13D Ricci scalar on the per-shadow spacetime",
                 "Psi_P": "Pneuma spinor restricted to the 13D shadow",
-                "T_omega^m": "Torsion connection inherited from the 27D bulk",
+                "T_omega^m": "Torsion connection inherited from the 26D bulk",
                 "V_face^(f)(local OR)": "Face OR potential inherited from the master action (Layer 2)"
             }
         ))
@@ -2500,10 +2500,10 @@ class LagrangianMasterDerivation(SimulationBase):
         ))
 
         # =================================================================
-        # PART F2: 27D MASTER LAGRANGIAN (Topic 03)
+        # PART F2: 26D MASTER LAGRANGIAN (Topic 03)
         # =================================================================
-        # These formulas document the full 27D bulk action with explicit
-        # dimensional decomposition 27D = 4D + 7D + 14D + 2D and the
+        # These formulas document the full 26D bulk action with explicit
+        # dimensional decomposition 26D = 4D + 7D + 14D + 2D and the
         # racetrack moduli potential with geometric scaling a_i = b3/i.
         # They are THEORETICAL/documentation-only and do not alter any
         # computed values in run().
@@ -2530,14 +2530,14 @@ class LagrangianMasterDerivation(SimulationBase):
             ),
             category="THEORETICAL",
             description=(
-                "Full 27D bulk action with explicit two-layer OR structure "
-                "(Topic 03: 27D Master Lagrangian). The 27 dimensions decompose as "
-                "27D = 4D (visible spacetime) + 7D (G2 holonomy internal manifold) "
+                "Full 26D bulk action with explicit two-layer OR structure "
+                "(Topic 03: 26D Master Lagrangian). The 27 dimensions decompose as "
+                "26D = 4D (visible spacetime) + 7D (G2 holonomy internal manifold) "
                 "+ 14D (7 bridge pairs, carrying shadow/face information) "
-                "+ 2D (sampler data fields S^{2,0} from v24.2). "
+                "+ 2D (shadow-time directions S^{2,0} from v24.2). "
                 "Each term has a precise geometric origin:\n"
-                "  R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full 27D bulk, "
-                "with kappa_27 the 27D gravitational coupling.\n"
+                "  R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full 26D bulk, "
+                "with kappa_27 the 26D gravitational coupling.\n"
                 "  |F_4|^2/2: M-theory 4-form flux kinetic term; F_4 = dC_3 is the "
                 "field strength of the C_3 potential, with 4-form flux threading "
                 "associative 3-cycles of the G2 manifold.\n"
@@ -2551,7 +2551,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Laplacian eigenvalues on the G2 7-manifold.\n"
                 "  V_bridge (Layer 1 -- global OR): Bridge potential governing shadow "
                 "creation and separation. This implements the first OR layer, splitting "
-                "the 27D bulk into dual 13D shadows.\n"
+                "the 26D bulk into dual 13D shadows.\n"
                 "  sum_f V_face^(f) (Layer 2 -- local OR): Per-face potential governing "
                 "face selection within each shadow. This implements the second OR layer, "
                 "selecting the visible face from the 4 TCS faces.\n"
@@ -2574,13 +2574,13 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "Begin with the 27D spacetime M^{26,1} decomposed as "
-                    "27D = 4D (visible M^{3,1}) + 7D (G2 internal X_7) "
+                    "Begin with the 26D spacetime M^{26,1} decomposed as "
+                    "26D = 4D (visible M^{3,1}) + 7D (G2 internal X_7) "
                     "+ 14D (7 bridge pairs for shadow/face structure) "
-                    "+ 2D (sampler data fields S^{2,0})",
+                    "+ 2D (shadow-time directions S^{2,0})",
                     "Write the Einstein-Hilbert gravitational sector "
                     "R_27/(2 kappa_27^2) with kappa_27^2 = 8 pi G_27, "
-                    "the 27D Newton constant related to M_* via "
+                    "the 26D Newton constant related to M_* via "
                     "kappa_27^2 ~ M_*^{-25}",
                     "Include the M-theory 4-form flux kinetic term "
                     "-(1/2)|F_4|^2 where F_4 = dC_3 threads the b_3 = 24 "
@@ -2622,9 +2622,9 @@ class LagrangianMasterDerivation(SimulationBase):
                 ]
             },
             terms={
-                "R_{27}": "27D Ricci scalar from the full bulk metric G_{27}",
+                "R_{27}": "26D Ricci scalar from the full bulk metric G_{27}",
                 r"\kappa_{27}": (
-                    "27D gravitational coupling; kappa_27^2 = 8 pi G_27 ~ M_*^{-25}"
+                    "26D gravitational coupling; kappa_27^2 = 8 pi G_27 ~ M_*^{-25}"
                 ),
                 "|F_4|^2": (
                     "Squared norm of the M-theory 4-form flux F_4 = dC_3, "
@@ -2649,9 +2649,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Layer 2 (local) OR potential for face f: governs face "
                     "selection within each shadow (f = 1..4 TCS faces)"
                 ),
-                "27D decomposition": (
+                "26D decomposition": (
                     "27 = 4 (visible spacetime M^{3,1}) + 7 (G2 internal X_7) "
-                    "+ 14 (7 bridge pairs) + 2 (sampler data fields S^{2,0})"
+                    "+ 14 (7 bridge pairs) + 2 (shadow-time directions S^{2,0})"
                 ),
             }
         ))
@@ -2670,10 +2670,10 @@ class LagrangianMasterDerivation(SimulationBase):
             ),
             category="THEORETICAL",
             description=(
-                "Racetrack moduli potential for the 27D master Lagrangian "
+                "Racetrack moduli potential for the 26D master Lagrangian "
                 "(Topic 03) with explicit geometric scaling a_i = b_3/i. "
                 "This is the leading-order moduli potential V_mod appearing "
-                "in the 27D bulk action (bulk-action-27d-v23). "
+                "in the 26D bulk action (bulk-action-27d-v23). "
                 "Each of the 4 Kahler moduli T_i (i=1..4) corresponds to one "
                 "face of the twisted connected sum (TCS) G2 construction, "
                 "controlling the volume of the i-th 2-cycle. The non-perturbative "
@@ -2941,7 +2941,7 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "v22: Total bridge spatial dimensions = 12 pairs x 2D per pair = 24D. "
                 "Combined with the 1D unified time, the full spacetime is 25D with (24,1) "
-                "signature. The 27D extension adds S^{2,0} sampler data fields (v24.2)."
+                "signature. The 26D extension adds two shadow-time directions (v24.2)."
             ),
             no_experimental_value=True
         ))
@@ -2953,12 +2953,12 @@ class LagrangianMasterDerivation(SimulationBase):
         return SectionContent(
             section_id="2",
             subsection_id="2.1",
-            title="Core M^{27}(24,1,2) Master Action: v24.2 12×(2,0) Paired Bridge System",
+            title="Core M^{26}(24,2) Master Action: v24.2 12×(2,0) Paired Bridge System",
             abstract=(
-                "Comprehensive derivation of the M^{27}(24,1,2) master action using vielbein/tetrad "
+                "Comprehensive derivation of the M^{26}(24,2) master action using vielbein/tetrad "
                 "formalism with G2 holonomy compactification to 4D. The v24.2 architecture "
-                "decomposes the bulk as M^{27}(24,1,2) = T^1 x_fiber (direct_sum B_i^{2,0} oplus S^{2,0}) with "
-                "12 paired Euclidean bridges plus S^{2,0} sampler data fields. Covers: (A) vielbein formalism and spin connection, "
+                "decomposes the bulk as M^{26}(24,2) = T^1 x_fiber (direct_sum B_i^{2,0} oplus S^{2,0}) with "
+                "12 paired Euclidean bridges plus two shadow-time directions. Covers: (A) vielbein formalism and spin connection, "
                 "(B) 26D Einstein-Hilbert, Yang-Mills, Dirac, and Pneuma sectors, (C) Euler-Lagrange "
                 "equations yielding 26D Einstein field equations, (D) v22 bridge system with "
                 "distributed OR reduction, and (E) Kaluza-Klein reduction chain 26D -> 13D -> "
@@ -3013,9 +3013,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     type="paragraph",
                     content=(
                         "The v24.2 framework introduces 12 PAIRED Euclidean bridges plus S^{2,0} sampler data "
-                        "fields. The full bulk structure is M^{27}(24,1,2) = T¹ ×_fiber "
+                        "fields. The full bulk structure is M^{26}(24,2) = T¹ ×_fiber "
                         "(⊕_{i=1}^{12} B_i^{2,0} ⊕ S^{2,0}), where each B_i has coordinates (y₁ᵢ, y₂ᵢ). "
-                        "The metric decomposes as ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂² with structure (24,1,2)."
+                        "The metric decomposes as ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂² with structure (24,2)."
                     )
                 ),
                 ContentBlock(
@@ -3156,12 +3156,12 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="KK Reduction Chain: 27D \u2192 13D (bridge reduction) \u2192 4D (face reduction)",
+                    title="KK Reduction Chain: 26D \u2192 13D (bridge reduction) \u2192 4D (face reduction)",
                     content=(
-                        "<strong>Stage 1 \u2014 Bridge OR Reduction (27D \u2192 13D):</strong> "
+                        "<strong>Stage 1 \u2014 Bridge OR Reduction (26D \u2192 13D):</strong> "
                         "The bridge/global OR potential V_bridge^(global OR) integrates out "
                         "the 12\u00d7(2,0) bridge directions (24 spatial DOF), reducing the "
-                        "M^{27}(24,1,2) master action to a 13D(12,1) per-shadow action. The "
+                        "M^{26}(24,2) master action to a 13D(12,1) per-shadow action. The "
                         "resulting Lagrangian is denoted <strong>L_13D</strong> \u2014 the "
                         "13D per-shadow Lagrangian after bridge OR reduction. It retains "
                         "13D gravity R_13, the Pneuma spinor with torsion coupling, and "
@@ -3215,58 +3215,58 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="list",
                     items=[
-                        "S_27D: M^{27}(24,1,2) master action \u2014 full bulk with V_bridge^(global OR) + V_face^(f)(local OR)",
-                        "27D \u2192 13D (bridge reduction): bridge OR integrates out 24 bridge DOF, creating dual 13D(12,1) shadows",
+                        "S_26D: M^{26}(24,2) master action \u2014 full bulk with V_bridge^(global OR) + V_face^(f)(local OR)",
+                        "26D \u2192 13D (bridge reduction): bridge OR integrates out 24 bridge DOF, creating dual 13D(12,1) shadows",
                         "L_13D: 13D(12,1) per-shadow Lagrangian \u2014 inherits face OR potential V_face^(f)(local OR)",
                         "13D \u2192 4D (face reduction): face OR selects visible face, G2 KK compactifies 7D internal space",
                         "L_4D: 4D(3,1) effective Lagrangian \u2014 SM + GR + \u039b, all parameters fixed by geometry",
                     ]
                 ),
                 # =============================================================
-                # Part H: 27D Master Lagrangian (Topic 03)
+                # Part H: 26D Master Lagrangian (Topic 03)
                 # =============================================================
                 ContentBlock(
                     type="heading",
                     level=3,
-                    content="27D Master Lagrangian: Full Bulk Action with Dimensional Decomposition"
+                    content="26D Master Lagrangian: Full Bulk Action with Dimensional Decomposition"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
                         "The 27 dimensions of the PM framework admit a precise physical "
                         "decomposition into four sectors:\n\n"
-                        "27D = 4D (visible spacetime) + 7D (G2 internal) "
-                        "+ 14D (bridges) + 2D (sampler data fields)\n\n"
+                        "26D = 4D (visible spacetime) + 7D (G2 internal) "
+                        "+ 14D (bridges) + 2D (shadow-time directions)\n\n"
                         "The 4D visible spacetime M^{3,1} is the Minkowski (or FRW) "
                         "spacetime we observe. The 7D G2 holonomy manifold X_7 carries "
                         "the internal geometry whose topology (b_3 = 24 associative "
                         "3-cycles, chi_eff = 144) determines all 4D coupling constants. "
                         "The 14D bridge sector consists of 7 bridge pairs (each 2D), "
                         "which carry the shadow and face structure of the two-layer OR "
-                        "hierarchy. The 2D sampler data fields S^{2,0} (introduced in v24.2) "
-                        "provides the final two spatial dimensions completing the 27D total."
+                        "hierarchy. The 2D shadow-time directions S^{2,0} (introduced in v24.2) "
+                        "provides the final two spatial dimensions completing the 26D total."
                     )
                 ),
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="27D Dimensional Decomposition",
+                    title="26D Dimensional Decomposition",
                     content=(
                         "4D: Visible spacetime M^{3,1} (3 spatial + 1 temporal)\n"
                         "7D: G2 holonomy internal manifold X_7 (b_3 = 24, chi_eff = 144)\n"
                         "14D: 7 bridge pairs (shadow/face structure, 2D each)\n"
                         "2D: Sampler data fields S^{2,0} (v24.2 extension)\n"
-                        "Total: 4 + 7 + 14 + 2 = 27 dimensions with (24,1,2) structure"
+                        "Total: 4 + 7 + 14 + 2 = 27 dimensions with (24,2) structure"
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The full 27D bulk action collects all geometric and matter "
+                        "The full 26D bulk action collects all geometric and matter "
                         "contributions into a single integral. Each term has a precise "
                         "origin in the M-theory compactification:\n\n"
                         "R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full "
-                        "27D bulk, ensuring diffeomorphism invariance.\n\n"
+                        "26D bulk, ensuring diffeomorphism invariance.\n\n"
                         "|F_4|^2/2: The M-theory 4-form flux kinetic energy. The field "
                         "strength F_4 = dC_3 threads the b_3 = 24 independent associative "
                         "3-cycles of the G2 manifold, stabilising complex structure moduli.\n\n"
@@ -3295,7 +3295,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     type="paragraph",
                     content=(
                         "The racetrack moduli potential provides the explicit form of "
-                        "V_mod in the 27D bulk action. The 4 Kahler moduli T_1,...,T_4 "
+                        "V_mod in the 26D bulk action. The 4 Kahler moduli T_1,...,T_4 "
                         "of the TCS G2 manifold are stabilised by competing non-perturbative "
                         "exponentials with geometrically-determined scales a_i = b_3/i = 24/i. "
                         "This adapts the KKLT (Kachru-Kallosh-Linde-Trivedi 2003) and LVS "
@@ -3322,7 +3322,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="success",
-                    title="27D Master Lagrangian: Key Results (Topic 03)",
+                    title="26D Master Lagrangian: Key Results (Topic 03)",
                     content=(
                         "Dimensional decomposition: 27 = 4 + 7 + 14 + 2\n"
                         "Two-layer OR: V_bridge (global, creates shadows) + "
@@ -3357,7 +3357,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "master-action-two-layer-or",
                 "reduced-lagrangian-13d",
                 "reduced-lagrangian-4d",
-                # Part H: 27D Master Lagrangian (Topic 03)
+                # Part H: 26D Master Lagrangian (Topic 03)
                 "bulk-action-27d-v23",
                 "racetrack-moduli-potential-27d-v23",
             ],

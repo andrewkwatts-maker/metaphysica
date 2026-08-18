@@ -14,7 +14,7 @@ Pipeline stages:
   3. G2 differential geometry (metric, Hodge star, torsion)
   4. Sphere packing (E8 density, coordination shells)
   5. Spectral geometry (Dirac operator, eigenvalues)
-  6. Bridge geometry (12 bridges, 27D metric, moduli stabilization)
+  6. Bridge geometry (12 bridges, 26D metric, moduli stabilization)
   7. Physical observables (n_gen, α_em, w₀)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -159,7 +159,7 @@ class GeometricPipeline:
         bridge_verify = self.bridges.verify()
         results['bridges'] = {
             'num_bridges': len(self.bridges.bridges),
-            'total_dim': self.bridges.total_bridge_dimensions + 3,
+            'total_dim': self.bridges.total_bridge_dimensions + 2,
             'signature': self.bridges.metric_signature(),
             'all_valid': all(bridge_verify.values()),
         }
@@ -290,10 +290,10 @@ class GeometricPipeline:
             'kk_mass_std': float(np.std(kk_masses)),
             'kk_mass_cv': float(np.std(kk_masses) / np.mean(kk_masses)),
             'n_gen_stable': bool(np.all(n_gens == 3)),
-            'signature_stable': all(s == (26, 1) for s in signatures),
+            'signature_stable': all(s == (24, 2) for s in signatures),
             'all_stable': (
                 bool(np.all(n_gens == 3))
-                and all(s == (26, 1) for s in signatures)
+                and all(s == (24, 2) for s in signatures)
                 and float(np.std(kk_masses) / np.mean(kk_masses)) < 0.5
             ),
         }
@@ -367,8 +367,8 @@ class GeometricPipeline:
 
         # Key observables
         checks['n_gen_3'] = results['observables']['n_gen'] == 3
-        checks['signature_26_1'] = results['bridges']['signature'] == (26, 1)
-        checks['dim_27'] = results['bridges']['total_dim'] == 27
+        checks['signature_24_2'] = results['bridges']['signature'] == (24, 2)
+        checks['dim_26'] = results['bridges']['total_dim'] == 26
 
         # E8 properties
         checks['e8_roots_240'] = results['e8']['num_roots'] == 240

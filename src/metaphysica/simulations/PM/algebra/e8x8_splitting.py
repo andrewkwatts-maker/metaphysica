@@ -3,11 +3,11 @@ Heterotic E₈ × E₈ Visible/Hidden Splitting
 ============================================
 
 Heterotic E₈ × E₈ with explicit visible/hidden splitting:
-  - Visible E₈:  acts on the 27D Pneuma condensate → SM gauge bosons + Yukawa textures
+  - Visible E₈:  acts on the 26D Pneuma condensate → SM gauge bosons + Yukawa textures
   - Hidden E₈':  drives gaugino condensation and dark portals
 
 The splitting uses:
-  - E₈ root vectors (from e8_root_system.py) acting on the 27D condensate
+  - E₈ root vectors (from e8_root_system.py) acting on the 26D condensate
   - Gaugino condensate W_np = exp(−a·T) from the hidden sector
   - Portal coupling α_leak = 1/√6 from E₇ ⊃ E₆ × U(1) branching
 
@@ -43,7 +43,7 @@ class E8xE8SplittingSimulation(SimulationBase):
     """
     Heterotic E₈ × E₈ with visible/hidden sector splitting.
 
-    Visible E₈ acts on the 27D Pneuma condensate.
+    Visible E₈ acts on the 26D Pneuma condensate.
     Hidden E₈' generates racetrack superpotential and dark portal.
     """
 
@@ -56,7 +56,7 @@ class E8xE8SplittingSimulation(SimulationBase):
             title="Heterotic E8 x E8 Visible/Hidden Splitting",
             description=(
                 "E8 x E8 heterotic string gauge group with visible (SM) and hidden (dark) sectors. "
-                "Visible E8 acts on 27D Pneuma condensate; hidden E8' drives gaugino condensation."
+                "Visible E8 acts on 26D Pneuma condensate; hidden E8' drives gaugino condensation."
             ),
             section_id="A5",
             appendix=True,
@@ -153,7 +153,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 plain_text="E8_visible acts on Psi_27 → SM gauge fields + Yukawa textures",
                 category="DERIVED",
                 description=(
-                    "Visible E₈ factor acts on the 27D Pneuma condensate via root generators. "
+                    "Visible E₈ factor acts on the 26D Pneuma condensate via root generators. "
                     "The 240 root vectors of E₈ mix the 27 condensate components, "
                     "producing SM gauge boson couplings and Yukawa texture hierarchy."
                 ),
@@ -164,11 +164,11 @@ class E8xE8SplittingSimulation(SimulationBase):
                     "each root vector r ∈ ℝ⁸ shifts condensate components by ε·rᵢ."
                 ),
                 derivation={
-                    "method": "E8 root generator action on 27D Pneuma condensate",
+                    "method": "E8 root generator action on 26D Pneuma condensate",
                     "parentFormulas": ["freudenthal-cubic-norm"],
                     "steps": [
                         "E₈ has 240 root vectors of length √2 (norm² = 2) in ℝ⁸ forming the E₈ root lattice",
-                        "The 27D Pneuma condensate Ψ₂₇ is embedded in the 248D E₈ adjoint via E₈ ⊃ E₆ × SU(3)",
+                        "The 26D Pneuma condensate Ψ₂₇ is embedded in the 248D E₈ adjoint via E₈ ⊃ E₆ × SU(3)",
                         "Each root generator eᵣ acts on Ψ₂₇ by the adjoint representation: Ψ → Ψ + ε[eᵣ, Ψ]",
                         "The SM gauge boson spectrum arises from the 78 generators of the E₆ sub-algebra",
                         "Yukawa textures arise from the off-diagonal mixing of condensate components by root generators",
@@ -251,7 +251,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 name="Visible E₈ Action Norm on Pneuma",
                 units="dimensionless",
                 status="DERIVED",
-                description="L2 norm of the change in the 27D Pneuma condensate under visible E₈ root generators.",
+                description="L2 norm of the change in the 26D Pneuma condensate under visible E₈ root generators.",
                 derivation_formula="e8x8-visible-action",
                 no_experimental_value=True,
                 eml_description="EML: ops.sqrt(ops.sum(ops.pow(eml_vec('delta_psi_i'), eml_scalar(2.0)) for i in range(27))) — L2 norm |Ψ'−Ψ| of condensate shift under 10 visible E₈ root generators",
@@ -328,7 +328,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 type="paragraph",
                 content=(
                     "<Normal>"
-                    "The visible E₈ acts on the 27D Pneuma condensate Ψ₂₇ via its 240 root generators, "
+                    "The visible E₈ acts on the 26D Pneuma condensate Ψ₂₇ via its 240 root generators, "
                     "producing the SM gauge boson spectrum and Yukawa texture hierarchy. "
                     "The hidden E₈' undergoes gaugino condensation with N₁=b₃=24 cycles, "
                     f"giving W_np = exp(−2π/24) ≈ {hid_cond:.6f}. "
@@ -444,6 +444,6 @@ class E8xE8SplittingSimulation(SimulationBase):
             {
                 "topic": "E8 Root System",
                 "url": "https://en.wikipedia.org/wiki/E8_(mathematics)",
-                "relevance": "The 240 root vectors of E8 that act on the 27D Pneuma condensate to generate SM fields",
+                "relevance": "The 240 root vectors of E8 that act on the 26D Pneuma condensate to generate SM fields",
             },
         ]

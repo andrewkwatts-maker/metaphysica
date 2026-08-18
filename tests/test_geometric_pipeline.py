@@ -108,11 +108,13 @@ class TestBridgesStage:
     def test_12_bridges(self, pipeline):
         assert pipeline._results['bridges']['num_bridges'] == 12
 
-    def test_27d(self, pipeline):
-        assert pipeline._results['bridges']['total_dim'] == 27
+    def test_26d(self, pipeline):
+        # Two-time ruling: 24 bridge dims + 2 shadow times = 26
+        assert pipeline._results['bridges']['total_dim'] == 26
 
-    def test_signature_26_1(self, pipeline):
-        assert pipeline._results['bridges']['signature'] == (26, 1)
+    def test_signature_24_2(self, pipeline):
+        # (24,2): two timelike directions, one per 13D shadow
+        assert pipeline._results['bridges']['signature'] == (24, 2)
 
 
 # ------------------------------------------------------------------

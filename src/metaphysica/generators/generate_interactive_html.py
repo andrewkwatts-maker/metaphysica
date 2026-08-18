@@ -137,7 +137,7 @@ def generate_master_action_html() -> str:
 <span class="formula-op">[</span>
 <span class="formula-var highlight" data-term="R">R<span class="var-tooltip"><span class="var-name">R - Ricci Scalar</span><span class="var-description">25D Einstein-Hilbert scalar curvature</span><span class="var-units">Length<sup>-2</sup></span></span></span>
 <span class="formula-op"> + </span>
-<span class="formula-var highlight" data-term="Psi_P"><span style="text-decoration:overline">&Psi;</span><sub>P</sub>(i&Gamma;<sup>M</sup>D<sub>M</sub> - m)&Psi;<sub>P</sub><span class="var-tooltip"><span class="var-name">&Psi;<sub>P</sub> - Pneuma Spinor</span><span class="var-description">4096-component Pneuma spinor from Cl(24,1) Clifford algebra. Source of all matter.</span><span class="var-units">Mass<sup>12.5</sup></span></span></span>
+<span class="formula-var highlight" data-term="Psi_P"><span style="text-decoration:overline">&Psi;</span><sub>P</sub>(i&Gamma;<sup>M</sup>D<sub>M</sub> - m)&Psi;<sub>P</sub><span class="var-tooltip"><span class="var-name">&Psi;<sub>P</sub> - Pneuma Spinor</span><span class="var-description">4096-component Weyl spinor of Cl(24,2). Source of all matter.</span><span class="var-units">Mass<sup>12.5</sup></span></span></span>
 <span class="formula-op"> + </span>
 <span class="formula-var" data-term="lambda">&lambda;(<span style="text-decoration:overline">&Psi;</span><sub>P</sub>&Psi;<sub>P</sub>)<sup>2</sup><span class="var-tooltip"><span class="var-name">&lambda; - Quartic Term</span><span class="var-description">Quartic self-interaction for fermion condensation and mass generation</span></span></span>
 <span class="formula-op"> + </span>

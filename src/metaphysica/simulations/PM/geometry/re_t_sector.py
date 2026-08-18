@@ -30,7 +30,7 @@ with the seed values:
     * b₃ = 24      — third Betti number of the G₂ manifold
                       (the SSoT seed; every leaf in the EML tree
                        traces back to this number).
-    * flux = 12    — the 12 paired (2,0) bridges of M^{27}(24,1,2);
+    * flux = 12    — the 12 paired (2,0) bridges of M^{26}(24,2);
                       modulates the instanton prefactor as the bridge
                       multiplicity weight.
     * A    = 3.2   — gaugino + M2 instanton prefactor, sourced from

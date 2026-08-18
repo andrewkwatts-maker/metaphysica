@@ -103,7 +103,7 @@ class IntegrityV16_2(SimulationBase):
             version="24.2",
             domain="integrity",
             title="System Integrity and Verification",
-            description="Hysteresis seal, 42 certificates of integrity, and data provenance for the v24.2 Sterile Model (27D/26,1)",
+            description="Hysteresis seal, 42 certificates of integrity, and data provenance for the v24.2 Sterile Model (26D/26,1)",
             section_id="4",
             subsection_id=None
         )
@@ -170,8 +170,8 @@ class IntegrityV16_2(SimulationBase):
                 content=(
                     "In materials science, hysteresis describes a system whose state depends on "
                     "its history. In the v24.2 model, <strong>Topological Hysteresis</strong> "
-                    "refers to the 'memory' of the 27D(24,1,2) bulk retained by the 4D world-sheet. "
-                    "During the 27D(24,1,2) → 13D(12,1) → 4D dimensional collapse, the manifold "
+                    "refers to the 'memory' of the 26D(24,2) bulk retained by the 4D world-sheet. "
+                    "During the 26D(24,2) → 13D(12,1) → 4D dimensional collapse, the manifold "
                     "underwent a symmetry-shattering event that 'set' the values of the residues."
                 )
             ),
@@ -181,7 +181,7 @@ class IntegrityV16_2(SimulationBase):
                     "<h4>The Seal</h4>"
                     "<p>Like a liquid freezing into a specific crystalline lattice, the residues "
                     "cannot be rearranged without melting the entire structure back into the "
-                    "ancestral 27D(24,1,2) potential. This hysteresis ensures that the current 4D state "
+                    "ancestral 26D(24,2) potential. This hysteresis ensures that the current 4D state "
                     "is a 'Global Minimum' with near-infinite energy walls, making the physical "
                     "constants immutable.</p>"
                 ),
@@ -197,8 +197,8 @@ class IntegrityV16_2(SimulationBase):
                 content=(
                     "The Hysteresis Seal is enforced by the dual-shadow bridge structure. As detailed "
                     "in Section 1.2, the OR reduction operator (R<sub>⊥</sub>) preserves the symmetry of the descent. In the "
-                    "v24.2 framework, the Euclidean S<sup>(2,0)</sup> sampler data fields act as a 'one-way valve': "
-                    "Information flows from 27D(24,1,2) potential to 4D residue. Once the 125-node "
+                    "v24.2 framework, the Euclidean S<sup>(2,0)</sup> shadow-time directions act as a 'one-way valve': "
+                    "Information flows from 26D(24,2) potential to 4D residue. Once the 125-node "
                     "registry is populated, the bridge 'locks,' preventing any back-propagation "
                     "of data. This makes the model <strong>non-recursive</strong>: the observed "
                     "data cannot be used to 're-tune' the starting geometry."
@@ -256,7 +256,7 @@ class IntegrityV16_2(SimulationBase):
                 content=(
                     "In the Sterile Model, peer review is not merely a post-hoc human evaluation "
                     "but an integrated algorithmic process. The 42 Certificates act as a "
-                    "'<strong>Digital Thread</strong>' connecting the 27D(24,1,2) theory to the 4D output. "
+                    "'<strong>Digital Thread</strong>' connecting the 26D(24,2) theory to the 4D output. "
                     "Each certificate represents a fundamental physical law or topological constraint "
                     "that the model must satisfy. If a single certificate fails, the Metric Lock "
                     "(Section 2.3) is revoked, and the entire simulation is invalidated."
@@ -282,7 +282,7 @@ class IntegrityV16_2(SimulationBase):
                     "the V₇ manifold. They check for 'Topological Crowding' and ensure the "
                     "manifold's Ricci-flatness is preserved.</p>"
                     "<h4>Tier II: Algebraic Parity (C15–C28)</h4>"
-                    "<p>These enforce the Symmetry Budget inherited from the 27D(24,1,2) dual-shadow bulk. "
+                    "<p>These enforce the Symmetry Budget inherited from the 26D(24,2) dual-shadow bulk. "
                     "They ensure that the OR reduction operator preserves parity across shadows and that "
                     "the sum of all residues equals the manifold's volume invariant.</p>"
                     "<h4>Tier III: Observational Alignment (C29–C42)</h4>"
@@ -331,7 +331,7 @@ class IntegrityV16_2(SimulationBase):
                     "To satisfy the requirements of 'Geometric Necessity,' the model must be "
                     "transparent, reproducible, and immune to retroactive 'revisionism.' Section "
                     "4.3 outlines how the repository serves as a permanent, immutable record of "
-                    "the 27D(24,1,2) descent."
+                    "the 26D(24,2) descent."
                 )
             ),
             ContentBlock(
@@ -390,7 +390,7 @@ class IntegrityV16_2(SimulationBase):
                     "the v24.2 model will <strong>not</strong> be 'updated.' The model will either "
                     "maintain its 0.48σ alignment or it will fail. If it fails, the theory is "
                     "discarded. There is no 'v24.3' because the Metric Lock prohibits the "
-                    "re-shattering of the 27D(24,1,2) bulk. The Omega Seal marks the end of the model's "
+                    "re-shattering of the 26D(24,2) bulk. The Omega Seal marks the end of the model's "
                     "evolution.</p>"
                 ),
                 label="omega-seal"
@@ -613,7 +613,7 @@ class IntegrityV16_2(SimulationBase):
                     "Omega_seal": "SHA-256 hash of the terminal state (256-bit digest)",
                     "registry": "Frozen 125-residue registry (registry.json)",
                     "coords": "Node coordinates of the brane-node intersection lattice",
-                    "tensors": "Projection tensors for 27D(24,1,2) to 4D dimensional reduction",
+                    "tensors": "Projection tensors for 26D(24,2) to 4D dimensional reduction",
                     "SHA-256": "Cryptographic hash function (NIST FIPS 180-4)",
                 },
             arithma=_arithma_num(256.0), eml=_eml_scalar(256.0), value=256.0),

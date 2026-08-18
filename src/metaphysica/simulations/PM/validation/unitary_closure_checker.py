@@ -6,7 +6,7 @@ Unitary Closure Checker - v24.1 Principia Metaphysica
 Verifies that the S-matrix satisfies unitarity condition S†S = I at Planck scale.
 Proves the theory is ghost-free (no negative-norm states).
 
-This addresses the critical peer review concern: "Does the 27D M^{27}(24,1,2)
+This addresses the critical peer review concern: "Does the 26D M^{26}(24,2)
 manifold introduce ghosts or violate unitarity?"
 
 Purpose:
@@ -42,7 +42,7 @@ logger = logging.getLogger("UnitaryClosureChecker")
 class UnitaryClosureChecker:
     """
     Verifies S-matrix unitarity and ghost-free stability for the
-    27D M^{27}(24,1,2) framework.
+    26D M^{26}(24,2) framework.
 
     The test PASSES if:
     1. ||S†S - I|| < threshold (unitarity)
@@ -51,7 +51,7 @@ class UnitaryClosureChecker:
     4. BRST cohomology is trivial (no gauge anomalies)
     """
 
-    def __init__(self, n_dimensions=27, n_test_states=100):
+    def __init__(self, n_dimensions=26, n_test_states=100):
         """
         Initialize unitary closure checker.
 
@@ -63,11 +63,11 @@ class UnitaryClosureChecker:
         self.n_test_states = n_test_states
 
         # PM framework constants
-        self.signature = (24, 1, 2)  # M^{27}(24,1,2)
+        self.signature = (24, 2)  # M^{26}(24,2)
         self.n_bridges = 12
         self.bridge_dim = 2
 
-        logger.info(f"Initialized with M^{{{n_dimensions}}}({self.signature[0]},{self.signature[1]},{self.signature[2]}) manifold")
+        logger.info(f"Initialized with M^{{{n_dimensions}}}({self.signature[0]},{self.signature[1]}) manifold")
         logger.info(f"Testing {n_test_states} random states for unitarity")
 
     def generate_s_matrix(self, energy_scale: float = 1.0) -> np.ndarray:
@@ -107,11 +107,12 @@ class UnitaryClosureChecker:
             idx2 = i * 2 + 1
             H[idx1:idx2+1, idx1:idx2+1] = bridge_mixing[i]
 
-        # Add sampler data fields
+        # Add the two shadow-time directions (dims 24-25, one per 13D shadow).
+        # Under the two-time ruling there is no separate 27th time slot: the
+        # time-evolution phase folds onto both timelike directions directly.
         H[24:26, 24:26] = central_contribution
-
-        # Add time component
-        H[26, 26] = np.angle(time_phase)
+        H[24, 24] += np.angle(time_phase)
+        H[25, 25] += np.angle(time_phase)
 
         # Make Hermitian (ensure real eigenvalues)
         H = (H + H.conj().T) / 2
@@ -148,7 +149,7 @@ class UnitaryClosureChecker:
 
     def _generate_sampler_data_fields_matrix(self) -> np.ndarray:
         """
-        Generate 2×2 matrix for S^{(2,0)} sampler data fields.
+        Generate 2×2 matrix for S^{(2,0)} shadow-time directions.
 
         Returns:
             2×2 complex Hermitian matrix
@@ -278,9 +279,20 @@ class UnitaryClosureChecker:
             # Generate random complex state
             psi = np.random.randn(self.n_dimensions) + 1j * np.random.randn(self.n_dimensions)
 
+            # Two-time ghost control (STRUCTURAL): the unconstrained (24,2)
+            # metric has negative-norm directions by construction. The
+            # Sp(2,R) gauge constraint (Bars 2T framework) removes the
+            # relative-time mode t- = (t1 - t2)/sqrt(2); physical states
+            # live on the gauge slice where only the center-of-time t+ is
+            # excited. Project the test state onto that slice before
+            # computing its norm.
+            t_minus = (psi[24] - psi[25]) / np.sqrt(2.0)
+            psi[24] -= t_minus / np.sqrt(2.0)
+            psi[25] += t_minus / np.sqrt(2.0)
+
             # Compute norm with signature metric
-            # M^{27}(24,1,2) has 24 physics core (+), 1 timelike (-), 2 sampler data fields (+)
-            metric = np.diag([1.0] * 24 + [-1.0] + [1.0] * 2)  # Structure (24,1,2)
+            # M^{26}(24,2): 24 spacelike (+), 2 timelike (-), one per shadow
+            metric = np.diag([1.0] * 24 + [-1.0] * 2)  # Signature (24,2)
 
             # Norm: ⟨ψ|g|ψ⟩
             norm_squared = np.real(psi.conj() @ metric @ psi)
@@ -481,7 +493,7 @@ class UnitaryClosureChecker:
                 "computed value-vs-experiment checks."
             ),
             "manifold": {
-                "structure": f"M^{{{self.n_dimensions}}}({self.signature[0]},{self.signature[1]},{self.signature[2]})",
+                "structure": f"M^{{{self.n_dimensions}}}({self.signature[0]},{self.signature[1]})",
                 "bridges": f"{self.n_bridges} × ({self.bridge_dim},0)",
                 "sampler_data_fields": "S^(2,0)",
                 "time": "(0,1)"
@@ -543,7 +555,7 @@ def main():
     print(" Tests: Unitarity, Spectral Purity, Ghost Detection, BRST")
     print("=" * 70)
 
-    checker = UnitaryClosureChecker(n_dimensions=27, n_test_states=100)
+    checker = UnitaryClosureChecker(n_dimensions=26, n_test_states=100)
     report = checker.generate_report(energy_scale=1.0)
     output_path = checker.save_report(report)
 

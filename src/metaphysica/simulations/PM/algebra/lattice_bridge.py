@@ -26,7 +26,7 @@ Assertion Assessment (Sprint 2, WP 2.2)
   in one pass alongside all algebra/geometry modules. No iterative tuning observed.
 - Lattice Result: chain_valid=True, all 21/21 checks PASS. E8 (240 roots, dim 248),
   octonions valid, G2 from E8 compatible, E8 triple orthogonal/each_e8/spans_R24,
-  12 bridges in 24D, signature (26,1), 4 faces x 3 bridges, alpha_leak=0.408248
+  12 bridges in 24D, signature (24,2), 4 faces x 3 bridges, alpha_leak=0.408248
   matches 1/sqrt(6) exactly.
 - Gemini Verdict: Steps 1-4 (E8, octonions, G2, Leech) are "mathematical theorem /
   standard construction." Steps 5-6 (12 bridge pairs, 4 faces) are "framework-specific
@@ -152,7 +152,7 @@ class LatticeBridgeConnector:
         results['bridges_from_leech'] = {
             'dim_matches_leech': bridge_verify['dim_matches_leech'],
             'bridge_count': bridge_verify['bridge_count'],
-            'signature_26_1': bridge_verify['signature_26_1'],
+            'signature_24_2': bridge_verify['signature_24_2'],
             'all_areas_positive': bridge_verify['all_areas_positive'],
             'moduli_valid': bridge_verify['moduli_valid'],
         }
@@ -192,7 +192,7 @@ class LatticeBridgeConnector:
             and results['e8_triple']['orthogonal']
             and results['e8_triple']['each_is_e8']
             and results['e8_triple']['spans_R24']
-            and results['bridges_from_leech']['signature_26_1']
+            and results['bridges_from_leech']['signature_24_2']
             and results['four_faces']['all_bridges_covered']
             and results['four_faces']['cross_e8']
             and results['face_moduli']['alpha_leak_matches']
@@ -238,7 +238,7 @@ class LatticeBridgeConnector:
         checks['e8_triple_consistent'] = r['bridge_decomposition']['consistent_with_e8_triple']
 
         # Bridges from Leech
-        checks['signature_26_1'] = r['bridges_from_leech']['signature_26_1']
+        checks['signature_24_2'] = r['bridges_from_leech']['signature_24_2']
         checks['bridge_moduli_valid'] = r['bridges_from_leech']['moduli_valid']
 
         # Four faces
@@ -271,7 +271,7 @@ class LatticeBridgeConnector:
             f"E8 triple: {r['e8_triple']['dimensions']}, orthogonal={r['e8_triple']['orthogonal']}, each E8={r['e8_triple']['each_is_e8']}",
             f"E8 pair: {r['e8_pair']['num_roots']} roots, heterotic={r['e8_pair']['heterotic_compatible']}",
             f"Bridges: {r['bridge_decomposition']['num_bridges']} × 2D = {r['bridge_decomposition']['total_dim']}D",
-            f"Signature: {('(26,1)' if r['bridges_from_leech']['signature_26_1'] else 'WRONG')}",
+            f"Signature: {('(24,2)' if r['bridges_from_leech']['signature_24_2'] else 'WRONG')}",
             f"Faces: {r['four_faces']['num_faces']} × {r['four_faces']['bridges_per_face']} bridges",
             f"α_leak = {r['face_moduli']['alpha_leak']:.6f} (expected 1/√6 = {1/math.sqrt(6):.6f})",
             f"Chain valid: {r['chain_valid']}",

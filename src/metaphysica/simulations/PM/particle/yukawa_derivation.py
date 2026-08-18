@@ -11,7 +11,7 @@ PHYSICS SUMMARY
 ---------------
 The binary tetrahedral group T₄ is the symmetry group of the 24-cell
 (the regular 4-polytope with 24 octahedral cells). In the v24.x
-metaphysica framework, the 12 paired (2,0) bridges of M^{27}(24,1,2)
+metaphysica framework, the 12 paired (2,0) bridges of M^{26}(24,2)
 project onto the 24-cell's vertex set via the G₂ spinor bundle. The
 overlap integrals between the three lepton-doublet generations and the
 neutrino mass-eigenstate basis are governed by:

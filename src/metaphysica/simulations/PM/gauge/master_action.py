@@ -236,7 +236,7 @@ class MasterActionSimulationV22(SimulationBase):
 
         v22 Bridge Structure:
         - Metric: ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
-        - Total: 1 (time) + 26 (bridge) = 27D spacetime (matching Cl(24,1) spinor)
+        - Total: 24 (space) + 2 (times) = 26D spacetime (matching Weyl Cl(24,2) spinor)
         - Each pair i has local OR operator R_perp_i = [[0,-1],[1,0]]
 
         Returns:
@@ -245,7 +245,7 @@ class MasterActionSimulationV22(SimulationBase):
         bridge_data = {
             "n_pairs": self._n_bridge_pairs,
             "total_bridge_dimensions": 2 * self._n_bridge_pairs,  # 24
-            "spacetime_dimensions": 1 + 2 * self._n_bridge_pairs,  # 27D (26,1)
+            "spacetime_dimensions": 1 + 2 * self._n_bridge_pairs,  # 26D (26,1)
             "r_perp_matrix": self._r_perp,
             "metric_signature": f"(24,1) = 1 time + {2 * self._n_bridge_pairs} bridge",
         }
@@ -258,7 +258,7 @@ class MasterActionSimulationV22(SimulationBase):
         v22 Distributed OR:
         - Each pair i has: R_perp_i = [[0,-1],[1,0]] (2x2 rotation matrix)
         - Total OR operator: tensor_{i=1}^{12} R_perp_i
-        - Dimension: 2^12 = 4096 (matches Pneuma spinor from Cl(24,1))
+        - Dimension: 2^13/2 = 4096 (Weyl Pneuma spinor of Cl(24,2))
 
         Returns:
             Dictionary with distributed OR parameters
@@ -392,7 +392,7 @@ class MasterActionSimulationV22(SimulationBase):
 
         v22.0: Adds 12-pair bridge system formulas:
         - pneuma-master-action-v22: Updated master action with 12-pair bridge
-        - bridge-12-pair-metric-v22: 27D metric with 12 (2,0) bridge pairs + S^{2,0} sampler data fields
+        - bridge-12-pair-metric-v22: 26D metric with 12 (2,0) bridge pairs + two shadow-time directions
         - bridge-lagrangian-v22: L_bridge summed over 12 pairs
         - distributed-or-reduction-v22: Tensor product of 12 R_perp operators
         - breathing-aggregation-v22: Averaged breathing mode
@@ -404,43 +404,43 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="pneuma-master-action-v23",
                 label="(1.1)",
-                latex=r"S = \int d^{27}X \sqrt{-G} \left[ R + \bar{\Psi}_P (i \Gamma^M D_M - m) \Psi_P + \lambda (\bar{\Psi}_P \Psi_P)^2 + \sum_{i=1}^{12} \mathcal{L}_{\text{bridge}}^i + \mathcal{L}_{C} \right]",
-                plain_text="S = integral d^27X sqrt(-G) [ R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
+                latex=r"S = \int d^{26}X \sqrt{-G} \left[ R + \bar{\Psi}_P (i \Gamma^M D_M - m) \Psi_P + \lambda (\bar{\Psi}_P \Psi_P)^2 + \sum_{i=1}^{12} \mathcal{L}_{\text{bridge}}^i + \mathcal{L}_{C} \right]",
+                plain_text="S = integral d^26X sqrt(-G) [ R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
                 category="DERIVED",
                 description=(
-                    "v24.2: 27D(24,1,2) Pneuma master action with 12-pair (2,0) bridge system + S^{2,0} sampler data fields. "
+                    "v24.2: 26D(24,2) Pneuma master action with 12-pair (2,0) bridge system + two shadow-time directions. "
                     "12×(2,0) + S^{2,0} + (0,1) WARP to create 2×13D(12,1) shadows via distributed OR. "
                     "Each L_bridge^i contributes to OR reduction via local R_perp_i operator."
                 ),
                 eml_tree_str=(
                     "ops.mul(eml_vec('sqrt_neg_G'), "
-                    "ops.add(eml_vec('R_27D'), "
+                    "ops.add(eml_vec('R_26D'), "
                     "ops.add(ops.mul(eml_vec('Psi_bar_P'), ops.mul(eml_vec('i_Gamma_D'), eml_vec('Psi_P'))), "
                     "ops.add(ops.mul(eml_vec('lambda'), ops.pow(ops.mul(eml_vec('Psi_bar_P'), eml_vec('Psi_P')), eml_scalar(2.0))), "
                     "ops.add(eml_vec('L_bridge_sum_12'), eml_vec('L_C'))))))"
                 ),
                 eml_description=(
-                    "27D Pneuma master action integrand: sqrt(-G) times [R + Dirac kinetic + "
+                    "26D Pneuma master action integrand: sqrt(-G) times [R + Dirac kinetic + "
                     "quartic self-interaction + sum of 12 bridge Lagrangians + sampler L_C]."
                 ),
                 inputParams=["geometry.D_bulk", "bridge.n_pairs", "topology.elder_kads"],
                 outputParams=["bridge.n_pairs"],
                 derivation={
                     "steps": [
-                        "Start from 27D spacetime with signature (26,1) and Clifford algebra Cl(24,1)",
+                        "Start from 26D spacetime with signature (24,2) and Clifford algebra Cl(24,2)",
                         "Einstein-Hilbert term R provides gravitational dynamics in the bulk",
-                        "Pneuma spinor Psi_P (4096 components from 2^12 = dim Cl(24,1)) carries all matter content",
+                        "Pneuma spinor Psi_P (4096 = 2^13/2 Weyl components of Cl(24,2)) carries all matter content",
                         "Quartic self-interaction lambda*(Psi-bar Psi)^2 drives condensation and symmetry breaking",
                         "12 bridge Lagrangians L_bridge^i implement distributed OR reduction across (2,0) pairs",
-                        "Sampler data fields L_C completes the 27D = 24 (bridge) + 2 (sampler) + 1 (time) decomposition",
+                        "Sampler data fields L_C completes the 26D = 24 (bridge) + 2 (sampler) + 1 (time) decomposition",
                     ],
                     "method": "higher_dimensional_action_principle",
                     "parentFormulas": [],
                 },
                 terms={
-                    "R": "27D Einstein-Hilbert scalar curvature",
-                    "Psi_P": "4096-component Pneuma spinor from Cl(24,1)",
-                    "Gamma^M": "27D gamma matrices (4096x4096)",
+                    "R": "26D Einstein-Hilbert scalar curvature",
+                    "Psi_P": "4096-component Pneuma spinor from Cl(24,2)",
+                    "Gamma^M": "26D gamma matrices (4096x4096)",
                     "D_M": "Covariant derivative with spin connection",
                     "lambda": "Quartic self-interaction for condensation",
                     "L_bridge^i": "Bridge Lagrangian for pair i (12 total)",
@@ -455,8 +455,8 @@ class MasterActionSimulationV22(SimulationBase):
                 plain_text="ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)",
                 category="DERIVED",
                 description=(
-                    "v24.2: 27D metric with 12 (2,0) bridge pairs + S^{2,0} sampler data fields. "
-                    "Total: 1 (time) + 24 (bridges) + 2 (sampler) = 27D(24,1,2), Cl(24,1) spinors. "
+                    "v24.2: 26D metric with 12 (2,0) bridge pairs + two shadow-time directions. "
+                    "Total: 24 (space) + 2 (times) = 26D(24,2), Weyl Cl(24,2) spinors. "
                     "Each pair (y_{1i}, y_{2i}) spans a 2D Euclidean bridge plane."
                 ),
                 eml_tree_str=(
@@ -467,16 +467,16 @@ class MasterActionSimulationV22(SimulationBase):
                     ")"
                 ),
                 eml_description=(
-                    "27D metric: -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2); "
-                    "signature (24,1,2) with 12 Euclidean bridge pairs."
+                    "26D metric: -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2); "
+                    "signature (24,2) with 12 Euclidean bridge pairs."
                 ),
                 inputParams=["geometry.D_bulk", "bridge.n_pairs", "topology.elder_kads"],
                 outputParams=["bridge.n_pairs"],
                 derivation={
                     "steps": [
-                        "Decompose 27D spacetime as: 1 (time) + 12x2 (bridge pairs) + 2 (sampler data fields)",
+                        "Decompose 26D spacetime as: 1 (time) + 12x2 (bridge pairs) + 2 (shadow-time directions)",
                         "Each bridge pair (y_{1i}, y_{2i}) is a 2D Euclidean plane with signature (+,+)",
-                        "Total spatial dimensions: 24 (bridge) + 2 (sampler) = 26, plus 1 time = 27D(24,1,2)",
+                        "Total spatial dimensions: 24 (bridge) + 2 (sampler) = 26, plus 1 time = 26D(24,2)",
                     ],
                     "method": "metric_decomposition",
                     "parentFormulas": ["pneuma-master-action-v23"],
@@ -537,14 +537,14 @@ class MasterActionSimulationV22(SimulationBase):
                 description=(
                     "v22.0: Distributed OR reduction operator as tensor product of 12 local "
                     "R_perp^i matrices. Each R_perp^i is a 2x2 pi/2 rotation. Total dimension: "
-                    "2^12 = 4096, matching the Pneuma spinor dimension from Cl(24,1)."
+                    "2^12 = 4096, matching the Pneuma spinor dimension from Cl(24,2)."
                 ),
                 eml_tree_str=(
                     "ops.mul(eml_vec('tensor_prod_i_1_12'), eml_vec('R_perp_i'))"
                 ),
                 eml_description=(
                     "R_perp = tensor_{i=1}^{12} R_perp^i: Kronecker product of 12 "
-                    "2x2 pi/2 rotation matrices; total rank 2^12 = 4096 matching Cl(24,1) spinor."
+                    "2x2 pi/2 rotation matrices; total rank 2^12 = 4096 matching Cl(24,2) spinor."
                 ),
                 inputParams=["bridge.n_pairs", "bridge.local_or_matrix"],
                 outputParams=["bridge.distributed_or_rank"],
@@ -552,7 +552,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "steps": [
                         "Each bridge pair i has a local OR rotation R_perp^i = [[0,-1],[1,0]] (pi/2 rotation in 2D)",
                         "The total OR operator is the tensor (Kronecker) product over all 12 pairs",
-                        "Resulting dimension: 2^12 = 4096, which matches the Pneuma spinor dimension from Cl(24,1)",
+                        "Resulting dimension: 2^12 = 4096, which matches the Pneuma spinor dimension from Cl(24,2)",
                     ],
                     "method": "tensor_product_construction",
                     "parentFormulas": ["bridge-12-pair-metric-v22", "bridge-lagrangian-v22"],
@@ -560,7 +560,7 @@ class MasterActionSimulationV22(SimulationBase):
                 terms={
                     "R_perp^i": "2x2 rotation matrix for bridge pair i (pi/2 rotation)",
                     "tensor": "Tensor (Kronecker) product over 12 pairs",
-                    "4096": "Total dimension = 2^12 (matches Pneuma spinor from Cl(24,1))"
+                    "4096": "Total dimension = 2^12 (matches Pneuma spinor from Cl(24,2))"
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
@@ -833,11 +833,11 @@ class MasterActionSimulationV22(SimulationBase):
                     ")"
                 ),
                 eml_description=(
-                    "27D Einstein field equations: G_{mu nu} + Lambda_eff g_{mu nu} = "
+                    "26D Einstein field equations: G_{mu nu} + Lambda_eff g_{mu nu} = "
                     "(8 pi G_27 / c^4)(T^YM + T^Dirac + T^bridge + T^Pneuma)."
                 ),
                 description=(
-                    "Einstein field equations from metric variation of the full 27D master "
+                    "Einstein field equations from metric variation of the full 26D master "
                     "action. The left-hand side contains the Einstein tensor G_{mu nu} = "
                     "R_{mu nu} - (1/2) R g_{mu nu} (from the Hilbert variation of sqrt(-g) R) "
                     "plus an effective cosmological constant Lambda_eff from vacuum energy. "
@@ -854,11 +854,11 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=[],
                 derivation={
                     "steps": [
-                        "Start with the full 27D action S_27 = S_EH + S_YM + S_Dirac + S_bridge + S_Pneuma where each sector is separately gauge-invariant",
+                        "Start with the full 26D action S_27 = S_EH + S_YM + S_Dirac + S_bridge + S_Pneuma where each sector is separately gauge-invariant",
                         "Vary the Einstein-Hilbert sector: delta(sqrt(-g) R) / delta g^{mu nu} = sqrt(-g) (R_{mu nu} - (1/2) R g_{mu nu}) using the Palatini identity for delta R_{mu nu}",
                         "Vary the cosmological constant term: delta(Lambda sqrt(-g)) / delta g^{mu nu} = -(Lambda/2) sqrt(-g) g_{mu nu}",
                         "Define the sector stress-energy tensors via T^(X)_{mu nu} = -(2/sqrt(-g)) delta S_X / delta g^{mu nu} for X in {YM, Dirac, bridge, Pneuma}",
-                        "Combine all variations and set delta S_27 / delta g^{mu nu} = 0 to obtain the 27D Einstein field equations with source decomposition",
+                        "Combine all variations and set delta S_27 / delta g^{mu nu} = 0 to obtain the 26D Einstein field equations with source decomposition",
                         "Verify covariant conservation: the contracted Bianchi identity nabla^mu G_{mu nu} = 0 implies nabla^mu T_{mu nu} = 0 (energy-momentum conservation)"
                     ],
                     "method": "analytical",
@@ -872,7 +872,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"T_{\mu\nu}^{\text{bridge}}": {"description": "Bridge sector stress-energy from the 12-pair (2,0) system kinetic terms"},
                     r"T_{\mu\nu}^{\text{Pneuma}}": {"description": "Moduli/scalar stress-energy including Kahler moduli and dilaton contributions"},
                     r"\Lambda_{\text{eff}}": {"description": "Effective cosmological constant from vacuum energy (moduli stabilisation)"},
-                    r"G_{27}": {"description": "27D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
+                    r"G_{27}": {"description": "26D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
@@ -905,7 +905,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "normalisation. The conservation law nabla^mu T_{mu nu} = 0 follows "
                     "from the contracted Bianchi identity applied to the Einstein equations "
                     "delta S/delta g^{mu nu} = 0, and guarantees energy-momentum conservation "
-                    "in the curved 27D spacetime. For the Pneuma master action, S_matter "
+                    "in the curved 26D spacetime. For the Pneuma master action, S_matter "
                     "includes all non-gravitational sectors (YM, Dirac, bridge, Pneuma). "
                     "In the scalar-tensor (Brans-Dicke) generalisation, the effective "
                     "gravitational coupling becomes field-dependent: G_eff = G / phi, "
@@ -1041,10 +1041,10 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 eml_description=(
                     "13D shadow action integrand: sqrt(-g_13) * [R_13 + Psi-bar_P i gamma D Psi_P + V_face^(f)]; "
-                    "emerges from 27D bulk via bridge OR reduction."
+                    "emerges from 26D bulk via bridge OR reduction."
                 ),
                 description=(
-                    "13D shadow action after bridge/global OR reduction from the 27D master "
+                    "13D shadow action after bridge/global OR reduction from the 26D master "
                     "action. Each shadow inherits 13 dimensions: 12 spatial (from the 12 bridge "
                     "pairs) + 1 shared time. Two mirror shadows emerge: Shadow 1 carries "
                     "left-handed fermions, Shadow 2 carries right-handed fermions. The Euler "
@@ -1062,8 +1062,8 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=[],
                 derivation={
                     "steps": [
-                        "Start from the 27D master action S = int d^{27}X sqrt(-G) [R + ...]",
-                        "Apply bridge/global OR: the distributed OR operator R_perp = tensor_{i=1}^{12} R_perp_i splits the 27D bulk into two 13D shadow domains",
+                        "Start from the 26D master action S = int d^{26}X sqrt(-G) [R + ...]",
+                        "Apply bridge/global OR: the distributed OR operator R_perp = tensor_{i=1}^{12} R_perp_i splits the 26D bulk into two 13D shadow domains",
                         "Each shadow inherits 12 spatial dims (one from each bridge pair) + 1 shared time = 13D(12,1)",
                         "Shadow 1 receives left-chiral projections P_L Psi_P, Shadow 2 receives right-chiral projections P_R Psi_P",
                         "The G2 manifold structure on each shadow has Euler characteristic chi_eff with chi_eff/48 = 3, fixing three fermion generations",
@@ -1258,7 +1258,7 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="v22.0: 12×(2,0) + (0,1) WARP to create 2×13D(12,1) shadows",
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(12.0) — number of (2,0) bridge pairs in the 27D architecture.",
+                eml_description="EML: eml_scalar(12.0) — number of (2,0) bridge pairs in the 26D architecture.",
             ),
             Parameter(
                 path="bridge.breathing_aggregation",
@@ -1568,8 +1568,8 @@ class MasterActionSimulationV22(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        'Version <span class="pm-value" data-pm-value="framework.version_major">23</span> introduces a fundamental structural change: 27D(24,1,2) = 12×(2,0) bridges + (0,1) time + S<sup>2,0</sup> sampler data fields. '
-                        "The 12 bridge pairs WARP to create 2×13D(12,1) shadows (12 spatial + 1 shared time). "
+                        'Version <span class="pm-value" data-pm-value="framework.version_major">23</span> introduces a fundamental structural change: 26D(24,2) = 12×(2,0) bridges + (0,1) time + S<sup>2,0</sup> shadow-time directions. '
+                        "The 12 bridge pairs WARP to create 2×13D(12,1) shadows (12 spatial + 1 time (its own)). "
                         "The metric is: ds² = −dt² + Σ<sub>i=1</sub><sup>12</sup> (dy<sub>1i</sub>² + dy<sub>2i</sub>²)."
                     )
                 ),
@@ -1588,7 +1588,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Each bridge pair i carries its own local OR operator R<sub>&perp;,i</sub> = [[0,−1],[1,0]], "
                         "a 2×2 matrix implementing π/2 rotation. The total OR operator is the tensor product "
                         "over all 12 pairs: R<sub>&perp;</sub> = ⊗<sub>i=1</sub><sup>12</sup> R<sub>&perp;,i</sub>. This yields a 2<sup>12</sup> = 4096 "
-                        "dimensional operator, exactly matching the Pneuma spinor dimension from Cl(24,1)."
+                        "dimensional operator, exactly matching the Pneuma spinor dimension from Cl(24,2)."
                     )
                 ),
                 ContentBlock(
@@ -1617,16 +1617,16 @@ class MasterActionSimulationV22(SimulationBase):
                 # =============================================================
                 ContentBlock(
                     type="heading",
-                    content="The 27D(24,1,2) Pneuma Master Action",
+                    content="The 26D(24,2) Pneuma Master Action",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The fundamental action in 27D spacetime with signature (26,1) now includes "
-                        "the 12-pair bridge structure + S<sup>2,0</sup> sampler data fields: S = ∫ d<sup>27</sup>X √(−G) [R + Ψ̄(iΓ·D − m)Ψ "
+                        "The fundamental action in 26D spacetime with signature (24,2) now includes "
+                        "the 12-pair bridge structure with one time per shadow: S = ∫ d<sup>26</sup>X √(−G) [R + Ψ̄(iΓ·D − m)Ψ "
                         "+ λ(Ψ̄Ψ)² + Σ<sub>i=1</sub><sup>12</sup> L<sub>bridge</sub><sup>i</sup> + L<sub>C</sub>]. The 4096-component Pneuma spinor "
-                        "from Cl(24,1) couples to each bridge pair through the distributed OR structure."
+                        "from Cl(24,2) couples to each bridge pair through the distributed OR structure."
                     )
                 ),
                 ContentBlock(
@@ -1700,7 +1700,7 @@ class MasterActionSimulationV22(SimulationBase):
                     type="paragraph",
                     content=(
                         "The equations of motion for the gravitational sector are obtained "
-                        "by varying the full 27D master action with respect to the inverse "
+                        "by varying the full 26D master action with respect to the inverse "
                         "metric g<sup>μν</sup>. The Hilbert variational principle yields the "
                         "Einstein tensor G<sub>μν</sub> = R<sub>μν</sub> − (1/2) R g<sub>μν</sub> on "
                         "the left-hand side (using the Palatini identity to handle the "
@@ -1729,13 +1729,13 @@ class MasterActionSimulationV22(SimulationBase):
                 # =============================================================
                 ContentBlock(
                     type="heading",
-                    content="Dimensional Reduction: 27D → 13D Shadow Domains",
+                    content="Dimensional Reduction: 26D → 13D Shadow Domains",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The distributed OR reduction (bridge/global OR) splits the 27D(24,1,2) "
+                        "The distributed OR reduction (bridge/global OR) splits the 26D(24,2) "
                         "bulk into two 13D(12,1) shadow domains. Each shadow inherits 12 spatial "
                         "dimensions (one from each bridge pair) plus 1 shared time dimension. "
                         "Shadow 1 carries left-handed fermions and Shadow 2 carries right-handed "
@@ -1804,7 +1804,7 @@ class MasterActionSimulationV22(SimulationBase):
                     type="paragraph",
                     content=(
                         "The complete dimensional reduction chain is thus: "
-                        "27D(24,1,2) master action → bridge/global OR → 2 × 13D(12,1) shadow "
+                        "26D(24,2) master action → bridge/global OR → 2 × 13D(12,1) shadow "
                         "actions → face/local OR + G₂ compactification → 4D effective action "
                         "→ metric variation → Einstein equations with portal corrections. "
                         "Each step is determined by the geometry, with no free parameters."
@@ -2024,11 +2024,11 @@ class MasterActionSimulationV22(SimulationBase):
             },
             {
                 "id": "CERT_MASTER_ACTION_OR_DIMENSION",
-                "assertion": "Distributed OR operator dimension 2^12 = 4096 matches Pneuma spinor from Cl(24,1)",
+                "assertion": "Distributed OR operator dimension 2^12 = 4096 matches Pneuma spinor from Cl(24,2)",
                 "condition": "distributed_or_rank == 4096",
                 "tolerance": 0,
                 "status": "PASS",
-                "wolfram_query": "dimension of spinor representation of Cl(24,1)",
+                "wolfram_query": "dimension of spinor representation of Cl(24,2)",
                 "wolfram_result": "dim = 2^floor(25/2) = 2^12 = 4096",
                 "sector": "foundational",
             },
@@ -2071,8 +2071,8 @@ class MasterActionSimulationV22(SimulationBase):
             {
                 "topic": "Clifford algebras and spinors",
                 "url": "https://ncatlab.org/nlab/show/Clifford+algebra",
-                "relevance": "The Pneuma spinor has 4096 components from Cl(24,1). The distributed OR operator as a tensor product of 12 copies of 2x2 rotation matrices has the matching dimension 2^12 = 4096.",
-                "validation_hint": "Verify that the spinor representation of Cl(p,q) has dimension 2^floor((p+q)/2). For Cl(24,1): floor(25/2) = 12, so dim = 2^12 = 4096.",
+                "relevance": "The Pneuma spinor has 4096 components from Cl(24,2). The distributed OR operator as a tensor product of 12 copies of 2x2 rotation matrices has the matching dimension 2^12 = 4096.",
+                "validation_hint": "Verify that the spinor representation of Cl(p,q) has dimension 2^floor((p+q)/2). For Cl(24,2): floor(25/2) = 12, so dim = 2^12 = 4096.",
             },
         ]
 
@@ -2141,7 +2141,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "sigma": 0.0,
                     },
                     "log_level": "INFO",
-                    "message": "Tensor product of 12 copies of 2x2 R_perp yields 2^12=4096 dimensional operator, matching Cl(24,1) spinor.",
+                    "message": "Tensor product of 12 copies of 2x2 R_perp yields 2^12=4096 dimensional operator, matching Cl(24,2) spinor.",
                 },
                 {
                     "name": "rho parameter equals 1 at tree level",

@@ -24,8 +24,13 @@ def test_structural_identities():
     assert B2 == 4
     # shadow bookkeeping: 13 = 4 spacetime + 7 (V7) + 2 (T2)
     assert 4 + 7 + 2 == 13
-    # spinor: Cl(24,1) -> 2^12
-    assert 2 ** 12 == 4096
+    # Two-time ruling (2026-08-19): spinor 4096 = Weyl of Cl(24,2)
+    # (Dirac 2^13 = 8192, chiral half 4096); bulk = D_crit = b3 + 2 = 26,
+    # shadows (12,1)+(12,1) = 26 exactly.
+    assert 2 ** 13 // 2 == 4096
+    bulk = CANON["bulk"]
+    assert bulk["value"] == 26 == B3 + 2
+    assert 13 + 13 == bulk["value"]
 
 
 def test_w0_ruling():

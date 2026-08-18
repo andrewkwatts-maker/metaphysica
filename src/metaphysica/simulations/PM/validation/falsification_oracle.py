@@ -112,8 +112,8 @@ class FalsificationOracle:
                 "mass_eV": 3.51e-3,  # 3.51 meV
                 "mass_uncertainty_eV": 0.02e-3,  # ±0.02 meV
                 "coupling_g_agg_GeV_inv": 1.0e-11,  # ~10⁻¹¹ GeV⁻¹
-                "source": "M²⁷ → M⁴ vacuum residue, Euclidean Information Sector (S_EIS)",
-                "derivation": "SPECULATIVE ANSATZ: estimated from EIS sector topology; not a unique prediction of the (24+1)⊕(0,2) decomposition",
+                "source": "M²⁶ → M⁴ vacuum residue, Euclidean Information Sector (S_EIS)",
+                "derivation": "SPECULATIVE ANSATZ: estimated from EIS sector topology; not a unique prediction of the (24,0)⊕(0,2) decomposition",
                 "falsification_status": "TESTABLE within BabyIAXO/IAXO window (2025-2028)",
                 "timeline": "2025-2028 (IAXO/BabyIAXO detection window)"
             },
@@ -122,7 +122,7 @@ class FalsificationOracle:
             "fifth_force": {
                 "range_lambda_m": 5.62e-5,  # 56.2 micrometers
                 "strength_relative_to_gravity": 1e-4,  # 0.01% of gravity
-                "source": "S^(2,0) sampler data fields leakage",
+                "source": "T^(0,2) shadow-time leakage (second timelike direction)",
                 "derivation": "Compactification scale from b₃ = 24"
             },
 
@@ -140,15 +140,39 @@ class FalsificationOracle:
                 "mass_eV": 1.5,  # ~1.5 eV
                 "mixing_angle_rad": 1e-2,  # θ ~ 0.01
                 "source": "12-pair bridge asymmetry",
-                "derivation": "Seesaw mechanism via M²⁷ descent"
+                "derivation": "Seesaw mechanism via M²⁶ descent"
             },
 
             # KK Gravitons from Extra Dimensions
             "kaluza_klein": {
                 "M_KK_TeV": 4.5,  # First KK mode at 4.5 TeV
                 "n_observable_modes": 3,  # First 3 modes accessible
-                "source": "27D → 4D compactification",
+                "source": "26D → 4D compactification",
                 "derivation": "R_compactification ~ 1/M_KK"
+            },
+
+            # Cross-shadow Bell correlations from the two-time bulk
+            # LABEL: SPECULATIVE - qualitative signature of the (24,2) structure.
+            # Pettini (2026, arXiv:2606.12457): an extra TIMELIKE dimension lets
+            # spatially separated sectors correlate causally through the second
+            # time (an extra SPACELIKE dimension would instead permit superluminal
+            # shortcuts). PM's two shadows each carry their own time; the bulk
+            # two-time structure therefore predicts Bell-type correlations
+            # between cross-shadow (visible/mirror) degrees of freedom that a
+            # single-time 26D theory forbids. No quantitative rate is derived
+            # yet - this is a qualitative kill-switch, not a numeric one.
+            "cross_pair_bell": {
+                "signature": "Bell-type correlations between cross-shadow pairs",
+                "expected_if_true": "Anomalous correlations in dark-sector"
+                                    " scattering beyond single-time LOCC bounds",
+                "expected_if_false": "All cross-sector correlations obey"
+                                     " single-time causal bounds",
+                "source": "Two-time bulk (24,2): one time per 13D shadow",
+                "derivation": "SPECULATIVE: qualitative consequence of the"
+                              " second timelike direction (Pettini 2026,"
+                              " arXiv:2606.12457; Bars Sp(2,R) 2T framework)",
+                "falsification_status": "QUALITATIVE - no near-term experiment"
+                                        " isolates cross-shadow correlations"
             }
         }
 
@@ -267,7 +291,7 @@ class FalsificationOracle:
                 "iaxo_limit": iaxo_limit,
                 "ratio": alp_coupling / baby_iaxo_limit,
                 "timeline": "2025-2028",
-                "note": "Unavoidable consequence of M²⁷ → M⁴ projection. If not detected, theory is FALSIFIED."
+                "note": "Unavoidable consequence of M²⁶ → M⁴ projection. If not detected, theory is FALSIFIED."
             }
         elif mass_in_range and alp_coupling >= iaxo_limit:
             results["ALP_Principia_Metric"] = {
@@ -386,6 +410,18 @@ class FalsificationOracle:
                 "margin": lhc_limit / m_kk
             }
 
+        # 6. Cross-shadow Bell correlations (two-time signature; SPECULATIVE)
+        bell = self.predictions["cross_pair_bell"]
+        results["Cross_Pair_Bell"] = {
+            "status": "SPECULATIVE",
+            "verdict": ("Qualitative two-time signature: cross-shadow Bell "
+                        "correlations (Pettini 2026, arXiv:2606.12457); no "
+                        "quantitative rate derived, no near-term experiment"),
+            "falsification_risk": "LOW",
+            "predicted_signature": bell["signature"],
+            "kill_condition": bell["expected_if_false"],
+        }
+
         return results
 
     def identify_kill_switches(self, risk_profile: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -466,7 +502,7 @@ class FalsificationOracle:
                     "g_aγγ ~ 10⁻¹¹ GeV⁻¹. These values are estimated from EIS sector topology "
                     "and fall within BabyIAXO/IAXO sensitivity (2025-2028), making this the "
                     "primary near-term experimental test. Note: m_a and g_agg are not uniquely "
-                    "fixed by the M²⁷ decomposition; non-detection would constrain the EIS sector "
+                    "fixed by the M²⁶ decomposition; non-detection would constrain the EIS sector "
                     "but an independent derivation is needed to elevate this to a firm prediction."
                 ),
                 "falsifiability_criterion": (
