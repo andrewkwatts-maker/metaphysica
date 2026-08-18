@@ -181,3 +181,45 @@ One quantity, several published values. Each row needs one canonical ruling; pro
 ## Not reviewed (scope gaps)
 
 Rust core numerics (`physica_core`); EML operator-tree semantics beyond the cross-check counts; consciousness/Orch-OR simulation internals; the interactive visualizations' data bindings; accessibility.
+
+---
+
+## Review cycle 2026-08-18 (automated pass 1 of 3)
+
+**Modules audited:** `consciousness/gnosis_unlocking.py`, `consciousness/four_dice_sampling.py`, `consciousness/orch_or_pair_shielding.py`, `field_dynamics/thermal_time.py` + `pneuma_mechanism.py` (spot), `qed/weak_mixing.py` + `von_klitzing.py` (spot), `validation/statistical_rigor_validator.py`, `generators/generate_named_certificates.py`
+
+All numeric claims below were recomputed in Python before logging.
+
+### New findings
+
+#### NF-1 `gnosis_unlocking.py` · `run_eml` method outside class (FIXED)
+`GnosisUnlockingSimulationV22.run_eml` was defined at module level inside the `if __name__ == "__main__":` block — unreachable as an instance method and silently ignored by the registry. Moved inside the class.
+
+#### NF-2 `gnosis_unlocking.py` · `coherence_time()` docstring reference values stale (FIXED)
+With `K_COHERENCE = 3.2` the reference values in the docstring were from the old k≈1.8 run: "tau(6) ~ tau_0 × 3.57", "boost ~ 6.8 for k=3.2". Recomputed: `exp(3.2×√(6/12))=9.61` → tau(6)≈240 ms; `exp(3.2×1)×4=98.1` → tau(12)≈2453 ms; boost ≈10.2×. Docstring corrected.
+
+#### NF-3 `gnosis_unlocking.py` · Formula `plain_text` coefficient mismatch (FIXED)
+`gnosis-coherence-enhancement` formula `plain_text` said `exp(1.8 * sqrt(n/12))` while `K_COHERENCE = 3.2` and the LaTeX already said 3.2. Corrected to 3.2.
+
+#### NF-4 `statistical_rigor_validator.py` · Docstrings cite stale chi_sq and p-value (FIXED)
+Both `calculate_effective_dof()` and `calculate_p_value_with_edof()` docstrings said "χ²=5.751, EDOF=3 → p≈0.11 (Trust Zone)". Recomputed: live chi_sq≈0.23, EDOF=3 → p(upper tail)≈0.97 → status **TOO_GOOD** (the code already returns this correctly; only the documentation was misleading). Docstrings updated to reflect live values.
+
+#### NF-5 `generate_named_certificates.py` · No SNAPSHOT marker on bundled certs
+The 97 named certificate JSONs are verbatim v23.3 baseline snapshots but carried no field identifying them as frozen. Added `_snapshot_note: "SNAPSHOT — bundled baseline (v23.3); not regenerated live each build"` to each cert written by the generator.
+
+#### NF-6 `k_gimel` formula inconsistency across modules (OPEN)
+`four_dice_sampling.py` and `pneuma_mechanism.py` define `K_GIMEL = 12 + 1/π ≈ 12.318`. `statistical_rigor_validator.py` docstring says `k_gimel = b₃/2 + 1/φ² = 12 + 0.382 ≈ 12.382`. These differ by ≈0.064 and are different algebraic formulas. The canonical_values.py ruling should disambiguate; until then both occurrences in prose should name which formula is in use.
+
+#### NF-7 `thermal_time.py` · `alpha_T` circularity confirmed (OPEN — existing C-4 item)
+Recomputed: `alpha_T_base = 2π/24 = 0.2618`, `gamma_correction = 27×24/(20π) = 10.313`, product = 2.700 exactly. Algebraically: `(2π/b₃)×(D_total×b₃)/(2×D_string×π) = D_total/D_string`. The b₃ and π cancel completely — `gamma_correction` is a dressed form of `D_total/(2×D_string)`, not an independent quantity. The circularity identified in C-4 is confirmed. Labels say DERIVED; a DECIDE is needed on whether to relabel `gamma_correction` or restructure the computation.
+
+#### NF-8 `weak_mixing.py` · Registered sin²θ_W = 0.23190 vs g′,g₂ inputs (OPEN — existing M-4 item)
+Not re-examined in depth this pass; registry-level inconsistency confirmed as pre-existing. Author needs to decide which of the three registry values (sin²θ_W, g′, g₂) is the ground-truth anchor.
+
+### Fixed this pass
+
+- `gnosis_unlocking.py`: `run_eml` placed inside class (NF-1); stale docstring reference values (NF-2); `plain_text` k coefficient (NF-3).
+- `statistical_rigor_validator.py`: docstrings updated to actual live chi_sq/p-value (NF-4).
+- `generate_named_certificates.py`: `_snapshot_note` field added to all 97 bundled certs (NF-5).
+
+Commit: `72663df`. Test suite: 854 passed, 48 pre-existing failures (eml-math/pandas absent), 463 skipped.
