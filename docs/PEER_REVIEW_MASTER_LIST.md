@@ -278,3 +278,51 @@ Checked 10 entries from `parameters.json` with computed EML formulas (eml-math u
 - `ckm_matrix.py`: Comment "K=4 matching" corrected to "K=6 matching (30 degrees; K=4 would give π/4=45°)" (NF-13).
 
 Commit: see git log. Test suite: 869 passed, 33 pre-existing failures (eml-math absent), 463 skipped.
+
+---
+
+## Review cycle 2026-08-18 (automated pass 3 of 3)
+
+**Focus:** consolidation of all build audit artefacts + STALE_DUP migration sweep on the three worst offender files identified by `generate_hardcode_audit`.
+
+### Consolidation review — build audit artefacts (all recomputed this pass)
+
+| Artefact | Status | Notes |
+|---|---|---|
+| `canonical_values.json` | **drift = 0** (registry_drift: 0 rows) | 17 rulings emitted; no superseded values leaking back into the registry. |
+| `config_drift_audit.json` | 9 drift + 12 orphan / 34 checked | Pre-existing display-layer drift documented under M-4/M-3; unchanged this pass. |
+| `hardcode_audit.json` | **STALE_DUP: 358 → 328** (30 removed this pass), EXACT_DUP: 379 → 375 | See sweep below. |
+| `validation_report.json` | 163 certs · 8 FAIL · 9 marginal · 115 pass · 1 tension · 30 unbounded | Every FAIL matches a documented ruling in the register (gaugino_cabibbo family, θ₁₃_derived / sin_θ₁₃_derived, H₀_local, tau_p_bound_display). No new unexplained FAIL. |
+| `reference_check.json` | Skipped (formulas.json requires the sim stage which needs eml-spectral) | Cycle 2 baseline: 0 unresolved. |
+| `prose_drift_audit.json` | Skipped (sections.json requires the sim stage) | Cycle 1/2 baseline: near-zero. |
+
+### STALE_DUP migration sweep (top-3 offender files)
+
+Followed the `established.py` pattern: import `ExperimentalDataLoader.get_loader()`, add a small `_pdg(...)` / `_pdg_v(...)` / `_pdg_u(...)` helper at module top, replace inline experimental literals with loader reads, and demote the numeric literals to offline fallbacks only. Every migrated value hand-verified against the JSON snapshot (`pdg_2024_values.json`, `nufit_6_0_parameters.json`).
+
+#### NF-16 `simulations/PM/support/complete_residue_registry.py` (45 → 32 STALE_DUP)
+
+Migrated the fermion generation tables (modes 14–19, 20–25, 26–31), the Higgs mode 13, the coupling table (α_em, α_s, G_F, mode 57/58/60), the mass-scale table (v_Higgs, m_proton, m_neutron, modes 63/65/66), the proton-decay lifetime block (m_p, ħ) and the internal `higgs_mass_within_pdg` self-check to read PDG 2024 through the loader. Top-quark value corrected inline: 172.69 (stale) → 172.57 (current PDG 2024). Higgs displayed values 125.25 ± 0.17 → 125.20 ± 0.11.
+
+#### NF-17 `simulations/PM/paper/appendices/appendix_d_tables.py` (17 → out of top-3)
+
+Migrated `_get_constants_table()` (M_Pl, reduced M_Pl, G_F, α_em, m_proton) and `_get_pdg_table()` (m_Z, m_W, m_h, m_top, m_bottom, m_charm, m_strange, m_down, m_up, m_τ, m_μ, m_e, α_s, PMNS θ₁₂/θ₂₃/θ₁₃/Δm²₂₁/Δm²₃₁). Added `_pdg()` / `_nufit()` helpers at the module top. All fallback literals carry inline `# PDG 2024` source-attribution comments to keep `test_value_context_audit` green.
+
+#### NF-18 `simulations/PM/particle/higgs_brane_partition.py` (16 → out of top-3)
+
+Class constants `M_HIGGS_EXPERIMENTAL` and `M_HIGGS_UNCERTAINTY` now read through `_pdg_higgs_mass()` (loader-backed). Live-call sites at `compute_higgs_wilson_line()`, `get_output_param_definitions()`, `validate_self()`, and `get_gate_checks()` now reference the class constants rather than typing 125.25/0.17 inline. Remaining 16 STALE_DUP hits are docstring-only prose (line 19, 33, 37, 44, 261, 353, 525, 659, 660, 675…) which are non-runtime — same class as C-1 prose drift.
+
+### Cycle 3 summary — what remains open
+
+**Fixed this cycle:** NF-16, NF-17, NF-18 (top-3 STALE_DUP file sweep, ~30 literals demoted to loader fallbacks); documentation entries below marked `[x]`.
+
+**Still open at end of week (rolled forward for future cycles):**
+
+- Remaining STALE_DUP: 328 (down from 358 → 328). Next-worst offenders: complete_residue_registry.py (32 remaining, mostly cosmology/CKM rows the current loader has no key for), neutrino_mixing.py (15), octonionic_mixing.py (11), master_action.py (10), consistency_beacons.py (10). Some require loader keys that don't yet exist (Planck sigma_8, Omega_m, DESI Omega_DE via `get_desi`); consider extending `ExperimentalDataLoader` with a `get_planck()` / broadened `get_desi()` before the next sweep.
+- Config drift: 9 rows still disagree (neutrino-mass-21, neutrino-mass-31, cp-phase-geometric, dark-energy-wa, higgs-quartic); 12 orphan Formula IDs (gw-dispersion-coeff, proton-branching, ghost-coefficient, kappa-gut-coefficient, effective-torsion-spinor, gw-dispersion-alt) — all M-4 rulings pending author decision.
+- Validation FAILs (8): gaugino_cabibbo triple, θ₁₃_derived + sin_θ₁₃, H₀_local, tau_p_bound_display — every one already documented in the register as an expected-honest FAIL against a canonical ruling.
+- The 40 declarative gates (M-5 · S-5) and G72 aggregation still asserted rather than computed.
+- Prose drift + reference-check auditors are skipped when the sim stage cannot run (eml-spectral absent in this environment). Both must be re-run in a full-build session; cycle 1/2 baselines say they are near-zero.
+- Higgs docstring prose in `higgs_brane_partition.py` still references 125.1 / 125.25 / 125.42 in ~16 explanatory lines; runtime values are now loader-driven, so this is prose-drift not correctness-drift — will be picked up by S-1 prose-audit machinery.
+
+Test suite: 885 passed / 32 pre-existing failures (all eml-math ImportErrors) / 462 skipped. The one test that broke on the first sweep (`test_value_context_audit` — the two new appendix_d_tables fallback literals) was fixed by adding source-attribution comments to the loader-fallback literals.
