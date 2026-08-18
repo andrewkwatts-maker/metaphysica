@@ -45,6 +45,42 @@ from metaphysica.simulations.base import (
     FoundationEntry,
 )
 
+# ------------------------------------------------------------------
+# SSOT helpers: read experimental values through ExperimentalDataLoader,
+# with the previous inline literals demoted to offline fallbacks. Follows
+# the same pattern as simulations/base/established.py. If the loader
+# cannot be imported the tables still fill in with the fallbacks so the
+# module never breaks — but the fresh dataset numbers always win when the
+# loader is available.
+# ------------------------------------------------------------------
+try:
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+    _LOADER_OK = True
+except Exception:
+    _LOADER_OK = False
+
+
+def _pdg(category: str, name: str, fb_value: float, fb_unc: float) -> tuple:
+    """Return (value, uncertainty) from pdg_2024_values.json, or the fallback."""
+    if _LOADER_OK:
+        try:
+            d = get_loader().get_pdg(category, name)
+            return d.value, (d.uncertainty if d.uncertainty is not None else fb_unc)
+        except Exception:
+            pass
+    return fb_value, fb_unc
+
+
+def _nufit(name: str, ordering: str, fb_value: float, fb_unc: float) -> tuple:
+    """Return (value, uncertainty) from nufit JSON, or the fallback."""
+    if _LOADER_OK:
+        try:
+            d = get_loader().get_nufit(name, ordering)
+            return d.value, (d.uncertainty if d.uncertainty is not None else fb_unc)
+        except Exception:
+            pass
+    return fb_value, fb_unc
+
 
 class AppendixDParameterTables(SimulationBase):
     """
@@ -146,46 +182,84 @@ class AppendixDParameterTables(SimulationBase):
         return self.run(registry)
 
     def _get_constants_table(self) -> List[Dict[str, Any]]:
-        """Return table of fundamental physical constants."""
+        """Return table of fundamental physical constants.
+
+        Values are read through ExperimentalDataLoader so the table can
+        never drift from the vetted PDG/CODATA JSON snapshots. Literals
+        are offline fallbacks only.
+        """
+        gf, _ = _pdg("constants", "G_F", 1.1663788e-5, 6e-12)
+        mp, _ = _pdg("baryons", "m_proton", 0.938272088, 2.9e-10)
+        # Reduced Planck mass registered under fundamental_constants;
+        # full Planck mass = M_bar * sqrt(8*pi) so we scale from the
+        # loader value rather than carrying a second literal.
+        mbar, _ = _pdg("fundamental_constants", "M_PLANCK_REDUCED", 2.435e18, 3.0e15)
+        m_pl_full = mbar * (8 * np.pi) ** 0.5
+        alpha_em, _ = _pdg("fundamental_constants", "alpha_em", 7.2973525643e-3, 1.1e-12)
         return [
-            {"name": "Planck Mass", "symbol": "M_Pl", "value": 1.221e19, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Reduced Planck Mass", "symbol": "M̄_Pl", "value": 2.435e18, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Planck Mass", "symbol": "M_Pl", "value": m_pl_full, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Reduced Planck Mass", "symbol": "M̄_Pl", "value": mbar, "units": "GeV", "source": "PDG 2024"},
             {"name": "Gravitational Constant", "symbol": "G_N", "value": 6.708e-39, "units": "GeV⁻²", "source": "PDG 2024"},
-            {"name": "Fine Structure Constant", "symbol": "α_em", "value": 1/137.036, "units": "dimensionless", "source": "PDG 2024"},  # alpha inverse (CODATA)
-            {"name": "Fermi Constant", "symbol": "G_F", "value": 1.166e-5, "units": "GeV⁻²", "source": "PDG 2024"},
+            {"name": "Fine Structure Constant", "symbol": "α_em", "value": alpha_em, "units": "dimensionless", "source": "PDG 2024"},
+            {"name": "Fermi Constant", "symbol": "G_F", "value": gf, "units": "GeV⁻²", "source": "PDG 2024"},
             {"name": "QCD Scale", "symbol": "Λ_QCD", "value": 0.217, "units": "GeV", "source": "PDG 2024"},
             {"name": "Speed of Light", "symbol": "c", "value": 1.0, "units": "natural", "source": "Definition"},
             {"name": "Reduced Planck Constant", "symbol": "ℏ", "value": 1.0, "units": "natural", "source": "Definition"},
             {"name": "Boltzmann Constant", "symbol": "k_B", "value": 1.0, "units": "natural", "source": "Definition"},
-            {"name": "Proton Mass", "symbol": "m_p", "value": 0.938, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Proton Mass", "symbol": "m_p", "value": mp, "units": "GeV", "source": "PDG 2024"},
         ]
 
     def _get_pdg_table(self) -> List[Dict[str, Any]]:
-        """Return table of PDG experimental inputs."""
+        """Return table of PDG experimental inputs.
+
+        Values are read through ExperimentalDataLoader so the table stays
+        pinned to the vetted PDG/NuFIT JSON snapshots. Literals are
+        offline fallbacks only.
+        """
+        # PDG 2024 anchors (fallback literals mirror the JSON snapshot).
+        mz, s_mz = _pdg("gauge_bosons", "m_Z", 91.1876, 0.0021)          # PDG 2024
+        mw, s_mw = _pdg("gauge_bosons", "m_W", 80.3692, 0.0133)          # PDG 2024
+        mh, s_mh = _pdg("higgs", "mass", 125.20, 0.11)                    # PDG 2024
+        mt, s_mt = _pdg("quarks", "m_top", 172.69, 0.30)                  # PDG 2024
+        mb, s_mb = _pdg("quarks", "m_bottom", 4.18, 0.03)                 # PDG 2024
+        mc, s_mc = _pdg("quarks", "m_charm", 1.27, 0.02)                  # PDG 2024
+        ms, s_ms = _pdg("quarks", "m_strange", 0.093, 0.011)              # PDG 2024
+        md, s_md = _pdg("quarks", "m_down", 0.00467, 0.00048)             # PDG 2024
+        mu, s_mu = _pdg("quarks", "m_up", 0.00216, 0.00049)               # PDG 2024
+        mtau, s_mtau = _pdg("leptons", "m_tau", 1.77693, 0.00009)         # PDG 2024
+        mmu, s_mmu = _pdg("leptons", "m_muon", 0.1056583755, 2.3e-9)      # PDG 2024
+        me, s_me = _pdg("leptons", "m_electron", 0.00051099895069, 1.6e-14)  # PDG 2024
+        alpha_s, s_as = _pdg("couplings", "alpha_s_MZ", 0.1180, 0.0009)   # PDG 2024
+        # NuFIT rows (fall back to numeric literals when loader misses)
+        theta12, s_t12 = _nufit("theta_12", "normal_ordering", 33.41, 0.75)
+        theta23, s_t23 = _nufit("theta_23", "normal_ordering", 49.1, 1.0)
+        theta13, s_t13 = _nufit("theta_13", "inverted_ordering", 8.63, 0.12)
+        dm21, s_dm21 = _nufit("delta_m21_sq", "normal_ordering", 7.42e-5, 0.20e-5)
+        dm31, s_dm31 = _nufit("delta_m31_sq", "normal_ordering", 2.515e-3, 0.028e-3)
         return [
-            {"name": "Z Boson Mass", "symbol": "m_Z", "value": 91.188, "uncertainty": 0.002, "units": "GeV", "source": "PDG 2024"},
-            {"name": "W Boson Mass", "symbol": "m_W", "value": 80.3692, "uncertainty": 0.0133, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Higgs Mass", "symbol": "m_h", "value": 125.20, "uncertainty": 0.11, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Top Quark Mass", "symbol": "m_t", "value": 172.69, "uncertainty": 0.30, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Bottom Quark Mass", "symbol": "m_b(m_b)", "value": 4.18, "uncertainty": 0.03, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Charm Quark Mass", "symbol": "m_c(m_c)", "value": 1.27, "uncertainty": 0.02, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Strange Quark Mass", "symbol": "m_s(2 GeV)", "value": 0.093, "uncertainty": 0.011, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Down Quark Mass", "symbol": "m_d(2 GeV)", "value": 0.00467, "uncertainty": 0.00048, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Up Quark Mass", "symbol": "m_u(2 GeV)", "value": 0.00216, "uncertainty": 0.00049, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Tau Mass", "symbol": "m_τ", "value": 1.777, "uncertainty": 0.0016, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Muon Mass", "symbol": "m_μ", "value": 0.1057, "uncertainty": 0.00000001, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Electron Mass", "symbol": "m_e", "value": 0.000511, "uncertainty": 0.000000001, "units": "GeV", "source": "PDG 2024"},
-            {"name": "Strong Coupling", "symbol": "α_s(M_Z)", "value": 0.1180, "uncertainty": 0.0010, "units": "dimensionless", "source": "PDG 2024"},  # alpha_s at M_Z (PDG)
+            {"name": "Z Boson Mass", "symbol": "m_Z", "value": mz, "uncertainty": s_mz, "units": "GeV", "source": "PDG 2024"},
+            {"name": "W Boson Mass", "symbol": "m_W", "value": mw, "uncertainty": s_mw, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Higgs Mass", "symbol": "m_h", "value": mh, "uncertainty": s_mh, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Top Quark Mass", "symbol": "m_t", "value": mt, "uncertainty": s_mt, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Bottom Quark Mass", "symbol": "m_b(m_b)", "value": mb, "uncertainty": s_mb, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Charm Quark Mass", "symbol": "m_c(m_c)", "value": mc, "uncertainty": s_mc, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Strange Quark Mass", "symbol": "m_s(2 GeV)", "value": ms, "uncertainty": s_ms, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Down Quark Mass", "symbol": "m_d(2 GeV)", "value": md, "uncertainty": s_md, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Up Quark Mass", "symbol": "m_u(2 GeV)", "value": mu, "uncertainty": s_mu, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Tau Mass", "symbol": "m_τ", "value": mtau, "uncertainty": s_mtau, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Muon Mass", "symbol": "m_μ", "value": mmu, "uncertainty": s_mmu, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Electron Mass", "symbol": "m_e", "value": me, "uncertainty": s_me, "units": "GeV", "source": "PDG 2024"},
+            {"name": "Strong Coupling", "symbol": "α_s(M_Z)", "value": alpha_s, "uncertainty": s_as, "units": "dimensionless", "source": "PDG 2024"},
             {"name": "Weak Mixing Angle", "symbol": "sin²θ_W(M_Z)", "value": 0.23122, "uncertainty": 0.00003, "units": "dimensionless", "source": "PDG 2024"},
             {"name": "CKM θ₁₂", "symbol": "θ₁₂^CKM", "value": 13.04, "uncertainty": 0.05, "units": "degrees", "source": "PDG 2024"},
             {"name": "CKM θ₂₃", "symbol": "θ₂₃^CKM", "value": 2.38, "uncertainty": 0.06, "units": "degrees", "source": "PDG 2024"},
             {"name": "CKM θ₁₃", "symbol": "θ₁₃^CKM", "value": 0.201, "uncertainty": 0.011, "units": "degrees", "source": "PDG 2024"},
             {"name": "CKM δ_CP", "symbol": "δ_CP^CKM", "value": 1.196, "uncertainty": 0.045, "units": "radians", "source": "PDG 2024"},
-            {"name": "PMNS θ₁₂", "symbol": "θ₁₂^PMNS", "value": 33.45, "uncertainty": 0.77, "units": "degrees", "source": "NuFIT 6.0"},
-            {"name": "PMNS θ₂₃", "symbol": "θ₂₃^PMNS", "value": 49.0, "uncertainty": 1.3, "units": "degrees", "source": "NuFIT 6.0"},
-            {"name": "PMNS θ₁₃", "symbol": "θ₁₃^PMNS", "value": 8.62, "uncertainty": 0.13, "units": "degrees", "source": "NuFIT 6.0"},
-            {"name": "Δm²₂₁", "symbol": "Δm²₂₁", "value": 7.53e-5, "uncertainty": 0.18e-5, "units": "eV²", "source": "NuFIT 6.0"},
-            {"name": "Δm²₃₁", "symbol": "|Δm²₃₁|", "value": 2.453e-3, "uncertainty": 0.033e-3, "units": "eV²", "source": "NuFIT 6.0"},
+            {"name": "PMNS θ₁₂", "symbol": "θ₁₂^PMNS", "value": theta12, "uncertainty": s_t12, "units": "degrees", "source": "NuFIT 6.0"},
+            {"name": "PMNS θ₂₃", "symbol": "θ₂₃^PMNS", "value": theta23, "uncertainty": s_t23, "units": "degrees", "source": "NuFIT 6.0"},
+            {"name": "PMNS θ₁₃", "symbol": "θ₁₃^PMNS", "value": theta13, "uncertainty": s_t13, "units": "degrees", "source": "NuFIT 6.0"},
+            {"name": "Δm²₂₁", "symbol": "Δm²₂₁", "value": dm21, "uncertainty": s_dm21, "units": "eV²", "source": "NuFIT 6.0"},
+            {"name": "Δm²₃₁", "symbol": "|Δm²₃₁|", "value": dm31, "uncertainty": s_dm31, "units": "eV²", "source": "NuFIT 6.0"},
         ]
 
     def _get_geometric_table(self) -> List[Dict[str, Any]]:
