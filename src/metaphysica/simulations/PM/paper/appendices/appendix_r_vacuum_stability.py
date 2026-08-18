@@ -487,7 +487,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"\beta_\lambda = \frac{d\lambda}{d\ln\mu} = \frac{1}{16\pi^2}\left[ 24\lambda^2 - 6y_t^4 + \frac{9}{5}g_1^4 + \frac{9}{4}g_2^4 + \ldots \right]",
+                    content=r"\beta_\lambda = \frac{d\lambda}{d\ln\mu} = \frac{1}{16\pi^2}\left[ 24\lambda^2 - 6y_t^4 + \frac{3}{8}g_1^4 + \frac{9}{8}g_2^4 + \frac{3}{4}g_1^2 g_2^2 + \ldots \right]",
                     formula_id="quartic-beta-function-v19",
                     label="(R.2)"
                 ),

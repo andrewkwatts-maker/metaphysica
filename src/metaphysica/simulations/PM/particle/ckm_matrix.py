@@ -242,7 +242,7 @@ class CKMMatrixSimulation(SimulationBase):
     # NOTE: exported/displayed delta_cp = pi/6 is inconsistent with
     # atan2(eta, rho) = atan2(0.36, 0.14) = 68.7 deg — the pi/6 display value
     # is a legacy ansatz (numeric kept unchanged for downstream consumers).
-    TOPOLOGICAL_PHASE = np.pi / 6  # CP phase from K=4 matching (30 degrees)
+    TOPOLOGICAL_PHASE = np.pi / 6  # CP phase from K=6 matching (30 degrees; K=4 would give π/4=45°)
 
     @property
     def metadata(self) -> SimulationMetadata:

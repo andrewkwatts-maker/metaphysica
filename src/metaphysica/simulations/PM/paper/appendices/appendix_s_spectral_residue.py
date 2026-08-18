@@ -482,7 +482,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"\text{Res}(\zeta_{V_7}, 5/2) \propto \int_{V_7} R \, dV = 0 \quad \text{(G2 Ricci-flat)}",
+                    content=r"\text{Res}(\zeta_{V_7}, 5/2) \approx \frac{b_3}{(4\pi)^2} \approx 0.152 \quad \text{(Weyl subleading; leading Ricci term vanishes, } G_2 \text{ Ricci-flat)}",
                     formula_id="spectral-curvature-residue-v19",
                     label="(S.5)"
                 ),

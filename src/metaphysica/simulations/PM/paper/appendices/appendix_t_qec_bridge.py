@@ -10,10 +10,14 @@ This appendix expands on the QEC Golay Bridge (qec_golay_bridge.py) with:
 2. A worked syndrome extraction example for single-qubit errors
 3. The complete PM-to-QEC mapping table with honest classifications
 
-The CSS [[24,12,8]] code from the self-dual Golay code [24,12,8] is standard
-quantum error correction theory. The PM mapping is a MOTIVATED_IDENTIFICATION:
-the numerical coincidences (b3=24 → n=24, 12 pairs → k=12) share a common
-mathematical root in the Leech lattice but connect different mathematical objects.
+HONEST CONSTRUCTION NOTE: A naive CSS construction with C1 = C2 = Golay [24,12,8]
+(self-dual) gives k = dim(C1) - dim(C2) = 0 logical qubits, not 12. The [[24,12,8]]
+quantum Golay code requires a non-trivial stabilizer construction (X-type and Z-type
+generators from the parity-check matrix H = [B^T | I], exploiting G·G^T = 0 mod 2).
+Only the X-half stabilizers are implemented here; label is SPECULATIVE for the full
+[[24,12,8]] CSS claim. The PM mapping is a MOTIVATED_IDENTIFICATION: the numerical
+coincidences (b3=24 → n=24, 12 pairs → k=12) share a common mathematical root in
+the Leech lattice but connect different mathematical objects.
 
 References:
 - Calderbank, Shor (1996) "Good quantum error-correcting codes exist"
@@ -97,9 +101,11 @@ class AppendixTQECBridge(SimulationBase):
             domain="appendix",
             title="Appendix T: QEC Bridge Stabilizer Table and Syndrome Extraction",
             description=(
-                "Expanded presentation of the CSS [[24,12,8]] quantum error-correcting "
-                "code from the self-dual Golay code. Includes explicit stabilizer matrix, "
-                "worked syndrome extraction example, and honest PM-to-QEC mapping table."
+                "Expanded presentation of the QEC Golay bridge. Implements X-type stabilizer "
+                "matrix (12×24) from the self-dual Golay [24,12,8] code. Full CSS [[24,12,8]] "
+                "construction is SPECULATIVE (naive self-dual CSS gives k=0; non-trivial "
+                "stabilizer construction required). Includes syndrome extraction example and "
+                "honest PM-to-QEC mapping table."
             ),
             section_id="appendix-T",
             subsection_id=None,

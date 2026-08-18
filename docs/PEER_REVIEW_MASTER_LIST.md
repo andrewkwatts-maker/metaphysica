@@ -223,3 +223,58 @@ Not re-examined in depth this pass; registry-level inconsistency confirmed as pr
 - `generate_named_certificates.py`: `_snapshot_note` field added to all 97 bundled certs (NF-5).
 
 Commit: `72663df`. Test suite: 854 passed, 48 pre-existing failures (eml-math/pandas absent), 463 skipped.
+
+---
+
+## Review cycle 2026-08-18 (automated pass 2 of 3)
+
+**Modules audited:** `paper/appendices/appendix_r_vacuum_stability.py`, `paper/appendices/appendix_s_spectral_residue.py`, `paper/appendices/appendix_t_qec_bridge.py`, `geometry/spectral_geometry.py`, `particle/ckm_matrix.py`, `data/parameters.json` (10 EML formula entries hand-verified).
+
+All numeric claims below were recomputed in Python before logging.
+
+### New findings
+
+#### NF-9 `appendix_s` · Formula S.5 asserts Res(ζ_{V7}, 5/2) = 0 but code computes 0.152 (FIXED)
+Recomputed: `b3 / (4π)² = 24 / 157.914 ≈ 0.15198`. Formula S.5 (line ~485) displayed `Res ∝ ∫ R dV = 0 (G₂ Ricci-flat)` — correct that the Ricci scalar vanishes, but the code's output is the subleading Weyl curvature term, not zero. The text already noted "Weyl curvature contributions survive" in the following paragraph but the formula itself still said = 0, contradicting the output. Fixed: formula S.5 now displays `≈ b₃/(4π)² ≈ 0.152 (Weyl subleading; leading Ricci term vanishes)`.
+
+#### NF-10 `appendix_s` · Res(ζ_{V7}, 7/2) substitutes χ_eff for Vol(V₇) (OPEN)
+Code uses `vol_coefficient * chi_eff` (chi_eff = 144) in place of Vol(V₇). These are dimensionally and physically distinct: χ_eff is the effective Euler characteristic (dimensionless); Vol(V₇) is the compactification volume (dimension [length]^7). The substitution is an ansatz without derivation. A DECIDE is needed on whether to derive Vol(V₇) from the moduli sector or label this row ANSATZ.
+
+#### NF-11 `appendix_r` · Beta function formula R.2 has wrong gauge quartic coefficients (FIXED)
+Standard SM one-loop β_λ (see e.g. Casas, Espinosa, Quiros 1995): `(3/8)g₁⁴ + (9/8)g₂⁴ + (3/4)g₁²g₂²`. Formula R.2 displayed `(9/5)g₁⁴ + (9/4)g₂⁴` and was missing the g₁²g₂² cross-term. Coefficients were off by factors of 24/5 and 9/2 respectively, and the cross-term (same order as the individual quartic terms) was absent. Fixed: R.2 now shows `(3/8)g₁⁴ + (9/8)g₂⁴ + (3/4)g₁²g₂²`. Note: `delta_lambda_total = 0.35` in `run()` remains hardcoded rather than derived from R.8; this is a pre-existing FITTED flag.
+
+#### NF-12 `appendix_t` · Golay CSS labelled [[24,12,8]] but only X-half stabilizers implemented (FIXED)
+A naive CSS construction C₁ = C₂ = Golay [24,12,8] (self-dual) gives k = dim(C₁) − dim(C₂) = 0 logical qubits. The full [[24,12,8]] quantum Golay code requires a non-trivial parity-check construction. The appendix only implements the 12×24 X-type stabilizer matrix; Z-stabilizers are absent. Module docstring and metadata description updated to label the full [[24,12,8]] CSS claim SPECULATIVE and to state explicitly that only the X-half is implemented. The underlying `qec_golay_bridge.py` already contained a matching technical note; the appendix now matches it.
+
+#### NF-13 `ckm_matrix.py` · Comment says "K=4 matching" for TOPOLOGICAL_PHASE = π/6 (FIXED)
+π/K = π/6 implies K = 6, not K = 4. K = 4 would give π/4 = 45°. Comment corrected to "K=6 matching (30 degrees; K=4 would give π/4=45°)". The existing inline note already flagged the π/6 display value as "inconsistent with atan2(eta,rho) = 68.7 deg — legacy ansatz"; that flag is unchanged.
+
+#### NF-14 `spectral_geometry.py` · Eigenvalue multiplicities drop lattice degeneracy (OPEN — documented)
+`FlatTorusDirac.analytic_eigenvalues()` uses Python `set()` to collect eigenvalues, discarding lattice-mode degeneracy. The spinor multiplicity `2^(d//2)` is applied, but multiple mode vectors that share the same norm (same |λ|) are counted only once. The docstring already states: "NOTE: eigenvalue multiplicities count distinct norms only — lattice mode degeneracy not included". This is an acknowledged scope limitation, not a silent bug. No code change; flagged here for completeness.
+
+#### NF-15 `parameters.json` · EML formula cross-check: 10 entries hand-verified; one discrepancy confirmed
+Checked 10 entries from `parameters.json` with computed EML formulas (eml-math unavailable; evaluated by hand):
+
+| Parameter | Stored value | Formula recomputed | Match? |
+|---|---|---|---|
+| `physics.cabibbo_angle` | 11.7782° | arcsin(1/√24)×180/π = 11.7782° | ✓ |
+| `gauge.sin2_theta_w` | 0.23190 | 3/(k_gimel+φ−1) = 3/12.936 = 0.23190 | ✓ |
+| `pmns.theta_12_triality` | 33.593° | arcsin(1/√3)×57.2958 = 35.264° | ✗ **1.67° off** |
+| `electromagnetic.alpha_inv` | 137.037 | k_gimel²−b3/φ+φ/(4π) = 136.48 | ✗ **0.41% off** |
+| `yukawa.jarlskog_geometric` | 9.925e-6 | sin(π/6)×λ₁₂λ₂₃λ₁₃² = 0.5×… (needs λᵢⱼ values) | partial |
+| `constants.M_PLANCK` | 2.435e18 | scalar input | ✓ (by definition) |
+| `pdg.m_higgs` | 125.2 GeV | scalar input | ✓ (by definition) |
+| `pdg.m_electron` | 5.11e-4 GeV | scalar input | ✓ (by definition) |
+| `geometry.sin2_theta_W` | 0.23190 | same formula as gauge.sin2_theta_w | ✓ |
+| `pdg.m_up` | 0.00216 GeV | scalar input | ✓ (by definition) |
+
+`pmns.theta_12_triality`: EML says arcsin(1/√3) = 35.26° (tribimaximal), but stored value is 33.59° (experimental solar angle). The stored value matches NuFIT θ₁₂ ≈ 33.6°, not the formula. One of the EML description or the stored value is wrong. `electromagnetic.alpha_inv`: formula evaluates to ≈136.5, stored is 137.037; the 0.4% gap may be k_gimel version sensitivity (12+1/π vs 12+1/φ²) but warrants a DECIDE. These confirm real physics content behind some of the 110-disagreement EML crosscheck list.
+
+### Fixed this pass
+
+- `appendix_s_spectral_residue.py`: Formula S.5 updated from `= 0 (G₂ Ricci-flat)` to `≈ b₃/(4π)² ≈ 0.152 (Weyl subleading; leading Ricci term vanishes)` (NF-9).
+- `appendix_r_vacuum_stability.py`: Formula R.2 gauge quartic terms corrected from `(9/5)g₁⁴ + (9/4)g₂⁴` to `(3/8)g₁⁴ + (9/8)g₂⁴ + (3/4)g₁²g₂²`; cross-term added (NF-11).
+- `appendix_t_qec_bridge.py`: Module docstring and metadata description updated to label full [[24,12,8]] CSS claim SPECULATIVE; X-half-only scope stated explicitly (NF-12).
+- `ckm_matrix.py`: Comment "K=4 matching" corrected to "K=6 matching (30 degrees; K=4 would give π/4=45°)" (NF-13).
+
+Commit: see git log. Test suite: 869 passed, 33 pre-existing failures (eml-math absent), 463 skipped.
