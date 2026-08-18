@@ -130,6 +130,28 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+
+# ------------------------------------------------------------------
+# SSOT: read the PDG 2024 Higgs mass through ExperimentalDataLoader;
+# the literal is the offline fallback only. See base/established.py for
+# the same pattern.
+# ------------------------------------------------------------------
+try:
+    from metaphysica.simulations.data.experimental_data_loader import get_loader as _get_loader
+    _LOADER_OK = True
+except Exception:
+    _LOADER_OK = False
+
+
+def _pdg_higgs_mass() -> tuple:
+    """(m_higgs_gev, uncertainty_gev) from PDG 2024; fallback 125.20 ± 0.11."""
+    if _LOADER_OK:
+        try:
+            d = _get_loader().get_pdg("higgs", "mass")
+            return d.value, (d.uncertainty if d.uncertainty is not None else 0.11)
+        except Exception:
+            pass
+    return 125.20, 0.11
 # --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
 try:  # pragma: no cover - optional during early migration
     import arithma as _A
@@ -166,9 +188,12 @@ class HiggsBranePartitionSimulation(SimulationBase):
         → M_H_local = 414.22 / 3.31 = 125.1 GeV
     """
 
-    # Experimental target
-    M_HIGGS_EXPERIMENTAL = 125.20  # GeV (PDG 2024, ATLAS+CMS combined)
-    M_HIGGS_UNCERTAINTY = 0.11     # GeV
+    # Experimental target — sourced from ExperimentalDataLoader (PDG 2024,
+    # ATLAS+CMS combined). Fallbacks 125.20 ± 0.11 GeV apply only when the
+    # loader is unavailable at import time (e.g. offline environments).
+    _PDG_M_H_VALUE, _PDG_M_H_UNC = _pdg_higgs_mass()
+    M_HIGGS_EXPERIMENTAL = _PDG_M_H_VALUE  # GeV
+    M_HIGGS_UNCERTAINTY = _PDG_M_H_UNC     # GeV
 
     def __init__(self):
         """Initialize the Higgs brane-partition simulation."""
@@ -290,8 +315,10 @@ class HiggsBranePartitionSimulation(SimulationBase):
         M_Planck_reduced = 2.435e18  # GeV (reduced Planck mass)
         m_H_GeV = m_H_planck * M_Planck_reduced
 
-        # Observed value
-        m_H_observed = 125.10  # GeV, PDG 2024
+        # Observed value — read the class constant so this stays pinned to
+        # the ExperimentalDataLoader / PDG 2024 anchor at the module top,
+        # not a stale inline 125.10 copy.
+        m_H_observed = self.M_HIGGS_EXPERIMENTAL  # GeV, PDG 2024 (125.20 ± 0.11)
 
         # Gap analysis
         gap_orders = np.log10(m_H_GeV / m_H_observed)
@@ -739,17 +766,20 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 ),
                 eml_description="EML: ops.div(M_H_bulk, ops.div(ops.div(k_gimel, eml_pi()), eta)) — 4D brane-projected Higgs mass (FITTED: 3 free params for 1 output)",
                 derivation_formula="higgs-local-mass",
-                experimental_bound=125.25,
-                uncertainty=0.17,
+                experimental_bound=self.M_HIGGS_EXPERIMENTAL,
+                uncertainty=self.M_HIGGS_UNCERTAINTY,
                 bound_type="measured",
                 bound_source="PDG2024",
                 validation={
-                    "experimental_value": 125.25,
-                    "uncertainty": 0.17,
+                    "experimental_value": self.M_HIGGS_EXPERIMENTAL,
+                    "uncertainty": self.M_HIGGS_UNCERTAINTY,
                     "bound_type": "measured",
                     "status": "PASS",
                     "source": "PDG2024",
-                    "notes": "PDG 2024: m_H = 125.25 ± 0.17 GeV. PM v16.2: 125.1 GeV (0.88σ)"
+                    "notes": (
+                        f"PDG 2024: m_H = {self.M_HIGGS_EXPERIMENTAL} ± "
+                        f"{self.M_HIGGS_UNCERTAINTY} GeV (via ExperimentalDataLoader)."
+                    ),
                 }
             ),
             Parameter(
@@ -964,14 +994,16 @@ class HiggsBranePartitionSimulation(SimulationBase):
         """
         checks = []
 
-        # Check 1: Local Higgs mass within 1 sigma of PDG
+        # Check 1: Local Higgs mass within 1 sigma of PDG (loader-sourced)
         m_local = 414.22 / 3.31  # approximate from formula
-        sigma = abs(m_local - 125.25) / 0.17
+        mh_ref = self.M_HIGGS_EXPERIMENTAL
+        mh_unc = self.M_HIGGS_UNCERTAINTY
+        sigma = abs(m_local - mh_ref) / mh_unc
         ok1 = sigma < 1.0
         checks.append({
             "name": "Local Higgs mass within 1 sigma of PDG 2024",
             "passed": ok1,
-            "confidence_interval": {"lower": 125.08, "upper": 125.42, "sigma": sigma},
+            "confidence_interval": {"lower": mh_ref - mh_unc, "upper": mh_ref + mh_unc, "sigma": sigma},
             "log_level": "INFO" if ok1 else "WARNING",
             "message": f"M_H_local ~ {m_local:.2f} GeV, sigma = {sigma:.2f}"
         })
@@ -1020,10 +1052,11 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
-                    "m_higgs_local": 125.1,  # Higgs mass (PDG)
+                    "m_higgs_local": 414.22 / 3.31,  # brane-projected local mass
                     "m_higgs_bulk": 414.22,
-                    "pdg_value": 125.25,
-                    "sigma": 0.88
+                    "pdg_value": self.M_HIGGS_EXPERIMENTAL,
+                    "pdg_uncertainty": self.M_HIGGS_UNCERTAINTY,
+                    "sigma": abs(414.22 / 3.31 - self.M_HIGGS_EXPERIMENTAL) / self.M_HIGGS_UNCERTAINTY,
                 }
             },
             {
