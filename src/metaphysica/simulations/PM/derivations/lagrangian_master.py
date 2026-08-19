@@ -122,7 +122,7 @@ class LagrangianMasterDerivation(SimulationBase):
         """Initialize derivation parameters and symbolic variables (v22)."""
         # Dimensional structure (v22: 12×(2,0) paired bridge system)
         self.D_critical = 26  # Critical dimension (bosonic string)
-        self.signature_26d = (24, 1)  # v22: unified time (no ghosts/CTCs)
+        self.signature_26d = (24, 2)  # two-time: one time per shadow; Sp(2,R) gauge (STRUCTURAL) controls ghosts
 
         # v22: 12×(2,0) Paired Bridge structure
         # M^{24,1} = T^1 x_fiber (⊕_{i=1}^{12} B_i^{2,0})
@@ -136,8 +136,8 @@ class LagrangianMasterDerivation(SimulationBase):
         self.bridge_coherence_time = 25e-3  # τ > 25ms for biological consciousness
 
         # v21 legacy structure (for G2 reduction - retained)
-        self.D_shadow = 11  # Per-shadow dimension (SPATIAL)
-        self.signature_shadow = (11, 0)  # v21: Per-shadow signature (SPATIAL, time shared)
+        self.D_shadow = 11  # SUPERSEDED v21 scaffold (spatial-only count); two-time ruling: shadows are 13D (12,1)
+        self.signature_shadow = (11, 0)  # SUPERSEDED v21 scaffold; ruling: (12,1) per shadow, own time
         self.D_7 = 7  # G2 holonomy manifold per shadow
         self.D_4 = 4  # Final spacetime
 
@@ -279,8 +279,8 @@ class LagrangianMasterDerivation(SimulationBase):
             "spectral-residue-dressing",
 
             # Part F2: 26D Master Lagrangian (Topic 03)
-            "bulk-action-27d-v23",
-            "racetrack-moduli-potential-27d-v23",
+            "bulk-action-26d-v23",
+            "racetrack-moduli-potential-26d-v23",
         ]
 
     # =========================================================================
@@ -341,14 +341,14 @@ class LagrangianMasterDerivation(SimulationBase):
 
         # Vielbein has D^2 = 676 components, but gauge freedom reduces this
         vielbein_components = D * D
-        lorentz_gauge = D * (D - 1) // 2  # SO(24,1) gauge freedom (v21)
+        lorentz_gauge = D * (D - 1) // 2  # SO(24,2) gauge freedom (v21)
         vielbein_physical = vielbein_components - lorentz_gauge
 
-        print(f"\nIn {D}D with ({n_spatial},{n_time}) signature (v21 unified time):")
+        print(f"\nIn {D}D with ({n_spatial},{n_time}) signature (two-time):")
         print(f"  - Total vielbein components: {vielbein_components}")
-        print(f"  - Local Lorentz gauge freedom: {lorentz_gauge} (SO(24,1))")
+        print(f"  - Local Lorentz gauge freedom: {lorentz_gauge} (SO(24,2))")
         print(f"  - Physical components: {vielbein_physical} = metric components")
-        print(f"  - v21: Unified time eliminates ghosts and CTCs")
+        print(f"  - Two-time: Sp(2,R) gauge (STRUCTURAL) eliminates ghosts and CTCs")
 
         results["vielbein_total"] = vielbein_components
         results["lorentz_gauge"] = lorentz_gauge
@@ -556,11 +556,11 @@ class LagrangianMasterDerivation(SimulationBase):
         Clifford algebra in 26D:
         {Gamma^a, Gamma^b} = 2 eta^ab
 
-        Spinor dimension in 26D (v21 with (24,1) signature):
+        Spinor dimension in 26D (two-time (24,2)):
         - Clifford algebra Cl(24,2) has dimension 2^26
-        - Spinor module: 2^{(25-1)/2} = 2^12 = 4096 complex
+        - Dirac module: 2^{26/2} = 2^13 = 8192 complex; Weyl half = 4096
         - Two-time (24,2) gives Cl(24,2) structure
-        - Weyl (chiral): Available in odd spatial dimensions
+        - Weyl (chiral): available because D = 26 is even
         """)
 
         # Two-time: Weyl spinor of Cl(24,2) is 2^13/2 = 4096
@@ -629,7 +629,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         This action is:
         - Diffeomorphism invariant (general coordinate transformations)
-        - Local Lorentz invariant (SO(24,1) in tangent space - v21 unified time)
+        - Local Lorentz invariant (SO(24,2) in tangent space - v21 unified time)
         - Gauge invariant (E8 x E8)
         - BRST invariant (after ghost sector)
 
@@ -894,16 +894,16 @@ class LagrangianMasterDerivation(SimulationBase):
         n_bridge_pairs = 12
         D_bridge_per_pair = 2
         D_bridge_total = n_bridge_pairs * D_bridge_per_pair  # 24
-        D_time = 1
-        D_total = D_time + D_bridge_total  # 25
+        D_time = 2  # one timelike direction per 13D shadow
+        D_total = D_time + D_bridge_total  # 26
 
         print(f"\nv22 Dimension structure:")
-        print(f"  M^{{24,1}} = T^1 ×_fiber (⊕_{{i=1}}^{{12}} B_i^{{2,0}})")
-        print(f"  Time: {D_time}D shared (0,1)")
+        print(f"  M^{{24,2}} = (12,1) + (12,1) — one time per shadow")
+        print(f"  Times: {D_time}D (one per shadow)")
         print(f"  Bridge pairs: {n_bridge_pairs} pairs × {D_bridge_per_pair}D = {D_bridge_total}D")
         print(f"  Total dimensions: {D_time} + {D_bridge_total} = {D_total}D")
-        print(f"  Signature: (24,1) - unified time")
-        print(f"  Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)")
+        print(f"  Signature: (24,2) - two-time")
+        print(f"  Metric: ds² = -dt₁² - dt₂² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)")
 
         results["n_bridge_pairs"] = n_bridge_pairs
         results["D_bridge_per_pair"] = D_bridge_per_pair
@@ -1533,7 +1533,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Add the Yang-Mills gauge sector S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN) for E8 x E8 gauge group with 496 generators",
                     "Include the Dirac fermion sector S_Dirac = integral d^26x sqrt(-g_26) Psi_bar Gamma^M D_M Psi with spinor covariant derivative D_M including spin connection",
                     "Add the Pneuma scalar/moduli sector S_Pneuma with Kahler moduli kinetic terms, dilaton, moduli potential V(T,phi), and conformal coupling xi R phi^2",
-                    "Combine all sectors into the master action S_26 = S_EH + S_YM + S_Dirac + S_Pneuma and verify diffeomorphism, local Lorentz SO(24,1), and E8 x E8 gauge invariance"
+                    "Combine all sectors into the master action S_26 = S_EH + S_YM + S_Dirac + S_Pneuma and verify diffeomorphism, local Lorentz SO(24,2), and E8 x E8 gauge invariance"
                 ],
                 "method": "Lagrangian construction via gauge principle: diffeomorphism + local Lorentz + Yang-Mills invariance in D=26 critical dimension",
                 "parentFormulas": ["einstein-hilbert-26d", "yang-mills-26d", "dirac-26d", "pneuma-coupling"]
@@ -1542,7 +1542,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "M_*^24": "26D Planck mass factor (ensures dimensionless action)",
                 "R_26": "26D Ricci scalar",
                 "F^2": "Yang-Mills field strength squared (E8 x E8)",
-                "Psi": "26D Dirac spinor field (dim 2^12 = 4096)",
+                "Psi": "26D Weyl spinor field (dim 2^13/2 = 4096)",
                 "T": "Kahler modulus (complex scalar parametrizing cycle volumes)",
                 "V(T)": "Moduli potential (Pneuma mechanism) stabilizing internal geometry"
             }
@@ -1848,17 +1848,17 @@ class LagrangianMasterDerivation(SimulationBase):
             category="DERIVED",
             description=(
                 "v22 bulk structure: 25D spacetime M^{24,1} is decomposed as a fiber bundle "
-                "with unified time T^1 as base and 12 Euclidean bridge pairs B_i^{2,0} as "
-                "fibers. Each pair contributes 2 spatial dimensions for a total of 24 spatial + "
-                "1 temporal = 25 dimensions with (24,1) signature (3 derivation steps)."
+                "with one timelike direction per 13D shadow and 12 Euclidean bridge pairs B_i^{2,0}. "
+                "Each pair contributes 2 spatial dimensions for a total of 24 spatial + "
+                "2 temporal = 26 dimensions with (24,2) signature (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=["derivations.n_bridge_pairs"],
             derivation={
                 "steps": [
-                    "Start from the 25D spacetime with (24,1) signature required by unified time (no ghosts/CTCs)",
+                    "Start from the 26D spacetime with (24,2) signature; the Sp(2,R) gauge constraint (STRUCTURAL) removes ghosts",
                     "Decompose the 24 spatial dimensions into 12 pairs of 2D Euclidean spaces B_i^{2,0}, each with positive-definite metric",
-                    "Fiber the 12 bridge pairs over the unified time T^1 to form M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0})"
+                    "Assemble the two 13D(12,1) shadows: M^{24,2} = (12,1) + (12,1), bridge pairs connecting corresponding spatial dimensions"
                 ],
                 "method": "Fiber bundle decomposition of (24,1) spacetime into paired Euclidean bridges",
                 "parentFormulas": ["ghost-elimination"]
@@ -2509,11 +2509,11 @@ class LagrangianMasterDerivation(SimulationBase):
         # computed values in run().
 
         formulas.append(Formula(
-            id="bulk-action-27d-v23",
+            id="bulk-action-26d-v23",
             label="(2.1.H1)",
             latex=(
-                r"S_{27} = \int d^{27}x \, \sqrt{-G_{27}} \left[ "
-                r"\frac{R_{27}}{2\kappa_{27}^2} "
+                r"S_{26} = \int d^{26}x \, \sqrt{-G_{26}} \left[ "
+                r"\frac{R_{26}}{2\kappa_{26}^2} "
                 r"- \frac{1}{2}|F_4|^2 "
                 r"+ V_{\text{mod}} "
                 r"+ V_{\text{tor}} "
@@ -2523,7 +2523,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 r"\right]"
             ),
             plain_text=(
-                "S_27 = integral d^27x sqrt(-G_27) [ R_27/(2 kappa_27^2) "
+                "S_26 = integral d^26x sqrt(-G_26) [ R_26/(2 kappa_26^2) "
                 "- (1/2)|F_4|^2 + V_mod + V_tor "
                 "+ sum_n R_n psi_bar_n D_slash psi_n "
                 "+ V_bridge + sum_f V_face^(f) ]"
@@ -2531,10 +2531,9 @@ class LagrangianMasterDerivation(SimulationBase):
             category="THEORETICAL",
             description=(
                 "Full 26D bulk action with explicit two-layer OR structure "
-                "(Topic 03: 26D Master Lagrangian). The 27 dimensions decompose as "
-                "26D = 4D (visible spacetime) + 7D (G2 holonomy internal manifold) "
-                "+ 14D (7 bridge pairs, carrying shadow/face information) "
-                "+ 2D (shadow-time directions S^{2,0} from v24.2). "
+                "(Topic 03: 26D Master Lagrangian). The 26 dimensions decompose as 26D = (12,1) + (12,1): each 13D "
+                "shadow carries 4D spacetime + 7D G2 holonomy + 2D bridge residual, "
+                "with one timelike direction per shadow. "
                 "Each term has a precise geometric origin:\n"
                 "  R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full 26D bulk, "
                 "with kappa_27 the 26D gravitational coupling.\n"
@@ -2543,7 +2542,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "associative 3-cycles of the G2 manifold.\n"
                 "  V_mod: Racetrack moduli potential stabilising the 4 Kahler moduli "
                 "T_1,...,T_4 via non-perturbative M2-brane instantons (see "
-                "racetrack-moduli-potential-27d-v23).\n"
+                "racetrack-moduli-potential-26d-v23).\n"
                 "  V_tor: Torsion correction from G2 structure deformation, encoding "
                 "the Fernandez-Gray tau_1 intrinsic torsion class.\n"
                 "  sum_n R_n psi_bar_n D_slash psi_n: Kaluza-Klein tower of fermion "
@@ -2604,7 +2603,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "potential that governs face selection within each shadow, "
                     "choosing the visible face from the 4 TCS faces",
                     "Verify that the complete action is diffeomorphism-invariant, "
-                    "locally Lorentz SO(24,1)-invariant, and respects the G2 "
+                    "locally Lorentz SO(24,2)-invariant, and respects the G2 "
                     "structure group of the internal manifold"
                 ],
                 "method": (
@@ -2622,8 +2621,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 ]
             },
             terms={
-                "R_{27}": "26D Ricci scalar from the full bulk metric G_{27}",
-                r"\kappa_{27}": (
+                "R_{26}": "26D Ricci scalar from the full bulk metric G_{26}",
+                r"\kappa_{26}": (
                     "26D gravitational coupling; kappa_27^2 = 8 pi G_27 ~ M_*^{-25}"
                 ),
                 "|F_4|^2": (
@@ -2632,7 +2631,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "V_{mod}": (
                     "Racetrack moduli potential: V = sum_i Lambda_i exp(-a_i T_i) + Lambda_0 "
-                    "with a_i = 24/i (see racetrack-moduli-potential-27d-v23)"
+                    "with a_i = 24/i (see racetrack-moduli-potential-26d-v23)"
                 ),
                 "V_{tor}": (
                     "Torsion correction from Fernandez-Gray tau_1 class of G2 structure"
@@ -2657,7 +2656,7 @@ class LagrangianMasterDerivation(SimulationBase):
         ))
 
         formulas.append(Formula(
-            id="racetrack-moduli-potential-27d-v23",
+            id="racetrack-moduli-potential-26d-v23",
             label="(2.1.H2)",
             latex=(
                 r"V(\{T_i\}) = \sum_{i=1}^{4} \Lambda_i \, e^{-a_i T_i} + \Lambda_0, "
@@ -2673,7 +2672,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Racetrack moduli potential for the 26D master Lagrangian "
                 "(Topic 03) with explicit geometric scaling a_i = b_3/i. "
                 "This is the leading-order moduli potential V_mod appearing "
-                "in the 26D bulk action (bulk-action-27d-v23). "
+                "in the 26D bulk action (bulk-action-26d-v23). "
                 "Each of the 4 Kahler moduli T_i (i=1..4) corresponds to one "
                 "face of the twisted connected sum (TCS) G2 construction, "
                 "controlling the volume of the i-th 2-cycle. The non-perturbative "
@@ -2750,7 +2749,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "parentFormulas": [
                     "racetrack-moduli-potential",
-                    "bulk-action-27d-v23",
+                    "bulk-action-26d-v23",
                     "g2-holonomy-constraint",
                 ]
             },
@@ -2797,7 +2796,7 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "Rank of the vielbein matrix e_a^mu in 26D: equals the spacetime dimension D = 26. "
                 "The vielbein has D^2 = 676 total components, reduced by D(D-1)/2 = 325 local "
-                "Lorentz SO(24,1) gauge freedom to D(D+1)/2 = 351 physical (metric) components."
+                "Lorentz SO(24,2) gauge freedom to D(D+1)/2 = 351 physical (metric) components."
             ),
             no_experimental_value=True
         ))
@@ -3283,7 +3282,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    formula_id="bulk-action-27d-v23",
+                    formula_id="bulk-action-26d-v23",
                     label="(2.1.H1)"
                 ),
                 ContentBlock(
@@ -3316,7 +3315,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    formula_id="racetrack-moduli-potential-27d-v23",
+                    formula_id="racetrack-moduli-potential-26d-v23",
                     label="(2.1.H2)"
                 ),
                 ContentBlock(
@@ -3358,8 +3357,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "reduced-lagrangian-13d",
                 "reduced-lagrangian-4d",
                 # Part H: 26D Master Lagrangian (Topic 03)
-                "bulk-action-27d-v23",
-                "racetrack-moduli-potential-27d-v23",
+                "bulk-action-26d-v23",
+                "racetrack-moduli-potential-26d-v23",
             ],
             param_refs=[
                 "derivations.vielbein_rank",
@@ -3754,7 +3753,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "The vielbein e_a^mu maps between coordinate and frame indices, with "
                 "g_munu = e_a^mu e_b^nu eta^ab. The 26D master action S_26 = S_EH + S_YM + "
                 "S_Dirac + S_Pneuma contains Einstein-Hilbert gravity, E8 x E8 Yang-Mills, "
-                "Dirac fermions (dim 2^12 = 4096), and Pneuma moduli coupling. The v22 "
+                "Weyl fermions (dim 2^13/2 = 4096), and Pneuma moduli coupling. The v22 "
                 "architecture decomposes the 24 spatial dimensions into 12 pairs of 2D "
                 "Euclidean bridges. Kaluza-Klein reduction via G2 holonomy yields 4D physics."
             ),
@@ -3776,12 +3775,12 @@ class LagrangianMasterDerivation(SimulationBase):
             {
                 "gate_id": "G01_LAGRANGIAN_DIMENSIONAL_CONSISTENCY",
                 "simulation_id": self.metadata.id,
-                "assertion": "26D master action is diffeomorphism, local Lorentz SO(24,1), and E8 x E8 gauge invariant with D(D-3)/2 = 299 graviton DOF",
+                "assertion": "26D master action is diffeomorphism, local Lorentz SO(24,2), and E8 x E8 gauge invariant with D(D-3)/2 = 299 graviton DOF",
                 "result": "PASS" if dof_graviton == 299 else "FAIL",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
                     "D_critical": 26,
-                    "signature": "(24,1)",
+                    "signature": "(24,2)",
                     "graviton_dof": dof_graviton,
                     "gauge_group": "E8 x E8 (dim 496)",
                     "spinor_dim": 2**12

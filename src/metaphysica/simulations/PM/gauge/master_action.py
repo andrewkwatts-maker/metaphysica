@@ -806,7 +806,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "g'": "U(1)_Y hypercharge coupling",
                     "f_W/f_Y": "G2 cycle volume ratio that locks the mixing angle"
                 },
-                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
+                arithma=_arithma_num(0.23189), eml=_eml_scalar(0.23189), value=0.23189,
             ),
             # =================================================================
             # Euler-Lagrange Variation Formulas
@@ -980,7 +980,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="dark-matter-portal-lagrangian",
                 label="(MA.TL2)",
-                latex=r"\mathscr{L}_{\text{portal}} = \alpha_{\text{leak}} \phi_{\text{vis}} \phi_{\text{dark}} \phi_{\text{mod}}, \quad \alpha_{\text{leak}} \approx 0.57",
+                latex=r"\mathscr{L}_{\text{portal}} = \alpha_{\text{leak}} \phi_{\text{vis}} \phi_{\text{dark}} \phi_{\text{mod}}, \quad \alpha_{\text{sample}} \approx 0.57",
                 plain_text="L_portal = alpha_leak * phi_vis * phi_dark * phi_mod, alpha_leak ≈ 0.57",
                 category="GEOMETRIC",
                 description=(
@@ -1343,7 +1343,7 @@ class MasterActionSimulationV22(SimulationBase):
                 name="Strong Coupling at M_Z",
                 units="dimensionless",
                 status="DERIVED",
-                description="alpha_s(M_Z) ~ 0.117 from G2 color cycle volume (< 1 sigma from PDG)",
+                description="alpha_s(M_Z) ~ 0.117 from G2 color cycle volume (~1.1 sigma from PDG)",
                 experimental_bound=0.1179,
                 bound_type="measured",
                 bound_source="PDG2024",

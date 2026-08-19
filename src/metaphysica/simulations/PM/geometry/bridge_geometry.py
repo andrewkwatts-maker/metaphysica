@@ -11,7 +11,7 @@ Dimensional Architecture:
   - 24 = 12 bridge pairs × 2D each
   - 1  = timelike fiber T¹
   - 2  = shadow-time directions S^{2,0}
-  - Total: 24 + 1 + 2 = 26D, signature (24,2)
+  - Total: 24 + 2 = 26D, signature (24,2)
 
 Mathematical Objects:
   - 12 bridge manifolds B_i (2D tori with complex structure τ_i)

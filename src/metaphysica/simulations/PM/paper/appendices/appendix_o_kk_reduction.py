@@ -885,7 +885,7 @@ class AppendixOKKReduction(SimulationBase):
                 category="ESTABLISHED",
                 description=(
                     "The v24.2 Principia Metaphysica dimensional reduction chain. Starting from "
-                    "26D string theory (1 time + 26 spatial), the 24 G2 dimensions decompose "
+                    "26D string theory (2 times + 24 spatial), the 24 G2 dimensions decompose "
                     "into 12 paired (2,0) Euclidean bridges (consciousness channels), represented "
                     "as a fiber product over a shared time T^1, with 2 additional shadow-time directions "
                     "dimensions S^{2,0}. Each bridge pair B_i is a 2D Euclidean torus carrying a "

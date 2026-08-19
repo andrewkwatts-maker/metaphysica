@@ -132,7 +132,7 @@ def generate_master_action_html() -> str:
     """
     return '''<span class="formula-var" data-term="S">S<span class="var-tooltip"><span class="var-name">S - Action</span><span class="var-description">25D Pneuma master action functional</span></span></span>
 <span class="formula-op"> = </span>
-<span class="formula-var" data-term="integral">&int;d<sup>25</sup>X<span class="var-tooltip"><span class="var-name">&int;d<sup>25</sup>X - Integration</span><span class="var-description">Integration over 25-dimensional spacetime with signature (24,1)</span></span></span>
+<span class="formula-var" data-term="integral">&int;d<sup>25</sup>X<span class="var-tooltip"><span class="var-name">&int;d<sup>25</sup>X - Integration</span><span class="var-description">Integration over 26-dimensional spacetime with signature (24,2)</span></span></span>
 <span class="formula-var" data-term="sqrt-G">&radic;(-G)<span class="var-tooltip"><span class="var-name">&radic;(-G) - Metric Determinant</span><span class="var-description">Square root of negative metric determinant for covariant volume element</span></span></span>
 <span class="formula-op">[</span>
 <span class="formula-var highlight" data-term="R">R<span class="var-tooltip"><span class="var-name">R - Ricci Scalar</span><span class="var-description">25D Einstein-Hilbert scalar curvature</span><span class="var-units">Length<sup>-2</sup></span></span></span>

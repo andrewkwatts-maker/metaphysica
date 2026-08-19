@@ -318,7 +318,7 @@ class AppendixUGammaCorrection(SimulationBase):
                     "b3": "24 — G2 manifold Betti number",
                     "2": "D_time = 2: one timelike direction per shadow (Sp(2,R) doublet)",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(9.9312684489), eml=_eml_scalar(9.9312684489), value=9.9312684489),
             Formula(
                 id="alpha-t-simplification",
                 label="(U.2)",
@@ -351,7 +351,7 @@ class AppendixUGammaCorrection(SimulationBase):
                     "D_total": "26 — PM spacetime dimension",
                     "D_string": "10 — superstring dimension",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(2.6), eml=_eml_scalar(2.6), value=2.6),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

@@ -74,7 +74,7 @@ OUTPUTS:
     - thermal.alpha_T: Full thermal coupling = D/D_s = 26/10 = 2.6 (DERIVED)
     - thermal.modular_temperature: Effective modular temperature
     - thermal.entropy_gradient: dS/dt (arrow of time)
-    - thermal.two_time_metric_signature: (24,1) metric signature with 12x(2,0) bridge pairs
+    - thermal.two_time_metric_signature: (24,2) metric signature with 12x(2,0) bridge pairs
 
 FORMULAS:
     - modular-hamiltonian: K = -log(rho) from thermal state

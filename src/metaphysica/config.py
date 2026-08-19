@@ -1109,7 +1109,7 @@ class CoreFormulas:
         category=FormulaCategory.PREDICTIONS,
         description="Dark energy equation of state from pure G2 topology (v16.2 STERILE)",
         section="7",
-        status="DESI 2025 VALIDATED (0.027σ)",
+        status="ANCHOR-DEPENDENT: 0.027σ vs adopted thawing anchor; 3.6σ vs DESI DR2 w0waCDM headline",
         terms={
             "w₀": FormulaTerm(
                 name="Dark Energy Equation of State",
@@ -1129,11 +1129,11 @@ class CoreFormulas:
             ),
         },
         info_title="Dark Energy from G₂ Topology (STERILE)",
-        info_meaning="v16.2 STERILE: Dark energy's equation of state emerges directly from the G₂ manifold's third Betti number b₃ = 24. The formula w₀ = -(b₃-1)/b₃ = -23/24 = -0.9583 is pure topology with zero free parameters. This matches DESI 2025 (w₀ = -0.957 ± 0.05) at 0.027σ - near-perfect agreement.",
+        info_meaning="v16.2 STERILE: Dark energy's equation of state emerges directly from the G₂ manifold's third Betti number b₃ = 24. The formula w₀ = -(b₃-1)/b₃ = -23/24 = -0.9583 is pure topology with zero free parameters. Against the framework-adopted thawing anchor (w₀ = -0.957 ± 0.05; attribution unverified) this is 0.027σ; against the DESI DR2 w0waCDM headline (w₀ = -0.752 ± 0.057) it is 3.6σ. The comparison is anchor/model dependent.",
         info_grid=[
             FormulaInfoItem(title="Predicted Value", content="w₀ = -23/24 = -0.9583"),
             FormulaInfoItem(title="DESI 2025", content="-0.957 ± 0.05"),
-            FormulaInfoItem(title="Agreement", content="0.027σ deviation"),
+            FormulaInfoItem(title="Agreement", content="0.027σ (adopted anchor) / 3.6σ (DESI DR2 w0waCDM headline)"),
             FormulaInfoItem(title="Mechanism", content="Pure G₂ topology"),
         ],
         expansion_title="w_0 = -\\frac{b_3 - 1}{b_3} = -\\frac{24 - 1}{24} = -\\frac{23}{24} = -0.9583",
@@ -3870,7 +3870,7 @@ class FundamentalConstants:
 
     # Legacy (deprecated - kept for backward compatibility)
     D_AFTER_SP2R = 13  # v22: Corrected to 13D per shadow (was 12 in v21.0)
-    SIGNATURE_INITIAL = (24, 1)  # v21/v22: Unified time (was (24,2) in v16-v20)
+    SIGNATURE_INITIAL = (24, 2)  # Two-time ruling: 24 space + 2 times (one per shadow)
 
     # Internal compactification (G₂ manifold or CY3×S¹/Z₂)
     INTERNAL_MANIFOLD = "G2"  # 7D holonomy manifold
@@ -3989,9 +3989,9 @@ class PhenomenologyParameters:
     W0_DENOMINATOR = 24      # Derived: b3 = 24 (CHNP 2015 TCS construction)
     # w_0 = -23/24 = -0.958333... (pure geometry from G2 manifold)
     W0_GEOMETRIC = -23/24    # v16.2 STERILE: Pure geometric derivation
-    W0_DESI_2025 = -0.957  # Source: DESI 2025 DR2 combined w0 = -0.957 ± 0.05
+    W0_DESI_2025 = -0.957  # Framework-adopted thawing anchor (attribution unverified; DESI DR2 w0waCDM headline: -0.752 ± 0.057)
     W0_DESI_ERROR = 0.05  # Source: DESI 2025 DR2 1σ uncertainty
-    W0_SIGMA_DEVIATION = 0.027  # Agreement: 0.027σ with DESI 2025
+    W0_SIGMA_DEVIATION = 0.027  # vs adopted anchor; vs DESI DR2 w0waCDM headline (-0.752 ± 0.057) it is 3.6σ
 
     WA_EVOLUTION = 0.0       # v16.2 STERILE: No evolution (static dark energy)
     WA_ERROR = 0.15  # Source: DESI 2025 DR2 wa uncertainty
@@ -4540,29 +4540,28 @@ class V21BridgeParameters:
     Parameters for v21 Euclidean Bridge mechanism.
 
     v21.0: The dual-shadow bridge framework replaces Sp(2,R) gauge fixing.
-    Unified time signature (24,1) eliminates ghosts and CTCs through
-    geometry rather than gauge constraints.
+    Two-time signature (24,2): the Sp(2,R) gauge constraint (Bars,
+    STRUCTURAL) eliminates ghosts and CTCs.
 
     v22.0 FIBERED TIME STRUCTURE (12×(2,0) Bridge Architecture):
     -----------------------------------------------------------
-    Time is NOT duplicated across shadows - it is the shared fiber base.
+    Two-time ruling: each shadow carries its OWN timelike direction.
     The 12×(2,0) bridge pairs connect corresponding spatial dimensions.
 
-        M^25 = T^1 ×_fiber (S_normal^12 ⊕ S_mirror^12)
+        M^26 = (12,1)_normal + (12,1)_mirror
 
-    where 12×(2,0) bridge pairs connect S_normal^12 ↔ S_mirror^12:
-    - T^1: Unified time (0,1) - shared fiber base
-    - S_normal^12: Normal shadow SPATIAL (12,0)
-    - S_mirror^12: Mirror shadow SPATIAL (12,0)
+    - (12,1)_normal: Normal shadow, 12 spatial + its own time
+    - (12,1)_mirror: Mirror shadow, 12 spatial + its own time
     - 12×(2,0): Bridge pairs connecting corresponding spatial dimensions
+    - Shared clock: the Sp(2,R)-invariant t+ = (t1+t2)/sqrt(2)
 
-    Dimensional check: 1 + 12 + 12 = 25 ✓ (with 12 connected pairs)
-    Signature check: (0,1) + (12,0) + (12,0) = (24,1) ✓
+    Dimensional check: 13 + 13 = 26 ✓
+    Signature check: (12,1) + (12,1) = (24,2) ✓
 
     Each shadow sees: 12 spatial + 1 time (its own) = 13D(12,1)
 
     Key features:
-    - Unified time (24,2): No negative-norm states, no causal paradoxes
+    - Two-time (24,2): Sp(2,R) gauge removes negative-norm states (STRUCTURAL)
     - Dual shadows: 2×13D(12,1) each with its own time
     - 12×(2,0) bridge pairs: Connect corresponding spatial dimension pairs
     - OR reduction: R_perp² = -I implements Möbius topology

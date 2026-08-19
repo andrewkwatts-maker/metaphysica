@@ -1314,7 +1314,7 @@ class ProtonDecaySimulation(SimulationBase):
                          * S_geom)
 
         # Equilibrium entropy from sampler dynamics
-        S_eq = 9.35e-05  # From SamplerEntropyDynamics with alpha_T=2.7, rho=I/2
+        S_eq = 9.00e-05  # From SamplerEntropyDynamics with alpha_T=2.6 (two-time), rho=I/2; scales linearly in alpha_T
         entropy_correction = np.exp(S_eq)  # = 1.0000935
         tau_entropy_corrected = tau_geometric * entropy_correction
 

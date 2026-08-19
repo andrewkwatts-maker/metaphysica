@@ -85,39 +85,62 @@ def _check_latex_divergence(arithma_latex: str, eml_latex: str):
     return None
 
 
+_RESULT_RE = re.compile(
+    r"(?P<mant>[+-]?\d+(?:\.\d+)?)"
+    r"(?:(?:\\times|\\cdot)10\^\{?(?P<exp>[+-]?\d+)\}?)?"
+)
+
+
 def _check_display_vs_computed(latex: str, value):
+    """Compare the computed value against the RESULT the LaTeX displays.
+
+    Only the segment after the LAST '=' (or '\\approx') is a candidate
+    result; numeric tokens elsewhere in the formula (exponents like
+    e^{-3/2}, structural integers like 2^{13}, fractions) are formula
+    STRUCTURE, not displayed results, and comparing against them
+    produced ~30 false mismatches per build. If the trailing segment is
+    not a bare numeric literal (optionally x10^n, a percent sign, a
+    degree sign, or trailing \\text units), there is nothing to compare.
+    """
     if value is None or not isinstance(latex, str):
         return None
     try:
         v = float(value)
     except (TypeError, ValueError):
         return None
-    tokens = _extract_numeric_tokens(latex)
-    if not tokens:
+    s = _normalize_latex(latex)
+    s = re.split(r"=|\\approx|\\simeq", s)[-1]
+    # A degree sign means the display is in degrees: convert the computed
+    # value (stored in radians) before comparing.
+    is_degrees = bool(re.search(r"\^\\circ|\\degree", s))
+    # A \text{...}/\mathrm{...} unit suffix means the displayed number may
+    # be in different units than the stored value (mm vs m, meV vs eV):
+    # the scanner cannot convert arbitrary units, so skip the comparison.
+    if re.search(r"\\text\{[^{}]*[a-zA-Z][^{}]*\}|\\mathrm\{[^{}]*[a-zA-Z][^{}]*\}", s):
         return None
-    # Find the closest displayed token.
-    best = None
-    best_pct = None
-    for tok in tokens:
-        if v == 0:
-            pct = abs(tok)
-        else:
-            pct = abs((tok - v) / v) * 100.0
-        if best_pct is None or pct < best_pct:
-            best_pct = pct
-            best = tok
-    if best is not None and best_pct is not None and best_pct > 5.0:
-        # Only surface if best_pct is meaningfully large; tiny tokens (1, 2, structural)
-        # will always show > 5 % vs the actual value, so require the token to be
-        # within an order of magnitude of the value.
-        if v != 0 and (0.1 * abs(v) < abs(best) < 10 * abs(v)):
-            return {
-                "kind": "display_vs_computed",
-                "displayed_value": best,
-                "computed_value": v,
-                "delta_pct": round(best_pct, 2),
-                "notes": f"LaTeX displays {best} but computed value is {v}.",
-            }
+    # strip non-numeric suffixes: degree marks, percent, spacing
+    s = re.sub(r"(\\,|\\;|\^\\circ|\\degree|\\%|%)", "", s)
+    m = _RESULT_RE.fullmatch(s)
+    if not m:
+        return None
+    displayed = float(m.group("mant"))
+    if m.group("exp") is not None:
+        displayed *= 10.0 ** int(m.group("exp"))
+    if is_degrees:
+        import math as _math
+        v = _math.degrees(v)
+    if v == 0:
+        pct = abs(displayed) * 100.0
+    else:
+        pct = abs((displayed - v) / v) * 100.0
+    if pct > 5.0:
+        return {
+            "kind": "display_vs_computed",
+            "displayed_value": displayed,
+            "computed_value": v,
+            "delta_pct": round(pct, 2),
+            "notes": f"LaTeX result states {displayed} but computed value is {v}.",
+        }
     return None
 
 

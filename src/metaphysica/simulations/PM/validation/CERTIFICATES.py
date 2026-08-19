@@ -1097,10 +1097,9 @@ class PrincipiaValidator:
 
         # Dimensional constants from the M^{26}(24,2) architecture
         dims_per_pair = 2       # Each bridge pair is (2,0) Euclidean
-        d_time = 1              # Unified T^1 fiber
-        d_sampler = 2           # two shadow-time directions
+        d_time = 2              # Two shadow times, one per 13D shadow
         d_physics_core = 24     # G2 physics core
-        d_bulk = 27             # Total M^{26}
+        d_bulk = 26             # Total M^{26}(24,2)
 
         # Check 1: Pair count
         count_ok = (pairs == 12)
@@ -1108,11 +1107,11 @@ class PrincipiaValidator:
         derivation_ok = (pairs == b3 // 2)
         # Check 3: Dimensional consistency (pairs × 2 = 24D physics core)
         dim_ok = (pairs * dims_per_pair == d_physics_core)
-        # Check 4: Total bulk dimension (24 + 1 + 2 = 27)
-        bulk_ok = (pairs * dims_per_pair + d_time + d_sampler == d_bulk)
-        # Check 5: Signature consistency (26 spacelike, 1 timelike)
-        d_spacelike = pairs * dims_per_pair + d_sampler  # 24 + 2 = 26
-        sig_ok = (d_spacelike + d_time == d_bulk) and (d_spacelike == 26)
+        # Check 4: Total bulk dimension (24 + 2 = 26, two-time ruling)
+        bulk_ok = (pairs * dims_per_pair + d_time == d_bulk)
+        # Check 5: Signature consistency (24 spacelike, 2 timelike)
+        d_spacelike = pairs * dims_per_pair  # = 24
+        sig_ok = (d_spacelike + d_time == d_bulk) and (d_spacelike == 24)
 
         all_ok = count_ok and derivation_ok and dim_ok and bulk_ok and sig_ok
 
@@ -1132,13 +1131,13 @@ class PrincipiaValidator:
         checks_str = (f"count={count_ok}, "
                       f"b3/2={b3}//2={b3 // 2}=={pairs}:{derivation_ok}, "
                       f"{pairs}×2={pairs*dims_per_pair}=={d_physics_core}:{dim_ok}, "
-                      f"{pairs*dims_per_pair}+{d_time}+{d_sampler}=={d_bulk}:{bulk_ok}, "
+                      f"{pairs*dims_per_pair}+{d_time}=={d_bulk}:{bulk_ok}, "
                       f"sig({d_spacelike},{d_time}):{sig_ok}")
 
         self.results['C_PAIRS'] = {
             "status": status,
             "metric": f"pairs={pairs}, dim={pairs*dims_per_pair}, sig=({d_spacelike},{d_time}), checks=[{checks_str}]",
-            "expected": "12=b3/2 pairs, 12×2=24D core, 24+1+2=26D bulk, sig(26,1)",
+            "expected": "12=b3/2 pairs, 12×2=24D core, 24+2=26D bulk, sig(24,2)",
             "sector": "BRIDGE",
             "bridge_architecture": "12-PAIR-BRIDGE",
             "classification": "GEOMETRIC",
@@ -1215,7 +1214,7 @@ class PrincipiaValidator:
 
         # ── Full validation with sampler_entropy_dynamics module ──
         dynamics = SamplerEntropyDynamics()
-        alpha_T = 2.7  # DERIVED: D_total/D_string = 27/10
+        alpha_T = 2.6  # DERIVED: D_total/D_string = 26/10 (two-time)
 
         # Sub-test 1: Second Law (integrated over compact S^{2,0})
         # Diffusion term integrates to zero by divergence theorem,

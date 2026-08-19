@@ -594,7 +594,7 @@ class RicciFlowH0V16(SimulationBase):
                         },
                         {
                             "description": "Implied transition redshift where flow dynamics change",
-                            "formula": r"z_* = 1/\tau \approx 1.95"
+                            "formula": r"z_* = 1/\mathrm{flow\ rate} = \tau \approx 0.51"
                         }
                     ],
                     "references": ["PM Section 3.1 - Geometric Anchors"],
@@ -654,7 +654,7 @@ class RicciFlowH0V16(SimulationBase):
                 terms={
                     "H(z)": "Redshift-dependent Hubble parameter",
                     "f(z)": "Ricci flow interpolation function",
-                    "z_*": "Transition redshift (~1.95)"
+                    "z_*": "Transition redshift (~0.51 = tau = k_gimel/b3)"
                 }
             ),
             Formula(
@@ -690,7 +690,7 @@ class RicciFlowH0V16(SimulationBase):
                         },
                         {
                             "description": "No tension - just evolution",
-                            "formula": r"\Delta H_0 / H_0 = 8.4\% \text{ (predicted)}"
+                            "formula": r"\Delta H_0 / H_0 = 13.3\% \text{ (model value; 8.4\% was the 73.04-anchor figure)}"
                         }
                     ],
                     "references": [
@@ -721,7 +721,7 @@ class RicciFlowH0V16(SimulationBase):
             else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
         )
         H0_early = self.H0_early if self.H0_early else 67.4
-        z_trans = self.z_transition if self.z_transition else 1.95
+        z_trans = self.z_transition if self.z_transition else 0.513
 
         return [
             Parameter(
@@ -793,7 +793,7 @@ class RicciFlowH0V16(SimulationBase):
                 ),
                 derivation_formula="hubble-tension-resolution",
                 no_experimental_value=True,
-                eml_description="EML: ops.inv(ops.div(eml_vec('geometry.k_gimel'), eml_scalar(24.0))) — z_* = 1/tau = b3/k_gimel ~ 1.95, transition redshift from Ricci flow timescale"
+                eml_description="EML: ops.div(eml_vec('geometry.k_gimel'), eml_scalar(24.0)) — z_* = tau = k_gimel/b3 ~ 0.51, transition redshift from Ricci flow timescale"
             ),
             Parameter(
                 path="cosmology.H0_tension_sigma",
@@ -936,7 +936,7 @@ class RicciFlowH0V16(SimulationBase):
             else 67.4 * (1 + 0.5 * np.sin(np.radians(31.0)) ** 2)
         )
         H0_early = self.H0_early if self.H0_early is not None else 67.4
-        z_trans = self.z_transition if self.z_transition is not None else 1.95
+        z_trans = self.z_transition if self.z_transition is not None else 0.513
 
         checks = []
 
@@ -1070,7 +1070,7 @@ class RicciFlowH0V16(SimulationBase):
                 "authors": "Riess, A.G. et al.",
                 "title": "A Comprehensive Measurement of the Local Value of the Hubble Constant",
                 "journal": "ApJ",
-                "year": 2025,
+                "year": 2022,
                 "url": "https://arxiv.org/abs/2112.04510",
                 "notes": "H0 = 73.04 +/- 1.04 km/s/Mpc"
             },
@@ -1114,7 +1114,7 @@ class RicciFlowH0V16(SimulationBase):
                 "The G2 manifold evolves under Hamilton's Ricci flow dg/dt = -2 Ric(g). "
                 "This produces a time-dependent effective curvature R(t) that modifies "
                 "the Friedmann equation. The characteristic timescale tau = k_gimel/b3 "
-                "= 0.513 gives a transition redshift z_* = 1/tau = 1.95. The Hubble "
+                "= 0.513 gives a transition redshift z_* = tau = 0.51 (the code computes z_* = 1/flow_rate with flow_rate = 1/tau). The Hubble "
                 "parameter interpolates: H(z) = H0_local * f(z) + H0_early * (1-f(z)) "
                 "where f(z) = 1/(1 + (z/z_*)^2). This smoothly connects H0=73.04 at z=0 "
                 "to H0=67.4 at z >> z_*."

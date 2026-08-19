@@ -326,3 +326,30 @@ Class constants `M_HIGGS_EXPERIMENTAL` and `M_HIGGS_UNCERTAINTY` now read throug
 - Higgs docstring prose in `higgs_brane_partition.py` still references 125.1 / 125.25 / 125.42 in ~16 explanatory lines; runtime values are now loader-driven, so this is prose-drift not correctness-drift — will be picked up by S-1 prose-audit machinery.
 
 Test suite: 885 passed / 32 pre-existing failures (all eml-math ImportErrors) / 462 skipped. The one test that broke on the first sweep (`test_value_context_audit` — the two new appendix_d_tables fallback literals) was fixed by adding source-attribution comments to the loader-fallback literals.
+
+## 2026-08-19 — Four-domain agent review cycle (math / particle / cosmology / geometry)
+
+All findings recomputation-verified before filing. FIXED = corrected this cycle; DEFERRED = registered for the next cycle.
+
+### FIXED
+- lagrangian_master two-time gap: signature_26d (24,1)->(24,2); D_time 1->2 (total 25->26); SO(24,1) labels -> SO(24,2) (dim 325 was already the SO(24,2) number); Dirac/Weyl spinor labels (Dirac Cl(24,2) = 8192, Weyl = 4096); bulk-action-27d formula -> 26D with (12,1)+(12,1) decomposition; D_shadow=11 scaffold marked SUPERSEDED; derivation steps recast.
+- gauge_unification: boundary condition used alpha_em(0)=1/137.036 at M_Z; corrected to alpha_em(M_Z)=1/127.951 (7% error in alpha_1, alpha_2 propagating into M_GUT).
+- ckm_matrix: PDG_J 3.12e-5 -> 3.08e-5 (runtime/prose now agree at 1.3 sigma); technicalDetail block fabricated values (A~3.6, rho~0.22, eta~0.125, "within 3%") corrected to code values (A=0.81, rho=0.14, eta=0.36 FITTED, 5.4%).
+- neutrino_algebraic: theta13 1-sigma band 0.25deg -> 0.11deg (NuFIT 6.0) — asin(1/6) candidate now honestly ~9 sigma; delta_CP anchor -107deg (T2K-only) -> -163deg (NuFIT 6.0 NO).
+- DESI w0 anchor honesty: "-0.957 +/- 0.05 DR2 combined" attribution unverifiable; config/dark_energy now label it framework-adopted thawing anchor and report 3.6 sigma vs the real DR2 w0waCDM headline (-0.752 +/- 0.057, arXiv:2503.14738). f_r_t_tau fabricated "+/-0.02 BAO-only" anchor replaced with the DR2 headline.
+- axion_dm: theta_i relabelled CALIBRATED (back-solved; theta_i=1 gives 4.3x observed); 3-face example numbers corrected (m_a 6.3->9.0 ueV; Omega 0.12 requires calibration).
+- ricci_flow_h0: z* formula/EML said 1/tau = 1.95 while code computes tau = 0.51 — formulas, fallbacks, EML tree reconciled to code; Delta-H0 8.4% -> 13.3% (model value); SH0ES reference year 2025 -> 2022.
+- D_heterotic pseudo-derivation (26+10)/2 = 13 (actually 18) — latex recast to the R+H+O decomposition with the 18 != 13 admission inline.
+- hubble_tension unit slips: 10^18 eV -> GeV; radii 10^47 l_P (10^12 m) -> 10^56 l_P (10^21 m).
+- Comment math: ln(288!) 1372.36 -> 1346.68; gate_60 0.599 -> 0.601; M_GUT comment 7.6e15 -> 7.6e16; 2^6.5 -> 2^((13-1)/2) = 2^6 exact; alpha_T_phenomenological 2.7 -> 2.6; thermal_time (24,1) docstring; higgs_mass 125.10 relabelled input-vintage; master_action alpha_s "~1.1 sigma".
+- Earlier same-cycle: C_PAIRS certificate 27D->26D accounting; terminal C06 27->26; abstract/foundations D_bulk=27 emissions -> 26; website foundations/beginners-guide/faq/philosophical two-time sweep (78 swaps); mismatch scanner rewritten (result-literal extraction; 30 false positives -> 12 real, then placeholder values populated for 9 scalar formulas); four_dice seeded (EML 85/85); duplicate sections resolved.
+
+### DEFERRED (next cycle)
+- wa triple inconsistency: dark_energy -1/sqrt(24) = -0.204 (canonical, 3.0 sigma) vs generate_72gates_json -4/sqrt(b3) = -0.816 (FITTED) vs G60/dark_energy_alignment "wa = 0" — pick one canonical wa, FALSIFY the others (G60_desi_static_anchor.json note self-contradicts).
+- s8_suppression sigma8 anchor "DESI 2024: 0.827 +/- 0.011" unverifiable (Planck 2018: 0.811 +/- 0.006; moduli_dm_coupling already uses 0.811); baseline S8 and all lensing sigmas shift if re-anchored. Lead value should be canonical growth-ODE 0.8004, not analytic 0.789.
+- neutrino_mixing: m_base = 0.049 misses its own atmospheric-splitting target (sqrt(2.498e-3) = 0.04998, dm2_32 3.35 sigma); NUFIT_VALUES block is NuFIT 5.2 data labelled 6.0; theta23-IO double anchor (49.0 +/- 1.5 vs 49.3 +/- 1.0).
+- yukawa_derivation: two theta13 anchors in one file (8.58/8.54; NuFIT 6.0 is 8.57 +/- 0.11 -> 0.90 sigma); delta_CP scored against IO value while theta13 scored NO; b=0.05 curvature coefficient is tuned (contradicts "no fitted parameter").
+- Cross-module delta_CP: three "derived" values (278.4 IO / 270 NO / 277.3) each scored against a different anchor; needs a canonical-output cross-reference note.
+- octonionic_mixing anchor-shopping (V_cb 0.09 sigma vs favorable anchor, 1.12 sigma vs own runtime constants); electroweak_mixing g2 "(PDG 2024)" computed from geometric VEV; ckm section text K=4 -> pi/6 inconsistency (flagged in 3 places, unflagged in 2).
+- ricci_flow_h0 "RESOLVED"/success prose vs its own 3.2-sigma FAIL cert; H0_early PREDICTED-but-anchored circularity; Planck 67.4 +/- 0.5 vs 67.36 +/- 0.54 rounding; desi.Omega_m = 0.3111 attribution ("DESI2025" — value is Planck18+BAO).
+- higgs cert anchors still testing |x - 125.25|/0.17 in two files; axion anthropic-window text excludes its own f_a; thermal alpha_T "DERIVED (zero free parameters)" is a target-first identity (relabel STRUCTURAL/POSTULATED); sampler-language residue in FormulasRegistry registry blocks and sampler_entropy_dynamics; config v21 legacy narrative blocks (V21UnifiedTimePhysics) unlabelled.

@@ -174,7 +174,7 @@ class SamplerEntropyDynamics(SimulationBase):
                 "Three contributions: bridge thermodynamics (alpha_T/12 * von Neumann), "
                 "OR collapse (Shannon entropy * Gamma_collapse), and sampler diffusion "
                 "(kappa_sampler * laplacian(S)). kappa_sampler = 2 = dim(S^{2,0}) is "
-                "topologically fixed by 27 = 24 + 1 + 2 dimensional accounting."
+                "topologically fixed by the two shadow-time directions of the (24,2) bulk (26 = 24 + 2)."
             ),
             section_id="sampler-entropy-dynamics",
             subsection_id=None,

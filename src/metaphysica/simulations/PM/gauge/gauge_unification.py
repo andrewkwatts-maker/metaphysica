@@ -84,7 +84,7 @@ _derive_mgut_from_moduli() and compared against hardcoded values. Results:
                alpha_GUT_inv_moduli = 75.7 vs standard ~25
 
 1-loop SM RG running from M_GUT_moduli to M_Z gives:
-  1/alpha_em(M_Z) = 222.9 (vs experimental 137.036, 63% off)
+  1/alpha_em(M_Z) = 222.9 (vs experimental alpha_em(M_Z)^-1 = 127.951; figure predates the M_Z-scale fix)
   sin^2(theta_W) = 0.258 (vs experimental 0.231, 12% off)
 
 Gemini 2.5 Flash Assessment (3 rounds):
@@ -125,10 +125,10 @@ Results (computed, not hardcoded):
   KK damped:      Delta_KK = [9.55, 11.46, 7.64] (with entropy enhancement)
   AS correction: Delta_AS = 0.15 * (24 - 75.7) = -7.76
   Net shift to 1/alpha_GUT: +1.80 (from 75.7 to 77.5, a 2.4% correction)
-  RG-evolved alpha_em_inv = 145.2 (improved from 222.9, now 6% off from 137)
+  RG-evolved alpha_em_inv = 145.2 (improved from 222.9; compare against 127.951 -- figures predate the M_Z-scale fix)
   sin^2(theta_W) = 0.737 (WRONG, vs 0.231 -- M_GUT still 20x too high)
   Does NOT collapse the 20x M_GUT offset (M_GUT stays at 3.96e17).
-  Does NOT produce alpha_em_inv = 137.036 (but closer than uncorrected).
+  Does NOT reproduce alpha_em_inv(M_Z) = 127.951 (but closer than uncorrected).
 
 Gemini 2.5 Flash Assessment (3 rounds, 2026-03-20):
   Round 1: Entropy damping is negligible. KK corrections are O(1) in 1/alpha.
@@ -312,7 +312,11 @@ class GaugeUnificationSimulation(SimulationBase):
         alpha_s_MZ = registry.get_param("pdg.alpha_s_MZ")
         sin2_theta_W_MZ = registry.get_param("pdg.sin2_theta_W")
         M_Z = registry.get_param("pdg.m_Z")
-        alpha_em = registry.get_param("constants.alpha_em")
+        # Boundary condition at M_Z must use the RUNNING coupling
+        # alpha_em(M_Z) = 1/127.951 (PDG 2024), NOT the Thomson-limit
+        # alpha_em(0) = 1/137.036 -- mixing the scales corrupted alpha_1,
+        # alpha_2 by ~7% (2026-08 peer-review fix).
+        alpha_em = 1.0 / 127.951  # alpha_em(M_Z), MS-bar
 
         # Compute SM gauge couplings at M_Z
         # GUT-normalized U(1)_Y: alpha_1 = (5/3) * alpha_em / cos^2(theta_W)
@@ -397,7 +401,7 @@ class GaugeUnificationSimulation(SimulationBase):
         alpha_s_MZ = registry.get_param("pdg.alpha_s_MZ")
         sin2_theta_W_MZ = registry.get_param("pdg.sin2_theta_W")
         M_Z = registry.get_param("pdg.m_Z")
-        alpha_em = registry.get_param("constants.alpha_em")
+        alpha_em = 1.0 / 127.951  # alpha_em(M_Z), MS-bar (PDG 2024) -- matches run(); Thomson 1/137 is the wrong scale here
 
         # EML: coupling normalization at M_Z
         sin2_pt = eml_scalar(float(sin2_theta_W_MZ))
@@ -1654,7 +1658,7 @@ class GaugeRGRunner:
             )
 
             sed = SamplerEntropyDynamics()
-            alpha_T = 2.700
+            alpha_T = 2.600
             rho = [np.eye(2) / 2 for _ in range(12)]
 
             # Get entropy gradient (dS/dt)

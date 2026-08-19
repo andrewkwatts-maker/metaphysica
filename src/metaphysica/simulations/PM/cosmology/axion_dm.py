@@ -256,7 +256,7 @@ class AxionDMV18(SimulationBase):
             metadata={
                 "derivation": "Misalignment mechanism with θ_i = 1",
                 "units": "dimensionless",
-                "note": "Natural initial angle gives correct DM density"
+                "note": "theta_i = 1 gives Omega h^2 ~ 0.52 (4.3x observed); theta_i ~ 0.48 is CALIBRATED to the observed abundance"
             }
         )
 
@@ -264,7 +264,7 @@ class AxionDMV18(SimulationBase):
             path="axion.theta_i",
             value=result.theta_i_required,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",  # back-solved from observed Omega_DM h^2
             metadata={
                 "derivation": "Required angle for Ω_DM = 0.12",
                 "units": "radians",
@@ -671,10 +671,11 @@ class AxionDMV18(SimulationBase):
                     "factor of 3 counts the hidden faces; the alpha_leak^2 factor "
                     "reflects that the relic density observable in the visible sector "
                     "is suppressed by the square of the leakage amplitude. For "
-                    "f_a ~ 6.3e11 GeV the predicted mass is m_a ~ 6.3 ueV and the "
-                    "total relic density is Omega_a h^2 ~ 0.12, matching the Planck "
-                    "measurement. This provides an independent geometric derivation "
-                    "of the dark matter abundance from the four-face topology."
+                    "f_a ~ 6.3e11 GeV the module mass formula gives m_a ~ 9.0 ueV; "
+                    "Omega_a h^2 ~ 0.12 requires the calibrated theta_i and does "
+                    "not follow from the 3-face factors alone (direct recomputation "
+                    "gives ~0.05) - an aspirational example, not an independent "
+                    "derivation."
                 ),
                 inputParams=["geometry.alpha_leak", "axion.f_a", "axion.m_a"],
                 outputParams=[],
@@ -716,8 +717,8 @@ class AxionDMV18(SimulationBase):
                         },
                         {
                             "description": (
-                                "For f_a ~ 6.3e11 GeV: m_a ~ 6.3 ueV, giving "
-                                "Omega ~ 0.12 matching Planck"
+                                "For f_a ~ 6.3e11 GeV: m_a ~ 9.0 ueV; "
+                                "Omega ~ 0.12 only with calibrated theta_i"
                             ),
                             "formula": (
                                 r"\Omega_a h^2 \approx 3 \times (0.57)^2"

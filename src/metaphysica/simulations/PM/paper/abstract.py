@@ -934,9 +934,9 @@ class AbstractV17_2(SimulationBase):
                 name="Bulk Spacetime Dimension",
                 no_experimental_value=True,
                 units="dimensionless",
-                description="Total ancestral bulk dimension M^{26}(24,2) = 24 physics core + 1 time + 2 sampler fields",
+                description="Total ancestral bulk dimension M^{26}(24,2) = 24 space + 2 times (one per 13D shadow)",
                 status="GEOMETRIC",
-                eml_description="EML: eml_scalar(27.0) — ancestral manifold dimension D_bulk = 24+1+2 = 27"
+                eml_description="EML: eml_scalar(26.0) — ancestral manifold dimension D_bulk = 24+2 = 26"
             ),
             Parameter(
                 path="dimensions.D_G2",

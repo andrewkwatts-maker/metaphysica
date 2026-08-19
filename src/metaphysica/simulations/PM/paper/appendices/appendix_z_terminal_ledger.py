@@ -342,7 +342,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "288": "Total ancestral roots",
                     "12": "Uniquely determined manifold tax",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(12.0), eml=_eml_scalar(12.0), value=12.0),
             # Z.2: Shell Saturation (C30-S)
             Formula(
                 id="c30s-shell-saturation",
@@ -370,7 +370,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "112": "Shell 3 root count (quarks and couplings)",
                     "125": "Total active residues (3-shell saturation)",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(125.0), eml=_eml_scalar(125.0), value=125.0),
             # Z.3: Strong CP Lock (C37-CP)
             Formula(
                 id="c37cp-strong-cp-lock",
@@ -427,7 +427,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "288": "Total ancestral roots",
                     "1.0": "Flat universe (Omega = 1 exactly)",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(1.0), eml=_eml_scalar(1.0), value=1.0),
             # Z.5: Gravitational Anchor (C42-G)
             Formula(
                 id="c42g-gravitational-anchor",
@@ -511,7 +511,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "24": "Torsion pins",
                     "144": "Hierarchy ratio = chi_eff (Euler characteristic)",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(144.0), eml=_eml_scalar(144.0), value=144.0),
             # Z.8: Speed of Light (geometric)
             Formula(
                 id="speed-of-light-geometric",
@@ -539,7 +539,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "24": "Torsion pins",
                     "12": "Geometric speed of light",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(12.0), eml=_eml_scalar(12.0), value=12.0),
             # Z.9: Cabibbo Angle
             Formula(
                 id="cabibbo-angle-geometric",
@@ -630,7 +630,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     r"\kappa": "Unwinding scale factor (10.1, tied to 24-pin torsion cycle)",
                     "73.1": "Predicted H0 value in km/s/Mpc",
                 },
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(73.1), eml=_eml_scalar(73.1), value=73.1),
         ]
 
     def run(self, registry) -> Dict[str, Any]:

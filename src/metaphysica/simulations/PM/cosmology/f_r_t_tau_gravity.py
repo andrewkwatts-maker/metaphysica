@@ -139,10 +139,12 @@ class FRTTauGravityV18(SimulationBase):
         self.M_Planck = 1.22e19         # GeV (reduced Planck mass)
         self.L_Planck = 1.616255e-35    # m
 
-        # Experimental reference for w_0
-        # DESI 2025: w0 = -0.958 +/- 0.02 (thawing quintessence)
-        self.w_0_experimental = -0.958  # DESI 2025
-        self.w_0_uncertainty = 0.02     # 1-sigma
+        # Experimental reference for w_0.
+        # NOTE: no DESI analysis constrains w0 to +/-0.02; the earlier
+        # anchor (-0.958 +/- 0.02) was unverifiable. Use the DESI DR2
+        # w0waCDM headline (arXiv:2503.14738).
+        self.w_0_experimental = -0.752  # DESI DR2 w0waCDM (BAO+CMB+DESY5)
+        self.w_0_uncertainty = 0.057    # 1-sigma
 
     @property
     def metadata(self) -> SimulationMetadata:

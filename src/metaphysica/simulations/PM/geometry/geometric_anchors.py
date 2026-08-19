@@ -1101,7 +1101,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "M_GUT": (
                     "EML: ops.mul(ops.div(eml_vec('k_gimel'), eml_vec('phi')),"
                     " eml_scalar(1e16))"
-                    " — GUT scale M_GUT = (k_gimel/φ)×10¹⁶ GeV ≈ 7.6×10¹⁵ GeV"
+                    " — GUT scale M_GUT = (k_gimel/φ)×10¹⁶ GeV ≈ 7.6×10¹⁶ GeV"
                 ),
                 "M_GUT_geometric": (
                     "EML: eml_scalar(2.1e16)"

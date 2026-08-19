@@ -688,10 +688,10 @@ class HiggsMassSimulation(SimulationBase):
                         "units": "dimensionless",
                     },
                 },
-                # Higgs mass prediction matches PDG 2024 measurement (125.20 +/- 0.11 GeV)
-                arithma=_arithma_num(125.10),  # PDG 2024
-                eml=_eml_scalar(125.10),  # PDG 2024
-                value=125.10,  # PDG 2024
+                # Input value 125.10 (2022 ATLAS+CMS vintage); PDG 2024: 125.20 +/- 0.11 GeV
+                arithma=_arithma_num(125.10),  # Source: PDG 2022-vintage ATLAS+CMS input (PDG 2024: 125.20 +/- 0.11)
+                eml=_eml_scalar(125.10),  # Source: PDG 2022-vintage input
+                value=125.10,  # Source: PDG 2022-vintage input (0.9 sigma below PDG 2024)
             ),
             Formula(
                 id="higgs-quartic-coupling",

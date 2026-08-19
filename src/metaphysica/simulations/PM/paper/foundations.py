@@ -691,17 +691,17 @@ class FoundationsV16_2(SimulationBase):
                 id="26d-signature",
                 label="(1.1)",
                 latex=r"\text{Signature}(M^{24,1}) = (24, 1) \quad ds^2 = -dt^2 + \sum_{i=1}^{12}(dy_{1i}^2 + dy_{2i}^2)",
-                plain_text="Signature(M^{24,1}) = (24, 1); ds^2 = -dt^2 + sum_i(dy_{1i}^2 + dy_{2i}^2)",
+                plain_text="Signature(M^{24,2}) = (24, 2); ds^2 = -dt_1^2 - dt_2^2 + sum_i(dy_{1i}^2 + dy_{2i}^2)",
                 category="DERIVED",
-                description="26D ancestral bulk signature with unified time. 24 spacelike from 12x2 pairs, 1 timelike.",
+                description="26D ancestral bulk signature (24,2). 24 spacelike from 12x2 pairs, 2 timelike (one per shadow).",
                 input_params=["dimensions.D_bulk", "topology.elder_kads"],
                 output_params=[],
                 derivation={
                     "method": "algebraic_construction",
                     "steps": [
-                        "Start from 26D total (26 spatial + 1 temporal)",
+                        "Start from 26D total (24 spatial + 2 temporal)",
                         "Decompose 24 spacelike dimensions into 12 Euclidean (2,0) bridge pairs",
-                        "Assign unified time (0,1) to ensure ghost-free propagation"
+                        "Assign one timelike direction per 13D shadow; the Sp(2,R) gauge constraint (STRUCTURAL) removes ghosts"
                     ],
                     "parentFormulas": []
                 },

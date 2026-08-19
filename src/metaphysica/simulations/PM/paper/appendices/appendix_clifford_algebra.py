@@ -133,7 +133,7 @@ class CliffordAlgebraAppendix(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Dimension n of the Clifford algebra Cl(p,q) = p + q used in the PM framework. "
-                    "The 26D Pneuma condensate uses Cl(24,2) with n = 27 = 24 + 1 + 2."
+                    "The 26D Pneuma condensate uses Cl(24,2) with n = 26 = 24 + 2."
                 ),
                 derivation_formula="clifford-appendix-quadratic",
                 no_experimental_value=True,

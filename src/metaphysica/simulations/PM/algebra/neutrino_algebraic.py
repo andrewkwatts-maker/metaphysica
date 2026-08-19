@@ -76,8 +76,8 @@ _DELTA_CP_DEG = math.degrees(_DELTA_CP_RAD)                      # = -90°
 
 # NuFIT 6.0 reference values (Normal Ordering)
 _THETA13_NUFIT = 8.57        # degrees, NO best fit
-_THETA13_1SIGMA = 0.25       # degrees, approximate 1σ
-_DELTA_CP_NUFIT = -107.0     # degrees, NO best fit
+_THETA13_1SIGMA = 0.11       # degrees, NuFIT 6.0 1σ (earlier 0.25 band understated the miss)
+_DELTA_CP_NUFIT = 197.0 - 360.0  # degrees: NuFIT 6.0 NO best fit ~197 deg mapped to (-180, 180]; the earlier -107 was the T2K-only fit
 _DELTA_CP_1SIGMA = 40.0      # degrees, approximate 1σ (range ≈ -180° to 0°)
 
 

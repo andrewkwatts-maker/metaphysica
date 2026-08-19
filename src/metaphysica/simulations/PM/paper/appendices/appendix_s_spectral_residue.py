@@ -955,7 +955,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "chi_eff": "Effective Euler characteristic (= 144)",
                     "N_gen": "Number of fermion generations (= 3)",
                 }, 
-            arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
+            arithma=_arithma_num(144.0), eml=_eml_scalar(144.0), value=144.0),
 
             # (S.7) Trace formula
             Formula(

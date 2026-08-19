@@ -27,8 +27,8 @@ Evidence:
 
 3. BRIDGE RADII CANNOT BE LARGE ENOUGH: The stabilize_moduli() method
    bounds L1, L2 to (0.1, 10.0) Planck lengths. Even at the upper bound,
-   KK masses remain ~10^{18} eV. Reaching 10^{-28} eV would require
-   compactification radii of ~10^{47} Planck lengths (~10^{12} meters),
+   KK masses remain ~10^{18} GeV. Reaching 10^{-28} eV would require
+   compactification radii of ~10^{56} Planck lengths (~10^{21} meters),
    ruled out by collider data, precision gravity tests, BBN, and CMB.
 
 4. INCONSISTENT MECHANISMS: The codebase contains three mutually

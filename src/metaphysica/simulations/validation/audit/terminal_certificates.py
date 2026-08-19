@@ -239,17 +239,16 @@ class TerminalCertificates:
 
     def c06_bulk_dimension(self) -> Certificate:
         """C06: Bulk Dimensionality."""
-        # 26D = 26 + 1 (26 spatial + 1 unified time)
-        # 26 spatial = 24 G2 core + 2 Euclidean bridge
-        bulk_dim = 27
-        is_correct = bulk_dim == 26 + 1
+        # Two-time ruling: 26D = 24 spatial + 2 timelike (one per shadow)
+        bulk_dim = 26
+        is_correct = bulk_dim == 24 + 2
 
         return Certificate(
             id="C06",
             name="Bulk Dimension",
             vault="I",
-            constraint="D_bulk = 27",
-            formula="26 (24 G2 core + 2 bridge) + 1 (unified time) = 27",
+            constraint="D_bulk = 26",
+            formula="24 (G2 core) + 2 (shadow times) = 26",
             status=GateStatus.HARD_LOCKED if is_correct else GateStatus.FAILED,
             derived_value=bulk_dim,
             expected_value=27,

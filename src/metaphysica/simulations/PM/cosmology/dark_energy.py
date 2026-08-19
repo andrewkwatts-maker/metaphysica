@@ -497,7 +497,8 @@ class DarkEnergyV16(SimulationBase):
         - 12 channels provide redundancy for robust experience
         - Aggregation smooths quantum fluctuations
 
-        DESI 2025 thawing constraint: w0 = -0.957 ± 0.067
+        Framework-adopted thawing anchor: w0 = -0.957 ± 0.067 (attribution
+        unverified; DESI DR1 w0waCDM headline: -0.827 ± 0.063)
         Our prediction: w0 = -0.9583 (within DESI BAO-only uncertainty)
         Target with aggregation: w ≈ -0.958 ± 0.003
 
@@ -727,7 +728,7 @@ class DarkEnergyV16(SimulationBase):
                         "The PM prediction w₀ = -23/24 = -0.9583 is compared against the "
                         "thawing-quintessence anchor (framework's adopted anchor; DESI DR1 "
                         "w0waCDM BAO+CMB+SN headline is w₀ = -0.827 +/- 0.063, against "
-                        "which -23/24 is 2.1 sigma): w₀ = -0.957 \u00b1 0.067. The PM value "
+                        "which -23/24 is 2.1 sigma; DR2 w0waCDM headline -0.752 +/- 0.057 puts it at 3.6 sigma): w₀ = -0.957 \u00b1 0.067. The PM value "
                         "falls within the adopted anchor's uncertainty range."
                     )
                 ),
@@ -881,7 +882,7 @@ class DarkEnergyV16(SimulationBase):
                         },
                         {
                             "description": "Heterotic string asymmetric construction: left-movers in 26D (bosonic), right-movers in 10D (superstring), but (26+10)/2 = 18 — this average does NOT give 13; D = 13 comes from 1+4+8 = dim(R)+dim(H)+dim(O)",
-                            "formula": r"D_{heterotic} = \frac{26 + 10}{2} = 13 \text{ (effectively)}"
+                            "formula": r"D_{shadow} = 1 + 4 + 8 = 13\ (\mathbb{R}+\mathbb{H}+\mathbb{O});\quad \tfrac{26+10}{2} = 18 \neq 13"
                         },
                         {
                             "description": "G2 holonomy compactification on 7D internal manifold (with b3=24 associative 3-cycles) reduces 13D to 4D observable spacetime",

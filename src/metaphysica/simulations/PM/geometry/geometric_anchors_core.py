@@ -352,7 +352,7 @@ class GeometricAnchors:
     @property
     def spinor_13d(self) -> int:
         """
-        Spinor dimension in 13D shadow spacetime: 2^(D_shadow_total/2) ≈ 2^6.5 → 64.
+        Spinor dimension in 13D shadow spacetime: 2^(D_shadow_total/2) = 2^((13-1)/2) = 2^6 → 64.
 
         After Sp(2,R) gauge fixing (26D → 13D), the shadow spinor is:
         Cl(D_shadow_space, D_shadow_time) = Cl(12,1)
@@ -524,7 +524,7 @@ class GeometricAnchors:
 
         Physical: The GUT scale is set by the Gimel-to-golden ratio.
         """
-        return (self.k_gimel / self.phi) * 1e16  # ≈ 7.6×10¹⁵ GeV
+        return (self.k_gimel / self.phi) * 1e16  # ≈ 7.6×10¹⁶ GeV
 
     @property
     def M_GUT_geometric(self) -> float:
@@ -584,7 +584,7 @@ class GeometricAnchors:
     @property
     def alpha_T_phenomenological(self) -> float:
         """Phenomenological thermal time parameter from observations."""
-        return 2.7  # From fit to data
+        return 2.6  # From fit to data
 
     @property
     def alpha_R_squared(self) -> float:

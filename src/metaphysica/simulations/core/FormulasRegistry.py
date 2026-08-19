@@ -1641,12 +1641,12 @@ class FormulasRegistry:
 
     @property
     def D_ancestral_space(self) -> int:
-        """Level 0 (ANCESTRAL): 26 spatial dimensions in (24,2) = 24 core + 2 sampler."""
+        """Level 0 (ANCESTRAL): 24 spatial dimensions of the (24,2) two-time bulk."""
         return self._D_ancestral_space
 
     @property
     def D_ancestral_time(self) -> int:
-        """Level 0 (ANCESTRAL): 1 temporal dimension in (24,1) unified time."""
+        """Level 0 (ANCESTRAL): 2 temporal dimensions, one per 13D shadow (two-time ruling)."""
         return self._D_ancestral_time
 
     # Legacy aliases for Level 0
@@ -3263,7 +3263,7 @@ class FormulasRegistry:
 
         Formula: G60 = (2 × 163 × 153) / 288²
 
-        Result: ≈ 0.599 (must stay below 1.0)
+        Result: ≈ 0.601 (must stay below 1.0)
 
         Purpose: Defines "Safe Zone" around 24D center. Ensures metric
         never crosses its own Schwarzschild radius into singularity.
@@ -3468,7 +3468,7 @@ class FormulasRegistry:
         "DNA" of specific manifold configuration. Seed for SovereignHash.
         """
         # Use Stirling approximation for ln(288!) = 288*ln(288) - 288 + 0.5*ln(2*pi*288)
-        # ln(288!) ≈ 1372.36
+        # ln(288!) ≈ 1346.68
         ln_288_factorial = 288 * math.log(288) - 288 + 0.5 * math.log(2 * math.pi * 288)
         # Take 153rd root: (288! × 135)^(1/153) = exp((ln(288!) + ln(135))/153)
         return (ln_288_factorial + math.log(self._shadow_sector)) / self._christ_constant

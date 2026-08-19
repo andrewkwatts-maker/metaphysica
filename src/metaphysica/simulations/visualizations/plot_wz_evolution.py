@@ -19,7 +19,7 @@ plt.rcParams['axes.titlesize'] = 14
 plt.rcParams['legend.fontsize'] = 10
 plt.rcParams['figure.figsize'] = (14, 10)
 
-def w_PM(z, w0=-0.8528, alpha_T=2.7, z_activate=3000):
+def w_PM(z, w0=-0.8528, alpha_T=2.6, z_activate=3000):
     """
     Principia Metaphysica dark energy equation of state
 
