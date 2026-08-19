@@ -52,7 +52,7 @@ PAPER_SECTIONS: Dict[str, SectionInfo] = {
     "1": SectionInfo(
         id="1",
         title="Foundations of Dimensional Descent",
-        description="The 26D(24,2) bulk with unified time, dual shadows, shadow-time directions S^{2,0}, G2 compactification, and condensate projection.",
+        description="The 26D(24,2) bulk with two times (one per shadow), dual shadows, shadow-time directions S^{2,0}, G2 compactification, and condensate projection.",
         section_type="section",
         simulation_source="merged_descent_v21"  # v24.2 refactor: 26D(24,2) dual-shadow model
     ),

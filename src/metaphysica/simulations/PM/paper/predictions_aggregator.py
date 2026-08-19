@@ -548,16 +548,16 @@ class PredictionsAggregatorV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "The following theoretical challenges have been systematically resolved "
-                    "by introducing the 𝔻 unified time framework:"
+                    "by introducing the 𝔻 two-time framework:"
                 )
             ),
             ContentBlock(
                 type="table",
                 headers=["Issue", "Status", "Resolution"],
                 rows=[
-                    ["D Unified Time Framework", "✓ NEW", "(13,1) + (13,1) with Z₂ symmetry; visible + mirror sectors"],
+                    ["D Two-Time Framework", "✓ NEW", "(13,1) + (13,1) with Z₂ symmetry; visible + mirror sectors"],
                     ["w₀ & wₐ derivation", "✓ DERIVED", "w₀ = -1 + 1/b₃ = -23/24 ≈ -0.9583, wₐ,eff = 0.27 from G₂ torsion logs (DESI 2025 BAO-only: < 1σ)"],
-                    ["CY4 construction", "✓ RESOLVED", "χ<sub>eff</sub> = 144 from 𝔻 unified time framework (flux-dressed Euler characteristic)"],
+                    ["CY4 construction", "✓ RESOLVED", "χ<sub>eff</sub> = 144 from 𝔻 two-time framework (flux-dressed Euler characteristic)"],
                     ["Hodge numbers", "✓ RESOLVED", "h<sup>1,1</sup> = 4, h<sup>2,1</sup> = 0, h<sup>3,1</sup> = 0, h<sup>2,2</sup> = 60 (satisfies CY4 constraint)"],
                     ["G₂ holonomy error", "✓ CORRECTED", "G₂×S¹ → Spin(7), NOT SU(4); use direct CY4 or M/F-theory duality"],
                     ["V₀ circularity", "✓ RESOLVED", "Non-circular derivation via species scale + distance conjecture"],
@@ -567,7 +567,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     ["Proton decay channels", "✓ VALIDATED via CKM", "BR(e⁺π⁰) = 64.2% ± 9.4%, BR(K⁺ν̄) = 35.6% ± 9.4%; τ<sub>p</sub> = 8.15 × 10³⁴ yr (4.9× Super-K)"],
                     ["PMNS mixing angles", "✓ CONFIRMED", "θ₂₃ = 45.75°, θ₁₂ = 33.34°, θ₁₃ = 8.63°, δ<sub>CP</sub> = 278.4° (0.00–0.24σ vs NuFIT 6.0)"],
                     ["KK graviton tower", "✓ COMPLETE", "Full tower: m₁ = 5.0 TeV, m₂ = 7.1±2.1 TeV, with T² degeneracies; σ(m₁) = 0.10±0.03 fb"],
-                    ["n<sub>gen</sub> = 3", "✓ DERIVED", "n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3 (𝔻 unified time framework with flux quantization)"],
+                    ["n<sub>gen</sub> = 3", "✓ DERIVED", "n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3 (𝔻 two-time framework with flux quantization)"],
                     ["α<sub>T</sub> derivation", "✓ DERIVED", "Z₂-corrected Γ/H scaling (α<sub>T</sub> ≈ 2.7)"],
                     ["Neutrino hierarchy", "✓ PREDICTION", "Normal hierarchy (76% confidence from hybrid suppression); falsifiable by JUNO/DUNE (2027-2030)"],
                     ["Mirror sector", "⚠ QUALITATIVE", "Dark matter candidate; ΔN<sub>eff</sub> predictions pending Z₂ scale"],
@@ -625,8 +625,8 @@ class PredictionsAggregatorV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "The number of fermion generations arises from the flux-dressed Euler characteristic "
-                    "of the 𝔻 unified time framework, accounting for flux quantization constraints: "
-                    "n<sub>gen</sub> = χ<sub>eff</sub> / 48 = 144 / 48 = 3. Note: The 𝔻 unified time framework uses "
+                    "of the 𝔻 two-time framework, accounting for flux quantization constraints: "
+                    "n<sub>gen</sub> = χ<sub>eff</sub> / 48 = 144 / 48 = 3. Note: The 𝔻 two-time framework uses "
                     "χ<sub>eff</sub> = 144 (flux-dressed) with the formula n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3. "
                     "This supersedes earlier formulations (χ/24 = 72/24 = 3 from F-theory), which also "
                     "yielded 3 generations but used different topological structures."
@@ -715,7 +715,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "A smoking-gun prediction of SO(10) grand unification is proton decay, mediated by "
-                    "superheavy gauge bosons (X, Y) with masses at the GUT scale. In the unified time framework, "
+                    "superheavy gauge bosons (X, Y) with masses at the GUT scale. In the two-time framework, "
                     "these predictions apply to the visible (13,1) sector. The dominant decay channel is "
                     "p → e⁺ + π⁰, with the dimension-6 operators responsible arising from X and Y boson exchange. "
                     "Decay rate: Γ(p → e⁺π⁰) ~ α<sub>GUT</sub>² m<sub>p</sub>⁵ / M<sub>X</sub>⁴, where lifetime τ<sub>p</sub> = 1/Γ = 8.15 × 10³⁴ years "
@@ -748,7 +748,7 @@ class PredictionsAggregatorV16(SimulationBase):
             # ===== DARK ENERGY =====
             ContentBlock(
                 type="heading",
-                content="6.2b Dark Energy: Unified Time Dynamics - SEMI-DERIVED",
+                content="6.2b Dark Energy: Two-Time Dynamics - SEMI-DERIVED",
                 level=2
             ),
             ContentBlock(
@@ -1000,7 +1000,7 @@ class PredictionsAggregatorV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The unified time framework predicts subtle violations of the CHSH (Clauser-Horne-Shimony-Holt) "
+                    "The two-time framework predicts subtle violations of the CHSH (Clauser-Horne-Shimony-Holt) "
                     "inequality—the canonical test of quantum nonlocality—through retrocausal effects mediated "
                     "by t_ortho. While standard quantum mechanics predicts CHSH = 2√2 ≈ 2.828, the orthogonal "
                     "time allows for advanced-wave correlations that slightly exceed this Tsirelson bound. "
@@ -1040,7 +1040,7 @@ class PredictionsAggregatorV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The unified time framework with vacuum decay dynamics predicts observable signatures in the CMB "
+                    "The two-time framework with vacuum decay dynamics predicts observable signatures in the CMB "
                     "from bubble nucleation events during the early universe. Vacuum decay bubbles from tunneling "
                     "between (13,1) sectors create characteristic cold spots: ΔT/T ~ −(r<sub>b</sub> H)<sup>1/2</sup>."
                 )
@@ -1074,7 +1074,7 @@ class PredictionsAggregatorV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The unified time framework provides a concrete mechanism for vacuum tunneling via Coleman-De Luccia "
+                    "The two-time framework provides a concrete mechanism for vacuum tunneling via Coleman-De Luccia "
                     "(CDL) instantons, with predictions testable through CMB anomaly searches. The bubble nucleation "
                     "rate per unit four-volume: Γ ~ exp(−27π²σ⁴ / (2ΔV³)), where σ is the surface tension of the domain wall "
                     "and ΔV is the vacuum energy difference."
@@ -1118,7 +1118,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 headers=["Parameter", "Value", "Status", "Explanation"],
                 rows=[
                     ["w₀", "−23/24 ≈ -0.9583", "SEMI-DERIVED", "From Maximum Entropy Principle: w₀ = −1 + 1/b₃ = -23/24 for b₃ = 24"],
-                    ["w<sub>a</sub>", "≈ −0.75", "DERIVED", "From unified time dynamics; exact DESI 2024 match"],
+                    ["w<sub>a</sub>", "≈ −0.75", "DERIVED", "From two-time structure dynamics; exact DESI 2024 match"],
                     ["Σm<sub>ν</sub>", "0.060 eV", "NOT UNIQUE", "From oscillation data + m₁ → 0; standard result"],
                     ["n<sub>gen</sub> = 3", "χ<sub>eff</sub>/48 = 144/48", "DERIVED", "Genuine prediction from 𝔻 framework formula"],
                     ["Normal Hierarchy", "m₁ < m₂ < m₃", "PREDICTION", "Only genuinely unique falsifiable prediction"],
@@ -1129,9 +1129,9 @@ class PredictionsAggregatorV16(SimulationBase):
                 type="list",
                 items=[
                     "<strong>v24.2 CKM Breakthrough:</strong> Cabibbo angle racetrack variant ε = 0.2257 (canonical e^{-3/2} = 0.22313) is <em>derived</em> from racetrack superpotential minimization (not an input parameter). CP phase δ<sub>CP</sub> = π/2 (maximal) emerges from cycle orientations. Jarlskog invariant J = 3.06 × 10⁻⁵ computed geometrically from CKM structure.",
-                    "<strong>DESI Compatibility:</strong> Both w₀ = −23/24 (from MEP) and w<sub>a</sub> = −0.75 (from unified time dynamics) are now derived. The w<sub>a</sub> value is consistent with DESI 2025 (thawing) observations.",
+                    "<strong>DESI Compatibility:</strong> Both w₀ = −23/24 (from MEP) and w<sub>a</sub> = −0.75 (from two-time structure dynamics) are now derived. The w<sub>a</sub> value is consistent with DESI 2025 (thawing) observations.",
                     "<strong>Neutrino Mass Sum is NOT Unique:</strong> Any model predicting NH + minimal m₁ gives Σm<sub>ν</sub> ≈ 0.06 eV. This value has no discriminatory power.",
-                    "<strong>Mirror Sector Predictions:</strong> The unified time framework introduces qualitative predictions for the mirror sector, testable via precision cosmology (Euclid, Roman).",
+                    "<strong>Mirror Sector Predictions:</strong> The two-time framework introduces qualitative predictions for the mirror sector, testable via precision cosmology (Euclid, Roman).",
                     "<strong>Primary Falsifiable Prediction:</strong> The normal neutrino mass hierarchy remains the cleanest test. If IH is confirmed at >3σ, the theory is falsified.",
                 ]
             ),
@@ -1139,13 +1139,13 @@ class PredictionsAggregatorV16(SimulationBase):
             # ===== PARAMETER CLASSIFICATION =====
             ContentBlock(
                 type="heading",
-                content="Parameter Classification (Unified Time Framework)",
+                content="Parameter Classification (Two-Time Framework)",
                 level=2
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The unified time framework significantly improves the derivation status of key parameters. "
+                    "The two-time framework significantly improves the derivation status of key parameters. "
                     "We clearly distinguish between derived, semi-derived, and fitted parameters."
                 )
             ),
@@ -1177,7 +1177,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "that will be tested by experiments over the next decade. This timeline establishes clear "
                     "falsification criteria and expected discovery signatures. To establish scientific credibility, "
                     "we explicitly pre-register predictions before DESI DR2, Euclid DR1, and JUNO results are published. "
-                    "These predictions are now strengthened by the unified time framework derivations."
+                    "These predictions are now strengthened by the two-time framework derivations."
                 )
             ),
             ContentBlock(

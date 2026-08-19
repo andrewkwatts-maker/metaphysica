@@ -156,7 +156,7 @@ class AppendixCGaugeMatrices(SimulationBase):
                     "Where P<sub>13→4</sub> is a rank-ordered tensor that maps the internal "
                     "degrees of freedom of the V₁₃ bulk onto the 4D Minkowski space. In the "
                     "v24.2 model, this matrix is a rank-4 <strong>co-isometry</strong> (PP† = I₄; 9 of 13 directions are discarded), and "
-                    "the 'Energy Budget' of the 25D ancestral state is perfectly accounted for "
+                    "the 'Energy Budget' of the 26D ancestral state is perfectly accounted for "
                     "in the 125 residues."
                 )
             ),

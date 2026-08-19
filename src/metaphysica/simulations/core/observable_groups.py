@@ -76,7 +76,7 @@ OBSERVABLE_GROUPS: Dict[str, List[str]] = {
         # Intentionally omitted from the cross-check:
         #   cosmology.H0_local
         #       ricci_flow_h0.py's late-time H(z=0) = H0_planck * (1 + sin^2(31°)/2)
-        #       ≈ 76.34 km/s/Mpc. The 31° "13D/25D volume mixing angle" is
+        #       ≈ 76.34 km/s/Mpc. The 31° "13D/26D volume mixing angle" is
         #       documented in hubble_tension.py (lines 39-43) as a fitted
         #       phenomenological parameter, not a derivation from G2 topology.
         #       Treated as a documented_alternative path (an attempted but

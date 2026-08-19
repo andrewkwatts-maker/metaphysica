@@ -317,11 +317,11 @@ class AbstractV17_2(SimulationBase):
                     'constants and cosmological observables from the topological invariants of a '
                     '<span class="pm-value" data-pm-value="dimensions.D_bulk">26</span>-dimensional manifold '
                     '<strong>M<sup>26</sup>(24,2)</strong>\u2014where <em>24</em> denotes the G\u2082 physics core '
-                    '(12\u00d7(2,0) bridge pairs creating dual 13D shadows), <em>1</em> the unified timelike fiber T\u00b9, '
+                    '(12\u00d7(2,0) bridge pairs creating dual 13D shadows), <em>1</em> the shared clock t+ = (t1+t2)/sqrt(2)like fiber T\u00b9, '
                     'and <em>2</em> the <strong>shadow-time directions</strong> S<sup>(2,0)</sup> '
                     '(an architecturally separate Euclidean sector providing global cross-shadow averaging). '
                     '<strong>Principia Metaphysica <span class="pm-value" data-pm-value="framework.version_label">v24.2</span></strong> '
-                    'proposes a dual-shadow structure where the unified time is intended to eliminate ghosts/CTCs, and the '
+                    'proposes a dual-shadow structure where the shared clock t+ = (t1+t2)/sqrt(2) is intended to eliminate ghosts/CTCs, and the '
                     'shadow-time directions S<sup>(2,0)</sup> (ds\u00b2 = ds\u2081\u00b2 + ds\u2082\u00b2) are used to model '
                     'coherent cross-shadow objective reduction (OR). Each shadow compactifies on G\u2082(7,0) to '
                     '<span class="pm-value" data-pm-value="dimensions.D_observable">4</span>D, yielding '
@@ -530,7 +530,7 @@ class AbstractV17_2(SimulationBase):
                 latex=r"M^{26}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3",
                 plain_text="M^{26}(24,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (2*b3) = 144/48 = 3",
                 category="DERIVED",
-                description="Framework overview: the M^{26}(24,2) ancestral bulk decomposes as T^1 (unified time) x S^(2,0) (shadow-time directions) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 26D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(2*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
+                description="Framework overview: the M^{26}(24,2) ancestral bulk decomposes as T^1 (two-time structure) x S^(2,0) (shadow-time directions) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 26D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(2*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
                 eml_tree_str="ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b3_leaf()))",
                 eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\; \mathrm{ops.mul}(\mathrm{eml\_scalar}(2),\; \mathrm{b3\_leaf}()))",
                 eml_description="EML: n_gen = ops.div(chi_eff=144, ops.mul(2, b3_leaf())) — generation count as ratio of topological integers (Sprint T1.7: 4·b3 → 2·b3 LaTeX/EML fix consistent)",
@@ -552,7 +552,7 @@ class AbstractV17_2(SimulationBase):
                     ]
                 },
                 terms={
-                    "M^{26}(24,2)": "26-dimensional ancestral bulk with structure (24 physics core, 1 temporal, 2 shadow-time directions), decomposed as 12x(2,0) bridge pairs + (0,1) unified time + two shadow-time directions",
+                    "M^{26}(24,2)": "26-dimensional ancestral bulk with structure (24 physics core, 1 temporal, 2 shadow-time directions), decomposed as 12x(2,0) bridge pairs + (0,1) two-time structure + two shadow-time directions",
                     "13D(12,1)": "13-dimensional observable shadow with signature (12 spatial from bridge, 1 shared temporal); each shadow compactifies independently on G2",
                     "S^(2,0)": "2-dimensional shadow-time directions with positive-definite metric ds^2 = ds_1^2 + ds_2^2 enabling cross-shadow coherence via OR reduction",
                     "n_gen": "Number of chiral fermion generations per shadow, topologically fixed at 3",

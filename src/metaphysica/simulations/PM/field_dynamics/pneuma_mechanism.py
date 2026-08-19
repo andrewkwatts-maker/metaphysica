@@ -536,7 +536,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="In 26D with signature (24,2) plus Euclidean bridge: coupling constant g times the bridge coordinates. The Euclidean bridge enables thermal time emergence and resolves causality issues via OR reduction to unified time."
+                content="In 26D with signature (24,2) plus Euclidean bridge: coupling constant g times the bridge coordinates. The Euclidean bridge enables thermal time emergence and resolves causality issues via OR reduction to two-time structure."
             ),
             ContentBlock(
                 type="heading",
@@ -742,7 +742,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="A distinguishing feature of the 25D formulation is the unified time structure in the signature (24,2). The term g&middot;t<sub>ortho</sub> in the Lagrangian couples the Pneuma field to the Euclidean bridge direction."
+                content="A distinguishing feature of the 26D two-time formulation is the two-time structure in the signature (24,2). The term g&middot;t<sub>ortho</sub> in the Lagrangian couples the Pneuma field to the Euclidean bridge direction."
             ),
             ContentBlock(
                 type="heading",
@@ -886,7 +886,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in dual 13D(12,1) shadow with shared unified time. Contributes to dark sector structure."
+                content="3 spatial dimensions in dual 13D(12,1) shadow with shared two-time structure. Contributes to dark sector structure."
             ),
             ContentBlock(
                 type="heading",
@@ -894,7 +894,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in dual 13D(12,1) shadow with shared unified time. Second dark sector component."
+                content="3 spatial dimensions in dual 13D(12,1) shadow with shared two-time structure. Second dark sector component."
             ),
             ContentBlock(
                 type="heading",
@@ -902,13 +902,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in 13D(12,1) shadow with shared unified time. Third dark sector component."
+                content="3 spatial dimensions in 13D(12,1) shadow with shared two-time structure. Third dark sector component."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="OR Reduction: 26D(24,2) → 12×(2,0) bridge pairs → 2×13D(12,1)",
-                content="Starting configuration: 25D with signature (24,2) = 12&times;(2,0) + (0,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + 1 shared time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action. The S<sup>(2,0)</sup> shadow-time directions provide additional geometric averaging."
+                content="Starting configuration: 26D with signature (24,2) = (12,1) + (12,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + 1 shared time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action. The S<sup>(2,0)</sup> shadow-time directions provide additional geometric averaging."
             ),
             ContentBlock(
                 type="heading",
@@ -1006,7 +1006,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="After OR reduction from 26D(24,2) = 12&times;(2,0) + (0,1) to dual 13D(12,1) shadows with unified time, the 4096-component spinor from Cl<sub>(24,2)</sub> reduces to effective 64 components:"
+                content="After OR reduction from 26D(24,2) = 12&times;(2,0) + (0,1) to dual 13D(12,1) shadows with two times (one per shadow), the 4096-component spinor from Cl<sub>(24,2)</sub> reduces to effective 64 components:"
             ),
             ContentBlock(
                 type="callout",

@@ -644,7 +644,7 @@ class AppendixMTensorCalculus(SimulationBase):
                         "- Kaluza-Klein reduction requires computing Christoffel symbols for product metrics\n\n"
                         "- G2 holonomy manifolds have special Riemann tensor constraints (Ricci-flat)\n\n"
                         "- Gauge fields emerge from off-diagonal metric components in KK reduction\n\n"
-                        "- The Euclidean bridge uses the unified time with fibered structure"
+                        "- The Euclidean bridge uses the shared clock t+ = (t1+t2)/sqrt(2) with fibered structure"
                     )
                 ),
             ],

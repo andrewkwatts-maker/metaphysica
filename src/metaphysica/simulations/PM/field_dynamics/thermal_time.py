@@ -47,7 +47,7 @@ The breathing mechanism uses 12 paired (2,0) bridges:
 
 Licensed under the MIT License. See LICENSE file for details.
 
-Implements the thermal time hypothesis with unified time framework:
+Implements the thermal time hypothesis with two-time framework:
 - Observable thermal time (t_therm) from modular flow
 - 12x(2,0) Euclidean bridge pairs for timeless substrate
 - Alpha_T_base (DERIVED) and alpha_T (DERIVED) coupling constants
@@ -63,9 +63,9 @@ This simulation computes:
 THEORETICAL FOUNDATION:
     The thermal time hypothesis (Connes-Rovelli 1994) posits that time emerges
     from the thermodynamic properties of quantum systems. In PM v24.2, we extend
-    this to a unified time framework where:
+    this to a two-time framework where:
 
-    - t_therm: Observable thermal time from modular flow (unified time)
+    - t_therm: Observable thermal time from modular flow (two-time structure)
     - 12x(2,0) Euclidean bridges: (y1_i, y2_i) coordinates for timeless substrate
     - alpha_T_base: Base coupling from KMS periodicity on b3 cycles (DERIVED)
     - alpha_T: Full coupling = D_total/D_string = 26/10 = 2.6 (DERIVED)
@@ -145,7 +145,7 @@ class ThermalTimeV16(SimulationBase):
     Thermal Time Hypothesis simulation (v22.0).
 
     Computes thermal time parameters from Pneuma field thermodynamics
-    and validates the unified time framework with 12×(2,0) Euclidean bridge
+    and validates the two-time framework with 12×(2,0) Euclidean bridge
     pairs substrate.
 
     v22 KEY CHANGE - 12-Pair Breathing Aggregation:
@@ -359,7 +359,7 @@ class ThermalTimeV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In Principia Metaphysica v24.2, we extend this to a dual-shadow unified time framework with "
+                    "In Principia Metaphysica v24.2, we extend this to a dual-shadow two-time framework with "
                     "M<sup>26</sup>(24,2) structure and 12&times;(2,0) Euclidean bridge pairs plus the S<sup>(2,0)</sup> shadow-time directions. "
                     "The observable thermal time t<sub>therm</sub> emerges "
                     "from the Pneuma field's modular flow, while 12 bridge pair coordinates (y<sub>1i</sub>, y<sub>2i</sub>) plus "
@@ -425,7 +425,7 @@ class ThermalTimeV16(SimulationBase):
         return SectionContent(
             section_id="thermal-time",
             subsection_id=None,
-            title="The Thermal Time Hypothesis and Unified Time Framework",
+            title="The Thermal Time Hypothesis and Two-Time Framework",
             abstract=(
                 "We implement the Connes-Rovelli thermal time hypothesis in the Principia "
                 "Metaphysica framework. Time emerges from the Pneuma field's thermodynamic "
@@ -813,7 +813,7 @@ class ThermalTimeV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "v24.2 M²⁶(24,2): 24 physics core from 12×(2,0) bridge pairs + 1 unified time + 2 S⁽²˒⁰⁾ shadow-time directions. "
+                    "v24.2 M²⁶(24,2): 24 physics core from 12×(2,0) bridge pairs + 1 two-time structure + 2 S⁽²˒⁰⁾ shadow-time directions. "
                     "Dimensional structure: T¹ ×_fiber (⊕ᵢ₌₁¹² Bᵢ⁽²˒⁰⁾ ⊕ S⁽²˒⁰⁾). 12 pairs from b₃ = 24/2. "
                     "Metric: ds² = -dt² + ∑ᵢ₌₁¹²(dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂²."
                 ),

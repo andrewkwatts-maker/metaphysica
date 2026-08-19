@@ -9,7 +9,7 @@ regarding the 26D -> (24+1) + (0,2) decomposition.
 Purpose:
     Ensures every mention of "26D" includes proper topological context:
     - M²⁶(24,2) = (24+1) ⊕ (0,2)
-    - (24+1) = Leech Lattice Λ₂₄ + Unified Time T¹ (Kinetic Backbone)
+    - (24+1) = Leech Lattice Λ₂₄ + Two-Time T¹ (Kinetic Backbone)
     - (0,2) = Euclidean Information Sector S_EIS (Consciousness Field)
 
     This prevents reviewers from flagging PM as "unmotivated dimensionality."
@@ -203,7 +203,7 @@ class DimensionalityAuditor:
             "status": "PUBLICATION READY" if len(self.flags) == 0 else "REVISION REQUIRED",
             "required_terminology": {
                 "full_expression": "M²⁶(24,2) = (24+1) ⊕ (0,2)",
-                "kinetic_backbone": "(24+1) = Leech Lattice Λ₂₄ + Unified Time T¹",
+                "kinetic_backbone": "(24+1) = Leech Lattice Λ₂₄ + Two-Time T¹",
                 "euclidean_sector": "(0,2) = Euclidean Information Sector (S_EIS)",
                 "alternative_names": [
                     "Kinetic Ancestor",
@@ -241,7 +241,7 @@ class DimensionalityAuditor:
                 "key_phrases": [
                     "Leech Lattice Λ₂₄ (Conway group Co₀)",
                     "Euclidean Information Sector (S_EIS)",
-                    "(24+1) kinetic backbone with unified time T¹",
+                    "(24+1) kinetic backbone with two times (one per shadow) T¹",
                     "(0,2) Euclidean Bridge for holographic information storage",
                     "Direct sum decomposition M²⁶ = P₂₄₊₁ ⊕ E₀,₂"
                 ]

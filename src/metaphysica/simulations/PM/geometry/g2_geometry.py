@@ -762,7 +762,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="formula",
-                content=r"E_G \geq \frac{\hbar}{\tau_{\text{OR}}}, \quad \tau_{\text{OR}} \sim \frac{\hbar}{E_G} \qquad \text{(OR reduction threshold, unified time physics)}",
+                content=r"E_G \geq \frac{\hbar}{\tau_{\text{OR}}}, \quad \tau_{\text{OR}} \sim \frac{\hbar}{E_G} \qquad \text{(OR reduction threshold, two-time structure physics)}",
                 label=""
             ),
             ContentBlock(
@@ -1252,7 +1252,7 @@ class G2GeometryV16(SimulationBase):
                     "headers": ["#", "Check", "Requirement", "Status"],
                     "rows": [
                         ["1", "OR Reduction / Euclidean Bridge", "26D = 13D shadow with OR reduction must preserve physics and eliminate ghosts", "PASS"],
-                        ["2", "Unified Time Ghost Elimination", "OR reduction removes negative-norm states through gravitational self-energy threshold in (24,2) signature", "PASS"],
+                        ["2", "Two-Time Ghost Elimination", "OR reduction removes negative-norm states through gravitational self-energy threshold in (24,2) signature", "PASS"],
                         ["3", "G₂ Holonomy Preservation", "13D compactification preserves exceptional G₂ structure", "PASS"],
                         ["4", "Dimensional Analysis M_Pl", "[M²] = [M^11][L^9] must be dimensionally correct", "PASS"],
                         ["5", "Brane Heterogeneity", "4 distinct brane types + Z₂ mirrors = 8 total in 6D bulk", "PASS"],

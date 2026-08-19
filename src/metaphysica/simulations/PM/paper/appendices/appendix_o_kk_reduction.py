@@ -505,7 +505,7 @@ class AppendixOKKReduction(SimulationBase):
                 type="note",
                 content=(
                     "<ul>"
-                    "<li><strong>26D(24,2)</strong>: Bosonic string with unified time, 24 G<sub>2</sub> spatial = 12&times;2, 2 shadow-time directions</li>"
+                    "<li><strong>26D(24,2)</strong>: Bosonic string with two times (one per shadow), 24 G<sub>2</sub> spatial = 12&times;2, 2 shadow-time directions</li>"
                     "<li><strong>12 Bridge Pairs</strong>: Each B<sub>i</sub><sup>2,0</sup> enables OR Reduction between normal/mirror shadows "
                     "<Speculation>(interpreted as consciousness channels in the speculative Orch-OR extension)</Speculation></li>"
                     "<li><strong>Distributed OR</strong>: R<sub>total</sub> = &otimes;<sub>i</sub> R<sub>&perp;,i</sub> (tensor product of 12 rotations)</li>"
@@ -894,7 +894,7 @@ class AppendixOKKReduction(SimulationBase):
                     "conditions from flux quantization."
                 ),
                 terms={
-                    "26D(24,2)": "Bosonic string with unified time and shadow-time directions",
+                    "26D(24,2)": "Bosonic string with two times (one per shadow) and shadow-time directions",
                     "T^1": "Shared time fiber",
                     "B_i^{2,0}": "12 Euclidean bridge pairs (consciousness channels)",
                     "S^{2,0}": "Sampler data fields dimensions",
@@ -905,7 +905,7 @@ class AppendixOKKReduction(SimulationBase):
                     "method": "v24.2 dimensional cascade from 26D bosonic string",
                     "parentFormulas": ["kk-metric-ansatz", "kk-higher-dim"],
                     "steps": [
-                        "Begin with 26D(24,2): bosonic string theory with unified time and shadow-time directions",
+                        "Begin with 26D(24,2): bosonic string theory with two times (one per shadow) and shadow-time directions",
                         "Decompose 24 G2 dimensions into 12 paired (2,0) Euclidean bridges",
                         "Each bridge pair carries OR reduction operator R_perp_i, warping to 2 x 13D(12,1) shadows",
                         "Per-shadow G2 holonomy compactification: 13D -> 4D(3,1) via TCS construction",

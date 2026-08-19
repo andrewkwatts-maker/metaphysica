@@ -6,7 +6,7 @@ Centralizes all topological derivations for Principia Metaphysica v24.2-26D.
 v24.2 FRAMEWORK (Publication Release):
 - Structure: M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}
   - 24D physics: 12 bridge pairs × 2 dims = 24D (G₂ core, create dual 13D shadows)
-  - 1D time: Shared T¹ fiber (unified timelike dimension)
+  - 1D time: Shared T¹ fiber (two-time structurelike dimension)
   - 2D shadow-time directions: S^{2,0} (global averaging sector, architecturally separate)
   - Total: 24 + 2 = 26D with signature (24,2)
   - Notation: 26D(24,2) where (physics, time, shadow-time directions)
@@ -1270,7 +1270,7 @@ class FormulasRegistry:
         # Key insight: Core and local bridge are DUAL REPRESENTATIONS of same 24D:
         #   - 12×(2,0) = 12 local Euclidean pairs (24 spatial, dual view of core)
         #   - S^{2,0} = shadow-time directions (2 spatial, NEW in v23)
-        #   - (0,1) = unified temporal dimension
+        #   - (0,1) = two-time temporal dimension
         #   - Total: 24 + 2 + 1 = 26D with signature (24,2)
         #
         # Warping to shadows:
@@ -1339,11 +1339,11 @@ class FormulasRegistry:
         # v23 SPACETIME SIGNATURE: (24,2) in 27 dimensions
         #   - 24 core spacelike (from dual shadows, = local bridge dual view)
         #   - 2 sampler spacelike (hierarchical averaging dimensions)
-        #   - 1 unified timelike
+        #   - 1 two-time structurelike
         #   - Total spacetime: 26D with signature (24,2)
         self._D_v23_spacetime_total = 27          # Full spacetime dimensions
         self._D_v23_spacetime_space = 26          # Spacelike (24 core + 2 sampler)
-        self._D_v23_spacetime_time = 1            # Unified time
+        self._D_v23_spacetime_time = 1            # Two-time structure
         # Legacy: "50 spacelike-like" counts each bridge coordinate twice
         self._D_total_spacelike_like = 50         # (24 core + 24 local + 2 sampler)
 
@@ -1683,7 +1683,7 @@ class FormulasRegistry:
 
     @property
     def D_shadow_time(self) -> int:
-        """Level 1 (SHADOW): 1 unified temporal dimension."""
+        """Level 1 (SHADOW): 1 two-time temporal dimension."""
         return self._D_shadow_time
 
     # Legacy aliases for Level 1 (brane -> shadow)
@@ -2494,7 +2494,7 @@ class FormulasRegistry:
         the manifold would be flat and fail to support the G(24,2) metric.
         The π factor introduces circular/spherical geometry.
 
-        v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
+        v21 NOTE: Metric updated from G(24,2) to G(24,1) for two-time structure.
         """
         g03 = self.gate_03_bulk_joint
         return g03 / (self._roots_total * math.pi)  # G03/(288×π)
@@ -2543,7 +2543,7 @@ class FormulasRegistry:
         manifold. Prevents "warping" in the G(24,2) metric, addressing the
         root cause of C04 instability.
 
-        v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
+        v21 NOTE: Metric updated from G(24,2) to G(24,1) for two-time structure.
         """
         return (self.torsion_gate * self._b3) / self._christ_constant  # (G53×24)/153
 
@@ -2588,9 +2588,9 @@ class FormulasRegistry:
 
         Purpose: Calculates the "Weight" of the Joint Closure across the
         manifold dimensions relative to the Bulk Pressure. This anchors
-        the 24D manifold to the G(24,2) metric's unified temporal direction.
+        the 24D manifold to the G(24,2) metric's two-time temporal direction.
 
-        v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
+        v21 NOTE: Metric updated from G(24,2) to G(24,1) for two-time structure.
         """
         return (self._christ_constant * self._b3) / self._sterile_sector  # (153×24)/163
 
@@ -3591,7 +3591,7 @@ class FormulasRegistry:
         v24.2: With shadow-time directions as physical dimensions:
         - 24 core spacelike (from dual shadows, = local bridge dual view)
         - 2 sampler spacelike (hierarchical averaging dimensions)
-        - 1 unified timelike
+        - 1 two-time structurelike
         - Total: 26D with signature (24,2)
         """
         return (self._D_v23_spacetime_space, self._D_v23_spacetime_time)

@@ -132,7 +132,7 @@ class InformationBottleneckDistiller:
             "Manifold M^{26}(24,2) = Twisted Connected Sum of two G₂ holonomy 7-manifolds, "
             "connected by 12 bridge pairs with signature (2,0), "
             "plus shadow-time directions S^{(2,0)} with Euclidean signature (2,0), "
-            "plus unified time fiber T¹ with signature (0,1). "
+            "plus two-time structure fiber T¹ with signature (0,1). "
             f"Third Betti number b₃ = 24. "
             "G₂ holonomy fixes Ricci-flatness and induces associative 3-cycles."
         )

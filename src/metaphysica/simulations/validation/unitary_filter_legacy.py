@@ -14,7 +14,7 @@ The total central charge must vanish:
 
 For PM's v21 (24,1) signature theory with Euclidean bridge:
 - 24 transverse coordinates (b3): c = +24
-- 1 unified time + Euclidean bridge (0) for timeless substrate: c = +2 effective
+- 1 two-time structure + Euclidean bridge (0) for timeless substrate: c = +2 effective
 - Ghost contribution: c = -26 (from bc ghost system)
 
 Total: c = 24 + 2 - 26 = 0 [GHOST-FREE]
@@ -133,7 +133,7 @@ class UnitaryFilter:
     """
 
     # Physical constants for the Weyl anomaly
-    DIM_BRIDGE = 2      # Unified time (1) + Euclidean bridge (0) contribution for timeless substrate
+    DIM_BRIDGE = 2      # Two-time structure (1) + Euclidean bridge (0) contribution for timeless substrate
     DIM_GHOST = 26      # bc ghost system central charge magnitude
 
     def __init__(self, b3_val: int = 24, dim_total: int = 26):
@@ -147,7 +147,7 @@ class UnitaryFilter:
 
         The central charge calculation:
             c = b3 + 2 - 26
-              = (transverse) + (unified time + bridge) - (ghost)
+              = (transverse) + (two-time structure + bridge) - (ghost)
               = 24 + 2 - 26 = 0 [required for unitarity]
         """
         self.b3_val = b3_val
@@ -172,7 +172,7 @@ class UnitaryFilter:
         """
         if self._central_charge is None:
             # c = c_transverse + c_bridge + c_ghost
-            # c = b3 + 2 - 26 (unified time + Euclidean bridge contribution)
+            # c = b3 + 2 - 26 (two-time structure + Euclidean bridge contribution)
             self._central_charge = self.b3_val + self.dim_bridge - self.dim_ghost
         return self._central_charge
 
@@ -239,7 +239,7 @@ class UnitaryFilter:
                 f"SIMULATION BLOCKED - {message}\n"
                 f"The Weyl anomaly is not cancelled:\n"
                 f"  b3 = {self.b3_val} (transverse modes)\n"
-                f"  Bridge = {self.dim_bridge} (unified time + Euclidean bridge contribution)\n"
+                f"  Bridge = {self.dim_bridge} (two-time structure + Euclidean bridge contribution)\n"
                 f"  Ghost = -{self.dim_ghost} (bc system)\n"
                 f"  Central charge = {self.central_charge} != 0\n"
                 f"\n"
@@ -475,7 +475,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 category="DERIVED",
                 description=(
                     "Unitarity requirement in terms of the G2 geometry. The third Betti "
-                    "number b3 = 24 provides transverse modes, unified time (1) + Euclidean "
+                    "number b3 = 24 provides transverse modes, two-time structure (1) + Euclidean "
                     "bridge (0) contributes 2 for timeless substrate, and the ghost sector subtracts 26. Total must be exactly 0."
                 ),
                 input_params=["topology.elder_kads"],
@@ -485,7 +485,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                     "method": "Dimensional counting from G2 compactification",
                     "steps": [
                         "b3 = 24 transverse modes from TCS G2 manifold",
-                        "Unified time (1) + Euclidean bridge (0) contributes 2 for timeless substrate",
+                        "Two-time structure (1) + Euclidean bridge (0) contributes 2 for timeless substrate",
                         "Ghost bc system contributes -26",
                         "c = 24 + 2 - 26 = 0 [GHOST-FREE]",
                     ]
@@ -562,10 +562,10 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Bridge sector central charge = 2, from unified time (1) plus "
+                    "Bridge sector central charge = 2, from two-time structure (1) plus "
                     "Euclidean bridge (0) contribution for timeless substrate."
                 ),
-                eml_description="EML: eml_scalar(2.0) — bridge central charge = 2 from unified time (1) + Euclidean bridge (0) for timeless substrate",
+                eml_description="EML: eml_scalar(2.0) — bridge central charge = 2 from two-time structure (1) + Euclidean bridge (0) for timeless substrate",
                 derivation_formula="central-charge-unitarity",
                 no_experimental_value=True
             ),
@@ -802,7 +802,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             "technicalDetail": (
                 "Central charge calculation: c = b3 + 2 - 26, where b3 = 24 is the third "
                 "Betti number (transverse modes from G2 compactification), 2 comes from "
-                "unified time (1) + Euclidean bridge (0) for timeless substrate in dual-shadow structure, "
+                "two-time structure (1) + Euclidean bridge (0) for timeless substrate in dual-shadow structure, "
                 "and -26 is the bc ghost system contribution. For c = 0, the Weyl anomaly cancels and the theory "
                 "is unitary (ghost-free). For c != 0, negative-norm states appear and all "
                 "predictions are invalid. The Guardian enforces c = 0 before any simulation runs."

@@ -9,7 +9,7 @@ PMNS uses chi_eff_total = 144 (both shadows combined) because neutrino oscillati
             involve BOTH 13D(12,1) shadows. The per-shadow chi_eff = 72 is used for baryon physics.
             S_orient = 12 remains unchanged (single unified bridge orientation sum)
 
-            Uses unified time (24,2) signature. 12×(2,0) bridge pairs + (0,1) shared time
+            Uses two-time signature (24,2) signature. 12×(2,0) bridge pairs + (0,1) shared time
             WARP to create dual 13D(12,1) shadows via OR coordinate selection.
             Orientation sum from Euclidean bridge mechanism.
 

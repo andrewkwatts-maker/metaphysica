@@ -6,7 +6,7 @@ Gauge Unification Simulation v21.0
 Licensed under the MIT License. See LICENSE file for details.
 
 v22 COMPATIBILITY: Uses SO(24,1) bulk symmetry breaking to SO(10) GUT.
-                   Unified time signature (24,2) with Euclidean bridge.
+                   Two-time signature (24,2) (24,2) with Euclidean bridge.
                    G2 topology (b3=24) determines asymptotic safety fixed point.
 
 Implements gauge coupling unification to determine M_GUT and alpha_GUT

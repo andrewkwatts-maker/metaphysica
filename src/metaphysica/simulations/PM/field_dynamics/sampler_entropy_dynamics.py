@@ -40,7 +40,7 @@ Round 3 (Classification):
 Implements the Sampler S^{2,0} entropy dynamics for the 27-dimensional
 spacetime M^{26}(24,2):
     - 24D physics core: 12 bridge pairs x 2 dimensions
-    - 1D unified time: T^1 fiber
+    - 1D two-time structure: T^1 fiber
     - 2D shadow-time directions: S^{2,0} (global averaging sector)
 
 The entropy gradient equation governs entropy flow across the sampler sector:
@@ -134,7 +134,7 @@ class SamplerEntropyDynamics(SimulationBase):
     diffusion into a unified entropy evolution equation.
 
     The shadow-time directions S^{2,0} occupy the 2 extra dimensions beyond
-    the 24D G2 physics core and 1D unified time. Their entropy dynamics
+    the 24D G2 physics core and 1D two-time structure. Their entropy dynamics
     govern global averaging and equilibrium selection.
 
     KEY PARAMETERS (all topologically fixed):
@@ -689,7 +689,7 @@ class SamplerEntropyDynamics(SimulationBase):
                 content=(
                     "The shadow-time directions S<sup>(2,0)</sup> occupy the two dimensions "
                     "of M<sup>26</sup>(24,2) beyond the 24D G&#8322; physics core and "
-                    "1D unified time. These dimensions provide a global averaging sector "
+                    "1D two-time structure. These dimensions provide a global averaging sector "
                     "whose entropy dynamics govern equilibrium selection across the 12 "
                     "bridge pairs. The entropy gradient equation combines three physically "
                     "distinct contributions: bridge thermodynamics, objective reduction "

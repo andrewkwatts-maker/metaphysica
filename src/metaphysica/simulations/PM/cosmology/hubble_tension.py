@@ -41,7 +41,7 @@ Evidence:
    None of these use KK modes; none are mutually consistent.
 
 5. FITTED, NOT DERIVED: The mixing angle theta = 31 degrees is described
-   as a "13D/25D volume ratio" but lacks a derivation from the G2
+   as a "13D/26D volume ratio" but lacks a derivation from the G2
    manifold geometry. The EDE certificate admits the boost factor 95
    is "phenomenological, from fit to CMB+BAO+SN." These are fitted
    parameters presented in geometric language, not topological derivations.

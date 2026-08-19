@@ -254,7 +254,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The full dimensional cascade proceeds as follows: the 26D "
-                        "bulk spacetime with (24,2) unified time signature first splits "
+                        "bulk spacetime with (24,2) two-time signature (24,2) first splits "
                         "into dual 13D(12,1) shadows via 12 paired (2,0) Euclidean bridges. "
                         "Each 13D shadow then decomposes as M\u00b9\u00b3 = M\u2074 \u00d7 K_Pneuma, where "
                         "K_Pneuma is a 9-dimensional internal space comprising a 7D G₂ "
@@ -269,7 +269,7 @@ class CosmologyIntroV16(SimulationBase):
                     content=(
                         "Each step in this cascade is physically necessary, not merely "
                         "mathematically convenient. The initial 26D \u2192 13D split is forced by "
-                        "the requirement that the (24,2) unified time signature must decompose "
+                        "the requirement that the (24,2) two-time signature (24,2) must decompose "
                         "into two copies of (12,1), the unique factorisation that preserves "
                         "Lorentzian causality in each shadow while eliminating ghost modes from "
                         "extra timelike dimensions. The subsequent 13D \u2192 4D compactification "
@@ -415,9 +415,9 @@ class CosmologyIntroV16(SimulationBase):
                     callout_type="info",
                     title="Step-by-Step Derivation: v24.2 Dimensional Reduction with 12-Pair Aggregation",
                     content=(
-                        "Step 1: 26D Bulk Metric (Unified Time)\n"
+                        "Step 1: 26D Bulk Metric (Two-Time)\n"
                         "ds²₂₆ = G_MN dX^M dX^N, M, N = 0, 1, ..., 25\n"
-                        "With unified time signature (24,2): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
+                        "With two-time signature (24,2) (24,2): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
                         "Step 2: Dual Shadow Split via 12\u00d7(2,0) Euclidean Bridge Pairs\n"
                         "M²⁶(24,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
                         "Each shadow: 12 spatial (from bridge coordinate selection) + 1 shared time = 13D(12,1)\n"
@@ -464,10 +464,10 @@ class CosmologyIntroV16(SimulationBase):
                         "The v21 framework contains an enhanced brane structure after G₂ compactification:\n"
                         "(5,1) + 3×(3,1) per shadow + bridge couplings\n\n"
                         "This notation indicates:\n"
-                        "• (5,1): One 5-brane with unified time (observable sector brane per shadow)\n"
-                        "• 3×(3,1): Three 3-branes, each with unified time (generational branes)\n"
+                        "• (5,1): One 5-brane with two times (one per shadow) (observable sector brane per shadow)\n"
+                        "• 3×(3,1): Three 3-branes, each with two times (one per shadow) (generational branes)\n"
                         "• Bridge couplings: Cross-shadow interactions via Euclidean bridge\n\n"
-                        "The unified time (24,2) signature eliminates ghost modes that would arise from (p,2) branes "
+                        "The two-time signature (24,2) signature eliminates ghost modes that would arise from (p,2) branes "
                         "in the old two-time framework."
                     )
                 ),
@@ -495,7 +495,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The Pneuma spinor field Ψ_P has 8192 components in the full 26D bulk (from Majorana-Weyl "
-                        "condition in (24,2) unified time signature). Upon dual-shadow splitting, G₂ compactification, "
+                        "condition in (24,2) two-time signature (24,2)). Upon dual-shadow splitting, G₂ compactification, "
                         "and symmetry breaking, this reduces to 64 effective components per shadow in the 4D effective theory."
                     )
                 ),
@@ -504,10 +504,10 @@ class CosmologyIntroV16(SimulationBase):
                     callout_type="info",
                     title="v21 Symbolic Computation: Spinor Decomposition",
                     content=(
-                        "Step 1: 26D Spinor Dimension (Unified Time)\n"
+                        "Step 1: 26D Spinor Dimension (Two-Time)\n"
                         "For signature (24,2), the minimal spinor has dimension:\n"
                         "dim(\u03a8_26D) = 2^((26\u22121)/2) = 2^(12.5) \u2192 8192 (Majorana-Weyl with real structure)\n"
-                        "The unified time signature ensures no ghost modes.\n\n"
+                        "The two-time signature (24,2) ensures no ghost modes.\n\n"
                         "Step 2: Dual Shadow Split\n"
                         "The 26D spinor splits into per-shadow components via the Euclidean bridge:\n"
                         "\u03a8₂₆D \u2192 2 \u00d7 [\u03a8₄D \u2297 \u03c7_SO(10) \u2297 \u03b7_shadow]\n"
@@ -634,7 +634,7 @@ class CosmologyIntroV16(SimulationBase):
                 output_params=["cosmology.D_eff_shadow"],
                 derivation={
                     "steps": [
-                        {"description": "Unified time structure (24,2)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
+                        {"description": "Two-time structure structure (24,2)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
                         {"description": "v22: 12-pair Euclidean bridge split", "formula": r"M^{26}(24,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
                         {"description": "Dimensional structure", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
                         {"description": "Aggregate metric", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
@@ -688,7 +688,7 @@ class CosmologyIntroV16(SimulationBase):
                 latex=r"T_{BPS} \geq \frac{|Z_{p,q}|}{V_p}",
                 plain_text="T_BPS ≥ |Z_p,q| / V_p",
                 category="DERIVED",
-                description="BPS bound on brane tensions ensuring quantum stability under unified time signature",
+                description="BPS bound on brane tensions ensuring quantum stability under two-time signature (24,2)",
                 inputParams=["topology.elder_kads"],
                 outputParams=["cosmology.brane_tension_5_2"],
                 input_params=["topology.elder_kads"],
@@ -1184,7 +1184,7 @@ class CosmologyIntroV16(SimulationBase):
             "title": "From 26 Dimensions to Our 4D Universe (v22)",
             "simpleExplanation": (
                 "String theory predicts that our universe has more than the 3 space + 1 time dimensions we experience. "
-                "Principia Metaphysica v22 starts with 26 dimensions (24 space + 1 unified time) and shows how these split into "
+                "Principia Metaphysica v22 starts with 26 dimensions (24 space + 1 two-time structure) and shows how these split into "
                 "two 'shadow' universes connected by 12 paired 2D bridges. Each shadow then 'folds up' to give us the 4D universe we observe. "
                 "The extra dimensions don't disappear completely - the bridge pressure mismatch creates 'breathing' dark energy, "
                 "and the 12-pair aggregation smooths out quantum fluctuations for stable cosmic evolution."
@@ -1201,7 +1201,7 @@ class CosmologyIntroV16(SimulationBase):
                 "12-pair aggregation: ρ_breath = (1/12) ∑ρ_i reduces variance by √12, stabilizing w ≈ -0.958 ± 0.003."
             ),
             "technicalDetail": (
-                "Starting from 25D with (24,2) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
+                "Starting from 26D with (24,2) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
                 "13D(12,1) shadows (each: 12 spatial from bridge + 1 shared time). Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}). "
                 "Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²). Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|. "
                 "Aggregated: ρ_breath = (1/12) ∑ρ_i. Why 12 pairs: b₃ = 24 associative 3-cycles → 24/2 = 12 normal/mirror pairs. "

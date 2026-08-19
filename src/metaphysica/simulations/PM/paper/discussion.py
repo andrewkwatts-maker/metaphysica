@@ -604,7 +604,7 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Rigorous treatment of unified time with dual-shadow structure:"
+                content="Rigorous treatment of two-time structure with dual-shadow structure:"
             ),
             ContentBlock(
                 type="list",

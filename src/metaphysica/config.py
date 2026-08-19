@@ -1573,7 +1573,7 @@ class CoreFormulas:
     # (Legacy variable names use "25D" for backward compatibility)
     # =========================================================================
 
-    MASTER_ACTION_25D = Formula(
+    MASTER_ACTION_26D = Formula(
         id="master-action-27d",  # Updated ID for v23.1
         output_params=['dimensions.D_BULK'],
         label="(2.1) Master Action",
@@ -1595,7 +1595,7 @@ class CoreFormulas:
             parent_formulas=[],
             established_physics=["virasoro-anomaly", "string-theory"],
             steps=[
-                "Start with 26D(24,2) = 24 physics core + 1 time + 2 shadow-time directions",
+                "Start with 26D(24,2) = 24 space + 2 times (one per shadow)",
                 "Include Pneuma spinor field for fermionic DOF (4096 Weyl components of Cl(24,2))",
                 "v23.1: Add shadow-time directions sector for dual-shadow structure"
             ],
@@ -1745,7 +1745,7 @@ class CoreFormulas:
             parent_formulas=[],
             established_physics=["clifford-algebra", "spinor-geometry"],
             steps=[
-                "v23.1: 26D(24,2) = 24 physics core + 1 time + 2 shadow-time directions; unified time eliminates ghosts",
+                "v23.1: 26D(24,2) = 24 space + 2 times (one per shadow); the Sp(2,R) gauge constraint controls ghosts",
                 "Dual shadows 2×13D(12,1) connected via 12×(2,0) bridge pairs + two shadow-time directions",
                 "OR reduction R_perp identifies physics across shadows",
                 "R_perp² = -I gives Möbius double-cover for spinor topology"
@@ -1782,7 +1782,7 @@ class CoreFormulas:
                 title="Principia Metaphysica v21.0: Dual-Shadow Bridge Framework",
                 authors="Watts, A.K.",
                 year=2026,
-                description="Introduction of OR reduction operator and unified time signature"
+                description="Introduction of OR reduction operator and two-time signature (24,2)"
             ),
             FormulaReference(
                 id="joyce2000",
@@ -1917,7 +1917,7 @@ class CoreFormulas:
         section="1",
         status="v23.1 FOUNDATIONAL",
         terms={
-            "26D_(24,2)": FormulaTerm("Bulk", "v23.1: 24 physics core + 1 time + 2 shadow-time directions"),
+            "26D_(24,2)": FormulaTerm("Bulk", "v23.1: 24 space + 2 times (one per shadow)"),
             "2×13D_(12,1)": FormulaTerm("Dual Shadows", "v23.1: Normal + Mirror shadows, each 12 space + 1 time (its own)"),
             "12×(2,0)": FormulaTerm("Bridge Pairs", "v23.1: 12 Euclidean bridge pairs connecting shadow dimensions"),
             "S^(2,0)": FormulaTerm("Sampler Data Fields", "v23.1: 2D Euclidean shadow-time directions (averaging sector)"),
@@ -1934,7 +1934,7 @@ class CoreFormulas:
                 title="Principia Metaphysica v21.0: Dual-Shadow Bridge Framework",
                 authors="Watts, A.K.",
                 year=2026,
-                description="v21 dimensional cascade with unified time and dual shadows"
+                description="v21 dimensional cascade with two times (one per shadow) and dual shadows"
             ),
             FormulaReference(
                 id="acharya1998_m_theory",
@@ -3755,7 +3755,7 @@ class CoreFormulas:
             cls.THETA23_MAXIMAL,
             cls.KK_GRAVITON,
             # Section 2: 26D Bulk (legacy names use "25D")
-            cls.MASTER_ACTION_25D,
+            cls.MASTER_ACTION_26D,
             cls.VIRASORO_ANOMALY,
             cls.SP2R_CONSTRAINTS,
             cls.RACETRACK_SUPERPOTENTIAL,
@@ -4018,7 +4018,7 @@ class PhenomenologyParameters:
 
 class BridgePhysicsParameters:
     """
-    Parameters for v21 unified time framework with Euclidean bridge.
+    Parameters for v21 two-time framework with Euclidean bridge.
 
     v21.0: Replaces two-time physics with dual-shadow bridge structure.
     The 2D Euclidean bridge connects Normal and Mirror shadows, with
@@ -4026,7 +4026,7 @@ class BridgePhysicsParameters:
 
     Historical note: This class was formerly MultiTimeParameters for
     the (24,2) two-time framework (v16-v20). The v21 framework uses
-    unified time (24,2) with an Euclidean bridge instead.
+    two-time signature (24,2) with an Euclidean bridge instead.
     """
 
     # Coupling Constants
@@ -4576,7 +4576,7 @@ class V21BridgeParameters:
     - Appendix G: Euclidean Bridge Derivation
     """
 
-    # Bulk spacetime (v21/v22: unified time)
+    # Bulk spacetime (v21/v22: two-time structure)
     D_BULK = 26  # Two-time (24,2): 26 = 2 x 13, one time per shadow
     BULK_SIGNATURE = (24, 2)  # Two-time signature (one time per shadow)
 
@@ -4687,7 +4687,7 @@ class PneumaVielbeinParameters:
 
     Einstein-Hilbert gravity is induced via Sakharov mechanism.
 
-    v21.0: Updated for dual-shadow bridge framework with unified time.
+    v21.0: Updated for dual-shadow bridge framework with two times (one per shadow).
 
     References:
     - Akama, K. (1978): Pregeometry
@@ -4696,7 +4696,7 @@ class PneumaVielbeinParameters:
     - PM v21.0 (2026): Dual-Shadow Bridge Framework
     """
 
-    # Bulk spacetime (v22 unified time)
+    # Bulk spacetime (v22 two-time structure)
     D_BULK = 26  # Two-time (24,2): 26 = 2 x 13, one time per shadow
     BULK_SIGNATURE = (24, 2)  # Two-time signature (one time per shadow)
 
@@ -8190,17 +8190,17 @@ class V21UnifiedTimePhysics:
     # Each shadow sees: 12 spatial + 1 time = 13D(12,1)
     SPATIAL_NORMAL = 12      # Derived: D_SHADOW - 1 = 12 spacelike
     SPATIAL_MIRROR = 12      # Derived: D_SHADOW - 1 = 12 spacelike
-    TEMPORAL_UNIFIED = 1     # v21/v22: Unified time (no ghosts, no CTCs)
+    TEMPORAL_UNIFIED = 1     # v21/v22: Two-time structure (no ghosts, no CTCs)
     
     # === CFT ANOMALY CANCELLATION ===
-    C_MATTER = 25            # Matter: 24 spatial + 1 temporal (v21 unified time)
+    C_MATTER = 25            # Matter: 24 spatial + 1 temporal (v21 two-time structure)
     C_GHOST = -25            # Virasoro ghost (b-c system) - matches C_MATTER for cancellation
     DELTA_C_BRIDGE = 0       # v21: Bridge contributes no central charge anomaly
     C_MATTER_EFFECTIVE = 24  # v21: C_MATTER - TEMPORAL_UNIFIED = 25 - 1 = 24
     C_TOTAL = 0              # v21: Anomaly cancellation preserved
 
     # Critical dimensions
-    D_CRITICAL_V21 = 25      # v21/v22: Unified time critical dimension (24+1)
+    D_CRITICAL_V21 = 25      # v21/v22: Two-time structure critical dimension (24+1)
 
     # === v21 OR REDUCTION ===
     OR_COUPLING = 0.1        # v21: OR reduction coupling
@@ -8224,7 +8224,7 @@ class V21UnifiedTimePhysics:
     CASIMIR_MIRROR = 33.75   # Same for mirror shadow
 
     # === v21 STABILITY FLAGS ===
-    GHOST_FREE = True        # v21: Unified time eliminates ghosts
+    GHOST_FREE = True        # v21: Two-time structure eliminates ghosts
     CTC_FREE = True          # v21: No closed timelike curves
     TACHYON_PROJECTED = True
     ANOMALY_FREE = True
@@ -8577,7 +8577,7 @@ class DimensionalStructure:
     26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions
 
     Stages:
-    1. Bulk: 26D(24,2) = 24 physics core + 1 time + 2 shadow-time directions = 26D
+    1. Bulk: 26D(24,2) = 24 space + 2 times (one per shadow) = 26D
     2. Dual-Shadow Split: 26D → 2×13D(12,1) via 12×(2,0) bridge pairs
        - Each shadow: 13D = 12 spatial + 1 time (its own)
        - 12 bridge pairs connect corresponding spatial dimensions between shadows

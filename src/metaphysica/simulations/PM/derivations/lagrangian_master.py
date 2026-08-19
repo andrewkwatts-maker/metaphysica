@@ -25,7 +25,7 @@ MATHEMATICAL FRAMEWORK (v22 - 12×(2,0) Paired Bridge System):
 
 2. 26D Master Action (v24.2 with 12 bridge pairs + 1 shadow-time directions):
    - S_26 = integral d^26X sqrt(-g_26) [R_26 + L_matter + L_gauge + L_bridge + pneuma]
-   - Structure (24,2) unified time eliminates ghosts and CTCs
+   - Structure (24,2) the Sp(2,R) gauge constraint (STRUCTURAL) controls ghosts and CTCs
    - L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
    - Step-by-step Euler-Lagrange derivation
 
@@ -261,7 +261,7 @@ class LagrangianMasterDerivation(SimulationBase):
             "sp2r-constraint-xp",       # Legacy: now replaced by distributed OR
             "sp2r-constraint-x2",       # Legacy: now replaced by bridge geometry
             "sp2r-gauge-fixed-action",  # Legacy: now replaced by 12-pair structure
-            "ghost-elimination",        # v21: achieved via (24,1) unified time
+            "ghost-elimination",        # v21: achieved via (24,1) two-time structure
             "dof-reduction-sp2r",       # v21: replaced by distributed DOF counting
 
             # Part E: G2 Holonomy
@@ -334,10 +334,10 @@ class LagrangianMasterDerivation(SimulationBase):
            sqrt(-g) = det(e_a^mu) = e
         """)
 
-        # For 26D with (24,1) signature (v21 unified time)
+        # For 26D with (24,1) signature (v21 two-time structure)
         D = 26
         n_spatial = 24
-        n_time = 1  # v21: Unified time eliminates ghosts and CTCs
+        n_time = 1  # v21: Two-time structure eliminates ghosts and CTCs
 
         # Vielbein has D^2 = 676 components, but gauge freedom reduces this
         vielbein_components = D * D
@@ -629,7 +629,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         This action is:
         - Diffeomorphism invariant (general coordinate transformations)
-        - Local Lorentz invariant (SO(24,2) in tangent space - v21 unified time)
+        - Local Lorentz invariant (SO(24,2) in tangent space - v21 two-time structure)
         - Gauge invariant (E8 x E8)
         - BRST invariant (after ghost sector)
 
@@ -833,7 +833,7 @@ class LagrangianMasterDerivation(SimulationBase):
         Structure: M^{24,2} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
 
         Components:
-        - T^1: Unified time (0,1) - shared fiber base
+        - T^1: Two-time structure (0,1) - shared fiber base
         - B_i^{2,0}: 12 Euclidean bridge pairs, each (2,0)
         - Each pair has coordinates (y₁ᵢ, y₂ᵢ)
 
@@ -940,7 +940,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         Ghost Elimination (v21 formulation retained):
         =============================================
-        The unified time (24,2) signature eliminates ghosts:
+        The two-time signature (24,2) signature eliminates ghosts:
         - Single time dimension: no negative-norm states
         - All bridge dimensions are spatial (positive-definite)
         - Unitarity preserved naturally via Euclidean bridges
@@ -1148,7 +1148,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("\nv22 Dimensional Cascade:")
         print("  M^{26}(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) → 4D(3,1)")
         print("")
-        print("  Level 0 (ANCESTRAL): 26D with structure (24,2) - unified time")
+        print("  Level 0 (ANCESTRAL): 26D with structure (24,2) - two-time structure")
         print("  Level 1 (STRUCTURE): 12×(2,0) + (0,1)")
         print("    - (0,1): Shared time fiber")
         print("    - 12×(2,0): 12 Euclidean bridge pairs")
@@ -1847,7 +1847,7 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})",
             category="DERIVED",
             description=(
-                "v22 bulk structure: 25D spacetime M^{24,1} is decomposed as a fiber bundle "
+                "v22 bulk structure: 26D spacetime M^{24,1} is decomposed as a fiber bundle "
                 "with one timelike direction per 13D shadow and 12 Euclidean bridge pairs B_i^{2,0}. "
                 "Each pair contributes 2 spatial dimensions for a total of 24 spatial + "
                 "2 temporal = 26 dimensions with (24,2) signature (3 derivation steps)."
@@ -1864,7 +1864,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["ghost-elimination"]
             },
             terms={
-                "T^1": "Unified time fiber with signature (0,1)",
+                "T^1": "Two-time structure fiber with signature (0,1)",
                 "B_i^{2,0}": "i-th Euclidean bridge pair with coordinates (y_1i, y_2i)",
                 "12": "Total number of bridge pairs (24 spatial / 2 per pair)"
             }
@@ -2000,9 +2000,9 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}",
             category="DERIVED",
             description=(
-                "Ghost elimination via unified time signature (24,1). The v22 12x(2,0) bridge "
+                "Ghost elimination via two-time signature (24,2) (24,1). The v22 12x(2,0) bridge "
                 "pair system plus the two shadow-time directions (introduced in v24.2 as an "
-                "extension) gives the full 26D structure. The (24,2) unified time signature "
+                "extension) gives the full 26D structure. The (24,2) two-time signature (24,2) "
                 "eliminates negative-norm ghost states and closed timelike curves (CTCs) that "
                 "would arise from multi-time signatures. Note: the shadow-time directions S^(2,0) are "
                 "a v24.2 extension of the base v22 framework (3 derivation steps)."
@@ -2013,13 +2013,13 @@ class LagrangianMasterDerivation(SimulationBase):
                 "steps": [
                     "Start from the v22 bulk M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0}) with 12 bridge pairs providing 24 spatial + 1 time = 25 dimensions",
                     "Add the shadow-time directions S^{2,0} (v24.2 extension) providing 2 additional spatial dimensions, for 27 total dimensions with (24,2) structure",
-                    "Verify ghost elimination: the unified time (single timelike direction) ensures all physical states have positive norm and prevents CTCs"
+                    "Verify ghost elimination: the shared clock t+ = (t1+t2)/sqrt(2) (single timelike direction) ensures all physical states have positive norm and prevents CTCs"
                 ],
                 "method": "Dimensional counting with signature analysis for ghost and CTC elimination",
                 "parentFormulas": ["v22-bulk-structure"]
             },
             terms={
-                "T^1": "Unified time fiber (single timelike direction)",
+                "T^1": "Two-time structure fiber (single timelike direction)",
                 "B_i^{2,0}": "Euclidean bridge pairs (12 total, each 2D)",
                 "S^{2,0}": "Sampler data fields (v24.2 extension, 2D Euclidean)",
                 "(24,2)": "Structure with 24 physics core, 1 timelike, and 2 shadow-time direction dimensions (no ghosts)"
@@ -2939,7 +2939,7 @@ class LagrangianMasterDerivation(SimulationBase):
             status="GEOMETRIC",
             description=(
                 "v22: Total bridge spatial dimensions = 12 pairs x 2D per pair = 24D. "
-                "Combined with the 1D unified time, the full spacetime is 25D with (24,2) "
+                "Combined with the 1D two-time structure, the full spacetime is 26D with (24,2) "
                 "signature. The 26D extension adds two shadow-time directions (v24.2)."
             ),
             no_experimental_value=True

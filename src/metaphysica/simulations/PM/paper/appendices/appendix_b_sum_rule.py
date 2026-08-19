@@ -95,7 +95,7 @@ class AppendixBSumRule(SimulationBase):
         chi = registry.get("topology.mephorash_chi", default=144)
         vol_v7 = registry.get("topology.vol_v7", default=1.0)
 
-        # Φ_G2 is the total invariant from 25D ancestral bulk
+        # Φ_G2 is the total invariant from 26D ancestral bulk
         phi_g2 = vol_v7 * chi / b3  # Simplified geometric constraint
 
         return {
@@ -428,7 +428,7 @@ class AppendixBSumRule(SimulationBase):
                 name="G₂ Geometric Invariant",
                 units="dimensionless",
                 status="FOUNDATIONAL",
-                description="Total invariant Φ_G₂ from ancestral 25D bulk",
+                description="Total invariant Φ_G₂ from ancestral 26D bulk",
                 eml_description="Dimensionless G2 holonomy invariant Phi_G2 = Vol(V7) * chi / b3; serves as the right-hand side target of the global sum rule.",
                 no_experimental_value=True,
             ),

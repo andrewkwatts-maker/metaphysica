@@ -116,7 +116,7 @@ class CouplingUnification:
 
     def verify_unification_point(self) -> Dict[str, Any]:
         """
-        C41: Verifies that all forces converge to the 25D Bulk Scale.
+        C41: Verifies that all forces converge to the 26D Bulk Scale.
 
         The sum of the three gauge residues must satisfy the 2/3
         Manifold Saturation Rule for the model to be sterile.
@@ -145,7 +145,7 @@ class CouplingUnification:
             "deviation": abs(unification_sum - target),
             "status": "TERMINAL_LOCKED" if is_unified else "DIVERGENCE_ERROR",
             "message": (
-                "All gauge forces converge at 25D bulk scale"
+                "All gauge forces converge at 26D bulk scale"
                 if is_unified else
                 "CRITICAL: Gauge unification violated"
             )

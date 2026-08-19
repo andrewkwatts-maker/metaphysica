@@ -196,7 +196,7 @@ class AppendixBComputationalMethods(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Z₂ parity arises from the Euclidean bridge in unified time with fibered structure and "
+                        "The Z₂ parity arises from the Euclidean bridge in two-time structure with fibered structure and "
                         "implements a mirror symmetry between the observable and hidden sectors:"
                     )
                 ),
@@ -295,7 +295,7 @@ class AppendixBComputationalMethods(SimulationBase):
                     type="paragraph",
                     content=(
                         "**Step 3: Include Z₂ factor from Euclidean bridge**\n"
-                        "Unified time with fibered structure requires Euclidean bridge reduction, which introduces Z₂ parity."
+                        "Two-time structure with fibered structure requires Euclidean bridge reduction, which introduces Z₂ parity."
                     )
                 ),
                 ContentBlock(
@@ -323,7 +323,7 @@ class AppendixBComputationalMethods(SimulationBase):
                         "- The Z₂ factor from the Euclidean bridge is essential - without it, we would get n<sub>gen</sub> = 6\n\n"
                         "- The Z₂ symmetry simultaneously solves two problems: correct generation count and "
                         "hidden variable structure for quantum foundations\n\n"
-                        "- The factor of 48 = 24 &#215; 2 combines the F-theory index theorem (24) with unified time fibered structure (2)\n\n"
+                        "- The factor of 48 = 24 &#215; 2 combines the F-theory index theorem (24) with two times (one per shadow) fibered structure (2)\n\n"
                         "- This derivation is parameter-free: all inputs (&#967;<sub>eff</sub> = 144, F<sub>divisor</sub> = 24, Z₂ = 2) are "
                         "geometrically determined"
                     )

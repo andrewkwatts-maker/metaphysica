@@ -176,7 +176,7 @@ class IntroductionV16(SimulationBase):
                 {
                     "name": "Dual Shadows with Euclidean Bridge",
                     "explanation": (
-                        "The theory uses a single unified time with a 2D Euclidean bridge "
+                        "The theory uses a single two-time structure with a 2D Euclidean bridge "
                         "connecting dual 'shadow' universes. This structure eliminates ghost "
                         "modes and explains dark energy through 'breathing' pressure mismatch."
                     )
@@ -293,7 +293,7 @@ class IntroductionV16(SimulationBase):
                     "under Ricci flow from <strong>EDOF=3</strong> (EDOF=3: 1 geometric seed b₃ + 2 calibrations), achieving <strong>116:1 compression ratio</strong>. "
                     "The bulk manifold <strong>M<sup>26</sup>(24,2)</strong> decomposes as: "
                     "<em>24</em> G₂ physics dimensions (12×(2,0) bridge pairs creating dual 13D shadows), "
-                    "<em>1</em> unified timelike fiber T¹, and "
+                    "<em>1</em> two-time structurelike fiber T¹, and "
                     "<em>2</em> <strong>shadow-time directions</strong> S<sup>(2,0)</sup> (an architecturally separate Euclidean sector "
                     "providing global cross-shadow objective reduction averaging). "
                     "The framework splits into <strong>dual 13D(12,1) shadows</strong> connected by <strong>12×(2,0) Euclidean "

@@ -9,13 +9,13 @@ reduction over G2 holonomy manifolds.
 
 DERIVATION CHAIN (v22):
 -----------------------
-1. 25D Master Action with vielbein formalism (signature (24,2))
+1. 26D Master Action with vielbein formalism (signature (24,2))
 2. Metric tensor from vielbein: g_munu = eta_AB e^A_mu e^B_nu
 3. Spin connection and torsion-free condition
 4. Riemann/Ricci tensor construction
 5. v22 Dimensional reduction:
    26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1) -> 4D(3,1)
-   - (0,1): Shared unified time fiber
+   - (0,1): Shared two-time structure fiber
    - 12x(2,0): 12 Euclidean bridge pairs
    - 2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
 6. Einstein-Hilbert action emergence
@@ -90,7 +90,7 @@ try:
     CHI_EFF = _REG.qedem_chi_sum        # Full manifold Euler char = 144
 
     # v21 Dimensional Chain - from SSOT
-    # Level 0: ANCESTRAL (26D, signature 24,1) - v21 Unified time
+    # Level 0: ANCESTRAL (26D, signature 24,1) - v21 Two-time structure
     D_CRITICAL = _REG.D_ancestral_total      # 26
     # Level 1: SHADOW (11D SPATIAL, signature 11,0) - v21 dual shadows
     # Structure: M^26 = T^1 x_fiber (S_normal^11 + S_mirror^11 + B^2)
@@ -181,7 +181,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
 
     v22 FRAMEWORK:
     Structure: 26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
-    - (0,1): Shared unified time fiber
+    - (0,1): Shared two-time structure fiber
     - 12x(2,0): 12 Euclidean bridge pairs
     - 2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
     Dimensional check: 12x2 + 1 = 25 EXACT
@@ -203,14 +203,14 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # Signature - v22 dual-shadow structure
         # v22 FRAMEWORK: 26D(24,2) = 12x(2,0) + (0,1) WARP to create 2x13D(12,1)
         # Components:
-        #   (0,1): Shared unified time fiber
+        #   (0,1): Shared two-time structure fiber
         #   12x(2,0): 12 Euclidean bridge pairs
         #   2x13D(12,1): Dual shadows (12 spatial + 1 time (its own) each)
         # Dimensional check: 12x2 + 1 = 25 EXACT
-        self.sig_25 = (24, 1)  # (spatial, temporal) - v22: unified time
+        self.sig_25 = (24, 1)  # (spatial, temporal) - v22: two-time structure
         self.sig_shadow = (12, 1)  # v22: Shadow is 13D (12 spatial + 1 time (its own))
         self.sig_bridge = (2, 0)   # Each of 12 Euclidean bridge pairs - v22
-        self.sig_time = (0, 1)     # Shared unified time - v22
+        self.sig_time = (0, 1)     # Shared two-time structure - v22
         self.sig_7 = (7, 0)    # G2 (Riemannian)
         self.sig_4 = (3, 1)    # Minkowski
 

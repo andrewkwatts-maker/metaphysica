@@ -5,7 +5,7 @@ Higgs Brane-Partition Simulation v21.0 (Demon-Lock)
 
 Licensed under the MIT License. See LICENSE file for details.
 
-v22 COMPATIBILITY: Uses Cl(24,2) Clifford algebra with unified time signature.
+v22 COMPATIBILITY: Uses Cl(24,2) Clifford algebra with two-time signature (24,2).
                    4-brane partition from (24,2) bulk symmetry structure.
                    Euclidean bridge enables mirror brane overlap calculation.
 

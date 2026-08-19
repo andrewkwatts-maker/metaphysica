@@ -7,8 +7,8 @@ notation for the M^{26}(24,2) dimensional architecture (e.g. legacy
 ``26D(26,1)`` references, old 26-spatial signatures, etc.).
 
 Every flagged item ultimately traces back to the single seed b₃ = 24:
-the 27-dim manifold is 24 (= b₃) bridge dimensions + 1 unified time +
-two shadow times. Terminology drift = drift from that one seed.
+the 26D bulk is 24 (= b₃) spatial dimensions + 2 timelike directions,
+one per 13D(12,1) shadow. Terminology drift = drift from that one seed.
 """
 from __future__ import annotations
 
@@ -27,23 +27,35 @@ CANONICAL = {
     "seed": "b3 = 24",
 }
 
+# Context markers that exempt a string from the deprecated-pattern scan:
+# self-labelled history, and the legitimate 27-dimensional exceptional
+# Jordan algebra (dim J3(O) = 27 is real mathematics, not stale notation).
+_CONTEXT_EXEMPT = (
+    "superseded", "formerly", "historical", "retired", "legacy",
+    "provenance", "two-time ruling", "jordan", "j3(o)", "j₃",
+    "exceptional", "vintage", "attribution",
+)
+
 # Patterns that indicate stale / inconsistent notation.
 DEPRECATED_PATTERNS = [
     (r"\b26D\(26,1\)\b", "Use M^{26}(24,2)"),
-    (r"\b25D\b", "v23+ uses 26D = 24 + 1 + 2"),
+    (r"\b25D\b", "Two-time ruling: the bulk is 26D = 24 space + 2 times"),
     (r"\b26D\(25,1\)\b", "Pre-v24 notation; use M^{26}(24,2)"),
+    (r"\b27D\b", "Two-time ruling: the bulk is 26D (24,2), not 27D"),
+    (r"\bunified time\b", "Two-time ruling: one timelike direction per shadow"),
     (r"Consciousness Field", "Use S_EIS (Euclidean Information Sector)"),
     (r"\bn_gen\s*=\s*chi_eff\s*/\s*\(4\*b3\)", "Verify chi_eff=144, b3=24 -> 3"),
 ]
 
 CANONICAL_KEYWORDS = [
     "M^{26}",
-    "24+1+2",
+    "(24,2)",
+    "24 + 2",
     "b3 = 24",
     "G2 holonomy",
     "twisted connected sum",
-    "S^{2,0}",
-    "T^1",
+    "(12,1)",
+    "Sp(2,R)",
 ]
 
 
@@ -56,6 +68,14 @@ def _scan_strings(obj: Any, path: str = "") -> List[Dict[str, Any]]:
         for i, v in enumerate(obj):
             flags.extend(_scan_strings(v, f"{path}[{i}]"))
     elif isinstance(obj, str):
+        # Text that labels itself as history, or that legitimately talks
+        # about the 27-dimensional exceptional Jordan algebra, is not
+        # terminology drift. Without this the 27D rule flags dim J3(O) = 27
+        # and every provenance note the two-time migration deliberately left
+        # in place.
+        low = obj.lower()
+        if any(k in low for k in _CONTEXT_EXEMPT):
+            return flags
         for pat, suggestion in DEPRECATED_PATTERNS:
             if re.search(pat, obj):
                 snippet = obj[:200] + ("..." if len(obj) > 200 else "")

@@ -1,4 +1,4 @@
-# metaphysica v2.2.0 — A speculative G₂-manifold model proposing ~125 candidate physical constants from one seed (b₃=24)
+# metaphysica v2.2.1 — A speculative G₂-manifold model proposing ~125 candidate physical constants from one seed (b₃=24)
 
 [![PyPI](https://img.shields.io/pypi/v/metaphysica.svg)](https://pypi.org/project/metaphysica/)
 [![Python](https://img.shields.io/pypi/pyversions/metaphysica.svg)](https://pypi.org/project/metaphysica/)

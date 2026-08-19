@@ -198,9 +198,10 @@ class FoundationsV16_2(SimulationBase):
                     "The foundational premise of the Sterile Model is that the observable universe "
                     "is not an independent system, but a lower-dimensional <strong>residue</strong> "
                     "of an <strong>M<sup>26</sup>(24,2) Bosonic Ancestral Bulk</strong>. This high-dimensional "
-                    "state represents the 'Total Potential' of the physical registry, with unified "
-                    "time (eliminating ghosts and closed timelike curves) and a <strong>12×(2,0) "
-                    "paired bridge system</strong> enabling dual-shadow coherence."
+                    "state represents the 'Total Potential' of the physical registry, with two "
+                    "timelike directions — one per 13D(12,1) shadow, ghosts and closed timelike "
+                    "curves controlled by the Sp(2,ℝ) gauge constraint (STRUCTURAL) — and a "
+                    "<strong>12×(2,0) paired bridge system</strong> enabling dual-shadow coherence."
                 )
             ),
             ContentBlock(
@@ -215,7 +216,7 @@ class FoundationsV16_2(SimulationBase):
                     "<strong>Monster Group</strong> and the <strong>Leech Lattice</strong> via the "
                     "bosonic string (26D parent, signature (24,2) before the S<sup>(2,0)</sup> extension). "
                     "In PM v24.2, the actual bulk has structure <strong>M<sup>26</sup>(24,2)</strong>: twenty-four "
-                    "physics core dimensions from the 12×(2,0) bridge pairs, one unified timelike, "
+                    "physics core dimensions from the 12×(2,0) bridge pairs, one two-time structurelike, "
                     "and two shadow-time directions S<sup>(2,0)</sup>. "
                     "This M<sup>26</sup>(24,2) configuration is ghost-free: the single timelike direction "
                     "prevents closed timelike curves, and OR reduction to 13D(12,1) shadows "
@@ -230,7 +231,7 @@ class FoundationsV16_2(SimulationBase):
                     "(24,2)) are required for modular invariance (Polyakov 1981). The 24 transverse "
                     "dimensions match the Leech lattice — the unique even unimodular lattice in 24D "
                     "with no roots — connecting via Moonshine to the Monster Group (Borcherds 1992). "
-                    "PM extends the 25D bosonic string parent (signature (24,2)) by appending the S<sup>(2,0)</sup> shadow-time directions, "
+                    "PM extends the 26D bosonic string parent (signature (24,2)) by appending the S<sup>(2,0)</sup> shadow-time directions, "
                     "which provide architectural averaging across the 12 bridge pairs "
                     "and stabilize the dual-shadow construction, yielding the full M<sup>26</sup>(24,2) bulk. The resulting (24,2) structure "
                     "preserves ghost-freedom (single timelike) while accommodating both the G₂ "
@@ -305,7 +306,7 @@ class FoundationsV16_2(SimulationBase):
                 content=(
                     "Each bridge pair B<sub>i</sub> = (y<sub>1i</sub>, y<sub>2i</sub>) contributes "
                     "two spacelike dimensions. This gives 12×2 = 24 spacelike dimensions from the pairs, "
-                    "plus 1 unified timelike dimension, plus 2 shadow-time directions S<sup>(2,0)</sup> = (s<sub>1</sub>, s<sub>2</sub>): "
+                    "plus 1 two-time structurelike dimension, plus 2 shadow-time directions S<sup>(2,0)</sup> = (s<sub>1</sub>, s<sub>2</sub>): "
                     "total <strong>M<sup>26</sup>(24,2)</strong>. The pairing "
                     "arises from the G₂ topology: <strong>b₃ = 24 / 2 = 12 pairs</strong>."
                 )
@@ -742,7 +743,7 @@ class FoundationsV16_2(SimulationBase):
                     "Bridge bulk: 12 bridge pairs times 2 dimensions each = 24D spatial sector."
                 ),
                 terms={
-                    "T^1": "1-dimensional unified timelike fiber",
+                    "T^1": "1-dimensional two-time structurelike fiber",
                     "B_i^{2,0}": "i-th Euclidean bridge pair with (2,0) signature",
                     "x_fiber": "Fiber product (fibered over time)"
                 },

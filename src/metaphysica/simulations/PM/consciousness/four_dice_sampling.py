@@ -417,7 +417,7 @@ class MandalaVisualizer:
         ax.set_ylim(-1.8, 1.8)
         ax.axis('off')
 
-        # Draw outer ring (representing the 25D bulk boundary)
+        # Draw outer ring (representing the 26D bulk boundary)
         outer_circle = plt.Circle((0, 0), 1.5, fill=False,
                                    edgecolor='gray', linewidth=2, linestyle='--')
         ax.add_patch(outer_circle)
