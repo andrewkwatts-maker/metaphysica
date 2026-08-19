@@ -691,7 +691,7 @@ class FoundationsV16_2(SimulationBase):
             Formula(
                 id="26d-signature",
                 label="(1.1)",
-                latex=r"\text{Signature}(M^{24,2}) = (24, 1) \quad ds^2 = -dt^2 + \sum_{i=1}^{12}(dy_{1i}^2 + dy_{2i}^2)",
+                latex=r"\text{Signature}(M^{24,2}) = (24, 2) \quad ds^2 = -dt_1^2 - dt_2^2 + \sum_{i=1}^{12}(dy_{1i}^2 + dy_{2i}^2)",
                 plain_text="Signature(M^{24,2}) = (24, 2); ds^2 = -dt_1^2 - dt_2^2 + sum_i(dy_{1i}^2 + dy_{2i}^2)",
                 category="DERIVED",
                 description="26D ancestral bulk signature (24,2). 24 spacelike from 12x2 pairs, 2 timelike (one per shadow).",
@@ -707,17 +707,17 @@ class FoundationsV16_2(SimulationBase):
                     "parentFormulas": []
                 },
                 eml_tree_str=(
-                    "ops.add(b3_leaf(), eml_scalar(1.0))"
+                    "ops.add(b3_leaf(), eml_scalar(2.0))"
                 ),
                 eml_description=(
-                    "Bulk signature (24,2): 24 spacelike dimensions plus 1 timelike."
+                    "Bulk signature (24,2): 24 spacelike dimensions plus 2 timelike (one per 13D shadow)."
                 ),
                 terms={
-                    "M^{24,2}": "25-dimensional manifold with signature (24,2)",
+                    "M^{24,2}": "26-dimensional manifold with signature (24,2)",
                     "ds^2": "Line element of the bulk metric",
                     "dy_{1i}, dy_{2i}": "Bridge pair coordinates for the i-th pair"
                 },
-            arithma=_arithma_add(_arithma_num(24.0), _arithma_num(1.0)), eml=_eml_add(_b3_leaf(), _eml_scalar(1.0)), value=25.0),
+            arithma=_arithma_add(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_add(_b3_leaf(), _eml_scalar(2.0)), value=26.0),
             Formula(
                 id="euclidean-bridge",
                 label="(1.2)",

@@ -13,7 +13,7 @@ experimental comparison:
 
     { path, value, experimental_value, experimental_uncertainty,
       sigma, status (from the registry's own validation_status),
-      verdict: PASS | MARGINAL | TENSION | FAIL | UNBOUNDED | INPUT,
+      verdict: PASS | MARGINAL | TENSION | FAIL | UNBOUNDED | INPUT | IDENTITY,
       source_simulation, units }
 
 The summary reports honest counts — including the failures. A framework
@@ -57,6 +57,26 @@ def _is_input_anchor(rec, value, exp) -> bool:
         return False
 
 
+def _is_roundtrip_identity(value, exp) -> bool:
+    """True when a 'prediction' reproduces its own input to machine precision.
+
+    2026-08 audit: the framework's most precise-looking results were
+    algebraic round-trips - e.g. bulk_hartree = CODATA/f followed by
+    manifest_hartree = bulk_hartree * f, which returns CODATA exactly.
+    Four QED constants (hartree, bohr, compton, stefan-boltzmann) shared
+    this shape and scored ~1e-12 fractional agreement, i.e. floating-point
+    noise reported as a part-per-trillion confirmation. Such records are
+    consistency identities (the projection algebra is self-inverse), not
+    predictions, and must not enter the pass tally.
+    """
+    if value is None or exp is None or exp == 0:
+        return False
+    try:
+        return abs((float(value) - float(exp)) / float(exp)) < 1e-10
+    except (TypeError, ValueError, ZeroDivisionError):
+        return False
+
+
 def _verdict(sigma, registry_status: str) -> str:
     """Classify by sigma with the registry's own validation_status as guide."""
     s = (registry_status or "").upper()
@@ -93,9 +113,27 @@ def build_report() -> Dict[str, Any]:
         sigma = _num(rec.get("sigma_deviation"))
         unc = _num(rec.get("experimental_uncertainty"))
         status = rec.get("validation_status") or ""
-        verdict = ("INPUT" if _is_input_anchor(rec, value, exp)
-                   else _verdict(sigma, status))
         meta = rec.get("metadata") or {}
+        if _is_input_anchor(rec, value, exp):
+            verdict = "INPUT"
+        elif _is_roundtrip_identity(value, exp):
+            verdict = "IDENTITY"
+        else:
+            verdict = _verdict(sigma, status)
+
+        # Dual sigma reporting. Where a record declares a theory
+        # uncertainty, the registry folds it into sigma in quadrature -
+        # legitimate for a tree-level derivation, but it can deflate the
+        # deviation by orders of magnitude (G_F_matched reads 0.02 sigma
+        # with its 0.12% theory bar and 57 sigma against PDG precision
+        # alone). Report both so the reader can judge.
+        theory_unc = meta.get("theory_uncertainty")
+        sigma_exp_only = None
+        if unc:
+            try:
+                sigma_exp_only = abs(float(value) - float(exp)) / float(unc)
+            except (TypeError, ValueError, ZeroDivisionError):
+                sigma_exp_only = None
         validations.append({
             "path": path,
             "value": value,
@@ -103,6 +141,8 @@ def build_report() -> Dict[str, Any]:
             "experimental_uncertainty": unc,
             "experimental_source": rec.get("experimental_source"),
             "sigma": sigma,
+            "sigma_experimental_only": sigma_exp_only,
+            "theory_uncertainty": _num(theory_unc),
             "verdict": verdict,
             "registry_status": rec.get("status"),
             "units": meta.get("units"),
@@ -133,7 +173,12 @@ def build_report() -> Dict[str, Any]:
             "(or the registry's own validation_status where set). INPUT "
             "marks experimental anchors compared against themselves - they "
             "are inputs, not predictions, and are excluded from the "
-            "pass/fail tally."
+            "pass/fail tally. IDENTITY marks algebraic round-trips that "
+            "reproduce their own input to machine precision (a projection "
+            "applied and then inverted); they are consistency identities, "
+            "not predictions. Where a record declares a theory uncertainty, "
+            "sigma folds it in and sigma_experimental_only reports the "
+            "deviation against the experimental precision alone - read both."
         ),
         "summary": {
             "total": len(validations),

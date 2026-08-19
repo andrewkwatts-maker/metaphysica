@@ -80,7 +80,13 @@ _DELTA_CP_RAD = -_PHI_ASSOC * (_CHI_EFF / (_B3 * _N_GEN))       # = -π/2
 _DELTA_CP_DEG = math.degrees(_DELTA_CP_RAD)                      # = -90°
 
 # NuFIT 6.0 reference values (Normal Ordering)
-_THETA13_NUFIT = 8.57        # degrees, NO best fit
+# ORDERING CONSISTENCY (2026-08-20): the framework predicts INVERTED
+# ordering from b3=24 even parity (see neutrino_mixing), and the sibling
+# module scores against IO. This module had been anchored to NORMAL
+# ordering, so the same prediction was being graded on two different
+# rulers. Anchored to IO for consistency; the candidate is falsified
+# either way (8.8 sigma IO / 9.3 sigma NO).
+_THETA13_NUFIT = 8.63        # degrees, NuFIT 6.0 IO best fit
 _THETA13_1SIGMA = 0.11       # degrees, NuFIT 6.0 1σ (earlier 0.25 band understated the miss)
 _DELTA_CP_NUFIT = 197.0 - 360.0  # degrees: NuFIT 6.0 NO best fit ~197 deg mapped to (-180, 180]; the earlier -107 was the T2K-only fit
 _DELTA_CP_1SIGMA = 40.0      # degrees, approximate 1σ (range ≈ -180° to 0°)
@@ -425,7 +431,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=_THETA13_NUFIT,
                 bound_type="central_value",
-                bound_source="NuFIT_6.0_NO_2024",
+                bound_source="NuFIT_6.0_IO_2024",
                 uncertainty=_THETA13_1SIGMA,
                 no_experimental_value=False,
             ),
@@ -449,7 +455,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 derivation_formula="pmns-delta-CP-derived",
                 experimental_bound=_DELTA_CP_NUFIT,
                 bound_type="central_value",
-                bound_source="NuFIT_6.0_NO_2024",
+                bound_source="NuFIT_6.0_IO_2024",
                 uncertainty=_DELTA_CP_1SIGMA,
                 no_experimental_value=False,
             ),
@@ -469,7 +475,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=math.sin(math.radians(_THETA13_NUFIT)),
                 bound_type="central_value",
-                bound_source="NuFIT_6.0_NO_2024",
+                bound_source="NuFIT_6.0_IO_2024",
                 uncertainty=0.005,
                 no_experimental_value=False,
             ),
