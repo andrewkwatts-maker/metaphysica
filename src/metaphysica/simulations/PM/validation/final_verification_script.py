@@ -8,7 +8,7 @@ regarding the 26D -> (24+1) + (0,2) decomposition.
 
 Purpose:
     Ensures every mention of "26D" includes proper topological context:
-    - M²⁶(26,1) = (24+1) ⊕ (0,2)
+    - M²⁶(24,2) = (24+1) ⊕ (0,2)
     - (24+1) = Leech Lattice Λ₂₄ + Unified Time T¹ (Kinetic Backbone)
     - (0,2) = Euclidean Information Sector S_EIS (Consciousness Field)
 
@@ -202,7 +202,7 @@ class DimensionalityAuditor:
             "total_flags": len(self.flags),
             "status": "PUBLICATION READY" if len(self.flags) == 0 else "REVISION REQUIRED",
             "required_terminology": {
-                "full_expression": "M²⁶(26,1) = (24+1) ⊕ (0,2)",
+                "full_expression": "M²⁶(24,2) = (24+1) ⊕ (0,2)",
                 "kinetic_backbone": "(24+1) = Leech Lattice Λ₂₄ + Unified Time T¹",
                 "euclidean_sector": "(0,2) = Euclidean Information Sector (S_EIS)",
                 "alternative_names": [
@@ -229,7 +229,7 @@ class DimensionalityAuditor:
                 },
                 {
                     "old": "26-dimensional manifold with signature (24,2)",
-                    "new": "M²⁶(26,1) manifold decomposed as (24+1) ⊕ (0,2), where (24+1) is the kinetic backbone and (0,2) is the Euclidean Bridge"
+                    "new": "M²⁶(24,2) manifold decomposed as (24+1) ⊕ (0,2), where (24+1) is the kinetic backbone and (0,2) is the Euclidean Bridge"
                 },
                 {
                     "old": "The 26D bulk manifold generates the Standard Model",

@@ -205,7 +205,7 @@ class LeechLattice:
         #     Each octad gives 2^7 = 128 vectors
         # (b) 2 × 24 × 2^12 / ... → Actually:
         #     Shape (3, ±1²³): one coordinate ±3, others ±1
-        #     2 × C(24,1) × 2^11 ... nah
+        #     2 × C(24,2) × 2^11 ... nah
 
         # Use the explicit three-type decomposition from Conway & Sloane:
         # Type 2: (2²²0²)  — 97,152 vectors

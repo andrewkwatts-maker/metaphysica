@@ -10,23 +10,22 @@
   },
   "cosmological_parameters": {
     "w0": {
-      "value": -0.957,
-      "uncertainty_plus": 0.067,
-      "uncertainty_minus": 0.067,
+      "value": -0.752,
+      "uncertainty_plus": 0.057,
+      "uncertainty_minus": 0.057,
       "units": "dimensionless",
-      "description": "Dark energy equation of state at z=0 (CPL thawing quintessence)",
-      "table": "Table 5",
-      "dataset": "DESI 2025 Thawing",
-      "note": "v16.2: Updated from DR2 Lambda-CDM (-0.728) to 2025 thawing (-0.957)"
+      "description": "Dark energy equation of state at z=0, w0waCDM",
+      "source": "DESI DR2 (2025) BAO + CMB + DESY5, arXiv:2503.14738",
+      "table": "DR2 Results II, w0waCDM combined"
     },
     "wa": {
-      "value": -0.99,
-      "uncertainty_plus": 0.32,
-      "uncertainty_minus": 0.32,
+      "value": -0.86,
+      "uncertainty_plus": 0.23,
+      "uncertainty_minus": 0.2,
       "units": "dimensionless",
-      "description": "Dark energy evolution parameter (CPL parameterization)",
-      "table": "Table 3",
-      "dataset": "BAO+CMB+DESY5+PantheonPlus"
+      "description": "Dark energy evolution parameter, w0waCDM (CPL)",
+      "source": "DESI DR2 (2025) BAO + CMB + DESY5, arXiv:2503.14738",
+      "table": "DR2 Results II, w0waCDM combined"
     },
     "H0": {
       "value": 68.52,
@@ -39,8 +38,8 @@
     },
     "Omega_m": {
       "value": 0.3069,
-      "uncertainty_plus": 0.0050,
-      "uncertainty_minus": 0.0050,
+      "uncertainty_plus": 0.005,
+      "uncertainty_minus": 0.005,
       "units": "dimensionless",
       "description": "Matter density parameter",
       "table": "Table 3",
@@ -48,34 +47,34 @@
     },
     "Omega_DE": {
       "value": 0.6931,
-      "uncertainty_plus": 0.0050,
-      "uncertainty_minus": 0.0050,
+      "uncertainty_plus": 0.005,
+      "uncertainty_minus": 0.005,
       "units": "dimensionless",
       "description": "Dark energy density parameter",
       "table": "Table 3",
       "dataset": "BAO+CMB+DESY5+PantheonPlus"
     },
     "sigma8": {
-      "value": 0.827,
-      "uncertainty_plus": 0.011,
-      "uncertainty_minus": 0.011,
+      "value": 0.8111,
+      "uncertainty_plus": 0.006,
+      "uncertainty_minus": 0.006,
       "units": "dimensionless",
-      "description": "RMS matter fluctuation amplitude",
-      "table": "Table 3",
-      "dataset": "BAO+CMB+DESY5+PantheonPlus"
+      "description": "RMS matter fluctuation amplitude at 8 h^-1 Mpc",
+      "source": "Planck 2018 TT,TE,EE+lowE+lensing (arXiv:1807.06209)",
+      "note": "DESI does not publish a stand-alone sigma8; the previous 0.827 +/- 0.011 'DESI 2024 BAO+CMB' attribution was unverifiable. Planck 2018 is the citable anchor."
     },
     "S8": {
-      "value": 0.832,
+      "value": 0.83,
       "uncertainty_plus": 0.013,
       "uncertainty_minus": 0.013,
       "units": "dimensionless",
       "description": "S8 = sigma8 * sqrt(Omega_m/0.3)",
-      "source": "Planck2018"
+      "source": "Planck 2018 TT,TE,EE+lowE+lensing (arXiv:1807.06209)"
     },
     "eta_baryon": {
       "value": 6.12e-10,
-      "uncertainty_plus": 0.04e-10,
-      "uncertainty_minus": 0.04e-10,
+      "uncertainty_plus": 4e-12,
+      "uncertainty_minus": 4e-12,
       "units": "dimensionless",
       "description": "Baryon-to-photon ratio from BBN (Planck 2018)",
       "source": "Planck2018+BBN",
@@ -84,16 +83,46 @@
   },
   "alternative_datasets": {
     "BAO_only": {
-      "w0": {"value": -0.55, "uncertainty": 0.21},
-      "wa": {"value": -1.32, "uncertainty": 0.82}
+      "w0": {
+        "value": -0.55,
+        "uncertainty": 0.21
+      },
+      "wa": {
+        "value": -1.32,
+        "uncertainty": 0.82
+      }
     },
     "BAO_CMB": {
-      "w0": {"value": -0.45, "uncertainty": 0.21},
-      "wa": {"value": -1.79, "uncertainty": 0.65}
+      "w0": {
+        "value": -0.45,
+        "uncertainty": 0.21
+      },
+      "wa": {
+        "value": -1.79,
+        "uncertainty": 0.65
+      }
     }
   },
   "verification": {
     "checksum_sha256": "pending",
     "last_verified": "2025-01-15"
+  },
+  "framework_adopted_anchors": {
+    "thawing_w0wa": {
+      "w0": {
+        "value": -0.957,
+        "uncertainty": 0.067
+      },
+      "wa": {
+        "value": -0.99,
+        "uncertainty": 0.32
+      },
+      "sigma8": {
+        "value": 0.827,
+        "uncertainty": 0.011
+      },
+      "status": "ATTRIBUTION_UNVERIFIED",
+      "note": "Values previously carried in cosmological_parameters and labelled 'DESI 2025 DR2 combined'. A 2026-08 peer-review pass could not locate them in any published DESI release: the DR2 w0waCDM headline is w0 = -0.752 +/- 0.057, wa = -0.86 (+0.23/-0.20) (arXiv:2503.14738), and DESI does not report a stand-alone sigma8 = 0.827. Retained here for provenance only - do NOT use for scoring."
+    }
   }
 }

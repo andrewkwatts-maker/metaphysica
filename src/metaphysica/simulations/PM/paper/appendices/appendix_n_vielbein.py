@@ -789,9 +789,9 @@ class AppendixNVielbein(SimulationBase):
                     "<li><strong>Fermion zero modes</strong>: Spinor fields on G2 require the spin "
                     "connection to define the Dirac operator whose zero modes give fermion generations.</li>"
                     "<li><strong>26D master action</strong>: The bulk vielbein E^A_M with A,M = 0,...,25 "
-                    "encodes the unified time (24,1) signature with fibered structure geometry.</li>"
+                    "encodes the unified time (24,2) signature with fibered structure geometry.</li>"
                     "<li><strong>Dimensional reduction</strong>: Vielbein decomposition tracks how "
-                    "Lorentz symmetry breaks: SO(24,1) -> SO(3,1) x G2 via Euclidean bridge.</li>"
+                    "Lorentz symmetry breaks: SO(24,2) -> SO(3,1) x G2 via Euclidean bridge.</li>"
                     "</ul>"
                 ),
                 label="pm-applications"

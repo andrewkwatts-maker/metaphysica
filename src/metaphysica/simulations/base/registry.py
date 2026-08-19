@@ -417,6 +417,83 @@ class PMRegistry:
             if not entry.metadata.get('eml_description'):
                 entry.metadata['eml_description'] = eml_description
 
+    def backfill_experimental_bound(
+        self,
+        path: str,
+        experimental_value: Optional[float],
+        experimental_uncertainty: Optional[float] = None,
+        experimental_source: Optional[str] = None,
+        bound_type: Optional[str] = None,
+    ) -> bool:
+        """Attach a declared experimental bound to an already-registered param.
+
+        2026-08 audit fix: ``inject_outputs`` skips re-registration when a
+        parameter was already written by an earlier simulation, which
+        silently discarded the ``experimental_bound`` declared on the
+        owning simulation's Parameter definition. Those predictions then
+        carried ``validation_status = NO_DATA`` and were invisible to the
+        validation report — the framework's own flagship w0 prediction
+        among them. This backfills the bound (never overwriting an
+        existing one) and recomputes the verdict.
+
+        Returns True when a bound was attached.
+        """
+        if path not in self._parameters or experimental_value is None:
+            return False
+        entry = self._parameters[path]
+        if entry.experimental_value is not None:
+            return False  # first binding wins; do not overwrite
+
+        entry.experimental_value = experimental_value
+        entry.experimental_uncertainty = experimental_uncertainty
+        entry.experimental_source = experimental_source
+        entry.bound_type = bound_type or "central_value"
+        self._recompute_validation(path)
+        return True
+
+    def _recompute_validation(self, path: str) -> None:
+        """Recompute sigma/verdict for an entry after a bound is attached."""
+        entry = self._parameters.get(path)
+        if entry is None or entry.experimental_value is None:
+            return
+        try:
+            theory = float(entry.value)
+            exp = float(entry.experimental_value)
+        except (TypeError, ValueError):
+            return
+
+        unc = entry.experimental_uncertainty
+        bound = (entry.bound_type or "central_value").lower()
+
+        if bound in ("measured", "central_value") and unc:
+            total = float(unc)
+            theory_unc = (entry.metadata or {}).get("theory_uncertainty")
+            if theory_unc:
+                try:
+                    total = (float(unc) ** 2 + float(theory_unc) ** 2) ** 0.5
+                except (TypeError, ValueError):
+                    pass
+            sigma = abs(theory - exp) / total
+            entry.sigma_deviation = sigma
+            if sigma < 1.0:
+                entry.validation_status = "PASS"
+            elif sigma < 2.0:
+                entry.validation_status = "MARGINAL"
+            elif sigma < 3.0:
+                entry.validation_status = "TENSION"
+            else:
+                entry.validation_status = "FAIL"
+        elif bound == "lower":
+            ok = theory >= exp
+            entry.validation_status = "PASS" if ok else "FAIL"
+            entry.relative_margin = (theory - exp) / exp if exp else None
+            entry.sigma_deviation = None
+        elif bound == "upper":
+            ok = theory <= exp
+            entry.validation_status = "PASS" if ok else "FAIL"
+            entry.relative_margin = (exp - theory) / exp if exp else None
+            entry.sigma_deviation = None
+
     def update(
         self,
         values: Dict[str, Any],

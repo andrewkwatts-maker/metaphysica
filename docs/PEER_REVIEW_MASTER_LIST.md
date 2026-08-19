@@ -353,3 +353,28 @@ All findings recomputation-verified before filing. FIXED = corrected this cycle;
 - octonionic_mixing anchor-shopping (V_cb 0.09 sigma vs favorable anchor, 1.12 sigma vs own runtime constants); electroweak_mixing g2 "(PDG 2024)" computed from geometric VEV; ckm section text K=4 -> pi/6 inconsistency (flagged in 3 places, unflagged in 2).
 - ricci_flow_h0 "RESOLVED"/success prose vs its own 3.2-sigma FAIL cert; H0_early PREDICTED-but-anchored circularity; Planck 67.4 +/- 0.5 vs 67.36 +/- 0.54 rounding; desi.Omega_m = 0.3111 attribution ("DESI2025" — value is Planck18+BAO).
 - higgs cert anchors still testing |x - 125.25|/0.17 in two files; axion anthropic-window text excludes its own f_a; thermal alpha_T "DERIVED (zero free parameters)" is a target-first identity (relabel STRUCTURAL/POSTULATED); sampler-language residue in FormulasRegistry registry blocks and sampler_entropy_dynamics; config v21 legacy narrative blocks (V21UnifiedTimePhysics) unlabelled.
+
+### 2026-08-19 (cont.) — Deferred register cleared + validation-coverage fix
+
+**Structural fixes (new defects found while clearing the register):**
+- `inject_outputs` skipped registration entirely for already-registered params, silently discarding the `experimental_bound` declared on the owning simulation's Parameter definition. Those predictions carried `validation_status = NO_DATA` and were INVISIBLE to the validation report — the framework's own w0/wa among them. Added `PMRegistry.backfill_experimental_bound()` (never overwrites an existing binding) + `_recompute_validation()`; 6 predictions became visible immediately.
+- Validation scoreboard was inflated: 56 of 109 "PASS" entries were experimental anchors compared against themselves (ESTABLISHED:* source, value == experimental_value, sigma identically 0). Added an INPUT verdict class, excluded from the pass/fail tally. Honest counts now: 47 pass / 13 marginal / 3 tension / 9 fail / 81 input / 17 unbounded.
+- `cosmology.M_Pl_4D` declared its bound against the REDUCED Planck mass (2.435e18) while the code stores the FULL mass (1.2209e19) and geometric_anchors.py documents the full-mass convention — a spurious ~3000-sigma failure once bounds became visible. Corrected to CODATA 2022 full Planck mass.
+- `cosmology.s8_pm_predicted` (an S8 prediction) was scored against a sigma8 anchor — a category error. Re-anchored to Planck 2018 S8 = 0.830 +/- 0.013.
+- Gate-symbol collision: the pass-10 sweep rewrote `G_{27}` (gate 27's LaTeX symbol) to `G_{26}`, colliding with gate 26. Restored; gate symbols are indices, not dimensions.
+
+**DESI/sigma8 SSOT correction (root cause of the anchor-honesty findings):**
+- `data/experimental/desi_2025_constraints.json` was the origin of the unverifiable anchors. Primary `cosmological_parameters` now carry the DESI DR2 w0waCDM headline (w0 = -0.752 +/- 0.057, wa = -0.86 +0.23/-0.20, arXiv:2503.14738) and Planck 2018 sigma8/S8; the previous values are preserved under `framework_adopted_anchors` marked ATTRIBUTION_UNVERIFIED. Every downstream sigma now follows automatically.
+
+**Deferred items cleared:**
+- wa canonicalised to -1/sqrt(b3) = -0.2041 (2.98 sigma vs DR2); the -4/sqrt(b3) = -0.8165 FITTED variant retired in generate_72gates_json; G60 + dark_energy_alignment certs rewritten (they had carried three mutually contradictory wa values including "wa = 0").
+- neutrino m_base 0.049 -> 0.049906 so the FITTED scale actually hits its own atmospheric target: dm2_32 goes from 3.35 sigma (FAIL) to 0.14 sigma (PASS).
+- NUFIT_VALUES relabelled as a mixed 5.2/6.0 snapshot with the 6.0 deltas noted; theta23-IO double anchor unified to the table value (49.3 +/- 1.0, 0.45 sigma).
+- yukawa theta13 band 0.13 -> 0.11 (NuFIT 6.0 symmetric; 0.68 -> 0.81 sigma, test updated with reason); the delta_CP/theta13 mixed-ordering scoring is now stated explicitly; (a, b) = (0.12, 0.05) labelled tuned (the "zero fitted parameters" claim was false).
+- Cross-module delta_CP note added to neutrino_mixing and neutrino_algebraic: three "derived" values in different orderings are not three confirmations.
+- octonionic V_cb/V_ub docstring sigmas restated against the module's OWN runtime anchors (0.09 -> 1.12, 0.29 -> 0.55); electroweak g2 "(PDG 2024)" relabelled mixed-provenance; ckm K=4 -> pi/6 caveat propagated into section + prediction text.
+- ricci "HUBBLE TENSION RESOLVED" / success callout restated against its own 3.2-sigma FAIL; H0_early status PREDICTED -> ANCHORED (the interpolation is normalised to return Planck, so agreement was definitional); Planck anchor 67.4 +/- 0.5 -> 67.36 +/- 0.54.
+- higgs certs re-anchored 125.25/0.17 -> 125.20/0.11 in both modules; axion anthropic window widened to 10^11-10^13 (the narrow quote excluded the module's own f_a); thermal alpha_T relabelled STRUCTURAL (target-first identity, not zero-free-parameter).
+- Legacy narrative blocks labelled: config `V21UnifiedTimePhysics` marked SUPERSEDED by the two-time ruling; FormulasRegistry "S^{2,0} sampler" block recast as the two timelike directions with the t+ shared-clock note.
+
+**LaTeX/theory-artifact sweep:** 168 signature/action swaps across 40 files ((24,1)/(26,1)/Spin(26,1)/Cl(24,1) -> (24,2)/Spin(24,2)/Cl(24,2); S_{27}/R_{27}/d^{27}X -> 26D forms), plus 24 S_27-family symbol renames. `formulas.json` and `sections.json` now scan CLEAN for every stale-geometry pattern; the only surviving (24,1)/27/10 strings are inside explicitly-labelled superseded records.

@@ -53,8 +53,13 @@ PREDICTION vs EXPERIMENT:
     CKM:
         V_us = 0.2245 (CALIBRATED: 0.037 cusp coefficient fitted to the 2020-era
                        PDG central 0.2245; PDG 2024: 0.22500 +/- 0.00067 → 0.75 sigma)
-        V_cb = 0.0409 (PDG 2024: 0.0410 +/- 0.0014) [0.09 sigma]
-        V_ub = 0.00375 (PDG 2024: 0.00382 +/- 0.00024) [0.29 sigma]
+        V_cb = 0.0409 (PDG 2024 inclusive/exclusive average 0.04182 +/-
+               0.00085 - the module's own runtime anchor) [1.12 sigma]
+        V_ub = 0.00375 (PDG 2024 0.00369 +/- 0.00011 - the module's own
+               runtime anchor) [0.55 sigma]
+        (2026-08: the previous 0.09/0.29 sigma figures quoted a second,
+        more favourable anchor than the constants the code actually
+        scores against.)
 
     PMNS (chi_eff_total=144):
         theta_23 = 49.75 deg (NuFIT 6.0 IO: 49.3 +/- 1.0 deg)

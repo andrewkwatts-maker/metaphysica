@@ -630,7 +630,7 @@ class AppendixMTensorCalculus(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "In the PM framework, we work in 26D with signature (24,1) and fibered structure. The tensor "
+                        "In the PM framework, we work in 26D with signature (24,2) and fibered structure. The tensor "
                         "calculus machinery developed here extends naturally to higher dimensions. "
                         "The G2 holonomy condition (nabla phi = 0) on the 7D internal manifold "
                         "is expressed using this same covariant derivative formalism."

@@ -31,7 +31,12 @@ topological invariants — ZERO free parameters.
 Status:
     neutrino.theta13_derived  — DERIVED  (12% high of NuFIT, ~4σ given tight 1σ≈0.25°;
                                            an order-of-magnitude prediction, not a precision fit)
-    neutrino.delta_CP_derived — DERIVED  (~0.4σ from NuFIT best fit)
+    neutrino.delta_CP_derived — DERIVED  (NO framing, -pi/2 = 270 deg;
+        ~1.8 sigma from the NuFIT 6.0 NO best fit ~197 deg. NOTE: two
+        sibling modules export different delta_CP values in different
+        orderings - particle/neutrino_mixing 278.4 deg (IO, includes a
+        FITTED 45.9 deg offset) and particle/yukawa_derivation 277.3
+        deg. They are not three confirmations of one prediction.)
 
 Dependencies: g2_geometry_v16_0 (topology.elder_kads, topology.n_gen),
               e7_representation_v1_0 (geometry.alpha_leak)

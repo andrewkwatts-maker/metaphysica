@@ -9,7 +9,7 @@ PMNS uses chi_eff_total = 144 (both shadows combined) because neutrino oscillati
             involve BOTH 13D(12,1) shadows. The per-shadow chi_eff = 72 is used for baryon physics.
             S_orient = 12 remains unchanged (single unified bridge orientation sum)
 
-            Uses unified time (24,1) signature. 12×(2,0) bridge pairs + (0,1) shared time
+            Uses unified time (24,2) signature. 12×(2,0) bridge pairs + (0,1) shared time
             WARP to create dual 13D(12,1) shadows via OR coordinate selection.
             Orientation sum from Euclidean bridge mechanism.
 
@@ -26,7 +26,7 @@ This module has TWO KINDS of outputs (see assessment further down):
 
 * delta_CP and m_base are FITTED inputs (calibrated to NuFIT 6.0):
   - delta_CP (parity_offset = 45.9 deg is a hardcoded fit, not a derivation)
-  - m_base = 0.049 eV (fitted to the atmospheric mass splitting)
+  - m_base = 0.049906 eV (fitted to the atmospheric mass splitting)
 
 The three mixing angles agree with NuFIT 6.0 within 0.5 sigma each in
 the current calibration, but this agreement is a proposed candidate
@@ -51,10 +51,16 @@ TOPOLOGICAL INPUTS (TCS #187):
     - n_gen = 3 (generations = |chi_eff_total|/48)
     - orientation_sum = 12 (from Euclidean bridge OR reduction, single bridge)
 
-PREDICTIONS vs NuFIT 6.0 (chi_eff_total=144):
+PREDICTIONS vs the NUFIT_VALUES table (mixed 5.2/6.0 snapshot; chi_eff_total=144).
+CANONICAL delta_CP NOTE: this module exports 278.4 deg (IO framing, includes
+the FITTED 45.9 deg parity offset). Sibling modules export different values in
+different orderings: algebra/neutrino_algebraic 270 deg (NO framing, from
+-pi/2) and particle/yukawa_derivation 277.3 deg (1.5408 pi). They are NOT
+three confirmations of one prediction - see each module's own labelling.
+
     theta_12 = 33.59° (NuFIT: 33.41 ± 0.75°) → 0.24σ
     theta_13 = 8.65°  (NuFIT: 8.63 ± 0.11°)  → 0.16σ  [chi_eff_total=144]
-    theta_23 = 49.75° (NuFIT: 49.0 ± 1.5° upper octant) → 0.50σ  [chi_eff_total=144]
+    theta_23 = 49.75° (NuFIT IO: 49.3 ± 1.0°, the table anchor) → 0.45σ  [chi_eff_total=144]
     delta_CP = 278.4° (NuFIT IO: 278 ± 22°)  → 0.02σ  [with 13D parity offset]
 
     NOTE: theta_13 derivation: sin(θ₁₃) = √12/24 × (1 + 12/(2×144)) = 0.1443 × 1.0417 = 0.1503
@@ -90,16 +96,17 @@ Parameter-by-parameter classification (6 PMNS mixing parameters):
   7. PMNS theta_23: GENUINELY PREDICTED (if b2, b3 accepted)
      - 45 + (b2-n_gen)*n_gen/b2 + (S_orient/b3)*(b2*chi_eff)/(b3*n_gen)
      - Base 45 deg from G2 ~ Aut(O) is a legitimate structural argument.
-     - Prediction: 49.75 deg vs NuFIT 49.0 +/- 1.5 deg (0.50 sigma).
+     - Prediction: 49.75 deg vs NuFIT IO 49.3 +/- 1.0 deg (0.45 sigma;
+       the table anchor, unified 2026-08 from a second 49.0 +/- 1.5 copy).
   8. PMNS delta_CP: FITTED
      - Uses parity_offset = 45.9 degrees -- hardcoded, not derived.
      - Without this offset, bare phase = 232.5 deg (wrong by ~46 deg).
      - The offset is tuned to match NuFIT IO: 278 +/- 22 deg.
   9. dm2_21 (solar splitting): FITTED
-     - m_base = 0.049 eV explicitly marked "FITTED to atmospheric splitting"
+     - m_base = 0.049906 eV explicitly marked "FITTED to atmospheric splitting"
        in code comments. No topological derivation.
   10. dm2_32 (atmospheric splitting): FITTED
-     - Same m_base = 0.049 eV sets the scale. Not derived.
+     - Same m_base = 0.049906 eV sets the scale. Not derived.
 
 Free parameter count: 2 fitted (parity_offset, m_base) for 6 observables.
 Net predictive power: 3-4 genuine predictions (theta_12, theta_13, theta_23,
@@ -211,8 +218,15 @@ class NeutrinoMixingSimulation(SimulationBase):
     # NuFIT 6.0 experimental values for validation
     # Source: http://www.nu-fit.org/ (2024-11)
     # Using Inverted Ordering (IO) values since PM predicts IO from b3=24 topology
+    # SNAPSHOT PROVENANCE (2026-08 audit): this table is a MIXED
+    # NuFIT 5.2 (2022) / 6.0 (2024) snapshot. Entries carrying 6.0
+    # values are marked inline; theta_12, dm2_21 and delta_cp_NO are
+    # 5.2 vintage (NuFIT 6.0: theta_12 ~ 33.68, dm2_21 ~ 7.49e-5,
+    # delta_cp_NO ~ 212). Predictions are scored against the entries
+    # below; the vintage gap is smaller than the quoted 1 sigma for
+    # every angle used in a scored comparison.
     NUFIT_VALUES = {
-        'theta_12': (33.41, 0.75, 0.72),   # degrees, +σ, -σ (same for NO and IO)
+        'theta_12': (33.41, 0.75, 0.72),  # NuFIT 5.2 vintage   # degrees, +σ, -σ (same for NO and IO)
         'theta_23_NO': (42.2, 1.1, 0.9),   # degrees, +σ, -σ (Normal Ordering)
         'theta_23_IO': (49.3, 1.0, 1.2),   # degrees, +σ, -σ (Inverted Ordering)
         'theta_13_NO': (8.58, 0.11, 0.11), # degrees, ±1σ (Normal Ordering)
@@ -247,7 +261,7 @@ class NeutrinoMixingSimulation(SimulationBase):
             title="PMNS Neutrino Mixing from G2 Geometry",
             description="Derives all four PMNS mixing parameters (theta_12, theta_13, "
                        "theta_23, delta_CP) from G2 manifold topology without calibration "
-                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)",
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049906 eV, both FITTED)",
             section_id="4",
             subsection_id="4.5"
         )
@@ -709,11 +723,11 @@ class NeutrinoMixingSimulation(SimulationBase):
         (m1, m2) and one lighter state (m3).
 
         MECHANISM:
-            - Geometric Seesaw scale: m_base = 0.049 eV from k_gimel
+            - Geometric Seesaw scale: m_base = 0.049906 eV (FITTED, not from k_gimel)
             - Heavy pair (m1, m2): Near-degenerate at ~0.049 eV
             - Light state (m3): Suppressed by C_kaf flux to ~0.0025 eV
             - Solar splitting: Δm²_21 ≈ 7.42e-5 eV²
-            - Atmospheric splitting: Δm²_32 ≈ -2.5e-3 eV² (negative = IO)
+            - Atmospheric splitting: Δm²_32 ≈ -2.498e-3 eV² (negative = IO)
 
         Returns:
             Dictionary with mass eigenvalues and ordering
@@ -723,7 +737,12 @@ class NeutrinoMixingSimulation(SimulationBase):
         # WARNING: m_base is FITTED to atmospheric splitting, not derived from first principles
         # This makes the mass sum prediction FITTED, not DERIVED
         # STATUS: FALSIFICATION_RISK - IO requires sum >= 0.10 eV but DESI constrains sum < 0.072 eV
-        m_base = 0.049  # eV - FITTED to atmospheric splitting (sqrt(|dm2_32|) ~ 0.050 eV)
+        # FITTED to the atmospheric splitting. 2026-08 fix: the old
+        # 0.049 missed its own target by 2% (dm2_32 came out -2.404e-3,
+        # 3.35 sigma from NuFIT IO -2.498e-3). Solving
+        # m2^2 - m3^2 = |dm2_32| with m2 = m_base*(1 + 1.5/1000) and
+        # m3 = 2.0e-3 eV gives m_base = 0.049906 eV.
+        m_base = 0.049906  # eV - FITTED to |dm2_32| = 2.498e-3 eV^2 (NuFIT IO)
 
         # m2: Heaviest state (includes geometric perturbation)
         m2 = m_base * (1 + (self._k_gimel / 1000))
@@ -763,7 +782,7 @@ class NeutrinoMixingSimulation(SimulationBase):
         Checks:
             1. dm2_32 < 0 (negative = inverted ordering)
             2. dm2_21 ≈ 7.42e-5 eV² (solar splitting)
-            3. |dm2_32| ≈ 2.5e-3 eV² (atmospheric splitting magnitude)
+            3. |dm2_32| ≈ 2.498e-3 eV² (atmospheric splitting magnitude)
 
         Args:
             masses: Dictionary from derive_inverted_masses()
@@ -798,7 +817,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 type="paragraph",
                 content="The TCS G₂ manifold construction #187 provides all necessary topological "
                        "inputs to compute the mixing angles without any free parameters or calibration "
-                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)."
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049906 eV, both FITTED)."
             ),
             ContentBlock(
                 type="formula",
@@ -861,7 +880,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                        "The δ_CP includes a 45.9° parity offset from 13D→4D projection. "
                        "These predictions agree with NuFIT 6.0 (IO) global fit values to within 1σ, "
                        "with no calibration or free parameters "
-                       "(except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED)."
+                       "(except δ_CP parity offset 45.9° and m_base = 0.049906 eV, both FITTED)."
             ),
             ContentBlock(
                 type="heading",
@@ -1024,7 +1043,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 "from the topological structure of associative 3-cycles on the G2 manifold. All four "
                 "mixing parameters (theta_12, theta_13, theta_23, delta_CP) emerge from wavefunction "
                 "overlaps on cycle intersections, with no free parameters or calibration to experimental "
-                "data (except δ_CP parity offset 45.9° and m_base = 0.049 eV, both FITTED). "
+                "data (except δ_CP parity offset 45.9° and m_base = 0.049906 eV, both FITTED). "
                 "The cross-shadow architecture (chi_eff_total = 144 from both 13D shadows) "
                 "naturally produces the characteristically large PMNS mixing angles, in contrast to "
                 "the small CKM angles arising from single-shadow quark confinement."

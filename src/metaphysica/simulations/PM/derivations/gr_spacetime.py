@@ -9,7 +9,7 @@ reduction over G2 holonomy manifolds.
 
 DERIVATION CHAIN (v22):
 -----------------------
-1. 25D Master Action with vielbein formalism (signature (24,1))
+1. 25D Master Action with vielbein formalism (signature (24,2))
 2. Metric tensor from vielbein: g_munu = eta_AB e^A_mu e^B_nu
 3. Spin connection and torsion-free condition
 4. Riemann/Ricci tensor construction
@@ -105,7 +105,7 @@ except ImportError:
     B3_G2 = 24           # Third Betti number
     B2_G2 = 4            # Second Betti number
     CHI_EFF = 144        # Effective Euler characteristic
-    D_CRITICAL = 26      # Bosonic string critical dimension (24,1)
+    D_CRITICAL = 26      # Bosonic string critical dimension (24,2)
     D_INTERMEDIATE = 11  # v21: Per-shadow dimension (SPATIAL 11,0)
     D_G2 = 7             # G2 holonomy manifold
     D_SPACETIME = 4      # Observable spacetime
@@ -1938,7 +1938,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             {
                 "gate_id": "G01",
                 "simulation_id": self.metadata.id,
-                "assertion": "Fundamental 26D action structure with signature (24,1) established",
+                "assertion": "Fundamental 26D action structure with signature (24,2) established",
                 "result": "PASS",
                 "timestamp": ts
             },

@@ -773,7 +773,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="26D→13D Shadow Decomposition with Euclidean Bridge (v24.2)",
-                content="The 26-dimensional spacetime decomposes as a tensor product of 13D shadow (from 26D bulk) connected via Euclidean bridge. Key Features: signature (24,1) → (12,1) effective after OR reduction; OR removes ghosts; 4096 → 64 components."
+                content="The 26-dimensional spacetime decomposes as a tensor product of 13D shadow (from 26D bulk) connected via Euclidean bridge. Key Features: signature (24,2) → (12,1) effective after OR reduction; OR removes ghosts; 4096 → 64 components."
             ),
             ContentBlock(
                 type="callout",
@@ -1238,7 +1238,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Update: The full dimensional reduction pathway 26D (24,1) → 13D (12,1) → 6D (5,1) → 4D (3,1) is now rigorously validated through 9 independent consistency checks, with clear distinction between OR reduction and compactification. This section documents the complete 4-stage chain and validation results."
+                content="Update: The full dimensional reduction pathway 26D (24,2) → 13D (12,1) → 6D (5,1) → 4D (3,1) is now rigorously validated through 9 independent consistency checks, with clear distinction between OR reduction and compactification. This section documents the complete 4-stage chain and validation results."
             ),
             ContentBlock(
                 type="callout",
@@ -1252,7 +1252,7 @@ class G2GeometryV16(SimulationBase):
                     "headers": ["#", "Check", "Requirement", "Status"],
                     "rows": [
                         ["1", "OR Reduction / Euclidean Bridge", "26D = 13D shadow with OR reduction must preserve physics and eliminate ghosts", "PASS"],
-                        ["2", "Unified Time Ghost Elimination", "OR reduction removes negative-norm states through gravitational self-energy threshold in (24,1) signature", "PASS"],
+                        ["2", "Unified Time Ghost Elimination", "OR reduction removes negative-norm states through gravitational self-energy threshold in (24,2) signature", "PASS"],
                         ["3", "G₂ Holonomy Preservation", "13D compactification preserves exceptional G₂ structure", "PASS"],
                         ["4", "Dimensional Analysis M_Pl", "[M²] = [M^11][L^9] must be dimensionally correct", "PASS"],
                         ["5", "Brane Heterogeneity", "4 distinct brane types + Z₂ mirrors = 8 total in 6D bulk", "PASS"],

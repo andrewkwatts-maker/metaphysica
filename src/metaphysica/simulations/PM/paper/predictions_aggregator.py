@@ -260,7 +260,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 "sigma_deviation": 0.02,
                 "experiment": "DESI 2025 (thawing)",
                 "testability": "CONFIRMED",
-                "derivation": "Dimensional reduction from (24,1) spacetime"
+                "derivation": "Dimensional reduction from (24,2) spacetime"
             },
             {
                 "category": "Cosmology",

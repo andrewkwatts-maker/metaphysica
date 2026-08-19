@@ -293,16 +293,18 @@ class EstablishedPhysics:
             wa = wa_data.value
             wa_unc = wa_data.uncertainty
         else:
-            # v16.2: Use DESI 2025 thawing quintessence constraint
-            # Old DESI DR2 Lambda-CDM was w0=-0.728, now using thawing model
-            w0 = -0.957  # DESI 2025 thawing quintessence
-            w0_unc = 0.067
-            wa = -0.99
-            wa_unc = 0.33
+            # DESI DR2 (2025) w0waCDM headline, BAO+CMB+DESY5
+            # (arXiv:2503.14738). Offline fallback only.
+            w0 = -0.752
+            w0_unc = 0.057
+            wa = -0.86
+            wa_unc = 0.22
 
-        # DESI 2025 thawing quintessence constraint (v16.2)
-        # PM predicts w0 = -23/24 = -0.9583, which falls within BAO-only uncertainty
-        w0_thawing = -0.957  # DESI 2025 thawing constraint
+        # Framework-adopted thawing anchor. ATTRIBUTION UNVERIFIED: a
+        # 2026-08 review could not locate w0 = -0.957 +/- 0.067 in any
+        # published DESI release. Kept as a secondary comparison only; the
+        # primary scoring anchor is desi.w0 (DR2 headline) above.
+        w0_thawing = -0.957
         w0_thawing_unc = 0.067
         wa_thawing = -0.99
         wa_thawing_unc = 0.33
@@ -320,9 +322,9 @@ class EstablishedPhysics:
             S8 = S8_data.value
             S8_unc = S8_data.uncertainty
         else:
-            sigma8 = 0.827
-            sigma8_unc = 0.011
-            S8 = 0.832
+            sigma8 = 0.8111   # Planck 2018 (DESI publishes no stand-alone sigma8)
+            sigma8_unc = 0.0060
+            S8 = 0.830
             S8_unc = 0.013
 
         params = [
@@ -332,8 +334,8 @@ class EstablishedPhysics:
                 uncertainty=w0_unc,
                 units="dimensionless",
                 source="ESTABLISHED:DESI_2025",
-                description="Dark energy equation of state at z=0 (standard w0-wa constraint)",
-                eml_description="EML: eml_scalar(-0.957) — dark energy w₀ at z=0 from DESI 2025 standard w0-wa analysis (input)"
+                description="Dark energy equation of state at z=0, w0waCDM (DESI DR2 BAO+CMB+DESY5, arXiv:2503.14738)",
+                eml_description="EML: eml_scalar(-0.752) — dark energy w₀ at z=0, DESI DR2 w0waCDM headline (input)"
             ),
             EstablishedParameter(
                 path="desi.wa",
@@ -341,8 +343,8 @@ class EstablishedPhysics:
                 uncertainty=wa_unc,
                 units="dimensionless",
                 source="ESTABLISHED:DESI_2025",
-                description="Dark energy evolution parameter (standard w0-wa constraint)",
-                eml_description="EML: eml_scalar(-0.99) — dark energy evolution parameter w_a from DESI 2025 (input)"
+                description="Dark energy evolution parameter w_a, w0waCDM (DESI DR2 BAO+CMB+DESY5, arXiv:2503.14738)",
+                eml_description="EML: eml_scalar(-0.86) — dark energy evolution parameter w_a, DESI DR2 w0waCDM headline (input)"
             ),
             # Thawing quintessence constraint - matches PM prediction
             EstablishedParameter(
@@ -360,8 +362,8 @@ class EstablishedPhysics:
                 uncertainty=wa_thawing_unc,
                 units="dimensionless",
                 source="ESTABLISHED:DESI_2025_THAWING",
-                description="Dark energy wa from thawing quintessence model",
-                eml_description="EML: eml_scalar(-0.99) — DESI 2025 thawing quintessence w_a evolution parameter (input)"
+                description="Dark energy wa, framework-adopted thawing anchor (ATTRIBUTION UNVERIFIED; see desi.wa for the DR2 headline)",
+                eml_description="EML: eml_scalar(-0.99) — framework-adopted thawing w_a anchor, attribution unverified (input)"
             ),
             EstablishedParameter(
                 path="desi.sigma8",
@@ -369,7 +371,7 @@ class EstablishedPhysics:
                 uncertainty=sigma8_unc,
                 units="dimensionless",
                 source="ESTABLISHED:DESI_2025",
-                description="RMS matter fluctuation amplitude at 8 h^-1 Mpc (from desi_2025_constraints.json)",
+                description="RMS matter fluctuation amplitude at 8 h^-1 Mpc (Planck 2018; DESI publishes no stand-alone sigma8)",
                 eml_description="EML: eml_scalar(0.827) — σ₈ matter fluctuation amplitude at 8 h⁻¹ Mpc (DESI 2025 / Planck 2018 input)"
             ),
             EstablishedParameter(

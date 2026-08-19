@@ -3,7 +3,7 @@
 Descent Chain Visualization v24.2
 ==================================
 
-Visualizes the (24,1) → dual shadows → 4D descent chain for Principia Metaphysica v24.2.
+Visualizes the (24,2) → dual shadows → 4D descent chain for Principia Metaphysica v24.2.
 
 Features:
 1. Descent chain diagram showing dimensional flow
@@ -40,7 +40,7 @@ def create_descent_chain_diagram():
     # Title
     ax.text(7, 9.5, 'Principia Metaphysica v24.2 - Descent Chain',
             ha='center', va='center', fontsize=16, fontweight='bold')
-    ax.text(7, 9.0, '(24,1) Dual-Shadow Model with Euclidean Bridge',
+    ax.text(7, 9.0, '(24,2) Dual-Shadow Model with Euclidean Bridge',
             ha='center', va='center', fontsize=12, style='italic', color='#666666')
 
     # Level 1: 26D Bulk
@@ -142,7 +142,7 @@ def create_descent_chain_diagram():
 
     # Legend
     legend_elements = [
-        mpatches.Patch(facecolor='#2C3E50', edgecolor='black', label='26D Bulk (24,1)'),
+        mpatches.Patch(facecolor='#2C3E50', edgecolor='black', label='26D Bulk (24,2)'),
         mpatches.Patch(facecolor='#3498DB', edgecolor='black', label='Normal Shadow'),
         mpatches.Patch(facecolor='#E74C3C', edgecolor='black', label='Mirror Shadow'),
         mpatches.Patch(facecolor='#9B59B6', edgecolor='black', label='Euclidean Bridge (2,0)'),

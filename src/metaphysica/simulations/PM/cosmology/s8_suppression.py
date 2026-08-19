@@ -11,7 +11,9 @@ The tension arises because:
 - KiDS-1000 weak lensing (late time): S8 = 0.766 +/- 0.020
 - DES Y3 weak lensing (late time): S8 = 0.776 +/- 0.017
 - HSC-Y3 weak lensing (late time): S8 = 0.769 +0.031/-0.034
-- DESI 2024 (BAO+CMB): sigma_8 = 0.827 +/- 0.011
+- Planck 2018 TT,TE,EE+lowE+lensing: sigma_8 = 0.8111 +/- 0.0060
+  (DESI publishes no stand-alone sigma_8; the earlier 'DESI 2024: 0.827'
+  attribution was unverifiable, 2026-08 review)
 
 Key Physics:
 PM's w0 = -1 + 1/b3 = -23/24 ~ -0.9583 is between LCDM (w=-1) and quintessence (w>-1).
@@ -96,8 +98,10 @@ UPDATED assessment (v16.2, with moduli-DM friction):
 Classification: SPECULATIVE-PROMISING
 
 The moduli-DM friction mechanism provides a physically motivated path to S8
-suppression. The coupling beta_eff ~ 0.065 is derived (not fitted), and the
-resulting S8 ~ 0.789 falls within 1.2sigma of all three weak lensing surveys.
+suppression. The coupling beta_eff ~ 0.065 is derived (not fitted). The
+CANONICAL value is the growth-ODE result S8 ~ 0.8004 (the analytic 0.789
+variant assumes a 5.1% suppression where the ODE delivers 4.31%); against
+KiDS-1000 (0.759 +/- 0.024) the canonical value is 1.7 sigma.
 
 However, key caveats apply:
 1. The friction mechanism assumes standard moduli-matter coupling from string
@@ -298,7 +302,7 @@ class S8SuppressionV16(SimulationBase):
         # Read inputs
         w0_pm = registry.get_param("cosmology.w0_derived")  # -1 + 1/b₃ = -23/24 = -0.9583
         wa_pm = registry.get_param("cosmology.wa_derived")  # w_a = -0.204 (registry canonical)
-        sigma8_desi = registry.get_param("desi.sigma8")     # 0.827 ± 0.011
+        sigma8_desi = registry.get_param("desi.sigma8")     # Planck 2018: 0.8111 ± 0.0060
         Omega_m = registry.get_param("desi.Omega_m")        # 0.3069 ± 0.005
 
         # Get Planck S8 for validation
@@ -1017,7 +1021,7 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) = 0.827 \times 1.011 \times 0.994 \approx 0.831",
+                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) = 0.8111 \times 1.011 \times 0.994 \approx 0.815",
                     formula_id="s8-prediction-pm",
                     label="(5.22)"
                 ),
@@ -1394,7 +1398,7 @@ class S8SuppressionV16(SimulationBase):
                         },
                         {
                             "description": "PM S8 prediction",
-                            "formula": r"S_{8,PM} = 0.827 \times 1.011 \times 0.994 \approx 0.831"
+                            "formula": r"S_{8,PM} = 0.8111 \times 1.011 \times 0.994 \approx 0.815"
                         },
                         {
                             "description": "Comparison to observations",
@@ -1451,10 +1455,14 @@ class S8SuppressionV16(SimulationBase):
                     f"Classification: SPECULATIVE-PROMISING (derived, not fitted)."
                 ),
                 derivation_formula="s8-prediction-pm",
-                experimental_bound=0.827,  # DESI 2025 sigma8
+                # 2026-08 fix: an S8 prediction was being scored against a
+                # sigma8 anchor (a category error, and the 0.827 "DESI 2025"
+                # sigma8 attribution was itself unverifiable). Compare S8
+                # against an S8 measurement.
+                experimental_bound=0.830,  # Planck 2018 S8
                 bound_type="central_value",
-                bound_source="DESI2025",
-                uncertainty=0.011,
+                bound_source="Planck2018_S8",
+                uncertainty=0.013,
                 eml_description=(
                     "EML: ops.mul(sigma8, ops.sqrt(ops.div(Omega_m, eml_scalar(0.3)))) — "
                     "S8 from 48-channel variance reduction; "

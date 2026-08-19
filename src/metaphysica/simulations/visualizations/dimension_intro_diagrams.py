@@ -312,7 +312,7 @@ def generate_kaluza_klein_intro(output_path: str = "../../images/kaluza-klein-in
                                   alpha=0.5, linewidth=2))
     ax2.text(1.5, 2.5, "25D Total", fontsize=12, ha='center',
             fontweight='bold', color=PM_COLORS["purple"])
-    ax2.text(1.5, 1.7, r"$M^{25}_{(24,1)}$", fontsize=11, ha='center',
+    ax2.text(1.5, 1.7, r"$M^{26}_{(24,2)}$", fontsize=11, ha='center',
             color=PM_COLORS["dark_purple"])
 
     # Breakdown inside the 26D box

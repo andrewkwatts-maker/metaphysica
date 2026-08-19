@@ -6,7 +6,7 @@ Gauge Unification Simulation v21.0
 Licensed under the MIT License. See LICENSE file for details.
 
 v22 COMPATIBILITY: Uses SO(24,1) bulk symmetry breaking to SO(10) GUT.
-                   Unified time signature (24,1) with Euclidean bridge.
+                   Unified time signature (24,2) with Euclidean bridge.
                    G2 topology (b3=24) determines asymptotic safety fixed point.
 
 Implements gauge coupling unification to determine M_GUT and alpha_GUT
@@ -470,7 +470,7 @@ class GaugeUnificationSimulation(SimulationBase):
                     type="paragraph",
                     content="The unification of gauge couplings provides a key prediction of Grand "
                             "Unified Theories. In the Principia Metaphysica framework, gauge coupling "
-                            "unification emerges from the dimensional reduction of SO(24,1) bulk symmetry "
+                            "unification emerges from the dimensional reduction of SO(24,2) bulk symmetry "
                             "to SO(10) GUT symmetry, mediated by the G2 holonomy manifold."
                 ),
                 ContentBlock(

@@ -809,7 +809,7 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 description=(
                     "Cryptographic seal generated from the terminal state of the 288-root "
                     "system. Format: OMEGA-XXXX-YYYY-ZZZZ (SHA-256 hash of model state). "
-                    "Generated from: v23-Roots{288}-Pins{24}-Nodes{125}-Signature(26,1)-"
+                    "Generated from: v23-Roots{288}-Pins{24}-Nodes{125}-Signature(24,2)-"
                     "Bridge12x(2,0)-Hidden{163}-Pairs{12}-Angle{θ_sterile}-Sum{Σ_residues}. "
                     "This seal locks the v24.2 terminal state and will change if any "
                     "parameters are modified, providing tamper-evident verification that "

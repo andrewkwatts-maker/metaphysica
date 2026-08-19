@@ -81,7 +81,7 @@ class StatisticalRigorValidator:
 
         # PM framework constants
         self.n_residues = 125  # Total physical constants
-        self.n_dimensions = 27  # M²⁶(26,1) manifold
+        self.n_dimensions = 27  # M²⁶(24,2) manifold
         self.n_testable = 26  # Parameters with experimental comparison
 
         logger.info(f"PM Framework: {self.n_residues} residues, {self.n_dimensions}D manifold")

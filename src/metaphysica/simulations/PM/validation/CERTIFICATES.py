@@ -1078,7 +1078,7 @@ class PrincipiaValidator:
           - pairs = b3/2 = 24/2 = 12 (derived from Betti number)
           - pairs × 2 = 24 = D_physics_core
           - Total: 24 (bridges) + 1 (time) + 2 (sampler) = 26D
-          - Signature: (26,1) = (24 + 2 spacelike, 1 timelike)
+          - Signature: (24,2) = (24 + 2 spacelike, 1 timelike)
 
         Classification: GEOMETRIC — the pair count 12 = b3/2 follows from
         the G2 manifold Betti number b3 = 24. The 12×(2,0) decomposition

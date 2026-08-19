@@ -223,7 +223,7 @@ class IntroductionV16(SimulationBase):
                 "avoids the traditional circular dependence on a pre-existing metric."
             ),
             "dimensional_hierarchy": (
-                "26D spacetime with structure (24,2) = 12×(2,0) bridges + (0,1) time + S<sup>(2,0)</sup> shadow-time directions warps into dual "
+                "26D spacetime with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions warps into dual "
                 "13D(12,1) shadows via coordinate selection. Each shadow "
                 "compactifies on G₂ manifolds to 4D, preserving gauge symmetries "
                 "and generating observable physics."
@@ -535,7 +535,7 @@ class IntroductionV16(SimulationBase):
                 type="note",
                 content=(
                     "<h4>The Pneuma Postulate (v24.2 Dual-Shadow Framework)</h4>"
-                    "<p>In the full 26D theory with structure (24,2) = 12×(2,0) bridges + (0,1) time + S<sup>(2,0)</sup> shadow-time directions, the Pneuma field Ψ<sub>P</sub> "
+                    "<p>In the full 26D theory with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions, the Pneuma field Ψ<sub>P</sub> "
                     "is a <strong>4096-component spinor</strong> of Cl(24,2). Bridge pairs WARP to create "
                     "<strong>dual 13D(12,1) shadows</strong> via coordinate selection (each: 12 spatial + 1 time (its own)), "
                     "with positive-definite metric ds² = dy₁² + dy₂². Each shadow contains an effective "
@@ -550,9 +550,9 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In the v24.2 framework, the full 26D bulk has structure (24,2) = 12×(2,0) bridges + (0,1) time + S<sup>(2,0)</sup> shadow-time directions, eliminating "
+                    "In the v24.2 framework, the full 26D bulk has signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions, eliminating "
                     "ghost modes and closed timelike curves. The Pneuma field Ψ<sub>P</sub> transforms under "
-                    "Spin(26,1). The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection, each "
+                    "Spin(24,2). The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection, each "
                     "bridge with OR reduction operator R<sub>⊥</sub> providing Möbius double-cover (R<sub>⊥</sub>² = −I). "
                     "Each shadow has Spin(12,1) symmetry with a 64-component spinor representation. Bilinear "
                     "condensates of this field generate the geometric tensors that define the internal manifold structure."
@@ -561,7 +561,7 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="equation",
                 content=(
-                    "Ψ<sub>P</sub> ∈ <strong>4096</strong><sub>Spin(26,1)</sub><br/>"
+                    "Ψ<sub>P</sub> ∈ <strong>4096</strong><sub>Spin(24,2)</sub><br/>"
                     "&nbsp;&nbsp;&nbsp;&nbsp;→ 2 × <strong>64</strong><sub>Spin(12,1)</sub><br/>"
                     "&nbsp;&nbsp;&nbsp;&nbsp;→ ⟨Ψ<sub>P</sub>Γ<sub>A...B</sub>Ψ<sub>P</sub>⟩ defines geometry"
                 ),
@@ -666,7 +666,7 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "<h4>Framework: 26D → Dual 13D(12,1) Shadows</h4>"
                     "<p>In the v24.2 Principia Metaphysica framework, the fundamental theory lives in "
-                    "<strong>26D with structure (24,2) = 12×(2,0) bridges + (0,1) time + S<sup>(2,0)</sup> shadow-time directions</strong>. "
+                    "<strong>26D with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions</strong>. "
                     "The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection "
                     "(each: 12 spatial from bridge + 1 shared time). Each shadow compactifies on G₂ "
                     "with the OR reduction operator R<sub>⊥</sub> providing cross-shadow coherence. This section explains why "
@@ -816,7 +816,7 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "The remainder of this paper develops the <strong>Principia Metaphysica</strong> "
                     "theoretical framework systematically and derives its physical consequences. The central "
-                    "insight is the M<sup>26</sup>(24,2) = 12×(2,0) bridges + (0,1) time + S<sup>(2,0)</sup> shadow-time directions → dual 13D(12,1) shadows → 4D dimensional hierarchy, where the "
+                    "insight is the M<sup>26</sup>(24,2) = 12×(2,0) bridge pairs + 2 shadow times + S<sup>(2,0)</sup> shadow-time directions → dual 13D(12,1) shadows → 4D dimensional hierarchy, where the "
                     "Euclidean bridge structure enables the derivation of key cosmological parameters. The structure is as follows:"
                 )
             ),

@@ -90,7 +90,7 @@ class FoundationsV16_2(SimulationBase):
     """
     Section 1: Foundations of Dimensional Descent (v24.2).
 
-    Provides the sterile derivation narrative for the (24,1)->4D descent path
+    Provides the sterile derivation narrative for the (24,2)->4D descent path
     with 12x(2,0) paired bridge system:
     - 1.1: The M^{26}(24,2) Ancestral Bulk with 12x(2,0) Paired Bridge
     - 1.2: The Paired Bridge System and OR Reduction
@@ -98,7 +98,7 @@ class FoundationsV16_2(SimulationBase):
     - 1.4: The 6D->4D Projection (Calabi-Yau Filtering)
 
     KEY v24.2 STRUCTURE:
-        M^{24,1} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})
+        M^{24,2} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})
         ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
 
     WHY 12 PAIRS:
@@ -213,7 +213,7 @@ class FoundationsV16_2(SimulationBase):
                 content=(
                     "At the highest level, the framework connects to the algebraic structures of the "
                     "<strong>Monster Group</strong> and the <strong>Leech Lattice</strong> via the "
-                    "bosonic string (26D parent, signature (24,1) before the S<sup>(2,0)</sup> extension). "
+                    "bosonic string (26D parent, signature (24,2) before the S<sup>(2,0)</sup> extension). "
                     "In PM v24.2, the actual bulk has structure <strong>M<sup>26</sup>(24,2)</strong>: twenty-four "
                     "physics core dimensions from the 12×(2,0) bridge pairs, one unified timelike, "
                     "and two shadow-time directions S<sup>(2,0)</sup>. "
@@ -227,10 +227,10 @@ class FoundationsV16_2(SimulationBase):
                 content=(
                     "<strong>Why (24,2) specifically?</strong> The construction begins with the "
                     "bosonic string: exactly 25 spacetime dimensions (24 spatial + 1 time, signature "
-                    "(24,1)) are required for modular invariance (Polyakov 1981). The 24 transverse "
+                    "(24,2)) are required for modular invariance (Polyakov 1981). The 24 transverse "
                     "dimensions match the Leech lattice — the unique even unimodular lattice in 24D "
                     "with no roots — connecting via Moonshine to the Monster Group (Borcherds 1992). "
-                    "PM extends the 25D bosonic string parent (signature (24,1)) by appending the S<sup>(2,0)</sup> shadow-time directions, "
+                    "PM extends the 25D bosonic string parent (signature (24,2)) by appending the S<sup>(2,0)</sup> shadow-time directions, "
                     "which provide architectural averaging across the 12 bridge pairs "
                     "and stabilize the dual-shadow construction, yielding the full M<sup>26</sup>(24,2) bulk. The resulting (24,2) structure "
                     "preserves ghost-freedom (single timelike) while accommodating both the G₂ "
@@ -489,7 +489,7 @@ class FoundationsV16_2(SimulationBase):
                     "<strong>Dimensional Accounting:</strong> 24 core + 24 local + 2 central = 50 spacelike dimensions",
                     "<strong>Local Level:</strong> 12×(2,0) pairs → micro-stability (per-branch selection)",
                     "<strong>Central Level:</strong> 1×(2,0) pair → macro-precision (global averaging)",
-                    "<strong>Signature Preservation:</strong> Bridge+time subalgebra (24,1) = 12×(2,0) + (0,1) [pre-S<sup>(2,0)</sup> extension]; full bulk is M<sup>26</sup>(24,2) with Euclidean shadow-time directions"
+                    "<strong>Signature Preservation:</strong> Bridge+time subalgebra (24,2) = 12×(2,0) + (0,1) [pre-S<sup>(2,0)</sup> extension]; full bulk is M<sup>26</sup>(24,2) with Euclidean shadow-time directions"
                 ],
                 label="hierarchical-sampling-structure"
             ),
@@ -690,7 +690,7 @@ class FoundationsV16_2(SimulationBase):
             Formula(
                 id="26d-signature",
                 label="(1.1)",
-                latex=r"\text{Signature}(M^{24,1}) = (24, 1) \quad ds^2 = -dt^2 + \sum_{i=1}^{12}(dy_{1i}^2 + dy_{2i}^2)",
+                latex=r"\text{Signature}(M^{24,2}) = (24, 1) \quad ds^2 = -dt^2 + \sum_{i=1}^{12}(dy_{1i}^2 + dy_{2i}^2)",
                 plain_text="Signature(M^{24,2}) = (24, 2); ds^2 = -dt_1^2 - dt_2^2 + sum_i(dy_{1i}^2 + dy_{2i}^2)",
                 category="DERIVED",
                 description="26D ancestral bulk signature (24,2). 24 spacelike from 12x2 pairs, 2 timelike (one per shadow).",
@@ -709,10 +709,10 @@ class FoundationsV16_2(SimulationBase):
                     "ops.add(b3_leaf(), eml_scalar(1.0))"
                 ),
                 eml_description=(
-                    "Bulk signature (24,1): 24 spacelike dimensions plus 1 timelike."
+                    "Bulk signature (24,2): 24 spacelike dimensions plus 1 timelike."
                 ),
                 terms={
-                    "M^{24,1}": "25-dimensional manifold with signature (24,1)",
+                    "M^{24,2}": "25-dimensional manifold with signature (24,2)",
                     "ds^2": "Line element of the bulk metric",
                     "dy_{1i}, dy_{2i}": "Bridge pair coordinates for the i-th pair"
                 },
@@ -720,8 +720,8 @@ class FoundationsV16_2(SimulationBase):
             Formula(
                 id="euclidean-bridge",
                 label="(1.2)",
-                latex=r"M^{24,1} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
-                plain_text="M^{24,1} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})",
+                latex=r"M^{24,2} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
+                plain_text="M^{24,2} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})",
                 category="DERIVED",
                 description="Fibered time structure with 12x(2,0) paired bridges. b_3=24 => 12 pairs.",
                 input_params=["dimensions.D_bulk", "topology.elder_kads"],
@@ -731,7 +731,7 @@ class FoundationsV16_2(SimulationBase):
                     "steps": [
                         "G2 topology fixes b3 = 24 Betti cycles",
                         "Pair 24 cycles into 12 Euclidean bridge pairs: 24/2 = 12",
-                        "Fiber time T^1 over bridge direct sum to form (24,1) bulk"
+                        "Fiber time T^1 over bridge direct sum to form (24,2) bulk"
                     ],
                     "parentFormulas": ["26d-signature"]
                 },

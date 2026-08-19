@@ -12,7 +12,7 @@ MATHEMATICAL BASIS:
 RELATION TO PHYSICS:
 - Bosonic string theory: critical dimension D = 26, transverse = 24
 - Vacuum energy: E₀ = -b₃/24 = -1 only for b₃ = 24
-- Ghost cancellation in (24,1) signature
+- Ghost cancellation in (24,2) signature
 
 REFERENCES:
 - Green, Schwarz, Witten (1987) "Superstring Theory Vol. 1"

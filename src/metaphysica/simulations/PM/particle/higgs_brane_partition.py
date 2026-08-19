@@ -6,7 +6,7 @@ Higgs Brane-Partition Simulation v21.0 (Demon-Lock)
 Licensed under the MIT License. See LICENSE file for details.
 
 v22 COMPATIBILITY: Uses Cl(24,2) Clifford algebra with unified time signature.
-                   4-brane partition from (24,1) bulk symmetry structure.
+                   4-brane partition from (24,2) bulk symmetry structure.
                    Euclidean bridge enables mirror brane overlap calculation.
 
 Computes the Higgs mass using a brane-partition ansatz from 26D bulk.
@@ -851,7 +851,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 "pages": "030001",
                 "year": 2024,
                 "url": "https://pdg.lbl.gov/",
-                "notes": "PDG 2024 combined: m_H = 125.25 +/- 0.17 GeV (ATLAS+CMS)."
+                "notes": "PDG 2024: m_H = 125.20 +/- 0.11 GeV (the 125.25 +/- 0.17 copy was PDG 2022)."
             },
             {
                 "id": "atlas2012",
@@ -928,11 +928,11 @@ class HiggsBranePartitionSimulation(SimulationBase):
             {
                 "id": "CERT_HIGGS_LOCAL_125GEV",
                 "assertion": "Local brane-projected Higgs mass matches PDG 2024 within 1 sigma",
-                "condition": "|M_H_local - 125.25| / 0.17 < 1.0",
-                "tolerance": 0.17,
+                "condition": "|M_H_local - 125.20| / 0.11 < 1.0",
+                "tolerance": 0.11,
                 "status": "PASS",
                 "wolfram_query": "Higgs boson mass in GeV",
-                "wolfram_result": "125.25",
+                "wolfram_result": "125.20",
                 "sector": "particle"
             },
             {
@@ -1101,7 +1101,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
             "technicalDetail": (
                 "M_H_bulk = 414.22 GeV (G2 attractor), Projection = k_gimel/π = 12.318/π = 3.92, "
                 "Mirror overlap η = (α_em × b3)^(1/4) = 1.185, "
-                "M_H_local = 414.22 / (3.92/1.185) = 414.22 / 3.31 = 125.1 GeV (σ = 0.88 vs PDG 125.25)"
+                "M_H_local = 414.22 / (3.92/1.185) = 414.22 / 3.31 = 125.1 GeV (σ = 0.91 vs PDG 2024 125.20 +/- 0.11)"
             ),
         }
 
@@ -1132,7 +1132,7 @@ def run_higgs_brane_partition(verbose: bool = True) -> Dict[str, Any]:
         print(f"Projection Factor (k_gimel/pi):    {results['higgs.projection_factor']:.4f}")
         print(f"Mirror Overlap (eta):              {results['higgs.mirror_overlap']:.4f}")
         print(f"Effective Scaling:                 {results['higgs.effective_scaling']:.4f}")
-        print(f"\nExperimental: 125.25 ± 0.17 GeV (PDG 2024)")
+        print(f"\nExperimental: 125.20 ± 0.11 GeV (PDG 2024)")
         print(f"Sigma Deviation:                   {results['higgs.sigma_local']:.2f} sigma")
         print(f"Status:                            {results['higgs.status']}")
         print()

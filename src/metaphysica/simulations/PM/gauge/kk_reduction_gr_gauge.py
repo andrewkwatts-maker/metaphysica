@@ -10,8 +10,8 @@ in Principia Metaphysica (dimensional descent via compactification, here simplif
 
 v22 KEY DIMENSIONAL CASCADE:
 =============================
-    Level 0: 26D (24,1) Ancestral bulk - UNIFIED TIME
-    Level 1: M^{24,1} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) - 12 PAIRS
+    Level 0: 26D (24,2) Ancestral bulk - UNIFIED TIME
+    Level 1: M^{24,2} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) - 12 PAIRS
              24 spatial dimensions decompose into 12 × 2D Euclidean pairs
     Level 2: 12×(2,0) + (0,1) WARP to create 2×13D(12,1) shadows
     Level 3: 7D (7,0) per shadow - G2 HOLONOMY (Riemannian)
@@ -239,7 +239,7 @@ class KKReductionGRGauge:
         each a (2,0) Euclidean torus acting as a consciousness channel.
         """
         return {
-            'structure': 'M^{24,1} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})',
+            'structure': 'M^{24,2} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})',
             'n_pairs': self.n_bridge_pairs,
             'd_per_pair': self.d_per_pair,
             'd_total_spatial': self.n_bridge_pairs * self.d_per_pair,  # 24
@@ -794,7 +794,7 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                     type="paragraph",
                     content=(
                         "In the Principia Metaphysica framework, this 5D toy model is "
-                        "generalized to a 26D bulk with signature (24,1), descending through "
+                        "generalized to a 26D bulk with signature (24,2), descending through "
                         "a cascade of compactifications to 4D spacetime. The 24 spatial "
                         "dimensions organize into 12 pairs of 2D Euclidean bridges, each "
                         "acting as a consciousness channel with distributed OR reduction. "

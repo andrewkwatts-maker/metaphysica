@@ -13,7 +13,7 @@ experimental comparison:
 
     { path, value, experimental_value, experimental_uncertainty,
       sigma, status (from the registry's own validation_status),
-      verdict: PASS | MARGINAL | TENSION | FAIL | UNBOUNDED,
+      verdict: PASS | MARGINAL | TENSION | FAIL | UNBOUNDED | INPUT,
       source_simulation, units }
 
 The summary reports honest counts — including the failures. A framework
@@ -35,6 +35,26 @@ def _num(v: Any):
     if isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(float(v)):
         return float(v)
     return None
+
+
+def _is_input_anchor(rec, value, exp) -> bool:
+    """True when the record IS the experimental input, not a prediction.
+
+    2026-08 audit: 56 of the report's 109 PASSes were experimental anchors
+    being compared against themselves (an ESTABLISHED:* source whose value
+    equals its own experimental_value, sigma identically 0). Counting those
+    as passes inflated the scoreboard with tautologies. They are now
+    reported as INPUT and excluded from the pass/fail tally.
+    """
+    src = str(rec.get("source") or "")
+    if src.upper().startswith("ESTABLISHED"):
+        return True
+    if value is None or exp is None:
+        return False
+    try:
+        return float(value) == float(exp)
+    except (TypeError, ValueError):
+        return False
 
 
 def _verdict(sigma, registry_status: str) -> str:
@@ -73,7 +93,8 @@ def build_report() -> Dict[str, Any]:
         sigma = _num(rec.get("sigma_deviation"))
         unc = _num(rec.get("experimental_uncertainty"))
         status = rec.get("validation_status") or ""
-        verdict = _verdict(sigma, status)
+        verdict = ("INPUT" if _is_input_anchor(rec, value, exp)
+                   else _verdict(sigma, status))
         meta = rec.get("metadata") or {}
         validations.append({
             "path": path,
@@ -109,7 +130,10 @@ def build_report() -> Dict[str, Any]:
             "the registry computed. Verdicts include failures — this report "
             "is the honest scoreboard, distinct from the declarative gate "
             "certificates. PASS < 2σ, MARGINAL < 3σ, TENSION < 5σ, FAIL ≥ 5σ "
-            "(or the registry's own validation_status where set)."
+            "(or the registry's own validation_status where set). INPUT "
+            "marks experimental anchors compared against themselves - they "
+            "are inputs, not predictions, and are excluded from the "
+            "pass/fail tally."
         ),
         "summary": {
             "total": len(validations),

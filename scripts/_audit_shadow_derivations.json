@@ -110,7 +110,7 @@
     {
       "observable": "S8",
       "values": {
-        "cosmology.s8_pm_predicted": 0.7995091457971604
+        "cosmology.s8_pm_predicted": 0.784137688217747
       },
       "skipped": {},
       "tolerance_used": 2.0,

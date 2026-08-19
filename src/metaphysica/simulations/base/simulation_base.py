@@ -412,6 +412,17 @@ class SimulationBase(ABC):
 
                 # Skip full registration if already registered (GeometricAnchors is source of truth)
                 if registry.has_param(param_path):
+                    # ...but still attach a declared experimental bound. Without
+                    # this the earlier (bound-less) registration wins and the
+                    # prediction never reaches the validation report.
+                    if param_def and param_def.experimental_bound is not None:
+                        registry.backfill_experimental_bound(
+                            param_path,
+                            param_def.experimental_bound,
+                            param_def.uncertainty,
+                            param_def.bound_source,
+                            param_def.bound_type,
+                        )
                     continue
                 computed_value = results[param_path]
 

@@ -20,7 +20,10 @@ CLASSIFICATION SEPARATION:
     a real-vs-complex normalization factor of 2 to the modular automorphism
     (equivalently, from the Sp(2,R) gauge symmetry of the two-time sector).
 
-    Full alpha_T = D_total/D_string = 26/10 = 2.6 — DERIVED (zero free
+    Full alpha_T = D_total/D_string = 26/10 = 2.6 — STRUCTURAL. The
+    gamma correction is constructed so that b3 and pi cancel exactly,
+    leaving the postulated dimensional ratio; nothing independent fixes
+    gamma, so this is a target-first identity, not a free-parameter-free
     parameters: D_total=26 from architecture, D_string=10 from M-theory target).
 
 CONSCIOUSNESS CONNECTION (SPECULATIVE):
@@ -429,7 +432,7 @@ class ThermalTimeV16(SimulationBase):
                 "properties via the modular Hamiltonian. The base coupling "
                 "&alpha;<sub>T,base</sub> = 2&pi;/b&#8323; is derived from KMS periodicity on "
                 "G&#8322; topology (DERIVED). The full coupling &alpha;<sub>T</sub> = 2.6 "
-                "= D<sub>total</sub>/D<sub>string</sub> = 26/10 (DERIVED, zero free parameters). The entropy gradient "
+                "= D<sub>total</sub>/D<sub>string</sub> = 26/10 (STRUCTURAL: the γ correction is built so b₃ and π cancel, leaving the postulated ratio). The entropy gradient "
                 "dS/dt &ge; 0 provides the thermodynamic arrow of time."
             ),
             content_blocks=content_blocks,

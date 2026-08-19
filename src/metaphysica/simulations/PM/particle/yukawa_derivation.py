@@ -63,13 +63,20 @@ With b₃ = 24:
     ξ = cos(π/24)        = 0.991445…
     η · ξ                = 0.183013…   ( = sin(π/12)/√2 )
     ξ²                   = 0.982963…   ( = (1+cos(π/12))/2 )
-    θ₁₃ = 8.6686° (NuFIT 6.0 NO 8.58 ± 0.13 → 0.68σ, within 1σ)
-    δ_CP = 1.5408 π  (NuFIT 6.0 1.54π ± 0.17π → 0.005σ, within 1σ)
+    θ₁₃ = 8.6686° (NuFIT 6.0 NO 8.58 ± 0.11 → 0.81σ, within 1σ)
+    δ_CP = 1.5408 π  (compared against the INVERTED-ordering best fit
+           1.54π ± 0.17π → 0.005σ; the θ₁₃ anchor above is NORMAL
+           ordering, so the two angles are NOT scored in a single
+           ordering - against the NO best fit (~1.18π) this δ_CP is
+           >2σ)
 
-θ_13 and δ_CP **both land within 1σ** of NuFIT 6.0 simultaneously
-without introducing any fitted free parameter: the second knob ξ is
-closed-form in b₃ via cos(π/b₃), so the only "inputs" remain the
-Pillar Seed b₃ = 24 and the two coefficients (a, b) which are fixed at
+θ_13 and δ_CP each land within 1σ of their respective anchors, but in
+DIFFERENT mass orderings (θ_13: NO; δ_CP: IO) - they are not a joint
+single-ordering fit. The knob ξ is closed-form in b₃ via cos(π/b₃),
+but the coefficients (a, b) = (0.12, 0.05) are TUNED to the δ_CP
+target, so "zero fitted parameters" overstates the case: the
+structural inputs are the Pillar Seed b₃ = 24 and the two
+coefficients (a, b) which are fixed at
 (0.12, 0.05) — the 0.12 is the inherited T₄ bridge-pair handedness-flip
 weight from Sprint 6 #1; the 0.05 is the ξ² polynomial coefficient that
 fixes the δ_CP curvature. Sprint T5 #1 (T2.4 of TIER_2_3_ROADMAP) closes
@@ -213,7 +220,7 @@ def _eta_from_b3(b3: int) -> float:
 
     For b₃ = 24 (the SSoT G₂ third Betti number) this evaluates to
     0.184592… and lands θ₁₃ = arcsin(√(2/3)·η) at 8.669°, i.e.
-    0.68σ from the NuFIT 6.0 NO best fit (8.58° ± 0.13, asymmetric upper
+    0.81σ from the NuFIT 6.0 NO best fit (8.58° ± 0.11, symmetric
     1σ bound). See the module docstring for the geometric provenance
     of the √2 (24-cell octahedral diagonal) and sin(π/b₃) (T₄ vertex-
     orbit half-angle).
@@ -294,13 +301,15 @@ DELTA_CP_XI2_COEF: float = 0.05
 #: NuFIT 6.0 anchor values used for the documented-divergence report.
 #: These are NOT inputs to the derivation — they are the experimental
 #: targets the geometric formula is benchmarked against. The σ for θ_13
-#: uses the conservative (asymmetric upper) NuFIT 6.0 1σ bound of 0.13;
-#: the symmetric central value 8.54° is the NuFIT 6.0 best fit. For
+#: uses the NuFIT 6.0 symmetric 1σ bound of 0.11 (an earlier 0.13
+#: asymmetric-upper copy understated the deviation; the 8.54° quoted
+#: in some older notes was a pre-release central value - the dataset
+#: NO best fit is 8.58°). For
 #: δ_CP the 1σ window is ~0.17π (asymmetric in NuFIT 6.0; the value
 #: here is the symmetric proxy used for the documented-divergence
 #: σ-deviation report).
 NUFIT_THETA_13_DEG: float = 8.58
-NUFIT_THETA_13_SIGMA: float = 0.13
+NUFIT_THETA_13_SIGMA: float = 0.11  # NuFIT 6.0 symmetric 1sigma (2026-08: was a 0.13 asymmetric-upper copy)
 NUFIT_DELTA_CP_RAD: float = 1.54 * math.pi      # NuFIT 6.0 best fit ≈ 1.54 π
 NUFIT_DELTA_CP_SIGMA_PI: float = 0.17           # NuFIT 6.0 1σ width in units of π
 
@@ -502,10 +511,11 @@ class GeometricYukawaT4:
                 "ξ = cos(π/b₃) — algebraic conjugate of η on the T₄/24-"
                 "cell vertex orbit. New form: "
                 "δ_CP = (3π/2)(1 − 0.12·η·ξ + 0.05·ξ²). With b₃ = 24: "
-                "θ₁₃ = 8.669° (NuFIT 6.0 8.54 ± 0.13 → 0.99σ, within 1σ); "
-                "δ_CP = 1.541π (NuFIT 6.0 1.54π ± 0.17π → 0.005σ, within "
-                "1σ). Both angles land within 1σ simultaneously with zero "
-                "fitted free parameters — ξ traces through b3_leaf() "
+                "θ₁₃ = 8.669° (NuFIT 6.0 NO 8.58 ± 0.11 → 0.81σ); "
+                "δ_CP = 1.541π (IO best fit 1.54π ± 0.17π → 0.005σ). "
+                "Each lands within 1σ of its own anchor, but in DIFFERENT "
+                "mass orderings, and (a, b) = (0.12, 0.05) are tuned to the "
+                "δ_CP target — ξ traces through b3_leaf() "
                 "exactly like η."
             ),
         }

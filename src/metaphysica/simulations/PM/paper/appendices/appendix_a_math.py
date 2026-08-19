@@ -165,7 +165,7 @@ class AppendixAMathFoundations(SimulationBase):
             abstract=(
                 "Mathematical foundations for Principia Metaphysica: derivation of the critical "
                 "dimension D = 26 from Virasoro anomaly cancellation, G₂ holonomy and spinor "
-                "structures, and compatibility with the (24,1) unified time framework with fibered structure."
+                "structures, and compatibility with the (24,2) unified time framework with fibered structure."
             ),
             content_blocks=[
                 ContentBlock(
@@ -241,12 +241,12 @@ class AppendixAMathFoundations(SimulationBase):
                 ),
                 ContentBlock(
                     type="subsection",
-                    content="A.3 Bridge Subalgebra Signature (24,1) and Euclidean Sampler Data Fields S<sup>(2,0)</sup>"
+                    content="A.3 Bridge Subalgebra Signature (24,2) and Euclidean Sampler Data Fields S<sup>(2,0)</sup>"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The PM framework's bridge+time subalgebra has signature (24,1) = 12×(2,0) + (0,1), with unified time and fibered structure. "
+                        "The PM framework's bridge+time subalgebra has signature (24,2) = 12×(2,0) + (0,1), with unified time and fibered structure. "
                         "This preserves Virasoro anomaly cancellation:"
                     )
                 ),
@@ -264,7 +264,7 @@ class AppendixAMathFoundations(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"\text{25D}_{(24,1)} \xrightarrow{\text{Euclidean bridge}} \text{13D}_{(12,1)} \xrightarrow{\text{OR reduction}} \text{Effective 4D}_{(3,1)}",
+                    content=r"\text{25D}_{(24,2)} \xrightarrow{\text{Euclidean bridge}} \text{13D}_{(12,1)} \xrightarrow{\text{OR reduction}} \text{Effective 4D}_{(3,1)}",
                     label="(A.6)"
                 ),
                 ContentBlock(
@@ -274,13 +274,13 @@ class AppendixAMathFoundations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The D = 26 bosonic string constraint and bridge+time signature (24,1) [before S<sup>(2,0)</sup> extension] enable the PM framework's dimensional reduction:"
+                        "The D = 26 bosonic string constraint and bridge+time signature (24,2) [before S<sup>(2,0)</sup> extension] enable the PM framework's dimensional reduction:"
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "- Bridge+time bulk: 25D with signature (24,1) = 12×(2,0) + (0,1) automatically satisfies Virasoro anomaly cancellation [full 26D(24,2) includes additional S<sup>(2,0)</sup> shadow-time directions]\n\n"
+                        "- Bridge+time bulk: 25D with signature (24,2) = 12×(2,0) + (0,1) automatically satisfies Virasoro anomaly cancellation [full 26D(24,2) includes additional S<sup>(2,0)</sup> shadow-time directions]\n\n"
                         "- Euclidean bridge: Reduces the 12×(2,0) pairs to shadows (12,1) via OR reconstruction\n\n"
                         "- Shadow reduction: Yields 13-dimensional intermediate spacetime with unified time\n\n"
                         "- Compactification: 9 spatial dimensions (from bridge reduction) + 13 shadow dimensions compactify on T<sup>15</sup> × G₂(7D)\n\n"

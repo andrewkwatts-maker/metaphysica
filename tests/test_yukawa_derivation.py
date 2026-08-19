@@ -204,7 +204,7 @@ def test_documented_divergence_reports_both_angles_within_1sigma(
         δ_CP = (3π/2) · (1 − 0.12·η·ξ + 0.05·ξ²)
 
     With b₃ = 24:
-      * θ₁₃ = 8.669° (NuFIT 6.0 NO 8.58 ± 0.13 → 0.68σ, within 1σ)
+      * θ₁₃ = 8.669° (NuFIT 6.0 NO 8.58 ± 0.11 → 0.81σ, within 1σ)
       * δ_CP = 1.541π (NuFIT 6.0 1.54π ± 0.17π → 0.005σ, within 1σ)
 
     Both within 1σ simultaneously with zero fitted free parameters.
@@ -221,14 +221,17 @@ def test_documented_divergence_reports_both_angles_within_1sigma(
     # (8.54 was a pre-release copy); the prediction 8.669 moves
     # from 0.99σ to 0.68σ — closer, not farther.
     assert div["nufit_theta_13_deg"] == pytest.approx(8.58)
-    assert div["nufit_theta_13_sigma"] == pytest.approx(0.13)
+    # 2026-08 anchor unification: NuFIT 6.0's symmetric 1-sigma is 0.11;
+    # the previous 0.13 was an asymmetric-upper copy that understated
+    # the deviation (0.68 sigma -> 0.81 sigma, still within 1 sigma).
+    assert div["nufit_theta_13_sigma"] == pytest.approx(0.11)
     assert div["nufit_delta_CP_pi_units"] == pytest.approx(1.54)
     assert div["nufit_delta_CP_sigma_pi"] == pytest.approx(0.17)
 
     # Sprint T5 #1: θ₁₃ within 1σ of NuFIT 6.0.
     assert div["theta_13_within_1sigma"] is True, (
         "Sprint T5 #1 (η = √2·sin(π/b₃), ξ = cos(π/b₃)) should land "
-        "θ₁₃ within 1σ of NuFIT 6.0 NO 8.58 ± 0.13, got "
+        "θ₁₃ within 1σ of NuFIT 6.0 NO 8.58 ± 0.11, got "
         f"theta_13_deg = {result['theta_13_deg']:.4f}°, "
         f"sigma deviation = {div['theta_13_sigma_deviation']:.3f}"
     )

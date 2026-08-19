@@ -940,12 +940,12 @@ class HiggsMassSimulation(SimulationBase):
                 derivation_formula="higgs-mass",
                 no_experimental_value=True,
                 validation={
-                    "experimental_value": 125.25,
+                    "experimental_value": 125.20,
                     "uncertainty": 0.17,
                     "bound_type": "measured",
                     "status": "FAIL",
                     "source": "PDG2024",
-                    "notes": "Pure geometric prediction: 738.5 GeV. Experiment: 125.25 GeV. Factor ~5.9 too high. Demonstrates Re(T) from geometry alone fails."
+                    "notes": "Pure geometric prediction: 738.5 GeV. Experiment: 125.20 GeV (PDG 2024). Factor ~5.9 too high. Demonstrates Re(T) from geometry alone fails."
                 }
             ),
             Parameter(
@@ -1055,7 +1055,7 @@ class HiggsMassSimulation(SimulationBase):
                     "STABILISED: requires both VEV closure AND TeV-scale "
                     "gravitino from non-trivial K(T); not yet achieved."
                 ),
-                eml_description="EML: eml_vec('is_ghost_free') — moduli stabilization status: PARTIAL when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.25))), eml_scalar(1.0)) — Re(T) closed by S4.3 but Kähler gravitino sector (S6.3) open",
+                eml_description="EML: eml_vec('is_ghost_free') — moduli stabilization status: PARTIAL when ops.lt(ops.abs(ops.sub(eml_vec('m_higgs_pred'), eml_scalar(125.20))), eml_scalar(1.0)) — Re(T) closed by S4.3 but Kähler gravitino sector (S6.3) open",
                 no_experimental_value=True,
                 validation={
                     "experimental_value": "PARTIAL",

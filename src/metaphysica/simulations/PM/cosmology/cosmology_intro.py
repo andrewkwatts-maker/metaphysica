@@ -191,9 +191,9 @@ class CosmologyIntroV16(SimulationBase):
 
         # Step 6: BPS brane tension (5,1) configuration
         # T_BPS ~ |Z|/V where Z is central charge
-        # For (5,1) brane: SO(24,1) Casimir C2 = 6×29/4 = 43.5
+        # For (5,1) brane: SO(24,2) Casimir C2 = 6×29/4 = 43.5
         p_5_1 = 6  # 5 spatial + 1 time
-        C2_brane = p_5_1 * (p_5_1 + 23) / 4.0  # SO(24,1) Casimir
+        C2_brane = p_5_1 * (p_5_1 + 23) / 4.0  # SO(24,2) Casimir
         T_BPS_5_2 = np.sqrt(C2_brane) * M_Pl ** 6  # Tension in GeV^6
 
         # Step 7: Pneuma field component reduction
@@ -254,7 +254,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The full dimensional cascade proceeds as follows: the 26D "
-                        "bulk spacetime with (24,1) unified time signature first splits "
+                        "bulk spacetime with (24,2) unified time signature first splits "
                         "into dual 13D(12,1) shadows via 12 paired (2,0) Euclidean bridges. "
                         "Each 13D shadow then decomposes as M\u00b9\u00b3 = M\u2074 \u00d7 K_Pneuma, where "
                         "K_Pneuma is a 9-dimensional internal space comprising a 7D G₂ "
@@ -269,7 +269,7 @@ class CosmologyIntroV16(SimulationBase):
                     content=(
                         "Each step in this cascade is physically necessary, not merely "
                         "mathematically convenient. The initial 26D \u2192 13D split is forced by "
-                        "the requirement that the (24,1) unified time signature must decompose "
+                        "the requirement that the (24,2) unified time signature must decompose "
                         "into two copies of (12,1), the unique factorisation that preserves "
                         "Lorentzian causality in each shadow while eliminating ghost modes from "
                         "extra timelike dimensions. The subsequent 13D \u2192 4D compactification "
@@ -417,7 +417,7 @@ class CosmologyIntroV16(SimulationBase):
                     content=(
                         "Step 1: 26D Bulk Metric (Unified Time)\n"
                         "ds²₂₆ = G_MN dX^M dX^N, M, N = 0, 1, ..., 25\n"
-                        "With unified time signature (24,1): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
+                        "With unified time signature (24,2): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
                         "Step 2: Dual Shadow Split via 12\u00d7(2,0) Euclidean Bridge Pairs\n"
                         "M²⁶(24,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
                         "Each shadow: 12 spatial (from bridge coordinate selection) + 1 shared time = 13D(12,1)\n"
@@ -467,7 +467,7 @@ class CosmologyIntroV16(SimulationBase):
                         "• (5,1): One 5-brane with unified time (observable sector brane per shadow)\n"
                         "• 3×(3,1): Three 3-branes, each with unified time (generational branes)\n"
                         "• Bridge couplings: Cross-shadow interactions via Euclidean bridge\n\n"
-                        "The unified time (24,1) signature eliminates ghost modes that would arise from (p,2) branes "
+                        "The unified time (24,2) signature eliminates ghost modes that would arise from (p,2) branes "
                         "in the old two-time framework."
                     )
                 ),
@@ -480,8 +480,8 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "For BPS states, this bound is saturated: T_BPS = |Z|/V. The SO(24,1) Casimir operator "
-                        "determines the brane tensions via T \u221d \u221aC₂, ensuring consistency with the SO(24,1) "
+                        "For BPS states, this bound is saturated: T_BPS = |Z|/V. The SO(24,2) Casimir operator "
+                        "determines the brane tensions via T \u221d \u221aC₂, ensuring consistency with the SO(24,2) "
                         "invariance of the v24.2 bulk geometry."
                     )
                 ),
@@ -495,7 +495,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The Pneuma spinor field Ψ_P has 8192 components in the full 26D bulk (from Majorana-Weyl "
-                        "condition in (24,1) unified time signature). Upon dual-shadow splitting, G₂ compactification, "
+                        "condition in (24,2) unified time signature). Upon dual-shadow splitting, G₂ compactification, "
                         "and symmetry breaking, this reduces to 64 effective components per shadow in the 4D effective theory."
                     )
                 ),
@@ -505,7 +505,7 @@ class CosmologyIntroV16(SimulationBase):
                     title="v21 Symbolic Computation: Spinor Decomposition",
                     content=(
                         "Step 1: 26D Spinor Dimension (Unified Time)\n"
-                        "For signature (24,1), the minimal spinor has dimension:\n"
+                        "For signature (24,2), the minimal spinor has dimension:\n"
                         "dim(\u03a8_26D) = 2^((26\u22121)/2) = 2^(12.5) \u2192 8192 (Majorana-Weyl with real structure)\n"
                         "The unified time signature ensures no ghost modes.\n\n"
                         "Step 2: Dual Shadow Split\n"
@@ -634,7 +634,7 @@ class CosmologyIntroV16(SimulationBase):
                 output_params=["cosmology.D_eff_shadow"],
                 derivation={
                     "steps": [
-                        {"description": "Unified time structure (24,1)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
+                        {"description": "Unified time structure (24,2)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
                         {"description": "v22: 12-pair Euclidean bridge split", "formula": r"M^{26}(24,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
                         {"description": "Dimensional structure", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
                         {"description": "Aggregate metric", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
@@ -697,7 +697,7 @@ class CosmologyIntroV16(SimulationBase):
                     "steps": [
                         {"description": "BPS bound", "formula": r"T \geq |Z|/V"},
                         {"description": "For (5,1) brane per shadow", "formula": r"p = 5 \text{ spatial} + 1 \text{ time} = 6"},
-                        {"description": "SO(24,1) Casimir", "formula": r"C_2 = p(p+23)/4 = 6 \times 29/4 = 43.5"},
+                        {"description": "SO(24,2) Casimir", "formula": r"C_2 = p(p+23)/4 = 6 \times 29/4 = 43.5"},
                         {"description": "Tension", "formula": r"T_{BPS} = \sqrt{C_2} \times M_{\text{Pl}}^6"}
                     ],
                     "references": ["BPS states", "v21 Dual-shadow brane dynamics"]
@@ -709,7 +709,7 @@ class CosmologyIntroV16(SimulationBase):
                 },
                 eml_latex=r"\mathrm{ops.div}(\lvert Z_{p,q}\rvert,\, V_p)",
                 eml_tree_str="ops.div(Z_pq_abs, V_p)",
-                eml_description="EML: T_BPS = ops.div(|Z_pq|, V_p) — BPS bound on brane tensions from SO(24,1) central charge",
+                eml_description="EML: T_BPS = ops.div(|Z_pq|, V_p) — BPS bound on brane tensions from SO(24,2) central charge",
             ),
             Formula(
                 id="pneuma-reduction",
@@ -752,15 +752,20 @@ class CosmologyIntroV16(SimulationBase):
         return [
             Parameter(
                 path="cosmology.M_Pl_4D",
-                name="4D Reduced Planck Mass",
+                name="4D Planck Mass",
                 units="GeV",
                 status="MEASURED",
-                # Uses REDUCED Planck mass: M_Pl_reduced = M_Pl / sqrt(8π) = 2.435e18 GeV
-                description="4D reduced Planck mass M_Pl_red = 2.435×10¹⁸ GeV (PDG 2024)",
-                experimental_bound=2.435e18,  # Reduced Planck mass
+                # 2026-08 fix: this path stores the FULL Planck mass (the code
+                # assigns M_Pl_4D = M_Pl), and geometric_anchors.py documents
+                # the same ruling ("M_Pl_4D must compare against FULL Planck
+                # mass (1.22e19), NOT reduced (2.435e18)"). The bound had been
+                # declared against the REDUCED mass, producing a spurious
+                # ~3000-sigma failure once declared bounds became visible.
+                description="4D Planck mass M_Pl = 1.220890×10¹⁹ GeV (CODATA 2022, full — not reduced)",
+                experimental_bound=1.220890e19,
                 bound_type="measured",
-                bound_source="PDG2024",
-                uncertainty=3.0e15  # Same as constants.M_PLANCK uncertainty
+                bound_source="CODATA2022",
+                uncertainty=1.9e15
             ),
             Parameter(
                 path="cosmology.V_9_internal",
@@ -993,7 +998,7 @@ class CosmologyIntroV16(SimulationBase):
             {
                 "id": "CERT_BPS_CASIMIR_SO24_1",
                 "assertion": (
-                    "SO(24,1) Casimir for (5,1) brane: C2 = 6*29/4 = 43.5"
+                    "SO(24,2) Casimir for (5,1) brane: C2 = 6*29/4 = 43.5"
                 ),
                 "condition": "6 * 29 / 4 == 43.5",
                 "tolerance": 0.0,
@@ -1050,7 +1055,7 @@ class CosmologyIntroV16(SimulationBase):
                 ),
                 "validation_hint": (
                     "Verify BPS bound: T_BPS = |Z|/V for saturated states. "
-                    "Check that SO(24,1) Casimir C2 = p(p+23)/4 for p-brane."
+                    "Check that SO(24,2) Casimir C2 = p(p+23)/4 for p-brane."
                 )
             },
         ]
@@ -1074,7 +1079,7 @@ class CosmologyIntroV16(SimulationBase):
         })
 
         # Check 2: 26D Pneuma components
-        pneuma_26d = 2**12 * 2  # Majorana-Weyl in (24,1)
+        pneuma_26d = 2**12 * 2  # Majorana-Weyl in (24,2)
         p26_ok = pneuma_26d == 8192
         checks.append({
             "name": "26D Pneuma: 2^12 * 2 = 8192 components",
@@ -1084,12 +1089,12 @@ class CosmologyIntroV16(SimulationBase):
             "message": f"26D Pneuma components = {pneuma_26d}"
         })
 
-        # Check 3: SO(24,1) Casimir for (5,1) brane
+        # Check 3: SO(24,2) Casimir for (5,1) brane
         p = 6
         C2 = p * (p + 23) / 4.0
         casimir_ok = abs(C2 - 43.5) < 1e-10
         checks.append({
-            "name": "SO(24,1) Casimir C2(6) = 43.5",
+            "name": "SO(24,2) Casimir C2(6) = 43.5",
             "passed": casimir_ok,
             "confidence_interval": {"lower": 43.5 - 1e-10, "upper": 43.5 + 1e-10, "sigma": 0.0},
             "log_level": "INFO" if casimir_ok else "ERROR",
@@ -1158,7 +1163,7 @@ class CosmologyIntroV16(SimulationBase):
                 "gate_id": "G57_calabi_yau_parity",
                 "simulation_id": self.metadata.id,
                 "assertion": (
-                    f"SO(24,1) Casimir C2 = {C2} for (5,1) brane is consistent "
+                    f"SO(24,2) Casimir C2 = {C2} for (5,1) brane is consistent "
                     f"with v24.2 dual-shadow framework"
                 ),
                 "result": "PASS" if casimir_ok else "FAIL",
@@ -1196,7 +1201,7 @@ class CosmologyIntroV16(SimulationBase):
                 "12-pair aggregation: ρ_breath = (1/12) ∑ρ_i reduces variance by √12, stabilizing w ≈ -0.958 ± 0.003."
             ),
             "technicalDetail": (
-                "Starting from 25D with (24,1) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
+                "Starting from 25D with (24,2) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
                 "13D(12,1) shadows (each: 12 spatial from bridge + 1 shared time). Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}). "
                 "Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²). Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|. "
                 "Aggregated: ρ_breath = (1/12) ∑ρ_i. Why 12 pairs: b₃ = 24 associative 3-cycles → 24/2 = 12 normal/mirror pairs. "

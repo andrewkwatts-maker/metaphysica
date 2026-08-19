@@ -109,7 +109,10 @@ class ElectroweakMixing:
         self.delta_rho = Decimal('0.0094')  # Top quark loop correction
 
         # Couplings derived from experimental masses for consistency
-        # g_2 = 2 × M_W / v = 2 × 80.3692 / 246.37 = 0.6524 (PDG 2024)
+        # g_2 = 2 x M_W / v = 2 x 80.3692 / 246.37 = 0.6524.
+        # MIXED PROVENANCE: M_W is PDG 2024 but v = 246.37 is this
+        # module's GEOMETRIC vev prediction, not the PDG 246.22
+        # (which would give 0.65284). Not a pure PDG number.
         self.g_2 = Decimal('0.6524')  # Weak coupling (from M_W)
         self.g_prime = self.g_2 * (self.sin_theta_W / self.cos_theta_W)
 

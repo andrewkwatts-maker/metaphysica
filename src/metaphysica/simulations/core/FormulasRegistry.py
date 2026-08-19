@@ -809,7 +809,7 @@ class FormulasRegistry:
         "gate_24_manifold_completion":    r"G_{24}",
         "gate_25_bit_density":            r"G_{25}",
         "gate_26_holographic_boundary":   r"G_{26}",
-        "gate_27_signal_to_noise":        r"G_{27}",
+        "gate_27_signal_to_noise":        r"G_{27}",  # gate index 27, NOT a 27D metric
         "gate_28_recursive_loop":         r"G_{28}",
         "gate_29_viscosity_nullifier":    r"G_{29}",
         "gate_30_phase_coherence":        r"G_{30}",
@@ -1306,18 +1306,19 @@ class FormulasRegistry:
         self._D_v21_bulk_space = 24           # Pre-v23 core only
 
         # =======================================================================
-        # v23 S^{2,0} ANCESTRAL EUCLIDEAN SAMPLER DATA FIELDS
+        # TWO SHADOW-TIME DIRECTIONS (0,2)
         # =======================================================================
-        # The two shadow-time directions average local 12×(2,0) outcomes for global
-        # condensate selection. They act as a "master sampler" enabling:
-        #   - Local 12×(2,0): Fine-grained residue flux (micro-stability, dilution)
-        #   - S^{2,0}: Global averaging (macro-precision, veil lift)
+        # SUPERSEDED FRAMING: the v23 "S^{2,0} Euclidean sampler pair" read
+        # these two dimensions as SPACELIKE averaging fields. Under the
+        # 2026-08-19 two-time ruling they are the two TIMELIKE directions,
+        # one per 13D(12,1) shadow. The averaging role survives as the
+        # Sp(2,R)-invariant shared clock t+ = (t1+t2)/sqrt(2); the relative
+        # time t- is pure gauge.
         #
-        # DIMENSIONAL ACCOUNTING (v23 - 26D interpretation):
-        #   - 24 core = 24 local bridge (DUAL REPRESENTATION of same physical space)
-        #   - 2 shadow-time directions (NEW physical dimensions for hierarchical averaging)
-        #   - 1 unified time
-        #   - TOTAL: 24 + 2 + 1 = 26D with signature (24,2)
+        # DIMENSIONAL ACCOUNTING (two-time):
+        #   - 24 spacelike = 12 bridge pairs x 2
+        #   - 2 timelike (one per shadow)
+        #   - TOTAL: 24 + 2 = 26D with signature (24,2)
         #   - Note: The "50 spacelike-like" counts bridge twice (core + local view)
         #
         # FORMULA: p_anc = (1/12) * sum(p_i) + (1/12) * sqrt(n_local/12) * phi
@@ -2490,7 +2491,7 @@ class FormulasRegistry:
         Formula: G04 = G03 / (288 × π)
 
         Purpose: Calibrates the geometry to a spherical topology. Without G04,
-        the manifold would be flat and fail to support the G(24,1) metric.
+        the manifold would be flat and fail to support the G(24,2) metric.
         The π factor introduces circular/spherical geometry.
 
         v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
@@ -2539,7 +2540,7 @@ class FormulasRegistry:
         Formula: G07 = (G53 × 24)/153
 
         Purpose: Normalizes the Torsion Gate (G53) across the 24-dimensional
-        manifold. Prevents "warping" in the G(24,1) metric, addressing the
+        manifold. Prevents "warping" in the G(24,2) metric, addressing the
         root cause of C04 instability.
 
         v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
@@ -2587,7 +2588,7 @@ class FormulasRegistry:
 
         Purpose: Calculates the "Weight" of the Joint Closure across the
         manifold dimensions relative to the Bulk Pressure. This anchors
-        the 24D manifold to the G(24,1) metric's unified temporal direction.
+        the 24D manifold to the G(24,2) metric's unified temporal direction.
 
         v21 NOTE: Metric updated from G(24,2) to G(24,1) for unified time.
         """
@@ -5276,7 +5277,7 @@ class FormulasRegistry:
                 },
                 "gate_27_signal_to_noise": {
                     "symbol": "G27",
-                    "latex": "G_{27}",
+                    "latex": "G_{26}",
                     "value": self.gate_27_signal_to_noise,
                     "formula": "288/sqrt(163*pi)",
                     "expanded": f"Truth filter = {self.gate_27_signal_to_noise:.10f}",

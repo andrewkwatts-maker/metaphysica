@@ -245,9 +245,9 @@ class MasterActionSimulationV22(SimulationBase):
         bridge_data = {
             "n_pairs": self._n_bridge_pairs,
             "total_bridge_dimensions": 2 * self._n_bridge_pairs,  # 24
-            "spacetime_dimensions": 1 + 2 * self._n_bridge_pairs,  # 26D (26,1)
+            "spacetime_dimensions": 1 + 2 * self._n_bridge_pairs,  # 26D (24,2)
             "r_perp_matrix": self._r_perp,
-            "metric_signature": f"(24,1) = 1 time + {2 * self._n_bridge_pairs} bridge",
+            "metric_signature": f"(24,2) = 1 time + {2 * self._n_bridge_pairs} bridge",
         }
         return bridge_data
 
@@ -815,13 +815,13 @@ class MasterActionSimulationV22(SimulationBase):
                 id="euler-lagrange-metric-variation",
                 label="(MA.EL1)",
                 latex=(
-                    r"\frac{\delta S_{27}}{\delta g^{\mu\nu}} = 0 \;\Longrightarrow\; "
-                    r"G_{\mu\nu} + \Lambda_{\text{eff}}\,g_{\mu\nu} = \frac{8\pi G_{27}}{c^4}"
+                    r"\frac{\delta S_{26}}{\delta g^{\mu\nu}} = 0 \;\Longrightarrow\; "
+                    r"G_{\mu\nu} + \Lambda_{\text{eff}}\,g_{\mu\nu} = \frac{8\pi G_{26}}{c^4}"
                     r"\!\left(T_{\mu\nu}^{\text{YM}} + T_{\mu\nu}^{\text{Dirac}} "
                     r"+ T_{\mu\nu}^{\text{bridge}} + T_{\mu\nu}^{\text{Pneuma}}\right)"
                 ),
                 plain_text=(
-                    "delta S_27 / delta g^{mu nu} = 0  =>  "
+                    "delta S_26 / delta g^{mu nu} = 0  =>  "
                     "G_{mu nu} + Lambda_eff g_{mu nu} = (8 pi G_27 / c^4) "
                     "(T^YM_{mu nu} + T^Dirac_{mu nu} + T^bridge_{mu nu} + T^Pneuma_{mu nu})"
                 ),
@@ -854,11 +854,11 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=[],
                 derivation={
                     "steps": [
-                        "Start with the full 26D action S_27 = S_EH + S_YM + S_Dirac + S_bridge + S_Pneuma where each sector is separately gauge-invariant",
+                        "Start with the full 26D action S_26 = S_EH + S_YM + S_Dirac + S_bridge + S_Pneuma where each sector is separately gauge-invariant",
                         "Vary the Einstein-Hilbert sector: delta(sqrt(-g) R) / delta g^{mu nu} = sqrt(-g) (R_{mu nu} - (1/2) R g_{mu nu}) using the Palatini identity for delta R_{mu nu}",
                         "Vary the cosmological constant term: delta(Lambda sqrt(-g)) / delta g^{mu nu} = -(Lambda/2) sqrt(-g) g_{mu nu}",
                         "Define the sector stress-energy tensors via T^(X)_{mu nu} = -(2/sqrt(-g)) delta S_X / delta g^{mu nu} for X in {YM, Dirac, bridge, Pneuma}",
-                        "Combine all variations and set delta S_27 / delta g^{mu nu} = 0 to obtain the 26D Einstein field equations with source decomposition",
+                        "Combine all variations and set delta S_26 / delta g^{mu nu} = 0 to obtain the 26D Einstein field equations with source decomposition",
                         "Verify covariant conservation: the contracted Bianchi identity nabla^mu G_{mu nu} = 0 implies nabla^mu T_{mu nu} = 0 (energy-momentum conservation)"
                     ],
                     "method": "analytical",
@@ -872,7 +872,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"T_{\mu\nu}^{\text{bridge}}": {"description": "Bridge sector stress-energy from the 12-pair (2,0) system kinetic terms"},
                     r"T_{\mu\nu}^{\text{Pneuma}}": {"description": "Moduli/scalar stress-energy including Kahler moduli and dilaton contributions"},
                     r"\Lambda_{\text{eff}}": {"description": "Effective cosmological constant from vacuum energy (moduli stabilisation)"},
-                    r"G_{27}": {"description": "26D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
+                    r"G_{26}": {"description": "26D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
@@ -1568,7 +1568,7 @@ class MasterActionSimulationV22(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        'Version <span class="pm-value" data-pm-value="framework.version_major">23</span> introduces a fundamental structural change: 26D(24,2) = 12×(2,0) bridges + (0,1) time + S<sup>2,0</sup> shadow-time directions. '
+                        'Version <span class="pm-value" data-pm-value="framework.version_major">23</span> introduces a fundamental structural change: 26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + S<sup>2,0</sup> shadow-time directions. '
                         "The 12 bridge pairs WARP to create 2×13D(12,1) shadows (12 spatial + 1 time (its own)). "
                         "The metric is: ds² = −dt² + Σ<sub>i=1</sub><sup>12</sup> (dy<sub>1i</sub>² + dy<sub>2i</sub>²)."
                     )

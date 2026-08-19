@@ -189,7 +189,7 @@ S8_LINEAR_RESPONSE: float = 0.085
 # Sprint 5.5's mirror-coupling Δw is ~10^13 too small; T3.4 identifies the
 # physical origin of the larger coupling. Mechanism (b) is early dark energy
 # (EDE) from a tower of 26D-bulk Kaluza-Klein modes with mass scale m_KK ~
-# 1/R_27 set by the compactification radius. When m_KK crosses the
+# 1/R_26 set by the compactification radius. When m_KK crosses the
 # radiation temperature T at z ~ 3000 the modes become non-relativistic and
 # briefly dominate as dark energy, raising the inferred H₀ (Karwal &
 # Kamionkowski 2016, Schoneberg et al. 2022 "H₀ Olympics").
@@ -404,7 +404,7 @@ class CosmologicalTensionsResolver:
         Physical picture
         ----------------
         The 26D bulk admits a Kaluza-Klein tower with mass scale
-        ``m_KK ~ 1 / R_27 ~ M_GUT``. Most KK modes are far above any
+        ``m_KK ~ 1 / R_26 ~ M_GUT``. Most KK modes are far above any
         cosmological temperature scale and decouple, but if the lightest
         modes have eV-scale masses they cross ``m_KK ~ T`` at z ~ 3000
         (recombination), briefly contributing an EDE-like component that

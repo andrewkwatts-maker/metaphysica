@@ -642,7 +642,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "For PM's (24,1) signature theory with Euclidean bridge, the central charge calculation is:"
+                    "For PM's (24,2) signature theory with Euclidean bridge, the central charge calculation is:"
                 )
             ),
             ContentBlock(

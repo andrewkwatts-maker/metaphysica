@@ -501,7 +501,8 @@ class RicciFlowH0V16(SimulationBase):
                     content=(
                         "At z=0 (local): H0 = 76.34 km/s/Mpc (3.17 sigma above SH0ES 73.04 +/- 1.04). "
                         "At z=1089 (CMB): H0 = 67.4 km/s/Mpc (matches Planck). "
-                        "The tension is not a contradiction but a natural consequence "
+                        "On this model the tension would not be a contradiction but a "
+                        "natural consequence "
                         "of G2 Ricci flow evolution."
                     )
                 ),
@@ -769,17 +770,20 @@ class RicciFlowH0V16(SimulationBase):
                 path="cosmology.H0_early",
                 name="Early Universe Hubble Constant (CMB)",
                 units="km/s/Mpc",
-                status="PREDICTED",
+                status="ANCHORED",
                 description=(
                     f"Hubble constant at recombination from Ricci flow: "
                     f"H0 = {H0_early:.2f} km/s/Mpc. "
-                    "Planck 2018: 67.4 +/- 0.5 km/s/Mpc."
+                    "Planck 2018: 67.36 +/- 0.54 km/s/Mpc. NOT an independent "
+                    "prediction: the interpolation is normalised so that the "
+                    "z >> z_* limit returns the Planck value, so agreement "
+                    "here is definitional (2026-08 review)."
                 ),
                 derivation_formula="hubble-evolution-ode",
-                experimental_bound=67.4,
+                experimental_bound=67.36,
                 bound_type="central_value",
                 bound_source="Planck2018",
-                uncertainty=0.5,
+                uncertainty=0.54,
                 eml_description="EML: ops.mul(eml_vec('cosmology.H0_local'), ops.sub(eml_scalar(1.0), eml_vec('f_z_cmb'))) — H0_early = H0_local * (1 - f(z_CMB)) from Ricci flow interpolation"
             ),
             Parameter(
@@ -1191,5 +1195,6 @@ if __name__ == "__main__":
     print(f"  z_transition:     {results['outputs']['cosmology.z_transition']:.2f}")
     print(f"  Tension (sigma):  {results['outputs']['cosmology.H0_tension_sigma']:.2f}")
     print("=" * 70)
-    print(" STATUS: HUBBLE TENSION RESOLVED")
+    print(" STATUS: MECHANISM PROPOSED - the model H0_local = 76.34 is 3.2 sigma")
+    print("         from SH0ES 73.04 +/- 1.04, so cert H0_LOCAL_SHOES FAILS")
     print("=" * 70)

@@ -18,7 +18,8 @@ PHYSICS:
 GEOMETRIC ANSATZ:
     f_a = M_Pl / k_gimel^6
 
-    This gives f_a ~ 3×10^12 GeV, placing the axion in the "anthropic window"
+    This gives f_a ~ 3.5x10^12 GeV, at the upper end of the "anthropic window"
+    (10^11-10^13 GeV; the narrower 10^11-10^12 quote excludes the module's own f_a)
     where it can explain 100% of dark matter with θ_i ~ O(1).
 
 PREDICTIONS:

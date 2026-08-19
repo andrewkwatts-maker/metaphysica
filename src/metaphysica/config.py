@@ -62,7 +62,7 @@ CHANGELOG v12.5:
   * Doublet-Triplet mechanism upgraded to Native TCS Topological Filter
   * Triplets shunted to shadow sector (not just lifted) - no Wilson line tuning
   * Breaking Chain Selection RESOLVED: Pati-Salam geometrically preferred
-  * Pati-Salam arises from SO(24,1) → G₂ projection with Pneuma (54_H) alignment
+  * Pati-Salam arises from SO(24,2) → G₂ projection with Pneuma (54_H) alignment
   * Added BreakingChainParameters class with intermediate scale M_PS = 1.2×10^12 GeV
   * FIXES: Consolidated proton decay to single canonical value (8.15e34 years)
   * FIXES: Deprecated ProtonLifetimeParameters (use GeometricProtonDecayParameters)
@@ -1578,16 +1578,16 @@ class CoreFormulas:
         output_params=['dimensions.D_BULK'],
         label="(2.1) Master Action",
         html="S<sub>26</sub> = ∫ d<sup>26</sup>x √|G| [M<sub>*</sub><sup>24</sup>R<sub>26</sub> + Ψ̄<sub>P</sub>(iΓ<sup>M</sup>D<sub>M</sub> - m)Ψ<sub>P</sub> + ℒ<sub>bridge</sub>]",
-        latex="S_{27} = \\int d^{27}x \\sqrt{|G_{(24,2)}|} \\left[ M_*^{25} R_{27} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
-        plain_text="S_27 = ∫ d²⁷x √|G| [M*²⁵R₂₇ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
+        latex="S_{26} = \\int d^{26}x \\sqrt{|G_{(24,2)}|} \\left[ M_*^{25} R_{26} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
+        plain_text="S_26 = ∫ d²⁶X √|G| [M*²⁴R₂₆ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
         category=FormulaCategory.THEORY,
         description="v23.1 Master action for 26D(24,2) bulk with Pneuma field and shadow-time directions sector",
         section="2",
         status="FOUNDATIONAL",
         terms={
-            "S_27": FormulaTerm("26D Action", "Full action in 26D(24,2) unified time signature", "sections.html#2"),
+            "S_26": FormulaTerm("26D Action", "Full action in the 26D(24,2) two-time bulk", "sections.html#2"),
             "M_*": FormulaTerm("Fundamental Scale", "26D Planck scale ~10¹⁶ GeV"),
-            "R_27": FormulaTerm("Ricci Scalar", "26D curvature scalar"),
+            "R_26": FormulaTerm("Ricci Scalar", "26D curvature scalar"),
             "Ψ_P": FormulaTerm("Pneuma Field", "4096-component Weyl spinor of Cl(24,2)"),
             "ℒ_bridge": FormulaTerm("Bridge Lagrangian", "v23.1: 12×(2,0) bridge pairs + two shadow-time directions"),
         },
@@ -3848,7 +3848,7 @@ class FundamentalConstants:
 
     # Dimensional Structure (v21/v22 Dual-Shadow Bridge Framework)
     # =========================================================
-    # 26D(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions → 2×13D(12,1) shadows
+    # 26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) shadows
     # (Legacy variable names use "25D" for backward compatibility)
     #
     # Structure: 26D(24,2) bulk splits via 12×(2,0) bridge pairs into dual 13D(12,1) shadows
@@ -4026,7 +4026,7 @@ class BridgePhysicsParameters:
 
     Historical note: This class was formerly MultiTimeParameters for
     the (24,2) two-time framework (v16-v20). The v21 framework uses
-    unified time (24,1) with an Euclidean bridge instead.
+    unified time (24,2) with an Euclidean bridge instead.
     """
 
     # Coupling Constants
@@ -4566,7 +4566,7 @@ class V21BridgeParameters:
     - 12×(2,0) bridge pairs: Connect corresponding spatial dimension pairs
     - OR reduction: R_perp² = -I implements Möbius topology
 
-    Decomposition: 26D(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions
+    Decomposition: 26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions
                  = 24D space + 2D time = 26D ✓
     Per shadow: 12 spatial + 1 time (its own) = 13D(12,1)
 
@@ -4620,7 +4620,7 @@ class V21BridgeParameters:
     @staticmethod
     def verify_signature():
         """
-        Verify: (24,1) signature from fibered time + spatial shadows.
+        Verify: (24,2) signature from fibered time + spatial shadows.
 
         v22.0 FIBERED TIME STRUCTURE (12×(2,0) Bridge Architecture):
         ------------------------------------------------------------
@@ -6695,7 +6695,7 @@ class BreakingChainParameters:
     intermediate step in the 26D(24,2) → dual-shadow → 4D dimensional reduction.
 
     Derivation:
-    1. Bulk: SO(24,1) contains maximal subgroup including SO(10)
+    1. Bulk: SO(24,2) contains maximal subgroup including SO(10)
     2. Per-shadow G₂ Projection: TCS construction (K=4) favors maximal subgroup
     3. Intermediate: SO(10) → SU(4)_C × SU(2)_L × SU(2)_R (Pati-Salam)
     4. Enforced by: Pneuma condensate (54_H) alignment with 7D curvature
@@ -8164,14 +8164,14 @@ if __name__ == '__main__':
 
 class V21UnifiedTimePhysics:
     """
-    v21.0/v22.0: Unified Time Physics Framework
-
-    IMPORTANT: This class replaces TwoTimePhysics from v6.4-v20.
-    The v21/v22 framework uses signature (24,2), with 12×(2,0) bridge pairs
-    instead of the (24,2) two-time structure with Sp(2,R) gauge fixing.
-
-    Decomposition: 26D(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions
-                   → 2×13D(12,1) shadows with shared time
+    SUPERSEDED (2026-08-19 two-time ruling): v21.0/v22.0 Unified Time
+    Physics Framework. This class encoded the one-time (24,2) formulation
+    that briefly replaced TwoTimePhysics (v6.4-v20); the author's ruling
+    restored the two-time structure, so the CURRENT geometry is signature
+    (24,2) = (12,1) + (12,1), one time per 13D shadow, with the Sp(2,R)
+    gauge constraint (Bars) controlling ghosts (STRUCTURAL). The block
+    below is retained for historical provenance only - see
+    canonical_values.py for the ruling.
 
     The 12 bridge pairs connect 12 corresponding spatial dimension pairs between
     Normal and Mirror shadows. Both shadows share the single temporal dimension.
@@ -8219,7 +8219,7 @@ class V21UnifiedTimePhysics:
     # After G2: (5,1) per shadow = 6D (13D - 7D G2 = 6D)
 
     # === BPS STABILITY ===
-    # C_2 = p(p + 22)/4 for SO(24,1)
+    # C_2 = p(p + 22)/4 for SO(24,2)
     CASIMIR_NORMAL = 33.75   # 5 * (5 + 22) / 4 (preserved from v20)
     CASIMIR_MIRROR = 33.75   # Same for mirror shadow
 
@@ -8574,7 +8574,7 @@ class DimensionalStructure:
     (Legacy variable names use "25D" for backward compatibility)
 
     Structure:
-    26D(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions
+    26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions
 
     Stages:
     1. Bulk: 26D(24,2) = 24 physics core + 1 time + 2 shadow-time directions = 26D

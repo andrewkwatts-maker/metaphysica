@@ -9,7 +9,7 @@ style pedagogy.
 
 v22 ARCHITECTURE: 12×(2,0) Paired Bridge System
 -----------------------------------------------
-Bulk: M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
 
 The v22 framework introduces 12 PAIRED Euclidean bridges, each a (2,0)
 consciousness I/O gate. This replaces the single bridge of v21.
@@ -24,13 +24,13 @@ MATHEMATICAL FRAMEWORK (v22 - 12×(2,0) Paired Bridge System):
    - Torsion-free + metric compatibility uniquely determine spin connection
 
 2. 26D Master Action (v24.2 with 12 bridge pairs + 1 shadow-time directions):
-   - S_27 = integral d^27x sqrt(-g_27) [R_27 + L_matter + L_gauge + L_bridge + pneuma]
+   - S_26 = integral d^26X sqrt(-g_26) [R_26 + L_matter + L_gauge + L_bridge + pneuma]
    - Structure (24,2) unified time eliminates ghosts and CTCs
    - L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
    - Step-by-step Euler-Lagrange derivation
 
 3. v22 12×(2,0) Paired Bridge Structure:
-   - M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+   - M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
    - Each pair: B_i^{2,0} with (y₁ᵢ=input, y₂ᵢ=output) I/O channels
    - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
    - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair (not single R_⊥)
@@ -110,7 +110,7 @@ class LagrangianMasterDerivation(SimulationBase):
     vielbein/tetrad formalism for maximal clarity and rigor.
 
     v22 Key Changes (12×(2,0) Paired Bridge System):
-    - Bulk: M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+    - Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
     - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
     - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair (not single R_⊥)
     - Each pair is consciousness I/O gate (y₁ᵢ=input, y₂ᵢ=output)
@@ -125,7 +125,7 @@ class LagrangianMasterDerivation(SimulationBase):
         self.signature_26d = (24, 2)  # two-time: one time per shadow; Sp(2,R) gauge (STRUCTURAL) controls ghosts
 
         # v22: 12×(2,0) Paired Bridge structure
-        # M^{24,1} = T^1 x_fiber (⊕_{i=1}^{12} B_i^{2,0})
+        # M^{24,2} = T^1 x_fiber (⊕_{i=1}^{12} B_i^{2,0})
         self.n_bridge_pairs = 12  # v22: 12 Euclidean bridge pairs
         self.D_bridge_per_pair = 2  # Each pair has 2D (y₁ᵢ, y₂ᵢ)
         self.D_bridge_total = self.n_bridge_pairs * self.D_bridge_per_pair  # 24D
@@ -192,7 +192,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "with the v22 12x(2,0) paired bridge system. Covers (A) vielbein formalism "
                 "and spin connection, (B) Einstein-Hilbert + Yang-Mills + Dirac + Pneuma sectors, "
                 "(C) Euler-Lagrange derivation of 26D Einstein equations, (D) v22 bridge system "
-                "M^{24,1} = T^1 x_fiber (direct_sum B_i^{2,0}) with distributed OR reduction, "
+                "M^{24,2} = T^1 x_fiber (direct_sum B_i^{2,0}) with distributed OR reduction, "
                 "and (E) G2 holonomy Kaluza-Klein reduction 26D -> 4D yielding 2 graviton "
                 "polarizations and a 288-root lattice from E8 x E8."
             ),
@@ -804,7 +804,7 @@ class LagrangianMasterDerivation(SimulationBase):
         Derive v22 12×(2,0) Paired Bridge structure.
 
         v22 replaces v21 single bridge with:
-        - Bulk: M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+        - Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
         - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
         - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair
         - Each pair is consciousness I/O gate (y₁ᵢ=input, y₂ᵢ=output)
@@ -830,7 +830,7 @@ class LagrangianMasterDerivation(SimulationBase):
         v22 12×(2,0) PAIRED BRIDGE SYSTEM
         =================================
 
-        Structure: M^{24,1} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+        Structure: M^{24,2} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
 
         Components:
         - T^1: Unified time (0,1) - shared fiber base
@@ -940,7 +940,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         Ghost Elimination (v21 formulation retained):
         =============================================
-        The unified time (24,1) signature eliminates ghosts:
+        The unified time (24,2) signature eliminates ghosts:
         - Single time dimension: no negative-norm states
         - All bridge dimensions are spatial (positive-definite)
         - Unitarity preserved naturally via Euclidean bridges
@@ -993,7 +993,7 @@ class LagrangianMasterDerivation(SimulationBase):
         DOF Transformation:
         ===================
         Step 1: 26D Bridge Structure
-        - M^{24,1} = T¹ × (⊕ᵢ B_i^{2,0})
+        - M^{24,2} = T¹ × (⊕ᵢ B_i^{2,0})
         - 1 time + 26 spatial = 26D effective
         - Bridge pairs: 12 × 2 = 24 spatial DOF
 
@@ -1143,10 +1143,10 @@ class LagrangianMasterDerivation(SimulationBase):
         """)
 
         # v22 dimension chain (updated 2026-01-19)
-        # Chain: M^{26}(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions → 2×13D(12,1) → [G2(7,0)] → 4D(3,1)
+        # Chain: M^{26}(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) → [G2(7,0)] → 4D(3,1)
         # v22: 12 bridge pairs WARP to create 2×13D(12,1) shadows
         print("\nv22 Dimensional Cascade:")
-        print("  M^{26}(24,2) = 12×(2,0) bridges + (0,1) time + two shadow-time directions → 2×13D(12,1) → 4D(3,1)")
+        print("  M^{26}(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) → 4D(3,1)")
         print("")
         print("  Level 0 (ANCESTRAL): 26D with structure (24,2) - unified time")
         print("  Level 1 (STRUCTURE): 12×(2,0) + (0,1)")
@@ -1612,7 +1612,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Dirac action in 26D with spinor covariant derivative D_M = d_M + (1/4) omega_M^ab "
                 "Gamma_ab. The curved gamma matrices Gamma^M = e^M_a Gamma^a use the vielbein to "
                 "map from the flat Clifford algebra Cl(24,2). Weyl spinor dimension is 2^13/2 = 4096 "
-                "from the Clifford algebra in 26D with (24,1) signature (3 derivation steps)."
+                "from the Clifford algebra in 26D with (24,2) signature (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
@@ -1843,8 +1843,8 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="v22-bulk-structure",
             label="(2.1.16)",
-            latex=r"M^{24,1} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
-            plain_text="M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})",
+            latex=r"M^{24,2} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
+            plain_text="M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})",
             category="DERIVED",
             description=(
                 "v22 bulk structure: 25D spacetime M^{24,1} is decomposed as a fiber bundle "
@@ -1860,7 +1860,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Decompose the 24 spatial dimensions into 12 pairs of 2D Euclidean spaces B_i^{2,0}, each with positive-definite metric",
                     "Assemble the two 13D(12,1) shadows: M^{24,2} = (12,1) + (12,1), bridge pairs connecting corresponding spatial dimensions"
                 ],
-                "method": "Fiber bundle decomposition of (24,1) spacetime into paired Euclidean bridges",
+                "method": "Fiber bundle decomposition of (24,2) spacetime into paired Euclidean bridges",
                 "parentFormulas": ["ghost-elimination"]
             },
             terms={
@@ -1886,7 +1886,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "From the bulk structure M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0}), write the metric as ds^2 = g_tt dt^2 + sum_i g_i(dy_1i, dy_2i)",
+                    "From the bulk structure M^{24,2} = T^1 x_fiber (direct_sum_i B_i^{2,0}), write the metric as ds^2 = g_tt dt^2 + sum_i g_i(dy_1i, dy_2i)",
                     "For flat background: g_tt = -1 (Lorentzian time) and each B_i^{2,0} has Euclidean metric dy_1i^2 + dy_2i^2, giving ds^2 = -dt^2 + sum_i (dy_1i^2 + dy_2i^2)"
                 ],
                 "method": "Metric decomposition from fiber bundle structure",
@@ -2002,7 +2002,7 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "Ghost elimination via unified time signature (24,1). The v22 12x(2,0) bridge "
                 "pair system plus the two shadow-time directions (introduced in v24.2 as an "
-                "extension) gives the full 26D structure. The (24,1) unified time signature "
+                "extension) gives the full 26D structure. The (24,2) unified time signature "
                 "eliminates negative-norm ghost states and closed timelike curves (CTCs) that "
                 "would arise from multi-time signatures. Note: the shadow-time directions S^(2,0) are "
                 "a v24.2 extension of the base v22 framework (3 derivation steps)."
@@ -2412,7 +2412,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "Start from the 26D master action S_27 with Einstein-Hilbert gravity R, Pneuma spinor kinetic and torsion coupling, moduli kinetic and potential terms, and flux integral",
+                    "Start from the 26D master action S_26 with Einstein-Hilbert gravity R, Pneuma spinor kinetic and torsion coupling, moduli kinetic and potential terms, and flux integral",
                     "Add the KK tower fermion sum over spectral residues R_n with Dirac kinetic terms for each mode",
                     "Include the volume breathing term -ln(Vol) dt_phys that tracks the dynamical evolution of the internal volume",
                     "Introduce V_bridge^(global OR): the bridge potential that governs shadow creation and separation (Layer 1 of the two-layer OR hierarchy)",
@@ -2535,8 +2535,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "shadow carries 4D spacetime + 7D G2 holonomy + 2D bridge residual, "
                 "with one timelike direction per shadow. "
                 "Each term has a precise geometric origin:\n"
-                "  R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full 26D bulk, "
-                "with kappa_27 the 26D gravitational coupling.\n"
+                "  R_26/(2 kappa_26^2): Einstein-Hilbert gravity in the full 26D bulk, "
+                "with kappa_26 the 26D gravitational coupling.\n"
                 "  |F_4|^2/2: M-theory 4-form flux kinetic term; F_4 = dC_3 is the "
                 "field strength of the C_3 potential, with 4-form flux threading "
                 "associative 3-cycles of the G2 manifold.\n"
@@ -2578,9 +2578,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     "+ 14D (7 bridge pairs for shadow/face structure) "
                     "+ 2D (shadow-time directions S^{2,0})",
                     "Write the Einstein-Hilbert gravitational sector "
-                    "R_27/(2 kappa_27^2) with kappa_27^2 = 8 pi G_27, "
+                    "R_26/(2 kappa_26^2) with kappa_26^2 = 8 pi G_27, "
                     "the 26D Newton constant related to M_* via "
-                    "kappa_27^2 ~ M_*^{-25}",
+                    "kappa_26^2 ~ M_*^{-25}",
                     "Include the M-theory 4-form flux kinetic term "
                     "-(1/2)|F_4|^2 where F_4 = dC_3 threads the b_3 = 24 "
                     "independent associative 3-cycles of the G2 manifold, "
@@ -2623,7 +2623,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 "R_{26}": "26D Ricci scalar from the full bulk metric G_{26}",
                 r"\kappa_{26}": (
-                    "26D gravitational coupling; kappa_27^2 = 8 pi G_27 ~ M_*^{-25}"
+                    "26D gravitational coupling; kappa_26^2 = 8 pi G_27 ~ M_*^{-25}"
                 ),
                 "|F_4|^2": (
                     "Squared norm of the M-theory 4-form flux F_4 = dC_3, "
@@ -2894,7 +2894,7 @@ class LagrangianMasterDerivation(SimulationBase):
             status="GEOMETRIC",
             description=(
                 "v22: Total number of Euclidean bridge pairs in the bulk decomposition "
-                "M^{24,1} = T^1 x_fiber (direct_sum_{i=1}^{12} B_i^{2,0}). Each of the 12 "
+                "M^{24,2} = T^1 x_fiber (direct_sum_{i=1}^{12} B_i^{2,0}). Each of the 12 "
                 "pairs contributes 2 spatial dimensions, totaling 24 spatial + 1 time = 25D."
             ),
             no_experimental_value=True
@@ -2939,7 +2939,7 @@ class LagrangianMasterDerivation(SimulationBase):
             status="GEOMETRIC",
             description=(
                 "v22: Total bridge spatial dimensions = 12 pairs x 2D per pair = 24D. "
-                "Combined with the 1D unified time, the full spacetime is 25D with (24,1) "
+                "Combined with the 1D unified time, the full spacetime is 25D with (24,2) "
                 "signature. The 26D extension adds two shadow-time directions (v24.2)."
             ),
             no_experimental_value=True
@@ -3264,7 +3264,7 @@ class LagrangianMasterDerivation(SimulationBase):
                         "The full 26D bulk action collects all geometric and matter "
                         "contributions into a single integral. Each term has a precise "
                         "origin in the M-theory compactification:\n\n"
-                        "R_27/(2 kappa_27^2): Einstein-Hilbert gravity in the full "
+                        "R_26/(2 kappa_26^2): Einstein-Hilbert gravity in the full "
                         "26D bulk, ensuring diffeomorphism invariance.\n\n"
                         "|F_4|^2/2: The M-theory 4-form flux kinetic energy. The field "
                         "strength F_4 = dC_3 threads the b_3 = 24 independent associative "

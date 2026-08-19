@@ -498,7 +498,7 @@ class MethodologyV16_2(SimulationBase):
                     "<strong>Einstein-Hilbert sector (R):</strong> The Ricci scalar R "
                     "yields second-order equations of motion with a positive-definite "
                     "kinetic term for the two physical graviton polarizations. The "
-                    "(26,1) unified-time signature eliminates the negative-norm temporal "
+                    "(24,2) unified-time signature eliminates the negative-norm temporal "
                     "modes that would otherwise produce gravitational ghosts.",
 
                     "<strong>Yang-Mills sector (F\u00b2):</strong> The gauge field strength "

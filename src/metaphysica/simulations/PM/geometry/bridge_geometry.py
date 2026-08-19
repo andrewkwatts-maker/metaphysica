@@ -210,7 +210,7 @@ class BridgeSystem:
         # 12 bridges = 24D / 2D per bridge
         checks['bridge_count'] = len(self.bridges) == leech.dimension // 2
 
-        # Signature still (26,1)
+        # Signature still (24,2)
         sig = self.metric_signature()
         checks['signature_24_2'] = sig == (24, 2)
 
