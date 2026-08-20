@@ -33,6 +33,38 @@ TWO CORRECTIONS TO THE OBVIOUS FORMULATION (2026-08-21)
    exchanging two halves, RP holds iff the cross block C_AB is positive
    semi-definite. That is the quantity computed here.
 
+WHAT THE GATE IS ACTUALLY FOR (2026-08-21 finding)
+--------------------------------------------------
+At the framework's vacuum every bridge is orthogonal (theta = pi/2), so every
+cross-shadow coupling L1*L2*cos(theta) is zero and the gate reports
+MARGINAL_VACUOUS. That could look useless. It is not, because of this:
+
+    the racetrack potential depends on theta ONLY through the area
+    T = L1*L2*sin(theta), and sin is symmetric about pi/2.
+
+Therefore V(theta) = V(pi - theta) EXACTLY: the framework's own moduli
+dynamics cannot distinguish an acute bridge from its obtuse mirror. Verified
+by calling racetrack_potential directly at 30/45/60/75/89 degrees against
+their supplements - identical to 12 significant figures.
+
+Reflection positivity CAN distinguish them: cos(theta) flips sign, so the
+obtuse branch carries a negative cross-coupling and is a ghost. The declared
+moduli bounds are (0.1, pi - 0.1), i.e. up to 174 degrees, so RP forbids
+50% of the currently-allowed range.
+
+So the gate's value is as a BRANCH SELECTOR on a direction the potential
+leaves degenerate, not as a test of the vacuum. That is a genuine constraint
+the framework does not otherwise impose.
+
+WHERE THE BREATHING COUPLING IS NOT
+-----------------------------------
+Searched: the breathing mode in this codebase is a SCALAR field tied to the
+bridge SIZE (the Kahler modulus T = area), not to the angle. No antisymmetric
+or Chern-Simons cross-shadow term exists anywhere (the only F ^ F is the
+standard axial anomaly in appendix Q, unrelated). So cross-shadow coupling is
+currently: zero at the vacuum, carried by the shear direction theta, and
+unconstrained in sign by the potential.
+
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 from __future__ import annotations

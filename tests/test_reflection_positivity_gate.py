@@ -90,3 +90,21 @@ def test_cross_block_matches_metric_off_diagonal():
     C = bridge_cross_block(gs)
     assert C[0, 0] == pytest.approx(0.25)
     assert C[1, 1] == pytest.approx(-0.5)
+
+
+def test_potential_is_degenerate_under_theta_to_pi_minus_theta():
+    """The racetrack potential cannot tell an acute bridge from its mirror.
+
+    T = L1*L2*sin(theta) and sin is symmetric about pi/2, so
+    V(theta) = V(pi - theta) exactly. This is why the RP gate matters: it
+    breaks a degeneracy the framework's own dynamics leaves open.
+    """
+    from metaphysica.simulations.PM.geometry.bridge_geometry import BridgeSystem
+    bs = BridgeSystem()
+    for deg in (30.0, 45.0, 75.0, 89.0):
+        m1 = np.column_stack(
+            [np.ones(12), np.ones(12), np.full(12, math.radians(deg))]).ravel()
+        m2 = np.column_stack(
+            [np.ones(12), np.ones(12), np.full(12, math.radians(180.0 - deg))]).ravel()
+        assert bs.racetrack_potential(m1) == pytest.approx(
+            bs.racetrack_potential(m2), rel=1e-12)
