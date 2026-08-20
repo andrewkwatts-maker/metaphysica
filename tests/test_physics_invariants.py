@@ -58,7 +58,8 @@ def test_gauge_invariance():
     print(f"Difference: {abs(l_initial - l_transformed):.2e}")
     print(f"Status: {'[PASS]' if is_invariant else '[FAIL]'}")
 
-    return is_invariant
+    assert is_invariant, \
+        "test_gauge_invariance: invariant violated"
 
 def test_su3_color_invariance():
     """
@@ -102,7 +103,8 @@ def test_su3_color_invariance():
     print(f"Transformed norm: {norm_transformed:.10f}")
     print(f"Status: {'[PASS]' if is_invariant else '[FAIL]'}")
 
-    return is_invariant
+    assert is_invariant, \
+        "test_su3_color_invariance: invariant violated"
 
 def test_lorentz_invariance():
     """
@@ -134,7 +136,8 @@ def test_lorentz_invariance():
     print(f"Transformed metric signature: {np.diag(eta_transformed)}")
     print(f"Status: {'[PASS]' if is_invariant else '[FAIL]'}")
 
-    return is_invariant
+    assert is_invariant, \
+        "test_lorentz_invariance: invariant violated"
 
 def test_manifold_parity():
     """
@@ -173,7 +176,8 @@ def test_manifold_parity():
     print(f"Deviation:                {abs(parity_sum - expected_sum):.6f}")
     print(f"Status: {'[PASS]' if is_valid else '[FAIL] - DEMON LOCK COMPROMISED'}")
 
-    return is_valid
+    assert is_valid, \
+        "test_manifold_parity: invariant violated"
 
 
 def test_integer_closure():
@@ -204,7 +208,8 @@ def test_integer_closure():
     print(f"Expected (E8xE8 roots):   {total_roots}")
     print(f"Status: {'[PASS]' if is_valid else '[FAIL] - DEMON LOCK BROKEN'}")
 
-    return is_valid
+    assert is_valid, \
+        "test_integer_closure: invariant violated"
 
 
 def test_sterile_ratio():
@@ -235,7 +240,8 @@ def test_sterile_ratio():
     print(f"Expected:                 {expected_ratio:.10f}")
     print(f"Status: {'[PASS]' if is_valid else '[FAIL]'}")
 
-    return is_valid
+    assert is_valid, \
+        "test_sterile_ratio: invariant violated"
 
 
 def test_tzimtzum_fraction():
@@ -272,7 +278,8 @@ def test_tzimtzum_fraction():
     print(f"Expected (1/B3 = 1/24):   {expected_complement:.16f}")
     print(f"Complement valid:         {'[PASS]' if complement_valid else '[FAIL]'}")
 
-    return is_valid and complement_valid
+    assert is_valid and complement_valid, \
+        "test_tzimtzum_fraction: invariant violated"
 
 
 def test_watts_constant_guard_rail():
@@ -309,7 +316,8 @@ def test_watts_constant_guard_rail():
     print(f"Expected CHI:              144.0")
     print(f"CHI valid:                 {'[PASS]' if parity_valid else '[FAIL]'}")
 
-    return is_valid and parity_valid
+    assert is_valid and parity_valid, \
+        "test_watts_constant_guard_rail: invariant violated"
 
 
 def test_odowd_hubble_formula():
@@ -362,7 +370,8 @@ def test_odowd_hubble_formula():
     print(f"Deviation:                 {abs(H0_derived - H0_expected):.4f}")
     print(f"Status: {'[PASS]' if is_valid else '[FAIL]'}")
 
-    return is_valid
+    assert is_valid, \
+        "test_odowd_hubble_formula: invariant violated"
 
 
 def test_c44_isotropy_guard():
@@ -401,7 +410,8 @@ def test_c44_isotropy_guard():
     print(f"Isotropy (6 each): {'[PASS]' if isotropic else '[FAIL]'}")
     print(f"Bridge pairs (12): {'[PASS]' if pairs_valid else '[FAIL]'}")
 
-    return divisible and isotropic and pairs_valid
+    assert divisible and isotropic and pairs_valid, \
+        "test_c44_isotropy_guard: invariant violated"
 
 
 def run_all_tests():

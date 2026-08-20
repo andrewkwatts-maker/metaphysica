@@ -269,7 +269,7 @@ class GeometricPipeline:
             perturbed[:, 2] += rng.randn(12) * sigma * 0.1
             # Clamp to valid ranges
             perturbed[:, :2] = np.clip(perturbed[:, :2], 0.1, 10.0)
-            perturbed[:, 2] = np.clip(perturbed[:, 2], 0.1, math.pi - 0.1)
+            perturbed[:, 2] = np.clip(perturbed[:, 2], 0.1, math.pi / 2)   # RP bound: obtuse = ghost
 
             system = BridgeSystem(moduli=perturbed)
             sig = system.metric_signature()
@@ -328,7 +328,7 @@ class GeometricPipeline:
                 perturbed[i, j] += delta
                 # Clamp
                 perturbed[i, :2] = np.clip(perturbed[i, :2], 0.1, 10.0)
-                perturbed[i, 2] = np.clip(perturbed[i, 2], 0.1, math.pi - 0.1)
+                perturbed[i, 2] = np.clip(perturbed[i, 2], 0.1, math.pi / 2)   # RP bound: obtuse = ghost
 
                 p_system = BridgeSystem(moduli=perturbed)
                 p_mass = p_system.lightest_kk_mass(2)

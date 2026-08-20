@@ -365,7 +365,13 @@ class BridgeSystem:
             bounds.extend([
                 (0.1, 10.0),       # L1
                 (0.1, 10.0),       # L2
-                (0.1, math.pi - 0.1),  # theta
+                # RP: reflection positivity requires theta <= pi/2. The cross-shadow
+                # coupling per pair is L1*L2*cos(theta), so an obtuse bridge carries a
+                # NEGATIVE coupling and is a ghost mode. The racetrack potential cannot
+                # exclude it - it depends on theta only through the area L1*L2*sin(theta),
+                # which is symmetric under theta -> pi - theta - so the bound must.
+                # Verified independently by validation/reflection_positivity_gate.py.
+                (0.1, math.pi / 2),  # theta - upper bound is the RP limit
             ])
 
         result = minimize(
