@@ -1356,7 +1356,20 @@ _validation_instance = CosmologicalConstantV16()
 
 assert _validation_instance.metadata is not None
 assert _validation_instance.metadata.id == "cosmological_constant_v16_1"
-assert len(_validation_instance.get_formulas()) == 4
+# EML is an OPTIONAL dependency (simulations/__init__ imports these modules
+# inside try/except ImportError and warns on failure). get_formulas() builds
+# EML trees, so calling it at import time hard-requires eml-math and takes
+# down the whole import chain when it is absent - which broke pytest
+# collection in CI. Only run the formula self-check when EML is available.
+try:  # pragma: no cover - availability probe
+    from metaphysica.simulations.core.eml_integration import (
+        EML_AVAILABLE as _EML_OK,
+    )
+except Exception:  # pragma: no cover
+    _EML_OK = False
+
+if _EML_OK:
+    assert len(_validation_instance.get_formulas()) == 4
 
 
 # ============================================================================

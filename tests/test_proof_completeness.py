@@ -19,8 +19,11 @@ import json
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import pytest
+
+# pandas is not a declared dependency of this package; skip the whole module
+# rather than failing collection when it is absent (CI fix).
+pd = pytest.importorskip("pandas")
 
 
 # ── Test plumbing ───────────────────────────────────────────────────────────
