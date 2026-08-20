@@ -1,0 +1,92 @@
+"""Tests for the reflection-positivity gate.
+
+The gate is the framework's only falsifiable structural test, so its own
+failure modes matter as much as its verdict. In particular it must not be
+possible to pass it vacuously without that being reported.
+"""
+from __future__ import annotations
+
+import math
+
+import numpy as np
+import pytest
+
+from metaphysica.simulations.PM.validation.reflection_positivity_gate import (
+    bridge_cross_block,
+    reflection_positivity_report,
+    shadow_swap,
+)
+
+
+def test_swap_is_an_involution():
+    """The RP reflection must square to +I. This is what R_perp fails."""
+    S = shadow_swap(12)
+    assert np.allclose(S @ S, np.eye(24))
+
+
+def test_r_perp_is_not_an_involution():
+    """R_perp has order 4, so it cannot be the RP reflection.
+
+    Guards the 2026-08-21 correction: an earlier proposal used R_perp as the
+    involution, which would have failed the gate for a purely algebraic
+    reason (its Gram form is antisymmetric) and been read as a ghost.
+    """
+    rep = reflection_positivity_report()
+    assert rep["involution"]["r_perp_is_involution"] is False
+    # antisymmetric => symmetric part is exactly zero
+    assert rep["involution"]["r_perp_symmetric_part_norm"] == pytest.approx(0.0)
+
+
+def test_acute_bridges_pass():
+    """Positive cross-coupling (theta < 90 deg) is reflection positive."""
+    g = np.array([[1.0, math.cos(math.radians(60))],
+                  [math.cos(math.radians(60)), 1.0]])
+    rep = reflection_positivity_report([g] * 12)
+    assert rep["verdict"] == "PASS"
+    assert rep["positive_semidefinite"] is True
+    assert rep["vacuous"] is False
+
+
+def test_obtuse_bridges_fail():
+    """Negative cross-coupling (theta > 90 deg) is a ghost mode.
+
+    This is the falsification direction: the gate must actually be able to
+    fail, otherwise it is not a test.
+    """
+    g = np.array([[1.0, math.cos(math.radians(120))],
+                  [math.cos(math.radians(120)), 1.0]])
+    rep = reflection_positivity_report([g] * 12)
+    assert rep["verdict"] == "FAIL"
+    assert rep["positive_semidefinite"] is False
+    assert len(rep["offending_pairs"]) == 12
+
+
+def test_orthogonal_bridges_report_vacuous_not_pass():
+    """The framework's own configuration sits on the RP boundary.
+
+    Every bridge is orthogonal (theta = pi/2), so each cross-coupling is
+    L1*L2*cos(pi/2) = 0 and the cross block is the zero matrix -- trivially
+    PSD. That must be reported as MARGINAL_VACUOUS rather than PASS, or the
+    gate would be claiming a success it did not earn.
+    """
+    rep = reflection_positivity_report()
+    assert rep["verdict"] == "MARGINAL_VACUOUS"
+    assert rep["vacuous"] is True
+    assert rep["max_abs_coupling"] < 1e-12
+
+
+def test_derived_constraint_is_recorded():
+    """The gate's real output is a constraint on the bridge angle."""
+    rep = reflection_positivity_report()
+    c = rep["derived_constraint"]
+    assert "90" in c["statement"]
+    assert c["framework_theta_deg"] == pytest.approx(90.0)
+
+
+def test_cross_block_matches_metric_off_diagonal():
+    """The cross block is exactly the metric's off-diagonal, per pair."""
+    gs = [np.array([[1.0, 0.25], [0.25, 1.0]]),
+          np.array([[2.0, -0.5], [-0.5, 3.0]])]
+    C = bridge_cross_block(gs)
+    assert C[0, 0] == pytest.approx(0.25)
+    assert C[1, 1] == pytest.approx(-0.5)
