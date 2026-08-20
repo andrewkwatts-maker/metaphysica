@@ -1631,8 +1631,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "pages": "1971-2092",
                 "year": 2015,
                 "type": "article",
-                "arxiv": "1207.3200",
-                "url": "https://arxiv.org/abs/1207.3200",
+                "arxiv": "1207.4470",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "doi": "10.1215/00127094-3120743",
                 "relevance": (
                     "Classification of TCS G2 manifolds; source of TCS #187 with b2=4, b3=24. "

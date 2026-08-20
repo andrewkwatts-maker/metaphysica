@@ -941,8 +941,8 @@ class FoundationsV16_2(SimulationBase):
                 "year": 2015,
                 "journal": "Duke Mathematical Journal",
                 "volume": "164",
-                "arxiv": "1207.3529",
-                "url": "https://arxiv.org/abs/1207.3529",
+                "arxiv": "1207.4470",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "notes": "TCS (Twisted Connected Sum) construction used for K_Pneuma"
             },
             {

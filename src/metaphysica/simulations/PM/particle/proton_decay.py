@@ -886,7 +886,7 @@ class ProtonDecaySimulation(SimulationBase):
                 "volume": "164",
                 "year": 2015,
                 "pages": "1971-2092",
-                "url": "https://arxiv.org/abs/1207.3200",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "notes": "TCS G2 construction used for cycle separation geometry."
             },
             {

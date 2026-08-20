@@ -275,7 +275,7 @@ class PrincipiaValidator:
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on empty/missing registry data.
 
-        Reference: Corti et al. (2015), arXiv:1207.3200
+        Reference: Corti et al. (2015), arXiv:1207.4470
         """
         chi = self._get_param('topology.mephorash_chi')
         b3 = self._get_param('geometry.elder_kads')

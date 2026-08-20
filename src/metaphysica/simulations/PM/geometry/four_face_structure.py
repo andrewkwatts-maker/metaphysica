@@ -1744,8 +1744,8 @@ class FourFaceG2Structure(SimulationBase):
                 "pages": "1971-2092",
                 "year": 2015,
                 "type": "article",
-                "arxiv": "1207.3200",
-                "url": "https://arxiv.org/abs/1207.3200",
+                "arxiv": "1207.4470",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "doi": "10.1215/00127094-3120743",
                 "relevance": (
                     "Classification of TCS G2 manifolds including TCS #187 with "
@@ -2214,7 +2214,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 "reference": (
                     "PM v23.7 framework; Kovalev (2003) arXiv:math/0012189 for TCS "
-                    "construction; Corti-Haskins-Nordstrom-Pacini (2015) arXiv:1207.3200 "
+                    "construction; Corti-Haskins-Nordstrom-Pacini (2015) arXiv:1207.4470 "
                     "for TCS #187 Hodge numbers; Joyce (2000) for G2 moduli space structure"
                 ),
                 "verification": (

@@ -919,8 +919,8 @@ class CosmologyIntroV16(SimulationBase):
                 "volume": "164",
                 "pages": "1971-2092",
                 "year": 2015,
-                "arxiv": "1207.3529",
-                "url": "https://arxiv.org/abs/1207.3529",
+                "arxiv": "1207.4470",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "notes": "TCS construction of compact G2 manifolds from K3 surface fibrations"
             },
             {

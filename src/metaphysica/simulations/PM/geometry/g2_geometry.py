@@ -1772,8 +1772,8 @@ class G2GeometryV16(SimulationBase):
                 "pages": "1971-2092",
                 "year": 2015,
                 "type": "article",
-                "arxiv": "1207.3200",
-                "url": "https://arxiv.org/abs/1207.3200",
+                "arxiv": "1207.4470",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "doi": "10.1215/00127094-3120743",
                 "relevance": (
                     "Classification of TCS G2 manifolds via semi-Fano 3-fold building "
@@ -1968,7 +1968,7 @@ class G2GeometryV16(SimulationBase):
                 "condition": "b3 == 24",
                 "tolerance": 0.0,
                 "sector": "geometry",
-                "reference": "Corti et al. (2015), Theorem 7.2, arXiv:1207.3200"
+                "reference": "Corti et al. (2015), Theorem 7.2, arXiv:1207.4470"
             },
             {
                 "id": "CERT_G2_CHI_EFF",
@@ -1991,7 +1991,7 @@ class G2GeometryV16(SimulationBase):
                 "condition": "chi_eff == 2 * (h11 - h21 + h31) == 144",
                 "tolerance": 0.0,
                 "sector": "geometry",
-                "reference": "Corti et al. (2015), arXiv:1207.3200"
+                "reference": "Corti et al. (2015), arXiv:1207.4470"
             },
             {
                 "id": "CERT_G2_GENERATIONS",
@@ -2115,7 +2115,7 @@ class G2GeometryV16(SimulationBase):
                 "validation_hint": (
                     "Verify that TCS construction preserves G2 holonomy via Kovalev's "
                     "gluing theorem (2003, Theorem 5.34). The CHNP refinement "
-                    "(arXiv:1207.3200) classifies all TCS manifolds from semi-Fano "
+                    "(arXiv:1207.4470) classifies all TCS manifolds from semi-Fano "
                     "3-fold building blocks."
                 )
             },
@@ -2158,7 +2158,7 @@ class G2GeometryV16(SimulationBase):
                 "validation_hint": (
                     "For TCS G2 manifolds, h^{1,1} = b2 counts independent 2-cycles "
                     "(K3 matching fibres in the Kovalev construction). The CHNP "
-                    "classification (arXiv:1207.3200) lists TCS #187 as having "
+                    "classification (arXiv:1207.4470) lists TCS #187 as having "
                     "b2 = 4, b3 = 24."
                 )
             },

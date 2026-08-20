@@ -1794,7 +1794,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
                 "year": 2015,
                 "doi": "10.1215/00127094-2785720",
-                "url": "https://arxiv.org/abs/1207.3200",
+                "url": "https://arxiv.org/abs/1207.4470",
                 "type": "article",
             },
         ]

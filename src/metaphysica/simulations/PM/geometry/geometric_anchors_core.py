@@ -117,6 +117,24 @@ class GeometricAnchors:
         Both yield n_gen = 3:
         - n_gen = chi_eff/24 = 72/24 = 3
         - n_gen = chi_eff_total/48 = 144/48 = 3
+
+        CIRCULARITY WARNING (2026-08-20 audit). Because chi_eff is DEFINED
+        here as 6 * b3, both of those routes are identities: n_gen =
+        chi_eff_total/(2*b3) = 6*b3/(2*b3) = 3 for ANY b3 (checked for b3 =
+        12, 18, 24, 36, 47, 99, 155 - all give 3). They are therefore NOT
+        independent confirmations and they do NOT derive three generations
+        from b3 = 24; the b3 input does no work in them. The same applies to
+        alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6), which is 1/sqrt(6) for
+        any b3 and so carries no topological information.
+
+        The ONLY generation route in this framework that genuinely depends
+        on b3 is n_generations below: n_gen = b3 // 8, which gives 3 at
+        b3 = 24 and 1, 2, 4, 6 at b3 = 12, 16, 32, 48. Quote that one when
+        claiming generations follow from topology.
+
+        Note also that a compact 7-manifold has Euler characteristic 0
+        identically, so "chi_eff" is a framework-defined quantity, not an
+        Euler characteristic of the G2 manifold.
         """
         return 6 * self.elder_kads  # = 144 (chi_eff_total for backward compatibility)
 
