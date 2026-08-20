@@ -5,8 +5,17 @@ Four-Face G2 Sub-Sector Structure v23.7 - SimulationBase Wrapper
 =================================================================
 
 This module implements the Four-Face G2 Sub-Sector Structure simulation,
-interpreting the Hodge number h^{1,1} = 4 of TCS #187 as four independent
+interpreting h^{1,1} = 4 of the TCS #187 BUILDING BLOCK as four independent
 Kahler moduli ("geometric faces") per shadow in the dual-shadow architecture.
+
+CATEGORY-ERROR CORRECTION (2026-08-20 literature review). A G2-holonomy
+manifold has NO complex structure and therefore NO Hodge numbers. h^{1,1}
+can only refer to a building block of the twisted connected sum (a
+semi-Fano / K3-fibred threefold), never to the G2 manifold itself. The
+G2-side invariants are b2 and b3, with H^3 refining as H^3_1 + H^3_7 +
+H^3_27. If the framework wants "4 faces per shadow" as a statement ABOUT
+THE G2 MANIFOLD, the correct invariant to name is b2 = 4, not h^{1,1} = 4.
+The two happen to coincide for this construction; the wording did not.
 
 Each face controls a distinct sector of the compactified geometry, with
 inter-face leakage coupling alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6).
@@ -31,7 +40,8 @@ Assertion Assessment (Sprint 2, WP 2.3)
   confirmed h^{1,1}=4 is correct for TCS #187 but noted n_faces=h^{1,1} is
   "not standard in the general G2 literature."
 - Classification: FITTED
-- Evidence: h^{1,1}=4 is a real Hodge number from TCS #187, but the face
+- Evidence: h^{1,1}=4 is a real Hodge number of the TCS #187 BUILDING BLOCK
+  (not of the G2 manifold, which has none - see the correction above), but the face
   grouping {i,i+4,i+8} is one of 576 cross-E8-valid options (not unique).
   The derivation n_gen=3=12/4 depends on selecting TCS #187 specifically
   because it yields the desired generation count. The stride-4 convention

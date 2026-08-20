@@ -180,6 +180,7 @@ def run_crosscheck(
     results: list[dict[str, Any]] = []
     bucket_counts: Counter = Counter()
     n_agree = n_disagree = n_skip = n_no_value = 0
+    n_error = 0
 
     for path, entry in sorted(params.items()):
         eml_desc = _get_eml_description(entry)
@@ -220,7 +221,13 @@ def run_crosscheck(
             err_msg = str(exc)
 
         if evaluated is None:
-            n_skip += 1
+            # An expression that does not EVALUATE is a failure of the EML
+            # representation, not a skip. Counting it as a skip removed it
+            # from the denominator and inflated the agreement rate (2026-08
+            # audit: 127 records were hidden this way, taking the reported
+            # strict rate from 58.6% to 74.4%).
+            n_error += 1
+            bucket_counts["ERROR"] += 1
             rec = {
                 "path": path,
                 "status": "ERROR",
@@ -280,6 +287,7 @@ def run_crosscheck(
             )
 
     total_with_desc = n_agree + n_disagree
+    total_scored = total_with_desc + n_error   # errors count as failures
     total = len(params)
 
     print("\n" + "=" * 60)
@@ -298,7 +306,10 @@ def run_crosscheck(
         strict = 100 * bucket_counts.get('AGREE', 0) / total_with_desc
         loose  = 100 * (bucket_counts.get('AGREE', 0) + bucket_counts.get('AGREE_LOOSE', 0)) / total_with_desc
         print()
-        print(f"  Strict agreement rate:   {strict:.1f}%")
+        print(f"  ERROR (did not evaluate):     {n_error}")
+        if total_scored > 0:
+            print(f"  Strict rate counting errors:  {100*bucket_counts.get('AGREE',0)/total_scored:.1f}%")
+        print(f"  Strict agreement rate:   {strict:.1f}%  (of those that evaluated)")
         print(f"  Loose  agreement rate:   {loose:.1f}%")
     print("=" * 60)
 
@@ -307,6 +318,17 @@ def run_crosscheck(
         "with_eml_description": total_with_desc + n_no_value,
         "skip": n_skip + n_no_value,
         "buckets": dict(bucket_counts),
+        "errors": n_error,
+        "note": (
+            "agreement_rate_strict/loose are computed over expressions that "
+            "EVALUATED. agreement_rate_strict_all counts unevaluable "
+            "expressions (ERROR) as failures and is the honest headline: an "
+            "EML description that does not evaluate is a broken "
+            "representation, not a skip."
+        ),
+        "agreement_rate_strict_all": (
+            bucket_counts.get('AGREE', 0) / total_scored if total_scored > 0 else None
+        ),
         "agreement_rate_strict": (
             bucket_counts.get('AGREE', 0) / total_with_desc if total_with_desc > 0 else None
         ),
