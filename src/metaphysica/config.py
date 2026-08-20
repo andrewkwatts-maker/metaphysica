@@ -4621,6 +4621,59 @@ class V21BridgeParameters:
     #       Kovalev math/0511150 (coassociative K3 fibration over S^3);
     #       Braun & Schafer-Nameki 1708.07215.
     OR_MATRIX = [[0, -1], [1, 0]]  # R_perp = modular S element of SL(2,Z)
+    # ------------------------------------------------------------------
+    # OR-MODULAR CONJECTURE (2026-08-20). Recorded as a CONJECTURE with a
+    # falsifiable gate, not as a result.
+    #
+    # Bisognano-Wichmann factorises the modular conjugation of a wedge
+    # algebra as J_W = Theta . U(R_W(pi)): an antiunitary PCT factor times
+    # the UNITARY rotation by pi that carries one wedge onto the other.
+    # In Spin(2) the lift of a pi-rotation is exp((pi/2) e1 e2) = e1 e2,
+    # whose 2x2 realisation is exactly [[0,-1],[1,0]] = R_perp. So
+    #
+    #     R_perp = U(R_W(pi))  -- the GEOMETRIC HALF of J, not J itself.
+    #
+    # The square is then not a mismatch but the required value:
+    # R_perp^2 = U(R(2pi)) = (-1)^F, the spinor double cover. J^2 = +1
+    # holds only because Theta^2 = (-1)^F cancels it. Independently,
+    # Cl(12,1) is quaternionic ((s-t) = 3 mod 8; equivalently D = 13 = 5
+    # mod 8, symplectic Majorana), so any antilinear conjugation on a
+    # single shadow's spinors MUST square to -1 - forced, not chosen.
+    #
+    # CONJECTURE: there exists an antiunitary Theta reversing both shadow
+    # times, with Theta^2 = (-1)^F, such that J = Theta . R_perp. Theta is
+    # the object the framework does not yet have; R_perp supplies the
+    # geometry and none of the conjugation.
+    #
+    # 'The central OR balances the shadows' then has a precise form:
+    #     (K_normal - K_mirror) Omega = 0
+    # i.e. the shared state is annihilated by the difference of the two
+    # shadows' modular Hamiltonians - the same statement as
+    # (H_R - H_L)|TFD> = 0 for a thermofield double - together with Haag
+    # duality M_mirror = (M_normal)' (twisted, Z^2 = (-1)^F, for fermions).
+    #
+    # FALSIFIABLE GATE (the highest-value test available): REFLECTION
+    # POSITIVITY. Exhibit an isometric involution theta exchanging the two
+    # shadows and prove <theta F, F> >= 0 for F supported on one shadow.
+    # Reflection positivity is exactly what FAILS for ghost, higher-
+    # derivative and generically two-time theories, so this is a real
+    # test that could close the modular route cleanly and early.
+    # Template for spinors: Jaffe & Ritter arXiv:hep-th/0609003; the
+    # RP -> modular objects step: Neeb & Olafsson arXiv:1611.00080.
+    #
+    # TWO HAZARDS.
+    # (a) EQUIVOCATION. 'Modular' in Tomita-Takesaki (from the modulus /
+    #     Radon-Nikodym derivative) and 'modular' in SL(2,Z) (from moduli
+    #     of elliptic curves) are UNRELATED. The established result that
+    #     R_perp is the S element of SL(2,Z) therefore gives ZERO support
+    #     for the modular-conjugation reading. Any argument passing
+    #     through the shared word is void; the two must be kept apart.
+    # (b) TYPE. Modular theory is non-trivial only for type III_1 factors.
+    #     Compact internal manifolds give discrete KK towers whose algebras
+    #     are type I with a trace, where J is just a transpose. See the
+    #     open tension noted on foundations/tomita-takesaki.html.
+    # ------------------------------------------------------------------
+
     OR_SQUARE = -1                 # R_perp² = -I (Möbius double-cover)
     OR_DET = 1                     # det(R_perp) = 1 (orientation-preserving)
 
