@@ -49,7 +49,10 @@ Dedicated To:
 
 from __future__ import annotations
 
+import math
 from typing import Any, Dict
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 from metaphysica.simulations.core.eml_tree_adapter import (
     b3_leaf,
@@ -112,7 +115,13 @@ class StrongCPAxion:
         two_pi = eml_mul(eml_scalar(2.0), eml_pi())
         b3_over_2pi = eml_div(b3_node, two_pi)
         # M_scale absorbs the dimensional Planck/M_GUT factor.
-        m_scale_val = self.f_a / float(eml_compute(b3_over_2pi))
+        #
+        # Computed with plain arithmetic rather than eml_compute(): this whole
+        # block is PROVENANCE (the comment above says so -- the test asserts
+        # the leaf-walk to b3, not this factor), so routing it through the
+        # optional EML evaluator made a missing extra break the physics.
+        b3_value = float(get_registry().elder_kads)
+        m_scale_val = self.f_a / (b3_value / (2.0 * math.pi))
         m_scale = eml_scalar(m_scale_val)
         self._f_a_tree = eml_mul(b3_over_2pi, m_scale)
 

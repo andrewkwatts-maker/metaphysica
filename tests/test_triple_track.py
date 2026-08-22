@@ -86,9 +86,21 @@ def _can_triple_check(formula) -> bool:
 
     ``triple_assert`` needs at least one symbolic view AND a canonical
     float value. Anything less is a migration TODO, not a test failure.
+
+    A symbolic view only counts if its BACKING PACKAGE is installed --
+    mirroring triple_assert's own availability logic. Checking `is not None`
+    alone was not enough: it let a formula through whose only view was an EML
+    tree, on a machine where EML is not installed, and triple_assert then
+    raised "no symbolic view available". That is a missing optional extra,
+    not a broken derivation, so it must skip rather than fail.
     """
-    has_a = getattr(formula, "arithma", None) is not None
-    has_e = getattr(formula, "eml", None) is not None
+    from metaphysica.simulations.core.triple_validator import (
+        _ARITHMA_OK,
+        _EML_OK,
+    )
+
+    has_a = getattr(formula, "arithma", None) is not None and _ARITHMA_OK
+    has_e = getattr(formula, "eml", None) is not None and _EML_OK
     has_v = getattr(formula, "value", None) is not None
     return has_v and (has_a or has_e)
 

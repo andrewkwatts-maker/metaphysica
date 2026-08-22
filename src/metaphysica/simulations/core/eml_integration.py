@@ -432,3 +432,93 @@ def _ensure_eml(v: Union[_Num, "EMLPoint"]) -> "EMLPoint":
     if EML_AVAILABLE and isinstance(v, EMLPoint):
         return v
     return eml_scalar(float(v))
+
+
+# ── Optional-dependency degradation ───────────────────────────────────────────
+#
+# EML is an OPTIONAL extra (`pip install metaphysica[sims]`), but ~20 physics
+# modules build their provenance trees inline in __init__, interleaved with the
+# physics:
+#
+#     b3_node = b3_leaf()                     # <- raised when EML was absent
+#     self._C_tree = eml_mul(b3_over_2pi, suppression)
+#
+# Because every combinator called require_eml(), a MISSING PROVENANCE LAYER
+# killed the PHYSICS. That is backwards: the EML tree is a cross-check on a
+# derivation, not the derivation itself. CI reproduced it as 13 failures in
+# axion_photon_coupling and baryogenesis -- including
+# test_compute_anomaly_coefficient_matches_expected, a pure arithmetic check
+# that has nothing to do with EML.
+#
+# The split below is deliberate and asymmetric:
+#
+#   * TREE BUILDERS degrade to an inert node. Provenance is simply not
+#     recorded, and the physics runs.
+#   * EVALUATORS (eml_compute) still raise. Fabricating a number when the
+#     evaluator is absent would be dishonest -- a missing cross-check must
+#     never masquerade as a passing one.
+#
+# When EML *is* installed this block rebinds nothing, so the working path is
+# bit-for-bit unchanged.
+
+
+class AbsentEMLNode:
+    """Inert stand-in for an EML node when the optional EML libs are absent.
+
+    Absorbs any combinator applied to it and is falsy, so callers can test
+    ``if node:`` to detect that no real provenance was recorded.
+    """
+
+    __slots__ = ("label",)
+
+    def __init__(self, label: str = "absent") -> None:
+        self.label = label
+
+    def __bool__(self) -> bool:
+        return False
+
+    def __repr__(self) -> str:
+        return f"<AbsentEMLNode {self.label!r} (eml not installed)>"
+
+    def tension(self) -> float:
+        raise ImportError(
+            "Cannot evaluate an EML tree: eml-math + eml-spectral are not "
+            "installed. Install with: pip install metaphysica[sims]"
+        )
+
+
+#: Names that only BUILD tree structure. Everything here degrades to an inert
+#: node. `eml_compute` is deliberately excluded -- see the note above.
+_TREE_BUILDER_NAMES = (
+    "eml_scalar", "b3_leaf", "eml_pi", "eml_e", "eml_two_pi", "eml_four_pi",
+    "eml_add", "eml_sub", "eml_mul", "eml_div", "eml_neg", "eml_inv",
+    "eml_sqrt", "eml_sqr", "eml_pow", "eml_exp", "eml_ln",
+    "eml_sin", "eml_cos", "eml_tan", "eml_sinh", "eml_cosh", "eml_tanh",
+    "eml_arcsin", "eml_arccos", "eml_arctan",
+    "eml_avg", "eml_hypot", "eml_ratio", "eml_product", "eml_sum_of_squares",
+    "eml_normalize_angle", "eml_g2_metric", "eml_e8_points",
+    "eml_leech_points", "eml_octonion_norm", "eml_g2_chi_eff", "eml_n_gen",
+)
+
+
+def _absent_stub(name: str):
+    """Build a replacement combinator that returns an inert node."""
+
+    def _stub(*_args: Any, **_kwargs: Any) -> AbsentEMLNode:
+        return AbsentEMLNode(name)
+
+    _stub.__name__ = name
+    _stub.__doc__ = (
+        f"Inert stand-in for {name}() -- eml-math/eml-spectral not installed. "
+        "Returns an AbsentEMLNode so provenance-tree construction is a no-op "
+        "instead of breaking the physics that surrounds it."
+    )
+    _stub.__eml_absent__ = True  # type: ignore[attr-defined]
+    return _stub
+
+
+if not EML_AVAILABLE:  # pragma: no cover - exercised in the no-EML CI matrix
+    for _builder_name in _TREE_BUILDER_NAMES:
+        if _builder_name in globals():
+            globals()[_builder_name] = _absent_stub(_builder_name)
+    del _builder_name

@@ -82,6 +82,24 @@ def test_module_imports_b3_leaf():
     )
 
 
+# ── EML-tree tests -----------------------------------------------------------
+#
+# These walk the EML operator tree itself, so they genuinely require the
+# optional eml-math/eml-spectral extra. They SKIP rather than FAIL when it is
+# absent: a missing optional cross-check must not read as a broken derivation.
+# The physics tests in this file deliberately carry no such marker -- they must
+# pass with or without EML.
+
+def _eml_missing() -> bool:
+    from metaphysica.simulations.core.eml_integration import EML_AVAILABLE
+    return not EML_AVAILABLE
+
+
+requires_eml = pytest.mark.skipif(
+    _eml_missing(), reason="requires the optional eml-math/eml-spectral extra"
+)
+
+@requires_eml
 def test_b3_leaf_is_in_derivation_tree():
     """Constructing ``StrongCPAxion`` builds an EML node anchored at b3_leaf().
 

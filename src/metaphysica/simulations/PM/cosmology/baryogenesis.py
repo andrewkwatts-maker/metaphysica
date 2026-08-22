@@ -77,10 +77,12 @@ Notes
 
 from __future__ import annotations
 
+import math
 from typing import Any, Dict
 
 import numpy as np
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry
 from metaphysica.simulations.core.eml_tree_adapter import (
     b3_leaf,
     eml_div,
@@ -160,12 +162,26 @@ class ModuliBaryogenesis:
         moduli scenario (Acharya et al. 2009).  The exponent is the
         canonical associative 3-cycle volume Vol(Y3) = b3 / 2.
         """
-        # EML tree: D_top = exp(-(b3 / 2))
-        b3 = b3_leaf()
-        vol_norm = eml_scalar(_VOL_NORM)
-        vol_y3 = eml_div(b3, vol_norm)
-        d_top_tree = eml_exp(eml_neg(vol_y3))
-        d_top_val = float(d_top_tree.tension())
+        # The VALUE comes from plain arithmetic; the EML tree below is a
+        # provenance and cross-check layer, not the calculator.
+        #
+        # This previously read the value out of the tree via .tension(),
+        # which meant a missing OPTIONAL dependency broke the physics --
+        # 13 CI failures on 2026-08-21, including a pure arithmetic test in
+        # a sibling module. exp(-b3/2) is something Python computes exactly;
+        # the two routes were verified bit-identical before this change.
+        b3_value = float(get_registry().elder_kads)
+        d_top_val = math.exp(-(b3_value / _VOL_NORM))
+
+        # EML tree: D_top = exp(-(b3 / 2)). Inert (falsy) when EML is absent.
+        d_top_tree = eml_exp(eml_neg(eml_div(b3_leaf(), eml_scalar(_VOL_NORM))))
+        if d_top_tree:
+            eml_val = float(d_top_tree.tension())
+            if not math.isclose(eml_val, d_top_val, rel_tol=1e-12):
+                raise ValueError(
+                    "topological_dilution: EML cross-check disagrees with the "
+                    f"arithmetic route ({eml_val!r} vs {d_top_val!r})"
+                )
 
         self.baryo_tree.register_derivation(
             "D_top",

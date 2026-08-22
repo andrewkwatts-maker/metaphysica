@@ -117,6 +117,24 @@ def test_module_imports_b3_leaf():
     )
 
 
+# ── EML-tree tests -----------------------------------------------------------
+#
+# These inspect the EML operator tree itself (walking nodes, calling
+# eml_compute), so they genuinely require the optional eml-math/eml-spectral
+# extra. They SKIP rather than FAIL when it is absent -- a missing optional
+# cross-check must not read as a broken derivation. The physics tests above
+# deliberately carry no such marker: they must pass with or without EML.
+
+def _eml_missing() -> bool:
+    from metaphysica.simulations.core.eml_integration import EML_AVAILABLE
+    return not EML_AVAILABLE
+
+
+requires_eml = pytest.mark.skipif(
+    _eml_missing(), reason="requires the optional eml-math/eml-spectral extra"
+)
+
+@requires_eml
 def test_b3_leaf_is_in_C_tree():
     """The EML tree for C_aγγ is anchored at ``b3_leaf()``.
 
@@ -141,6 +159,7 @@ def test_b3_leaf_is_in_C_tree():
     )
 
 
+@requires_eml
 def test_b3_leaf_is_in_g_tree():
     """The EML tree for g_aγγ is anchored at ``b3_leaf()`` via C_aγγ."""
     mod = _import_module()
@@ -153,6 +172,7 @@ def test_b3_leaf_is_in_g_tree():
     assert eml_compute(instance._g_tree) == pytest.approx(g, rel=1e-9)
 
 
+@requires_eml
 def test_b3_traceback_flag_set_in_persisted_tree():
     """``register_derivation`` flags axion-photon entries as b3-traceable.
 
