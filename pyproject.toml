@@ -79,7 +79,10 @@ dev = [
     "mypy>=1.0.0",
     "build>=1.0.0",
     "twine>=4.0.0",
-]
+    # CI installs .[dev] and gates on tests/test_proof_completeness_priors.py,
+    # which builds the ledger DataFrame. Without pandas that gate errors out
+    # instead of gating, so the test dependency belongs here.
+    "pandas>=2.0.0"]
 # Optional Rust acceleration. The pure-Python install path above is the
 # default; the Rust core (under `rust/physica_core/`) is opt-in and built
 # via maturin. Either:

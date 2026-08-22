@@ -115,10 +115,21 @@ from __future__ import annotations
 
 import math
 import re
-from typing import Any, Dict, List, Mapping, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Tuple
 
 import numpy as np
-import pandas as pd
+
+# pandas is an OPTIONAL extra (`plots`), but this module imported it at module
+# level -- so on any install without that extra, importing proof_completeness
+# raised ModuleNotFoundError, taking down the nine tests in
+# test_proof_completeness_priors.py that CI runs as a GATING step. The gate has
+# been erroring rather than gating since the extra was split out.
+#
+# `from __future__ import annotations` makes the two pd.DataFrame annotations
+# below strings, so only the one real construction site needs the import. It is
+# deferred into build_ledger() and raises there with a clear instruction.
+if TYPE_CHECKING:  # pragma: no cover - typing only
+    import pandas as pd
 
 # Sprint 4 EML adapter — exactly the import path the task spec mandates.
 from metaphysica.simulations.core.eml_tree_adapter import eml_operator_tree
@@ -702,6 +713,14 @@ class ProofLedger:
                 "Section": _section_of(param),
                 "Duplicate_Derivations": list(duplicates_map.get(str(param), ())),
             })
+
+        try:
+            import pandas as pd
+        except ImportError as exc:  # pragma: no cover - exercised in CI matrix
+            raise ImportError(
+                "build_ledger needs pandas, which ships in the optional "
+                "'plots' extra. Install with: pip install metaphysica[plots]"
+            ) from exc
 
         df = pd.DataFrame(rows, columns=[
             "Parameter", "Value", "Status", "EML_Tree", "Section",
