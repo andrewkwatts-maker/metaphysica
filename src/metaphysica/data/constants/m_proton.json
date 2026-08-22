@@ -2,7 +2,7 @@
   "name": "m_proton",
   "canonical_path": "constants.m_proton",
   "value": 0.938272,
-  "units": null,
+  "units": "GeV",
   "uncertainty": 1e-06,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:22.009470+00:00",
+    "generated_at": "2026-08-22T07:26:51.391418+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

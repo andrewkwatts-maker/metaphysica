@@ -2,7 +2,7 @@
   "name": "V_ub",
   "canonical_path": "pdg.V_ub",
   "value": 0.00382,
-  "units": null,
+  "units": "dimensionless",
   "uncertainty": 0.00024,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:21.938003+00:00",
+    "generated_at": "2026-08-22T07:26:51.339762+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

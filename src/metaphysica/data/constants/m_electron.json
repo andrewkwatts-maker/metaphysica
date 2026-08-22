@@ -2,7 +2,7 @@
   "name": "m_electron",
   "canonical_path": "pdg.m_electron",
   "value": 0.0005109989461,
-  "units": null,
+  "units": "GeV",
   "uncertainty": 3.1e-12,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:21.994869+00:00",
+    "generated_at": "2026-08-22T07:26:51.380259+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

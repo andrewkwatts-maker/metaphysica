@@ -1,9 +1,9 @@
 {
   "name": "m_muon",
   "canonical_path": "pdg.m_muon",
-  "value": 0.1056583755,
-  "units": null,
-  "uncertainty": 2.3e-09,
+  "value": 0.1056583745,
+  "units": "GeV",
+  "uncertainty": 2.4e-06,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
   "description": null,
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:22.002143+00:00",
+    "generated_at": "2026-08-22T07:26:51.385908+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

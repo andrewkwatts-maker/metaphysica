@@ -2,8 +2,8 @@
   "name": "G",
   "canonical_path": "constants.G_NEWTON",
   "value": 6.70883e-39,
-  "units": null,
-  "uncertainty": 1.5e-43,
+  "units": "GeV^-2",
+  "uncertainty": 3e-44,
   "source": "ESTABLISHED:CODATA2018",
   "status": "ESTABLISHED",
   "description": null,
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:21.910025+00:00",
+    "generated_at": "2026-08-22T07:26:51.319814+00:00",
     "sources": [
       "ESTABLISHED:CODATA2018"
     ]

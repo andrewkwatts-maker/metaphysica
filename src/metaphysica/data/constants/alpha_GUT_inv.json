@@ -2,16 +2,16 @@
   "name": "alpha_GUT_inv",
   "canonical_path": "gauge.ALPHA_GUT_INV",
   "value": 42.730467973109285,
-  "units": null,
+  "units": "dimensionless",
   "uncertainty": null,
   "source": "gauge_unification_v16_0",
   "status": "DERIVED",
   "description": null,
-  "eml_expression": "3-loop RG minimal-spread argmin ≈ 42.7305 (see gauge_unification); the b₃ = 24 fixed-point identification is a separate ANSATZ claim",
+  "eml_expression": "EML: eml_scalar(24) — AS fixed point alpha_GUT^-1 = b3 (asymptotic safety locks to Betti number)",
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:21.945942+00:00",
+    "generated_at": "2026-08-22T07:26:51.345251+00:00",
     "sources": [
       "gauge_unification_v16_0"
     ]

@@ -2,7 +2,7 @@
   "name": "m_planck",
   "canonical_path": "constants.M_PLANCK",
   "value": 2.435e+18,
-  "units": null,
+  "units": "GeV",
   "uncertainty": 3000000000000000.0,
   "source": "ESTABLISHED:PDG2024",
   "status": "ESTABLISHED",
@@ -11,7 +11,7 @@
   "kind": "physics",
   "_provenance": {
     "metaphysica_version": "2.2.1",
-    "generated_at": "2026-08-14T04:29:22.005881+00:00",
+    "generated_at": "2026-08-22T07:26:51.388666+00:00",
     "sources": [
       "ESTABLISHED:PDG2024"
     ]

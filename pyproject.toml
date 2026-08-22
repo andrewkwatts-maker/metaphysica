@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "metaphysica"
-version = "2.2.1"
+version = "2.3.0"
 description = "G2-manifold-derived theoretical physics framework: 125 derived constants, quark + constant datasheet API, bundled static-website generator."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -51,7 +51,7 @@ dependencies = [
     "mpmath>=1.3.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
-    "eml-math>=2.0.37",
+    "eml-math>=2.3.0",
 ]
 
 [project.optional-dependencies]
