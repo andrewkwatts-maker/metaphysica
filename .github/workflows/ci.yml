@@ -26,7 +26,10 @@ jobs:
         run: pip install --upgrade pip maturin
 
       - name: Install library with dev deps
-        run: pip install .[dev]
+        # [sims] too: without it the build step skips 'Run all simulations'
+        # and therefore 30 of its 34 steps, which made the build check
+        # nearly vacuous. eml-spectral is on PyPI, so this is installable.
+        run: pip install .[dev,sims]
 
       - name: Run tests
         run: pytest tests/ -v --tb=short
