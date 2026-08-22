@@ -127,3 +127,55 @@ def test_orthogonal_bound_matches_the_rp_gate():
 
     cfg = PhysicsConfig.from_registry()
     assert cfg.orthogonal_bound == pytest.approx(math.pi / 2)
+
+
+def test_config_fundamental_constants_track_the_registry():
+    """config.FundamentalConstants must not be a parallel store.
+
+    Its own module comment concedes it is not authoritative, and the drift
+    audit classes a hand literal with no registry path as ORPHAN -- "the worst
+    class". These are now read from FormulasRegistry at class-definition time,
+    so a change to the open (24,2)/26D vs (26,2)/28D ruling propagates instead
+    of needing a hand edit.
+    """
+    from metaphysica.config import FundamentalConstants as FC
+
+    reg = get_registry()
+    assert FC.D_BULK == reg.D_ancestral_total
+    assert FC.SIGNATURE_BULK == (reg.D_ancestral_space, reg.D_ancestral_time)
+    assert FC.D_PER_SHADOW == reg.D_shadow_total
+    assert FC.SIGNATURE_SHADOW == (reg.D_shadow_space, reg.D_shadow_time)
+    assert FC.N_BRIDGE_PAIRS == reg.bridge_local
+
+
+def test_config_has_no_dimensional_literals_left():
+    """The literals must be gone, not merely shadowed by a matching value."""
+    import io
+    from pathlib import Path
+
+    cfg = (
+        Path(__file__).resolve().parents[1]
+        / "src" / "metaphysica" / "config.py"
+    )
+    # Every class that mirrored these -- FundamentalConstants,
+    # V21BridgeParameters, PneumaVielbeinParameters and the two dimensional
+    # -structure blocks -- now reads the registry.
+    #
+    # Matches ASSIGNMENTS only. A plain substring search also hits prose such
+    # as "# Check 2: v22 dual-shadow structure (D_PER_SHADOW = 13)", which is a
+    # comment describing the value, not a second copy of it.
+    literals = ("D_BULK = 26", "D_PER_SHADOW = 13",
+                "SIGNATURE_BULK = (24, 2)", "BULK_SIGNATURE = (24, 2)",
+                "SHADOW_SIGNATURE = (12, 1)", "SIGNATURE_SHADOW = (12, 1)",
+                "N_BRIDGE_PAIRS = 12", "D_AFTER_SP2R = 13",
+                "SIGNATURE_INITIAL = (24, 2)", "D_SHADOW_NORMAL = 13",
+                "D_SHADOW_MIRROR = 13")
+    offenders = []
+    for lineno, line in enumerate(
+        io.open(cfg, encoding="utf-8").read().splitlines(), 1
+    ):
+        code = line.split("#", 1)[0]
+        for literal in literals:
+            if code.strip().startswith(literal):
+                offenders.append(f"{lineno}: {line.strip()[:70]}")
+    assert not offenders, "dimensional literals survived:\n" + "\n".join(offenders)

@@ -90,10 +90,40 @@ from typing import Dict, List, Optional, Any
 # documentation purposes, but FormulasRegistry is the authoritative source.
 # To enforce SSoT, simulations should use FormulasRegistry directly.
 try:
-    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+    from metaphysica.simulations.core.FormulasRegistry import (
+        FormulasRegistry,
+        get_registry as _get_registry,
+    )
     _REGISTRY_AVAILABLE = True
 except ImportError:
     _REGISTRY_AVAILABLE = False
+
+
+def _ssot_dim(prop: str) -> int:
+    """Read one dimensional constant from FormulasRegistry, the SSOT.
+
+    The dimensional integers used to be written here as literals, which made
+    config.py a parallel store of values that live authoritatively in
+    FormulasRegistry -- exactly the ORPHAN class generate_config_drift_audit.py
+    exists to surface, and this module's own comment above concedes it is not
+    authoritative.
+
+    It matters beyond tidiness: CANON["D_bulk"] is STRUCTURAL_CHALLENGED while
+    the (24,2)/26D vs (26,2)/28D ruling is open. A literal 26 here would have to
+    be found and edited by hand the day that ruling lands; a registry read
+    follows it.
+
+    Deliberately no literal fallback. If the registry cannot be imported, the
+    honest outcome is a loud failure -- a hardcoded default would silently
+    reintroduce the drift this removes.
+    """
+    if not _REGISTRY_AVAILABLE:
+        raise RuntimeError(
+            f"config.py needs FormulasRegistry to resolve {prop!r}; it is the "
+            "single source of truth for dimensional structure and there is no "
+            "literal fallback by design."
+        )
+    return getattr(_get_registry(), prop)
 
 # ==============================================================================
 # PARAMETER CATEGORIZATION FRAMEWORK
@@ -3858,19 +3888,21 @@ class FundamentalConstants:
     # OR reduction R_perp² = -I identifies physics across shadows
 
     # Bulk dimensions (two-time): 24 space + 2 times = 26D
-    D_BULK = 26  # Two-time bulk (24,2): 24 space + 2 times
-    SIGNATURE_BULK = (24, 2)  # Two-time signature: one time per 13D shadow
+    # Read from FormulasRegistry, not written here -- see _ssot_dim(). These
+    # follow the open (24,2)/26D vs (26,2)/28D ruling automatically.
+    D_BULK = _ssot_dim("D_ancestral_total")
+    SIGNATURE_BULK = (_ssot_dim("D_ancestral_space"), _ssot_dim("D_ancestral_time"))
 
     # v21/v22 Dual-Shadow Structure (replaces Sp(2,R) gauge fixing)
     N_SHADOWS = 2             # Derived: Normal + Mirror shadows
-    D_PER_SHADOW = 13         # v22: Each shadow is 13D = 12 space + 1 time (its own)
-    SIGNATURE_SHADOW = (12, 1)  # v22: Per-shadow signature (12 space + 1 time)
-    N_BRIDGE_PAIRS = 12       # v22: 12×(2,0) bridge pairs connect shadow dimensions
+    D_PER_SHADOW = _ssot_dim("D_shadow_total")
+    SIGNATURE_SHADOW = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
+    N_BRIDGE_PAIRS = _ssot_dim("bridge_local")
     SIGNATURE_BRIDGE_PAIR = (2, 0)  # Each bridge pair is Euclidean (2,0)
 
     # Legacy (deprecated - kept for backward compatibility)
-    D_AFTER_SP2R = 13  # v22: Corrected to 13D per shadow (was 12 in v21.0)
-    SIGNATURE_INITIAL = (24, 2)  # Two-time ruling: 24 space + 2 times (one per shadow)
+    D_AFTER_SP2R = _ssot_dim("D_shadow_total")  # legacy alias, SSOT-backed
+    SIGNATURE_INITIAL = (_ssot_dim("D_ancestral_space"), _ssot_dim("D_ancestral_time"))
 
     # Internal compactification (G₂ manifold or CY3×S¹/Z₂)
     INTERNAL_MANIFOLD = "G2"  # 7D holonomy manifold
@@ -4577,12 +4609,12 @@ class V21BridgeParameters:
     """
 
     # Bulk spacetime (v21/v22: two-time structure)
-    D_BULK = 26  # Two-time (24,2): 26 = 2 x 13, one time per shadow
-    BULK_SIGNATURE = (24, 2)  # Two-time signature (one time per shadow)
+    D_BULK = _ssot_dim("D_ancestral_total")
+    BULK_SIGNATURE = (_ssot_dim("D_ancestral_space"), _ssot_dim("D_ancestral_time"))
 
     # Dual-shadow structure (replaces Sp(2,R) constraints)
     N_SHADOWS = 2             # Normal + Mirror shadows
-    D_PER_SHADOW = 13         # v22: Each shadow is 13D (12 spatial + 1 time (its own))
+    D_PER_SHADOW = _ssot_dim("D_shadow_total")
     SHADOW_SIGNATURE_SPATIAL = (12, 0)  # v22: Shadows are SPATIAL only (12,0)
 
     # v21.1 Fibered Time Structure (Issue 4 Resolution)
@@ -4591,7 +4623,7 @@ class V21BridgeParameters:
     TIME_SHARED = False             # Two-time ruling: each shadow evolves in its own time
 
     # Legacy (for backward compatibility - use SHADOW_SIGNATURE_SPATIAL instead)
-    SHADOW_SIGNATURE = (12, 1)  # v22: Full shadow signature (12 spatial + 1 time (its own))
+    SHADOW_SIGNATURE = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
 
     # Euclidean bridge
     D_BRIDGE = 2              # Bridge dimensions
@@ -4770,12 +4802,12 @@ class PneumaVielbeinParameters:
     """
 
     # Bulk spacetime (v22 two-time structure)
-    D_BULK = 26  # Two-time (24,2): 26 = 2 x 13, one time per shadow
-    BULK_SIGNATURE = (24, 2)  # Two-time signature (one time per shadow)
+    D_BULK = _ssot_dim("D_ancestral_total")
+    BULK_SIGNATURE = (_ssot_dim("D_ancestral_space"), _ssot_dim("D_ancestral_time"))
 
     # Per-shadow spacetime (v22 dual-shadow structure)
-    D_PER_SHADOW = 13         # Two-time: 26 = 2×13 (own time per shadow)
-    SHADOW_SIGNATURE = (12, 1)  # v22: Per-shadow signature
+    D_PER_SHADOW = _ssot_dim("D_shadow_total")
+    SHADOW_SIGNATURE = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
 
     # Internal manifold (per shadow)
     D_INTERNAL = 7  # Source: Joyce (2000) G2 holonomy manifold dimension
@@ -8255,9 +8287,9 @@ class V21UnifiedTimePhysics:
     """
 
     # === v21/v22 DIMENSIONAL STRUCTURE ===
-    D_SHADOW_NORMAL = 13     # Normal shadow: 13D = (12,1) signature
-    D_SHADOW_MIRROR = 13     # Mirror shadow: 13D = (12,1) signature
-    N_BRIDGE_PAIRS = 12      # v22: 12×(2,0) bridge pairs
+    D_SHADOW_NORMAL = _ssot_dim("D_shadow_total")
+    D_SHADOW_MIRROR = _ssot_dim("D_shadow_total")
+    N_BRIDGE_PAIRS = _ssot_dim("bridge_local")
 
     # Verification: 12 (Normal spatial) + 12 (Mirror spatial) + 1 (shared time) = 25 ✓
     # Each shadow sees: 12 spatial + 1 time = 13D(12,1)
@@ -8659,13 +8691,13 @@ class DimensionalStructure:
 
     Note: This class was updated in v22.0 from (11,1) to (12,1) shadow signatures.
     """
-    D_BULK = 26  # Two-time bulk (24,2): 24 space + 2 times
-    SIGNATURE_BULK = (24, 2)  # Two-time signature: one time per 13D shadow
+    D_BULK = _ssot_dim("D_ancestral_total")
+    SIGNATURE_BULK = (_ssot_dim("D_ancestral_space"), _ssot_dim("D_ancestral_time"))
 
     # Stage 1: v22 Dual-shadow split via 12×(2,0) bridge pairs
-    D_PER_SHADOW = 13  # v22: Each shadow is 13D = 12 space + 1 time (its own)
-    SIGNATURE_SHADOW = (12, 1)  # v22: Per-shadow signature
-    N_BRIDGE_PAIRS = 12  # v22: 12×(2,0) bridge pairs connect shadow dimensions
+    D_PER_SHADOW = _ssot_dim("D_shadow_total")
+    SIGNATURE_SHADOW = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
+    N_BRIDGE_PAIRS = _ssot_dim("bridge_local")
 
     # Stage 2: Per-shadow G₂ compactification 13D→6D
     D_AFTER_G2 = 6  # v22: 13 - 7 = 6 dimensions per shadow
