@@ -51,7 +51,12 @@ dependencies = [
     "mpmath>=1.3.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
-    "eml-math>=2.3.0",
+    # Floor stays at 2.0.37 -- the newest release ON PyPI. 2.3.0 exists in
+    # the EML-Math repo (it carries a correctness fix to ln() below the
+    # normal range) but has not been published, and pinning a floor above
+    # what the index serves makes `pip install .[dev]` unsatisfiable.
+    # Raise this to >=2.3.0 once 2.3.0 is on PyPI.
+    "eml-math>=2.0.37",
 ]
 
 [project.optional-dependencies]
