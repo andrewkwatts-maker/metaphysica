@@ -68,6 +68,22 @@ def _optional_deps_available(modules: tuple) -> bool:
     return True
 
 STEPS: List[Tuple[str, List[str], bool]] = [
+    # ── Pre-flight structural gates ───────────────────────────────────────────
+    # These run FIRST, before any simulation runs or any tensor is allocated.
+    # They are cheap (milliseconds) and check structural preconditions: an
+    # ill-formed action term or a ghost mode should abort the build immediately
+    # rather than after the expensive stages. This is deliberately earlier than
+    # the other validation gates further down, which necessarily run after the
+    # physics because they read its output.
+    ("Run exterior degree gate",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.validation.exterior_degree_gate"],
+     False),
+    ("Run reflection-positivity gate",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.validation.reflection_positivity_gate"],
+     False),
+
     # ── Stage 0: copy bundled website templates so the JS loaders have a home ──
     ("Copy bundled website templates", ["__copy_static__"], False),
 

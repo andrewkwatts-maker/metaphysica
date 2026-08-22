@@ -108,3 +108,40 @@ def test_potential_is_degenerate_under_theta_to_pi_minus_theta():
             [np.ones(12), np.ones(12), np.full(12, math.radians(180.0 - deg))]).ravel()
         assert bs.racetrack_potential(m1) == pytest.approx(
             bs.racetrack_potential(m2), rel=1e-12)
+
+
+def test_write_report_produces_valid_json(tmp_path):
+    """The gate is wired into the build, so it must emit a machine-readable
+    report like every other wired gate. It previously only printed, which is
+    why it sat unwired.
+    """
+    import json
+
+    from metaphysica.simulations.PM.validation.reflection_positivity_gate import (
+        write_report,
+    )
+
+    out = write_report(out_path=tmp_path / "reflection_positivity.json")
+    payload = json.loads(out.read_text(encoding="utf-8"))
+    assert payload["schema_version"] == 1
+    assert payload["n_pass"] + payload["n_fail"] <= payload["count"]
+    assert payload["verdict"] in {"PASS", "FAIL", "MARGINAL_VACUOUS"}
+    assert "MARGINAL_VACUOUS" in payload["note"]
+
+
+def test_vacuous_cross_block_is_not_reported_as_pass(tmp_path):
+    """A zero cross block must NOT read as PASS.
+
+    At theta = 90 degrees the metric coupling is switched off entirely, so
+    there is nothing whose positivity could be certified. Reporting PASS there
+    would be the same defect as an input anchor validating itself.
+    """
+    from metaphysica.simulations.PM.validation.reflection_positivity_gate import (
+        reflection_positivity_report,
+    )
+
+    rep = reflection_positivity_report()
+    if abs(rep["min_eigenvalue"]) < 1e-12:
+        assert rep["verdict"] == "MARGINAL_VACUOUS", (
+            "a vanishing cross block was reported as a genuine verdict"
+        )
