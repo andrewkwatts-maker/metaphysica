@@ -77,3 +77,15 @@ Cargo.lock
 
 # Dev-time visual-regression screenshots (large PNGs, local only)
 /visual_candidate_smoke/
+
+# ── Website output spilled into the library repo ──────────────────────────────
+# `python -m metaphysica.build --out .` run from this directory drops the whole
+# generated site here. It belongs in PrincipiaMetaphysica, which is the site
+# repo; here it is ~30 MB of regenerable noise that masks real changes.
+/css/
+/js/
+/components/
+/foundations/
+/images/
+/index.html
+/visual_baseline/
