@@ -41,11 +41,50 @@ claimed numbers.**
   predictions). Per the standing rule, falsified candidates stay on the books
   so the same dead end is never explored twice.
 
+### Fixed — CI verifies the physics again
+
+CI had been red since 2026-08-19 and, once green, was still exercising only
+4 of the build's 35 steps.
+
+- **`.[dev,sims]` restored.** `eml-spectral` 2.3.0 reached PyPI on 2026-08-24
+  with cp311/cp312/cp313 manylinux wheels, so the extra is installable across
+  the matrix at last. The build step now runs **40 steps instead of 4** —
+  including the simulations, the shadow-derivation auditor and the Bayesian
+  PRIORS gate, all of which had been skipping or erroring for months. Floors
+  raised to `eml-math>=2.3.0` (the `ln()` subnormal fix) and
+  `eml-spectral>=2.3.0`; the previous `>=2.0.37` named a version the index
+  never carried.
+
+- **Sterility report — two bugs, the second found only by verifying the
+  first.** `sync_docs` and `verify_sterility_report` both wrote
+  `sterility_report.json` in *different* schemas (flat vs metadata-block),
+  both inside `run_all_simulations`, so the artifact flipped layout by code
+  path and churned 160+ lines per regeneration. The duplicate writer is
+  removed — the file has **no consumers anywhere**, which argues for one
+  writer rather than two kept in sync. The survivor then turned out to ignore
+  `METAPHYSICA_OUT`, reaching a build directory only through a junction; a
+  scratch build was observed writing into the site repo. Diff is now 2 lines
+  of timestamp instead of 160+ of schema flip.
+
+### Changed — failure magnitudes are measurable
+
+- Claim-miss ratios pinned for 9 candidates as one parametrised test.
+  Ratios are taken against each proposal's **own claimed value**, never the
+  experimental anchor: `computed/claimed` is fixed arithmetic, whereas
+  `computed/anchor` moves whenever PDG or NuFIT publish a revision, and
+  pinning that would make a legitimate data update look like a code
+  regression. The muon g-2 entry is the cautionary case — its anchor is
+  already stale after the 2024-25 lattice-HVP results.
+
 ### Notes
 
-- The proposed Kähler–Ricci running-Re(T) sector and instanton-corrected
-  W(T) carry no evaluable numbers (the per-cycle χᵢ inputs do not exist in
-  this codebase) and are recorded as OPEN_PROPOSAL pending an author ruling.
+- **AUTHOR RULING 2026-08-23:** the Kähler–Ricci running-Re(T) sector stays
+  FROZEN with zero active code. The per-cycle χᵢ inputs do not exist, so
+  implementing it would mean inventing them, and an arbitrary running scale
+  on Re(T) breaks the zero-parameter commitment. Enforced by a test that
+  fails if the ruling leaves the gate *or* if a `kahler_ricci` /
+  `running_ret` implementation file appears in `src/`. Unfreeze condition
+  recorded: computed TCS sub-manifold invariants.
 
 ---
 
