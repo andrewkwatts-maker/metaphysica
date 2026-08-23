@@ -193,3 +193,207 @@ __all__ = [
     "OBSERVABLE_GROUPS",
     "build_param_to_group_index",
 ]
+
+# ══════════════════════════════════════════════════════════════════════════
+# Disposition ledger (2026-08-24)
+# ══════════════════════════════════════════════════════════════════════════
+#
+# WHY THIS EXISTS
+# ---------------
+# OBSERVABLE_GROUPS above is human-curated, and its own docstring defends
+# that as "reproducible and audit-friendly". It is also how the shadow
+# detector went blind. A curated allowlist records what someone REMEMBERED
+# to check, and it drifts toward what already agrees:
+#
+#   * the H0_local group held two entries, both 73.04, and reported
+#     CONSISTENT -- while the registry also shipped H0_local = 71.55 (the
+#     canonical value) and H0_ricci_variant = 76.34 (a 3.17-sigma FAIL)
+#   * the S8 group held ONE entry, so the detector reported "insufficient
+#     data" while four distinct S8 values were registered
+#   * theta_13's group omitted theta13_derived = 9.594 deg, the framework's
+#     own 9.31-sigma failure, so it was never compared against the 8.669 deg
+#     carried by particle.theta_13_rad
+#
+# The detector reported 0 conflicts throughout.
+#
+# WHY NOT SIMPLY AUTO-DISCOVER
+# ----------------------------
+# Naive name matching swings to the opposite error. Grouping H0_early (67.4,
+# Planck) with H0_late_evolved (73.04, SH0ES) would report the HUBBLE
+# TENSION ITSELF as a code defect. It is physical, not a bug. False
+# conflicts corrode a report just as fast as false silence -- both teach the
+# reader to stop looking.
+#
+# THE FIX
+# -------
+# Discovery finds candidates; a DISPOSITION must exist for every one.
+# Omission becomes structurally impossible, because an unclassified
+# parameter surfaces as UNTRIAGED instead of vanishing. Distinctness stays
+# declarable, so genuine physics does not read as a defect -- but it must be
+# DECLARED, with a reason, rather than assumed by omission.
+
+#: Substrings identifying candidate parameters per observable. Cast WIDE on
+#: purpose: over-collection costs one disposition line, under-collection
+#: costs a contradiction that never surfaces.
+OBSERVABLE_TOKENS: Dict[str, Tuple[str, ...]] = {
+    "theta_13": ("theta_13", "theta13"),
+    "eta_B": ("eta_b", "eta_baryon"),
+    "n_s": ("n_s_", ".n_s"),
+    "H0_local": ("h0",),
+    "S8": ("s8",),
+    "m_higgs": ("m_higgs", "m_h_", ".m_h"),
+    "g_a_gamma": ("g_a_gamma", "coupling_gev"),
+    "sigma_m_nu": ("m_nu", "sum_m_nu"),
+}
+
+#: Disposition kinds.
+MEMBER = "MEMBER"              # competing derivation -- compare it
+DISTINCT = "DISTINCT"          # different physical quantity -- do not compare
+INTERMEDIATE = "INTERMEDIATE"  # coefficient/sigma/ratio, not a prediction
+UNTRIAGED = "UNTRIAGED"        # nobody has classified it -- a finding
+
+#: Every candidate must appear here. The reason string is the point: it is
+#: what stops a future reader from quietly re-curating the report back into
+#: agreement.
+DISPOSITIONS: Dict[str, Tuple[str, str]] = {
+    # -- H0: the tension is physical; the rival derivations are not --------
+    "cosmology.H0_early": (DISTINCT, "early-universe (Planck) H0 -- the "
+                                     "early/late split IS the Hubble tension"),
+    "cosmology.H0_early_normalized": (DISTINCT, "early-universe, normalised"),
+    "geometry.H0_early": (DISTINCT, "early-universe duplicate"),
+    "desi.H0": (DISTINCT, "DESI early-universe anchor"),
+    "cosmology.H0_late_evolved": (MEMBER, "late-time H0"),
+    "cosmology.H0_baseline_km_s_Mpc": (MEMBER, "late-time SH0ES baseline"),
+    "cosmology.H0_local": (MEMBER, "canonical framework late-time prediction, "
+                                   "71.55 -- absent from the curated group"),
+    "cosmology.H0_ricci_variant": (MEMBER, "rival Ricci-flow derivation, "
+                                           "76.34 -- a 3.17-sigma FAIL the "
+                                           "detector never compared"),
+    "cosmology.H0_tension_sigma": (INTERMEDIATE, "sigma, not an H0 value"),
+    "cosmology.H0_tension_remaining_sigma": (INTERMEDIATE,
+        "residual tension in sigmas, not a value of H0"),
+    "geometry.H0_tension_ratio": (INTERMEDIATE,
+        "late/early H0 ratio, dimensionless"),
+    "cosmology.h0_unwinding_scale": (INTERMEDIATE, "model scale, not H0"),
+
+    # -- S8: four registered values, one curated group member -------------
+    "cosmology.s8_pm_predicted": (MEMBER, "friction-suppressed prediction"),
+    "cosmology.S8_pred": (MEMBER, "alternate S8 prediction (0.8333)"),
+    "geometry.S8": (MEMBER, "geometry-sector S8 (0.8333)"),
+    "cosmology.S8_resolved": (MEMBER, "post-resolution S8 -- lands on the "
+                                      "anchor almost exactly, which deserves "
+                                      "scrutiny of its own"),
+    "cosmology.s8_pm_baseline": (DISTINCT, "unsuppressed baseline, not a "
+                                           "prediction of observed S8"),
+    "cosmology.S8_baseline": (DISTINCT,
+        "pre-suppression baseline, not a prediction of observed S8"),
+    "desi.S8": (DISTINCT, "experimental anchor"),
+    "planck.S8": (DISTINCT, "experimental anchor"),
+    "cosmology.S8_tension_remaining_sigma": (INTERMEDIATE,
+        "residual tension in sigmas, not a value of S8"),
+    "cosmology.s8_tension_des": (INTERMEDIATE,
+        "tension against the DES survey, in sigmas"),
+    "cosmology.s8_tension_des_baseline": (INTERMEDIATE,
+        "baseline DES tension, in sigmas"),
+    "cosmology.s8_tension_kids": (INTERMEDIATE,
+        "tension against the KiDS survey, in sigmas"),
+    "cosmology.s8_tension_kids_baseline": (INTERMEDIATE,
+        "baseline KiDS tension, in sigmas"),
+    "cosmology.s8_tension_planck": (INTERMEDIATE,
+        "tension against Planck, in sigmas"),
+    "cosmology.s8_friction_beta_eff": (INTERMEDIATE, "friction coefficient"),
+    "cosmology.s8_friction_kernel": (INTERMEDIATE, "friction kernel"),
+    "cosmology.s8_friction_suppression_pct": (INTERMEDIATE, "percentage -- "
+                                              "5.13 here against the 4.31 "
+                                              "the growth-ODE branch uses"),
+    "cosmology.s8_suppression_factor": (INTERMEDIATE,
+        "multiplicative suppression factor, dimensionless"),
+    "cosmology.s8_improvement_factor": (INTERMEDIATE,
+        "how much the mechanism improves the tension, dimensionless"),
+    "geometry.s8_viscosity_scale": (INTERMEDIATE, "model scale"),
+
+    # -- theta_13: the framework's own failing derivation was omitted ------
+    "neutrino.theta13_derived": (MEMBER, "9.594 deg -- the 9.31-sigma "
+                                         "failure, absent from the group"),
+    "particle.theta_13_rad": (MEMBER, "same angle in radians (8.669 deg)"),
+    "particle.eml_theta_13_rad": (MEMBER, "EML cross-check of the above"),
+    "neutrino.sin_theta13_derived": (DISTINCT, "sine, not the angle"),
+    "neutrino.theta13_sigma": (INTERMEDIATE,
+        "deviation in sigmas, not the angle itself"),
+
+    # -- remaining observables --------------------------------------------
+    "cosmology.n_s_slow_roll": (MEMBER, "slow-roll n_s variant"),
+    "higgs.m_higgs_pred": (MEMBER, "120.62 against the group's ~125.2"),
+    "higgs.m_higgs_geometric": (UNTRIAGED, "504.06 -- far from the Higgs "
+                                           "mass; likely a different "
+                                           "quantity, but the name claims "
+                                           "otherwise"),
+    "higgs.m_higgs_bulk": (UNTRIAGED, "414.22 -- same question"),
+    "cosmology.planck_omega_dm_h2": (DISTINCT, "relic density, matched only "
+                                               "by the crude m_h token"),
+    "portals.alp_photon_coupling_gev_inv": (MEMBER, "ALP photon coupling"),
+    "portals.alp_nucleon_coupling_gev_inv": (DISTINCT, "nucleon, not photon"),
+    "bounds.sum_m_nu_upper": (DISTINCT, "experimental upper bound"),
+    "spectral.m_nu_1": (DISTINCT, "individual mass eigenvalue, not the sum"),
+    "spectral.m_nu_2": (DISTINCT, "individual mass eigenvalue"),
+    "spectral.m_nu_3": (DISTINCT, "individual mass eigenvalue"),
+}
+
+
+def discover_candidates(params):
+    """Every registry parameter whose name matches an observable token.
+
+    Deliberately over-collects: a candidate costs one disposition line, a
+    missed candidate costs a contradiction nobody sees.
+    """
+    out = {}
+    for observable, tokens in OBSERVABLE_TOKENS.items():
+        hits = []
+        for name, entry in params.items():
+            value = entry.get("value") if isinstance(entry, dict) else entry
+            if not isinstance(value, (int, float)) or isinstance(value, bool):
+                continue
+            if any(tok in name.lower() for tok in tokens):
+                hits.append(name)
+        out[observable] = sorted(hits)
+    return out
+
+
+def audit_dispositions(params):
+    """Candidates with no disposition, plus those explicitly UNTRIAGED.
+
+    A non-empty result means the ledger has fallen behind the registry --
+    exactly the drift that let the H0 and S8 contradictions hide.
+    """
+    declared = {m for members in OBSERVABLE_GROUPS.values() for m in members}
+    undisposed = []
+    untriaged = []
+    for _observable, names in discover_candidates(params).items():
+        for name in names:
+            if name in declared:
+                continue
+            disposition = DISPOSITIONS.get(name)
+            if disposition is None:
+                undisposed.append(name)
+            elif disposition[0] == UNTRIAGED:
+                untriaged.append(name)
+    return {"undisposed": sorted(set(undisposed)),
+            "untriaged": sorted(set(untriaged))}
+
+
+def effective_groups(params):
+    """OBSERVABLE_GROUPS plus every candidate dispositioned MEMBER.
+
+    This is what a conflict detector should actually check: the curated
+    lists remain the declared core, and the ledger supplies what curation
+    forgot.
+    """
+    groups = {k: list(v) for k, v in OBSERVABLE_GROUPS.items()}
+    for observable, names in discover_candidates(params).items():
+        bucket = groups.setdefault(observable, [])
+        for name in names:
+            disposition = DISPOSITIONS.get(name)
+            if disposition and disposition[0] == MEMBER and name not in bucket:
+                bucket.append(name)
+    return groups
+

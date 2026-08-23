@@ -71,6 +71,32 @@ TOLERANCE_OVERRIDES: Dict[str, float] = {
 }
 
 
+
+#: Conflicts surfaced on 2026-08-24 when the auditor stopped trusting the
+#: curated allowlist and began checking the effective groups. Every one is an
+#: open Tier-1 item in docs/OUTSTANDING_ISSUES.md that had been documented in
+#: prose while the machine reported the codebase conflict-free.
+#:
+#: This is a RATCHET, not an acceptance. Each entry needs an author ruling on
+#: which derivation is canonical; a SIXTH conflict fails the build. Removing
+#: an entry once its ruling lands is the intended direction of travel.
+KNOWN_CONFLICTS = {
+    # register 1.1 -- 9.594 deg has no surviving derivation (9.31 sigma),
+    # while particle.theta_13_deg carries 8.669. Two live predictions.
+    "theta_13",
+    # register 1.7 -- three coexisting H0 values: 71.55 canonical,
+    # 73.04 late-time, 76.34 Ricci variant (a 3.17-sigma FAIL).
+    "H0_local",
+    # register 1.4 -- 0.7841 (5.13% friction suppression) against 0.8333.
+    # Reconciling the suppression branches is worth ~0.5 sigma, not the
+    # ~1.5 the register estimates.
+    "S8",
+    # 120.62 against the PDG-anchored ~125.2 family.
+    "m_higgs",
+    # slow-roll n_s (0.9996) against the canonical 0.9636.
+    "n_s",
+}
+
 def _effective_tolerance(observable: str, default_pct: float) -> float:
     """Return the tolerance window (in %) to apply for ``observable``."""
     return TOLERANCE_OVERRIDES.get(observable, default_pct)
@@ -405,10 +431,39 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     print(f"Loaded {len(params)} parameter records.")
 
+    # Check the EFFECTIVE groups, not the curated lists. The curated map is
+    # a human allowlist and had drifted toward what already agreed: the
+    # H0 group held two entries that were both 73.04 (reporting CONSISTENT
+    # while 71.55 and 76.34 were also registered), and the S8 group held one
+    # entry (reporting "insufficient data" against four registered values).
+    # effective_groups() folds in every candidate the disposition ledger
+    # marks MEMBER, so omission can no longer hide a contradiction.
+    try:
+        from metaphysica.simulations.core.observable_groups import (
+            audit_dispositions, effective_groups,
+        )
+        groups = effective_groups(params)
+        disposition_audit = audit_dispositions(params)
+    except ImportError:
+        groups = dict(OBSERVABLE_GROUPS)
+        disposition_audit = {"undisposed": [], "untriaged": []}
+
     results: List[Dict[str, Any]] = []
-    for observable, members in OBSERVABLE_GROUPS.items():
+    for observable, members in groups.items():
         tol = _effective_tolerance(observable, default_tol)
         results.append(_check_group(observable, members, params, tol))
+
+    if disposition_audit["undisposed"]:
+        print()
+        print("=== parameters with NO disposition "
+              "(add them to observable_groups.DISPOSITIONS) ===")
+        for name in disposition_audit["undisposed"]:
+            print(f"  {name}")
+    if disposition_audit["untriaged"]:
+        print()
+        print("=== explicitly UNTRIAGED (awaiting an author call) ===")
+        for name in disposition_audit["untriaged"]:
+            print(f"  {name}")
 
     conflicts = [r for r in results if r["verdict"] == "CONFLICT"]
     consistent = [r for r in results if r["verdict"] == "CONSISTENT"]
@@ -421,6 +476,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "tolerance_pct": default_tol,
         "tolerance_overrides": dict(TOLERANCE_OVERRIDES),
         "observable_groups_checked": len(results),
+        "undisposed_parameters": disposition_audit["undisposed"],
+        "untriaged_parameters": disposition_audit["untriaged"],
         "n_conflicts": len(conflicts),
         "n_consistent": len(consistent),
         "n_insufficient": len(insufficient),
@@ -484,7 +541,26 @@ def main(argv: Optional[List[str]] = None) -> int:
             json.dump(report, fh, ensure_ascii=False, indent=2, default=str)
         print(f"Build-output mirror written to {autogen_path}")
 
-    return 1 if conflicts else 0
+    # Ratchet: the five conflicts surfaced on 2026-08-24 are recorded above
+    # and await author rulings, so they do not fail the build. Anything NEW
+    # does -- this class of defect must not grow while the known ones are
+    # being resolved.
+    new_conflicts = [r for r in conflicts
+                     if r["observable"] not in KNOWN_CONFLICTS]
+    stale = KNOWN_CONFLICTS - {r["observable"] for r in conflicts}
+    if stale:
+        print()
+        print("=== recorded conflicts that no longer conflict "
+              "(remove them from KNOWN_CONFLICTS) ===")
+        for name in sorted(stale):
+            print(f"  {name}")
+    if new_conflicts:
+        print()
+        print("=== NEW conflicts (not in the recorded baseline) ===")
+        for r in new_conflicts:
+            print(f"  {r['observable']}")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
