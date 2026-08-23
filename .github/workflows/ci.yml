@@ -26,16 +26,11 @@ jobs:
         run: pip install --upgrade pip maturin
 
       - name: Install library with dev deps
-        # Deliberately NOT .[dev,sims]. The sims extra pins
-        # eml-spectral>=2.0.37, but PyPI serves only 2.0.2 -- the pin is
-        # unsatisfiable from the index, which is why CI has never had it and
-        # why the build step skips the simulations. Tried it; the install
-        # step failed outright. Add sims here once 2.0.37 is published.
-        #
-        # Until then build.py skips the simulation-dependent steps cleanly
-        # rather than hard-failing on their missing inputs, so this stays an
-        # incomplete build rather than a broken one.
-        run: pip install .[dev]
+        # [dev,sims] restored 2026-08-24: eml-spectral 2.3.0 is now on PyPI
+        # with cp311/cp312/cp313 manylinux wheels, so the pin is satisfiable
+        # across this matrix at last. Without sims the build step ran 4 of its
+        # 35 steps, skipping the simulations it exists to verify.
+        run: pip install .[dev,sims]
 
       - name: Run tests
         run: pytest tests/ -v --tb=short

@@ -51,23 +51,21 @@ dependencies = [
     "mpmath>=1.3.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
-    # Floor stays at 2.0.37 -- the newest release ON PyPI. 2.3.0 exists in
-    # the EML-Math repo (it carries a correctness fix to ln() below the
-    # normal range) but has not been published, and pinning a floor above
-    # what the index serves makes `pip install .[dev]` unsatisfiable.
-    # Raise this to >=2.3.0 once 2.3.0 is on PyPI.
-    "eml-math>=2.0.37",
+    # 2.3.0 carries the correctness fix to ln() below the normal range
+    # (subnormal inputs returned -3.89 instead of -736.83). Published
+    # 2026-08-24, so this floor is satisfiable.
+    "eml-math>=2.3.0",
 ]
 
 [project.optional-dependencies]
 # Heavy / build-only deps live behind extras so plain `pip install metaphysica`
 # stays slim â€” the bundled Get() datasheet fast path needs none of these.
 # The full website builder should use `pip install metaphysica[full]`.
-sims  = ["eml-spectral>=2.0.37"]   # advanced algebra (E8 / Leech / Octonion / Clifford) for the sim engine
+sims  = ["eml-spectral>=2.3.0"]   # advanced algebra (E8 / Leech / Octonion / Clifford) for the sim engine
 pdf   = ["xhtml2pdf>=0.2.16"]      # PDF paper export
 plots = ["matplotlib>=3.7.0", "pandas>=2.0.0"]   # plot regeneration
 full = [
-    "eml-spectral>=2.0.37",
+    "eml-spectral>=2.3.0",
     "xhtml2pdf>=0.2.16",
     "matplotlib>=3.7.0",
     "pandas>=2.0.0",

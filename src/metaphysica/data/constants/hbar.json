@@ -10,8 +10,8 @@
   "eml_expression": "EML: eml_scalar(6.582119569e-25) — reduced Planck constant ℏ in GeV·s (CODATA 2018 input)",
   "kind": "physics",
   "_provenance": {
-    "metaphysica_version": "2.3.0",
-    "generated_at": "2026-08-22T16:09:41.368656+00:00",
+    "metaphysica_version": "2.3.1",
+    "generated_at": "2026-08-23T14:53:54.946318+00:00",
     "sources": [
       "ESTABLISHED:CODATA2018"
     ]

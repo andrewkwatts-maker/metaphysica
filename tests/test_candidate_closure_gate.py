@@ -16,6 +16,7 @@ import math
 import pytest
 
 from metaphysica.simulations.PM.validation.candidate_closure_gate import (
+    _THETA_12_SIGMA,
     evaluate_all_candidates,
     write_report,
 )
@@ -178,3 +179,64 @@ def test_report_never_reports_a_pass(tmp_path):
     assert payload["n_fail"] == 10  # 9 FALSIFIED + 1 ILL_FORMED
     assert payload["count"] == 14
     assert "FALSIFIED" in payload["verdict_counts"]
+
+# ── failure-magnitude ledger ─────────────────────────────────────────────────
+#
+# Ratios are pinned against each proposal's OWN CLAIMED value, never against
+# the experimental anchor. That distinction is load-bearing:
+#
+#   computed/claimed  is internal arithmetic -- fixed forever, safe to pin
+#   computed/anchor   moves whenever PDG/NuFIT publish a revision, so pinning
+#                     it exactly would make a legitimate data update look like
+#                     a code regression
+#
+# The muon g-2 entry is the cautionary case: its anchor is ALREADY stale
+# (2024-25 lattice-HVP results largely dissolved that tension). Had the ratio
+# been pinned to the anchor, this suite would now be enforcing a number
+# physics has moved past. Experimental comparisons stay as bounds.
+
+#: (candidate_id, computed/claimed ratio, tolerance). One parametrized test,
+#: not eight near-duplicates -- duplicated matrices drift apart.
+_CLAIM_MISS_RATIOS = [
+    ("vev-factor-dimension-ratio", 1.63518, 1e-3),
+    ("alpha-gut-s5-volume", 1.22427, 1e-3),
+    ("lambda-golay-capacity", 1.001e114, 1e-3),
+    ("hubble-shift-alpha-leak", 0.296972, 1e-3),
+    ("weinberg-d5-running", 1.57895, 1e-3),
+    ("pmns-theta13-leak", 0.0359983, 1e-3),
+    ("pmns-theta12-golden", 1.00003, 1e-3),
+    ("muon-g2-torsion", 164.848, 1e-3),
+    # Included deliberately though its verdict is PLAUSIBLE_UNTESTABLE: the
+    # arithmetic agreeing with its claim to 0.3% is exactly why that verdict
+    # is not FALSIFIED, and pinning it keeps the distinction honest.
+    ("soft-susy-golay-suppression", 1.00341, 1e-3),
+]
+
+
+@pytest.mark.parametrize("cid,expected_ratio,tol", _CLAIM_MISS_RATIOS)
+def test_claim_miss_ratio_is_pinned(by_id, cid, expected_ratio, tol):
+    """How far each proposal misses ITS OWN advertised number, pinned.
+
+    Turns a qualitative "FALSIFIED" label into a measurable engineering
+    quantity, so a 1.6x miss and a 10^114 miss can never blur together in the
+    record -- and so a silent change in any computed value trips the suite.
+    """
+    v = by_id[cid]
+    assert v.claimed, f"{cid} has no claimed value to compare against"
+    assert v.computed / v.claimed == pytest.approx(expected_ratio, rel=tol)
+
+
+def test_theta12_is_the_one_that_matches_its_claim(by_id):
+    """theta_12 is instructive: ratio 1.0 means the ARITHMETIC is honest.
+
+    It is FALSIFIED on experiment (24.09 deg vs NuFIT's 33.44), not on
+    self-consistency. Recording the difference matters -- "the algebra is
+    wrong" and "the algebra is right but nature disagrees" are different
+    failures and deserve different follow-up.
+    """
+    v = by_id["pmns-theta12-golden"]
+    assert v.computed / v.claimed == pytest.approx(1.0, rel=1e-3)
+    assert v.verdict == "FALSIFIED"
+    assert abs(v.computed - v.anchor) / _THETA_12_SIGMA > 10
+
+
