@@ -56,7 +56,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Union
 
-__version__ = "2.3.0"
+__version__ = "2.3.1"
 __author__ = "Andrew Keith Watts"
 
 # Companion-app launcher — `metaphysica.Launch()` finds/clones metaphysica-app and runs it.
