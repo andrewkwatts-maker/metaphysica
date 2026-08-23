@@ -315,9 +315,13 @@ def evaluate_all_candidates() -> List[CandidateVerdict]:
         verdict="OPEN_PROPOSAL",
         note=("Structural idea with no evaluable numbers: the C_i and chi_i "
               "per-cycle inputs do not exist in this codebase and would have "
-              "to be invented to implement it. Whether to build a running-"
-              "modulus sector is an author ruling; nothing here can be "
-              "arithmetic-checked, so nothing is adopted or falsified."),
+              "to be invented to implement it. AUTHOR RULING 2026-08-23: "
+              "keep FROZEN with zero active code execution -- do not invent "
+              "the cycles. An arbitrary running scale on Re(T) would break "
+              "the zero-parameter commitment. Revisit only when the TCS "
+              "sub-manifold invariants (the actual chi_i) are computed."),
+        extras={"author_ruling": "FROZEN_2026_08_23",
+                "unfreeze_condition": "computed TCS sub-manifold invariants"},
     ))
 
     return out

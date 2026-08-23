@@ -103,11 +103,50 @@ def test_muon_g2_notes_the_dissolved_tension(by_id):
     assert "lattice" in v.note  # the target itself is stale
 
 
+def test_muon_g2_scale_mismatch_is_pinned(by_id):
+    """The proposal is not marginally off -- it misses its OWN claim by ~165x.
+
+    Pinning the ratio (not just the value) keeps the magnitude of the failure
+    on the record: alpha/(2*pi*b3*k_beth) = 4.1e-7 against a claimed 2.49e-9.
+    A near-miss and a two-orders-of-magnitude miss must never blur together.
+    """
+    v = by_id["muon-g2-torsion"]
+    assert v.computed / v.claimed == pytest.approx(164.9, rel=1e-2)
+
+
+def test_kahler_ricci_sector_stays_frozen(by_id):
+    """AUTHOR RULING 2026-08-23: frozen, zero active code, invent nothing.
+
+    Two enforcements: the ruling must stay recorded in the gate, and no
+    running-Re(T)/Kahler-Ricci implementation may appear in the source tree
+    while the chi_i inputs remain uncomputed -- code showing up here means
+    someone invented the cycles the ruling forbids.
+    """
+    from pathlib import Path
+
+    v = by_id["running-ret-kahler-ricci"]
+    assert v.verdict == "OPEN_PROPOSAL"
+    assert v.extras.get("author_ruling") == "FROZEN_2026_08_23"
+    assert "zero active code" in v.note
+
+    src = Path(__file__).resolve().parents[1] / "src"
+    offenders = [
+        p for p in src.rglob("*.py")
+        if "kahler_ricci" in p.name.lower() or "running_ret" in p.name.lower()
+    ]
+    assert not offenders, (
+        f"frozen sector has grown implementation files: {offenders}"
+    )
+
+
 def test_open_proposal_adopts_nothing(by_id):
+    """Originally this asserted the sector was PENDING an author ruling; the
+    ruling has since been made (2026-08-23: frozen), so it now asserts the
+    ruling is recorded and that still nothing numerical was adopted."""
     v = by_id["running-ret-kahler-ricci"]
     assert v.verdict == "OPEN_PROPOSAL"
     assert v.computed is None and v.claimed is None
-    assert "author ruling" in v.note
+    assert "AUTHOR RULING" in v.note
 
 
 def test_gate_can_fail_if_a_verdict_flips():
