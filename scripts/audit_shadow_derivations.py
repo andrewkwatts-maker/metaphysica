@@ -101,6 +101,14 @@ KNOWN_CONFLICTS = {
     # disagreement is real and self-acknowledged; the ruling is whether
     # the potential or the canonical chain wins.
     "n_s",
+    # found 2026-08-24 while building the DE plane gate: neutrino.mass_sum
+    # (0.1012 eV, the register 1.5 headline) had escaped token discovery --
+    # its name contains neither m_nu nor sum_m_nu. Once discovered it
+    # conflicts with spectral.sum_m_nu (0.0598) at 40.9% against the 40%
+    # override. THREE registered mass sums (0.060 / 0.082 / 0.101) need a
+    # canonical ruling; note the choice decides whether the framework sits
+    # above or below the DESI LCDM bound of 0.072 eV.
+    "sigma_m_nu",
 }
 
 def _effective_tolerance(observable: str, default_pct: float) -> float:

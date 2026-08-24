@@ -243,7 +243,11 @@ OBSERVABLE_TOKENS: Dict[str, Tuple[str, ...]] = {
     "S8": ("s8",),
     "m_higgs": ("m_higgs", "m_h_", ".m_h"),
     "g_a_gamma": ("g_a_gamma", "coupling_gev"),
-    "sigma_m_nu": ("m_nu", "sum_m_nu"),
+    # "mass_sum" added 2026-08-24: neutrino.mass_sum = 0.1012 eV was
+    # escaping discovery entirely -- the name contains neither m_nu nor
+    # sum_m_nu. Found when the DE plane gate listed it beside the two
+    # discovered sums (0.0598, 0.0817) and the trio visibly disagreed.
+    "sigma_m_nu": ("m_nu", "sum_m_nu", "mass_sum"),
 }
 
 #: Disposition kinds.
@@ -360,6 +364,12 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "spectral.m_nu_1": (DISTINCT, "individual mass eigenvalue, not the sum"),
     "spectral.m_nu_2": (DISTINCT, "individual mass eigenvalue"),
     "spectral.m_nu_3": (DISTINCT, "individual mass eigenvalue"),
+    "neutrino.mass_sum": (MEMBER,
+        "0.1012 eV -- the register 1.5 headline value, which had escaped "
+        "token discovery (its name contains neither m_nu nor sum_m_nu). "
+        "Disagrees with the discovered sums geometry.sum_m_nu = 0.0817 and "
+        "spectral.sum_m_nu = 0.0598 by up to 69% -- three registered values "
+        "for one observable, the exact defect this ledger exists to surface."),
 }
 
 

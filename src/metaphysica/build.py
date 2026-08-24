@@ -75,6 +75,7 @@ STANDALONE_STEPS = {
     "Run exterior degree gate",
     "Run reflection-positivity gate",
     "Run candidate closure gate",
+    "Run dark-energy plane gate",
     "Copy bundled website templates",
     "Build named per-category certificates",
 }
@@ -108,6 +109,10 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Run candidate closure gate",
      [sys.executable, "-m",
       "metaphysica.simulations.PM.validation.candidate_closure_gate"],
+     False),
+    ("Run dark-energy plane gate",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.validation.de_plane_gate"],
      False),
 
     # ── Stage 0: copy bundled website templates so the JS loaders have a home ──
