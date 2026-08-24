@@ -84,16 +84,22 @@ KNOWN_CONFLICTS = {
     # register 1.1 -- 9.594 deg has no surviving derivation (9.31 sigma),
     # while particle.theta_13_deg carries 8.669. Two live predictions.
     "theta_13",
-    # register 1.7 -- three coexisting H0 values: 71.55 canonical,
-    # 73.04 late-time, 76.34 Ricci variant (a 3.17-sigma FAIL).
+    # register 1.7, after triage: the 76.34 Ricci variant turned out to
+    # carry a PRIOR documented-alternative ruling (fitted 31-deg angle) under
+    # a stale parameter name, so it is dispositioned DISTINCT. The residual
+    # conflict is the framework prediction 71.55 against the 73.04 SH0ES
+    # anchor family -- 2.06%, just over the 2% tolerance, the same 1.43-sigma
+    # MARGINAL the validation layer reports. Ruling still open: does the
+    # anchor belong inside the shadow group at all?
     "H0_local",
     # register 1.4 -- 0.7841 (5.13% friction suppression) against 0.8333.
     # Reconciling the suppression branches is worth ~0.5 sigma, not the
     # ~1.5 the register estimates.
     "S8",
-    # 120.62 against the PDG-anchored ~125.2 family.
-    "m_higgs",
-    # slow-roll n_s (0.9996) against the canonical 0.9636.
+    # slow-roll n_s (0.9996) against the canonical 0.9636. The inflation
+    # module itself registers this as a documented_divergence -- the
+    # disagreement is real and self-acknowledged; the ruling is whether
+    # the potential or the canonical chain wins.
     "n_s",
 }
 

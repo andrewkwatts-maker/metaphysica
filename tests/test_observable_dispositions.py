@@ -82,9 +82,10 @@ def test_every_candidate_has_a_disposition(params):
 def test_untriaged_entries_are_declared_not_hidden(params):
     """UNTRIAGED is allowed, but only as an explicit, visible state.
 
-    Two Higgs-named parameters (504.06 and 414.22 GeV) sit far from the
-    Higgs mass. They may well be different quantities, but their names claim
-    otherwise, so they are recorded as UNTRIAGED rather than quietly dropped.
+    The first occupants (two Higgs-named parameters at 504.06 and 414.22
+    GeV) have since been triaged: higgs_mass.py's Sprint T3 #4 block turned
+    out to document both as failed/pre-projection legs. The state remains
+    legal for future candidates; this guards its bookkeeping.
     """
     audit = audit_dispositions(params)
     for name in audit["untriaged"]:
@@ -122,10 +123,15 @@ def test_effective_groups_are_larger_than_the_curated_ones(params):
 def test_the_canonical_h0_is_now_checked(params):
     """cosmology.H0_local = 71.55 is the framework's canonical late-time H0
     and was absent from the group, which held two entries both equal to
-    73.04 -- so the detector reported CONSISTENT."""
+    73.04 -- so the detector reported CONSISTENT.
+
+    The 76.34 Ricci variant is deliberately NOT a member: triage found a
+    prior documented-alternative ruling for it (fitted 31-deg angle) hiding
+    under a stale parameter name in the group's own comments."""
     eff = effective_groups(params)
     assert "cosmology.H0_local" in eff["H0_local"]
-    assert "cosmology.H0_ricci_variant" in eff["H0_local"]
+    assert "cosmology.H0_ricci_variant" not in eff["H0_local"]
+    assert DISPOSITIONS["cosmology.H0_ricci_variant"][0] == DISTINCT
 
 
 def test_the_failing_theta13_derivation_is_now_checked(params):

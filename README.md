@@ -316,7 +316,7 @@ are model-internal and are not independently validated.
 | 9 | Mirror DM relic abundance (v26.0) | Ω_DM h² matches Planck | closed |
 | 10 | Inflation observables (n_s, r) from G₂ moduli (v26.0) | canonical n_s within Planck 2σ, but a rival slow-roll branch gives 0.9996 | **tension** — two internal n_s derivations disagree |
 | 11 | Gauge unification at M_GUT (v26.0) | three couplings cross at one point | closed |
-| 12 | Higgs sector — m_H, λ_H (v26.0) | m_H 120.6 GeV derived vs 125.2 observed (3.7% gap) | **tension** — see shadow-derivation report |
+| 12 | Higgs sector — m_H, λ_H (v26.0) | canonical m_H 125.08 GeV (MSSM diagonalisation, 0.9σ); the 120.6 figure is a documented stale calibration, not a rival | resolved — soft-term inputs, not pure b₃ |
 | 13 | Neutrino mass spectrum refinement (v26.0) | NH ordering, Σm_ν < 0.12 eV | closed |
 
 ### Documented divergences (2)

@@ -266,9 +266,13 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "cosmology.H0_baseline_km_s_Mpc": (MEMBER, "late-time SH0ES baseline"),
     "cosmology.H0_local": (MEMBER, "canonical framework late-time prediction, "
                                    "71.55 -- absent from the curated group"),
-    "cosmology.H0_ricci_variant": (MEMBER, "rival Ricci-flow derivation, "
-                                           "76.34 -- a 3.17-sigma FAIL the "
-                                           "detector never compared"),
+    "cosmology.H0_ricci_variant": (DISTINCT,
+        "documented alternative, per the pre-existing comment in this file's "
+        "H0 group -- which describes exactly this 76.34 value (fitted 31-deg "
+        "volume-mixing angle, 'not a derivation from G2 topology') but under "
+        "the STALE name cosmology.H0_local; the parameter was later renamed "
+        "and the canonical name now carries 71.55. The prior ruling stands; "
+        "its 3.17-sigma FAIL is tracked by the validation layer."),
     "cosmology.H0_tension_sigma": (INTERMEDIATE, "sigma, not an H0 value"),
     "cosmology.H0_tension_remaining_sigma": (INTERMEDIATE,
         "residual tension in sigmas, not a value of H0"),
@@ -313,27 +317,41 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "geometry.s8_viscosity_scale": (INTERMEDIATE, "model scale"),
 
     # -- theta_13: the framework's own failing derivation was omitted ------
-    "neutrino.theta13_derived": (MEMBER, "9.594 deg -- the 9.31-sigma "
-                                         "failure, absent from the group"),
-    "particle.theta_13_rad": (MEMBER, "same angle in radians (8.669 deg)"),
-    "particle.eml_theta_13_rad": (MEMBER, "EML cross-check of the above"),
+    "neutrino.theta13_derived": (MEMBER,
+        "9.594 deg, still registered as DERIVED with the stale 0.25-deg "
+        "error band in its module docstring; the register corrects the "
+        "band to 0.11 deg making this 9.31 sigma. A LIVE rival to the "
+        "8.647 canonical branch until an author ruling retires it."),
+    "particle.theta_13_rad": (DISTINCT,
+        "same angle in RADIANS (0.1513 = 8.669 deg). The auditor compares "
+        "raw numerics with no unit conversion, so grouping this with the "
+        "degree-valued members manufactured a fake 98% conflict that masked "
+        "the real 10.9% one. The degree entries carry the comparison; unit "
+        "consistency between deg and rad forms belongs to the triple-track "
+        "layer, not the shadow auditor."),
+    "particle.eml_theta_13_rad": (DISTINCT,
+        "EML cross-check of theta_13_rad -- radians, same reasoning"),
     "neutrino.sin_theta13_derived": (DISTINCT, "sine, not the angle"),
     "neutrino.theta13_sigma": (INTERMEDIATE,
         "deviation in sigmas, not the angle itself"),
 
     # -- remaining observables --------------------------------------------
     "cosmology.n_s_slow_roll": (MEMBER, "slow-roll n_s variant"),
-    "higgs.m_higgs_pred": (MEMBER,
-        "120.62 against the group's ~125.2 (3.7%). A tree-level reading "
-        "exists -- 120.6 could be the uncorrected value with top-loop "
-        "corrections closing the gap -- but relabelling it a match "
-        "requires COMPUTING the correction, not granting a 5% buffer. "
-        "Until that calculation exists this stays a conflict."),
-    "higgs.m_higgs_geometric": (UNTRIAGED, "504.06 -- far from the Higgs "
-                                           "mass; likely a different "
-                                           "quantity, but the name claims "
-                                           "otherwise"),
-    "higgs.m_higgs_bulk": (UNTRIAGED, "414.22 -- same question"),
+    "higgs.m_higgs_pred": (DISTINCT,
+        "documented stale-calibration artifact, NOT a rival: the Sprint "
+        "T3 #4 block in higgs_mass.py records that Re(T)=9.865 was "
+        "hand-inverted to hit 125.10 under v24.2 inputs, later input "
+        "refinements detuned it to 120.62, and it is kept only for "
+        "paper reproducibility. The canonical path is particle.m_h_GeV "
+        "= 125.08 (0.9 sigma). An earlier draft here guessed a "
+        "tree-level-vs-loops story; the documentation says otherwise."),
+    "higgs.m_higgs_geometric": (DISTINCT,
+        "documented failed pure-geometry leg (Re(T)=1.833 -> 504 GeV), "
+        "per the Sprint T3 #4 disposition block in higgs_mass.py -- kept "
+        "on the books per the falsified-candidates rule, not competing"),
+    "higgs.m_higgs_bulk": (DISTINCT,
+        "documented raw 26D pre-projection value (414 GeV), same Sprint "
+        "T3 #4 block -- an intermediate of the chain, not a prediction"),
     "cosmology.planck_omega_dm_h2": (DISTINCT, "relic density, matched only "
                                                "by the crude m_h token"),
     "portals.alp_photon_coupling_gev_inv": (MEMBER, "ALP photon coupling"),
