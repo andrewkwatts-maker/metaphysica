@@ -323,7 +323,12 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
 
     # -- remaining observables --------------------------------------------
     "cosmology.n_s_slow_roll": (MEMBER, "slow-roll n_s variant"),
-    "higgs.m_higgs_pred": (MEMBER, "120.62 against the group's ~125.2"),
+    "higgs.m_higgs_pred": (MEMBER,
+        "120.62 against the group's ~125.2 (3.7%). A tree-level reading "
+        "exists -- 120.6 could be the uncorrected value with top-loop "
+        "corrections closing the gap -- but relabelling it a match "
+        "requires COMPUTING the correction, not granting a 5% buffer. "
+        "Until that calculation exists this stays a conflict."),
     "higgs.m_higgs_geometric": (UNTRIAGED, "504.06 -- far from the Higgs "
                                            "mass; likely a different "
                                            "quantity, but the name claims "
