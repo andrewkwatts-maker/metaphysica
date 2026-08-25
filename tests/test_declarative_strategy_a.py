@@ -12,6 +12,7 @@ from metaphysica.simulations.PM.validation.declarative_strategies.strategy_a_sem
     gate_G22_gluon_string_tension,
     gate_G23_proton_stability_floor,
     gate_G29_weak_hypercharge,
+    gate_G40_sterile_active_mixing,
     run_all,
 )
 
@@ -155,4 +156,20 @@ def test_G29_mutation_chi_fails():
         return_value=reg,
     ):
         result = gate_G29_weak_hypercharge()
+    assert result.verdict == "FAIL"
+
+
+# G40 mutation: sterile_sector != 163
+def test_G40_mutation_sterile_fails():
+    with _patch_registry("sterile_sector", 164):
+        result = gate_G40_sterile_active_mixing()
+    assert result.verdict == "FAIL", (
+        "G40 must FAIL when sterile_sector=164; got PASS (fake gate!)"
+    )
+
+
+# G40 mutation: roots_total != 288
+def test_G40_mutation_roots_fails():
+    with _patch_registry("roots_total", 290):
+        result = gate_G40_sterile_active_mixing()
     assert result.verdict == "FAIL"
