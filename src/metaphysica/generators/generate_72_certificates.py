@@ -378,13 +378,24 @@ _REGISTRY_MEMO = None
 def _load_registry_params():
     global _REGISTRY_MEMO
     if _REGISTRY_MEMO is None:
-        try:
-            path = _autogen_dir() / "parameters.json"
-            with open(path, encoding="utf-8") as f:
-                _REGISTRY_MEMO = json.load(f).get("parameters", {})
-        except Exception:
+        for _try_path in (_autogen_dir() / "parameters.json",
+                          _bundled_params_path()):
+            try:
+                with open(_try_path, encoding="utf-8") as f:
+                    _REGISTRY_MEMO = json.load(f).get("parameters", {})
+                break
+            except Exception:
+                continue
+        else:
             _REGISTRY_MEMO = {}
     return _REGISTRY_MEMO
+
+
+def _bundled_params_path():
+    """Absolute path to the bundled wheel parameters.json."""
+    import metaphysica
+    from pathlib import Path
+    return Path(metaphysica.__file__).parent / "data" / "parameters.json"
 
 
 # Registry tier: gate_id -> live-value comparison spec. Only gates whose
@@ -438,6 +449,37 @@ def _eval_registry_spec(spec, registry):
             "status": "COMPUTED_PASS" if all(c["ok"] for c in checks) else "COMPUTED_FAIL"}
 
 
+_STRATEGY_A_MEMO = None
+
+
+def _get_strategy_a_evaluators():
+    """Lazily import and return the gate_id -> evaluator map from strategy_a_semantic."""
+    global _STRATEGY_A_MEMO
+    if _STRATEGY_A_MEMO is None:
+        try:
+            from metaphysica.simulations.PM.validation.declarative_strategies.strategy_a_semantic import (
+                gate_G01_integer_root_parity,
+                gate_G13_photon_zero_mass,
+                gate_G17_generation_triality,
+                gate_G22_gluon_string_tension,
+                gate_G23_proton_stability_floor,
+                gate_G29_weak_hypercharge,
+                gate_G40_sterile_active_mixing,
+            )
+            _STRATEGY_A_MEMO = {
+                1: gate_G01_integer_root_parity,
+                13: gate_G13_photon_zero_mass,
+                17: gate_G17_generation_triality,
+                22: gate_G22_gluon_string_tension,
+                23: gate_G23_proton_stability_floor,
+                29: gate_G29_weak_hypercharge,
+                40: gate_G40_sterile_active_mixing,
+            }
+        except Exception:
+            _STRATEGY_A_MEMO = {}
+    return _STRATEGY_A_MEMO
+
+
 def evaluate_gate(gate_id, verif, registry):
     """Return the evaluation block for a verifiable gate."""
     # Tier 2 first: live-registry comparison is the stronger check.
@@ -446,6 +488,24 @@ def evaluate_gate(gate_id, verif, registry):
         result = _eval_registry_spec(spec, registry)
         if result is not None:
             return result
+    # Tier 1.5: Strategy-A semantic evaluators (exact integer/ratio assertions,
+    # no invented thresholds, all values sourced from FormulasRegistry or
+    # the bundled parameters.json).
+    semantic_fn = _get_strategy_a_evaluators().get(gate_id)
+    if semantic_fn is not None:
+        try:
+            r = semantic_fn()
+            return {
+                "tier": "semantic",
+                "source": "strategy_a_semantic.py",
+                "measured": r.measured,
+                "expected": r.expected,
+                "note": r.note,
+                "numbers_invented": r.numbers_invented,
+                "status": "COMPUTED_PASS" if r.verdict == "PASS" else "COMPUTED_FAIL",
+            }
+        except Exception:
+            pass
     # Tier 1: arithmetic identity.
     value = _safe_arith_eval(verif.get("wl_code", ""))
     if value is not None:

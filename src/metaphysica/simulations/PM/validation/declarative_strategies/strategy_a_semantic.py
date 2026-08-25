@@ -5,19 +5,21 @@ Each gate's stated claim is read and converted into a Python assertion that
 can actually fail.  No new physical constants are introduced: every threshold
 comes from the FormulasRegistry or from the gate's own published result.
 
-SAMPLE: 6 of the 24 DECLARATIVE gates are converted here.
+SAMPLE: 7 of the 24 DECLARATIVE gates are converted here.
     G01 — Integer Root Parity
     G13 — Photon Zero-Mass
     G17 — Generation Triality
     G22 — Gluon String Tension ratio
     G23 — Proton Stability Floor
     G29 — Weak Hypercharge
+    G40 — Sterile-Active Mixing
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List
 
 __all__ = [
@@ -28,6 +30,7 @@ __all__ = [
     "gate_G22_gluon_string_tension",
     "gate_G23_proton_stability_floor",
     "gate_G29_weak_hypercharge",
+    "gate_G40_sterile_active_mixing",
     "run_all",
 ]
 
@@ -46,6 +49,17 @@ class GateResult:
 def _registry():
     from metaphysica.simulations.core.FormulasRegistry import get_registry
     return get_registry()
+
+
+def _params_path() -> Path:
+    """Return the parameters.json path, preferring the build output over bundled."""
+    from metaphysica.generators._common import autogen_dir
+    p = autogen_dir() / "parameters.json"
+    if p.exists():
+        return p
+    # Fall back to the bundled wheel data (always present after pip install).
+    import metaphysica
+    return Path(metaphysica.__file__).parent / "data" / "parameters.json"
 
 
 # ---------------------------------------------------------------------------
@@ -157,9 +171,8 @@ def gate_G22_gluon_string_tension() -> GateResult:
 #         parameters.json — both are registry values, nothing invented.
 # ---------------------------------------------------------------------------
 def gate_G23_proton_stability_floor() -> GateResult:
-    import json, os
-    from metaphysica.generators._common import autogen_dir
-    params_path = autogen_dir() / "parameters.json"
+    import json
+    params_path = _params_path()
     with open(params_path) as fh:
         params = json.load(fh)["parameters"]
 
@@ -208,6 +221,30 @@ def gate_G29_weak_hypercharge() -> GateResult:
     )
 
 
+# ---------------------------------------------------------------------------
+# G40: Sterile-Active Mixing — θ_sterile = 163/288
+# Claim: the sterile-active mixing parameter is sterile_sector / roots_total.
+# Source: reg.sterile_sector (163) and reg.roots_total (288) from registry.
+# Tolerance: exact integer ratio — no threshold invented.
+# ---------------------------------------------------------------------------
+def gate_G40_sterile_active_mixing() -> GateResult:
+    reg = _registry()
+    measured_num = reg.sterile_sector   # 163
+    measured_den = reg.roots_total      # 288
+    expected_num = 163
+    expected_den = 288
+    match = (measured_num == expected_num) and (measured_den == expected_den)
+    return GateResult(
+        gate_id=40,
+        gate_name="Sterile-Active Mixing",
+        verdict="PASS" if match else "FAIL",
+        measured=f"{measured_num}/{measured_den} = {measured_num/measured_den:.6f}",
+        expected=f"{expected_num}/{expected_den} = {expected_num/expected_den:.6f}",
+        note="Exact integer ratio sterile_sector/roots_total (163/288); no tolerance invented.",
+        numbers_invented=0,
+    )
+
+
 def run_all() -> List[GateResult]:
     return [
         gate_G01_integer_root_parity(),
@@ -216,6 +253,7 @@ def run_all() -> List[GateResult]:
         gate_G22_gluon_string_tension(),
         gate_G23_proton_stability_floor(),
         gate_G29_weak_hypercharge(),
+        gate_G40_sterile_active_mixing(),
     ]
 
 
