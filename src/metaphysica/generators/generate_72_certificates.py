@@ -392,8 +392,24 @@ def _load_registry_params():
 # anchor. kind: 'sigma' (|v-exp|/unc < max_sigma) or 'lower_bound'
 # (v > bound) or 'rel' (|v-exp|/exp < rel_tol).
 GATE_EVAL_SPECS = {
+    # R6 ruling (2026-08-25): G12 converts with the PDG uncertainty and NO
+    # theory-uncertainty buffer -- an invented tolerance sized to admit the
+    # miss would be the fake-pass disease. The framework's sin2_theta_W_pred
+    # (0.23190) sits ~17 sigma from PDG (0.23122 +/- 0.00004), so this gate
+    # reads COMPUTED_FAIL until a *cited* theory uncertainty exists. An
+    # honest FAIL outranks a declarative shrug.
+    12: {"path": "constants.sin2_theta_W_pred", "kind": "sigma",
+         "exp": 0.23122, "unc": 0.00004, "max_sigma": 3.0,
+         "source": "PDG 2024 sin2(theta_W) MS-bar at M_Z; no theory buffer "
+                   "(R6 ruling -- fails honestly pending a cited theory unc)"},
     23: {"path": "proton_decay.lifetime_years", "kind": "lower_bound",
          "bound": 2.4e34, "source": "Super-K p->e+pi0 bound (PDG 2024)"},
+    # R7 ruling (2026-08-25): the vacuous "< 1.0" threshold is replaced by
+    # the PDG first-row unitarity measurement -- two-sided and live (the
+    # measured sum is itself ~2 sigma below 1: the Cabibbo-angle anomaly).
+    36: {"path": "ckm.unitarity_row1", "kind": "sigma",
+         "exp": 0.9985, "unc": 0.0007, "max_sigma": 3.0,
+         "source": "PDG 2024 first-row CKM unitarity 0.9985 +/- 0.0007"},
     27: {"multi": [
             ("neutrino.theta_12_pred", 33.41, 0.75),
             ("neutrino.theta_13_pred", 8.63, 0.11),

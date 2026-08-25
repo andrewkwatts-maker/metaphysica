@@ -94,8 +94,10 @@ OBSERVABLE_GROUPS: Dict[str, List[str]] = {
     #   gap (delta_w_mirror 10^13 too small to actually shift S8) is honestly
     #   documented in cosmological_tensions.py — the returned value collapses
     #   to the baseline anchor, so surfacing it here generates a spurious
-    #   shadow with the canonical prediction s8_pm_predicted = 0.803. Excluded
-    #   as a documented_alternative per T1.6 honest-accounting precedent.
+    #   shadow with the canonical prediction s8_pm_predicted (~0.815 after
+    #   the R2 growth-ODE ruling replaced the retired 5.1% exponential).
+    #   Excluded as a documented_alternative per T1.6 honest-accounting
+    #   precedent.
     "S8": [
         "cosmology.s8_pm_predicted",
     ],
@@ -267,7 +269,12 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "geometry.H0_early": (DISTINCT, "early-universe duplicate"),
     "desi.H0": (DISTINCT, "DESI early-universe anchor"),
     "cosmology.H0_late_evolved": (MEMBER, "late-time H0"),
-    "cosmology.H0_baseline_km_s_Mpc": (MEMBER, "late-time SH0ES baseline"),
+    "cosmology.H0_baseline_km_s_Mpc": (DISTINCT,
+        "R4 ruling (2026-08-25): this is the SH0ES anchor (73.04) restated "
+        "under a cosmology.* name, not a rival derivation. An anchor is data "
+        "-- same ground as desi.S8 / planck.S8 / bounds.sum_m_nu_upper. "
+        "Keeping it in the group manufactured self-agreement rows "
+        "(73.04-vs-73.04) and a phantom conflict against the honest 71.55."),
     "cosmology.H0_local": (MEMBER, "canonical framework late-time prediction, "
                                    "71.55 -- absent from the curated group"),
     "cosmology.H0_ricci_variant": (DISTINCT,
@@ -367,9 +374,12 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "neutrino.mass_sum": (MEMBER,
         "0.1012 eV -- the register 1.5 headline value, which had escaped "
         "token discovery (its name contains neither m_nu nor sum_m_nu). "
-        "Disagrees with the discovered sums geometry.sum_m_nu = 0.0817 and "
-        "spectral.sum_m_nu = 0.0598 by up to 69% -- three registered values "
-        "for one observable, the exact defect this ledger exists to surface."),
+        "Disagrees with the discovered sums geometry.sum_m_nu = 0.0817 "
+        "(the R5 canonical headline) and spectral.sum_m_nu = 0.0625 (the "
+        "spectral cross-check, self-consistent after the R5 chain audit "
+        "replaced a hardcoded m1 with the formula's own output) -- three "
+        "registered values for one observable, the exact defect this "
+        "ledger exists to surface."),
 }
 
 

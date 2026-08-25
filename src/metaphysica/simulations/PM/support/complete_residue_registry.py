@@ -399,17 +399,32 @@ def _make_registry() -> Dict[int, SpectralResidue]:
 
     # PM prediction for lightest neutrino mass
     # From G2 spectral structure: m1 ~ k_gimel * (v^2/M_GUT) / sqrt(chi_eff)
+    #
+    # R5 CHAIN AUDIT (2026-08-25): this block previously computed
+    # m1_predicted = 0.00311 eV and then silently used a hardcoded
+    # m1 = 0.001 eV instead -- a 3.1x undercut of its own formula, which
+    # made the registered sum (0.0598) a number with no derivation behind
+    # it. The chain now uses its own output. Consequences, stated plainly:
+    #   - sum_m_nu moves 0.0598 -> 0.0625 eV (still < DESI LCDM 0.072)
+    #   - the sum is ~94% measured oscillation splittings (floor 0.0588)
+    #     plus the predicted m1; it is a prediction OF m1 CONVERTED to a
+    #     sum via NuFIT data, not a zero-parameter prediction of the sum
+    #   - M_GUT sensitivity: under the unresolved GUT-scale ruling
+    #     (register 2.2: 2.118e16 vs 6.325e15, 3.3x apart) the sum spans
+    #     0.0623 -> 0.0740 eV, CROSSING the DESI bound at the low-M_GUT
+    #     end. The canonical mass-sum headline is therefore the geometric
+    #     branch (see docs/RULINGS_ASSESSMENT.md R5); this chain remains
+    #     registered as the spectral cross-check.
     v_higgs = 246.22  # GeV
-    M_GUT = 2e16  # GeV
+    M_GUT = 2e16  # GeV (hardcoded pending the register 2.2 GUT-scale ruling)
     chi_eff = 144
-    m1_predicted = k_gimel * (v_higgs**2 / M_GUT) / np.sqrt(chi_eff) * 1e9  # Convert to eV
-    # ~ 0.001 eV (prediction for lightest)
+    m1_predicted = k_gimel * (v_higgs**2 / M_GUT) / np.sqrt(chi_eff) * 1e9  # eV
 
     # Mass eigenvalues (normal hierarchy)
-    m1 = 0.001  # eV - PM prediction for lightest
-    m2 = np.sqrt(Dm2_21 + m1**2)  # ~ 0.0086 eV
+    m1 = m1_predicted  # ~ 0.0031 eV -- the formula's actual output
+    m2 = np.sqrt(Dm2_21 + m1**2)  # ~ 0.0092 eV
     m3 = np.sqrt(Dm2_31 + m1**2)  # ~ 0.0502 eV
-    sum_m_nu = m1 + m2 + m3  # ~ 0.060 eV
+    sum_m_nu = m1 + m2 + m3  # ~ 0.0625 eV
 
     # Convert to GeV for registry
     neutrino_mass_data = [
@@ -882,7 +897,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             )
 
         if sum_nu:
-            sum_ev = sum_nu.mass_gev * 1e9 if sum_nu.mass_gev else 0.060
+            sum_ev = sum_nu.mass_gev * 1e9 if sum_nu.mass_gev else 0.0625
             registry.set_param(
                 path="spectral.sum_m_nu",
                 value=sum_ev,
@@ -892,10 +907,16 @@ class CompleteResidueRegistryV18(SimulationBase):
                 experimental_uncertainty=0.06,
                 experimental_source="Planck2018_cosmology",
                 metadata={
-                    "derivation": "Sum m_nu = m1 + m2 + m3",
+                    "derivation": "Sum m_nu = m1(predicted) + m2 + m3, with "
+                                  "m2, m3 from measured NuFIT splittings",
                     "units": "eV",
-                    "note": "Testable by CMB + LSS (DESI, Euclid)",
-                    "prediction": "~0.06 eV (normal hierarchy minimum)",
+                    "note": "Testable by CMB + LSS (DESI, Euclid). NOT "
+                            "zero-parameter: ~94% of the value is the "
+                            "oscillation floor (0.0588 eV); the framework "
+                            "contributes m1 only. M_GUT sensitivity spans "
+                            "0.0623-0.0740 eV (register 2.2). Canonical "
+                            "headline is geometry.sum_m_nu (R5 ruling).",
+                    "prediction": "~0.0625 eV (near normal-hierarchy floor)",
                     "eml_description": "EML: ops.add(ops.add(eml_vec('m_nu_1'), eml_vec('m_nu_2')), eml_vec('m_nu_3')) — total neutrino mass sum from G2 spectral residues 49+50+51"
                 }
             )
@@ -986,10 +1007,10 @@ class CompleteResidueRegistryV18(SimulationBase):
             "spectral.lambda_max": stats["lambda_max"],
             "spectral.gauge_boson_count": gauge_bosons,
             "spectral.fermion_count": fermions,
-            "spectral.m_nu_1": nu_1.mass_gev * 1e9 if nu_1 and nu_1.mass_gev else 0.001,
-            "spectral.m_nu_2": nu_2.mass_gev * 1e9 if nu_2 and nu_2.mass_gev else 0.0086,
+            "spectral.m_nu_1": nu_1.mass_gev * 1e9 if nu_1 and nu_1.mass_gev else 0.0031,
+            "spectral.m_nu_2": nu_2.mass_gev * 1e9 if nu_2 and nu_2.mass_gev else 0.0092,
             "spectral.m_nu_3": nu_3.mass_gev * 1e9 if nu_3 and nu_3.mass_gev else 0.0502,
-            "spectral.sum_m_nu": sum_nu.mass_gev * 1e9 if sum_nu and sum_nu.mass_gev else 0.060,
+            "spectral.sum_m_nu": sum_nu.mass_gev * 1e9 if sum_nu and sum_nu.mass_gev else 0.0625,
             "spectral.hierarchy": "normal",
             # Proton decay
             "spectral.tau_proton": tau_p.experimental_mass if tau_p else 1e34,

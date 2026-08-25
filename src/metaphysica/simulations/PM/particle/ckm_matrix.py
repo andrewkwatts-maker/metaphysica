@@ -288,6 +288,7 @@ class CKMMatrixSimulation(SimulationBase):
             "ckm.eta_wolfenstein",
             "ckm.delta_cp",
             "ckm.unitarity_test",
+            "ckm.unitarity_row1",
         ]
 
     @property
@@ -1240,6 +1241,26 @@ class CKMMatrixSimulation(SimulationBase):
                 eml_description="EML: ops.sub(eml_scalar(1.0), ops.add(ops.pow(eml_vec('ckm.V_ud'), eml_scalar(2.0)), ops.add(ops.pow(eml_vec('ckm.V_us'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_ub'), eml_scalar(2.0))))) — unitarity deviation = 1 − (|V_ud|²+|V_us|²+|V_ub|²)",
                 derivation_formula="ckm-unitarity",
                 no_experimental_value=True
+            ),
+            Parameter(
+                path="ckm.unitarity_row1",
+                name="CKM First-Row Sum |V_ud|^2+|V_us|^2+|V_ub|^2",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "First-row CKM sum, the quantity PDG measures as "
+                    "0.9985 +/- 0.0007 (the ~2-sigma Cabibbo-angle anomaly). "
+                    "Persisted for gate G36 (R7 ruling): the gate now checks "
+                    "this framework value against the PDG measurement, "
+                    "two-sided, instead of the vacuous '< 1.0' threshold."
+                ),
+                eml_description="EML: ops.add(ops.pow(eml_vec('ckm.V_ud'), eml_scalar(2.0)), ops.add(ops.pow(eml_vec('ckm.V_us'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_ub'), eml_scalar(2.0)))) — first-row CKM unitarity sum",
+                derivation_formula="ckm-unitarity",
+                experimental_bound=0.9985,
+                bound_type="central_value",
+                bound_source="PDG_2024_first_row_unitarity",
+                uncertainty=0.0007,
+                no_experimental_value=False,
             ),
         ]
 

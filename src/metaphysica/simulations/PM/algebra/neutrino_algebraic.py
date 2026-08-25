@@ -29,8 +29,11 @@ Key: all integer inputs (b₃=24, χ_eff=144, n_gen=3) and α_leak=1/√6 are
 topological invariants — ZERO free parameters.
 
 Status:
-    neutrino.theta13_derived  — DERIVED  (12% high of NuFIT, ~4σ given tight 1σ≈0.25°;
-                                           an order-of-magnitude prediction, not a precision fit)
+    neutrino.theta13_derived  — FALSIFIED (R1 ruling 2026-08-25: ~9σ from
+        NuFIT 6.0 given 1σ≈0.25°. Kept on the books labelled -- the
+        zero-parameter asin(1/6) candidate died honestly, which is the
+        gate system demonstrating it has teeth. Working headline is
+        particle.theta_13_deg = 8.669°.)
     neutrino.delta_CP_derived — DERIVED  (NO framing, -pi/2 = 270 deg;
         ~1.8 sigma from the NuFIT 6.0 NO best fit ~197 deg. NOTE: two
         sibling modules export different delta_CP values in different
@@ -414,15 +417,19 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
         return [
             Parameter(
                 path="neutrino.theta13_derived",
-                name="PMNS Reactor Angle theta_13 (Derived)",
+                name="PMNS Reactor Angle theta_13 (Falsified Candidate)",
                 units="degrees",
-                status="DERIVED",
+                status="FALSIFIED",
                 description=(
-                    f"PMNS reactor angle derived from E₇ ⊃ E₆×U(1) branching. "
-                    f"sin(θ₁₃) = α_leak/√(2 n_gen) = 1/6. "
-                    f"Derived: {_THETA13_DEG:.4f}°. "
-                    f"NuFIT 6.0 (NO): {_THETA13_NUFIT}° ± {_THETA13_1SIGMA}°. "
-                    f"Gap: ~12%; DERIVED approximation, zero free parameters."
+                    f"FALSIFIED (R1 ruling, 2026-08-25): sin(θ₁₃) = "
+                    f"α_leak/√(2 n_gen) = 1/6 gives {_THETA13_DEG:.4f}°, "
+                    f"~9σ from NuFIT 6.0 ({_THETA13_NUFIT}° ± "
+                    f"{_THETA13_1SIGMA}°). A zero-parameter prediction that "
+                    f"misses by 9σ is a falsification, not a tension -- the "
+                    f"row stays on the books as the framework's proof its "
+                    f"gates can kill an elegant candidate. Working headline: "
+                    f"particle.theta_13_deg = 8.669° (0.8σ); geometric "
+                    f"cross-check: geometry.theta_13 = 8.54° (0.4σ)."
                 ),
                 eml_description=(
                     "EML: ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0))) — "
@@ -461,12 +468,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             ),
             Parameter(
                 path="neutrino.sin_theta13_derived",
-                name="sin(theta_13) Derived",
+                name="sin(theta_13) Falsified Candidate",
                 units="dimensionless",
-                status="DERIVED",
+                status="FALSIFIED",
                 description=(
                     f"sin(θ₁₃) = α_leak/√(2 n_gen) = (1/√6)/√6 = 1/6 ≈ {_SIN_THETA13:.6f}. "
-                    "DERIVED from E₇ branching and G₂ generation counting."
+                    "FALSIFIED with its angle (R1 ruling): the exact rational "
+                    "1/6 is ~9σ from the measured sin θ₁₃ ≈ 0.149. Kept on "
+                    "the books labelled, per standing policy."
                 ),
                 eml_description=(
                     "EML: ops.div(eml_scalar(1.0), ops.mul(eml_scalar(6.0), eml_scalar(1.0))) — "

@@ -28,6 +28,7 @@ __all__ = [
     "gate_G22_gluon_string_tension",
     "gate_G23_proton_stability_floor",
     "gate_G29_weak_hypercharge",
+    "gate_G32_wz_gut_ratio",
     "gate_G40_sterile_active_mixing",
     "SEMANTIC_EVALUATORS",
     "run_all",
@@ -238,12 +239,44 @@ def gate_G40_sterile_active_mixing() -> GateResult:
     )
 
 
+
+# ---------------------------------------------------------------------------
+# G32: W/Z Mass Ratio -- sin^2(theta_W) = 3/8 at the GUT boundary
+# The gate's stated result is the exact group-theory value for SU(5)/SO(10)-
+# type embeddings AT UNIFICATION. R6 ruling (2026-08-25): assert the exact
+# rational against the registry's own GUT-scale value, no tolerance. The
+# claim must never be silently rebased to M_Z, where the advisory formula
+# (3/8)(1 - 2/24pi) = 0.365 vs 0.2312 was already falsified this cycle.
+# ---------------------------------------------------------------------------
+def gate_G32_wz_gut_ratio() -> GateResult:
+    import json
+    from metaphysica.generators._common import autogen_dir
+    with open(autogen_dir() / "parameters.json") as fh:
+        params = json.load(fh)["parameters"]
+    measured = params["gauge.sin2_theta_W_gut"]["value"]
+    expected = 3.0 / 8.0
+    return GateResult(
+        gate_id=32,
+        gate_name="W/Z Mass Ratio (GUT boundary)",
+        verdict="PASS" if measured == expected else "FAIL",
+        measured=measured,
+        expected=expected,
+        note=(
+            "gauge.sin2_theta_W_gut must be exactly 3/8 -- the group-theory "
+            "unification value. Pinned at the GUT scale by ruling; never "
+            "compare against M_Z data."
+        ),
+        numbers_invented=0,
+    )
+
+
 #: gate_id -> evaluator, consumed by generate_72_certificates.evaluate_gate
 #: as its semantic tier. Only gates whose stated claim reduces to an exact
 #: registry integer/ratio assertion belong here -- anything needing an
 #: invented tolerance stays DECLARATIVE (see docs/DECLARATIVE_GATE_STRATEGIES.md).
 SEMANTIC_EVALUATORS = {
     1: gate_G01_integer_root_parity,
+    32: gate_G32_wz_gut_ratio,
     13: gate_G13_photon_zero_mass,
     17: gate_G17_generation_triality,
     22: gate_G22_gluon_string_tension,
@@ -260,6 +293,7 @@ def run_all() -> List[GateResult]:
         gate_G22_gluon_string_tension(),
         gate_G23_proton_stability_floor(),
         gate_G29_weak_hypercharge(),
+        gate_G32_wz_gut_ratio(),
         gate_G40_sterile_active_mixing(),
     ]
 

@@ -2198,8 +2198,14 @@ class SimulationRunner:
                 status = "ESTABLISHED"
             elif source == "g2_geometry_v16_0":
                 status = "GEOMETRIC"
-            elif original_status in ("ESTABLISHED", "GEOMETRIC", "PREDICTED", "CALIBRATED"):
-                # Preserve explicitly set statuses
+            elif original_status in ("ESTABLISHED", "GEOMETRIC", "PREDICTED",
+                                     "CALIBRATED", "FALSIFIED", "VALIDATION"):
+                # Preserve explicitly set statuses. FALSIFIED is load-bearing:
+                # the R1 ruling marks dead candidates in the registry itself
+                # (falsified rows stay on the books, labelled), and this
+                # whitelist used to silently launder FALSIFIED back into
+                # DERIVED at export -- the label survived in the description
+                # while the machine-readable status lied.
                 status = original_status
             elif "calibrated" in param_data.get("description", "").lower():
                 status = "CALIBRATED"
