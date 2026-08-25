@@ -438,8 +438,38 @@ def _eval_registry_spec(spec, registry):
             "status": "COMPUTED_PASS" if all(c["ok"] for c in checks) else "COMPUTED_FAIL"}
 
 
+def _eval_semantic(gate_id):
+    """Tier 0: exact semantic assertion from the Strategy-A evaluators.
+
+    Only gates whose stated claim is an exact registry integer/ratio live
+    here (docs/DECLARATIVE_GATE_STRATEGIES.md, Strategy A: 7 gates, zero
+    invented thresholds, all mutation-proof). Consulted before the other
+    tiers because it asserts the gate's own claim verbatim.
+    """
+    try:
+        from metaphysica.simulations.PM.validation.declarative_strategies.strategy_a_semantic import SEMANTIC_EVALUATORS
+    except ImportError:
+        return None
+    evaluator = SEMANTIC_EVALUATORS.get(gate_id)
+    if evaluator is None:
+        return None
+    r = evaluator()
+    return {
+        "tier": "semantic",
+        "measured": r.measured,
+        "expected": r.expected,
+        "numbers_invented": r.numbers_invented,
+        "note": r.note,
+        "status": "COMPUTED_PASS" if r.verdict == "PASS" else "COMPUTED_FAIL",
+    }
+
+
 def evaluate_gate(gate_id, verif, registry):
     """Return the evaluation block for a verifiable gate."""
+    # Tier 0: exact semantic assertion of the gate's own claim.
+    semantic = _eval_semantic(gate_id)
+    if semantic is not None:
+        return semantic
     # Tier 2 first: live-registry comparison is the stronger check.
     spec = GATE_EVAL_SPECS.get(gate_id)
     if spec:

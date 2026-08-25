@@ -28,6 +28,8 @@ __all__ = [
     "gate_G22_gluon_string_tension",
     "gate_G23_proton_stability_floor",
     "gate_G29_weak_hypercharge",
+    "gate_G40_sterile_active_mixing",
+    "SEMANTIC_EVALUATORS",
     "run_all",
 ]
 
@@ -208,6 +210,48 @@ def gate_G29_weak_hypercharge() -> GateResult:
     )
 
 
+
+# ---------------------------------------------------------------------------
+# G40: Sterile-Active Mixing — theta_sterile = 163/288
+# Claim: the sterile-active mixing fraction is the exact registry ratio
+# barbelo_modulus / roots_total = 163/288 = 0.56597...
+# Source: both integers are registry architectural constants; the check is
+# the exact rational, no tolerance. (Flagged as convertible in the strategy
+# report's own errata -- it was left out of the original 6-gate sample only
+# to keep the sample diverse.)
+# ---------------------------------------------------------------------------
+def gate_G40_sterile_active_mixing() -> GateResult:
+    reg = _registry()
+    sterile = reg.barbelo_modulus     # 163
+    total = reg.roots_total           # 288
+    measured = sterile / total
+    expected = 163.0 / 288.0
+    ok = (sterile == 163 and total == 288 and measured == expected)
+    return GateResult(
+        gate_id=40,
+        gate_name="Sterile-Active Mixing",
+        verdict="PASS" if ok else "FAIL",
+        measured=measured,
+        expected=expected,
+        note="barbelo_modulus/roots_total must be exactly 163/288.",
+        numbers_invented=0,
+    )
+
+
+#: gate_id -> evaluator, consumed by generate_72_certificates.evaluate_gate
+#: as its semantic tier. Only gates whose stated claim reduces to an exact
+#: registry integer/ratio assertion belong here -- anything needing an
+#: invented tolerance stays DECLARATIVE (see docs/DECLARATIVE_GATE_STRATEGIES.md).
+SEMANTIC_EVALUATORS = {
+    1: gate_G01_integer_root_parity,
+    13: gate_G13_photon_zero_mass,
+    17: gate_G17_generation_triality,
+    22: gate_G22_gluon_string_tension,
+    23: gate_G23_proton_stability_floor,
+    29: gate_G29_weak_hypercharge,
+    40: gate_G40_sterile_active_mixing,
+}
+
 def run_all() -> List[GateResult]:
     return [
         gate_G01_integer_root_parity(),
@@ -216,6 +260,7 @@ def run_all() -> List[GateResult]:
         gate_G22_gluon_string_tension(),
         gate_G23_proton_stability_floor(),
         gate_G29_weak_hypercharge(),
+        gate_G40_sterile_active_mixing(),
     ]
 
 
