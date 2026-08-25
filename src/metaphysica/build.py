@@ -76,6 +76,7 @@ STANDALONE_STEPS = {
     "Run reflection-positivity gate",
     "Run candidate closure gate",
     "Run dark-energy plane gate",
+    "Evaluate topological cross-shadow coupling",
     "Copy bundled website templates",
     "Build named per-category certificates",
 }
@@ -113,6 +114,16 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Run dark-energy plane gate",
      [sys.executable, "-m",
       "metaphysica.simulations.PM.validation.de_plane_gate"],
+     False),
+    # Stage 4 of the action-layer plan: evaluates the topological term at
+    # the stabilised (theta = 90 deg) vacuum by two independent routes. It
+    # reads only bridge_geometry + g2_differential, so like the gates above
+    # it needs no simulation output -- but unlike them it is a physics
+    # RESULT, and it sits here so the answer is captured as an artifact
+    # rather than printed and lost, which is what happened until now.
+    ("Evaluate topological cross-shadow coupling",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.gauge.topological_terms"],
      False),
 
     # ── Stage 0: copy bundled website templates so the JS loaders have a home ──

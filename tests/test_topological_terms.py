@@ -186,3 +186,142 @@ def test_module_does_not_overclaim_topology():
     assert "NOT A TOPOLOGICAL INVARIANT" in doc.upper()
     assert "compact G2 manifold" in doc
     assert "NOT derived" in doc  # the bridge-to-channel assignment
+
+
+# ── the Stage-4 report ───────────────────────────────────────────────────────
+#
+# The evaluation was computable long before it was captured: main() printed
+# the answer and the build kept no artifact, so the one result Priority 1 was
+# gated on left no record. These tests defend the artifact, and -- more
+# importantly -- prove its checks can come out FAIL. A report that always
+# writes PASS is the fake-pass disease in report form.
+
+
+@pytest.fixture(scope="module")
+def report(tmp_path_factory):
+    import json
+
+    from metaphysica.simulations.PM.gauge.topological_terms import write_report
+
+    out = write_report(
+        out_path=tmp_path_factory.mktemp("flux") / "topological_flux.json"
+    )
+    return json.loads(out.read_text(encoding="utf-8"))
+
+
+def test_report_schema(report):
+    assert report["schema_version"] == 1
+    assert report["degrees"] == [3, 2, 2]
+    assert report["domain_dim"] == 7
+    assert sum(report["degrees"]) == report["domain_dim"], "term must be top-degree"
+    assert report["count"] == len(report["checks"])
+    assert report["n_pass"] + report["n_fail"] == report["count"]
+
+
+def test_report_records_the_affirmative_answer(report):
+    """The question Priority 1 was gated on, and its scope."""
+    assert report["verdict"] == "NONZERO_INTEGRAND_FLAT_R7"
+    assert abs(report["density_via_epsilon"]) > 1e-9
+    assert report["n_fail"] == 0, [c for c in report["checks"]
+                                   if c["status"] == "FAIL"]
+
+
+def test_report_carries_the_anti_overclaim_scope(report):
+    """Scoping the claim is part of the deliverable, not a caveat bolted on."""
+    assert "not a topological invariant" in report["scope"]
+    assert "compact G2 manifold" in report["not_established"]
+    assert "modelling input" in report["not_established"]
+
+
+def test_report_states_a_kill_condition_in_advance(report):
+    """42 of 210 channels are allowed, so the rule can rule the physical
+    configuration out -- that is what makes this falsifiable rather than
+    merely non-zero."""
+    assert "dead" in report["kill_condition"]
+    assert "42" in report["kill_condition"]
+
+
+def test_path_a_is_blocked_not_faked(report):
+    """Path A is degree-valid and computable, but no 13D C_3 is derived.
+
+    The report must say so rather than carry a number produced from an
+    invented ansatz -- the Kahler-Ricci ruling applies here too. If a C_3
+    on the 13D shadow is ever derived, this status changes and the
+    Path-A-vs-B ruling becomes decidable on computed evidence.
+    """
+    path_a = report["path_a_boundary13"]
+    assert sum(path_a["degrees"]) == path_a["domain_dim"] == 13
+    assert path_a["degree_valid"] is True
+    assert path_a["status"] == "BLOCKED_ON_UNDERIVED_INPUT"
+    assert "inventing" in path_a["blocker"]
+    assert path_a["unblocks_when"]
+
+
+def test_every_check_has_a_substantive_note(report):
+    for check in report["checks"]:
+        assert check["status"] in ("PASS", "FAIL")
+        assert len(check["note"]) > 20, f"{check['id']} has no substantive note"
+
+
+def test_report_counts_are_computed_not_asserted(tmp_path, monkeypatch):
+    """Mutation: break the kernel and the report must say so.
+
+    Without this, n_pass = 5 could be a literal and the artifact would keep
+    announcing success against a broken evaluation -- exactly the failure
+    mode the certificate layer was cured of.
+    """
+    import json
+
+    import metaphysica.simulations.PM.gauge.topological_terms as tt
+
+    real = tt.cs7_result
+
+    def dead_coupling(f_a, f_b, **kwargs):
+        res = real(f_a, f_b, **kwargs)
+        return tt.CS7Result(0.0, 0.0, True, 0.0, res.volume, 0.0)
+
+    monkeypatch.setattr(tt, "cs7_result", dead_coupling)
+    out = tt.write_report(out_path=tmp_path / "mutated.json")
+    payload = json.loads(out.read_text(encoding="utf-8"))
+
+    statuses = {c["id"]: c["status"] for c in payload["checks"]}
+    assert statuses["coupling_nonzero_at_vacuum"] == "FAIL", (
+        "a zero coupling must be reported as FAIL -- if this passes, the "
+        "report cannot distinguish the affirmative answer from a null one"
+    )
+    assert payload["n_fail"] >= 1
+    assert payload["n_pass"] == payload["count"] - payload["n_fail"]
+
+
+def test_selection_rule_check_can_fail(tmp_path, monkeypatch):
+    """Mutation on the other independent check: a wrong channel count must
+    trip the rule, not be waved through."""
+    import json
+
+    import metaphysica.simulations.PM.gauge.topological_terms as tt
+
+    monkeypatch.setattr(
+        tt, "allowed_channels",
+        lambda g2=None: {"n_disjoint_placements": 210, "n_allowed": 41,
+                         "selection_rule": "mutated", "channels": []},
+    )
+    payload = json.loads(
+        tt.write_report(out_path=tmp_path / "m2.json").read_text(encoding="utf-8")
+    )
+    statuses = {c["id"]: c["status"] for c in payload["checks"]}
+    assert statuses["selection_rule_42_of_210"] == "FAIL"
+
+
+def test_main_exits_nonzero_when_a_check_fails(tmp_path, monkeypatch):
+    """The build must trip on a failing evaluation, not log it and continue."""
+    import metaphysica.simulations.PM.gauge.topological_terms as tt
+
+    monkeypatch.setenv("METAPHYSICA_OUT", str(tmp_path))
+    assert tt.main() == 0
+
+    monkeypatch.setattr(
+        tt, "allowed_channels",
+        lambda g2=None: {"n_disjoint_placements": 210, "n_allowed": 0,
+                         "selection_rule": "mutated", "channels": []},
+    )
+    assert tt.main() == 1, "a failing check must make the build step fail"
