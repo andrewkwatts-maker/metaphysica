@@ -215,6 +215,26 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
         if len(refs) > top:
             print(f"          ... and {len(refs) - top} more distinct names")
 
+    # Agreement reached WITH unresolved references is agreement by luck: the
+    # expression was evaluated with 0.0 standing in for a name it needed, and
+    # still landed within tolerance. Reported rather than reclassified --
+    # moving these out of AGREE unilaterally would change the headline rate,
+    # which is the author's call -- but leaving them silent would let a
+    # coincidence count as a confirmation.
+    lucky = [r for r in results
+             if str(r.get("status", "")).startswith("AGREE")
+             and r.get("missing_refs")]
+    if lucky:
+        print()
+        print(f"  [DEBUG] {len(lucky)} row(s) AGREE despite unresolved "
+              f"references -- agreement reached with 0.0 substituted for a "
+              f"needed name, so it may be coincidental:")
+        for rec in lucky[:top]:
+            names = ", ".join(rec.get("missing_refs", [])[:3])
+            print(f"          {rec.get('path','?')}  (missing: {names})")
+        if len(lucky) > top:
+            print(f"          ... and {len(lucky) - top} more")
+
 
 def _rel_error(evaluated: float, registered: float) -> Optional[float]:
     """Relative error between evaluated and registered values."""
@@ -235,6 +255,20 @@ def _classify(evaluated: float, registered: float, tolerance: float,
     if rel is not None and rel <= loose:
         return "AGREE_LOOSE", f"within {loose:.0%}"
 
+    # Unresolved references come FIRST among the disagreement diagnostics.
+    #
+    # An expression evaluated with 0.0 substituted for a missing name produces
+    # a meaningless number, and whatever pattern that number happens to form
+    # is an artifact rather than a diagnosis. gauge.qcd_canonical is the case
+    # that showed it: ops.inv(eml_vec('alpha_s_inv')) with alpha_s_inv absent
+    # becomes inv(0) = 1e300, whose ratio to the registered 1 is exactly
+    # 10^300 -- so it was filed as "off by 10^300", a unit error, when the
+    # actual fault is that alpha_s_inv is not in the registry at all.
+    # Diagnosing the artifact instead of the cause sends the reader hunting
+    # for a scale factor that does not exist.
+    if missing_refs:
+        return "DISAGREE_MISSING_CTX", f"missing: {', '.join(missing_refs[:3])}"
+
     # sign-flip: |evaluated + registered| ≈ 0  ⇒ evaluated == −registered
     if registered != 0 and abs(evaluated + registered) / abs(registered) <= tolerance:
         return "DISAGREE_SIGN", "sign flip — magnitudes match"
@@ -248,10 +282,6 @@ def _classify(evaluated: float, registered: float, tolerance: float,
                 nearest = round(log10)
                 if abs(log10 - nearest) < 0.02 and nearest != 0:
                     return "DISAGREE_SCALE", f"off by 10^{nearest}"
-
-    # missing-context: evaluator flagged unresolved refs
-    if missing_refs:
-        return "DISAGREE_MISSING_CTX", f"missing: {', '.join(missing_refs[:3])}"
 
     return "DISAGREE", f"rel_err={rel*100:.2f}%" if rel is not None else "no rel_err"
 
