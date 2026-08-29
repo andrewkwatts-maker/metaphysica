@@ -95,3 +95,9 @@ Cargo.lock
 # once. The snapshots under scripts/archive/ are kept deliberately, as
 # provenance for migrations that have already happened.
 /scripts/_audit_*.json
+
+# Codemod backups. scripts/codemod_b3_leaf_inject.py writes a .bak beside
+# every file it rewrites; 23 of them were committed by accident and sat in
+# src/ for months, shadowing live modules in greps and file listings. Git
+# history is the backup -- these never need tracking.
+*.bak
