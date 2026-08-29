@@ -1118,6 +1118,67 @@ class SimulationResult:
     formulas_registered: int = 0
 
 
+def _attach_module_references(data: dict) -> None:
+    """Give every formula the reference ids its own module registered.
+
+    ``Formula.references`` exists in the schema and no simulation ever set
+    it, so all 230 bibliography entries were orphans -- present in
+    references.json, cited by nothing. A bibliography nothing points at
+    cannot be checked for relevance and cannot answer "what backs this
+    number?".
+
+    Both sides already record their originating module: references carry
+    ``source_simulation`` (stamped in _collect_references) and formulas carry
+    it too. Joining on it invents nothing -- it surfaces the association the
+    author made by registering the paper inside that module.
+
+    This is MODULE-LEVEL attribution and is flagged as such on each formula
+    via ``references_are_module_level``. It states "this formula comes from a
+    module that declared these papers", NOT "this paper proves this line".
+    A simulation that sets Formula.references explicitly keeps its own,
+    finer-grained list; the fallback never overwrites one.
+    """
+    formulas = data.get("formulas") or {}
+    references = data.get("references") or []
+    by_sim: dict = {}
+    for ref in references:
+        if not isinstance(ref, dict):
+            continue
+        sim, rid = ref.get("source_simulation"), ref.get("id")
+        if sim and rid:
+            by_sim.setdefault(sim, []).append(rid)
+
+    for formula in formulas.values():
+        if not isinstance(formula, dict):
+            continue
+        explicit = [r for r in (formula.get("references") or []) if r]
+        if explicit:
+            formula["references"] = explicit
+            formula["references_are_module_level"] = False
+            continue
+        formula["references"] = list(by_sim.get(formula.get("source_simulation"), []))
+        formula["references_are_module_level"] = bool(formula["references"])
+
+    # Parameters too. Some modules register references and produce no
+    # formulas at all -- geometric_anchors is one, and its three papers
+    # (Kovalev's twisted connected sums, Corti-Haskins-Nordstrom-Pacini,
+    # and the internal four-face note) stayed orphaned when only formulas
+    # were joined. Those modules still publish parameters, which carry the
+    # same source_simulation, so the same join reaches them.
+    parameters = data.get("parameters") or {}
+    for param in parameters.values():
+        if not isinstance(param, dict):
+            continue
+        explicit = [r for r in (param.get("references") or []) if r]
+        if explicit:
+            param["references"] = explicit
+            param["references_are_module_level"] = False
+            continue
+        sim = param.get("source_simulation") or param.get("source")
+        param["references"] = list(by_sim.get(sim, []))
+        param["references_are_module_level"] = bool(param["references"])
+
+
 class SimulationRunner:
     """
     Orchestrates execution of all v16 simulations in topological order.
@@ -2516,6 +2577,7 @@ class SimulationRunner:
 
         # 1. Formulas
         if 'formulas' in data:
+            _attach_module_references(data)
             formulas_data = {
                 'version': data.get('metadata', {}).get('version', '23.0'),
                 'count': len(data['formulas']),

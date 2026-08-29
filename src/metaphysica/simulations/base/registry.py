@@ -1448,6 +1448,14 @@ class PMRegistry:
                 'eml_tree_compact': getattr(f, 'eml_tree_compact', None),
                 'triple_status': getattr(f, 'triple_status', ''),
                 'value': getattr(f, 'value', None),
+                # Formula.references exists in the schema but was never
+                # populated by any simulation, which is why all 230
+                # bibliography entries were orphans -- defined, cited by
+                # nothing. Explicit per-formula ids are carried through here;
+                # the module-level fallback is applied downstream, where the
+                # reference list is actually in scope (see
+                # run_all_simulations._attach_module_references).
+                'references': list(getattr(f, 'references', None) or []),
                 'source_simulation': entry.source,
                 'timestamp': entry.timestamp,
             }

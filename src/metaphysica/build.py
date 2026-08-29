@@ -213,6 +213,13 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     # Dead-link check: every {{formula:id}} / formula_id / formula_refs
     # reference in sections must resolve in formulas.json (audit found 4
     # broken ids shipping silently).
+    # Bibliography health: orphaned entries, duplicate ids, missing
+    # identifiers. Distinct from the step below, which checks that formula
+    # IDS resolve -- this checks that the PAPERS are connected to claims.
+    ("Audit reference integrity",
+     [sys.executable, "-m",
+      "metaphysica.generators.generate_reference_integrity"],
+     False),
     ("Validate formula-id references resolve",
      [sys.executable, "-m", "metaphysica.generators.generate_reference_check"],
      False),
