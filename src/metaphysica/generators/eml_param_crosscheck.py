@@ -138,6 +138,7 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
         return
     missing_attr: Counter = Counter()
     missing_name: Counter = Counter()
+    prose_fields: list = []
     other: Counter = Counter()
     for rec in errs:
         reason = str(rec.get("reason", ""))
@@ -148,6 +149,17 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
         m = _re.search(r"name '([A-Za-z_0-9]+)' is not defined", reason)
         if m:
             missing_name[m.group(1)] += 1
+            continue
+        if "must start with" in reason:
+            # The field holds a prose description, not an EML expression --
+            # there is nothing here that could evaluate. Named separately
+            # because "did not evaluate" implies a broken expression, and
+            # these have no expression at all. They stay counted as
+            # failures rather than skips: a prose-filled eml_description is
+            # itself a defect, and moving them out of the denominator is
+            # exactly the accounting that inflated the agreement rate
+            # before the 2026-08 audit.
+            prose_fields.append(rec.get("path", "?"))
             continue
         other[reason.split(":")[-1].strip()[:70] or "unknown"] += 1
 
@@ -167,6 +179,14 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
               f"the symbol is used but never bound:")
         for name, count in missing_name.most_common(top):
             print(f"          {count:3d}x {name}")
+    if prose_fields:
+        print(f"    - {len(prose_fields):3d} eml_description holds PROSE, not an EML "
+              f"expression -- there is no expression to evaluate; the field "
+              f"needs one written (still counted as a failure, not a skip):")
+        for path in prose_fields[:top]:
+            print(f"          {path}")
+        if len(prose_fields) > top:
+            print(f"          ... and {len(prose_fields) - top} more")
     if other:
         n = sum(other.values())
         print(f"    - {n:3d} other:")
