@@ -24,6 +24,7 @@ import pytest
 from metaphysica.generators.eml_render_validity import (
     REASON_OK,
     classify_render,
+    classify_source,
     tree_operator_count,
 )
 
@@ -71,6 +72,69 @@ def test_unresolved_internal_name_is_withheld():
 def test_empty_and_missing_are_withheld():
     assert classify_render(_renders(latex="   "), _OP_TREE)[0] is False
     assert classify_render({"html": "<svg/>"}, _OP_TREE)[0] is False
+
+
+# ── source diagnosis: name the cause, not the symptom ───────────────────────
+
+
+_COMMENTED_W0 = (
+    "# w0 derivation in EML operator tree:\n"
+    "# w0 = ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))\n"
+    "#    = ops.div(ops.neg(eml_scalar(23.0)), b3_leaf())"
+)
+
+
+def test_commented_out_source_is_diagnosed_by_cause():
+    """The real cause of all twelve 'parse errors': the whole expression is
+    a comment block. 'invalid syntax on line 2' sent readers hunting for a
+    typo that does not exist."""
+    ok, reason = classify_source(_COMMENTED_W0)
+    assert ok is False
+    assert "commented out" in reason
+    assert "2 candidate expressions" in reason
+
+
+def test_diagnosis_counts_candidates_so_the_author_can_choose():
+    one = "# only = ops.mul(eml_scalar(2.0), eml_scalar(3.0))"
+    ok, reason = classify_source(one)
+    assert ok is False
+    assert "1 candidate expression" in reason
+    assert "2 candidate" not in reason
+
+
+def test_diagnosis_refuses_to_pick_the_canonical_form():
+    """Eleven of the twelve carry 2-6 alternative or intermediate forms.
+    Choosing among them is an authoring decision, and the message must say
+    so rather than the generator silently uncommenting one."""
+    _, reason = classify_source(_COMMENTED_W0)
+    assert "authoring decision" in reason
+    assert "not chosen here" in reason
+
+
+def test_commented_block_with_no_expression_is_reported_separately():
+    ok, reason = classify_source("# just a note, no code here")
+    assert ok is False
+    assert "no recognisable ops.* call" in reason
+
+
+def test_real_expression_passes_source_check():
+    ok, reason = classify_source("ops.add(eml_scalar(1.0), eml_scalar(2.0))")
+    assert ok is True and reason == REASON_OK
+
+
+def test_expression_with_a_leading_comment_line_still_passes():
+    """Only an ENTIRELY commented block is the defect. A comment above real
+    code is normal, and rejecting it would withhold working diagrams."""
+    ok, _ = classify_source(
+        "# explanatory note\nops.add(eml_scalar(1.0), eml_scalar(2.0))"
+    )
+    assert ok is True
+
+
+def test_empty_source_is_not_a_parse_error():
+    ok, reason = classify_source("")
+    assert ok is False
+    assert "no EML expression" in reason
 
 
 # ── the operator criterion (structural, not a tuned number) ─────────────────

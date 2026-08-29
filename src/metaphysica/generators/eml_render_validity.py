@@ -45,6 +45,7 @@ __all__ = [
     "REASON_OK",
     "tree_operator_count",
     "classify_render",
+    "classify_source",
     "REQUIRE_OPERATOR",
 ]
 
@@ -86,6 +87,61 @@ _INTERNAL_LEAF_RE = re.compile(r"^[A-Za-z0-9_\\{}^]+_leaf$")
 
 #: Any rendered payload containing this is an error message, not content.
 _ERROR_MARKERS = ("parse error", "traceback", "nameerror", "syntaxerror")
+
+
+#: Recognises an EML operator call inside a line of prose or comment.
+_OPS_CALL_RE = re.compile(r"ops\.[A-Za-z_]+\s*\(")
+
+
+def classify_source(expr: str) -> Tuple[bool, str]:
+    """Diagnose the SOURCE expression before it is handed to the parser.
+
+    Worth doing separately because the parser's own message is useless to
+    whoever has to fix it. All twelve formulas that shipped
+    ``<parse error: invalid syntax (<unknown>, line 2)>`` have the same
+    cause, and it is not a syntax error in any meaningful sense: their
+    ``eml_tree_str`` is a **comment block**. The expression is right there,
+    but every line begins with ``#``, so the parser sees no code::
+
+        # w0 derivation in EML operator tree:
+        # w0 = ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))
+        #    = ops.div(ops.neg(eml_scalar(23.0)), b3_leaf())
+
+    Reporting "invalid syntax on line 2" sends the reader hunting for a
+    typo. Reporting "every line is commented out, 2 candidate expressions
+    inside" names the fix.
+
+    This deliberately does NOT uncomment anything. Only one of the twelve
+    carries a single candidate; the rest hold two to six alternative or
+    intermediate forms, and choosing among them is an authoring decision
+    about which form is canonical -- not something a generator should make
+    silently on the author's behalf.
+    """
+    if not expr or not expr.strip():
+        return False, "no EML expression"
+
+    body = expr.split("EML:", 1)[-1] if expr.startswith("EML:") else expr
+    lines = [ln.strip() for ln in body.splitlines() if ln.strip()]
+    if not lines:
+        return False, "no EML expression"
+
+    if all(ln.startswith("#") for ln in lines):
+        n_candidates = sum(1 for ln in lines if _OPS_CALL_RE.search(ln))
+        if n_candidates:
+            return False, (
+                f"eml_tree_str is entirely commented out -- the expression "
+                f"exists but every line starts with '#', so the parser sees "
+                f"no code ({n_candidates} candidate expression"
+                f"{'s' if n_candidates != 1 else ''} inside). Uncomment the "
+                f"canonical form; which one is canonical is an authoring "
+                f"decision, so it is not chosen here"
+            )
+        return False, (
+            "eml_tree_str is entirely commented out and contains no "
+            "recognisable ops.* call"
+        )
+
+    return True, REASON_OK
 
 
 def _walk_kinds(node: Any, out: list) -> None:

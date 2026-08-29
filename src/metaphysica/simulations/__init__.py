@@ -149,10 +149,35 @@ def _bind_output_dir():
                 # Check via an inode/realpath comparison.
                 if legacy.resolve() == real:
                     return
-                # Real directory → don't clobber, but warn.
-                print(f"[metaphysica] WARNING: {legacy} exists as a real dir; "
-                      f"sims may write here instead of {real}", file=_sys.stderr)
-                return
+                # Points somewhere else. Distinguish a stale LINK from a real
+                # directory: a junction reports is_symlink() == False on
+                # Windows, so it used to land in the "real dir" branch below
+                # and only ever warn. A junction left behind by an earlier run
+                # in a temp dir therefore survived indefinitely, and anything
+                # writing through the legacy path landed in that dead temp
+                # directory instead of the build output -- silently, which is
+                # the same stale-artifact trap the output-root bug caused.
+                #
+                # os.readlink succeeds on junctions and symlinks and raises
+                # OSError on a genuine directory, which is exactly the
+                # distinction needed. Removing a junction does not touch the
+                # directory it points at.
+                try:
+                    _os.readlink(legacy)
+                except OSError:
+                    # A genuine directory with contents → never clobber.
+                    print(f"[metaphysica] WARNING: {legacy} exists as a real "
+                          f"dir; sims may write here instead of {real}",
+                          file=_sys.stderr)
+                    return
+                try:
+                    legacy.rmdir()          # unlinks the junction itself
+                except OSError:
+                    print(f"[metaphysica] WARNING: {legacy} is a stale link to "
+                          f"{legacy.resolve()} and could not be removed; sims "
+                          f"may write there instead of {real}", file=_sys.stderr)
+                    return
+                # fall through and recreate it pointing at `real`
         except OSError:
             return
     # Create a junction (Windows) or symlink (POSIX) from legacy → real.

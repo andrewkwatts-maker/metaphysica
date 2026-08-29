@@ -47,6 +47,7 @@ import argparse
 import base64
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -65,6 +66,7 @@ except ImportError as exc:
 # Format identifiers — kept lowercase to match the JS widget tab names.
 from metaphysica.generators.eml_render_validity import (
     REQUIRE_OPERATOR,
+    classify_source,
     classify_render,
 )
 
@@ -180,11 +182,19 @@ def main(argv: list[str] | None = None) -> int:
         if not expr:
             n_skip += 1
             continue
+        # Diagnose the source first: the parser's "invalid syntax, line 2"
+        # is true but useless, and it is the same cause every time.
+        src_ok, src_reason = classify_source(expr)
+        if not src_ok:
+            n_err += 1
+            unrenderable[fid] = src_reason
+            continue
+
         try:
             tree = parse_eml_tree(expr, expand_eml=False)
-        except (ParseError, Exception):
+        except (ParseError, Exception) as exc:
             n_err += 1
-            unrenderable[fid] = "eml_tree_str failed to parse"
+            unrenderable[fid] = f"eml_tree_str failed to parse: {exc}"
             continue
 
         renders: dict[str, str] = {}
@@ -242,17 +252,28 @@ def main(argv: list[str] | None = None) -> int:
     # why. These used to ship as content instead -- "<parse error: ...>" was
     # rendered on the page -- so the noise here is the point.
     if unrenderable:
-        by_reason: dict[str, list[str]] = {}
+        # Group by CAUSE, not by exact message. The commented-out reason
+        # embeds a per-formula candidate count, which would otherwise split
+        # one cause into eleven single-item groups and bury the pattern.
+        detail_re = re.compile(r"\s*\((\d+) candidate expressions? inside\)")
+        by_reason: dict[str, list[tuple[str, str]]] = {}
         for fid, reason in sorted(unrenderable.items()):
-            by_reason.setdefault(reason, []).append(fid)
+            m = detail_re.search(reason)
+            key = detail_re.sub("", reason)
+            if m:
+                n = int(m.group(1))
+                detail = f"{n} candidate" + ("s" if n != 1 else "")
+            else:
+                detail = ""
+            by_reason.setdefault(key, []).append((fid, detail))
         print("")
         print(f"  [DEBUG] EML option withheld for {len(unrenderable)} "
               f"formula(s) with no valid diagram:")
-        for reason, fids in sorted(by_reason.items(),
-                                   key=lambda kv: (-len(kv[1]), kv[0])):
-            print(f"    - {len(fids):3d}x {reason}")
-            for fid in fids:
-                print(f"          {fid}")
+        for reason, items in sorted(by_reason.items(),
+                                    key=lambda kv: (-len(kv[1]), kv[0])):
+            print(f"    - {len(items):3d}x {reason}")
+            for fid, detail in items:
+                print(f"          {fid}" + (f"   ({detail})" if detail else ""))
 
     # Tripwire: some formulas legitimately have no EML form, but ALL of them
     # failing means the renderer or eml-math itself is broken, and a silent

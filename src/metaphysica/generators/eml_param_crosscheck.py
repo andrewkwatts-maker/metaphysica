@@ -121,6 +121,59 @@ def _build_context(params: dict[str, Any]) -> dict[str, float]:
     return ctx
 
 
+def _print_error_breakdown(results: list, top: int = 12) -> None:
+    """Group the ERROR rows by CAUSE rather than reporting a bare count.
+
+    "ERROR (did not evaluate): 127" is a number nobody can act on. The 127
+    are not 127 separate problems: they collapse into a handful of causes,
+    and the largest is a single missing operator. Naming them turns a
+    standing count into a work list, which is the same fix applied to the
+    formula-render debug notes.
+    """
+    import re as _re
+    from collections import Counter
+
+    errs = [r for r in results if r.get("status") == "ERROR"]
+    if not errs:
+        return
+    missing_attr: Counter = Counter()
+    missing_name: Counter = Counter()
+    other: Counter = Counter()
+    for rec in errs:
+        reason = str(rec.get("reason", ""))
+        m = _re.search(r"has no attribute '([A-Za-z_0-9]+)'", reason)
+        if m:
+            missing_attr[m.group(1)] += 1
+            continue
+        m = _re.search(r"name '([A-Za-z_0-9]+)' is not defined", reason)
+        if m:
+            missing_name[m.group(1)] += 1
+            continue
+        other[reason.split(":")[-1].strip()[:70] or "unknown"] += 1
+
+    print()
+    print("  [DEBUG] ERROR rows grouped by cause "
+          "(these are failures, not skips):")
+    if missing_attr:
+        n = sum(missing_attr.values())
+        print(f"    - {n:3d} missing eml_math.operators attribute(s) -- the "
+              f"expression calls an operator the installed eml-math does "
+              f"not provide:")
+        for name, count in missing_attr.most_common(top):
+            print(f"          {count:3d}x ops.{name}")
+    if missing_name:
+        n = sum(missing_name.values())
+        print(f"    - {n:3d} undefined name(s) in the evaluation context -- "
+              f"the symbol is used but never bound:")
+        for name, count in missing_name.most_common(top):
+            print(f"          {count:3d}x {name}")
+    if other:
+        n = sum(other.values())
+        print(f"    - {n:3d} other:")
+        for reason, count in other.most_common(top):
+            print(f"          {count:3d}x {reason}")
+
+
 def _rel_error(evaluated: float, registered: float) -> Optional[float]:
     """Relative error between evaluated and registered values."""
     if registered == 0.0:
@@ -307,6 +360,7 @@ def run_crosscheck(
         loose  = 100 * (bucket_counts.get('AGREE', 0) + bucket_counts.get('AGREE_LOOSE', 0)) / total_with_desc
         print()
         print(f"  ERROR (did not evaluate):     {n_error}")
+        _print_error_breakdown(results)
         if total_scored > 0:
             print(f"  Strict rate counting errors:  {100*bucket_counts.get('AGREE',0)/total_scored:.1f}%")
         print(f"  Strict agreement rate:   {strict:.1f}%  (of those that evaluated)")
