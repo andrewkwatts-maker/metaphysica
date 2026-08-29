@@ -305,3 +305,46 @@ def test_a_single_bad_formula_does_not_fail_the_build(tmp_path, monkeypatch):
     assert "good" in bundle["f"]
     assert "bare" in bundle["_unrenderable"]
     assert "no operator" in bundle["_unrenderable"]["bare"]
+
+
+# ── display normalisation of internal leaf names ────────────────────────────
+
+
+def test_leaf_marker_is_stripped_and_subscripted():
+    """b3_leaf() is metaphysica's spelling for the b3 leaf, not an eml-math
+    builtin, so the parser labelled the node verbatim and every renderer
+    printed it -- 'b3_leaf' was visible in 92 published formula renders."""
+    from metaphysica.generators.eml_render_validity import normalise_leaf_names
+
+    assert normalise_leaf_names("b3_leaf()") == "b_3"
+    assert normalise_leaf_names(
+        "ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b3_leaf()))"
+    ) == "ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b_3))"
+
+
+def test_leaf_without_an_index_keeps_its_stem():
+    from metaphysica.generators.eml_render_validity import normalise_leaf_names
+
+    assert normalise_leaf_names("chi_leaf()") == "chi"
+
+
+def test_normalisation_leaves_real_operators_alone():
+    """It must not eat ops.* calls or non-empty argument lists."""
+    from metaphysica.generators.eml_render_validity import normalise_leaf_names
+
+    expr = "ops.add(eml_scalar(1.0), eml_pi())"
+    out = normalise_leaf_names(expr)
+    assert "ops.add(" in out and "eml_scalar(1.0)" in out
+
+
+def test_no_published_render_leaks_an_internal_leaf_name():
+    """The regression, checked against the shipped bundle."""
+    import re
+
+    bundle = _load_renders()
+    offenders = [
+        fid for fid, entry in bundle["f"].items()
+        for value in entry.values()
+        if re.search(r"\b[A-Za-z0-9]+_leaf\b", str(value))
+    ]
+    assert not offenders, f"internal *_leaf names published: {offenders[:6]}"

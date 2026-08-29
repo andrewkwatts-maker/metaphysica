@@ -68,6 +68,7 @@ from metaphysica.generators.eml_render_validity import (
     REQUIRE_OPERATOR,
     classify_source,
     classify_render,
+    normalise_leaf_names,
 )
 
 
@@ -90,13 +91,33 @@ DEFAULT_FORMATS = ("latex", "html")
 
 
 def _get_expr(formula: dict) -> str | None:
-    """Return the best available expression string for a formula card."""
+    """Return the best available expression string for a formula card.
+
+    An ``eml_tree_str`` that is ENTIRELY commented out is treated as absent
+    so the eml_description fallback below applies. Eleven formulas ship a
+    tree_str that is a comment block -- an explanatory note, sometimes
+    holding only an intermediate step -- while the eml_description beside it
+    carries the complete expression the author declared. Preferring the
+    comment block meant those eleven rendered "<parse error>" while a
+    perfectly good expression sat unused one field away.
+
+    This chooses no candidate: where the comment's first line and the
+    eml_description differ, the eml_description is the fuller of the two
+    (for chi-squared-alignment the comment is a truncated multi-line
+    fragment; for speed-of-light-derivation it is a sub-step, Delta_eff/b3,
+    rather than c itself). Where they agree -- six of the eleven -- the
+    choice is moot.
+    """
     ts = formula.get("eml_tree_str", "")
-    if ts:
+    if ts and classify_source(ts)[0]:
         return f"EML: {ts}"
     ed = formula.get("eml_description", "")
     if ed and ed.startswith("EML:"):
         return ed
+    if ts:
+        # Keep the commented block as the reported expression so
+        # classify_source can name the defect rather than silently skipping.
+        return f"EML: {ts}"
     return None
 
 
@@ -189,6 +210,10 @@ def main(argv: list[str] | None = None) -> int:
             n_err += 1
             unrenderable[fid] = src_reason
             continue
+
+        # Display normalisation before parsing so every output format
+        # inherits the readable symbol (b3_leaf -> b_3).
+        expr = normalise_leaf_names(expr)
 
         try:
             tree = parse_eml_tree(expr, expand_eml=False)

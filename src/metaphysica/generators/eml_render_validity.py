@@ -93,6 +93,34 @@ _ERROR_MARKERS = ("parse error", "traceback", "nameerror", "syntaxerror")
 _OPS_CALL_RE = re.compile(r"ops\.[A-Za-z_]+\s*\(")
 
 
+#: Internal leaf spellings -> the symbol a reader should see.
+#: ``b3_leaf()`` is metaphysica's way of writing "the b3 leaf" in an EML
+#: expression. It is not an eml-math builtin, so the parser labels the node
+#: with the identifier verbatim and every renderer prints it -- ``b3_leaf``
+#: was visible in 92 published formula renders. Stripping the marker and
+#: subscripting the index turns it into ``b_3``, which MathJax draws as b₃.
+_LEAF_SUFFIX_RE = re.compile(r"\b([A-Za-z][A-Za-z0-9]*?)(\d*)_leaf\b")
+
+
+def normalise_leaf_names(expr: str) -> str:
+    """Rewrite internal ``*_leaf`` identifiers to display symbols.
+
+    Applied to the expression BEFORE parsing, so the tree carries the
+    display label and every output format (latex, flow SVG, MathML) picks
+    it up without any of them post-processing strings.
+
+    ``b3_leaf()`` -> ``b_3``; the trailing ``()`` is dropped because the
+    result is a symbol, not a call.
+    """
+    def repl(match):
+        stem, digits = match.group(1), match.group(2)
+        return f"{stem}_{digits}" if digits else stem
+
+    out = _LEAF_SUFFIX_RE.sub(repl, expr)
+    # `b3_leaf()` becomes `b_3()`; strip the empty call parens.
+    return re.sub(r"\b([A-Za-z][A-Za-z0-9_]*)\(\)", r"\1", out)
+
+
 def classify_source(expr: str) -> Tuple[bool, str]:
     """Diagnose the SOURCE expression before it is handed to the parser.
 
