@@ -63,6 +63,26 @@ except ImportError as exc:
 
 
 # Format identifiers — kept lowercase to match the JS widget tab names.
+from metaphysica.generators.eml_render_validity import (
+    REQUIRE_OPERATOR,
+    classify_render,
+)
+
+
+def _serialise_tree(tree):
+    """Compact [label, kind_char, *children] form, via EML-Math's own encoder.
+
+    Reusing to_compact keeps this in step with eml_trees.json rather than
+    maintaining a second encoder that could drift from it. Returns None if
+    the encoder is unavailable, which makes the operator test skip rather
+    than reject -- a missing encoder must not silently hide every formula.
+    """
+    try:
+        from eml_math.tree import to_compact
+        return to_compact(tree)
+    except Exception:
+        return None
+
 ALL_FORMATS = ("latex", "html", "svg", "mathml", "png", "pdf", "plain")
 DEFAULT_FORMATS = ("latex", "html")
 
@@ -151,6 +171,7 @@ def main(argv: list[str] | None = None) -> int:
     formulas: dict = data.get("formulas", data)
 
     entries: dict[str, dict[str, str]] = {}
+    unrenderable: dict[str, str] = {}
     per_fmt_counts = {fmt: 0 for fmt in fmts}
     n_skip = n_err = 0
 
@@ -163,6 +184,7 @@ def main(argv: list[str] | None = None) -> int:
             tree = parse_eml_tree(expr, expand_eml=False)
         except (ParseError, Exception):
             n_err += 1
+            unrenderable[fid] = "eml_tree_str failed to parse"
             continue
 
         renders: dict[str, str] = {}
@@ -170,14 +192,38 @@ def main(argv: list[str] | None = None) -> int:
             r = _render_one(tree, fmt, expr)
             if r is not None:
                 renders[fmt] = r
-                per_fmt_counts[fmt] += 1
-        if renders:
-            entries[fid] = renders
+        if not renders:
+            unrenderable[fid] = "renderer produced no output in any format"
+            continue
+
+        # A render that exists is not automatically a render that can be
+        # shown. `r is not None` accepted "<parse error: ...>" as content
+        # for twelve formulas; classify_render is the check that was missing.
+        ok, reason = classify_render(
+            renders, _serialise_tree(tree), formats=fmts
+        )
+        if not ok:
+            unrenderable[fid] = reason
+            continue
+
+        entries[fid] = renders
+        for fmt in renders:
+            per_fmt_counts[fmt] += 1
 
     out = {
         "_v": 1,
         "_formats": list(fmts),
         "f": entries,
+        # Kept so the omission is auditable rather than silent. The website
+        # looks up renders.f[fid] and attaches nothing when absent, so an
+        # entry here IS the "no EML option" behaviour.
+        "_unrenderable": unrenderable,
+        "_policy": {
+            "require_operator": REQUIRE_OPERATOR,
+            "note": "a render must parse, be non-empty, carry no error text, "
+                    "not leak parser-internal names, and (when "
+                    "require_operator) depict at least one operator",
+        },
     }
 
     with open(output_json, "w", encoding="utf-8") as f:
@@ -191,6 +237,35 @@ def main(argv: list[str] | None = None) -> int:
     for fmt, cnt in per_fmt_counts.items():
         print(f"  {fmt:7s}: {cnt}")
     print(f"  Output:            {output_json}  ({size_kb:.1f} KB)")
+
+    # Debug notes: name every formula whose EML option will be withheld, and
+    # why. These used to ship as content instead -- "<parse error: ...>" was
+    # rendered on the page -- so the noise here is the point.
+    if unrenderable:
+        by_reason: dict[str, list[str]] = {}
+        for fid, reason in sorted(unrenderable.items()):
+            by_reason.setdefault(reason, []).append(fid)
+        print("")
+        print(f"  [DEBUG] EML option withheld for {len(unrenderable)} "
+              f"formula(s) with no valid diagram:")
+        for reason, fids in sorted(by_reason.items(),
+                                   key=lambda kv: (-len(kv[1]), kv[0])):
+            print(f"    - {len(fids):3d}x {reason}")
+            for fid in fids:
+                print(f"          {fid}")
+
+    # Tripwire: some formulas legitimately have no EML form, but ALL of them
+    # failing means the renderer or eml-math itself is broken, and a silent
+    # empty bundle would publish a site with no EML anywhere while the build
+    # stayed green.
+    n_candidates = len(formulas) - n_skip
+    if n_candidates > 0 and not entries:
+        print("")
+        print(f"ERROR: every one of the {n_candidates} formula(s) with an "
+              f"EML expression failed to produce a showable diagram. That is "
+              f"a broken renderer, not {n_candidates} broken formulas -- "
+              f"check that eml-math is installed and importable.")
+        return 1
     return 0
 
 
