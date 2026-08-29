@@ -281,6 +281,15 @@ class CKMMatrixSimulation(SimulationBase):
             "ckm.V_td",
             "ckm.V_ts",
             "ckm.V_tb",
+            # Computed in run() and returned, but never declared -- so three
+            # of the nine CKM elements were dropped on the way to the
+            # registry. Expressions referencing eml_vec('ckm.V_ud') then
+            # resolved to nothing and (under strict=False) evaluated with
+            # 0.0, which surfaced as a physics disagreement rather than a
+            # missing publication.
+            "ckm.V_ud",
+            "ckm.V_cd",
+            "ckm.V_cs",
             "ckm.jarlskog_invariant",
             "ckm.lambda_wolfenstein",
             "ckm.A_wolfenstein",
@@ -1241,6 +1250,50 @@ class CKMMatrixSimulation(SimulationBase):
                 eml_description="EML: ops.sub(eml_scalar(1.0), ops.add(ops.pow(eml_vec('ckm.V_ud'), eml_scalar(2.0)), ops.add(ops.pow(eml_vec('ckm.V_us'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_ub'), eml_scalar(2.0))))) — unitarity deviation = 1 − (|V_ud|²+|V_us|²+|V_ub|²)",
                 derivation_formula="ckm-unitarity",
                 no_experimental_value=True
+            ),
+            Parameter(
+                path="ckm.V_ud",
+                name="CKM Matrix Element V_ud",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "V_ud = sqrt(1 - V_us^2 - V_ub^2), fixed by first-row "
+                    "unitarity. Computed by this module all along but not "
+                    "declared as an output, so it never reached the registry."
+                ),
+                eml_description="EML: ops.sqrt(ops.sub(eml_scalar(1.0), ops.add(ops.pow(eml_vec('ckm.V_us'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_ub'), eml_scalar(2.0))))) — V_ud from first-row unitarity",
+                derivation_formula="ckm-unitarity",
+                experimental_bound=0.97435,
+                bound_type="central_value",
+                bound_source="PDG_2024_V_ud",
+                uncertainty=0.00016,
+                no_experimental_value=False,
+            ),
+            Parameter(
+                path="ckm.V_cd",
+                name="CKM Matrix Element V_cd",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "V_cd from the Wolfenstein parametrisation. Computed and "
+                    "returned by run(); previously undeclared."
+                ),
+                eml_description="EML: ops.neg(eml_vec('ckm.lambda_wolfenstein')) — V_cd = -lambda at leading Wolfenstein order",
+                derivation_formula="wolfenstein-parametrization",
+                no_experimental_value=True,
+            ),
+            Parameter(
+                path="ckm.V_cs",
+                name="CKM Matrix Element V_cs",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "V_cs from the Wolfenstein parametrisation. Computed and "
+                    "returned by run(); previously undeclared."
+                ),
+                eml_description="EML: ops.sub(eml_scalar(1.0), ops.mul(eml_scalar(0.5), ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(2.0)))) — V_cs = 1 - lambda^2/2 at leading Wolfenstein order",
+                derivation_formula="wolfenstein-parametrization",
+                no_experimental_value=True,
             ),
             Parameter(
                 path="ckm.unitarity_row1",

@@ -193,6 +193,28 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
         for reason, count in other.most_common(top):
             print(f"          {count:3d}x {reason}")
 
+    # DISAGREE_MISSING_CTX rows are not errors -- they evaluated -- but they
+    # evaluated with 0.0 substituted for every eml_vec name absent from the
+    # context, so the number they produce is meaningless and the row reads as
+    # a physics discrepancy. Naming the missing references turns that bucket
+    # into a work list too.
+    missing_ctx = [r for r in results
+                   if r.get("status") == "DISAGREE_MISSING_CTX"]
+    if missing_ctx:
+        refs: Counter = Counter()
+        for rec in missing_ctx:
+            for ref in _re.findall(r"eml_vec\(['\"]([^'\"]+)['\"]\)",
+                                   str(rec.get("eml_description", ""))):
+                refs[ref] += 1
+        print()
+        print(f"  [DEBUG] {len(missing_ctx)} row(s) evaluated with UNRESOLVED "
+              f"references (0.0 substituted, so the value is meaningless -- "
+              f"these are not physics disagreements):")
+        for ref, count in refs.most_common(top):
+            print(f"          {count:3d}x eml_vec('{ref}')")
+        if len(refs) > top:
+            print(f"          ... and {len(refs) - top} more distinct names")
+
 
 def _rel_error(evaluated: float, registered: float) -> Optional[float]:
     """Relative error between evaluated and registered values."""

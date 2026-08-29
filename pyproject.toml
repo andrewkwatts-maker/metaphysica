@@ -54,7 +54,11 @@ dependencies = [
     # 2.3.0 carries the correctness fix to ln() below the normal range
     # (subnormal inputs returned -3.89 instead of -736.83). Published
     # 2026-08-24, so this floor is satisfiable.
-    "eml-math>=2.3.0",
+    # >=2.4 for ops.abs/sum/max/log10/gt/and_, variadic mul/add, bare-name
+    # context resolution and annotated-tail parsing. Expressions in this
+    # repo call those operators; against 2.3 they raise AttributeError and
+    # every affected parameter is scored as unevaluable.
+    "eml-math>=2.4.0",
 ]
 
 [project.optional-dependencies]
