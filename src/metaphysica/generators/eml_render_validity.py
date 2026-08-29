@@ -56,8 +56,29 @@ LEAF_KINDS = frozenset({"#", "v", "P", "C", "_", "?"})
 
 REASON_OK = "ok"
 
-#: Policy switch, resolved by branch comparison (see docs/EML_RENDER_POLICY.md).
 #: When True a render must depict at least one operator to be offered.
+#:
+#: RESOLVED BY BRANCH COMPARISON, not by preference. Both policies were run
+#: against the live formula set:
+#:
+#:   permissive (False) -> 395 offered, 15 withheld
+#:   strict     (True)  -> 389 offered, 21 withheld
+#:
+#: The six formulas that differ are the whole argument. Under the permissive
+#: policy the website offers, as the EML form of each statement:
+#:
+#:   g2-automorphism-relation   G_2 = Aut(O)              rendered as  "8"
+#:   g2-holonomy                Hol(g) < G_2 <=> ...      rendered as  "1"
+#:   hysteresis-lock            d(alpha)/dt = 0           rendered as  "0"
+#:   gut-scale                  M_GUT : min_mu sigma[..]  rendered as  "M_{GUT}"
+#:   gr-ricci-tensor-v19        full Ricci contraction    rendered as  one term
+#:   g2-holonomy-foundations    Hol(g) < G_2 <=> ...      "G2_{holonomy}"
+#:
+#: These are not merely uninformative -- each is a truncation that
+#: misrepresents its own formula. "8" for "G_2 = Aut(O)" is the case that
+#: settles it: 8 is the dimension of the octonions, so the render is wrong in
+#: a way that reads as content, and a reader toggling to EML would take it for
+#: the framework's claim. Withholding beats publishing that.
 REQUIRE_OPERATOR = True
 
 #: Parser-internal leaf names that must never reach published output.
