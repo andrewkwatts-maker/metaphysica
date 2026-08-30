@@ -180,3 +180,68 @@ def test_no_gate_passes_by_asserting_its_own_conclusion():
     for r in results:
         assert r.numbers_invented == 0, f"G{r.gate_id} invented a threshold"
         assert r.expected is not None, f"G{r.gate_id} has no expected value"
+
+
+# ── a check that used to be arithmetic true-by-definition ───────────────────
+
+
+def _or_reduction():
+    import metaphysica.simulations.PM.gauge.master_action as ma
+
+    cls = [
+        v for v in vars(ma).values()
+        if isinstance(v, type) and hasattr(v, "compute_distributed_or_reduction")
+    ]
+    if not cls:
+        pytest.skip("master action simulation class not found")
+    return cls[0]()
+
+
+def test_spinor_match_is_computed_from_the_signature_not_a_literal():
+    """`2 ** n_pairs == 4096` never consulted the Clifford algebra.
+
+    With n_pairs = 12 that is 2**12 == 4096 -- true by definition. It read
+    as a spinor cross-check while really asking "is n_pairs 12", so it could
+    not fail for the reason it claimed to test.
+    """
+    d = _or_reduction().compute_distributed_or_reduction()
+    assert d["bulk_weyl_dimension"] == 4096, (
+        "Weyl dimension should be computed from the registry signature "
+        "(24 + 2 = 26 -> 2^12)"
+    )
+    assert d["total_rank"] == 4096
+    assert d["matches_pneuma_spinor"] is True
+
+
+def test_the_spinor_check_fails_when_the_two_routes_disagree(monkeypatch):
+    """Mutation: move the signature and the agreement must break.
+
+    Under the OPEN signature ruling (CANON["bulk"]) at (26,2), D = 28 gives
+    Weyl = 2^13 = 8192 while the OR rank stays 2^12 = 4096. The check must
+    then report False -- which is informative, not a regression: it says
+    4096 has become the shadow-pair spinor rather than the bulk Weyl one.
+    """
+    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+
+    monkeypatch.setattr(FormulasRegistry, "D_ancestral_space", 26,
+                        raising=False)
+    d = _or_reduction().compute_distributed_or_reduction()
+    assert d["bulk_weyl_dimension"] == 8192, d
+    assert d["matches_pneuma_spinor"] is False, (
+        "the spinor check passed under a signature where the OR rank and "
+        "the bulk Weyl dimension differ -- it is not testing what it claims"
+    )
+
+
+def test_odd_dimension_reports_no_weyl_spinor(monkeypatch):
+    """There is no chirality in odd D, so the comparison must abstain.
+
+    This is the retired Cl(24,1) situation the framework's own notes record;
+    reporting a match there would be meaningless.
+    """
+    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+
+    monkeypatch.setattr(FormulasRegistry, "D_ancestral_time", 1, raising=False)
+    d = _or_reduction().compute_distributed_or_reduction()
+    assert d["bulk_weyl_dimension"] is None
+    assert d["matches_pneuma_spinor"] is False

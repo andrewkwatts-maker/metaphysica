@@ -263,14 +263,59 @@ class MasterActionSimulationV22(SimulationBase):
         Returns:
             Dictionary with distributed OR parameters
         """
+        total_rank = 2 ** self._n_bridge_pairs
+        weyl = self._bulk_weyl_dimension()
         distributed_or = {
             "n_pairs": self._n_bridge_pairs,
             "per_pair_rank": 2,  # 2x2 matrix for each pair
-            "total_rank": 2 ** self._n_bridge_pairs,  # 2^12 = 4096
-            "matches_pneuma_spinor": 2 ** self._n_bridge_pairs == 4096,
+            "total_rank": total_rank,  # 2^12 = 4096
+            "bulk_weyl_dimension": weyl,
+            # Compares the OR rank against the bulk Weyl spinor dimension
+            # COMPUTED FROM THE REGISTRY SIGNATURE, not against a literal.
+            #
+            # This read `2 ** self._n_bridge_pairs == 4096`, which never
+            # consulted the Clifford algebra at all: with n_pairs = 12 it is
+            # 2**12 == 4096, arithmetic true by definition. It was really
+            # asking "is n_pairs 12" while presenting as a spinor check, so
+            # it could not fail for the reason it claimed to test.
+            #
+            # It now also carries information under the OPEN signature
+            # ruling (CANON["bulk"], STRUCTURAL_CHALLENGED). At (24,2),
+            # D = 26 and Weyl = 2^12 = 4096, so the two coincide. At (26,2),
+            # D = 28 and Weyl = 2^13 = 8192 while the OR rank stays 2^12 --
+            # the check would go False and correctly report that 4096 is
+            # then the shadow-pair spinor rather than the bulk Weyl one,
+            # which is exactly what the resolution evidence describes.
+            "matches_pneuma_spinor": weyl is not None and total_rank == weyl,
             "tensor_structure": f"tensor_{{i=1}}^{{{self._n_bridge_pairs}}} R_perp_i",
         }
         return distributed_or
+
+    def _bulk_weyl_dimension(self):
+        """Weyl spinor dimension of the bulk Clifford algebra, from the SSOT.
+
+        Dirac dimension of Cl(p,q) is 2**floor(D/2) with D = p + q; a Weyl
+        (chiral) halving exists only in even D. Returns None in odd D, where
+        there is no chirality to compare against -- the situation the
+        framework's own notes record for the retired Cl(24,1) reading.
+
+        Read from FormulasRegistry rather than hardcoded so a future
+        signature ruling propagates instead of silently leaving this stale.
+        """
+        try:
+            from metaphysica.simulations.core.FormulasRegistry import (
+                FormulasRegistry,
+            )
+
+            registry = FormulasRegistry()
+            space = int(registry.D_ancestral_space)
+            time = int(registry.D_ancestral_time)
+        except Exception:
+            return None
+        total = space + time
+        if total % 2:
+            return None  # odd dimension: no Weyl spinor
+        return 2 ** (total // 2 - 1)
 
     def compute_breathing_aggregation(self) -> Dict[str, Any]:
         """
