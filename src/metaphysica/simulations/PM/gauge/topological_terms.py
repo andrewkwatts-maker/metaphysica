@@ -76,6 +76,9 @@ __all__ = [
     "cs7_result",
     "associative_triples",
     "allowed_channels",
+    "coupling_graph",
+    "bridge_placement_spectrum",
+    "face_assignment_candidates",
     "vacuum_comparison",
     "write_report",
     "main",
@@ -384,6 +387,76 @@ def bridge_placement_spectrum(n_bridges: int = 12, g2=None) -> Dict[str, Any]:
     }
 
 
+def face_assignment_candidates(g2=None) -> Dict[str, Any]:
+    """Narrow the four-face choice from 35 to 7 on a symmetry criterion.
+
+    Each triangle T_k is labelled by the coordinate k it OMITS, so choosing
+    four faces means choosing a 4-subset of the seven Fano points. Under the
+    Fano symmetry those 35 subsets fall into exactly two orbits:
+
+      * **28** that contain a line (three of the four labels collinear)
+      * **7** that contain none -- the arcs, and each is precisely the
+        complement of one of the seven lines
+
+    So requiring the four face labels to be *generic* -- no three of them
+    forming an associative triple -- picks out seven candidates, canonically
+    indexed by the single line left over. The three unchosen triangles are
+    then exactly that line.
+
+    WHAT THIS DOES AND DOES NOT SETTLE. The 7/28 split is a fact about the
+    Fano plane and is computed here, not asserted. Whether the *generic*
+    orbit is the physical one is a separate question this cannot answer: it
+    needs a reason why three collinear face labels would be disallowed, and
+    no such reason is derived anywhere in the framework. The narrowing is
+    therefore offered as a criterion with a name, not as a result -- 35 -> 7
+    IF genericity holds, and 7 -> 1 would still require fixing which line is
+    omitted.
+    """
+    g2 = g2 or _g2()
+    lines = [set(t) for t in associative_triples(g2)]
+    all_points = set(range(7))
+
+    generic, line_containing = [], []
+    for four in combinations(range(7), 4):
+        subset = set(four)
+        if any(line <= subset for line in lines):
+            line_containing.append(list(four))
+        else:
+            generic.append(list(four))
+
+    candidates = []
+    for four in generic:
+        omitted = sorted(all_points - set(four))
+        candidates.append({
+            "face_labels": list(four),
+            "unchosen_triangles": omitted,
+            "unchosen_is_a_line": set(omitted) in lines,
+        })
+
+    return {
+        "n_choices_total": len(generic) + len(line_containing),
+        "n_line_containing": len(line_containing),
+        "n_generic": len(generic),
+        "generic_candidates": candidates,
+        "criterion": (
+            "no three of the four face labels are collinear in the Fano "
+            "plane, i.e. no three form an associative triple of phi"
+        ),
+        "residual_freedom": (
+            "which of the seven lines is the omitted one; the candidates are "
+            "in bijection with the lines, so the remaining choice is a "
+            "labelling rather than a further structural decision"
+        ),
+        "status": "CRITERION_STATED_NOT_DERIVED",
+        "caveat": (
+            "The 7/28 orbit split is computed. That the generic orbit is the "
+            "physical one is NOT derived -- nothing in the framework forbids "
+            "three collinear face labels. Adopting it narrows 35 -> 7; "
+            "without it the choice remains 35."
+        ),
+    }
+
+
 def vacuum_comparison(
     channel: Sequence[Tuple[int, int]] = ((0, 1), (3, 6)),
     thetas_deg: Sequence[float] = (10, 30, 45, 60, 80, 89, 90),
@@ -612,6 +685,7 @@ def write_report(out_path=None):
             "placements qualify, so the data can rule it out."
         ),
         "coupling_graph": coupling_graph(g2),
+        "face_assignment": face_assignment_candidates(g2),
         "note": (
             "Stage 4 of the action-layer plan. The topological route carries "
             "cross-shadow coupling at the orthogonal vacuum where the metric "

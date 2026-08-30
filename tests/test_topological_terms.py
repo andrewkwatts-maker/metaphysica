@@ -523,3 +523,64 @@ def test_maximal_placements_are_exactly_the_four_triangle_unions():
     }
     assert len(unions) == 35
     assert all(len(u) == 12 for u in unions), "a triangle union is not 12 pairs"
+
+
+# ── narrowing the four-face choice ──────────────────────────────────────────
+
+
+def test_four_subsets_split_into_exactly_two_fano_orbits():
+    """35 = 7 + 28, computed rather than asserted.
+
+    Choosing four faces is choosing a 4-subset of the seven Fano points
+    (each triangle is labelled by the coordinate it omits). Those subsets
+    either contain a line or they do not, and the split is 28 / 7.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        face_assignment_candidates,
+    )
+
+    d = face_assignment_candidates()
+    assert d["n_choices_total"] == 35
+    assert d["n_line_containing"] == 28
+    assert d["n_generic"] == 7
+    assert d["n_line_containing"] + d["n_generic"] == d["n_choices_total"]
+
+
+def test_every_generic_choice_leaves_exactly_a_line_unchosen():
+    """The seven arcs are precisely the complements of the seven lines.
+
+    That is what makes the residual freedom a labelling rather than a
+    further structural decision: the candidates are in bijection with the
+    lines.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        associative_triples,
+        face_assignment_candidates,
+    )
+
+    lines = {frozenset(t) for t in associative_triples()}
+    candidates = face_assignment_candidates()["generic_candidates"]
+    assert len(candidates) == 7
+    omitted = set()
+    for c in candidates:
+        assert c["unchosen_is_a_line"] is True, c
+        assert frozenset(c["unchosen_triangles"]) in lines
+        omitted.add(frozenset(c["unchosen_triangles"]))
+    assert len(omitted) == 7, "the seven candidates omit seven distinct lines"
+
+
+def test_the_narrowing_is_labelled_as_a_criterion_not_a_derivation():
+    """Nothing in the framework forbids three collinear face labels.
+
+    The 7/28 split is a fact; that the generic orbit is the physical one is
+    an assumption. It must be carried as such, or a later reader will take
+    35 -> 7 for a derived result.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        face_assignment_candidates,
+    )
+
+    d = face_assignment_candidates()
+    assert d["status"] == "CRITERION_STATED_NOT_DERIVED"
+    assert "NOT derived" in d["caveat"]
+    assert d["criterion"] and d["residual_freedom"]
