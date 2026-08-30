@@ -182,3 +182,71 @@ def test_shipped_reference_audit_matches_recomputation():
 def test_no_orphan_references_survive_in_the_shipped_bundle():
     """The requirement, checked against what actually shipped."""
     assert _load("reference_integrity.json")["totals"]["orphans"] == 0
+
+
+# ── the statistical rigor validator's input contract ────────────────────────
+
+
+def test_validation_report_rows_reach_the_rigor_validator():
+    """Guards a rename that silently emptied a validator.
+
+    The validator read ``sigma_table`` from validation_report.json. No such
+    key exists -- the report calls it ``validations`` -- so the list was
+    always empty and every downstream method logged "No validation results
+    available" and returned {}. It looked healthy because the summary block
+    still loads, so the constructor reported "Loaded validation data:
+    chi^2 = ..., DoF = ..." either way.
+    """
+    from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
+        StatisticalRigorValidator,
+    )
+
+    path = _autogen() / "validation_report.json"
+    if not path.is_file():
+        pytest.skip("validation_report.json not present")
+    validator = StatisticalRigorValidator(validation_file=str(path))
+    assert validator.validation_results, (
+        "the rigor validator received no rows -- its input key has drifted "
+        "from the report's schema again"
+    )
+    row = validator.validation_results[0]
+    for field in ("status", "predicted_value", "experimental_value", "uncertainty"):
+        assert field in row, f"adapted row is missing {field!r}"
+    assert all(r["uncertainty"] for r in validator.validation_results), (
+        "a row with no experimental uncertainty survived; the consumer "
+        "divides by it"
+    )
+
+
+def test_rigor_validator_still_honours_a_legacy_sigma_table():
+    """An older report must keep working rather than being reinterpreted."""
+    from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
+        StatisticalRigorValidator,
+    )
+
+    legacy = {"sigma_table": [{"status": "PASS", "predicted_value": 1.0,
+                               "experimental_value": 1.0, "uncertainty": 0.1}]}
+    rows = StatisticalRigorValidator._adapt_validation_rows(legacy)
+    assert rows == legacy["sigma_table"]
+
+
+def test_rows_without_an_uncertainty_are_dropped_not_zero_filled():
+    """INPUT and UNBOUNDED rows have nothing to compare against.
+
+    Zero-filling would inject spurious infinite-sigma contributions into the
+    chi-squared rather than omitting a row that carries no constraint.
+    """
+    from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
+        StatisticalRigorValidator,
+    )
+
+    data = {"validations": [
+        {"path": "a", "verdict": "PASS", "value": 1.0,
+         "experimental_value": 1.0, "experimental_uncertainty": 0.1},
+        {"path": "b", "verdict": "INPUT", "value": 2.0,
+         "experimental_value": 2.0, "experimental_uncertainty": None},
+        {"path": "c", "verdict": "UNBOUNDED", "value": 3.0,
+         "experimental_value": None, "experimental_uncertainty": 0.5},
+    ]}
+    rows = StatisticalRigorValidator._adapt_validation_rows(data)
+    assert [r["path"] for r in rows] == ["a"]

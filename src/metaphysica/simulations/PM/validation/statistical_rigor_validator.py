@@ -70,7 +70,7 @@ class StatisticalRigorValidator:
                 self.data = json.load(f)
             self.chi_sq = self.data.get("summary", {}).get("global_chi_squared", 0.23)
             self.dof_claimed = self.data.get("summary", {}).get("degrees_of_freedom", 25)
-            self.validation_results = self.data.get("sigma_table", [])
+            self.validation_results = self._adapt_validation_rows(self.data)
             logger.info(f"Loaded validation data: χ² = {self.chi_sq}, DoF = {self.dof_claimed}")
         else:
             # Use theoretical values if file doesn't exist
@@ -86,6 +86,51 @@ class StatisticalRigorValidator:
 
         logger.info(f"PM Framework: {self.n_residues} residues, {self.n_dimensions}D manifold")
         logger.info(f"Theory uncertainty: {self.theory_uncertainty * 100:.2f}%")
+
+    @staticmethod
+    def _adapt_validation_rows(data):
+        """Per-parameter rows from validation_report.json.
+
+        This read ``data.get("sigma_table", [])``. No such key exists -- the
+        report calls it ``validations`` -- so the list was always empty and
+        every downstream method logged "No validation results available" and
+        returned {}. The failure was quiet because the SUMMARY block does
+        load, so the constructor still reported "Loaded validation data:
+        chi^2 = ..., DoF = ...", which reads like success. The validator has
+        therefore been producing nothing while appearing healthy.
+
+        The field names differ as well as the key, so this adapts rather
+        than merely renaming:
+
+            predicted_value  <- value
+            uncertainty      <- experimental_uncertainty
+            status           <- verdict
+
+        Rows without an experimental uncertainty are dropped: the consumer
+        divides by it, and an INPUT or UNBOUNDED row has nothing to compare
+        against. ``sigma_table`` is still honoured first so an older report
+        keeps working.
+        """
+        legacy = data.get("sigma_table")
+        if legacy:
+            return legacy
+
+        rows = []
+        for entry in data.get("validations", []):
+            uncertainty = entry.get("experimental_uncertainty")
+            predicted = entry.get("value")
+            experimental = entry.get("experimental_value")
+            if uncertainty in (None, 0) or predicted is None or experimental is None:
+                continue
+            rows.append({
+                "path": entry.get("path"),
+                "status": entry.get("verdict"),
+                "predicted_value": predicted,
+                "experimental_value": experimental,
+                "uncertainty": uncertainty,
+                "sigma": entry.get("sigma"),
+            })
+        return rows
 
     def generate_jacobian_matrix(self) -> np.ndarray:
         """
