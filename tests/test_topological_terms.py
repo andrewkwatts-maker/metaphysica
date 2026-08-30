@@ -234,11 +234,20 @@ def test_report_carries_the_anti_overclaim_scope(report):
 
 
 def test_report_states_a_kill_condition_in_advance(report):
-    """42 of 210 channels are allowed, so the rule can rule the physical
-    configuration out -- that is what makes this falsifiable rather than
-    merely non-zero."""
+    """A falsifier must be on record, and it must be one that can fire.
+
+    The original condition ("if the bridges sit only on non-associative
+    complements every channel is forbidden") turned out to describe an
+    impossible event -- see test_twelve_bridges_can_never_switch_the_
+    coupling_off. It is retired in the artifact and replaced by the
+    face-triangle identification, which 35 of 293930 placements satisfy and
+    the rest refute.
+    """
     assert "dead" in report["kill_condition"]
-    assert "42" in report["kill_condition"]
+    assert "35" in report["kill_condition"], (
+        "the kill condition must name the size of the surviving set, so a "
+        "reader can see it is falsifiable"
+    )
 
 
 def test_path_a_is_blocked_not_faked(report):
@@ -325,3 +334,82 @@ def test_main_exits_nonzero_when_a_check_fails(tmp_path, monkeypatch):
                          "selection_rule": "mutated", "channels": []},
     )
     assert tt.main() == 1, "a failing check must make the build step fail"
+
+
+# ── the coupling graph (bridge-channel assignment evidence) ─────────────────
+
+
+def test_coupling_graph_is_seven_triangles():
+    """The selection rule restated as geometry.
+
+    21 coordinate pairs, 21 allowed couplings, every vertex degree 2 -- so
+    a disjoint union of cycles, and it resolves into seven triangles.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import coupling_graph
+
+    g = coupling_graph()
+    assert g["n_vertices"] == 21
+    assert g["n_edges"] == 21
+    assert g["is_two_regular"] is True
+    assert g["n_components"] == 7
+    assert g["component_sizes"] == [3] * 7
+
+
+def test_each_triangle_omits_one_point_and_carries_its_three_lines():
+    """Triangle T_k is a perfect matching of the six points other than k,
+    and its three edges are the three Fano lines through k. Verified by
+    enumeration rather than asserted."""
+    from metaphysica.simulations.PM.gauge.topological_terms import coupling_graph
+
+    omitted = set()
+    for comp in coupling_graph()["components"]:
+        assert isinstance(comp["omitted_point"], int), comp
+        assert len(comp["support"]) == 6
+        assert comp["edges_are_lines_through_omitted_point"] is True
+        omitted.add(comp["omitted_point"])
+    assert omitted == set(range(7)), "one triangle per coordinate"
+
+
+def test_twelve_bridges_can_never_switch_the_coupling_off():
+    """The retired kill condition, pinned so it cannot be reinstated.
+
+    The Stage-4 report claimed the route dies if the bridges land only on
+    non-associative complements. Over all C(21,12) placements the live
+    coupling count runs 5..12 and is never 0, so that outcome cannot occur.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        bridge_placement_spectrum,
+    )
+
+    s = bridge_placement_spectrum()
+    assert s["n_placements"] == 293930
+    assert s["minimum"] == 5
+    assert s["all_channels_forbidden_is_possible"] is False
+
+
+def test_maximum_coupling_is_exactly_the_four_complete_triangles():
+    """12 live couplings, reached by exactly C(7,4) = 35 placements.
+
+    This is the whole basis of the face-triangle proposal: the framework
+    independently carries four faces of three bridges, and four complete
+    triangles is the unique way to maximise coupling.
+    """
+    import math
+
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        bridge_placement_spectrum,
+    )
+
+    s = bridge_placement_spectrum()
+    assert s["maximum"] == 12
+    assert s["n_maximal_placements"] == math.comb(7, 4) == 35
+    assert 11 not in s["live_couplings_histogram"], "no placement reaches 11"
+
+
+def test_report_retires_the_unfireable_kill_condition(report):
+    """A kill condition that cannot fire must not be left standing."""
+    assert "kill_condition_retired" in report
+    assert "CANNOT OCCUR" in report["kill_condition_retired"]
+    # and the replacement must name something that can happen
+    assert "four" in report["kill_condition"].lower()
+    assert "35" in report["kill_condition"]

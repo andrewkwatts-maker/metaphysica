@@ -246,6 +246,144 @@ def allowed_channels(g2=None) -> Dict[str, Any]:
     }
 
 
+def coupling_graph(g2=None) -> Dict[str, Any]:
+    """The allowed-channel structure as a graph on the 21 coordinate pairs.
+
+    WHAT THIS COMPUTES, and why it matters for the open assignment problem.
+
+    The 42 allowed ordered channels are 21 unordered ones. Treating each
+    coordinate pair (i,j) as a vertex and each allowed coupling as an edge
+    gives a graph on C(7,2) = 21 vertices with 21 edges, and **every vertex
+    has degree exactly 2** -- so it is a disjoint union of cycles. It
+    resolves into **seven triangles**, one per coordinate k, whose three
+    vertices are a perfect matching of the six points other than k and whose
+    three edges are the three Fano lines through k.
+
+    That is the selection rule restated as geometry rather than as a filter:
+    phi's seven associative triples ARE the Fano plane, and the coupling
+    graph is its point-line incidence turned inside out.
+
+    Consequence for the twelve bridges: they occupy twelve of the
+    twenty-one vertices, and the number of live couplings is the number of
+    edges internal to that choice. Enumerated over all C(21,12) = 293930
+    placements, that count runs from 5 to 12 and is **never zero**, with the
+    maximum 12 reached by exactly C(7,4) = 35 placements -- precisely those
+    that take four complete triangles.
+
+    Bounded by construction: 21 vertices, 21 edges, C(21,12) placements.
+    No search, no convergence loop.
+    """
+    g2 = g2 or _g2()
+    channels = allowed_channels(g2)
+    undirected = {
+        frozenset((tuple(c["f_a"]), tuple(c["f_b"])))
+        for c in channels["channels"]
+    }
+    adjacency: Dict[Tuple[int, int], List[Tuple[int, int]]] = {}
+    for edge in undirected:
+        a, b = tuple(edge)
+        adjacency.setdefault(a, []).append(b)
+        adjacency.setdefault(b, []).append(a)
+
+    seen: set = set()
+    components: List[List[Tuple[int, int]]] = []
+    for vertex in adjacency:
+        if vertex in seen:
+            continue
+        stack, comp = [vertex], []
+        while stack:
+            node = stack.pop()
+            if node in seen:
+                continue
+            seen.add(node)
+            comp.append(node)
+            stack.extend(adjacency[node])
+        components.append(sorted(comp))
+
+    triples = set(associative_triples(g2))
+    described = []
+    for comp in sorted(components):
+        support = set()
+        for pair in comp:
+            support |= set(pair)
+        omitted = sorted(set(range(7)) - support)
+        described.append({
+            "vertices": [list(v) for v in comp],
+            "support": sorted(support),
+            "omitted_point": omitted[0] if len(omitted) == 1 else omitted,
+            "edges_are_lines_through_omitted_point": all(
+                tuple(sorted(set(range(7)) - (set(a) | set(b)))) in triples
+                for a, b in combinations(comp, 2)
+            ),
+        })
+
+    degrees = {len(v) for v in adjacency.values()}
+    return {
+        "n_vertices": len(adjacency),
+        "n_edges": len(undirected),
+        "degrees_present": sorted(degrees),
+        "is_two_regular": degrees == {2},
+        "n_components": len(components),
+        "component_sizes": sorted(len(c) for c in components),
+        "components": described,
+    }
+
+
+def bridge_placement_spectrum(n_bridges: int = 12, g2=None) -> Dict[str, Any]:
+    """How many couplings survive, over every placement of the bridges.
+
+    Answers the question the Stage-4 report left open -- and, in doing so,
+    retires the kill condition that report stated. See the ``kill_condition``
+    note in write_report: "if the physical bridges sit only on
+    non-associative complements, every channel is forbidden and the route is
+    dead" describes an outcome that **cannot occur**. The minimum over all
+    C(21,12) placements is five live couplings, never zero.
+
+    A kill condition that cannot fire is not a kill condition, and leaving it
+    stated would have been exactly the sort of unfalsifiable guard this
+    framework audits out of its own gates.
+    """
+    from itertools import combinations as _combinations
+
+    graph = coupling_graph(g2)
+    vertices = sorted({tuple(v) for comp in graph["components"]
+                       for v in map(tuple, comp["vertices"])})
+    index = {v: i for i, v in enumerate(vertices)}
+    edges = []
+    for comp in graph["components"]:
+        verts = [tuple(v) for v in comp["vertices"]]
+        for a, b in _combinations(verts, 2):
+            edges.append((index[a], index[b]))
+    # Only edges that are genuinely allowed couplings (triangles are complete)
+    channels = allowed_channels(g2)
+    allowed_pairs = {
+        frozenset((tuple(c["f_a"]), tuple(c["f_b"])))
+        for c in channels["channels"]
+    }
+    edges = [(i, j) for i, j in edges
+             if frozenset((vertices[i], vertices[j])) in allowed_pairs]
+
+    histogram: Dict[int, int] = {}
+    best, best_selection = -1, None
+    for selection in _combinations(range(len(vertices)), n_bridges):
+        chosen = set(selection)
+        live = sum(1 for i, j in edges if i in chosen and j in chosen)
+        histogram[live] = histogram.get(live, 0) + 1
+        if live > best:
+            best, best_selection = live, selection
+
+    return {
+        "n_bridges": n_bridges,
+        "n_placements": sum(histogram.values()),
+        "live_couplings_histogram": dict(sorted(histogram.items())),
+        "minimum": min(histogram),
+        "maximum": best,
+        "n_maximal_placements": histogram[best],
+        "one_maximal_placement": [list(vertices[i]) for i in best_selection],
+        "all_channels_forbidden_is_possible": min(histogram) == 0,
+    }
+
+
 def vacuum_comparison(
     channel: Sequence[Tuple[int, int]] = ((0, 1), (3, 6)),
     thetas_deg: Sequence[float] = (10, 30, 45, 60, 80, 89, 90),
@@ -451,13 +589,29 @@ def write_report(out_path=None):
             "the twelve physical bridges to coordinate channels is also a "
             "modelling input, not derived."
         ),
-        "kill_condition": (
-            "If the bridge-to-channel assignment, once derived, places the "
-            "physical bridges only on complementary NON-associative 4-sets, "
-            "every physical channel is forbidden by the selection rule and "
-            "this route is dead -- the rule permits 42 of 210, so it can "
-            "rule the physical configuration out."
+        "kill_condition_retired": (
+            "SUPERSEDED 2026-08-30. This report previously stated: 'if the "
+            "bridge-to-channel assignment places the physical bridges only "
+            "on complementary NON-associative 4-sets, every channel is "
+            "forbidden and this route is dead'. Enumeration over all "
+            "C(21,12) = 293930 placements shows that outcome CANNOT OCCUR -- "
+            "the live-coupling count runs 5..12 and is never zero. A kill "
+            "condition that cannot fire is not a kill condition, and it is "
+            "retired here rather than left standing as an unfalsifiable "
+            "guard. See coupling_graph / bridge_placement_spectrum."
         ),
+        "kill_condition": (
+            "The coupling graph is seven disjoint triangles, and the maximum "
+            "12 live couplings is reached only by placements that take four "
+            "COMPLETE triangles (35 of them, C(7,4)). The framework "
+            "independently carries four faces of three bridges each. If the "
+            "face grouping, once derived, does NOT correspond to four "
+            "complete triangles, then faces and coupling channels are "
+            "unrelated structures and the identification proposed in "
+            "docs/BRIDGE_CHANNEL_ASSIGNMENT.md is dead -- 35 of the 293930 "
+            "placements qualify, so the data can rule it out."
+        ),
+        "coupling_graph": coupling_graph(g2),
         "note": (
             "Stage 4 of the action-layer plan. The topological route carries "
             "cross-shadow coupling at the orthogonal vacuum where the metric "
