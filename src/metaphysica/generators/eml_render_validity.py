@@ -203,7 +203,18 @@ def classify_render(
     than the first one noticed.
     """
     if require_operator is None:
-        require_operator = REQUIRE_OPERATOR
+        # REQUIRE_OPERATOR is the ADOPTED default and stays the declared
+        # source of truth. The variant registry is consulted so the choice
+        # can be exercised without editing this file -- which is how the
+        # strict/permissive comparison had to be run the first time (two
+        # branches, manually diffed). An unknown value raises rather than
+        # silently falling back, so a typo cannot run one policy while the
+        # report claims the other.
+        try:
+            from metaphysica.simulations.core.variants import resolve
+            require_operator = resolve("render_policy") == "strict"
+        except ImportError:
+            require_operator = REQUIRE_OPERATOR
 
     present = {f: renders.get(f) for f in formats}
 

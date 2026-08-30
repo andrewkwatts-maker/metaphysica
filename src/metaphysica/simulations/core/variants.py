@@ -1,0 +1,296 @@
+"""Executable forks: run the pipeline under a choice that is not yet ruled.
+
+WHY THIS EXISTS
+---------------
+The framework already records its open decisions well. ``CANON["bulk"]``
+carries a STRUCTURAL_CHALLENGED status, a multi-page ``challenge``, a
+``resolution_evidence`` block and an explicit "RESOLUTION OPTIONS (author's
+call): (a) ... (b) ... (c) ...". The four-face choice, the render policy, the
+Path A/B question and the person-within-a-face reading are all documented the
+same way.
+
+What none of them can do is **run**. The options are prose, so seeing what
+option (b) actually changes means editing code, rebuilding, remembering to
+put it back, and comparing by hand -- which is how the strict/permissive
+render policy was decided (two git branches, manually diffed). That works
+once. It does not scale to a dozen open forks, and nothing stops a switch
+being flipped and silently left flipped.
+
+This module makes a fork a first-class object: declared, enumerable,
+selectable, and defaulted to whatever CANON says is currently adopted.
+
+NOT A NEW CONSTANT STORE
+------------------------
+Every default here must correspond to a value that already exists elsewhere
+(a CANON entry, a module-level policy switch, a registry property). This is a
+*view* over decisions, in the same sense that PhysicsConfig is a view over
+FormulasRegistry. If a variant's default and its source disagree, that is a
+bug and ``test_variants`` fails on it.
+
+THE TUNING HAZARD -- READ THIS BEFORE ADDING A FORK
+---------------------------------------------------
+A switchboard for physics choices is one keystroke away from being a
+parameter fitter: run every option, keep whichever agrees best with the
+anchors, report that. That is anchor-shopping with better tooling, and this
+repo has already retired one advertised agreement that came from exactly
+that pattern.
+
+Three rules follow, and the comparison runner enforces the first two:
+
+1. A comparison reports **every** option's outcome. It never returns "the
+   best one".
+2. It never ranks by agreement with experimental anchors. Consequences are
+   recorded; the ordering is declaration order.
+3. Adopting an option is an explicit author act recorded at its source (the
+   CANON entry or the module switch), not a default quietly changed here.
+
+Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
+"""
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from typing import Any, Callable, Dict, List, Optional
+
+__all__ = [
+    "VariantOption",
+    "Fork",
+    "FORKS",
+    "resolve",
+    "active_selection",
+    "describe",
+]
+
+#: Environment prefix: METAPHYSICA_VARIANT_<FORK_ID_UPPER>=<option id>
+_ENV_PREFIX = "METAPHYSICA_VARIANT_"
+
+
+@dataclass(frozen=True)
+class VariantOption:
+    """One branch of a fork, with what choosing it costs and buys."""
+
+    id: str
+    summary: str
+    consequence: str
+    #: True only for the option currently adopted at the fork's source.
+    adopted: bool = False
+
+
+@dataclass(frozen=True)
+class Fork:
+    """An open decision that can be executed either way.
+
+    ``source`` names where the adopted value actually lives, so the default
+    can be checked against it rather than restated here.
+    """
+
+    id: str
+    question: str
+    source: str
+    options: List[VariantOption]
+    status: str
+    #: Reads the currently-adopted option id from ``source``. Kept as a
+    #: callable so the check is against live state, not a copy.
+    read_adopted: Optional[Callable[[], str]] = None
+    notes: str = ""
+
+    def option_ids(self) -> List[str]:
+        return [o.id for o in self.options]
+
+    def default(self) -> str:
+        for option in self.options:
+            if option.adopted:
+                return option.id
+        raise ValueError(f"fork {self.id!r} declares no adopted option")
+
+
+def _render_policy_adopted() -> str:
+    from metaphysica.generators.eml_render_validity import REQUIRE_OPERATOR
+
+    return "strict" if REQUIRE_OPERATOR else "permissive"
+
+
+def _face_genericity_adopted() -> str:
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        face_assignment_candidates,
+    )
+
+    status = face_assignment_candidates()["status"]
+    return "generic" if status == "CRITERION_STATED_NOT_DERIVED" else "all"
+
+
+#: The forks that are executable today. Documented-but-not-runnable
+#: decisions (Path A/B, the person-within-a-face reading) are deliberately
+#: absent: Path A is blocked on an underived C_3, and the reading changes
+#: what a result MEANS rather than what the code computes. Declaring them
+#: here would imply a switch that does nothing.
+FORKS: Dict[str, Fork] = {
+    "render_policy": Fork(
+        id="render_policy",
+        question="May a lone symbol be offered as a formula's EML diagram?",
+        source="generators.eml_render_validity.REQUIRE_OPERATOR",
+        status="RULED",
+        read_adopted=_render_policy_adopted,
+        options=[
+            VariantOption(
+                id="strict",
+                summary="a render must depict at least one operator",
+                consequence="Withholds every formula whose EML render is a "
+                            "lone symbol, because such a render misrepresents "
+                            "its own statement -- 'G2 = Aut(O)' would show as "
+                            "the glyph '8'. Currently ten fewer formulas "
+                            "offered than under 'permissive'.",
+                adopted=True,
+            ),
+            VariantOption(
+                id="permissive",
+                summary="any clean render may be offered",
+                consequence="Publishes those lone-symbol renders as if they "
+                            "were the formulas. Offers ten more, every one of "
+                            "them a truncation that misstates its formula.",
+            ),
+        ],
+        notes="Decided by running both against the live formula set "
+              "(two branches, manually diffed). This fork exists partly to "
+              "validate the machinery against an answer already known.",
+    ),
+    "face_genericity": Fork(
+        id="face_genericity",
+        question="Must the four face labels avoid containing a Fano line?",
+        source="PM.gauge.topological_terms.face_assignment_candidates",
+        status="OPEN",
+        read_adopted=_face_genericity_adopted,
+        options=[
+            VariantOption(
+                id="generic",
+                summary="no three of the four labels collinear (arcs only)",
+                consequence="35 -> 7 candidates, in bijection with the seven "
+                            "lines; the three unchosen triangles are exactly "
+                            "the omitted line. NOT derived -- nothing in the "
+                            "framework forbids collinear labels.",
+                adopted=True,
+            ),
+            VariantOption(
+                id="all",
+                summary="any 4-subset of the seven Fano points",
+                consequence="all 35 candidates remain; the residual choice "
+                            "is structural rather than a labelling.",
+            ),
+        ],
+        notes="See docs/BRIDGE_CHANNEL_ASSIGNMENT.md. Adopting 'generic' is "
+              "a criterion, not a result; the orbit split 28/7 is the fact.",
+    ),
+}
+
+
+def resolve(fork_id: str, override: Optional[str] = None) -> str:
+    """Selected option for *fork_id*.
+
+    Precedence: explicit *override*, then ``METAPHYSICA_VARIANT_<ID>``, then
+    the adopted default -- the same order build() uses for its output root,
+    so callers do not have to remember a second convention.
+    """
+    fork = FORKS.get(fork_id)
+    if fork is None:
+        raise KeyError(
+            f"unknown fork {fork_id!r}; declared: {sorted(FORKS)}"
+        )
+    chosen = override or os.environ.get(_ENV_PREFIX + fork_id.upper())
+    if chosen is None:
+        return fork.default()
+    if chosen not in fork.option_ids():
+        raise ValueError(
+            f"fork {fork_id!r} has no option {chosen!r}; "
+            f"available: {fork.option_ids()}"
+        )
+    return chosen
+
+
+def active_selection() -> Dict[str, str]:
+    """Every fork's currently selected option, including env overrides."""
+    return {fid: resolve(fid) for fid in FORKS}
+
+
+def describe() -> Dict[str, Any]:
+    """Machine-readable summary for the build artifact."""
+    out: Dict[str, Any] = {
+        "schema_version": 1,
+        "note": (
+            "Open decisions that can be executed either way. Defaults mirror "
+            "the value adopted at each fork's source and are checked against "
+            "it; this module stores no physics of its own. Comparisons "
+            "report every option and never rank by agreement with anchors."
+        ),
+        "env_prefix": _ENV_PREFIX,
+        "forks": {},
+    }
+    for fid, fork in FORKS.items():
+        drift = None
+        if fork.read_adopted is not None:
+            try:
+                live = fork.read_adopted()
+                if live != fork.default():
+                    drift = f"source says {live!r}, declaration says {fork.default()!r}"
+            except Exception as exc:  # pragma: no cover - diagnostic only
+                drift = f"could not read source: {exc}"
+        out["forks"][fid] = {
+            "question": fork.question,
+            "source": fork.source,
+            "status": fork.status,
+            "selected": resolve(fid),
+            "default": fork.default(),
+            "options": [
+                {
+                    "id": o.id,
+                    "summary": o.summary,
+                    "consequence": o.consequence,
+                    "adopted": o.adopted,
+                }
+                for o in fork.options
+            ],
+            "notes": fork.notes,
+            "drift": drift,
+        }
+    return out
+
+
+def write_report(out_path=None):
+    """Emit AutoGenerated/variants.json so the open forks are visible."""
+    import json
+    from pathlib import Path
+
+    from metaphysica.generators._common import autogen_dir
+
+    payload = describe()
+    out_path = Path(out_path) if out_path else autogen_dir() / "variants.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
+    return out_path
+
+
+def main(argv=None) -> int:
+    out = write_report()
+    payload = describe()
+    print("=" * 70)
+    print(" EXECUTABLE FORKS")
+    print("=" * 70)
+    for fid, entry in payload["forks"].items():
+        mark = "*" if entry["selected"] != entry["default"] else " "
+        print(f" {mark}{fid}  [{entry['status']}]  selected={entry['selected']}")
+        print(f"    {entry['question']}")
+        for opt in entry["options"]:
+            flag = "adopted" if opt["adopted"] else "       "
+            print(f"      {flag}  {opt['id']}: {opt['summary']}")
+        if entry["drift"]:
+            print(f"    DRIFT: {entry['drift']}")
+    print("")
+    print(f"  override with {payload['env_prefix']}<FORK_ID>=<option>")
+    print(f"  Report written to: {out}")
+    return 1 if any(e["drift"] for e in payload["forks"].values()) else 0
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())

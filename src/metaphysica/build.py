@@ -76,6 +76,7 @@ STANDALONE_STEPS = {
     "Run reflection-positivity gate",
     "Run candidate closure gate",
     "Run dark-energy plane gate",
+    "Report executable forks",
     "Evaluate topological cross-shadow coupling",
     "Copy bundled website templates",
     "Build named per-category certificates",
@@ -216,6 +217,11 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     # Bibliography health: orphaned entries, duplicate ids, missing
     # identifiers. Distinct from the step below, which checks that formula
     # IDS resolve -- this checks that the PAPERS are connected to claims.
+    # Enumerate the open forks and which option each is running under, so
+    # a build is self-describing about the choices it embodies.
+    ("Report executable forks",
+     [sys.executable, "-m", "metaphysica.simulations.core.variants"],
+     False),
     ("Audit reference integrity",
      [sys.executable, "-m",
       "metaphysica.generators.generate_reference_integrity"],
