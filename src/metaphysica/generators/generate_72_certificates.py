@@ -706,6 +706,15 @@ def main():
         "title": "Gates Certificate Registry",
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "summary": {
+            # DECLARATIVE tally: what each gate's certificate ASSERTS about
+            # itself. It is not an execution result and must not be read as
+            # one -- "verified: 40" counts gates whose executable form has
+            # never been run alongside gates the evaluation layer has
+            # actually failed. Read evaluation_summary below for what was
+            # computed. The two coexisted with no note saying which was
+            # which, and improvement_scorecard.json was reading this one.
+            "tally_type": "declarative_assertions_not_execution_results",
+            "authoritative_counts": "see evaluation_summary",
             "total_gates": 72,
             "verified": verified_count,
             "pending_lock": pending_count,
@@ -729,7 +738,15 @@ def main():
                                   if c.get('evaluation_status') == 'COMPUTED_INFO'),
             "declarative": sum(1 for c in all_certificates
                                 if c.get('evaluation_status') == 'DECLARATIVE'),
+            # The gates that fail ON THEIR OWN. G72 is the AND over these,
+            # so when any of them fails the seal fails too and is counted in
+            # computed_fail above -- which is why that count can exceed the
+            # length of this list by exactly one. Stated explicitly because
+            # "computed_fail: 2, failed_gate_ids: [12]" otherwise reads as
+            # an arithmetic error.
             "failed_gate_ids": eval_fails,
+            "failed_gate_ids_excludes_seal": True,
+            "seal_gate_id": 72,
         },
         "derivation_summary": {
             "description": "Derivation status indicates how each gate's formula was obtained",

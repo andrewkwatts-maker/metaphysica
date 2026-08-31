@@ -33,6 +33,15 @@ OPEN = {"PENDING_LOCK", "OPEN", "FAIL", "NOT_VERIFIED"}
 AXIOM = {"NOT_TESTABLE", "AXIOM"}
 
 
+#: The executed evaluation layer's verdicts, which OUTRANK the declarative
+#: verification_status when present.
+EVALUATION_BUCKET = {
+    "COMPUTED_PASS": "locked",
+    "COMPUTED_FAIL": "open",
+    "COMPUTED_INFO": "other",
+}
+
+
 def _bucket(status: str) -> str:
     s = (status or "").upper()
     if s in LOCKED:
@@ -42,6 +51,31 @@ def _bucket(status: str) -> str:
     if s in AXIOM:
         return "axiom"
     return "other"
+
+
+def _bucket_certificate(cert: Dict[str, Any]) -> str:
+    """Bucket one gate, letting the executed result win.
+
+    This read only ``verification_status`` -- the DECLARATIVE field, which
+    says VERIFIED for a gate whose executable form has never been run. The
+    evaluation layer added in 2026-08 records what actually happened in
+    ``evaluation_status``, and it was ignored here. The visible consequence
+    was a scorecard reading "42/42 testable gates LOCKED (100.0% complete),
+    open_gate_ids: []" while listing G12 as locked, at the same time as the
+    evaluation layer reported G12 COMPUTED_FAIL at 17.1 sigma and the G72
+    seal FAILING on it. Two artifacts in the same build directory, flatly
+    contradicting each other.
+
+    A gate with no executable form keeps its declarative status, which is
+    the honest reading: nothing has been run, so nothing has failed. Those
+    are counted separately as ``declarative`` so the completion figure is
+    not mistaken for an execution result.
+    """
+    evaluated = EVALUATION_BUCKET.get(
+        str(cert.get("evaluation_status") or "").upper())
+    if evaluated is not None:
+        return evaluated
+    return _bucket(cert.get("verification_status") or cert.get("status") or "")
 
 
 def main() -> int:
@@ -61,9 +95,11 @@ def main() -> int:
     locked_gates: List[str] = []
     open_gates: List[str] = []
 
+    n_declarative = 0
     for c in certs:
-        status = c.get("verification_status") or c.get("status") or ""
-        b = _bucket(status)
+        if not (c.get("evaluation_status") or "").upper().startswith("COMPUTED"):
+            n_declarative += 1
+        b = _bucket_certificate(c)
         bucket_counts[b] += 1
         gate_id = c.get("gate_id") or c.get("id") or c.get("name") or "?"
         phase = str(c.get("phase", "?"))
@@ -95,14 +131,26 @@ def main() -> int:
             "other": bucket_counts["other"],
             "testable_total": n_testable,
             "completion_percent": round(completion_pct, 2),
+            # Gates with no executable form. They keep their declarative
+            # status because nothing has been run on them -- which is also
+            # why the completion figure above must not be read as an
+            # execution result.
+            "declarative_no_executable_form": n_declarative,
         },
         "by_phase": {k: dict(v) for k, v in sorted(by_phase.items())},
         "by_block": {k: dict(v) for k, v in sorted(by_block.items())},
         "locked_gate_ids": locked_gates,
         "open_gate_ids": open_gates,
+        "counts_source": (
+            "evaluation_status where the gate has an executable form, "
+            "verification_status otherwise. This previously read "
+            "verification_status alone, so gates the evaluation layer had "
+            "already failed were still counted LOCKED."
+        ),
         "status_summary": (
             f"{n_locked}/{n_testable} testable gates LOCKED "
-            f"({completion_pct:.1f}% complete); {n_axiom} axiomatic."
+            f"({completion_pct:.1f}% complete); {n_axiom} axiomatic; "
+            f"{n_declarative} declarative (no executable form, never run)."
         ),
     }
 
