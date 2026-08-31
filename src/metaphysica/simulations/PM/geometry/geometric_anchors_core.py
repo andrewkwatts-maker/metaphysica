@@ -67,6 +67,44 @@ except ImportError:
     D_VISIBLE_TOTAL = 4
 
 
+#: Anchors that are RAW EXPERIMENTAL INPUT, not derived from b3 = 24.
+#:
+#: This set lived inside a method named register_to_registry that does
+#: not exist on the class and is called from nowhere -- the entire block
+#: was dead code. Meanwhile the LIVE registration loop in
+#: geometric_anchors.py assigned status="GEOMETRIC" with
+#: "fundamental": True and "tuning_free": True to every anchor without
+#: exception, so NuFIT mixing angles, the SH0ES H0 and the DESI w0 all
+#: shipped labelled as tuning-free consequences of the topology. The
+#: correct classification existed the whole time and never ran.
+#:
+#: theta_13 is the sharpest case: the property returns a hardcoded 8.54
+#: annotated "(NuFIT)" and its eml_description is the bare literal
+#: eml_scalar(8.54).
+MEASURED_ANCHORS = frozenset({
+    "Omega_matter",         # 0.315 (Planck 2018)
+    "Omega_radiation",      # 8.5e-5 (Planck 2018)
+    "H0_early",             # 67.4 km/s/Mpc (Planck 2018)
+    "H0_local",             # 73.04 km/s/Mpc (SH0ES 2022)
+    "theta_12",             # 33.41 deg (NuFIT)
+    "theta_13",             # 8.54 deg (NuFIT)
+    "theta_23",             # 49.0 deg (NuFIT)
+    "delta_CP_PMNS",        # 278.4 deg (NuFIT IO)
+    "dm21_squared",         # 7.42e-5 eV^2 (NuFIT)
+    "dm31_squared",         # 2.51e-3 eV^2 (NuFIT)
+    "A_Wolfenstein",        # 0.81 (PDG)
+    "J_CKM",                # 3.0e-5 (PDG-level value, hardcoded)
+    "M_GUT_geometric",      # 2.1e16 GeV (phenomenological, proton decay limits)
+    "m_KK_bound",           # 3.5 TeV (ATLAS/CMS bound)
+    "alpha_T_phenomenological",   # 2.7 (fit to data)
+    "alpha_R_squared_phenom",     # 0.0045 (phenomenological)
+    "w0_observed_DESI",     # DESI 2025
+    "w0_error_DESI",        # DESI 2025
+    "wa_observed_DESI",     # DESI 2025
+    "omega_Lambda_Planck",  # Planck 2018
+})
+
+
 class GeometricAnchors:
     """
     Derives all PM parameters from the Betti number b₃=24.
@@ -1441,28 +1479,7 @@ class GeometricAnchors:
             anchors = self.get_all_anchors()
 
             # Raw experimental/observational inputs — NOT derived from b3=24.
-            measured_params = {
-                "Omega_matter",         # 0.315 (Planck 2018)
-                "Omega_radiation",      # 8.5e-5 (Planck 2018)
-                "H0_early",             # 67.4 km/s/Mpc (Planck 2018)
-                "H0_local",             # 73.04 km/s/Mpc (SH0ES 2022)
-                "theta_12",             # 33.41 deg (NuFIT)
-                "theta_13",             # 8.54 deg (NuFIT)
-                "theta_23",             # 49.0 deg (NuFIT)
-                "delta_CP_PMNS",        # 278.4 deg (NuFIT IO)
-                "dm21_squared",         # 7.42e-5 eV^2 (NuFIT)
-                "dm31_squared",         # 2.51e-3 eV^2 (NuFIT)
-                "A_Wolfenstein",        # 0.81 (PDG)
-                "J_CKM",                # 3.0e-5 (PDG-level value, hardcoded)
-                "M_GUT_geometric",      # 2.1e16 GeV (phenomenological, proton decay limits)
-                "m_KK_bound",           # 3.5 TeV (ATLAS/CMS bound)
-                "alpha_T_phenomenological",   # 2.7 (fit to data)
-                "alpha_R_squared_phenom",     # 0.0045 (phenomenological)
-                "w0_observed_DESI",     # DESI 2025
-                "w0_error_DESI",        # DESI 2025
-                "wa_observed_DESI",     # DESI 2025
-                "omega_Lambda_Planck",  # Planck 2018
-            }
+            measured_params = MEASURED_ANCHORS
 
             # Register each anchor with per-parameter status
             for name, value in anchors.items():

@@ -1366,22 +1366,43 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
             }
 
-            # Build registration kwargs
+            # Build registration kwargs.
+            #
+            # Status is PER-PARAMETER. This loop previously stamped
+            # status="GEOMETRIC" with "fundamental": True and
+            # "tuning_free": True onto every anchor without exception, so
+            # the NuFIT mixing angles, the SH0ES H0 and the DESI w0 all
+            # shipped labelled as tuning-free consequences of b3 = 24. The
+            # correct classification already existed in
+            # geometric_anchors_core, inside a method that is never called;
+            # MEASURED_ANCHORS is now the single home for it and this is
+            # the loop that consults it.
+            from metaphysica.simulations.PM.geometry.geometric_anchors_core import (
+                MEASURED_ANCHORS,
+            )
+
+            is_measured = name in MEASURED_ANCHORS
             reg_kwargs = {
                 "path": param_path,
                 "value": value,
                 "source": self._metadata.id,
-                "status": "GEOMETRIC",
+                "status": "MEASURED" if is_measured else "GEOMETRIC",
                 "metadata": {
-                    "derivation": "Derived from b3=24 topological invariant",
-                    "fundamental": True,
-                    "tuning_free": True,
+                    "derivation": (
+                        "Experimental/observational input, NOT derived from "
+                        "b3=24 (see the property docstring for the source)"
+                        if is_measured else
+                        "Derived from b3=24 topological invariant"
+                    ),
+                    "fundamental": not is_measured,
                     "eml_description": PARAM_EML_DESCRIPTIONS.get(
                         name,
                         f"EML: eml_vec('{name}') — geometric anchor from G₂ TCS topology"
                     )
                 }
             }
+            if not is_measured:
+                reg_kwargs["metadata"]["tuning_free"] = True
 
             # Add experimental reference if available
             if name in experimental_references:

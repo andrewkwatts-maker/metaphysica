@@ -468,11 +468,15 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_cabibbo_proxy",
                 name="Cabibbo-like Suppression Proxy ε",
                 units="dimensionless",
-                status="DERIVED",
+                status="FALSIFIED",
                 description=(
-                    "Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo parameter λ_W ≈ 0.2250. "
-                    "Promotes Cabibbo angle from CALIBRATED toward DERIVED. "
-                    "Note: exact value requires racetrack minimization with SM matter content."
+                    "FALSIFIED. Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo "
+                    "parameter λ_W. Evaluates to 0.455938 against PDG 0.22500 ± 0.00067 "
+                    "— 344.7σ, off by roughly a factor of two. Retained on the books "
+                    "with its derivation intact rather than retired, because the "
+                    "racetrack construction behind it is still carried by the refined "
+                    "and derived variants. It no longer promotes the Cabibbo angle "
+                    "toward DERIVED; that claim is withdrawn."
                 ),
                 derivation_formula="gaugino-cabibbo-proxy",
                 eml_description=(
@@ -489,13 +493,17 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_cabibbo_refined",
                 name="Cabibbo Refined Estimate exp(-pi/2)",
                 units="dimensionless",
-                status="DERIVED",
+                status="FALSIFIED",
                 description=(
-                    "Refined Cabibbo-like estimate: exp(-pi/2) = lambda_eff^(N1/4) ≈ 0.2079. "
-                    "Physical argument: first-generation Yukawa suppression involves N1/4=6 racetrack "
-                    "cycles out of N1=24 total (E6 has 4 SM-like gauge sectors). "
-                    "Closer to PDG Wolfenstein lambda_W ≈ 0.22500 than the coarse proxy lambda_eff^3 ≈ 0.456. "
-                    "Residual gap (0.208 vs 0.226) from loop corrections and SU(5) embedding."
+                    "FALSIFIED. Refined Cabibbo-like estimate exp(-pi/2) = "
+                    "lambda_eff^(N1/4) = 0.207880, against PDG 0.22500 +- 0.00067 "
+                    "— 25.6 sigma. The physical argument was that first-generation "
+                    "Yukawa suppression involves N1/4 = 6 racetrack cycles out of "
+                    "N1 = 24 total (E6 has 4 SM-like gauge sectors). This is the "
+                    "closest of the three variants and still fails by a wide margin. "
+                    "The residual gap was previously attributed to loop corrections "
+                    "and SU(5) embedding; that attribution is untested and does not "
+                    "account for a 7.6% shortfall on a quantity measured to 0.3%."
                 ),
                 derivation_formula="gaugino-cabibbo-proxy",
                 eml_description=(
@@ -539,14 +547,19 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_cabibbo_derived",
                 name="Wolfenstein λ_W from Racetrack Minimum (Algebraic, DERIVED)",
                 units="dimensionless",
-                status="DERIVED",
+                status="FALSIFIED",
                 description=(
                     "Algebraically derived Wolfenstein CKM parameter "
                     "λ_W = |exp(-2π·T_min/N₁) - exp(-2π·T_min/N₂)|^(1/n_gen) ≈ 0.2502. "
                     "T_min = (N₁·N₂)/(2π·(N₁-N₂))·ln(N₁/N₂) is the racetrack moduli minimum. "
                     "N₁=b₃=24 (topological), N₂=23, n_gen=3 (G₂ geometry). "
-                    "PDG Wolfenstein λ_W = 0.22500 — 11% agreement, zero free parameters. "
-                    "Status: DERIVED (not CALIBRATED)."
+                    "FALSIFIED against PDG Wolfenstein λ_W = 0.22500 ± 0.00067: "
+                    "0.250163 is 37.6σ away. Minimising the racetrack moved the "
+                    "prediction toward the measurement relative to the λ_eff³ proxy "
+                    "but overshot it; the mechanism does not fix the Cabibbo angle. "
+                    "The earlier '11% agreement, zero free parameters' framing is "
+                    "withdrawn — an 11% discrepancy on a quantity measured to 0.3% "
+                    "is a failure, not an agreement."
                 ),
                 derivation_formula="gaugino-cabibbo-derived",
                 eml_description=(

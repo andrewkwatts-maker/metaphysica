@@ -147,6 +147,54 @@ class StatisticalRigorValidator:
         return chi_sq, n
 
     @staticmethod
+    def _chi_squared_split(rows):
+        """Report the fit BOTH ways, and name what moved between them.
+
+        Three algebra.gaugino_cabibbo_* rows are 95.4% of the global
+        chi-squared on their own. They are labelled FALSIFIED: the framework
+        has withdrawn those candidates, while keeping them on the books
+        rather than deleting them. That creates a real tension between two
+        defensible statistics:
+
+          * Including them, the "current fit" is dominated by predictions
+            nobody is still making.
+          * Excluding them silently is exactly the move that made this
+            validator report a perfect fit in the first place -- drop the
+            failures, admire the result.
+
+        So neither is chosen. Both are computed, the excluded rows are
+        listed by name with their sigma, and the caller decides which to
+        quote. A reader who sees only one number can always find the other.
+        """
+        withdrawn = [r for r in rows
+                     if str(r.get("registry_status", "")).upper() == "FALSIFIED"]
+        live = [r for r in rows
+                if str(r.get("registry_status", "")).upper() != "FALSIFIED"]
+        chi_all, n_all = StatisticalRigorValidator._chi_squared_from_rows(rows)
+        chi_live, n_live = StatisticalRigorValidator._chi_squared_from_rows(live)
+        return {
+            "all_scoring_rows": {
+                "chi_squared": chi_all,
+                "n": n_all,
+                "reduced": (chi_all / n_all) if n_all else None,
+            },
+            "excluding_falsified": {
+                "chi_squared": chi_live,
+                "n": n_live,
+                "reduced": (chi_live / n_live) if n_live else None,
+            },
+            "withdrawn_rows": sorted(
+                ({"path": r.get("path"), "sigma": r.get("sigma"),
+                  "verdict": r.get("status")} for r in withdrawn),
+                key=lambda d: -(d["sigma"] or 0.0)),
+            "note": (
+                "FALSIFIED rows stay on the books and stay scored. They are "
+                "shown separately because a withdrawn candidate should not "
+                "silently set the headline fit quality in either direction."
+            ),
+        }
+
+    @staticmethod
     def _adapt_validation_rows(data):
         """Per-parameter rows from validation_report.json.
 
@@ -194,6 +242,11 @@ class StatisticalRigorValidator:
                 "experimental_value": experimental,
                 "uncertainty": uncertainty,
                 "sigma": entry.get("sigma"),
+                # The REGISTRY label, distinct from the verdict. A row can
+                # be FALSIFIED (the framework has withdrawn the claim) and
+                # still FAIL (it is scored and it misses). Both are needed:
+                # see _chi_squared_split.
+                "registry_status": entry.get("registry_status"),
             })
         return rows
 
@@ -795,6 +848,12 @@ class StatisticalRigorValidator:
                     "depend entirely on this hardcoded value and should be treated as illustrative."
                 ),
             },
+            # The raw fit, computed from the rows rather than from a
+            # literal, reported both with and without the withdrawn
+            # candidates. This is the number to read if the EDOF ansatz
+            # above is not accepted -- it depends on no hardcoded value.
+            "chi_squared_from_rows": self._chi_squared_split(
+                self.validation_results),
             "edof_analysis": edof_results,
             "theory_uncertainty_correction_deprecated": uncertainty_results,
             "summary": {

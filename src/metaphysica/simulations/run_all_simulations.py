@@ -2260,13 +2260,23 @@ class SimulationRunner:
             elif source == "g2_geometry_v16_0":
                 status = "GEOMETRIC"
             elif original_status in ("ESTABLISHED", "GEOMETRIC", "PREDICTED",
-                                     "CALIBRATED", "FALSIFIED", "VALIDATION"):
+                                     "CALIBRATED", "FALSIFIED", "MEASURED",
+                                     "VALIDATION"):
                 # Preserve explicitly set statuses. FALSIFIED is load-bearing:
                 # the R1 ruling marks dead candidates in the registry itself
                 # (falsified rows stay on the books, labelled), and this
                 # whitelist used to silently launder FALSIFIED back into
                 # DERIVED at export -- the label survived in the description
                 # while the machine-readable status lied.
+                #
+                # MEASURED was omitted and hit the same trap. The geometric
+                # anchors include raw experimental inputs (NuFIT mixing
+                # angles, the SH0ES H0, the DESI w0); once those were
+                # correctly classified upstream the label was laundered back
+                # to DERIVED here, so a NuFIT input still shipped as a
+                # framework derivation. Any status this whitelist does not
+                # name is silently rewritten, which makes the omission
+                # invisible -- see test_export_status_whitelist.
                 status = original_status
             elif "calibrated" in param_data.get("description", "").lower():
                 status = "CALIBRATED"
