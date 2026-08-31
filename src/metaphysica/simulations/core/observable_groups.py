@@ -304,6 +304,26 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
         "pre-suppression baseline, not a prediction of observed S8"),
     "desi.S8": (DISTINCT, "experimental anchor"),
     "planck.S8": (DISTINCT, "experimental anchor"),
+    # Weak-lensing anchors. Same ground as desi.S8 / planck.S8: data, not
+    # rival derivations. They exist as registry rows because the S8 tension
+    # was being scored against the CMB anchor only -- s8_pm_predicted passes
+    # Planck at 0.7 sigma while the framework's own text puts the KiDS
+    # tension at ~2.7 sigma, and that number appeared in no scored row.
+    "lensing.S8_kids1000": (DISTINCT,
+        "KiDS-1000 experimental anchor (Heymans et al. 2021)"),
+    "lensing.S8_des_y3": (DISTINCT,
+        "DES Y3 experimental anchor (DES Collaboration 2022)"),
+    "lensing.S8_hsc_y3": (DISTINCT,
+        "HSC Y3 experimental anchor (Li et al. 2023)"),
+    "cosmology.s8_pm_vs_lensing": (DISTINCT,
+        "NOT a rival derivation -- it is numerically identical to "
+        "cosmology.s8_pm_predicted, the same prediction scored against the "
+        "weak-lensing anchor instead of the CMB one. Comparing the two "
+        "inside the group would manufacture a 0-sigma self-agreement row of "
+        "exactly the kind the R4 ruling struck out for "
+        "cosmology.H0_baseline_km_s_Mpc. Its disagreement with the anchor "
+        "is the S8 tension and is tracked by the validation layer "
+        "(2.73 sigma TENSION)."),
     "cosmology.S8_tension_remaining_sigma": (INTERMEDIATE,
         "residual tension in sigmas, not a value of S8"),
     "cosmology.s8_tension_des": (INTERMEDIATE,
