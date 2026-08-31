@@ -77,6 +77,63 @@ def _is_roundtrip_identity(value, exp) -> bool:
         return False
 
 
+#: Adopted policy for whether an UNCITED theory uncertainty may change a
+#: verdict. Declared as the `theory_uncertainty_policy` fork in
+#: simulations/core/variants.py; override per run with
+#: METAPHYSICA_VARIANT_THEORY_UNCERTAINTY_POLICY=<option>.
+#:
+#: Generalises the R6 ruling. G12 was converted with no invented theory
+#: buffer and reads COMPUTED_FAIL at 17.1 sigma. The SAME number
+#: (0.23190478152123015) also sits in the registry as
+#: gauge.sin2_theta_w_geometric carrying an uncited 0.001 buffer and reads
+#: PASS at 0.68 sigma -- one prediction, two published verdicts. A buffer
+#: nobody derived should not be able to decide the answer.
+DEFAULT_THEORY_UNCERTAINTY_POLICY = "cited_only"
+
+
+def _resolve_theory_policy() -> str:
+    try:
+        from metaphysica.simulations.core.variants import resolve
+        return resolve("theory_uncertainty_policy")
+    except Exception:
+        return DEFAULT_THEORY_UNCERTAINTY_POLICY
+
+
+def _theory_uncertainty_is_cited(meta: Dict[str, Any]) -> bool:
+    """A named SOURCE is not a citation.
+
+    `theory_uncertainty_source` holds strings like "geometric_vev_precision"
+    and "expansion_history_approximation" -- categories, not references. A
+    citation must identify something checkable, so a separate key is
+    required and its absence means uncited.
+    """
+    citation = meta.get("theory_uncertainty_citation")
+    return bool(citation and str(citation).strip())
+
+
+def _registry_band(sigma) -> str:
+    """Band a sigma the way PMRegistry.set_param does.
+
+    The registry uses <1 PASS, <2 MARGINAL, <3 TENSION, else FAIL, while
+    this report's _verdict uses <2/<3/<5. Both conventions are live. The
+    theory-uncertainty comparison must not straddle them: banding the
+    experimental sigma with the looser scale while the folded sigma carries
+    the registry's own verdict made 'experimental_only' report MORE passes
+    than the stricter policy, which is impossible (sigma_exp >= sigma_total
+    always). Comparing like with like is what makes the diff mean anything.
+    """
+    if sigma is None:
+        return "UNBOUNDED"
+    a = abs(sigma)
+    if a < 1.0:
+        return "PASS"
+    if a < 2.0:
+        return "MARGINAL"
+    if a < 3.0:
+        return "TENSION"
+    return "FAIL"
+
+
 def _verdict(sigma, registry_status: str) -> str:
     """Classify by sigma with the registry's own validation_status as guide."""
     s = (registry_status or "").upper()
@@ -104,6 +161,7 @@ def build_report() -> Dict[str, Any]:
         }
     registry = json.loads(params_path.read_text(encoding="utf-8")).get("parameters", {})
 
+    policy = _resolve_theory_policy()
     validations: List[Dict[str, Any]] = []
     for path, rec in sorted(registry.items()):
         value = _num(rec.get("value"))
@@ -134,6 +192,28 @@ def build_report() -> Dict[str, Any]:
                 sigma_exp_only = abs(float(value) - float(exp)) / float(unc)
             except (TypeError, ValueError, ZeroDivisionError):
                 sigma_exp_only = None
+
+        # All three policy outcomes are computed for every row, so the
+        # comparison needs no rebuild -- the active policy only decides
+        # which one becomes the headline `verdict`.
+        v_with_theory = verdict
+        v_exp_only = verdict
+        # Only re-decide rows the registry itself scored two-sidedly. Where
+        # sigma is None the registry declined to compute one -- a one-sided
+        # bound has no two-sided sigma -- and manufacturing a verdict from
+        # sigma_exp_only there would convert UNBOUNDED rows into PASS/FAIL
+        # on a comparison the registry deliberately did not make.
+        if (verdict not in ("INPUT", "IDENTITY")
+                and sigma is not None and sigma_exp_only is not None):
+            v_exp_only = _registry_band(sigma_exp_only)
+        cited = _theory_uncertainty_is_cited(meta)
+        load_bearing = bool(theory_unc) and v_with_theory != v_exp_only
+        if policy == "experimental_only":
+            verdict = v_exp_only
+        elif policy == "cited_only" and load_bearing and not cited:
+            verdict = v_exp_only
+        # policy == "always" leaves the folded verdict in place
+
         validations.append({
             "path": path,
             "value": value,
@@ -143,7 +223,11 @@ def build_report() -> Dict[str, Any]:
             "sigma": sigma,
             "sigma_experimental_only": sigma_exp_only,
             "theory_uncertainty": _num(theory_unc),
+            "theory_uncertainty_cited": cited if theory_unc else None,
+            "theory_uncertainty_load_bearing": load_bearing or None,
             "verdict": verdict,
+            "verdict_with_theory": v_with_theory,
+            "verdict_experimental_only": v_exp_only,
             "registry_status": rec.get("status"),
             "units": meta.get("units"),
             "source_simulation": rec.get("source_simulation"),
@@ -154,6 +238,31 @@ def build_report() -> Dict[str, Any]:
     counts: Dict[str, int] = {}
     for v in validations:
         counts[v["verdict"]] = counts.get(v["verdict"], 0) + 1
+
+    # Every policy's scoreboard, computed from the same rows. Publishing all
+    # three is the guard against the switch becoming a way to shop for the
+    # flattering one: the alternatives are always visible beside the active
+    # verdict, and they are ordered by declaration, never by agreement.
+    def _tally(key: str) -> Dict[str, int]:
+        out: Dict[str, int] = {}
+        for v in validations:
+            out[v[key]] = out.get(v[key], 0) + 1
+        return dict(sorted(out.items()))
+
+    deflated = [
+        {
+            "path": v["path"],
+            "sigma_with_theory": v["sigma"],
+            "sigma_experimental_only": v["sigma_experimental_only"],
+            "theory_uncertainty": v["theory_uncertainty"],
+            "cited": v["theory_uncertainty_cited"],
+            "verdict_with_theory": v["verdict_with_theory"],
+            "verdict_experimental_only": v["verdict_experimental_only"],
+        }
+        for v in validations
+        if v.get("theory_uncertainty_load_bearing")
+    ]
+    deflated.sort(key=lambda d: -(d["sigma_experimental_only"] or 0))
 
     worst = sorted(
         (v for v in validations if v["sigma"] is not None),
@@ -183,6 +292,34 @@ def build_report() -> Dict[str, Any]:
         "summary": {
             "total": len(validations),
             **{k.lower(): n for k, n in sorted(counts.items())},
+        },
+        "theory_uncertainty_policy": {
+            "active": policy,
+            "default": DEFAULT_THEORY_UNCERTAINTY_POLICY,
+            "fork": "theory_uncertainty_policy (see variants.json)",
+            "rule": (
+                "cited_only: a theory uncertainty may change a verdict only "
+                "if metadata carries theory_uncertainty_citation. A named "
+                "theory_uncertainty_source ('geometric_vev_precision') is a "
+                "category, not a reference, and does not count. Generalises "
+                "the R6 ruling from G12 to the whole validation layer."
+            ),
+            "n_rows_with_theory_uncertainty": sum(
+                1 for v in validations if v["theory_uncertainty"]
+            ),
+            "n_load_bearing": len(deflated),
+            "n_load_bearing_cited": sum(1 for d in deflated if d["cited"]),
+            "scoreboard_if_always": _tally("verdict_with_theory"),
+            "scoreboard_if_experimental_only": _tally("verdict_experimental_only"),
+            "load_bearing_rows": deflated,
+            "note": (
+                "A theory uncertainty is load-bearing when it changes the "
+                "verdict. Ten of the fifteen rows carrying one are NOT "
+                "load-bearing -- the allowance is modest and the answer is "
+                "the same either way; those are untouched by this policy. "
+                "Only where a buffer decides the answer does its provenance "
+                "matter."
+            ),
         },
         "worst_offenders": [
             {"path": v["path"], "sigma": v["sigma"], "verdict": v["verdict"]}
