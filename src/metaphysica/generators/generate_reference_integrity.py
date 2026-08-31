@@ -84,6 +84,56 @@ def audit_references(autogen: Path) -> dict:
     duplicates = {t: sorted(v) for t, v in by_title.items() if len(v) > 1}
     n_dup_entries = sum(len(v) for v in duplicates.values())
 
+    # Identifier CONFLICTS, which are a different and worse defect than a
+    # shared title.
+    #
+    # The title check cannot tell an accidental duplicate from a deliberate
+    # one, and in practice most of what it flags is deliberate: one PDG
+    # release cited under six ids for six different sections, one CODATA
+    # release under seven, one Planck paper under eleven. Those split a
+    # citation but every id still points at the right document.
+    #
+    # The serious case is the opposite: two entries that are genuinely
+    # DIFFERENT works carrying the SAME identifier, so following the
+    # citation lands the reader on the wrong paper. A year mismatch is the
+    # reliable signal, since the same document cannot have two publication
+    # years. Found this way:
+    #
+    #   * berger1966 carries 10.24033/bsmf.1464, which is Berger's 1955
+    #     holonomy classification in Bull. SMF
+    #   * penrose_2004_road_to_reality carries the OUP identifier of the
+    #     1996 gravity-reduction work
+    #   * nist-codata-2018 shares the CODATA landing-page URL with the
+    #     2022 release entries
+    #
+    # None is fixable here without a lookup, and inventing a replacement
+    # identifier is exactly what the SSOT rule forbids. The audit reports
+    # them; it does not repair them.
+    by_identifier = defaultdict(list)
+    for rid, ref in refs.items():
+        ident = str(
+            ref.get("arxiv") or ref.get("arxiv_id") or ref.get("doi")
+            or ref.get("url") or ""
+        ).strip().lower()
+        if ident:
+            by_identifier[ident].append(rid)
+
+    identifier_conflicts = {}
+    for ident, rids in by_identifier.items():
+        if len(rids) < 2:
+            continue
+        years = {str(refs[r].get("year")) for r in rids}
+        if len(years) > 1:
+            identifier_conflicts[ident] = sorted(
+                {"id": r, "year": refs[r].get("year"),
+                 "title": refs[r].get("title")} for r in rids
+            ) if False else [
+                {"id": r, "year": refs[r].get("year"),
+                 "title": refs[r].get("title")}
+                for r in sorted(rids)
+            ]
+    n_conflicting = sum(len(v) for v in identifier_conflicts.values())
+
     unidentified = sorted(
         rid for rid, ref in refs.items()
         if not any(ref.get(f) for f in _IDENTIFIER_FIELDS)
@@ -108,6 +158,21 @@ def audit_references(autogen: Path) -> dict:
             "status": "PASS" if not duplicates else "FAIL",
             "note": "duplicates inflate the apparent breadth of the "
                     "literature base and split citations of one paper",
+        },
+        {
+            "id": "no_conflicting_identifiers",
+            "claim": "entries from different years do not share an identifier",
+            "measured": n_conflicting,
+            "expected": 0,
+            "status": "PASS" if not identifier_conflicts else "FAIL",
+            "note": "a shared TITLE splits one paper's citations, which is "
+                    "untidy; a shared IDENTIFIER between works of different "
+                    "years sends the reader to the wrong document, which "
+                    "breaks the citation. This check exists because the "
+                    "title check flagged the deliberate PDG and CODATA "
+                    "groups while missing berger1966 carrying Berger 1955's "
+                    "DOI and penrose_2004_road_to_reality carrying a 1996 "
+                    "identifier",
         },
         {
             "id": "references_are_cited",
@@ -139,6 +204,7 @@ def audit_references(autogen: Path) -> dict:
         "checks": checks,
         "orphans": orphans,
         "duplicate_groups": duplicates,
+        "identifier_conflicts": identifier_conflicts,
         "without_identifier": unidentified,
         "references_per_simulation": dict(by_sim.most_common()),
         "note": (
