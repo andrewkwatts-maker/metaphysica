@@ -367,8 +367,14 @@ class CKMMatrixSimulation(SimulationBase):
         V_ud = np.sqrt(1.0 - V_us ** 2 - V_ub ** 2)
 
         # Second row (c-type quarks)
-        # V_cd ~ -lambda (same magnitude as V_us)
-        V_cd = lambda_w
+        # V_cd = -lambda at leading Wolfenstein order. The sign was
+        # dropped here while the comment, the eml_description
+        # (ops.neg(...)) and the PDG convention all carry it, which made
+        # ckm.V_cd the sole DISAGREE_SIGN row in the EML cross-check:
+        # evaluated -0.223130, registered +0.223130. Downstream uses are
+        # V_cd**2 (V_cs from unitarity, the first-column normalisation), so
+        # restoring the sign leaves every magnitude unchanged.
+        V_cd = -lambda_w
 
         # V_cb ~ A*lambda^2
         V_cb = A_w * lambda_w ** 2

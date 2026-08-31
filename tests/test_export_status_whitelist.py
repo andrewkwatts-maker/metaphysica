@@ -156,19 +156,60 @@ def test_theta_13_is_not_scored_against_its_own_anchor():
 # -- the whitelist's silent-rewrite property ---------------------------------
 
 
-def test_whitelist_names_every_status_the_registry_can_set():
-    """An unnamed status is silently rewritten, which hides the omission."""
-    import inspect
+def test_every_declared_status_survives_export():
+    """An unnamed status is silently rewritten, which hides the omission.
 
-    from metaphysica.simulations import run_all_simulations as runner
+    The set began as a seven-name inline tuple while 27 distinct statuses
+    were declared across the tree, so 20 were being rewritten to DERIVED --
+    an epistemic UPGRADE applied by accident. FITTED (19 parameters),
+    ANSATZ (7, including gauge.su2_sin2_theta_W), SPECULATIVE (3),
+    PLAUSIBLE (6) and TOPOLOGY_CANDIDATE (1) all shipped as derivations.
 
-    src = inspect.getsource(runner)
-    for status in ("FALSIFIED", "MEASURED", "CALIBRATED", "PREDICTED",
-                   "GEOMETRIC", "ESTABLISHED", "VALIDATION"):
-        assert f'"{status}"' in src, (
-            f"{status} is not named in run_all_simulations; if the registry "
-            f"can set it, export will rewrite it to DERIVED without warning"
-        )
+    This walks the AST for every Parameter(status=...) literal rather than
+    listing names, so a newly introduced status cannot slip past.
+    """
+    import ast as _ast
+    import pathlib
+
+    from metaphysica.simulations.run_all_simulations import (
+        PRESERVED_PARAMETER_STATUSES,
+    )
+
+    root = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica"
+    if not root.is_dir():
+        pytest.skip("source tree not available")
+    declared = set()
+    for path in root.rglob("*.py"):
+        try:
+            tree = _ast.parse(path.read_text(encoding="utf-8"))
+        except (SyntaxError, UnicodeDecodeError):
+            continue
+        for node in _ast.walk(tree):
+            if (isinstance(node, _ast.Call)
+                    and getattr(node.func, "id", "") == "Parameter"):
+                for kw in node.keywords:
+                    if kw.arg == "status" and isinstance(kw.value, _ast.Constant):
+                        declared.add(kw.value.value)
+    missing = sorted(declared - PRESERVED_PARAMETER_STATUSES)
+    assert not missing, (
+        f"these statuses are declared in the tree but not preserved at "
+        f"export, so they ship as DERIVED: {missing}"
+    )
+
+
+def test_no_shipped_status_was_invented_at_export():
+    """Catches statuses set at runtime rather than as a literal."""
+    from metaphysica.simulations.run_all_simulations import (
+        PRESERVED_PARAMETER_STATUSES,
+    )
+
+    shipped = {v.get("status") for v in _params().values()} - {None}
+    unknown = sorted(shipped - PRESERVED_PARAMETER_STATUSES)
+    assert not unknown, (
+        f"the artifact carries statuses the export does not preserve: "
+        f"{unknown}. They survived by some other route and would be "
+        f"rewritten if they ever passed through the whitelist branch."
+    )
 
 
 def test_falsified_still_survives_export():

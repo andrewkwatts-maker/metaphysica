@@ -176,6 +176,40 @@ except ImportError:
     warnings.warn("NumPy not available - UQ mode will be disabled")
 
 
+
+#: Parameter statuses that survive export unchanged.
+#:
+#: This began as a seven-name inline tuple, and anything it did not name was
+#: silently rewritten to DERIVED. That is an epistemic upgrade applied by
+#: accident: a status is the framework's own statement of how much a number
+#: is worth, and the export was overwriting the weaker ones with a stronger
+#: one. An audit of every ``Parameter(status=...)`` literal in the tree found
+#: 27 distinct statuses declared and only 7 surviving. Among the 20 being
+#: rewritten:
+#:
+#:   * FITTED (19 parameters) -- a fit, shipping as a derivation
+#:   * ANSATZ (7) -- including gauge.su2_sin2_theta_W and
+#:     gauge.su3_alpha_s_predicted
+#:   * SPECULATIVE (3), PLAUSIBLE (6), TOPOLOGY_CANDIDATE (1),
+#:     RETRODICTED_VARIANT (1)
+#:   * FALSIFIED and MEASURED, each fixed separately after being found the
+#:     same way
+#:
+#: The failure mode is silence: the label survives in the description while
+#: the machine-readable status says something stronger. test_export_status_
+#: whitelist asserts this set covers every status literal in the tree, so a
+#: newly introduced one fails loudly instead of being quietly promoted.
+PRESERVED_PARAMETER_STATUSES = frozenset({
+    "ANCHORED", "ANSATZ", "CALIBRATED", "COMPUTATIONAL", "COMPUTED",
+    "DERIVED",
+    "DIAGNOSTIC", "ESTABLISHED", "EXACT", "FALSIFIED", "FITTED",
+    "FITTED_COMPOSITE", "FOUNDATIONAL", "GEOMETRIC", "INPUT", "MEASURED",
+    "PLAUSIBLE", "PREDICTED", "PREDICTIONS", "RETRODICTED_VARIANT",
+    "SPECULATIVE", "SYSTEM", "TABULATED", "TARGET", "TERMINAL",
+    "TOPOLOGY_CANDIDATE", "VALIDATED", "VALIDATION",
+})
+
+
 class NumpyJSONEncoder(json.JSONEncoder):
     """Custom JSON encoder that handles numpy types and sanitizes inf/nan."""
     def default(self, obj):
@@ -2259,9 +2293,7 @@ class SimulationRunner:
                 status = "ESTABLISHED"
             elif source == "g2_geometry_v16_0":
                 status = "GEOMETRIC"
-            elif original_status in ("ESTABLISHED", "GEOMETRIC", "PREDICTED",
-                                     "CALIBRATED", "FALSIFIED", "MEASURED",
-                                     "VALIDATION"):
+            elif original_status in PRESERVED_PARAMETER_STATUSES:
                 # Preserve explicitly set statuses. FALSIFIED is load-bearing:
                 # the R1 ruling marks dead candidates in the registry itself
                 # (falsified rows stay on the books, labelled), and this
