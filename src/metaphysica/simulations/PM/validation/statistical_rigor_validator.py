@@ -40,6 +40,23 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger("StatisticalRigor")
 
 
+#: Verdicts the validation report itself declines to score two-sidedly.
+#: These rows carry an experimental value and an uncertainty, so they
+#: survived the "has an uncertainty" filter, but the report has already
+#: judged them not comparable. Two of them dominated the global
+#: chi-squared before this exclusion existed: gauge.M_GUT_GEOMETRIC
+#: compares 2.1e16 GeV against 1.67e34 -- a proton LIFETIME in years, not
+#: a mass -- contributing 3.4e38 on its own, and axion.omega_h2 added
+#: 1.6e5. Including a row the report calls UNBOUNDED is not conservative;
+#: it is a category error with a very loud number attached.
+NON_SCORING_VERDICTS = frozenset({"UNBOUNDED", "INPUT", "IDENTITY"})
+
+#: Verdicts that DO carry a two-sided comparison. A fit statistic must
+#: range over all of these -- excluding TENSION and FAIL is what made
+#: the fit look perfect.
+SCORING_VERDICTS = frozenset({"PASS", "MARGINAL", "TENSION", "FAIL"})
+
+
 class StatisticalRigorValidator:
     """
     Computes the 'Independence Rank' of the 26D ancestral geometry.
@@ -68,16 +85,27 @@ class StatisticalRigorValidator:
         if self.validation_file.exists():
             with open(self.validation_file, "r") as f:
                 self.data = json.load(f)
-            self.chi_sq = self.data.get("summary", {}).get("global_chi_squared", 0.23)
-            self.dof_claimed = self.data.get("summary", {}).get("degrees_of_freedom", 25)
             self.validation_results = self._adapt_validation_rows(self.data)
-            logger.info(f"Loaded validation data: χ² = {self.chi_sq}, DoF = {self.dof_claimed}")
+            summary = self.data.get("summary", {})
+            self.chi_sq = summary.get("global_chi_squared")
+            self.dof_claimed = summary.get("degrees_of_freedom")
+            if self.chi_sq is None or self.dof_claimed is None:
+                self.chi_sq, self.dof_claimed = self._chi_squared_from_rows(
+                    self.validation_results)
+            logger.info(
+                f"Loaded validation data: chi^2 = {self.chi_sq}, "
+                f"DoF = {self.dof_claimed} (from "
+                f"{len(self.validation_results)} scoring rows)")
         else:
-            # Use theoretical values if file doesn't exist
-            self.chi_sq = 0.23  # From v23.9 validation
-            self.dof_claimed = 25  # 26 testable - 1 marginal
-            self.validation_results = []
-            logger.warning(f"Validation file not found, using theoretical values")
+            raise FileNotFoundError(
+                f"validation_report.json not found at {self.validation_file}. "
+                "This validator previously fell back to chi^2 = 0.23 and "
+                "DoF = 25 -- literals carried over from v23.9 -- and then "
+                "published a full statistical report, p-value and "
+                "'TOO_GOOD' verdict computed from no data at all. A missing "
+                "input is a build failure, not a licence to invent one. Run "
+                "the validation step first, or pass validation_file."
+            )
 
         # PM framework constants
         self.n_residues = 125  # Total physical constants
@@ -86,6 +114,37 @@ class StatisticalRigorValidator:
 
         logger.info(f"PM Framework: {self.n_residues} residues, {self.n_dimensions}D manifold")
         logger.info(f"Theory uncertainty: {self.theory_uncertainty * 100:.2f}%")
+
+    @staticmethod
+    def _chi_squared_from_rows(rows):
+        """Compute (chi^2, dof) from the scoring rows themselves.
+
+        The report's summary block carries no ``global_chi_squared`` or
+        ``degrees_of_freedom`` key, so the previous ``.get(..., 0.23)`` and
+        ``.get(..., 25)`` defaults fired on EVERY run, not just when the
+        file was missing. Every statistic downstream -- the p-value, the
+        EDOF comparison, the "TOO_GOOD" verdict -- was computed from those
+        two literals rather than from the 136 rows sitting in the same
+        file.
+
+        Degrees of freedom is the row count. The framework claims zero
+        fitted parameters, so nothing is subtracted; if that claim is ever
+        withdrawn this needs revisiting.
+        """
+        chi_sq = 0.0
+        n = 0
+        for row in rows:
+            try:
+                predicted = float(row["predicted_value"])
+                experimental = float(row["experimental_value"])
+                uncertainty = float(row["uncertainty"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if uncertainty <= 0:
+                continue
+            chi_sq += ((predicted - experimental) / uncertainty) ** 2
+            n += 1
+        return chi_sq, n
 
     @staticmethod
     def _adapt_validation_rows(data):
@@ -122,8 +181,14 @@ class StatisticalRigorValidator:
             experimental = entry.get("experimental_value")
             if uncertainty in (None, 0) or predicted is None or experimental is None:
                 continue
+            if entry.get("verdict") in NON_SCORING_VERDICTS:
+                continue
             rows.append({
                 "path": entry.get("path"),
+                # recalculate_with_theory_uncertainty reads "name"; the
+                # report calls it "path". Both are emitted so neither
+                # consumer has to know about the other's spelling.
+                "name": entry.get("path"),
                 "status": entry.get("verdict"),
                 "predicted_value": predicted,
                 "experimental_value": experimental,
@@ -406,7 +471,16 @@ class StatisticalRigorValidator:
         detailed_results = []
 
         for result in self.validation_results:
-            if result["status"] in ["PASS", "MARGINAL"]:
+            # Every SCORING row, not just the agreeing ones. This read
+            # ["PASS", "MARGINAL"], so the chi-squared -- and the fit
+            # quality verdict drawn from it -- was computed over exactly
+            # the rows that already agreed, with every TENSION and FAIL
+            # discarded first. It then reported the result as
+            # "TOO_GOOD (suspiciously perfect fit)", which it was, by
+            # construction. Rows the report declines to score two-sidedly
+            # (UNBOUNDED / INPUT / IDENTITY) are already excluded upstream
+            # by NON_SCORING_VERDICTS; nothing else may be filtered here.
+            if result["status"] in SCORING_VERDICTS:
                 predicted = result["predicted_value"]
                 experimental = result["experimental_value"]
                 sigma_exp = result["uncertainty"]
@@ -467,7 +541,16 @@ class StatisticalRigorValidator:
         # the fit is "too good". We want p-values in [0.05, 0.95] range.
         is_credible = bool(0.05 <= p_value_new <= 0.95)
 
-        if self.use_lower_tail:
+        # Interpret according to the tail ACTUALLY used, not the flag.
+        # The tail is selected above by the data (chi_sq_old < dof_effective);
+        # the interpretation branched on self.use_lower_tail instead. When
+        # chi^2 exceeds the DoF the upper tail is taken and p ~ 0 means a bad
+        # fit -- but the lower-tail branch reads p < 0.05 as "TOO_GOOD
+        # (suspiciously perfect fit)". A catastrophic misfit was therefore
+        # reported as a suspiciously perfect one, with the sign of the whole
+        # conclusion inverted. This surfaced the moment the validator was
+        # given real rows: chi^2 = 126676 over 63 DoF printed as TOO_GOOD.
+        if tail_used.startswith("lower"):
             # For lower tail, SMALL p-value = too good, LARGE p-value = acceptable
             if is_credible:
                 status = "CREDIBLE"

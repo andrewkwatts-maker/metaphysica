@@ -108,6 +108,47 @@ class SectionEntry:
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
 
+# ---------------------------------------------------------------------------
+# Anchors for parameters registered without one
+# ---------------------------------------------------------------------------
+#
+# WHY THIS EXISTS
+# ---------------
+# ``update()`` registers a whole result dict at once and passed no
+# experimental anchors, so EVERY parameter arriving through it carried
+# ``experimental_value: None`` and was therefore skipped by the validation
+# report -- not even recorded as UNBOUNDED. Three of the framework's most
+# promoted numbers came in this way and were scored nowhere:
+# ``particle.theta_13_deg`` (the working headline), ``geometry.theta_13``
+# (its cross-check) and ``geometry.sum_m_nu`` (the canonical mass sum). The
+# register quoted sigma values for all three as prose.
+#
+# Each entry below names an anchor that ALREADY EXISTS in the registry
+# rather than a literal, so the measured value and its uncertainty have a
+# single home. If the anchor row moves, these move with it; if the anchor
+# is absent, the parameter stays unbound rather than acquiring an invented
+# one.
+DECLARED_ANCHORS: Dict[str, Dict[str, str]] = {
+    "particle.theta_13_deg": {
+        "anchor": "nufit.theta_13",
+        "bound_type": "measured",
+    },
+    # geometry.theta_13 is DELIBERATELY ABSENT. Its producer
+    # (geometric_anchors_core.theta_13) returns a hardcoded 8.54 that the
+    # module's own comment annotates "8.54 deg (NuFIT)", and its
+    # eml_description is the bare literal eml_scalar(8.54). Binding it to
+    # the NuFIT anchor would score the anchor against itself and publish a
+    # ~0 sigma PASS that measures nothing. It is listed in that module's
+    # measured_params set and belongs there.
+    "geometry.sum_m_nu": {
+        "anchor": "bounds.sum_m_nu_upper",
+        "bound_type": "upper",
+    },
+}
+
+
+
+
 class PMRegistry:
     """
     Singleton registry for parameters, formulas, and sections.
@@ -302,6 +343,14 @@ class PMRegistry:
             experimental_source: Citation (e.g., "PDG2024", "NuFIT6.0", "DESI2025")
             bound_type: Type of bound ("measured", "upper", "lower", "range")
         """
+        # A declared anchor fills in only where none was supplied. An
+        # explicit binding at the call site always wins; this exists for
+        # parameters whose registration path offers no way to pass one.
+        if experimental_value is None:
+            declared = self._anchor_for(path)
+            if declared is not None:
+                experimental_value, experimental_uncertainty,                     experimental_source, bound_type = declared
+
         # Check for overwrites and warn if value differs significantly
         if path in self._parameters:
             existing = self._parameters[path]
@@ -493,6 +542,44 @@ class PMRegistry:
             entry.validation_status = "PASS" if ok else "FAIL"
             entry.relative_margin = (exp - theory) / exp if exp else None
             entry.sigma_deviation = None
+
+    def _anchor_for(self, full_path: str):
+        """Resolve a declared path to (value, uncertainty, source, type).
+
+        Returns None when no anchor is declared or the anchor row is missing,
+        which leaves the parameter unbound. That is the honest outcome: an
+        absent anchor is not a licence to supply one.
+
+        Note the registry stores RegistryEntry dataclasses, not dicts. An
+        earlier version of this guarded with ``isinstance(row, dict)`` and
+        so returned None for every row that existed, binding nothing while
+        appearing to work.
+        """
+        spec = DECLARED_ANCHORS.get(full_path)
+        if spec is None:
+            return None
+        row = self._parameters.get(spec["anchor"])
+        if row is None:
+            return None
+        value = row.experimental_value
+        if value is None:
+            value = row.value
+        if value is None:
+            return None
+        unc = row.experimental_uncertainty
+        if unc is None:
+            unc = row.uncertainty
+        try:
+            value = float(value)
+            unc = float(unc) if unc is not None else None
+        except (TypeError, ValueError):
+            return None
+        return (
+            value,
+            unc,
+            row.experimental_source or row.source or spec["anchor"],
+            spec["bound_type"],
+        )
 
     def update(
         self,

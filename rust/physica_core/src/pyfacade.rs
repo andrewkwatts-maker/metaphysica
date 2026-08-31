@@ -159,6 +159,10 @@ fn _physica_core(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_list_constants, m)?)?;
     m.add_function(wrap_pyfunction!(py_list_quarks, m)?)?;
     m.add_function(wrap_pyfunction!(py_get_constant, m)?)?;
+    // Defined in cosmology.rs and re-exported there, but never registered
+    // here, so `from metaphysica._physica_core import py_ricci_flow_solve`
+    // raised ImportError and the whole C4 Ricci-invariant suite errored out.
+    m.add_function(wrap_pyfunction!(crate::cosmology::py_ricci_flow_solve, m)?)?;
     m.add("__version__", crate::version())?;
     Ok(())
 }

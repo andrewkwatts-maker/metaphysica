@@ -40,6 +40,11 @@ pub mod gates;
 pub mod simulations;
 pub mod g2_manifold;
 pub mod validation;
+// cosmology.rs was never declared here, so the whole file -- including the
+// Ricci-flow solver and its PyO3 wrapper -- was dead code that cargo never
+// compiled. The C4 Ricci-invariant suite imports py_ricci_flow_solve from
+// the extension and errored out on ImportError as a result.
+pub mod cosmology;
 
 #[cfg(feature = "python")]
 pub mod pyfacade;
