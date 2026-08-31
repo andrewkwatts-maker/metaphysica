@@ -240,12 +240,17 @@ def test_rows_without_an_uncertainty_are_dropped_not_zero_filled():
         StatisticalRigorValidator,
     )
 
+    # bound_type is required on the surviving row: one-sided bounds are
+    # excluded from the fit separately (a margin is not a residual), so a
+    # fixture without it would be dropped for the wrong reason and this
+    # test would pass while checking nothing.
     data = {"validations": [
-        {"path": "a", "verdict": "PASS", "value": 1.0,
+        {"path": "a", "verdict": "PASS", "value": 1.0, "bound_type": "measured",
          "experimental_value": 1.0, "experimental_uncertainty": 0.1},
-        {"path": "b", "verdict": "INPUT", "value": 2.0,
+        {"path": "b", "verdict": "INPUT", "value": 2.0, "bound_type": "measured",
          "experimental_value": 2.0, "experimental_uncertainty": None},
         {"path": "c", "verdict": "UNBOUNDED", "value": 3.0,
+         "bound_type": "measured",
          "experimental_value": None, "experimental_uncertainty": 0.5},
     ]}
     rows = StatisticalRigorValidator._adapt_validation_rows(data)

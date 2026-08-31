@@ -144,6 +144,13 @@ DECLARED_ANCHORS: Dict[str, Dict[str, str]] = {
         "anchor": "bounds.sum_m_nu_upper",
         "bound_type": "upper",
     },
+    # Same observable, same bound, registered by a different module. It
+    # carried the 0.12 value with no bound_type, so it scored UNBOUNDED
+    # while its sibling was scored.
+    "spectral.sum_m_nu": {
+        "anchor": "bounds.sum_m_nu_upper",
+        "bound_type": "upper",
+    },
 }
 
 
@@ -346,10 +353,20 @@ class PMRegistry:
         # A declared anchor fills in only where none was supplied. An
         # explicit binding at the call site always wins; this exists for
         # parameters whose registration path offers no way to pass one.
-        if experimental_value is None:
+        # A row with an experimental value but no bound_type is scored as
+        # UNBOUNDED: the comparison exists but nothing says which direction
+        # counts, so no verdict can be reached. spectral.sum_m_nu carried
+        # 0.12 and no type, and sat unscored beside its bound sibling.
+        if experimental_value is None or bound_type is None:
             declared = self._anchor_for(path)
             if declared is not None:
-                experimental_value, experimental_uncertainty,                     experimental_source, bound_type = declared
+                d_value, d_unc, d_source, d_type = declared
+                if experimental_value is None:
+                    experimental_value = d_value
+                    experimental_uncertainty = d_unc
+                    experimental_source = experimental_source or d_source
+                if bound_type is None:
+                    bound_type = d_type
 
         # Check for overwrites and warn if value differs significantly
         if path in self._parameters:

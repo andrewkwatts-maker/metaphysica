@@ -901,9 +901,28 @@ class GaugeUnificationSimulation(SimulationBase):
                 description="Grand Unification scale from 3-loop RG evolution (used for coupling evolution). Predicted value with no direct experimental measurement possible at this energy scale.",
                 derivation_formula="gut-scale",
                 no_experimental_value=True,
-                experimental_bound=1.67e34,
-                bound_type="indirect_lower",
-                bound_source="Super-Kamiokande proton lifetime bound tau_p > 1.67e34 yr constrains M_GUT > ~10^15 GeV",
+                # UNIT FIX. experimental_bound held 1.67e34 -- the
+                # Super-Kamiokande proton LIFETIME in years -- while the
+                # parameter is a mass in GeV. The bound_source string
+                # states the intended inference correctly ("constrains
+                # M_GUT > ~10^15 GeV"), so the reasoning was right and the
+                # wrong number was stored. bound_type was also
+                # "indirect_lower", which the registry does not recognise,
+                # so the row scored as UNBOUNDED and the mismatch went
+                # unnoticed. It surfaced in the global chi-squared, where
+                # comparing 2.1e16 against 1.67e34 contributed 3.4e38 on
+                # its own -- more than every other row combined.
+                #
+                # The floor below is this module's own declared
+                # theoretical_range minimum, not a new constant.
+                experimental_bound=1e15,
+                bound_type="lower",
+                bound_source=(
+                    "Indirect: Super-Kamiokande tau_p > 1.67e34 yr "
+                    "(p -> e+ pi0) constrains M_GUT above ~1e15 GeV. This "
+                    "is an inference, not a measurement of M_GUT -- no "
+                    "direct measurement is possible at this scale."
+                ),
                 eml_description="EML: ops.argmin_mu(ops.std(alpha1_mu, alpha2_mu, alpha3_mu)) — GUT scale is the energy at which 3-loop RG-evolved gauge couplings minimally spread",
                 validation={
                     "theoretical_range": {"min": 1e15, "max": 1e17},
@@ -919,9 +938,27 @@ class GaugeUnificationSimulation(SimulationBase):
                 description="Grand Unification scale from G2 torsion and moduli stabilization (used for proton decay). Constrained indirectly by proton lifetime.",
                 derivation_formula="gauge-coupling-unification",
                 no_experimental_value=True,
-                experimental_bound=1.67e34,
-                bound_type="indirect_lower",
-                bound_source="Super-Kamiokande proton lifetime tau_p > 1.67e34 yr (p -> e+ pi0)",
+                # UNIT FIX. experimental_bound held 1.67e34 -- the
+                # Super-Kamiokande proton LIFETIME in years -- while the
+                # parameter is a mass in GeV. The bound_source string
+                # states the intended inference correctly ("constrains
+                # M_GUT > ~10^15 GeV"), so the reasoning was right and the
+                # wrong number was stored. bound_type was also
+                # "indirect_lower", which the registry does not recognise,
+                # so the row scored as UNBOUNDED and the mismatch went
+                # unnoticed. It surfaced in the global chi-squared, where
+                # comparing 2.1e16 against 1.67e34 contributed 3.4e38 on
+                # its own -- more than every other row combined.
+                #
+                # The floor below is this module's own declared
+                # theoretical_range minimum, not a new constant.
+                experimental_bound=1e15,
+                bound_type="lower",
+                bound_source=(
+                    "Indirect: Super-Kamiokande tau_p > 1.67e34 yr "
+                    "(p -> e+ pi0) constrains M_GUT above ~1e15 GeV. This "
+                    "is an inference, not a measurement of M_GUT."
+                ),
                 uncertainty=0.09e16,
                 eml_description="EML: ops.mul(eml_scalar(2.1e16), eml_scalar(1.0)) — geometric GUT scale from TCS G2 torsion T_omega=-0.875 and moduli Re(T)~9.865 (currently hardcoded; pending moduli derivation)",
                 validation={

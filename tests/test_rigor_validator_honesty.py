@@ -145,14 +145,35 @@ def test_theory_uncertainty_recalculation_sees_the_failures_too():
 
 
 def test_unbounded_rows_are_excluded():
-    """gauge.M_GUT_GEOMETRIC compared 2.1e16 GeV to a proton LIFETIME.
-
-    That single row contributed 3.4e38 to the chi-squared. The report
-    already marks it UNBOUNDED; the validator was ignoring that judgement.
-    """
+    """The report's own non-scoring verdicts must be honoured."""
     rows = _validator().validation_results
     assert all(r["status"] not in NON_SCORING_VERDICTS for r in rows)
-    assert "gauge.M_GUT_GEOMETRIC" not in {r["path"] for r in rows}
+
+
+def test_one_sided_bounds_are_excluded_from_the_fit():
+    """A margin is not a residual.
+
+    gauge.M_GUT_GEOMETRIC once compared 2.1e16 GeV against 1.67e34 -- the
+    Super-Kamiokande proton LIFETIME in years, stored in the field meant for
+    a mass -- and contributed 3.4e38 to the chi-squared on its own. With the
+    unit error fixed it is a genuine lower bound at 1e15 GeV that the value
+    clears 20-fold, so it is now a legitimate PASS. It still must not enter
+    the fit: the registry sets sigma to None for one-sided bounds precisely
+    because "20x above the floor" is not a discrepancy, and squaring
+    (value - bound)/uncertainty would turn a comfortable pass into a large
+    fictitious contribution.
+    """
+    from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
+        TWO_SIDED_BOUND_TYPES,
+    )
+
+    rows = _validator().validation_results
+    assert rows, "no rows survived"
+    for row in rows:
+        assert row.get("bound_type") in TWO_SIDED_BOUND_TYPES, (
+            f"{row['path']} is a {row.get('bound_type')!r} bound and has no "
+            f"residual, but reached the chi-squared"
+        )
 
 
 # -- 4. the tail interpretation matches the tail used -----------------------

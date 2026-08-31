@@ -56,6 +56,10 @@ NON_SCORING_VERDICTS = frozenset({"UNBOUNDED", "INPUT", "IDENTITY"})
 #: the fit look perfect.
 SCORING_VERDICTS = frozenset({"PASS", "MARGINAL", "TENSION", "FAIL"})
 
+#: Bound types that express a two-sided comparison and therefore have a
+#: residual. A "lower"/"upper" bound has a margin, not a sigma.
+TWO_SIDED_BOUND_TYPES = frozenset({"measured", "central_value"})
+
 
 class StatisticalRigorValidator:
     """
@@ -231,6 +235,15 @@ class StatisticalRigorValidator:
                 continue
             if entry.get("verdict") in NON_SCORING_VERDICTS:
                 continue
+            # One-sided bounds carry an uncertainty but no sigma: the
+            # registry declines to compute one because "how far above the
+            # floor" is not a residual. Including them would contribute
+            # ((value - bound)/unc)^2 terms that mean nothing --
+            # gauge.M_GUT_GEOMETRIC sits 20x above its inferred 1e15 GeV
+            # floor, which is a PASS, not a 23-sigma discrepancy. Same test
+            # the registry uses when deciding to compute sigma at all.
+            if entry.get("bound_type") not in TWO_SIDED_BOUND_TYPES:
+                continue
             rows.append({
                 "path": entry.get("path"),
                 # recalculate_with_theory_uncertainty reads "name"; the
@@ -247,6 +260,7 @@ class StatisticalRigorValidator:
                 # still FAIL (it is scored and it misses). Both are needed:
                 # see _chi_squared_split.
                 "registry_status": entry.get("registry_status"),
+                "bound_type": entry.get("bound_type"),
             })
         return rows
 
