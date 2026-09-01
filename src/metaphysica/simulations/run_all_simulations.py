@@ -1162,9 +1162,11 @@ def _attach_module_references(data: dict) -> None:
     number?".
 
     Both sides already record their originating module: references carry
-    ``source_simulation`` (stamped in _collect_references) and formulas carry
-    it too. Joining on it invents nothing -- it surfaces the association the
-    author made by registering the paper inside that module.
+    ``source_simulation`` (stamped in _collect_references) plus
+    ``also_registered_by`` for every later module that registered the same
+    paper, and formulas carry it too. Joining on it invents nothing -- it
+    surfaces the association the author made by registering the paper inside
+    that module.
 
     This is MODULE-LEVEL attribution and is flagged as such on each formula
     via ``references_are_module_level``. It states "this formula comes from a
@@ -1178,9 +1180,19 @@ def _attach_module_references(data: dict) -> None:
     for ref in references:
         if not isinstance(ref, dict):
             continue
-        sim, rid = ref.get("source_simulation"), ref.get("id")
-        if sim and rid:
-            by_sim.setdefault(sim, []).append(rid)
+        rid = ref.get("id")
+        if not rid:
+            continue
+        # ``source_simulation`` names the FIRST module to register the entry;
+        # _collect_references keeps that one and records the rest under
+        # ``also_registered_by``. Both count. One paper cited by six modules
+        # is one bibliography entry, and dropping the other five would make
+        # the merge of duplicate ids silently cost those modules their
+        # citations -- the whole reason the ids were duplicated in the first
+        # place was to give each module an id of its own.
+        for sim in [ref.get("source_simulation"), *(ref.get("also_registered_by") or [])]:
+            if sim:
+                by_sim.setdefault(sim, []).append(rid)
 
     for formula in formulas.values():
         if not isinstance(formula, dict):
@@ -2121,6 +2133,7 @@ class SimulationRunner:
         """
         all_references = []
         seen_ids = set()
+        seen_first: Dict[str, Dict[str, Any]] = {}
 
         # Collect from all phases in order
         for phase_num in sorted(self.phases.keys()):
@@ -2135,6 +2148,21 @@ class SimulationRunner:
                                 seen_ids.add(ref_id)
                                 ref['source_simulation'] = sim.metadata.id
                                 all_references.append(ref)
+                                seen_first[ref_id] = ref
+                            elif ref_id:
+                                # Same paper, registered again by a later
+                                # module. Keep the first entry, but remember
+                                # that this module cites it too, so
+                                # _attach_module_references can reach the
+                                # module's formulas and parameters. Without
+                                # this the surviving entry would carry only
+                                # the first module's name and every other
+                                # citing module would look sourceless.
+                                kept = seen_first[ref_id]
+                                also = kept.setdefault('also_registered_by', [])
+                                if sim.metadata.id not in also and \
+                                        sim.metadata.id != kept.get('source_simulation'):
+                                    also.append(sim.metadata.id)
                     except Exception as e:
                         if self.verbose:
                             print(f"  Warning: Could not get references from {sim.metadata.id}: {e}")
@@ -2649,6 +2677,14 @@ class SimulationRunner:
                         enriched['v16_experimental'] = bounds['experimental']
                         if 'sigma' in bounds:
                             enriched['v16_sigma'] = bounds['sigma']
+
+                    # Surface the producing formula at top level. It arrives in
+                # metadata (see simulation_base.register_outputs) but no
+                # consumer looks there, so the parameter -> formula link was
+                # effectively absent from every artifact.
+                meta = enriched.get('metadata') or {}
+                if meta.get('derivation_formula') and 'derivation_formula' not in enriched:
+                    enriched['derivation_formula'] = meta['derivation_formula']
 
                 enriched_params[param_path] = enriched
 

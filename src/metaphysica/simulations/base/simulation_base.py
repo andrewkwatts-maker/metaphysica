@@ -464,6 +464,16 @@ class SimulationBase(ABC):
                 if param_def and param_def.eml_description:
                     metadata['eml_description'] = param_def.eml_description
 
+                # Propagate derivation_formula, which names the formula that
+                # produces this parameter. It is declared on 315 Parameter
+                # definitions and reached ZERO exported artifacts: it was
+                # read off param_def for nothing, so no consumer could link a
+                # parameter to the formula deriving it, and derivation_chain
+                # shipped empty for every row. Carried through metadata the
+                # same way eml_description is.
+                if param_def and getattr(param_def, "derivation_formula", None):
+                    metadata['derivation_formula'] = param_def.derivation_formula
+
                 # Extract experimental comparison data from parameter definition
                 exp_value = None
                 exp_uncertainty = None
