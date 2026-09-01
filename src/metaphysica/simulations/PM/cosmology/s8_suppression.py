@@ -291,9 +291,6 @@ class S8SuppressionV16(SimulationBase):
             # tension is ~2.7 sigma and unresolved, and that appeared in no
             # scored row. Both comparisons are now published.
             "cosmology.s8_pm_vs_lensing",
-            "lensing.S8_kids1000",                 # Heymans et al. 2021
-            "lensing.S8_des_y3",                   # DES Collaboration 2022
-            "lensing.S8_hsc_y3",                   # Li et al. 2023
         ]
 
     @property
@@ -405,9 +402,6 @@ class S8SuppressionV16(SimulationBase):
             # definition: against Planck it passes, against KiDS-1000 it does
             # not, and only the first was ever scored.
             "cosmology.s8_pm_vs_lensing": self.s8_pm,
-            "lensing.S8_kids1000": 0.766,
-            "lensing.S8_des_y3": 0.776,
-            "lensing.S8_hsc_y3": 0.769,
             "cosmology.s8_pm_baseline": self.s8_pm_baseline,
             "cosmology.s8_suppression_factor": self.suppression_factor,
             "cosmology.s8_friction_beta_eff": self.friction_results["beta_eff"],
@@ -1504,7 +1498,7 @@ class S8SuppressionV16(SimulationBase):
                         },
                         {
                             "description": "Comparison to observations",
-                            "formula": r"\text{KiDS-1000: } 0.766\pm0.020 \text{ (1.1σ)}, \text{ DES Y3: } 0.776\pm0.017 \text{ (0.7σ)}"
+                            "formula": r"\text{KiDS-1000: } 0.766\pm0.020 \text{ (2.7σ)}, \text{ DES Y3: } 0.776\pm0.017 \text{ (2.6σ)}"
                         }
                     ],
                     "references": [
@@ -1600,53 +1594,6 @@ class S8SuppressionV16(SimulationBase):
             # chosen. The survey values and citations are lifted from the
             # S8Measurement table in this module rather than typed afresh.
             # ---------------------------------------------------------------
-            Parameter(
-                path="lensing.S8_kids1000",
-                name="S8 (KiDS-1000 weak lensing)",
-                units="dimensionless",
-                status="ESTABLISHED",
-                description=(
-                    "KiDS-1000 cosmic shear S8 = 0.766 +/- 0.020, Heymans "
-                    "et al. (2021) A&A 646, A140. Effective lensing redshift "
-                    "z ~ 0.5. Experimental input."
-                ),
-                eml_description="EML: eml_scalar(0.766) — KiDS-1000 S8",
-                experimental_bound=0.766,
-                bound_type="measured",
-                bound_source="KiDS-1000 (Heymans et al. 2021)",
-                uncertainty=0.020,
-            ),
-            Parameter(
-                path="lensing.S8_des_y3",
-                name="S8 (DES Year 3 weak lensing)",
-                units="dimensionless",
-                status="ESTABLISHED",
-                description=(
-                    "DES Y3 3x2pt S8 = 0.776 +/- 0.017, DES Collaboration "
-                    "(2022) PRD 105, 023520. Experimental input."
-                ),
-                eml_description="EML: eml_scalar(0.776) — DES Y3 S8",
-                experimental_bound=0.776,
-                bound_type="measured",
-                bound_source="DES Y3 (DES Collaboration 2022)",
-                uncertainty=0.017,
-            ),
-            Parameter(
-                path="lensing.S8_hsc_y3",
-                name="S8 (HSC Year 3 weak lensing)",
-                units="dimensionless",
-                status="ESTABLISHED",
-                description=(
-                    "HSC Y3 S8 = 0.769 +/- 0.032, Li et al. (2023) PRD 108, "
-                    "123518. Uncertainty is the symmetric average of "
-                    "+0.031/-0.034. Experimental input."
-                ),
-                eml_description="EML: eml_scalar(0.769) — HSC Y3 S8",
-                experimental_bound=0.769,
-                bound_type="measured",
-                bound_source="HSC Y3 (Li et al. 2023)",
-                uncertainty=0.032,
-            ),
             Parameter(
                 path="cosmology.s8_pm_vs_lensing",
                 name="PM S8 against weak lensing (KiDS-1000)",
@@ -1804,9 +1751,11 @@ class S8SuppressionV16(SimulationBase):
                 description=(
                     f"Statistical tension with KiDS-1000 "
                     f"(0.766 ± 0.020, Heymans et al. 2021): "
-                    f"{tension_kids:.2f}σ. The description here read "
-                    f"\"PM: 1.1σ\" -- prose left behind by the R2 ruling, "
-                    f"which retired the 5.1% closed-form friction "
+                    f"{tension_kids:.2f}σ. Friction does not resolve it; the "
+                    f"ΛCDM comparison is the separate "
+                    f"s8_tension_kids_baseline row. The description here "
+                    f"read \"PM: 1.1σ\" -- prose left behind by the R2 "
+                    f"ruling, which retired the 5.1% closed-form friction "
                     f"suppression the smaller figure depended on. It is "
                     f"interpolated from the computed value now, so the two "
                     f"cannot drift apart again."
@@ -1825,8 +1774,9 @@ class S8SuppressionV16(SimulationBase):
                 description=(
                     f"Statistical tension with DES Y3 "
                     f"(0.776 ± 0.017, DES Collaboration 2022): "
-                    f"{tension_des:.2f}σ. Previously stated as "
-                    f"\"PM: 0.7σ\"; same stale-prose cause as the KiDS row."
+                    f"{tension_des:.2f}σ. Friction does not resolve it. "
+                    f"Previously stated as \"PM: 0.7σ\"; same stale-prose "
+                    f"cause as the KiDS row."
                 ),
                 no_experimental_value=True,
                 eml_description=(
@@ -1841,7 +1791,8 @@ class S8SuppressionV16(SimulationBase):
                 status="VALIDATION",
                 description=(
                     "Statistical tension with Planck CMB inference. "
-                    "PM: 3.4σ vs ΛCDM: 0.3σ. Expected: PM predicts less late-time growth."
+                    "PM: 0.9σ vs Planck S8=0.832±0.013. PM is close to Planck; "
+                    "weak-lensing surveys (KiDS-1000, DES-Y3) disagree with Planck at ~2.7σ."
                 ),
                 no_experimental_value=True,
                 eml_description=(

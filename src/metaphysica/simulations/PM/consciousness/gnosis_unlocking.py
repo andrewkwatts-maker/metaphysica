@@ -1087,7 +1087,7 @@ if SCHEMA_AVAILABLE:
                     description="Coherence time with 6 active pairs (baseline consciousness, SPECULATIVE)",
                     derivation_formula="gnosis-coherence-enhancement",
                     no_experimental_value=True,
-                    eml_description="EML: eml_scalar(25.0) — baseline Orch-OR coherence time tau_baseline = 25ms (EEG/MEG gamma scale, 6 active pairs)",
+                    eml_description="EML: ops.div(ops.mul(eml_scalar(25.0), ops.mul(ops.exp(ops.mul(eml_scalar(3.2), ops.sqrt(ops.div(eml_scalar(6.0), eml_scalar(12.0))))), ops.pow(ops.div(eml_scalar(6.0), eml_scalar(6.0)), eml_scalar(2.0)))), eml_scalar(1000.0)) — tau_baseline = tau_0*exp(k*sqrt(n/12))*(n/6)^2/1000 with n=6 pairs, tau_0=25ms, k=3.2 (Orch-OR, SPECULATIVE). Divided by 1000 for ms→s; previous eml_scalar(25.0) was the bare seed, missing the 6-pair factor exp(3.2*sqrt(0.5)) ≈ 9.61.",
                 ),
                 Parameter(
                     path="consciousness.tau_gnosis",
@@ -1097,7 +1097,7 @@ if SCHEMA_AVAILABLE:
                     description="Coherence time with all 12 pairs active (full gnosis, SPECULATIVE)",
                     derivation_formula="gnosis-coherence-enhancement",
                     no_experimental_value=True,
-                    eml_description="EML: ops.mul(eml_scalar(25.0), ops.mul(ops.exp(ops.mul(eml_scalar(3.2), ops.sqrt(eml_scalar(1.0)))), ops.pow(eml_scalar(2.0), eml_scalar(2.0)))) — full gnosis coherence time tau(12) = tau_0 * exp(3.2*sqrt(12/12)) * (12/6)^2",
+                    eml_description="EML: ops.div(ops.mul(eml_scalar(25.0), ops.mul(ops.exp(ops.mul(eml_scalar(3.2), ops.sqrt(eml_scalar(1.0)))), ops.pow(eml_scalar(2.0), eml_scalar(2.0)))), eml_scalar(1000.0)) — tau_gnosis = tau_0*exp(k*sqrt(12/12))*(12/6)^2/1000 with tau_0=25ms, k=3.2 (Orch-OR, SPECULATIVE). Divided by 1000 for ms→s; previous expression was in ms.",
                 ),
                 Parameter(
                     path="consciousness.unlocking_probability_6",

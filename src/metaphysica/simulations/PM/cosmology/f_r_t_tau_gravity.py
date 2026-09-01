@@ -801,7 +801,7 @@ class FRTTauGravityV18(SimulationBase):
                     "For NS mergers: A ~ 10^-9. Potentially detectable by LISA, Einstein Telescope, "
                     "or Cosmic Explorer. A positive detection would distinguish f(R) from GR."
                 ),
-                eml_description="EML: ops.mul(eml_vec('gravity.alpha_F_r2'), eml_scalar(1e-9)) — scalar breathing mode A ~ α_F × (NS merger strain) ~ 10⁻⁹",
+                eml_description="EML: ops.mul(eml_vec('gravity.alpha_F_r2'), eml_scalar(1e-6)) — scalar breathing mode A = α_F × (R_source/M_Pl²) with R_source/M_Pl² ~ 1e-6 for NS mergers (see compute_modified_gravity, line ~286). Previous expression used 1e-9 (the result, not the input), which was a transcription error.",
                 no_experimental_value=True
             ),
         ]
