@@ -309,12 +309,13 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                 "notes": "SU(5) GUT showing SM gauge groups embed into a single simple group.",
             },
             {
-                "id": "acharya2004",
-                "authors": "Acharya, B. S.; Witten, E.",
+                "id": "acharya_witten2001",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
-                "year": "2001",
+                "year": 2001,
                 "publisher": "arXiv",
                 "arxiv": "hep-th/0109152",
+                "url": "https://arxiv.org/abs/hep-th/0109152",
                 "notes": "Non-Abelian gauge groups from ADE singularities on G2 manifolds.",
             },
         ]

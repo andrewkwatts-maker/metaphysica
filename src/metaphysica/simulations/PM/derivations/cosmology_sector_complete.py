@@ -1407,12 +1407,17 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         """Return academic references for cosmology sector derivations."""
         return [
             {
-                "id": "planck2018_cosmo",
+                "id": "planck2018",
                 "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
                 "year": 2020,
+                "journal": "Astron. Astrophys.",
+                "volume": "641",
+                "pages": "A6",
                 "doi": "10.1051/0004-6361/201833910",
-                "type": "article"
+                "arxiv": "1807.06209",
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "type": "article",
             },
             {
                 "id": "desi2024_de",

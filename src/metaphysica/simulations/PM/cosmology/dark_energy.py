@@ -1343,17 +1343,12 @@ class DarkEnergyV16(SimulationBase):
                 "id": "desi2024",
                 "authors": "DESI Collaboration (Adame, A.G. et al.)",
                 "title": "DESI 2024 VI: Cosmological Constraints from the Measurements of Baryon Acoustic Oscillations",
-                "journal": "arXiv preprint",
                 "year": 2024,
+                "journal": "arXiv preprint",
+                "doi": "10.48550/arXiv.2404.03002",
                 "arxiv": "2404.03002",
                 "url": "https://arxiv.org/abs/2404.03002",
-                "doi": "10.48550/arXiv.2404.03002",
-                "notes": (
-                    "DESI Year 1 BAO measurements combined with CMB and supernovae. "
-                    "Reports preference for evolving dark energy (w0 > -1, wa < 0). "
-                    "Thawing quintessence fit: w0 = -0.957 +/- 0.067. Validates PM "
-                    "prediction w0 = -23/24 = -0.9583 (consistent with BAO-only measurement)."
-                )
+                "notes": "DESI Year 1 BAO measurements combined with CMB and supernovae. Reports preference for evolving dark energy (w0 > -1, wa < 0). Thawing quintessence fit: w0 = -0.957 +/- 0.067. Validates PM prediction w0 = -23/24 = -0.9583 (consistent with BAO-only measurement).",
             },
             {
                 "id": "green1987",
@@ -1377,9 +1372,10 @@ class DarkEnergyV16(SimulationBase):
                 "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "publisher": "Oxford University Press",
                 "year": 2000,
-                "url": "https://doi.org/10.1093/acprof:oso/9780198506010.001.0001"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
             },
             {
                 "id": "chevallier2001",
@@ -1403,16 +1399,17 @@ class DarkEnergyV16(SimulationBase):
                 "notes": "w0 = -0.957 +/- 0.067 (thawing quintessence model)"
             },
             {
-                "id": "planck2018_cosmo",
+                "id": "planck2018",
                 "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
+                "year": 2020,
                 "journal": "Astron. Astrophys.",
                 "volume": "641",
-                "year": 2020,
                 "pages": "A6",
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "w0 = -1.03 +/- 0.03 (Planck alone, consistent with cosmological constant)"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "w0 = -1.03 +/- 0.03 (Planck alone, consistent with cosmological constant)",
             },
             {
                 "id": "weinberg1989",

@@ -2092,16 +2092,17 @@ class S8SuppressionV16(SimulationBase):
         """Return scientific references for this simulation."""
         return [
             {
-                "id": "planck2020",
-                "authors": "Planck Collaboration",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
-                "journal": "A&A",
+                "year": 2020,
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "year": 2020,
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "S8 = 0.832 ± 0.013"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "S8 = 0.832 ± 0.013",
             },
             {
                 "id": "kids2021",
@@ -2128,14 +2129,15 @@ class S8SuppressionV16(SimulationBase):
                 "notes": "S8 = 0.776 ± 0.017"
             },
             {
-                "id": "desi2025",
-                "authors": "DESI Collaboration",
-                "title": "DESI 2024I: Cosmological Constraints from Full-Shape Analysis",
-                "journal": "arXiv",
+                "id": "desi2024",
+                "authors": "DESI Collaboration (Adame, A.G. et al.)",
+                "title": "DESI 2024 VI: Cosmological Constraints from the Measurements of Baryon Acoustic Oscillations",
                 "year": 2024,
-                "arxiv": "2411.12022",
-                "url": "https://arxiv.org/abs/2411.12022",
-                "notes": "σ8 = 0.827 ± 0.011, Ωm = 0.3069 ± 0.0050"
+                "journal": "arXiv preprint",
+                "doi": "10.48550/arXiv.2404.03002",
+                "arxiv": "2404.03002",
+                "url": "https://arxiv.org/abs/2404.03002",
+                "notes": "σ8 = 0.827 ± 0.011, Ωm = 0.3069 ± 0.0050",
             },
             {
                 "id": "linder2005",

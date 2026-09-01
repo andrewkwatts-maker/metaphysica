@@ -750,16 +750,17 @@ class BaryonAsymmetryV18(SimulationBase):
         """Return scientific references for baryon asymmetry."""
         return [
             {
-                "id": "planck2018_bbn",
-                "authors": "Planck Collaboration",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
-                "journal": "A&A",
+                "year": 2020,
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "year": 2020,
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "eta_b = (6.143 +/- 0.019) x 10^-10 from BBN+CMB"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "eta_b = (6.143 +/- 0.019) x 10^-10 from BBN+CMB",
             },
             {
                 "id": "pdg2024_ckm",

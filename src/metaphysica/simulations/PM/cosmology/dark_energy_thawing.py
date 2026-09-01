@@ -1627,20 +1627,15 @@ class DarkEnergyEvolution(SimulationBase):
         """Return scientific references."""
         return [
             {
-                "id": "desi2024_bao",
+                "id": "desi2024",
                 "authors": "DESI Collaboration (Adame, A.G. et al.)",
                 "title": "DESI 2024 VI: Cosmological Constraints from the Measurements of Baryon Acoustic Oscillations",
-                "journal": "arXiv preprint",
                 "year": 2024,
+                "journal": "arXiv preprint",
+                "doi": "10.48550/arXiv.2404.03002",
                 "arxiv": "2404.03002",
                 "url": "https://arxiv.org/abs/2404.03002",
-                "doi": "10.48550/arXiv.2404.03002",
-                "notes": (
-                    "DESI Year 1 BAO measurements combined with CMB and supernovae. "
-                    "Reports preference for evolving dark energy with w0 > -1, wa < 0 "
-                    "(thawing quintessence). Thawing model fit: w0 = -0.957 +/- 0.067, "
-                    "wa = -0.99 +/- 0.32."
-                )
+                "notes": "DESI Year 1 BAO measurements combined with CMB and supernovae. Reports preference for evolving dark energy with w0 > -1, wa < 0 (thawing quintessence). Thawing model fit: w0 = -0.957 +/- 0.067, wa = -0.99 +/- 0.32.",
             },
             {
                 "id": "chevallier2001",
@@ -1668,10 +1663,11 @@ class DarkEnergyEvolution(SimulationBase):
                 "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "publisher": "Oxford University Press",
                 "year": 2000,
-                "url": "https://doi.org/10.1093/acprof:oso/9780198506010.001.0001",
-                "notes": "G2 manifolds and 3-forms"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "notes": "G2 manifolds and 3-forms",
             },
             {
                 "id": "hamilton1982",

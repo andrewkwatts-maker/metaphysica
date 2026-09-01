@@ -1810,12 +1810,14 @@ class GRSpacetimeDerivationsV19(SimulationBase):
                 "type": "textbook"
             },
             {
-                "id": "joyce2000_g2",
-                "authors": "Joyce, D.",
+                "id": "joyce2000",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
-                "url": "https://global.oup.com/academic/product/compact-manifolds-with-special-holonomy-9780198506010",
-                "type": "textbook"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "type": "textbook",
             },
             {
                 "id": "weinberg1972_gravity",

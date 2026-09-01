@@ -1892,11 +1892,13 @@ class Appendix72Gates(SimulationBase):
         """Return bibliographic references for the gate framework."""
         return [
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "year": "2000",
-                "doi": "10.1093/acprof:oso/9780198506010.001.0001",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "monograph",
             },
             {
@@ -1908,11 +1910,15 @@ class Appendix72Gates(SimulationBase):
                 "type": "journal",
             },
             {
-                "id": "pdg-2024",
-                "authors": "Particle Data Group",
+                "id": "pdg2024",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
-                "year": "2024",
-                "url": "https://pdg.lbl.gov",
+                "year": 2024,
+                "journal": "Phys. Rev. D",
+                "volume": "110",
+                "pages": "030001",
+                "doi": "10.1103/PhysRevD.110.030001",
+                "url": "https://pdg.lbl.gov/",
                 "type": "review",
             },
             {

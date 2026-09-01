@@ -2045,16 +2045,11 @@ class FourFaceG2Structure(SimulationBase):
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
-                "type": "book",
                 "publisher": "Oxford University Press",
-                "url": "https://global.oup.com/academic/product/compact-manifolds-with-special-holonomy-9780198506010",
                 "doi": "10.1093/oso/9780198506010.001.0001",
-                "relevance": (
-                    "Foundation for G2 holonomy geometry; defines the Kahler moduli "
-                    "structure from which the four-face interpretation arises. "
-                    "Chapter 11 covers deformations of G2 structures and the moduli "
-                    "space relevant to racetrack stabilization."
-                ),
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "type": "book",
+                "relevance": "Foundation for G2 holonomy geometry; defines the Kahler moduli structure from which the four-face interpretation arises. Chapter 11 covers deformations of G2 structures and the moduli space relevant to racetrack stabilization.",
             },
             {
                 "key": "joyce2017",
@@ -2094,53 +2089,42 @@ class FourFaceG2Structure(SimulationBase):
                 "id": "chnp2015",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
+                "year": 2015,
                 "journal": "Duke Math. J.",
                 "volume": "164",
                 "number": "10",
                 "pages": "1971-2092",
-                "year": 2015,
-                "type": "article",
+                "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "doi": "10.1215/00127094-3120743",
-                "relevance": (
-                    "Classification of TCS G2 manifolds including TCS #187 with "
-                    "b2=4, b3=24. Theorem 7.2 provides the Betti number computation "
-                    "that underlies the four-face structure."
-                ),
+                "type": "article",
+                "relevance": "Classification of TCS G2 manifolds including TCS #187 with b2=4, b3=24. Theorem 7.2 provides the Betti number computation that underlies the four-face structure.",
             },
             {
                 "key": "acharya_witten2001",
                 "id": "acharya_witten2001",
-                "authors": "Acharya, B.S., Witten, E.",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
-                "type": "article",
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "relevance": (
-                    "Chiral fermion localization on G2 manifolds; provides the "
-                    "physical basis for face-dependent matter sector structure "
-                    "and the connection between Kahler moduli and gauge sectors."
-                ),
+                "type": "article",
+                "relevance": "Chiral fermion localization on G2 manifolds; provides the physical basis for face-dependent matter sector structure and the connection between Kahler moduli and gauge sectors.",
             },
             {
                 "key": "kklt2003",
                 "id": "kklt2003",
                 "authors": "Kachru, S., Kallosh, R., Linde, A., Trivedi, S.P.",
                 "title": "de Sitter Vacua in String Theory",
+                "year": 2003,
                 "journal": "Phys. Rev. D",
                 "volume": "68",
                 "pages": "046005",
-                "year": 2003,
-                "type": "article",
+                "doi": "10.1103/PhysRevD.68.046005",
                 "arxiv": "hep-th/0301240",
                 "url": "https://arxiv.org/abs/hep-th/0301240",
-                "doi": "10.1103/PhysRevD.68.046005",
-                "relevance": (
-                    "KKLT racetrack mechanism for Kahler moduli stabilization; "
-                    "adapted here to the four-face G2 context to derive T_i VEVs."
-                ),
+                "type": "article",
+                "relevance": "KKLT racetrack mechanism for Kahler moduli stabilization; adapted here to the four-face G2 context to derive T_i VEVs.",
             },
             {
                 "key": "bbcq2005",
@@ -2162,20 +2146,18 @@ class FourFaceG2Structure(SimulationBase):
                 ),
             },
             {
-                "key": "acharya2002",
-                "id": "acharya2002",
+                "key": "acharya1999",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
                 "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 2002,
+                "pages": "227-248",
+                "arxiv": "hep-th/9812205",
+                "url": "https://arxiv.org/abs/hep-th/9812205",
                 "type": "article",
-                "arxiv": "hep-th/0212294",
-                "url": "https://arxiv.org/abs/hep-th/0212294",
-                "relevance": (
-                    "M-theory on G2 manifolds with ADE singularities; establishes "
-                    "the gauge sector structure that localizes on different faces."
-                ),
+                "relevance": "M-theory on G2 manifolds with ADE singularities; establishes the gauge sector structure that localizes on different faces.",
             },
             {
                 "key": "hitchin2000",

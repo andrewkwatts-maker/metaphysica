@@ -954,11 +954,15 @@ if _SCHEMA_AVAIL:
             """Return references."""
             return [
                 {
-                    "id": "hameroff2014",
+                    "id": "hameroff_penrose_2014",
                     "authors": "Hameroff, S. and Penrose, R.",
                     "title": "Consciousness in the universe: A review of the Orch OR theory",
                     "year": 2014,
+                    "journal": "Physics of Life Reviews",
+                    "volume": "11",
+                    "pages": "39-78",
                     "doi": "10.1016/j.plrev.2013.08.002",
+                    "url": "https://doi.org/10.1016/j.plrev.2013.08.002",
                 },
             ]
 

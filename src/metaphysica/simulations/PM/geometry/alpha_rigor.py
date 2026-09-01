@@ -692,23 +692,27 @@ if SCHEMA_AVAILABLE:
             return [
                 {
                     "id": "codata2022",
-                    "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                    "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                     "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
+                    "year": 2025,
                     "journal": "Rev. Mod. Phys.",
-                    "year": 2024,
+                    "volume": "97",
+                    "pages": "025002",
+                    "doi": "10.1103/RevModPhys.97.025002",
+                    "url": "https://doi.org/10.1103/RevModPhys.97.025002",
                     "type": "article",
-                    "url": "https://physics.nist.gov/cuu/Constants/",
-                    "relevance": "Experimental reference value alpha^-1 = 137.035999177(21) for validation"
+                    "relevance": "Experimental reference value alpha^-1 = 137.035999177(21) for validation",
                 },
                 {
                     "id": "joyce2000",
                     "authors": "Joyce, D.D.",
                     "title": "Compact Manifolds with Special Holonomy",
                     "year": 2000,
-                    "type": "book",
                     "publisher": "Oxford University Press",
-                    "url": "https://global.oup.com/academic/product/compact-manifolds-with-special-holonomy-9780198506010",
-                    "relevance": "G2 holonomy theory providing the topological foundation (b3=24) for the alpha derivation"
+                    "doi": "10.1093/oso/9780198506010.001.0001",
+                    "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                    "type": "book",
+                    "relevance": "G2 holonomy theory providing the topological foundation (b3=24) for the alpha derivation",
                 },
                 {
                     "id": "kovalev2003",

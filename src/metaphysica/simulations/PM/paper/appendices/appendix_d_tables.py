@@ -551,11 +551,14 @@ class AppendixDParameterTables(SimulationBase):
         return [
             {
                 "id": "pdg2024",
-                "authors": "Particle Data Group",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
+                "year": 2024,
                 "journal": "Phys. Rev. D",
                 "volume": "110",
-                "year": "2024",
+                "pages": "030001",
+                "doi": "10.1103/PhysRevD.110.030001",
+                "url": "https://pdg.lbl.gov/",
             },
             {
                 "id": "nufit2022",
@@ -574,13 +577,16 @@ class AppendixDParameterTables(SimulationBase):
                 "year": "2024",
             },
             {
-                "id": "planck2020",
-                "authors": "Planck Collaboration",
-                "title": "Planck 2018 Results: Cosmological Parameters",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
+                "title": "Planck 2018 results. VI. Cosmological parameters",
+                "year": 2020,
                 "journal": "Astron. Astrophys.",
                 "volume": "641",
-                "year": "2020",
+                "pages": "A6",
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
             },
             {
                 "id": "chnp2015_tables",

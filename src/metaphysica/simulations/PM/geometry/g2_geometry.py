@@ -1680,16 +1680,11 @@ class G2GeometryV16(SimulationBase):
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
-                "type": "book",
                 "publisher": "Oxford University Press",
-                "url": "https://global.oup.com/academic/product/compact-manifolds-with-special-holonomy-9780198506010",
                 "doi": "10.1093/oso/9780198506010.001.0001",
-                "relevance": (
-                    "Foundational reference for G2 holonomy existence, Ricci-flatness "
-                    "proofs (Theorem 10.2.10), and compact G2 manifold construction. "
-                    "Chapters 10-12 cover the deformation theory, moduli space structure, "
-                    "and associative/coassociative calibrations essential for the PM framework."
-                )
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "type": "book",
+                "relevance": "Foundational reference for G2 holonomy existence, Ricci-flatness proofs (Theorem 10.2.10), and compact G2 manifold construction. Chapters 10-12 cover the deformation theory, moduli space structure, and associative/coassociative calibrations essential for the PM framework.",
             },
             {
                 "key": "joyce1996",
@@ -1766,21 +1761,16 @@ class G2GeometryV16(SimulationBase):
                 "id": "chnp2015",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
+                "year": 2015,
                 "journal": "Duke Math. J.",
                 "volume": "164",
                 "number": "10",
                 "pages": "1971-2092",
-                "year": 2015,
-                "type": "article",
+                "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "doi": "10.1215/00127094-3120743",
-                "relevance": (
-                    "Classification of TCS G2 manifolds via semi-Fano 3-fold building "
-                    "blocks. Contains explicit Betti number computations (Theorem 7.2) "
-                    "including TCS #187 with b2=4, b3=24. Source of the h^{1,1}=4 "
-                    "Kahler moduli that underlie the four-face structure."
-                )
+                "type": "article",
+                "relevance": "Classification of TCS G2 manifolds via semi-Fano 3-fold building blocks. Contains explicit Betti number computations (Theorem 7.2) including TCS #187 with b2=4, b3=24. Source of the h^{1,1}=4 Kahler moduli that underlie the four-face structure.",
             },
             {
                 "key": "chnp2018",
@@ -1819,45 +1809,43 @@ class G2GeometryV16(SimulationBase):
                 )
             },
             {
-                "key": "acharya2002",
-                "id": "acharya2002",
+                "key": "acharya1999",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
                 "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 2002,
+                "pages": "227-248",
+                "arxiv": "hep-th/9812205",
+                "url": "https://arxiv.org/abs/hep-th/9812205",
                 "type": "article",
-                "arxiv": "hep-th/0212294",
-                "url": "https://arxiv.org/abs/hep-th/0212294",
-                "relevance": "Chiral fermion generation counting from G2 compactification index theorem"
+                "relevance": "Chiral fermion generation counting from G2 compactification index theorem",
             },
             {
                 "key": "acharya_witten2001",
                 "id": "acharya_witten2001",
-                "authors": "Acharya, B.S., Witten, E.",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
-                "type": "article",
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "relevance": (
-                    "Chiral fermion localization on singular G2 manifolds; establishes "
-                    "the mechanism for obtaining chiral matter from M-theory on G2."
-                )
+                "type": "article",
+                "relevance": "Chiral fermion localization on singular G2 manifolds; establishes the mechanism for obtaining chiral matter from M-theory on G2.",
             },
             {
                 "key": "berger1955",
                 "id": "berger1955",
                 "authors": "Berger, M.",
                 "title": "Sur les groupes d'holonomie homogene des varietes a connexion affine et des varietes riemanniennes",
+                "year": 1955,
                 "journal": "Bull. Soc. Math. France",
                 "volume": "83",
                 "pages": "279-330",
-                "year": 1955,
-                "type": "article",
-                "url": "https://doi.org/10.24033/bsmf.1464",
                 "doi": "10.24033/bsmf.1464",
-                "relevance": "Berger classification of Riemannian holonomy groups including G2 in dimension 7"
+                "url": "https://doi.org/10.24033/bsmf.1464",
+                "type": "article",
+                "relevance": "Berger classification of Riemannian holonomy groups including G2 in dimension 7",
             },
         ]
 

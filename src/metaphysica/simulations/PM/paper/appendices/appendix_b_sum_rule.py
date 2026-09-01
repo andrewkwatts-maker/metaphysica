@@ -451,11 +451,12 @@ class AppendixBSumRule(SimulationBase):
             },
             {
                 "id": "joyce2000",
-                "authors": "Joyce, D. D.",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
+                "year": 2000,
                 "publisher": "Oxford University Press",
-                "year": "2000",
-                "url": "https://doi.org/10.1093/acprof:oso/9780198527916.001.0001",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "notes": "G2 manifold construction and Betti number computation",
             },
             {

@@ -991,12 +991,15 @@ class SpeedOfLightV17(SimulationBase):
         return [
             {
                 "id": "codata2022",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "c = 299,792,458 m/s (exact by SI definition since 2019)"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "c = 299,792,458 m/s (exact by SI definition since 2019)",
             },
             {
                 "id": "bipm2019",
@@ -1018,12 +1021,13 @@ class SpeedOfLightV17(SimulationBase):
             },
             {
                 "id": "joyce2000",
-                "authors": "Joyce, D.",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "publisher": "Oxford University Press",
                 "year": 2000,
-                "url": "https://arxiv.org/abs/math/9907045",
-                "notes": "Foundational text on G2 holonomy manifolds and compactification geometry"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "notes": "Foundational text on G2 holonomy manifolds and compactification geometry",
             },
             {
                 "id": "hamilton1982",

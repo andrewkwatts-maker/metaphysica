@@ -963,15 +963,16 @@ class FRTTauGravityV18(SimulationBase):
                 "notes": "Review of f(R) modified gravity"
             },
             {
-                "id": "acharya2002",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
-                "title": "M theory, Joyce orbifolds and Super Yang-Mills",
+                "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 1999,
+                "pages": "227-248",
                 "arxiv": "hep-th/9812205",
                 "url": "https://arxiv.org/abs/hep-th/9812205",
-                "notes": "M-theory on G2 manifolds: gauge fields from singularities"
+                "notes": "M-theory on G2 manifolds: gauge fields from singularities",
             },
             {
                 "id": "nishizawa2018",

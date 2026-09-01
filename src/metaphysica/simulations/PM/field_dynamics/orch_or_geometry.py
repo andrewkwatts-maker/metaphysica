@@ -1020,36 +1020,28 @@ if SCHEMA_AVAILABLE:
             """
             return [
                 {
-                    "id": "penrose_1996_gravity_reduction",
+                    "id": "penrose1996",
                     "authors": "Penrose, R.",
                     "title": "On Gravity's Role in Quantum State Reduction",
                     "year": 1996,
-                    "journal": "General Relativity and Gravitation",
+                    "journal": "Gen. Rel. Grav.",
                     "volume": "28",
                     "pages": "581-600",
-                    "url": "https://doi.org/10.1093/oso/9780198539957.001.0001",
-                    "notes": (
-                        "Establishes the Penrose Criterion tau = hbar / E_g for objective "
-                        "reduction of quantum superpositions by gravitational self-energy. "
-                        "This is the core formula used by the Orch-OR geometry solver to "
-                        "derive coherence times from G2 manifold topology."
-                    ),
+                    "doi": "10.1007/BF02105068",
+                    "url": "https://doi.org/10.1007/BF02105068",
+                    "notes": "Establishes the Penrose Criterion tau = hbar / E_g for objective reduction of quantum superpositions by gravitational self-energy. This is the core formula used by the Orch-OR geometry solver to derive coherence times from G2 manifold topology.",
                 },
                 {
-                    "id": "hameroff_penrose_2014_consciousness",
+                    "id": "hameroff_penrose_2014",
                     "authors": "Hameroff, S. and Penrose, R.",
-                    "title": "Consciousness in the universe: A review of the 'Orch OR' theory",
+                    "title": "Consciousness in the universe: A review of the Orch OR theory",
                     "year": 2014,
                     "journal": "Physics of Life Reviews",
                     "volume": "11",
                     "pages": "39-78",
+                    "doi": "10.1016/j.plrev.2013.08.002",
                     "url": "https://doi.org/10.1016/j.plrev.2013.08.002",
-                    "notes": (
-                        "Comprehensive Orch-OR review connecting microtubule quantum coherence "
-                        "to consciousness. The 13-protofilament helical structure matches the "
-                        "G2 topological pitch, and conformational mass shifts produce neural "
-                        "timescale collapse times. The v22 gnosis model extends this framework."
-                    ),
+                    "notes": "Comprehensive Orch-OR review connecting microtubule quantum coherence to consciousness. The 13-protofilament helical structure matches the G2 topological pitch, and conformational mass shifts produce neural timescale collapse times. The v22 gnosis model extends this framework.",
                 },
                 {
                     "id": "penrose_2004_road_to_reality",
@@ -1057,12 +1049,9 @@ if SCHEMA_AVAILABLE:
                     "title": "The Road to Reality: A Complete Guide to the Laws of the Universe",
                     "year": 2004,
                     "publisher": "Jonathan Cape",
-                    "url": "https://doi.org/10.1093/oso/9780198539957.001.0001",
-                    "notes": (
-                        "Provides the mathematical framework connecting gravitational physics "
-                        "to quantum state reduction. Chapters on twistor theory, spinor geometry, "
-                        "and gravitational energy inform the PM warp-corrected approach."
-                    ),
+                    "isbn": "9780224044479",
+                    "url": "https://openlibrary.org/works/OL3474173W",
+                    "notes": "Provides the mathematical framework connecting gravitational physics to quantum state reduction. Chapters on twistor theory, spinor geometry, and gravitational energy inform the PM warp-corrected approach.",
                 },
                 {
                     "id": "connes_1994_noncommutative_geometry",
@@ -1070,30 +1059,21 @@ if SCHEMA_AVAILABLE:
                     "title": "Noncommutative Geometry",
                     "year": 1994,
                     "publisher": "Academic Press",
-                    "url": "https://doi.org/10.1016/B978-0-08-057175-1.X5000-6",
-                    "notes": (
-                        "Foundation for spectral geometry approaches to physics. The G2 manifold "
-                        "topology and Dirac spectral methods used in the PM framework draw on "
-                        "Connes' formulation of noncommutative differential geometry. The "
-                        "k_gimel warp factor connects to spectral action principles."
-                    ),
+                    "isbn": "9780121858605",
+                    "url": "https://openlibrary.org/works/OL3495466W",
+                    "notes": "Foundation for spectral geometry approaches to physics. The G2 manifold topology and Dirac spectral methods used in the PM framework draw on Connes' formulation of noncommutative differential geometry. The k_gimel warp factor connects to spectral action principles.",
                 },
                 {
-                    "id": "rovelli_1993_thermal_time",
+                    "id": "rovelli_1993",
                     "authors": "Rovelli, C.",
                     "title": "Statistical mechanics of gravity and the thermodynamical origin of time",
                     "year": 1993,
-                    "journal": "Classical and Quantum Gravity",
+                    "journal": "Class. Quantum Grav.",
                     "volume": "10",
                     "pages": "1549-1566",
-                    "arxiv": "gr-qc/9302019",
-                    "url": "https://doi.org/10.1103/PhysRevD.48.1506",
-                    "notes": (
-                        "The thermal time hypothesis connects the emergence of physical time "
-                        "to thermodynamic properties of quantum states. The Orch-OR geometry "
-                        "solver's coherence time tau relates to this framework through the "
-                        "modular flow interpretation of collapse timing."
-                    ),
+                    "doi": "10.1088/0264-9381/10/8/015",
+                    "url": "https://doi.org/10.1088/0264-9381/10/8/015",
+                    "notes": "The thermal time hypothesis connects the emergence of physical time to thermodynamic properties of quantum states. The Orch-OR geometry solver's coherence time tau relates to this framework through the modular flow interpretation of collapse timing.",
                 },
             ]
 

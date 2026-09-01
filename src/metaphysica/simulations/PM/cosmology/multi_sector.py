@@ -1030,21 +1030,25 @@ class MultiSectorV16(SimulationBase):
         return [
             {
                 "id": "desi2024",
-                "authors": "DESI Collaboration",
-                "title": "DESI DR2 (2024) - Dark Energy Survey Results",
-                "journal": "ApJ",
+                "authors": "DESI Collaboration (Adame, A.G. et al.)",
+                "title": "DESI 2024 VI: Cosmological Constraints from the Measurements of Baryon Acoustic Oscillations",
                 "year": 2024,
-                "url": "https://arxiv.org/abs/2404.03002"
+                "journal": "arXiv preprint",
+                "doi": "10.48550/arXiv.2404.03002",
+                "arxiv": "2404.03002",
+                "url": "https://arxiv.org/abs/2404.03002",
             },
             {
                 "id": "planck2018",
-                "authors": "Planck Collaboration",
-                "title": "Planck 2018 results: Cosmological parameters",
-                "journal": "A&A",
-                "volume": "641",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
+                "title": "Planck 2018 results. VI. Cosmological parameters",
                 "year": 2020,
+                "journal": "Astron. Astrophys.",
+                "volume": "641",
+                "pages": "A6",
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
             },
             {
                 "id": "friedmann1922",
@@ -1072,18 +1076,14 @@ class MultiSectorV16(SimulationBase):
                 )
             },
             {
-                "id": "acharya_witten_2001",
-                "authors": "Acharya, B.S.; Witten, E.",
+                "id": "acharya_witten2001",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
                 "journal": "arXiv preprint",
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": (
-                    "M-theory on G2 manifolds producing chiral fermions. The b3 = 24 "
-                    "associative 3-cycles and generation counting n_gen = chi/48 are "
-                    "central to the multi-sector decomposition."
-                )
+                "notes": "M-theory on G2 manifolds producing chiral fermions. The b3 = 24 associative 3-cycles and generation counting n_gen = chi/48 are central to the multi-sector decomposition.",
             },
             {
                 "id": "hori_vafa_2000",

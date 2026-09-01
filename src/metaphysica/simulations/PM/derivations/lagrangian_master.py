@@ -3417,33 +3417,34 @@ class LagrangianMasterDerivation(SimulationBase):
                 "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "publisher": "Oxford University Press",
                 "year": 2000,
-                "notes": "Mathematical foundations for G2 holonomy manifolds and associative 3-form construction"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "notes": "Mathematical foundations for G2 holonomy manifolds and associative 3-form construction",
             },
             {
                 "id": "acharya_witten2001",
-                "authors": "Acharya, B.S., Witten, E.",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
-                "arxiv": "hep-th/0109152",
                 "year": 2001,
-                "notes": "G2 compactification yielding chiral fermions; b_3 determines generation number"
+                "arxiv": "hep-th/0109152",
+                "url": "https://arxiv.org/abs/hep-th/0109152",
+                "notes": "G2 compactification yielding chiral fermions; b_3 determines generation number",
             },
             {
-                "id": "kklt2003",
                 "key": "kklt2003",
+                "id": "kklt2003",
                 "authors": "Kachru, S., Kallosh, R., Linde, A., Trivedi, S.P.",
-                "title": "De Sitter Vacua in String Theory",
+                "title": "de Sitter Vacua in String Theory",
                 "year": 2003,
+                "journal": "Phys. Rev. D",
+                "volume": "68",
+                "pages": "046005",
                 "doi": "10.1103/PhysRevD.68.046005",
+                "arxiv": "hep-th/0301240",
                 "url": "https://arxiv.org/abs/hep-th/0301240",
-                "notes": (
-                    "KKLT construction for moduli stabilisation in Type IIB string theory. "
-                    "Non-perturbative superpotential from D3-brane instantons combined with "
-                    "flux-generated tree-level W_0 stabilises all Kahler moduli and produces "
-                    "a de Sitter vacuum after anti-D3-brane uplift. Adapted here for the "
-                    "racetrack-moduli-potential formula (L.R1) in the G2 setting."
-                )
+                "notes": "KKLT construction for moduli stabilisation in Type IIB string theory. Non-perturbative superpotential from D3-brane instantons combined with flux-generated tree-level W_0 stabilises all Kahler moduli and produces a de Sitter vacuum after anti-D3-brane uplift. Adapted here for the racetrack-moduli-potential formula (L.R1) in the G2 setting.",
             },
             {
                 "id": "lvs2005",

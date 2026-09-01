@@ -1070,13 +1070,13 @@ class AbstractV17_2(SimulationBase):
         """Return bibliographic references relevant to the abstract."""
         return [
             {
-                "id": "acharya_witten_2001",
-                "authors": "Acharya, B. S. and Witten, E.",
+                "id": "acharya_witten2001",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": "Foundation for chirality from G2 compactification cited in abstract"
+                "notes": "Foundation for chirality from G2 compactification cited in abstract",
             },
             {
                 "id": "desi_2025_thawing",
@@ -1088,15 +1088,17 @@ class AbstractV17_2(SimulationBase):
                 "notes": "PM prediction w0 = -23/24 falls within BAO-only uncertainty range"
             },
             {
-                "id": "planck_2018",
-                "authors": "Planck Collaboration",
-                "title": "Planck 2018 Results. VI. Cosmological Parameters",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
+                "title": "Planck 2018 results. VI. Cosmological parameters",
                 "year": 2020,
-                "journal": "Astronomy & Astrophysics",
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "Primary cosmological data set for validation"
+                "doi": "10.1051/0004-6361/201833910",
+                "arxiv": "1807.06209",
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "Primary cosmological data set for validation",
             },
             {
                 "id": "nufit_6_0",

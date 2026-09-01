@@ -495,10 +495,12 @@ class ElectroweakMixingSimulation(SimulationBase):
                 "id": "weinberg1967",
                 "authors": "Weinberg, S.",
                 "title": "A Model of Leptons",
-                "year": "1967",
+                "year": 1967,
                 "journal": "Phys. Rev. Lett.",
                 "volume": "19",
                 "pages": "1264-1266",
+                "doi": "10.1103/PhysRevLett.19.1264",
+                "url": "https://doi.org/10.1103/PhysRevLett.19.1264",
                 "notes": "Original electroweak unification paper introducing the Weinberg angle.",
             },
             {

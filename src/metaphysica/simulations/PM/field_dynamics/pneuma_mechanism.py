@@ -1572,11 +1572,13 @@ class PneumaMechanismV16(SimulationBase):
         return [
             {
                 "id": "joyce2000",
-                "authors": "Joyce, D.",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
+                "year": 2000,
                 "journal": "Oxford University Press",
-                "year": "2000",
-                "url": "https://doi.org/10.1093/acprof:oso/9780198527916.001.0001"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
             },
             {
                 "id": "witten1995",
@@ -1600,12 +1602,13 @@ class PneumaMechanismV16(SimulationBase):
                 "id": "penrose1996",
                 "authors": "Penrose, R.",
                 "title": "On Gravity's Role in Quantum State Reduction",
+                "year": 1996,
                 "journal": "Gen. Rel. Grav.",
                 "volume": "28",
                 "pages": "581-600",
-                "year": "1996",
                 "doi": "10.1007/BF02105068",
-                "note": "Included for gravitational quantum collapse aspects relevant to field dynamics, not speculative consciousness theories"
+                "url": "https://doi.org/10.1007/BF02105068",
+                "note": "Included for gravitational quantum collapse aspects relevant to field dynamics, not speculative consciousness theories",
             },
             {
                 "id": "karigiannis2009",
@@ -1620,13 +1623,15 @@ class PneumaMechanismV16(SimulationBase):
             },
             {
                 "id": "kklt2003",
-                "authors": "Kachru, S., Kallosh, R., Linde, A. and Trivedi, S.P.",
+                "authors": "Kachru, S., Kallosh, R., Linde, A., Trivedi, S.P.",
                 "title": "de Sitter Vacua in String Theory",
+                "year": 2003,
                 "journal": "Phys. Rev. D",
                 "volume": "68",
-                "year": "2003",
+                "pages": "046005",
+                "doi": "10.1103/PhysRevD.68.046005",
                 "arxiv": "hep-th/0301240",
-                "url": "https://arxiv.org/abs/hep-th/0301240"
+                "url": "https://arxiv.org/abs/hep-th/0301240",
             },
         ]
 

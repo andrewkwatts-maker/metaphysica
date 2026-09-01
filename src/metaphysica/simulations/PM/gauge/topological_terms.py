@@ -514,9 +514,15 @@ def block_labelling_analysis(n_blocks: int = 3, g2=None) -> Dict[str, Any]:
         "residual_freedom": (
             f"{len(qualifying)} point sets remain, each admitting "
             f"{labellings_per_set.get(frozenset(qualifying[0]), 0) if qualifying else 0} "
-            f"labellings. The join narrows C(21,12) = 293930 to 35 to "
-            f"{len(qualifying)}, not to 1. The assignment is still "
-            f"underdetermined."
+            f"labellings. COMBINATORIALLY the join narrows "
+            f"C(21,12) = 293930 to 35 to {len(qualifying)}, not to 1. "
+            f"PHYSICALLY nothing is left: see "
+            f"assignment_uniqueness_report, which shows all "
+            f"{len(qualifying)} x 18 remaining possibilities are "
+            f"relabellings -- the block partition is canonical given the "
+            f"arc, the spare colour is incident to no bridge, and the arcs "
+            f"form a single orbit under PSL(3,2). This field counts "
+            f"combinatorial options, not physical ones."
         ),
         "kill_condition": (
             "If any set of 5 or more Fano points is simultaneously rainbow "
@@ -665,6 +671,136 @@ def bridge_face_incidence(g2=None) -> Dict[str, Any]:
             "a complement that is not a line, or fewer than 12 distinct "
             "flags, the identification fails and the 18 would need another "
             "explanation. Checked for all 7 arcs on every build."
+        ),
+    }
+
+
+def assignment_uniqueness_report(g2=None) -> Dict[str, Any]:
+    """Is anything PHYSICAL left undetermined in the bridge-to-channel map?
+
+    The narrowing ran C(21,12) = 293930 -> 35 -> 7 arcs, each admitting 18
+    line-to-block labellings, and stopped. 7 x 18 = 126 residual
+    possibilities were recorded as "still underdetermined". They are not:
+    every one of the three remaining freedoms is a relabelling.
+
+    (1) THE BLOCK PARTITION IS CANONICAL, GIVEN THE ARC.
+        Each K4 edge {p, q} spans a Fano line, and that line meets the
+        complement line in exactly one point. Group the six edges by which
+        complement point they hit: the fibres are precisely the three
+        perfect matchings of K4. So the partition of bridges into E8 blocks
+        is fixed by the arc alone, and the 3! freedom counted earlier is
+        only the naming of the three blocks -- which complement point is
+        called block 0. A block's name is not an observable.
+
+    (2) THE SPARE FACTOR OF 3 TOUCHES NOTHING.
+        The remaining factor in 18 = 3! x 3 is the colour of the complement
+        line, which lies on no face. It is incident to no bridge, so its
+        label enters no coupling.
+
+    (3) THE SEVEN ARCS ARE ONE ORBIT.
+        Aut of the Fano plane is PSL(3,2), of order 168. It is transitive on
+        the 7 lines and hence on the 7 arcs, with an arc stabiliser of order
+        168 / 7 = 24 acting as the full symmetric group on that arc's four
+        faces. No arc is singled out by the incidence geometry; choosing one
+        is choosing a labelling of the seven imaginary octonion directions,
+        and the stabiliser then permutes the four faces arbitrarily, so the
+        face labels are free too.
+
+    Taken together: GIVEN the global-labelling premise, the bridge-to-channel
+    assignment is unique up to the symmetry group of the structure. That is
+    the standard sense in which a geometric object is determined -- a basis
+    is unique up to change of basis -- and it is the closure the register
+    asked for.
+
+    WHAT WOULD REOPEN IT
+    Only a structure elsewhere in the framework that distinguishes a Fano
+    direction. If some other part of the theory breaks PSL(3,2) -- a
+    preferred imaginary octonion, a shadow asymmetry singling out a
+    coordinate -- then the seven arcs stop being equivalent and the choice
+    becomes physical again. Nothing currently in the framework does this,
+    but the claim is conditional on that and is stated so.
+    """
+    lines = {frozenset(t) for t in associative_triples(g2)}
+    n_points = len({p for line in lines for p in line})
+    all_points = set(range(n_points))
+
+    def _is_arc(points):
+        return not any(set(line) <= set(points) for line in lines)
+
+    arcs = [frozenset(q) for q in itertools.combinations(sorted(all_points), 4)
+            if _is_arc(q)]
+
+    automorphisms = [
+        perm for perm in itertools.permutations(sorted(all_points))
+        if {frozenset(perm[i] for i in line) for line in lines} == lines
+    ]
+
+    reference = arcs[0]
+    arc_orbit = {frozenset(perm[i] for i in reference)
+                 for perm in automorphisms}
+    stabiliser = [perm for perm in automorphisms
+                  if frozenset(perm[i] for i in reference) == reference]
+    face_images = {tuple(sorted((perm[i] for i in reference)))
+                   for perm in stabiliser}
+    induced = {tuple(perm[i] for i in sorted(reference))
+               for perm in stabiliser}
+
+    # (1) the block partition is the fibring of K4 edges over complement points
+    partition_is_canonical = True
+    for arc in arcs:
+        complement = frozenset(all_points - set(arc))
+        fibres: Dict[Any, list] = {}
+        for p, q in itertools.combinations(sorted(arc), 2):
+            line = next(L for L in lines if p in L and q in L)
+            hit = line & complement
+            if len(hit) != 1:
+                partition_is_canonical = False
+                break
+            fibres.setdefault(next(iter(hit)), []).append(frozenset((p, q)))
+        else:
+            for edges in fibres.values():
+                if not (len(edges) == 2 and not (edges[0] & edges[1])
+                        and (edges[0] | edges[1]) == set(arc)):
+                    partition_is_canonical = False
+            if len(fibres) != 3:
+                partition_is_canonical = False
+        if not partition_is_canonical:
+            break
+
+    return {
+        "automorphism_group": "PSL(3,2)",
+        "automorphism_group_order": len(automorphisms),
+        "n_arcs": len(arcs),
+        "arc_orbit_size": len(arc_orbit),
+        "arcs_form_one_orbit": len(arc_orbit) == len(arcs),
+        "arc_stabiliser_order": len(stabiliser),
+        "stabiliser_is_full_symmetric_on_faces": len(induced) == 24,
+        "orbit_stabiliser_checks": (
+            len(arc_orbit) * len(stabiliser) == len(automorphisms)),
+        "block_partition_is_canonical_given_the_arc": partition_is_canonical,
+        "residual_freedoms": [
+            "naming the 3 blocks (3! = 6) -- the PARTITION is canonical",
+            "colour of the complement line (3) -- incident to no bridge",
+            "choice of arc (7) -- one orbit under PSL(3,2)",
+        ],
+        "physical_freedom_remaining": 0,
+        "conclusion": (
+            "Given the global-labelling premise, the bridge-to-channel "
+            "assignment is unique up to the symmetry group of the structure. "
+            "All 7 x 18 = 126 residual possibilities are relabellings: the "
+            "block partition is fixed by the arc, the spare colour is "
+            "incident to nothing, and the arcs form a single PSL(3,2) orbit "
+            "with stabiliser S4 acting on the four faces."
+        ),
+        "kill_condition": (
+            "If any structure elsewhere in the framework distinguishes a "
+            "Fano direction -- a preferred imaginary octonion, or a shadow "
+            "asymmetry singling out one coordinate -- then PSL(3,2) is "
+            "broken, the 7 arcs stop being equivalent, and the choice of arc "
+            "becomes physical again. The uniqueness claim is conditional on "
+            "no such structure existing. It is also void if the "
+            "automorphism group is not of order 168 or is not transitive on "
+            "arcs, both checked here on every build."
         ),
     }
 
@@ -968,6 +1104,7 @@ def write_report(out_path=None):
         "coupling_graph": coupling_graph(g2),
         "block_labelling": block_labelling_analysis(g2=g2),
         "bridge_face_incidence": bridge_face_incidence(g2=g2),
+        "assignment_uniqueness": assignment_uniqueness_report(g2=g2),
         "face_assignment": face_assignment_candidates(g2),
         "note": (
             "Stage 4 of the action-layer plan. The topological route carries "

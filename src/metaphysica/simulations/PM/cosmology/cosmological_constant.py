@@ -1015,16 +1015,17 @@ class CosmologicalConstantV16(SimulationBase):
                 "url": "https://doi.org/10.1103/RevModPhys.74.825"
             },
             {
-                "id": "planck2018_lambda",
+                "id": "planck2018",
                 "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
+                "year": 2020,
                 "journal": "Astron. Astrophys.",
                 "volume": "641",
-                "year": 2020,
                 "pages": "A6",
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "Omega_Lambda = 0.6847 +/- 0.0073, H0 = 67.36 +/- 0.54 km/s/Mpc"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "Omega_Lambda = 0.6847 +/- 0.0073, H0 = 67.36 +/- 0.54 km/s/Mpc",
             },
             {
                 "id": "polchinski1998",
@@ -1036,13 +1037,14 @@ class CosmologicalConstantV16(SimulationBase):
                 "notes": "Instanton actions in string compactifications"
             },
             {
-                "id": "joyce2000_g2",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "publisher": "Oxford University Press",
                 "year": 2000,
-                "url": "https://doi.org/10.1093/acprof:oso/9780198527916.001.0001",
-                "notes": "G2 manifold topology, Betti numbers b2=0, b3=24 for Joyce manifolds"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "notes": "G2 manifold topology, Betti numbers b2=0, b3=24 for Joyce manifolds",
             },
             {
                 "id": "perlmutter1999",

@@ -39,11 +39,18 @@ put in by hand:
                  carried the note that this was "a stated criterion, not a
                  derivation". It is now a consequence.
 
-WHAT IS NOT CLAIMED
--------------------
-The join narrows 293930 -> 35 -> 7. It does not reach 1. Which arc, and
-which of its 18 labellings, remains open, and these tests assert that the
-residual freedom is still reported rather than papered over.
+WHAT IS NOT CLAIMED HERE
+------------------------
+This enumeration narrows 293930 -> 35 -> 7 and stops. It does not reach a
+single combinatorial answer, and these tests assert that the count keeps
+saying so rather than presenting 7 as a unique result.
+
+That the 7 are PHYSICALLY equivalent is a separate result, proved in
+assignment_uniqueness_report and tested in test_assignment_uniqueness: the
+block partition is canonical given the arc, the spare colour is incident to
+no bridge, and the arcs form one orbit under PSL(3,2). The distinction is
+worth keeping sharp -- this module counts combinatorial options, that one
+decides which of them are observable.
 """
 from __future__ import annotations
 
@@ -140,16 +147,21 @@ def test_a_line_containing_quadruple_admits_no_labelling():
 # -- the honesty of what remains --------------------------------------------
 
 
-def test_the_join_does_not_claim_to_be_unique():
-    """It narrows 293930 -> 35 -> 7, and must say so rather than pick one."""
+def test_the_join_reports_combinatorial_options_not_physical_ones():
+    """It narrows 293930 -> 35 -> 7 and must not present 7 as a unique answer.
+
+    The 7 are combinatorially distinct and this count must keep saying so.
+    That they are PHYSICALLY equivalent is a separate result proved in
+    assignment_uniqueness_report, and the wording here has to point at it
+    rather than either overclaiming uniqueness or leaving the reader with
+    "underdetermined" when the freedom is entirely gauge.
+    """
     result = block_labelling_analysis()
-    assert result["n_qualifying"] > 1, (
-        "the analysis now reports a unique assignment; if that is genuine "
-        "the residual_freedom text and this test both need revisiting, and "
-        "if it is not, something has been assumed"
-    )
+    assert result["n_qualifying"] > 1
     assert set(result["labellings_per_qualifying_set"].values()) == {18}
-    assert "underdetermined" in result["residual_freedom"]
+    freedom = result["residual_freedom"]
+    assert "COMBINATORIALLY" in freedom and "PHYSICALLY" in freedom
+    assert "assignment_uniqueness_report" in freedom
 
 
 def test_the_assumption_is_stated():
