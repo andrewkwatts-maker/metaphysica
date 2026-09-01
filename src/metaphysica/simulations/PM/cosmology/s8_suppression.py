@@ -1014,10 +1014,12 @@ class S8SuppressionV16(SimulationBase):
                 "The S₈ \u2261 \u03c3₈ \u00d7 \u221a(\u03a9_m/0.3) tension between CMB (Planck: 0.832 \u00b1 0.013) "
                 "and weak lensing surveys (KiDS-1000: 0.766 \u00b1 0.020, DES Y3: 0.776 \u00b1 0.017) "
                 "is a significant challenge for ΛCDM cosmology. We analyze PM's prediction "
-                "for S₈ given dynamical dark energy with w₀ = -1 + 1/b₃ = -23/24 and DESI 2025's "
-                "\u03c3₈ = 0.827 \u00b1 0.011. PM predicts S₈ \u2248 0.831, intermediate between Planck "
-                "and weak lensing, representing the integrated expansion history with "
-                "time-evolving dark energy."
+                "for S₈ given dynamical dark energy with w₀ = -1 + 1/b₃ = -23/24. PM predicts "
+                "S₈ = 0.8207, and the same prediction is now scored against BOTH anchors: "
+                "0.718\u03c3 PASS against Planck 2018 (planck.S8 = 0.830 \u00b1 0.013) and "
+                "2.733\u03c3 TENSION against KiDS-1000 (lensing.S8_kids1000 = 0.766 \u00b1 0.020). "
+                "It is not intermediate between the two \u2014 it sits on the CMB side, and "
+                "the moduli-DM friction term does not resolve the weak-lensing tension."
             ),
             content_blocks=[
                 ContentBlock(
@@ -1125,23 +1127,35 @@ class S8SuppressionV16(SimulationBase):
                     type="table",
                     headers=["Survey", "S₈ Measured", "\u03c3 from Planck", "\u03c3 from PM", "PM Position"],
                     rows=[
-                        ["Planck 2018", "0.832 \u00b1 0.013", "\u2014", "0.4\u03c3", "Slightly high"],
-                        ["KiDS-1000", "0.766 \u00b1 0.020", "3.3\u03c3 low", "3.5\u03c3 high", "Between"],
-                        ["DES Y3", "0.776 \u00b1 0.017", "3.3\u03c3 low", "3.6\u03c3 high", "Between"],
-                        ["HSC-Y3", "0.769 \u00b1 0.032", "2.0\u03c3 low", "2.0\u03c3 high", "Between"],
-                        ["DESI \u03c3₈ (input)", "0.827 \u00b1 0.011", "0.5\u03c3 low", "Used", "Consistent"],
+                        ["Planck 2018 (planck.S8)", "0.830 \u00b1 0.013", "\u2014", "0.718\u03c3 \u2014 PASS", "Agrees"],
+                        ["KiDS-1000", "0.766 \u00b1 0.020", "3.2\u03c3 low", "2.733\u03c3 \u2014 TENSION", "Fails"],
+                        ["DES Y3", "0.776 \u00b1 0.017", "3.2\u03c3 low", "2.628\u03c3", "Fails"],
+                        ["HSC-Y3", "0.769 \u00b1 0.032", "1.9\u03c3 low", "1.6\u03c3", "Marginal"],
+                        ["\u03c3₈ (Planck 2018, input)", "0.8111 \u00b1 0.0060", "\u2014", "Used", "Input"],
                     ]
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "PM's S₈ = 0.837 \u00b1 0.014 (combining \u03c3₈ and \u03a9_m uncertainties "
-                        "in quadrature: \u03b4S₈\u00b2 \u2248 (0.011)\u00b2 + (0.008)\u00b2) lies between "
-                        "Planck's high value (0.832) and weak lensing's low values (0.766\u20130.776). "
-                        "The PM growth suppression of ~0.6% (\u03b2 \u2248 0.994) is well below the "
-                        "~1.7% statistical uncertainty, making PM indistinguishable from \u039bCDM "
-                        "with current data. Stage-IV surveys (Rubin/LSST, Euclid, Roman) "
-                        "will reduce S₈ uncertainty to ~0.005, potentially resolving this."
+                        "The prediction is <code>cosmology.s8_pm_predicted</code> = 0.8207. "
+                        "It is now scored against <strong>both</strong> ends of the tension "
+                        "rather than against a single anchor, and it does not land in the "
+                        "middle of them: <strong>0.718\u03c3 PASS against Planck 2018 "
+                        "(planck.S8 = 0.830 \u00b1 0.013)</strong> and "
+                        "<strong>2.733\u03c3 TENSION against KiDS-1000 "
+                        "(lensing.S8_kids1000 = 0.766 \u00b1 0.020)</strong>, with 2.628\u03c3 "
+                        "against DES Y3 and 1.6\u03c3 against HSC-Y3. The prediction sits on the "
+                        "CMB side. The moduli-DM friction term moves it by 0.71%, which "
+                        "narrows the KiDS gap from 3.03\u03c3 to 2.73\u03c3 and no further: "
+                        "<strong>friction does not resolve the weak-lensing tension</strong>. "
+                        "Stage-IV surveys (Rubin/LSST, Euclid, Roman) will reduce the S₈ "
+                        "uncertainty to ~0.005 and decide it. Three lensing anchors are now "
+                        "registered separately \u2014 <code>lensing.S8_kids1000</code>, "
+                        "<code>lensing.S8_des_y3</code>, <code>lensing.S8_hsc_y3</code> \u2014 so "
+                        "the comparison cannot quietly be made against whichever one is "
+                        "closest. The earlier figure quoted here, S₈ = 0.837 \u00b1 0.014 "
+                        "&lsquo;intermediate between Planck and weak lensing&rsquo;, is "
+                        "withdrawn: it is neither the computed value nor an intermediate one."
                     )
                 ),
                 ContentBlock(
@@ -1162,11 +1176,14 @@ class S8SuppressionV16(SimulationBase):
                     callout_type="info",
                     title="S₈ Tension Status",
                     content=(
-                        "PM's w₀ = -1 + 1/b₃ = -23/24 gives S₈ \u2248 0.837 \u00b1 0.014, intermediate "
-                        "between Planck (0.832) and weak lensing (0.77). The 0.6% growth "
-                        "suppression from \u039bCDM is too small to resolve the ~8% weak lensing "
-                        "discrepancy given current error bars (~1.7%). Stage-IV surveys will "
-                        "reach ~0.6% precision, enabling a definitive test. Future work: "
+                        "PM's w₀ = -1 + 1/b₃ = -23/24 gives S₈ = 0.8207, which agrees with "
+                        "Planck 2018 at 0.718\u03c3 and is in 2.733\u03c3 tension with KiDS-1000. "
+                        "The growth suppression from \u039bCDM, friction included, is 0.71% \u2014 "
+                        "too small to close the ~7% gap to weak lensing. The S₈ tension is "
+                        "NOT resolved by this mechanism, and the prediction is not "
+                        "intermediate between the two camps: it sits with the CMB. Stage-IV "
+                        "surveys will reach ~0.6% precision, enabling a definitive test. "
+                        "Future work: "
                         "(1) neutrino mass effects (\u03a3m_\u03bd \u2248 0.06 eV from PM prediction), "
                         "(2) early dark energy contributions from w\u2090 \u2248 0.29, "
                         "(3) systematic error reduction in KiDS, DES, HSC, Euclid."
@@ -2030,13 +2047,32 @@ class S8SuppressionV16(SimulationBase):
         planck_sigma = 0.013
         dev_planck = abs(s8_pm - planck_s8) / planck_sigma
 
-        desi_sigma8 = 0.827
-        desi_sigma = 0.011
-        dev_desi = abs(s8_pm - desi_sigma8 * np.sqrt(0.3069 / 0.3)) / planck_sigma
+        # REMOVED: a dev_desi computed from a hardcoded "DESI sigma8 = 0.827"
+        # and an Omega_m literal of 0.3069 (the registry carries 0.3111),
+        # divided by planck_sigma rather than its own uncertainty. This
+        # module's own header records that DESI publishes no stand-alone
+        # sigma_8 and that the 0.827 attribution was unverifiable, so the
+        # value is retired -- yet it was still being published in this gate's
+        # details as "desi_sigma8_input". The quantity was also DEAD: dev_desi
+        # was computed and never read by any assertion or result.
+        #
+        # Real S8 anchors now exist in the registry (planck.S8,
+        # lensing.S8_kids1000 / _des_y3 / _hsc_y3) and the S8 comparison is
+        # scored there as cosmology.s8_pm_predicted and
+        # cosmology.s8_pm_vs_lensing. This gate does not need to restate it
+        # from literals.
 
         return [
             {
+                # NOTE: this check is filed under the baryon-to-photon-ratio
+                # gate while asserting something about S8. Sharing a gate id
+                # across simulations is the normal pattern here (G48 and G49
+                # each collect four), but S8 and eta_b are unrelated
+                # observables and this pairing looks like a copy. Which gate
+                # the S8 bound belongs under is a bookkeeping call for the
+                # author; flagged rather than reassigned.
                 "gate_id": "G50_baryon_to_photon_ratio",
+                "gate_id_mismatch_flagged": True,
                 "simulation_id": self.metadata.id,
                 "assertion": (
                     f"PM S8 = {s8_pm:.3f} is within 3sigma of Planck "
@@ -2050,7 +2086,6 @@ class S8SuppressionV16(SimulationBase):
                     "planck_s8": planck_s8,
                     "planck_sigma": planck_sigma,
                     "deviation_sigma": dev_planck,
-                    "desi_sigma8_input": desi_sigma8,
                 }
             },
         ]

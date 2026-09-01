@@ -491,7 +491,13 @@ class MasterActionSimulationV22(SimulationBase):
                     "L_bridge^i": "Bridge Lagrangian for pair i (12 total)",
                     "L_C": "Sampler data fields Lagrangian S^{2,0}"
                 },
-                arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
+                # The Lagrangian itself has no scalar value; its coupling does.
+                # Carrying 0.0 here made the triple-track scanner compare the
+                # display text against a placeholder and report a spurious
+                # mismatch.
+                arithma=_arithma_num(0.4082482904638631),
+                eml=_eml_scalar(0.4082482904638631),
+                value=0.4082482904638631,
             ),
             Formula(
                 id="bridge-12-pair-metric-v22",
@@ -1026,7 +1032,8 @@ class MasterActionSimulationV22(SimulationBase):
                 id="dark-matter-portal-lagrangian",
                 label="(MA.TL2)",
                 latex=r"\mathscr{L}_{\text{portal}} = \alpha_{\text{leak}} \phi_{\text{vis}} \phi_{\text{dark}} \phi_{\text{mod}}, \quad \alpha_{\text{sample}} \approx 0.57",
-                plain_text="L_portal = alpha_leak * phi_vis * phi_dark * phi_mod, alpha_leak ≈ 0.57",
+                plain_text=("L_portal = alpha_leak * phi_vis * phi_dark * phi_mod, "
+                            "alpha_leak = 1/sqrt(6) ≈ 0.4082"),
                 category="GEOMETRIC",
                 description=(
                     "Dark matter portal Lagrangian -- hidden face coupling from volume ratio "
@@ -1038,10 +1045,17 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 eml_description=(
                     "L_portal = alpha_leak * phi_vis * phi_dark * phi_mod: "
-                    "trilinear visible-dark-moduli coupling; alpha_leak ~ 1/sqrt(6) ~ 0.57."
+                    "trilinear visible-dark-moduli coupling; "
+                    "alpha_leak = 1/sqrt(6) = 0.4082."
                 ),
                 inputParams=["geometry.alpha_leak", "topology.mephorash_chi", "topology.elder_kads"],
-                outputParams=["gauge.dark_portal_coupling"],
+                # gauge.dark_portal_coupling does not exist in the registry.
+                # A declared output that no simulation produces makes the
+                # dependency walkers skip the formula silently, so its chain
+                # was being counted as b3-rooted on the strength of a path
+                # that is not there. The formula's actual content is the
+                # coupling alpha_leak, which IS registered.
+                outputParams=["geometry.alpha_leak"],
                 derivation={
                     "steps": [
                         "The 4-face TCS G2 structure has one visible face (selected by face OR) and three hidden faces",
@@ -1049,7 +1063,17 @@ class MasterActionSimulationV22(SimulationBase):
                         "The portal coupling alpha_leak is determined geometrically: the base factor is 1/sqrt(6) from the volume ratio of the visible face to the total internal volume",
                         "Torsion corrections from the G2 contorsion tensor modify the base coupling by a factor of order unity",
                         "Flux asymmetry between visible and hidden faces provides an additional correction factor",
-                        "The combined result is alpha_leak ~ 0.57, entirely determined by the internal geometry"
+                        "The base factor alone gives alpha_leak = 1/sqrt(6) = 0.408249, "
+                        "which is what geometry.alpha_leak carries and what this "
+                        "formula evaluates. A corrected value of ~0.57 was previously "
+                        "asserted here as the combined result 'entirely determined by "
+                        "the internal geometry'. That is withdrawn: steps 4 and 5 "
+                        "invoke a torsion factor 'of order unity' and an unquantified "
+                        "flux asymmetry, neither of which is computed anywhere, and "
+                        "0.57 matches no registry value in this sector. It was an "
+                        "ANSATZ presented as a derivation, and the three other tracks "
+                        "of this formula (plain text, EML, terms) all stated it as "
+                        "alpha_leak itself, contradicting 1/sqrt(6) in the same breath"
                     ],
                     "method": "Hidden face coupling from G2 volume ratio, torsion, and flux corrections",
                     "parentFormulas": ["pneuma-master-action-v23"]
@@ -1058,7 +1082,11 @@ class MasterActionSimulationV22(SimulationBase):
                     "phi_vis": "Visible face scalar fields (our universe)",
                     "phi_dark": "Hidden (dark) face scalar fields",
                     "phi_mod": "Shared moduli fields mediating cross-face coupling",
-                    "alpha_leak": "Portal coupling ~ 0.57 from 1/sqrt(6) with torsion and flux corrections"
+                    "alpha_leak": ("Portal coupling = 1/sqrt(6) = 0.408249 from the "
+                                   "visible-to-total face volume ratio. Torsion and "
+                                   "flux corrections are named in the derivation but "
+                                   "not quantified; the ~0.57 they were said to "
+                                   "produce is withdrawn as an ANSATZ (see step 6)")
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
