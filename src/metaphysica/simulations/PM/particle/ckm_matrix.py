@@ -912,7 +912,7 @@ class CKMMatrixSimulation(SimulationBase):
                         "pi/K with K = 4 gives pi/4 = 45 degrees, NOT the quoted pi/6 = 30 degrees (pi/6 corresponds to K = 6)",
                         "eta = 0.36 (FITTED; not sin(delta_CP) = 0.5)",
                         "J = A²λ⁶η = 0.81² × 0.22313⁶ × 0.36 ≈ 2.91×10⁻⁵",
-                        "PDG 2024 value: J = (3.12 ± 0.13) × 10^-5 (1.6 sigma)",
+                        "PDG 2024 value: J = (3.08 ± 0.13) × 10^-5 (1.27 sigma)",
                     ]
                 },
                 terms={

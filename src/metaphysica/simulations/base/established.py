@@ -372,7 +372,7 @@ class EstablishedPhysics:
                 units="dimensionless",
                 source="ESTABLISHED:DESI_2025",
                 description="RMS matter fluctuation amplitude at 8 h^-1 Mpc (Planck 2018; DESI publishes no stand-alone sigma8)",
-                eml_description="EML: eml_scalar(0.827) — σ₈ matter fluctuation amplitude at 8 h⁻¹ Mpc (DESI 2025 / Planck 2018 input)"
+                eml_description="EML: eml_scalar(0.8111) — σ₈ matter fluctuation amplitude at 8 h⁻¹ Mpc (Planck 2018 input; DESI publishes no stand-alone σ₈)"
             ),
             EstablishedParameter(
                 path="desi.H0",

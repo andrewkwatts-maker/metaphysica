@@ -1111,13 +1111,13 @@ class S8SuppressionV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Using DESI 2025's \u03c3₈ = 0.827 \u00b1 0.011 and \u03a9_m = 0.3069 \u00b1 0.0050, "
-                        "we predict:"
+                        "Using \u03c3₈ = 0.8111 \u00b1 0.0060 (Planck 2018; DESI publishes no stand-alone \u03c3₈) "
+                        "and \u03a9_m = 0.3111 \u00b1 0.0056, we predict:"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) = 0.8111 \times 1.011 \times 0.994 \approx 0.821",
+                    content=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) \times f_{\rm fric}^{\rm ODE} = 0.8111 \times 1.0183 \times 1.0007 \times 0.9929 \approx 0.821",
                     formula_id="s8-prediction-pm",
                     label="(5.22)"
                 ),
@@ -1470,7 +1470,7 @@ class S8SuppressionV16(SimulationBase):
             Formula(
                 id="s8-prediction-pm",
                 label="(5.22)",
-                latex=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) \times f_{\rm fric}^{\rm ODE} \approx 0.815",
+                latex=r"S_{8,PM} = \sigma_8 \sqrt{\frac{\Omega_m}{0.3}} \times \beta(z_{eff}) \times f_{\rm fric}^{\rm ODE} \approx 0.821",
                 plain_text="S8_PM = σ8 * sqrt(Ωm/0.3) * β(z_eff) * f_fric_ODE ≈ 0.821 (band 0.784-0.821)",
                 category="PREDICTED",
                 description="PM prediction for S8 parameter including growth suppression and moduli-DM friction",
@@ -1481,20 +1481,28 @@ class S8SuppressionV16(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "DESI 2025 measurement",
-                            "formula": r"\sigma_8 = 0.827 \pm 0.011"
+                            # Planck 2018 anchor: DESI publishes no stand-alone
+                            # sigma8, so the retired "DESI 2025: 0.827 +/- 0.011"
+                            # attribution must not be quoted here. Mirrors
+                            # registry desi.sigma8.
+                            "description": "sigma_8 input (Planck 2018 anchor)",
+                            "formula": r"\sigma_8 = 0.8111 \pm 0.0060"
                         },
                         {
                             "description": "Matter density",
-                            "formula": r"\Omega_m = 0.3069 \pm 0.0050"
+                            "formula": r"\Omega_m = 0.3111 \pm 0.0056"
                         },
                         {
-                            "description": "Suppression factor at z_eff = 0.5",
-                            "formula": r"\beta(0.5) \approx 0.994"
+                            "description": "Growth suppression factor at z_eff = 0.5",
+                            "formula": r"\beta(0.5) \approx 1.0007"
+                        },
+                        {
+                            "description": "Moduli-DM friction factor (growth ODE, declared z < 0.5 window)",
+                            "formula": r"f_{\rm fric}^{\rm ODE} \approx 0.9929"
                         },
                         {
                             "description": "PM S8 prediction",
-                            "formula": r"S_{8,PM} = 0.8111 \times 1.011 \times 0.994 \approx 0.815"
+                            "formula": r"S_{8,PM} = 0.8111 \times 1.0183 \times 1.0007 \times 0.9929 \approx 0.821"
                         },
                         {
                             "description": "Comparison to observations",
@@ -1946,11 +1954,14 @@ class S8SuppressionV16(SimulationBase):
                 "topic": "DESI Baryon Acoustic Oscillation Survey",
                 "url": "https://arxiv.org/abs/2411.12022",
                 "relevance": (
-                    "DESI provides the sigma8 = 0.827 +/- 0.011 measurement used "
-                    "as input for the PM S8 prediction in this simulation."
+                    "DESI supplies the BAO/expansion constraints behind this sector. "
+                    "The sigma8 = 0.8111 +/- 0.0060 input used for the PM S8 prediction "
+                    "is the Planck 2018 anchor -- DESI publishes no stand-alone sigma8, "
+                    "and the earlier 'DESI 0.827 +/- 0.011' attribution was retired."
                 ),
                 "validation_hint": (
-                    "Confirm DESI 2025 sigma8 value and Omega_m = 0.3069 +/- 0.005."
+                    "Confirm sigma8 = 0.8111 +/- 0.0060 (Planck 2018) and "
+                    "Omega_m = 0.3111 +/- 0.0056 against registry desi.sigma8 / desi.Omega_m."
                 )
             },
         ]
