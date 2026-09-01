@@ -1488,7 +1488,7 @@ class S8SuppressionV16(SimulationBase):
                         },
                         {
                             "description": "Comparison to observations",
-                            "formula": r"\text{KiDS-1000: } 0.766\pm0.020 \text{ (1.1σ)}, \text{ DES Y3: } 0.776\pm0.017 \text{ (0.7σ)}"
+                            "formula": r"\text{KiDS-1000: } 0.766\pm0.020 \text{ (2.7σ)}, \text{ DES Y3: } 0.776\pm0.017 \text{ (2.6σ)}"
                         }
                     ],
                     "references": [
@@ -1689,7 +1689,7 @@ class S8SuppressionV16(SimulationBase):
                 status="VALIDATION",
                 description=(
                     "Statistical tension with KiDS-1000 measurement. "
-                    "PM: 1.1σ vs ΛCDM: 3.1σ. Improvement factor: 2.8×."
+                    "PM: 2.7σ vs ΛCDM: 3.1σ. Friction does not resolve the tension."
                 ),
                 no_experimental_value=True,
                 eml_description=(
@@ -1704,7 +1704,7 @@ class S8SuppressionV16(SimulationBase):
                 status="VALIDATION",
                 description=(
                     "Statistical tension with DES Y3 measurement. "
-                    "PM: 0.7σ vs ΛCDM: 2.7σ. Improvement factor: 3.9×."
+                    "PM: 2.6σ vs ΛCDM: 2.7σ. Friction does not resolve the tension."
                 ),
                 no_experimental_value=True,
                 eml_description=(
@@ -1719,7 +1719,8 @@ class S8SuppressionV16(SimulationBase):
                 status="VALIDATION",
                 description=(
                     "Statistical tension with Planck CMB inference. "
-                    "PM: 3.4σ vs ΛCDM: 0.3σ. Expected: PM predicts less late-time growth."
+                    "PM: 0.9σ vs Planck S8=0.832±0.013. PM is close to Planck; "
+                    "weak-lensing surveys (KiDS-1000, DES-Y3) disagree with Planck at ~2.7σ."
                 ),
                 no_experimental_value=True,
                 eml_description=(

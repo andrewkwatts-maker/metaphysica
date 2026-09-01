@@ -407,8 +407,30 @@ class EstablishedPhysics:
                 uncertainty=S8_unc,
                 units="dimensionless",
                 source="ESTABLISHED:Planck2018",
-                description="S8 = sigma8 * sqrt(Omega_m/0.3) - loaded from desi_2025_constraints.json",
-                eml_description="EML: ops.mul(eml_vec('sigma8'), ops.sqrt(ops.div(eml_vec('Omega_m'), eml_scalar(0.3)))) — S₈ = σ₈√(Ω_m/0.3) (DESI/Planck input)"
+                description=(
+                    "S8 = sigma8 * sqrt(Omega_m/0.3) derived from Planck 2018 sigma8 and Omega_m. "
+                    "NOTE: provenance is Planck 2018, not DESI; DESI publishes no stand-alone S8. "
+                    "For weak-lensing S8 anchors see lensing.S8_kids1000 and lensing.S8_des_y3."
+                ),
+                eml_description="EML: ops.mul(eml_vec('sigma8'), ops.sqrt(ops.div(eml_vec('Omega_m'), eml_scalar(0.3)))) — S₈ = σ₈√(Ω_m/0.3) (Planck 2018 input; attribution Planck, not DESI)"
+            ),
+            EstablishedParameter(
+                path="lensing.S8_kids1000",
+                value=0.766,
+                uncertainty=0.020,
+                units="dimensionless",
+                source="ESTABLISHED:KiDS1000_2021",
+                description="S8 from KiDS-1000 weak gravitational lensing (Heymans et al. 2021, A&A 646, A140). Effective redshift z~0.5.",
+                eml_description="EML: eml_scalar(0.766) — S₈ from KiDS-1000 multi-probe weak lensing (input anchor)"
+            ),
+            EstablishedParameter(
+                path="lensing.S8_des_y3",
+                value=0.776,
+                uncertainty=0.017,
+                units="dimensionless",
+                source="ESTABLISHED:DES_Y3_2022",
+                description="S8 from DES Year 3 weak gravitational lensing (DES Collaboration 2022, PRD 105, 023520). Effective redshift z~0.6.",
+                eml_description="EML: eml_scalar(0.776) — S₈ from DES Year 3 cosmic shear (input anchor)"
             ),
         ]
 
@@ -714,8 +736,9 @@ ESTABLISHED_PARAMS = {
         ],
         "desi": ["desi.w0", "desi.wa", "desi.sigma8", "desi.S8", "desi.H0", "desi.Omega_m"],
         "planck": ["planck.S8"],
+        "lensing": ["lensing.S8_kids1000", "lensing.S8_des_y3"],
         "bounds": ["bounds.tau_proton_lower", "bounds.sum_m_nu_upper"],
         "codata": ["codata.alpha_inverse", "codata.mu_pe", "codata.M_PLANCK"]
     },
-    "total_count": 39
+    "total_count": 41
 }

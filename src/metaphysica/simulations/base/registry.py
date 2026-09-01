@@ -848,6 +848,15 @@ class PMRegistry:
 
         _try("mirror_dm_relic",        _mirror_dm,    prefix="cosmology.")
         _try("inflation",              _inflation,    prefix="cosmology.")
+        # n_s_slow_roll (0.9996) lands ~8.3σ from Planck 2018; backfill the
+        # experimental binding so it appears in the validation report as FAIL.
+        self.backfill_experimental_bound(
+            "cosmology.n_s_slow_roll",
+            experimental_value=0.9649,
+            experimental_uncertainty=0.0042,
+            experimental_source="Planck2018",
+            bound_type="central_value",
+        )
         _try("axion_photon_coupling",  _axion_photon, prefix="particle.")
         _try("higgs_sector",           _higgs,        prefix="particle.")
         _try("cosmological_tensions",  _tensions,     prefix="cosmology.")
