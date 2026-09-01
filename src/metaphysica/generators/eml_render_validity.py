@@ -46,6 +46,8 @@ __all__ = [
     "tree_operator_count",
     "classify_render",
     "classify_source",
+    "classify_eml_description",
+    "eml_operator_surface",
     "REQUIRE_OPERATOR",
 ]
 
@@ -250,3 +252,136 @@ def classify_render(
             )
 
     return True, REASON_OK
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Is a PARAMETER's eml_description offerable as an EML option?
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# Pages/parameters.html attaches a "Normal | EML" pill to every parameter
+# whose eml_description is non-empty, and shows the field's raw text under
+# the EML tab. Non-empty was the only test, so the pill was offered for 36
+# parameters that have no EML expression to show:
+#
+#   * 18 whose eml_description is English prose -- toggling to EML showed
+#     the same sentence as Normal, relabelled as the framework's formal
+#     notation. That is worse than no option: it presents prose AS EML.
+#   * 10 that read eml_scalar(N_pass) and the like -- a bare tally with no
+#     operator. Identical in kind to the lone-symbol renders the strict
+#     render_policy already withholds (see REQUIRE_OPERATOR): a picture of
+#     one symbol depicts no relation.
+#   * 8 that call operators the installed eml-math does not define
+#     (ops.quadratic over a metric signature, ops.corrcoef over two data
+#     arrays, ops.integrate over a grid, ops.argmin_mu, plus a Python
+#     comprehension summing an indexed family).
+#
+# The operator surface is READ FROM THE INSTALLED LIBRARY rather than
+# listed here. A hardcoded list would keep suppressing an expression after
+# eml-math grew the operator it needs, and would need editing in lockstep
+# with a package this module does not own.
+
+#: Names the evaluator binds itself (EMLEvaluator._namespace). Anything else
+#: spelled ``eml_*`` is a constructor the DSL does not have.
+_EML_CONSTRUCTORS = frozenset({"eml_scalar", "eml_pi", "eml_vec"})
+
+_EML_PREFIX = "EML: "
+
+
+def eml_operator_surface() -> frozenset:
+    """Operator names the INSTALLED eml-math actually provides.
+
+    Empty frozenset if eml-math cannot be imported, which makes the
+    unknown-operator test skip rather than suppress everything -- the same
+    fail-open choice ``_serialise_tree`` makes for the operator count. A
+    missing dependency must not silently withhold every EML option.
+    """
+    try:
+        import eml_math.operators as _ops
+    except Exception:
+        return frozenset()
+    return frozenset(n for n in dir(_ops) if not n.startswith("_"))
+
+
+def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, str]:
+    """Return ``(offerable, reason, category)`` for one eml_description.
+
+    Deliberately a STATIC check on the source text. Whether the expression
+    also *agrees* with the registered value is a different question, and it
+    is the cross-check's to answer -- an expression that depicts a real
+    relation is worth showing even when one of its operands is missing from
+    the registry, and suppressing on disagreement would hide the very
+    discrepancies the cross-check exists to surface.
+
+    Categories: ``ok``, ``prose``, ``malformed``, ``no_relation``,
+    ``not_expressible``.
+    """
+    import ast
+
+    if operators is None:
+        operators = eml_operator_surface()
+
+    text = (desc or "").strip()
+    if not text:
+        return False, "no eml_description", "prose"
+
+    if not text.startswith(_EML_PREFIX):
+        return False, (
+            "eml_description holds prose, not an EML expression -- there is "
+            "nothing to show under an EML tab that is not already shown "
+            "under Normal"
+        ), "prose"
+
+    try:
+        from eml_math.evaluator import EMLEvaluator
+        body = EMLEvaluator._parse(text)
+    except Exception as exc:
+        return False, f"eml_description is not a parseable expression: {exc}", "malformed"
+
+    try:
+        parsed = ast.parse(body, mode="eval")
+    except SyntaxError as exc:
+        return False, (
+            f"declared 'EML:' but the body is not a valid expression: {exc}"
+        ), "malformed"
+
+    unknown: set = set()
+    comprehension = False
+    n_ops = 0
+    for node in ast.walk(parsed):
+        if isinstance(node, (ast.GeneratorExp, ast.ListComp, ast.SetComp,
+                             ast.DictComp)):
+            comprehension = True
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if (isinstance(func, ast.Attribute)
+                and isinstance(func.value, ast.Name)
+                and func.value.id == "ops"):
+            n_ops += 1
+            if operators and func.attr not in operators:
+                unknown.add(f"ops.{func.attr}")
+        elif isinstance(func, ast.Name) and func.id.startswith("eml_"):
+            if func.id not in _EML_CONSTRUCTORS:
+                unknown.add(func.id)
+
+    if unknown:
+        return False, (
+            f"requires {', '.join(sorted(unknown))}, which eml-math does not "
+            f"provide -- the quantity lives in a domain the scalar tension "
+            f"algebra has no type for"
+        ), "not_expressible"
+
+    if comprehension:
+        return False, (
+            "expression sums over an indexed family (Python comprehension); "
+            "the scalar algebra has no indexed-family or reduction type"
+        ), "not_expressible"
+
+    if n_ops == 0:
+        return False, (
+            "expression contains no operator -- a bare symbol or tally "
+            "depicts no relation, the same defect the strict render_policy "
+            "withholds for lone-symbol diagrams"
+        ), "no_relation"
+
+    return True, REASON_OK, "ok"

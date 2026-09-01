@@ -39,13 +39,45 @@ Assertion Assessment (Sprint 2, WP 2.3)
   unequivocally labeled DERIVED (framework-specific construction)." Gemini
   confirmed h^{1,1}=4 is correct for TCS #187 but noted n_faces=h^{1,1} is
   "not standard in the general G2 literature."
-- Classification: FITTED
+- Classification: FITTED, but see the three amendments below (2026-09-02).
+  The counts are now computed rather than asserted -- see
+  enumerate_face_groupings / cross_e8_valid_groupings, which reproduce
+  15400 = 12!/((3!)^4 4!) and 576 = (4!)^2 by enumeration.
 - Evidence: h^{1,1}=4 is a real Hodge number of the TCS #187 BUILDING BLOCK
   (not of the G2 manifold, which has none - see the correction above), but the face
   grouping {i,i+4,i+8} is one of 576 cross-E8-valid options (not unique).
   The derivation n_gen=3=12/4 depends on selecting TCS #187 specifically
   because it yields the desired generation count. The stride-4 convention
   is a labeling choice, not a mathematical necessity.
+
+- AMENDMENT 1 -- "one of 576" is answered (grouping_orbit_report).
+  The 576 form a SINGLE REGULAR ORBIT under S4 x S4 renaming bridges inside
+  E8 blocks 1 and 2: orbit size 576, group order 576, trivial stabiliser.
+  Every cross-E8-valid grouping IS stride-4 after renaming bridges within
+  their own blocks, and a bridge's name is not an observable. So this is
+  arbitrariness among relabellings of one object, not among physically
+  distinct alternatives -- which is a coordinate convention, not a fitted
+  parameter. The other legs of the FITTED classification stand.
+
+- AMENDMENT 2 -- n_faces = 4 is no longer read off h^{1,1}
+  (topological_terms.block_labelling_analysis). Requiring the E8 block to be
+  a property of the channel rather than of the observing face -- one global
+  labelling of the 7 Fano lines by 3 blocks, shared by every face -- caps
+  the number of faces at FOUR: enumerating all 3^7 labellings shows none
+  makes five or more Fano points simultaneously rainbow. The same
+  enumeration DERIVES the genericity criterion, since the 28
+  line-containing 4-point sets admit zero labellings while each of the 7
+  arcs admits 18. The global-labelling premise is an assumption and is
+  stated as one.
+
+- AMENDMENT 3 -- n_gen = 3 is fixed twice over (generation_count_report),
+  rather than being 12/4 arithmetic on two numbers taken from the manifold.
+  A face carries one bridge per E8 block and the Leech lattice splits as
+  8 + 8 + 8; under the join a face is a Fano point and its bridges are the
+  lines through it, and the order-2 projective plane has q + 1 = 3 lines
+  through every point. The lattice and the G2 associative structure agree
+  on 3 without having been chosen together. This fixes n_gen relative to b3
+  and the G2 structure; it does not explain why three.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -287,6 +319,150 @@ def face_grouping_report(n_bridges: int = 12,
             "576-element orbit, not a derivation. What the property DOES "
             "settle is that the contiguous grouping is a different object, "
             "since its first face lies wholly inside one E8 block."
+        ),
+    }
+
+
+def relabel_within_blocks(grouping, perm_block1, perm_block2,
+                          bridges_per_block: int = 4) -> tuple:
+    """Rename bridges inside E8 blocks 1 and 2, leaving block 0 fixed.
+
+    Block 0 is held fixed because it is what labels the faces; permuting it
+    as well would only compose with a relabelling of the faces themselves.
+    """
+    def _moved(b):
+        block, index = e8_block_of(b, bridges_per_block), b % bridges_per_block
+        if block == 0:
+            return b
+        perm = perm_block1 if block == 1 else perm_block2
+        return block * bridges_per_block + perm[index]
+
+    return canonical_grouping(
+        tuple(tuple(_moved(b) for b in face) for face in grouping))
+
+
+def grouping_orbit_report(n_bridges: int = 12,
+                          face_size: int = 3) -> Dict[str, Any]:
+    """Are the 576 cross-E8-valid groupings physically distinct, or one orbit?
+
+    This matters for how the face grouping should be classified. The module
+    header records the honest observation that stride-4 is "one of 576
+    cross-E8-valid options (not unique)" and "a labeling choice, not a
+    mathematical necessity", and classifies the construction FITTED on that
+    basis.
+
+    The 576 turn out to form a SINGLE ORBIT. Renaming the four bridges
+    inside E8 block 1 and inside block 2 -- an action of S4 x S4, of order
+    4! * 4! = 576 -- carries stride-4 onto every cross-E8-valid grouping and
+    onto nothing else. The orbit is regular: 576 group elements, 576
+    groupings, trivial stabiliser, so the set is a torsor under S4 x S4.
+
+    The consequence is worth separating from the observation that produced
+    it. "Arbitrary among physically distinct alternatives" and "arbitrary
+    among relabellings of one object" are very different situations, and
+    only the first is a fitted parameter. Every cross-E8-valid grouping
+    becomes stride-4 after renaming bridges within their own E8 blocks, and
+    a bridge's name is not an observable. So the choice is a coordinate
+    convention and nothing measurable depends on which is taken.
+
+    This does NOT rescue the rest of the FITTED classification. h^{1,1} = 4
+    still comes from having selected TCS #187, and the cross-E8 property is
+    still imposed rather than derived. What changes is only the "one of 576"
+    part of the argument.
+    """
+    n_faces = n_bridges // face_size
+    bridges_per_block = n_bridges // face_size
+    valid = set(cross_e8_valid_groupings(n_bridges, face_size))
+    base = stride4_grouping(n_bridges, n_faces)
+
+    orbit = set()
+    stabiliser = 0
+    for perm1 in itertools.permutations(range(bridges_per_block)):
+        for perm2 in itertools.permutations(range(bridges_per_block)):
+            moved = relabel_within_blocks(base, perm1, perm2, bridges_per_block)
+            orbit.add(moved)
+            if moved == base:
+                stabiliser += 1
+
+    group_order = math.factorial(bridges_per_block) ** 2
+    return {
+        "group": "S_4 x S_4 renaming bridges inside E8 blocks 1 and 2",
+        "group_order": group_order,
+        "orbit_size": len(orbit),
+        "n_cross_e8_valid": len(valid),
+        "orbit_is_everything": orbit == valid,
+        "stabiliser_order": stabiliser,
+        "action_is_regular": stabiliser == 1 and len(orbit) == group_order,
+        "conclusion": (
+            "The 576 cross-E8-valid groupings form a single regular orbit "
+            "under relabelling bridges within their E8 blocks. stride-4 is "
+            "therefore a choice of COORDINATES, not a choice among "
+            "physically distinct options: every cross-E8-valid grouping is "
+            "stride-4 after renaming bridges inside their own blocks, and a "
+            "bridge's name is not an observable."
+        ),
+        "does_not_affect": (
+            "h^{1,1} = 4 still comes from selecting TCS #187, and the "
+            "cross-E8 property is still imposed rather than derived. Only "
+            "the 'one of 576' step of the FITTED argument is answered."
+        ),
+    }
+
+
+def generation_count_report(n_bridges: int = 12) -> Dict[str, Any]:
+    """Why the faces hold three bridges each, from two directions.
+
+    n_gen = 3 was obtained as 12 / 4 -- bridges divided by faces -- which is
+    arithmetic on two numbers that were themselves taken from the manifold.
+    The face size is fixed twice over by structures that were not chosen
+    with each other in mind:
+
+      * A face carries one bridge per E8 block, and the Leech lattice's
+        standard construction splits its 24 coordinates as 8 + 8 + 8. Three
+        blocks, so three bridges per face.
+
+      * Under the bridge-to-channel join a face is a Fano point and its
+        bridges are the lines through that point. The Fano plane is the
+        projective plane of order q = 2, in which every point lies on
+        exactly q + 1 = 3 lines.
+
+    The first number comes from the lattice, the second from the G2
+    associative 3-form. They agree, and with n_faces = 4 forced by
+    block_labelling_analysis the count 12 = 4 x 3 is fixed as well.
+
+    This is a consistency result, not an explanation of why three: 3 is
+    q + 1 on one side and 24 / 8 on the other, and neither is derived here.
+    What it rules out is treating n_gen as separately adjustable once b3 and
+    the G2 structure are fixed.
+    """
+    from metaphysica.simulations.PM.gauge.topological_terms import (
+        associative_triples,
+    )
+
+    lines = [frozenset(t) for t in associative_triples()]
+    points = sorted({p for line in lines for p in line})
+    lines_per_point = {len([L for L in lines if p in L]) for p in points}
+    leech_dimension = 2 * n_bridges
+    e8_rank = 8
+    n_blocks = leech_dimension // e8_rank
+
+    from_fano = lines_per_point.pop() if len(lines_per_point) == 1 else None
+    return {
+        "leech_dimension": leech_dimension,
+        "e8_rank": e8_rank,
+        "n_e8_blocks": n_blocks,
+        "fano_order_q": 2,
+        "lines_through_each_fano_point": from_fano,
+        "fano_is_uniform": from_fano is not None,
+        "n_generations": n_blocks,
+        "routes_agree": from_fano == n_blocks,
+        "note": (
+            "Two independent structures give 3: the Leech lattice's "
+            "8 + 8 + 8 block decomposition, and the q + 1 = 3 lines through "
+            "each point of the order-2 projective plane carrying the G2 "
+            "associative triples. With n_faces = 4 forced, "
+            "n_bridges = 4 x 3 = 12 follows. This fixes n_gen relative to b3 "
+            "and the G2 structure; it does not explain why 3."
         ),
     }
 

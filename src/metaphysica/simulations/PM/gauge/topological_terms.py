@@ -531,6 +531,143 @@ def block_labelling_analysis(n_blocks: int = 3, g2=None) -> Dict[str, Any]:
         ),
     }
 
+
+def bridge_face_incidence(g2=None) -> Dict[str, Any]:
+    """What a bridge IS, once the arc is chosen: a directed edge of K4.
+
+    block_labelling_analysis narrows the face labels to the 7 arcs and finds
+    18 admissible line-to-block labellings per arc. Both numbers look
+    arbitrary until the arc's internal structure is unpacked, and then the
+    whole bridge-to-channel assignment closes.
+
+    Fix an arc A -- four Fano points, no three collinear. Its complement is a
+    line (that is what the 7 arcs are: complements of the 7 lines), so A is
+    disjoint from it. Take any line through a point p of A. It has three
+    points, meets the complement line in exactly one, and therefore contains
+    exactly one further point of A. So every line through a point of the arc
+    is spanned by a PAIR of arc points, the six pairs give six distinct
+    lines, and the seventh line is the complement, which touches no point of
+    A at all.
+
+    That is a complete dictionary:
+
+        4 faces          <-> the 4 vertices of K4
+        6 channel-lines  <-> the 6 edges of K4
+        12 bridges       <-> the 12 DIRECTED edges of K4
+        3 E8 blocks      <-> the 3 perfect matchings of K4
+        1 spare line     <-> the complement line, on no face
+
+    A bridge is a flag (p, L): a face together with a line through it. Since
+    L is spanned by p and one other arc point q, a flag is exactly an ordered
+    pair (p, q) of distinct faces. Twelve of them, which is the bridge count.
+    The word "bridge" turns out to be literal -- it is a directed connection
+    between two faces, not an index that happened to run to twelve.
+
+    The block condition falls out too. A face must carry one bridge per E8
+    block, so the three edges at each vertex of K4 need three distinct
+    colours: a proper 3-edge-colouring. K4's six edges split into exactly
+    three perfect matchings, a proper colouring is a bijection from colours
+    to matchings, and there are 3! = 6 of them. The complement line lies on
+    no face and is unconstrained, contributing a free factor of 3. Hence
+    6 x 3 = 18 labellings per arc, and the E8 blocks are identified with the
+    three ways of pairing the four faces two against two.
+
+    Nothing here is imposed beyond the global-labelling premise already
+    stated in block_labelling_analysis. The 18 was an output of that
+    enumeration; this explains it.
+    """
+    lines = [frozenset(t) for t in associative_triples(g2)]
+    n_points = len({p for line in lines for p in line})
+    all_points = set(range(n_points))
+
+    def _is_arc(points):
+        return not any(set(line) <= set(points) for line in lines)
+
+    arcs = [q for q in itertools.combinations(sorted(all_points), 4)
+            if _is_arc(q)]
+
+    per_arc = []
+    for arc in arcs:
+        complement = frozenset(all_points - set(arc))
+        pair_to_line = {}
+        for p, q in itertools.combinations(arc, 2):
+            spanning = [i for i, line in enumerate(lines)
+                        if p in line and q in line]
+            if len(spanning) != 1:
+                return {"error": f"pair {(p, q)} spans {len(spanning)} lines"}
+            pair_to_line[frozenset((p, q))] = spanning[0]
+        spanned = set(pair_to_line.values())
+        leftover = sorted(set(range(len(lines))) - spanned)
+
+        edges = [frozenset(e) for e in itertools.combinations(arc, 2)]
+        matchings = [m for m in itertools.combinations(edges, 2)
+                     if not (m[0] & m[1])]
+        flags = [(p, pair_to_line[frozenset((p, q))])
+                 for p in arc for q in arc if p != q]
+
+        per_arc.append({
+            "arc": list(arc),
+            "complement": sorted(complement),
+            "complement_is_a_line": complement in lines,
+            "n_pair_lines": len(spanned),
+            "pair_lines_are_distinct": len(spanned) == len(pair_to_line),
+            "leftover_line_ids": leftover,
+            "leftover_is_the_complement": (
+                len(leftover) == 1 and lines[leftover[0]] == complement),
+            "n_k4_edges": len(edges),
+            "n_perfect_matchings": len(matchings),
+            "n_flags": len(flags),
+            "flags_are_directed_edges": len(flags) == 12 == len(set(flags)),
+            "proper_edge_colourings": math.factorial(len(matchings)),
+            "free_colours_for_leftover": 3 ** len(leftover),
+            "predicted_labellings": (math.factorial(len(matchings))
+                                     * 3 ** len(leftover)),
+        })
+
+    consistent = all(
+        a["complement_is_a_line"] and a["pair_lines_are_distinct"]
+        and a["leftover_is_the_complement"] and a["flags_are_directed_edges"]
+        and a["n_perfect_matchings"] == 3
+        for a in per_arc
+    )
+    predicted = {a["predicted_labellings"] for a in per_arc}
+
+    return {
+        "n_arcs": len(arcs),
+        "dictionary": {
+            "faces": "the 4 vertices of K4",
+            "channel_lines": "the 6 edges of K4",
+            "bridges": "the 12 DIRECTED edges of K4, i.e. ordered pairs of faces",
+            "e8_blocks": "the 3 perfect matchings of K4",
+            "spare": "the complement line, incident to no face",
+        },
+        "holds_for_every_arc": consistent,
+        "predicted_labellings_per_arc": sorted(predicted),
+        "matches_enumeration": predicted == {18},
+        "per_arc": per_arc,
+        "why_eighteen": (
+            "A face needs one bridge per E8 block, so the three K4 edges at "
+            "each vertex must take three distinct colours -- a proper "
+            "3-edge-colouring. K4's six edges split into exactly three "
+            "perfect matchings and a proper colouring is a bijection from "
+            "colours to matchings, giving 3! = 6. The complement line lies "
+            "on no face and is free, contributing 3. 6 x 3 = 18, which is "
+            "what block_labelling_analysis counts."
+        ),
+        "why_twelve": (
+            "A bridge is a flag (face, line through it). Every line meeting "
+            "the arc is spanned by two arc points, so a flag is an ordered "
+            "pair of distinct faces: 4 x 3 = 12 directed edges of K4. The "
+            "bridge count is the edge count, not a separate input."
+        ),
+        "kill_condition": (
+            "If any arc had a pair of points spanning more than one line, or "
+            "a complement that is not a line, or fewer than 12 distinct "
+            "flags, the identification fails and the 18 would need another "
+            "explanation. Checked for all 7 arcs on every build."
+        ),
+    }
+
 def face_assignment_candidates(g2=None) -> Dict[str, Any]:
     """Narrow the four-face choice from 35 to 7 on a symmetry criterion.
 
@@ -830,6 +967,7 @@ def write_report(out_path=None):
         ),
         "coupling_graph": coupling_graph(g2),
         "block_labelling": block_labelling_analysis(g2=g2),
+        "bridge_face_incidence": bridge_face_incidence(g2=g2),
         "face_assignment": face_assignment_candidates(g2),
         "note": (
             "Stage 4 of the action-layer plan. The topological route carries "
