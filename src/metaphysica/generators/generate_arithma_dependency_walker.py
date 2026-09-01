@@ -102,6 +102,13 @@ def main() -> int:
     with open(ag / "formulas.json", encoding="utf-8") as fp:
         formulas = json.load(fp).get("formulas", {})
 
+    # Needed to tell a real declared dependency from a phantom one.
+    params = {}
+    params_path = ag / "parameters.json"
+    if params_path.exists():
+        with open(params_path, encoding="utf-8") as fp:
+            params = json.load(fp).get("parameters", {})
+
     eml_trees = {}
     eml_path = ag / "eml_trees.json"
     if eml_path.exists():
@@ -161,6 +168,27 @@ def main() -> int:
             "b3_rooted": has_b3,
         }
 
+    # A declared input or output that names no registry parameter is
+    # invisible to the walk: producer_of simply has no entry for it and the
+    # loop moves on. So a formula can declare a dependency that does not
+    # exist and still be counted, and b3_rooted_count is then measured over
+    # chains that are partly fictional. Counting the phantoms does not
+    # repair them, but it stops the rooted count being read as though every
+    # declared edge were real.
+    known_paths = set(params) if isinstance(params, dict) else set()
+    phantom_inputs, phantom_outputs = {}, {}
+    if known_paths:
+        for fid, f in formulas.items():
+            missing_in = sorted(set(f.get("input_params") or []) - known_paths)
+            missing_out = sorted(set(f.get("output_params") or []) - known_paths)
+            if missing_in:
+                phantom_inputs[fid] = missing_in
+            if missing_out:
+                phantom_outputs[fid] = missing_out
+    distinct_phantoms = sorted(
+        {p for v in phantom_inputs.values() for p in v}
+        | {p for v in phantom_outputs.values() for p in v})
+
     out = {
         "version": "1.0",
         "root_seed": "b3=24",
@@ -170,6 +198,23 @@ def main() -> int:
         "b3_rooted_count": b3_rooted,
         "ambiguous_count": ambiguous,
         "non_b3_rooted_count": non_rooted,
+        "declared_paths_that_do_not_exist": {
+            "note": (
+                "Formula input_params / output_params naming no registry "
+                "parameter. The walker cannot see these edges, so a chain "
+                "containing one is shorter than it claims and "
+                "b3_rooted_count is measured over partly fictional "
+                "dependencies. Reported, not repaired: whether the path "
+                "should be created or the declaration dropped is a "
+                "per-formula question."
+            ),
+            "formulas_with_phantom_inputs": len(phantom_inputs),
+            "formulas_with_phantom_outputs": len(phantom_outputs),
+            "distinct_phantom_paths": len(distinct_phantoms),
+            "phantom_paths": distinct_phantoms,
+            "by_formula_inputs": phantom_inputs,
+            "by_formula_outputs": phantom_outputs,
+        },
         "chains": chains,
     }
     out_path = ag / "dependency_chains.json"
