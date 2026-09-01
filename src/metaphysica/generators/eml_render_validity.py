@@ -47,6 +47,7 @@ __all__ = [
     "classify_render",
     "classify_source",
     "classify_eml_description",
+    "resolve_require_operator",
     "eml_operator_surface",
     "REQUIRE_OPERATOR",
 ]
@@ -93,6 +94,10 @@ _ERROR_MARKERS = ("parse error", "traceback", "nameerror", "syntaxerror")
 
 #: Recognises an EML operator call inside a line of prose or comment.
 _OPS_CALL_RE = re.compile(r"ops\.[A-Za-z_]+\s*\(")
+
+#: Recognises an eml_* constructor call, used to tell an expression that
+#: merely lost its "EML: " prefix from a field that is genuinely prose.
+_EML_CTOR_RE = re.compile(r"(?<![A-Za-z0-9_])eml_[A-Za-z_]+\s*\(")
 
 
 #: Internal leaf spellings -> the symbol a reader should see.
@@ -174,6 +179,27 @@ def classify_source(expr: str) -> Tuple[bool, str]:
     return True, REASON_OK
 
 
+def resolve_require_operator() -> bool:
+    """The operator policy actually in force.
+
+    REQUIRE_OPERATOR is the ADOPTED default and stays the declared source of
+    truth. The variant registry is consulted so the choice can be exercised
+    without editing this file -- which is how the strict/permissive
+    comparison had to be run the first time (two branches, manually diffed).
+
+    Split out of classify_render so the generator can record the SAME value
+    it enforces. While this lived inline, the artifact wrote the module
+    constant instead, and the test asserting ``_policy.require_operator is
+    True`` compared a hardcoded literal against a hardcoded literal -- it
+    would have passed unchanged while the build ran the permissive policy.
+    """
+    try:
+        from metaphysica.simulations.core.variants import resolve
+        return resolve("render_policy") == "strict"
+    except ImportError:
+        return REQUIRE_OPERATOR
+
+
 def _walk_kinds(node: Any, out: list) -> None:
     """Collect kind codes from a serialised tree ``[label, kind, *children]``."""
     if not isinstance(node, (list, tuple)) or len(node) < 2:
@@ -205,18 +231,7 @@ def classify_render(
     than the first one noticed.
     """
     if require_operator is None:
-        # REQUIRE_OPERATOR is the ADOPTED default and stays the declared
-        # source of truth. The variant registry is consulted so the choice
-        # can be exercised without editing this file -- which is how the
-        # strict/permissive comparison had to be run the first time (two
-        # branches, manually diffed). An unknown value raises rather than
-        # silently falling back, so a typo cannot run one policy while the
-        # report claims the other.
-        try:
-            from metaphysica.simulations.core.variants import resolve
-            require_operator = resolve("render_policy") == "strict"
-        except ImportError:
-            require_operator = REQUIRE_OPERATOR
+        require_operator = resolve_require_operator()
 
     present = {f: renders.get(f) for f in formats}
 
@@ -260,20 +275,31 @@ def classify_render(
 #
 # Pages/parameters.html attaches a "Normal | EML" pill to every parameter
 # whose eml_description is non-empty, and shows the field's raw text under
-# the EML tab. Non-empty was the only test, so the pill was offered for 36
+# the EML tab. Non-empty was the only test, so the pill was offered for 53
 # parameters that have no EML expression to show:
 #
-#   * 18 whose eml_description is English prose -- toggling to EML showed
+#   * 26 whose eml_description is English prose -- toggling to EML showed
 #     the same sentence as Normal, relabelled as the framework's formal
 #     notation. That is worse than no option: it presents prose AS EML.
-#   * 10 that read eml_scalar(N_pass) and the like -- a bare tally with no
-#     operator. Identical in kind to the lone-symbol renders the strict
-#     render_policy already withholds (see REQUIRE_OPERATOR): a picture of
-#     one symbol depicts no relation.
-#   * 8 that call operators the installed eml-math does not define
+#   * 14 that read eml_scalar(N_pass) and the like -- a bare tally naming a
+#     symbol that is in no registry. Identical in kind to the lone-symbol
+#     renders the strict render_policy already withholds (see
+#     REQUIRE_OPERATOR): a picture of one symbol depicts no relation.
+#   * 9 that call operators the installed eml-math does not define
 #     (ops.quadratic over a metric signature, ops.corrcoef over two data
 #     arrays, ops.integrate over a grid, ops.argmin_mu, plus a Python
 #     comprehension summing an indexed family).
+#   * 4 that never parse at all -- one declares itself "structural boolean,
+#     not an arithmetic expression", one carries an expression but lost its
+#     "EML: " prefix.
+#
+# Of these, 37 are among the 89 rows the cross-check reports as unevaluable;
+# the other 16 have no registered numeric value and were already SKIPped.
+# The 52 unevaluable rows NOT withheld are expressions that do depict a
+# relation but name an operand no registry defines -- see the report in
+# eml_crosscheck.json. Those stay offered: hiding a readable relation
+# behind a missing UI control would conceal a registry gap rather than fix
+# it.
 #
 # The operator surface is READ FROM THE INSTALLED LIBRARY rather than
 # listed here. A hardcoded list would keep suppressing an expression after
@@ -302,7 +328,8 @@ def eml_operator_surface() -> frozenset:
     return frozenset(n for n in dir(_ops) if not n.startswith("_"))
 
 
-def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, str]:
+def classify_eml_description(desc: str, *, operators=None,
+                            context=None) -> Tuple[bool, str, str]:
     """Return ``(offerable, reason, category)`` for one eml_description.
 
     Deliberately a STATIC check on the source text. Whether the expression
@@ -311,6 +338,15 @@ def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, s
     relation is worth showing even when one of its operands is missing from
     the registry, and suppressing on disagreement would hide the very
     discrepancies the cross-check exists to surface.
+
+    *context* is the evaluation context (name -> float). It is used ONLY to
+    tell a literal echo from an undefined placeholder, which is the single
+    distinction the operator count gets wrong. ``eml_scalar(137.035999177)``
+    and ``eml_scalar(N_pass)`` both contain zero operators, but the first
+    declares a CODATA input and evaluates to it, while the second names a
+    tally that exists in no registry and evaluates to nothing. An earlier
+    draft of this function suppressed on operator count alone and withheld
+    175 working options to catch 10 broken ones.
 
     Categories: ``ok``, ``prose``, ``malformed``, ``no_relation``,
     ``not_expressible``.
@@ -325,6 +361,16 @@ def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, s
         return False, "no eml_description", "prose"
 
     if not text.startswith(_EML_PREFIX):
+        # An expression that merely forgot the prefix is a formatting defect,
+        # not prose -- it has content a reader could use, and calling it
+        # prose would send whoever fixes it looking for an expression that
+        # is already there. sterile.all_verified is the one instance:
+        # "eml_vec('sterile_status_all')" with no "EML: " in front.
+        if _OPS_CALL_RE.search(text) or _EML_CTOR_RE.search(text):
+            return False, (
+                "eml_description contains an expression but is missing the "
+                "'EML: ' prefix, so nothing will parse it"
+            ), "malformed"
         return False, (
             "eml_description holds prose, not an EML expression -- there is "
             "nothing to show under an EML tab that is not already shown "
@@ -345,12 +391,18 @@ def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, s
         ), "malformed"
 
     unknown: set = set()
+    unbound: set = set()
     comprehension = False
     n_ops = 0
     for node in ast.walk(parsed):
         if isinstance(node, (ast.GeneratorExp, ast.ListComp, ast.SetComp,
                              ast.DictComp)):
             comprehension = True
+        if isinstance(node, ast.Name) and not isinstance(
+                getattr(node, "ctx", None), ast.Store):
+            if (node.id != "ops" and not node.id.startswith("eml_")
+                    and context is not None and node.id not in context):
+                unbound.add(node.id)
         if not isinstance(node, ast.Call):
             continue
         func = node.func
@@ -377,11 +429,13 @@ def classify_eml_description(desc: str, *, operators=None) -> Tuple[bool, str, s
             "the scalar algebra has no indexed-family or reduction type"
         ), "not_expressible"
 
-    if n_ops == 0:
+    if n_ops == 0 and unbound:
         return False, (
-            "expression contains no operator -- a bare symbol or tally "
-            "depicts no relation, the same defect the strict render_policy "
-            "withholds for lone-symbol diagrams"
+            f"no operator and the only content is the undefined symbol "
+            f"{', '.join(sorted(unbound))} -- a tally that exists in no "
+            f"registry depicts no relation and resolves to nothing, the "
+            f"same defect the strict render_policy withholds for "
+            f"lone-symbol diagrams"
         ), "no_relation"
 
     return True, REASON_OK, "ok"

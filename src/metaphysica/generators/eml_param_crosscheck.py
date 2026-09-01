@@ -237,7 +237,8 @@ def _print_error_breakdown(results: list, top: int = 12) -> None:
             print(f"          ... and {len(lucky) - top} more")
 
 
-def write_offer_policy(params: dict[str, Any], path: Path = None) -> dict[str, Any]:
+def write_offer_policy(params: dict[str, Any], context: dict = None,
+                       path: Path = None) -> dict[str, Any]:
     """Decide, per parameter, whether the site may offer an EML option.
 
     Mirrors the ``_unrenderable`` / ``_policy`` artifact that
@@ -268,7 +269,8 @@ def write_offer_policy(params: dict[str, Any], path: Path = None) -> dict[str, A
         desc = _get_eml_description(entry)
         if not desc:
             continue          # no pill is offered anyway; not a suppression
-        ok, reason, category = classify_eml_description(desc, operators=operators)
+        ok, reason, category = classify_eml_description(
+            desc, operators=operators, context=context)
         cat_counts[category] += 1
         if ok:
             offered.append(ppath)
@@ -380,7 +382,7 @@ def run_crosscheck(
     from collections import Counter
     params = _load_parameters(PARAMS_JSON)
     context = _build_context(params)
-    offer_policy = write_offer_policy(params)
+    offer_policy = write_offer_policy(params, context)
 
     evaluator = EMLEvaluator(context, strict=False)
 

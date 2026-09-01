@@ -23,8 +23,10 @@ import pytest
 
 from metaphysica.generators.eml_render_validity import (
     REASON_OK,
+    classify_eml_description,
     classify_render,
     classify_source,
+    resolve_require_operator,
     tree_operator_count,
 )
 
@@ -241,8 +243,21 @@ def test_withheld_formulas_are_recorded_with_reasons():
 
 
 def test_policy_is_recorded_in_the_artifact():
+    """The artifact must record the policy that was ENFORCED.
+
+    This asserted ``is True`` against a hardcoded literal while the
+    generator wrote the REQUIRE_OPERATOR module constant and
+    classify_render separately resolved render_policy from the variant
+    registry. Nothing tied the two together, so the assertion held no
+    matter which policy the build actually applied -- it could not fail.
+    Comparing against the resolved value is what makes it a check.
+    """
     bundle = _load_renders()
-    assert bundle.get("_policy", {}).get("require_operator") is True
+    recorded = bundle.get("_policy", {}).get("require_operator")
+    assert recorded is resolve_require_operator(), (
+        f"artifact records require_operator={recorded} but the resolved "
+        f"policy is {resolve_require_operator()}"
+    )
 
 
 # ── the all-fail tripwire ───────────────────────────────────────────────────
@@ -348,3 +363,143 @@ def test_no_published_render_leaks_an_internal_leaf_name():
         if re.search(r"\b[A-Za-z0-9]+_leaf\b", str(value))
     ]
     assert not offenders, f"internal *_leaf names published: {offenders[:6]}"
+
+
+# ── which eml_descriptions may be offered as an EML option ──────────────────
+#
+# Pages/parameters.html attached the Normal|EML pill on "eml_description is
+# non-empty" alone, so 53 parameters offered an EML tab that showed prose, a
+# bare undefined tally, or a call to an operator eml-math does not define.
+
+
+def test_prose_is_not_offered_as_an_eml_option():
+    ok, reason, cat = classify_eml_description(
+        "Integer count of the 72 gates that returned PASS status."
+    )
+    assert ok is False
+    assert cat == "prose"
+    assert "prose" in reason
+
+
+def test_a_real_expression_is_offered():
+    ok, reason, cat = classify_eml_description(
+        "EML: ops.div(eml_scalar(144.0), eml_scalar(24.0)) - chi/b3"
+    )
+    assert ok is True and cat == "ok" and reason == REASON_OK
+
+
+def test_literal_echo_is_offered_even_though_it_has_no_operator():
+    """The distinction the operator count alone gets wrong.
+
+    An earlier draft suppressed every operator-free expression and withheld
+    175 working options -- CODATA echoes like this one -- to catch the 10
+    undefined placeholders below.
+    """
+    ok, _, cat = classify_eml_description(
+        "EML: eml_scalar(137.035999177) - CODATA 2022 alpha inverse",
+        context={},
+    )
+    assert ok is True and cat == "ok"
+
+
+def test_undefined_tally_with_no_operator_is_withheld():
+    ok, reason, cat = classify_eml_description(
+        "EML: eml_scalar(N_pass) - count of LOCKED gates passing",
+        context={"b3": 24.0},
+    )
+    assert ok is False and cat == "no_relation"
+    assert "N_pass" in reason
+
+
+def test_operator_eml_math_does_not_provide_is_withheld_and_named():
+    ok, reason, cat = classify_eml_description(
+        "EML: ops.quadratic(eml_vec('g2_multivector'), eml_signature('+++'))",
+        operators=frozenset({"add", "mul", "div"}),
+    )
+    assert ok is False and cat == "not_expressible"
+    assert "ops.quadratic" in reason and "eml_signature" in reason
+
+
+def test_indexed_family_comprehension_is_withheld():
+    ok, reason, cat = classify_eml_description(
+        "EML: ops.sqrt(ops.sum(ops.pow(eml_vec('d'), eml_scalar(2.0)) "
+        "for i in range(27)))",
+        operators=frozenset({"sqrt", "sum", "pow"}),
+    )
+    assert ok is False and cat == "not_expressible"
+    assert "indexed-family" in reason
+
+
+def test_an_expression_with_an_unregistered_operand_is_still_offered():
+    """Deliberate: depicting a relation is the bar, not evaluating.
+
+    ops.div(V_cb, lambda_W**2) is a readable statement of how A is built
+    even when lambda_W is in no registry. Withholding it would hide a
+    genuine registry gap behind a missing UI control, and the cross-check
+    already reports it as an unevaluable row.
+    """
+    ok, _, cat = classify_eml_description(
+        "EML: ops.div(V_cb, ops.pow(lambda_W, eml_scalar(2.0)))",
+        context={},
+    )
+    assert ok is True and cat == "ok"
+
+
+def test_missing_eml_math_does_not_withhold_everything():
+    """Fail-open: an empty operator surface must not suppress the site."""
+    ok, _, cat = classify_eml_description(
+        "EML: ops.quadratic(eml_vec('v'), eml_scalar(1.0))",
+        operators=frozenset(),
+    )
+    assert ok is True and cat == "ok"
+
+
+def _load_offer_policy():
+    """The published EML offer policy, same search order as _load_renders."""
+    raw = os.environ.get("METAPHYSICA_OUT")
+    candidates = []
+    if raw:
+        candidates.append(Path(raw) / "AutoGenerated" / "eml_offer_policy.json")
+    candidates += [
+        Path("H:/Github/PrincipiaMetaphysica/AutoGenerated/eml_offer_policy.json"),
+        Path(__file__).resolve().parents[1] / "AutoGenerated" / "eml_offer_policy.json",
+    ]
+    for path in candidates:
+        if path.is_file():
+            return json.loads(path.read_text(encoding="utf-8"))
+    pytest.skip(
+        "no eml_offer_policy.json; regenerate with "
+        "python -m metaphysica.generators.eml_param_crosscheck"
+    )
+
+
+def test_every_withheld_parameter_is_recorded_with_a_reason_and_category():
+    """Suppression must be auditable, not silent -- the same requirement
+    already placed on withheld formula diagrams."""
+    policy = _load_offer_policy()
+    withheld = policy.get("_unrenderable", {})
+    categories = policy.get("_categories", {})
+    assert withheld, "expected some withheld parameters; none recorded"
+    for path, reason in withheld.items():
+        assert reason and len(reason) > 12, f"{path} withheld with no reason"
+        assert path in categories, f"{path} withheld with no category"
+        assert categories[path] in {
+            "prose", "malformed", "no_relation", "not_expressible",
+        }, f"{path} has unknown category {categories[path]!r}"
+
+
+def test_suppression_stays_a_minority_of_the_offered_set():
+    """A tripwire, not a quality bar.
+
+    The first draft of classify_eml_description suppressed on operator count
+    alone and withheld 246 of 641 -- it stripped every CODATA echo. Nothing
+    caught it but reading the list. If suppression ever exceeds the offered
+    count again, the classifier has broken, not the data.
+    """
+    policy = _load_offer_policy()
+    withheld = len(policy.get("_unrenderable", {}))
+    offered = policy.get("_offered_count", 0)
+    assert offered > withheld, (
+        f"{withheld} parameters withheld vs {offered} offered -- the "
+        f"classifier is suppressing valid expressions"
+    )

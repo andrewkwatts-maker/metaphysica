@@ -69,6 +69,7 @@ from metaphysica.generators.eml_render_validity import (
     classify_source,
     classify_render,
     normalise_leaf_names,
+    resolve_require_operator,
 )
 
 
@@ -193,6 +194,15 @@ def main(argv: list[str] | None = None) -> int:
         data = json.load(f)
     formulas: dict = data.get("formulas", data)
 
+    # Resolve the policy ONCE and use the same value to enforce and to
+    # record. Previously classify_render resolved render_policy from the
+    # variant registry while the artifact wrote the REQUIRE_OPERATOR module
+    # constant, so switching the variant to permissive would have changed
+    # what the build enforced while the artifact -- and the test asserting
+    # on it -- kept reporting "strict". A policy field that cannot disagree
+    # with the constant it is compared against is not evidence of anything.
+    require_operator = resolve_require_operator()
+
     entries: dict[str, dict[str, str]] = {}
     unrenderable: dict[str, str] = {}
     per_fmt_counts = {fmt: 0 for fmt in fmts}
@@ -235,7 +245,8 @@ def main(argv: list[str] | None = None) -> int:
         # shown. `r is not None` accepted "<parse error: ...>" as content
         # for twelve formulas; classify_render is the check that was missing.
         ok, reason = classify_render(
-            renders, _serialise_tree(tree), formats=fmts
+            renders, _serialise_tree(tree), formats=fmts,
+            require_operator=require_operator,
         )
         if not ok:
             unrenderable[fid] = reason
@@ -254,7 +265,8 @@ def main(argv: list[str] | None = None) -> int:
         # entry here IS the "no EML option" behaviour.
         "_unrenderable": unrenderable,
         "_policy": {
-            "require_operator": REQUIRE_OPERATOR,
+            "require_operator": require_operator,
+            "declared_default": REQUIRE_OPERATOR,
             "note": "a render must parse, be non-empty, carry no error text, "
                     "not leak parser-internal names, and (when "
                     "require_operator) depict at least one operator",
