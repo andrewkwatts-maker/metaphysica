@@ -62,6 +62,8 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 from __future__ import annotations
 
+import itertools
+
 import math
 from dataclasses import dataclass, field
 from itertools import combinations, permutations
@@ -387,6 +389,148 @@ def bridge_placement_spectrum(n_bridges: int = 12, g2=None) -> Dict[str, Any]:
     }
 
 
+
+def block_labelling_analysis(n_blocks: int = 3, g2=None) -> Dict[str, Any]:
+    """Join the R^24 bridge structure to the R^7 coupling structure.
+
+    THE GAP THIS ADDRESSES
+    ----------------------
+    Two combinatorial structures sat in the codebase with nothing connecting
+    them. On the R^24 side, ``leech_lattice`` maps bridge b to the Leech
+    coordinate pair (2b, 2b+1) and groups the 12 bridges into 4 faces of 3.
+    On the R^7 side, ``coupling_graph`` resolves the allowed channels into
+    seven disjoint triangles, and ``bridge_placement_spectrum`` finds maximal
+    coupling on exactly 35 = C(7,4) of the C(21,12) = 293930 placements.
+    Nothing mapped a bridge index to a G2 coordinate pair.
+
+    THE SHAPES ALREADY MATCH
+    ------------------------
+    Each triangle is indexed by an omitted Fano point k, and its three
+    vertices are the three lines through k. A maximal placement fills four
+    complete triangles: 4 points x 3 lines = 12 slots, against 4 faces x 3
+    bridges = 12 on the other side. So a face corresponds to a chosen point
+    and its three bridges to the three lines through that point. That the two
+    independently-derived structures have identical shape is a consistency
+    check the framework passes; it is not by itself a selection.
+
+    THE ONE ASSUMPTION
+    ------------------
+    Bridge b carries an E8 block, b // 4, because the 24 Leech coordinates
+    split as 8 + 8 + 8. The assumption made here -- and it IS an assumption,
+    stated rather than derived -- is that this block is a property of the
+    CHANNEL and not of the face observing it: the block is a function of the
+    Fano line alone, one global labelling of the 7 lines by 3 blocks, the
+    same for every face. Since a face must contain one bridge per block, the
+    three lines through each chosen point must receive three distinct blocks.
+    Call such a point "rainbow" under that labelling.
+
+    WHAT FOLLOWS
+    ------------
+    Enumerating all 3^7 labellings gives a result that was not put in:
+
+      * The maximum number of simultaneously rainbow points is FOUR. No
+        labelling makes five, six or seven points rainbow.
+      * At four, exactly 7 of the 35 four-point sets qualify -- and they are
+        precisely the 7 arcs, the four-point sets containing no Fano line.
+      * At three, all 35 qualify, so the constraint says nothing there.
+
+    Two things previously taken as given therefore follow from the geometry:
+
+      n_faces = 4    was read off h^{1,1} = 4 of the TCS #187 building block,
+                     which this repository already labels FITTED and
+                     dependent on having picked that manifold. Four is now
+                     the largest number of faces admitting a consistent block
+                     assignment at all.
+
+      genericity     the face_genericity fork narrowed 35 -> 7 by requiring
+                     the four labels to contain no Fano line. The variants
+                     report carries it as OPEN with the note that it is "a
+                     stated criterion, not a derivation". The 28
+                     line-containing sets admit ZERO labellings; only the 7
+                     arcs survive. The criterion is a consequence.
+
+    WHAT IS STILL NOT FIXED
+    -----------------------
+    Which of the 7 arcs, and which of the 18 labellings per arc. The join
+    narrows 293930 -> 35 -> 7 but does not reach 1, so the bridge-to-channel
+    assignment remains underdetermined. Reporting that plainly is the point;
+    inventing a tie-break would not be a derivation.
+    """
+    lines = [frozenset(t) for t in associative_triples(g2)]
+    n_points = len({p for line in lines for p in line})
+    lines_through = {
+        p: [i for i, line in enumerate(lines) if p in line]
+        for p in range(n_points)
+    }
+
+    def _is_arc(points):
+        return not any(set(line) <= set(points) for line in lines)
+
+    def _rainbow_points(colouring):
+        return frozenset(
+            p for p in range(n_points)
+            if len({colouring[i] for i in lines_through[p]}) == n_blocks
+        )
+
+    achievable: Dict[int, set] = {}
+    labellings_per_set: Dict[frozenset, int] = {}
+    for colouring in itertools.product(range(n_blocks), repeat=len(lines)):
+        rainbow = _rainbow_points(colouring)
+        achievable.setdefault(len(rainbow), set()).add(rainbow)
+        for size in range(1, len(rainbow) + 1):
+            for subset in itertools.combinations(sorted(rainbow), size):
+                key = frozenset(subset)
+                labellings_per_set[key] = labellings_per_set.get(key, 0) + 1
+
+    max_faces = max(achievable) if achievable else 0
+    qualifying = sorted(tuple(sorted(s)) for s in achievable.get(max_faces, set()))
+    all_max_sets = list(itertools.combinations(range(n_points), max_faces))
+    arcs = [q for q in all_max_sets if _is_arc(q)]
+
+    return {
+        "assumption": (
+            "The E8 block is a property of the channel, not of the face: one "
+            "global labelling of the 7 Fano lines by 3 blocks, shared by "
+            "every face. Stated, not derived."
+        ),
+        "n_points": n_points,
+        "n_lines": len(lines),
+        "n_blocks": n_blocks,
+        "max_rainbow_points": max_faces,
+        "n_faces_is_forced": max_faces == 4,
+        "qualifying_point_sets": [list(q) for q in qualifying],
+        "n_qualifying": len(qualifying),
+        "n_point_sets_of_that_size": len(all_max_sets),
+        "qualifying_sets_are_exactly_the_arcs": (
+            sorted(qualifying) == sorted(arcs)),
+        "n_arcs": len(arcs),
+        "labellings_per_qualifying_set": {
+            str(list(q)): labellings_per_set.get(frozenset(q), 0)
+            for q in qualifying
+        },
+        "genericity_is_derived": (
+            sorted(qualifying) == sorted(arcs) and len(arcs) < len(all_max_sets)
+        ),
+        "residual_freedom": (
+            f"{len(qualifying)} point sets remain, each admitting "
+            f"{labellings_per_set.get(frozenset(qualifying[0]), 0) if qualifying else 0} "
+            f"labellings. The join narrows C(21,12) = 293930 to 35 to "
+            f"{len(qualifying)}, not to 1. The assignment is still "
+            f"underdetermined."
+        ),
+        "kill_condition": (
+            "If any set of 5 or more Fano points is simultaneously rainbow "
+            "under a single global line-to-block labelling, then 4 is not "
+            "forced and n_faces = 4 loses this support, falling back on "
+            "h^{1,1} = 4 of TCS #187 -- which the framework itself labels "
+            "FITTED. Equally, if any of the 28 line-containing 4-point sets "
+            "admits a labelling, genericity returns to being a stated "
+            "criterion rather than a consequence. Both are decided by "
+            "enumeration over 3^7 = 2187 labellings and are checked on every "
+            "build."
+        ),
+    }
+
 def face_assignment_candidates(g2=None) -> Dict[str, Any]:
     """Narrow the four-face choice from 35 to 7 on a symmetry criterion.
 
@@ -685,6 +829,7 @@ def write_report(out_path=None):
             "placements qualify, so the data can rule it out."
         ),
         "coupling_graph": coupling_graph(g2),
+        "block_labelling": block_labelling_analysis(g2=g2),
         "face_assignment": face_assignment_candidates(g2),
         "note": (
             "Stage 4 of the action-layer plan. The topological route carries "

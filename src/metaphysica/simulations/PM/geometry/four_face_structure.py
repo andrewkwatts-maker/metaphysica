@@ -54,6 +54,7 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+import itertools
 import math
 from typing import Dict, Any, List, Optional
 
@@ -140,6 +141,154 @@ _OUTPUT_FORMULAS = [
     "face-sampling-strength",
 ]
 
+
+
+# ---------------------------------------------------------------------------
+# Face-grouping enumeration
+# ---------------------------------------------------------------------------
+#
+# The module header asserted "15400 total 4x3 groupings of 12 bridges; 576
+# satisfy the cross-E8 property" and cited a review for it. No code computed
+# either number -- the claim existed only in prose, so the conclusion drawn
+# from it (that the standard grouping is "one of 576, NOT unique") rested on
+# nothing the build could check.
+#
+# Both are now computed, and both agree with closed forms:
+#
+#     total    = 12! / ((3!)^4 * 4!) = 15400
+#     cross-E8 = (4!)^2              = 576
+#
+# The closed form for the cross-E8 count is worth stating because it also
+# explains the number. The 24 Leech coordinates split into three E8 blocks;
+# bridge b occupies coordinates (2b, 2b+1) and therefore lies in block
+# b // 4, giving three blocks of four bridges. A grouping spans all three
+# blocks in every face exactly when each face takes one bridge from each
+# block. Fix the four bridges of block 0 as the labels of the four faces;
+# block 1 may then be matched to them in 4! ways and block 2 independently
+# in 4! ways, so (4!)^2 = 576. No further quotient by face relabelling is
+# needed because block 0 has already fixed the labelling.
+
+
+def enumerate_face_groupings(n_bridges: int = 12,
+                             face_size: int = 3) -> List[tuple]:
+    """Every partition of the bridges into unordered faces of *face_size*.
+
+    Each grouping is returned in canonical form, so membership can be tested
+    by equality.
+    """
+    if n_bridges % face_size:
+        raise ValueError(
+            f"{n_bridges} bridges do not divide into faces of {face_size}")
+
+    def _partition(items):
+        if not items:
+            yield ()
+            return
+        first, rest = items[0], items[1:]
+        for others in itertools.combinations(rest, face_size - 1):
+            face = (first,) + others
+            remaining = [x for x in rest if x not in others]
+            for tail in _partition(remaining):
+                yield (face,) + tail
+
+    return [canonical_grouping(p) for p in _partition(list(range(n_bridges)))]
+
+
+def canonical_grouping(grouping) -> tuple:
+    """One canonical form per grouping: sorted faces of sorted bridges."""
+    return tuple(sorted(tuple(sorted(face)) for face in grouping))
+
+
+def e8_block_of(bridge: int, bridges_per_block: int = 4) -> int:
+    """Which E8 block a bridge belongs to.
+
+    Bridge b occupies Leech coordinates (2b, 2b+1); the 24 coordinates split
+    into three E8 blocks of eight, so four consecutive bridges share a block.
+    """
+    return bridge // bridges_per_block
+
+
+def is_cross_e8_valid(grouping, bridges_per_block: int = 4,
+                      n_blocks: int = 3) -> bool:
+    """True when every face draws on all *n_blocks* E8 blocks."""
+    return all(
+        len({e8_block_of(b, bridges_per_block) for b in face}) == n_blocks
+        for face in grouping
+    )
+
+
+def cross_e8_valid_groupings(n_bridges: int = 12,
+                             face_size: int = 3) -> List[tuple]:
+    """The subset of groupings in which every face spans all three blocks."""
+    return [g for g in enumerate_face_groupings(n_bridges, face_size)
+            if is_cross_e8_valid(g)]
+
+
+def stride4_grouping(n_bridges: int = 12, n_faces: int = 4) -> tuple:
+    """The convention used here and in leech_lattice: face i is {i, i+4, i+8}."""
+    return canonical_grouping(
+        tuple(tuple(range(i, n_bridges, n_faces)) for i in range(n_faces)))
+
+
+def contiguous_grouping(n_bridges: int = 12, face_size: int = 3) -> tuple:
+    """The rival convention in consciousness/four_dice_sampling."""
+    return canonical_grouping(
+        tuple(tuple(range(i, i + face_size))
+              for i in range(0, n_bridges, face_size)))
+
+
+def face_grouping_report(n_bridges: int = 12,
+                         face_size: int = 3) -> Dict[str, Any]:
+    """Enumerate the groupings and settle the stride-4 / contiguous question.
+
+    Two conventions coexisted with nothing reconciling them: ``leech_lattice``
+    and this module use stride-4 {i, i+4, i+8}, while
+    ``consciousness/four_dice_sampling`` uses contiguous triples {0,1,2},
+    {3,4,5}, ... They are NOT alternative labellings of one object. Stride-4
+    spans all three E8 blocks in every face; the contiguous grouping's first
+    face draws all three of its bridges from block 0, so it is not
+    cross-E8-valid at all. Whatever the contiguous partition is for, it is not
+    the E8-spanning face structure, and calling both "the face grouping"
+    conflates two different objects.
+    """
+    n_faces = n_bridges // face_size
+    total = enumerate_face_groupings(n_bridges, face_size)
+    valid = set(cross_e8_valid_groupings(n_bridges, face_size))
+    stride4 = stride4_grouping(n_bridges, n_faces)
+    contiguous = contiguous_grouping(n_bridges, face_size)
+
+    closed_total = (math.factorial(n_bridges)
+                    // (math.factorial(face_size) ** n_faces
+                        * math.factorial(n_faces)))
+    closed_valid = math.factorial(n_faces) ** (face_size - 1)
+
+    return {
+        "n_bridges": n_bridges,
+        "n_faces": n_faces,
+        "face_size": face_size,
+        "n_groupings": len(total),
+        "n_groupings_closed_form": closed_total,
+        "n_groupings_formula": "n! / ((face_size!)^n_faces * n_faces!)",
+        "n_cross_e8_valid": len(valid),
+        "n_cross_e8_valid_closed_form": closed_valid,
+        "n_cross_e8_valid_formula": "(n_faces!)^(n_blocks - 1)",
+        "closed_forms_agree": (len(total) == closed_total
+                               and len(valid) == closed_valid),
+        "stride4_grouping": [list(f) for f in stride4],
+        "stride4_is_cross_e8_valid": stride4 in valid,
+        "contiguous_grouping": [list(f) for f in contiguous],
+        "contiguous_is_cross_e8_valid": contiguous in valid,
+        "contiguous_first_face_blocks": sorted(
+            {e8_block_of(b) for b in contiguous[0]}),
+        "selection": (
+            "The cross-E8 property does not single out the stride-4 "
+            "convention: it admits 576 groupings and stride-4 is one of them. "
+            "That is the honest status -- a labelling choice inside a "
+            "576-element orbit, not a derivation. What the property DOES "
+            "settle is that the contiguous grouping is a different object, "
+            "since its first face lies wholly inside one E8 block."
+        ),
+    }
 
 class FourFaceG2Structure(SimulationBase):
     """
@@ -337,19 +486,29 @@ class FourFaceG2Structure(SimulationBase):
     ) -> float:
         """Compute inter-face leakage alpha_leak from lattice structure.
 
-        Derives the leakage coupling from the actual stabilized moduli
-        rather than hardcoding ratio=6.0. The computation proceeds as:
+        The ratio is TOPOLOGICAL, not read off the moduli. It is
+        n_aligned = n_pairs / 2 from the Z2 decomposition under R_perp,
+        which equals chi_eff / b3 = 144 / 24 = 6 for the standard
+        architecture.
 
-        1. Compute face volumes from bridge areas in each face grouping
-        2. Derive chi_eff/b3 ratio from the total-to-max volume ratio
-        3. Verify consistency with the topological value chi_eff/b3 = 6
+        The moduli enter only as a CHECK: the face volumes are computed from
+        the bridge areas and every face must carry positive, finite area,
+        because the pairing argument behind n_aligned = n_pairs / 2 assumes
+        it. A degenerate face raises rather than returning a number that
+        does not describe the configuration.
+
+        This docstring previously said the coupling was "derived from the
+        actual stabilized moduli rather than hardcoding ratio=6.0" and "NOT
+        hardcoded but verified from the moduli". It was neither: the volumes
+        were computed and discarded, and the return value depended only on
+        len(bridge_moduli).
 
         For the standard TCS #187 architecture with b3=24, chi_eff=144:
             alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6) ~ 0.4082
 
         The ratio chi_eff/b3 = 6 corresponds to the number of aligned
-        bridge pairs under the OR rotation R_perp (see bridge-pair-decomposition
-        formula). This is NOT hardcoded but verified from the moduli.
+        bridge pairs under the OR rotation R_perp (see
+        bridge-pair-decomposition formula).
 
         Gemini Assessment (WP1.2, 3 rounds):
             The leakage coupling is DERIVED from topology -- "depends only on
@@ -379,23 +538,44 @@ class FourFaceG2Structure(SimulationBase):
                 total_area += area
             face_volumes.append(total_area)
 
-        # Derive the effective ratio from moduli structure
-        # For n_bridges=12 with b3=24: n_pairs = n_bridges = 12,
-        # n_aligned = n_pairs/2 = 6 (from Z2 decomposition under R_perp)
-        # This equals chi_eff/b3 = 144/24 = 6
-        b3 = 2 * n_bridges  # b3 = 24 for 12 bridges (Leech lattice dimension)
+        # The ratio is TOPOLOGICAL: n_aligned = n_pairs / 2 from the Z2
+        # decomposition under R_perp, which for 12 bridges gives 6 and
+        # matches chi_eff / b3 = 144 / 24. The moduli do NOT enter it.
+        #
+        # This is stated plainly because the docstring above used to claim
+        # the opposite -- "Derives the leakage coupling from the actual
+        # stabilized moduli rather than hardcoding ratio=6.0 ... This is NOT
+        # hardcoded but verified from the moduli". The face volumes were
+        # computed from bridge_moduli immediately above and then discarded,
+        # and the returned value was 1/sqrt(n_bridges // 2): a function of
+        # the bridge COUNT alone. Passing entirely different moduli returned
+        # the same number. The topological derivation is defensible on its
+        # own terms; the claim that it was checked against the geometry was
+        # not.
         n_pairs = n_bridges
-        n_aligned = n_pairs // 2  # Z2 decomposition: half aligned, half orthogonal
-
-        # The ratio is n_aligned = n_bridges/2, which for the standard
-        # architecture gives 12/2 = 6 = chi_eff/b3
+        n_aligned = n_pairs // 2
         ratio = float(n_aligned)
 
-        # Verify: for standard config, ratio should be 6
-        # chi_eff = 2 * (h11 + h31) for TCS; with h11=4, h31=n_bridges*n_faces+20
-        # gives chi_eff = 144, and chi_eff/b3 = 144/24 = 6
-        # The n_aligned derivation gives the same result independently
-        assert ratio > 0, f"Invalid ratio {ratio} from {n_bridges} bridges"
+        # The volumes are now used rather than discarded, as a check that can
+        # actually fail. n_aligned = n_pairs / 2 assumes the bridges pair up
+        # under R_perp, which presupposes every face carries real area. A
+        # degenerate face -- zero or negative volume, or a non-finite one
+        # from a collapsed modulus -- breaks that assumption, and the ratio
+        # would then be describing a configuration the moduli do not
+        # support.
+        if not face_volumes:
+            raise ValueError("no faces: the grouping is empty")
+        for face_idx, volume in enumerate(face_volumes):
+            if not math.isfinite(volume) or volume <= 0.0:
+                raise ValueError(
+                    f"face {face_idx} has volume {volume!r}; the pairing "
+                    f"argument behind n_aligned = n_pairs / 2 assumes every "
+                    f"face carries positive area, so the topological ratio "
+                    f"does not describe these moduli"
+                )
+        if ratio <= 0:
+            raise ValueError(
+                f"invalid ratio {ratio} from {n_bridges} bridges")
 
         return 1.0 / math.sqrt(ratio)
 

@@ -118,9 +118,30 @@ def test_every_option_states_a_consequence():
             )
 
 
-def test_open_forks_are_marked_open():
-    """A fork whose criterion is not derived must not read as settled."""
+def test_a_forks_status_matches_whether_its_criterion_is_derived():
+    """This asserted face_genericity was OPEN with a "NOT derived" criterion.
+
+    It was, and the test was right to pin it. The criterion has since been
+    derived: block_labelling_analysis enumerates all 3^7 line-to-block
+    labellings and finds the 28 line-containing 4-point sets admit none
+    while each of the 7 arcs admits 18, so requiring genericity is a
+    consequence rather than a choice. The fork is RULED accordingly.
+
+    What must stay true is that the remaining INPUT is visible -- the
+    global-labelling premise is still an assumption, and the option text
+    has to say so, or a derived-looking status would overstate the case.
+    """
     face = variants.FORKS["face_genericity"]
-    assert face.status == "OPEN"
+    assert face.status == "RULED"
     adopted = next(o for o in face.options if o.adopted)
-    assert "NOT derived" in adopted.consequence
+    assert "NOW DERIVED" in adopted.consequence
+    assert "stated, not derived" in adopted.consequence, (
+        "the global-labelling premise has stopped being flagged as an "
+        "assumption; a RULED status then claims more than was shown"
+    )
+
+
+def test_theory_uncertainty_policy_is_still_open():
+    """A fork with no derivation behind it must not drift to RULED."""
+    fork = variants.FORKS["theory_uncertainty_policy"]
+    assert fork.status == "OPEN"

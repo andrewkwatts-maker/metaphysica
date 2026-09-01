@@ -279,7 +279,19 @@ FORKS: Dict[str, Fork] = {
         id="face_genericity",
         question="Must the four face labels avoid containing a Fano line?",
         source="PM.gauge.topological_terms.face_assignment_candidates",
-        status="OPEN",
+        # Was OPEN with the note that adopting `generic` was "a stated
+        # criterion, not a derivation". It is now a consequence. Requiring
+        # the E8 block to be a property of the CHANNEL -- one global
+        # labelling of the 7 Fano lines by 3 blocks, shared by every face --
+        # means the 3 lines through each chosen point must carry 3 distinct
+        # blocks. Enumerating all 3^7 labellings
+        # (topological_terms.block_labelling_analysis) shows the 28
+        # line-containing 4-point sets admit ZERO such labellings while each
+        # of the 7 arcs admits 18. The same enumeration forces the number of
+        # faces: no labelling makes 5 or more points rainbow, so 4 is the
+        # maximum, which n_faces = 4 previously took from h^{1,1} of TCS #187
+        # -- a value this repository labels FITTED.
+        status="RULED",
         read_adopted=_face_genericity_adopted,
         options=[
             VariantOption(
@@ -287,8 +299,21 @@ FORKS: Dict[str, Fork] = {
                 summary="no three of the four labels collinear (arcs only)",
                 consequence="35 -> 7 candidates, in bijection with the seven "
                             "lines; the three unchosen triangles are exactly "
-                            "the omitted line. NOT derived -- nothing in the "
-                            "framework forbids collinear labels.",
+                            "the omitted line. NOW DERIVED (2026-09-01), "
+                            "having been carried as a stated criterion. "
+                            "Requiring the E8 block to be a property of the "
+                            "channel -- one global labelling of the 7 Fano "
+                            "lines by 3 blocks, shared by every face -- "
+                            "forces the 3 lines through each chosen point to "
+                            "carry 3 distinct blocks. Enumerating all 3^7 "
+                            "labellings shows the 28 line-containing "
+                            "4-point sets admit ZERO, while each of the 7 "
+                            "arcs admits 18. The same enumeration caps the "
+                            "number of faces at 4: no labelling makes 5 or "
+                            "more points rainbow. See "
+                            "topological_terms.block_labelling_analysis. "
+                            "The GLOBAL-LABELLING PREMISE is the input and "
+                            "is stated, not derived.",
                 adopted=True,
             ),
             VariantOption(
