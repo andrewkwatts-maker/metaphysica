@@ -79,17 +79,62 @@ def _build_context(params: dict[str, Any]) -> dict[str, float]:
     ctx: dict[str, float] = {}
 
     # 1+2 — short / medium aliases (low priority)
-    for path, entry in params.items():
-        val = entry.get("value")
-        if val is None: continue
-        try:    f = float(val)
-        except (TypeError, ValueError): continue
-        if not math.isfinite(f): continue
+    #
+    # AMBIGUOUS SHORT NAMES ARE NOT BOUND AT ALL.
+    #
+    # This used ctx.setdefault(parts[-1], f), so the first parameter
+    # encountered with a given last component won and the rest were
+    # discarded -- silently, and in dict insertion order. The collisions are
+    # not obscure: they are mostly a PREDICTION colliding with its own
+    # ANCHOR.
+    #
+    #   theta_13      nufit 8.58        vs geometry 8.54
+    #   theta_23      nufit 42.2        vs geometry 49
+    #   sin2_theta_W  pdg 0.23122       vs geometry 0.231905
+    #   wa            desi -0.86        vs geometry -0.204
+    #   M_PLANCK      reduced 2.435e18  vs full 1.22089e19
+    #
+    # An eml_description written against the bare name `theta_13` therefore
+    # evaluated against whichever of the two happened to be first. If it
+    # bound to the anchor, a prediction was compared with the measurement it
+    # is supposed to predict and agreed trivially -- the fake-pass pattern,
+    # arrived at by dictionary ordering. The M_PLANCK pair is the reduced /
+    # full Planck mass, a factor of sqrt(8 pi) apart; this repository has
+    # already had to correct one 97.65-sigma error caused by exactly that
+    # confusion.
+    #
+    # An ambiguous name is worse than an absent one, because absent fails
+    # loudly. A short alias is now bound only when every parameter claiming
+    # it agrees; otherwise the name stays unbound and the expression must
+    # qualify it. That converts a silent wrong answer into a visible
+    # unbound-name error, which will raise the unevaluable count -- those
+    # rows were never honestly evaluable.
+    def _collect(key_of):
+        seen: dict[str, float] = {}
+        clashing: set[str] = set()
+        for path, entry in params.items():
+            val = entry.get("value")
+            if val is None: continue
+            try:    f = float(val)
+            except (TypeError, ValueError): continue
+            if not math.isfinite(f): continue
+            key = key_of(path)
+            if key is None: continue
+            if key in seen:
+                a, b = seen[key], f
+                scale = max(abs(a), abs(b)) or 1.0
+                if abs(a - b) / scale > 1e-9:
+                    clashing.add(key)
+            else:
+                seen[key] = f
+        return {k: v for k, v in seen.items() if k not in clashing}, clashing
 
-        parts = path.split(".")
-        ctx.setdefault(parts[-1], f)
-        if len(parts) >= 2:
-            ctx.setdefault(".".join(parts[-2:]), f)
+    short, short_clashes = _collect(lambda p: p.split(".")[-1])
+    medium, medium_clashes = _collect(
+        lambda p: ".".join(p.split(".")[-2:]) if p.count(".") >= 1 else None)
+    ctx.update(short)
+    ctx.update(medium)
+    _build_context.ambiguous_names = sorted(short_clashes | medium_clashes)
 
     # 3 — full paths (override)
     for path, entry in params.items():
@@ -529,6 +574,20 @@ def run_crosscheck(
         "skip": n_skip + n_no_value,
         "buckets": dict(bucket_counts),
         "errors": n_error,
+        # Short names two or more parameters claim with DIFFERENT values.
+        # They are deliberately left unbound: an expression using one would
+        # have evaluated against whichever parameter came first in dict
+        # order. Most of these are a prediction colliding with its own
+        # anchor (theta_13: NuFIT 8.58 vs geometry 8.54), so binding one
+        # silently could make a prediction agree with the measurement it is
+        # meant to predict. Rows referencing them now report
+        # DISAGREE_MISSING_CTX, which is the honest outcome.
+        "ambiguous_short_names": getattr(_build_context, "ambiguous_names", []),
+        "ambiguous_short_names_note": (
+            "Not bound. An ambiguous name is worse than an absent one, "
+            "because an absent one fails loudly. Qualify the name in the "
+            "expression to resolve it."
+        ),
         "note": (
             "agreement_rate_strict/loose are computed over expressions that "
             "EVALUATED. agreement_rate_strict_all counts unevaluable "
