@@ -381,13 +381,16 @@ class HartreeEnergyV17(SimulationBase):
         """Return bibliographic references for the Hartree energy derivation."""
         return [
             {
-                "id": "codata2022hartree",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "id": "codata2022",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "E_h = 4.3597447222071(85)e-18 J"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "E_h = 4.3597447222071(85)e-18 J",
             },
             {
                 "id": "hartree1928wave",

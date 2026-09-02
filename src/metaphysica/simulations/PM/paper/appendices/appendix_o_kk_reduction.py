@@ -537,7 +537,14 @@ class AppendixOKKReduction(SimulationBase):
                     "to a bridge torus T&sup2;. This decomposition follows from the "
                     "E<sub>8</sub> &times; E<sub>8</sub> &times; E<sub>8</sub> triple "
                     "structure of R<sup>24</sup>, where each E<sub>8</sub> block contributes "
-                    "4 bridge pairs (matching h<sup>1,1</sup> = 4 faces with 3 bridges each). "
+                    "4 bridge pairs (matching 4 faces with 3 bridges each). The face count is "
+                    "not taken from h<sup>1,1</sup> of the TCS building block: under the stated "
+                    "assumption that the E<sub>8</sub> block is a property of the channel rather "
+                    "than of the observing face, enumerating all 3<sup>7</sup> labellings of the "
+                    "7 Fano lines by 3 blocks shows that <strong>four is the maximum</strong> "
+                    "number of simultaneously rainbow points, and that only the 7 arcs qualify "
+                    "at four (18 labellings each; the 28 line-containing sets admit none). "
+                    "See &sect;1.1.1a — the join narrows 293,930 → 35 → 7 and does not reach 1. "
                     "The full derivation chain E<sub>8</sub> &rarr; octonions &rarr; G<sub>2</sub> "
                     "&rarr; Leech &rarr; bridges is computationally verified via the "
                     "LatticeBridgeConnector module."
@@ -1171,11 +1178,13 @@ class AppendixOKKReduction(SimulationBase):
                 "type": "journal",
             },
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "year": "2000",
-                "doi": "10.1093/acprof:oso/9780198506010.001.0001",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "monograph",
             },
             {

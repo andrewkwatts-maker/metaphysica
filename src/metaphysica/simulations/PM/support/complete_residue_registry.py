@@ -1771,34 +1771,26 @@ class CompleteResidueRegistryV18(SimulationBase):
         """
         return [
             {
-                "id": "ref-pdg-2024",
-                "authors": "Particle Data Group",
+                "id": "pdg2024",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
                 "year": 2024,
-                "journal": "Physical Review D",
+                "journal": "Phys. Rev. D",
                 "volume": "110",
                 "pages": "030001",
+                "doi": "10.1103/PhysRevD.110.030001",
                 "url": "https://pdg.lbl.gov/",
-                "notes": (
-                    "Source of reference particle masses, mixing angles, and coupling "
-                    "constants catalogued in the registry. These PDG values are stored "
-                    "alongside PM spectral residues for orientation; this simulation "
-                    "does not perform independent fits to PDG data."
-                )
+                "notes": "Source of reference particle masses, mixing angles, and coupling constants catalogued in the registry. These PDG values are stored alongside PM spectral residues for orientation; this simulation does not perform independent fits to PDG data.",
             },
             {
-                "id": "ref-acharya-2004-g2",
-                "authors": "Acharya, B. S.; Witten, E.",
+                "id": "acharya_witten2001",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
                 "journal": "arXiv preprint",
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": (
-                    "Foundational paper on chiral fermion spectrum from G2 "
-                    "compactification. Provides the theoretical basis for "
-                    "interpreting Laplacian eigenvalues as particle modes."
-                )
+                "notes": "Foundational paper on chiral fermion spectrum from G2 compactification. Provides the theoretical basis for interpreting Laplacian eigenvalues as particle modes.",
             },
             {
                 "id": "ref-esteban-2020-nufit",
@@ -1819,38 +1811,29 @@ class CompleteResidueRegistryV18(SimulationBase):
                 )
             },
             {
-                "id": "ref-nishino-2012-proton",
+                "id": "ref-nishino-2009-proton",
                 "authors": "Nishino, H. et al. (Super-Kamiokande Collaboration)",
-                "title": "Search for Proton Decay via p -> e+pi0 and p -> mu+pi0",
+                "title": "Search for Proton Decay via p -> e+ pi0 and p -> mu+ pi0 in a Large Water Cherenkov Detector",
                 "year": 2009,
-                "journal": "Physical Review Letters",
+                "journal": "Phys. Rev. Lett.",
                 "volume": "102",
                 "pages": "141801",
+                "doi": "10.1103/PhysRevLett.102.141801",
                 "url": "https://doi.org/10.1103/PhysRevLett.102.141801",
-                "notes": (
-                    "Source of the proton decay experimental lower limit (~10^34 yr) "
-                    "cited as a reference bound for the PM proton lifetime prediction. "
-                    "This simulation does not fit to Super-K data; the bound is used "
-                    "for contextual comparison only."
-                )
+                "notes": "Source of the proton decay experimental lower limit (~10^34 yr) cited as a reference bound for the PM proton lifetime prediction. This simulation does not fit to Super-K data; the bound is used for contextual comparison only.",
             },
             {
-                "id": "ref-planck-2018",
+                "id": "planck2018",
                 "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
                 "year": 2020,
-                "journal": "Astronomy & Astrophysics",
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": (
-                    "Source of the cosmological upper bound on sum of neutrino masses "
-                    "(< 0.12 eV at 95% CL) cited as a reference constraint for the PM "
-                    "prediction of sum(m_nu) ~ 0.06 eV. Cosmological parameters "
-                    "(H0, Omega_Lambda, T_CMB) in registry modes 85-92 also reference "
-                    "Planck 2018 central values for orientation."
-                )
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "Source of the cosmological upper bound on sum of neutrino masses (< 0.12 eV at 95% CL) cited as a reference constraint for the PM prediction of sum(m_nu) ~ 0.06 eV. Cosmological parameters (H0, Omega_Lambda, T_CMB) in registry modes 85-92 also reference Planck 2018 central values for orientation.",
             },
         ]
 

@@ -13,8 +13,12 @@ captures against.
 - **Viewport:** 1280 x 800, `full_page=True` (with viewport-only fallback)
 - **Sprint:** T3 task #7 — establishes the baseline produced by T2.7.
 
-Per the task constraint, these files are NOT committed in this sprint. They
-are scaffolded artifacts staged for the Sprint T7 v2.1.0 publish step.
+The 18 PNGs **are** committed and live in this directory; the earlier note
+saying they were staged-but-uncommitted is out of date. They date from
+2026-06-12 against metaphysica v2.1.0, so they predate the two-time (24,2)
+ruling and every page that renders the bulk signature, the gate dashboard or
+the global fit will legitimately differ from them. **Recapture before treating
+a diff as a regression** — the commands are under *Regenerating* below.
 
 ## File inventory
 
@@ -74,7 +78,7 @@ METAPHYSICA_OUT=h:/Github/PrincipiaMetaphysica python -c \
 # capture baseline
 python h:/Github/metaphysica/scripts/visual_regression.py capture \
   --root h:/Github/PrincipiaMetaphysica \
-  --out  h:/Github/metaphysica/visual_baseline \
+  --out  h:/Github/metaphysica/tests/visual_baselines \
   --port 8077
 
 # verify against a fresh second capture
@@ -83,7 +87,7 @@ python h:/Github/metaphysica/scripts/visual_regression.py capture \
   --out  h:/Github/metaphysica/visual_candidate_smoke \
   --port 8078
 python h:/Github/metaphysica/scripts/visual_regression.py diff \
-  --baseline  h:/Github/metaphysica/visual_baseline \
+  --baseline  h:/Github/metaphysica/tests/visual_baselines \
   --candidate h:/Github/metaphysica/visual_candidate_smoke \
   --fail-threshold 0.5
 ```

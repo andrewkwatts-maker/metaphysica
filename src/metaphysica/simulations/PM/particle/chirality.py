@@ -1126,21 +1126,22 @@ class ChiralitySpinorSimulation(SimulationBase):
         return [
             {
                 "id": "joyce2000",
-                "authors": "Joyce, D. D.",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
+                "year": 2000,
                 "journal": "Oxford Mathematical Monographs",
-                "year": "2000",
                 "publisher": "Oxford University Press",
-                "url": "https://doi.org/10.1093/acprof:oso/9780198506010.001.0001"
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
             },
             {
                 "id": "acharya_witten2001",
-                "authors": "Acharya, B. S. and Witten, E.",
-                "title": "Chiral fermions from manifolds of G2 holonomy",
+                "authors": "Acharya, B.S. and Witten, E.",
+                "title": "Chiral Fermions from Manifolds of G2 Holonomy",
+                "year": 2001,
                 "journal": "arXiv:hep-th/0109152",
-                "year": "2001",
                 "arxiv": "hep-th/0109152",
-                "url": "https://arxiv.org/abs/hep-th/0109152"
+                "url": "https://arxiv.org/abs/hep-th/0109152",
             },
             {
                 "id": "bryant2005",
@@ -1153,13 +1154,14 @@ class ChiralitySpinorSimulation(SimulationBase):
             },
             {
                 "id": "harvey_lawson1982",
-                "authors": "Harvey, R. and Lawson, H. B.",
+                "authors": "Harvey, R. and Lawson, H.B.",
                 "title": "Calibrated geometries",
+                "year": 1982,
                 "journal": "Acta Math.",
                 "volume": "148",
-                "year": "1982",
                 "pages": "47-157",
-                "url": "https://doi.org/10.1007/BF02392726"
+                "doi": "10.1007/BF02392726",
+                "url": "https://doi.org/10.1007/BF02392726",
             },
             {
                 "id": "atiyah_singer1968",

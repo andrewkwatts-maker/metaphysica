@@ -686,15 +686,15 @@ class HiggsVEVRefinedV18(SimulationBase):
         """
         return [
             {
-                "id": "pdg2024_higgs_vev",
+                "id": "pdg2024weak",
                 "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics: Electroweak Model and Constraints on New Physics",
+                "year": 2024,
                 "journal": "Phys. Rev. D",
                 "volume": "110",
                 "pages": "030001",
-                "year": 2024,
                 "url": "https://pdg.lbl.gov/",
-                "notes": "PDG 2024: v = 246.22 +/- 0.5 GeV, G_F = 1.1663788(6) x 10^-5 GeV^-2."
+                "notes": "PDG 2024: v = 246.22 +/- 0.5 GeV, G_F = 1.1663788(6) x 10^-5 GeV^-2.",
             },
             {
                 "id": "schwinger1948",

@@ -962,13 +962,15 @@ class FermionGenerationsV16(SimulationBase):
         """
         return [
             {
-                "id": "georgi1975",
+                "id": "georgi_glashow_1974",
                 "authors": "Georgi, H. and Glashow, S.L.",
-                "title": "Unity of All Elementary Particle Forces",
+                "title": "Unity of All Elementary-Particle Forces",
+                "year": 1974,
                 "journal": "Phys. Rev. Lett.",
                 "volume": "32",
-                "year": 1974,
-                "url": "https://doi.org/10.1103/PhysRevLett.32.438"
+                "pages": "438-441",
+                "doi": "10.1103/PhysRevLett.32.438",
+                "url": "https://doi.org/10.1103/PhysRevLett.32.438",
             },
             {
                 "id": "fritzsch1979",

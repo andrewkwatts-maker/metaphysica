@@ -200,9 +200,13 @@ class ResultsV16_2(SimulationBase):
                 content=(
                     "The PM prediction H₀ = 71.55 km/s/Mpc is 1.4σ below SH0ES 2022 and "
                     "8.3σ above Planck 2018. It lies within the DESI 2025 BAO-only range "
-                    "(H₀ = 68.5 ± 2.0 km/s/Mpc) at 1.5σ. The global alignment of the "
-                    "framework across Planck 2018, DESI 2025, and NuFIT 6.0 gives a weighted "
-                    "mean deviation of 0.48σ across all 26 compared Standard Model parameters. "
+                    "(H₀ = 68.5 ± 2.0 km/s/Mpc) at 1.5σ. This is a per-observable statement and "
+                    "should not be read as a global one: the computed global fit across the "
+                    "validation registry is χ² = 126,748.86 over 65 scoring rows (p = 0, POOR_FIT), "
+                    "or χ² = 5,790.62 over 60 rows excluding the five FALSIFIED candidates "
+                    "(<code>statistical_rigor_report.json</code>, <code>chi_squared_from_rows</code>). "
+                    "The &lsquo;0.48σ weighted mean deviation across 26 parameters&rsquo; previously "
+                    "quoted here was never computed from the registry and is withdrawn. "
                     "The PM framework <em>does not eliminate</em> the Hubble tension; rather, "
                     "it contributes a geometric prediction that must be compared against future "
                     "high-precision measurements. A DESI or CMB-S4 measurement at H₀ ≈ 71–72 "
@@ -525,10 +529,13 @@ class ResultsV16_2(SimulationBase):
                     "<code>inflation.derive_observables</code> Re(T) slow-roll formula gives "
                     "<Normal>n_s = "
                     "<span class=\"pm-value\" data-pm-value=\"cosmology.n_s\">0.9996</span></Normal>, "
-                    "which is 8.3σ from Planck 2018 (0.9649 ± 0.0042). The older "
-                    "<code>cosmology.n_s_pred = 0.9636</code> is Planck-compatible at &lt;0.4σ. The "
-                    "older derivation remains canonical pending higher-order slow-roll corrections "
-                    "(Tier 3 item T3.3).",
+                    "which is scored <strong>8.263σ from Planck 2018 (0.9649 ± 0.0042), "
+                    "verdict FAIL</strong> — the row now carries an experimental binding and "
+                    "appears in the validation report as a failure rather than as an unscored "
+                    "diagnostic. The infrared-closure value <code>geometry.n_s = 0.96364</code> "
+                    "passes at 0.271σ and remains canonical pending higher-order slow-roll "
+                    "corrections (Tier 3 item T3.3). Two different quantities, two different "
+                    "verdicts; the failing one is not superseded by the passing one.",
                     "<strong>η_B (baryon asymmetry).</strong> New "
                     "<code>baryogenesis.compute_eta_B</code> with G<sub>2</sub> entropy dilution gives "
                     "<Normal>η_B = "
@@ -944,25 +951,29 @@ class ResultsV16_2(SimulationBase):
             },
             {
                 "id": "riess_2022",
-                "authors": "Riess, A. G., Yuan, W., Macri, L. M., et al.",
-                "title": "A Comprehensive Measurement of the Local Value of the Hubble Constant",
+                "authors": "Riess, A.G. et al. (SH0ES Team)",
+                "title": "A Comprehensive Measurement of the Local Value of the Hubble Constant with 1 km/s/Mpc Uncertainty from the Hubble Space Telescope and the SH0ES Team",
                 "year": 2022,
-                "journal": "The Astrophysical Journal Letters",
+                "journal": "Astrophys. J. Lett.",
                 "volume": "934",
                 "pages": "L7",
+                "doi": "10.3847/2041-8213/ac5c5b",
+                "arxiv": "2112.04510",
                 "url": "https://doi.org/10.3847/2041-8213/ac5c5b",
-                "notes": "SH0ES H0 = 73.04 +/- 1.04 km/s/Mpc; PM predicts 71.55 (1.4σ below SH0ES)"
+                "notes": "SH0ES H0 = 73.04 +/- 1.04 km/s/Mpc; PM predicts 71.55 (1.4σ below SH0ES)",
             },
             {
-                "id": "planck_2020",
-                "authors": "Planck Collaboration",
-                "title": "Planck 2018 Results. VI. Cosmological Parameters",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
+                "title": "Planck 2018 results. VI. Cosmological parameters",
                 "year": 2020,
-                "journal": "Astronomy & Astrophysics",
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "Planck H0 = 67.4 +/- 0.5; tension with SH0ES reduced by w0 dynamics"
+                "doi": "10.1051/0004-6361/201833910",
+                "arxiv": "1807.06209",
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "Planck H0 = 67.4 +/- 0.5; tension with SH0ES reduced by w0 dynamics",
             },
         ]
 

@@ -218,13 +218,16 @@ class VonKlitzingV17(SimulationBase):
         """Return bibliographic references for the von Klitzing constant derivation."""
         return [
             {
-                "id": "codata2022rk",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "id": "codata2022",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "R_K = h/e^2 = 25812.80745 Ohm (exact since 2019 SI redefinition)"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "R_K = h/e^2 = 25812.80745 Ohm (exact since 2019 SI redefinition)",
             },
             {
                 "id": "klitzing1980",

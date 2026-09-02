@@ -218,24 +218,41 @@ class FoundationsV16_2(SimulationBase):
                     "In PM v24.2, the actual bulk has structure <strong>M<sup>26</sup>(24,2)</strong>: twenty-four "
                     "physics core dimensions from the 12×(2,0) bridge pairs, one two-time structurelike, "
                     "and two shadow-time directions S<sup>(2,0)</sup>. "
-                    "This M<sup>26</sup>(24,2) configuration is ghost-free: the single timelike direction "
-                    "prevents closed timelike curves, and OR reduction to 13D(12,1) shadows "
-                    "removes all unphysical states."
+                    "Ghost control in this configuration is an <strong>open problem</strong>. "
+                    "Earlier text called the bulk ghost-free by appeal to &lsquo;the single "
+                    "timelike direction&rsquo;, which is not a description of a (24,2) bulk, and "
+                    "then by appeal to Bars&rsquo; Sp(2,ℝ) theorem. Both are withdrawn under "
+                    "the 2026-08-31 signature ruling: Sp(2,ℝ) gauging removes two dimensions "
+                    "and yields <em>one</em> 24D shadow of signature (23,1), not two 13D(12,1) "
+                    "shadows, so this framework&rsquo;s shadows do not inherit that theorem. OR "
+                    "reduction to 13D(12,1) shadows is what the framework asserts; it is not a "
+                    "computed removal of unphysical states."
                 )
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Why (24,2) specifically?</strong> The construction begins with the "
-                    "bosonic string: exactly 25 spacetime dimensions (24 spatial + 1 time, signature "
-                    "(24,2)) are required for modular invariance (Polyakov 1981). The 24 transverse "
-                    "dimensions match the Leech lattice — the unique even unimodular lattice in 24D "
-                    "with no roots — connecting via Moonshine to the Monster Group (Borcherds 1992). "
-                    "PM extends the 26D bosonic string parent (signature (24,2)) by appending the S<sup>(2,0)</sup> shadow-time directions, "
-                    "which provide architectural averaging across the 12 bridge pairs "
-                    "and stabilize the dual-shadow construction, yielding the full M<sup>26</sup>(24,2) bulk. The resulting (24,2) structure "
-                    "preserves ghost-freedom (single timelike) while accommodating both the G₂ "
-                    "compactification and the shadow-time directions as independent geometric structures."
+                    "<strong>Why (24,2) specifically?</strong> Because 26 = b₃ + 2 and one time "
+                    "per shadow. That is the framework&rsquo;s own dimensional identity, and the "
+                    "2026-08-31 ruling keeps it — at a price that is stated here rather than "
+                    "buried. Three claims that previously supported this paragraph are "
+                    "<strong>withdrawn</strong>. (i) <em>D<sub>bulk</sub> = D<sub>crit</sub> = 26.</em> "
+                    "26 is the critical dimension of the <em>one-time</em> bosonic string at "
+                    "signature (25,1), where 26 = 24 transverse + a lightcone pair (one space, one "
+                    "time) — not two times. The two-time bosonic critical dimension is 27–28 "
+                    "(Bars &amp; Kounnas, hep-th/9705205; Watabiki, hep-th/0303045). The framework "
+                    "may keep 26 = b₃ + 2 as its own identity but may no longer call it the "
+                    "critical dimension. (ii) <em>The appeal to Bars for ghost-freedom</em>, for "
+                    "the reason given above. (iii) <em>The Leech/modular-invariance justification.</em> "
+                    "An even unimodular lattice of signature (p,q) exists iff p − q ≡ 0 (mod 8). "
+                    "For (24,2), 24 − 2 = 22 ≡ 6 (mod 8): <strong>no even self-dual lattice "
+                    "exists at this signature</strong>, and there is no modular-invariant lattice "
+                    "compactification here. Both (25,1) and (26,2) pass that test; the adopted "
+                    "signature is the one that fails it. <strong>This obstruction is unanswered.</strong> "
+                    "Any future modular-invariance claim must derive its own footing rather than "
+                    "cite the lattice. The 24 transverse dimensions still match the Leech lattice "
+                    "rank, and Moonshine (Borcherds 1992) is still the motivating analogy — but "
+                    "an analogy is what it now is."
                 )
             ),
             ContentBlock(
@@ -274,15 +291,76 @@ class FoundationsV16_2(SimulationBase):
                     "sublattices of the Leech lattice itself (which has no norm-2 vectors). "
                     "The coordinate pairing of this 24D space yields 12 bridge pairs "
                     "(24/2 = 12), which are then grouped into 4 faces of 3 bridges each — "
-                    "one bridge from each E<sub>8</sub> block per face. This grouping "
-                    "recovers h<sup>1,1</sup> = 4 (Kähler moduli) and n<sub>gen</sub> = 3 "
-                    "(fermion generations per face) as framework-consistent identifications."
+                    "one bridge from each E<sub>8</sub> block per face."
                 )
             ),
             ContentBlock(
                 type="equation",
                 content=r"\mathbb{R}^{24} = \mathbb{R}^8 \oplus \mathbb{R}^8 \oplus \mathbb{R}^8 \;\;\Rightarrow\;\; 12\text{ bridges} = 4\text{ faces} \times 3\text{ bridges/face}",
                 label="leech-e8-decomposition"
+            ),
+            ContentBlock(
+                type="heading",
+                content="1.1.1a Why Four Faces: the Bridge-to-Channel Join",
+                level=4
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "n<sub>faces</sub> = 4 was previously read off h<sup>1,1</sup> = 4 of the "
+                    "TCS #187 building block, a reading this repository labels <strong>FITTED</strong> "
+                    "because it depends on having chosen that manifold. It no longer needs to be. "
+                    "On the R<sup>7</sup> side the allowed couplings resolve into the seven lines "
+                    "of the Fano plane, and a maximal bridge placement fills four complete "
+                    "triangles — 4 points × 3 lines through each = 12 slots, against 4 faces "
+                    "× 3 bridges = 12 on the R<sup>24</sup> side. A face corresponds to a Fano "
+                    "point and its three bridges to the three lines through that point."
+                )
+            ),
+            ContentBlock(
+                type="callout",
+                callout_type="warning",
+                title="The one assumption",
+                content=(
+                    "Bridge b carries an E<sub>8</sub> block because the 24 Leech coordinates "
+                    "split 8 + 8 + 8. The join <em>assumes</em> — states rather than derives — "
+                    "that this block is a property of the <strong>channel</strong> and not of the "
+                    "observing face: one global labelling of the 7 Fano lines by 3 blocks, the "
+                    "same for every face. Everything below follows from that premise and falls "
+                    "with it."
+                )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "Under that premise a face is admissible only when the three lines through "
+                    "its point receive three distinct blocks — call such a point "
+                    "<em>rainbow</em>. Enumerating all 3<sup>7</sup> = 2187 labellings gives two "
+                    "results that were not put in: <strong>the maximum number of simultaneously "
+                    "rainbow points is four</strong> (no labelling makes five, six or seven), so "
+                    "four faces is the largest number admitting a consistent block assignment at "
+                    "all; and of the 35 = C(7,4) four-point sets, <strong>exactly the 7 arcs "
+                    "qualify</strong> — the 28 sets that contain a Fano line admit zero "
+                    "labellings, while each arc admits 18. <strong>Genericity is therefore "
+                    "derived, not stipulated</strong>: it had been carried as a stated criterion "
+                    "with the note that it was not a derivation."
+                )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "What the join does <em>not</em> do is single out one configuration. It "
+                    "narrows C(21,12) = 293,930 placements → 35 → 7, and stops there: which of "
+                    "the 7 arcs, and which of its 18 labellings, remains open. The "
+                    "bridge-to-channel assignment is still underdetermined, and inventing a "
+                    "tie-break would not be a derivation. Two counts in this construction are "
+                    "also now enumerated rather than asserted: 15400 = 12!/((3!)<sup>4</sup>4!) "
+                    "groupings of 12 bridges into 4 unordered triples, of which 576 = (4!)<sup>2</sup> "
+                    "are cross-E<sub>8</sub>-valid. Note that the stride-4 triples {i, i+4, i+8} "
+                    "and contiguous triples are different objects — the contiguous first face "
+                    "lies entirely inside one E<sub>8</sub> block and is therefore not "
+                    "cross-E<sub>8</sub>-valid at all."
+                )
             ),
             ContentBlock(
                 type="heading",
@@ -853,7 +931,15 @@ class FoundationsV16_2(SimulationBase):
                 derivation={
                     "method": "topological_index",
                     "steps": [
-                        "G2 manifold TCS #187 has third Betti number b3 = 24",
+                        "G2 manifold 'TCS #187' has third Betti number b3 = 24. OPEN "
+                        "OBSTRUCTION: (b2, b3) = (4, 24) cannot exist as a twisted connected "
+                        "sum -- Crowley & Nordstrom (arXiv:1211.0269) Thm 1.7 gives nu = 24 "
+                        "for every TCS and the Thm 1.3 parity constraint then forces b2 + b3 "
+                        "to be ODD, while 4 + 24 = 28 is even. b3 = 24 itself is realizable "
+                        "(Joyce 1996 has a compact holonomy-G2 manifold with (b2, b3) = "
+                        "(7, 24)); it is the pairing with b2 = 4 -- the 'four faces' reading "
+                        "-- that fails. This obstruction is independent of the bulk-signature "
+                        "ruling and remains open.",
                         "Fermion zero modes counted by chi_eff/(2*b3) = 144/48 = 3",
                         "Alternatively simplified: b3/8 = 24/8 = 3 generations per shadow"
                     ],
@@ -926,33 +1012,36 @@ class FoundationsV16_2(SimulationBase):
         """Return bibliographic references for foundations section."""
         return [
             {
-                "id": "joyce_2000",
-                "authors": "Joyce, D. D.",
+                "id": "joyce2000",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
                 "publisher": "Oxford University Press",
-                "url": "https://doi.org/10.1093/acprof:oso/9780198527916.001.0001",
-                "notes": "Definitive reference for G2 holonomy manifold construction"
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "notes": "Definitive reference for G2 holonomy manifold construction",
             },
             {
-                "id": "corti_haskins_2015",
+                "id": "chnp2015",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
                 "year": 2015,
-                "journal": "Duke Mathematical Journal",
+                "journal": "Duke Math. J.",
                 "volume": "164",
+                "pages": "1971-2092",
+                "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "notes": "TCS (Twisted Connected Sum) construction used for K_Pneuma"
+                "notes": "TCS (Twisted Connected Sum) construction used for K_Pneuma",
             },
             {
-                "id": "acharya_witten_2001",
-                "authors": "Acharya, B. S. and Witten, E.",
+                "id": "acharya_witten2001",
+                "authors": "Acharya, B.S. and Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": "Chirality from G2 compactification; n_gen from Euler characteristic"
+                "notes": "Chirality from G2 compactification; n_gen from Euler characteristic",
             },
         ]
 

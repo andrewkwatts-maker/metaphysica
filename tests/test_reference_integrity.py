@@ -186,3 +186,30 @@ def test_shipped_bibliography_has_no_orphans():
         pytest.skip("live bibliography not available")
     out = audit_references(ag)
     assert out["totals"]["orphans"] == 0, out["orphans"][:10]
+
+
+def test_a_module_that_re_registers_a_paper_still_gets_the_citation():
+    """Merging duplicate ids must not cost the later modules their citations.
+
+    Eleven ids for Planck 2018 VI existed partly because each module wanted
+    an id of its own; collapsing them onto one id would, with a plain
+    keep-the-first dedup, have left every module but the first with no
+    reference at all. _collect_references records the later registrations in
+    ``also_registered_by`` and the join honours them.
+    """
+    from metaphysica.simulations.run_all_simulations import (
+        _attach_module_references,
+    )
+
+    data = {
+        "formulas": {"f1": {"source_simulation": "sim_a"},
+                     "f2": {"source_simulation": "sim_b"}},
+        "references": [
+            {"id": "planck2018", "source_simulation": "sim_a",
+             "also_registered_by": ["sim_b"]},
+        ],
+    }
+    _attach_module_references(data)
+    assert data["formulas"]["f1"]["references"] == ["planck2018"]
+    assert data["formulas"]["f2"]["references"] == ["planck2018"]
+    assert data["formulas"]["f2"]["references_are_module_level"] is True

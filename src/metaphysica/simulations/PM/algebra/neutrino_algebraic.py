@@ -117,8 +117,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             description=(
                 "Algebraic derivation of PMNS reactor angle theta_13 and CP phase delta_CP "
                 "from G2 topology (b3=24, chi_eff=144, n_gen=3) and E7 branching (alpha_leak=1/sqrt(6)). "
-                "Zero free parameters. Results are approximate (~10-20%), not fitted. "
-                "Promotes theta_13 and delta_CP from CALIBRATED toward DERIVED."
+                "Zero free parameters, and both candidates miss: neutrino.theta13_derived "
+                "is FALSIFIED (8.8 sigma vs NuFIT 6.0) and neutrino.delta_CP_derived scores "
+                "1.825 sigma MARGINAL. The 'promotes theta_13 and delta_CP from CALIBRATED "
+                "toward DERIVED' claim is withdrawn. The working theta_13 headline is the "
+                "independent particle.theta_13_deg = 8.6686 deg, 0.805 sigma PASS."
             ),
             section_id="neutrino-algebraic",
             appendix=True,
@@ -428,8 +431,13 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"misses by 9σ is a falsification, not a tension -- the "
                     f"row stays on the books as the framework's proof its "
                     f"gates can kill an elegant candidate. Working headline: "
-                    f"particle.theta_13_deg = 8.669° (0.8σ); geometric "
-                    f"cross-check: geometry.theta_13 = 8.54° (0.4σ)."
+                    f"particle.theta_13_deg = 8.6686°, scored 0.805σ PASS against "
+                    f"NuFIT 6.0 (8.58 ± 0.11). WITHDRAWN: the '0.4σ geometric "
+                    f"cross-check' against geometry.theta_13 = 8.54°. That anchor "
+                    f"is a hardcoded restatement of a pre-release NuFIT central "
+                    f"value (eml_scalar(8.54), status MEASURED) and not a "
+                    f"geometric quantity, so comparing a prediction to it "
+                    f"cross-checks nothing."
                 ),
                 eml_description=(
                     "EML: ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0))) — "
@@ -452,8 +460,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"δ_CP = −(2π/(b₃/n_gen)) × χ_eff/(b₃ n_gen) = −π/2. "
                     f"Derived: {_DELTA_CP_DEG:.1f}°. "
                     f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°. "
-                    f"Derived value lies within the 1σ favoured region (~0.4σ from best fit). "
-                    f"DERIVED approximation, zero free parameters."
+                    f"Scored 1.825σ, verdict MARGINAL — not the '~0.4σ from best fit, "
+                    f"within the 1σ favoured region' previously claimed here, which is "
+                    f"withdrawn. DERIVED approximation, zero free parameters."
                 ),
                 eml_description=(
                     "EML: ops.div(eml_pi(), eml_scalar(6.0)) — "

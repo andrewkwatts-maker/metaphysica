@@ -1175,10 +1175,13 @@ class AppendixPG2Holonomy(SimulationBase):
         return [
             {
                 "id": "joyce2000",
-                "authors": "Joyce, D. D.",
+                "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
+                "year": 2000,
                 "journal": "Oxford University Press",
-                "year": "2000",
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
             },
             {
                 "id": "bryant1987",

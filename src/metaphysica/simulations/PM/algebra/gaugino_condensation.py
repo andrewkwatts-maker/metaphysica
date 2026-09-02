@@ -25,12 +25,26 @@ Algebraic Cabibbo derivation (DERIVED):
         ε_racetrack = |W₁ − W₂| ≈ 0.01566
     Step 4 — Generation correction (n_gen=3 eigenvalues in the Yukawa matrix):
         λ_W ≈ ε_racetrack^(1/n_gen) = 0.01566^(1/3) ≈ 0.2502
-        cf. PDG Wolfenstein λ_W = 0.22500  (11% agreement — DERIVED, not fitted)
+        cf. PDG Wolfenstein λ_W = 0.22500 ± 0.00067  —  37.6σ away
 
 Key: N₁=24 comes directly from b₃=24 (G₂ Betti number — topological invariant),
-N₂=N₁−1=23, n_gen=3 from G₂ geometry. No free parameters.
+N₂=N₁−1=23, n_gen=3 from G₂ geometry. No free parameters enter the construction.
 
-Status: cabibbo_derived is DERIVED — zero free parameters.
+STATUS: FALSIFIED (2026-09). All three Cabibbo candidates produced by this
+module are scored against PDG Wolfenstein λ_W = 0.22500 ± 0.00067 and all
+three fail:
+
+    algebra.gaugino_cabibbo_proxy    0.455938   344.7 sigma
+    algebra.gaugino_cabibbo_derived  0.250163    37.6 sigma
+    algebra.gaugino_cabibbo_refined  0.207880    25.6 sigma
+
+Between them they carry 95.4% of the framework's global chi-squared. Two
+claims are WITHDRAWN: that this "promotes the Cabibbo angle from CALIBRATED
+toward DERIVED", and that "11% agreement, zero free parameters" is an
+agreement at all. An 11% discrepancy on a quantity measured to 0.3% is a
+failure. Zero free parameters makes a wrong prediction unavoidable, not
+excusable. The racetrack construction is kept on the books with its
+derivation intact so the failure stays visible and reproducible.
 
 Dependencies: g2_geometry_v16_0 (topology.elder_kads = b₃ = 24)
 
@@ -72,7 +86,9 @@ class GauginoCondensationSimulation(SimulationBase):
             title="Hidden E8 Gaugino Condensation - Cabibbo from Racetrack",
             description=(
                 "Derives Cabibbo-like suppression from N₁=24/N₂=23 racetrack superpotential. "
-                "Promotes Cabibbo angle from CALIBRATED toward DERIVED."
+                "FALSIFIED: all three candidates miss PDG λ_W = 0.22500 ± 0.00067 "
+                "(344.7σ / 37.6σ / 25.6σ). The 'promotes Cabibbo from CALIBRATED "
+                "toward DERIVED' claim is withdrawn."
             ),
             section_id="A4",
             appendix=True,
@@ -311,10 +327,12 @@ class GauginoCondensationSimulation(SimulationBase):
                 plain_text=f"epsilon_proxy = lambda_eff^3 ≈ {cab:.4f}",
                 category="DERIVED",
                 description=(
-                    f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f}. "
-                    "Coarse proxy for the Wolfenstein parameter λ_W ≈ 0.2250; "
-                    "exact value requires racetrack minimization with full matter content. "
-                    "Promotes Cabibbo angle from CALIBRATED toward DERIVED."
+                    f"FALSIFIED. Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} "
+                    "against PDG λ_W = 0.22500 ± 0.00067 — 344.7σ, off by roughly a "
+                    "factor of two. The 'promotes Cabibbo angle from CALIBRATED toward "
+                    "DERIVED' claim is withdrawn. Retained with its derivation intact "
+                    "because the racetrack construction is still carried by the refined "
+                    "and derived variants, which also fail."
                 ),
                 inputParams=["algebra.gaugino_lambda_eff"],
                 outputParams=["algebra.gaugino_cabibbo_proxy"],
@@ -359,14 +377,16 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"epsilon_rt = |exp(-2pi*T_min/N1) - exp(-2pi*T_min/N2)| = {epsilon_rt:.6f}; "
                     f"lambda_W = epsilon_rt^(1/n_gen) = {cab_derived:.6f} (cf. PDG 0.22500)"
                 ),
-                category="DERIVED",
+                category="FALSIFIED",
                 description=(
-                    f"Algebraic Wolfenstein parameter λ_W ≈ {cab_derived:.4f} from the racetrack moduli minimum. "
+                    f"FALSIFIED. Algebraic Wolfenstein parameter λ_W ≈ {cab_derived:.4f} from the racetrack moduli minimum. "
                     f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23. "
                     f"ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f} is the off-diagonal Yukawa texture. "
                     f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "PDG: 0.22500. Agreement ≈ 89% — DERIVED, zero free parameters. "
-                    "N₁=b₃=24 (topological), N₂=N₁−1=23, n_gen=3 (G₂ geometry)."
+                    "PDG: 0.22500 ± 0.00067 — 37.6σ away. N₁=b₃=24 (topological), "
+                    "N₂=N₁−1=23, n_gen=3 (G₂ geometry): the construction takes no free "
+                    "parameters, which is why it cannot be rescued. The earlier "
+                    "'agreement ≈ 89%, DERIVED, zero free parameters' framing is withdrawn."
                 ),
                 inputParams=["topology.elder_kads", "topology.n_gen"],
                 outputParams=["algebra.gaugino_cabibbo_derived", "algebra.gaugino_racetrack_T_min"],
@@ -610,15 +630,16 @@ class GauginoCondensationSimulation(SimulationBase):
             ),
             ContentBlock(
                 type="callout",
-                callout_type="success",
-                title="Racetrack Minimum (Zero Free Parameters)",
+                callout_type="warning",
+                title="Racetrack Minimum (Zero Free Parameters) — FALSIFIED",
                 content=(
                     f"W_np(N₁=24) = {W1:.8f},  W_np(N₂=23) = {W2:.8f}\n"
                     f"λ_eff = exp(−2π/24) = {leff:.8f}\n"
                     f"Cabibbo proxy ε ≈ λ_eff³ = {cab:.6f}  (cf. PDG Wolfenstein λ_W ≈ 0.2250)\n"
                     f"Racetrack minimum T_min ≈ {T_min:.6f}\n"
                     f"Algebraic: ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f},  "
-                    f"λ_W = ε_rt^(1/3) = {cab_derived:.6f}  [DERIVED, PDG: 0.22500, ~{abs(cab_derived-0.22500)/0.22500*100:.0f}% error]"
+                    f"λ_W = ε_rt^(1/3) = {cab_derived:.6f}  "
+                    f"[FALSIFIED: PDG 0.22500 ± 0.00067, {abs(cab_derived-0.22500)/0.00067:.1f} sigma]"
                 ),
             ),
             ContentBlock(
@@ -633,8 +654,14 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"The off-diagonal Yukawa texture ε_rt = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.5f} "
                     "encodes the condensate splitting at the minimum. "
                     f"With n_gen = 3 fermion generations, λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "The PDG value is 0.22500 — agreement ≈ 89%, purely from topology (N₁=b₃=24, N₂=23, n_gen=3). "
-                    "This is a DERIVED result: zero free parameters."
+                    "The PDG value is 0.22500 ± 0.00067, so this is "
+                    f"{abs(cab_derived-0.22500)/0.00067:.1f}σ away and the row is scored "
+                    "FALSIFIED. Minimising the racetrack moved the prediction toward the "
+                    "measurement relative to the λ_eff³ proxy (344.7σ) but overshot it; "
+                    "the closest of the three variants, exp(−π/2) = 0.207880, is still "
+                    "25.6σ out. The mechanism does not fix the Cabibbo angle. Zero free "
+                    "parameters is a statement about the construction's arity, not a "
+                    "defence of its accuracy."
                     "</Normal>"
                     "<EML>"
                     f"T_min: ops.div(ops.mul(eml_scalar({N1}), eml_scalar({N2})), "
@@ -665,7 +692,9 @@ class GauginoCondensationSimulation(SimulationBase):
             abstract=(
                 "Hidden E₈' gaugino condensation with b₃=24 topology gives N₁=24/N₂=23 racetrack. "
                 f"The algebraic Wolfenstein parameter λ_W = ε_rt^(1/3) ≈ {cab_derived:.4f} "
-                "(PDG: 0.22500) follows from the racetrack moduli minimum — DERIVED, zero free parameters."
+                "follows from the racetrack moduli minimum with no free parameters, and is "
+                "FALSIFIED against PDG λ_W = 0.22500 ± 0.00067 at 37.6σ. All three Cabibbo "
+                "candidates from this module fail (344.7σ / 37.6σ / 25.6σ)."
             ),
             content_blocks=blocks,
             formula_refs=[
@@ -700,9 +729,25 @@ class GauginoCondensationSimulation(SimulationBase):
             },
             {
                 "id": "CERT_GAUGINO_CABIBBO_PROXY",
-                "assertion": f"Cabibbo proxy epsilon = lambda_eff^3 = {cab:.6f} (order-of-magnitude for Wolfenstein lambda_W)",
+                "assertion": (
+                    f"Cabibbo proxy epsilon = lambda_eff^3 = {cab:.6f}. The order-of-magnitude "
+                    "band 0.1 < eps < 1.0 is satisfied, but the row is FALSIFIED against PDG "
+                    "lambda_W = 0.22500 +- 0.00067 at 344.7 sigma. The band check is not a "
+                    "validation of the prediction."
+                ),
                 "condition": f"0.1 < {cab} < 1.0",
+                # The band check itself passes; the PARAMETER it describes is
+                # falsified. Both facts matter, so they go in separate fields
+                # -- a status is a vocabulary token and must stay parseable.
+                # It previously read "PASS (band only; parameter row
+                # FALSIFIED)", which no consumer could match against the
+                # allowed set.
                 "status": "PASS",
+                "scope_caveat": (
+                    "Band only. The parameter row this certificate covers is "
+                    "FALSIFIED (344.7 sigma against PDG); passing the band "
+                    "does not rehabilitate it."
+                ),
             },
         ]
 

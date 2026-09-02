@@ -365,12 +365,15 @@ class ComptonWavelengthV17(SimulationBase):
         return [
             {
                 "id": "codata2022",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "lambda_C = 2.42631023867(73) x 10^-12 m, relative uncertainty 3.0e-10"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "lambda_C = 2.42631023867(73) x 10^-12 m, relative uncertainty 3.0e-10",
             },
             {
                 "id": "mohr2016",

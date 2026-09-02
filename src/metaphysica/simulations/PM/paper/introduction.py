@@ -303,8 +303,12 @@ class IntroductionV16(SimulationBase):
                     '<strong>χ = <span class="pm-value" data-pm-value="topology.mephorash_chi">144</span></strong> '
                     "provides all structure: fermion generations (χ<sub>eff</sub>/48 = 3), "
                     "mixing angles, mass hierarchies, and cosmological parameters. The framework "
-                    "achieves <strong>0.48σ global alignment</strong> with Planck 2018, DESI 2025, "
-                    "and NuFIT 6.0 experimental data, including dark energy <strong>w₀ = -23/24</strong> "
+                    "does <strong>not</strong> fit the data globally: over the 65 scoring rows of the "
+                    "validation registry the computed statistic is <strong>χ² = 126,748.86 "
+                    "(reduced 1,950), p = 0, POOR_FIT</strong>, and χ² = 5,790.62 over the 60 rows "
+                    "left after excluding five FALSIFIED candidates. An earlier &lsquo;0.48σ global "
+                    "alignment&rsquo; headline was a hand-carried literal and is withdrawn. Individual "
+                    "residues do land well — dark energy <strong>w₀ = -23/24</strong> "
                     'consistent with DESI 2025 thawing dark energy constraints and <strong>H₀ = '
                     '<span class="pm-value" data-pm-value="cosmology.H0_local">71.55</span> km/s/Mpc</strong> within '
                     "1.4σ of SH0ES 2022. New results: thermal time coupling "
@@ -968,10 +972,17 @@ class IntroductionV16(SimulationBase):
                     "<h4>Two-Time Physics (Bars 1998–2010; Pettini 2026)</h4>"
                     "<p>Itzhak Bars' program demonstrated that a physical theory in signature (d,2) with an "
                     "Sp(2,ℝ) gauge symmetry reproduces families of ordinary one-time systems as different "
-                    "gauge fixings, with the gauge constraint removing ghost states. PM adopts this structure: "
-                    "the bulk carries signature (24,2), and each 13D(12,1) shadow is a one-time gauge slice "
-                    "carrying its own timelike direction — (12,1) + (12,1) = (24,2) exactly. The Sp(2,ℝ) "
-                    "constraint is currently a STRUCTURAL assumption (invoked, not yet derived from b₃ = 24). "
+                    "gauge fixings, with the gauge constraint removing ghost states. PM borrows the "
+                    "<em>shape</em> of this structure: the bulk carries signature (24,2), and each "
+                    "13D(12,1) shadow is treated as a one-time slice carrying its own timelike "
+                    "direction — (12,1) + (12,1) = (24,2) exactly. <strong>PM does not inherit "
+                    "Bars&rsquo; ghost-freedom theorem, and the appeal to it is withdrawn</strong> "
+                    "(2026-08-31 signature ruling): Sp(2,ℝ) gauging removes two dimensions and "
+                    "yields ONE 24D shadow of signature (23,1), not two 13D(12,1) shadows, and "
+                    "Bars&rsquo; shadows are alternative gauge-fixings of the same bulk rather than "
+                    "a partition of it into halves. Ghost control of the second time is an OPEN "
+                    "problem here with no computed backing. The Sp(2,ℝ) constraint is likewise a "
+                    "STRUCTURAL assumption (invoked, not derived from b₃ = 24). "
                     "Recent work by <strong>Pettini (2026, arXiv:2606.12457)</strong> argues that an extra "
                     "<em>timelike</em> dimension lets spatially separated branes correlate causally through the "
                     "second time — where an extra spacelike dimension would instead permit superluminal "
@@ -981,9 +992,15 @@ class IntroductionV16(SimulationBase):
                     "the Sp(2,ℝ)-invariant combination t₊ = (t₁+t₂)/√2 survives gauge fixing as the common "
                     "time along which the OR reduction balances the 12 bridge pairs, while the relative time "
                     "t₋ = (t₁−t₂)/√2 is pure gauge. A literal third timelike direction would give "
-                    "D = 27 ≠ D_crit = 26, destroy the Weyl chirality of Cl(24,2) (odd-dimensional Clifford "
-                    "algebras admit no chiral spinors), and fall outside the Sp(2,ℝ) two-time theorem, which "
-                    "singles out exactly two times.</p>"
+                    "D = 27, an odd dimension, destroying the Weyl chirality the framework relies on "
+                    "(odd-dimensional Clifford algebras admit no chiral spinors), and would fall "
+                    "outside the Sp(2,ℝ) two-time construction, which singles out exactly two "
+                    "times. Note that the argument here is chirality, not criticality: the claim "
+                    "&lsquo;D = 27 ≠ D<sub>crit</sub> = 26&rsquo; is <strong>withdrawn</strong>, "
+                    "because 26 is the ONE-time critical dimension at (25,1) and the two-time "
+                    "bosonic critical dimension is 27–28 (Bars &amp; Kounnas hep-th/9705205). "
+                    "26 = b₃ + 2 is retained as the framework&rsquo;s own dimensional identity "
+                    "and not as a criticality result.</p>"
                 ),
                 label="historical-two-time-context"
             ),
@@ -1247,22 +1264,26 @@ class IntroductionV16(SimulationBase):
                 "url": "https://doi.org/10.1016/0029-5582(61)90469-2"
             },
             {
-                "id": "weinberg_1967",
+                "id": "weinberg1967",
                 "authors": "Weinberg, S.",
                 "title": "A Model of Leptons",
+                "year": 1967,
                 "journal": "Phys. Rev. Lett.",
                 "volume": "19",
-                "year": "1967",
-                "url": "https://doi.org/10.1103/PhysRevLett.19.1264"
+                "pages": "1264-1266",
+                "doi": "10.1103/PhysRevLett.19.1264",
+                "url": "https://doi.org/10.1103/PhysRevLett.19.1264",
             },
             {
                 "id": "georgi_glashow_1974",
-                "authors": "Georgi, H. and Glashow, S. L.",
-                "title": "Unity of All Elementary Particle Forces",
+                "authors": "Georgi, H. and Glashow, S.L.",
+                "title": "Unity of All Elementary-Particle Forces",
+                "year": 1974,
                 "journal": "Phys. Rev. Lett.",
                 "volume": "32",
-                "year": "1974",
-                "url": "https://doi.org/10.1103/PhysRevLett.32.438"
+                "pages": "438-441",
+                "doi": "10.1103/PhysRevLett.32.438",
+                "url": "https://doi.org/10.1103/PhysRevLett.32.438",
             },
         ]
 

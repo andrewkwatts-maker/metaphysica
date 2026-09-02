@@ -1031,16 +1031,17 @@ class DarkMatterPortalsV23(SimulationBase):
         """Return scientific references for dark matter portal physics."""
         return [
             {
-                "id": "planck2018_dm",
-                "authors": "Planck Collaboration",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
-                "journal": "A&A",
+                "year": 2020,
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "year": 2020,
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "Omega_DM h^2 = 0.120 +/- 0.001"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "Omega_DM h^2 = 0.120 +/- 0.001",
             },
             {
                 "id": "xenonnt2023",

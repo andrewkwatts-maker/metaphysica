@@ -1322,14 +1322,15 @@ class AppendixSSpectralResidueV19(SimulationBase):
         """
         return [
             {
-                "id": "minakshisundaram-pleijel-1949",
-                "authors": "Minakshisundaram, S. & Pleijel, A.",
-                "title": "Some properties of the eigenfunctions of the Laplace-operator on Riemannian manifolds",
-                "journal": "Canadian Journal of Mathematics",
+                "id": "minakshisundaram_pleijel_1949",
+                "authors": "Minakshisundaram, S. and Pleijel, A.",
+                "title": "Some Properties of the Eigenfunctions of the Laplace-Operator on Riemannian Manifolds",
+                "year": 1949,
+                "journal": "Canad. J. Math.",
                 "volume": "1",
                 "pages": "242-256",
-                "year": "1949",
                 "doi": "10.4153/CJM-1949-021-5",
+                "url": "https://doi.org/10.4153/CJM-1949-021-5",
             },
             {
                 "id": "seeley-1967",
@@ -1370,14 +1371,15 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 "doi": "10.1016/0001-8708(71)90045-4",
             },
             {
-                "id": "selberg-1956",
+                "id": "selberg1956",
                 "authors": "Selberg, A.",
                 "title": "Harmonic analysis and discontinuous groups in weakly symmetric Riemannian spaces with applications to Dirichlet series",
-                "journal": "Journal of the Indian Mathematical Society",
+                "year": 1956,
+                "journal": "J. Indian Math. Soc.",
                 "volume": "20",
                 "pages": "47-87",
-                "year": "1956",
-                "url": "https://mathworld.wolfram.com/SelbergTraceFormula.html",
+                "url": "https://www.mathnet.ru/eng/mat30",
+                "notes": "No DOI is registered for the 1956 J. Indian Math. Soc. printing (doi.org returns 404 for the JIMS identifier). The linked Mathnet record indexes this paper and cites the original as J. Indian Math. Soc. 20 (1956) 47-87.",
             },
         ]
 

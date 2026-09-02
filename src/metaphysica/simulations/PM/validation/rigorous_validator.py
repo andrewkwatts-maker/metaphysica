@@ -952,12 +952,15 @@ class RigorousValidatorV16_1(SimulationBase):
                 "notes": "theta_12=33.41±0.70°, theta_13=8.58±0.10°, theta_23=49.0±1.5°, delta_CP=232±20°"
             },
             {
-                "id": "desi2025",
-                "authors": "DESI Collaboration",
-                "title": "DESI 2025 Cosmological Constraints from BAO",
-                "journal": "arXiv preprint (not yet published)",
-                "year": 2025,
-                "notes": "w0=-0.958±0.02, wa=-1.05±0.30 (thawing quintessence)"
+                "id": "desi2024",
+                "authors": "DESI Collaboration (Adame, A.G. et al.)",
+                "title": "DESI 2024 VI: Cosmological Constraints from the Measurements of Baryon Acoustic Oscillations",
+                "year": 2024,
+                "journal": "arXiv preprint",
+                "doi": "10.48550/arXiv.2404.03002",
+                "arxiv": "2404.03002",
+                "url": "https://arxiv.org/abs/2404.03002",
+                "notes": "w0=-0.958±0.02, wa=-1.05±0.30 (thawing quintessence)",
             },
             {
                 "id": "planck2025",

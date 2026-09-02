@@ -1554,11 +1554,13 @@ class CKMMatrixSimulation(SimulationBase):
             },
             {
                 "id": "pdg2024",
-                "authors": "Particle Data Group",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
-                "journal": "Prog. Theor. Exp. Phys.",
-                "volume": "2024",
-                "year": "2024",
+                "year": 2024,
+                "journal": "Phys. Rev. D",
+                "volume": "110",
+                "pages": "030001",
+                "doi": "10.1103/PhysRevD.110.030001",
                 "url": "https://pdg.lbl.gov/",
             },
         ]

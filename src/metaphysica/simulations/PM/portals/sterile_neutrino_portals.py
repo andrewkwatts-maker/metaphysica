@@ -996,16 +996,17 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 "notes": "Sterile neutrino production via oscillation in early universe"
             },
             {
-                "id": "planck2018_neff",
-                "authors": "Planck Collaboration",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
-                "journal": "A&A",
+                "year": 2020,
+                "journal": "Astron. Astrophys.",
                 "volume": "641",
                 "pages": "A6",
-                "year": 2020,
+                "doi": "10.1051/0004-6361/201833910",
                 "arxiv": "1807.06209",
-                "url": "https://arxiv.org/abs/1807.06209",
-                "notes": "N_eff = 2.99 +/- 0.34, constraining extra radiation"
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
+                "notes": "N_eff = 2.99 +/- 0.34, constraining extra radiation",
             },
             {
                 "id": "pdg2024_neutrino",
@@ -1018,15 +1019,16 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 "notes": "Delta m^2_atm = 2.453e-3 eV^2, atmospheric neutrino mass scale"
             },
             {
-                "id": "acharya2002_moduli",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
-                "title": "M-theory, Joyce orbifolds and super Yang-Mills",
+                "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 2002,
-                "arxiv": "hep-th/0212294",
-                "url": "https://arxiv.org/abs/hep-th/0202210",
-                "notes": "Moduli stabilization in G2 compactifications"
+                "pages": "227-248",
+                "arxiv": "hep-th/9812205",
+                "url": "https://arxiv.org/abs/hep-th/9812205",
+                "notes": "Moduli stabilization in G2 compactifications",
             },
         ]
 

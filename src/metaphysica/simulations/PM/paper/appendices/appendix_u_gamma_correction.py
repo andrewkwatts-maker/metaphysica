@@ -422,11 +422,13 @@ class AppendixUGammaCorrection(SimulationBase):
     def get_references(self):
         return [
             {
-                "id": "connes1994",
-                "authors": "Connes, A. and Rovelli, C.",
-                "title": "Von Neumann algebra automorphisms and time-thermodynamics relation",
+                "id": "connes_1994_noncommutative_geometry",
+                "authors": "Connes, A.",
+                "title": "Noncommutative Geometry",
                 "year": 1994,
-                "doi": "10.1088/0264-9381/11/12/007",
+                "publisher": "Academic Press",
+                "isbn": "9780121858605",
+                "url": "https://openlibrary.org/works/OL3495466W",
             },
         ]
 

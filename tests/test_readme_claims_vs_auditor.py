@@ -53,10 +53,35 @@ def test_no_closed_claim_for_a_conflicted_observable():
 
 
 def test_the_check_is_not_vacuous():
-    """The keyword map must actually match rows in the README table."""
+    """Either the table is there and the map matches it, or it is gone.
+
+    The README's "candidate resolutions" table was replaced by a pointer to
+    OUTSTANDING_ISSUES.md, so the keywords this map guards no longer appear
+    and the check above has nothing to range over. That is a legitimate
+    state, not a failure -- but it must be DISTINGUISHED from the table
+    having been renamed or reworded, which would leave a live claim
+    unguarded while the test quietly passed.
+
+    So: if the table is absent, require that no "| closed |" row survives at
+    all. If any such row exists, the map must match it. The guard therefore
+    stays armed for the table's return instead of being deleted with it.
+    """
     readme = io.open(_ROOT / "README.md", encoding="utf-8").read()
-    for keyword in _CLAIM_MAP:
-        assert keyword in readme, (
-            f"keyword {keyword!r} no longer appears in README — update the "
-            "map or this test silently checks nothing"
+    closed_rows = [ln for ln in readme.splitlines()
+                   if "| closed |" in ln.replace("**", "").lower()]
+    matched = [k for k in _CLAIM_MAP if k in readme]
+
+    if not closed_rows:
+        assert not matched, (
+            "the README carries the mapped keywords but no '| closed |' "
+            "rows; the table has been reworded and _CLAIM_MAP no longer "
+            "describes it"
         )
+        return
+
+    assert matched, (
+        f"the README still has {len(closed_rows)} '| closed |' row(s) but "
+        f"none of the mapped keywords {sorted(_CLAIM_MAP)} appear, so "
+        f"test_no_closed_claim_for_a_conflicted_observable is checking "
+        f"nothing. Update the map to the table's current wording."
+    )

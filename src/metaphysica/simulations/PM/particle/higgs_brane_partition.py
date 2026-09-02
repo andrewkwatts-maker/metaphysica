@@ -878,15 +878,16 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 "notes": "CMS Higgs discovery."
             },
             {
-                "id": "acharya2002",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
-                "title": "M theory, Joyce orbifolds and Super Yang-Mills",
+                "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 2002,
-                "arxiv": "hep-th/0212294",
-                "url": "https://arxiv.org/abs/hep-th/0212294",
-                "notes": "Moduli stabilization in M-theory on G2 manifolds."
+                "pages": "227-248",
+                "arxiv": "hep-th/9812205",
+                "url": "https://arxiv.org/abs/hep-th/9812205",
+                "notes": "Moduli stabilization in M-theory on G2 manifolds.",
             },
             {
                 "id": "acharya_witten2001",
@@ -895,11 +896,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 "year": 2001,
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": (
-                    "Foundational paper on G2 compactification. Wilson-line moduli "
-                    "can give rise to Higgs-like scalars, but mass scale depends on "
-                    "non-perturbative moduli stabilization, not simple topological ratios."
-                )
+                "notes": "Foundational paper on G2 compactification. Wilson-line moduli can give rise to Higgs-like scalars, but mass scale depends on non-perturbative moduli stabilization, not simple topological ratios.",
             },
             {
                 "id": "acharya_g2mssm2007",

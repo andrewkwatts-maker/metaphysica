@@ -693,11 +693,13 @@ class AppendixJTorsionFunnel(SimulationBase):
         """Return bibliographic references for torsion funnel topology."""
         return [
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "year": "2000",
-                "doi": "10.1093/acprof:oso/9780198506010.001.0001",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "monograph",
             },
             {

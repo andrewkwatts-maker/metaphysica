@@ -237,13 +237,16 @@ class StefanBoltzmannV17(SimulationBase):
         """Return bibliographic references for the Stefan-Boltzmann derivation."""
         return [
             {
-                "id": "codata2022stefan",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "id": "codata2022",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "sigma = 5.670374419e-8 W/(m^2 K^4) (exact since 2019 SI redefinition)"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "sigma = 5.670374419e-8 W/(m^2 K^4) (exact since 2019 SI redefinition)",
             },
             {
                 "id": "stefan1879",

@@ -1828,12 +1828,16 @@ class GRSpacetimeDerivationsV19(SimulationBase):
                 "type": "textbook"
             },
             {
-                "id": "codata2018_constants",
-                "authors": "CODATA Task Group on Fundamental Constants",
+                "id": "nist-codata-2018",
+                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2018",
-                "year": 2019,
+                "year": 2021,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "93",
+                "pages": "025010",
                 "doi": "10.1103/RevModPhys.93.025010",
-                "type": "dataset"
+                "url": "https://doi.org/10.1103/RevModPhys.93.025010",
+                "type": "dataset",
             },
         ]
 

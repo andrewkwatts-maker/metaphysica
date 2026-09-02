@@ -962,15 +962,15 @@ class ALPPortalsV23(SimulationBase):
         return [
             {
                 "id": "svrcek_witten_2006",
-                "authors": "Svrcek, P. & Witten, E.",
+                "authors": "Svrcek, P. and Witten, E.",
                 "title": "Axions in String Theory",
+                "year": 2006,
                 "journal": "JHEP",
                 "volume": "0606",
                 "pages": "051",
-                "year": 2006,
                 "arxiv": "hep-th/0605206",
                 "url": "https://arxiv.org/abs/hep-th/0605206",
-                "notes": "ALP landscape from string compactifications"
+                "notes": "ALP landscape from string compactifications",
             },
             {
                 "id": "conlon_2006",

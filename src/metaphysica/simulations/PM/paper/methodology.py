@@ -742,8 +742,14 @@ class MethodologyV16_2(SimulationBase):
                     "(4) the <strong>Leech lattice</strong> ambient space R<sup>24</sup> decomposes into "
                     "three orthogonal E<sub>8</sub>-structured blocks; "
                     "(5) coordinate pairing yields <strong>12 bridge pairs</strong>; "
-                    "(6) grouping into <strong>4 faces × 3 bridges</strong> recovers "
-                    "h<sup>1,1</sup> = 4 and n<sub>gen</sub> = 3."
+                    "(6) grouping into <strong>4 faces × 3 bridges</strong> gives "
+                    "n<sub>gen</sub> = 3 per face. Step (6) no longer reads n<sub>faces</sub> = 4 "
+                    "off h<sup>1,1</sup> of the TCS building block: joining the R<sup>24</sup> "
+                    "bridge structure to the R<sup>7</sup> Fano-plane channel structure caps the "
+                    "face count at four and derives the genericity criterion — see §1.1.1a. "
+                    "That join rests on one stated assumption (the E<sub>8</sub> block is a "
+                    "property of the channel, not of the observing face) and it narrows the "
+                    "placements to 7, not to 1."
                 )
             ),
             ContentBlock(
@@ -757,8 +763,11 @@ class MethodologyV16_2(SimulationBase):
                     "This chain is computationally verified end-to-end by the LatticeBridgeConnector, "
                     "with 6 dedicated LATTICE certificates (LATT-050 through LATT-055) validating each "
                     "step. The derivation provides an algebraic cross-check of the topological inputs "
-                    "b<sub>3</sub> = 24, h<sup>1,1</sup> = 4, and n<sub>gen</sub> = 3 used throughout "
-                    "the spectral geometry framework."
+                    "b<sub>3</sub> = 24, b<sub>2</sub> = 4, and n<sub>gen</sub> = 3 used throughout "
+                    "the spectral geometry framework. (b<sub>2</sub>, not h<sup>1,1</sup>: a "
+                    "G<sub>2</sub>-holonomy manifold has no complex structure and therefore no "
+                    "Hodge numbers. h<sup>1,1</sup> = 4 is a Hodge number of the TCS <em>building "
+                    "block</em>; the two coincide for this construction but the wording did not.)"
                 )
             ),
 
@@ -989,33 +998,35 @@ class MethodologyV16_2(SimulationBase):
                 "authors": "Berger, M.",
                 "title": "Sur les groupes d'holonomie homogene des varietes a connexion affine et des varietes riemanniennes",
                 "year": 1955,
-                "journal": "Bulletin de la Societe Mathematique de France",
+                "journal": "Bull. Soc. Math. France",
                 "volume": "83",
                 "pages": "279-330",
-                "url": "https://doi.org/10.24033/bsmf.1502",
-                "notes": "Berger classification of holonomy groups; establishes G2 as possible Riemannian holonomy"
+                "doi": "10.24033/bsmf.1464",
+                "url": "https://doi.org/10.24033/bsmf.1464",
+                "notes": "Berger classification of holonomy groups; establishes G2 as possible Riemannian holonomy",
             },
             {
                 "id": "selberg1956",
                 "authors": "Selberg, A.",
                 "title": "Harmonic analysis and discontinuous groups in weakly symmetric Riemannian spaces with applications to Dirichlet series",
                 "year": 1956,
-                "journal": "Journal of the Indian Mathematical Society",
+                "journal": "J. Indian Math. Soc.",
                 "volume": "20",
                 "pages": "47-87",
-                "url": "https://doi.org/10.1007/BF02940436",
-                "notes": "Foundation for the trace formula relating spectral and geometric data"
+                "url": "https://www.mathnet.ru/eng/mat30",
+                "notes": "No DOI is registered for the 1956 J. Indian Math. Soc. printing (doi.org returns 404 for the JIMS identifier). The linked Mathnet record indexes this paper and cites the original as J. Indian Math. Soc. 20 (1956) 47-87.",
             },
             {
                 "id": "minakshisundaram_pleijel_1949",
                 "authors": "Minakshisundaram, S. and Pleijel, A.",
                 "title": "Some Properties of the Eigenfunctions of the Laplace-Operator on Riemannian Manifolds",
                 "year": 1949,
-                "journal": "Canadian Journal of Mathematics",
+                "journal": "Canad. J. Math.",
                 "volume": "1",
                 "pages": "242-256",
+                "doi": "10.4153/CJM-1949-021-5",
                 "url": "https://doi.org/10.4153/CJM-1949-021-5",
-                "notes": "Heat kernel expansion; asymptotic formula used in sterile proof (2.2b)"
+                "notes": "Heat kernel expansion; asymptotic formula used in sterile proof (2.2b)",
             },
         ]
 

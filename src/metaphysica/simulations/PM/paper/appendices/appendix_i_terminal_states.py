@@ -343,7 +343,7 @@ class AppendixITerminalStates(SimulationBase):
                     "<table style='width:100%'>"
                     "<tr><th>Era</th><th>State</th><th>Description</th></tr>"
                     "<tr><td>Primordial</td><td>Unlocked</td><td>The 26D potential shatters into 125 nodes</td></tr>"
-                    "<tr><td>Current (v24.2)</td><td>Locked</td><td>The 0.48σ alignment governs expansion</td></tr>"
+                    "<tr><td>Current (v24.2)</td><td>Locked</td><td>The fixed residues govern expansion (global fit: POOR_FIT)</td></tr>"
                     "<tr><td>Terminal</td><td>Saturated</td><td>The manifold is fully 'unwound'; time as a gradient ceases</td></tr>"
                     "</table>"
                 ),
@@ -709,11 +709,13 @@ class AppendixITerminalStates(SimulationBase):
                 "type": "journal",
             },
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "year": "2000",
-                "doi": "10.1093/acprof:oso/9780198506010.001.0001",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "monograph",
             },
         ]

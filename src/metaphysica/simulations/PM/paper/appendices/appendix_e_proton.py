@@ -513,11 +513,16 @@ def calculate_proton_lifetime(M_GUT: float, m_p: float, alpha_GUT: float = 1/24,
             },
             {
                 "id": "superk2020",
-                "authors": "Super-Kamiokande Collaboration",
-                "title": "Search for proton decay via p->e+pi0 and p->mu+pi0",
+                "authors": "Super-Kamiokande Collaboration (Takenaka, A. et al.)",
+                "title": "Search for proton decay via p -> e+ pi0 and p -> mu+ pi0 with an enlarged fiducial volume in Super-Kamiokande I-IV",
                 "year": 2020,
+                "journal": "Phys. Rev. D",
+                "volume": "102",
+                "pages": "112011",
                 "doi": "10.1103/PhysRevD.102.112011",
-                "type": "article"
+                "arxiv": "2010.16098",
+                "url": "https://doi.org/10.1103/PhysRevD.102.112011",
+                "type": "article",
             },
         ]
 

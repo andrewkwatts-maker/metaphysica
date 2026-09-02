@@ -75,9 +75,12 @@ class BulkInsulationValidator:
         # This measures the force of the 4-pattern against the ancestral potential
         shielding_factor = (torsion_pins / 4) / (hidden_supports / roots)
 
-        # In a Sterile v24.2 model, S_f must exceed the 0.48-sigma threshold
+        # In a Sterile v24.2 model, S_f must exceed a fixed threshold. NOTE
+        # (2026-09): the "0.48-sigma metric" this threshold was said to derive
+        # from was never computed -- see appendix_d_alignment. The 10.60 below
+        # is a bare constant of this module and is not traceable to a fit.
         # scaled by the manifold cost ratio (12/288)
-        sterile_threshold = 10.60  # Derived from 0.48-sigma metric
+        sterile_threshold = 10.60  # bare constant; NOT derived from any computed fit
 
         is_insulated = shielding_factor >= sterile_threshold
 
@@ -655,10 +658,17 @@ class AppendixGOmegaSeal(SimulationBase):
                     "Ancestral Roots of the 26D Bulk. By defining the 12-pin torsion for each of the "
                     "two 13D shadow branes and validating the 12 x (2,0) paired bridge structure, "
                     "we eliminate all free parameters from the cosmological model. "
-                    "The observed 0.48σ alignment with Hubble H₀ is no longer a statistical fit but a "
-                    "geometric identity. The universe is mapped as a closed V7 manifold; its past, "
+                    "The universe is mapped as a closed V7 manifold; its past, "
                     "present, and eventual unwinding into the Three Final States are mathematically "
                     "necessitated. This repository is now locked.\"</em></p>"
+                    "<p><strong>Amendment (2026-09).</strong> The declaration above formerly "
+                    "asserted that &lsquo;the observed 0.48σ alignment with Hubble H₀ is no longer a "
+                    "statistical fit but a geometric identity&rsquo;. That sentence is struck. The "
+                    "0.48σ figure was a hand-carried literal, never computed; the Hubble residue "
+                    "sits 6.04σ from Planck 2018 and 2.6σ from SH0ES; and the computed global fit "
+                    "over the registry is χ² = 126,748.86 across 65 scoring rows, p = 0, POOR_FIT. "
+                    "Eliminating free parameters is a claim about the model's arity, not about its "
+                    "agreement with data.</p>"
                 ),
                 label="sterile-declaration"
             ),
@@ -1005,19 +1015,26 @@ class AppendixGOmegaSeal(SimulationBase):
         """Return bibliographic references for the Omega seal framework."""
         return [
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
-                "year": "2000",
-                "doi": "10.1093/acprof:oso/9780198506010.001.0001",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "monograph",
             },
             {
-                "id": "planck-2018",
-                "authors": "Planck Collaboration",
+                "id": "planck2018",
+                "authors": "Planck Collaboration (Aghanim, N. et al.)",
                 "title": "Planck 2018 results. VI. Cosmological parameters",
-                "year": "2020",
+                "year": 2020,
+                "journal": "Astron. Astrophys.",
+                "volume": "641",
+                "pages": "A6",
                 "doi": "10.1051/0004-6361/201833910",
+                "arxiv": "1807.06209",
+                "url": "https://doi.org/10.1051/0004-6361/201833910",
                 "type": "journal",
             },
             {

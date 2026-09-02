@@ -10,11 +10,96 @@ All notable changes to `metaphysica` will be documented in this file.
 
 ---
 
-## [Unreleased] — EML render integrity, bibliography wiring, coupling geometry
+## [Unreleased] — the (24,2) ruling, the bridge-to-channel join, honest statistics
 
 Requires **eml-math >= 2.4.0**. Expressions here call operators added in that
 release; against 2.3 each raises `AttributeError` and the affected parameter
 is scored as unevaluable.
+
+### Changed — the bulk signature is RULED: 26D at (24,2)
+
+`CANON["bulk"]` moves from `STRUCTURAL_CHALLENGED` to a ruled state, and
+`variants.json` gains the fork `bulk_signature` (status RULED, selected
+`24_2`, with `(26,2)` and `(25,1)` kept as options carrying their evidence).
+The bulk is 26-dimensional at signature (24,2) — 24 space, two times, one per
+shadow — shadows stay 13D(12,1), and nothing migrates.
+
+**The costs are recorded, not dropped** (`CANON["bulk"]["ruling"]`), and the
+three challenge positions stay on the books:
+
+- `D_bulk = D_crit = 26` is **withdrawn**. The two-time bosonic critical
+  dimension is 27–28, at (25,2)/(26,2) (Bars & Kounnas, hep-th/9705205);
+  D_crit = 26 belongs to the one-time string at (25,1), where 26 is 24
+  transverse plus a lightcone pair, not two times.
+- The appeal to Bars for **ghost-freedom is withdrawn**. Sp(2,ℝ) gauging
+  removes exactly two dimensions, giving one 24D shadow of signature (23,1) —
+  not two 13D(12,1) ones — so the framework's shadows do not inherit his
+  theorem. Sp(2,ℝ) remains invoked, not derived from b₃ = 24.
+- The **lattice obstruction is unanswered**: an even unimodular lattice of
+  signature (p,q) exists iff p − q ≡ 0 (mod 8), and 24 − 2 = 22 ≡ 6.
+
+Independent of the ruling and still open: the **TCS obstruction**
+(Crowley–Nordström force b₂ + b₃ odd; the claimed (4, 24) is even).
+
+### Fixed — the published statistics were literals, and twenty statuses were upgraded at export
+
+- `statistical_rigor_validator` read `summary.get("global_chi_squared", 0.23)`
+  from a report whose summary has never carried that key, so the **0.23
+  default fired on every run**, together with a `degrees_of_freedom` default
+  of 25. The p-value, the EDOF comparison and the headline verdict all came
+  from those two literals rather than from the rows in the same file. With the
+  file *absent* it published a full report — including "Full Independence:
+  True" — over no data at all. And the p-value tail was chosen from the data
+  but *interpreted* from a flag, so an upper-tail p ≈ 0 was reported as
+  "TOO_GOOD (suspiciously perfect fit)": the conclusion inverted.
+  Same code, same file, now: **χ² = 126,749 over 65 scoring rows, p = 0,
+  POOR_FIT**; 5,791 over 60 excluding the five withdrawn candidates, published
+  side by side rather than either being chosen silently. **Any document
+  quoting "χ² = 0.23", "TOO_GOOD" or "suspiciously perfect" is false.**
+  Still scaffolds, and they say so: the EDOF = 3 ansatz and the `np.random`
+  Jacobian.
+- The export whitelist preserved seven status names and rewrote everything
+  else to `DERIVED` — always in the same direction, because DERIVED is
+  stronger than nearly all of them. An AST walk found **27 declared, 7
+  surviving**: `FITTED` (19 parameters), `ANSATZ` (7), `SPECULATIVE` (3),
+  `PLAUSIBLE` (6), `TOPOLOGY_CANDIDATE`, `RETRODICTED_VARIANT` — and
+  `FALSIFIED` and `MEASURED` — all shipped as derivations. 21 statuses now
+  ship where 7 did; DERIVED falls 338 → 275.
+- `geometric_anchors.py` registered **every** anchor `GEOMETRIC` with
+  `fundamental: True` and `tuning_free: True`. **Twenty are raw experimental
+  input**: the three NuFIT mixing angles, the SH0ES H₀, the Planck matter
+  density, the DESI w₀/wₐ, the PDG Wolfenstein A and Jarlskog, and two
+  openly phenomenological fit values. The correct classification already
+  existed — a `measured_params` set with a docstring explaining exactly this
+  distinction — inside a method defined on nothing and called from nowhere.
+  `geometry.theta_13` is the sharpest case: the producer returns a hardcoded
+  `8.54` whose own comment reads `8.54 deg (NuFIT)`, so it is the anchor
+  restated and is now **deliberately left unscored**. Its billing as a
+  "0.4σ geometric cross-check" on θ₁₃ is withdrawn. `particle.theta_13_deg`
+  **is** a derivation and is scored for the first time: **0.805σ PASS**
+  against NuFIT 6.0.
+- `improvement_scorecard.json` published "42/42 testable gates LOCKED
+  (100.0%), open_gate_ids: []" with G12 among the locked ids, while the
+  evaluation layer in the same directory reported G12 COMPUTED_FAIL at 17.1σ
+  and the G72 seal failing on it. The generator read `verification_status` —
+  what a certificate asserts about itself — and never `evaluation_status`.
+  Now **41/43 locked (95.3%), open ['12', '72']**, with 45 declarative gates
+  counted separately so completion is not mistaken for execution.
+- KiDS-1000 and DES-Y3 anchors added, so the S₈ weak-lensing tension is
+  scored instead of narrated: **0.718σ PASS vs Planck, 2.733σ TENSION vs
+  KiDS-1000**. Friction does not resolve it.
+- An uncited theory uncertainty may no longer change a verdict (R6
+  generalised to the whole validation layer). Four rows carried a buffer 23×
+  to 2333× the experimental uncertainty; two were defined as a percentage of
+  the value under test. Ten of the fifteen rows with a theory uncertainty are
+  untouched because the allowance is not load-bearing. All three policies
+  (`cited_only` / `always` / `experimental_only`) are published side by side.
+- `compute_leakage_from_lattice` claimed the coupling was "derived from the
+  actual stabilized moduli rather than hardcoding ratio=6.0". It computed the
+  four face volumes and **discarded them**, returning `1/sqrt(n_bridges // 2)`
+  — a function of the bridge count alone, identical for any moduli. The
+  topological derivation is kept; the provenance claim is withdrawn and the
+  volumes are now load-bearing as a check that can fail.
 
 ### Fixed — the website was publishing error text as physics
 
@@ -73,9 +158,9 @@ The 21 allowed couplings on the 21 coordinate pairs form a 2-regular graph:
 **seven disjoint triangles**, one per coordinate *k*, whose edges are the
 three Fano lines through *k*. Over all C(21,12) = 293,930 placements of the
 twelve bridges the live-coupling count runs 5–12, maximal at 12 for exactly
-35 = C(7,4) placements — the four-complete-triangle ones. Proposed
-identification (`docs/BRIDGE_CHANNEL_ASSIGNMENT.md`): each face is a
-triangle, supplying the criterion `four_face_structure` lacks.
+35 = C(7,4) placements — the four-complete-triangle ones. Identification
+(`PrincipiaMetaphysica/docs/BRIDGE_CHANNEL_ASSIGNMENT.md`): each face is a
+triangle, supplying the criterion `four_face_structure` lacked.
 
 **Correction.** The Stage-4 report's kill condition — bridges landing only on
 non-associative complements — describes an event that **cannot occur** (the
@@ -84,6 +169,60 @@ the exact defect this project audits out of its own gates, and it shipped.
 Retired as `kill_condition_retired` rather than deleted, and replaced with a
 falsifier 35 of 293,930 placements satisfy. The correction strengthens the
 result: cross-shadow coupling is **structurally unavoidable**.
+
+### Added — the bridge-to-channel join closes, on one stated assumption
+
+The register's load-bearing geometric gap — *nothing maps a bridge index to a
+G₂ coordinate pair* — is closed. The two structures have identical shape: each
+coupling triangle is indexed by an omitted Fano point and its three vertices
+are the three lines through that point, so a maximal placement is 4 points ×
+3 lines = 12 slots against 4 faces × 3 bridges = 12.
+
+**One assumption is added, and it must be restated wherever the result is
+quoted:** the E₈ block a bridge carries is a property of the **channel**, not
+of the face observing it — one global labelling of the 7 Fano lines by 3
+blocks, shared by every face. Enumerating all 3⁷ = 2187 labellings then turns
+two inputs into consequences:
+
+- **`n_faces = 4` is forced.** Four is the *maximum* number of simultaneously
+  rainbow Fano points; 5, 6 and 7 admit no labelling at all. It was previously
+  read off h^{1,1} = 4 of the TCS #187 building block, which
+  `four_face_structure` itself classifies FITTED.
+- **Genericity is derived.** The 28 line-containing 4-point sets admit **zero**
+  labellings; each of the 7 arcs admits exactly 18. The `face_genericity` fork
+  goes OPEN → **RULED**; it had carried the note "NOT derived — nothing in the
+  framework forbids collinear labels".
+
+The structure then closes as **K₄** on the four faces: 4 faces = vertices,
+6 channel-lines = edges, **12 bridges = the 12 directed edges** (ordered pairs
+of faces), 3 E₈ blocks = the 3 perfect matchings, 1 spare line incident to no
+face. So "bridge" is literal, and 12 is K₄'s directed-edge count rather than a
+separate input. 18 = 3! proper 3-edge-colourings × 3 free colours for the
+complement line. `n_gen = 3` is fixed twice over (Leech 24 = 8+8+8; q+1 = 3
+lines per point of the order-2 projective plane).
+
+**And the assignment is unique up to symmetry.** All 7 × 18 = 126 residual
+possibilities are relabellings: the block partition is canonical given the arc
+(the three perfect matchings are the fibres of "which point of the complement
+line does this edge's line meet"); the spare colour is incident to no bridge;
+and the 7 arcs form a single orbit under Aut(Fano) = PSL(3,2), order 168, arc
+stabiliser 24 acting as the full S₄ on the four faces. *Conditional kill:* if
+anything elsewhere in the framework distinguishes a Fano direction, PSL(3,2)
+breaks and the arc choice becomes physical again.
+
+Two prose claims became code. **15400** and **576** had no implementation
+behind them; both are now enumerated and agree with 12!/((3!)⁴4!) and (4!)².
+The 576 form a single **regular** S₄ × S₄ orbit, so stride-4 {i, i+4, i+8} is a
+coordinate convention, not a fitted selection. And the long-standing stride-4
+vs contiguous conflict is settled the other way: they are **different
+objects** — the contiguous grouping's first face lies entirely inside one E₈
+block, so it was never one of the 576.
+
+**Kill condition on record:** any 5-point rainbow set, or any line-containing
+4-set admitting a labelling, retracts the corresponding half.
+
+Tests: `test_block_labelling_join.py`, `test_assignment_uniqueness.py`,
+`test_bridge_face_incidence.py`, `test_face_grouping_enumeration.py`.
 
 ### Added — tests that encode this cycle's lessons
 

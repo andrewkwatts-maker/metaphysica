@@ -160,13 +160,16 @@ class MolarGasV17(SimulationBase):
         """Return bibliographic references for the molar gas constant derivation."""
         return [
             {
-                "id": "codata2022r",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "id": "codata2022",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "R = 8.314462618 J/(mol K) (exact since 2019 SI: R = N_A * k_B)"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "R = 8.314462618 J/(mol K) (exact since 2019 SI: R = N_A * k_B)",
             },
             {
                 "id": "bipm2019",

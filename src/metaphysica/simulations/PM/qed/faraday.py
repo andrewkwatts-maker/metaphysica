@@ -192,13 +192,16 @@ class FaradayV17(SimulationBase):
         """Return bibliographic references for the Faraday constant derivation."""
         return [
             {
-                "id": "codata2022faraday",
-                "authors": "Tiesinga, E., Mohr, P.J., Newell, D.B., Taylor, B.N.",
+                "id": "codata2022",
+                "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                 "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
-                "journal": "Journal of Physical and Chemical Reference Data",
-                "year": 2024,
-                "url": "https://physics.nist.gov/cuu/Constants/",
-                "notes": "F = 96485.33212 C/mol (exact since 2019 SI redefinition: F = N_A * e)"
+                "year": 2025,
+                "journal": "Rev. Mod. Phys.",
+                "volume": "97",
+                "pages": "025002",
+                "doi": "10.1103/RevModPhys.97.025002",
+                "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                "notes": "F = 96485.33212 C/mol (exact since 2019 SI redefinition: F = N_A * e)",
             },
             {
                 "id": "bipm2019",

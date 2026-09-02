@@ -235,10 +235,17 @@ class AbstractV17_2(SimulationBase):
             "abstract.pure_predictions":       55,
             "abstract.calibration_inputs":     3,
             "abstract.fitted_pmns":            2,
-            # Validation statistics (Standard Model parameter comparisons)
-            "validation.total_predictions":    26,   # Total SM parameters with experimental comparisons
-            "validation.predictions_within_1sigma": 24,  # Within 1σ of experimental values
-            "validation.exact_matches":        3,    # Within 0.1σ (theory uncertainty level)
+            # Validation statistics (Standard Model parameter comparisons).
+            # WARNING (2026-09): the three counts below are hand-maintained
+            # literals, not computed. generate_statistics writes the computed
+            # figures — validation.within_1sigma = 41 and within_2sigma = 54
+            # over validation.total_predictions = 67 — and statistics.json
+            # reports exact_matches = 0. The abstract prose now quotes the
+            # computed pair (67 / 41); reconciling the literals below with
+            # them changes registry values and needs an author ruling.
+            "validation.total_predictions":    26,   # LITERAL, not computed (computed: 67)
+            "validation.predictions_within_1sigma": 24,  # LITERAL, not computed (computed: 41)
+            "validation.exact_matches":        3,    # LITERAL, not computed (statistics.json: 0)
             "validation.calibrated_count":     0,    # EDOF=3: calibrations are scale-setting, not fitted
             "validation.constraints_count":    1,    # Higgs mass fixes Re(T)
             "abstract.constraints_count":      1,    # One observational constraint (m_h → Re(T))
@@ -368,13 +375,20 @@ class AbstractV17_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    'Of <span class="pm-value" data-pm-value="validation.total_predictions">26</span> '
-                    'Standard Model parameter comparisons, '
-                    '<strong><span class="pm-value" data-pm-value="validation.predictions_within_1sigma">24</span></strong> '
+                    'The framework does not fit the data globally. Over the 65 scoring rows of '
+                    'the validation registry the computed statistic is <strong>\u03c7\u00b2 = 126,748.86 '
+                    '(reduced 1,950), p = 0, status POOR_FIT</strong>; excluding five candidates now '
+                    'carried as FALSIFIED it is \u03c7\u00b2 = 5,790.62 over 60 rows (reduced \u2248 96.5). '
+                    'Both figures are published in <code>statistical_rigor_report.json</code> under '
+                    '<code>chi_squared_from_rows</code>. A previously published headline of '
+                    '\u03c7\u00b2 = 0.23, reduced 0.077, p \u2248 0.97, verdict TOO_GOOD was read from a summary '
+                    'key that has never existed, and is withdrawn in full. '
+                    'Individual comparisons are a different matter and are reported per row: of '
+                    '<span class="pm-value" data-pm-value="validation.total_predictions">67</span> '
+                    'scored parameter comparisons, '
+                    '<strong><span class="pm-value" data-pm-value="validation.within_1sigma">41</span></strong> '
                     'lie within 1\u03c3 of current experimental '
-                    'data (see Section 3 for full comparison table), with '
-                    '<strong><span class="pm-value" data-pm-value="validation.exact_matches">3</span> within '
-                    '0.1\u03c3 of experimental central values</strong> (within theory uncertainty), including the fine structure '
+                    'data (see Section 3 for full comparison table), including the fine structure '
                     'constant \u03b1<sup>\u22121</sup> = <span class="pm-value" data-pm-value="abstract.alpha_inv_pred">137.0367</span> (\u03b1<sup>\u22121</sup><sub>pred</sub> vs CODATA 2022: <span class="pm-value" data-pm-value="abstract.alpha_inv_codata">137.036</span>; '
                     '~<span class="pm-value" data-pm-value="abstract.alpha_inv_theory_sigma">0.05</span>\u03c3 theory-level comparison\u2014note: CODATA experimental precision is sub-ppb) and '
                     '\u03b8\u2082\u2083 = <span class="pm-value" data-pm-value="pmns_matrix.theta_23">49.75</span>\u00b0 '
@@ -634,7 +648,11 @@ class AbstractV17_2(SimulationBase):
                 name="Pure Predictions Count",
                 no_experimental_value=True,
                 units="dimensionless",
-                description="Number of parameters that are pure topological predictions with no experimental input",
+                description=("Number of parameters claimed as pure topological predictions with no "
+                             "experimental input. Twenty entries in the geometry.* namespace carry "
+                             "status MEASURED -- the three NuFIT mixing angles, SH0ES H0, Planck "
+                             "Omega_m, DESI w0/wa, PDG Wolfenstein A and Jarlskog among them -- and "
+                             "are raw experimental input, not consequences of b3 = 24."),
                 status="PREDICTED",
                 eml_description="EML: eml_scalar(55) — count of zero-free-parameter predictions derived from G₂ topology alone"
             ),
@@ -1036,10 +1054,13 @@ class AbstractV17_2(SimulationBase):
                     "name": "Testable Predictions",
                     "explanation": (
                         "The abstract highlights several predictions that experiments can "
-                        "check: 24 out of 26 predictions already match experimental data "
-                        "within measurement uncertainty, dark energy may behave as 'thawing' "
-                        "(consistent with DESI 2025 data), and proton decay at a rate "
-                        "testable by the Hyper-Kamiokande detector."
+                        "check. 41 of 67 scored comparisons land within 1 sigma of the "
+                        "measurement, dark energy may behave as 'thawing' (consistent with "
+                        "DESI 2025 data), and proton decay at a rate testable by the "
+                        "Hyper-Kamiokande detector. Taken together, though, the fit is poor: "
+                        "chi^2 = 126,748.86 over 65 scoring rows, p = 0, POOR_FIT. Five "
+                        "candidates have already been falsified outright, including three "
+                        "attempts at the Cabibbo angle."
                     )
                 },
                 {

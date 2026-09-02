@@ -825,9 +825,17 @@ def get_geometric_pmns() -> Dict[str, Any]:
     With the Sprint T5 #1 two-parameter form,
     ``documented_divergence.theta_13_within_1sigma`` AND
     ``documented_divergence.delta_CP_within_1sigma`` are BOTH ``True``
-    (θ₁₃ = 8.669°, 0.99σ from 8.54 ± 0.13; δ_CP = 1.541π, 0.005σ from
-    1.54π ± 0.17π). The 72-gate validator can mark BOTH PMNS gates
-    green — proof-killer #2 (δ_CP independence) is closed.
+    (θ₁₃ = 8.6686°, δ_CP = 1.541π, 0.005σ from 1.54π ± 0.17π).
+
+    θ₁₃ is now scored in the validation registry for the first time:
+    ``particle.theta_13_deg`` = 8.6686° against NuFIT 6.0 8.58 ± 0.11
+    gives **0.805 sigma, verdict PASS**. This is a real derivation being
+    compared to a real measurement, and it is a different object from
+    ``geometry.theta_13`` = 8.54, which is a hardcoded restatement of a
+    pre-release NuFIT central value (status MEASURED). The older
+    "0.99 sigma from 8.54 +- 0.13" figure in this docstring used both a
+    superseded central value and a superseded asymmetric-upper sigma;
+    it is withdrawn.
     """
     return GeometricYukawaT4().derive_pmns_angles()
 

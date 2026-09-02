@@ -1744,22 +1744,22 @@ class DiscussionV16(SimulationBase):
             Formula(
                 id="discussion-global-alignment",
                 label="(7.1)",
-                latex=r"\bar{\sigma} = \frac{1}{N_{\text{pred}}} \sum_{i=1}^{N_{\text{pred}}} \frac{|x_i^{\text{PM}} - x_i^{\text{exp}}|}{\sigma_i^{\text{exp}}} = 0.48\sigma",
-                plain_text="sigma_bar = (1/N_pred) * sum |x_i^PM - x_i^exp| / sigma_i^exp = 0.48 sigma",
+                latex=r"\chi^2 = \sum_{i} \left(\frac{x_i^{\text{PM}} - x_i^{\text{exp}}}{\sigma_i^{\text{exp}}}\right)^{2} = 126{,}748.86 \ \ (n = 65,\ p = 0)",
+                plain_text="chi^2 = sum_i ((x_i^PM - x_i^exp)/sigma_i^exp)^2 = 126748.86 over n = 65 scoring rows, p = 0, POOR_FIT",
                 category="DERIVED",
                 description=(
-                    "Global alignment metric: the arithmetic mean of per-observable pulls "
-                    "(absolute deviation in sigma units) across ALL validated PM predictions. "
-                    "The calculation proceeds as follows: for each observable i, the pull_i = "
-                    "|x_i^PM - x_i^exp| / sigma_i^exp quantifies how many standard deviations "
-                    "the PM prediction deviates from the experimental central value. The global "
-                    "metric sigma_bar = (1/N_pred) * sum(pull_i) = 0.48 sigma averages over N_pred "
-                    "observables spanning gauge couplings (Planck 2018), dark energy parameters "
-                    "(DESI DR2 2025), neutrino mixing angles (NuFIT 6.0), and fermion mass ratios "
-                    "(PDG 2024). A value below 1.0 sigma indicates that, on average, PM predictions "
-                    "fall within the 1-sigma experimental bands. For comparison, the Standard Model "
-                    "with tuned parameters achieves sigma_bar ~ 0 by construction, while a random "
-                    "theory would yield sigma_bar >> 1."
+                    "Global goodness-of-fit: the sum of squared pulls over every scoring row of "
+                    "the validation registry, computed in statistical_rigor_report.json under "
+                    "chi_squared_from_rows. The result is chi^2 = 126748.86 over n = 65 rows "
+                    "(reduced 1950.0), p = 0, status POOR_FIT; excluding the five rows carried as "
+                    "FALSIFIED it is chi^2 = 5790.62 over n = 60 (reduced 96.5). Both are "
+                    "published so that neither the withdrawn candidates nor the survivors alone "
+                    "set the headline. WITHDRAWN: this formula previously read sigma_bar = "
+                    "(1/N_pred) * sum(pull_i) = 0.48 sigma, described as the global alignment "
+                    "across 26 parameters. That number was never computed from the registry, and "
+                    "a mean of absolute pulls is in any case not a goodness-of-fit test: it "
+                    "averages a few catastrophic misses away against many rows that are "
+                    "experimental inputs restated, whose pull is zero by construction."
                 ),
                 input_params=[
                     "topology.elder_kads",
@@ -1848,8 +1848,9 @@ class DiscussionV16(SimulationBase):
                 "journal": "Physics of Life Reviews",
                 "volume": "11",
                 "pages": "39-78",
+                "doi": "10.1016/j.plrev.2013.08.002",
                 "url": "https://doi.org/10.1016/j.plrev.2013.08.002",
-                "notes": "Orch-OR consciousness model explored as a speculative interpretive extension of the PM geometric framework (not a core claim)"
+                "notes": "Orch-OR consciousness model explored as a speculative interpretive extension of the PM geometric framework (not a core claim)",
             },
         ]
 

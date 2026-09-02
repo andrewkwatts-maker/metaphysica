@@ -177,7 +177,14 @@ class AppendixAMathFoundations(SimulationBase):
                     content=(
                         "The critical dimension D = 26 follows from requiring consistent BRST "
                         "quantization of the bosonic string. The Virasoro algebra central charge "
-                        "must vanish for physical states."
+                        "must vanish for physical states. This is the <strong>one-time</strong> "
+                        "result, at signature (25,1), where 26 = 24 transverse coordinates plus a "
+                        "lightcone pair (one space and one time). It is stated here as standard "
+                        "string theory and is <em>not</em> a derivation of PM&rsquo;s bulk: the "
+                        "two-time bosonic critical dimension is 27–28 (Bars &amp; Kounnas, "
+                        "hep-th/9705205), so the claim D<sub>bulk</sub> = D<sub>crit</sub> = 26 at "
+                        "signature (24,2) is withdrawn. PM retains 26 = b<sub>3</sub> + 2 as its "
+                        "own dimensional identity."
                     )
                 ),
                 ContentBlock(

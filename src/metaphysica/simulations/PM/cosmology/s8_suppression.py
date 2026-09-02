@@ -1922,8 +1922,11 @@ class S8SuppressionV16(SimulationBase):
             {
                 "id": "CERT_S8_BETWEEN_CMB_WL",
                 "assertion": (
-                    f"PM S8 = {s8_pm:.3f} is intermediate between Planck ({planck_s8}) "
-                    f"and KiDS-1000 ({kids_s8}), consistent with dynamical DE"
+                    f"PM S8 = {s8_pm:.3f} lies within 3 sigma of Planck ({planck_s8}). It is "
+                    f"NOT intermediate between Planck and KiDS-1000 ({kids_s8}): the same "
+                    f"prediction scores 0.718 sigma against Planck 2018 and 2.733 sigma "
+                    f"against KiDS-1000, i.e. it sits with the CMB. The 'intermediate, "
+                    f"consistent with dynamical DE' reading of this certificate is withdrawn."
                 ),
                 "condition": f"{kids_s8} < {s8_pm:.3f} or {s8_pm:.3f} < {planck_s8} + 3*{planck_s8_sigma}",
                 "tolerance": 3.0,

@@ -287,8 +287,11 @@ class IntegrityV16_2(SimulationBase):
                     "the sum of all residues equals the manifold's volume invariant.</p>"
                     "<h4>Tier III: Observational Alignment (C29–C42)</h4>"
                     "<p>These compare the sterile outputs against the 'Gold Standard' datasets "
-                    "(DESI 2025, Planck 2025). C31, for instance, specifically validates the "
-                    "0.48σ alignment for the Hubble residue.</p>"
+                    "(DESI 2025, Planck 2025). C31, for instance, records the Hubble residue "
+                    "against both anchors. The &lsquo;0.48σ alignment&rsquo; that this tier "
+                    "formerly certified is withdrawn: it was never computed. The Hubble residue "
+                    "sits 6.04σ from Planck 2018 and 2.6σ from SH0ES, and the global fit over the "
+                    "registry is POOR_FIT (χ² = 126,748.86 over 65 scoring rows, p = 0).</p>"
                 ),
                 label="certificate-tiers"
             ),
@@ -387,9 +390,11 @@ class IntegrityV16_2(SimulationBase):
                     "<h4>The Dead Man's Switch</h4>"
                     "<p>A critical feature of the Omega Seal is its behavior toward future "
                     "observational data. If a 2027 dataset significantly shifts the H₀ mean, "
-                    "the v24.2 model will <strong>not</strong> be 'updated.' The model will either "
-                    "maintain its 0.48σ alignment or it will fail. If it fails, the theory is "
-                    "discarded. There is no 'v24.3' because the Metric Lock prohibits the "
+                    "the v24.2 model will <strong>not</strong> be 'updated.' The residues are fixed; "
+                    "they either survive the new data or they do not. The switch has already fired "
+                    "once: five candidates are now carried as FALSIFIED, and the global fit over the "
+                    "registry is POOR_FIT (χ² = 126,748.86 over 65 scoring rows, p = 0). There is "
+                    "no 'v24.3' because the Metric Lock prohibits the "
                     "re-shattering of the 26D(24,2) bulk. The Omega Seal marks the end of the model's "
                     "evolution.</p>"
                 ),
@@ -702,12 +707,16 @@ class IntegrityV16_2(SimulationBase):
         """Return academic references for paper integrity framework."""
         return [
             {
-                "id": "pdg-2024",
-                "authors": "Particle Data Group",
+                "id": "pdg2024",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
                 "year": 2024,
-                "url": "https://pdg.lbl.gov/2024/",
-                "type": "data_compilation"
+                "journal": "Phys. Rev. D",
+                "volume": "110",
+                "pages": "030001",
+                "doi": "10.1103/PhysRevD.110.030001",
+                "url": "https://pdg.lbl.gov/",
+                "type": "data_compilation",
             },
             {
                 "id": "nist-sha256",
@@ -718,12 +727,16 @@ class IntegrityV16_2(SimulationBase):
                 "type": "standard"
             },
             {
-                "id": "berger-1955",
+                "id": "berger1955",
                 "authors": "Berger, M.",
-                "title": "Sur les groupes d'holonomie homogene des varietes a connexion affine",
+                "title": "Sur les groupes d'holonomie homogene des varietes a connexion affine et des varietes riemanniennes",
                 "year": 1955,
+                "journal": "Bull. Soc. Math. France",
+                "volume": "83",
+                "pages": "279-330",
                 "doi": "10.24033/bsmf.1464",
-                "type": "journal_article"
+                "url": "https://doi.org/10.24033/bsmf.1464",
+                "type": "journal_article",
             },
             {
                 "id": "atiyah-singer-1968",
@@ -734,12 +747,14 @@ class IntegrityV16_2(SimulationBase):
                 "type": "journal_article"
             },
             {
-                "id": "joyce-2000",
+                "id": "joyce2000",
                 "authors": "Joyce, D.D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
-                "url": "https://global.oup.com/academic/product/compact-manifolds-with-special-holonomy-9780198506010",
-                "type": "book"
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "type": "book",
             },
         ]
 

@@ -56,12 +56,22 @@ VALID_FORMULA_CATEGORIES = frozenset({
     # RETRODICTED = formula adopted after the measurement it matches;
     # SPECULATIVE = superseded/alternative-story candidate.
     "FITTED", "ANSATZ", "CALIBRATED", "RETRODICTED", "SPECULATIVE",
+    # FALSIFIED: the candidate is dead and stays on the books labelled.
+    # Standing policy is that a falsified candidate is never silently
+    # retired, so the vocabulary has to be able to SAY falsified -- omitting
+    # it forced a dead formula to keep wearing a live category.
+    "FALSIFIED",
 })
 
 # STRUCTURAL (2026-08 audit): certificate whose check asserts an identity
 # from placeholder/zero-valued inputs — cannot fail by construction, so it
 # must not masquerade as an evaluated PASS.
-VALID_CERT_STATUSES = frozenset({"PASS", "FAIL", "OFFLINE", "STRUCTURAL"})
+# WITHDRAWN: the claim the certificate attested has been retracted. Distinct
+# from FAIL (checked and did not hold) and from OFFLINE (not evaluated): the
+# certificate is no longer asserting anything. Same reasoning as FALSIFIED
+# above -- a retraction has to be expressible or it gets recorded as a pass.
+VALID_CERT_STATUSES = frozenset({"PASS", "FAIL", "OFFLINE", "STRUCTURAL",
+                                 "WITHDRAWN"})
 
 # Simulation IDs that are allowed to have empty required_inputs (seed/root sims)
 EMPTY_INPUTS_ALLOWED = frozenset({

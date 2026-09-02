@@ -177,24 +177,26 @@ class WeakMixingV17(SimulationBase):
         return [
             {
                 "id": "pdg2024weak",
-                "authors": "Particle Data Group",
+                "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics: Electroweak Model and Constraints on New Physics",
-                "journal": "Physical Review D",
                 "year": 2024,
+                "journal": "Phys. Rev. D",
                 "volume": "110",
+                "pages": "030001",
                 "url": "https://pdg.lbl.gov/",
-                "notes": "sin^2(theta_W) = 0.23122 +/- 0.00004 (MS-bar scheme at M_Z)"
+                "notes": "sin^2(theta_W) = 0.23122 +/- 0.00004 (MS-bar scheme at M_Z)",
             },
             {
                 "id": "weinberg1967",
                 "authors": "Weinberg, S.",
                 "title": "A Model of Leptons",
-                "journal": "Physical Review Letters",
                 "year": 1967,
+                "journal": "Phys. Rev. Lett.",
                 "volume": "19",
                 "pages": "1264-1266",
+                "doi": "10.1103/PhysRevLett.19.1264",
                 "url": "https://doi.org/10.1103/PhysRevLett.19.1264",
-                "notes": "Original electroweak unification introducing theta_W"
+                "notes": "Original electroweak unification introducing theta_W",
             },
         ]
 

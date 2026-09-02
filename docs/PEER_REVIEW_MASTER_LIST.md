@@ -8,6 +8,40 @@ Status legend: `[x]` fixed this session · `[ ]` open · **DECIDE** = needs the 
 
 ---
 
+> ## Read this before using the tables below (added 2026-09-02)
+>
+> **This file is history, not the live register.** It records the four-domain
+> peer-review cycle of 2026-08-17 and the sweeps that followed. The live
+> register is `PrincipiaMetaphysica/docs/OUTSTANDING_ISSUES.md`, and it wins
+> on any disagreement.
+>
+> It is kept in full — including every falsified candidate and withdrawn claim,
+> per standing policy — but **several "Suggested canonical" entries in C-1 were
+> subsequently ruled the other way.** The ones that matter:
+>
+> | C-1 row | suggested here | ruled since |
+> |---|---|---|
+> | Bulk dimension | 27D (24,1,2) | **26D at (24,2)**, ruled 2026-08-31, shadows 13D(12,1) × 2 — with `D_crit = 26` withdrawn, the Bars ghost-freedom appeal withdrawn, and the lattice obstruction (24 − 2 ≡ 6 mod 8) unanswered |
+> | Clifford/spinor | Cl(24,1), 2¹² = 4096, non-chiral | **Weyl of Cl(24,2) = 4096** (Dirac 2¹³ = 8192) — chiral, which is what the chirality gates need |
+> | w_a | −0.8165 (FITTED ×4 projection) | **−1/√24 = −0.2041**; the −0.8165 branch was retired and is labelled FITTED |
+> | S₈ | 0.8030 (growth-ODE) | **0.8207** under the declared friction window; published against *both* anchors — 0.718σ vs Planck, **2.733σ TENSION vs KiDS-1000** |
+> | θ₁₃ | "DECIDE which module is canonical" | asin(1/6) = 9.594° **FALSIFIED** (~9σ, kept on the books); headline `particle.theta_13_deg` = 8.669° at **0.805σ PASS**; `geometry.theta_13` = 8.54° is the NuFIT value restated and is deliberately unscored |
+> | Σm_ν | 0.0598 (spectral) | **`geometry.sum_m_nu` = 0.0817 eV** canonical — the spectral branch failed its R5 chain audit |
+> | n_s | "DECIDE (0.9996 vs 0.964)" | geometric 0.9636 canonical at 0.27σ; `n_s_slow_roll` kept loud as an **8.263σ FAIL** — two internal derivations disagree and both stay visible |
+> | Certificate count | "72 gates + 25 named" | gate dashboard now reads **41/43 locked (95.3%), open G12 and G72**; 29 axiomatic, 45 declarative |
+>
+> Also superseded: C-3's "0.48σ global alignment" finding was right that the
+> number was irreproducible, but the replacement is not a smaller σ — the
+> global fit is **χ² = 126,749 over 65 scoring rows, p = 0, POOR_FIT** (5,791
+> over 60 excluding the five withdrawn candidates). The old "χ² = 0.2304" was a
+> `.get(key, 0.23)` default firing on a key the report never contained.
+>
+> And the load-bearing geometric gap this cycle could only name — *nothing maps
+> a bridge index to a G₂ coordinate pair* — is **closed**, on one stated
+> assumption. See `PrincipiaMetaphysica/docs/BRIDGE_CHANNEL_ASSIGNMENT.md`.
+
+---
+
 ## C — Critical (scientific validity)
 
 ### C-1 · Canonical-value conflicts (DECIDE, then template) — the dominant defect class

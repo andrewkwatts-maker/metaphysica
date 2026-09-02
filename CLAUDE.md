@@ -51,8 +51,50 @@ metaphysica/
 │   ├── simulations/              # the engine itself (153 sim modules)
 │   ├── generators/               # JSON / JS / HTML / plot / PDF / datasheet generators
 │   └── website/                  # bundled HTML/CSS/JS templates copied into out_dir
-└── tests/                        # 655 tests, 100% pass
+└── tests/                        # 1641 tests, 100% pass
 ```
+
+## Facts that must not drift
+
+Before writing prose, a docstring, a caption or a commit message that states a
+framework result, check it against these. They are read from build artifacts,
+not from memory, and stale versions of them keep reappearing.
+
+- **Bulk geometry: 26D at signature (24,2)**, ruled 2026-08-31
+  (`CANON["bulk"]`; `variants.json` fork `bulk_signature`, RULED, `24_2`).
+  Shadows 13D(12,1) × 2. Pneuma spinor = Weyl of Cl(24,2) = 4096.
+  Accepted costs, always stated with it: `D_crit = 26` **withdrawn**, the Bars
+  ghost-freedom appeal **withdrawn**, the lattice obstruction (24 − 2 ≡ 6 mod 8)
+  **unanswered**. Sp(2,ℝ) is invoked, not derived. The TCS obstruction
+  (b₂ + b₃ must be odd; (4,24) is even) is independent and still open.
+  "27D", "M²⁷(24,1,2)", "(24,1) unified time" and "25D" are all stale.
+- **The bridge-to-channel join is closed on one stated assumption** — that the
+  E₈ block is a property of the *channel*, not the observing face. From it,
+  n_faces = 4 is forced and genericity is derived; the structure closes as K₄
+  with 12 bridges = 12 directed edges and 3 E₈ blocks = 3 perfect matchings;
+  the assignment is unique up to PSL(3,2). **The assumption must travel with
+  every statement of the result.**
+- **The fit is poor.** χ² = 126,749 over 65 scoring rows, p = 0, POOR_FIT
+  (5,791 over 60 excluding the five withdrawn candidates). "χ² = 0.23",
+  "TOO_GOOD", "suspiciously perfect" are **false** — a `.get(key, 0.23)`
+  default on a key that never existed.
+- **Scoreboard:** 179 records — 47 PASS · 13 MARGINAL · 6 TENSION · 13 FAIL ·
+  84 INPUT · 14 UNBOUNDED · 2 IDENTITY.
+- **Gates:** 41/43 locked (95.3%), open G12 and G72; 29 axiomatic, 45
+  declarative. Not "42/42, 100%".
+- **Falsified, kept on the books:** `algebra.gaugino_cabibbo_*` (344.7σ /
+  37.6σ / 25.6σ), `neutrino.theta13_derived` = asin(1/6) (~9σ),
+  `sin²(2θ) = 1/b₃`. Never delete a falsified candidate or a withdrawn claim.
+- **Twenty "geometric anchors" are experimental INPUT**, not consequences of
+  b₃ = 24. `geometry.theta_13` = 8.54 is the NuFIT value restated and is
+  deliberately unscored; `particle.theta_13_deg` = 8.669 is the real
+  derivation, at 0.805σ PASS.
+- **S₈:** 0.718σ PASS vs Planck **and** 2.733σ TENSION vs KiDS-1000. Friction
+  does not resolve the weak-lensing tension.
+- **`cosmology.n_s_slow_roll`:** 8.263σ FAIL vs Planck 2018.
+
+Live register: `PrincipiaMetaphysica/docs/OUTSTANDING_ISSUES.md`. It wins over
+anything in this file or in any other document.
 
 ## Standard commands
 

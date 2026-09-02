@@ -1150,15 +1150,16 @@ class HiggsMassSimulation(SimulationBase):
                 "notes": "PDG 2024 combined: m_H = 125.25 +/- 0.17 GeV (ATLAS+CMS)."
             },
             {
-                "id": "acharya2002",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
-                "title": "M theory, Joyce orbifolds and Super Yang-Mills",
+                "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
+                "year": 1999,
                 "journal": "Adv. Theor. Math. Phys.",
                 "volume": "3",
-                "year": 2002,
-                "arxiv": "hep-th/0212294",
-                "url": "https://arxiv.org/abs/hep-th/0212294",
-                "notes": "Moduli fixing in M-theory on G2 manifolds."
+                "pages": "227-248",
+                "arxiv": "hep-th/9812205",
+                "url": "https://arxiv.org/abs/hep-th/9812205",
+                "notes": "Moduli fixing in M-theory on G2 manifolds.",
             },
         ]
 

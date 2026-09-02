@@ -38,8 +38,9 @@ and slow by acceptance.
 | `topological_terms` — 7D flux, two independent routes | done |
 | `exterior_degree_gate` — form-degree validation | done |
 | `bridge_geometry` — moduli potential, scipy stabilisation | pre-existing |
+| bridge-to-channel join — Fano triangles, rainbow labellings, K₄ closure, PSL(3,2) uniqueness | done (2026-09-01) |
 | K₁₂ Eisenstein lattice / 729 vacua | not started |
-| 28D → 13D boundary variation | not started |
+| 26D → 13D boundary variation | not started |
 
 **Exit criterion:** every component has a test that can fail, demonstrated by
 mutation. Several already do — the wedge sign convention, the degree gate's
@@ -78,7 +79,10 @@ Custom kernels for path-integral sampling across the 729 K₁₂ vacuum states.
 including the edge cases — subnormals, exact zeros, and the degenerate
 configurations (θ = 90° exactly, where `cos θ` is `6.12e-17` rather than `0`
 and the metric channel is vacuous rather than absent). Those are precisely
-where a fast path diverges, and precisely where the physics is interesting.
+where a fast path diverges, and precisely where the physics is interesting —
+the topological channel is *maximal* at exactly that point, and cross-shadow
+coupling is structurally unavoidable there (no placement of twelve bridges on
+the cycle switches it off; the minimum live-coupling count is five, never zero).
 
 Only after that gate may a CPU routine be marked deprecated — and even then
 it stays in the tree as the reference the harness compares against.
@@ -95,7 +99,12 @@ no non-trivial 7-cycles, so integration there is coefficient × volume. Getting
 further needs harmonic representatives on a compact manifold with b₃ = 24.
 Deferred because it is 600+ lines of mesh infrastructure that does not exist
 anywhere in the tree, and because it unblocks nothing that is currently
-blocked.
+blocked. Note the scope is **unchanged** by the bridge-to-channel join: that
+result is combinatorial (Fano incidence of φ's associative triples) and would
+hold on any G₂ structure with the same incidence, so it does not by itself
+supply topological content. It is also **contingent on the TCS obstruction**
+(b₂ + b₃ must be odd for a twisted connected sum; the claimed (4, 24) is even),
+which remains open and is independent of the (24,2) signature ruling.
 
 **Finite-difference exterior derivative.** Rejected outright, not deferred. At
 n=13, p=3 with only 4 points per direction it needs 143 GB — the same shape as

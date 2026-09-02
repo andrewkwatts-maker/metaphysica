@@ -45,9 +45,16 @@ Planck 2018 / 2026 bounds
 Canonical n_s — infrared closure (Sprint T5, Option (b))
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The leading-order slow-roll on a near-linear Re(T) potential gives
-``n_s_slow_roll ≈ 0.9996`` at Re(T) = 174.033 — outside the Planck 1σ
-window — because the tree-level flux term V ∝ Re(T) is too flat to
-reproduce the observed ~3.5 % red tilt.
+``n_s_slow_roll ≈ 0.9996`` at Re(T) = 174.033, because the tree-level flux
+term V ∝ Re(T) is too flat to reproduce the observed ~3.5 % red tilt.
+
+This row is now scored in the validation registry rather than merely
+annotated: ``cosmology.n_s_slow_roll`` = 0.99960 against Planck 2018
+n_s = 0.9649 ± 0.0042 is **8.263 sigma, verdict FAIL**. "Outside the
+1 sigma window" understated it by a factor of eight; the leading-order
+slow-roll value on this potential is excluded, not merely disfavoured.
+The canonical n_s below is a different quantity and passes at 0.271
+sigma, but the two must not be conflated.
 
 The full v25.0 prediction includes the **infrared closure** of the
 slow-roll expansion onto the golden-modulated e-fold count of the G2
@@ -184,10 +191,10 @@ _STATUS_AGREES: str = (
 _STATUS_DOCUMENTED_DIVERGENCE: str = (
     "documented_divergence: canonical n_s (infrared closure: "
     "1 - 2*phi^2/chi_eff with chi_eff = 6*b3 = 144) agrees with Planck "
-    "2018/2026, but the leading-order slow-roll on the near-linear Re(T) "
-    "potential gives n_s_slow_roll outside the 1sigma window (potential "
-    "too flat to reproduce the observed ~3.5% red tilt; see module "
-    "docstring)"
+    "2018/2026 at 0.271 sigma, but the leading-order slow-roll on the "
+    "near-linear Re(T) potential gives n_s_slow_roll = 0.99960, which is "
+    "8.263 sigma from Planck 2018 and scored FAIL (potential too flat to "
+    "reproduce the observed ~3.5% red tilt; see module docstring)"
 )
 
 #: Status returned when ``r`` itself sits above the Planck upper bound.

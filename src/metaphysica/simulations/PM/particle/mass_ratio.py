@@ -350,31 +350,36 @@ if SCHEMA_AVAILABLE:
             return [
                 {
                     "id": "codata2022",
-                    "authors": "Tiesinga, E. et al.",
+                    "authors": "Mohr, P.J., Newell, D.B., Taylor, B.N., Tiesinga, E.",
                     "title": "CODATA Recommended Values of the Fundamental Physical Constants: 2022",
+                    "year": 2025,
                     "journal": "Rev. Mod. Phys.",
-                    "volume": "95",
-                    "year": "2024",
-                    "url": "https://physics.nist.gov/cuu/Constants/",
-                    "notes": "m_p/m_e = 1836.15267343 +/- 0.00000011"
+                    "volume": "97",
+                    "pages": "025002",
+                    "doi": "10.1103/RevModPhys.97.025002",
+                    "url": "https://doi.org/10.1103/RevModPhys.97.025002",
+                    "notes": "m_p/m_e = 1836.15267343 +/- 0.00000011",
                 },
                 {
                     "id": "joyce2000",
-                    "authors": "Joyce, D. D.",
+                    "authors": "Joyce, D.D.",
                     "title": "Compact Manifolds with Special Holonomy",
+                    "year": 2000,
                     "publisher": "Oxford University Press",
-                    "year": "2000",
-                    "url": "https://doi.org/10.1093/acprof:oso/9780198506010.001.0001",
-                    "notes": "G2 manifold topology and cycle volume computations"
+                    "doi": "10.1093/oso/9780198506010.001.0001",
+                    "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                    "notes": "G2 manifold topology and cycle volume computations",
                 },
                 {
                     "id": "pdg2024",
-                    "authors": "Particle Data Group",
+                    "authors": "Particle Data Group (Navas, S. et al.)",
                     "title": "Review of Particle Physics",
-                    "journal": "Prog. Theor. Exp. Phys.",
-                    "volume": "2024",
-                    "year": "2024",
-                    "url": "https://pdg.lbl.gov/"
+                    "year": 2024,
+                    "journal": "Phys. Rev. D",
+                    "volume": "110",
+                    "pages": "030001",
+                    "doi": "10.1103/PhysRevD.110.030001",
+                    "url": "https://pdg.lbl.gov/",
                 }
             ]
 

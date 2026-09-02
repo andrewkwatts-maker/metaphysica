@@ -882,24 +882,27 @@ class ProtonDecaySimulation(SimulationBase):
                 "id": "chnp2015",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
+                "year": 2015,
                 "journal": "Duke Math. J.",
                 "volume": "164",
-                "year": 2015,
                 "pages": "1971-2092",
+                "doi": "10.1215/00127094-3120743",
+                "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "notes": "TCS G2 construction used for cycle separation geometry."
+                "notes": "TCS G2 construction used for cycle separation geometry.",
             },
             {
                 "id": "superk2020",
                 "authors": "Super-Kamiokande Collaboration (Takenaka, A. et al.)",
-                "title": "Search for proton decay via p -> e+pi0 and p -> mu+pi0 with an enlarged fiducial volume in Super-Kamiokande I-IV",
+                "title": "Search for proton decay via p -> e+ pi0 and p -> mu+ pi0 with an enlarged fiducial volume in Super-Kamiokande I-IV",
+                "year": 2020,
                 "journal": "Phys. Rev. D",
                 "volume": "102",
                 "pages": "112011",
-                "year": 2020,
+                "doi": "10.1103/PhysRevD.102.112011",
                 "arxiv": "2010.16098",
-                "url": "https://arxiv.org/abs/2010.16098",
-                "notes": "Super-K bound: tau_p > 2.4 x 10^34 years (90% CL) for p -> e+pi0."
+                "url": "https://doi.org/10.1103/PhysRevD.102.112011",
+                "notes": "Super-K bound: tau_p > 2.4 x 10^34 years (90% CL) for p -> e+pi0.",
             },
         ]
 
