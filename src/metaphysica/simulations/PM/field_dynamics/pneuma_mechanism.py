@@ -1291,7 +1291,7 @@ class PneumaMechanismV16(SimulationBase):
                 plain_text="X^M X_M = 0; X^M P_M = 0; P^M P_M + M² = 0",
                 category="DERIVED",
                 description="2T physics null constraints: position, mixed, and mass-shell conditions",
-                input_params=["topology.D_bulk"],
+                input_params=["geometry.D_bulk"],
                 output_params=[],
                 derivation={
                     "source": "2T physics phase space with Sp(2,R) gauge invariance",
@@ -1384,7 +1384,7 @@ class PneumaMechanismV16(SimulationBase):
                 plain_text="L1(26D): S_26 bulk action; L2(13D): dual shadow effective; L3(4D): f(R,T,τ) gravity; L4(DE): quintessence",
                 category="DERIVED",
                 description="Complete dimensional descent: 26D → 13D x 2 -> 4D -> dark energy sector",
-                input_params=["topology.elder_kads", "topology.mephorash_chi", "topology.D_bulk"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi", "geometry.D_bulk"],
                 output_params=["cosmology.w0_derived"],
                 derivation={
                     "source": "Successive dimensional reduction from 26D bulk to 4D effective theory",

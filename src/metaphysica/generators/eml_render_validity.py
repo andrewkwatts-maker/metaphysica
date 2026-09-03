@@ -383,12 +383,32 @@ def classify_eml_description(desc: str, *, operators=None,
     except Exception as exc:
         return False, f"eml_description is not a parseable expression: {exc}", "malformed"
 
+    # Try the full body first; if syntax fails, strip a trailing prose
+    # annotation of the form " - <human-readable comment>" that describes the
+    # expression but is not valid Python (e.g. "eml_scalar(x) - CODATA 2022").
     try:
         parsed = ast.parse(body, mode="eval")
-    except SyntaxError as exc:
-        return False, (
-            f"declared 'EML:' but the body is not a valid expression: {exc}"
-        ), "malformed"
+    except SyntaxError:
+        # Progressively drop the longest trailing " - <prose>" suffix that
+        # makes the remainder parse.  Stop at the first success; if nothing
+        # works, keep the original error so we return "malformed".
+        parts = body.split(" - ")
+        parsed = None
+        for i in range(len(parts) - 1, 0, -1):
+            candidate = " - ".join(parts[:i])
+            try:
+                parsed = ast.parse(candidate, mode="eval")
+                body = candidate
+                break
+            except SyntaxError:
+                continue
+        if parsed is None:
+            try:
+                parsed = ast.parse(body, mode="eval")
+            except SyntaxError as exc:
+                return False, (
+                    f"declared 'EML:' but the body is not a valid expression: {exc}"
+                ), "malformed"
 
     unknown: set = set()
     unbound: set = set()

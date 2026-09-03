@@ -789,7 +789,7 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 units="basin_name",
                 status="TERMINAL",
                 description="Currently dominant terminal basin",
-                eml_description="eml_vec('dominant_basin_id')",
+                eml_description="Categorical basin label — not a scalar arithmetic expression",
                 no_experimental_value=True,
             ),
             Parameter(
@@ -817,7 +817,7 @@ class AppendixLOmegaUnwinding(SimulationBase):
                     "dynamically computed from simulation output and serves as a geometric "
                     "integrity check for the entire framework."
                 ),
-                eml_description="eml_vec('omega_seal_hash')",
+                eml_description="SHA-256 hash of terminal model state — not a scalar arithmetic expression",
                 no_experimental_value=True,
             ),
         ]

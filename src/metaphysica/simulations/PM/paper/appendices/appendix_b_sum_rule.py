@@ -382,7 +382,7 @@ class AppendixBSumRule(SimulationBase):
                     "Spectral gap explaining the hierarchy problem. The UV-IR "
                     "eigenvalue gap encodes the Planck-to-electron mass ratio."
                 ),
-                input_params=["particle.m_electron", "constants.M_PLANCK"],
+                input_params=["pdg.m_electron", "constants.M_PLANCK"],
                 output_params=[],
                 derivation={
                     "method": "Eigenvalue gap from spectral decomposition",

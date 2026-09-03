@@ -805,7 +805,7 @@ class AppendixKSterileConstants(SimulationBase):
                 units="boolean",
                 status="VALIDATION",
                 description="True if all constants have STERILE status",
-                eml_description="eml_vec('sterile_status_all')",
+                eml_description="Boolean verification status — not a scalar arithmetic expression",
                 no_experimental_value=True,
             ),
         ]

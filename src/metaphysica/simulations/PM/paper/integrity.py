@@ -92,7 +92,7 @@ class IntegrityV16_2(SimulationBase):
         "certificates.tier2_status",
         "certificates.tier3_status",
         "certificates.all_passed",
-        "seal.omega_hash",
+        "gates.omega_hash",
         "seal.verified",
     ]
 
@@ -598,7 +598,7 @@ class IntegrityV16_2(SimulationBase):
                 category="DERIVED",
                 description="Omega Seal: cryptographic hash locking the terminal state of the 125-residue registry, node coordinates, and projection tensors.",
                 input_params=["registry.node_count", "geometry.coordinate_hash"],
-                output_params=["seal.omega_hash", "seal.verified"],
+                output_params=["gates.omega_hash", "seal.verified"],
                 derivation={
                     "steps": [
                         {"description": "Concatenate bitstreams of registry.json (125 residues), node_coords.csv, and projection_tensors.py", "formula": r"\text{input} = \text{registry} \| \text{coords} \| \text{tensors}"},
@@ -636,7 +636,7 @@ class IntegrityV16_2(SimulationBase):
                 no_experimental_value=True,
             ),
             Parameter(
-                path="seal.omega_hash",
+                path="gates.omega_hash",
                 name="Omega Seal Hash",
                 units="dimensionless",
                 status="DERIVED",

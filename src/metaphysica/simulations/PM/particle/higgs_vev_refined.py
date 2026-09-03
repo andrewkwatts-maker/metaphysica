@@ -413,7 +413,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                     ],
                 },
                 eml_tree_str=(
-                    "ops.mul(eml_vec('k_gimel'), ops.sub(b3_leaf(), eml_scalar(4.0)))"
+                    "ops.mul(eml_vec('constants.k_gimel'), ops.sub(b3_leaf(), eml_scalar(4.0)))"
                 ),
                 eml_description=(
                     "Higgs VEV: k_gimel times (b3 - 4), where b3=24 giving 20 non-trivial cycles."

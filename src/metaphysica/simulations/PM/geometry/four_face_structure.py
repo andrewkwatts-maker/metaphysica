@@ -1045,7 +1045,7 @@ class FourFaceG2Structure(SimulationBase):
                 plain_text=(
                     "m_KK^(i) = M_Pl / (T_i * V_G2^{1/7})"
                 ),
-                eml_tree_str="ops.mul(eml_vec('n_KK'), ops.div(eml_vec('k_gimel'), eml_vec('R_face')))",
+                eml_tree_str="ops.mul(eml_vec('n_KK'), ops.div(eml_vec('constants.k_gimel'), eml_vec('R_face')))",
                 category="PREDICTED",
                 description=(
                     "Kaluza-Klein mass spectrum per geometric face. Each face has a "
@@ -1153,7 +1153,7 @@ class FourFaceG2Structure(SimulationBase):
                 plain_text=(
                     "T_leak = alpha_leak * Psi_bridge = (1/sqrt(chi_eff/b3)) * (k_gimel/b3)"
                 ),
-                eml_tree_str="ops.mul(ops.inv(ops.sqrt(ops.div(eml_vec('chi_eff'), eml_vec('b3')))), ops.div(eml_vec('k_gimel'), eml_vec('b3')))",
+                eml_tree_str="ops.mul(ops.inv(ops.sqrt(ops.div(eml_vec('chi_eff'), eml_vec('b3')))), ops.div(eml_vec('constants.k_gimel'), eml_vec('b3')))",
                 category="DERIVED",
                 description=(
                     "Torsional leakage mechanism formalizing how the G2 torsion tensor "
@@ -1637,7 +1637,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('k_gimel')), eml_pi()) — T1 = b3·k_gimel/π, dominant Kähler modulus from TCS racetrack stabilization",
+                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), eml_pi()) — T1 = b3·k_gimel/π, dominant Kähler modulus from TCS racetrack stabilization",
             ),
             Parameter(
                 path="geometry.face_moduli_T2",
@@ -1651,7 +1651,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('k_gimel')), ops.mul(eml_scalar(2.0), eml_pi())) — T2 = b3·k_gimel/(2π), first shadow sector Kähler modulus",
+                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), ops.mul(eml_scalar(2.0), eml_pi())) — T2 = b3·k_gimel/(2π), first shadow sector Kähler modulus",
             ),
             Parameter(
                 path="geometry.face_moduli_T3",
@@ -1665,7 +1665,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('k_gimel')), ops.mul(eml_scalar(3.0), eml_pi())) — T3 = b3·k_gimel/(3π), second shadow sector Kähler modulus",
+                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), ops.mul(eml_scalar(3.0), eml_pi())) — T3 = b3·k_gimel/(3π), second shadow sector Kähler modulus",
             ),
             Parameter(
                 path="geometry.face_moduli_T4",
@@ -1679,7 +1679,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('k_gimel')), ops.mul(eml_scalar(4.0), eml_pi())) — T4 = b3·k_gimel/(4π), subdominant Kähler modulus of deepest shadow sector",
+                eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), ops.mul(eml_scalar(4.0), eml_pi())) — T4 = b3·k_gimel/(4π), subdominant Kähler modulus of deepest shadow sector",
             ),
             Parameter(
                 path="geometry.shadow_asymmetry_delta_T",

@@ -626,7 +626,7 @@ class LeechPartitionV16(SimulationBase):
                 status="DERIVED",
                 description="Whether G₂ = Aut(O) is satisfied (True)",
                 no_experimental_value=True,
-                eml_description="EML: structural boolean — G2=Aut(O) is a Lie group theorem, not an arithmetic expression; evaluates to True by Cartan classification",
+                eml_description="Structural boolean — G2=Aut(O) is a Lie group theorem, not an arithmetic expression; evaluates to True by Cartan classification",
             ),
         ]
 

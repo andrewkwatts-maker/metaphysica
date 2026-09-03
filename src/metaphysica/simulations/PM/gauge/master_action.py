@@ -1493,7 +1493,7 @@ class MasterActionSimulationV22(SimulationBase):
                 theory_uncertainty=0.001,  # Tree-level: missing EW loop + threshold corrections
                 eml_description=(
                     "EML: ops.div(eml_scalar(3.0), "
-                    "ops.sub(ops.add(eml_vec('k_gimel'), eml_vec('phi')), eml_scalar(1.0))) "
+                    "ops.sub(ops.add(eml_vec('constants.k_gimel'), eml_vec('phi')), eml_scalar(1.0))) "
                     "— sin^2(theta_W) = 3/(k_gimel + phi - 1) from G2 cycle ratio."
                 ),
             ),

@@ -1768,7 +1768,7 @@ class DiscussionV16(SimulationBase):
                     "cosmology.H0_geometric",
                     "gauge.ALPHA_GUT_INV",
                     "gauge.sin2_theta_w",
-                    "particle.higgs_vev",
+                    "geometry.higgs_vev",
                 ],
                 output_params=[
                     "statistics.global_alignment_sigma",

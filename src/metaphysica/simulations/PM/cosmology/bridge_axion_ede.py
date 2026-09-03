@@ -1196,7 +1196,7 @@ class BridgeAxionEDE(SimulationBase):
                     "parentFormulas": ["axion-decay-constant-v18"]
                 },
                 eml_tree_str=(
-                    "ops.div(eml_vec('M_Pl'), ops.pow(eml_vec('k_gimel'), eml_scalar(6.0)))"
+                    "ops.div(eml_vec('M_Pl'), ops.pow(eml_vec('constants.k_gimel'), eml_scalar(6.0)))"
                 ),
                 eml_description=(
                     "Individual bridge axion decay constant: M_Pl divided by k_gimel^6."

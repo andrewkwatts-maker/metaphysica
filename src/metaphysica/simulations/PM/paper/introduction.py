@@ -1207,7 +1207,7 @@ class IntroductionV16(SimulationBase):
                     "topology.elder_kads",
                 ],
                 output_params=[
-                    "dimensions.D_shadow",
+                    "geometry.D_shadow",
                 ],
                 derivation={
                     "steps": [

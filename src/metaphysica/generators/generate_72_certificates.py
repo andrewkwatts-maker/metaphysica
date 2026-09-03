@@ -427,6 +427,58 @@ GATE_EVAL_SPECS = {
          "unc": 0.04e-10, "max_sigma": 3.0, "source": "Planck 2018"},
     60: {"path": "cosmology.wa_derived", "kind": "sigma", "exp": -0.75,
          "unc": 0.29, "max_sigma": 3.0, "source": "DESI DR1 w0waCDM"},
+
+    # G19: neutrino neutrality — derived theta_13 from yukawa_derivation vs NuFIT 6.0.
+    # NOT the fitted PMNS angle (neutrino.theta_13_pred); this is the geometric
+    # derivation registered at particle.theta_13_deg.  Evaluates the claim in
+    # VERIFIABLE_GATES[19]: "PMNS matches NuFIT" using the key derivation.
+    # Current sigma: 0.805 (PASS, §1.1 of OUTSTANDING_ISSUES).
+    19: {"path": "particle.theta_13_deg", "kind": "sigma",
+         "exp": 8.58, "unc": 0.11, "max_sigma": 3.0,
+         "source": "NuFIT 6.0 theta_13 IO central 8.58 +/- 0.11 deg"},
+
+    # G25: asymptotic freedom — framework alpha_s(MZ) vs PDG 2024.
+    # The gate claims the UV fixed point alpha* = 1/b3 gives asymptotic freedom;
+    # the observable consequence is that running from the UV yields the correct
+    # coupling at M_Z.
+    25: {"path": "constants.alpha_s_pred", "kind": "sigma",
+         "exp": 0.1180, "unc": 0.0009, "max_sigma": 3.0,
+         "source": "PDG 2024 alpha_s(MZ) = 0.1180 +/- 0.0009"},
+
+    # G26: electron-mass-to-charge (proton/electron mass ratio) — FITTED parameter.
+    # holonomy_correction was back-computed from CODATA; this is a sanity check on
+    # implementation correctness, not a zero-parameter prediction.
+    26: {"path": "fermion.mass_ratio_proton_electron", "kind": "sigma",
+         "exp": 1836.15267343, "unc": 5e-7, "max_sigma": 3.0,
+         "source": "CODATA 2022 m_p/m_e 1836.15267343 +/- 5e-7 (FITTED param — impl sanity check)"},
+
+    # G39: PMNS angle saturation — theta_23 triality prediction vs NuFIT IO.
+    # Gate claims 24-pin cage geometry saturates maximal mixing.  Uses the
+    # triality-derived path (pmns.theta_23_triality) distinct from the PMNS fit path
+    # already checked by G27.
+    39: {"path": "pmns.theta_23_triality", "kind": "sigma",
+         "exp": 49.3, "unc": 1.0, "max_sigma": 3.0,
+         "source": "NuFIT 6.0 theta_23 IO central 49.3 +/- 1.0 deg"},
+
+    # G56: compactification radius — warped KK mass central value vs LHC exclusion.
+    # LHC ATLAS/CMS exclude M_KK < 3.5 TeV (PDG 2024).  The framework predicts
+    # geometry.m_KK_central = 5.0 TeV from warped/exponential suppression.
+    56: {"path": "geometry.m_KK_central", "kind": "lower_bound",
+         "bound": 3.5,
+         "source": "LHC exclusion M_KK > 3.5 TeV (ATLAS/CMS, PDG 2024)"},
+
+    # G59: moduli stabilisation — vacuum bounce action exceeds instability threshold.
+    # Gate claims stable vacuum (dV/dT = 0, bounce action B > 400 so rate < exp(-400)).
+    59: {"path": "vacuum.bounce_action", "kind": "lower_bound",
+         "bound": 400.0,
+         "source": "Vacuum stability: decay rate exp(-B) suppressed for B > 400"},
+
+    # G67: phase-transition symmetry — W boson mass from EWSB vs PDG 2024.
+    # Gate claims all three gauge couplings match PDG at M_Z; W mass is the sharpest
+    # EWSB observable.
+    67: {"path": "gauge.m_w_gev", "kind": "sigma",
+         "exp": 80.3692, "unc": 0.0133, "max_sigma": 3.0,
+         "source": "PDG 2024 M_W 80.3692 +/- 0.0133 GeV"},
 }
 
 

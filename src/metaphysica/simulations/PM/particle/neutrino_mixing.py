@@ -1675,7 +1675,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Lightest neutrino mass eigenstate in Normal Ordering, or heavy eigenstate in Inverted Ordering",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Individual neutrino masses not directly measured
-                eml_description="EML: ops.exp(ops.neg(ops.mul(eml_scalar(2.0), eml_vec('k_gimel')))) — m₁ = exp(−2k_gimel) lightest neutrino mass from spectral gap",
+                eml_description="EML: ops.exp(ops.neg(ops.mul(eml_scalar(2.0), eml_vec('neutrino.k_gimel')))) — m₁ = exp(−2k_gimel) lightest neutrino mass from spectral gap",
                 validation={
                     "bound_type": "indirect",
                     "status": "THEORETICAL",

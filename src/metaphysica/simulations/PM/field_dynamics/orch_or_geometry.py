@@ -779,9 +779,9 @@ if SCHEMA_AVAILABLE:
                     ),
                     inputParams=[
                         "topology.k_gimel",
-                        "topology.c_kaf",
-                        "constants.hbar",
-                        "constants.G_newton"
+                        "geometry.c_kaf",
+                        "constants.HBAR",
+                        "constants.G_NEWTON"
                     ],
                     outputParams=["quantum_bio.coherence_time_ms", "quantum_bio.eg_joules"],
                     derivation={
@@ -925,7 +925,7 @@ if SCHEMA_AVAILABLE:
                                    "description": "Fibonacci bridge constant matching biological protofilament count"}
                     },
                     eml_tree_str=(
-                        "ops.div(b3_leaf(), ops.div(eml_vec('k_gimel'), eml_pi()))"
+                        "ops.div(b3_leaf(), ops.div(eml_vec('constants.k_gimel'), eml_pi()))"
                     ),
                     eml_description=(
                         "Microtubule topological pitch: b3=24 divided by (k_gimel / pi)."

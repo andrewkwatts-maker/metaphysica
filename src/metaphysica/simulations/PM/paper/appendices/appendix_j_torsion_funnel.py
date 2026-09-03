@@ -204,7 +204,7 @@ class AppendixJTorsionFunnel(SimulationBase):
         "funnel.entry_roots",
         "funnel.bottleneck_pins",
         "funnel.exit_residues",
-        "funnel.hidden_supports",
+        "topology.hidden_supports",
         "funnel.survival_rate",
         "funnel.compression_ratio",
     ]
@@ -250,7 +250,7 @@ class AppendixJTorsionFunnel(SimulationBase):
             "funnel.entry_roots": flow["entry_points"],
             "funnel.bottleneck_pins": flow["bottleneck_pins"],
             "funnel.exit_residues": flow["exit_residues"],
-            "funnel.hidden_supports": flow["hidden_scaffolding"],
+            "topology.hidden_supports": flow["hidden_scaffolding"],
             "funnel.survival_rate": flow["survival_rate"],
             "funnel.scaffold_rate": flow["scaffold_rate"],
             "funnel.bottleneck_ratio": flow["bottleneck_ratio"],
@@ -550,7 +550,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 eml_tree_str="ops.sub(ops.add(eml_vec('active_residues'), eml_vec('hidden_supports')), ops.mul(eml_scalar(0.0), b3_leaf()))",
                 category="GEOMETRIC",
                 description="Active residues plus hidden supports must equal total roots.",
-                input_params=["funnel.exit_residues", "funnel.hidden_supports"],
+                input_params=["funnel.exit_residues", "topology.hidden_supports"],
                 output_params=[],
                 derivation={
                     "method": "Conservation law for ancestral root partition",

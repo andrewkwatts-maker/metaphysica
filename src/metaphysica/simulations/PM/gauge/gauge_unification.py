@@ -651,9 +651,9 @@ class GaugeUnificationSimulation(SimulationBase):
                 # Doi-Lawson construction enforces h11 = b3), so the threshold
                 # correction chains via topology.h11 -> b3. Add topology.elder_kads
                 # so the dependency walker roots the chain at b3_leaf().
-                inputParams=["topology.h11", "topology.elder_kads"],
+                inputParams=["geometry.h11", "topology.elder_kads"],
                 outputParams=[],
-                input_params=["topology.h11", "topology.elder_kads"],
+                input_params=["geometry.h11", "topology.elder_kads"],
                 output_params=[],
                 derivation={
                     "steps": [

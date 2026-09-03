@@ -235,7 +235,7 @@ class ProtonDecaySimulation(SimulationBase):
         return {
             "proton_decay.tau_p_years": tau_p_years,
             "proton_decay.tau_p_base": tau_base,
-            "proton_decay.d_over_R": d_over_R,
+            "topology.d_over_R": d_over_R,
             "proton_decay.suppression_factor": suppression_factor,
             "proton_decay.super_k_ratio": super_k_ratio,
             "proton_decay.above_bound": above_bound,
@@ -292,7 +292,7 @@ class ProtonDecaySimulation(SimulationBase):
         return {
             "proton_decay.tau_p_years": tau_p_years,
             "proton_decay.tau_p_base": tau_base,
-            "proton_decay.d_over_R": d_over_R,
+            "topology.d_over_R": d_over_R,
             "proton_decay.suppression_factor": suppression_factor,
             "proton_decay.super_k_ratio": super_k_ratio,
             "proton_decay.above_bound": above_bound,
@@ -544,7 +544,7 @@ class ProtonDecaySimulation(SimulationBase):
                 # G2 #187). Add b₃ as explicit input so the dependency walker
                 # roots the chain at b3_leaf().
                 inputParams=["topology.K_MATCHING", "topology.elder_kads"],
-                outputParams=["proton_decay.suppression_factor", "proton_decay.d_over_R"],
+                outputParams=["proton_decay.suppression_factor", "topology.d_over_R"],
                 derivation={
                     "parentFormulas": ["tcs-matching-condition"],
                     "method": "Wavefunction overlap integral across TCS neck",
@@ -789,7 +789,7 @@ class ProtonDecaySimulation(SimulationBase):
                 }
             ),
             Parameter(
-                path="proton_decay.d_over_R",
+                path="topology.d_over_R",
                 name="Cycle Separation Ratio",
                 units="dimensionless",
                 status="GEOMETRIC",

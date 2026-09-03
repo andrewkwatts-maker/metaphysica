@@ -912,7 +912,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — instanton action s_mem = 45.714 × 7/8 ≈ 40.0 (torsion-spinor fraction)"
                 ),
                 "delta_lamed": (
-                    "EML: ops.div(ops.log(eml_vec('k_gimel')),"
+                    "EML: ops.div(ops.log(eml_vec('constants.k_gimel')),"
                     " ops.div(ops.mul(eml_scalar(2.0),"
                     " eml_pi()), eml_vec('elder_kads')))"
                     " — threshold correction δ_lamed = ln(k_gimel) / (2π/b₃)"
@@ -932,7 +932,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 # Pneuma / Dark Energy
                 "pneuma_amplitude": (
-                    "EML: ops.div(eml_vec('k_gimel'), eml_scalar(200.0))"
+                    "EML: ops.div(eml_vec('constants.k_gimel'), eml_scalar(200.0))"
                     " — EDE Hubble-tension amplitude = k_gimel/200 ≈ 0.0616"
                 ),
                 "pneuma_width": (
@@ -1042,7 +1042,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "m_KK": (
                     "EML: ops.div(eml_vec('m_planck_4d'),"
                     " ops.mul(eml_vec('elder_kads'),"
-                    " ops.pow(eml_vec('k_gimel'), eml_scalar(2.0))))"
+                    " ops.pow(eml_vec('constants.k_gimel'), eml_scalar(2.0))))"
                     " — KK mass m_KK = M_Pl/(b₃ × k_gimel²) ≈ 3.4e15 GeV"
                     " (NOTE: the TeV-scale KK claim elsewhere uses the warped"
                     " form M_Pl·exp(−k_eff·π), not this ratio)"
@@ -1099,7 +1099,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 # GUT / string scales
                 "M_GUT": (
-                    "EML: ops.mul(ops.div(eml_vec('k_gimel'), eml_vec('phi')),"
+                    "EML: ops.mul(ops.div(eml_vec('constants.k_gimel'), eml_vec('phi')),"
                     " eml_scalar(1e16))"
                     " — GUT scale M_GUT = (k_gimel/φ)×10¹⁶ GeV ≈ 7.6×10¹⁶ GeV"
                 ),
@@ -1110,7 +1110,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "M_string": (
                     "EML: ops.div(eml_vec('m_planck_4d'),"
-                    " ops.sqrt(ops.mul(eml_vec('k_gimel'), eml_scalar(10.0))))"
+                    " ops.sqrt(ops.mul(eml_vec('constants.k_gimel'), eml_scalar(10.0))))"
                     " — string scale M_s = M_Pl/√(k_gimel×10) ≈ 10¹⁸ GeV"
                 ),
                 "M_star": (
@@ -1126,7 +1126,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Thermal time / modified gravity
                 "alpha_T": (
                     "EML: ops.div(ops.mul(eml_scalar(2.0),"
-                    " ops.mul(eml_pi(), eml_vec('k_gimel'))),"
+                    " ops.mul(eml_pi(), eml_vec('constants.k_gimel'))),"
                     " ops.sub(eml_vec('elder_kads'), eml_scalar(1.0)))"
                     " — thermal time scaling α_T = 2π k_gimel/(b₃-1) ≈ 3.36"
                 ),
@@ -1136,7 +1136,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "alpha_R_squared": (
                     "EML: ops.div(eml_scalar(1.0),"
-                    " ops.pow(ops.mul(eml_vec('elder_kads'), eml_vec('k_gimel')),"
+                    " ops.pow(ops.mul(eml_vec('elder_kads'), eml_vec('constants.k_gimel')),"
                     " eml_scalar(2.0)))"
                     " — modified gravity R² coefficient α_R² = 1/(b₃ k_gimel)²"
                 ),
@@ -1146,7 +1146,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 # CKM matrix elements
                 "V_us": (
-                    "EML: ops.div(eml_vec('k_gimel'),"
+                    "EML: ops.div(eml_vec('constants.k_gimel'),"
                     " ops.mul(eml_vec('elder_kads'),"
                     " ops.mul(eml_vec('phi'), ops.sqrt(eml_scalar(2.0)))))"
                     " — CKM |V_us| = k_gimel/(b₃ φ √2) ≈ 0.225 (Cabibbo angle)"
@@ -1203,7 +1203,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Wave physics / GW
                 "eta_GW": (
                     "EML: ops.div(eml_scalar(1.0),"
-                    " ops.mul(eml_scalar(10.0), eml_vec('k_gimel')))"
+                    " ops.mul(eml_scalar(10.0), eml_vec('constants.k_gimel')))"
                     " — GW dispersion η = 1/(10 k_gimel) ≈ 0.008"
                 ),
                 "xi_breathing": (
@@ -1253,7 +1253,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Fundamental constants (Demon-Lock Certificates)
                 "alpha_inverse": (
                     "EML: ops.add(ops.sub("
-                    " ops.pow(eml_vec('k_gimel'), eml_scalar(2.0)),"
+                    " ops.pow(eml_vec('constants.k_gimel'), eml_scalar(2.0)),"
                     " ops.div(eml_vec('elder_kads'), eml_vec('phi'))),"
                     " ops.div(eml_vec('phi'),"
                     " ops.mul(eml_scalar(4.0),"
@@ -1263,10 +1263,10 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "alpha_s": (
                     "EML: ops.mul("
-                    " ops.div(eml_vec('k_gimel'),"
+                    " ops.div(eml_vec('constants.k_gimel'),"
                     " ops.add(ops.mul(eml_vec('elder_kads'),"
                     " ops.add(eml_pi(), eml_scalar(1.0))),"
-                    " ops.div(eml_vec('k_gimel'), eml_scalar(2.0)))),"
+                    " ops.div(eml_vec('constants.k_gimel'), eml_scalar(2.0)))),"
                     " ops.add(eml_scalar(1.0),"
                     " ops.div(eml_scalar(1.0),"
                     " ops.mul(eml_vec('elder_kads'),"
@@ -1275,12 +1275,12 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "sin2_theta_W": (
                     "EML: ops.div(eml_scalar(3.0),"
-                    " ops.sub(ops.add(eml_vec('k_gimel'), eml_vec('phi')),"
+                    " ops.sub(ops.add(eml_vec('constants.k_gimel'), eml_vec('phi')),"
                     " eml_scalar(1.0)))"
                     " — weak mixing sin²θ_W = 3/(k_gimel+φ-1) ≈ 0.2319 (Cert C09)"
                 ),
                 "higgs_vev": (
-                    "EML: ops.mul(eml_vec('k_gimel'),"
+                    "EML: ops.mul(eml_vec('constants.k_gimel'),"
                     " ops.sub(eml_vec('elder_kads'), eml_scalar(4.0)))"
                     " — Higgs VEV v = k_gimel×(b₃-4) ≈ 246.37 GeV (Cert C07)"
                 ),
@@ -1292,7 +1292,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "mu_pe": (
                     "EML: ops.div("
                     " ops.mul(ops.pow(eml_vec('c_kaf'), eml_scalar(2.0)),"
-                    " ops.div(eml_vec('k_gimel'), eml_pi())),"
+                    " ops.div(eml_vec('constants.k_gimel'), eml_pi())),"
                     " ops.mul(eml_scalar(1.5427972),"
                     " ops.add(eml_scalar(1.0),"
                     " ops.div(eml_scalar(0.57721566), eml_vec('elder_kads')))))"
@@ -1314,7 +1314,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — Schwinger-corrected Fermi constant G_F × (1+α/2π) (Cert C08b)"
                 ),
                 "T_CMB": (
-                    "EML: ops.div(ops.mul(eml_vec('phi'), eml_vec('k_gimel')),"
+                    "EML: ops.div(ops.mul(eml_vec('phi'), eml_vec('constants.k_gimel')),"
                     " ops.add(ops.mul(eml_scalar(2.0),"
                     " eml_pi()), eml_scalar(1.0)))"
                     " — CMB temperature T_CMB = φ k_gimel/(2π+1) ≈ 2.737 K (Cert C18)"
@@ -1331,7 +1331,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " (b₃/χ_eff) × sin(δ_CP) × exp(-Re(T)) ≈ 6.185×10⁻¹⁰"
                 ),
                 "unity_seal": (
-                    "EML: ops.div(ops.mul(eml_vec('k_gimel'), eml_vec('phi')),"
+                    "EML: ops.div(ops.mul(eml_vec('constants.k_gimel'), eml_vec('phi')),"
                     " ops.sub(eml_vec('elder_kads'), eml_scalar(4.0)))"
                     " — unity seal I = k_gimel φ/(b₃-4) ≈ 0.997 (Cert C25)"
                 ),
@@ -1344,7 +1344,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — spectral index n_s = 1 - 2φ²/χ_eff ≈ 0.9636 (Planck 2018)"
                 ),
                 "sigma8": (
-                    "EML: ops.mul(ops.div(eml_vec('k_gimel'), eml_vec('elder_kads')),"
+                    "EML: ops.mul(ops.div(eml_vec('constants.k_gimel'), eml_vec('elder_kads')),"
                     " eml_vec('phi'))"
                     " — matter fluctuation σ8 = (k_gimel/b₃)×φ ≈ 0.8305"
                 ),
@@ -1358,7 +1358,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 # Neutrino sector
                 "sum_m_nu": (
-                    "EML: ops.div(eml_vec('k_gimel'),"
+                    "EML: ops.div(eml_vec('constants.k_gimel'),"
                     " ops.mul(ops.mul(eml_scalar(2.0),"
                     " eml_pi()), eml_vec('elder_kads')))"
                     " — neutrino mass sum Σmν = k_gimel/(2π b₃) ≈ 0.082 eV"

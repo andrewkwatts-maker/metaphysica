@@ -848,9 +848,9 @@ class OctonionicMixing(SimulationBase):
                     "adjacent octonionic subalgebras. This angle governs the base scale of "
                     "quark-lepton mixing via the associative/co-associative cycle split."
                 ),
-                inputParams=["constants.phi_golden", "topology.octonion_dim"],
+                inputParams=["constants.phi", "topology.octonion_dim"],
                 outputParams=["triality.theta_g", "triality.phi_golden"],
-                input_params=["constants.phi_golden", "topology.octonion_dim"],
+                input_params=["constants.phi", "topology.octonion_dim"],
                 output_params=["triality.theta_g", "triality.phi_golden"],
                 derivation={
                     "steps": [

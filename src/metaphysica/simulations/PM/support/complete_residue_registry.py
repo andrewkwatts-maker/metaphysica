@@ -812,7 +812,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             metadata={
                 "derivation": "Maximum eigenvalue in registry",
                 "units": "dimensionless (k_gimel normalized)",
-                "eml_description": "EML: ops.mul(eml_vec('k_gimel'), eml_scalar(80.5)) — maximum Laplace-Beltrami eigenvalue on G2 manifold, normalized by spectral gap k_gimel. NOTE: 80.5 is CALIBRATED (fitted to the residue count in run()); it is not derived from b₃ or any other geometric quantity. The ratio registered_value/EML ≈ 1e15 misses an exact power of ten by 0.124%, indicating an unexplained normalisation factor. See SCALE_DISAGREEMENTS.md §5."
+                "eml_description": "EML: ops.mul(eml_vec('constants.k_gimel'), eml_scalar(80.5)) — maximum Laplace-Beltrami eigenvalue on G2 manifold, normalized by spectral gap k_gimel. NOTE: 80.5 is CALIBRATED (fitted to the residue count in run()); it is not derived from b₃ or any other geometric quantity. The ratio registered_value/EML ≈ 1e15 misses an exact power of ten by 0.124%, indicating an unexplained normalisation factor. See SCALE_DISAGREEMENTS.md §5."
             }
         )
 

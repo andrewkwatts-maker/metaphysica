@@ -329,7 +329,7 @@ class AppendixGOmegaSeal(SimulationBase):
     ]
 
     PARAM_REFS = [
-        "seal.omega_hash",
+        "gates.omega_hash",
         "seal.zenodo_doi",
         "seal.timestamp",
         "seal.protocol_version",
@@ -797,7 +797,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "Omega hash. Any modification to any locked value changes this hash."
                 ),
                 input_params=["registry.node_count", "geometry.coordinate_hash"],
-                output_params=["seal.omega_hash"],
+                output_params=["gates.omega_hash"],
                 derivation={
                     "method": "Terminal hash from concatenation of all model state vectors",
                     "steps": [

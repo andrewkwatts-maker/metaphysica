@@ -278,7 +278,7 @@ if SCHEMA_AVAILABLE:
                     eml_description="EML: ops.div(ops.mul(ops.pow(C_kaf, eml_scalar(2.0)), ops.div(k_gimel, eml_pi())), holonomy_correction) — proton/electron mass ratio from G2 cycle volumes",
                     category="GEOMETRIC",
                     description="Proton-electron mass ratio derived from G2 cycle volume ratio with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
-                    inputParams=["topology.elder_kads", "topology.k_gimel", "topology.c_kaf"],
+                    inputParams=["topology.elder_kads", "topology.k_gimel", "geometry.c_kaf"],
                     outputParams=["fermion.mass_ratio_proton_electron"],
                     derivation={
                         "method": "G2 cycle volume ratio via Laplacian eigenvalues on associative and co-associative cycles",

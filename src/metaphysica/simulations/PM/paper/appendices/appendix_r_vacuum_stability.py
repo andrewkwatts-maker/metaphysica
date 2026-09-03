@@ -843,7 +843,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "radiative corrections from the running of lambda. The logarithmic "
                     "term captures the leading quantum corrections."
                 ),
-                input_params=["higgs.mass_higgs", "constants.v_EW"],
+                input_params=["higgs.mass_higgs", "particle.v_EW_GeV"],
                 output_params=["vacuum.lambda_ew"],
                 derivation={
                     "method": "Coleman-Weinberg effective potential",
@@ -1503,8 +1503,8 @@ def main():
     # Add required parameters if not present
     if not registry.has_param("constants.M_PLANCK"):
         registry.set_param("constants.M_PLANCK", 2.435e18, source="foundational")
-    if not registry.has_param("constants.v_EW"):
-        registry.set_param("constants.v_EW", 246.22, source="foundational")  # PDG experimental
+    if not registry.has_param("particle.v_EW_GeV"):
+        registry.set_param("particle.v_EW_GeV", 246.22, source="foundational")  # PDG experimental
     if not registry.has_param("higgs.mass_higgs"):
         registry.set_param("higgs.mass_higgs", 125.1, source="PDG2024")  # PDG experimental
     if not registry.has_param("fermion.mass_top"):

@@ -1357,7 +1357,7 @@ class G2GeometryV16(SimulationBase):
             description="Effective Euler characteristic from Hodge numbers of the TCS G2 manifold",
             inputParams=[],
             outputParams=["topology.mephorash_chi"],
-            input_params=["topology.h11", "topology.h21", "topology.h31"],
+            input_params=["geometry.h11", "geometry.h21", "geometry.h31"],
             output_params=["topology.mephorash_chi"],
             derivation={
                 "steps": [

@@ -63,9 +63,9 @@ class AppendixASpectralRegistry(SimulationBase):
         "cosmology.H0_geometric",
         "cosmology.w0_geometric",
         "particle.alpha_em",
-        "particle.m_electron",
+        "pdg.m_electron",
         "particle.m_top",
-        "particle.higgs_vev",
+        "geometry.higgs_vev",
         "particle.alpha_s",
     ]
 

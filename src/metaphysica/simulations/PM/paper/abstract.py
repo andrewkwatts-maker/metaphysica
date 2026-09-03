@@ -1000,7 +1000,7 @@ class AbstractV17_2(SimulationBase):
                 units="dimensionless",
                 description="Gnostic alias for k_gimel — spectral gap from associative 3-cycles",
                 status="GEOMETRIC",
-                eml_description="EML: eml_vec('k_gimel') — demiurgic_coupling = k_gimel ≈ 12.318 (alias)"
+                eml_description="EML: eml_vec('constants.k_gimel') — demiurgic_coupling = k_gimel ≈ 12.318 (alias)"
             ),
         ]
 

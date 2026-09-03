@@ -121,7 +121,7 @@ class FoundationsV16_2(SimulationBase):
     # Dynamic parameter paths referenced by this section
     PARAM_REFS = [
         "dimensions.D_bulk",
-        "dimensions.D_shadow",
+        "geometry.D_shadow",
         "dimensions.D_observable",
         "topology.elder_kads",
         "topology.euler_chi",
@@ -804,7 +804,7 @@ class FoundationsV16_2(SimulationBase):
                 category="DERIVED",
                 description="Fibered time structure with 12x(2,0) paired bridges. b_3=24 => 12 pairs.",
                 input_params=["dimensions.D_bulk", "topology.elder_kads"],
-                output_params=["dimensions.D_shadow"],
+                output_params=["geometry.D_shadow"],
                 derivation={
                     "method": "topological_decomposition",
                     "steps": [
