@@ -864,7 +864,20 @@ class AppendixLOmegaUnwinding(SimulationBase):
                 "authors": "Penrose, R.",
                 "title": "The Road to Reality",
                 "year": "2004",
-                "doi": "10.1038/nphys344",
+                # WAS doi 10.1038/nphys344. Verified against Crossref, that
+                # DOI is "Direct force measurements on DNA in a solid-state
+                # nanopore", Nature Physics 2 (2006) 473-477 -- an unrelated
+                # experiment, and in a journal that did not exist in 2004.
+                # A reader following this citation landed on a DNA nanopore
+                # paper. The identifier was unique and resolvable, so
+                # no_conflicting_identifiers could not see it.
+                #
+                # Replaced with the ISBN and URL that this book's other
+                # entry (penrose_2004_road_to_reality) already carries, so
+                # nothing is invented here.
+                "isbn": "9780224044479",
+                "url": "https://openlibrary.org/works/OL3474173W",
+                "publisher": "Jonathan Cape",
                 "type": "monograph",
             },
             {

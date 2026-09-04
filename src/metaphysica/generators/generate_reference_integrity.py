@@ -155,6 +155,41 @@ def audit_references(autogen: Path) -> dict:
             ]
     n_conflicting = sum(len(v) for v in identifier_conflicts.values())
 
+    # NEAR-duplicates: titles that agree once a subtitle is dropped, in the
+    # same year. Reported as an ADVISORY, never merged automatically.
+    #
+    # Two entries for Penrose's "The Road to Reality" coexisted -- one as
+    # "The Road to Reality", one with the full subtitle -- so the strict
+    # title check saw two different works and passed. The short-titled copy
+    # carried doi 10.1038/nphys344, which Crossref resolves to "Direct force
+    # measurements on DNA in a solid-state nanopore", Nature Physics 2
+    # (2006). Weinberg's "Gravitation and Cosmology" had the same shape, its
+    # DOI resolving to a magazine subscription price list. Both identifiers
+    # were unique, well-formed and resolvable, so no_conflicting_identifiers
+    # could not see them either: an id can be wrong without being shared.
+    #
+    # Automatic merging on this looser key would be WRONG -- it collapses
+    # the seven deliberate PDG per-section citations, the distinct CODATA
+    # 2014/2018/2022 releases, and two genuinely different Acharya G2-MSSM
+    # papers. So this surfaces candidates for a human decision and the
+    # strict check remains the gate.
+    def _drop_subtitle(title):
+        head = str(title).split(":")[0]
+        return " ".join(
+            "".join(c if c.isalnum() else " " for c in head.lower()).split())
+
+    near = defaultdict(list)
+    for rid, ref in refs.items():
+        key = (_drop_subtitle(ref.get("title", "")), str(ref.get("year", "")))
+        if key[0]:
+            near[key].append(rid)
+    near_duplicates = {
+        f"{title} ({year})": sorted(rids)
+        for (title, year), rids in near.items()
+        if len(rids) > 1 and sorted(rids) not in
+        [sorted(v) for v in duplicates.values()]
+    }
+
     unidentified = sorted(
         rid for rid, ref in refs.items()
         if not any(ref.get(f) for f in _IDENTIFIER_FIELDS)
@@ -197,6 +232,22 @@ def audit_references(autogen: Path) -> dict:
                     "that is simply wrong, and shared with nothing, passes",
         },
         {
+            "id": "no_near_duplicate_titles",
+            "claim": "no two entries share a title once subtitles are dropped",
+            "measured": sum(len(v) for v in near_duplicates.values()),
+            "expected": 0,
+            "status": "ADVISORY",
+            "note": "Advisory, not a gate. A looser title key would wrongly "
+                    "collapse the deliberate PDG per-section citations, the "
+                    "distinct CODATA releases and two different Acharya "
+                    "papers, so these are surfaced for a human decision "
+                    "rather than merged. This tier is what exposed two "
+                    "books whose DOIs resolved to a DNA nanopore experiment "
+                    "and a magazine price list -- unique identifiers "
+                    "pointing at the wrong document, which no other check "
+                    "can detect",
+        },
+        {
             "id": "references_are_cited",
             "claim": "each entry is cited by a formula, section or parameter",
             "measured": len(cited),
@@ -227,6 +278,7 @@ def audit_references(autogen: Path) -> dict:
         "orphans": orphans,
         "duplicate_groups": duplicates,
         "identifier_conflicts": identifier_conflicts,
+        "near_duplicate_titles": near_duplicates,
         "without_identifier": unidentified,
         "references_per_simulation": dict(by_sim.most_common()),
         "note": (

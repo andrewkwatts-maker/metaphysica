@@ -886,7 +886,17 @@ class AppendixKSterileConstants(SimulationBase):
                 "authors": "Weinberg, S.",
                 "title": "Gravitation and Cosmology",
                 "year": "1972",
-                "doi": "10.1002/piuz.19740050511",
+                # WAS doi 10.1002/piuz.19740050511. Verified against
+                # Crossref, that DOI is "Preise fuer Jahres-Abonnement
+                # 1975" -- a subscription price list in Physik in unserer
+                # Zeit 5 (1974). Not a paper at all, let alone Weinberg's
+                # textbook. Same failure as penrose-2004: unique,
+                # well-formed, resolvable and pointing at the wrong
+                # document, so every existing check passed.
+                #
+                # Replaced with the publisher URL that this book's other
+                # entry (weinberg1972_gravity) already carries.
+                "url": "https://www.wiley.com/en-us/Gravitation+and+Cosmology-p-9780471925675",
                 "type": "monograph",
             },
         ]
