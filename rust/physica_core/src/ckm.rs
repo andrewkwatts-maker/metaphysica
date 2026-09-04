@@ -51,11 +51,7 @@ impl CKMMatrix {
     #[must_use]
     pub fn from_topology() -> Self {
         Self {
-            rows: [
-                [1.0, 0.0, 0.0],
-                [0.0, 1.0, 0.0],
-                [0.0, 0.0, 1.0],
-            ],
+            rows: [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
             jarlskog_invariant: 0.0,
             cabibbo_angle: 0.0,
         }

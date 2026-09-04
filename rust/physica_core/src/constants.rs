@@ -144,11 +144,9 @@ pub const SEED_VISIBLE_SECTOR: u32 = 125;
 /// Sterile-sector root count (288 − 125).
 pub const SEED_STERILE_SECTOR: u32 = 163;
 /// Golden ratio φ — high-precision literal (see plan §D.9 / §D.7).
-pub const SEED_GOLDEN_RATIO: f64 =
-    1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_180_f64;
+pub const SEED_GOLDEN_RATIO: f64 = 1.618_033_988_749_895_f64;
 /// Euler–Mascheroni constant γ.
-pub const SEED_EULER_MASCHERONI: f64 =
-    0.577_215_664_901_532_860_606_512_090_082_402_431_042_159_335_f64;
+pub const SEED_EULER_MASCHERONI: f64 = 0.577_215_664_901_532_9_f64;
 /// JC topological invariant.
 pub const SEED_JC_CONSTANT: u32 = 153;
 /// Logic closure — full-lattice constraint count.
@@ -238,12 +236,7 @@ impl FormulasRegistry {
     fn seed_derived_layer(&self) {
         let derived = [
             // v_higgs (MeV) — used by Yukawa scaling
-            Constant::derived(
-                "v_higgs_mev",
-                &format!("{}", PHYSICA_V_HIGGS_MEV),
-                "MeV",
-                &[],
-            ),
+            Constant::derived("v_higgs_mev", &format!("{PHYSICA_V_HIGGS_MEV}"), "MeV", &[]),
             // sterile = roots_total − visible_sector
             Constant::derived(
                 "sterile_check",
@@ -252,33 +245,23 @@ impl FormulasRegistry {
                 &["roots_total", "visible_sector"],
             ),
             // n_gen squared (used downstream)
-            Constant::derived(
-                "n_gen_sq",
-                "n_gen * n_gen",
-                "count",
-                &["n_gen"],
-            ),
+            Constant::derived("n_gen_sq", "n_gen * n_gen", "count", &["n_gen"]),
             // H0 central
             Constant::derived(
                 "h0_central",
-                &format!("{}", PHYSICA_H0_CENTRAL),
+                &format!("{PHYSICA_H0_CENTRAL}"),
                 "km/s/Mpc",
                 &[],
             ),
             // w0 central
             Constant::derived(
                 "w0_central",
-                &format!("{}", PHYSICA_W0_CENTRAL),
+                &format!("{PHYSICA_W0_CENTRAL}"),
                 "dimensionless",
                 &[],
             ),
             // tau lepton mass
-            Constant::derived(
-                "m_tau_mev",
-                &format!("{}", PHYSICA_M_TAU_MEV),
-                "MeV",
-                &[],
-            ),
+            Constant::derived("m_tau_mev", &format!("{PHYSICA_M_TAU_MEV}"), "MeV", &[]),
             // χ_eff / b3 = 3 (matches n_gen — a key topological identity)
             Constant::derived(
                 "topo_gen_check",
@@ -338,11 +321,7 @@ impl FormulasRegistry {
     /// Internal derivation helper with explicit visit-stack to detect cycles.
     /// Iterative-style (no Rust recursion ≥ 2 levels): the stack is reused
     /// across nested lookups inside `evaluate_expression`.
-    fn derive_inner(
-        &self,
-        name: &str,
-        visiting: &mut Vec<String>,
-    ) -> Result<f64, ConstantError> {
+    fn derive_inner(&self, name: &str, visiting: &mut Vec<String>) -> Result<f64, ConstantError> {
         debug_assert!(!name.is_empty());
         debug_assert!(visiting.len() < 256, "derivation stack runaway");
 
@@ -386,7 +365,7 @@ impl FormulasRegistry {
     /// entries inserted/updated. The JSON document must be an array of
     /// [`Constant`] records.
     pub fn load_from_json(&self, path: &Path) -> Result<usize, ConstantError> {
-        debug_assert!(path.as_os_str().len() > 0);
+        debug_assert!(!path.as_os_str().is_empty());
         let raw = fs::read_to_string(path).map_err(|e| ConstantError::Io {
             path: path.display().to_string(),
             source: e,
@@ -459,7 +438,10 @@ pub fn evaluate_expression(
 ) -> Result<f64, ConstantError> {
     debug_assert!(!src.is_empty());
     let tokens = tokenize(src)?;
-    debug_assert!(!tokens.is_empty(), "expression tokenized to nothing: `{src}`");
+    debug_assert!(
+        !tokens.is_empty(),
+        "expression tokenized to nothing: `{src}`"
+    );
     let mut parser = Parser { tokens, pos: 0 };
     let v = parser.parse_expr(registry, visiting)?;
     if parser.pos != parser.tokens.len() {
@@ -504,12 +486,30 @@ fn tokenize(src: &str) -> Result<Vec<Tok>, ConstantError> {
             continue;
         }
         match c {
-            '+' => { out.push(Tok::Plus); i += 1; }
-            '-' => { out.push(Tok::Minus); i += 1; }
-            '*' => { out.push(Tok::Star); i += 1; }
-            '/' => { out.push(Tok::Slash); i += 1; }
-            '(' => { out.push(Tok::LParen); i += 1; }
-            ')' => { out.push(Tok::RParen); i += 1; }
+            '+' => {
+                out.push(Tok::Plus);
+                i += 1;
+            }
+            '-' => {
+                out.push(Tok::Minus);
+                i += 1;
+            }
+            '*' => {
+                out.push(Tok::Star);
+                i += 1;
+            }
+            '/' => {
+                out.push(Tok::Slash);
+                i += 1;
+            }
+            '(' => {
+                out.push(Tok::LParen);
+                i += 1;
+            }
+            ')' => {
+                out.push(Tok::RParen);
+                i += 1;
+            }
             d if d.is_ascii_digit() || d == '.' => {
                 let start = i;
                 let mut saw_dot = c == '.';
@@ -542,9 +542,7 @@ fn tokenize(src: &str) -> Result<Vec<Tok>, ConstantError> {
             a if a.is_ascii_alphabetic() || a == '_' => {
                 let start = i;
                 i += 1;
-                while i < bytes.len()
-                    && (bytes[i].is_ascii_alphanumeric() || bytes[i] == '_')
-                {
+                while i < bytes.len() && (bytes[i].is_ascii_alphanumeric() || bytes[i] == '_') {
                     i += 1;
                 }
                 let id: String = bytes[start..i].iter().collect();
@@ -680,8 +678,16 @@ mod tests {
         let r = FormulasRegistry::new();
         // 10 seeds + derived first-tier; assert seeds are all present.
         for nm in [
-            "b3", "chi_eff", "n_gen", "roots_total", "visible_sector",
-            "sterile_sector", "phi", "gamma_em", "jc_constant", "logic_closure",
+            "b3",
+            "chi_eff",
+            "n_gen",
+            "roots_total",
+            "visible_sector",
+            "sterile_sector",
+            "phi",
+            "gamma_em",
+            "jc_constant",
+            "logic_closure",
         ] {
             assert!(r.get(nm).is_ok(), "missing seed `{nm}`");
         }
@@ -772,7 +778,8 @@ mod tests {
     fn evaluate_expression_parens_and_div() {
         let r = FormulasRegistry::new();
         let mut visiting = Vec::new();
-        let v = evaluate_expression("(roots_total - visible_sector) / n_gen", &r, &mut visiting).unwrap();
+        let v = evaluate_expression("(roots_total - visible_sector) / n_gen", &r, &mut visiting)
+            .unwrap();
         assert!((v - (f64::from(SEED_STERILE_SECTOR) / 3.0)).abs() < 1e-12);
     }
 
@@ -813,7 +820,9 @@ mod tests {
     #[test]
     fn load_from_json_missing_path() {
         let r = FormulasRegistry::new();
-        let err = r.load_from_json(Path::new("h:/does/not/exist.json")).unwrap_err();
+        let err = r
+            .load_from_json(Path::new("h:/does/not/exist.json"))
+            .unwrap_err();
         assert!(matches!(err, ConstantError::Io { .. }));
     }
 }

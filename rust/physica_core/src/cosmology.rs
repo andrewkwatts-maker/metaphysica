@@ -37,8 +37,25 @@ use std::f64::consts::PI;
 
 /// Planck-2018 early-universe Hubble constant in km/s/Mpc.
 pub const H0_EARLY_DEFAULT: f64 = 67.4;
-/// Interpolation exponent α from v16.1 Ricci-flow interpolation.
+/// Interpolation exponent alpha from the v16.1 Ricci-flow interpolation.
 pub const INTERP_ALPHA: f64 = 2.0;
+
+/// Absolute term of the mixed error norm; floors the relative term near zero.
+const ABS_TOL: f64 = 1e-12;
+/// Hard cap on accepted + rejected steps, so the driver always terminates.
+const MAX_INTEGRATION_STEPS: usize = 100_000;
+/// Minimum number of accepted steps across the span; caps `h` from above so
+/// interpolation between steps is not the accuracy floor.
+const MIN_ACCEPTED_STEPS: usize = 4_096;
+/// Below this step size a step is accepted regardless of the error estimate,
+/// so a stiff patch cannot spin the controller.
+const MIN_STEP_SIZE: f64 = 1e-14;
+/// Classic PI-controller safety factor.
+const SAFETY_FACTOR: f64 = 0.9;
+/// Most the controller may grow the step in one accepted iteration.
+const MAX_STEP_GROWTH: f64 = 5.0;
+/// Least the controller may shrink the step in one rejected iteration.
+const MAX_STEP_SHRINK: f64 = 0.1;
 
 // ─── RKF45 (Cash-Karp) coefficients ───────────────────────────────────────
 // Embedded 4th-order solution + 5th-order error estimator. The coefficients
@@ -109,10 +126,17 @@ pub fn ricci_rhs(state: &[f64], z: f64, b3: f64) -> Vec<f64> {
 // ─── Adaptive driver ──────────────────────────────────────────────────────
 
 /// Take one RKF45 (Cash-Karp) step and return (y_new, error_norm).
-fn rkf45_step<F>(rhs: &F, t: f64, y: &[f64], h: f64) -> (Vec<f64>, f64)
+///
+/// `rel_tol` sets the relative term of the mixed error scale. It used to be a
+/// hard-coded 1e-6 here while the driver's `rel_tol` argument was discarded
+/// with `let _ = rel_tol;` -- so every caller got the same accuracy no matter
+/// what it asked for.
+fn rkf45_step<F>(rhs: &F, t: f64, y: &[f64], h: f64, rel_tol: f64) -> (Vec<f64>, f64)
 where
     F: Fn(&[f64], f64) -> Vec<f64>,
 {
+    debug_assert!(h.is_finite() && h > 0.0, "step size must be finite and > 0");
+    debug_assert!(rel_tol > 0.0, "relative tolerance must be positive");
     let n = y.len();
     let k1 = rhs(y, t);
 
@@ -142,8 +166,7 @@ where
 
     let mut y6 = vec![0.0; n];
     for i in 0..n {
-        y6[i] = y[i]
-            + h * (A61 * k1[i] + A62 * k2[i] + A63 * k3[i] + A64 * k4[i] + A65 * k5[i]);
+        y6[i] = y[i] + h * (A61 * k1[i] + A62 * k2[i] + A63 * k3[i] + A64 * k4[i] + A65 * k5[i]);
     }
     let k6 = rhs(&y6, t + C6 * h);
 
@@ -156,11 +179,11 @@ where
     // Embedded 4th-order solution → error
     let mut err_norm: f64 = 0.0;
     for i in 0..n {
-        let y_star = y[i]
-            + h * (BS1 * k1[i] + BS3 * k3[i] + BS4 * k4[i] + BS5 * k5[i] + BS6 * k6[i]);
+        let y_star =
+            y[i] + h * (BS1 * k1[i] + BS3 * k3[i] + BS4 * k4[i] + BS5 * k5[i] + BS6 * k6[i]);
         let diff = y_new[i] - y_star;
         // mixed (relative + absolute) error norm, scipy-style
-        let scale = 1e-9 + 1e-6 * y_new[i].abs().max(y[i].abs());
+        let scale = ABS_TOL + rel_tol * y_new[i].abs().max(y[i].abs());
         let r = diff / scale;
         err_norm += r * r;
     }
@@ -190,46 +213,53 @@ where
     let mut ts = vec![t0];
     let mut ys = vec![y0.clone()];
 
+    // Cap the step so that linear interpolation BETWEEN accepted steps stays
+    // as accurate as the steps themselves. Without this the controller grows h
+    // freely on a smooth solution and the interpolation, not the integrator,
+    // becomes the error floor -- 2.4% relative on the Ricci flow at z = 0.4.
+    let h_max = (t_end - t0) / MIN_ACCEPTED_STEPS as f64;
     let mut t = t0;
     let mut y = y0;
-    // Initial step heuristic — start small, let the controller grow it.
-    let mut h = ((t_end - t0) / 100.0).max(1e-8);
+    // Initial step heuristic: start small, let the controller grow it.
+    let mut h = ((t_end - t0) / 100.0).max(1e-8).min(h_max);
 
-    let max_steps = 100_000usize;
     let mut steps = 0usize;
 
-    while t < t_end && steps < max_steps {
+    while t < t_end && steps < MAX_INTEGRATION_STEPS {
         steps += 1;
-        // Clamp final step
+        // Clamp the final step so the grid lands exactly on t_end.
         if t + h > t_end {
             h = t_end - t;
         }
 
-        let (y_new, err) = rkf45_step(rhs, t, &y, h);
+        let (y_new, err) = rkf45_step(rhs, t, &y, h, rel_tol);
 
-        if err <= 1.0 || h <= 1e-14 {
-            // Accept
+        if err <= 1.0 || h <= MIN_STEP_SIZE {
             t += h;
             y = y_new;
             ts.push(t);
             ys.push(y.clone());
-            // Grow step
             let factor = if err == 0.0 {
-                5.0
+                MAX_STEP_GROWTH
             } else {
-                (0.9 * err.powf(-0.2)).min(5.0)
+                (SAFETY_FACTOR * err.powf(-0.2)).min(MAX_STEP_GROWTH)
             };
-            h *= factor;
+            h = (h * factor).min(h_max);
         } else {
-            // Reject, shrink
-            let factor = (0.9 * err.powf(-0.25)).max(0.1);
+            let factor = (SAFETY_FACTOR * err.powf(-0.25)).max(MAX_STEP_SHRINK);
             h *= factor;
         }
-        // Honour caller's tolerance band: tighten step bound for high accuracy
-        let _ = rel_tol;
     }
+    debug_assert!(
+        steps < MAX_INTEGRATION_STEPS,
+        "integration hit its step cap"
+    );
+    debug_assert!(!ts.is_empty(), "the step grid cannot be empty");
 
-    debug_assert!(t >= t_end - 1e-9, "adaptive_integrate: failed to reach t_end");
+    debug_assert!(
+        t >= t_end - 1e-9,
+        "adaptive_integrate: failed to reach t_end"
+    );
     (ts, ys)
 }
 
@@ -277,7 +307,10 @@ fn linear_interp(ts: &[f64], ys: &[f64], z: f64) -> f64 {
 /// At z = 0, f = 1 ⇒ H = H₀_late ≈ 73.04.
 /// At z = 1100, f ≈ 0 ⇒ H = H₀_early ≈ 67.4.
 pub fn solve_ricci_flow(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
-    assert!(!z_array.is_empty(), "solve_ricci_flow: z_array must be non-empty");
+    assert!(
+        !z_array.is_empty(),
+        "solve_ricci_flow: z_array must be non-empty"
+    );
     assert!(h0_late > 0.0, "solve_ricci_flow: h0_late must be > 0");
     assert!(b3 > 0.0, "solve_ricci_flow: b3 must be > 0");
 
@@ -285,28 +318,17 @@ pub fn solve_ricci_flow(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
     let tau_ricci = k_gimel / b3;
     let r_initial = b3 / (k_gimel * k_gimel);
 
-    // Determine integration range — span the full request, but always start
-    // at z = 0 (matching Python's RicciFlowIntegrator.integrate convention
-    // when called from integrate_with_ricci_flow with z_range=(0, z_max)).
-    let z_min: f64 = z_array.iter().cloned().fold(f64::INFINITY, f64::min).min(0.0);
-    let z_max: f64 = z_array.iter().cloned().fold(f64::NEG_INFINITY, f64::max);
+    // This function used to drive a capped 100,000-step adaptive RKF45
+    // integration here and then discard both outputs with `let (_ts, _ys)`.
+    // Its own comment conceded that "the interpolated H0_eff result is
+    // independent of R(z)" -- so the integration was pure waste dressed up as
+    // the hard kernel. Callers who want the actual ODE solution should call
+    // `ricci_flow_curve`, which returns it.
+    debug_assert!(r_initial > 0.0, "initial curvature must be positive");
+    debug_assert!(tau_ricci > 0.0, "the Ricci timescale must be positive");
+    let _ = r_initial;
 
-    // Python sets R0 = R_initial * exp(-z_min / tau_ricci); here z_min ≤ 0
-    // typically so the exponent vanishes.
-    let r0 = r_initial * (-z_min / tau_ricci).exp();
-
-    // Drive RKF45 (only used here to walk the ODE; the interpolated H₀_eff
-    // result is independent of R(z), but the ODE step exercises the same
-    // numerical pipeline scipy.integrate.solve_ivp uses on the Python side,
-    // which is what the parity test asserts).
-    let rhs = |state: &[f64], z: f64| ricci_rhs(state, z, b3);
-    let (_ts, _ys) = if z_max > z_min {
-        adaptive_integrate(&rhs, z_min, z_max, vec![r0], 1e-6)
-    } else {
-        (vec![z_min], vec![vec![r0]])
-    };
-
-    // Interpolated unified-evolution H₀_eff(z) — matches
+    // Interpolated unified-evolution H0_eff(z) -- matches
     // `calculate_h_evolution_interpolated` in evolution_engine.py exactly
     // (up to the Python float arithmetic).
     let z_star = 1.0 / tau_ricci; // = b3 / k_gimel
@@ -320,34 +342,69 @@ pub fn solve_ricci_flow(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
         .collect()
 }
 
-/// Companion accessor: scalar Ricci curvature R(z) at a single redshift,
-/// matching `RicciFlowIntegrator.get_curvature_at_z`. Useful for
-/// downstream geometric-consistency tests.
+/// Numerically integrate the Ricci-flow ODE and sample R(z) on `z_array`.
+///
+/// This is the kernel `solve_ricci_flow` only pretended to run. It drives the
+/// adaptive RKF45 stepper over `[0, max(z_array)]` and interpolates the
+/// accepted steps onto the caller's grid, so the returned curve is the ODE
+/// solution rather than a closed form. Tests cross-check it against
+/// [`ricci_curvature_at`], which is the analytic solution of the same ODE.
+///
+/// Returns `None` when `z_array` is empty or carries a negative or non-finite
+/// redshift -- a caller must decide what that means, not receive a default.
+#[must_use]
+pub fn ricci_flow_curve(z_array: &[f64], b3: f64) -> Option<Vec<f64>> {
+    if z_array.is_empty() || z_array.len() > MAX_REDSHIFT_SAMPLES || !(b3.is_finite() && b3 > 0.0) {
+        return None;
+    }
+    if !z_array.iter().all(|z| z.is_finite() && *z >= 0.0) {
+        return None;
+    }
+    debug_assert!(b3 > 0.0, "b3 survived validation but is not positive");
+    debug_assert!(
+        z_array.len() <= MAX_REDSHIFT_SAMPLES,
+        "redshift grid survived validation but exceeds the fixed bound"
+    );
+
+    let k_gimel = b3 / 2.0 + 1.0 / PI;
+    let tau_ricci = k_gimel / b3;
+    let r0 = b3 / (k_gimel * k_gimel);
+
+    let z_max = z_array.iter().cloned().fold(0.0_f64, f64::max);
+    if z_max <= 0.0 {
+        return Some(vec![r0; z_array.len()]);
+    }
+
+    let rhs = |state: &[f64], z: f64| ricci_rhs(state, z, b3);
+    let (ts, ys) = adaptive_integrate(&rhs, 0.0, z_max, vec![r0], 1e-6);
+    debug_assert_eq!(ts.len(), ys.len(), "step times and states disagree");
+    let scalars: Vec<f64> = ys.iter().map(|y| y[0]).collect();
+    let _ = tau_ricci;
+    Some(
+        z_array
+            .iter()
+            .map(|&z| linear_interp(&ts, &scalars, z))
+            .collect(),
+    )
+}
+
+/// Hard bound on the redshift grid accepted in one call, so every loop over
+/// caller-supplied data has a fixed limit.
+pub const MAX_REDSHIFT_SAMPLES: usize = 1_048_576;
+
+/// Exponential curvature law `R(z) = R0 exp(-z / tau_ricci)`, mirroring
+/// `RicciFlowIntegrator.get_curvature_at_z`.
+///
+/// This is **not** the solution of [`ricci_rhs`], despite the Python calling
+/// it "the analytic solution" -- see
+/// `exponential_accessor_is_not_the_solution_of_the_stated_ode`. Use
+/// [`ricci_flow_curve`] when you want the ODE solved.
 pub fn ricci_curvature_at(z: f64, b3: f64) -> f64 {
     let k_gimel = b3 / 2.0 + 1.0 / PI;
     let tau_ricci = k_gimel / b3;
     let r_initial = b3 / (k_gimel * k_gimel);
     r_initial * (-z / tau_ricci).exp()
 }
-
-// ─── PyO3 wrapper ─────────────────────────────────────────────────────────
-
-#[cfg(feature = "python")]
-mod py {
-    use super::*;
-    use pyo3::prelude::*;
-
-    /// Rust-accelerated twin of the Python
-    /// `EvolutionEngineV16.calculate_h_evolution_interpolated` driven through
-    /// the Ricci-flow ODE solver (see `solve_ricci_flow` for the algorithm).
-    #[pyfunction]
-    pub fn py_ricci_flow_solve(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
-        solve_ricci_flow(z_array, h0_late, b3)
-    }
-}
-
-#[cfg(feature = "python")]
-pub use py::py_ricci_flow_solve;
 
 // ─── Tests ────────────────────────────────────────────────────────────────
 
@@ -382,12 +439,10 @@ mod tests {
     #[test]
     fn h_monotone_decreasing_from_73_to_67() {
         let (h0_late, b3) = defaults();
-        let zs: Vec<f64> = (0..50)
-            .map(|i| 1100.0 * (i as f64 / 49.0))
-            .collect();
+        let zs: Vec<f64> = (0..50).map(|i| 1100.0 * (i as f64 / 49.0)).collect();
         let hs = solve_ricci_flow(zs.clone(), h0_late, b3);
         for w in hs.windows(2) {
-            assert!(w[0] >= w[1] - 1e-12, "H not monotone: {:?}", w);
+            assert!(w[0] >= w[1] - 1e-12, "H not monotone: {w:?}");
         }
         assert!(hs[0] > 73.0);
         assert!(hs[hs.len() - 1] < 68.0);
@@ -415,6 +470,56 @@ mod tests {
             expected,
             ts.len()
         );
+    }
+
+    /// `dR/dz = -(1/tau) R / (1+z)` has the closed form
+    /// `R(z) = R0 (1+z)^(-1/tau)`. The integrator must reproduce it.
+    #[test]
+    fn ricci_flow_curve_matches_the_closed_form_of_its_own_ode() {
+        let b3 = 24.0_f64;
+        let k_gimel = b3 / 2.0 + 1.0 / PI;
+        let tau = k_gimel / b3;
+        let r0 = b3 / (k_gimel * k_gimel);
+
+        let zs: Vec<f64> = (0..25).map(|i| f64::from(i) * 0.4).collect();
+        let numeric = ricci_flow_curve(&zs, b3).expect("a valid grid was rejected");
+        assert_eq!(numeric.len(), zs.len());
+        for (z, r) in zs.iter().zip(numeric.iter()) {
+            let exact = r0 * (1.0 + z).powf(-1.0 / tau);
+            let rel = (r - exact).abs() / exact.abs().max(1e-30);
+            assert!(rel < 1e-3, "R({z}) = {r}, closed form {exact}, rel {rel:e}");
+        }
+    }
+
+    /// Guard on a discrepancy inherited from the Python, so that "fixing" one
+    /// side without the other cannot pass unnoticed.
+    ///
+    /// `evolution_engine.RicciFlowIntegrator.flow_rate` states the ODE
+    /// `dR/dz = -(1/tau) R / (1+z)`, whose solution is `R0 (1+z)^(-1/tau)`.
+    /// `get_curvature_at_z` on the very same class advertises itself as "the
+    /// analytic solution" and returns `R0 exp(-z/tau)`, which solves
+    /// `dR/dz = -(1/tau) R` instead. The two agree only to first order at
+    /// small z and diverge badly beyond it. [`ricci_curvature_at`] mirrors the
+    /// exponential form because that is what the Python actually computes;
+    /// which of the two is intended is a physics question for the author.
+    #[test]
+    fn exponential_accessor_is_not_the_solution_of_the_stated_ode() {
+        let b3 = 24.0_f64;
+        let curve = ricci_flow_curve(&[5.0], b3).expect("a valid grid was rejected");
+        let accessor = ricci_curvature_at(5.0, b3);
+        let rel = (curve[0] - accessor).abs() / accessor.abs();
+        assert!(
+            rel > 1.0,
+            "the two curvature laws have converged (rel {rel:e}); one of them changed"
+        );
+    }
+
+    #[test]
+    fn ricci_flow_curve_rejects_bad_input_rather_than_defaulting() {
+        assert!(ricci_flow_curve(&[], 24.0).is_none());
+        assert!(ricci_flow_curve(&[-1.0], 24.0).is_none());
+        assert!(ricci_flow_curve(&[f64::NAN], 24.0).is_none());
+        assert!(ricci_flow_curve(&[1.0], 0.0).is_none());
     }
 
     #[test]

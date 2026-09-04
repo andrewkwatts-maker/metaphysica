@@ -671,7 +671,7 @@ class AppendixKSterileConstants(SimulationBase):
                 category="GEOMETRIC",
                 description="ILLUSTRATIVE identity only: numerically L_horizon/(6 t_Planck) ~ 10^69 m/s, not c; not a derivation of the speed of light.",
                 input_params=["topology.torsion_per_shadow"],
-                output_params=["sterile.c_origin"],
+                output_params=[],
                 derivation={
                     "method": "Causal span from time-like torsion pin allocation",
                     "steps": [
@@ -697,7 +697,7 @@ class AppendixKSterileConstants(SimulationBase):
                 category="GEOMETRIC",
                 description="Gravitational constant from Metric Anchor node.",
                 input_params=["cosmology.speed_of_light_derived", "cosmology.H0_geometric", "topology.vol_v7"],
-                output_params=["sterile.G_origin"],
+                output_params=[],
                 derivation={
                     "method": "Metric Bank Node 001 eigenvalue extraction",
                     "steps": [
@@ -723,7 +723,7 @@ class AppendixKSterileConstants(SimulationBase):
                 category="GEOMETRIC",
                 description="Fine structure constant from sterile angle.",
                 input_params=["topology.sterile_angle"],
-                output_params=["sterile.alpha_origin"],
+                output_params=[],
                 derivation={
                     "method": "Fine structure constant from sterile projection angle",
                     "steps": [
@@ -749,7 +749,7 @@ class AppendixKSterileConstants(SimulationBase):
                 category="GEOMETRIC",
                 description="Planck's constant from 26D to 4D scale factor.",
                 input_params=["topology.vol_v7", "topology.ancestral_roots"],
-                output_params=["sterile.h_origin"],
+                output_params=[],
                 derivation={
                     "method": "Dimensional reduction normalization from 26D to 4D",
                     "steps": [
@@ -777,7 +777,7 @@ class AppendixKSterileConstants(SimulationBase):
                 category="GEOMETRIC",
                 description="Dark energy EoS from Betti number.",
                 input_params=["topology.elder_kads"],
-                output_params=["sterile.w0_origin"],
+                output_params=[],
                 derivation={
                     "method": "Dark energy equation of state from b3 Betti number",
                     "steps": [

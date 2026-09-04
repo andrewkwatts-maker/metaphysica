@@ -51,7 +51,7 @@ pub fn gate_28_iterative(
         return Err(GateError::InvalidDepth(max_depth));
     }
 
-    let mut current: [u32; LATTICE_WIDTH] = initial_state;
+    let current: [u32; LATTICE_WIDTH] = initial_state;
     let mut work_stack: Vec<usize> = Vec::with_capacity(LATTICE_WIDTH);
     work_stack.extend(0..LATTICE_WIDTH);
 

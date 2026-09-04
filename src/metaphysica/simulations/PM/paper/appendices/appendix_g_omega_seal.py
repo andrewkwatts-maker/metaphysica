@@ -735,7 +735,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "computes SHA-256 to produce a deterministic, tamper-evident checksum."
                 ),
                 input_params=["topology.ancestral_roots", "topology.shadow_torsion_total", "seal.bridge_pairs", "registry.node_count"],
-                output_params=["seal.geometric_checksum"],
+                output_params=[],
                 derivation={
                     "method": "Cryptographic hash of complete geometric state",
                     "steps": [
@@ -767,7 +767,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "would produce anisotropic physics (different laws in different directions)."
                 ),
                 input_params=["topology.shadow_torsion_total"],
-                output_params=["seal.4_pattern_verified"],
+                output_params=[],
                 derivation={
                     "method": "Isotropy verification from even pin division across 4D",
                     "steps": [

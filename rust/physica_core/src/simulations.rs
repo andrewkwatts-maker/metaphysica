@@ -95,7 +95,16 @@ impl TemporalSimulator {
     /// Construct with explicit parameters; rejects non-positive step or zero
     /// iteration cap so all subsequent loops have fixed bounds.
     pub fn new(step_size: f64, max_iterations: usize) -> Result<Self, SimulationError> {
-        if !(step_size > 0.0) {
+        // Written out rather than as `step_size <= 0.0`, which clippy suggests
+        // for the original `!(step_size > 0.0)`: that comparison is *false*
+        // for NaN, so a NaN step would have passed validation and every
+        // subsequent `t += step_size` would silently produce NaN.
+        //
+        // `is_finite` additionally rejects an infinite step, which the original
+        // guard let through -- `inf > 0.0` is true. An infinite step makes the
+        // first integration step meaningless, so refusing it is a fix, not
+        // just a tidy-up.
+        if !step_size.is_finite() || step_size <= 0.0 {
             return Err(SimulationError::InvalidStepSize(step_size));
         }
         if max_iterations == 0 {
@@ -126,7 +135,11 @@ pub fn simulate_temporal_sync(
     duration: f64,
 ) -> Result<TemporalState, SimulationError> {
     initial.validate()?;
-    if !(duration >= 0.0) {
+    // Exactly equivalent to the original `!(duration >= 0.0)`: rejects NaN and
+    // negatives, and deliberately still admits an infinite duration, which the
+    // `min(max_iterations)` below already bounds into a finite step count.
+    // Spelled out because the negated form reads as a mistake.
+    if duration.is_nan() || duration < 0.0 {
         return Err(SimulationError::InvalidStepSize(duration));
     }
     let n_steps = ((duration / sim.step_size).ceil() as usize).min(sim.max_iterations);
@@ -173,5 +186,46 @@ mod tests {
         let s0 = TemporalState::zero();
         let s1 = simulate_temporal_sync(&sim, s0, 1e-3).unwrap();
         assert!(s1.t > 0.0);
+    }
+    // ─── validation regressions ────────────────────────────────────────────
+
+    #[test]
+    fn a_nan_step_size_is_refused() {
+        // The guard was `!(step_size > 0.0)`. Clippy suggests `<= 0.0`, which
+        // is *false* for NaN -- a NaN step would have passed validation and
+        // turned every `t` into NaN thereafter. This pins the NaN rejection so
+        // the guard cannot be "tidied" into that bug later.
+        assert!(TemporalSimulator::new(f64::NAN, 10).is_err());
+    }
+
+    #[test]
+    fn an_infinite_step_size_is_refused() {
+        // `inf > 0.0` is true, so the original guard admitted it. An infinite
+        // step makes the first integration step meaningless.
+        assert!(TemporalSimulator::new(f64::INFINITY, 10).is_err());
+        assert!(TemporalSimulator::new(f64::NEG_INFINITY, 10).is_err());
+    }
+
+    #[test]
+    fn ordinary_step_sizes_are_accepted() {
+        assert!(TemporalSimulator::new(0.01, 10).is_ok());
+        assert!(
+            TemporalSimulator::new(0.0, 10).is_err(),
+            "zero is not a step"
+        );
+        assert!(TemporalSimulator::new(-0.01, 10).is_err());
+    }
+
+    #[test]
+    fn a_nan_duration_is_refused_but_an_infinite_one_is_bounded() {
+        let sim = TemporalSimulator::new(0.1, 5).expect("valid simulator");
+        let state = TemporalState::zero();
+        assert!(simulate_temporal_sync(&sim, state.clone(), f64::NAN).is_err());
+        assert!(simulate_temporal_sync(&sim, state.clone(), -1.0).is_err());
+        // Infinity is deliberately still allowed: `min(max_iterations)` bounds
+        // it to a finite step count, so it means "run to the cap".
+        let out = simulate_temporal_sync(&sim, state, f64::INFINITY)
+            .expect("an infinite duration is capped, not rejected");
+        assert!(out.t.is_finite(), "the capped run must leave t finite");
     }
 }

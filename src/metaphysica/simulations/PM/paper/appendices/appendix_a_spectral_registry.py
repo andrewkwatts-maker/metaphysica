@@ -316,7 +316,7 @@ class AppendixASpectralRegistry(SimulationBase):
                     "Any modification triggers Sterile Certification revocation."
                 ),
                 input_params=["registry.node_count"],
-                output_params=["validation.omega_seal"],
+                output_params=["terminal.omega_seal"],
                 terms={
                     "Omega_seal": "The terminal cryptographic signature",
                     "SHA-256": "NIST-standard 256-bit cryptographic hash function",

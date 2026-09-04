@@ -967,7 +967,7 @@ class FourFaceG2Structure(SimulationBase):
                     "aligned with the visible-sector OR projection."
                 ),
                 input_params=["topology.mephorash_chi", "topology.elder_kads"],
-                output_params=["geometry.n_bridge_pairs", "geometry.n_aligned_pairs"],
+                output_params=["pneuma.n_bridge_pairs", "geometry.n_aligned_pairs"],
                 derivation={
                     "steps": [
                         "Start with n_pairs = chi_eff/12 = 144/12 = 12 total bridge "

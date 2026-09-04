@@ -30,9 +30,7 @@
 //! [`quark_hierarchy_check`] checks the *log-spacing* matches PDG within a
 //! configurable tolerance (default 1.0 = one e-fold), not the absolute mass.
 
-use crate::constants::{
-    FormulasSource, SEED_GOLDEN_RATIO, PHYSICA_V_HIGGS_MEV,
-};
+use crate::constants::{FormulasSource, PHYSICA_V_HIGGS_MEV, SEED_GOLDEN_RATIO};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use thiserror::Error;
@@ -105,8 +103,8 @@ impl QuarkPrediction {
     /// Build a fully populated prediction from the canonical texture entry.
     #[must_use]
     pub fn from_texture(name: &str, generation: u8, n: i32) -> Self {
-        debug_assert!(generation >= 1 && generation <= 3);
-        debug_assert!(n >= 0 && n <= 300);
+        debug_assert!((1..=3).contains(&generation));
+        debug_assert!((0..=300).contains(&n));
         let m = phi_scaling_mass(n);
         let y = m / PHYSICA_V_HIGGS_MEV;
         Self {
@@ -178,7 +176,11 @@ impl QuarkRegistry {
         let mut r = Self::new();
         r.insert(QuarkPrediction::from_texture("up", 1, PHYSICA_N_UP));
         r.insert(QuarkPrediction::from_texture("down", 1, PHYSICA_N_DOWN));
-        r.insert(QuarkPrediction::from_texture("strange", 2, PHYSICA_N_STRANGE));
+        r.insert(QuarkPrediction::from_texture(
+            "strange",
+            2,
+            PHYSICA_N_STRANGE,
+        ));
         r.insert(QuarkPrediction::from_texture("charm", 2, PHYSICA_N_CHARM));
         r.insert(QuarkPrediction::from_texture("bottom", 3, PHYSICA_N_BOTTOM));
         r.insert(QuarkPrediction::from_texture("top", 3, PHYSICA_N_TOP));
@@ -388,7 +390,10 @@ mod tests {
         let m_charm = r.predict_mass(2, QuarkFlavour::Up).unwrap();
         let m_strange = r.predict_mass(2, QuarkFlavour::Down).unwrap();
         // Up-type heavier than down-type in 2nd generation per texture.
-        assert!(m_charm > m_strange, "charm({m_charm}) should exceed strange({m_strange})");
+        assert!(
+            m_charm > m_strange,
+            "charm({m_charm}) should exceed strange({m_strange})"
+        );
     }
 
     #[test]
@@ -456,6 +461,9 @@ mod tests {
     fn exponent_for_round_trip() {
         assert_eq!(exponent_for(1, QuarkFlavour::Up).unwrap(), PHYSICA_N_UP);
         assert_eq!(exponent_for(3, QuarkFlavour::Up).unwrap(), PHYSICA_N_TOP);
-        assert_eq!(exponent_for(3, QuarkFlavour::Down).unwrap(), PHYSICA_N_BOTTOM);
+        assert_eq!(
+            exponent_for(3, QuarkFlavour::Down).unwrap(),
+            PHYSICA_N_BOTTOM
+        );
     }
 }

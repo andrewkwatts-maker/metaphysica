@@ -22,15 +22,19 @@
 //!
 //! Total: 240 roots, each with squared length 2.
 //!
-//! This is a one-shot precompute, cached in a `OnceLock` so the second-onwards
-//! call is a pointer return. Used by the Python `E8RootSystem` class at init
-//! time via the `@rust_accelerated("py_e8_roots")` decorator on
-//! `_enumerate_roots`.
+//! This is a one-shot precompute, cached in a `OnceLock` so the second call
+//! onwards is a pointer return.
+//!
+//! NOTE ON THE OLD HEADER: this file used to claim the Python `E8RootSystem`
+//! reached it "via the `@rust_accelerated(\"py_e8_roots\")` decorator on
+//! `_enumerate_roots`". It never did. This module was not declared in
+//! `lib.rs`, so `py_e8_roots` was never in the extension, and
+//! `rust_accelerated` has no call sites anywhere in the Python package. The
+//! module is wired up now; the Python side is not, because the measured cost
+//! of `_enumerate_roots` is 1.5 ms once per process and porting it would buy
+//! nothing.
 
 use std::sync::OnceLock;
-
-#[cfg(feature = "python")]
-use pyo3::prelude::*;
 
 /// Cached 240-root enumeration. Populated on first call to [`enumerate_e8_roots`].
 static ROOTS: OnceLock<Vec<[f64; 8]>> = OnceLock::new();
@@ -78,18 +82,18 @@ pub fn enumerate_e8_roots() -> &'static Vec<[f64; 8]> {
             // bit k == 0 → +1, bit k == 1 → -1
             let mut signs = [0.0_f64; 8];
             let mut neg_count = 0_u32;
-            for k in 0..8 {
+            for (k, sign) in signs.iter_mut().enumerate() {
                 if (mask >> k) & 1 == 0 {
-                    signs[k] = 1.0;
+                    *sign = 1.0;
                 } else {
-                    signs[k] = -1.0;
+                    *sign = -1.0;
                     neg_count += 1;
                 }
             }
             if neg_count % 2 == 0 {
                 let mut v = [0.0_f64; 8];
-                for k in 0..8 {
-                    v[k] = 0.5 * signs[k];
+                for (slot, sign) in v.iter_mut().zip(signs.iter()) {
+                    *slot = 0.5 * sign;
                 }
                 debug_assert!(
                     (v.iter().map(|x| x * x).sum::<f64>() - 2.0).abs() < 1e-15,
@@ -104,20 +108,8 @@ pub fn enumerate_e8_roots() -> &'static Vec<[f64; 8]> {
     })
 }
 
-/// PyO3 binding: returns the 240 E8 roots as `list[list[float]]`.
-///
-/// `[f64; 8]` does not have a direct PyO3 `IntoPy` impl, so each root is
-/// converted to `Vec<f64>` on the way out. The conversion runs once per
-/// Python-level call; the underlying enumeration is cached, so subsequent
-/// calls only re-copy the array, not re-enumerate.
-#[cfg(feature = "python")]
-#[pyfunction]
-pub fn py_e8_roots() -> Vec<Vec<f64>> {
-    enumerate_e8_roots()
-        .iter()
-        .map(|r| r.to_vec())
-        .collect()
-}
+// The `py_e8_roots` binding lives in `pyfacade`, with the rest of the
+// Python surface, so there is one place to look for what the wheel exports.
 
 #[cfg(test)]
 mod tests {
@@ -139,9 +131,7 @@ mod tests {
             let norm_sq: f64 = r.iter().map(|x| x * x).sum();
             assert!(
                 (norm_sq - 2.0).abs() < 1e-12,
-                "root {:?} has norm² = {}, expected 2",
-                r,
-                norm_sq
+                "root {r:?} has norm² = {norm_sq}, expected 2"
             );
         }
     }
@@ -162,7 +152,7 @@ mod tests {
             } else if all_half {
                 half_int_count += 1;
             } else {
-                panic!("root {:?} is neither Type I nor Type II", r);
+                panic!("root {r:?} is neither Type I nor Type II");
             }
         }
         assert_eq!(integer_count, 112, "Type I count");
@@ -177,7 +167,7 @@ mod tests {
             let all_half = r.iter().all(|&x| x.abs() == 0.5);
             if all_half {
                 let neg = r.iter().filter(|&&x| x < 0.0).count();
-                assert_eq!(neg % 2, 0, "Type II root {:?} has odd minus-sign count", r);
+                assert_eq!(neg % 2, 0, "Type II root {r:?} has odd minus-sign count");
             }
         }
     }
@@ -201,10 +191,10 @@ mod tests {
         }
         for r in roots {
             let mut neg = *r;
-            for k in 0..8 {
-                neg[k] = -neg[k];
+            for component in neg.iter_mut() {
+                *component = -*component;
             }
-            assert!(set.contains(&to_key(&neg)), "negation of {:?} missing", r);
+            assert!(set.contains(&to_key(&neg)), "negation of {r:?} missing");
         }
     }
 

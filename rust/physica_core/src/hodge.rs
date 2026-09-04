@@ -170,7 +170,10 @@ pub fn levi_civita_sign(idx: &[usize; DIM]) -> f64 {
         seen |= bit;
     }
     let s = parity(idx);
-    debug_assert!(s == 1.0 || s == -1.0, "distinct indices must give a unit sign");
+    debug_assert!(
+        s == 1.0 || s == -1.0,
+        "distinct indices must give a unit sign"
+    );
     s
 }
 
@@ -236,7 +239,11 @@ fn validate_form(values: &[f64], expected: usize, sqrt_det_g: f64) -> Result<(),
 
 /// Write `val` into all 24 index orderings of `quad`, signed by parity.
 fn scatter_antisymmetric(star: &mut [f64], quad: &[usize; 4], val: f64) {
-    debug_assert_eq!(star.len(), RANK4_LEN, "scatter target is not a dense 4-form");
+    debug_assert_eq!(
+        star.len(),
+        RANK4_LEN,
+        "scatter target is not a dense 4-form"
+    );
     debug_assert!(val.is_finite(), "scattering a non-finite component");
     for p in PERM4.iter() {
         let sign = parity(p);

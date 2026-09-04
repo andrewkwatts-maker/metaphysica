@@ -498,7 +498,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 category="GEOMETRIC",
                 description="Total ancestral roots from SO(24) + shadow torsion - manifold cost.",
                 input_params=["topology.so24_generators", "topology.shadow_torsion_total", "topology.manifold_cost"],
-                output_params=["funnel.entry_roots"],
+                output_params=[],
                 derivation={
                     "method": "Symmetry budget at the funnel entry (26D bulk)",
                     "steps": [
@@ -525,7 +525,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 category="GEOMETRIC",
                 description="Torsion pins at the 4D intersection (4 dimensions x 6 pins each).",
                 input_params=["topology.shadow_torsion_total"],
-                output_params=["funnel.bottleneck_pins"],
+                output_params=[],
                 derivation={
                     "method": "Isotropic pin distribution across 4D spacetime",
                     "steps": [

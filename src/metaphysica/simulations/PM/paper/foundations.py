@@ -125,7 +125,7 @@ class FoundationsV16_2(SimulationBase):
         "dimensions.D_observable",
         "topology.elder_kads",
         "topology.mephorash_chi",
-        "particle.n_generations",
+        "geometry.n_generations",
     ]
 
     @property
@@ -927,7 +927,7 @@ class FoundationsV16_2(SimulationBase):
                 category="DERIVED",
                 description="Three fermion generations from b3 Betti number of G2 manifold.",
                 input_params=["topology.elder_kads"],
-                output_params=["particle.n_generations"],
+                output_params=["geometry.n_generations"],
                 derivation={
                     "method": "topological_index",
                     "steps": [
