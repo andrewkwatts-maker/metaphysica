@@ -1116,7 +1116,15 @@ class OctonionicMixing(SimulationBase):
                     "Cabibbo angle derived from golden angle on associative 3-form. "
                     "V_us = sin(theta_g/2) * xi ~ 0.223. The 3D rigidity constrains mixing."
                 ),
-                eml_description="EML: ops.mul(ops.sin(ops.div(eml_vec('theta_g'), eml_scalar(2.0))), eml_vec('xi_epsilon')) — V_us from sin(θ_g/2) × flux correction",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('fermion.epsilon_fn'), ops.add(eml_scalar(1.0), "
+                    "ops.mul(ops.inv(ops.sqrt(ops.add(eml_vec('topology.elder_kads'), "
+                    "ops.add(ops.div(eml_vec('topology.elder_kads'), eml_scalar(2.0)), "
+                    "ops.inv(eml_pi()))))), eml_scalar(0.037)))) — V_us = epsilon_fn x cusp_correction. "
+                    "The published form read sin(theta_g/2) x xi_epsilon; in run() xi_epsilon IS "
+                    "epsilon_fn/sin(theta_g/2), so the golden angle cancels exactly and V_us does not "
+                    "depend on it. cusp = 1 + 0.037/sqrt(b3 + k_gimel)"
+                ),
                 derivation_formula="ckm-from-theta-g",
                 experimental_bound=0.22500,
                 uncertainty=0.00067,
@@ -1131,7 +1139,17 @@ class OctonionicMixing(SimulationBase):
                 description=(
                     "c-b mixing from second power of golden angle. V_cb = V_us^2 * xi_b ~ 0.040."
                 ),
-                eml_description="EML: ops.mul(ops.pow(eml_vec('V_us_triality'), eml_scalar(2.0)), eml_vec('xi_b')) — V_cb ~ V_us² × geometric correction",
+                eml_description=(
+                    "EML: ops.mul(ops.div(ops.div(ops.pow(eml_vec('ckm.V_us_triality'), eml_scalar(2.0)), "
+                    "ops.add(eml_scalar(1.0), ops.div(ops.sub(eml_vec('topology.elder_kads'), "
+                    "ops.mul(eml_vec('topology.b2'), eml_vec('topology.n_gen'))), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi'))))), "
+                    "ops.inv(eml_scalar(0.81))), ops.add(eml_scalar(1.0), "
+                    "ops.div(ops.mul(eml_scalar(2.0), ops.add(ops.div(eml_vec('topology.elder_kads'), "
+                    "eml_scalar(2.0)), ops.inv(eml_pi()))), ops.pow(eml_vec('topology.elder_kads'), "
+                    "eml_scalar(2.0))))) — V_cb = V_us^2 / geometric_factor x 0.81 x g2_twist, with "
+                    "geometric_factor = 1 + (b3 - b2 n_gen)/(2 chi_eff) and g2_twist = 1 + 2 k_gimel/b3^2"
+                ),
                 derivation_formula="ckm-from-theta-g",
                 experimental_bound=0.04182,
                 uncertainty=0.00085,
@@ -1146,7 +1164,11 @@ class OctonionicMixing(SimulationBase):
                 description=(
                     "u-b mixing from third power of golden angle. V_ub = V_us^3 * xi_t ~ 0.004."
                 ),
-                eml_description="EML: ops.mul(ops.pow(eml_vec('V_us_triality'), eml_scalar(3.0)), eml_vec('xi_t')) — V_ub ~ V_us³ × geometric correction",
+                eml_description=(
+                    "EML: ops.mul(ops.div(ops.pow(eml_vec('ckm.V_us_triality'), eml_scalar(3.0)), "
+                    "ops.add(eml_scalar(1.0), ops.div(eml_vec('topology.n_gen'), "
+                    "eml_vec('topology.b2')))), eml_scalar(0.58)) — V_ub = V_us^3 / (1 + n_gen/b2) x 0.58"
+                ),
                 derivation_formula="ckm-from-theta-g",
                 experimental_bound=0.00369,
                 uncertainty=0.00011,
@@ -1161,7 +1183,17 @@ class OctonionicMixing(SimulationBase):
                 description=(
                     "CP violation measure from octonionic structure. J ~ V_us * V_cb * V_ub * sin(delta)."
                 ),
-                eml_description="EML: ops.mul(eml_vec('V_us_triality'), ops.mul(eml_vec('V_cb_triality'), ops.mul(eml_vec('V_ub_triality'), ops.sin(eml_vec('delta_cp'))))) — J = V_us·V_cb·V_ub·sin(δ)",
+                eml_description=(
+                    "EML: ops.mul(ops.mul(ops.mul(eml_vec('ckm.V_us_triality'), "
+                    "ops.mul(eml_vec('ckm.V_cb_triality'), eml_vec('ckm.V_ub_triality'))), "
+                    "ops.sin(ops.mul(eml_scalar(2.0), "
+                    "ops.arctan(ops.inv(eml_vec('triality.phi_golden')))))), ops.add(eml_scalar(1.0), "
+                    "ops.div(ops.add(ops.div(eml_vec('topology.elder_kads'), eml_scalar(2.0)), "
+                    "ops.inv(eml_pi())), ops.pow(eml_vec('topology.elder_kads'), eml_scalar(2.0))))) — J "
+                    "= V_us V_cb V_ub sin(2 theta_g) x (1 + k_gimel/b3^2). The CP phase used here is the "
+                    "DOUBLED golden angle 2 theta_g = 63.4 deg, not ckm.delta_cp = pi/6, and the "
+                    "torsional damping factor was missing from the published form"
+                ),
                 derivation_formula="ckm-from-theta-g",
                 experimental_bound=3.08e-5,
                 uncertainty=0.13e-5,
@@ -1178,7 +1210,14 @@ class OctonionicMixing(SimulationBase):
                     "Solar mixing angle from tribimaximal base on 4-form. "
                     "theta_12 = arcsin(1/sqrt(3)) * (1 - delta) ~ 33.59 degrees."
                 ),
-                eml_description="EML: ops.mul(ops.asin(ops.div(eml_scalar(1.0), ops.sqrt(eml_scalar(3.0)))), eml_scalar(57.2958)) — θ₁₂ = arcsin(1/√3) ≈ 33.6° (tribimaximal)",
+                eml_description=(
+                    "EML: ops.mul(ops.asin(ops.mul(ops.inv(ops.sqrt(eml_scalar(3.0))), "
+                    "ops.sub(eml_scalar(1.0), ops.div(ops.sub(eml_vec('topology.elder_kads'), "
+                    "ops.mul(eml_vec('topology.b2'), eml_vec('topology.n_gen'))), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi')))))), "
+                    "eml_scalar(57.29577951308232)) — theta_12 = arcsin[(1/sqrt 3)(1 - (b3 - b2 n_gen)/(2 "
+                    "chi_eff))] in degrees. The published form dropped the topological perturbation"
+                ),
                 derivation_formula="pmns-from-triality",
                 experimental_bound=33.41,
                 uncertainty=0.75,
@@ -1194,7 +1233,18 @@ class OctonionicMixing(SimulationBase):
                     "Atmospheric mixing angle from maximal base + golden enhancement. "
                     "theta_23 = pi/4 + theta_g/2 = 60.9 degrees raw, reduced to ~49.75 by flux/Kahler corrections."
                 ),
-                eml_description="EML: ops.mul(ops.add(ops.div(eml_pi(), eml_scalar(4.0)), ops.div(eml_vec('theta_g_rad'), eml_scalar(2.0))), eml_scalar(57.2958)) — θ₂₃ = π/4 + θ_g/2 ≈ 49.75°",
+                eml_description=(
+                    "EML: ops.add(eml_scalar(45.0), "
+                    "ops.add(ops.div(ops.mul(ops.sub(eml_vec('topology.b2'), eml_vec('topology.n_gen')), "
+                    "eml_vec('topology.n_gen')), eml_vec('topology.b2')), "
+                    "ops.mul(ops.div(eml_vec('topology.orientation_sum'), "
+                    "eml_vec('topology.elder_kads')), ops.div(ops.mul(eml_vec('topology.b2'), "
+                    "eml_vec('topology.mephorash_chi')), ops.mul(eml_vec('topology.elder_kads'), "
+                    "eml_vec('topology.n_gen')))))) — theta_23 = 45 deg + Kahler correction "
+                    "(b2-n_gen)n_gen/b2 + flux winding (S_orient/b3)(b2 chi_eff)/(b3 n_gen) = 45 + 0.75 + "
+                    "4.0. The pi/4 + theta_g/2 route the published form quoted gives 60.9 deg and is NOT "
+                    "what run() computes"
+                ),
                 derivation_formula="pmns-from-triality",
                 experimental_bound=49.3,
                 uncertainty=1.0,
@@ -1210,7 +1260,15 @@ class OctonionicMixing(SimulationBase):
                     "Reactor mixing angle from cycle intersection geometry. "
                     "theta_13 = sqrt(b2*n_gen)/b3 * correction ~ 8.33 degrees."
                 ),
-                eml_description="EML: ops.mul(ops.div(ops.sqrt(ops.mul(eml_scalar(4.0), eml_scalar(3.0))), eml_scalar(24.0)), eml_scalar(57.2958)) — θ₁₃ = √(h₁₁·n_gen)/b₃ × rad→deg",
+                eml_description=(
+                    "EML: ops.mul(ops.asin(ops.mul(ops.div(ops.sqrt(ops.mul(eml_vec('topology.b2'), "
+                    "eml_vec('topology.n_gen'))), eml_vec('topology.elder_kads')), "
+                    "ops.add(eml_scalar(1.0), ops.div(eml_vec('topology.orientation_sum'), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi')))))), "
+                    "eml_scalar(57.29577951308232)) — theta_13 = arcsin[(sqrt(b2 n_gen)/b3)(1 + "
+                    "S_orient/(2 chi_eff))] in degrees. The published form omitted both the arcsin and "
+                    "the orientation correction"
+                ),
                 derivation_formula="pmns-from-triality",
                 experimental_bound=8.63,
                 uncertainty=0.11,
@@ -1279,7 +1337,12 @@ class OctonionicMixing(SimulationBase):
                     "Ratio of lepton to quark mixing magnitudes. "
                     "Geometric prediction (4/3)^(3/2) ~ 1.54, observed ~ 2.5."
                 ),
-                eml_description="EML: ops.pow(ops.div(eml_scalar(4.0), eml_scalar(3.0)), eml_scalar(1.5)) — mixing ratio (4/3)^(3/2) ≈ 1.54 from co-assoc/assoc cycle ratio",
+                eml_description=(
+                    "EML: ops.div(ops.sin(ops.div(ops.mul(eml_vec('pmns.theta_12_triality'), eml_pi()), "
+                    "eml_scalar(180.0))), eml_vec('ckm.V_us_triality')) — the registered value is the "
+                    "ACTUAL ratio sin(theta_12)/V_us = 2.46, not the dimensional (4/3)^(3/2) = 1.54 the "
+                    "published form quoted. run() computes the former and compares it to the latter"
+                ),
                 derivation_formula="mixing-dimension-ratio",
                 no_experimental_value=True
             ),

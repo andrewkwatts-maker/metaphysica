@@ -1077,7 +1077,10 @@ class CKMMatrixSimulation(SimulationBase):
                     f"PDG 2024: {self.PDG_V_cb} ± {self.PDG_V_cb_err}. "
                     "Agreement within experimental error."
                 ),
-                eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(2.0))) — V_cb = Aλ² from 2nd-gen geometric overlap",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('ckm.A_wolfenstein'), ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(2.0))) "
+                    "— V_cb = A lambda^2 from 2nd-gen geometric overlap"
+                ),
                 derivation_formula="ckm-hierarchy",
                 experimental_bound=0.04182,
                 uncertainty=0.00085,
@@ -1095,7 +1098,13 @@ class CKMMatrixSimulation(SimulationBase):
                     f"PDG 2024: {self.PDG_V_ub} ± {self.PDG_V_ub_err}. "
                     "Matches inclusive measurement."
                 ),
-                eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(3.0))) — V_ub = Aλ³ from 3rd-gen geometric suppression",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('ckm.A_wolfenstein'), ops.mul(ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(3.0)), "
+                    "ops.sqrt(ops.add(ops.pow(eml_vec('ckm.rho_wolfenstein'), eml_scalar(2.0)), "
+                    "ops.pow(eml_vec('ckm.eta_wolfenstein'), eml_scalar(2.0)))))) "
+                    "— |V_ub| = A lambda^3 |rho - i eta|. The published form omitted the "
+                    "|rho - i eta| modulus that run() applies, so it read 12% high"
+                ),
                 derivation_formula="ckm-hierarchy",
                 experimental_bound=0.00369,
                 uncertainty=0.00011,
@@ -1112,7 +1121,13 @@ class CKMMatrixSimulation(SimulationBase):
                     "parametrization with geometric CP phase. "
                     f"PDG 2024: {self.PDG_V_td} ± {self.PDG_V_td_err} from B_d mixing."
                 ),
-                eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.mul(ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(3.0)), ops.sqrt(ops.add(ops.pow(eml_vec('rho_wolfenstein'), eml_scalar(2.0)), ops.pow(eml_vec('eta_wolfenstein'), eml_scalar(2.0)))))) — V_td = Aλ³√(ρ²+η²)",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('ckm.A_wolfenstein'), ops.mul(ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(3.0)), "
+                    "ops.sqrt(ops.add(ops.pow(ops.sub(eml_scalar(1.0), eml_vec('ckm.rho_wolfenstein')), eml_scalar(2.0)), "
+                    "ops.pow(eml_vec('ckm.eta_wolfenstein'), eml_scalar(2.0)))))) "
+                    "— |V_td| = A lambda^3 |1 - rho - i eta|. The published form used rho "
+                    "where run() uses (1 - rho)"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 experimental_bound=self.PDG_V_td,
                 uncertainty=self.PDG_V_td_err,
@@ -1129,7 +1144,11 @@ class CKMMatrixSimulation(SimulationBase):
                     "~ 0.040 from geometric overlap structure. "
                     f"PDG 2024: {self.PDG_V_ts} ± {self.PDG_V_ts_err} from B_s mixing."
                 ),
-                eml_description="EML: ops.mul(eml_vec('A_wolfenstein'), ops.pow(eml_vec('lambda_wolfenstein'), eml_scalar(2.0))) — |V_ts| ≈ Aλ² from Wolfenstein parametrization (PDG magnitude convention)",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('ckm.A_wolfenstein'), ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(2.0))) "
+                    "— |V_ts| = A lambda^2 from the Wolfenstein parametrization "
+                    "(PDG magnitude convention)"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 experimental_bound=self.PDG_V_ts,
                 uncertainty=self.PDG_V_ts_err,
@@ -1146,7 +1165,14 @@ class CKMMatrixSimulation(SimulationBase):
                     "generation diagonal dominance in CKM matrix. "
                     f"PDG 2024: {self.PDG_V_tb} ± {self.PDG_V_tb_err} from single top production."
                 ),
-                eml_description="EML: ops.sub(eml_scalar(1.0), ops.mul(eml_scalar(0.5), ops.pow(eml_vec('A_wolfenstein'), eml_scalar(2.0)))) — V_tb ≈ 1 − A²λ⁴/2 (diagonal dominance)",
+                eml_description=(
+                    "EML: ops.sqrt(ops.sub(eml_scalar(1.0), ops.add("
+                    "ops.pow(eml_vec('ckm.V_td'), eml_scalar(2.0)), "
+                    "ops.pow(eml_vec('ckm.V_ts'), eml_scalar(2.0))))) "
+                    "— V_tb from third-row unitarity, which is how run() fixes it. The "
+                    "published form read 1 - A^2/2 = 0.672, having dropped the lambda^4 its "
+                    "own annotation carried"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 experimental_bound=self.PDG_V_tb,
                 uncertainty=self.PDG_V_tb_err,
@@ -1165,7 +1191,11 @@ class CKMMatrixSimulation(SimulationBase):
                     f"PDG 2024: J = ({self.PDG_J:.1e} ± {self.PDG_J_err:.1e}). "
                     "Geometric prediction within 3%."
                 ),
-                eml_description="EML: ops.mul(ops.pow(eml_scalar(A), eml_scalar(2.0)), ops.mul(ops.pow(lambda_W, eml_scalar(6.0)), eml_scalar(eta)))",
+                eml_description=(
+                    "EML: ops.mul(ops.pow(eml_vec('ckm.A_wolfenstein'), eml_scalar(2.0)), "
+                    "ops.mul(ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(6.0)), eml_vec('ckm.eta_wolfenstein'))) "
+                    "— J = A^2 lambda^6 eta"
+                ),
                 derivation_formula="jarlskog-invariant",
                 experimental_bound=self.PDG_J,
                 uncertainty=self.PDG_J_err,
@@ -1197,7 +1227,10 @@ class CKMMatrixSimulation(SimulationBase):
                     "Wolfenstein A parameter derived from geometric overlap "
                     "coefficient. Geometric derivation parameter, no direct experimental measurement."
                 ),
-                eml_description="EML: ops.div(Vcb, ops.pow(lambda_W, eml_scalar(2.0))) — geometric overlap coefficient A ~ V_cb/lambda^2",
+                eml_description=(
+                    "EML: ops.div(eml_vec('ckm.V_cb'), ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(2.0))) "
+                    "— geometric overlap coefficient A = V_cb / lambda^2"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 no_experimental_value=True
             ),
@@ -1210,7 +1243,12 @@ class CKMMatrixSimulation(SimulationBase):
                     "Real Wolfenstein parameter rho. Emerges from geometric "
                     "CP phase structure. Geometric derivation parameter from unitarity triangle."
                 ),
-                eml_description="EML: ops.mul(eml_vec('V_ub'), ops.cos(eml_vec('delta_cp'))) — ρ ≈ |V_ub|cos(δ_CP) from unitarity triangle geometry",
+                eml_description=(
+                    "EML: eml_scalar(0.14) "
+                    "— rho is a FITTED input to run() (unitarity-triangle constraint), not a "
+                    "derived quantity. The published form claimed rho = |V_ub| cos(delta_CP), "
+                    "which evaluates to 0.0030 and is not where this 0.14 comes from"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 no_experimental_value=True
             ),
@@ -1224,7 +1262,13 @@ class CKMMatrixSimulation(SimulationBase):
                     "magnitude, derived from topological phase delta_CP ~ pi/6. "
                     "Geometric derivation parameter."
                 ),
-                eml_description="EML: ops.mul(eml_vec('V_ub'), ops.sin(eml_vec('delta_cp'))) — η ≈ |V_ub|sin(δ_CP) from δ_CP ~ π/6 topological phase",
+                eml_description=(
+                    "EML: eml_scalar(0.36) "
+                    "— eta is a FITTED input to run(), calibrated so that J ~ 3e-5. The "
+                    "published form claimed eta = |V_ub| sin(delta_CP), which evaluates to "
+                    "0.0017; run() itself notes delta_CP = pi/6 is inconsistent with "
+                    "atan2(eta, rho) = 68.7 deg"
+                ),
                 derivation_formula="wolfenstein-parametrization",
                 no_experimental_value=True
             ),
@@ -1253,7 +1297,12 @@ class CKMMatrixSimulation(SimulationBase):
                     "for exact geometric construction. Tests completeness of G2 eigenstates. "
                     "Mathematical constraint, no experimental measurement."
                 ),
-                eml_description="EML: ops.sub(eml_scalar(1.0), ops.add(ops.pow(eml_vec('ckm.V_ud'), eml_scalar(2.0)), ops.add(ops.pow(eml_vec('ckm.V_us'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_ub'), eml_scalar(2.0))))) — unitarity deviation = 1 − (|V_ud|²+|V_us|²+|V_ub|²)",
+                eml_description=(
+                    "EML: ops.max(ops.abs(ops.sub(eml_vec('ckm.unitarity_row1'), "
+                    "eml_scalar(1.0))), ops.abs(ops.sub(ops.add(ops.pow(eml_vec('ckm.V_ud'), eml_scalar(2.0)), ops.add(ops.pow(eml_vec('ckm.V_cd'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_td'), eml_scalar(2.0)))), eml_scalar(1.0)))) "
+                    "— max(|row1 - 1|, |col1 - 1|). The published form tested row 1 alone, "
+                    "which is 0 by construction because V_ud is DEFINED from it"
+                ),
                 derivation_formula="ckm-unitarity",
                 no_experimental_value=True
             ),

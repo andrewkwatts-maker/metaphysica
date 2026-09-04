@@ -71,7 +71,13 @@ from metaphysica._launcher import launch as Launch
 # fall back to the pure-Python implementation, so importing this module is
 # always safe.
 # Rust dispatch is wired via _dispatch.py. _HAS_RUST re-exported for inspection.
-from metaphysica._dispatch import _HAS_RUST, _native  # noqa: F401
+from metaphysica._dispatch import (  # noqa: F401
+    _HAS_RUST,
+    _native,
+    assert_rust_backend,
+    backend_report,
+    rust_fn,
+)
 
 
 # ── Build pipeline ───────────────────────────────────────────────────────────
@@ -190,18 +196,22 @@ def Get(name: str, *, as_json: bool = False) -> Union[Dict[str, Any], str]:
         result = build_quark_datasheet(name)
     except KeyError:
         # 2. Fall through to constant — Rust fast path for known registry names.
-        if _HAS_RUST and _native is not None:
-            fn = getattr(_native, "py_get_constant", None)
-            if fn is not None:
-                try:
-                    result = fn(name)
-                    if as_json:
-                        import json
-                        return json.dumps(result, indent=2, ensure_ascii=False, default=str)
-                    return result
-                except (KeyError, Exception):
-                    pass  # Fall through to Python.
-        result = build_constant_datasheet(name)
+        result = None
+        fn = rust_fn("py_get_constant")
+        if fn is not None:
+            # Only a KeyError means "the Rust registry does not carry this
+            # name", which is ordinary -- the Python alias table is broader.
+            # Everything else is an integrity signal and must surface:
+            # py_get_constant raises ValueError when a constant derives to a
+            # non-finite value, and the old `except (KeyError, Exception):
+            # pass` swallowed exactly that, then quietly answered from the
+            # Python path as though nothing had gone wrong.
+            try:
+                result = fn(name)
+            except KeyError:
+                result = None
+        if result is None:
+            result = build_constant_datasheet(name)
 
     if as_json:
         import json
@@ -220,13 +230,11 @@ def list_quarks() -> list:
     """
     from metaphysica.datasheets.quark import KNOWN_QUARKS
     names: set[str] = set(KNOWN_QUARKS)
-    if _HAS_RUST and _native is not None:
-        fn = getattr(_native, "py_list_quarks", None)
-        if fn is not None:
-            try:
-                names.update(fn())
-            except Exception:
-                pass
+    # No try/except: listing names cannot legitimately fail, so a failure here
+    # means a broken extension and must be seen rather than papered over.
+    fn = rust_fn("py_list_quarks")
+    if fn is not None:
+        names.update(fn())
     return sorted(names)
 
 
@@ -246,13 +254,10 @@ def list_constants() -> list:
     """
     from metaphysica.datasheets.constant import KNOWN_CONSTANTS
     names: set[str] = set(KNOWN_CONSTANTS)
-    if _HAS_RUST and _native is not None:
-        fn = getattr(_native, "py_list_constants", None)
-        if fn is not None:
-            try:
-                names.update(fn())
-            except Exception:
-                pass
+    # See list_quarks: a failure here is a broken extension, not a fallback.
+    fn = rust_fn("py_list_constants")
+    if fn is not None:
+        names.update(fn())
     return sorted(names)
 
 
@@ -310,6 +315,7 @@ from metaphysica._errors import (  # noqa: E402,F401
     MetaphysicaAmbiguityError,
     MetaphysicaFormatError,
     MetaphysicaBackendError,
+    MetaphysicaRustBackendError,
 )
 from metaphysica._help import help  # noqa: E402,F401
 
@@ -368,6 +374,9 @@ __all__ = [
     "MetaphysicaAmbiguityError",
     "MetaphysicaFormatError",
     "MetaphysicaBackendError",
+    "MetaphysicaRustBackendError",
+    "assert_rust_backend",
+    "backend_report",
     # S6 — interactive help
     "help",
 ]

@@ -1128,7 +1128,11 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="Quartic Coupling at EW Scale",
                 units="dimensionless",
                 status="DERIVED",
-                eml_description="EML: ops.div(ops.pow(eml_vec('m_H'), eml_scalar(2.0)), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('v_ew'), eml_scalar(2.0))))",
+                eml_description=(
+                    "EML: ops.div(ops.pow(eml_vec('pdg.m_higgs'), eml_scalar(2.0)), "
+                    "ops.mul(eml_scalar(2.0), ops.pow(eml_vec('geometry.higgs_vev'), "
+                    "eml_scalar(2.0)))) — lambda = m_H^2 / (2 v^2) at the EW scale"
+                ),
                 description=(
                     "Higgs quartic coupling at the electroweak scale. "
                     "lambda(M_Z) = m_H^2 / (2*v^2) ~ 0.13."
@@ -1143,7 +1147,12 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="Quartic Coupling at GUT Scale",
                 units="dimensionless",
                 status="DERIVED",
-                eml_description="EML: ops.add(eml_vec('lambda_MZ'), ops.add(ops.mul(eml_vec('beta_coeff'), eml_vec('log_MGUT_over_MZ')), eml_vec('delta_lambda_G2')))",
+                eml_description=(
+                    "EML: ops.add(ops.add(eml_vec('vacuum.lambda_ew'), "
+                    "ops.mul(eml_scalar(-0.01), ops.log(ops.div(eml_vec('gauge.M_GUT'), eml_vec('pdg.m_Z'))))), eml_scalar(0.35)) "
+                    "— lambda(M_GUT) = lambda(M_Z) + beta_SM ln(M_GUT/M_Z) + "
+                    "delta_lambda_G2, with beta_SM = -0.01 and delta_lambda_G2 = 0.35"
+                ),
                 description=(
                     "Higgs quartic coupling at the GUT/compactification scale. "
                     "In SM: negative. In PM: positive due to G2 portal correction."
@@ -1156,7 +1165,11 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="Quartic Coupling at Planck Scale",
                 units="dimensionless",
                 status="PREDICTIONS",
-                eml_description="EML: ops.add(eml_vec('lambda_gut_pm'), ops.mul(eml_vec('beta_pm_above_gut'), eml_vec('log_MP_over_MGUT')))",
+                eml_description=(
+                    "EML: ops.add(eml_vec('vacuum.lambda_gut'), ops.mul(eml_scalar(0.005), "
+                    "ops.sub(ops.log(ops.div(eml_vec('constants.M_PLANCK'), eml_vec('pdg.m_Z'))), ops.log(ops.div(eml_vec('gauge.M_GUT'), eml_vec('pdg.m_Z')))))) "
+                    "— lambda(M_P) = lambda(M_GUT) + beta_PM ln(M_P/M_GUT), beta_PM = 0.005"
+                ),
                 description=(
                     "Higgs quartic coupling at the Planck scale. PM predicts "
                     "lambda(M_P) > 0, ensuring absolute stability."
@@ -1169,7 +1182,14 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="SM Instability Scale",
                 units="GeV",
                 status="DERIVED",
-                eml_description="EML: ops.mul(eml_vec('M_Z'), ops.exp(ops.div(ops.mul(eml_scalar(8.0), ops.mul(ops.pow(eml_pi(), eml_scalar(2.0)), eml_vec('lambda_MZ'))), ops.mul(eml_scalar(3.0), ops.pow(eml_vec('y_t'), eml_scalar(4.0))))))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('pdg.m_Z'), ops.exp(ops.div("
+                    "eml_vec('vacuum.lambda_ew'), eml_scalar(0.01)))) "
+                    "— Lambda_I = M_Z exp(-lambda(M_Z)/beta_SM) is the scale at which the "
+                    "linearised 1-loop running crosses zero. The previous form quoted the "
+                    "textbook 8 pi^2 lambda / (3 y_t^4) exponent, which is NOT what STEP 3 "
+                    "of this module computes"
+                ),
                 description=(
                     "Energy scale at which lambda becomes negative in the Standard Model. "
                     "Lambda_I ~ 10^10.5 GeV for measured m_H and m_t. "
@@ -1198,7 +1218,13 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="Euclidean Bounce Action",
                 units="dimensionless",
                 status="DERIVED",
-                eml_description="EML: ops.div(ops.mul(ops.mul(eml_scalar(27.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.pow(eml_vec('sigma'), eml_scalar(4.0))), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('epsilon'), eml_scalar(3.0))))",
+                eml_description=(
+                    "EML: ops.min(ops.div(ops.mul(ops.mul(eml_scalar(27.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.pow(ops.mul(eml_scalar(1.5), eml_vec('constants.M_PLANCK')), eml_scalar(4.0))), ops.mul(eml_scalar(2.0), ops.pow(ops.mul(eml_scalar(1e-120), ops.pow(eml_vec('constants.M_PLANCK'), eml_scalar(4.0))), eml_scalar(3.0)))), eml_scalar(1.0e10)) "
+                    "— Coleman-De Luccia thin-wall B = 27 pi^2 sigma^4 / (2 epsilon^3) with "
+                    "sigma = 1.5 M_P and epsilon = 1e-120 M_P^4. The raw action is ~1e215; "
+                    "the registered 1e10 is the display cap the module applies, so the cap "
+                    "is part of the published quantity and is shown here"
+                ),
                 description=(
                     "The Euclidean action of the tunneling instanton. Controls vacuum "
                     "decay rate via Gamma ~ exp(-B). PM has B >> 400."
@@ -1243,7 +1269,13 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 name="Vacuum Stability Flag",
                 units="boolean",
                 status="PREDICTIONS",
-                eml_description="EML: ops.mul(eml_vec('bounce_gt_crit'), eml_vec('instability_gt_MP'))",
+                eml_description=(
+                    "EML: ops.mul(ops.gt(eml_vec('vacuum.bounce_action'), eml_scalar(400.0)), "
+                    "ops.mul(ops.gt(eml_vec('vacuum.lambda_gut'), eml_scalar(0.0)), "
+                    "ops.gt(eml_vec('vacuum.lambda_planck'), eml_scalar(0.0)))) "
+                    "— stable iff B > B_crit AND lambda stays positive to M_P (which is what "
+                    "makes instability_scale_pm infinite, hence > M_P)"
+                ),
                 description=(
                     "Whether the vacuum is absolutely stable. PM predicts True."
                 ),

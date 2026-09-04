@@ -178,7 +178,32 @@ class RicciFlowIntegrator:
         """
         Get effective Ricci curvature at redshift z.
 
-        Uses analytic solution: R(z) = R_initial * exp(-z / tau_ricci)
+        Analytic solution of the ODE this class declares in `flow_rate`:
+
+            dR/dz = -(1/tau) R / (1+z)
+            =>  dR/R = -(1/tau) d ln(1+z)
+            =>  R(z) = R_initial * (1+z)^(-1/tau)
+
+        CORRECTED 2026-09-05. This returned R_initial * exp(-z/tau), which
+        is the solution of dR/dz = -(1/tau) R -- a DIFFERENT equation from
+        the one `flow_rate` states, while the docstring advertised it as
+        "the analytic solution". The two laws diverge fast: they differ by
+        1.8x at z = 1, by 500x at z = 5, and by 1e39 at z = 50.
+
+        The power law is the correct reading. Cosmological evolution runs in
+        ln(1+z) because a = 1/(1+z), so dR/R = -(1/tau) d ln a is the
+        geometrically meaningful statement -- the curvature falls as a power
+        of the scale factor. Treating z itself as the affine parameter has
+        no such meaning. The exponential law is also numerically degenerate
+        at high redshift: at recombination it gives exp(-2143), which is
+        exactly 0.0 in f64, so the curvature vanishes identically at z=1100.
+
+        `ricci_flow_curve` in the Rust core already integrates `flow_rate`'s
+        ODE and reproduces the power law to ~1e-9, so this accessor was the
+        odd one out rather than the reference.
+
+        Nothing in production called it -- only the parity tests -- so this
+        corrects a latent trap rather than changing a published number.
 
         Args:
             z: Redshift
@@ -186,7 +211,7 @@ class RicciFlowIntegrator:
         Returns:
             Ricci curvature at z
         """
-        return self.R_initial * np.exp(-z / self.tau_ricci)
+        return self.R_initial * (1.0 + z) ** (-1.0 / self.tau_ricci)
 
 
 class EvolutionEngineV16(SimulationBase):

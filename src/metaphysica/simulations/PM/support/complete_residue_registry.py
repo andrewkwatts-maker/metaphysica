@@ -864,7 +864,15 @@ class CompleteResidueRegistryV18(SimulationBase):
                     "units": "eV",
                     "hierarchy": "normal",
                     "note": "PM predicts normal hierarchy from brane tensions",
-                    "eml_description": "EML: ops.mul(eml_vec('lambda_49'), ops.inv(eml_vec('L_compact_sq'))) — lightest neutrino mass from 49th spectral residue via G2 see-saw mechanism"
+                    "eml_description": (
+                        "EML: ops.mul(ops.div(ops.div(eml_vec('geometry.k_gimel'), "
+                        "ops.sqrt(eml_scalar(144.0))), ops.div(eml_scalar(2.0e16), "
+                        "ops.pow(eml_scalar(246.22), eml_scalar(2.0)))), eml_scalar(1.0e9)) "
+                        "— m1 = k_gimel (v^2/M_GUT) / sqrt(chi_eff), converted GeV->eV. "
+                        "M_GUT = 2e16 GeV is hardcoded here pending the register 2.2 "
+                        "GUT-scale ruling, so it is written as a literal rather than "
+                        "resolved from gauge.M_GUT"
+                    )
                 }
             )
 
@@ -970,7 +978,15 @@ class CompleteResidueRegistryV18(SimulationBase):
                 metadata={
                     "derivation": "M_Pl/sqrt(b3) with instanton suppression",
                     "units": "GeV",
-                    "eml_description": "EML: ops.div(eml_vec('M_Planck'), ops.sqrt(eml_vec('b3'))) — GUT scale from Planck mass divided by sqrt(b3=24) G2 instanton suppression"
+                    "eml_description": (
+                        "EML: ops.mul(ops.div(eml_scalar(1.22e19), "
+                        "ops.sqrt(eml_vec('topology.elder_kads'))), "
+                        "ops.pow(ops.exp(ops.neg(ops.div(eml_scalar(144.0), "
+                        "eml_scalar(12.0)))), eml_scalar(0.25))) "
+                        "— M_GUT_eff = (M_Pl/sqrt(b3)) x exp(-chi_eff/12)^(1/4). The "
+                        "published form gave only M_Pl/sqrt(b3) = 2.49e18 and omitted the "
+                        "instanton suppression that run() applies, a factor of 20"
+                    )
                 }
             )
 

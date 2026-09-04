@@ -180,6 +180,7 @@ class PneumaMechanismV16(SimulationBase):
         return [
             "pneuma.coupling",
             "pneuma.flow_parameter",
+            "pneuma.potential_second_derivative_vev",
             "pneuma.lagrangian_valid",
             "pneuma.vev",
             "pneuma.mass_scale",
@@ -264,6 +265,12 @@ class PneumaMechanismV16(SimulationBase):
         return {
             "pneuma.coupling": float(coupling),
             "pneuma.flow_parameter": float(flow_parameter),
+            # Published because pneuma.flow_parameter and
+            # pneuma.lagrangian_valid are both defined in terms of V''(<Psi>)
+            # and it was in no registry, so neither eml_description could
+            # resolve its own principal operand.
+            "pneuma.potential_second_derivative_vev": float(
+                self._potential_second_derivative(vev)),
             "pneuma.lagrangian_valid": bool(lagrangian_valid),
             "pneuma.vev": float(vev),
             "pneuma.mass_scale": float(mass_scale),
@@ -1447,9 +1454,47 @@ class PneumaMechanismV16(SimulationBase):
                 derivation_formula="pneuma-lagrangian",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(ops.sqrt(ops.div(b3, eml_scalar(24.0))), "
-                    "ops.mul(g2_norm, ops.div(m_higgs, M_Planck))) — "
-                    "topological factor × G2 norm × hierarchy factor"
+                    "EML: ops.mul(ops.sqrt(ops.div(eml_vec('topology.elder_kads'), "
+                    "eml_scalar(24.0))), ops.mul(ops.sqrt(ops.div(eml_scalar(7.0), "
+                    "eml_scalar(3.0))), ops.div(m_higgs, eml_vec('constants.M_PLANCK')))) — "
+                    "topological factor × G2 norm sqrt(7/3) × hierarchy factor "
+                    "(reduced Planck mass)"
+                ),
+            ),
+            Parameter(
+                path="pneuma.potential_second_derivative_vev",
+                name="Racetrack Potential Curvature at VEV",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "V''(<Psi>), the second derivative of the racetrack potential "
+                    "evaluated at the Pneuma VEV; sets both the flow parameter and "
+                    "the vacuum stability flag"
+                ),
+                derivation_formula="pneuma-flow",
+                no_experimental_value=True,
+                eml_description=(
+                    "EML: ops.add(ops.mul(eml_scalar(2.0), ops.pow(ops.sub(ops.mul(eml_scalar(1.0), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)), "
+                    "eml_scalar(2.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(24.0)), eml_vec('pneuma.vev')))))), ops.mul(eml_scalar(1.03), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
+                    "eml_scalar(2.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(23.0)), eml_vec('pneuma.vev'))))))), eml_scalar(2.0))), "
+                    "ops.mul(eml_scalar(2.0), ops.mul(ops.add(ops.neg(ops.mul(eml_scalar(1.0), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)), "
+                    "eml_scalar(1.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(24.0)), eml_vec('pneuma.vev'))))))), ops.mul(eml_scalar(1.03), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
+                    "eml_scalar(1.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(23.0)), eml_vec('pneuma.vev'))))))), ops.add(ops.neg(ops.mul(eml_scalar(1.0), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)), "
+                    "eml_scalar(3.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(24.0)), eml_vec('pneuma.vev'))))))), ops.mul(eml_scalar(1.03), "
+                    "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
+                    "eml_scalar(3.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(23.0)), eml_vec('pneuma.vev')))))))))) — V''(<Psi>) = 2 (W'')^2 + 2 W' W''' "
+                    "at the racetrack VEV, with A=1.0, B=1.03, a=2pi/24, b=2pi/23"
                 ),
             ),
             Parameter(
@@ -1461,7 +1506,8 @@ class PneumaMechanismV16(SimulationBase):
                 derivation_formula="pneuma-flow",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.sqrt(ops.mul(eml_scalar(2.0), V_double_prime_vev)) — "
+                    "EML: ops.sqrt(ops.mul(eml_scalar(2.0), "
+                    "eml_vec('pneuma.potential_second_derivative_vev'))) — "
                     "sqrt(2 V''(<Psi>)) from curvature at racetrack minimum"
                 ),
             ),
@@ -1474,7 +1520,8 @@ class PneumaMechanismV16(SimulationBase):
                 derivation_formula="pneuma-lagrangian",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.gt(V_double_prime_vev, eml_scalar(0.0)) — "
+                    "EML: ops.gt(eml_vec('pneuma.potential_second_derivative_vev'), "
+                    "eml_scalar(0.0)) — "
                     "True iff V''(⟨Ψ⟩) > 0 at racetrack minimum (stable vacuum condition)"
                 ),
             ),
@@ -1487,9 +1534,13 @@ class PneumaMechanismV16(SimulationBase):
                 derivation_formula="pneuma-flow",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.ln(ops.div(ops.mul(B, b_coeff), ops.mul(A, a_coeff))), "
-                    "ops.sub(b_coeff, a_coeff)) — VEV from racetrack analytic minimum; "
-                    "condensate: ops.mul(phi_0, ops.exp(ops.neg(ops.div(m_phi, H_0))))"
+                    "EML: ops.div(ops.ln(ops.div(ops.mul(eml_scalar(1.03), "
+                    "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0))), "
+                    "ops.mul(eml_scalar(1.0), ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(24.0))))), ops.sub(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(23.0)), ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "eml_scalar(24.0)))) — VEV = ln(Bb/Aa)/(b-a) at the racetrack analytic "
+                    "minimum, with A=1.0, B=1.03, a=2pi/24, b=2pi/23"
                 ),
             ),
             Parameter(
@@ -1501,9 +1552,11 @@ class PneumaMechanismV16(SimulationBase):
                 derivation_formula="pneuma-lagrangian",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(M_Planck, ops.sqrt(chi_eff)) — "
-                    "Planck mass / sqrt(Euler characteristic); "
-                    "ops.div(eml_scalar(M_P), ops.sqrt(eml_scalar(144.0))) for TCS G2 #187"
+                    "EML: ops.div(eml_vec('constants.M_PLANCK'), "
+                    "ops.sqrt(eml_vec('geometry.chi_eff_total'))) — "
+                    "REDUCED Planck mass / sqrt(chi_eff_total = 144) for TCS G2 #187. "
+                    "Both operands are qualified: M_PLANCK is claimed by two registry "
+                    "entries a factor sqrt(8 pi) apart, and chi_eff by two a factor 2 apart"
                 ),
             ),
             # v22.0: Neural gate parameters

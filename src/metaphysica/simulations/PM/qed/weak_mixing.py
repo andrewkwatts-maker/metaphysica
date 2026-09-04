@@ -152,7 +152,10 @@ class WeakMixingV17(SimulationBase):
                 status="DERIVED",
                 description="sin^2(theta_W) in bulk (before Torsion Gate)",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(weak_manifest, ops.add(eml_scalar(1.0), epsilon))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.manifest_weak_mixing'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_weak_mixing",
@@ -163,7 +166,11 @@ class WeakMixingV17(SimulationBase):
                 experimental_bound=CODATA_WEAK,
                 bound_type="measured",
                 bound_source="PDG2024",
-                eml_description="EML: ops.div(weak_bulk, ops.add(eml_scalar(1.0), epsilon)) — coupling ratio contracts under projection",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.bulk_weak_mixing'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon'))) "
+                    "— coupling ratio contracts under projection"
+                ),
             ),
         ]
 

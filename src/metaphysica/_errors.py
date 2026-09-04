@@ -15,6 +15,7 @@ The hierarchy
     |   +- MetaphysicaAmbiguityError       (name resolves to multiple kinds)
     +- MetaphysicaFormatError              (format not supported — inherits ValueError)
     +- MetaphysicaBackendError             (JIT generator failed — inherits RuntimeError)
+    +- MetaphysicaRustBackendError         (Rust extension missing or stale)
 
 Each subtype carries machine-readable attributes alongside its message so
 callers can surface helpful UI without parsing strings.
@@ -128,6 +129,26 @@ class MetaphysicaBackendError(MetaphysicaError, RuntimeError):
         )
 
 
+class MetaphysicaRustBackendError(MetaphysicaError, RuntimeError):
+    """Raised by :func:`metaphysica.assert_rust_backend` when Rust is not live.
+
+    Kept separate from :class:`MetaphysicaBackendError`, which is about a JIT
+    generator or renderer failing and takes ``(name, fmt, cause)``. This one
+    carries the whole :func:`metaphysica.backend_report` dict, so a caller can
+    tell "not built" from "built for the wrong ABI" from "stale version"
+    without parsing the message.
+
+    Attributes
+    ----------
+    report : dict
+        The backend report at the moment the check failed.
+    """
+
+    def __init__(self, message: str, report: Optional[dict] = None) -> None:
+        self.report = report or {}
+        super().__init__(message)
+
+
 def closest_matches(name: str, pool: Iterable[str], *, n: int = 3) -> List[str]:
     """Return up to *n* closest matches to *name* from *pool*.
 
@@ -144,5 +165,6 @@ __all__ = [
     "MetaphysicaAmbiguityError",
     "MetaphysicaFormatError",
     "MetaphysicaBackendError",
+    "MetaphysicaRustBackendError",
     "closest_matches",
 ]

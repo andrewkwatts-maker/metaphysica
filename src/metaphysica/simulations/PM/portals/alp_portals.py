@@ -101,6 +101,7 @@ class ALPResult:
 
 # Output parameter paths
 _OUTPUT_PARAMS = [
+    "portals.alp_decay_constant_gev",
     "portals.alp_mass_ev",
     "portals.alp_photon_coupling_gev_inv",
     "portals.alp_nucleon_coupling_gev_inv",
@@ -437,7 +438,25 @@ class ALPPortalsV23(SimulationBase):
             }
         )
 
+        registry.set_param(
+            path="portals.alp_decay_constant_gev",
+            value=result.f_a_alp,
+            source=self._metadata.id,
+            status="PREDICTED",
+            metadata={
+                "derivation": "sqrt(f_a_single * f_a_double) from Face 3 racetrack",
+                "units": "GeV",
+                "note": (
+                    "Published because all three ALP observables are defined as "
+                    "functions of f_a^ALP and it was only returned under the private "
+                    "key _f_a_alp_GeV, leaving every ALP eml_description naming an "
+                    "operand no registry held"
+                ),
+            }
+        )
+
         return {
+            "portals.alp_decay_constant_gev": result.f_a_alp,
             "portals.alp_mass_ev": result.m_alp,
             "portals.alp_photon_coupling_gev_inv": result.g_a_gamma_gamma,
             "portals.alp_nucleon_coupling_gev_inv": result.g_a_N,
@@ -753,6 +772,39 @@ class ALPPortalsV23(SimulationBase):
         """Return parameter definitions."""
         return [
             Parameter(
+                path="portals.alp_decay_constant_gev",
+                name="ALP Decay Constant",
+                units="GeV",
+                status="PREDICTED",
+                description=(
+                    "Face 3 ALP decay constant f_a^{ALP}, the geometric mean of the "
+                    "single- and double-suppression branches of the Face 3 racetrack. "
+                    "Sets the mass and both couplings of the ALP."
+                ),
+                no_experimental_value=True,
+                eml_description=(
+                    "EML: ops.sqrt(ops.mul(ops.div(ops.mul(eml_scalar(1.22e19), "
+                    "ops.exp(ops.neg(ops.div(ops.mul(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
+                    "ops.mul(eml_scalar(3.0), eml_pi()))), eml_vec('topology.elder_kads'))))), "
+                    "ops.mul(eml_vec('geometry.chi_eff_sector'), "
+                    "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
+                    "ops.mul(eml_scalar(3.0), eml_pi())))), ops.div(ops.mul(ops.mul(eml_scalar(1.22e19), "
+                    "ops.exp(ops.neg(ops.div(ops.mul(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
+                    "ops.mul(eml_scalar(3.0), eml_pi()))), eml_vec('topology.elder_kads'))))), "
+                    "ops.exp(ops.neg(ops.div(ops.mul(ops.mul(eml_scalar(2.0), eml_pi()), "
+                    "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
+                    "ops.mul(eml_scalar(3.0), eml_pi()))), ops.sub(eml_vec('topology.elder_kads'), "
+                    "ops.div(eml_vec('geometry.chi_eff_sector'), eml_vec('topology.elder_kads'))))))), "
+                    "ops.mul(eml_vec('geometry.chi_eff_sector'), "
+                    "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
+                    "ops.mul(eml_scalar(3.0), eml_pi())))))) — f_a^ALP = sqrt(f_a_single * f_a_double), the "
+                    "geometric mean of the single- and double-exponential Face 3 racetrack branches, with "
+                    "T_3 = b3 k_gimel/(3 pi) and M_Pl = 1.22e19 GeV"
+                ),
+            ),
+            Parameter(
                 path="portals.alp_mass_ev",
                 name="ALP Mass",
                 units="eV",
@@ -766,7 +818,11 @@ class ALPPortalsV23(SimulationBase):
                     "IAXO helioscope, and CAST helioscope experiments."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(ops.div(ops.pow(eml_scalar(0.217), eml_scalar(2.0)), eml_vec('f_a_alp_gev')), eml_scalar(1.0e9)) — m_ALP = Lambda_QCD^2 / f_a^ALP (converted to eV) from Face 3 moduli"
+                eml_description=(
+                    "EML: ops.mul(ops.div(ops.pow(eml_scalar(0.217), eml_scalar(2.0)), "
+                    "eml_vec('portals.alp_decay_constant_gev')), eml_scalar(1.0e9)) "
+                    "— m_ALP = Lambda_QCD^2 / f_a^ALP (converted to eV) from Face 3 moduli"
+                )
             ),
             Parameter(
                 path="portals.alp_photon_coupling_gev_inv",
@@ -783,7 +839,13 @@ class ALPPortalsV23(SimulationBase):
                 bound_type="upper",
                 bound_source="CAST2017",
                 uncertainty=None,
-                eml_description="EML: ops.div(ops.mul(eml_vec('geometry.alpha_leak'), eml_scalar(72.0)), ops.mul(ops.mul(eml_scalar(24.0), eml_pi()), eml_vec('f_a_alp_gev'))) — g_agammagamma = alpha_leak * chi_eff / (24*pi*f_a_ALP) Primakoff coupling"
+                eml_description=(
+                    "EML: ops.div(ops.mul(eml_vec('geometry.alpha_leak'), "
+                    "eml_vec('geometry.chi_eff_sector')), ops.mul(ops.mul(eml_scalar(24.0), "
+                    "eml_pi()), eml_vec('portals.alp_decay_constant_gev'))) "
+                    "— g_agammagamma = alpha_leak * chi_eff_sector / (24 pi f_a^ALP); "
+                    "the per-sector 72, not the two-shadow 144"
+                )
             ),
             Parameter(
                 path="portals.alp_nucleon_coupling_gev_inv",
@@ -798,7 +860,11 @@ class ALPPortalsV23(SimulationBase):
                     "measurements (CASPEr, ARIADNE)."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('geometry.alpha_leak'), eml_vec('f_a_alp_gev')) — g_aN = alpha_leak / f_a^ALP minimal inter-face leakage nucleon coupling"
+                eml_description=(
+                    "EML: ops.div(eml_vec('geometry.alpha_leak'), "
+                    "eml_vec('portals.alp_decay_constant_gev')) "
+                    "— g_aN = alpha_leak / f_a^ALP, minimal inter-face leakage coupling"
+                )
             ),
             Parameter(
                 path="portals.alp_fifth_force_range_m",

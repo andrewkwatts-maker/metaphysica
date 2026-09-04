@@ -32,6 +32,15 @@
 //! `ckm::CKMMatrix::from_topology`) stay unexported so a pass-through cannot
 //! be mistaken for a derivation.
 
+// PyO3 0.22's `#[pyfunction]` / `#[pymethods]` expansion trips
+// `clippy::useless_conversion` on the `PyResult<T>` return type of every
+// wrapper in this file. The lint fires on generated code, and its suggestion
+// -- "consider removing" the return type -- does not compile. Silenced here
+// rather than obeyed. Note this only ever appears under
+// `cargo clippy --all-features`; the default-feature run does not compile
+// this module at all, which is how fourteen clippy errors sat here unseen.
+#![allow(clippy::useless_conversion)]
+
 use crate::constants::FormulasRegistry;
 use crate::quarks::QuarkRegistry;
 use pyo3::exceptions::{PyKeyError, PyValueError};
@@ -334,13 +343,119 @@ fn py_ricci_flow_solve(z_array: Vec<f64>, h0_late: f64, b3: f64) -> PyResult<Vec
     Ok(out)
 }
 
-/// Reject a Python sequence longer than [`MAX_SEQUENCE_LEN`].
-fn check_sequence_len(n: usize) -> PyResult<()> {
-    debug_assert!(MAX_SEQUENCE_LEN > 0, "the sequence bound must be positive");
+/// Ricci curvature R(z) from the numerically integrated flow ODE.
+///
+/// This is the ODE solve itself, as opposed to [`py_ricci_flow_solve`], which
+/// evaluates the closed-form H0_eff interpolation and never touches R(z). The
+/// kernel existed but was reachable only from Rust unit tests.
+#[pyfunction]
+fn py_ricci_flow_curve(z_array: Vec<f64>, b3: f64) -> PyResult<Vec<f64>> {
+    check_sequence_len(z_array.len())?;
     debug_assert!(
-        MAX_SEQUENCE_LEN >= crate::hodge::RANK4_LEN,
-        "the bound must admit the largest form this module accepts"
+        z_array.len() <= MAX_SEQUENCE_LEN,
+        "length guard let an oversized grid through"
     );
+    // `ricci_flow_curve` returns None rather than a default on bad input; the
+    // boundary turns that into a Python exception instead of a silent value.
+    let out = crate::cosmology::ricci_flow_curve(&z_array, b3).ok_or_else(|| {
+        PyValueError::new_err(
+            "z_array must be non-empty with finite non-negative redshifts, and b3 finite and > 0",
+        )
+    })?;
+    debug_assert_eq!(out.len(), z_array.len(), "one curvature per redshift");
+    debug_assert!(
+        out.iter().all(|r| r.is_finite() && *r > 0.0),
+        "the Ricci flow produced a non-finite or non-positive curvature"
+    );
+    Ok(out)
+}
+
+/// E8 lattice points inside the ball of `radius`, as `list[list[float]]`.
+///
+/// Mirrors `SpherePacking.enumerate_lattice_points`, including its inherited
+/// coordinate cap: the enumeration is complete only up to radius 2.5. Ask
+/// `py_e8_lattice_complete(radius)` rather than assuming.
+#[pyfunction]
+fn py_e8_lattice_points(radius: f64) -> PyResult<Vec<Vec<f64>>> {
+    let points = crate::e8::e8_lattice_points(radius)
+        .ok_or_else(|| PyValueError::new_err("radius must be finite and non-negative"))?;
+    debug_assert!(
+        points.iter().all(|v| v.len() == 8),
+        "an E8 lattice point must have 8 coordinates"
+    );
+    debug_assert!(
+        points.len() <= MAX_SEQUENCE_LEN,
+        "the enumeration produced more points than the sequence bound allows"
+    );
+    Ok(points.iter().map(|v| v.to_vec()).collect())
+}
+
+/// `True` when `py_e8_lattice_points(radius)` misses no point of the ball.
+#[pyfunction]
+fn py_e8_lattice_complete(radius: f64) -> bool {
+    crate::e8::e8_lattice_points_are_complete(radius)
+}
+
+/// Packing-density convergence rows `(radius, density, n_points)`.
+#[pyfunction]
+fn py_e8_density_convergence(
+    max_radius: f64,
+    num_steps: usize,
+    lattice_constant: f64,
+) -> PyResult<Vec<(f64, f64, usize)>> {
+    let rows = crate::e8::e8_density_convergence(max_radius, num_steps, lattice_constant)
+        .ok_or_else(|| {
+            PyValueError::new_err(
+                "max_radius and lattice_constant must be finite and > 0, and num_steps in 1..=4096",
+            )
+        })?;
+    debug_assert_eq!(rows.len(), num_steps, "one row per requested step");
+    debug_assert!(
+        rows.iter().all(|r| r.1.is_finite()),
+        "a density row came back non-finite"
+    );
+    Ok(rows)
+}
+
+/// Exact Dirac eigenvalues on a flat torus with the given `periods`.
+///
+/// Mirrors `FlatTorusDirac.analytic_eigenvalues`. Raises `ValueError` rather
+/// than returning an empty spectrum, which would read as a torus with no
+/// modes.
+#[pyfunction]
+fn py_flat_torus_dirac_spectrum(periods: Vec<f64>, max_mode: u32) -> PyResult<Vec<f64>> {
+    check_sequence_len(periods.len())?;
+    let n = periods.len();
+    let evals =
+        crate::g2_manifold::flat_torus_dirac_spectrum(&periods, max_mode).ok_or_else(|| {
+            PyValueError::new_err(format!(
+                "periods must be 1..={} finite positive lengths and \
+                 (2*max_mode+1)^dim must not exceed {}",
+                crate::g2_manifold::MAX_TORUS_DIM,
+                crate::g2_manifold::MAX_MODE_VECTORS
+            ))
+        })?;
+    debug_assert!(!evals.is_empty(), "every torus has at least the zero mode");
+    debug_assert_eq!(
+        evals.len() % (1_usize << (n / 2)),
+        0,
+        "the spectrum is not a whole number of spinor multiplets"
+    );
+    Ok(evals)
+}
+
+// Compile-time, not debug-time. These two facts are about constants, so a
+// `debug_assert!` on them is vacuous -- always true, and compiled out of
+// release anyway. Clippy was right to reject them; the fix is to make a
+// violation a build failure rather than to weaken the check.
+const _: () = assert!(MAX_SEQUENCE_LEN > 0);
+const _: () = assert!(MAX_SEQUENCE_LEN >= crate::hodge::RANK4_LEN);
+
+/// Reject a Python sequence longer than [`MAX_SEQUENCE_LEN`].
+///
+/// This is the boundary guard itself, so it refuses rather than asserting:
+/// a caller that sends an oversized sequence gets a `ValueError`, not a panic.
+fn check_sequence_len(n: usize) -> PyResult<()> {
     if n > MAX_SEQUENCE_LEN {
         return Err(PyValueError::new_err(format!(
             "sequence of {n} elements exceeds the {MAX_SEQUENCE_LEN}-element bound"
@@ -378,6 +493,11 @@ fn _physica_core(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(py_hodge_star_4form, m)?)?;
     m.add_function(wrap_pyfunction!(py_hodge_involution_max_error, m)?)?;
     m.add_function(wrap_pyfunction!(py_ricci_flow_solve, m)?)?;
+    m.add_function(wrap_pyfunction!(py_ricci_flow_curve, m)?)?;
+    m.add_function(wrap_pyfunction!(py_e8_lattice_points, m)?)?;
+    m.add_function(wrap_pyfunction!(py_e8_lattice_complete, m)?)?;
+    m.add_function(wrap_pyfunction!(py_e8_density_convergence, m)?)?;
+    m.add_function(wrap_pyfunction!(py_flat_torus_dirac_spectrum, m)?)?;
     m.add_function(wrap_pyfunction!(version_rust, m)?)?;
     m.add_function(wrap_pyfunction!(is_rust_backend, m)?)?;
     m.add("__version__", crate::version())?;
@@ -436,8 +556,12 @@ mod tests {
         assert!(r.derive("no_such_constant").is_err());
     }
 
+    /// The constant relation this used to assert is now checked at compile
+    /// time (`const _: () = assert!(...)` above), so the runtime test would be
+    /// vacuous. What is worth testing is that the guard actually refuses.
     #[test]
-    fn sequence_bound_admits_the_largest_form() {
-        assert!(super::MAX_SEQUENCE_LEN >= crate::hodge::RANK4_LEN);
+    fn the_sequence_guard_refuses_an_oversized_request() {
+        assert!(super::check_sequence_len(super::MAX_SEQUENCE_LEN).is_ok());
+        assert!(super::check_sequence_len(super::MAX_SEQUENCE_LEN + 1).is_err());
     }
 }

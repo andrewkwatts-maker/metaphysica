@@ -24,6 +24,7 @@ import math
 import numpy as np
 from typing import Optional, List, Tuple, Dict, Any
 
+from metaphysica._dispatch import rust_fn
 from metaphysica.simulations.PM.algebra.e8_root_system import E8RootSystem
 from metaphysica.simulations.PM.algebra.leech_lattice import LeechLattice
 
@@ -114,12 +115,26 @@ class E8SpherePacking:
         Returns:
             List of (radius, density, num_points) tuples
         """
+        fn = rust_fn("py_e8_density_convergence")
+        if fn is not None:
+            return [tuple(row) for row in
+                    fn(float(max_radius), int(num_steps), float(self.lattice_constant))]
+        return self._density_convergence_python(max_radius, num_steps)
+
+    def _density_convergence_python(self, max_radius: float = 5.0,
+                                    num_steps: int = 20) -> List[Tuple[float, float, int]]:
+        """Pure-Python reference for :meth:`density_convergence`.
+
+        Kept callable by name so tests/test_rust_python_parity.py can compare
+        the two paths. A Rust kernel that only the accelerated path can reach
+        is a kernel nobody can check.
+        """
         r_pack = self.packing_radius()
         results = []
 
         for step in range(1, num_steps + 1):
             R = max_radius * step / num_steps
-            points = self.enumerate_lattice_points(R)
+            points = self._enumerate_lattice_points_python(R)
             n_points = len(points)
             if n_points == 0:
                 results.append((R, 0.0, 0))
@@ -141,6 +156,42 @@ class E8SpherePacking:
 
     def enumerate_lattice_points(self, radius: float) -> np.ndarray:
         """Enumerate all E8 lattice points within a ball of given radius.
+
+        Dispatches to the Rust kernel `py_e8_lattice_points` when the
+        extension is built, and to :meth:`_enumerate_lattice_points_python`
+        otherwise. The two are asserted equal, elementwise, by
+        tests/test_rust_python_parity.py.
+
+        WHY THE RUST PATH EXISTS. The Python builds an 8-axis `np.meshgrid`;
+        once `bound` hits its cap of 3 that is 7**8 = 5_764_801 rows of 8
+        float64s, so `all_vecs`, the meshgrid grids and `half_vecs` together
+        allocate roughly 1.1 GB per call, and `density_convergence` calls it
+        once per radius step.
+
+        TRUNCATION, INHERITED AND PRESERVED. `bound = min(ceil(radius)+1, 3)`
+        makes the enumeration complete only up to radius 2.5: past that,
+        points with a coordinate larger than 3 are silently dropped. The Rust
+        port reproduces this so the two paths agree, and exposes
+        `py_e8_lattice_complete(radius)` so a caller can ask rather than
+        assume. `density_convergence(max_radius=5.0)` therefore reports a
+        density decline for R > 2.5 that is an artefact of the cap.
+
+        Args:
+            radius: Ball radius in lattice units (norm^2 <= radius^2)
+
+        Returns:
+            (N, 8) array of lattice points
+        """
+        fn = rust_fn("py_e8_lattice_points")
+        if fn is not None:
+            points = fn(float(radius))
+            if not points:
+                return np.zeros((0, 8), dtype=np.float64)
+            return np.asarray(points, dtype=np.float64)
+        return self._enumerate_lattice_points_python(radius)
+
+    def _enumerate_lattice_points_python(self, radius: float) -> np.ndarray:
+        """Pure-Python reference for :meth:`enumerate_lattice_points`.
 
         Uses vectorized numpy for speed. The E8 lattice consists of:
           - All integer vectors (n₁,...,n₈) with Σnᵢ even

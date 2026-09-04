@@ -70,9 +70,9 @@ pub mod pyfacade;
 // ─── Re-exports ─────────────────────────────────────────────────────────────
 pub use ckm::CKMMatrix;
 pub use constants::{Constant, ConstantStatus, FormulasRegistry};
-pub use cosmology::{ricci_curvature_at, solve_ricci_flow};
-pub use e8::enumerate_e8_roots;
-pub use g2_manifold::{compute_spectral_geometry, G2Manifold};
+pub use cosmology::{ricci_curvature_at, ricci_flow_curve, solve_ricci_flow};
+pub use e8::{e8_density_convergence, e8_lattice_points, enumerate_e8_roots};
+pub use g2_manifold::{compute_spectral_geometry, flat_torus_dirac_spectrum, G2Manifold};
 pub use gates::gate_28_iterative;
 pub use hodge::{hodge_involution_max_error, hodge_star_3form, hodge_star_4form};
 pub use quarks::{QuarkPrediction, QuarkRegistry};

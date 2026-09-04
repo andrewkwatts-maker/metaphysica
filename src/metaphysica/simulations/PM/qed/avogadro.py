@@ -20,6 +20,7 @@ from metaphysica.simulations.base import (
     SimulationBase, SimulationMetadata, ContentBlock, SectionContent, Formula, Parameter, PMRegistry,
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+from metaphysica.simulations.PM.qed._triple_track import qed_epsilon
 
 _REG = get_registry()
 CODATA_NA = 6.02214076e23  # mol^-1 (exact)
@@ -48,7 +49,11 @@ class AvogadroV17(SimulationBase):
 
     @property
     def output_params(self) -> List[str]:
-        return ["qed.bulk_avogadro", "qed.manifest_avogadro"]
+        return [
+            "qed.projection_epsilon",
+            "qed.bulk_avogadro",
+            "qed.manifest_avogadro",
+        ]
 
     @property
     def output_formulas(self) -> List[str]:
@@ -59,6 +64,13 @@ class AvogadroV17(SimulationBase):
         self.manifest_na = _REG.manifest_avogadro
         self.variance = abs(self.manifest_na - CODATA_NA)
         return {
+            # Published here because all nine QED kernels divide or multiply
+            # by (1 + epsilon) and none of them registered it. Every one of
+            # their eml_descriptions therefore named a symbol no registry
+            # held; the cross-check resolved the bare name `epsilon` to
+            # cosmology.epsilon = 4.95e-5 instead of the Decad-Cubic
+            # 1/28800 = 3.47e-5, which is a different quantity entirely.
+            "qed.projection_epsilon": qed_epsilon(),
             "qed.bulk_avogadro": self.bulk_na,
             "qed.manifest_avogadro": self.manifest_na,
         }
@@ -164,13 +176,32 @@ class AvogadroV17(SimulationBase):
     def get_output_param_definitions(self) -> List[Parameter]:
         return [
             Parameter(
+                path="qed.projection_epsilon",
+                name="Decad-Cubic Projection Parameter",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "Decad-Cubic projection parameter epsilon = 1/(roots_total * DECAD^2) "
+                    "= 1/28800; the single gate parameter shared by all nine QED kernels"
+                ),
+                no_experimental_value=True,
+                eml_description=(
+                    "EML: ops.inv(ops.mul(eml_vec('geometry.roots_total'), "
+                    "ops.pow(eml_scalar(10.0), eml_scalar(2.0)))) "
+                    "— epsilon = 1/(roots_total x DECAD^2) = 1/28800"
+                ),
+            ),
+            Parameter(
                 path="qed.bulk_avogadro",
                 name="Bulk Avogadro Number",
                 units="mol^-1",
                 status="DERIVED",
                 description="Avogadro number in bulk (before contraction)",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(na_manifest, ops.add(eml_scalar(1.0), epsilon))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.manifest_avogadro'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_avogadro",
@@ -182,7 +213,11 @@ class AvogadroV17(SimulationBase):
                 bound_type="measured",
                 bound_source="CODATA2022",
                 uncertainty=0.0,  # Exact since 2019 SI redefinition
-                eml_description="EML: ops.div(na_bulk, ops.add(eml_scalar(1.0), epsilon)) — extensive count dilutes under projection",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.bulk_avogadro'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon'))) "
+                    "— extensive count dilutes under projection"
+                ),
             ),
         ]
 

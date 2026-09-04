@@ -194,7 +194,10 @@ class VonKlitzingV17(SimulationBase):
                 status="DERIVED",
                 description="Von Klitzing constant in bulk (before expansion)",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(rk_manifest, ops.add(eml_scalar(1.0), epsilon))",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.manifest_von_klitzing'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_von_klitzing",
@@ -205,7 +208,11 @@ class VonKlitzingV17(SimulationBase):
                 experimental_bound=CODATA_RK,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                eml_description="EML: ops.mul(rk_bulk, ops.add(eml_scalar(1.0), epsilon)) — h/e^2 expands with h",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.bulk_von_klitzing'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon'))) "
+                    "— h/e^2 expands with h"
+                ),
             ),
         ]
 

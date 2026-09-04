@@ -399,7 +399,14 @@ class EstablishedPhysics:
                 units="dimensionless",
                 source="ESTABLISHED:Planck2018",
                 description="S8 parameter from Planck 2018 CMB (S8 = sigma8 * sqrt(Omega_m/0.3))",
-                eml_description="EML: ops.mul(eml_vec('sigma8'), ops.sqrt(ops.div(eml_vec('Omega_m'), eml_scalar(0.3)))) — S₈ = σ₈√(Ω_m/0.3) (Planck 2018)"
+                eml_description=(
+                    "EML: eml_scalar(0.83) "
+                    "— S₈ as PUBLISHED by Planck 2018, an established input. It is not "
+                    "recomputed from σ₈√(Ω_m/0.3): that identity with desi.sigma8 = 0.8111 "
+                    "and desi.Omega_m = 0.3111 returns 0.826, 0.5% off the published 0.830, "
+                    "because Planck quotes S₈ from its own chain, not from these two "
+                    "marginalised numbers"
+                )
             ),
             EstablishedParameter(
                 path="desi.S8",
@@ -412,7 +419,12 @@ class EstablishedPhysics:
                     "NOTE: provenance is Planck 2018, not DESI; DESI publishes no stand-alone S8. "
                     "For weak-lensing S8 anchors see lensing.S8_kids1000 and lensing.S8_des_y3."
                 ),
-                eml_description="EML: ops.mul(eml_vec('sigma8'), ops.sqrt(ops.div(eml_vec('Omega_m'), eml_scalar(0.3)))) — S₈ = σ₈√(Ω_m/0.3) (Planck 2018 input; attribution Planck, not DESI)"
+                eml_description=(
+                    "EML: eml_scalar(0.83) "
+                    "— S₈ as published by Planck 2018 (attribution Planck, not DESI). "
+                    "Same established input as planck.S8; the σ₈√(Ω_m/0.3) identity is the "
+                    "definition of S₈, not the route by which this number was obtained"
+                )
             ),
             EstablishedParameter(
                 path="lensing.S8_kids1000",

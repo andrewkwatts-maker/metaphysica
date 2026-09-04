@@ -1448,7 +1448,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Number of spin connection components: D * D(D-1)/2 = 4*6 = 24 in 4D",
-            eml_description="Number of independent spin connection components omega^AB_mu in 4D = D * D(D-1)/2 = 4 * 6 = 24; determines fermion-gravity coupling degrees of freedom",
+            eml_description=(
+                "EML: ops.mul(eml_scalar(4.0), ops.div(ops.mul(eml_scalar(4.0), "
+                "ops.sub(eml_scalar(4.0), eml_scalar(1.0))), eml_scalar(2.0))) — independent "
+                "spin connection components omega^AB_mu in 4D = D * D(D-1)/2 = 4 * 6 = 24; "
+                "determines fermion-gravity coupling degrees of freedom"
+            ),
             no_experimental_value=True
         ))
 
@@ -1458,7 +1463,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Independent Riemann tensor components: D^2(D^2-1)/12 = 20 in 4D",
-            eml_description="Number of algebraically independent components of the Riemann curvature tensor R^rho_sigma_mu_nu in D=4: N = D^2(D^2-1)/12 = 20",
+            eml_description=(
+                "EML: ops.div(ops.mul(ops.pow(eml_scalar(4.0), eml_scalar(2.0)), "
+                "ops.sub(ops.pow(eml_scalar(4.0), eml_scalar(2.0)), eml_scalar(1.0))), "
+                "eml_scalar(12.0)) — algebraically independent components of the Riemann "
+                "curvature tensor R^rho_sigma_mu_nu in D=4: N = D^2(D^2-1)/12 = 20"
+            ),
             experimental_bound=20,
             bound_type="exact",
             bound_source="Mathematical (tensor symmetries)"
@@ -1470,7 +1480,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Symmetric Ricci tensor components: D(D+1)/2 = 10 in 4D",
-            eml_description="Number of independent components of the symmetric Ricci tensor R_mu_nu in D=4: N = D(D+1)/2 = 10; these appear directly in Einstein's field equations",
+            eml_description=(
+                "EML: ops.div(ops.mul(eml_scalar(4.0), ops.add(eml_scalar(4.0), "
+                "eml_scalar(1.0))), eml_scalar(2.0)) — independent components of the "
+                "symmetric Ricci tensor R_mu_nu in D=4: N = D(D+1)/2 = 10; these appear "
+                "directly in Einstein's field equations"
+            ),
             experimental_bound=10,
             bound_type="exact",
             bound_source="Mathematical (symmetric tensor)"
@@ -1482,7 +1497,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="GeV^-2",
             status="DERIVED",
             description="G_N = 1/M_Pl^2 from G2 compactification geometry",
-            eml_description="Newton's gravitational constant G_N = 1/M_Pl^2 derived from G2 dimensional reduction: G_N = 1/(M_26D^24 * Vol(X_22))",
+            eml_description=(
+                "EML: ops.inv(ops.pow(eml_vec('codata.M_PLANCK'), eml_scalar(2.0))) — "
+                "Newton's constant in natural units G_N = 1/M_Pl^2 against the FULL Planck "
+                "mass (codata.M_PLANCK); the reduced mass at constants.M_PLANCK is a factor "
+                "8 pi away and is not the one meant here"
+            ),
             derivation_formula="gr-newton-from-g2-v19",
             experimental_bound=6.70883e-39,  # Natural units (GeV^-2), converted from CODATA 2018
             bound_type="measured",
@@ -1509,7 +1529,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Physical graviton polarizations: D(D-3)/2 = 2 in 4D (tensor modes)",
-            eml_description="Number of physical graviton helicity states in 4D = D(D-3)/2 = 2 (plus and cross polarizations); confirmed by LIGO/Virgo gravitational wave observations",
+            eml_description=(
+                "EML: ops.div(ops.mul(eml_scalar(4.0), ops.sub(eml_scalar(4.0), "
+                "eml_scalar(3.0))), eml_scalar(2.0)) — physical graviton helicity states "
+                "in 4D = D(D-3)/2 = 2 (plus and cross polarizations); confirmed by "
+                "LIGO/Virgo gravitational wave observations"
+            ),
             experimental_bound=2,
             bound_type="measured",
             bound_source="GW observations (LIGO/Virgo)"

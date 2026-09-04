@@ -910,7 +910,11 @@ class HiggsMassSimulation(SimulationBase):
                     "This uses the experimental value m_h = 125.20 GeV (PDG 2024) as input to fix "
                     "Re(T) = 9.865, then verifies consistency."
                 ),
-                eml_description="EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(v_yukawa, eml_scalar(2.0)), lambda_eff_pheno))) — Higgs mass from phenomenological moduli",
+                eml_description=(
+                    "EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(eml_vec('higgs.vev_yukawa'), eml_scalar(2.0)), eml_vec('higgs.lambda_eff_pheno')))) "
+                    "— m_h = sqrt(8 pi^2 v_Yukawa^2 lambda_eff) with the phenomenological "
+                    "Re(T); v_Yukawa is v/sqrt(2) = 174.1 GeV, NOT the 246 GeV EW VEV"
+                ),
                 derivation_formula="higgs-mass",
                 experimental_bound=125.20,  # Higgs mass (PDG 2024)
                 bound_type="measured",
@@ -936,7 +940,10 @@ class HiggsMassSimulation(SimulationBase):
                     "the attractor mechanism. Yields m_h ≈ 414 GeV, which does not match "
                     "experiment, demonstrating that pure geometry fails to predict the Higgs mass."
                 ),
-                eml_description="EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(v_yukawa, eml_scalar(2.0)), eml_vec('lambda_eff_geometric')))) — geometric Higgs mass from attractor Re(T) = 1.833",
+                eml_description=(
+                    "EML: ops.sqrt(ops.mul(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0))), ops.mul(ops.pow(eml_vec('higgs.vev_yukawa'), eml_scalar(2.0)), eml_vec('higgs.lambda_eff_geometric')))) "
+                    "— geometric Higgs mass from the attractor Re(T) = 1.833"
+                ),
                 derivation_formula="higgs-mass",
                 no_experimental_value=True,
                 validation={
@@ -1002,7 +1009,12 @@ class HiggsMassSimulation(SimulationBase):
                     "Effective Higgs quartic coupling with moduli corrections, using "
                     "phenomenologically constrained Re(T) = 9.865."
                 ),
-                eml_description="EML: ops.sub(lambda_0, ops.mul(ops.div(eml_scalar(1.0), ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.mul(re_T_pheno, ops.pow(y_t, eml_scalar(2.0))))) — effective quartic with pheno Re(T)",
+                eml_description=(
+                    "EML: ops.sub(eml_vec('higgs.lambda_0'), ops.mul(ops.inv(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), "
+                    "ops.mul(eml_vec('moduli.re_t_phenomenological'), ops.pow(eml_vec('yukawa.y_top'), eml_scalar(2.0))))) "
+                    "— lambda_eff = lambda_0 - kappa Re(T) y_t^2 with kappa = 1/(8 pi^2) "
+                    "and the phenomenological Re(T) = 9.865"
+                ),
                 derivation_formula="higgs-quartic-coupling",
                 no_experimental_value=True,
                 validation={
@@ -1023,7 +1035,12 @@ class HiggsMassSimulation(SimulationBase):
                     "Effective Higgs quartic coupling with moduli corrections, using "
                     "geometric Re(T) = 1.833 from attractor mechanism."
                 ),
-                eml_description="EML: ops.sub(eml_vec('lambda_0'), ops.mul(eml_vec('kappa'), ops.mul(eml_vec('re_t_attractor'), ops.pow(eml_vec('y_top'), eml_scalar(2.0))))) — effective quartic with geometric Re(T) = 1.833 from attractor",
+                eml_description=(
+                    "EML: ops.sub(eml_vec('higgs.lambda_0'), ops.mul(ops.inv(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), "
+                    "ops.mul(eml_vec('moduli.re_t_attractor'), ops.pow(eml_vec('yukawa.y_top'), eml_scalar(2.0))))) "
+                    "— lambda_eff with the geometric Re(T) = 1.833 from the attractor; "
+                    "kappa = 1/(8 pi^2) is the 1-loop coefficient, not a registry parameter"
+                ),
                 derivation_formula="higgs-quartic-coupling",
                 no_experimental_value=True,
                 validation={
@@ -1082,7 +1099,11 @@ class HiggsMassSimulation(SimulationBase):
                     "One-loop correction to Higgs quartic from moduli-Higgs interactions: "
                     "Δλ = (1/8π^2) Re(T) y_t^2."
                 ),
-                eml_description="EML: ops.mul(eml_vec('kappa'), ops.mul(eml_vec('re_t_pheno'), ops.pow(eml_vec('y_top'), eml_scalar(2.0)))) — quartic correction Δλ = κ·Re(T)·y_t² from one-loop SUGRA moduli exchange",
+                eml_description=(
+                    "EML: ops.mul(ops.inv(ops.mul(eml_scalar(8.0), ops.pow(eml_pi(), eml_scalar(2.0)))), ops.mul(eml_vec('moduli.re_t_phenomenological'), ops.pow(eml_vec('yukawa.y_top'), eml_scalar(2.0)))) "
+                    "— delta_lambda = kappa Re(T) y_t^2 from one-loop SUGRA moduli exchange, "
+                    "kappa = 1/(8 pi^2)"
+                ),
                 no_experimental_value=True,
                 validation={
                     "experimental_value": None,

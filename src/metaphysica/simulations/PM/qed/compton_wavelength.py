@@ -314,7 +314,10 @@ class ComptonWavelengthV17(SimulationBase):
                 status="DERIVED",
                 description="Bulk Compton wavelength in Pleroma (before projection)",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(lambda_manifest, ops.add(eml_scalar(1.0), epsilon))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.manifest_compton_wavelength'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_compton_wavelength",
@@ -326,7 +329,11 @@ class ComptonWavelengthV17(SimulationBase):
                 bound_type="measured",
                 bound_source="CODATA2022",
                 uncertainty=CODATA_COMPTON_SIGMA,
-                eml_description="EML: ops.div(compton_bulk, ops.add(eml_scalar(1.0), epsilon)) — h/(m_e*c) contracts net 1/(1+eps)",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.bulk_compton_wavelength'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon'))) "
+                    "— h/(m_e*c) contracts net 1/(1+eps)"
+                ),
             ),
             Parameter(
                 path="qed.compton_variance_m",

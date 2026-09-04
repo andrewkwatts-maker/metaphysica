@@ -845,9 +845,13 @@ class DarkMatterPortalsV23(SimulationBase):
                 derivation_formula="portal-dm-coupling-v23",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.mul(alpha_leak, ops.sqrt(ops.div(chi_eff_full, b3))), "
-                    "ops.mul(eml_scalar(4.0), eml_pi())) — g_portal = α_leak·√(χ_eff/b₃)/(4π), "
-                    "portal coupling from face sampling strength with chi_eff_full=144, b3=24"
+                    "EML: ops.div(ops.mul(eml_scalar(0.57), "
+                    "ops.sqrt(ops.div(eml_vec('geometry.chi_eff_total'), "
+                    "eml_vec('topology.elder_kads')))), ops.mul(eml_scalar(4.0), eml_pi())) "
+                    "— g_portal = alpha_leak sqrt(chi_eff_total/b3)/(4 pi). The 0.57 is the "
+                    "face-sampling alpha_leak this module hardcodes; it is NOT "
+                    "geometry.alpha_leak = 1/sqrt(6) = 0.40825, which the module declares as "
+                    "an input and then does not read"
                 ),
             ),
             Parameter(
@@ -866,10 +870,14 @@ class DarkMatterPortalsV23(SimulationBase):
                 bound_source="XENONnT (2023)",
                 uncertainty=None,
                 eml_description=(
-                    "EML: ops.mul(ops.div(ops.mul(ops.pow(g_portal, eml_scalar(2.0)), "
-                    "ops.pow(m_N, eml_scalar(2.0))), ops.mul(ops.mul(eml_scalar(4.0), eml_pi()), "
-                    "ops.pow(m_KK, eml_scalar(4.0)))), eml_scalar(3.894e-28)) — "
-                    "σ_SI = g²·m_N²/(4π·m_KK⁴)×unit_conv, Born approximation moduli exchange"
+                    "EML: ops.mul(ops.div(ops.mul("
+                    "ops.pow(eml_vec('portals.dm_coupling_strength'), eml_scalar(2.0)), "
+                    "ops.pow(eml_scalar(0.938272), eml_scalar(2.0))), "
+                    "ops.mul(ops.mul(eml_scalar(4.0), eml_pi()), "
+                    "ops.pow(eml_vec('portals.dm_mediator_mass_gev'), eml_scalar(4.0)))), "
+                    "eml_scalar(3.894e-28)) "
+                    "— sigma_SI = g^2 m_N^2 / (4 pi m_KK^4) x GeV^-2-to-cm^2, Born "
+                    "approximation for moduli exchange; m_N = 0.938272 GeV is the nucleon mass"
                 ),
             ),
             Parameter(
@@ -885,9 +893,11 @@ class DarkMatterPortalsV23(SimulationBase):
                 derivation_formula="portal-dm-mediator-mass-v23",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.mul(M_Pl, alpha_leak), ops.mul(ops.mul(eml_scalar(4.0), "
-                    "eml_pi()), ops.pow(k_gimel, eml_scalar(2.0)))) — "
-                    "m_KK = M_Pl·α_leak/(4π·k_ℷ²), moduli-mediated KK portal mediator mass"
+                    "EML: ops.div(ops.mul(eml_scalar(1.22e19), eml_scalar(0.57)), "
+                    "ops.mul(ops.mul(eml_scalar(4.0), eml_pi()), "
+                    "ops.pow(eml_vec('geometry.k_gimel'), eml_scalar(2.0)))) "
+                    "— m_KK = M_Pl alpha_leak / (4 pi k_gimel^2). M_Pl = 1.22e19 GeV is this "
+                    "module's own rounded full Planck mass, not codata.M_PLANCK = 1.22089e19"
                 ),
             ),
         ]

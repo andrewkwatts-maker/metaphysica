@@ -168,7 +168,10 @@ class FaradayV17(SimulationBase):
                 status="DERIVED",
                 description="Faraday constant in bulk (before contraction)",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(f_manifest, ops.add(eml_scalar(1.0), epsilon))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.manifest_faraday'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_faraday",
@@ -179,7 +182,11 @@ class FaradayV17(SimulationBase):
                 experimental_bound=CODATA_FARADAY,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                eml_description="EML: ops.div(f_bulk, ops.add(eml_scalar(1.0), epsilon)) — F=N_A*e, e invariant",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.bulk_faraday'), "
+                    "ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon'))) "
+                    "— F=N_A*e, e invariant"
+                ),
             ),
         ]
 

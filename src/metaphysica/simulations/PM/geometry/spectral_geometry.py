@@ -26,6 +26,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
 import numpy as np
+from metaphysica._dispatch import rust_fn
 from scipy import sparse
 from scipy.sparse.linalg import eigsh
 from typing import Optional, List, Tuple
@@ -80,6 +81,24 @@ class FlatTorusDirac:
         if self._analytic_eigenvalues is not None:
             return self._analytic_eigenvalues
 
+        fn = rust_fn("py_flat_torus_dirac_spectrum")
+        if fn is not None:
+            self._analytic_eigenvalues = np.array(
+                fn([float(L) for L in self.periods], int(max_mode))
+            )
+            return self._analytic_eigenvalues
+        return self._analytic_eigenvalues_python(max_mode)
+
+    def _analytic_eigenvalues_python(self, max_mode: int = 3) -> np.ndarray:
+        """Pure-Python reference for :meth:`analytic_eigenvalues`.
+
+        Kept callable by name so tests/test_rust_python_parity.py can compare
+        the two paths directly. This is the hot one: `_mode_vectors` is a
+        `dim`-deep recursive generator over `(2*max_mode+1)**dim` integer
+        vectors -- 7**7 = 823_543 at the defaults, and 11**7 = 19_487_171 at
+        `counting_function`'s default `max_mode=5` -- building a fresh tuple
+        per level, then a zip-genexp sum and a set insert per vector.
+        """
         eigenvalues = set()
 
         # Generate all mode vectors

@@ -204,7 +204,10 @@ class StefanBoltzmannV17(SimulationBase):
                 status="DERIVED",
                 description="Stefan-Boltzmann constant in bulk (before Quad-Gate expansion)",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(sigma_manifest, ops.pow(ops.add(eml_scalar(1.0), epsilon), eml_scalar(4.0)))",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.manifest_stefan_boltzmann'), "
+                    "ops.pow(ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), eml_scalar(4.0)))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_stefan_boltzmann",
@@ -215,7 +218,10 @@ class StefanBoltzmannV17(SimulationBase):
                 experimental_bound=CODATA_STEFAN,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                eml_description="EML: ops.mul(sigma_bulk, ops.pow(ops.add(eml_scalar(1.0), epsilon), eml_scalar(4.0)))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.bulk_stefan_boltzmann'), "
+                    "ops.pow(ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), eml_scalar(4.0)))"
+                ),
             ),
             Parameter(
                 path="qed.stefan_variance",

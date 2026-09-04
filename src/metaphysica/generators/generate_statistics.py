@@ -191,6 +191,7 @@ def compute_statistics(sigma_deviations: List[float]) -> Dict[str, Any]:
         "within_2sigma": within_2sigma,
         "exact_matches": exact_matches,
         "total_predictions": total_predictions,
+        "chi_squared": round(chi_squared, 4),
         "chi_squared_reduced": round(chi_squared_reduced, 4),
         "degrees_of_freedom": degrees_of_freedom,
         "high_sigma_count": high_sigma_count,
@@ -328,6 +329,7 @@ def generate_statistics() -> Dict[str, Any]:
             "total_gates": gate_counts["total_gates"],
             "testable_count": gate_counts["total_gates"] - gate_counts["not_testable"],  # 72 - 30 = 42
             "exact_matches": validation_stats["exact_matches"],
+            "chi_squared": validation_stats["chi_squared"],
             "chi_squared_reduced": validation_stats["chi_squared_reduced"],
             "degrees_of_freedom": validation_stats["degrees_of_freedom"],
             "status": status
@@ -380,17 +382,40 @@ def generate_statistics() -> Dict[str, Any]:
                 'description': 'Number of testable gates (total - axioms)',
                 'eml_description': 'EML: ops.sub(eml_scalar(72), eml_vec(\'framework_statistics.not_testable_count\')) — testable = total_gates − axioms'
             }
+            # Registered because framework_statistics.chi_squared_reduced is
+            # DEFINED as chi_squared / dof and chi_squared was in no registry,
+            # so its eml_description named an operand nothing could resolve.
+            params_data['parameters']['framework_statistics.chi_squared'] = {
+                'value': fs['chi_squared'],
+                'status': 'COMPUTED',
+                'source': 'generate_statistics.py',
+                'description': 'Sum of squared sigma deviations over all scored predictions',
+                'eml_description': (
+                    "EML: ops.mul(eml_vec('framework_statistics.chi_squared_reduced'), "
+                    "eml_vec('framework_statistics.degrees_of_freedom')) "
+                    "— chi^2 = chi^2_red x dof; the sum itself is a reduction over the "
+                    "per-parameter sigma deviations, which the scalar algebra cannot express"
+                ),
+            }
             params_data['parameters']['framework_statistics.chi_squared_reduced'] = {
                 'value': fs['chi_squared_reduced'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: ops.div(eml_vec(\'chi_squared\'), eml_vec(\'framework_statistics.degrees_of_freedom\')) — χ²_red = Σσᵢ²/dof'
+                'eml_description': (
+                    "EML: ops.div(eml_vec('framework_statistics.chi_squared'), "
+                    "eml_vec('framework_statistics.degrees_of_freedom')) "
+                    "— chi^2_red = sum(sigma_i^2) / dof"
+                )
             }
             params_data['parameters']['framework_statistics.degrees_of_freedom'] = {
                 'value': fs['degrees_of_freedom'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: ops.sub(eml_vec(\'validation.total_predictions\'), eml_scalar(N_fitted)) — dof = N_pred − N_fitted_params'
+                'eml_description': (
+                    "EML: ops.sub(eml_vec('validation.total_predictions'), eml_scalar(1.0)) "
+                    "— dof = N_pred - N_fitted, with FITTED_PARAMS_COUNT = 1 (only "
+                    "k_gimel is fitted; b3, chi_eff and phi are mathematical)"
+                )
             }
             params_data['parameters']['framework_statistics.status'] = {
                 'value': fs['status'],

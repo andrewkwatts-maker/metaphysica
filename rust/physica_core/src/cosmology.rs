@@ -44,9 +44,16 @@ pub const INTERP_ALPHA: f64 = 2.0;
 const ABS_TOL: f64 = 1e-12;
 /// Hard cap on accepted + rejected steps, so the driver always terminates.
 const MAX_INTEGRATION_STEPS: usize = 100_000;
-/// Minimum number of accepted steps across the span; caps `h` from above so
-/// interpolation between steps is not the accuracy floor.
-const MIN_ACCEPTED_STEPS: usize = 4_096;
+/// Floor on the number of accepted steps across the span, imposed by capping
+/// `h` from above. This is a grid-resolution floor, not an accuracy crutch:
+/// it stops the controller leaping the whole span in one or two steps and
+/// handing back a grid too coarse to interpolate on. It used to be 4_096,
+/// which was large enough that the step size was pinned at `h_max` on every
+/// step of every realistic problem -- so the error controller never bound and
+/// `rel_tol` had no observable effect, even after it was plumbed through. The
+/// fix was to make the interpolation fourth order (see [`hermite_interp`])
+/// rather than to over-resolve the grid.
+const MIN_ACCEPTED_STEPS: usize = 16;
 /// Below this step size a step is accepted regardless of the error estimate,
 /// so a stiff patch cannot spin the controller.
 const MIN_STEP_SIZE: f64 = 1e-14;
@@ -192,31 +199,38 @@ where
     (y_new, err_norm)
 }
 
-/// Adaptive RKF45 driver from `t0` to `t_end` with initial step `h0`.
+/// Accepted-step record produced by the driver.
+///
+/// `dys[i]` is the RHS evaluated at `(ts[i], ys[i])`. Carrying it costs one
+/// extra RHS call per accepted step and buys fourth-order interpolation; the
+/// alternative is a second-order interpolant that has to be propped up with a
+/// far finer grid, which is what this module used to do.
+struct StepGrid {
+    ts: Vec<f64>,
+    ys: Vec<Vec<f64>>,
+    dys: Vec<Vec<f64>>,
+}
+
+/// Adaptive RKF45 driver from `t0` to `t_end`.
 ///
 /// Step-size control mirrors scipy's classic PI controller with safety
-/// factor 0.9 and shrink/grow bounds (0.1, 5.0). The result is stored
-/// every accepted step in `(ts, ys)` for later interpolation onto the
+/// factor 0.9 and shrink/grow bounds (0.1, 5.0). Every accepted step is
+/// recorded in the returned [`StepGrid`] for later interpolation onto the
 /// caller's evaluation grid.
-fn adaptive_integrate<F>(
-    rhs: &F,
-    t0: f64,
-    t_end: f64,
-    y0: Vec<f64>,
-    rel_tol: f64,
-) -> (Vec<f64>, Vec<Vec<f64>>)
+fn adaptive_integrate<F>(rhs: &F, t0: f64, t_end: f64, y0: Vec<f64>, rel_tol: f64) -> StepGrid
 where
     F: Fn(&[f64], f64) -> Vec<f64>,
 {
     assert!(t_end > t0, "adaptive_integrate: t_end must exceed t0");
+    assert!(
+        rel_tol.is_finite() && rel_tol > 0.0,
+        "adaptive_integrate: rel_tol must be finite and > 0"
+    );
 
     let mut ts = vec![t0];
+    let mut dys = vec![rhs(&y0, t0)];
     let mut ys = vec![y0.clone()];
 
-    // Cap the step so that linear interpolation BETWEEN accepted steps stays
-    // as accurate as the steps themselves. Without this the controller grows h
-    // freely on a smooth solution and the interpolation, not the integrator,
-    // becomes the error floor -- 2.4% relative on the Ricci flow at z = 0.4.
     let h_max = (t_end - t0) / MIN_ACCEPTED_STEPS as f64;
     let mut t = t0;
     let mut y = y0;
@@ -238,6 +252,7 @@ where
             t += h;
             y = y_new;
             ts.push(t);
+            dys.push(rhs(&y, t));
             ys.push(y.clone());
             let factor = if err == 0.0 {
                 MAX_STEP_GROWTH
@@ -254,39 +269,81 @@ where
         steps < MAX_INTEGRATION_STEPS,
         "integration hit its step cap"
     );
-    debug_assert!(!ts.is_empty(), "the step grid cannot be empty");
-
     debug_assert!(
-        t >= t_end - 1e-9,
-        "adaptive_integrate: failed to reach t_end"
+        ts.len() > MIN_ACCEPTED_STEPS,
+        "the h_max cap must force more than MIN_ACCEPTED_STEPS grid points"
     );
-    (ts, ys)
+
+    // Not a debug_assert: falling short of t_end means the step cap was hit
+    // and every interpolated value past the last step would silently be the
+    // clamped endpoint rather than a solution.
+    assert!(
+        t >= t_end - 1e-9,
+        "adaptive_integrate: failed to reach t_end within its step cap"
+    );
+    StepGrid { ts, ys, dys }
 }
 
-/// Linear interpolation of the integrator output onto an arbitrary `z_query`.
-fn linear_interp(ts: &[f64], ys: &[f64], z: f64) -> f64 {
-    if z <= ts[0] {
-        return ys[0];
-    }
-    if z >= ts[ts.len() - 1] {
-        return ys[ys.len() - 1];
-    }
-    // Binary search for the bracketing interval.
+/// Index pair bracketing `z`, i.e. `ts[lo] <= z <= ts[hi]` with `hi == lo + 1`.
+///
+/// Caller must have ruled out `z` outside `[ts[0], ts[last]]`.
+fn bracket(ts: &[f64], z: f64) -> (usize, usize) {
+    debug_assert!(ts.len() >= 2, "bracketing needs at least two grid points");
+    debug_assert!(
+        z > ts[0] && z < ts[ts.len() - 1],
+        "bracket called on a point outside the grid"
+    );
     let mut lo = 0usize;
     let mut hi = ts.len() - 1;
+    // The window halves every pass, so this terminates in at most log2(len).
     while hi - lo > 1 {
-        let mid = (lo + hi) / 2;
+        let mid = lo + (hi - lo) / 2;
         if ts[mid] <= z {
             lo = mid;
         } else {
             hi = mid;
         }
     }
-    let t0 = ts[lo];
-    let t1 = ts[hi];
-    let y0 = ys[lo];
-    let y1 = ys[hi];
-    y0 + (y1 - y0) * (z - t0) / (t1 - t0)
+    (lo, hi)
+}
+
+/// Cubic Hermite interpolation of component `component` onto `z`.
+///
+/// This replaces a linear interpolant. Linear interpolation is second order,
+/// so it was the accuracy floor of a fifth-order integrator: the driver had to
+/// be pinned to 4_096 near-fixed steps to hide it, which in turn meant the
+/// error controller never bound and the `rel_tol` argument -- already once
+/// fixed for being discarded outright -- still changed nothing observable.
+/// Hermite uses the derivative the RHS supplies at both ends of the interval,
+/// so it is fourth order and the controller is free to choose the step.
+fn hermite_interp(grid: &StepGrid, component: usize, z: f64) -> f64 {
+    debug_assert!(!grid.ts.is_empty(), "cannot interpolate an empty grid");
+    debug_assert_eq!(
+        grid.ts.len(),
+        grid.ys.len(),
+        "step times and states disagree in length"
+    );
+    let last = grid.ts.len() - 1;
+    if z <= grid.ts[0] {
+        return grid.ys[0][component];
+    }
+    if z >= grid.ts[last] {
+        return grid.ys[last][component];
+    }
+    let (lo, hi) = bracket(&grid.ts, z);
+    let h = grid.ts[hi] - grid.ts[lo];
+    debug_assert!(h > 0.0, "the step grid must be strictly increasing");
+    let s = (z - grid.ts[lo]) / h;
+    let s2 = s * s;
+    let s3 = s2 * s;
+    let h00 = 2.0 * s3 - 3.0 * s2 + 1.0;
+    let h10 = s3 - 2.0 * s2 + s;
+    let h01 = -2.0 * s3 + 3.0 * s2;
+    let h11 = s3 - s2;
+    h00 * grid.ys[lo][component]
+        + h10 * h * grid.dys[lo][component]
+        + h01 * grid.ys[hi][component]
+        + h11 * h * grid.dys[hi][component]
 }
 
 // ─── Public solver ────────────────────────────────────────────────────────
@@ -296,42 +353,71 @@ fn linear_interp(ts: &[f64], ys: &[f64], z: f64) -> f64 {
 ///
 /// `h0_late` is the SH0ES local value (km/s/Mpc); `b3` the G2 third
 /// Betti number (24 by topology). Honours the Python defaults
-/// `H0_early = 67.4` and `α = 2`.
+/// `H0_early = 67.4` and `alpha = 2`.
 ///
-/// The function evaluates the Ricci-flow ODE for R(z) over the full span
-/// (this is the work the plan calls out as the "hard kernel") then maps
-/// the result through the v16.1 interpolation
-/// `H₀_eff(z) = H₀_late · f(z) + H₀_early · (1 − f(z))`,
-/// with `f(z) = 1 / (1 + (z / z_star)^α)` and `z_star = b3 / k_gimel`.
+/// This is a closed form, not an ODE solve. It maps each redshift through
+/// the v16.1 interpolation
+/// `H0_eff(z) = H0_late * f(z) + H0_early * (1 - f(z))`,
+/// with `f(z) = 1 / (1 + (z / z_star)^alpha)` and `z_star = b3 / k_gimel`.
 ///
-/// At z = 0, f = 1 ⇒ H = H₀_late ≈ 73.04.
-/// At z = 1100, f ≈ 0 ⇒ H = H₀_early ≈ 67.4.
+/// It reproduces the `H0_eff` sub-expression of
+/// `EvolutionEngineV16.calculate_h_evolution_interpolated`, and only that
+/// sub-expression: the Python method goes on to multiply by
+/// `E(z) = sqrt(Omega_m (1+z)^3 + Omega_de)` to obtain H(z). The two are
+/// equal only at z = 0. An earlier comment here claimed they matched
+/// "exactly", which they never did.
+///
+/// At z = 0, f = 1, so H0_eff is H0_late (73.04 by default).
+/// At z = 1100, f is about 3.1e-6, so H0_eff is H0_early to within 1e-4.
+///
+/// For the actual Ricci-flow ODE solution R(z), call [`ricci_flow_curve`].
+///
+/// # Panics
+///
+/// Refuses an empty grid, a grid longer than [`MAX_REDSHIFT_SAMPLES`], a
+/// non-finite or negative redshift, and a non-finite or non-positive
+/// `h0_late` or `b3`. Accepting a NaN redshift and returning a NaN would
+/// hand back something that looks like an answer.
 pub fn solve_ricci_flow(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
     assert!(
         !z_array.is_empty(),
         "solve_ricci_flow: z_array must be non-empty"
     );
-    assert!(h0_late > 0.0, "solve_ricci_flow: h0_late must be > 0");
-    assert!(b3 > 0.0, "solve_ricci_flow: b3 must be > 0");
+    assert!(
+        z_array.len() <= MAX_REDSHIFT_SAMPLES,
+        "solve_ricci_flow: z_array exceeds the fixed sample bound"
+    );
+    // Positive tests, not negated comparisons: `!(z < 0.0)` and
+    // `!(h0_late <= 0.0)` both admit NaN, and a NaN here poisons every
+    // downstream value silently.
+    assert!(
+        z_array.iter().all(|z| z.is_finite() && *z >= 0.0),
+        "solve_ricci_flow: every redshift must be finite and non-negative"
+    );
+    assert!(
+        h0_late.is_finite() && h0_late > 0.0,
+        "solve_ricci_flow: h0_late must be finite and > 0"
+    );
+    assert!(
+        b3.is_finite() && b3 > 0.0,
+        "solve_ricci_flow: b3 must be finite and > 0"
+    );
 
+    // R(z) never enters H0_eff. An earlier revision ran a capped
+    // 100,000-step adaptive RKF45 integration right here and threw both of
+    // its outputs away with `let (_ts, _ys)`, which is also why the
+    // interpolator that was written to consume them had no live caller. The
+    // ODE now lives in `ricci_flow_curve`, which returns its solution.
     let k_gimel = b3 / 2.0 + 1.0 / PI;
-    let tau_ricci = k_gimel / b3;
-    let r_initial = b3 / (k_gimel * k_gimel);
-
-    // This function used to drive a capped 100,000-step adaptive RKF45
-    // integration here and then discard both outputs with `let (_ts, _ys)`.
-    // Its own comment conceded that "the interpolated H0_eff result is
-    // independent of R(z)" -- so the integration was pure waste dressed up as
-    // the hard kernel. Callers who want the actual ODE solution should call
-    // `ricci_flow_curve`, which returns it.
-    debug_assert!(r_initial > 0.0, "initial curvature must be positive");
-    debug_assert!(tau_ricci > 0.0, "the Ricci timescale must be positive");
-    let _ = r_initial;
-
-    // Interpolated unified-evolution H0_eff(z) -- matches
-    // `calculate_h_evolution_interpolated` in evolution_engine.py exactly
-    // (up to the Python float arithmetic).
-    let z_star = 1.0 / tau_ricci; // = b3 / k_gimel
+    let z_star = b3 / k_gimel; // = 1 / tau_ricci
+    debug_assert!(
+        k_gimel > b3 / 2.0,
+        "k_gimel must exceed b3/2 by exactly 1/pi"
+    );
+    debug_assert!(
+        z_star.is_finite() && z_star > 0.0,
+        "the transition redshift must be finite and positive"
+    );
 
     z_array
         .iter()
@@ -347,8 +433,9 @@ pub fn solve_ricci_flow(z_array: Vec<f64>, h0_late: f64, b3: f64) -> Vec<f64> {
 /// This is the kernel `solve_ricci_flow` only pretended to run. It drives the
 /// adaptive RKF45 stepper over `[0, max(z_array)]` and interpolates the
 /// accepted steps onto the caller's grid, so the returned curve is the ODE
-/// solution rather than a closed form. Tests cross-check it against
-/// [`ricci_curvature_at`], which is the analytic solution of the same ODE.
+/// solution rather than a closed form. Tests cross-check it against the
+/// closed form of the ODE it actually solves, `R0 (1+z)^(-1/tau_ricci)` --
+/// *not* against [`ricci_curvature_at`], which solves a different equation.
 ///
 /// Returns `None` when `z_array` is empty or carries a negative or non-finite
 /// redshift -- a caller must decide what that means, not receive a default.
@@ -367,7 +454,6 @@ pub fn ricci_flow_curve(z_array: &[f64], b3: f64) -> Option<Vec<f64>> {
     );
 
     let k_gimel = b3 / 2.0 + 1.0 / PI;
-    let tau_ricci = k_gimel / b3;
     let r0 = b3 / (k_gimel * k_gimel);
 
     let z_max = z_array.iter().cloned().fold(0.0_f64, f64::max);
@@ -376,17 +462,28 @@ pub fn ricci_flow_curve(z_array: &[f64], b3: f64) -> Option<Vec<f64>> {
     }
 
     let rhs = |state: &[f64], z: f64| ricci_rhs(state, z, b3);
-    let (ts, ys) = adaptive_integrate(&rhs, 0.0, z_max, vec![r0], 1e-6);
-    debug_assert_eq!(ts.len(), ys.len(), "step times and states disagree");
-    let scalars: Vec<f64> = ys.iter().map(|y| y[0]).collect();
-    let _ = tau_ricci;
+    let grid = adaptive_integrate(&rhs, 0.0, z_max, vec![r0], RICCI_REL_TOL);
+    debug_assert_eq!(
+        grid.ts.len(),
+        grid.dys.len(),
+        "step times and derivatives disagree"
+    );
+    debug_assert!(
+        grid.ys.iter().all(|y| y.len() == 1),
+        "the Ricci flow is a single-component system"
+    );
     Some(
         z_array
             .iter()
-            .map(|&z| linear_interp(&ts, &scalars, z))
+            .map(|&z| hermite_interp(&grid, 0, z))
             .collect(),
     )
 }
+
+/// Relative tolerance the Ricci flow is integrated at. Named rather than
+/// inlined so the accuracy the physics actually runs at is visible and can be
+/// asserted on.
+pub const RICCI_REL_TOL: f64 = 1e-9;
 
 /// Hard bound on the redshift grid accepted in one call, so every loop over
 /// caller-supplied data has a fixed limit.
@@ -403,7 +500,14 @@ pub fn ricci_curvature_at(z: f64, b3: f64) -> f64 {
     let k_gimel = b3 / 2.0 + 1.0 / PI;
     let tau_ricci = k_gimel / b3;
     let r_initial = b3 / (k_gimel * k_gimel);
-    r_initial * (-z / tau_ricci).exp()
+    // CORRECTED 2026-09-05: was r_initial * (-z / tau_ricci).exp(), a
+    // faithful port of a Python bug. That is the solution of
+    // dR/dz = -(1/tau) R, not of dR/dz = -(1/tau) R / (1+z), which is the
+    // equation `flow_rate` declares and which `ricci_flow_curve` in this
+    // same file integrates. Cosmological evolution runs in ln(1+z) since
+    // a = 1/(1+z), so R falls as a power of the scale factor; and the
+    // exponential form is exactly 0.0 in f64 at recombination.
+    r_initial * (1.0 + z).powf(-1.0 / tau_ricci)
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────
@@ -460,15 +564,15 @@ mod tests {
     fn rkf45_solves_exponential_decay() {
         // dy/dt = -y, y(0) = 1 ⇒ y(1) = 1/e ≈ 0.367879
         let rhs = |state: &[f64], _t: f64| vec![-state[0]];
-        let (ts, ys) = adaptive_integrate(&rhs, 0.0, 1.0, vec![1.0], 1e-9);
-        let final_y = ys[ys.len() - 1][0];
+        let grid = adaptive_integrate(&rhs, 0.0, 1.0, vec![1.0], 1e-9);
+        let final_y = grid.ys[grid.ys.len() - 1][0];
         let expected = (-1.0_f64).exp();
         assert!(
             (final_y - expected).abs() < 1e-5,
             "RKF45 exp-decay: got {}, want {}, ts.len()={}",
             final_y,
             expected,
-            ts.len()
+            grid.ts.len()
         );
     }
 
@@ -502,16 +606,50 @@ mod tests {
     /// small z and diverge badly beyond it. [`ricci_curvature_at`] mirrors the
     /// exponential form because that is what the Python actually computes;
     /// which of the two is intended is a physics question for the author.
+    /// RESOLVED 2026-09-05. This asserted the two laws DISAGREE, which they
+    /// did, and pinning it rather than quietly converging them was right --
+    /// which law is intended was a physics question, not a tidying one.
+    ///
+    /// It is answered now, and the power law wins three ways: it is the
+    /// solution of the ODE `flow_rate` declares; cosmological evolution runs
+    /// in ln(1+z) because a = 1/(1+z), so the curvature falls as a power of
+    /// the scale factor while treating z as the affine parameter means
+    /// nothing; and the exponential underflows to exactly 0.0 in f64 at
+    /// recombination, so it makes the curvature vanish identically at
+    /// z = 1100. `ricci_flow_curve` already integrated the ODE correctly, so
+    /// the closed-form accessor was the odd one out.
     #[test]
-    fn exponential_accessor_is_not_the_solution_of_the_stated_ode() {
+    fn the_accessor_now_solves_the_stated_ode() {
         let b3 = 24.0_f64;
-        let curve = ricci_flow_curve(&[5.0], b3).expect("a valid grid was rejected");
-        let accessor = ricci_curvature_at(5.0, b3);
-        let rel = (curve[0] - accessor).abs() / accessor.abs();
-        assert!(
-            rel > 1.0,
-            "the two curvature laws have converged (rel {rel:e}); one of them changed"
-        );
+        let k_gimel = b3 / 2.0 + 1.0 / PI;
+        let tau = k_gimel / b3;
+        let r0 = b3 / (k_gimel * k_gimel);
+        for &z in &[1.0_f64, 5.0, 50.0] {
+            let curve = ricci_flow_curve(&[0.0, z], b3).expect("a valid grid was rejected");
+            let accessor = ricci_curvature_at(z, b3);
+            let closed = r0 * (1.0 + z).powf(-1.0 / tau);
+            assert!(
+                ((accessor - closed).abs() / closed).abs() < 1e-12,
+                "accessor {accessor} is not the closed form {closed} at z={z}"
+            );
+            let rel = (curve[1] - accessor).abs() / accessor.abs();
+            assert!(
+                rel < 1e-4,
+                "the ODE and the accessor have parted company at z={z} (rel {rel:e})"
+            );
+        }
+    }
+
+    /// The old law differs by ~1e39 at z = 50, so its return would be loud.
+    #[test]
+    fn the_exponential_law_is_not_silently_reintroduced() {
+        let b3 = 24.0_f64;
+        let k_gimel = b3 / 2.0 + 1.0 / PI;
+        let tau = k_gimel / b3;
+        let r0 = b3 / (k_gimel * k_gimel);
+        let old_law = r0 * (-50.0_f64 / tau).exp();
+        assert!(old_law < 1e-40, "the exponential no longer underflows at z=50");
+        assert!(ricci_curvature_at(50.0, b3) > 1e-20, "the exponential law is back");
     }
 
     #[test]
@@ -522,15 +660,169 @@ mod tests {
         assert!(ricci_flow_curve(&[1.0], 0.0).is_none());
     }
 
+    /// `rel_tol` used to be taken by the driver and thrown away, with
+    /// `rkf45_step` hard-coding 1e-6 instead, so every caller got the same
+    /// accuracy whatever it asked for. Loosening the tolerance must now
+    /// visibly cost accuracy, and tightening it must visibly cost steps.
     #[test]
-    fn linear_interp_endpoints_and_midpoint() {
-        let ts = vec![0.0, 1.0, 2.0];
-        let ys = vec![10.0, 20.0, 40.0];
-        assert!((linear_interp(&ts, &ys, 0.0) - 10.0).abs() < 1e-12);
-        assert!((linear_interp(&ts, &ys, 2.0) - 40.0).abs() < 1e-12);
-        assert!((linear_interp(&ts, &ys, 0.5) - 15.0).abs() < 1e-12);
-        // out of range clamps
-        assert!((linear_interp(&ts, &ys, -1.0) - 10.0).abs() < 1e-12);
-        assert!((linear_interp(&ts, &ys, 3.0) - 40.0).abs() < 1e-12);
+    fn rel_tol_is_honoured_rather_than_discarded() {
+        let rhs = |state: &[f64], _t: f64| vec![-state[0]];
+        let exact = (-1.0_f64).exp();
+
+        let loose = adaptive_integrate(&rhs, 0.0, 1.0, vec![1.0], 1e-2);
+        let tight = adaptive_integrate(&rhs, 0.0, 1.0, vec![1.0], 1e-13);
+
+        let loose_err = (loose.ys[loose.ys.len() - 1][0] - exact).abs();
+        let tight_err = (tight.ys[tight.ys.len() - 1][0] - exact).abs();
+
+        assert!(
+            tight_err < loose_err,
+            "rel_tol changed nothing: loose {loose_err:e} vs tight {tight_err:e}"
+        );
+        assert!(
+            tight.ts.len() > loose.ts.len(),
+            "a 1e-13 tolerance took no more steps ({}) than 1e-2 ({})",
+            tight.ts.len(),
+            loose.ts.len()
+        );
+    }
+
+    /// The step cap that keeps linear interpolation off the critical path.
+    /// Removing it silently degrades every sampled value between steps.
+    #[test]
+    fn the_driver_takes_at_least_the_minimum_number_of_steps() {
+        let rhs = |state: &[f64], _t: f64| vec![-state[0]];
+        // A tolerance this loose would otherwise let the controller cross the
+        // whole span in a handful of steps.
+        let grid = adaptive_integrate(&rhs, 0.0, 1.0, vec![1.0], 1e-1);
+        assert!(
+            grid.ts.len() > MIN_ACCEPTED_STEPS,
+            "only {} accepted steps, the h_max cap is not being applied",
+            grid.ts.len()
+        );
+    }
+
+    /// The ODE path must stay accurate all the way out to recombination, not
+    /// only over the short span the first test covers. Measured worst case is
+    /// ~6.1e-5 relative; 1e-3 leaves headroom without hiding a regression.
+    #[test]
+    fn ricci_flow_curve_is_accurate_out_to_recombination() {
+        let b3 = 24.0_f64;
+        let k_gimel = b3 / 2.0 + 1.0 / PI;
+        let tau = k_gimel / b3;
+        let r0 = b3 / (k_gimel * k_gimel);
+
+        let zs: Vec<f64> = (0..=40).map(|i| 1100.0 * f64::from(i) / 40.0).collect();
+        let numeric = ricci_flow_curve(&zs, b3).expect("a valid grid was rejected");
+        for (z, r) in zs.iter().zip(numeric.iter()) {
+            let exact = r0 * (1.0 + z).powf(-1.0 / tau);
+            let rel = (r - exact).abs() / exact;
+            assert!(rel < 1e-3, "R({z}) rel error {rel:e} exceeds 1e-3");
+        }
+        for w in numeric.windows(2) {
+            assert!(w[0] > w[1], "curvature must fall with redshift: {w:?}");
+        }
+    }
+
+    /// `solve_ricci_flow` returns H0_eff, NOT the H(z) that the Python method
+    /// of the nearest name returns. The Python multiplies by
+    /// `E(z) = sqrt(Om (1+z)^3 + Ode)`; the two agree only at z = 0. A future
+    /// edit that "fixes parity" by folding E(z) in here must break this test
+    /// and be made deliberately.
+    #[test]
+    fn solve_ricci_flow_returns_h0_eff_and_not_h_of_z() {
+        let (h0_late, b3) = defaults();
+        let z = 1.0_f64;
+        let h0_eff = solve_ricci_flow(vec![0.0, z], h0_late, b3);
+
+        assert!(
+            (h0_eff[0] - h0_late).abs() < 1e-12,
+            "z=0 must be the identity"
+        );
+
+        // Omega_m and Omega_de as hard-coded in calculate_h_evolution_interpolated.
+        let e_z = (0.311 * (1.0 + z).powi(3) + 0.689).sqrt();
+        let h_of_z = h0_eff[1] * e_z;
+        assert!(
+            (h_of_z - h0_eff[1]).abs() > 10.0,
+            "E(z) has become the identity; the two quantities are no longer distinct"
+        );
+    }
+
+    #[test]
+    #[should_panic(expected = "every redshift must be finite and non-negative")]
+    fn solve_ricci_flow_refuses_a_nan_redshift() {
+        // NaN in, NaN out would have looked exactly like an answer.
+        let _ = solve_ricci_flow(vec![0.0, f64::NAN], 73.04, 24.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "h0_late must be finite and > 0")]
+    fn solve_ricci_flow_refuses_a_nan_h0() {
+        let _ = solve_ricci_flow(vec![0.0], f64::NAN, 24.0);
+    }
+
+    /// The Hermite interpolant must pass through every node exactly, clamp
+    /// outside the grid, and reproduce a cubic in between -- a cubic is the
+    /// highest order it is exact for, so that is the sharpest check available.
+    #[test]
+    fn hermite_interp_is_exact_on_nodes_and_on_cubics() {
+        // y(t) = t^3 - 2t + 1, dy/dt = 3t^2 - 2.
+        let f = |t: f64| t * t * t - 2.0 * t + 1.0;
+        let df = |t: f64| 3.0 * t * t - 2.0;
+        let ts = vec![0.0, 1.0, 2.5];
+        let grid = StepGrid {
+            ys: ts.iter().map(|&t| vec![f(t)]).collect(),
+            dys: ts.iter().map(|&t| vec![df(t)]).collect(),
+            ts: ts.clone(),
+        };
+        for &t in &ts {
+            assert!(
+                (hermite_interp(&grid, 0, t) - f(t)).abs() < 1e-12,
+                "node {t} not reproduced"
+            );
+        }
+        for k in 1..40 {
+            let t = 2.5 * f64::from(k) / 40.0;
+            let got = hermite_interp(&grid, 0, t);
+            assert!(
+                (got - f(t)).abs() < 1e-10,
+                "cubic not reproduced at {t}: {got} vs {}",
+                f(t)
+            );
+        }
+        // Outside the grid the value clamps to the nearest endpoint.
+        assert!((hermite_interp(&grid, 0, -1.0) - f(0.0)).abs() < 1e-12);
+        assert!((hermite_interp(&grid, 0, 9.0) - f(2.5)).abs() < 1e-12);
+    }
+
+    /// Regression on the fix: on the grid the controller now chooses, the
+    /// second-order interpolant that used to be used here is orders of
+    /// magnitude worse -- which is exactly why the step count had to be
+    /// inflated to 4_096 to hide it.
+    #[test]
+    fn hermite_beats_the_linear_interpolant_it_replaced() {
+        let b3 = 24.0_f64;
+        let k_gimel = b3 / 2.0 + 1.0 / PI;
+        let tau = k_gimel / b3;
+        let r0 = b3 / (k_gimel * k_gimel);
+        let rhs = |state: &[f64], z: f64| ricci_rhs(state, z, b3);
+        let grid = adaptive_integrate(&rhs, 0.0, 20.0, vec![r0], RICCI_REL_TOL);
+
+        let mut worst_hermite = 0.0_f64;
+        let mut worst_linear = 0.0_f64;
+        for k in 1..200 {
+            let z = 20.0 * f64::from(k) / 200.0;
+            let exact = r0 * (1.0 + z).powf(-1.0 / tau);
+            let (lo, hi) = bracket(&grid.ts, z);
+            let w = (z - grid.ts[lo]) / (grid.ts[hi] - grid.ts[lo]);
+            let lin = grid.ys[lo][0] + (grid.ys[hi][0] - grid.ys[lo][0]) * w;
+            worst_hermite = worst_hermite.max((hermite_interp(&grid, 0, z) - exact).abs() / exact);
+            worst_linear = worst_linear.max((lin - exact).abs() / exact);
+        }
+        assert!(
+            worst_hermite * 100.0 < worst_linear,
+            "hermite {worst_hermite:e} is not decisively better than linear {worst_linear:e}"
+        );
     }
 }

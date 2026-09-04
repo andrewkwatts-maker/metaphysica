@@ -338,7 +338,11 @@ class HartreeEnergyV17(SimulationBase):
                 status="DERIVED",
                 description="Bulk Hartree energy in Pleroma (before projection via Inverse Double-Gate)",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(E_h_CODATA, ops.mul(ops.add(1, epsilon), ops.pow(ops.sub(1, epsilon), 2)))",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.manifest_hartree_energy'), "
+                    "ops.mul(ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), "
+                    "ops.pow(ops.sub(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), eml_scalar(2.0))))"
+                ),
             ),
             Parameter(
                 path="qed.manifest_hartree_energy",
@@ -350,7 +354,11 @@ class HartreeEnergyV17(SimulationBase):
                 bound_type="measured",
                 bound_source="CODATA2022",
                 uncertainty=CODATA_HARTREE_SIGMA,
-                eml_description="EML: ops.mul(E_h_bulk, ops.mul(ops.add(1, epsilon), ops.pow(ops.sub(1, epsilon), 2)))",
+                eml_description=(
+                    "EML: ops.mul(eml_vec('qed.bulk_hartree_energy'), "
+                    "ops.mul(ops.add(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), "
+                    "ops.pow(ops.sub(eml_scalar(1.0), eml_vec('qed.projection_epsilon')), eml_scalar(2.0))))"
+                ),
             ),
             Parameter(
                 path="qed.hartree_variance_j",
@@ -358,7 +366,7 @@ class HartreeEnergyV17(SimulationBase):
                 units="J",
                 status="DERIVED",
                 description="Variance from CODATA",
-                eml_description="EML: ops.abs(ops.sub(eml_vec('qed.hartree_bulk'), eml_scalar(4.3597447222071e-18))) — |E_h_predicted − E_h_CODATA| in J",
+                eml_description="EML: ops.abs(ops.sub(eml_vec('qed.manifest_hartree_energy'), eml_scalar(4.3597447222071e-18))) — |E_h_predicted − E_h_CODATA| in J",
                 no_experimental_value=True,
             ),
             Parameter(
@@ -367,7 +375,13 @@ class HartreeEnergyV17(SimulationBase):
                 units="sigma",
                 status="DERIVED",
                 description="Sigma-equivalent deviation from CODATA",
-                eml_description="EML: ops.div(eml_vec('qed.hartree_variance_j'), eml_scalar(1.3e-30)) — σ = variance / CODATA uncertainty (1.3×10⁻³⁰ J)",
+                eml_description=(
+                    "EML: ops.div(eml_vec('qed.hartree_variance_j'), eml_scalar(8.5e-30)) "
+                    "— sigma = variance / CODATA uncertainty. The uncertainty this module "
+                    "actually divides by is CODATA_HARTREE_SIGMA = 8.5e-30 J; the published "
+                    "form quoted 1.3e-30 J, which is not a figure that appears anywhere in "
+                    "the module and made the row read 6.5x high"
+                ),
                 no_experimental_value=True,
             ),
         ]
