@@ -327,9 +327,9 @@ class AppendixTQECBridge(SimulationBase):
                     "Inner product of i-th stabilizer generator with error vector, mod 2. "
                     "For single-qubit X-error on qubit j, result is j-th column of H."
                 ),
-                inputParams=["qec.code_n", "qec.code_d"],
+                inputParams=["topology.elder_kads"],
                 outputParams=["appendix_t.syndrome_example_valid"],
-                input_params=["qec.code_n", "qec.code_d"],
+                input_params=["topology.elder_kads"],
                 output_params=["appendix_t.syndrome_example_valid"],
                 derivation={
                     "method": "css_syndrome_extraction",

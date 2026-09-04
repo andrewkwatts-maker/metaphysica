@@ -513,7 +513,7 @@ class AppendixITerminalStates(SimulationBase):
                 category="DERIVED",
                 description="Spectral trace saturation: End of expansion as trace reaches maximum.",
                 input_params=["topology.vol_v7"],
-                output_params=["terminal.trace_saturated"],
+                output_params=[],
                 derivation={
                     "method": "Heat kernel trace saturation on V7 manifold",
                     "steps": [
@@ -539,7 +539,7 @@ class AppendixITerminalStates(SimulationBase):
                 category="DERIVED",
                 description="The terminal geodesic curve showing expansion flattening to Static Lock.",
                 input_params=["terminal.metric_null_potential", "terminal.gauge_ghost_potential"],
-                output_params=["terminal.geodesic_defined"],
+                output_params=[],
                 derivation={
                     "method": "Piecewise exponential saturation across three terminal basins",
                     "steps": [
@@ -568,7 +568,7 @@ class AppendixITerminalStates(SimulationBase):
                 category="DERIVED",
                 description="Shadow torsion decoupling rate over cosmic time.",
                 input_params=["topology.shadow_torsion_total", "cosmology.lambda_geometric"],
-                output_params=["terminal.decoupling_rate"],
+                output_params=[],
                 derivation={
                     "method": "Exponential torsion dissipation from cosmological constant",
                     "steps": [

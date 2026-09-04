@@ -1770,9 +1770,7 @@ class DiscussionV16(SimulationBase):
                     "gauge.sin2_theta_w",
                     "geometry.higgs_vev",
                 ],
-                output_params=[
-                    "statistics.global_alignment_sigma",
-                ],
+                output_params=[],
                 derivation={
                     "steps": [
                         {"description": "Collect all N_pred PM predictions with experimental data. The observable set includes: 1/alpha_GUT (gauge), w_0 and w_a (dark energy), theta_12/theta_13/theta_23/delta_CP (PMNS angles), m_h (Higgs), Sigma m_nu (neutrino sum), and fermion mass ratios. Experimental sources: Planck 2018, DESI DR2 2025, NuFIT 6.0, PDG 2024.", "formula": r"\{x_i^{\text{PM}}, x_i^{\text{exp}}, \sigma_i^{\text{exp}}\}_{i=1}^{N_{\text{pred}}}"},

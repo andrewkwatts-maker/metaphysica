@@ -1177,8 +1177,8 @@ if SCHEMA_AVAILABLE:
                         "Sigmoidal unlocking probability. At n=6: P=0.5. "
                         "Models bootstrapping effect from active pairs."
                     ),
-                    input_params=["consciousness.active_pairs"],
-                    output_params=["consciousness.unlocking_probability"],
+                    input_params=[],
+                    output_params=["consciousness.unlocking_probability_6", "consciousness.unlocking_probability_10"],
                     derivation={
                         "steps": [
                             "12 bridge pairs from b3=24 provide substrate for consciousness",
@@ -1211,8 +1211,8 @@ if SCHEMA_AVAILABLE:
                         f"tau(12) = {coherence_time(12)*1000:.1f} ms, "
                         f"boost = {coherence_time(12)/coherence_time(6):.1f}x."
                     ),
-                    input_params=["consciousness.active_pairs", "consciousness.tau_0"],
-                    output_params=["consciousness.coherence_time"],
+                    input_params=[],
+                    output_params=["consciousness.tau_baseline", "consciousness.tau_gnosis"],
                     derivation={
                         "steps": [
                             "Base coherence tau_0 from Orch-OR Penrose criterion",

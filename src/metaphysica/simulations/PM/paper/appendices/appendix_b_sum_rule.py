@@ -82,7 +82,12 @@ class AppendixBSumRule(SimulationBase):
 
     @property
     def output_params(self) -> List[str]:
-        return ["validation.sum_rule_result", "validation.trace_convergence"]
+        return [
+            "validation.sum_rule_result",
+            "validation.trace_convergence",
+            "validation.phi_g2",
+            "validation.sum_rule_tolerance",
+        ]
 
     @property
     def output_formulas(self) -> List[str]:
@@ -352,7 +357,7 @@ class AppendixBSumRule(SimulationBase):
                     "Closure condition for trace formula verification. Variance must "
                     "be below sterile tolerance threshold to maintain certification."
                 ),
-                input_params=["validation.phi_g2", "registry.node_count", "validation.sterile_tolerance"],
+                input_params=["validation.phi_g2", "registry.node_count", "validation.sum_rule_tolerance"],
                 output_params=["validation.sum_rule_result"],
                 derivation={
                     "method": "Absolute deviation bound from geometric invariant",
@@ -367,7 +372,7 @@ class AppendixBSumRule(SimulationBase):
                 terms={
                     "ΔΦ": {"symbol": "\\Delta\\Phi", "description": "Variance from geometric invariant"},
                     "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "registry.node_count"},
-                    "ε_sterile": {"symbol": "\\epsilon_{\\text{sterile}}", "value": "10^{-15}", "description": "Sterile tolerance threshold", "param_id": "validation.sterile_tolerance"},
+                    "ε_sterile": {"symbol": "\\epsilon_{\\text{sterile}}", "value": "10^{-15}", "description": "Sterile tolerance threshold", "param_id": "validation.sum_rule_tolerance"},
                 }
             ),
             Formula(
@@ -421,6 +426,19 @@ class AppendixBSumRule(SimulationBase):
                 status="VALIDATION",
                 description="Whether the spectral trace converges to expected Vol(V₇)",
                 eml_description="Boolean flag indicating convergence of the spectral trace Tr(exp(-t*Delta_V7)) to the geometric volume invariant of the V7 manifold.",
+                no_experimental_value=True,
+            ),
+            Parameter(
+                path="validation.sum_rule_tolerance",
+                name="Global Sum Rule Tolerance",
+                units="dimensionless",
+                status="VALIDATION",
+                description=(
+                    "Numerical tolerance epsilon_sterile against which the global sum rule "
+                    "residual is compared. Set to 1e-15, the double-precision floor for the "
+                    "125-term weighted sum; a residual below it is indistinguishable from zero."
+                ),
+                eml_description="Convergence threshold constant (1e-15) for the sum-rule residual; not a derived quantity.",
                 no_experimental_value=True,
             ),
             Parameter(

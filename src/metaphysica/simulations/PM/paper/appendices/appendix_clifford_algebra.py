@@ -60,6 +60,7 @@ class CliffordAlgebraAppendix(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         return [
+            "geometry.D_bulk",
             "algebra.clifford_g2_invariant",
             "algebra.clifford_boost_conservation",
             "algebra.clifford_flrw_invariant",
@@ -68,7 +69,7 @@ class CliffordAlgebraAppendix(SimulationBase):
 
     @property
     def output_params(self) -> List[str]:
-        return []
+        return ["algebra.clifford_appendix_signature_count"]
 
     @property
     def output_formulas(self) -> List[str]:
@@ -79,7 +80,12 @@ class CliffordAlgebraAppendix(SimulationBase):
         boost = registry.get_param("algebra.clifford_boost_conservation") or 0.0
         flrw_inv = registry.get_param("algebra.clifford_flrw_invariant") or -1.0
         rot_err = registry.get_param("algebra.clifford_rotation_check") or 0.0
+        # n = p + q for Cl(p,q). The PM bulk is Cl(24,2), so n is the bulk
+        # dimension: read it, do not restate it. get_param raises if absent
+        # rather than falling back on a literal 26.
+        signature_count = int(registry.get_param("geometry.D_bulk"))
         return {
+            "algebra.clifford_appendix_signature_count": signature_count,
             "_g2_inv": g2_inv,
             "_boost": boost,
             "_flrw_inv": flrw_inv,

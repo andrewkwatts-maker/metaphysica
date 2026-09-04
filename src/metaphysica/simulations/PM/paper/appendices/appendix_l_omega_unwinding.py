@@ -320,6 +320,7 @@ class AppendixLOmegaUnwinding(SimulationBase):
     @property
     def output_params(self) -> List[str]:
         return [
+            "terminal.current_entropy",
             "terminal.dominant_basin",
             "terminal.restoration_probability",
             "terminal.omega_seal",
@@ -783,6 +784,20 @@ class AppendixLOmegaUnwinding(SimulationBase):
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions for this appendix."""
         return [
+            Parameter(
+                path="terminal.current_entropy",
+                name="Current Unwinding Entropy",
+                units="dimensionless",
+                status="TERMINAL",
+                description=(
+                    "Entropy accumulated along the Omega unwinding trajectory at the current "
+                    "epoch: S = t * gamma with gamma = ln(288/125) the basin decay constant. "
+                    "It is the argument of the basin-selection threshold (S < 0.8 selects the "
+                    "Gauge Ghost basin) and the complement of terminal.restoration_probability."
+                ),
+                eml_description="EML: ops.mul(eml_vec('current_epoch'), ops.log(ops.div(eml_vec('topology.ancestral_roots'), eml_vec('registry.node_count')))) — unwinding entropy = epoch * ln(288/125)",
+                no_experimental_value=True,
+            ),
             Parameter(
                 path="terminal.dominant_basin",
                 name="Dominant Basin",

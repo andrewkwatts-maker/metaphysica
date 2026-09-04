@@ -1674,9 +1674,9 @@ class PredictionsAggregatorV16(SimulationBase):
                     "EM and gravity leak at this rate; strong/weak forces are zero."
                 ),
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
-                outputParams=["predictions.dark_force_leakage"],
+                outputParams=[],
                 input_params=["topology.mephorash_chi", "topology.elder_kads"],
-                output_params=["predictions.dark_force_leakage"],
+                output_params=[],
                 derivation={
                     "steps": [
                         "Bridge OR creates dual shadows separated by 12 Möbius double-cover operators",
@@ -1853,9 +1853,9 @@ class PredictionsAggregatorV16(SimulationBase):
                     "falsification window for the PM dark matter axion channel."
                 ),
                 inputParams=["topology.elder_kads", "constants.k_gimel"],
-                outputParams=["predictions.admx_axion_mass", "predictions.admx_fa_bound"],
+                outputParams=[],
                 input_params=["topology.elder_kads", "constants.k_gimel"],
-                output_params=["predictions.admx_axion_mass", "predictions.admx_fa_bound"],
+                output_params=[],
                 derivation={
                     "steps": [
                         "QCD axion mass: m_a ~ 6 microeV from G2 moduli stabilization",
@@ -1902,9 +1902,9 @@ class PredictionsAggregatorV16(SimulationBase):
                     "or revised mirror sector temperature."
                 ),
                 inputParams=["geometry.alpha_leak", "topology.mephorash_chi"],
-                outputParams=["predictions.delta_neff_mirror"],
+                outputParams=[],
                 input_params=["geometry.alpha_leak", "topology.mephorash_chi"],
-                output_params=["predictions.delta_neff_mirror"],
+                output_params=[],
                 derivation={
                     "steps": [
                         "PM mirror sector predicts mirror neutrinos with T'/T ~ 0.57",

@@ -857,7 +857,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "the falsification tolerance epsilon. Ensures the Sterile Model remains "
                     "a fixed prediction rather than an adjustable fit."
                 ),
-                input_params=["validation.sigma_global"],
+                input_params=[],
                 output_params=["seal.integrity_status"],
                 derivation={
                     "method": "Falsifiability trigger from sigma deviation threshold",
@@ -889,7 +889,7 @@ class AppendixGOmegaSeal(SimulationBase):
                     "locks the model: no parameter can be adjusted without breaking both factors."
                 ),
                 input_params=["registry.node_count", "topology.ancestral_roots", "topology.shadow_torsion_total"],
-                output_params=["seal.sterile_locked"],
+                output_params=[],
                 derivation={
                     "method": "Sterile rigidity product from survival rate and isotropy factor",
                     "steps": [

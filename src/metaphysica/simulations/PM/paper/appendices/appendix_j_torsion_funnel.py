@@ -550,7 +550,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 eml_tree_str="ops.sub(ops.add(eml_vec('active_residues'), eml_vec('hidden_supports')), ops.mul(eml_scalar(0.0), b3_leaf()))",
                 category="GEOMETRIC",
                 description="Active residues plus hidden supports must equal total roots.",
-                input_params=["funnel.exit_residues", "topology.hidden_supports"],
+                input_params=["registry.node_count", "topology.hidden_supports"],
                 output_params=[],
                 derivation={
                     "method": "Conservation law for ancestral root partition",
@@ -577,7 +577,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 eml_tree_str="ops.div(eml_vec('active_residues'), ops.mul(eml_scalar(12.0), b3_leaf()))",
                 category="DERIVED",
                 description="Fraction of ancestral roots that become observable particles.",
-                input_params=["funnel.exit_residues", "funnel.entry_roots"],
+                input_params=["registry.node_count", "topology.ancestral_roots"],
                 output_params=["funnel.survival_rate"],
                 derivation={
                     "method": "Ratio of active residues to total ancestral roots",
@@ -603,7 +603,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 eml_tree_str="ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf())",
                 category="DERIVED",
                 description="Entry pressure at the torsion bottleneck.",
-                input_params=["funnel.entry_roots", "funnel.bottleneck_pins"],
+                input_params=["topology.ancestral_roots", "topology.elder_kads"],
                 output_params=["funnel.compression_ratio"],
                 derivation={
                     "method": "Compression ratio at the brane intersection bottleneck",

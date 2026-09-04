@@ -73,7 +73,6 @@ class AppendixDAlignment(SimulationBase):
     PARAM_REFS = [
         "cosmology.H0_geometric",
         "cosmology.w0_derived",
-        "validation.sigma_global",
         "geometry.H0_early",
         "geometry.H0_local",
         "observational.w0_desi",
@@ -355,7 +354,7 @@ description="Geometric Hubble residue from the V7 manifold's spectral structure.
                 category="DERIVED",
                 description="w0 alignment with DESI BAO measurements (within BAO-only uncertainty).",
                 input_params=["cosmology.w0_derived", "observational.w0_desi"],
-                output_params=["validation.sigma_global"],
+                output_params=[],
                 terms={
                     "w0_geo": "Geometric dark energy equation of state (-23/24 = -0.9583)",
                     "w0_DESI": "DESI DR2 (2025) BAO measurement of w0",

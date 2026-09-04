@@ -88,7 +88,6 @@ class IntegrityV16_2(SimulationBase):
 
     # Dynamic parameter paths referenced by this section
     PARAM_REFS = [
-        "certificates.all_passed",
         "gates.omega_hash",
         "seal.verified",
     ]
@@ -562,7 +561,7 @@ class IntegrityV16_2(SimulationBase):
                 category="DERIVED",
                 description="42 certificates of integrity validation logic: short-circuit binary enforcement requiring all geometric, algebraic, and observational checks to pass. Every certificate validates a quantity derived from the b3=24 G2 seed, so the overall validity flag is a meta-summary rooted at b3.",
                 input_params=["topology.elder_kads"],
-                output_params=["certificates.all_passed"],
+                output_params=[],
                 derivation={
                     "steps": [
                         {"description": "Partition 42 certificates into 3 tiers: Geometric (C01-C14), Algebraic (C15-C28), Observational (C29-C42)", "formula": r"\{C_n\}_{n=1}^{42} = \text{Tier I} \cup \text{Tier II} \cup \text{Tier III}"},

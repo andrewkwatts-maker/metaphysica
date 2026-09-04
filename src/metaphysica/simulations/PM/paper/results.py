@@ -120,7 +120,6 @@ class ResultsV16_2(SimulationBase):
         "topology.vol_v7",
         "cosmology.H0_geometric",
         "cosmology.w0_derived",
-        "validation.sigma_global",
     ]
 
     @property
@@ -838,7 +837,7 @@ class ResultsV16_2(SimulationBase):
                     "across 26 Standard Model parameters (EDOF=3)."
                 ),
                 input_params=["cosmology.w0_derived", "cosmology.H0_geometric"],
-                output_params=["validation.sigma_global"],
+                output_params=[],
                 eml_latex=(
                     r"\chi^2 = \mathrm{ops.div}("
                     r"\mathrm{ops.pow}(\mathrm{ops.add}(w0_{\text{pred}}, \mathrm{ops.neg}(w0_{\text{obs}})), 2),"
