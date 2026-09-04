@@ -386,6 +386,7 @@ class HiggsMassSimulation(SimulationBase):
         """
         from metaphysica.simulations.core.eml_integration import (
             eml_scalar, eml_compute, eml_mul, eml_sub, eml_sqrt, eml_sqr, eml_pi,
+            eml_div,
         )
 
         self.validate_inputs(registry)
@@ -1555,4 +1556,13 @@ def main():
     print("="*70)
     print()
     print("The phenomenological calculation uses m_h as INPUT to constrain Re(T).")
-    pr
+    print("This is NOT a prediction from pure geometry!")
+    print()
+    print("The geometric calculation (Re(T) from attractor) FAILS to predict m_h.")
+    print("This demonstrates the limit of geometric derivation for the Higgs mass.")
+    print()
+    print("="*70)
+
+
+if __name__ == "__main__":
+    main()
