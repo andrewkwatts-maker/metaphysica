@@ -61,7 +61,7 @@ class AppendixASpectralRegistry(SimulationBase):
         "topology.elder_kads",
         "topology.mephorash_chi",
         "cosmology.H0_geometric",
-        "cosmology.w0_geometric",
+        "cosmology.w0_derived",
         "particle.alpha_em",
         "pdg.m_electron",
         "particle.m_top",

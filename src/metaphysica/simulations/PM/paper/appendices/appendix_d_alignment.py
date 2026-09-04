@@ -72,10 +72,10 @@ class AppendixDAlignment(SimulationBase):
 
     PARAM_REFS = [
         "cosmology.H0_geometric",
-        "cosmology.w0_geometric",
+        "cosmology.w0_derived",
         "validation.sigma_global",
-        "observational.H0_planck",
-        "observational.H0_shoes",
+        "geometry.H0_early",
+        "geometry.H0_local",
         "observational.w0_desi",
     ]
 
@@ -109,7 +109,7 @@ class AppendixDAlignment(SimulationBase):
         """Execute alignment validation against observational data."""
         # Dynamic param extraction - use registry.get() with geometric defaults
         H0_geo = registry.get("cosmology.H0_geometric", default=73.04)
-        w0_geo = registry.get("cosmology.w0_geometric", default=-23/24)
+        w0_geo = registry.get("cosmology.w0_derived", default=-23/24)
         # NOTE (2026-09): "validation.sigma_global" is not a registry
         # parameter, so this default ALWAYS fires. 0.48 is a v24.2 literal,
         # not a computed statistic, and chi2_total below is therefore
@@ -354,7 +354,7 @@ description="Geometric Hubble residue from the V7 manifold's spectral structure.
                 eml_tree_str="ops.div(ops.sub(eml_vec('w0_geo'), eml_vec('w0_DESI')), eml_vec('sigma_DESI'))",
                 category="DERIVED",
                 description="w0 alignment with DESI BAO measurements (within BAO-only uncertainty).",
-                input_params=["cosmology.w0_geometric", "observational.w0_desi"],
+                input_params=["cosmology.w0_derived", "observational.w0_desi"],
                 output_params=["validation.sigma_global"],
                 terms={
                     "w0_geo": "Geometric dark energy equation of state (-23/24 = -0.9583)",

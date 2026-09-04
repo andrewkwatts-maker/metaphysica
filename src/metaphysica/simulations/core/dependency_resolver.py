@@ -690,7 +690,7 @@ def build_pm_dependency_graph() -> DependencyGraph:
 
     # w0_geometric from b3
     graph.register(
-        "cosmology.w0_geometric",
+        "cosmology.w0_derived",
         depends_on=["seeds.elder_kads"],
         compute_fn=lambda deps: -1.0 + 1.0 / deps["seeds.elder_kads"],
         metadata={'level': 3, 'description': 'Dark energy equation of state'}
@@ -699,8 +699,8 @@ def build_pm_dependency_graph() -> DependencyGraph:
     # Omega_DE from w0
     graph.register(
         "cosmology.Omega_DE",
-        depends_on=["cosmology.w0_geometric"],
-        compute_fn=lambda deps: 0.685 * (1.0 + 0.1 * (deps["cosmology.w0_geometric"] + 1.0)),
+        depends_on=["cosmology.w0_derived"],
+        compute_fn=lambda deps: 0.685 * (1.0 + 0.1 * (deps["cosmology.w0_derived"] + 1.0)),
         metadata={'level': 3, 'description': 'Dark energy density parameter'}
     )
 

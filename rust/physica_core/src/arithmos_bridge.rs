@@ -7,9 +7,22 @@
 //!
 //!For inquiries, please contact AndrewKWatts@Gmail.com
 
-//! Arithmos symbolic-expression bridge.
+//! Arithmos symbolic-expression bridge. **NOT COMPILED.**
 //!
-//! Gated behind the `with-arithmos` feature. **This is the engine path
+//! This file is not a module of `physica_core` and never has been. `lib.rs`
+//! declared it behind `#[cfg(feature = "with-arithmos")]`, but that feature
+//! was never added to `Cargo.toml`, so the cfg was permanently false: the
+//! code below -- including its two unit tests -- has never been built by any
+//! `cargo` invocation, not even `cargo check --all-features`.
+//!
+//! It cannot simply be switched on. It imports `arithmos_core`, which is not
+//! a declared dependency, and the upstream crate has since been renamed to
+//! `arithma_core` (live at the sibling Arithma repository). Reconciling that
+//! spans several repositories and is deliberately out of scope here. The file
+//! is kept as the record of intent; the module declaration was removed so the
+//! crate stops advertising a capability it does not have.
+//!
+//! Originally gated behind the `with-arithmos` feature. **This is the engine path
 //! ONLY** — it is *never* part of the metaphysica PyPI wheel because the
 //! Arithmos dependency is wired by relative `path =` (git-submodule layout)
 //! and would not resolve from a published Cargo registry build.

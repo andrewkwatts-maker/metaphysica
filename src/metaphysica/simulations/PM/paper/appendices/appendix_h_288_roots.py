@@ -64,7 +64,7 @@ class AppendixH288Roots(SimulationBase):
     ]
 
     PARAM_REFS = [
-        "topology.transverse_dimensions",
+        "topology.elder_kads",
         "topology.so24_generators",
         "topology.torsion_per_shadow",
         "topology.shadow_torsion_total",
@@ -113,7 +113,7 @@ class AppendixH288Roots(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute 288-Root derivation and validation."""
         # Fundamental constants from geometry
-        n_transverse = registry.get("topology.transverse_dimensions", default=24)
+        n_transverse = registry.get("topology.elder_kads", default=24)
         torsion_per_shadow = registry.get("topology.torsion_per_shadow", default=12)
         manifold_cost = registry.get("topology.manifold_cost", default=12)
         active_residues = registry.get("registry.node_count", default=125)
@@ -459,7 +459,7 @@ class AppendixH288Roots(SimulationBase):
                     "in 26D bosonic string theory. Computed via the standard Lie algebra dimension "
                     "formula dim(SO(n)) = n(n-1)/2 with n = 24 transverse directions."
                 ),
-                input_params=["topology.transverse_dimensions"],
+                input_params=["topology.elder_kads"],
                 output_params=["topology.so24_generators"],
                 derivation={
                     "method": "Lie algebra dimension formula for SO(n)",

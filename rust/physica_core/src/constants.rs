@@ -425,18 +425,13 @@ impl FormulasRegistry {
         *self.dirty.lock() = false;
     }
 
-    /// Retrieve the constant as both an `f64` and an Arithmos symbolic
-    /// expression. Available only when the `with-arithmos` feature is on
-    /// (engine / git-checkout path).
-    #[cfg(feature = "with-arithmos")]
-    pub fn derive_with_arithmos(
-        &self,
-        name: &str,
-    ) -> Result<(f64, arithmos_core::expression::ArithmosExpression), ConstantError> {
-        let v = self.derive(name)?;
-        let expr = crate::arithmos_bridge::ArithmosConstantBridge::expression_for(name, v);
-        Ok((v, expr))
-    }
+    // `derive_with_arithmos` used to live here behind `#[cfg(feature =
+    // "with-arithmos")]`. That feature was never declared in Cargo.toml, so
+    // the cfg was always false and the method never existed -- rustc said as
+    // much on every build ("expected values for `feature` are: `default`,
+    // `pyo3`, `python`") and the warning was carried for the life of the file.
+    // Restoring it needs a real dependency on the symbolic-expression crate,
+    // which is an upstream decision; see src/arithmos_bridge.rs.
 }
 
 impl FormulasSource for FormulasRegistry {

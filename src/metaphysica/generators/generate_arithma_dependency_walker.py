@@ -189,6 +189,43 @@ def main() -> int:
         {p for v in phantom_inputs.values() for p in v}
         | {p for v in phantom_outputs.values() for p in v})
 
+
+    # registry.get(path, default=X) where the path does not exist. The
+    # default then fires on EVERY call and the lookup is decorative -- a
+    # hardcoded value wearing the costume of a registry read. This is the
+    # same shape as the chi-squared that came from
+    # summary.get("global_chi_squared", 0.23) on a key that never existed.
+    #
+    # Several were load-bearing physics: observational.H0_shoes defaulting
+    # to 73.04, observational.H0_planck to 67.4, and -- worst --
+    # cosmology.H0_geometric, a PREDICTION, defaulting to 73.04, the SH0ES
+    # MEASUREMENT it exists to predict. That is the pattern the R4 ruling
+    # struck out elsewhere, reappearing as a default argument.
+    silent_defaults = []
+    if known_paths:
+        try:
+            import re as _re
+            from pathlib import Path as _Path
+
+            _pat = _re.compile(
+                r"""registry\.get\(\s*["']([\w.]+)["']\s*,\s*default\s*=\s*([^)\n]+)\)"""
+            )
+            _root = _Path(__file__).resolve().parents[1]
+            for _f in sorted(_root.rglob("*.py")):
+                try:
+                    _text = _f.read_text(encoding="utf-8")
+                except (OSError, UnicodeDecodeError):
+                    continue
+                for _m in _pat.finditer(_text):
+                    if _m.group(1) not in known_paths:
+                        silent_defaults.append({
+                            "path": _m.group(1),
+                            "default": _m.group(2).strip()[:60],
+                            "file": _f.relative_to(_root).as_posix(),
+                        })
+        except Exception:
+            silent_defaults = []
+
     out = {
         "version": "1.0",
         "root_seed": "b3=24",
@@ -198,6 +235,18 @@ def main() -> int:
         "b3_rooted_count": b3_rooted,
         "ambiguous_count": ambiguous,
         "non_b3_rooted_count": non_rooted,
+        "silent_registry_defaults": {
+            "note": (
+                "registry.get(path, default=X) where the path does not "
+                "exist, so the default fires on every call and the lookup "
+                "reads as provenance it does not have. Reported, not "
+                "repaired: whether to register the path or drop the lookup "
+                "is a per-site question."
+            ),
+            "count": len(silent_defaults),
+            "distinct_paths": sorted({s["path"] for s in silent_defaults}),
+            "sites": silent_defaults,
+        },
         "declared_paths_that_do_not_exist": {
             "note": (
                 "Formula input_params / output_params naming no registry "

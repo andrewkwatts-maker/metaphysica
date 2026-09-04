@@ -119,7 +119,7 @@ class ResultsV16_2(SimulationBase):
         "topology.mephorash_chi",
         "topology.vol_v7",
         "cosmology.H0_geometric",
-        "cosmology.w0_geometric",
+        "cosmology.w0_derived",
         "validation.sigma_global",
     ]
 
@@ -683,7 +683,7 @@ class ResultsV16_2(SimulationBase):
                 category="DERIVED",
                 description="Dark energy equation of state from b3 Betti cycles.",
                 input_params=["topology.elder_kads"],
-                output_params=["cosmology.w0_geometric"],
+                output_params=["cosmology.w0_derived"],
                 eml_latex=r"w_0 = \mathrm{ops.add}(\mathrm{ops.neg}(1),\; \mathrm{ops.inv}(b_3)) = \mathrm{ops.div}(-23,\; 24)",
                 eml_tree_str=(
                     "# w0 derivation in EML operator tree:\n"
@@ -837,7 +837,7 @@ class ResultsV16_2(SimulationBase):
                     "Sum over all compared observables; PM achieves 0.48σ mean deviation "
                     "across 26 Standard Model parameters (EDOF=3)."
                 ),
-                input_params=["cosmology.w0_geometric", "cosmology.H0_geometric"],
+                input_params=["cosmology.w0_derived", "cosmology.H0_geometric"],
                 output_params=["validation.sigma_global"],
                 eml_latex=(
                     r"\chi^2 = \mathrm{ops.div}("

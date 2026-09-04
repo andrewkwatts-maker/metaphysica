@@ -236,8 +236,8 @@ class RicciFlowH0V16(SimulationBase):
         # Step 4: Compute Hubble tension diagnostic
         # SH0ES 2022 (Riess et al.): H0 = 73.04 +/- 1.04 km/s/Mpc
         # Planck 2018: H0 = 67.4 +/- 0.5 km/s/Mpc
-        H0_shoes = registry.get("observational.H0_shoes", default=73.04)
-        H0_planck = registry.get("observational.H0_planck", default=67.4)
+        H0_shoes = registry.get("geometry.H0_local", default=73.04)
+        H0_planck = registry.get("geometry.H0_early", default=67.4)
         sigma_shoes = registry.get("observational.sigma_H0_shoes", default=1.04)
         sigma_planck = registry.get("observational.sigma_H0_planck", default=0.5)
 
@@ -325,7 +325,7 @@ class RicciFlowH0V16(SimulationBase):
         # v16.2 GEOMETRIC FIX: Derive H0_local from mixing angle formula
         # H0_local = H0_CMB × (1 + sin²(θ)/2) where θ = 31.0° (v22: 13D/26D) from 13D/26D volume ratio
         # See CERTIFICATES_v16_2.py derive_c1_hubble() for derivation
-        H0_planck = registry.get("observational.H0_planck", default=67.4)   # km/s/Mpc (early, Planck CMB value)
+        H0_planck = registry.get("geometry.H0_early", default=67.4)   # km/s/Mpc (early, Planck CMB value)
         theta_mixing = registry.get("geometry.theta_mixing_13D_25D", default=31.0) * np.pi / 180  # 13D/26D volume mixing angle in radians
         H0_geometric = H0_planck * (1 + np.sin(theta_mixing)**2 / 2)  # ≈ 76.34 km/s/Mpc
         H0_shoes = H0_geometric  # Use geometric derivation, not hardcoded 73.04
