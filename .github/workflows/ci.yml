@@ -25,6 +25,21 @@ jobs:
       - name: Install build tools
         run: pip install --upgrade pip maturin
 
+      # eml-math 2.4.0 is not on PyPI (latest published is 2.3.0), and the
+      # package legitimately requires it: the three commits since 2.3.0 add
+      # bare-name context resolution, variadic mul/add with a tolerated
+      # annotated expression tail, and eml_vec resolving like a bare name.
+      # The EML cross-check's agreeing rows depend on all three, so relaxing
+      # the pin to >=2.3.0 would not be a fix -- it would break the thing the
+      # pin exists to protect.
+      #
+      # Installing it from source here keeps the PUBLISHED metadata honest:
+      # pyproject still says >=2.4.0, which is what the code actually needs.
+      # pip then sees the requirement already satisfied and does not go
+      # looking on PyPI. Drop this step once 2.4.0 is published.
+      - name: Install eml-math from source (2.4.0 unpublished)
+        run: pip install "eml-math @ git+https://github.com/andrewkwatts-maker/EML-Math.git@main"
+
       - name: Install library with dev deps
         # [dev,sims] restored 2026-08-24: eml-spectral 2.3.0 is now on PyPI
         # with cp311/cp312/cp313 manylinux wheels, so the pin is satisfiable
