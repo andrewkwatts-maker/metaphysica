@@ -873,7 +873,13 @@ class FourFaceG2Structure(SimulationBase):
                     "mechanism adapted to G2 compactification."
                 ),
                 input_params=["topology.elder_kads", "constants.k_gimel"],
-                output_params=["geometry.T1_modulus", "geometry.T2_modulus", "geometry.T3_modulus", "geometry.T4_modulus"],
+                # These are registered as geometry.face_moduli_T* by this
+                # simulation's own _OUTPUT_PARAMS. The formula declared them
+                # as geometry.T*_modulus, a name that exists nowhere, so all
+                # four outputs were phantom and the racetrack chain could
+                # not be walked despite the values being right there.
+                output_params=["geometry.face_moduli_T1", "geometry.face_moduli_T2",
+                               "geometry.face_moduli_T3", "geometry.face_moduli_T4"],
                 derivation={
                     "steps": [
                         "The racetrack superpotential for G2 moduli takes the form "
@@ -883,7 +889,12 @@ class FourFaceG2Structure(SimulationBase):
                         "The leading-order solution at the racetrack minimum yields "
                         "T_i = b3 * k_gimel / (i * pi), where k_gimel encodes the "
                         "G2 holonomy projection factor",
-                        "For TCS #187: T_1 = 94.07, T_2 = 47.04, T_3 = 31.36, T_4 = 23.52"
+                        "For TCS #187 with b3 = 24 and k_gimel = 12.31831: "
+                        "T_1 = 94.1050, T_2 = 47.0525, T_3 = 31.3683, "
+                        "T_4 = 23.5262. (This step previously read T_1 = 94.07, "
+                        "which the stated formula does not give -- "
+                        "24 x 12.31831 / pi = 94.1050. The registered "
+                        "geometry.face_moduli_T* carry the computed values.)"
                     ],
                     "method": (
                         "Racetrack stabilization of Kahler moduli via non-perturbative "
@@ -1054,7 +1065,7 @@ class FourFaceG2Structure(SimulationBase):
                     "This is a testable prediction for future collider searches."
                 ),
                 input_params=["topology.elder_kads", "constants.k_gimel", "constants.M_PLANCK"],
-                output_params=["predictions.m_KK_face1", "predictions.m_KK_face4"],
+                output_params=[],
                 derivation={
                     "steps": [
                         "The KK mass scale for the i-th cycle is set by the inverse "

@@ -1564,7 +1564,25 @@ class GeometricAnchorsSimulation(SimulationBase):
                 name="4D Planck Mass",
                 units="GeV",
                 status="DERIVED",
-                description="4D Planck mass: M_Pl_4D = M_Pl_26D * chi, where chi = sqrt(V7) is the G2 volume factor. PM prediction: 1.2207e19 GeV. CODATA 2022 FULL Planck mass: 1.220890e19 +/- 1.9e15 GeV.",
+                description=(
+                    "4D Planck mass: M_Pl_4D = M_Pl_26D * chi = 1.2208e19 GeV, "
+                    "against CODATA 2022 full Planck mass 1.220890e19 +/- 1.9e15. "
+                    "THIS IS NOT A PREDICTION. chi = 5.0132 is sqrt(8*pi) = "
+                    "5.013257 to five figures, the standard conversion between "
+                    "the REDUCED and FULL Planck mass (M_full^2 = 8*pi * "
+                    "M_reduced^2), and M_Pl_26D = 2.435e18 is the reduced "
+                    "Planck mass -- which is itself defined as the CODATA full "
+                    "value divided by sqrt(8*pi). Dividing the measurement by "
+                    "sqrt(8*pi) and multiplying it back reproduces the "
+                    "measurement, so the 0.26 sigma agreement is an identity, "
+                    "not evidence. This description previously read "
+                    "'chi = sqrt(V7) is the G2 volume factor'; "
+                    "geometric_anchors_core.m_planck_4d already records that "
+                    "chi is NOT a G2 volume factor, and the correction had not "
+                    "reached the shipped text. A genuine derivation would need "
+                    "Vol(X7) and M_11 from the G2 geometry independently, and "
+                    "the framework supplies neither."
+                ),
                 derivation_formula=None,
                 experimental_bound=1.220890e19,
                 bound_type="measured",

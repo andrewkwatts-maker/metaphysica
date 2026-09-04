@@ -658,13 +658,31 @@ def build_pm_dependency_graph() -> DependencyGraph:
     # Level 2: Gravity parameters
     # =========================================================================
 
-    # M_planck from k_gimel and V_G2
-    graph.register(
-        "gravity.M_planck",
-        depends_on=["geometry.k_gimel", "geometry.V_G2"],
-        compute_fn=lambda deps: 1.22089e19 * (deps["geometry.k_gimel"] / deps["geometry.V_G2"]) ** 0.25,
-        metadata={'level': 2, 'description': 'Planck mass in GeV'}
-    )
+    # gravity.M_planck REMOVED 2026-09-04. It read
+    #
+    #   1.22089e19 * (k_gimel / V_G2) ** 0.25
+    #
+    # and was wrong three ways at once.
+    #
+    # (1) The prefactor 1.22089e19 IS codata.M_PLANCK, the measured full
+    #     Planck mass. The entry took the measurement, applied a correction
+    #     factor, and presented the result as a derivation of that same
+    #     measurement.
+    # (2) The exponent is wrong. In M-theory on a G2 manifold the reduction
+    #     gives M_Pl,4^2 = Vol(X7)/kappa_11^2, so M_Pl,4 scales as
+    #     Vol^(1/2), not Vol^(1/4). The live derivation in
+    #     geometric_anchors_core uses the 1/2 power and is right about this.
+    # (3) geometry.V_G2 does not exist in the registry, so the lookup fell
+    #     to a default of 0.1667 on every call -- and that default is
+    #     inconsistent both with topology.vol_v7's default of 1.0 and with
+    #     the 25.13 implied by the chi = sqrt(V7) story, three different
+    #     values for one quantity.
+    #
+    # It was also dead: gravity.M_planck is registered nowhere, so nothing
+    # consumed it. The G2-volume route to the Planck mass is not currently
+    # derivable -- it needs Vol(X7) and M_11 independently from the geometry,
+    # and the framework supplies neither. Removed rather than left as a
+    # plausible-looking dead path.
 
     # G_N from M_planck
     graph.register(
