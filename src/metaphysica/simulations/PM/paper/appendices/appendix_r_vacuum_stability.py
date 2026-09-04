@@ -843,7 +843,16 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "radiative corrections from the running of lambda. The logarithmic "
                     "term captures the leading quantum corrections."
                 ),
-                input_params=["higgs.mass_higgs", "particle.v_EW_GeV"],
+                # higgs.mass_higgs / fermion.mass_top named no registry
+                # parameter anywhere in this appendix's four formulas. run()
+                # already reads the values it uses from pdg.m_higgs (125.2) and
+                # pdg.m_top (172.57) -- see the registry.get calls in
+                # compute_vacuum_stability -- so the declarations were the same
+                # two quantities under names nothing registers. Repointed at the
+                # paths the code actually consumes. (The 125.1 / 172.69 literals
+                # in main() are the older PDG vintage and are standalone-only
+                # fallbacks; they never run inside the build.)
+                input_params=["pdg.m_higgs", "particle.v_EW_GeV"],
                 output_params=["vacuum.lambda_ew"],
                 derivation={
                     "method": "Coleman-Weinberg effective potential",
@@ -883,7 +892,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "The -6*y_t^4 term from the top Yukawa is the dominant negative contribution "
                     "that drives lambda toward negative values at high scales."
                 ),
-                input_params=["fermion.mass_top"],
+                input_params=["pdg.m_top"],
                 output_params=[],
                 derivation={
                     "method": "Standard RG calculation",
@@ -919,7 +928,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "the dominant top Yukawa contribution. Shows the decrease of lambda "
                     "with increasing energy scale."
                 ),
-                input_params=["higgs.mass_higgs", "fermion.mass_top"],
+                input_params=["pdg.m_higgs", "pdg.m_top"],
                 output_params=["vacuum.lambda_gut", "vacuum.lambda_planck"],
                 derivation={
                     "parentFormulas": ["quartic-beta-function-v19"],
@@ -954,7 +963,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                     "in the Standard Model. Above this scale, the potential is unbounded "
                     "from below and a deeper minimum exists."
                 ),
-                input_params=["higgs.mass_higgs", "fermion.mass_top"],
+                input_params=["pdg.m_higgs", "pdg.m_top"],
                 output_params=["vacuum.instability_scale_sm"],
                 derivation={
                     "parentFormulas": ["quartic-running-v19"],

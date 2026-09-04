@@ -1345,7 +1345,13 @@ class PneumaMechanismV16(SimulationBase):
                 category="DERIVED",
                 description="4D effective fermion Lagrangian from KK reduction with explicit Yukawa couplings",
                 input_params=["topology.mephorash_chi", "fermion.n_generations"],
-                output_params=["fermion.yukawa_matrix"],
+                # fermion.yukawa_matrix named no registry parameter. Y_ij is a
+                # 3x3 matrix of G2 associative 3-cycle triple-overlap integrals;
+                # a matrix is not a scalar registry parameter, and no simulation
+                # emits one under this path. The numeric content this formula
+                # does produce is n_gen = chi_eff/48 = 3 (its triple-track
+                # value), which is already declared by generation-number.
+                output_params=[],
                 derivation={
                     "source": "Kaluza-Klein reduction of 11D M-theory on G2 manifold",
                     "method": "kaluza_klein_reduction",

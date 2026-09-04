@@ -122,6 +122,7 @@ class FoundationsV16_2(SimulationBase):
     PARAM_REFS = [
         "dimensions.D_bulk",
         "geometry.D_shadow",
+        "geometry.D_shadow_total",
         "dimensions.D_observable",
         "topology.elder_kads",
         "topology.mephorash_chi",
@@ -964,7 +965,11 @@ class FoundationsV16_2(SimulationBase):
                 plain_text="V7 -> M^4 x K^6 via CY3",
                 category="DERIVED",
                 description="Calabi-Yau filtering from 7D G2 to 4D Minkowski spacetime.",
-                input_params=["topology.elder_kads", "dimensions.D_after_sp2r"],
+                # dimensions.D_after_sp2r repointed at geometry.D_shadow_total:
+                # the same 13D(12,1) per-shadow dimension under the name that is
+                # actually registered (config.PMConstants keeps D_AFTER_SP2R as
+                # an SSOT-backed alias of D_shadow_total).
+                input_params=["topology.elder_kads", "geometry.D_shadow_total"],
                 output_params=["dimensions.D_observable"],
                 derivation={
                     "method": "dimensional_reduction",

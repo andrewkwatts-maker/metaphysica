@@ -764,7 +764,13 @@ class HiggsBranePartitionSimulation(SimulationBase):
                     "Observable Higgs mass as 4D brane projection of bulk tension. "
                     "M_H_local = M_H_bulk / (k_gimel/π/η) = 414.2/3.31 = 125.1 GeV"
                 ),
-                eml_description="EML: ops.div(M_H_bulk, ops.div(ops.div(k_gimel, eml_pi()), eta)) — 4D brane-projected Higgs mass (FITTED: 3 free params for 1 output)",
+                eml_description=(
+                    "EML: ops.div(eml_vec('higgs.m_higgs_bulk'), ops.div(ops.div("
+                    "eml_vec('topology.k_gimel'), eml_pi()), eml_vec('higgs.mirror_overlap'))) — "
+                    "M_H_local = M_H_bulk / (projection_factor / overlap). Operands qualified: "
+                    "the bare `k_gimel` is refused as ambiguous and `M_H_bulk`/`eta` named nothing "
+                    "in the registry (FITTED: 3 free params for 1 output)"
+                ),
                 derivation_formula="higgs-local-mass",
                 experimental_bound=self.M_HIGGS_EXPERIMENTAL,
                 uncertainty=self.M_HIGGS_UNCERTAINTY,

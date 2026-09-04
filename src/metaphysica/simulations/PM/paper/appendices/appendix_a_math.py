@@ -439,7 +439,7 @@ class AppendixAMathFoundations(SimulationBase):
                 "math.octonion_dimension",
                 "topology.elder_kads",
                 "dimensions.D_bulk",
-                "dimensions.D_after_sp2r",
+                "geometry.D_shadow_total",
                 "dimensions.D_observable",
             ]
         )

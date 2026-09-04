@@ -275,7 +275,9 @@ if SCHEMA_AVAILABLE:
                     plain_text="m_p/m_e = (C_kaf^2 * k_gimel/pi) / holonomy_correction = 1836.15",
                     eml_tree_str="ops.div(ops.mul(ops.pow(C_kaf, eml_scalar(2.0)), ops.div(k_gimel, eml_pi())), holonomy_correction)",
                     eml_latex=r"\frac{m_p}{m_e} = \mathrm{ops.div}(\mathrm{ops.mul}(\mathrm{ops.pow}(C_{kaf},\; 2),\; \mathrm{ops.div}(k_{gimel},\; \pi)),\; h_{\text{corr}})",
-                    eml_description="EML: ops.div(ops.mul(ops.pow(C_kaf, eml_scalar(2.0)), ops.div(k_gimel, eml_pi())), holonomy_correction) — proton/electron mass ratio from G2 cycle volumes",
+                    eml_description=(
+                        "EML: ops.div(ops.mul(ops.pow(eml_vec('geometry.c_kaf'), eml_scalar(2.0)), ops.div(eml_vec('topology.k_gimel'), eml_pi())), ops.mul(eml_scalar(1.5427971665), ops.add(eml_scalar(1.0), ops.div(eml_scalar(0.57721566), eml_vec('topology.elder_kads'))))) — m_p/m_e = C_kaf²·(k_ℷ/π) / h, h = 1.5427971665·(1 + γ_E/b₃). C_kaf and k_ℷ are qualified because the bare names bind elsewhere: `C_kaf` resolves to neutrino.C_kaf = 2.0, not geometry.c_kaf = 27.2, and `k_gimel` is refused as ambiguous. h is FITTED to CODATA (see module docstring)"
+                    ),
                     category="GEOMETRIC",
                     description="Proton-electron mass ratio derived from G2 cycle volume ratio with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
                     inputParams=["topology.elder_kads", "topology.k_gimel", "geometry.c_kaf"],
@@ -322,7 +324,9 @@ if SCHEMA_AVAILABLE:
                         f"({result['relative_error_ppm']:.2f} ppm). "
                         f"v18.0: 4 ppm precision is the geometric derivation limit."
                     ),
-                    eml_description="EML: ops.div(ops.mul(ops.pow(C_kaf, eml_scalar(2.0)), ops.div(k_gimel, eml_pi())), holonomy_correction) — proton/electron mass ratio from G2 cycle volumes",
+                    eml_description=(
+                        "EML: ops.div(ops.mul(ops.pow(eml_vec('geometry.c_kaf'), eml_scalar(2.0)), ops.div(eml_vec('topology.k_gimel'), eml_pi())), ops.mul(eml_scalar(1.5427971665), ops.add(eml_scalar(1.0), ops.div(eml_scalar(0.57721566), eml_vec('topology.elder_kads'))))) — m_p/m_e = C_kaf²·(k_ℷ/π) / h, h = 1.5427971665·(1 + γ_E/b₃). C_kaf and k_ℷ are qualified because the bare names bind elsewhere: `C_kaf` resolves to neutrino.C_kaf = 2.0, not geometry.c_kaf = 27.2, and `k_gimel` is refused as ambiguous. h is FITTED to CODATA (see module docstring)"
+                    ),
                     derivation_formula="mass-ratio-geometric",
                     experimental_bound=1836.15267343,
                     uncertainty=0.0000005,  # v18.0: Combined theoretical+experimental uncertainty

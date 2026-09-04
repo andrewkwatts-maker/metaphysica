@@ -680,7 +680,14 @@ class MasterActionSimulationV22(SimulationBase):
                     "5D KK ansatz: g_{mu nu} dx^mu dx^nu + R^2 (dy + k A_mu dx^mu)^2; "
                     "off-diagonal A_mu becomes 4D U(1) gauge field."
                 ),
-                inputParams=["geometry.D_bulk", "gauge.compact_radius", "gauge.kk_normalization"],
+                # gauge.compact_radius and gauge.kk_normalization named no
+                # registry parameter. They are R and k in
+                # kk_reduction_gr_gauge.KKReductionGRGauge, both set to
+                # Decimal("1.0") -- a normalisation convention chosen so that
+                # k^2 R^2 = 1 is canonical, not a derived physical scale.
+                # Declaring them as registry inputs put two paths that no
+                # simulation produces into this chain.
+                inputParams=["geometry.D_bulk"],
                 outputParams=["gauge.kk_planck_factor", "gauge.kk_gauge_kinetic_coeff"],
                 derivation={
                     "steps": [
@@ -720,7 +727,15 @@ class MasterActionSimulationV22(SimulationBase):
                     "QCD: -1/4 G^a^2 (gluon kinetic) plus sum_f qbar_f (i gamma D - m_f) q_f (quark). "
                     "SU(3) from G2 associative 3-cycle; alpha_s locked by cycle volume."
                 ),
-                inputParams=["gauge.g_s_coupling", "geometry.associative_3cycle_volume"],
+                # gauge.g_s_coupling named no registry parameter. By this
+                # formula's own derivation g_s is *determined by* the
+                # associative 3-cycle volume, i.e. it is a result of the
+                # reduction, not an input to it; what the registry carries is
+                # the derived alpha_s = g_s^2/(4 pi) at gauge.qcd_alpha_s_mz,
+                # already declared as an output below. No parameter for g_s
+                # itself exists, so the declaration is dropped rather than
+                # repointed at alpha_s, which is a different quantity.
+                inputParams=["geometry.associative_3cycle_volume"],
                 outputParams=["gauge.qcd_gluon_count", "gauge.qcd_alpha_s_mz"],
                 derivation={
                     "steps": [
@@ -760,7 +775,14 @@ class MasterActionSimulationV22(SimulationBase):
                     "SU(2)_L weak gauge Lagrangian from G2 co-associative 4-cycle. "
                     "3 weak bosons (W+, W-, W^3) couple only to left-handed fermions."
                 ),
-                inputParams=["gauge.g2_weak_coupling", "geometry.coassociative_4cycle_volume"],
+                # gauge.g2_weak_coupling named no registry parameter, and the
+                # quantity it names -- g_2 -- is this formula's own OUTPUT,
+                # registered as gauge.weak_coupling_g2 below and derived here
+                # from the co-associative 4-cycle volume. Repointing the
+                # declaration at gauge.weak_coupling_g2 would make the formula
+                # declare that it consumes what it produces, so the input is
+                # dropped instead; the real input is the cycle volume.
+                inputParams=["geometry.coassociative_4cycle_volume"],
                 outputParams=["gauge.weak_boson_count", "gauge.weak_coupling_g2"],
                 derivation={
                     "steps": [
@@ -800,7 +822,12 @@ class MasterActionSimulationV22(SimulationBase):
                     "U(1)_Y: -1/4 B^2 (Abelian kinetic) plus fermion coupling via "
                     "covariant derivative partial_mu - i g' Y B_mu."
                 ),
-                inputParams=["gauge.gp_hypercharge_coupling", "geometry.residual_abelian_cycle_volume"],
+                # Same shape as (3.3): gauge.gp_hypercharge_coupling named no
+                # registry parameter and names g', which is this formula's own
+                # OUTPUT gauge.hypercharge_coupling_gp, fixed here by the
+                # residual Abelian cycle volume. Dropped rather than repointed
+                # at its own output.
+                inputParams=["geometry.residual_abelian_cycle_volume"],
                 outputParams=["gauge.hypercharge_coupling_gp"],
                 derivation={
                     "steps": [
@@ -898,8 +925,16 @@ class MasterActionSimulationV22(SimulationBase):
                     "nabla^mu G_{mu nu} = 0 ensures covariant conservation of T_{mu nu}. "
                     "This is the equation of motion (EOM) for the gravitational sector."
                 ),
+                # constants.M_STAR names no registry parameter. M_* here is the
+                # 26D fundamental scale (8 pi G_26 = M_*^{-24}); it is carried
+                # symbolically (sympy Symbol in lagrangian_master) and set to
+                # 1.0 in natural units in kk_reduction_gr_gauge -- no
+                # simulation produces a value for it. The one registered path
+                # with a similar name, geometry.M_star = 2.435e18 GeV, is the
+                # 4D REDUCED PLANCK MASS M_Pl/sqrt(8 pi), a different quantity;
+                # repointing at it would assert an equality the framework does
+                # not derive. Declaration dropped, symbol left in the terms.
                 inputParams=[
-                    "constants.M_STAR",
                     "geometry.D_bulk",
                 ],
                 outputParams=[],
@@ -962,9 +997,9 @@ class MasterActionSimulationV22(SimulationBase):
                     "gravitational coupling becomes field-dependent: G_eff = G / phi, "
                     "modifying the source term."
                 ),
-                inputParams=[
-                    "constants.M_STAR",
-                ],
+                # constants.M_STAR: see (MA.EL1) -- no registry parameter, and
+                # geometry.M_star is the 4D reduced Planck mass, not M_*.
+                inputParams=[],
                 outputParams=[],
                 derivation={
                     "steps": [
@@ -1007,7 +1042,14 @@ class MasterActionSimulationV22(SimulationBase):
                     "R_chirality = R_perp_global * P_LR * R_face^(f): composed operator "
                     "for cross-shadow chirality flip; P_reverse ~ 3e-6 suppressed by volume ratio."
                 ),
-                inputParams=["bridge.distributed_or_rank", "gauge.electroweak_mixing_angle", "geometry.tcs_face_count"],
+                # gauge.electroweak_mixing_angle named no registry parameter.
+                # The registry carries sin^2(theta_W) (gauge.sin2_theta_w =
+                # 0.23122), not theta_W, so this is not a rename of an existing
+                # path; and no factor of the mixing angle appears in
+                # R_chirality = R_perp_global * P_LR * R_face^(f) or in its
+                # terms. The lineage to the mixing sector is already carried by
+                # parentFormulas -> electroweak-mixing-v22.
+                inputParams=["bridge.distributed_or_rank", "geometry.tcs_face_count"],
                 outputParams=["gauge.chirality_reversal_probability"],
                 derivation={
                     "steps": [
@@ -1198,8 +1240,9 @@ class MasterActionSimulationV22(SimulationBase):
                     "+ sterile neutrino + ALP interactions) couple the visible face to hidden "
                     "faces, and L_DM captures the dark matter sector from hidden face fields."
                 ),
+                # constants.M_STAR: see (MA.EL1) -- no registry parameter, and
+                # geometry.M_star is the 4D reduced Planck mass, not M_*.
                 inputParams=[
-                    "constants.M_STAR",
                     "geometry.D_bulk",
                     "bridge.n_pairs",
                 ],
@@ -1277,8 +1320,9 @@ class MasterActionSimulationV22(SimulationBase):
                     "hidden sector fields. The Bianchi identity ensures covariant conservation "
                     "of the total stress-energy: nabla^mu (T^SM_{mu nu} + T^portal_{mu nu}) = 0."
                 ),
+                # constants.M_STAR: see (MA.EL1) -- no registry parameter, and
+                # geometry.M_star is the 4D reduced Planck mass, not M_*.
                 inputParams=[
-                    "constants.M_STAR",
                     "gauge.sin2_theta_w",
                 ],
                 outputParams=[],

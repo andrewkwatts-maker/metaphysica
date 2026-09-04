@@ -75,7 +75,7 @@ class AppendixDAlignment(SimulationBase):
         "cosmology.w0_derived",
         "geometry.H0_early",
         "geometry.H0_local",
-        "observational.w0_desi",
+        "desi.w0",
     ]
 
     @property
@@ -361,7 +361,21 @@ description="Geometric Hubble residue from the V7 manifold's spectral structure.
                 eml_tree_str="ops.div(ops.sub(eml_vec('w0_geo'), eml_vec('w0_DESI')), eml_vec('sigma_DESI'))",
                 category="DERIVED",
                 description="w0 alignment with DESI BAO measurements (within BAO-only uncertainty).",
-                input_params=["cosmology.w0_derived", "observational.w0_desi"],
+                # observational.w0_desi named no registry parameter. The
+                # quantity this formula's own terms describe -- "DESI DR2 (2025)
+                # BAO measurement of w0" -- is registered as desi.w0 = -0.752
+                # (uncertainty 0.057, ESTABLISHED:DESI_2025), so the declaration
+                # is repointed there.
+                # RECORDED, NOT REPAIRED: against desi.w0 the deviation is
+                # |-0.9583 - (-0.752)|/0.057 = 3.62 sigma (cosmology.w0_deviation
+                # = 3.6199, cosmology.w0_validation status TENSION). The
+                # "sigma_w0 = 0.02" in this formula's latex and description was
+                # computed against -0.958 (geometry.w0_observed_DESI), which is
+                # the thawing PREDICTION restated, not the DESI measurement. The
+                # quoted 0.02 is therefore inconsistent with its own declared
+                # input; correcting the stated figure is an author ruling, not a
+                # declaration fix, and is left alone here.
+                input_params=["cosmology.w0_derived", "desi.w0"],
                 output_params=[],
                 terms={
                     "w0_geo": "Geometric dark energy equation of state (-23/24 = -0.9583)",

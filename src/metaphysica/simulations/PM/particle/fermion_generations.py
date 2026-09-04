@@ -644,9 +644,16 @@ class FermionGenerationsV16(SimulationBase):
                 # saturation that fixes the 7-out-of-8 spinor split traces to b₃.
                 # Add b₃ as an explicit input so the dependency walker can root the
                 # chain at b3_leaf().
-                inputParams=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling", "topology.elder_kads"],
+                # fermion.pneuma_condensate_gradient and gauge.g_coupling named
+                # no registry parameter. nabla<Psi_P> is a gradient (a vector
+                # field, not a scalar) and no simulation produces it; g is the
+                # generic coupling of the G2 holonomy connection A_mu, with no
+                # registered path and no appearance in the output -- the filter
+                # strength 7/8 is fixed by the Spin(7) spinor split alone. Both
+                # dropped; the b3 root (topology.elder_kads) is untouched.
+                inputParams=["geometry.g2_holonomy", "topology.elder_kads"],
                 outputParams=["fermion.chiral_filter_strength"],
-                input_params=["fermion.pneuma_condensate_gradient", "geometry.g2_holonomy", "gauge.g_coupling", "topology.elder_kads"],
+                input_params=["geometry.g2_holonomy", "topology.elder_kads"],
                 output_params=["fermion.chiral_filter_strength"],
                 derivation={
                     "method": "Axial torsion coupling from Pneuma condensate gradient in G2 holonomy",

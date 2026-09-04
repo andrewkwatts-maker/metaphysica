@@ -213,6 +213,7 @@ class HiggsMassSimulation(SimulationBase):
             "higgs.vev_yukawa",
             "yukawa.y_top",
             "gauge.g_gut",
+            "gauge.M_GUT_GEOMETRIC",
 
             # Moduli stabilization (DERIVED)
             "moduli.re_t_attractor",
@@ -236,6 +237,7 @@ class HiggsMassSimulation(SimulationBase):
             "higgs.lambda_eff_geometric",
             "moduli.stabilization_status",
             "higgs.quartic_correction",
+            "higgs.dt_splitting_ratio",
         ]
 
     @property
@@ -299,6 +301,16 @@ class HiggsMassSimulation(SimulationBase):
         # Electroweak VEV (v = 246 GeV)
         vev = HiggsVEVs.V_EW
 
+        # Doublet-triplet splitting ratio M_triplet/M_doublet = M_GUT/v_EW.
+        # doublet-triplet-splitting (4.4.4) declared higgs.dt_splitting_ratio as
+        # its output but nothing produced it, so the formula's triple track
+        # (2.1e16/246) lived only inside the Formula object. Computed here from
+        # the two registered parameters the arithma actually uses -- the
+        # geometric GUT anchor 2.1e16 GeV, NOT the 3-loop RG gauge.M_GUT
+        # (6.32e15 GeV) -- so the declared output is now a real path.
+        m_gut_geometric = registry.get_param("gauge.M_GUT_GEOMETRIC")
+        dt_splitting_ratio = m_gut_geometric / vev
+
         # Stabilization status — Sprint T1 task #3 honest categorical state.
         #
         # The previous criterion ``RESOLVED iff |m_h_pheno - 125.25| < 1 GeV``
@@ -358,6 +370,7 @@ class HiggsMassSimulation(SimulationBase):
             "higgs.lambda_eff_geometric": lambda_eff_geometric,
             "moduli.stabilization_status": stabilization_status,
             "higgs.quartic_correction": delta_lambda_pheno,
+            "higgs.dt_splitting_ratio": dt_splitting_ratio,
         }
 
 
@@ -419,6 +432,12 @@ class HiggsMassSimulation(SimulationBase):
         _ = abs(m_h_pheno - HiggsMassParameters.M_HIGGS_EXPERIMENTAL) < 1.0  # legacy telemetry
         stabilization_status = "PARTIAL"
 
+        # M_triplet/M_doublet = M_GUT_geometric / v_EW (see ``run``)
+        dt_splitting_ratio = eml_compute(eml_div(
+            eml_scalar(float(registry.get_param("gauge.M_GUT_GEOMETRIC"))),
+            eml_scalar(float(vev)),
+        ))
+
         return {
             "higgs.m_higgs_pred": m_h_pheno,
             "higgs.m_higgs_geometric": m_h_geo,
@@ -428,6 +447,7 @@ class HiggsMassSimulation(SimulationBase):
             "higgs.lambda_eff_geometric": lam_eff_geo,
             "moduli.stabilization_status": stabilization_status,
             "higgs.quartic_correction": delta_lam_pheno,
+            "higgs.dt_splitting_ratio": dt_splitting_ratio,
         }
 
     def get_section_content(self) -> Optional[SectionContent]:
@@ -839,9 +859,14 @@ class HiggsMassSimulation(SimulationBase):
                 # to b₃ (chi_eff = 6·b₃ sets the moduli scale of unification);
                 # v_EW chains via higgs.vev_yukawa from the brane sector. Add
                 # b₃ so the walker terminates the chain at b3_leaf().
-                inputParams=["gauge.M_GUT", "higgs.vev", "topology.elder_kads"],
+                # The arithma/eml/value triple below is 2.1e16/246.0, i.e. the
+                # GEOMETRIC GUT anchor, not the 3-loop RG scale gauge.M_GUT =
+                # 6.32e15 GeV. run() now emits higgs.dt_splitting_ratio from
+                # gauge.M_GUT_GEOMETRIC / higgs.vev, so the input declaration is
+                # repointed at the path that is actually consumed.
+                inputParams=["gauge.M_GUT_GEOMETRIC", "higgs.vev", "topology.elder_kads"],
                 outputParams=["higgs.dt_splitting_ratio"],
-                input_params=["gauge.M_GUT", "higgs.vev", "topology.elder_kads"],
+                input_params=["gauge.M_GUT_GEOMETRIC", "higgs.vev", "topology.elder_kads"],
                 output_params=["higgs.dt_splitting_ratio"],
                 derivation={
                     "parentFormulas": ["z2-filter-mechanism"],
@@ -900,6 +925,26 @@ class HiggsMassSimulation(SimulationBase):
             List of Parameter instances describing simulation outputs
         """
         return [
+            Parameter(
+                path="higgs.dt_splitting_ratio",
+                name="Doublet-Triplet Splitting Ratio",
+                no_experimental_value=True,
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "M_triplet / M_doublet = M_GUT / v_EW from the Z2 x Z2 orbifold "
+                    "projection on the TCS G2 manifold. Computed from the registered "
+                    "geometric GUT anchor gauge.M_GUT_GEOMETRIC = 2.1e16 GeV and "
+                    "higgs.vev = 246 GeV, giving ~8.54e13. Not a measurable quantity: "
+                    "it is the hierarchy that keeps the colour triplets heavy enough "
+                    "for proton stability."
+                ),
+                derivation_formula="doublet-triplet-splitting",
+                eml_description=(
+                    "EML: ops.div(eml_vec('gauge.M_GUT_GEOMETRIC'), eml_vec('higgs.vev')) "
+                    "— M_T/M_H = 2.1e16/246 ~ 8.54e13"
+                ),
+            ),
             Parameter(
                 path="higgs.m_higgs_pred",
                 name="Higgs Mass (Phenomenological)",
@@ -1510,13 +1555,4 @@ def main():
     print("="*70)
     print()
     print("The phenomenological calculation uses m_h as INPUT to constrain Re(T).")
-    print("This is NOT a prediction from pure geometry!")
-    print()
-    print("The geometric calculation (Re(T) from attractor) FAILS to predict m_h.")
-    print("This demonstrates the limit of geometric derivation for the Higgs mass.")
-    print()
-    print("="*70)
-
-
-if __name__ == "__main__":
-    main()
+    pr

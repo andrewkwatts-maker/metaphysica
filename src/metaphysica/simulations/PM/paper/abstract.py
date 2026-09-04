@@ -172,6 +172,7 @@ class AbstractV17_2(SimulationBase):
             "dimensions.D_bulk",
             "dimensions.D_G2",
             "dimensions.D_physics",
+            "dimensions.D_observable",
             # Ten Pillar Seed display aliases
             "constants.k_gimel",
             "constants.phi",
@@ -221,6 +222,13 @@ class AbstractV17_2(SimulationBase):
             "dimensions.D_bulk":               26,   # Total manifold dimensions M^{26}(24,2)
             "dimensions.D_G2":                 7,    # G₂ compactification manifold dimension
             "dimensions.D_physics":            24,   # Physics core (12×(2,0) bridge pairs)
+            # Registered 2026-09: the abstract has always rendered
+            # data-pm-value="dimensions.D_observable" and foundations declares
+            # it as the output of calabi-yau-projection (1.4), whose triple
+            # track is 7 - 3 = 4 -- but no simulation emitted the path, so every
+            # formula declaring it declared an edge the walkers could not see,
+            # and appendix_c's registry.get(..., default=4) always fell through.
+            "dimensions.D_observable":         4,    # D_G2 (7) minus the 3 CY3 internal directions
             # Ten Pillar Seed display aliases (for HTML display of canonical seeds)
             "constants.k_gimel":               12.3183098862,   # Spectral gap from associative 3-cycles
             "constants.phi":                   1.618033988749,  # Golden ratio from minimal surface geometry
@@ -973,6 +981,22 @@ class AbstractV17_2(SimulationBase):
                 description="Physics core dimension = 12 bridge pairs × 2 = 24 spatial dimensions",
                 status="GEOMETRIC",
                 eml_description="EML: ops.mul(eml_scalar(12.0), eml_scalar(2.0)) — physics core D_physics = 12×2 = 24"
+            ),
+            Parameter(
+                path="dimensions.D_observable",
+                name="Observable Spacetime Dimension",
+                no_experimental_value=True,
+                units="dimensionless",
+                description=(
+                    "Observable 4D Minkowski spacetime dimension after the CY3 "
+                    "projection of the 7D G₂ manifold: D_G2 - 3 = 7 - 3 = 4. "
+                    "Derived by calabi-yau-projection (1.4); registered here "
+                    "alongside the other dimensional aliases so the path the "
+                    "formula declares as its output actually exists."
+                ),
+                status="GEOMETRIC",
+                derivation_formula="calabi-yau-projection",
+                eml_description="EML: ops.sub(eml_scalar(7.0), eml_scalar(3.0)) — observable D = D_G2 - 3 = 4"
             ),
             # Seed display aliases (registered by abstract to ensure display consistency)
             Parameter(

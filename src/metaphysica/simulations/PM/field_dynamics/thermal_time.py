@@ -470,9 +470,17 @@ class ThermalTimeV16(SimulationBase):
                 plain_text="K = -log(rho) - log(Z)",
                 category="DERIVED",
                 description="Modular Hamiltonian constructed from the thermal density matrix, representing the generator of time translations associated with the thermal equilibrium state. This operator governs the system's temporal evolution as perceived by an observer in thermal equilibrium, connecting algebraic quantum field theory to emergent thermodynamic time.",
-                inputParams=["thermal.density_matrix_rho", "thermal.partition_function_Z"],
+                # Neither declared input named a registry parameter. rho is the
+                # thermal density MATRIX (an operator on the von Neumann
+                # algebra, not a scalar), and Z = Tr(exp(-K)) is never computed
+                # by this simulation -- thermal_time produces only
+                # thermal.modular_temperature and thermal.entropy_gradient. A
+                # matrix cannot be a registry parameter, so declaring it as one
+                # put an unwalkable edge into this chain. The identity itself
+                # is unchanged; it is already classified non-b3 (kind a).
+                inputParams=[],
                 outputParams=["thermal.modular_temperature"],
-                input_params=["thermal.density_matrix_rho", "thermal.partition_function_Z"],
+                input_params=[],
                 output_params=["thermal.modular_temperature"],
                 derivation={
                     "method": "modular_theory",
@@ -785,9 +793,9 @@ class ThermalTimeV16(SimulationBase):
                 derivation_formula="modular-hamiltonian",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(m_P_scale, vev_Pneuma) — "
-                    "inverse temperature from surface gravity: "
-                    "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), kappa_surface)"
+                    "EML: ops.div(eml_vec('pneuma.mass_scale'), eml_vec('pneuma.vev')) — "
+                    "T_mod = m_P / <Ψ_P>, the modular temperature the run() body actually "
+                    "computes; the previous `m_P_scale`/`vev_Pneuma` named nothing in the registry"
                 ),
             ),
             Parameter(
@@ -802,9 +810,11 @@ class ThermalTimeV16(SimulationBase):
                 derivation_formula="entropy-gradient",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(alpha_T, ops.inv(T_local)) — "
-                    "thermal time correlation from modular flow; "
-                    "dS/dt >= 0 guaranteed by Lindblad monotonicity"
+                    "EML: ops.mul(eml_scalar(8.617333262e-5), ops.mul(eml_vec('thermal.alpha_T'), "
+                    "ops.div(eml_vec('thermal.modular_temperature'), eml_vec('constants.M_PLANCK')))) — "
+                    "dS/dt = k_B·α_T·(T_mod / M_Pl), which is what run() computes; k_B = "
+                    "8.617333262e-5 eV/K (SI-exact). The previous ops.mul(alpha_T, ops.inv(T_local)) "
+                    "was neither the computed relation nor bindable. dS/dt >= 0 by Lindblad monotonicity"
                 ),
             ),
             Parameter(

@@ -1271,7 +1271,7 @@ class FourFaceG2Structure(SimulationBase):
                     "double-cover operators, creates dual shadows from 26D bulk"
                 ),
                 input_params=["topology.mephorash_chi", "dimensions.D_bulk"],
-                output_params=["geometry.or_operator_rank"],
+                output_params=["bridge.distributed_or_rank"],
                 derivation={
                     "steps": [
                         "Start from the 12 bridge pairs (n_pairs = chi_eff/12 = 12) "

@@ -120,6 +120,7 @@ class CosmologyIntroV16(SimulationBase):
             "cosmology.D_eff_shadow",
             "cosmology.brane_tension_5_2",
             "cosmology.pneuma_components_4D",
+            "gauge.so10_spinor_dim",
         ]
 
     @property
@@ -198,9 +199,16 @@ class CosmologyIntroV16(SimulationBase):
 
         # Step 7: Pneuma field component reduction
         # 26D Majorana-Weyl: 2^12 = 4096 × 2 = 8192 components
-        # After SO(10) → SU(5) → GSM: 4 × 16 = 64 effective components
+        # After SO(10) → SU(5) → GSM: 4 × 16 = 64 effective components.
+        # dim(16 of SO(10)) was previously only a comment and a validation
+        # string, while pneuma-reduction (5.6) declared gauge.so10_spinor_dim as
+        # an input that named no registry parameter. It is emitted here and the
+        # 64 is now the product rather than a literal, so the declared edge is
+        # real and the factor is load-bearing.
+        so10_spinor_dim = 16       # dim of the chiral 16 of SO(10)
+        dirac_4d_components = 4    # 4D Dirac spinor components
         pneuma_components_26D = 8192
-        pneuma_components_4D = 64
+        pneuma_components_4D = dirac_4d_components * so10_spinor_dim  # 64
         reduction_factor = pneuma_components_26D / pneuma_components_4D  # 128
 
         # Return computed parameters
@@ -212,6 +220,7 @@ class CosmologyIntroV16(SimulationBase):
             "cosmology.D_eff_shadow": D_eff_shadow,
             "cosmology.brane_tension_5_2": T_BPS_5_2,
             "cosmology.pneuma_components_4D": float(pneuma_components_4D),
+            "gauge.so10_spinor_dim": so10_spinor_dim,
         }
 
     # -------------------------------------------------------------------------
@@ -569,9 +578,13 @@ class CosmologyIntroV16(SimulationBase):
                     "mixed term A_u^a provides gauge fields (one for each Killing vector of "
                     "the internal isometry group SO(10), giving the GUT gauge bosons)."
                 ),
-                inputParams=["geometry.D_bulk", "bridge.n_pairs", "gauge.so10_killing_vectors"],
+                # gauge.so10_killing_vectors named no registry parameter: K_a^m
+                # is the set of Killing vector FIELDS of the SO(10) isometry,
+                # not a scalar, and nothing produces it. Dropped from the
+                # declaration; the term K_a^m is left in place.
+                inputParams=["geometry.D_bulk", "bridge.n_pairs"],
                 outputParams=["cosmology.M_Pl_4D"],
-                input_params=["geometry.D_bulk", "bridge.n_pairs", "gauge.so10_killing_vectors"],
+                input_params=["geometry.D_bulk", "bridge.n_pairs"],
                 output_params=["cosmology.M_Pl_4D"],
                 derivation={
                     "steps": [
@@ -835,6 +848,22 @@ class CosmologyIntroV16(SimulationBase):
                 derivation_formula="pneuma-reduction",
                 no_experimental_value=True,
                 eml_description="EML: ops.mul(eml_scalar(4.0), eml_scalar(16.0)) — 64 = 4 (4D Dirac) × 16 (SO(10) spinor), reduced from 8192 = 2^12×2 in 26D via SO(10)→G_SM breaking"
+            ),
+            Parameter(
+                path="gauge.so10_spinor_dim",
+                name="SO(10) Spinor Dimension",
+                units="dimensionless",
+                status="ESTABLISHED",
+                description=(
+                    "Dimension of the chiral spinor representation 16 of SO(10), "
+                    "into which one Standard Model generation embeds. A "
+                    "representation-theoretic fact, not a fitted quantity; it is "
+                    "the factor that takes the 4D Dirac spinor to the 64 effective "
+                    "Pneuma components (4 × 16 = 64)."
+                ),
+                derivation_formula="pneuma-reduction",
+                no_experimental_value=True,
+                eml_description="EML: eml_scalar(16.0) — dim(16 of SO(10)), the chiral spinor representation"
             ),
         ]
 

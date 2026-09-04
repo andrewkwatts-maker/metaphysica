@@ -55,7 +55,7 @@ class AppendixCGaugeMatrices(SimulationBase):
 
     PARAM_REFS = [
         "dimensions.D_bulk",
-        "dimensions.D_after_sp2r",
+        "geometry.D_shadow_total",
         "dimensions.D_observable",
         "gauge.orthogonality_tolerance",
     ]
@@ -89,8 +89,14 @@ class AppendixCGaugeMatrices(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute gauge matrix validation."""
         # Dynamic param extraction - use registry.get() with geometric defaults
+        # dimensions.D_after_sp2r existed nowhere, so its default 13 fired on
+        # every call. config.PMConstants already declares
+        # D_AFTER_SP2R = _ssot_dim("D_shadow_total"): the two names are the
+        # same 13D(12,1) per-shadow dimension, and geometry.D_shadow_total = 13
+        # IS registered. Repointed, so the lookup now reads a produced value
+        # instead of always falling through.
         d_bulk = registry.get("dimensions.D_bulk", default=26)
-        d_13 = registry.get("dimensions.D_after_sp2r", default=13)
+        d_13 = registry.get("geometry.D_shadow_total", default=13)
         d_4 = registry.get("dimensions.D_observable", default=4)
 
         return {
@@ -272,7 +278,7 @@ class AppendixCGaugeMatrices(SimulationBase):
                     "Dimensional projection from 13D ancestral registry to 4D observables. "
                     "The gauge filter preserves the retained 4D block; 9 directions are projected out."
                 ),
-                input_params=["dimensions.D_after_sp2r", "dimensions.D_observable"],
+                input_params=["geometry.D_shadow_total", "dimensions.D_observable"],
                 output_params=["gauge.projection_rank"],
                 terms={
                     "R_4": "4D observable residue vector",
@@ -299,7 +305,11 @@ class AppendixCGaugeMatrices(SimulationBase):
                 eml_tree_str="ops.mul(ops.mul(eml_vec('P_dagger'), eml_vec('P_13_to_4')), ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), eml_scalar(1.0)))",
                 category="DERIVED",
                 description="Co-isometry condition: PP† = I₄ on the retained 4D block; 9 internal directions are projected out (not lossless).",
-                input_params=["gauge.projection_matrix_13_to_4", "dimensions.D_after_sp2r"],
+                # gauge.projection_matrix_13_to_4 named no registry parameter:
+                # P_{13->4} is a 4x13 matrix, not a scalar, and no simulation
+                # emits one. Dropped. dimensions.D_after_sp2r repointed at
+                # geometry.D_shadow_total (same 13, registered).
+                input_params=["geometry.D_shadow_total"],
                 output_params=["gauge.unitarity_verified"],
                 terms={
                     "P_dagger": "Hermitian conjugate of projection tensor",
@@ -324,7 +334,7 @@ class AppendixCGaugeMatrices(SimulationBase):
                 eml_tree_str="ops.mul(ops.mul(ops.mul(eml_vec('SU3_C'), eml_vec('SU2_L')), eml_vec('U1_Y')), ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), eml_scalar(1.0)))",
                 category="ESTABLISHED",
                 description="Symmetry shattering rule based on the S_PR(2) gauge, dictating how the initial 13D gauge group G_13 breaks down into the Standard Model gauge groups SU(3)_C x SU(2)_L x U(1)_Y through a cascade of maximal subgroup reductions. Each Standard Model factor corresponds to a specific sector of the 125-node spectral registry.",
-                input_params=["dimensions.D_after_sp2r"],
+                input_params=["geometry.D_shadow_total"],
                 output_params=[],
                 terms={
                     "G_13": "13D ancestral gauge group",

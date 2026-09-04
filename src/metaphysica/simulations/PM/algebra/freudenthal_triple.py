@@ -235,7 +235,15 @@ class FreudenthalTripleSimulation(SimulationBase):
                             "Equals V_bridge / V_face in the racetrack potential.",
                 derivation_formula="freudenthal-cubic-norm",
                 no_experimental_value=True,
-                eml_description="EML: ops.pow(eml_scalar(condensate_scale), eml_scalar(3.0)) — cubic norm N(A) = s³ for the symmetric Pneuma element with diagonal entries s = b₃/27",
+                eml_description=(
+                    "EML: ops.mul(eml_scalar(-2.0), ops.mul(ops.add(eml_scalar(1.0), "
+                    "ops.div(eml_scalar(5.0), ops.mul(eml_scalar(4.0), ops.sqrt(eml_scalar(2.0))))), "
+                    "ops.pow(eml_vec('algebra.pneuma_27d_condensate_scale'), eml_scalar(3.0)))) — "
+                    "N(A) = c₁c₂c₃ − Σcᵢ|xᵢ|² + 2·Re(x₁x₂x₃). The condensate element has "
+                    "cᵢ = s = b₃/27 and xᵢ = s·u with u = (1+Σeᵢ)/√8, so |xᵢ|² = s² and "
+                    "Re(u(uu)) = −5/(4√2); N(A) = s³ − 3s³ − (5/(2√2))s³ = −2s³(1 + 5/(4√2)). "
+                    "The former s³ form described the ImportError fallback, not FreudenthalTripleSystem"
+                ),
             ),
             Parameter(
                 path="algebra.freudenthal_quartic",
@@ -246,7 +254,12 @@ class FreudenthalTripleSimulation(SimulationBase):
                             "quartic lives in e7_representation.py); encodes ALP mass scale.",
                 derivation_formula="freudenthal-quartic-invariant",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(ops.pow(eml_vec('algebra.freudenthal_jordan_trace'), eml_scalar(2.0)), ops.mul(eml_scalar(3.0), ops.pow(eml_scalar(condensate_scale), eml_scalar(2.0)))), eml_scalar(4.0)) — quartic q(A) = Tr(A)²·3s²/4",
+                eml_description=(
+                    "EML: ops.div(ops.mul(ops.pow(eml_vec('algebra.freudenthal_jordan_trace'), eml_scalar(2.0)), "
+                    "ops.mul(eml_scalar(9.0), ops.pow(eml_vec('algebra.pneuma_27d_condensate_scale'), eml_scalar(2.0)))), "
+                    "eml_scalar(4.0)) — q(A) = Tr(A)²·⟨A,A⟩/4 with ⟨A,A⟩ = Σcᵢ² + 2Σ|xᵢ|² = 3s² + 6s² = 9s² "
+                    "(the earlier 3s² used only the diagonal part of the Jordan norm)"
+                ),
             ),
             Parameter(
                 path="algebra.freudenthal_jordan_trace",
