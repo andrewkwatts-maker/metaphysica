@@ -118,7 +118,7 @@ class ResultsV16_2(SimulationBase):
         "topology.elder_kads",
         "topology.mephorash_chi",
         "topology.vol_v7",
-        "cosmology.H0_geometric",
+        "cosmology.H0_local",
         "cosmology.w0_derived",
     ]
 
@@ -721,7 +721,7 @@ class ResultsV16_2(SimulationBase):
                     "between Planck (67.4) and SH0ES (73.04). Comparison: 1.4σ below SH0ES."
                 ),
                 input_params=["topology.vol_v7", "topology.mephorash_chi"],
-                output_params=["cosmology.H0_geometric"],
+                output_params=["cosmology.H0_local"],
                 derivation={
                     "method": "odowd_geometric_formula",
                     "steps": [
@@ -759,7 +759,7 @@ class ResultsV16_2(SimulationBase):
                     "required to reproduce 71.55 is not independently derived."
                 ),
                 input_params=["topology.elder_kads", "topology.mephorash_chi", "topology.vol_v7"],
-                output_params=["cosmology.H0_geometric"],
+                output_params=["cosmology.H0_local"],
                 eml_latex=r"H_0 = \mathrm{ops.mul}(c,\; \mathrm{ops.sqrt}(\mathrm{ops.div}(\chi,\; \mathrm{ops.mul}(b_3,\; \mathrm{Vol}(V_7)))))",
                 eml_tree_str=(
                     "# H0 topology bridge in EML operator tree:\n"
@@ -836,7 +836,7 @@ class ResultsV16_2(SimulationBase):
                     "Sum over all compared observables; PM achieves 0.48σ mean deviation "
                     "across 26 Standard Model parameters (EDOF=3)."
                 ),
-                input_params=["cosmology.w0_derived", "cosmology.H0_geometric"],
+                input_params=["cosmology.w0_derived", "cosmology.H0_local"],
                 output_params=[],
                 eml_latex=(
                     r"\chi^2 = \mathrm{ops.div}("
@@ -880,7 +880,7 @@ class ResultsV16_2(SimulationBase):
                 plain_text="Vol(V7) = (chi/b3) * (c/H0)^7",
                 category="DERIVED",
                 description="Holonomy Volume Constraint: V7 volume locked by topology and H0.",
-                input_params=["topology.mephorash_chi", "topology.elder_kads", "cosmology.H0_geometric"],
+                input_params=["topology.mephorash_chi", "topology.elder_kads", "cosmology.H0_local"],
                 output_params=["topology.vol_v7"],
                 eml_tree_str="ops.mul(ops.div(chi, b3), ops.pow(ops.div(c, H0), eml_scalar(7.0)))",
                 eml_description=(

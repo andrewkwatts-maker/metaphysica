@@ -71,7 +71,7 @@ class AppendixDAlignment(SimulationBase):
     ]
 
     PARAM_REFS = [
-        "cosmology.H0_geometric",
+        "cosmology.H0_local",
         "cosmology.w0_derived",
         "geometry.H0_early",
         "geometry.H0_local",
@@ -107,7 +107,15 @@ class AppendixDAlignment(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute alignment validation against observational data."""
         # Dynamic param extraction - use registry.get() with geometric defaults
-        H0_geo = registry.get("cosmology.H0_geometric", default=73.04)
+        # Was registry.get("cosmology.H0_geometric", default=73.04). That
+        # path exists nowhere, so the default always fired -- and 73.04 is
+        # the SH0ES anchor (geometry.H0_local, MEASURED). The "geometric"
+        # H0 entering this alignment was the measurement itself, checked
+        # against the measurement. Repointed at cosmology.H0_local (71.55),
+        # which observable_groups already rules the canonical framework
+        # late-time prediction. The default is kept only as a last resort
+        # and is no longer the value in play.
+        H0_geo = registry.get("cosmology.H0_local", default=71.5500639237564)
         w0_geo = registry.get("cosmology.w0_derived", default=-23/24)
         # NOTE (2026-09): "validation.sigma_global" is not a registry
         # parameter, so this default ALWAYS fires. 0.48 is a v24.2 literal,
@@ -331,7 +339,7 @@ class AppendixDAlignment(SimulationBase):
                 category="PREDICTED",
 description="Geometric Hubble residue from the V7 manifold's spectral structure. H0 = 70.42 km/s/Mpc is the SUPERSEDED sterile-extraction variant; the canonical value is the O'Dowd composite 71.55. It is positioned between the early-universe (Planck 2018: 67.4 +- 0.5) and local-universe (SH0ES 2022: 73.04 +- 1.04) measurements but agrees with NEITHER: 6.0 sigma from Planck and 2.5 sigma from SH0ES. The claim that it 'offers a resolution to the Planck-SH0ES Hubble tension' and 'aligns with both within combined statistical uncertainties' is WITHDRAWN -- the canonical-value ruling retires every Hubble-tension-resolved claim in the framework.",
                 input_params=["topology.elder_kads"],
-                output_params=["cosmology.H0_geometric"],
+                output_params=["cosmology.H0_local"],
                 terms={
                     "H0_geo": "Geometrically-derived Hubble constant from V7 unwinding rate",
                 },

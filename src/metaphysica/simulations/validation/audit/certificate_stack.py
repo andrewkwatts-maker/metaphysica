@@ -304,7 +304,7 @@ class CertificateStack:
         Requirement: H0 expansion rate matches manifold unwinding curve.
         """
         # Get H0 from registry or use geometric value
-        h0 = self.registry.get('H0', self.registry.get('cosmology.H0_geometric', 73.04))
+        h0 = self.registry.get('H0', self.registry.get('cosmology.H0_local', 73.04))
         h0_target = 73.04  # SH0ES 2022
 
         is_synced = np.isclose(h0, h0_target, rtol=0.02)  # 2% tolerance

@@ -696,7 +696,7 @@ class AppendixKSterileConstants(SimulationBase):
                 eml_tree_str="ops.div(ops.pow(eml_vec('c'), eml_scalar(5.0)), ops.mul(ops.pow(eml_vec('H0'), eml_scalar(2.0)), eml_vec('vol_v7')))",
                 category="GEOMETRIC",
                 description="Gravitational constant from Metric Anchor node.",
-                input_params=["cosmology.speed_of_light_derived", "cosmology.H0_geometric", "topology.vol_v7"],
+                input_params=["cosmology.speed_of_light_derived", "cosmology.H0_local", "topology.vol_v7"],
                 output_params=[],
                 derivation={
                     "method": "Metric Bank Node 001 eigenvalue extraction",

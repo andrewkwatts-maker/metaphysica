@@ -1765,7 +1765,7 @@ class DiscussionV16(SimulationBase):
                     "topology.elder_kads",
                     "topology.mephorash_chi",
                     "cosmology.w0_derived",
-                    "cosmology.H0_geometric",
+                    "cosmology.H0_local",
                     "gauge.ALPHA_GUT_INV",
                     "gauge.sin2_theta_w",
                     "geometry.higgs_vev",

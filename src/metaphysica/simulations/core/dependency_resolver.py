@@ -700,7 +700,7 @@ def build_pm_dependency_graph() -> DependencyGraph:
     # DERIVED: H0_base = 24 * 3 - 0.45 = 71.55 km/s/Mpc from b3=24 geometry
     H0_base = 24 * 3 - 0.45  # Geometric H0 from b3=24
     graph.register(
-        "cosmology.H0_geometric",
+        "cosmology.H0_local",
         depends_on=["geometry.k_gimel", "seeds.mephorash_chi", "seeds.logos_joint"],
         compute_fn=lambda deps: H0_base * (deps["geometry.k_gimel"] * deps["seeds.mephorash_chi"] / deps["seeds.logos_joint"]) ** 0.1,
         metadata={'level': 3, 'description': 'Hubble constant from geometry'}

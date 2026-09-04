@@ -613,7 +613,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "It ties the geometric H0 = (125/288)/24 x 400 to physical units. "
                     "Remains locked to the 24-pin torsion cycle."
                 ),
-                input_params=["cosmology.h0_geometric", "topology.shadow_torsion_total"],
+                input_params=["cosmology.H0_local", "topology.shadow_torsion_total"],
                 output_params=["cosmology.h0_unwinding_scale", "cosmology.H0_physical"],
                 derivation={
                     "method": "Hubble constant from geometric ratio times unwinding scale",

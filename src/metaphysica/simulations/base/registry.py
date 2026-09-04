@@ -1036,7 +1036,7 @@ class PMRegistry:
         depend on input parameters, enabling automatic resolution.
 
         Args:
-            param: Parameter path (e.g., "cosmology.H0_geometric")
+            param: Parameter path (e.g., "cosmology.H0_local")
             depends_on: List of parameter paths this parameter depends on
             compute_fn: Function to compute this parameter.
                        Signature: fn(dep_values: Dict[str, Any]) -> Any
@@ -1048,7 +1048,7 @@ class PMRegistry:
 
         Example:
             registry.register_dependency(
-                "cosmology.H0_geometric",
+                "cosmology.H0_local",
                 depends_on=["geometry.k_gimel", "seeds.mephorash_chi"],
                 compute_fn=lambda deps: 71.55 * (deps["geometry.k_gimel"] * deps["seeds.mephorash_chi"]) ** 0.1
             )

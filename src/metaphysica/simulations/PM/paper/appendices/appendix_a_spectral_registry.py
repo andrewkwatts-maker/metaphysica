@@ -60,7 +60,7 @@ class AppendixASpectralRegistry(SimulationBase):
     PARAM_REFS = [
         "topology.elder_kads",
         "topology.mephorash_chi",
-        "cosmology.H0_geometric",
+        "cosmology.H0_local",
         "cosmology.w0_derived",
         "particle.alpha_em",
         "pdg.m_electron",
