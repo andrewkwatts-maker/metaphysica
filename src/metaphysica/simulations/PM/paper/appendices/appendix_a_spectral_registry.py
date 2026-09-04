@@ -59,7 +59,7 @@ class AppendixASpectralRegistry(SimulationBase):
     # Dynamic parameter paths referenced by this appendix
     PARAM_REFS = [
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "cosmology.H0_geometric",
         "cosmology.w0_geometric",
         "particle.alpha_em",
@@ -286,7 +286,7 @@ class AppendixASpectralRegistry(SimulationBase):
                     "constants of particles in the 4D effective theory via the spectral "
                     "geometry correspondence."
                 ),
-                input_params=["topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["registry.node_count"],
                 terms={
                     "Delta_V7": "Laplace-Beltrami operator on V7 manifold",

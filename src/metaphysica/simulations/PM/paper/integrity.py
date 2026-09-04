@@ -88,9 +88,6 @@ class IntegrityV16_2(SimulationBase):
 
     # Dynamic parameter paths referenced by this section
     PARAM_REFS = [
-        "certificates.tier1_status",
-        "certificates.tier2_status",
-        "certificates.tier3_status",
         "certificates.all_passed",
         "gates.omega_hash",
         "seal.verified",
@@ -533,7 +530,7 @@ class IntegrityV16_2(SimulationBase):
                 plain_text="d(alpha)/dt = 0 (Hysteresis Constraint)",
                 category="DERIVED",
                 description="Parameter freeze from topological hysteresis: all 125 spectral residues are time-invariant due to G2 holonomy rigidity.",
-                input_params=["topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=[],
                 derivation={
                     "steps": [
@@ -564,7 +561,7 @@ class IntegrityV16_2(SimulationBase):
                 plain_text="Valid = Product(C_n) for n=1..42 (All must pass)",
                 category="DERIVED",
                 description="42 certificates of integrity validation logic: short-circuit binary enforcement requiring all geometric, algebraic, and observational checks to pass. Every certificate validates a quantity derived from the b3=24 G2 seed, so the overall validity flag is a meta-summary rooted at b3.",
-                input_params=["topology.elder_kads", "certificates.tier1_status", "certificates.tier2_status", "certificates.tier3_status"],
+                input_params=["topology.elder_kads"],
                 output_params=["certificates.all_passed"],
                 derivation={
                     "steps": [

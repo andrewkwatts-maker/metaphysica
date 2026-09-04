@@ -54,7 +54,7 @@ class AppendixEBraneMap(SimulationBase):
 
     PARAM_REFS = [
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "registry.node_count",
         "geometry.min_separation",
     ]

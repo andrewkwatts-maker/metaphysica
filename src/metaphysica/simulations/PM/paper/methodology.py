@@ -95,7 +95,7 @@ class MethodologyV16_2(SimulationBase):
     # Dynamic parameter paths referenced by this section
     PARAM_REFS = [
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "topology.vol_v7",
         "validation.phi_g2",
         "validation.trace_convergence",
@@ -865,7 +865,7 @@ class MethodologyV16_2(SimulationBase):
                 plain_text="Delta_V7 Psi = lambda_n Psi",
                 category="DERIVED",
                 description="Laplacian eigenvalue equation on the G2 manifold.",
-                input_params=["topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["registry.node_count"],
                 derivation={
                     "method": "spectral_geometry",
@@ -920,7 +920,7 @@ class MethodologyV16_2(SimulationBase):
                 plain_text="Tr(exp(-t*Delta_V7)) = Sum exp(-t*lambda_n) = Vol(V7)/(4*pi*t)^(7/2) + O(t^(-5/2))",
                 category="DERIVED",
                 description="Spectral Trace: Heat kernel expansion proving 125 residues encode V7 volume.",
-                input_params=["topology.vol_v7", "topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.vol_v7", "topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["validation.trace_convergence", "registry.node_count"],
                 derivation={
                     "method": "heat_kernel_expansion",
@@ -949,7 +949,7 @@ class MethodologyV16_2(SimulationBase):
                 plain_text="Σ_{n=1}^{ק_כה} ω_n · R_n² = Φ_{G₂}",
                 category="DERIVED",
                 description="Global holonomy checksum for visible-sector residue verification.",
-                input_params=["topology.elder_kads", "topology.euler_chi", "topology.sophian_modulus"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi", "registry.node_count"],
                 output_params=["validation.phi_g2"],
                 derivation={
                     "method": "holonomy_checksum",
@@ -961,7 +961,7 @@ class MethodologyV16_2(SimulationBase):
                     "parentFormulas": ["laplacian-eigenvalue", "spectral-trace-sterile-proof"]
                 },
                 terms={
-                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "topology.sophian_modulus"},
+                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "registry.node_count"},
                     "ω_n": {"symbol": "\\omega_n", "description": "Weighting factor from Laplacian spectrum position"},
                     "R_n": {"symbol": "\\mathcal{R}_n", "description": "Spectral residue at eigenvalue n"},
                     "Φ_G2": {"symbol": "\\Phi_{G_2}", "description": "G₂ holonomy invariant (total geometric closure)"},

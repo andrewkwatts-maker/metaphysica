@@ -910,7 +910,7 @@ if _SCHEMA_AVAILABLE:
                     derivation_formula="four-dice-branch-count",
                     no_experimental_value=True,
                     eml_description=(
-                        "EML: ops.pow(eml_scalar(2.0), eml_scalar(2.0)) — 4 dice branches = 2² from binary quantum sampling"
+                        "EML: ops.pow(eml_scalar(4.0), eml_scalar(4.0)) — total branches = DICE_MODULUS^NUM_DICE = 4^4 = 256 (quaternionic mod-4, 4 dice)"
                     ),
                 ),
                 Parameter(

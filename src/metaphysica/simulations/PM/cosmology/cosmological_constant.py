@@ -691,9 +691,9 @@ class CosmologicalConstantV16(SimulationBase):
                     "v16.2: Cosmological constant with instanton suppression. "
                     "The e^{-2*pi*26} factor (~10^-71) solves the 120-order hierarchy problem."
                 ),
-                inputParams=["topology.elder_kads", "constants.k_gimel", "desi.H0", "constants.D_crit"],
+                inputParams=["topology.elder_kads", "constants.k_gimel", "desi.H0", "topology.critical_dim"],
                 outputParams=["cosmology.Lambda_derived"],
-                input_params=["topology.elder_kads", "constants.k_gimel", "desi.H0", "constants.D_crit"],
+                input_params=["topology.elder_kads", "constants.k_gimel", "desi.H0", "topology.critical_dim"],
                 output_params=["cosmology.Lambda_derived"],
                 derivation={
                     "steps": [

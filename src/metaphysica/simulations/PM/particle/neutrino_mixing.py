@@ -1571,8 +1571,12 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(33.59), ops.div(eml_pi(), eml_scalar(180.0))) "
-                    "— CALIBRATED to NuFIT 6.0"
+                    "EML: ops.mul(ops.div(eml_scalar(180.0), eml_pi()), "
+                    "ops.asin(ops.mul(ops.inv(ops.sqrt(eml_scalar(3.0))), "
+                    "ops.add(eml_scalar(1.0), ops.neg(ops.div("
+                    "ops.sub(eml_vec('topology.elder_kads'), ops.mul(eml_vec('topology.b2'), eml_vec('topology.n_gen'))), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi')))))))) "
+                    "— θ₁₂ = (180/π)·arcsin[(1/√3)(1−(b₃−b₂n_gen)/2χ)] in degrees"
                 ),
                 validation={
                     "experimental_value": nufit_theta_12[0],
@@ -1598,8 +1602,12 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(8.65), ops.div(eml_pi(), eml_scalar(180.0))) "
-                    "— CALIBRATED to NuFIT 6.0"
+                    "EML: ops.mul(ops.div(eml_scalar(180.0), eml_pi()), "
+                    "ops.asin(ops.mul(ops.div(ops.sqrt(ops.mul(eml_vec('topology.b2'), eml_vec('topology.n_gen'))), "
+                    "eml_vec('topology.elder_kads')), "
+                    "ops.add(eml_scalar(1.0), ops.div(eml_vec('topology.orientation_sum'), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi'))))))) "
+                    "— θ₁₃ = (180/π)·arcsin[√(b₂n_gen)/b₃·(1+S/2χ)] in degrees"
                 ),
                 validation={
                     "experimental_value": nufit_theta_13_io[0],
@@ -1625,8 +1633,12 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(49.75), ops.div(eml_pi(), eml_scalar(180.0))) "
-                    "— CALIBRATED to NuFIT 6.0"
+                    "EML: ops.add(eml_scalar(45.0), ops.add("
+                    "ops.div(ops.mul(ops.sub(eml_vec('topology.b2'), eml_vec('topology.n_gen')), eml_vec('topology.n_gen')), eml_vec('topology.b2')), "
+                    "ops.mul(ops.div(eml_vec('topology.orientation_sum'), eml_vec('topology.elder_kads')), "
+                    "ops.div(ops.mul(eml_vec('topology.b2'), eml_vec('topology.mephorash_chi')), "
+                    "ops.mul(eml_vec('topology.elder_kads'), eml_vec('topology.n_gen')))))) "
+                    "— θ₂₃ = 45°+(b₂−n)n/b₂+(S/b₃)(b₂χ/b₃n) in degrees"
                 ),
                 validation={
                     "experimental_value": nufit_theta_23_io[0],

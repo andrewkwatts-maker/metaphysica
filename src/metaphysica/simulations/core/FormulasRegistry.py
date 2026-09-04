@@ -5807,7 +5807,7 @@ class FormulasRegistry:
                     "description": "Octonionic/24D structure (288 = b3 * 12)",
                     "legacy_alias": "The Ennoia",
                     "legacy_description": "Universal Mind; Logic Closure",
-                    "pm_path": "topology.nitzotzin_roots"
+                    "pm_path": "topology.ancestral_roots"
                 },
                 "visible": {
                     "value": self.sophian_modulus,
@@ -5815,7 +5815,7 @@ class FormulasRegistry:
                     "formula": "5^3 = 125 (SM parameters)",
                     "legacy_alias": "The Visible",
                     "legacy_description": "The manifest Standard Model; 125 parameters",
-                    "pm_path": "topology.sophian_modulus"
+                    "pm_path": "registry.node_count"
                 },
                 "sterile": {
                     "value": self.barbelo_modulus,
@@ -5823,15 +5823,14 @@ class FormulasRegistry:
                     "formula": "ROOTS - VISIBLE = 288 - 125 = 163",
                     "legacy_alias": "The Barbelo",
                     "legacy_description": "First Thought; the hidden bulk pressure",
-                    "pm_path": "topology.barbelo_modulus"
+                    "pm_path": "topology.hidden_supports"
                 },
                 "shadow_sector": {
                     "value": self.demiurgic_Yetts,
                     "name": "Shadow Sector",
                     "formula": "VISIBLE_GATES = 135",
                     "legacy_alias": "The Sophia",
-                    "legacy_description": "Wisdom; the Visible Gates of manifest knowledge",
-                    "pm_path": "topology.demiurgic_Yetts"
+                    "legacy_description": "Wisdom; the Visible Gates of manifest knowledge"
                 }
             },
 
