@@ -642,7 +642,7 @@ class ModularInvarianceV16(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description="D = b₃ + 2 = 26",
-                eml_description="EML: ops.add(eml_scalar(26.0), eml_scalar(1.0)) — bosonic critical dimension 26 plus timelike fiber = 27 total (or ops.add(b3, eml_scalar(2)) = 26 for the bosonic string)",
+                eml_description="EML: ops.add(eml_vec('topology.elder_kads'), eml_scalar(2.0)) — D_crit = b₃+2 = 24+2 = 26; note D_crit=26 withdrawn under the (24,2) ruling (see OUTSTANDING_ISSUES §1.12)",
                 derivation_formula="critical-dimension",
                 no_experimental_value=True
             ),

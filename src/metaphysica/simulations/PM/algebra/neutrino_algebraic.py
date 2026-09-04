@@ -440,8 +440,10 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"cross-checks nothing."
                 ),
                 eml_description=(
-                    "EML: ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0))) — "
-                    "θ₁₃ = asin(1/6) = asin(α_leak/√(2·n_gen)) ≈ 9.59°"
+                    "EML: ops.mul(ops.div(eml_scalar(180.0), eml_pi()), "
+                    "ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0)))) — "
+                    "θ₁₃ = (180/π)·asin(1/6) = (180/π)·asin(α_leak/√(2·n_gen)) ≈ 9.59° "
+                    "[FALSIFIED: ~9σ from NuFIT 8.57°±0.11°]"
                 ),
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=_THETA13_NUFIT,

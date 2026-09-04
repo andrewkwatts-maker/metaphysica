@@ -124,7 +124,7 @@ class FoundationsV16_2(SimulationBase):
         "geometry.D_shadow",
         "dimensions.D_observable",
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "particle.n_generations",
     ]
 
@@ -894,7 +894,7 @@ class FoundationsV16_2(SimulationBase):
                 plain_text="Hol(g) ⊆ G2 iff exists eta: nabla eta = 0",
                 category="DERIVED",
                 description="G2 holonomy condition for torsion-free, Ricci-flat metric.",
-                input_params=["topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=[],
                 derivation={
                     "method": "holonomy_classification",

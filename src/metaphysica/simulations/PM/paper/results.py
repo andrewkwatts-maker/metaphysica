@@ -116,7 +116,7 @@ class ResultsV16_2(SimulationBase):
     # Dynamic parameter paths referenced by this section
     PARAM_REFS = [
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "topology.vol_v7",
         "cosmology.H0_geometric",
         "cosmology.w0_geometric",
@@ -721,7 +721,7 @@ class ResultsV16_2(SimulationBase):
                     "by mixing angle theta_mix from G2 holonomy. Yields H0 = 71.55 km/s/Mpc, "
                     "between Planck (67.4) and SH0ES (73.04). Comparison: 1.4σ below SH0ES."
                 ),
-                input_params=["topology.vol_v7", "topology.euler_chi"],
+                input_params=["topology.vol_v7", "topology.mephorash_chi"],
                 output_params=["cosmology.H0_geometric"],
                 derivation={
                     "method": "odowd_geometric_formula",
@@ -759,7 +759,7 @@ class ResultsV16_2(SimulationBase):
                     "Note: the formula structure is well-motivated but the exact Vol(V₇) value "
                     "required to reproduce 71.55 is not independently derived."
                 ),
-                input_params=["topology.elder_kads", "topology.euler_chi", "topology.vol_v7"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi", "topology.vol_v7"],
                 output_params=["cosmology.H0_geometric"],
                 eml_latex=r"H_0 = \mathrm{ops.mul}(c,\; \mathrm{ops.sqrt}(\mathrm{ops.div}(\chi,\; \mathrm{ops.mul}(b_3,\; \mathrm{Vol}(V_7)))))",
                 eml_tree_str=(
@@ -795,7 +795,7 @@ class ResultsV16_2(SimulationBase):
                 plain_text="rho_vacuum = rho_bulk * exp(-b3*chi) ≈ 10^-50",
                 category="DERIVED",
                 description="Vacuum energy floor from brane-tension cancellation.",
-                input_params=["topology.elder_kads", "topology.euler_chi"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["cosmology.rho_vacuum"],
                 eml_latex=r"\rho_{vac} = \mathrm{ops.mul}(\rho_{bulk},\; \mathrm{ops.exp}(\mathrm{ops.neg}(\mathrm{ops.mul}(b_3,\; \chi))))",
                 eml_tree_str=(
@@ -881,7 +881,7 @@ class ResultsV16_2(SimulationBase):
                 plain_text="Vol(V7) = (chi/b3) * (c/H0)^7",
                 category="DERIVED",
                 description="Holonomy Volume Constraint: V7 volume locked by topology and H0.",
-                input_params=["topology.euler_chi", "topology.elder_kads", "cosmology.H0_geometric"],
+                input_params=["topology.mephorash_chi", "topology.elder_kads", "cosmology.H0_geometric"],
                 output_params=["topology.vol_v7"],
                 eml_tree_str="ops.mul(ops.div(chi, b3), ops.pow(ops.div(c, H0), eml_scalar(7.0)))",
                 eml_description=(

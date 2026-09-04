@@ -558,18 +558,14 @@ class SpeedOfLightV17(SimulationBase):
                 ),
                 inputParams=[
                     "topology.elder_kads",
-                    "topology.nitzotzin_roots",
-                    "topology.barbelo_modulus",
-                    "topology.demiurgic_Yetts",
-                    "topology.logos_joint",
+                    "topology.ancestral_roots",
+                    "topology.hidden_supports",
                 ],
                 outputParams=["cosmology.speed_of_light_derived"],
                 input_params=[
                     "topology.elder_kads",
-                    "topology.nitzotzin_roots",
-                    "topology.barbelo_modulus",
-                    "topology.demiurgic_Yetts",
-                    "topology.logos_joint",
+                    "topology.ancestral_roots",
+                    "topology.hidden_supports",
                 ],
                 output_params=["cosmology.speed_of_light_derived"],
                 derivation={
@@ -665,9 +661,9 @@ class SpeedOfLightV17(SimulationBase):
                     "(see FormulasRegistry SSoT note), so this factor is FITTED, "
                     "not topology-first."
                 ),
-                inputParams=["topology.nitzotzin_roots"],
+                inputParams=["topology.ancestral_roots"],
                 outputParams=[],
-                input_params=["topology.nitzotzin_roots"],
+                input_params=["topology.ancestral_roots"],
                 output_params=[],
                 derivation={
                     "steps": [
@@ -699,9 +695,9 @@ class SpeedOfLightV17(SimulationBase):
                     "over extended boundary). Depends on the fitted 163 boundary "
                     "count — FITTED."
                 ),
-                inputParams=["topology.nitzotzin_roots", "topology.elder_kads"],
+                inputParams=["topology.ancestral_roots", "topology.elder_kads"],
                 outputParams=[],
-                input_params=["topology.nitzotzin_roots", "topology.elder_kads"],
+                input_params=["topology.ancestral_roots", "topology.elder_kads"],
                 output_params=[],
                 derivation={
                     "steps": [
@@ -770,9 +766,9 @@ class SpeedOfLightV17(SimulationBase):
                     "Adjusts the derived speed of light, reducing an initial deviation "
                     "of ~10,444 m/s to a final deviation of ~35 m/s from the CODATA value."
                 ),
-                inputParams=["topology.nitzotzin_roots"],
+                inputParams=["topology.ancestral_roots"],
                 outputParams=["cosmology.spatial_projection"],
-                input_params=["topology.nitzotzin_roots"],
+                input_params=["topology.ancestral_roots"],
                 output_params=["cosmology.spatial_projection"],
                 derivation={
                     "steps": [
@@ -823,9 +819,9 @@ class SpeedOfLightV17(SimulationBase):
                     f"(FITTED: depends on the 288 = 135 + 153 fitted integer "
                     f"decomposition — see FormulasRegistry SSoT note)"
                 ),
-                inputParams=["topology.elder_kads", "topology.b2", "topology.ancestral_roots", "topology.nitzotzin_roots"],
+                inputParams=["topology.elder_kads", "topology.b2", "topology.ancestral_roots"],
                 outputParams=["cosmology.speed_of_light_derived"],
-                input_params=["topology.elder_kads", "topology.b2", "topology.ancestral_roots", "topology.nitzotzin_roots"],
+                input_params=["topology.elder_kads", "topology.b2", "topology.ancestral_roots"],
                 output_params=["cosmology.speed_of_light_derived"],
                 derivation={
                     "steps": [

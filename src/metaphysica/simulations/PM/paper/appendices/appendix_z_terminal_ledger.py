@@ -270,7 +270,7 @@ class AppendixZTerminalLedger(SimulationBase):
                 units="degrees",
                 status="TERMINAL",
                 description="Cabibbo quark mixing angle from torsion geometry: arcsin(sqrt(1/24)).",
-                eml_description="EML: ops.arcsin(ops.sqrt(ops.inv(eml_scalar(24.0)))) — θ_C = arcsin(1/√24) from torsion pin geometry",
+                eml_description="EML: ops.mul(ops.div(eml_scalar(180.0), eml_pi()), ops.asin(ops.sqrt(ops.inv(eml_scalar(24.0))))) — θ_C = (180/π)·arcsin(1/√24) in degrees from torsion pin geometry",
                 no_experimental_value=True,
             ),
             Parameter(

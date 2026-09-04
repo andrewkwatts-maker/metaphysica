@@ -56,7 +56,7 @@ class AppendixBSumRule(SimulationBase):
 
     PARAM_REFS = [
         "topology.elder_kads",
-        "topology.euler_chi",
+        "topology.mephorash_chi",
         "topology.vol_v7",
         "validation.phi_g2",
         "validation.sum_rule_tolerance",
@@ -293,7 +293,7 @@ class AppendixBSumRule(SimulationBase):
                     "Heat kernel partition function of V₇ manifold. Converges to "
                     "Vol(V₇) times geometric factors for Ricci-flat manifolds."
                 ),
-                input_params=["topology.vol_v7", "topology.euler_chi"],
+                input_params=["topology.vol_v7", "topology.mephorash_chi"],
                 output_params=["validation.trace_convergence"],
                 derivation={
                     "method": "Heat kernel expansion on compact Riemannian manifold",
@@ -322,7 +322,7 @@ class AppendixBSumRule(SimulationBase):
                     "Global sum rule ensuring metric rigidity. The weighted sum of "
                     "squared residues must equal the ancestral G₂ holonomy invariant."
                 ),
-                input_params=["topology.elder_kads", "topology.euler_chi", "topology.sophian_modulus"],
+                input_params=["topology.elder_kads", "topology.mephorash_chi", "registry.node_count"],
                 output_params=["validation.phi_g2"],
                 derivation={
                     "method": "Spectral constraint from G2 holonomy invariant",
@@ -335,7 +335,7 @@ class AppendixBSumRule(SimulationBase):
                     ],
                 },
                 terms={
-                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "topology.sophian_modulus"},
+                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "registry.node_count"},
                     "ω_n": {"symbol": "\\omega_n", "description": "Weighting factor from Laplacian spectrum position"},
                     "R_n": {"symbol": "\\mathcal{R}_n", "description": "Spectral residue at eigenvalue n"},
                     "Φ_G2": {"symbol": "\\Phi_{G_2}", "description": "G₂ holonomy invariant (total geometric closure from 26D bulk)"},
@@ -352,7 +352,7 @@ class AppendixBSumRule(SimulationBase):
                     "Closure condition for trace formula verification. Variance must "
                     "be below sterile tolerance threshold to maintain certification."
                 ),
-                input_params=["validation.phi_g2", "topology.sophian_modulus", "validation.sterile_tolerance"],
+                input_params=["validation.phi_g2", "registry.node_count", "validation.sterile_tolerance"],
                 output_params=["validation.sum_rule_result"],
                 derivation={
                     "method": "Absolute deviation bound from geometric invariant",
@@ -366,7 +366,7 @@ class AppendixBSumRule(SimulationBase):
                 },
                 terms={
                     "ΔΦ": {"symbol": "\\Delta\\Phi", "description": "Variance from geometric invariant"},
-                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "topology.sophian_modulus"},
+                    "ק_כה": {"symbol": "\\text{ק}_{\\text{כה}}", "value": 125, "description": "Visible sector residue count", "param_id": "registry.node_count"},
                     "ε_sterile": {"symbol": "\\epsilon_{\\text{sterile}}", "value": "10^{-15}", "description": "Sterile tolerance threshold", "param_id": "validation.sterile_tolerance"},
                 }
             ),
