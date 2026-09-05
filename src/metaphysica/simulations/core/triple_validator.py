@@ -27,7 +27,7 @@ Typical usage from a simulation::
 
     expected = 6.283185307179586
     eml_tree = eml_mul(eml_scalar(2.0), eml_pi())
-    arithma_expr = A.Expression.number(2.0) * A.Expression.constant("pi")
+    arithma_expr = A.Expression.number(2.0) * A.Expression.variable("pi")
 
     triple_assert(arithma_expr, eml_tree, expected, name="two_pi")
 """
@@ -111,6 +111,37 @@ class TripleResult:
         return self.expected
 
 
+
+def _default_symbol_env() -> dict:
+    """Symbols the arithma track needs bound in order to evaluate at all.
+
+    The two tracks must be given the SAME symbolic footing or the comparison
+    is not like-for-like. The EML track already resolves b3 through
+    ``b3_leaf()``, which reads the SSoT ``FormulasRegistry``; the arithma
+    track builds ``Expression.variable("b3")`` and so needs the same value in
+    its environment.
+
+    This binds nothing new and invents nothing: b3 comes from the same single
+    source of truth the EML leaf uses, and pi is math.pi. Without it every
+    formula written in terms of b3 raised ``unbound variable 'b3'``, which
+    ``triple_assert`` reported as ``arithma_value=None`` -- so the message
+    named the formula and hid the cause.
+
+    Previously these resolved because ``Expression.constant(name)`` consulted
+    a global constants table. It no longer does: a constant now carries its
+    own cached value and does not look at the environment, which is why the
+    symbols became variables and the environment became necessary.
+    """
+    env: dict = {"pi": math.pi}
+    try:
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+        env["b3"] = float(get_registry().elder_kads)
+    except Exception:  # pragma: no cover - registry optional at import time
+        pass
+    return env
+
+
 def triple_assert(
     arithma_expr: Any,
     eml_tree: Any,
@@ -156,7 +187,11 @@ def triple_assert(
         If both symbolic views are ``None`` (a formula must offer at least
         one symbolic check; pure-float entries should not call this).
     """
-    env_dict = dict(env or {})
+    # Start from the shared symbol environment so the arithma track can
+    # evaluate the same symbols the EML track resolves internally; an
+    # explicit env still wins.
+    env_dict = _default_symbol_env()
+    env_dict.update(dict(env or {}))
 
     arithma_used = arithma_expr is not None and _ARITHMA_OK
     eml_used = eml_tree is not None and _EML_OK

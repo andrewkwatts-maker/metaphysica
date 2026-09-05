@@ -66,8 +66,34 @@ def _load(name: str):
 #:
 #: b3_rooted_min is deliberately NOT lowered: it stays 366, so a genuine
 #: loss of coverage still fails. ambiguous_max TIGHTENS to 0.
-_ARITHMA_BASELINE = {"total": 422, "b3_rooted_min": 366,
-                     "non_b3_max": 56, "ambiguous_max": 0,
+# 2026-09-06: b3_rooted_min 366 -> 350, non_b3_max 56 -> 72. This is a
+# CORRECTION TO THE MEASUREMENT, not a loss of coverage, and the distinction
+# is the whole reason the numbers moved.
+#
+# Until now ZERO of the 422 formulas carried an arithma tree: every arithma
+# expression failed to serialise, because Expression.constant("b3") had no
+# cached value and from_f64 used a saturating fixed scale. So every formula
+# fell through to the DEGRADED fallback -- a substring scan of the
+# human-written `latex` field for "b3" -- and prose was enough to count as
+# rooted.
+#
+# With arithma fixed, 169 formulas now carry a real tree and get the
+# structural walk. 17 of them turn out to contain no b3 whatever:
+#
+#     generation-theorem          ["fn","mul",["num","3"],["num","8"]]
+#     c37cp-strong-cp-lock        ["num","0"]
+#     gauge-unification-sum       ["num","0"]
+#     cabibbo-angle-geometric     ["num","0"]
+#     higgs-effective-potential-v19  ["num","0"]
+#
+# All 17 were counted rooted by the string scan and reach the seed through
+# nothing. This is the same finding as the 2026-09-04 ratchet move, in a new
+# place: making the edges real shows which ones were never there.
+#
+# The floor is therefore lowered ONCE, against a named cause. A future drop
+# below 350 is a genuine regression and must fail.
+_ARITHMA_BASELINE = {"total": 422, "b3_rooted_min": 350,
+                     "non_b3_max": 72, "ambiguous_max": 0,
                      "degraded_max": 12}
 _EML_BASELINE = {"total": 422, "b3_rooted_min": 102,
                  "non_b3_max": 320, "ambiguous_max": 6}
@@ -84,20 +110,43 @@ def test_arithma_b3_coverage_never_regresses():
     assert d["ambiguous_count"] <= _ARITHMA_BASELINE["ambiguous_max"]
 
 
-def test_arithma_walk_degradation_is_bounded():
-    """The walker runs DEGRADED without the optional arithma package.
+#: Formulas that supply NO symbolic tree in either dialect, so the walker has
+#: nothing to walk and must fall back to scanning a latex string. Every one is
+#: a Jordan-algebra, E7/E8 or Clifford construction whose content is a
+#: reduction over an indexed family -- the same quantities withheld from the
+#: EML cross-check, for the same reason.
+_NO_SYMBOLIC_TREE = frozenset({
+    "freudenthal-cubic-norm", "freudenthal-quartic-invariant",
+    "freudenthal-triple-product", "e7-quartic-invariant", "e7-alp-mass",
+    "e8x8-visible-action", "e8x8-hidden-condensate", "e8x8-portal-coupling",
+    "clifford-appendix-quadratic", "harmonic-cycle-fraction",
+    "bulk-metric-ratio", "metric-conversion",
+})
 
-    arithma 2.0.2 is on PyPI, so this is fixable by installing it — at which
-    point degraded_walks drops and this baseline should be tightened to 0.
-    Until then the degradation may not grow.
+
+def test_arithma_walk_degradation_is_bounded():
+    """Degradation is caused by MISSING EXPRESSIONS, not a missing package.
+
+    This test used to say the opposite -- "arithma 2.0.2 is on PyPI, so this
+    is fixable by installing it, at which point degraded_walks drops to 0" --
+    and it never fired, because the artifact recorded
+    ``arithma_available: false`` and the assertion sat behind that flag.
+
+    Both halves were wrong. arithma imports fine; what was failing was every
+    arithma EXPRESSION, so no formula carried a tree and all 422 walks
+    degraded to a substring scan of human-written latex. With that fixed 169
+    formulas now carry real trees, and the 12 that still degrade are the 12
+    that declare no symbolic expression in either dialect. Installing a
+    package cannot change that; writing expressions for them can.
     """
     d = _load("dependency_chains.json")
     assert d["degraded_walks"] <= _ARITHMA_BASELINE["degraded_max"]
-    if d.get("arithma_available"):
-        assert d["degraded_walks"] == 0, (
-            "arithma is installed but walks still degrade — tighten the "
-            "baseline and investigate"
-        )
+    assert d["degraded_walks"] == len(_NO_SYMBOLIC_TREE), (
+        f"{d['degraded_walks']} walks degrade but "
+        f"{len(_NO_SYMBOLIC_TREE)} formulas lack a symbolic tree — a "
+        f"formula that HAS a tree is degrading, which points at the walker "
+        f"rather than at the formula set"
+    )
 
 
 def test_eml_b3_coverage_never_regresses():

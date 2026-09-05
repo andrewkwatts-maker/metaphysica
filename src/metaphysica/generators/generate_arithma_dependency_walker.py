@@ -49,14 +49,37 @@ except ImportError:
     ARITHMA_AVAILABLE = False
 
 
+#: Kind tokens that appear FIRST in an arithma compact node. The two compact
+#: formats order the pair the opposite way round:
+#:
+#:     EML      [label, kind]     ["b3_leaf", "c"]   ["144", "#"]
+#:     arithma  [kind, label]     ["var", "b3"]      ["num", "6"]
+#:
+#: This walker only understood the EML order, which was harmless for as long
+#: as no arithma tree existed -- and none did, because every arithma
+#: expression failed to serialise while `Expression.constant("b3")` had no
+#: cached value and `from_f64` used a saturating fixed scale. With those
+#: fixed, 169 of 422 formulas now carry a real arithma tree, and reading
+#: ["var", "b3"] as label="var" silently found no b3 in any of them.
+_ARITHMA_KIND_TOKENS = frozenset({"fn", "num", "var", "const"})
+
+
+def _compact_label_and_kind(node):
+    """Return (label, kind) from a compact node of either dialect."""
+    first, second = str(node[0]), str(node[1])
+    if first in _ARITHMA_KIND_TOKENS:
+        return second, first          # arithma: [kind, label]
+    return first, second              # EML:     [label, kind]
+
+
 def _walk_compact_tree(node, counts):
     """Walk an EML/Arithma compact-form node and tally b3 / raw-24 leaves."""
     if not isinstance(node, list) or len(node) < 2:
         return
-    label, kind = str(node[0]), str(node[1])
+    label, kind = _compact_label_and_kind(node)
     children = node[2:]
     if not children:  # leaf
-        if kind == "#":
+        if kind in ("#", "num"):
             try:
                 if float(label) == 24.0:
                     counts["raw_24"] += 1

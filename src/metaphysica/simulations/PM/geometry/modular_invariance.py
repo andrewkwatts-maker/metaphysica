@@ -51,7 +51,11 @@ try:  # pragma: no cover - optional during early migration
     def _arithma_num(v):
         return _A.Expression.number(float(v))
     def _arithma_const(name):
-        return _A.Expression.constant(name)
+        # `variable`, not `constant`: these symbols are bound by the
+        # evaluation environment. Expression.constant(name) means a named
+        # constant carrying its own cached value, does not consult the env,
+        # and raises "constant 'b3' has no cached value" when evaluated.
+        return _A.Expression.variable(name)
 except ImportError:  # pragma: no cover
     _A = None  # type: ignore[assignment]
     def _arithma_num(v):
