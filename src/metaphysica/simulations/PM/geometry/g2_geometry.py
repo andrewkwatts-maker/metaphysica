@@ -93,6 +93,15 @@ from metaphysica.simulations.core.eml_integration import (
     eml_pi as _eml_pi,
     b3_leaf as _b3_leaf,
 )
+try:  # arithma's unary ops moved from instance to static
+    from arithma import Expression as _ArithmaExpression
+except ImportError:  # pragma: no cover - arithma optional
+    _ArithmaExpression = None
+
+# arithma 2.0.4 made the unary operations staticmethods taking the
+# operand: a.sqrt() now raises "missing 1 required positional
+# argument". The unbound form below is correct on BOTH the old and
+# the new API, so it does not need a version guard.
 def _arithma_div(a, b):
     return None if a is None or b is None else a / b
 def _arithma_mul(a, b):
@@ -106,15 +115,15 @@ def _arithma_neg(a):
 def _arithma_pow(a, b):
     return None if a is None or b is None else a ** b
 def _arithma_sqrt(a):
-    return None if a is None else a.sqrt()
+    return None if a is None else _ArithmaExpression.sqrt(a)
 def _arithma_exp(a):
-    return None if a is None else a.exp()
+    return None if a is None else _ArithmaExpression.exp(a)
 def _arithma_ln(a):
-    return None if a is None else a.ln()
+    return None if a is None else _ArithmaExpression.ln(a)
 def _arithma_sin(a):
-    return None if a is None else a.sin()
+    return None if a is None else _ArithmaExpression.sin(a)
 def _arithma_cos(a):
-    return None if a is None else a.cos()
+    return None if a is None else _ArithmaExpression.cos(a)
 
 
 class G2GeometryV16(SimulationBase):

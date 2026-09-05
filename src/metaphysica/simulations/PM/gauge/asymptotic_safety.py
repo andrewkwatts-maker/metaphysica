@@ -108,12 +108,21 @@ from metaphysica.simulations.core.eml_integration import (
     eml_exp as _eml_exp,
     eml_neg as _eml_neg,
 )
+try:  # arithma's unary ops moved from instance to static
+    from arithma import Expression as _ArithmaExpression
+except ImportError:  # pragma: no cover - arithma optional
+    _ArithmaExpression = None
+
+# arithma 2.0.4 made the unary operations staticmethods taking the
+# operand: a.sqrt() now raises "missing 1 required positional
+# argument". The unbound form below is correct on BOTH the old and
+# the new API, so it does not need a version guard.
 def _arithma_div(a, b):
     return None if a is None or b is None else a / b
 def _arithma_neg(a):
     return None if a is None else a.neg()
 def _arithma_exp(a):
-    return None if a is None else a.exp()
+    return None if a is None else _ArithmaExpression.exp(a)
 
 
 class AsymptoticSafetySimulation(SimulationBase):
