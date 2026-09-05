@@ -1458,11 +1458,8 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="KK tower contribution to Planck scale from 5D→4D reduction",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(ops.pow(eml_vec('M_5'), eml_scalar(3.0)), "
-                    "ops.mul(eml_vec('R_kk'), ops.pow(eml_vec('M_Pl'), eml_scalar(2.0)))) "
-                    "— KK tower factor M_5^3 / (R_KK M_Pl^2) from 5D→4D Planck scale relation."
-                ),
+                # EML WITHHELD: names M_5, R_kk and M_Pl in a 5D reduction; the first two exist under no
+                # registry path.
             ),
             Parameter(
                 path="gauge.kk_gauge_kinetic_coeff",
@@ -1471,10 +1468,8 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="Gauge kinetic coefficient from KK reduction over G2 compactification radius",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.mul(eml_vec('R_kk'), ops.pow(eml_vec('g_5'), eml_scalar(2.0))) "
-                    "— gauge kinetic coefficient R_KK g_5^2 from dimensional reduction of 5D action."
-                ),
+                # EML WITHHELD: names R_kk and g_5, five-dimensional quantities that exist under no
+                # registry path.
             ),
             Parameter(
                 path="gauge.kk_canonical",
@@ -1512,10 +1507,10 @@ class MasterActionSimulationV22(SimulationBase):
                 bound_type="measured",
                 bound_source="PDG2024",
                 uncertainty=0.0009,
-                eml_description=(
-                    "EML: ops.div(ops.pow(eml_vec('g_s'), eml_scalar(2.0)), "
-                    "ops.mul(eml_scalar(4.0), eml_pi())) — alpha_s = g_s^2/(4pi)."
-                ),
+                # EML WITHHELD: written as g_s^2/(4 pi), but g_s exists under no registry path and is
+                # computed nowhere. alpha_s is what the framework carries, so the
+                # expression is circular: it derives alpha_s from a quantity defined only
+                # as sqrt(4 pi alpha_s).
             ),
             Parameter(
                 path="gauge.qcd_canonical",
@@ -1524,10 +1519,10 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="Boolean flag: QCD (SU(3)_C) gauge fields are canonically normalized",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.inv(eml_vec('alpha_s_inv')) "
-                    "— QCD canonical coupling g_s = 1/α_s⁻¹ at GUT scale."
-                ),
+                # EML WITHHELD: a BOOLEAN flag registering as True (1.0), like gauge.weak_canonical and
+                # gauge.hypercharge_canonical. The expression computed a coupling, so it
+                # compared a number against a yes/no answer -- a mismatch of kind that
+                # cannot be repaired by adjusting either side.
             ),
             Parameter(
                 path="gauge.weak_boson_count",
@@ -1547,10 +1542,12 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="SU(2)_L gauge coupling g_2 from electroweak mixing",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.mul(ops.sqrt(eml_scalar(2.0)), eml_vec('g_weak')) "
-                    "— weak coupling g₂ from SU(2) gauge group."
-                ),
+                # EML WITHHELD: g_2 = 0.6524 is a DECLARED constant, not a derived one:
+                # electroweak_mixing.py sets it from 2*M_W/v and its own comment records
+                # the mixed provenance -- M_W is PDG 2024 while v is this framework's
+                # geometric vev, so it is neither a pure measurement nor a pure
+                # derivation. The old expression, sqrt(2)*g_weak, named a g_weak that no
+                # registry holds.
             ),
             Parameter(
                 path="gauge.weak_canonical",
@@ -1559,10 +1556,14 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="Boolean flag: SU(2)_L gauge fields are canonically normalized",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(eml_vec('g_2'), ops.sqrt(eml_scalar(2.0))) "
-                    "— canonical weak coupling g₂/√2 after SU(2)_L normalization."
-                ),
+                # EML WITHHELD. This parameter is a BOOLEAN flag -- its own
+                # description says so, and it registers as True (1.0). The
+                # expression removed here computed a coupling, g_2/sqrt(2),
+                # and so compared a normalisation constant against a yes/no
+                # answer: 0.4613 versus 1.0. A flag has no derivation, and a
+                # mismatch of KIND cannot be repaired by adjusting either
+                # side. If the canonically normalised coupling is wanted as a
+                # published quantity it needs its own parameter.
             ),
             Parameter(
                 path="gauge.sin2_theta_w_geometric",
@@ -1622,8 +1623,8 @@ class MasterActionSimulationV22(SimulationBase):
                 bound_source="PDG2024",
                 uncertainty=0.0021,
                 eml_description=(
-                    "EML: ops.div(ops.mul(ops.sqrt(ops.add(ops.pow(eml_vec('g_2'), eml_scalar(2.0)), "
-                    "ops.pow(eml_vec('g_prime'), eml_scalar(2.0)))), eml_vec('v')), eml_scalar(2.0)) "
+                    "EML: ops.div(ops.mul(ops.sqrt(ops.add(ops.pow(eml_vec('gauge.weak_coupling_g2'), eml_scalar(2.0)), "
+                    "ops.pow(eml_vec('gauge.hypercharge_coupling_gp'), eml_scalar(2.0)))), eml_vec('geometry.higgs_vev')), eml_scalar(2.0)) "
                     "— M_Z = sqrt(g_2^2 + g'^2) * v / 2 from electroweak symmetry breaking."
                 ),
             ),
@@ -1638,7 +1639,7 @@ class MasterActionSimulationV22(SimulationBase):
                 bound_source="PDG2024",
                 uncertainty=0.0133,
                 eml_description=(
-                    "EML: ops.div(ops.mul(eml_vec('g_2'), eml_vec('v')), eml_scalar(2.0)) "
+                    "EML: ops.div(ops.mul(eml_vec('gauge.weak_coupling_g2'), eml_vec('geometry.higgs_vev')), eml_scalar(2.0)) "
                     "— M_W = g_2 * v / 2 from SU(2)_L symmetry breaking."
                 ),
             ),
@@ -1677,7 +1678,7 @@ class MasterActionSimulationV22(SimulationBase):
                 description="U(1)_Y hypercharge gauge coupling g' from electroweak mixing",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(eml_vec('g_2'), ops.sqrt(eml_vec('sin2_theta_W'))) "
+                    "EML: ops.mul(eml_vec('gauge.weak_coupling_g2'), ops.div(ops.sqrt(eml_scalar(0.22320)), ops.sqrt(ops.sub(eml_scalar(1.0), eml_scalar(0.22320))))) "
                     "— hypercharge coupling g' = g₂ tan(θ_W) from U(1)_Y embedding."
                 ),
             ),
@@ -1688,10 +1689,14 @@ class MasterActionSimulationV22(SimulationBase):
                 status="DERIVED",
                 description="Boolean flag: U(1)_Y hypercharge fields are canonically normalized",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(eml_vec('g_prime'), ops.sqrt(eml_scalar(2.0))) "
-                    "— canonical hypercharge coupling g'/√2 after U(1)_Y normalization."
-                ),
+                # EML WITHHELD. This parameter is a BOOLEAN flag -- its own
+                # description says so, and it registers as True (1.0). The
+                # expression removed here computed a coupling, g'/sqrt(2),
+                # and so compared a normalisation constant against a yes/no
+                # answer: 0.2473 versus 1.0. A flag has no derivation, and a
+                # mismatch of KIND cannot be repaired by adjusting either
+                # side. If the canonically normalised coupling is wanted as a
+                # published quantity it needs its own parameter.
             ),
             # Chirality Reversal (Sprint 2)
             Parameter(
@@ -1705,11 +1710,10 @@ class MasterActionSimulationV22(SimulationBase):
                     "to total spinor space in the dual-shadow architecture."
                 ),
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(eml_vec('Vol_bridge'), eml_vec('Vol_spinor')) "
-                    "— P_reverse ~ Vol_bridge / Vol_spinor ~ 3e-6; "
-                    "cross-shadow chirality flip suppressed by dual-shadow phase-space ratio."
-                ),
+                # EML WITHHELD: names Vol_bridge and Vol_spinor. Neither exists in the registry and
+                # neither is computed -- the same finding as the three gauge cycle volumes
+                # in master_action: a suppression stated to come from a volume ratio, with
+                # no volume behind it.
             ),
         ]
 

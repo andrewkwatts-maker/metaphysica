@@ -1227,7 +1227,10 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="alpha_s(M_Z) from G2 3-cycle volume spectral residue",
-            eml_description="Strong coupling constant alpha_s at the Z-boson mass scale derived from the volume of associative 3-cycles in the G2 manifold",
+            # EML WITHHELD: written as g_s^2/(4 pi), but g_s exists under no registry path and is
+            # computed nowhere. alpha_s is what the framework carries, so the
+            # expression is circular: it derives alpha_s from a quantity defined only
+            # as sqrt(4 pi alpha_s).
             derivation_formula="su3-qcd-lagrangian-g2-v19",
             experimental_bound=0.1179,
             bound_type="measured",
@@ -1265,7 +1268,12 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="SU(2)_L coupling from co-associative 4-cycle volume",
-            eml_description="SU(2)_L gauge coupling g_2 derived from the volume of co-associative 4-cycles in the G2 manifold; related to Weinberg angle by g_2 sin(theta_W) = e",
+            # EML WITHHELD: g_2 = 0.6524 is a DECLARED constant, not a derived one:
+            # electroweak_mixing.py sets it from 2*M_W/v and its own comment records
+            # the mixed provenance -- M_W is PDG 2024 while v is this framework's
+            # geometric vev, so it is neither a pure measurement nor a pure
+            # derivation. The old expression, sqrt(2)*g_weak, named a g_weak that no
+            # registry holds.
             derivation_formula="su2-weak-lagrangian-g2-v19",
             experimental_bound=0.6517,
             bound_type="measured",

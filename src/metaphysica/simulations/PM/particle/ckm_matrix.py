@@ -1346,7 +1346,7 @@ class CKMMatrixSimulation(SimulationBase):
                     "V_cs from the Wolfenstein parametrisation. Computed and "
                     "returned by run(); previously undeclared."
                 ),
-                eml_description="EML: ops.sub(eml_scalar(1.0), ops.mul(eml_scalar(0.5), ops.pow(eml_vec('ckm.lambda_wolfenstein'), eml_scalar(2.0)))) — V_cs = 1 - lambda^2/2 at leading Wolfenstein order",
+                eml_description="EML: ops.sqrt(ops.sub(eml_scalar(1.0), ops.add(ops.pow(eml_vec('ckm.V_cd'), eml_scalar(2.0)), ops.pow(eml_vec('ckm.V_cb'), eml_scalar(2.0))))) — V_cs = sqrt(1 - V_cd^2 - V_cb^2) by second-row unitarity, which is what ckm_matrix.py computes. The previous text gave the leading Wolfenstein form 1 - lambda^2/2 = 0.97511, an approximation the code does not use",
                 derivation_formula="wolfenstein-parametrization",
                 no_experimental_value=True,
             ),

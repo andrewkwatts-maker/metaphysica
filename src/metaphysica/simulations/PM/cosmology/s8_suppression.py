@@ -1688,8 +1688,15 @@ class S8SuppressionV16(SimulationBase):
                 derivation_formula="growth-suppression-factor",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.add(eml_scalar(0.55), ops.mul(eml_scalar(0.005), eml_vec('w0_pm'))) — "
-                    "growth index gamma_PM ≈ 0.55 + 0.005*w0; Linder formula for PM dark energy"
+                    "EML: ops.sub(ops.add(eml_scalar(0.55), ops.mul(eml_scalar(0.02), "
+                    "ops.add(eml_scalar(1.0), eml_vec('cosmology.w0_derived')))), "
+                    "ops.mul(eml_scalar(0.01), eml_vec('cosmology.wa_derived'))) — "
+                    "gamma = 0.55 + 0.02(1+w0) - 0.01 wa, which is the CPL form "
+                    "_compute_growth_index actually returns (its docstring calls it "
+                    "\"the correct formula accounting for early dark energy\"). The "
+                    "previous text used the Linder form 0.55 + 0.005 w0 over a w0_pm "
+                    "that no registry holds, so the row scored against a substituted "
+                    "value and read 0.55 exactly"
                 ),
             ),
             Parameter(
@@ -1718,7 +1725,7 @@ class S8SuppressionV16(SimulationBase):
                 derivation_formula="growth-suppression-factor",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(eml_vec('sigma8'), ops.mul(ops.sqrt(ops.div(eml_vec('Omega_m'), eml_scalar(0.3))), eml_vec('suppression_factor'))) — "
+                    "EML: ops.mul(eml_vec('desi.sigma8'), ops.mul(ops.sqrt(ops.div(eml_vec('desi.Omega_m'), eml_scalar(0.3))), eml_vec('cosmology.s8_suppression_factor'))) — "
                     "S8 baseline from dark energy growth suppression only, before moduli-DM friction"
                 ),
             ),
@@ -1736,7 +1743,7 @@ class S8SuppressionV16(SimulationBase):
                 derivation_formula="s8-friction-suppression",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(ops.div(eml_scalar(1.0), ops.mul(eml_scalar(4.0), eml_vec('pi'))), ops.inv(ops.sqrt(eml_vec('b3')))) — "
+                    "EML: ops.div(eml_vec('geometry.alpha_leak'), ops.mul(eml_scalar(2.0), eml_pi())) — "
                     "beta_eff = alpha_leak/(4pi) * 1/sqrt(b3) from sampler-bridge moduli coupling"
                 ),
             ),
@@ -1769,10 +1776,8 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 derivation_formula="s8-friction-suppression",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.mul(eml_scalar(100.0), ops.sub(ops.exp(ops.neg(ops.mul(eml_vec('beta_eff'), eml_vec('I_z')))), eml_scalar(1.0))) — "
-                    "friction suppression percent = 100*(exp(-beta_eff * I(z)) - 1)"
-                ),
+                # EML WITHHELD: contains I_z, an integral over redshift. Quadrature has no scalar EML
+                # form.
             ),
             Parameter(
                 path="cosmology.s8_tension_kids",
@@ -1793,7 +1798,7 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('S8_PM'), eml_scalar(0.766))), eml_scalar(0.020)) — "
+                    "EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.s8_pm_predicted'), eml_scalar(0.766))), eml_scalar(0.020)) — "
                     "sigma tension = |S8_PM - S8_KiDS| / sigma_KiDS"
                 ),
             ),
@@ -1811,7 +1816,7 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('S8_PM'), eml_scalar(0.776))), eml_scalar(0.017)) — "
+                    "EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.s8_pm_predicted'), eml_scalar(0.776))), eml_scalar(0.017)) — "
                     "sigma tension = |S8_PM - S8_DES| / sigma_DES"
                 ),
             ),
@@ -1827,7 +1832,7 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('S8_PM'), eml_scalar(0.832))), eml_scalar(0.013)) — "
+                    "EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.s8_pm_predicted'), eml_scalar(0.832))), eml_scalar(0.013)) — "
                     "sigma tension = |S8_PM - S8_Planck| / sigma_Planck"
                 ),
             ),
@@ -1879,10 +1884,8 @@ class S8SuppressionV16(SimulationBase):
                     "Quantifies how much better PM fits late-time observations."
                 ),
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(eml_vec('tension_lcdm_avg'), eml_vec('tension_pm_avg')) — "
-                    "improvement = sigma_LCDM / sigma_PM; ratio of tension reductions"
-                ),
+                # EML WITHHELD: a ratio of two AVERAGES over tension arrays. Reductions over indexed
+                # families have no scalar EML form.
             ),
         ]
 

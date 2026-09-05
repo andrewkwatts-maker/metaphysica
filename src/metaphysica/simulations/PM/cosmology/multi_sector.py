@@ -984,7 +984,10 @@ class MultiSectorV16(SimulationBase):
                 status="DERIVED",
                 description="Relative weight of Standard Model sector in multi-sector blend",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(eml_vec('gaussian_weight_sm'), eml_vec('jacobian_sm')) — SM sector Gaussian weight × G2 metric Jacobian at sampling position 0.5"
+                # EML WITHHELD: names gaussian_weight_sm and jacobian_sm. The Jacobian is the np.random
+                # stub -- statistical_rigor_report's own scaffold_notes record that the
+                # 125x27 matrix is random uniform entries, not derivatives -- so any
+                # expression over it would document a seed, not physics.
             ),
             Parameter(
                 path="cosmology.mirror_weight",

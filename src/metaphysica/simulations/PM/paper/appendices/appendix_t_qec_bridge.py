@@ -358,9 +358,9 @@ class AppendixTQECBridge(SimulationBase):
                 description="Mean Hamming weight of stabilizer generators",
                 derivation_formula="syndrome-extraction-formula",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.div(eml_vec('appendix_t.total_weight'), eml_vec('appendix_t.n_stabilizers')) — mean stabilizer weight = total_weight/n_stabilizers"
-                ),
+                # EML WITHHELD: a mean over the stabiliser table -- a reduction over an indexed family,
+                # which has no scalar EML form. total_weight and n_stabilizers were named
+                # under appendix_t.* paths that no registry holds.
             ),
             Parameter(
                 path="appendix_t.syndrome_example_valid",

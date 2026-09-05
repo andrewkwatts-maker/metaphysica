@@ -266,7 +266,10 @@ class AbstractV17_2(SimulationBase):
             # DESI BAO-only w0 uncertainty (2025)
             "abstract.desi_w0_uncertainty":    0.067,
             # Proton lifetime display values (coefficient × 10^34 yr)
-            "abstract.tau_p_display":          round(tau_p / 1e34, 1),         # 4.8
+            # Not rounded: round(x, 1) stored 4.8 for 4.7574, so the row
+            # could only ever agree loosely with its own derivation. The
+            # rendered text still reads "4.8" -- that is the renderer's job.
+            "abstract.tau_p_display":          tau_p / 1e34,
             "abstract.tau_p_bound_display":    round(tau_p_bound / 1e34, 2),   # 1.67
             # Dark force leakage probability
             "abstract.dark_force_pleak":       "6.9\u00d710\u207b\u2078",
@@ -603,7 +606,7 @@ class AbstractV17_2(SimulationBase):
                 units="version",
                 description="Current Principia Metaphysica version number (e.g., '24.2')",
                 status="SYSTEM",
-                eml_description="EML: eml_vec('framework_version') — PM framework version identifier string"
+                # EML WITHHELD: a version STRING. Not a physical quantity and not derived from anything.
             ),
             Parameter(
                 path="framework.version_major",
@@ -612,7 +615,7 @@ class AbstractV17_2(SimulationBase):
                 units="version",
                 description="Major version number only (e.g., '24')",
                 status="SYSTEM",
-                eml_description="EML: eml_vec('framework_version_major') — PM framework major version identifier"
+                # EML WITHHELD: a version number. Not a physical quantity and not derived from anything.
             ),
             Parameter(
                 path="framework.version_label",

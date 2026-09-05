@@ -617,7 +617,7 @@ class AppendixITerminalStates(SimulationBase):
                 units="dimensionless",
                 status="TERMINAL",
                 description="Fraction at full restoration (288/288 = 100%)",
-                eml_description="EML: ops.div(ops.add(eml_vec('active_residues'), eml_vec('hidden_supports')), eml_vec('ancestral_roots'))",
+                eml_description="EML: ops.div(ops.add(eml_vec('registry.node_count'), eml_vec('hidden_supports')), eml_vec('ancestral_roots'))",
                 no_experimental_value=True,
             ),
             Parameter(

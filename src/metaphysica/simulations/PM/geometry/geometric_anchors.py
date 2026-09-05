@@ -1107,7 +1107,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — local H₀ = 73.04 km/s/Mpc (SH0ES 2022 distance ladder)"
                 ),
                 "H0_tension_ratio": (
-                    "EML: ops.div(eml_vec('H0_local'), eml_vec('H0_early'))"
+                    "EML: ops.div(eml_vec('geometry.H0_local'), eml_vec('geometry.H0_early'))"
                     " — Hubble tension ratio H₀_local/H₀_early ≈ 1.084"
                 ),
                 # GUT / string scales
@@ -1165,12 +1165,12 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — CKM |V_us| = k_gimel/(b₃ φ √2) ≈ 0.225 (Cabibbo angle)"
                 ),
                 "V_cb": (
-                    "EML: ops.mul(ops.pow(eml_vec('V_us'), eml_scalar(2.0)),"
+                    "EML: ops.mul(ops.pow(eml_vec('geometry.V_us'), eml_scalar(2.0)),"
                     " eml_scalar(0.81))"
                     " — CKM |V_cb| ≈ A λ² ≈ 0.041 from octonionic triality"
                 ),
                 "V_ub": (
-                    "EML: ops.mul(ops.pow(eml_vec('V_us'), eml_scalar(3.0)),"
+                    "EML: ops.mul(ops.pow(eml_vec('geometry.V_us'), eml_scalar(3.0)),"
                     " eml_scalar(0.33))"
                     " — CKM |V_ub| ≈ A λ³(1-ρ-iη) ≈ 0.0037"
                 ),
@@ -1180,7 +1180,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " from octonionic triality"
                 ),
                 "lambda_Wolfenstein": (
-                    "EML: eml_vec('V_us') — Wolfenstein parameter λ = V_us ≈ 0.225"
+                    "EML: eml_vec('geometry.V_us') — Wolfenstein parameter λ = V_us ≈ 0.225"
                 ),
                 "A_Wolfenstein": (
                     "EML: eml_scalar(0.81) — Wolfenstein parameter A = 0.81"
@@ -1243,9 +1243,13 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — swampland dS parameter λ = 1/√b₃ ≈ 0.204"
                 ),
                 "landscape_entropy": (
-                    "EML: ops.mul(eml_vec('elder_kads'),"
-                    " ops.log(eml_vec('landscape_factorial_b3')))"
-                    " — landscape entropy S = b₃ ln(b₃!) ≈ 1300"
+                    "EML: ops.mul(eml_vec('topology.elder_kads'),"
+                    " ops.log(eml_scalar(6.204484017332394e23)))"
+                    " — landscape entropy S = b₃ ln(b₃!) = 24 ln(24!) ="
+                    " 1314.8335. The operand is 24! written out: EML has no"
+                    " factorial node, and landscape_factorial_b3 was a name no"
+                    " registry held, so the row scored against a substituted"
+                    " value"
                 ),
                 # Experimental reference values
                 "w0_observed_DESI": (
@@ -1321,7 +1325,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "G_F_matched": (
                     "EML: ops.mul(eml_vec('G_F'),"
                     " ops.add(eml_scalar(1.0),"
-                    " ops.div(ops.div(eml_scalar(1.0), eml_vec('alpha_inverse')),"
+                    " ops.div(ops.div(eml_scalar(1.0), eml_vec('geometry.alpha_inverse')),"
                     " ops.mul(eml_scalar(2.0),"
                     " eml_pi()))))"
                     " — Schwinger-corrected Fermi constant G_F × (1+α/2π) (Cert C08b)"
@@ -1361,7 +1365,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — matter fluctuation σ8 = (k_gimel/b₃)×φ ≈ 0.8305"
                 ),
                 "S8": (
-                    "EML: ops.mul(eml_vec('sigma8'),"
+                    "EML: ops.mul(eml_vec('geometry.sigma8'),"
                     " ops.mul(ops.sqrt(ops.div(eml_scalar(0.315), eml_scalar(0.3))),"
                     " ops.sub(eml_scalar(1.0),"
                     " ops.div(eml_scalar(1.0),"

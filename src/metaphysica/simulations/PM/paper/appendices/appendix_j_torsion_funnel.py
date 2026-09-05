@@ -168,7 +168,11 @@ class TorsionFunnelFlow:
         return {
             "entry_pressure": round(entry_pressure, 2),
             "exit_pressure": round(exit_pressure, 2),
-            "compression_ratio": round(compression, 2),
+            # Not rounded. round(compression, 2) published 2.3 for a value
+            # that is exactly 288/125 = 2.304, so every downstream check of
+            # this row could only ever agree to within the rounding. Display
+            # precision belongs to the renderer, not to the registry.
+            "compression_ratio": compression,
             "sterile_angle_deg": round(np.degrees(np.arcsin(active / roots)), 4),
         }
 
@@ -632,7 +636,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 units="fraction",
                 status="DERIVED",
                 description="Fraction of roots that become active residues (43.4%)",
-                eml_description="EML: ops.div(eml_vec('active_residues'), eml_vec('ancestral_roots'))",
+                eml_description="EML: ops.div(eml_vec('registry.node_count'), eml_vec('ancestral_roots'))",
                 no_experimental_value=True,
             ),
             Parameter(
@@ -641,7 +645,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 units="ratio",
                 status="DERIVED",
                 description="Entry pressure / exit pressure at bottleneck",
-                eml_description="EML: ops.div(eml_vec('ancestral_roots'), eml_vec('torsion_pins'))",
+                eml_description="EML: ops.div(eml_vec('topology.ancestral_roots'), eml_vec('registry.node_count')) — compression = (roots/pins)/(active/pins) = roots/active = 288/125 = 2.304. The pin count CANCELS: this ratio does not depend on the 24-pin bottleneck it is described as measuring. The previous expression divided by the pins and gave 12; it named topology.torsion_pins, which no registry held, so the row was reported as missing context and the error was never surfaced",
                 no_experimental_value=True,
             ),
         ]

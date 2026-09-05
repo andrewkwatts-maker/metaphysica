@@ -1759,7 +1759,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula="shadow-asymmetry",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('T1'), eml_vec('T4'))), eml_vec('T1')) — δT = |T1−T4|/T1 = 3/4, normalized shadow asymmetry between dominant and subdominant face moduli",
+                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('geometry.face_moduli_T1'), eml_vec('geometry.face_moduli_T4'))), eml_vec('geometry.face_moduli_T1')) — δT = |T1−T4|/T1 = 3/4, normalized shadow asymmetry between dominant and subdominant face moduli",
             ),
             Parameter(
                 path="geometry.racetrack_stability",

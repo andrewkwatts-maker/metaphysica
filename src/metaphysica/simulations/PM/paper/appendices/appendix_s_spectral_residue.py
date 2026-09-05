@@ -834,7 +834,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.3)",
                 latex=r"\text{Res}(\zeta_{V_7}, s) = \frac{a_{d-2s}(\Delta)}{(4\pi)^{d/2} \, \Gamma(s)}",
                 plain_text="Res(zeta_V7, s) = a_{d-2s}(Delta) / ((4*pi)^{d/2} * Gamma(s))",
-                eml_tree_str="ops.div(eml_vec('a_k'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_vec('d'), eml_scalar(2.0))), eml_vec('Gamma_s')))",
+                eml_tree_str="ops.div(eml_vec('a_k'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_vec('geometry.D_G2'), eml_scalar(2.0)) — pole at d/2 = 7/2, d being the dimension of the G2 manifold), eml_vec('Gamma_s')))",
                 category="ESTABLISHED",
                 description=(
                     "General formula for residues of the spectral zeta function at poles "
@@ -931,7 +931,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 latex=r"\text{Res}(\zeta_{V_7}, 3/2) \propto \chi_{\text{eff}}(V_7) = 144",
                 plain_text="Res(zeta_V7, 3/2) ~ chi_eff(V_7) = 144",
                 # T4 (b): chi_eff = 144 = 6·b3 → expose b3_leaf directly in the residue numerator
-                eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), eml_vec('Gamma_3_2')))",
+                eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), ops.div(ops.sqrt(eml_pi()), eml_scalar(2.0))))",
                 category="DERIVED",
                 description=(
                     "The residue at s = 3/2 is proportional to the effective Euler "
@@ -1123,7 +1123,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 name="Leading Zeta Pole",
                 units="dimensionless",
                 status="FOUNDATIONAL",
-                eml_description="EML: ops.div(eml_vec('d'), eml_scalar(2.0))",
+                eml_description="EML: ops.div(eml_vec('geometry.D_G2'), eml_scalar(2.0)) — pole at d/2 = 7/2, d being the dimension of the G2 manifold",
                 description=(
                     "Position of the leading pole of the spectral zeta function. "
                     "For 7D manifolds: s = d/2 = 7/2 = 3.5."
@@ -1135,7 +1135,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 name="Volume Residue",
                 units="dimensionless",
                 status="DERIVED",
-                eml_description="EML: ops.div(eml_vec('Vol_V7'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(7.0), eml_scalar(2.0))), eml_vec('Gamma_7_2')))",
+                eml_description="EML: ops.div(eml_vec('topology.mephorash_chi'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(7.0), eml_scalar(2.0))), ops.div(ops.mul(eml_scalar(15.0), ops.sqrt(eml_pi())), eml_scalar(8.0)))) — residue normalised to chi_eff, not to a G2 volume: the code reads volume_residue = vol_coefficient * chi_eff and the numerator recovers as exactly 144. Gamma(7/2) = 15*sqrt(pi)/8",
                 description=(
                     "Residue of spectral zeta at s = 7/2, encoding the G2 volume "
                     "and thereby the Planck mass."
@@ -1161,7 +1161,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 name="Euler Residue",
                 units="dimensionless",
                 status="DERIVED",
-                eml_description="EML: ops.div(eml_vec('chi_eff'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), eml_vec('Gamma_3_2')))",
+                eml_description="EML: ops.div(eml_vec('topology.mephorash_chi'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), ops.div(ops.sqrt(eml_pi()), eml_scalar(2.0))))",
                 description=(
                     "Residue at s = 3/2, proportional to effective Euler characteristic "
                     "chi_eff = 144, determining N_gen = 3."

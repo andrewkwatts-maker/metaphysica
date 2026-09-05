@@ -831,7 +831,8 @@ class CosmologyIntroV16(SimulationBase):
                 ),
                 derivation_formula="breathing-mode",
                 no_experimental_value=True,
-                eml_description="EML: ops.exp(ops.neg(eml_vec('T_min'))) — ε_KK = e^{-T_min} = 0.22572 (= 1/Vol ratio) via racetrack stabilization at T_min=1.4885"
+                # EML WITHHELD: names T_min, the racetrack minimum 1.4885, which appears only in prose
+                # and is computed nowhere -- see the note on cosmology.racetrack_Re_T.
             ),
             Parameter(
                 path="cosmology.D_eff_shadow",

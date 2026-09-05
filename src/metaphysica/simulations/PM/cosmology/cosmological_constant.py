@@ -884,7 +884,8 @@ class CosmologicalConstantV16(SimulationBase):
                 ),
                 derivation_formula="g2-entropy-density",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_vec('topology.elder_kads'), ops.log(eml_vec('constants.k_gimel'))), eml_vec('cosmology.V_horizon')) — entropy density s = b3·ln(k_gimel)/V_horizon from Bekenstein-Hawking topology"
+                # EML WITHHELD: divides by cosmology.V_horizon, a volume that exists under no registry
+                # path and is computed nowhere.
             ),
             Parameter(
                 path="cosmology.Lambda_ratio",
@@ -922,7 +923,9 @@ class CosmologicalConstantV16(SimulationBase):
                     "Non-circular replacement for H0-dependent Lambda derivation."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.add(ops.sub(eml_vec('cosmology.V_racetrack'), ops.mul(ops.div(eml_scalar(1.0), eml_vec('topology.elder_kads')), eml_vec('cosmology.rho_sampler'))), ops.mul(eml_vec('cosmology.V_torsion'), ops.exp(ops.neg(eml_vec('cosmology.S_Pneuma'))))) — V_eff(φ) = V_racetrack − ρ_sampler/b3 + V_torsion·exp(−S_Pneuma) dynamical vacuum energy"
+                # EML WITHHELD: built from V_racetrack, rho_sampler and V_torsion, three potentials that
+                # exist under no registry path and are computed nowhere. The expression
+                # named all three and so scored against substituted values.
             ),
             Parameter(
                 path="cosmology.dynamical_classification",

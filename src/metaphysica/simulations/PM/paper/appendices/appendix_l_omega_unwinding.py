@@ -795,7 +795,8 @@ class AppendixLOmegaUnwinding(SimulationBase):
                     "It is the argument of the basin-selection threshold (S < 0.8 selects the "
                     "Gauge Ghost basin) and the complement of terminal.restoration_probability."
                 ),
-                eml_description="EML: ops.mul(eml_vec('current_epoch'), ops.log(ops.div(eml_vec('topology.ancestral_roots'), eml_vec('registry.node_count')))) — unwinding entropy = epoch * ln(288/125)",
+                # EML WITHHELD: depends on current_epoch. A quantity that changes with wall-clock time
+                # is not a fixed scalar and has no stable EML form.
                 no_experimental_value=True,
             ),
             Parameter(

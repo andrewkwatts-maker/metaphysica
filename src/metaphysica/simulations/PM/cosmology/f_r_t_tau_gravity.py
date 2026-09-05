@@ -759,7 +759,7 @@ class FRTTauGravityV18(SimulationBase):
                     "eta_G = Psi/Phi ratio. Modified gravity predicts eta ~ 1.0007, "
                     "a testable deviation from GR (eta = 1 exactly)."
                 ),
-                eml_description="EML: ops.add(eml_scalar(1.0), ops.mul(eml_scalar(2.0), eml_vec('gravity.alpha_F_r2'))) — η_G = 1 + 2α_F (gravitational slip from R² term)",
+                eml_description="EML: ops.add(eml_scalar(1.0), ops.div(eml_vec('gravity.beta_F_trace'), eml_scalar(10.0))) — η_G = 1 + β_F/10, the trace coefficient over the factor of 10 the source applies. The previous text read 1 + 2α_F, a different formula over a different coefficient, and gave 1.00347 against a registered 1.00069",
                 experimental_bound=1.0,
                 bound_type="measured",
                 bound_source="theory_GR",
