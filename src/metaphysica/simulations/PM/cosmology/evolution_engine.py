@@ -942,7 +942,16 @@ class EvolutionEngineV16(SimulationBase):
                 bound_type="central_value",
                 bound_source="Planck2018",
                 uncertainty=0.5,
-                eml_description="EML: ops.div(eml_vec('cosmology.H0_late_evolved'), eml_vec('cosmology.relaxation_z1100')) — H0_early inferred from H(z=1100) / E(z=1100) normalization"
+                # EML WITHHELD. The live path is H(z_cmb)/E(z_cmb),
+                # with H(z_cmb) taken from the interpolated Ricci-flow
+                # evolution -- an ODE solution, which has no closed
+                # scalar form. The previous string described the v14.2
+                # raw formula H0_late/relaxation(1100), which this
+                # method's own docstring says is 'preserved for
+                # compatibility' while 'the interpolated method is
+                # used'. It gave 56.54 against a registered 67.40.
+                # (no eml_description: absence is what withholds a
+                # parameter from the cross-check.)
             ),
             Parameter(
                 path="cosmology.relaxation_z1100",

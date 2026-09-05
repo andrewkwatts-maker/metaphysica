@@ -380,6 +380,32 @@ def _classify(evaluated: float, registered: float, tolerance: float,
     rel = _rel_error(evaluated, registered)
     if rel is not None and rel <= tolerance:
         return "AGREE", ""
+
+    # A relative error is undefined near zero, and dividing by a value that is
+    # itself floating-point noise manufactures a disagreement out of nothing.
+    #
+    # appendix_u.match_sigma is the case that showed it. It is a residual that
+    # is zero BY CONSTRUCTION -- |(2*pi/b3)*gamma_geom - 26/10| divided by the
+    # 5e-7 match tolerance -- and the two sides were 0.0 and 8.88e-10. Those
+    # agree: the numerator behind that 8.88e-10 is 4.44e-16, which is two
+    # units in the last place of a double near 2.6, i.e. exact cancellation.
+    # Relative error still called it a 100% disagreement, because the
+    # denominator was the noise.
+    #
+    # The threshold here is the check's OWN tolerance, not a new number: two
+    # values that both lie within `tolerance` of zero are not distinguishable
+    # from zero, or from each other, by a check that resolves to `tolerance`.
+    # Claiming otherwise would be reporting a precision this comparison does
+    # not have. The diagnostic records that the verdict was reached on
+    # absolute grounds so it is never mistaken for a relative match.
+    if (abs(evaluated) <= tolerance and abs(registered) <= tolerance
+            and abs(evaluated - registered) <= tolerance):
+        return "AGREE", (
+            f"both within the {tolerance:g} tolerance of zero; compared "
+            f"absolutely, since a relative error against a value that small "
+            f"is dominated by representation noise"
+        )
+
     if rel is not None and rel <= loose:
         return "AGREE_LOOSE", f"within {loose:.0%}"
 

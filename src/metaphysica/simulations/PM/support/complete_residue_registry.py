@@ -852,7 +852,17 @@ class CompleteResidueRegistryV18(SimulationBase):
             metadata={
                 "derivation": "Count from FERMION category",
                 "units": "count",
-                "eml_description": "EML: ops.mul(eml_scalar(3.0), ops.mul(eml_scalar(4.0), eml_scalar(2.0))) — fermionic modes: 3 generations × 4 particles × 2 (particle/antiparticle) = 24"
+                # EML WITHHELD: this is len(get_by_category(FERMION)),
+                # a tally of registry entries rather than a derived
+                # quantity. The previous expression asserted
+                # 3 x 4 x 2 = 24, a rationalisation that does not even
+                # match the count it claims to explain (22). A tally
+                # has no derivation; if 22 is wrong then the residue
+                # table is what needs fixing, not a formula describing
+                # it.
+                # (no eml_description: absence is how a parameter is
+                # withheld from the cross-check; a non-"EML:" string is
+                # reported as a malformed expression instead.)
             }
         )
 

@@ -284,7 +284,10 @@ class E7RepresentationSimulation(SimulationBase):
                 description="E₇ quartic invariant on the 56D representation evaluated on the Pneuma condensate pair.",
                 derivation_formula="e7-quartic-invariant",
                 no_experimental_value=True,
-                eml_description="EML: ops.sub(ops.pow(eml_vec('algebra.e7_symplectic'), eml_scalar(2.0)), ops.mul(eml_scalar(4.0), eml_vec('algebra.freudenthal_cubic_norm'), eml_vec('algebra.freudenthal_cubic_norm'))) — quartic q(x,y) = ⟨x,y⟩²−4N(x)N(y)",
+                # EML WITHHELD, for the same reason as algebra.e7_symplectic: the quartic is
+                # built from the same Jordan-27 reductions. The previous string composed the
+                # fallback symplectic with the Freudenthal cubic norm and gave 16.376
+                # against a registered 14.057.
             ),
             Parameter(
                 path="algebra.e7_symplectic",
@@ -293,7 +296,13 @@ class E7RepresentationSimulation(SimulationBase):
                 status="DERIVED",
                 description="Symplectic bilinear form on the 56D E₇ representation (Jordan inner product).",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(eml_scalar(3.0), ops.pow(ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)), eml_scalar(2.0))) — symplectic form ⟨x,y⟩ = 3s² with s=b₃/27",
+                # EML WITHHELD. symplectic_form() is x.bilinear_form(y) over Jordan-27
+                # elements built from the Pneuma condensate -- a pairing summed over 27
+                # components, i.e. a reduction over an indexed family, which has no scalar
+                # EML form. The previous string, 3*(b3/27)^2 = 2.370, described the
+                # ImportError FALLBACK path, not the eml_spectral computation that actually
+                # runs and returns 6.6623. An expression documenting a branch the code does
+                # not take is worse than none.
             ),
             Parameter(
                 path="algebra.e7_alp_mass_gev",

@@ -921,18 +921,24 @@ if _SCHEMA_AVAILABLE:
                     description="Shannon entropy of branch probability distribution (SPECULATIVE)",
                     derivation_formula="four-dice-branch-count",
                     no_experimental_value=True,
-                    eml_description=(
-                        # Was -0.25*ln(0.25) = 0.3466: one term of a 4-branch sum, in
-                        # nats, for a distribution that has DICE_MODULUS**NUM_DICE = 256
-                        # branches and units of bits. The ideal uniform value is
-                        # H = log2(4**4) = 8 bits. The registered value is a 1000-sample
-                        # Monte Carlo estimate (seed 24) and sits ~2.7% below the ideal
-                        # through finite-sample bias, so this expression is NOT expected
-                        # to reproduce it exactly.
-                        "EML: ops.div(ops.log(ops.pow(eml_scalar(4.0), eml_scalar(4.0))), "
-                        "ops.log(eml_scalar(2.0))) "
-                        "— H = log₂(4⁴) = 8 bits, uniform limit over all 256 branches"
-                    ),
+                    # EML WITHHELD. The registered value is the Shannon
+                    # entropy of the branch distribution: a sum of p*log2(p)
+                    # over 256 branches, estimated by 1000-sample Monte Carlo
+                    # (seed 24). A reduction over an indexed family has no
+                    # scalar EML form, and a seeded estimate is not a closed
+                    # expression at all.
+                    #
+                    # The previous string gave the UNIFORM LIMIT,
+                    # H = log2(4^4) = 8 bits, against a registered 7.789 --
+                    # and its own comment conceded the expression "is NOT
+                    # expected to reproduce it exactly". An expression
+                    # published in the knowledge that it disagrees with the
+                    # value it annotates is not documentation; the earlier
+                    # -0.25*ln(0.25) = 0.3466 was worse still, being one term
+                    # of the sum, in nats, against a value in bits.
+                    # (no eml_description: absence is what withholds a
+                    # parameter from the cross-check. The uniform limit, for
+                    # reference, is log2(4^4) = 8 bits.)
                 ),
             ]
 

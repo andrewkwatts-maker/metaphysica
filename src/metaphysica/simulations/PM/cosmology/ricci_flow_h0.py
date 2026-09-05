@@ -848,12 +848,35 @@ class RicciFlowH0V16(SimulationBase):
                 units="dimensionless",
                 status="PREDICTED",
                 description=(
-                    f"Redshift where H(z) interpolation is steepest: "
-                    f"z_* = {z_trans:.2f}. Corresponds to Ricci flow timescale."
+                    f"Redshift of the inflection in H(z) -- where the curve "
+                    f"BENDS: z_* = {z_trans:.4f}. It agrees to 1.4% with the "
+                    f"Ricci flow timescale tau = k_gimel/b3 = 0.5133, which "
+                    f"is the substantive result, and it is stable across "
+                    f"integration bounds (0.5205 / 0.5205 / 0.5005 for "
+                    f"z_max = 10 / 20 / 50). "
+                    f"This description previously read 'where H(z) is "
+                    f"steepest', and that is what the code took: "
+                    f"argmax|dH/dz| over a monotonically steepening curve, "
+                    f"which is always the RIGHT EDGE of the grid. The "
+                    f"published value was therefore exactly z_max = 10.0 -- "
+                    f"the integration bound, not a redshift -- while the "
+                    f"module docstring said 0.5-1.0 and nothing compared the "
+                    f"two."
                 ),
                 derivation_formula="hubble-tension-resolution",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('geometry.k_gimel'), eml_scalar(24.0)) — z_* = tau = k_gimel/b3 ~ 0.51, transition redshift from Ricci flow timescale"
+                # EML WITHHELD. This value is located NUMERICALLY: it is
+                # the extremum of the second derivative of an ODE solution,
+                # which has no closed scalar form.
+                #
+                # tau = k_gimel/b3 = 0.5133 is a separate THEORETICAL
+                # prediction, and the numerical inflection (0.5205, stable
+                # across integration bounds of 10, 20 and 50) confirms it to
+                # 1.4%. That agreement is a result and is stated in the
+                # description above; publishing tau as this parameter's
+                # derivation would conflate a prediction with the measurement
+                # that confirms it, and would report a 1.4% modelling
+                # agreement as though it were an exact identity.
             ),
             Parameter(
                 path="cosmology.H0_tension_sigma",
@@ -865,7 +888,16 @@ class RicciFlowH0V16(SimulationBase):
                     "Values < 2 indicate tension resolution."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.max(ops.div(ops.abs(ops.sub(eml_vec('cosmology.H0_local'), eml_scalar(73.04))), eml_scalar(1.04)), ops.div(ops.abs(ops.sub(eml_vec('cosmology.H0_early'), eml_scalar(67.4))), eml_scalar(0.5))) — max sigma from SH0ES and Planck targets"
+                # The expression named the WRONG H0. run() divides
+                # self.H0_local -- this module's own computed value,
+                # which registers as cosmology.H0_ricci_variant
+                # (76.34) -- not cosmology.H0_local, which is the
+                # O'Dowd composite (71.55) that this module does not
+                # use here. The anchors are also registry rows, not
+                # literals. Corrected: |76.339-73.04|/1.04 = 3.1725,
+                # which is the registered value; the old string gave
+                # 1.4326.
+                eml_description="EML: ops.max(ops.div(ops.abs(ops.sub(eml_vec('cosmology.H0_ricci_variant'), eml_vec('geometry.H0_local'))), eml_scalar(1.04)), ops.div(ops.abs(ops.sub(eml_vec('cosmology.H0_early'), eml_vec('geometry.H0_early'))), eml_scalar(0.5))) — max sigma of this module's Ricci-flow H0 from the SH0ES anchor and of its early H0 from the Planck anchor"
             ),
             Parameter(
                 path="cosmology.ricci_flow_rate",
