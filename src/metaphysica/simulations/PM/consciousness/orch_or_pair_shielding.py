@@ -862,6 +862,8 @@ if _SCHEMA_AVAIL:
                 "consciousness.penrose_tau_ms",
                 "consciousness.shielded_tau_ms",
                 "consciousness.shielding_factor",
+                "consciousness.penrose_E_G_joules",
+                "consciousness.tau_base_ms",
             ]
 
         @property
@@ -879,6 +881,13 @@ if _SCHEMA_AVAIL:
                 "consciousness.penrose_tau_ms": result_6.tau_coherence * 1000,
                 "consciousness.shielded_tau_ms": result_12.tau_effective * 1000,
                 "consciousness.shielding_factor": result_12.shielding_factor,
+                # Registered because penrose_tau_ms is DEFINED as hbar/E_G and
+                # shielded_tau_ms as tau_base*shielding_factor: both operands were
+                # named in the eml_descriptions but existed in no registry, so the
+                # two relations could not be checked against anything.
+                "consciousness.penrose_E_G_joules": result_6.E_G,
+                "consciousness.tau_base_ms": min(result_12.tau_coherence,
+                                                result_12.tau_decoherence) * 1000,
             }
 
         def get_output_param_definitions(self):
@@ -892,8 +901,10 @@ if _SCHEMA_AVAIL:
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,
                     eml_description=(
-                        "EML: ops.mul(ops.div(eml_scalar(1.054571817e-34), E_G_6pairs), "
-                        "eml_scalar(1000.0)) — τ_Penrose = ℏ/E_G in ms at 6 active pairs (baseline)"
+                        "EML: ops.mul(ops.div(eml_scalar(1.055e-34), "
+                        "eml_vec('consciousness.penrose_E_G_joules')), eml_scalar(1000.0)) — "
+                        "τ_Penrose = ℏ/E_G in ms at 6 active pairs (baseline); ℏ = 1.055e-34 J·s "
+                        "is the module constant HBAR"
                     ),
                 ),
                 _Param(
@@ -905,9 +916,43 @@ if _SCHEMA_AVAIL:
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,
                     eml_description=(
-                        "EML: ops.mul(tau_base_ms, eml_vec('consciousness.shielding_factor')) — "
-                        "τ_shielded = τ_base·shielding_factor at 12 pairs; SPECULATIVE k=2.5 FITTED"
+                        "EML: ops.mul(eml_vec('consciousness.tau_base_ms'), "
+                        "eml_vec('consciousness.shielding_factor')) — "
+                        "τ_shielded = τ_base·shielding_factor at 12 pairs, τ_base = "
+                        "min(τ_Penrose, τ_decoherence); SPECULATIVE k=2.5 FITTED"
                     ),
+                ),
+                _Param(
+                    path="consciousness.penrose_E_G_joules",
+                    name="Gravitational Self-Energy (6-pair baseline)",
+                    units="joules",
+                    status="PREDICTED",
+                    description=(
+                        "Penrose-Diosi gravitational self-energy E_G of the 1000-tubulin "
+                        "superposition; sets τ_Penrose = ℏ/E_G (SPECULATIVE context)"
+                    ),
+                    derivation_formula="pair-shielding-enhancement",
+                    no_experimental_value=True,
+                    eml_description=(
+                        "EML: ops.div(ops.mul(eml_scalar(6.674e-11), ops.pow(ops.mul("
+                        "eml_scalar(1000.0), eml_scalar(1.826e-22)), eml_scalar(2.0))), "
+                        "eml_scalar(8e-9)) — E_G = G·(N·m_tubulin)²/d with N = 1000 tubulins, "
+                        "m_tubulin = 110 kDa = 1.826e-22 kg and d = 8 nm dimer spacing "
+                        "(module constants G, TUBULIN_MASS, TUBULIN_SEPARATION)"
+                    ),
+                ),
+                _Param(
+                    path="consciousness.tau_base_ms",
+                    name="Unshielded Base Coherence Time (12 pairs)",
+                    units="milliseconds",
+                    status="PREDICTED",
+                    description=(
+                        "Base coherence time before pair shielding, τ_base = "
+                        "min(τ_Penrose, τ_decoherence); in the wet regime the environmental "
+                        "term wins (SPECULATIVE context)"
+                    ),
+                    derivation_formula="pair-shielding-enhancement",
+                    no_experimental_value=True,
                 ),
                 _Param(
                     path="consciousness.shielding_factor",

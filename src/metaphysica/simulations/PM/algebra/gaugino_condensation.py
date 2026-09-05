@@ -543,11 +543,15 @@ class GauginoCondensationSimulation(SimulationBase):
                 status="DERIVED",
                 description="Analytic racetrack minimum T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ=2π/Nᵢ.",
                 eml_description=(
-                    "EML: ops.div(ops.log(ops.div(eml_vec('a2'), eml_vec('a1'))), "
-                    "ops.add(eml_vec('a2'), ops.neg(eml_vec('a1')))) "
-                    "where a1=ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)), "
-                    "a2=ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)) "
-                    "— T_min = ln(a₂/a₁)/(a₂−a₁) modulus at racetrack potential minimum"
+                    # a1 = 2pi/N1 and a2 = 2pi/N2 are inlined rather than named in a
+                    # trailing "where" clause: the clause was prose, not EML, so a1 and
+                    # a2 were unbound and the expression evaluated with 0.0 for both.
+                    "EML: ops.div(ops.log(ops.div("
+                    "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
+                    "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))), "
+                    "ops.sub(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
+                    "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))) "
+                    "— T_min = ln(a₂/a₁)/(a₂−a₁) with aᵢ = 2π/Nᵢ, N₁=24, N₂=23"
                 ),
                 no_experimental_value=True,
             ),
@@ -584,8 +588,10 @@ class GauginoCondensationSimulation(SimulationBase):
                 derivation_formula="gaugino-cabibbo-derived",
                 eml_description=(
                     "EML: ops.pow(ops.abs(ops.add("
-                    "ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(eml_vec('T_min'), eml_scalar(24)))))), "
-                    "ops.neg(ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(eml_vec('T_min'), eml_scalar(23))))))))), "
+                    # 'T_min' is not a registry name; the modulus is registered at
+                    # algebra.gaugino_racetrack_T_min and is referenced by full path.
+                    "ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(eml_vec('algebra.gaugino_racetrack_T_min'), eml_scalar(24)))))), "
+                    "ops.neg(ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(eml_vec('algebra.gaugino_racetrack_T_min'), eml_scalar(23))))))))), "
                     "ops.inv(eml_scalar(3)))"
                 ),
                 experimental_bound=0.22500,

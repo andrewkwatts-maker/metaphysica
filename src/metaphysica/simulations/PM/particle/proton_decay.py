@@ -694,7 +694,15 @@ class ProtonDecaySimulation(SimulationBase):
                     "Predicted proton lifetime from TCS geometric suppression. "
                     "Includes cycle separation selection rule and GUT unification scale."
                 ),
-                eml_description="EML: ops.mul(C_prefactor, ops.mul(ops.pow(M_GUT_ratio, eml_scalar(4.0)), ops.mul(ops.pow(alpha_ratio, eml_scalar(2.0)), S))) — Super-K bound >2.4e34 yr",
+                eml_description=(
+                    "EML: ops.mul(eml_scalar(3.82e33), ops.mul(ops.pow(ops.div("
+                    "eml_vec('gauge.M_GUT_GEOMETRIC'), eml_scalar(1e16)), eml_scalar(4.0)), "
+                    "ops.mul(ops.pow(ops.div(eml_scalar(0.03), eml_vec('gauge.ALPHA_GUT_GEOMETRIC')), "
+                    "eml_scalar(2.0)), eml_vec('proton_decay.suppression_factor')))) — "
+                    "τ_p = C·(M_GUT/10¹⁶)⁴·(0.03/α_GUT)²·S with C = C_PREFACTOR = 3.82e33 yr "
+                    "(calibrated to SU(5), see module header). The former C_prefactor/M_GUT_ratio/"
+                    "alpha_ratio/S operands named nothing in the registry. Super-K bound >2.4e34 yr"
+                ),
                 derivation_formula="proton-lifetime",
                 experimental_bound=2.4e34,
                 bound_type="lower",

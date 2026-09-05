@@ -961,7 +961,31 @@ class CompleteResidueRegistryV18(SimulationBase):
                     "derivation": "Dimension-6 operators with G2 instanton suppression",
                     "units": "years",
                     "note": "Testable by Hyper-K (sensitivity to 10^35 yr)",
-                    "eml_description": "EML: ops.pow(ops.div(eml_vec('M_GUT_G2'), eml_vec('m_proton')), eml_scalar(4.0)) — proton lifetime from dimension-6 operator suppressed by M_GUT^4 with G2 instanton factor"
+                    # (M_GUT/m_p)^4 = 3.05e68 is dimensionless and is not the
+                    # lifetime this module computes. The module computes
+                    #   tau_base_gev = M_GUT_eff^4 / (alpha_GUT^2 * m_p^5)   [GeV^-1]
+                    #   tau_yr       = tau_base_gev * hbar_s / 3.15e7        [years]
+                    # with alpha_GUT = 0.04 and hbar_s = 6.582e-25 GeV*s, giving
+                    # tau_p ~ 4.24e39 yr. The registered value is 1e34 -- see the note
+                    # below: the set_param call reads the Super-K experimental field,
+                    # not the computed prediction, so this expression will DISAGREE
+                    # until that is fixed. Left disagreeing on purpose.
+                    "eml_description": (
+                        "EML: ops.div(ops.mul(ops.div("
+                        "ops.pow(eml_vec('spectral.M_GUT_G2'), eml_scalar(4.0)), "
+                        "ops.mul(ops.pow(eml_scalar(0.04), eml_scalar(2.0)), "
+                        "ops.pow(eml_vec('constants.m_proton'), eml_scalar(5.0)))), "
+                        "eml_scalar(6.582e-25)), eml_scalar(3.15e7)) "
+                        "— tau_p = M_GUT_eff⁴/(α_GUT² m_p⁵) × ħ / (3.15e7 s/yr), "
+                        "dimension-6 operator with G₂ instanton suppression"
+                    ),
+                    "note_value_provenance": (
+                        "REGISTERED VALUE IS THE EXPERIMENTAL LIMIT, NOT THE PREDICTION. "
+                        "The enclosing block does `tau_yr = tau_p.experimental_mass if "
+                        "tau_p.experimental_mass else 1e34`, which shadows the computed "
+                        "tau_yr with the Super-K bound 1e34 yr. The module's own "
+                        "computation gives ~4.24e39 yr."
+                    )
                 }
             )
 

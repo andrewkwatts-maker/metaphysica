@@ -108,6 +108,10 @@ _OUTPUT_PARAMS = [
     "portals.sterile_mixing_sin2_2theta",
     "portals.sterile_mass_scale_gev",
     "portals.sterile_n_eff_contribution",
+    # Registered because sin^2(2*theta) is DEFINED in terms of the Dirac
+    # Yukawa y_as = alpha_leak, and that operand existed in no registry --
+    # geometry.alpha_leak is 1/sqrt(6) = 0.408, a different quantity.
+    "portals.alpha_leak_yukawa",
 ]
 
 # Output formula IDs
@@ -504,6 +508,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
             "portals.sterile_mixing_sin2_2theta": result.sin2_2theta,
             "portals.sterile_mass_scale_gev": result.M_s,
             "portals.sterile_n_eff_contribution": result.delta_n_eff,
+            "portals.alpha_leak_yukawa": result.y_as,
             "_m_nu_eff_eV": result.m_nu_eff,
             "_y_as": result.y_as,
             "_n_sterile_per_face": result.n_sterile_per_face,
@@ -684,9 +689,15 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "ops.mul(M_Planck, ops.exp(ops.neg(ops.div(T_modulus, eml_scalar(2.0)))))"
                 ),
                 eml_description=(
-                    "EML: ops.mul(M_KK, ops.sqrt(alpha_leak)) — sterile mass from portal; "
-                    "equivalently ops.mul(M_Planck, ops.exp(ops.neg(ops.div(T_i, eml_scalar(2.0))))) "
-                    "— Majorana mass from hidden-face moduli suppression"
+                    # M_KK and alpha_leak are not registry names and were left unbound;
+                    # the expression is the module's own M_s = M_Pl*exp(-T_i/2).
+                    "EML: ops.mul(eml_scalar(1.22e19), ops.exp(ops.neg(ops.div("
+                    "ops.mul(eml_scalar(2.0), ops.log(ops.div(eml_scalar(1.22e19), eml_scalar(1.0e4)))), "
+                    "eml_scalar(2.0))))) "
+                    "— M_s = M_Pl·exp(−T_i/2) with T_i = 2·ln(M_Pl/10⁴ GeV). "
+                    "NOTE: _compute_hidden_face_modulus() defines T_i from the "
+                    "TARGET M_s = 10⁴ GeV, so this relation is circular and returns "
+                    "the target by construction — it is an assumed scale, not a derivation."
                 ),
                 terms={
                     "M_Pl": "Planck mass = 1.22e19 GeV",
@@ -822,11 +833,42 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 bound_source="IceCube/MINOS+ 2024",
                 uncertainty=None,
                 eml_description=(
-                    "FALSIFIED: sin²(2θ) = 1/b₃ = 1/24 ≈ 0.0417 (torsion geometry claim). "
-                    "Exceeds IceCube/MINOS+ 2024 upper bound of 0.01 by ~4.2×. "
-                    "Claim excluded by data; kept on record per falsification policy (see SCALE_DISAGREEMENTS.md §4). "
-                    "Registered value 4.28e-05 derives from bridge-mediated type-I seesaw: "
-                    "sin²(2θ) = 4 y_as² v_higgs² / M_s² × (volume suppression) × (KK suppression)."
+                    "EML: ops.mul(ops.mul(ops.div(ops.mul(eml_scalar(4.0), ops.mul(ops.pow("
+                    "eml_vec('portals.alpha_leak_yukawa'), eml_scalar(2.0)), ops.pow("
+                    "eml_scalar(246.0), eml_scalar(2.0)))), ops.pow(eml_vec("
+                    "'portals.sterile_mass_scale_gev'), eml_scalar(2.0))), ops.div(eml_vec("
+                    "'topology.elder_kads'), eml_vec('geometry.chi_eff_sector'))), ops.exp("
+                    "ops.neg(ops.mul(eml_pi(), eml_vec('portals.alpha_leak_yukawa'))))) — "
+                    "sin²(2θ) = 4·y_as²·v²/M_s² × (b₃/χ_eff) × exp(−π·y_as), the "
+                    "bridge-mediated type-I seesaw value the module computes. "
+                    "SUPERSEDED CLAIM, kept on record per falsification policy "
+                    "(SCALE_DISAGREEMENTS.md §4): sin²(2θ) = 1/b₃ = 1/24 ≈ 0.0417 (torsion "
+                    "geometry) exceeds the IceCube/MINOS+ 2024 upper bound of 0.01 by ~4.2× "
+                    "and is excluded by data."
+                ),
+            ),
+            Parameter(
+                path="portals.alpha_leak_yukawa",
+                name="Bridge Portal Coupling (Dirac Yukawa y_as)",
+                units="dimensionless",
+                status="PREDICTED",
+                description=(
+                    "Inter-face leakage coupling alpha_leak identified with the Dirac "
+                    "Yukawa y_as of the active-sterile portal.  Distinct from "
+                    "geometry.alpha_leak = 1/sqrt(6) = 0.408: this is the geometric mean "
+                    "of that base with the torsion- and bridge-corrected volume ratio."
+                ),
+                derivation_formula="portal-sterile-mixing-v23",
+                no_experimental_value=True,
+                eml_description=(
+                    "EML: ops.sqrt(ops.mul(ops.mul(ops.mul(ops.inv(ops.sqrt(ops.div(eml_vec("
+                    "'geometry.chi_eff_sector'), eml_vec('topology.elder_kads')))), ops.div("
+                    "ops.sub(eml_vec('topology.elder_kads'), eml_scalar(1.0)), eml_vec("
+                    "'topology.elder_kads'))), ops.sqrt(ops.div(eml_vec('geometry.chi_eff_sector'), "
+                    "ops.sub(eml_vec('geometry.chi_eff_sector'), eml_vec('topology.elder_kads'))))), "
+                    "ops.inv(ops.sqrt(eml_scalar(6.0))))) — y_as = sqrt( (1/sqrt(χ_eff/b₃)) · "
+                    "((b₃−1)/b₃) · sqrt(χ_eff/(χ_eff−b₃)) · 1/sqrt(6) ) with χ_eff = 72 "
+                    "per-shadow and b₃ = 24"
                 ),
             ),
             Parameter(
@@ -843,7 +885,13 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 derivation_formula="portal-sterile-mass-v23",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(M_KK, ops.sqrt(alpha_leak)) — sterile mass from portal"
+                    "EML: ops.mul(eml_scalar(1.22e19), ops.exp(ops.neg(ops.div("
+                    "ops.mul(eml_scalar(2.0), ops.log(ops.div(eml_scalar(1.22e19), eml_scalar(1.0e4)))), "
+                    "eml_scalar(2.0))))) "
+                    "— M_s = M_Pl·exp(−T_i/2) with T_i = 2·ln(M_Pl/10⁴ GeV). "
+                    "NOTE: _compute_hidden_face_modulus() defines T_i from the "
+                    "TARGET M_s = 10⁴ GeV, so this relation is circular and returns "
+                    "the target by construction — it is an assumed scale, not a derivation."
                 ),
             ),
             Parameter(
@@ -863,7 +911,19 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 bound_source="Planck2018",
                 uncertainty=0.23,
                 eml_description=(
-                    "EML: ops.mul(eml_scalar(0.027), eml_vec('portals.sterile_mixing_sin2_2theta')) — ΔN_eff contribution from sterile neutrino portal"
+                    # The 0.027 prefactor appears nowhere in compute_sterile_portals().
+                    # The module computes delta_N_eff = n_sterile_eff * sin2_2theta * F_DW
+                    # with n_sterile_eff = n_hidden_faces * (2*chi_eff/48) * alpha_leak
+                    # and F_DW = chi_eff/(4*pi*b3); alpha_leak here is this module's local
+                    # sqrt(sqrt(0.5)*(23/24)/sqrt(6)) = 0.5260, NOT geometry.alpha_leak.
+                    "EML: ops.mul(ops.mul(eml_scalar(3.0), ops.mul("
+                    "ops.div(eml_scalar(144.0), eml_scalar(48.0)), "
+                    "ops.sqrt(ops.div(ops.mul(ops.sqrt(eml_scalar(0.5)), "
+                    "ops.div(eml_scalar(23.0), eml_scalar(24.0))), ops.sqrt(eml_scalar(6.0)))))), "
+                    "ops.mul(eml_vec('portals.sterile_mixing_sin2_2theta'), "
+                    "ops.div(eml_scalar(72.0), ops.mul(ops.mul(eml_scalar(4.0), eml_pi()), "
+                    "eml_vec('topology.elder_kads'))))) "
+                    "— ΔN_eff = n_sterile_eff · sin²(2θ) · F_DW (Dodelson-Widrow)"
                 ),
             ),
         ]

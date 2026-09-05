@@ -577,7 +577,7 @@ class YukawaTexturesV18(SimulationBase):
                 "derivation": "J = sin(delta_CP) * lambda_12 * lambda_23 * lambda_13^2",
                 "note": "v19.0: From texture N-values and G2 triality phase",
                 "units": "dimensionless",
-                "eml_description": "EML: ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.mul(eml_vec('lambda_12'), ops.mul(eml_vec('lambda_23'), ops.pow(eml_vec('lambda_13'), eml_scalar(2.0))))) — J = sin(π/6)·λ_12·λ_23·λ_13² Jarlskog invariant from G₂ triality phase"
+                "eml_description": "EML: ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.mul(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(7.0), eml_scalar(2.0)))), ops.mul(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(8.0), eml_scalar(2.0)))), ops.pow(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(15.0), eml_scalar(2.0)))), eml_scalar(2.0))))) — J = sin(π/6)·λ₁₂·λ₂₃·λ₁₃² with λ_ij = φ^(-ΔN_ij/2), ΔN₁₂=7, ΔN₂₃=8, ΔN₁₃=15 from the runtime phi-fit quark N values; λ_12/23/13 are derivation-local and are expanded here in terms of geometry.phi"
             }
         )
 
@@ -796,7 +796,7 @@ class YukawaTexturesV18(SimulationBase):
                     "With runtime φ-fit N values J_geometric ≈ 9.9e-6, agreeing with "
                     "PDG J = 3.08e-5 at order of magnitude only (factor ~3 low)."
                 ),
-                eml_description="EML: ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.mul(eml_vec('lambda_12'), ops.mul(eml_vec('lambda_23'), ops.pow(eml_vec('lambda_13'), eml_scalar(2.0))))) — J = sin(δ_CP) × λ_12 × λ_23 × λ_13² from G2 triality phase and phi-scaling CKM mixing angles",
+                eml_description="EML: ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.mul(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(7.0), eml_scalar(2.0)))), ops.mul(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(8.0), eml_scalar(2.0)))), ops.pow(ops.inv(ops.pow(eml_vec('geometry.phi'), ops.div(eml_scalar(15.0), eml_scalar(2.0)))), eml_scalar(2.0))))) — J = sin(π/6)·λ₁₂·λ₂₃·λ₁₃² with λ_ij = φ^(-ΔN_ij/2), ΔN₁₂=7, ΔN₂₃=8, ΔN₁₃=15 from the runtime phi-fit quark N values; λ_12/23/13 are derivation-local and are expanded here in terms of geometry.phi",
                 no_experimental_value=False,
                 experimental_bound=3.08e-5,
                 uncertainty=0.15e-5,

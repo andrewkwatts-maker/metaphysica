@@ -1664,10 +1664,16 @@ class NeutrinoMixingSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="NuFIT6.0",
                 eml_description=(
-                    "EML: ops.mul(eml_pi(), ops.add("
-                    "ops.div(ops.add(n_gen, b2), ops.mul(eml_scalar(2.0), n_gen)), "
-                    "ops.div(n_gen, b3))) + FITTED +45.9° parity offset (δ_parity) "
-                    "— CALIBRATED to NuFIT 6.0 IO"
+                    # The pi-prefactor gives radians while the parameter is in degrees,
+                    # and the FITTED +45.9 deg parity offset was prose outside the
+                    # expression. Both are folded in: pi rad -> 180 deg.
+                    "EML: ops.add(ops.mul(eml_scalar(180.0), ops.add("
+                    "ops.div(ops.add(eml_vec('topology.n_gen'), eml_vec('topology.b2')), "
+                    "ops.mul(eml_scalar(2.0), eml_vec('topology.n_gen'))), "
+                    "ops.div(eml_vec('topology.n_gen'), eml_vec('topology.elder_kads')))), "
+                    "eml_scalar(45.9)) "
+                    "— δ_CP = 180°·((n_gen+b₂)/(2 n_gen) + n_gen/b₃) + δ_parity, "
+                    "δ_parity = +45.9° FITTED — CALIBRATED to NuFIT 6.0 IO"
                 ),
                 validation={
                     "experimental_value": nufit_delta_cp_io[0],
@@ -1687,7 +1693,16 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Lightest neutrino mass eigenstate in Normal Ordering, or heavy eigenstate in Inverted Ordering",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Individual neutrino masses not directly measured
-                eml_description="EML: ops.exp(ops.neg(ops.mul(eml_scalar(2.0), eml_vec('neutrino.k_gimel')))) — m₁ = exp(−2k_gimel) lightest neutrino mass from spectral gap",
+                eml_description=(
+                    # ops.exp(-2*k_gimel) = 0.049787 agrees with the registered
+                    # 0.049233 to 1.1% by coincidence; it is NOT the derivation.
+                    # derive_inverted_masses() sets m1 = sqrt(m2^2 - dm2_21_target)
+                    # with dm2_21_target = 7.42e-5 eV^2 and m2 built on the FITTED
+                    # m_base = 0.049906 eV.
+                    "EML: ops.sqrt(ops.sub(ops.pow(eml_vec('neutrino.m2'), eml_scalar(2.0)), "
+                    "eml_scalar(7.42e-5))) "
+                    "— m₁ = √(m₂² − Δm²₂₁); heavy IO eigenstate, FITTED via m_base"
+                ),
                 validation={
                     "bound_type": "indirect",
                     "status": "THEORETICAL",
@@ -1719,7 +1734,15 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Heaviest neutrino mass eigenstate in Normal Ordering, or light eigenstate in Inverted Ordering",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Individual neutrino masses not directly measured
-                eml_description="EML: ops.sqrt(ops.add(ops.pow(eml_vec('neutrino.m1'), eml_scalar(2.0)), eml_vec('delta_m31_sq'))) — m₃ = √(m₁²+Δm²₃₁)",
+                eml_description=(
+                    # sqrt(m1^2 + dm2_31) is the Normal-Ordering formula; this module
+                    # runs Inverted Ordering, where m3 is the LIGHT state set by the
+                    # C_kaf flux suppression: m3 = C_kaf * 1e-3 eV, C_kaf = b3/(b2*n_gen).
+                    "EML: ops.mul(ops.div(eml_vec('topology.elder_kads'), "
+                    "ops.mul(eml_vec('topology.b2'), eml_vec('topology.n_gen'))), "
+                    "eml_scalar(1.0e-3)) "
+                    "— m₃ = C_kaf × 10⁻³ eV with C_kaf = b₃/(b₂·n_gen) = 2 (light IO state)"
+                ),
                 validation={
                     "bound_type": "indirect",
                     "status": "THEORETICAL",
@@ -1830,7 +1853,15 @@ class NeutrinoMixingSimulation(SimulationBase):
                 description="Geometric seesaw scale parameter from G2 topology: k_gimel = chi_eff / (b2 * b3)",
                 derivation_formula="neutrino-mass-spectrum",
                 no_experimental_value=True,  # Pure topological parameter, not experimentally measurable
-                eml_description="EML: ops.div(chi_eff, ops.mul(b2, b3)) — k_gimel = χ/(b₂·b₃) = 144/(4·24) = 1.5 (this module's local k_gimel — name collision with the Higgs-VEV k_gimel = b₃/2 + 1/π ≈ 12.318)",
+                eml_description=(
+                    # Bare chi_eff resolves to the per-shadow seed 72; this module's
+                    # chi is the full-manifold 144 held at topology.mephorash_chi.
+                    # Every operand is qualified by full registry path.
+                    "EML: ops.div(eml_vec('topology.mephorash_chi'), "
+                    "ops.mul(eml_vec('topology.b2'), eml_vec('topology.elder_kads'))) "
+                    "— k_gimel = χ/(b₂·b₃) = 144/(4·24) = 1.5 (this module's local k_gimel "
+                    "— name collision with the Higgs-VEV k_gimel = b₃/2 + 1/π ≈ 12.318)"
+                ),
                 validation={
                     "bound_type": "theoretical",
                     "status": "GEOMETRIC",

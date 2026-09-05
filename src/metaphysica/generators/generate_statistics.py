@@ -361,7 +361,14 @@ def generate_statistics() -> Dict[str, Any]:
                 'value': fs['not_testable_count'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_axiom) — count of axiomatic/untestable gates (mathematical constraints)'
+                'eml_description': (
+                    "EML: ops.sub(eml_scalar(72.0), ops.add(eml_vec('framework_statistics.pass_count'), "
+                    "ops.add(eml_vec('framework_statistics.pending_count'), "
+                    "eml_vec('framework_statistics.mathematical_count')))) "
+                    "— the four gate classes partition the 72 gates, so the axiomatic count is "
+                    "the residual 72 - pass - pending - mathematical. The former eml_scalar(N_axiom) "
+                    "named an operand that is in no registry"
+                )
             }
             params_data['parameters']['framework_statistics.mathematical_count'] = {
                 'value': fs['mathematical_count'],

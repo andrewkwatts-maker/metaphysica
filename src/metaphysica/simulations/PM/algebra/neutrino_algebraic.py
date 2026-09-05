@@ -467,8 +467,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"withdrawn. DERIVED approximation, zero free parameters."
                 ),
                 eml_description=(
-                    "EML: ops.div(eml_pi(), eml_scalar(6.0)) — "
-                    "δ_CP = π/6 (N.B. π/K with K=4 gives π/4; π/6 needs K=6 — superseded by fitted δ_CP = 278.4°)"
+                    # Was ops.div(eml_pi(), eml_scalar(6.0)): a pi/K ansatz this module
+                    # does not run, in radians while the parameter is in degrees.
+                    # run() computes -phi_assoc * chi_eff/(b3*n_gen) with
+                    # phi_assoc = 2pi/(b3/n_gen), converted to degrees; 2pi rad = 360 deg.
+                    "EML: ops.neg(ops.mul("
+                    "ops.div(eml_scalar(360.0), ops.div(eml_vec('topology.elder_kads'), eml_vec('topology.n_gen'))), "
+                    "ops.div(eml_vec('topology.mephorash_chi'), ops.mul(eml_vec('topology.elder_kads'), eml_vec('topology.n_gen'))))) "
+                    "— δ_CP = −(2π/(b₃/n_gen)) × χ/(b₃·n_gen) = −π/2 = −90°"
                 ),
                 derivation_formula="pmns-delta-CP-derived",
                 experimental_bound=_DELTA_CP_NUFIT,
@@ -541,9 +547,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"Expected ≈ {(_THETA13_DEG - _THETA13_NUFIT)/_THETA13_1SIGMA:.1f}σ."
                 ),
                 eml_description=(
-                    "EML: ops.div(ops.sub(eml_vec('theta13_derived'), eml_scalar(8.57)), "
-                    "eml_scalar(0.25)) — "
-                    "σ-deviation = (θ₁₃_derived − 8.57°) / 0.25° from NuFIT 6.0"
+                    # 8.57 / 0.25 were a superseded NuFIT band; run() divides by
+                    # _THETA13_NUFIT = 8.63 and _THETA13_1SIGMA = 0.11.
+                    "EML: ops.div(ops.sub(eml_vec('neutrino.theta13_derived'), eml_scalar(8.63)), "
+                    "eml_scalar(0.11)) — "
+                    "σ-deviation = (θ₁₃_derived − 8.63°) / 0.11° from NuFIT 6.0 IO"
                 ),
                 no_experimental_value=True,
             ),
@@ -558,9 +566,12 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"Expected ≈ {(_DELTA_CP_DEG - _DELTA_CP_NUFIT)/_DELTA_CP_1SIGMA:.2f}σ."
                 ),
                 eml_description=(
-                    "EML: ops.div(ops.sub(eml_vec('delta_CP_derived'), eml_scalar(-107.0)), "
+                    # -107 was the T2K-only fit; run() uses
+                    # _DELTA_CP_NUFIT = 197 - 360 = -163 (NuFIT 6.0 NO best fit).
+                    "EML: ops.div(ops.sub(eml_vec('neutrino.delta_CP_derived'), "
+                    "ops.sub(eml_scalar(197.0), eml_scalar(360.0))), "
                     "eml_scalar(40.0)) — "
-                    "σ-deviation = (δ_CP_derived − (−107°)) / 40° from NuFIT 6.0"
+                    "σ-deviation = (δ_CP_derived − (−163°)) / 40° from NuFIT 6.0"
                 ),
                 no_experimental_value=True,
             ),

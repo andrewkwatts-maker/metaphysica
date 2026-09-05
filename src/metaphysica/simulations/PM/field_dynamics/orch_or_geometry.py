@@ -999,9 +999,14 @@ if SCHEMA_AVAILABLE:
                     derivation_formula="orch-or-coherence-time",
                     no_experimental_value=True,
                     eml_description=(
-                        "EML: ops.div(ops.mul(ops.mul(G_N, k_gimel), ops.pow(M_eff, eml_scalar(2.0))), "
-                        "r_delta) — E_G = G_eff·M_eff²/r_δ with G_eff = G_N·k_ℷ, "
-                        "M_eff = N_tubulins·m_single·conformational_fraction"
+                        "EML: ops.div(ops.mul(ops.mul(eml_scalar(6.6743e-11), "
+                        "eml_vec('topology.k_gimel')), ops.pow(ops.mul(ops.mul(eml_scalar(1e9), "
+                        "eml_scalar(1.8e-22)), eml_scalar(1e-4)), eml_scalar(2.0))), "
+                        "ops.mul(eml_scalar(2.5e-10), ops.div(eml_vec('geometry.c_kaf'), "
+                        "eml_scalar(27.2)))) — E_G = G_eff·M_eff²/r_δ with G_eff = G_N·k_ℷ, "
+                        "M_eff = N_tubulins·m_single·conformational_fraction = 1e9·1.8e-22·1e-4 kg "
+                        "and r_δ = 2.5e-10·(C_kaf/27.2) m. The former G_N/M_eff/r_delta operands "
+                        "named nothing in the registry"
                     ),
                 ),
             ]

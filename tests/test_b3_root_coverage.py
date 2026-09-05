@@ -48,8 +48,26 @@ def _load(name: str):
 #: Baselines measured 2026-08-24. Direction of the ratchet:
 #:   b3_rooted may only grow, non-rooted / ambiguous / degraded may only
 #:   shrink. Improving a walker updates these numbers UPWARD deliberately.
+#: non_b3_max 55 -> 56 and ambiguous_max 1 -> 0 on 2026-09-05. This is a
+#: measurement correction, not a loosening, and the four formulas that moved
+#: are named so the change is auditable:
+#:
+#:   bulk-metric-ratio           ambiguous -> rooted   (gained)
+#:   decad3-projection           non       -> rooted   (gained)
+#:   chirality-reversal-operator rooted    -> non      (lost)
+#:   dead-mans-switch            rooted    -> non      (lost)
+#:
+#: The two losses are the point. Both declared an input naming no registry
+#: parameter, so the walker could not see that edge, skipped it, and reached
+#: b3 by another route -- counting them rooted through a dependency that did
+#: not exist. Clearing the phantom made the edge real and the walk now
+#: terminates honestly. They were never b3-rooted; the old number was
+#: inflated by the gap.
+#:
+#: b3_rooted_min is deliberately NOT lowered: it stays 366, so a genuine
+#: loss of coverage still fails. ambiguous_max TIGHTENS to 0.
 _ARITHMA_BASELINE = {"total": 422, "b3_rooted_min": 366,
-                     "non_b3_max": 55, "ambiguous_max": 1,
+                     "non_b3_max": 56, "ambiguous_max": 0,
                      "degraded_max": 12}
 _EML_BASELINE = {"total": 422, "b3_rooted_min": 102,
                  "non_b3_max": 320, "ambiguous_max": 6}

@@ -1438,7 +1438,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="dimensionless",
             status="ESTABLISHED",
             description="Rank of vielbein matrix in 4D spacetime (equals dimension D=4)",
-            eml_description="Rank of the vielbein (tetrad) e^A_mu matrix in 4D spacetime; equals spacetime dimension D=4, mapping between curved and flat frame indices",
+            eml_description=(
+                "EML: ops.add(eml_scalar(3.0), eml_scalar(1.0)) — rank of the vielbein "
+                "(tetrad) e^A_mu equals the spacetime dimension D = 3 spatial + 1 time = 4; "
+                "e^A_mu is the invertible map between curved and flat frame indices, so its "
+                "rank is full by definition"
+            ),
             no_experimental_value=True
         ))
 
@@ -1516,7 +1521,15 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             units="GeV",
             status="DERIVED",
             description="M_Pl from G2 compactification: 1.22e19 GeV",
-            eml_description="4D Planck mass M_Pl = M_26D * Vol(G2)^(-1/5) * f(chi_eff, b3) from G2 compactification; topological invariants chi_eff=144 and b3=24 fix the gravitational scale",
+            eml_description=(
+                "EML: ops.mul(eml_vec('constants.M_PLANCK'), ops.sqrt(ops.mul(eml_scalar(8.0), "
+                "eml_pi()))) — M_Pl = M_Pl_reduced·√(8π) = 1.2209e19 GeV. "
+                "derive_newton_constant_from_g2() returns M_PLANCK_GEV unchanged: the "
+                "G2 volume enters only M_26D, never M_Pl, so this parameter is the "
+                "measured Planck mass expressed against the registered reduced value, "
+                "not a compactification output. The former Vol(G2)^(-1/5)·f(chi_eff,b3) "
+                "wording described a derivation the code does not perform"
+            ),
             derivation_formula="gr-planck-from-compactification-v19",
             experimental_bound=1.220890e19,
             bound_type="measured",
