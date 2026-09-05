@@ -2005,7 +2005,9 @@ class PredictionsAggregatorV16(SimulationBase):
                     "from all sectors. Computed as the count of registry-resolved predictions."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(N) — integer count of registry-resolved falsifiable predictions (non-None sector values across gauge, proton-decay, neutrino, cosmology, topology)",
+                # EML WITHHELD: a count of sector predictions that resolved to a non-None
+                # value. A tally over a collection has no scalar tension form; the former
+                # string named a bare N that is in no registry.
             ),
             # ── TwoLayerOR Experimental Signatures (Topic 11) ──────────────
             Parameter(

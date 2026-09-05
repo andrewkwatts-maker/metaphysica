@@ -402,7 +402,9 @@ class AppendixASpectralRegistry(SimulationBase):
                 units="dimensionless",
                 status="FOUNDATIONAL",
                 description="Total number of residue nodes in the spectral registry (125)",
-                eml_description="Integer count of spectral eigenvalue nodes extracted from the V7 Laplacian; equals 125 by topological constraint.",
+                # EML WITHHELD: a count of eigenvalue nodes taken from the V7 Laplacian
+                # spectrum. The module declares 125 outright; there is no arithmetic
+                # here for a scalar algebra to express.
                 no_experimental_value=True,
             ),
             Parameter(

@@ -923,7 +923,10 @@ class GaugeUnificationSimulation(SimulationBase):
                     "is an inference, not a measurement of M_GUT -- no "
                     "direct measurement is possible at this scale."
                 ),
-                eml_description="EML: ops.argmin_mu(ops.std(alpha1_mu, alpha2_mu, alpha3_mu)) — GUT scale is the energy at which 3-loop RG-evolved gauge couplings minimally spread",
+                # EML WITHHELD: M_GUT is located by scanning the RG trajectories for the
+                # scale of minimum spread among alpha_1, alpha_2, alpha_3. An argmin over
+                # a numerically evolved family is not a scalar tension expression;
+                # ops.argmin_mu and ops.std do not exist.
                 validation={
                     "theoretical_range": {"min": 1e15, "max": 1e17},
                     "status": "UNTESTED",
@@ -975,7 +978,11 @@ class GaugeUnificationSimulation(SimulationBase):
                 description="Unified gauge coupling from 3-loop RG evolution. Theoretical prediction with no direct experimental access.",
                 derivation_formula="gauge-coupling-unification",
                 no_experimental_value=True,
-                eml_description="EML: ops.inv(alpha_GUT_inv) — alpha_GUT = 1/alpha_GUT_inv from RG running; alpha_GUT_inv ~ ops.add(eml_scalar(42.0), eml_scalar(0.7))",
+                eml_description=(
+                    "EML: ops.inv(eml_vec('gauge.ALPHA_GUT_INV')) — alpha_GUT = 1/alpha_GUT_inv from the RG run. The "
+                    "former string named bare alpha_GUT_inv; the quantity is registered at gauge.ALPHA_GUT_INV (40.94, "
+                    "not the ~42.7 the old annotation quoted)."
+                ),
                 validation={
                     "theoretical_range": {"min": 0.02, "max": 0.04},
                     "status": "UNTESTED",
@@ -1002,10 +1009,15 @@ class GaugeUnificationSimulation(SimulationBase):
                 name="Inverse Unified Coupling",
                 units="dimensionless",
                 status="DERIVED",
-                description="Inverse of unified gauge coupling (1/alpha_GUT ~ 24). Theoretical prediction from asymptotic safety.",
+                description=(
+                    "Inverse of unified gauge coupling. Two-loop RG value at the "
+                    "spread-minimising scale, KK-threshold corrected, then pulled 15% of "
+                    "the way toward the asymptotic-safety fixed point alpha*^-1 = b3 = 24. "
+                    "It is NOT the fixed point itself."
+                ),
                 derivation_formula="gauge-coupling-unification",
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(24) — AS fixed point alpha_GUT^-1 = b3 (asymptotic safety locks to Betti number)",
+                eml_description="EML: ops.inv(eml_vec('gauge.ALPHA_GUT')) — α_GUT⁻¹ as the reciprocal of the registered α_GUT. This is a restatement, not a derivation: the value comes from find_M_GUT(), which runs the couplings to the spread-minimising scale, applies the KK threshold, then adds Δ_AS = weight·(24 − mean) with weight = 0.15 — an unmotivated interpolation constant that alone determines how far the answer sits between the RG result (~43.9) and b₃ = 24. The previous text asserted eml_scalar(24), naming the AS TARGET as if it were the result; the code deliberately applies only 15% of that pull, and this parameter's own validation note already gives a third number (42.7), which predictions_aggregator.py also writes to this same path as a literal",
                 validation={
                     "theoretical_range": {"min": 24, "max": 50},
                     "status": "PASS",

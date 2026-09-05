@@ -569,9 +569,9 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "exactly one real spinor out of 8 components. This is the defining "
                     "property of G2 manifolds and the geometric origin of chiral fermions."
                 ),
-                inputParams=["topology.g2_holonomy", "geometry.spinor_bundle_dim"],
+                inputParams=["topology.g2_compatible", "chirality.spinor_dimension"],
                 outputParams=["chirality.preserved_spinors", "chirality.spinor_dimension"],
-                input_params=["topology.g2_holonomy", "geometry.spinor_bundle_dim"],
+                input_params=["topology.g2_compatible", "chirality.spinor_dimension"],
                 output_params=["chirality.preserved_spinors", "chirality.spinor_dimension"],
                 derivation={
                     "parentFormulas": [],

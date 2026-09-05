@@ -710,7 +710,7 @@ class FRTTauGravityV18(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description="Matter coupling from chi_eff=144 flux quanta.",
-                eml_description="EML: ops.inv(eml_vec('chi_eff')) — β_F = 1/χ_eff = 1/144 from flux quanta count",
+                eml_description="EML: ops.inv(eml_vec('topology.mephorash_chi')) — β_F = 1/χ_eff = 1/144 from flux quanta count. The bare name `chi_eff` is deliberately NOT used: it binds to the FormulasRegistry seed chi_eff = 72 (per-shadow), whereas this coefficient uses the cross-shadow total the code actually reads (topology.mephorash_chi = 144)",
                 no_experimental_value=True
             ),
             Parameter(
@@ -719,7 +719,7 @@ class FRTTauGravityV18(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description="Holonomy-scalar cross-coupling from mixed reduction.",
-                eml_description="EML: ops.mul(eml_vec('gravity.alpha_F_r2'), ops.inv(eml_vec('chi_eff'))) — γ_F = α_F/χ_eff (holonomy-scalar cross-coupling)",
+                eml_description="EML: ops.inv(ops.mul(eml_vec('topology.elder_kads'), ops.sqrt(eml_vec('topology.mephorash_chi')))) — γ_F = 1/(b₃√χ_eff) = 1/(24·12) = 1/288 (holonomy-scalar cross-coupling). The previous text read α_F/χ_eff, which is not what the code, the module docstring, formula (5.1) derivation step 3, or the registered metadata state",
                 no_experimental_value=True
             ),
             Parameter(
@@ -728,7 +728,7 @@ class FRTTauGravityV18(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description="(d_tau)R kinetic mixing, suppressed at large volume.",
-                eml_description="EML: ops.mul(eml_vec('gravity.alpha_F_r2'), eml_vec('gravity.beta_F_trace')) — δ_F = α_F × β_F (kinetic mixing, suppressed at large volume)",
+                eml_description="EML: ops.inv(ops.pow(eml_scalar(1.0e12), ops.div(eml_scalar(1.0), eml_scalar(3.0)))) — δ_F = 1/Vol_G2^(1/3) = 1e-4, the expression compute_modified_gravity() evaluates. NOTE: Vol_G2 = 1e12 in Planck units is a hardcoded PROXY; it is not derived from b₃, χ_eff or any other geometric quantity, so δ_F is CALIBRATED rather than DERIVED. The previous text read α_F × β_F, which is not what the code computes",
                 no_experimental_value=True
             ),
             # DESI 2025: w0 = -0.958 +/- 0.02 (thawing quintessence)
@@ -739,9 +739,12 @@ class FRTTauGravityV18(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Dark energy equation of state from f(R,T,tau) attractor. "
-                    "Predicts w_0 = -0.9583, consistent with DESI 2025."
+                    "The published value is w_0 = -0.9796, not the canonical "
+                    "w_0 = -23/24 = -0.9583: this module applies an additional "
+                    "delta_attractor = 0.034 that is asserted, not integrated. "
+                    "See the note on gravity.w_0_modified."
                 ),
-                eml_description="EML: ops.add(eml_scalar(-1.0), ops.mul(ops.div(eml_scalar(2.0), ops.mul(eml_scalar(3.0), ops.sqrt(eml_vec('chi_eff')))), ops.sub(eml_scalar(1.0), ops.mul(eml_scalar(12.0), eml_vec('gravity.alpha_F_r2'))))) — w₀ = −1 + 2/(3√χ_eff) × (1 − 12α_F)",
+                eml_description="EML: ops.sub(ops.add(eml_scalar(-1.0), ops.mul(ops.div(eml_scalar(2.0), ops.mul(eml_scalar(3.0), ops.sqrt(eml_vec('topology.mephorash_chi')))), ops.sub(eml_scalar(1.0), ops.mul(eml_scalar(12.0), eml_vec('gravity.alpha_F_r2'))))), eml_scalar(0.034)) — w₀ = −1 + 2/(3√χ_eff)·(1 − 12α_F) − δ_attractor, matching formula (5.3). Two corrections against the previous text: χ_eff is taken from topology.mephorash_chi = 144 (the bare name `chi_eff` binds to the per-shadow seed 72), and the δ_attractor term was missing. NOTE: δ_attractor = 0.034 is CALIBRATED — the code labels it 'from numerical integration' but no integration is performed anywhere in this module",
                 experimental_bound=-0.958,
                 bound_type="measured",
                 bound_source="DESI_2025",

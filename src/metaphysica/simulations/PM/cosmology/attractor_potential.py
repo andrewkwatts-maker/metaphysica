@@ -594,7 +594,7 @@ class AttractorPotentialV18(SimulationBase):
                     "the periodicity of modulus field oscillations around the attractor."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.mul(eml_scalar(2.0), eml_pi()), ops.sqrt(eml_vec('chi_eff'))) — ω = 2π/√χ_eff = π/6 ≈ 0.524 oscillation frequency"
+                eml_description="EML: ops.div(ops.mul(eml_scalar(2.0), eml_pi()), ops.sqrt(eml_vec('topology.mephorash_chi'))) — ω = 2π/√χ_eff = 2π/√144 = π/6 ≈ 0.524. χ_eff is read from topology.mephorash_chi = 144, the value compute() uses and its own self-check asserts to 1e-10; the bare name `chi_eff` binds to the FormulasRegistry seed = 72 (per-shadow) and made this tree contradict its own trailing prose"
             ),
             Parameter(
                 path="cosmology.f_decay_constant",
@@ -607,7 +607,7 @@ class AttractorPotentialV18(SimulationBase):
                     "scale for modulus field variations; f > M_Pl/12 ensures slow-roll stability."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('M_Planck'), ops.sqrt(eml_vec('chi_eff'))) — f = M_Pl/√χ_eff ~ 2.03×10¹⁷ GeV sub-Planckian (M_Pl/12) decay constant"
+                eml_description="EML: ops.div(eml_vec('constants.M_PLANCK'), ops.sqrt(eml_vec('topology.mephorash_chi'))) — f = M_Pl/√χ_eff ~ 2.03×10¹⁷ GeV sub-Planckian (M_Pl/12) decay constant. Qualified: M_Planck is ambiguous (reduced 2.435e18 vs full 1.22089e19) and compute() uses the reduced mass; the bare chi_eff binds to the per-shadow seed 72, while the value used here is topology.mephorash_chi = 144"
             ),
             Parameter(
                 path="cosmology.phi_star_attractor",
@@ -636,7 +636,7 @@ class AttractorPotentialV18(SimulationBase):
                 bound_type="measured",
                 bound_source="DESI_2025",
                 uncertainty=0.02,
-                eml_description="EML: ops.add(eml_scalar(-1.0), ops.add(ops.mul(ops.div(eml_scalar(2.0), eml_scalar(3.0)), eml_vec('epsilon_eff')), eml_scalar(0.016))) — w₀ = −1 + (2/3)ε_eff + δ_Ricci from slow-roll + Ricci flow correction"
+                eml_description="EML: ops.add(eml_scalar(-1.0), ops.add(ops.mul(ops.div(eml_scalar(2.0), eml_scalar(3.0)), ops.div(ops.mul(eml_scalar(0.5), ops.mul(ops.pow(ops.div(eml_vec('constants.M_PLANCK'), eml_vec('cosmology.f_decay_constant')), eml_scalar(2.0)), ops.pow(ops.mul(eml_vec('cosmology.A_amplitude'), eml_vec('cosmology.omega_frequency')), eml_scalar(2.0)))), eml_vec('topology.mephorash_chi'))), eml_scalar(0.016))) — w₀ = −1 + (2/3)ε_eff + δ_Ricci with ε_eff = 0.5(M_Pl/f)²(Aω)²/χ_eff written out; epsilon_eff was never a registry path, so this row previously reached AGREE_LOOSE only because 0.0 was substituted for it"
             ),
             Parameter(
                 path="cosmology.w_a_thawing",
@@ -651,7 +651,7 @@ class AttractorPotentialV18(SimulationBase):
                 bound_type="measured",
                 bound_source="DESI2024",
                 uncertainty=0.2,
-                eml_description="EML: ops.add(ops.mul(eml_scalar(2.0), ops.mul(eml_vec('epsilon_eff'), ops.sub(eml_scalar(1.0), eml_vec('eta_eff')))), eml_scalar(0.09)) — w_a = 2ε_eff(1−η_eff) + δ_Ricci thawing CPL parameter"
+                eml_description="EML: ops.add(ops.mul(eml_scalar(2.0), ops.mul(ops.div(ops.mul(eml_scalar(0.5), ops.mul(ops.pow(ops.div(eml_vec('constants.M_PLANCK'), eml_vec('cosmology.f_decay_constant')), eml_scalar(2.0)), ops.pow(ops.mul(eml_vec('cosmology.A_amplitude'), eml_vec('cosmology.omega_frequency')), eml_scalar(2.0)))), eml_vec('topology.mephorash_chi')), ops.sub(eml_scalar(1.0), ops.mul(ops.pow(ops.div(eml_vec('constants.M_PLANCK'), eml_vec('cosmology.f_decay_constant')), eml_scalar(2.0)), ops.mul(eml_vec('cosmology.A_amplitude'), ops.pow(eml_vec('cosmology.omega_frequency'), eml_scalar(2.0))))))), eml_scalar(0.09)) — w_a = 2ε_eff(1−η_eff) + δ_Ricci, with ε_eff = 0.5(M_Pl/f)²(Aω)²/χ_eff and η_eff = (M_Pl/f)²Aω² written out over registered operands; neither epsilon_eff nor eta_eff is a registry path. NB the inline comment claiming η_eff ~ 0.079 is stale: (M_Pl/f)² = χ_eff = 144 gives η_eff = 4π²/√b₃ = 8.06, so 2ε_eff(1−η_eff) is negative and δ_Ricci = 0.09 dominates"
             ),
         ]
 

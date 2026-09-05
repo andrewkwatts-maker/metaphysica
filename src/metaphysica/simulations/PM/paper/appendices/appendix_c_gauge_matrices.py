@@ -363,7 +363,11 @@ class AppendixCGaugeMatrices(SimulationBase):
                 units="dimensionless",
                 status="FOUNDATIONAL",
                 description="Rank of the 13D→4D projection matrix",
-                eml_description="Integer rank of the dimensional projection tensor P_{13->4}; equals 13 - 4 = 9 internal degrees removed during S_PR(2) reduction.",
+                eml_description=(
+                    "EML: ops.sub(eml_vec('geometry.D_shadow_total'), eml_vec('dimensions.D_observable')) — "
+                    "rank(P_{13->4}) = 13 - 4 = 9 internal directions removed by the S_PR(2) reduction, taken from the "
+                    "two registered dimension counts rather than from prose."
+                ),
                 no_experimental_value=True,
             ),
             Parameter(
@@ -372,7 +376,9 @@ class AppendixCGaugeMatrices(SimulationBase):
                 units="boolean",
                 status="VALIDATION",
                 description="Whether gauge projection matrices satisfy unitarity",
-                eml_description="Boolean flag indicating that P_dagger * P = I_13 is satisfied to machine precision, confirming lossless gauge projection.",
+                # EML WITHHELD: a boolean verification flag over the 13x13 matrix
+                # identity P_dagger P = I_13. Matrix unitarity is not a scalar tension
+                # quantity, and a True/False outcome is not an arithmetic derivation.
                 no_experimental_value=True,
             ),
         ]

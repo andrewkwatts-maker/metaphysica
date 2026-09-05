@@ -156,6 +156,7 @@ _OUTPUT_PARAMS = [
     "geometry.face_moduli_T4",
     "geometry.shadow_asymmetry_delta_T",
     "geometry.racetrack_stability",
+    "geometry.n_aligned_pairs",
 ]
 
 # Output formula IDs
@@ -568,6 +569,21 @@ class FourFaceG2Structure(SimulationBase):
         # Racetrack stability: all VEVs positive and asymmetry bounded
         racetrack_stability = all(t > 0 for t in T) and shadow_asymmetry < 1.0
 
+        # Aligned bridge pairs under the OR rotation R_perp. The 12 bridge
+        # pairs split into two equal classes; the aligned count is the 6 that
+        # alpha_leak = 1/sqrt(6) is built on. bridge-pair-decomposition
+        # declared this as an output but no registry path existed, so the
+        # edge from that formula was invisible and alpha_leak's independent
+        # justification was unreachable from the dependency graph.
+        # n_bridges is derived, not asserted: the Leech lattice splits as
+        # 8 + 8 + 8, giving b3 / 8 = 3 E8 blocks, and each of the n_faces
+        # faces carries one bridge into each block -- the same 3 that
+        # generation_count_report() gets independently from the q + 1 = 3
+        # lines through each point of the Fano plane.
+        n_e8_blocks = int(b3) // 8
+        n_bridges = int(n_faces) * n_e8_blocks
+        n_aligned_pairs = float(n_bridges // 2)
+
         results = {
             "geometry.n_faces": n_faces,
             "geometry.alpha_leak": alpha_leak,
@@ -577,6 +593,7 @@ class FourFaceG2Structure(SimulationBase):
             "geometry.face_moduli_T4": T[3],
             "geometry.shadow_asymmetry_delta_T": shadow_asymmetry,
             "geometry.racetrack_stability": 1.0 if racetrack_stability else 0.0,
+            "geometry.n_aligned_pairs": n_aligned_pairs,
         }
 
         # Register outputs to the registry
@@ -590,6 +607,7 @@ class FourFaceG2Structure(SimulationBase):
                     "geometry.face_moduli_T4",
                     "geometry.shadow_asymmetry_delta_T",
                     "geometry.racetrack_stability",
+                    "geometry.n_aligned_pairs",
                 ) else "DERIVED"
                 registry.set_param(
                     path=path,
@@ -1124,7 +1142,9 @@ class FourFaceG2Structure(SimulationBase):
                     "consistent with the observed matter-dark sector asymmetry."
                 ),
                 input_params=["topology.elder_kads", "constants.k_gimel"],
-                output_params=["geometry.shadow_asymmetry"],
+                # Was "geometry.shadow_asymmetry", a path in no registry. The
+                # quantity the module computes and registers is delta_T.
+                output_params=["geometry.shadow_asymmetry_delta_T"],
                 derivation={
                     "steps": [
                         "The dominant face T_1 = b3*k_gimel/pi controls the observable "
@@ -1326,7 +1346,14 @@ class FourFaceG2Structure(SimulationBase):
                     "via Dirac eigenvalue modulation"
                 ),
                 input_params=["topology.elder_kads", "topology.mephorash_chi", "geometry.alpha_leak"],
-                output_params=["geometry.face_or_eigenvalue"],
+                # No output_params. R_face is operator-valued -- a Dirac
+                # eigenvalue phase times the OR rotor -- and has no scalar
+                # registry value. It formerly declared
+                # "geometry.face_or_eigenvalue", a path in no registry, which
+                # read as though lambda_f were a published quantity; lambda_f
+                # is never computed here, and inventing an n_f per face to
+                # make it computable would be fabricating the input.
+                output_params=[],
                 derivation={
                     "steps": [
                         "Within each shadow (after Layer 1 bridge OR), the 13D geometry "
@@ -1543,7 +1570,14 @@ class FourFaceG2Structure(SimulationBase):
                     "unless ΔF/F₀ < 0)"
                 ),
                 input_params=["geometry.alpha_leak", "topology.mephorash_chi", "topology.elder_kads"],
-                output_params=["geometry.face_sampling_strength"],
+                # No output_params. alpha_sample is an inserted ANSATZ value
+                # (0.57) which EXCEEDS the upper bound its own factorisation
+                # implies: the product is at most 1/sqrt(6) = 0.408 unless
+                # Delta_F/F0 < 0. Registering it would publish a number that
+                # contradicts the formula printed beside it. It formerly
+                # declared "geometry.face_sampling_strength", a path in no
+                # registry, so the claim was made without ever being scored.
+                output_params=[],
                 derivation={
                     "steps": [
                         "The sampling strength alpha_sample^(f) quantifies how strongly "
@@ -1691,6 +1725,27 @@ class FourFaceG2Structure(SimulationBase):
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
                 eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), ops.mul(eml_scalar(4.0), eml_pi())) — T4 = b3·k_gimel/(4π), subdominant Kähler modulus of deepest shadow sector",
+            ),
+            Parameter(
+                path="geometry.n_aligned_pairs",
+                name="Aligned Bridge Pairs",
+                units="count",
+                status="GEOMETRIC",
+                description=(
+                    "Number of bridge pairs whose orientation is preserved by "
+                    "the visible-sector projection: the 12 bridges split into "
+                    "two equal classes under the 90-degree OR rotation "
+                    "R_perp = [[0,-1],[1,0]], giving n_aligned = 12/2 = 6. "
+                    "This is what makes alpha_leak = 1/sqrt(6) more than a "
+                    "repackaging of chi_eff/b3 = 144/24 = 6: the same 6 "
+                    "arrives independently as a pair count. The pairing "
+                    "argument assumes every face carries positive area, which "
+                    "compute_leakage_from_lattice checks against the moduli "
+                    "and raises on."
+                ),
+                derivation_formula="bridge-pair-decomposition",
+                no_experimental_value=True,
+                eml_description="EML: ops.div(ops.mul(eml_vec('geometry.n_faces'), ops.div(eml_vec('topology.elder_kads'), eml_scalar(8.0))), eml_scalar(2.0)) — n_aligned = n_faces·(b3/8)/2 = 4·3/2 = 6 aligned bridge pairs",
             ),
             Parameter(
                 path="geometry.shadow_asymmetry_delta_T",

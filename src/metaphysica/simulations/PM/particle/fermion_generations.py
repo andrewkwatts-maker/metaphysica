@@ -651,9 +651,9 @@ class FermionGenerationsV16(SimulationBase):
                 # registered path and no appearance in the output -- the filter
                 # strength 7/8 is fixed by the Spin(7) spinor split alone. Both
                 # dropped; the b3 root (topology.elder_kads) is untouched.
-                inputParams=["geometry.g2_holonomy", "topology.elder_kads"],
+                inputParams=["topology.g2_compatible", "topology.elder_kads"],
                 outputParams=["fermion.chiral_filter_strength"],
-                input_params=["geometry.g2_holonomy", "topology.elder_kads"],
+                input_params=["topology.g2_compatible", "topology.elder_kads"],
                 output_params=["fermion.chiral_filter_strength"],
                 derivation={
                     "method": "Axial torsion coupling from Pneuma condensate gradient in G2 holonomy",

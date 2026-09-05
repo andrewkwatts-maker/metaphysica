@@ -945,9 +945,22 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — dark energy EoS w₀ = -1 + 1/b₃ = -23/24 ≈ -0.9583"
                 ),
                 "wa": (
+                    "EML: ops.neg(ops.div(eml_scalar(1.0),"
+                    " ops.sqrt(eml_vec('elder_kads'))))"
+                    " — dark energy wa = -1/√b₃ ≈ -0.2041, the CANONICAL pure form."
+                    " The ×4 co-associative projection was removed here: the"
+                    " 2026-08 ruling in core/canonical_values.py publishes the pure"
+                    " form and keeps the projection separately as"
+                    " geometry.wa_projection_x4 (status RETRODICTED). This text"
+                    " still carried the pre-ruling ×4 tree while the code, the"
+                    " accessor docstring and the artifact all returned -0.2041"
+                ),
+                "wa_projection_x4": (
                     "EML: ops.mul(ops.neg(ops.div(eml_scalar(1.0),"
                     " ops.sqrt(eml_vec('elder_kads')))), eml_scalar(4.0))"
-                    " — dark energy wa = -4/√b₃ ≈ -0.816 (co-associative 4-form scaling)"
+                    " — wa × dim(Ψ) = -4/√b₃ ≈ -0.8165, the co-associative 4-form"
+                    " projection. RETRODICTED: the ×4 multiplier was introduced"
+                    " after DESI, so it is a spare variable, not a prediction"
                 ),
                 "s8_viscosity_scale": (
                     "EML: eml_scalar(0.01) — S8 viscosity denominator scale = 1/100"
@@ -1320,15 +1333,14 @@ class GeometricAnchorsSimulation(SimulationBase):
                     " — CMB temperature T_CMB = φ k_gimel/(2π+1) ≈ 2.737 K (Cert C18)"
                 ),
                 "eta_baryon": (
-                    "EML: ops.mul(ops.div(J_jarlskog,"
-                    " ops.mul(eml_scalar(2.0),"
-                    " ops.sub(eml_vec('elder_kads'), eml_scalar(14.0)))),"
-                    " ops.mul(ops.mul(eml_scalar(0.12), eml_vec('elder_kads')),"
-                    " ops.mul(ops.div(eml_vec('elder_kads'), eml_scalar(72.0)),"
-                    " ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))),"
-                    " ops.exp(ops.neg(eml_scalar(7.086)))))))"
-                    " — Sprint T4 #6 canonical: η_B = (J/N_eff) × Δb₃ ×"
-                    " (b₃/χ_eff) × sin(δ_CP) × exp(-Re(T)) ≈ 6.185×10⁻¹⁰"
+                    "EML: ops.mul(ops.div(eml_scalar(3.08e-5), ops.mul(eml_scalar(2.0), "
+                    "ops.sub(eml_vec('topology.elder_kads'), eml_scalar(14.0)))), ops.mul(ops.mul(eml_scalar(0.12), "
+                    "eml_vec('topology.elder_kads')), ops.mul(ops.div(eml_vec('topology.elder_kads'), eml_scalar(72.0)), "
+                    "ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.exp(ops.neg(eml_vec('cosmology.racetrack_Re_T'))))))) — "
+                    "Sprint T4 #6 canonical: eta_B = (J/N_eff) * delta_b3 * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T)) ~ "
+                    "6.185e-10. J is the module's own literal 3.08e-5 (PDG 2024); it is NOT pdg.J_ckm (3.12e-5) nor the "
+                    "framework's computed ckm.jarlskog_invariant (2.915e-5), and the three do not agree. The former "
+                    "string named bare J_jarlskog."
                 ),
                 "unity_seal": (
                     "EML: ops.div(ops.mul(eml_vec('constants.k_gimel'), eml_vec('phi')),"

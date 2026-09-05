@@ -762,7 +762,7 @@ class AxionDMV18(SimulationBase):
                     "In the anthropic window for dark matter."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('M_Planck'), ops.pow(eml_vec('geometry.k_gimel'), eml_scalar(6.0))) — f_a = M_Pl / k_gimel^6 from 6D moduli of associative 3-cycle"
+                eml_description="EML: ops.div(eml_vec('codata.M_PLANCK'), ops.pow(eml_vec('geometry.k_gimel'), eml_scalar(6.0))) — f_a = M_Pl / k_gimel^6 from 6D moduli of associative 3-cycle. Qualified to the FULL Planck mass: this module uses M_Pl = 1.22e19, not the reduced 2.435e18, and the bare name M_Planck is ambiguous between them. Residual ~7e-4 is the module hardcoding 1.22e19 where codata.M_PLANCK is 1.22089e19"
             ),
             Parameter(
                 path="axion.m_a",
@@ -781,20 +781,23 @@ class AxionDMV18(SimulationBase):
                 units="dimensionless",
                 status="PREDICTED",
                 description=(
-                    "Axion contribution to dark matter. For natural θ_i ~ 1, "
-                    "PM predicts Ω_a h² ≈ 0.4, explaining 100% of DM."
+                    "Axion contribution to dark matter at θ_i = 1. PM gives "
+                    "Ω_a h² ≈ 0.516, which is 4.3× the observed 0.120 — an "
+                    "overclosure, not a fit. The previous text claimed ≈ 0.4."
                 ),
                 experimental_bound=0.120,
                 bound_type="measured",
                 bound_source="Planck2018",
                 uncertainty=0.001,
-                eml_description="EML: ops.mul(ops.mul(eml_scalar(0.12), ops.pow(ops.div(eml_vec('axion.f_a'), eml_scalar(1.0e12)), eml_scalar(1.167))), ops.pow(eml_vec('axion.theta_i'), eml_scalar(2.0))) — Omega_a h^2 from vacuum misalignment mechanism"
+                eml_description="EML: ops.mul(ops.mul(eml_scalar(0.12), ops.pow(ops.div(eml_vec('axion.f_a'), eml_scalar(1.0e12)), eml_scalar(1.167))), ops.pow(eml_scalar(1.0), eml_scalar(2.0))) — Ω_a h² from vacuum misalignment at θ_i = 1, which is the angle compute() substitutes for this parameter. The previous text used eml_vec('axion.theta_i'), and axion.theta_i is CALIBRATED as sqrt(0.12/prefactor) — back-solved from the observed relic density — so substituting it returned 0.12 identically for any f_a: a circular expression that could not fail"
             ),
             Parameter(
                 path="axion.theta_i",
                 name="Required Misalignment Angle",
                 units="radians",
-                status="PREDICTED",
+                # CALIBRATED, matching the set_param call: theta_i is
+                # back-solved from the observed Omega_DM h^2, not predicted.
+                status="CALIBRATED",
                 description=(
                     "Initial axion field angle required for correct DM density. "
                     "O(1) value indicates natural dark matter candidate."

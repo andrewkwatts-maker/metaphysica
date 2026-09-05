@@ -349,13 +349,19 @@ def generate_statistics() -> Dict[str, Any]:
                 'value': fs['pass_count'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_pass) — count of LOCKED gates passing experimental validation'
+                # EML WITHHELD -- count of LOCKED gates passing experimental validation. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['framework_statistics.pending_count'] = {
                 'value': fs['pending_count'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_pending) — count of gates in PENDING_LOCK state'
+                # EML WITHHELD -- count of gates in PENDING_LOCK state. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['framework_statistics.not_testable_count'] = {
                 'value': fs['not_testable_count'],
@@ -374,7 +380,10 @@ def generate_statistics() -> Dict[str, Any]:
                 'value': fs['mathematical_count'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_math) — count of gates with mathematical (algebraic) status'
+                # EML WITHHELD -- count of gates with mathematical (algebraic) status. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['framework_statistics.total_gates'] = {
                 'value': fs['total_gates'],
@@ -434,7 +443,10 @@ def generate_statistics() -> Dict[str, Any]:
                 'value': fs['exact_matches'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_exact) — count of predictions with σ-deviation = 0 (exact match to PDG value)'
+                # EML WITHHELD -- count of predictions with sigma-deviation = 0. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
 
             # Also add validation section
@@ -443,19 +455,28 @@ def generate_statistics() -> Dict[str, Any]:
                 'value': vs['within_1sigma'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_1σ) — count of predictions within 1σ of experimental value'
+                # EML WITHHELD -- count of predictions within 1 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['validation.within_2sigma'] = {
                 'value': vs['within_2sigma'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_2σ) — count of predictions within 2σ of experimental value'
+                # EML WITHHELD -- count of predictions within 2 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['validation.total_predictions'] = {
                 'value': vs['total_predictions'],
                 'status': 'COMPUTED',
                 'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(N_pred) — total number of verifiable predicted observables'
+                # EML WITHHELD -- total number of verifiable predicted observables. A tally over a collection. Withheld rather than hard-coded as a
+                # scalar literal: the count is whatever the audit returns, and an
+                # eml_scalar(<current value>) would silently become a false claim the
+                # first time the tally moves.
             }
             params_data['parameters']['validation.success_rate'] = {
                 'value': vs['success_rate'],

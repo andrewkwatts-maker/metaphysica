@@ -567,7 +567,11 @@ class AppendixITerminalStates(SimulationBase):
                 eml_tree_str="ops.mul(b3_leaf(), ops.neg(ops.exp(ops.neg(ops.mul(eml_vec('Lambda'), eml_vec('t'))))))",
                 category="DERIVED",
                 description="Shadow torsion decoupling rate over cosmic time.",
-                input_params=["topology.shadow_torsion_total", "cosmology.lambda_geometric"],
+                # Was "cosmology.lambda_geometric", a path in no registry.
+                # This formula's own method line reads "Exponential torsion
+                # dissipation from cosmological constant", and the registry
+                # holds that constant as cosmology.Lambda_derived.
+                input_params=["topology.shadow_torsion_total", "cosmology.Lambda_derived"],
                 output_params=[],
                 derivation={
                     "method": "Exponential torsion dissipation from cosmological constant",

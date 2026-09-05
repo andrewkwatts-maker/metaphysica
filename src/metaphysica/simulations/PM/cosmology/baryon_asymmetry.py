@@ -121,6 +121,7 @@ _OUTPUT_PARAMS = [
     "cosmology.delta_b3_asymmetry",
     "cosmology.cp_phase_sterile",
     "cosmology.k_bary_normalization",
+    "cosmology.racetrack_Re_T",
 ]
 
 # Output formula IDs
@@ -303,9 +304,13 @@ class BaryonAsymmetryV18(SimulationBase):
             path="cosmology.delta_b3_asymmetry",
             value=self.delta_b3_ratio,
             source=self._metadata.id,
-            status="GEOMETRIC",
+            # CALIBRATED, not GEOMETRIC: compute() assigns the literal 0.12.
+            # No geometric derivation of it exists in this module, and the
+            # module docstring calls the cycle asymmetry approximate ("exact
+            # flux mismatch requires lattice G2 computation").
+            status="CALIBRATED",
             metadata={
-                "derivation": "Flux mismatch between 3-cycle types",
+                "derivation": "Flux mismatch between 3-cycle types -- ASSERTED as 0.12, not computed",
                 "units": "dimensionless"
             }
         )
@@ -319,6 +324,13 @@ class BaryonAsymmetryV18(SimulationBase):
                 "derivation": "G2 triality-linked CP phase (π/6)",
                 "units": "radians"
             }
+        )
+
+        registry.set_param(
+            path="cosmology.racetrack_Re_T",
+            value=self.Re_T,
+            source=self._metadata.id,
+            status="CALIBRATED",
         )
 
         registry.set_param(
@@ -340,6 +352,7 @@ class BaryonAsymmetryV18(SimulationBase):
             "cosmology.eta_baryon_geometric": result.eta_b,
             "cosmology.delta_b3_asymmetry": self.delta_b3_ratio,
             "cosmology.cp_phase_sterile": self.cp_phase,
+            "cosmology.racetrack_Re_T": self.Re_T,
             "cosmology.k_bary_normalization": result.k_bary,
             "_sigma_deviation": result.sigma_deviation,
             "_k_bary_order_of_magnitude": np.log10(result.k_bary)
@@ -497,9 +510,16 @@ class BaryonAsymmetryV18(SimulationBase):
                 # the EML tree carries the b3_leaf root via the identity factor
                 # and Re(T) ~ (b_3/2π) × ln(B/A) is implicitly b_3-driven from
                 # the racetrack exponent spacing in the KKLT superpotential.
-                inputParams=["cosmology.T_modulus_min", "cosmology.racetrack_Re_T", "topology.elder_kads"],
+                # cosmology.T_modulus_min named no registry parameter and is
+                # not computed: T_min = 1.4885 appears only in this
+                # derivation's prose. Re(T) is the live number and is now
+                # registered -- as CALIBRATED, because self.Re_T carries the
+                # comment "chosen to match BBN baryon asymmetry". Registering
+                # it stops eta_baryon_geometric reading as a zero-parameter
+                # prediction when one of its inputs was tuned to the answer.
+                inputParams=["cosmology.racetrack_Re_T", "topology.elder_kads"],
                 outputParams=["cosmology.eta_baryon_geometric"],
-                input_params=["cosmology.T_modulus_min", "cosmology.racetrack_Re_T", "topology.elder_kads"],
+                input_params=["cosmology.racetrack_Re_T", "topology.elder_kads"],
                 output_params=["cosmology.eta_baryon_geometric"],
                 derivation={
                     "steps": [
@@ -542,7 +562,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 # numerical value of f_damp (T2.3 fix).
                 eml_tree_str="ops.mul(ops.exp(ops.neg(Re_T)), ops.div(b3_leaf(), b3_leaf()))",
                 eml_description=(
-                    "EML moduli damping: ops.exp(ops.neg(Re_T)) × (b3_leaf()/b3_leaf()) = ops.exp(ops.neg(eml_scalar(7.086))). "
+                    "EML moduli damping: ops.exp(ops.neg(Re_T)) × (b3_leaf()/b3_leaf()) = ops.exp(ops.neg(eml_vec('cosmology.racetrack_Re_T'))). "
                     "Sakharov condition 3: out-of-equilibrium suppression via KKLT racetrack moduli stabilization; "
                     "Re(T) ~ (b_3/2π) × ln(B/A) carries b_3 dependence from the racetrack exponent spacing."
                 ),
@@ -552,6 +572,28 @@ class BaryonAsymmetryV18(SimulationBase):
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions."""
         return [
+            Parameter(
+                path="cosmology.racetrack_Re_T",
+                name="Racetrack Modulus Re(T)",
+                units="dimensionless",
+                status="CALIBRATED",
+                description=(
+                    "Real part of the stabilized Kahler modulus entering the "
+                    "moduli damping factor exp(-Re(T)) = 8.38e-4. CALIBRATED, "
+                    "not derived: the source comment reads 'Re(T) = 7.086 "
+                    "chosen to match BBN baryon asymmetry eta_b ~ 6.1e-10', so "
+                    "the damping that closes eta_baryon_geometric was fitted "
+                    "to the quantity it helps predict. It sat outside the "
+                    "registry entirely -- declared as a formula input under a "
+                    "path nothing held -- so the calibration was invisible to "
+                    "every audit. NOTE: geometry.ReT = 174.033 is a DIFFERENT "
+                    "quantity despite the near-identical name; the two are not "
+                    "interchangeable and neither is derived from the other."
+                ),
+                derivation_formula="moduli-damping-v18",
+                no_experimental_value=True,
+                eml_description="EML: eml_scalar(7.086) — Re(T), calibrated to the observed baryon asymmetry rather than derived",
+            ),
             Parameter(
                 path="cosmology.eta_baryon_geometric",
                 name="Baryon-to-Photon Ratio (Geometric)",
@@ -566,8 +608,16 @@ class BaryonAsymmetryV18(SimulationBase):
                 bound_source="Planck2018_BBN",
                 uncertainty=0.04e-10,
                 eml_description=(
-                    "EML: ops.mul(ops.div(J, N_eff), ops.mul(delta_b3, "
-                    "ops.mul(ops.div(b3, chi_eff), ops.mul(sin_delta_cp, exp_neg_ReT))))"
+                    "EML: ops.mul(ops.div(eml_scalar(3.08e-5), ops.mul(eml_scalar(2.0), "
+                    "ops.sub(eml_vec('topology.elder_kads'), eml_scalar(14.0)))), ops.mul(ops.mul(eml_scalar(0.12), "
+                    "eml_vec('topology.elder_kads')), ops.mul(ops.div(eml_vec('topology.elder_kads'), eml_scalar(72.0)), "
+                    "ops.mul(ops.sin(ops.div(eml_pi(), eml_scalar(6.0))), ops.exp(ops.neg(eml_vec('cosmology.racetrack_Re_T'))))))) — eta_B "
+                    "= (J/N_eff) * delta_b3 * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T)), with delta_b3 = 0.12 b3, "
+                    "chi_eff = 72 per-sector, delta_CP = pi/6 and Re(T) = 7.086 [CALIBRATED for baryon asymmetry -- not "
+                    "the geometric 1.833 nor the Higgs-derived 9.865]. J is the module's own literal 3.08e-5 (PDG 2024); "
+                    "it is NOT pdg.J_ckm (3.12e-5) nor the framework's computed ckm.jarlskog_invariant (2.915e-5), and "
+                    "the three do not agree. The former string named bare J, N_eff, delta_b3, sin_delta_cp and "
+                    "exp_neg_ReT, none of which is a registry path."
                 ),
             ),
             Parameter(
@@ -577,17 +627,29 @@ class BaryonAsymmetryV18(SimulationBase):
                 status="DERIVED",
                 description="k_bary = J/N_eff = J/(2*(b3-14)) = 3.08×10⁻⁵/20. v24.2: χ_eff = 72 per-sector, N_eff = 20.",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(J_jarlskog, ops.mul(eml_scalar(2.0), ops.sub(b3, eml_scalar(14.0))))",
+                eml_description=(
+                    "EML: ops.div(eml_scalar(3.08e-5), ops.mul(eml_scalar(2.0), ops.sub(eml_vec('topology.elder_kads'), "
+                    "eml_scalar(14.0)))) — k_bary = J / N_eff with N_eff = 2(b3 - 14) = 20. J is the module's own literal "
+                    "3.08e-5 (PDG 2024); it is NOT pdg.J_ckm (3.12e-5) nor the framework's computed "
+                    "ckm.jarlskog_invariant (2.915e-5), and the three do not agree. The former string named bare "
+                    "J_jarlskog, which is not a registry path."
+                ),
             ),
             Parameter(
                 path="cosmology.delta_b3_asymmetry",
                 name="B3 Cycle Asymmetry",
                 units="dimensionless",
-                status="GEOMETRIC",
-                description="Flux mismatch fraction between associative 3-cycles and coassociative 4-cycles (0.12).",
+                status="CALIBRATED",
+                description="Flux mismatch fraction between associative 3-cycles and coassociative 4-cycles, asserted as 0.12. CALIBRATED: the value is a literal in compute(); no derivation from b3, chi_eff or any flux count exists in this module.",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(eml_scalar(1.0), eml_vec('b3')) — δ_b3 = 1/b₃ = 1/24 topological baryon asymmetry seed"
+                    "EML: eml_scalar(0.12) — δ_b3 = 0.12, the literal compute() assigns. "
+                    "The previous text claimed δ_b3 = 1/b₃ = 0.041667, a derivation that "
+                    "appears nowhere in this module: the code sets self.delta_b3_ratio = 0.12 "
+                    "outright, the module docstring calls the cycle asymmetry \"approximate "
+                    "(exact flux mismatch requires lattice G2 computation)\", and the parent "
+                    "formula's terms give \"Cycle asymmetry = 0.12 * b3\". CALIBRATED, not "
+                    "GEOMETRIC — see the status note on this parameter"
                 ),
             ),
             Parameter(

@@ -92,6 +92,15 @@ def _arithma_ln(a):
     return None if a is None else a.ln()
 
 
+#: Niemeier (1973): there are exactly 24 even unimodular lattices in
+#: dimension 24, of which the Leech lattice is the unique one with no roots.
+#: The count and the dimension are BOTH 24 and that is a coincidence of this
+#: dimension, not one fact -- leech-dimension-uniqueness declared the count as
+#: an input under a path no registry held, so nothing could check the two
+#: apart.
+NIEMEIER_LATTICE_COUNT = 24
+
+
 @dataclass
 class LatticeProperties:
     """Properties of the Leech lattice."""
@@ -168,6 +177,7 @@ class LeechPartitionV16(SimulationBase):
             "topology.octonion_dim",     # Octonion dimension (8)
             "topology.partition_exact",  # Boolean: is 24/8 exact integer?
             "topology.g2_compatible",    # Boolean: G₂ = Aut(O)?
+            "topology.niemeier_count",   # 24 even unimodular lattices in dim 24
         ]
 
     @property
@@ -221,6 +231,7 @@ class LeechPartitionV16(SimulationBase):
             "topology.octonion_dim": self.octonion.dimension,
             "topology.partition_exact": is_exact,
             "topology.g2_compatible": g2_compatible,
+            "topology.niemeier_count": float(NIEMEIER_LATTICE_COUNT),
         }
 
 
@@ -446,9 +457,9 @@ class LeechPartitionV16(SimulationBase):
                 plain_text="dim(Leech) = 24",
                 category="DERIVED",
                 description="Unique even unimodular lattice dimension",
-                inputParams=["topology.even_unimodular_class", "topology.niemeier_count"],
+                inputParams=["topology.niemeier_count"],
                 outputParams=["topology.leech_dim"],
-                input_params=["topology.even_unimodular_class", "topology.niemeier_count"],
+                input_params=["topology.niemeier_count"],
                 output_params=["topology.leech_dim"],
                 derivation={
                     "method": "lattice_classification",
@@ -475,9 +486,9 @@ class LeechPartitionV16(SimulationBase):
                 plain_text="G2 = Aut(O)",
                 category="DERIVED",
                 description="G2 is the automorphism group of octonions",
-                inputParams=["topology.octonion_algebra", "topology.g2_holonomy"],
+                inputParams=["topology.octonion_dim", "topology.g2_compatible"],
                 outputParams=["topology.g2_compatible"],
-                input_params=["topology.octonion_algebra", "topology.g2_holonomy"],
+                input_params=["topology.octonion_dim", "topology.g2_compatible"],
                 output_params=["topology.g2_compatible"],
                 derivation={
                     "method": "lie_algebra_classification",
@@ -577,6 +588,25 @@ class LeechPartitionV16(SimulationBase):
 
         return [
             Parameter(
+                path="topology.niemeier_count",
+                name="Niemeier Lattice Count",
+                units="count",
+                status="ESTABLISHED",
+                description=(
+                    "There are exactly 24 even unimodular lattices in "
+                    "dimension 24 (Niemeier 1973); the Leech lattice is the "
+                    "unique one of them with no roots, which is what makes "
+                    "dim = 24 the distinguished choice. The count and the "
+                    "dimension are both 24 and that is a coincidence of this "
+                    "dimension, not a single fact -- topology.leech_dim is the "
+                    "other 24 and the two must not be substituted for each "
+                    "other."
+                ),
+                derivation_formula="leech-dimension-uniqueness",
+                no_experimental_value=True,
+                eml_description="EML: eml_scalar(24.0) — the 24 even unimodular lattices of dimension 24 (Niemeier 1973)",
+            ),
+            Parameter(
                 path="topology.n_gen_leech",
                 name="Generation Count (Leech Partition)",
                 units="dimensionless",
@@ -626,7 +656,8 @@ class LeechPartitionV16(SimulationBase):
                 status="DERIVED",
                 description="Whether G₂ = Aut(O) is satisfied (True)",
                 no_experimental_value=True,
-                eml_description="Structural boolean — G2=Aut(O) is a Lie group theorem, not an arithmetic expression; evaluates to True by Cartan classification",
+                # EML WITHHELD: G2 = Aut(O) is a statement of the Cartan classification.
+                # A structural theorem has no arithmetic form in a scalar algebra.
             ),
         ]
 

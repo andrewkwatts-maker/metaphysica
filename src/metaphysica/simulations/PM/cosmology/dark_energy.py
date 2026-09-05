@@ -1277,7 +1277,7 @@ class DarkEnergyV16(SimulationBase):
                     f"{deviation_sigma:.2f}σ. {'Excellent' if deviation_sigma < 1 else 'Good'} agreement."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.w0_derived'), eml_scalar(-0.957))), eml_scalar(0.067)) — sigma deviation of w0 from DESI 2025 thawing"
+                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.w0_derived'), eml_vec('desi.w0'))), eml_scalar(0.057)) — σ-deviation of w₀ from the DESI DR2 w0waCDM headline, which is the row _compute_deviation() actually scores against. The previous text used eml_scalar(-0.957)/eml_scalar(0.067), i.e. the desi.w0_thawing row, whose attribution established.py records as UNVERIFIED; 0.057 is the 1-sigma carried on the desi.w0 row (arXiv:2503.14738)"
             ),
             Parameter(
                 path="cosmology.w0_validation",

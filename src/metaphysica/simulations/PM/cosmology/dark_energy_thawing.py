@@ -225,13 +225,31 @@ class DarkEnergyEvolution(SimulationBase):
         self.z_array = np.linspace(0, self.z_max, self.n_points)
         self.w_z_array = np.array([self.get_w_z(z) for z in self.z_array])
 
-        # Step 6: Validate against DESI 2025
+        # Step 6: Validate against DESI 2025.
+        #
+        # The uncertainties are READ FROM THE DATASOURCE ROW, not hardcoded.
+        # They used to be literals 0.063 and 0.32, which match neither the
+        # DR2 headline row (desi.w0 = -0.752 +/- 0.057, desi.wa = -0.86 +/-
+        # 0.23) nor the framework-adopted thawing row (desi.w0_thawing =
+        # -0.957 +/- 0.067, desi.wa_thawing = -0.99 +/- 0.33). They were
+        # invented, and they set the published sigma of two predictions.
+        w0_desi_unc = self._desi_uncertainty(registry, "desi.w0")
+        wa_desi_unc = self._desi_uncertainty(registry, "desi.wa")
+
         sigma_w0 = self._compute_sigma_deviation(
-            self.w0_derived, w0_desi, 0.063  # DESI uncertainty
+            self.w0_derived, w0_desi, w0_desi_unc
         )
         sigma_wa = self._compute_sigma_deviation(
-            self.wa_derived, wa_desi, 0.32  # DESI uncertainty
+            self.wa_derived, wa_desi, wa_desi_unc
         )
+
+        # Keep the anchors actually used, so the parameter definitions and
+        # get_thawing_signature() report the same comparison run() scored
+        # rather than each re-deciding which DESI row to compare against.
+        self._desi_anchors = {
+            "w0": (w0_desi, w0_desi_unc),
+            "wa": (wa_desi, wa_desi_unc),
+        }
 
         # Overall validation: both must be within 3 sigma
         validated = (abs(sigma_w0) < 3.0) and (abs(sigma_wa) < 3.0)
@@ -257,6 +275,28 @@ class DarkEnergyEvolution(SimulationBase):
         between Normal Math and EML Math modes.
         """
         return self.run(registry)
+
+    @staticmethod
+    def _desi_uncertainty(registry: PMRegistry, path: str) -> float:
+        """Return the 1-sigma uncertainty on a DESI datasource row.
+
+        SSOT: the uncertainty must come from the row it belongs to. There is
+        no fallback literal here on purpose -- an absent uncertainty is a
+        broken datasource and must fail loudly rather than be replaced by an
+        invented number.
+        """
+        entry = registry.get_entry(path)
+        if entry is None:
+            raise KeyError(f"Parameter '{path}' not found in registry")
+        unc = entry.uncertainty
+        if unc is None:
+            unc = entry.experimental_uncertainty
+        if unc is None or float(unc) <= 0.0:
+            raise ValueError(
+                f"'{path}' carries no usable 1-sigma uncertainty; refusing to "
+                f"substitute a literal."
+            )
+        return float(unc)
 
     def calculate_w_params_w0(self, b3: int) -> float:
         """
@@ -529,12 +569,18 @@ class DarkEnergyEvolution(SimulationBase):
         if self.w0_derived is None:
             raise ValueError("Must call run() first")
 
-        # Get DESI values for comparison (from established.py registry)
-        # v18: Use DESI 2025 thawing quintessence constraint (matches PM prediction)
-        w0_desi = -0.957  # DESI 2025 thawing model, not Lambda-CDM (-0.728)
-        wa_desi = -0.99
-        sigma_w0 = self._compute_sigma_deviation(self.w0_derived, w0_desi, 0.067)
-        sigma_wa = self._compute_sigma_deviation(self.wa_derived, wa_desi, 0.32)
+        # Compare against the SAME anchor run() scored. This used to hardcode
+        # the desi.w0_thawing row (-0.957 +/- 0.067, -0.99 +/- 0.32), so the
+        # signature reported a different sigma than the published parameter.
+        # established.py records that the thawing anchor's attribution is
+        # UNVERIFIED and that "the primary scoring anchor is desi.w0".
+        anchors = getattr(self, "_desi_anchors", None)
+        if not anchors:
+            raise ValueError("Must call run() first")
+        w0_desi, w0_desi_unc = anchors["w0"]
+        wa_desi, wa_desi_unc = anchors["wa"]
+        sigma_w0 = self._compute_sigma_deviation(self.w0_derived, w0_desi, w0_desi_unc)
+        sigma_wa = self._compute_sigma_deviation(self.wa_derived, wa_desi, wa_desi_unc)
 
         return ThawingSignature(
             w0=self.w0_derived,
@@ -1185,12 +1231,42 @@ class DarkEnergyEvolution(SimulationBase):
         z_thaw = self.z_thaw if self.z_thaw else np.sqrt(24.0)
         epsilon_T = self.torsional_leakage if self.torsional_leakage else 0.133
 
-        # DESI 2025 values for sigma calculation (from established.py registry)
-        # v18: Use thawing quintessence constraint (matches PM prediction w0=-23/24=-0.9583)
-        w0_desi = -0.957  # DESI 2025 thawing model, not Lambda-CDM (-0.728)
-        w0_desi_unc = 0.067
-        wa_desi = -0.99
-        wa_desi_unc = 0.32
+        # DESI anchors: the ones run() actually scored against, not a second
+        # private copy. This block used to hardcode the desi.w0_thawing row
+        # (-0.957 +/- 0.067, -0.99 +/- 0.32) while run() scored against
+        # desi.w0 / desi.wa, so the published description string and the
+        # published experimental_bound described a comparison that had not
+        # been made. established.py records the thawing anchor's attribution
+        # as UNVERIFIED and names desi.w0 the primary scoring anchor.
+        anchors = getattr(self, "_desi_anchors", None)
+        if anchors:
+            w0_desi, w0_desi_unc = anchors["w0"]
+            wa_desi, wa_desi_unc = anchors["wa"]
+        else:
+            # Definitions requested before run() (documentation paths, and the
+            # SSOT compliance suite, which builds definitions against an empty
+            # registry). Read the DATASOURCE rows rather than the registry:
+            # established.py fills desi.w0 / desi.wa from exactly this loader,
+            # so the numbers are the same ones, but they are available without
+            # a populated registry. Reading the registry here made
+            # get_output_param_definitions() depend on run-order and raise
+            # KeyError when called first. Still no literals: an absent
+            # datasource row must fail rather than be guessed.
+            from metaphysica.simulations.data.experimental_data_loader import (
+                get_loader as _get_loader,
+            )
+            _loader = _get_loader()
+            _w0_row = _loader.get_desi("w0")
+            _wa_row = _loader.get_desi("wa")
+            w0_desi = float(_w0_row.value)
+            wa_desi = float(_wa_row.value)
+            w0_desi_unc = float(_w0_row.uncertainty)
+            wa_desi_unc = float(_wa_row.uncertainty)
+            if not (w0_desi_unc > 0.0 and wa_desi_unc > 0.0):
+                raise ValueError(
+                    "DESI w0/wa datasource rows carry no usable 1-sigma "
+                    "uncertainty; refusing to substitute a literal."
+                )
 
         sigma_w0 = (w0 - w0_desi) / w0_desi_unc
         sigma_wa = (wa - wa_desi) / wa_desi_unc
@@ -1262,7 +1338,16 @@ class DarkEnergyEvolution(SimulationBase):
                 ),
                 derivation_formula="torsional-leakage-formula",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(ops.div(b3, chi_eff), ops.add(1, ops.neg(ops.inv(ops.sqrt(b3))))) — torsional leakage coefficient"
+                eml_description=(
+                    "EML: ops.mul(ops.div(eml_vec('topology.elder_kads'), eml_vec('topology.mephorash_chi')), "
+                    "ops.sub(eml_scalar(1.0), ops.inv(ops.sqrt(eml_vec('topology.elder_kads'))))) — "
+                    "ε_T = (b₃/χ_eff)(1 − 1/√b₃). χ_eff is taken from topology.mephorash_chi = 144, "
+                    "the value calculate_torsional_leakage() is handed and its docstring names. The bare "
+                    "name `chi_eff` is not used because it binds to the FormulasRegistry seed = 72 "
+                    "(per-shadow). UNRESOLVED: the FormulasRegistry chi_eff usage guide lists "
+                    "\"Torsional leakage (b₃/χ_eff in epsilon_T formula)\" under chi_eff_sector = 72, "
+                    "which would double ε_T to 0.265. Needs an author ruling"
+                )
             ),
             Parameter(
                 path="cosmology.w0_desi_sigma",
@@ -1276,8 +1361,12 @@ class DarkEnergyEvolution(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.sub(eml_vec('cosmology.w0_thawing'), eml_scalar(-0.957)), "
-                    "eml_scalar(0.067)) — σ-deviation of predicted w₀ from DESI 2025 thawing value"
+                    "EML: ops.div(ops.sub(eml_vec('cosmology.w0_thawing'), eml_vec('desi.w0')), "
+                    "eml_scalar(0.057)) — σ-deviation of predicted w₀ from the DESI DR2 "
+                    "w0waCDM headline (desi.w0). The previous text scored against eml_scalar(-0.957)/"
+                    "eml_scalar(0.067), i.e. the desi.w0_thawing row, whose attribution established.py "
+                    "records as UNVERIFIED and which run() has never used. 0.057 is the 1-sigma on the "
+                    "desi.w0 datasource row (arXiv:2503.14738), read from that row, not chosen"
                 ),
             ),
             Parameter(
@@ -1294,8 +1383,12 @@ class DarkEnergyEvolution(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.sub(eml_vec('cosmology.wa_thawing'), eml_scalar(-0.99)), "
-                    "eml_scalar(0.32)) — σ-deviation of predicted wₐ from DESI 2025 measurement"
+                    "EML: ops.div(ops.sub(eml_vec('cosmology.wa_thawing'), eml_vec('desi.wa')), "
+                    "eml_scalar(0.23)) — σ-deviation of predicted wₐ from the DESI DR2 "
+                    "w0waCDM headline (desi.wa). The previous text scored against eml_scalar(-0.99)/"
+                    "eml_scalar(0.32) — the desi.wa_thawing row, attribution UNVERIFIED, and an "
+                    "uncertainty (0.32) that matches no datasource row at all. 0.23 is the 1-sigma on the "
+                    "desi.wa datasource row"
                 ),
             ),
             Parameter(

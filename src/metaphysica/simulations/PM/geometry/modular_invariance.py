@@ -146,6 +146,7 @@ class ModularInvarianceV16(SimulationBase):
             "topology.anomaly_free",      # Boolean: is anomaly cancelled?
             "topology.critical_dim",      # D = b₃ + 2 = 26
             "topology.modular_weight",    # Weight of partition function
+            "topology.dedekind_eta_phase",  # pi/12 from eta(tau+1)
         ]
 
     @property
@@ -199,6 +200,7 @@ class ModularInvarianceV16(SimulationBase):
             "topology.anomaly_free": anomaly_free,
             "topology.critical_dim": critical_dim,
             "topology.modular_weight": modular_weight,
+            "topology.dedekind_eta_phase": float(np.pi / 12.0),
         }
 
 
@@ -445,9 +447,9 @@ class ModularInvarianceV16(SimulationBase):
                 category="DERIVED",
                 description="Dedekind eta function, a weight-1/2 modular form whose 24th power yields the modular discriminant Delta(tau). Its transformation law under SL(2,Z) encodes the phase factor that constrains b3.",
                 inputParams=["topology.elder_kads"],
-                outputParams=["topology.modular_phase"],
+                outputParams=["topology.dedekind_eta_phase"],
                 input_params=["topology.elder_kads"],
-                output_params=["topology.modular_phase"],
+                output_params=["topology.dedekind_eta_phase"],
                 derivation={
                     "method": "modular_form_definition",
                     "parentFormulas": [],
@@ -607,6 +609,29 @@ class ModularInvarianceV16(SimulationBase):
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions."""
         return [
+            Parameter(
+                path="topology.dedekind_eta_phase",
+                name="Dedekind Eta Transformation Phase",
+                units="radians",
+                status="ESTABLISHED",
+                description=(
+                    "Phase acquired by the Dedekind eta function under the "
+                    "T-transformation tau -> tau + 1: eta(tau+1) = "
+                    "exp(i*pi/12) * eta(tau), so the phase is pi/12 = "
+                    "0.261799 rad. Exact, and the whole b3 = 0 mod 24 argument "
+                    "turns on it -- Z = eta^(-b3) picks up exp(-i*pi*b3/12), "
+                    "and single-valuedness forces b3/12 to be even. It was "
+                    "declared twice under two names, as the OUTPUT of "
+                    "dedekind-eta-definition (topology.modular_phase) and as "
+                    "an INPUT to modular-anomaly-condition "
+                    "(topology.dedekind_eta_phase), and neither name existed, "
+                    "so the edge joining the two halves of the argument was "
+                    "missing in both directions."
+                ),
+                derivation_formula="dedekind-eta-definition",
+                no_experimental_value=True,
+                eml_description="EML: ops.div(eml_pi(), eml_scalar(12.0)) — the eta transformation phase pi/12",
+            ),
             Parameter(
                 path="topology.b3_modular",
                 name="b₃ from Modular Invariance",

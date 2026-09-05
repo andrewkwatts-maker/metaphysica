@@ -497,7 +497,7 @@ class AppendixJTorsionFunnel(SimulationBase):
                 eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="GEOMETRIC",
                 description="Total ancestral roots from SO(24) + shadow torsion - manifold cost.",
-                input_params=["topology.so24_generators", "topology.shadow_torsion_total", "topology.manifold_cost"],
+                input_params=["topology.so24_generators", "topology.shadow_torsion_total", "terminal.manifold_tax"],
                 output_params=[],
                 derivation={
                     "method": "Symmetry budget at the funnel entry (26D bulk)",

@@ -1017,9 +1017,9 @@ class OctonionicMixing(SimulationBase):
                     "difference (3D vs 4D) explains why quark mixing is small and "
                     "lepton mixing is large."
                 ),
-                inputParams=["geometry.g2_holonomy", "topology.g2_compatible"],
+                inputParams=["topology.g2_compatible"],
                 outputParams=["triality.associative_dimension", "triality.coassociative_dimension"],
-                input_params=["geometry.g2_holonomy", "topology.g2_compatible"],
+                input_params=["topology.g2_compatible"],
                 output_params=["triality.associative_dimension", "triality.coassociative_dimension"],
                 derivation={
                     "steps": [

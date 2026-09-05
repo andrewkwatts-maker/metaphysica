@@ -759,9 +759,16 @@ class EvolutionEngineV16(SimulationBase):
                     "with v16.1 Ricci flow geometry."
                 ),
                 inputParams=["topology.elder_kads", "cosmology.H0_late_evolved"],
-                outputParams=["cosmology.H_z"],
+                outputParams=["cosmology.H0_early_normalized"],
                 input_params=["topology.elder_kads", "cosmology.H0_late_evolved"],
-                output_params=["cosmology.H_z"],
+                # H(z) is a curve; the registry holds the scalar this curve
+                # produces at the named redshift. It formerly declared
+                # "cosmology.H_z", which is a parameter nowhere in the
+                # registry, so the dependency edge was invisible and every
+                # chain through this formula was counted on a fiction.
+                # H(0) cannot be the output -- H0_late_evolved is an INPUT
+                # here, and naming it would close a one-step cycle.
+                output_params=["cosmology.H0_early_normalized"],
                 derivation={
                     "steps": [
                         {
@@ -803,9 +810,11 @@ class EvolutionEngineV16(SimulationBase):
                     "Logarithmic relaxation factor from v14.2 with b3 from G2 topology."
                 ),
                 inputParams=["topology.elder_kads"],
-                outputParams=["cosmology.relaxation"],
+                outputParams=["cosmology.relaxation_z1100"],
                 input_params=["topology.elder_kads"],
-                output_params=["cosmology.relaxation"],
+                # As above: relaxation(z) is a curve, and relaxation_z1100 is
+                # the scalar the module registers from it.
+                output_params=["cosmology.relaxation_z1100"],
                 derivation={
                     "steps": [
                         {
@@ -836,16 +845,27 @@ class EvolutionEngineV16(SimulationBase):
             Formula(
                 id="ricci-flow-evolution",
                 label="(5.32)",
-                latex=r"R(z) = R_0 \exp\left(-\frac{z}{\tau_{Ricci}}\right), \quad \tau_{Ricci} = \frac{k_\gimel}{b_3}",
-                plain_text="R(z) = R0 * exp(-z / tau_ricci), tau_ricci = k_gimel / b3",
+                latex=r"R(z) = R_0 (1+z)^{-1/\tau_{Ricci}}, \quad \tau_{Ricci} = \frac{k_\gimel}{b_3}",
+                plain_text="R(z) = R0 * (1+z)^(-1/tau_ricci), tau_ricci = k_gimel / b3",
                 category="DERIVED",
                 description=(
-                    "Ricci curvature evolution under Hamilton's flow on G2 manifold."
+                    "Ricci curvature evolution under Hamilton's flow on G2 "
+                    "manifold. The declared ODE is dR/dz = -R/(tau*(1+z)), "
+                    "whose solution is the POWER law below. This formula "
+                    "previously published R0*exp(-z/tau), which solves a "
+                    "different equation (dR/dz = -R/tau); the two agree only "
+                    "to first order in z. The distinction is not cosmetic: "
+                    "cosmological evolution is parameterised by ln(1+z) since "
+                    "a = 1/(1+z), and at recombination the exponential form "
+                    "underflows to exactly 0.0 in double precision while the "
+                    "power law gives a finite curvature."
                 ),
                 inputParams=["topology.elder_kads", "constants.k_gimel"],
-                outputParams=["cosmology.ricci_curvature"],
+                outputParams=["cosmology.ricci_flow_consistency"],
                 input_params=["topology.elder_kads", "constants.k_gimel"],
-                output_params=["cosmology.ricci_curvature"],
+                # R(z) is a curve. The scalar this simulation registers from
+                # it is the flow-consistency residual, not a curvature value.
+                output_params=["cosmology.ricci_flow_consistency"],
                 derivation={
                     "steps": [
                         {
@@ -857,8 +877,8 @@ class EvolutionEngineV16(SimulationBase):
                             "formula": r"\frac{dR}{dz} = -\frac{R}{\tau_{Ricci}(1+z)}"
                         },
                         {
-                            "description": "Analytic solution",
-                            "formula": r"R(z) = R_0 \exp(-z/\tau_{Ricci})"
+                            "description": ("Analytic solution: separating dR/R = -dz/(tau*(1+z)) and integrating gives ln R = -ln(1+z)/tau + const"),
+                            "formula": r"R(z) = R_0 (1+z)^{-1/\tau_{Ricci}}"
                         }
                     ],
                     "provenance": "v16.1 Ricci flow framework",
@@ -871,9 +891,9 @@ class EvolutionEngineV16(SimulationBase):
                     "R0": "Initial curvature = b3/k_gimel^2",
                     "tau_ricci": "Flow timescale = k_gimel/b3 = 0.513"
                 },
-                eml_latex=r"\mathrm{ops.mul}(R_0,\, \mathrm{ops.exp}(\mathrm{ops.neg}(\mathrm{ops.div}(z, \tau_{Ricci}))))",
-                eml_tree_str="ops.mul(R0, ops.exp(ops.neg(ops.div(z, tau_ricci))))",
-                eml_description="EML: R(z) = ops.mul(R0, ops.exp(ops.neg(ops.div(z, tau_ricci)))) — Ricci curvature decay",
+                eml_latex=r"\mathrm{ops.mul}(R_0,\, \mathrm{ops.pow}(\mathrm{ops.add}(\mathrm{eml\_scalar}(1), z),\, \mathrm{ops.neg}(\mathrm{ops.div}(\mathrm{eml\_scalar}(1), \tau_{Ricci}))))",
+                eml_tree_str="ops.mul(R0, ops.pow(ops.add(eml_scalar(1.0), z), ops.neg(ops.div(eml_scalar(1.0), tau_ricci))))",
+                eml_description="EML: R(z) = ops.mul(R0, ops.pow(ops.add(1, z), ops.neg(ops.div(1, tau_ricci)))) — Ricci curvature decays as a power of (1+z), not exponentially in z",
             ),
         ]
 
@@ -898,7 +918,15 @@ class EvolutionEngineV16(SimulationBase):
                 bound_type="central_value",
                 bound_source="SH0ES 2022",
                 uncertainty=1.04,
-                eml_description="EML: ops.div(H0_late * ops.pow(1+z, 1.5), ops.add(1, ops.div(log(1+z), b3))) at z=0 — unified evolution engine H0"
+                eml_description=(
+                    "EML: ops.div(ops.mul(eml_vec('geometry.H0_local'), ops.pow(ops.add(eml_scalar(1.0), "
+                    "eml_scalar(0.0)), eml_scalar(1.5))), ops.add(eml_scalar(1.0), "
+                    "ops.div(ops.log(ops.add(eml_scalar(1.0), eml_scalar(0.0))), eml_vec('topology.elder_kads')))) — H(z) "
+                    "= H0_late (1+z)^1.5 / (1 + ln(1+z)/b3) evaluated at z=0, where it reduces identically to H0_late. "
+                    "H0_late is geometry.H0_local, the SH0ES 2022 distance-ladder measurement -- this parameter passes "
+                    "that number through, it does not predict it. The former string named bare H0_late and z, neither of "
+                    "which is a registry path."
+                ),
             ),
             Parameter(
                 path="cosmology.H0_early_normalized",
@@ -940,7 +968,10 @@ class EvolutionEngineV16(SimulationBase):
                 ),
                 derivation_formula="ricci-flow-evolution",
                 no_experimental_value=True,
-                eml_description="EML: ops.corrcoef(eml_vec('relaxation_array'), ops.inv(eml_vec('R_array'))) — Pearson correlation between log-scaling relaxation and inverse Ricci curvature"
+                # EML WITHHELD: this is a Pearson correlation coefficient between two
+                # arrays sampled over the redshift grid. Correlation is a statistic of
+                # two sequences, not a scalar tension expression; ops.corrcoef does not
+                # exist and inventing it would not make the quantity scalar.
             ),
             Parameter(
                 path="cosmology.h_evolution_sigma",
@@ -952,7 +983,7 @@ class EvolutionEngineV16(SimulationBase):
                     "Values < 2 indicate successful tension resolution."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.max(eml_vec('cosmology.H0_early_deviation_sigma'), eml_scalar(0.0)) — max sigma among H0_early and H0_late deviations from targets"
+                eml_description="EML: ops.max(ops.div(ops.abs(ops.sub(eml_vec('cosmology.H0_early_normalized'), eml_vec('geometry.H0_early'))), eml_scalar(0.5)), eml_scalar(0.0)) — max(|H0_early_normalized - H0_early_target| / 0.5, late-branch term). 0.5 km/s/Mpc is the Planck 2018 uncertainty this module divides by, and the late-branch term is 0 when the z=0 branch is exact. cosmology.H0_early_deviation_sigma is not a registry path"
             ),
         ]
 

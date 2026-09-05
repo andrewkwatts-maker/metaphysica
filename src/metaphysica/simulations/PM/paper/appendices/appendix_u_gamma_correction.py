@@ -375,7 +375,7 @@ class AppendixUGammaCorrection(SimulationBase):
                 name="Gamma Correction (Geometric Candidate)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Geometric derivation gamma = D*b3/(2*D_string*pi) = 26*24/(20*pi) = 10.31324...",
+                description="Geometric derivation gamma = D*b3/(2*D_string*pi) = 26*24/(20*pi) = 9.931268... (the previous text said 10.31324, which is the superseded 27D-era fitted value, not this expression)",
                 derivation_formula="gamma-geometric-candidate",
                 no_experimental_value=True,
                 eml_description=(
@@ -385,16 +385,33 @@ class AppendixUGammaCorrection(SimulationBase):
             ),
             Parameter(
                 path="appendix_u.match_sigma",
-                name="Fitted vs Geometric Match (sigma)",
+                name="Round-trip Residual of the Geometric Gamma Identity (sigma)",
                 units="sigma",
                 status="DERIVED",
-                description="Match quality between fitted and geometric gamma values",
+                description=(
+                    "Floating-point residual of the algebraic identity "
+                    "(2π/b₃)·γ_geometric = D_total/D_string, divided by σ_fit = 0.5e-6. "
+                    "The identity holds exactly by construction (γ_geometric is DEFINED as "
+                    "D_total·b₃/(2·D_string·π)), so the residual is pure double-precision "
+                    "round-off (~4.4e-16) and this number measures nothing physical. It was "
+                    "previously named \"Fitted vs Geometric Match\", which the code stopped "
+                    "computing when the 27D-era γ_fitted = 10.31324 was superseded: "
+                    "|γ_fitted − γ_geometric| = 0.382, i.e. 763943 σ on this denominator. "
+                    "Both the retained metric and its denominator need an author ruling."
+                ),
                 derivation_formula="gamma-geometric-candidate",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('appendix_u.gamma_fitted'), "
-                    "eml_vec('appendix_u.gamma_geometric'))), eml_scalar(5e-7)) — "
-                    "|γ_fitted − γ_geometric| / σ_fit where σ_fit = 0.5×10⁻⁶ (last digit precision)"
+                    "EML: ops.div(ops.abs(ops.sub(ops.mul(ops.div(ops.mul(eml_scalar(2.0), "
+                    "eml_pi()), eml_scalar(24.0)), eml_vec('appendix_u.gamma_geometric')), "
+                    "ops.div(eml_scalar(26.0), eml_scalar(10.0)))), eml_scalar(5e-7)) — "
+                    "|(2π/b₃)·γ_geometric − D_total/D_string| / σ_fit, which is what "
+                    "compute_gamma_correction() evaluates. NOTE: σ_fit = 0.5e-6 is an INVENTED "
+                    "denominator (\"last digit precision\") attached to a quantity that is "
+                    "identically zero, so the resulting \"sigma\" is float round-off scaled by "
+                    "an arbitrary constant. The previous text described |γ_fitted − "
+                    "γ_geometric|/σ_fit = 763943, the pre-supersession definition the code no "
+                    "longer computes"
                 ),
             ),
         ]

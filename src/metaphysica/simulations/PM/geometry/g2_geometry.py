@@ -1419,9 +1419,9 @@ class G2GeometryV16(SimulationBase):
             plain_text="b0=1, b1=0, b2=4, b3=24, b4=24, b5=4, b6=0, b7=1",
             category="DERIVED",
             description="Betti number sequence for TCS G2 manifold #187",
-            inputParams=["geometry.g2_holonomy", "topology.tcs_manifold_id"],
+            inputParams=["topology.g2_compatible", "topology.b2", "topology.elder_kads"],
             outputParams=["topology.b2", "topology.elder_kads"],
-            input_params=["geometry.g2_holonomy", "topology.tcs_manifold_id"],
+            input_params=["topology.g2_compatible", "topology.b2", "topology.elder_kads"],
             output_params=["topology.b2", "topology.elder_kads"],
             derivation={
                 "steps": [

@@ -98,6 +98,23 @@ except ImportError:
     _REGISTRY_AVAILABLE = False
 
 
+# ---------------------------------------------------------------------------
+# The H0 chain's two unsourced constants.
+#
+# h0_physical = (125/288)/24 * H0_GEOMETRIC_SCALE * H0_UNWINDING_SCALE, so only
+# the PRODUCT (4040) is determined by the answer. Neither factor has an
+# independent source in the framework. They are named here so that the split is
+# visible instead of reading as two separate derivation steps.
+# ---------------------------------------------------------------------------
+
+#: "Geometric units" scale factor. Unsourced.
+H0_GEOMETRIC_SCALE = 400.0
+
+#: "Unwinding scale factor", described as the only temporal variable and tied
+#: to the 24-pin torsion cycle. Unsourced; no derivation from 24 is given.
+H0_UNWINDING_SCALE = 10.1
+
+
 class AppendixZTerminalLedger(SimulationBase):
     """
     Appendix Z: Terminal Constant Ledger
@@ -162,6 +179,7 @@ class AppendixZTerminalLedger(SimulationBase):
             "physics.cabibbo_angle",
             "terminal.closure_verified",
             "cosmology.h0_unwinding_scale",
+            "cosmology.H0_physical",
         ]
 
     @property
@@ -196,6 +214,28 @@ class AppendixZTerminalLedger(SimulationBase):
                 ),
                 eml_description="EML: ops.div(eml_scalar(24.0), eml_scalar(2.0)) — τ = b₃/2 = 24/2 = 12 (stabilizing integer from root budget 276+24−τ=288)",
                 no_experimental_value=True,
+            ),
+            Parameter(
+                path="cosmology.H0_physical",
+                name="Hubble Constant from the Unwinding Chain",
+                units="km/s/Mpc",
+                status="DERIVED",
+                description=(
+                    "H0 from the terminal ledger: (125/288)/24 * 400 * 10.1 = "
+                    "73.06 km/s/Mpc. Computed on every run and never "
+                    "registered -- the formula declared it as an output under "
+                    "a path no registry held, so the number was published in "
+                    "prose and scored nowhere. Registered now so it is "
+                    "compared against SH0ES like any other prediction. Read "
+                    "the sigma with the note on H0_GEOMETRIC_SCALE in mind: "
+                    "400 and 10.1 are unsourced and only their product enters."
+                ),
+                derivation_formula="h0-unwinding-scale",
+                experimental_bound=73.04,
+                bound_type="central_value",
+                bound_source="SH0ES 2022",
+                uncertainty=1.04,
+                eml_description="EML: ops.mul(ops.div(ops.div(eml_vec('registry.node_count'), eml_vec('topology.ancestral_roots')), eml_vec('topology.elder_kads')), eml_scalar(4040.0)) — (125/288)/24 × 4040; the 4040 is one unsourced constant written as 400 × 10.1",
             ),
             Parameter(
                 path="terminal.generation_count",
@@ -293,7 +333,7 @@ class AppendixZTerminalLedger(SimulationBase):
                     "to physical units: H0_phys = 7.24 * 10.1 = 73.1 km/s/Mpc. "
                     "Locked to the 24-pin (Nun) torsion unwinding cycle rate."
                 ),
-                eml_description="EML: ops.mul(ops.mul(ops.div(eml_scalar(125.0), eml_scalar(288.0)), ops.inv(eml_scalar(24.0))), eml_scalar(400.0)) — H0_geom = (125/288)/24 × 400; ×κ=10.1 → H0_phys",
+                eml_description="EML: eml_scalar(10.1) — κ = 10.1, the value this parameter holds. The previous tree, (125/288)/24 × 400, evaluates to 7.2338: that is the SIBLING quantity h0_geometric, not κ. NOTE: κ = 10.1 is CALIBRATED, not derived — the module itself records (see the note above H0_GEOMETRIC_SCALE) that 400 and 10.1 are both unsourced and only their product 4040 enters H0_phys, so κ is one half of a single fitted constant presented as two",
                 no_experimental_value=True,
             ),
         ]
@@ -381,7 +421,14 @@ class AppendixZTerminalLedger(SimulationBase):
                 eml_tree_str="ops.mul(eml_vec('torsion_variance'), ops.div(eml_vec('node_count'), ops.mul(eml_scalar(12.0), b3_leaf())))",
                 category="DERIVED",
                 description="Strong CP conservation by [6,6,6,6] isotropy - Axion eliminated.",
-                input_params=["topology.torsion_pattern"],
+                # Was "topology.torsion_pattern" -- the list [6,6,6,6], which
+                # is not a registry scalar and existed under no path. The
+                # scalar fact the lock needs is the 24-pin total distributing
+                # equally over the 4 spacetime dimensions; the isotropy that
+                # sends Var to zero is an assumption of the construction, not
+                # a registry read, and is now stated as such rather than
+                # smuggled in as a phantom input.
+                input_params=["topology.shadow_torsion_total"],
                 output_params=["physics.theta_qcd"],
                 derivation={
                     "method": "Isotropic torsion pin distribution enforces theta_QCD = 0",
@@ -613,7 +660,13 @@ class AppendixZTerminalLedger(SimulationBase):
                     "It ties the geometric H0 = (125/288)/24 x 400 to physical units. "
                     "Remains locked to the 24-pin torsion cycle."
                 ),
-                input_params=["cosmology.H0_local", "topology.shadow_torsion_total"],
+                # cosmology.H0_local was declared an input and is not one:
+                # the arithmetic below reads 125, 288, 24 and two unsourced
+                # constants, and never touches the measurement. Declaring the
+                # measured H0 as an input to a formula that predicts H0 made a
+                # prediction look like it consumed its own answer.
+                input_params=["registry.node_count", "topology.ancestral_roots",
+                              "topology.elder_kads"],
                 output_params=["cosmology.h0_unwinding_scale", "cosmology.H0_physical"],
                 derivation={
                     "method": "Hubble constant from geometric ratio times unwinding scale",
@@ -648,8 +701,15 @@ class AppendixZTerminalLedger(SimulationBase):
         theta_c = np.degrees(np.arcsin(np.sqrt(1 / self.PINS)))
 
         # H0 Unwinding Scale Factor
-        h0_geometric = (self.ACTIVE / self.ROOTS) / self.PINS * 400
-        unwinding_scale = 10.1  # The temporal variable tied to 24-pin torsion
+        # NOTE ON THE TWO CONSTANTS BELOW. 400 and 10.1 are both unsourced,
+        # and only their PRODUCT enters the answer: h0_physical is
+        # (125/288)/24 * 4040. They are one fitted constant presented as two,
+        # and splitting it into a "geometric" 400 and a "temporal" 10.1 gives
+        # the 73.06 the appearance of a two-step derivation it does not have.
+        # Recorded rather than repaired -- which of the two (if either) has an
+        # independent source is an author ruling.
+        h0_geometric = (self.ACTIVE / self.ROOTS) / self.PINS * H0_GEOMETRIC_SCALE
+        unwinding_scale = H0_UNWINDING_SCALE
         h0_physical = h0_geometric * unwinding_scale
 
         # Register output parameters
@@ -664,6 +724,7 @@ class AppendixZTerminalLedger(SimulationBase):
         registry.set_param("physics.cabibbo_angle", theta_c, self.metadata.id, "TERMINAL")
         registry.set_param("terminal.closure_verified", True, self.metadata.id, "TERMINAL")
         registry.set_param("cosmology.h0_unwinding_scale", unwinding_scale, self.metadata.id, "TERMINAL")
+        registry.set_param("cosmology.H0_physical", h0_physical, self.metadata.id, "DERIVED")
 
         return {
             "terminal.manifold_tax": self.TAX,
@@ -677,6 +738,7 @@ class AppendixZTerminalLedger(SimulationBase):
             "physics.cabibbo_angle": theta_c,
             "terminal.closure_verified": True,
             "cosmology.h0_unwinding_scale": unwinding_scale,
+            "cosmology.H0_physical": h0_physical,
         }
 
 

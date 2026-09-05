@@ -1362,10 +1362,17 @@ class SimulationRunner:
                 ([AppendixEBraneMap()] if APPENDIX_E_V16_2_AVAILABLE else []) +
                 # Appendix F: Gates of Integrity (v16.2 architecture)
                 ([Appendix72Gates()] if APPENDIX_F_V16_2_AVAILABLE else []) +
-                # Appendix G: Omega Seal Cryptographic Protocol
-                ([AppendixGOmegaSeal()] if APPENDIX_G_V16_2_AVAILABLE else []) +
+                # Appendix H runs BEFORE Appendix G. The appendices are
+                # otherwise in alphabetical order, which is not a dependency
+                # order: G's seal consumes topology.torsion_per_shadow, which H
+                # produces. That went unnoticed because G read the value with
+                # registry.get(path, default=12) against a path no registry
+                # held, so the default fired on every run and the ordering
+                # could not matter. With the path real, the order does.
                 # Appendix H: 288-Root Ancestral Basis (SO(24) + Shadow Torsion)
                 ([AppendixH288Roots()] if APPENDIX_H_V16_2_AVAILABLE else []) +
+                # Appendix G: Omega Seal Cryptographic Protocol
+                ([AppendixGOmegaSeal()] if APPENDIX_G_V16_2_AVAILABLE else []) +
                 # Appendix I: Three Terminal States of the Universe
                 ([AppendixITerminalStates()] if APPENDIX_I_V16_2_AVAILABLE else []) +
                 # Appendix J: The Torsion Funnel (288→24→125 Flow Visualization)

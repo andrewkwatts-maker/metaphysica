@@ -36,6 +36,9 @@ _simulations_dir = os.path.dirname(os.path.dirname(_current_dir))
 _project_root = os.path.dirname(_simulations_dir)
 sys.path.insert(0, _project_root)
 
+from metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots import (
+    MANIFOLD_PROJECTION_COST,
+)
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -402,7 +405,13 @@ class AppendixGOmegaSeal(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the omega seal verification."""
-        return ["geometry.unity_seal"]
+        # torsion_per_shadow is declared here so the resolver orders
+        # appendix_h before this module. It used to be read with a
+        # default of 12 against a path no registry held, which is why the
+        # ordering never mattered: the default always fired.
+        return ["geometry.unity_seal", "topology.torsion_per_shadow",
+                "topology.elder_kads", "registry.node_count",
+                "bridge.n_pairs"]
 
     @property
     def output_params(self) -> List[str]:
@@ -415,15 +424,22 @@ class AppendixGOmegaSeal(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute omega seal verification with 288-Root checksum and 12-PAIR-BRIDGE."""
         # Get parameters from registry
-        ancestral_roots = registry.get("topology.ancestral_roots", default=288)
-        torsion_per_shadow = registry.get("topology.torsion_per_shadow", default=12)
-        active_residues = registry.get("registry.node_count", default=125)
-        bridge_pairs = registry.get("seal.bridge_pairs", default=12)
+        # All four reads below used to carry a default. Two of those defaults
+        # were dead weight on paths that do exist, and one was worse than
+        # dead: bridge_pairs was read from "seal.bridge_pairs", which is THIS
+        # module's own output and is therefore unset when the read happens, so
+        # the default 12 always fired and the check two lines down --
+        # bridge_pairs == 12 -- could not fail. It now reads the registered
+        # bridge geometry, so it is a comparison rather than a tautology.
+        b3 = registry.get("topology.elder_kads")
+        torsion_per_shadow = registry.get("topology.torsion_per_shadow")
+        active_residues = registry.get("registry.node_count")
+        bridge_pairs = registry.get("bridge.n_pairs")
 
         # Verify the 288-root basis
-        so24_generators = (24 * 23) // 2  # 276
+        so24_generators = (int(b3) * (int(b3) - 1)) // 2  # 276
         shadow_torsion = torsion_per_shadow * 2  # 24
-        manifold_cost = 12
+        manifold_cost = MANIFOLD_PROJECTION_COST
         calculated_roots = so24_generators + shadow_torsion - manifold_cost
 
         # Verify 4-pattern stability
@@ -920,7 +936,9 @@ class AppendixGOmegaSeal(SimulationBase):
                     "the 4-fold stabilizer passes (24/4 = 6 pins per dimension), and the "
                     "12-PAIR-BRIDGE architecture is valid. False triggers model falsification."
                 ),
-                eml_description="Boolean flag that is True when all 288 ancestral roots, 24 torsion pins, and 12 bridge pairs pass cryptographic verification; False triggers model falsification.",
+                # EML WITHHELD: a boolean AND over the 288-root checksum, the 4-pattern
+                # stability test and the bridge-pair count. A verification flag is not a
+                # derived scalar.
                 experimental_bound=True,
                 bound_type="exact",
                 bound_source="Geometric necessity",
@@ -949,7 +967,9 @@ class AppendixGOmegaSeal(SimulationBase):
                     "Number of (2,0) Euclidean bridge pairs in the 12-PAIR-BRIDGE architecture. "
                     "Each pair couples one Normal shadow coordinate to one Mirror shadow coordinate."
                 ),
-                eml_description="Integer count of (2,0) Euclidean paired bridges in the 12-PAIR-BRIDGE architecture; always equals 12 by construction of the M^{26}(24,2) framework.",
+                # EML WITHHELD: a declared architectural count (12 paired bridges), read
+                # back from the registry with itself as the default. It is a structural
+                # declaration, not a quantity derived by arithmetic.
                 experimental_bound=12,
                 bound_type="exact",
                 bound_source="Geometric necessity",

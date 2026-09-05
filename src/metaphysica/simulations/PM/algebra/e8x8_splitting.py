@@ -254,7 +254,11 @@ class E8xE8SplittingSimulation(SimulationBase):
                 description="L2 norm of the change in the 26D Pneuma condensate under visible E₈ root generators.",
                 derivation_formula="e8x8-visible-action",
                 no_experimental_value=True,
-                eml_description="EML: ops.sqrt(ops.sum(ops.pow(eml_vec('delta_psi_i'), eml_scalar(2.0)) for i in range(27))) — L2 norm |Ψ'−Ψ| of condensate shift under 10 visible E₈ root generators",
+                # EML WITHHELD: an L2 norm over the 27 components of a Freudenthal
+                # triple is a reduction over an indexed family, which the scalar
+                # tension algebra has no form for. The previous string used a Python
+                # generator expression (`for i in range(27)`) inside ops.sum, which is
+                # not EML and never evaluated.
             ),
             Parameter(
                 path="algebra.e8_hidden_condensate",

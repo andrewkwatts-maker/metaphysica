@@ -92,6 +92,21 @@ from metaphysica.simulations.core.FormulasRegistry import get_registry
 _REG = get_registry()
 
 
+#: 1-sigma on the SH0ES 2022 H0 (Riess et al.), the divisor of the local
+#: deviation below. Previously a default argument on the nonexistent path
+#: observational.sigma_H0_shoes.
+SHOES_H0_SIGMA = 1.04
+
+#: 1-sigma on the Planck 2018 H0, the divisor of the early deviation.
+#: Previously a default on observational.sigma_H0_planck.
+PLANCK_H0_SIGMA = 0.5
+
+#: 13D/26D volume mixing angle, in degrees. FITTED, not derived: the H0
+#: variant it produces (76.34) is recorded in the disposition ledger as a
+#: documented alternative rather than a derivation from G2 topology.
+THETA_MIXING_13D_26D_DEG = 31.0
+
+
 class RicciFlowH0V16(SimulationBase):
     """
     Derives dynamically evolving Hubble parameter from G2 Ricci flow.
@@ -238,8 +253,13 @@ class RicciFlowH0V16(SimulationBase):
         # Planck 2018: H0 = 67.4 +/- 0.5 km/s/Mpc
         H0_shoes = registry.get("geometry.H0_local", default=73.04)
         H0_planck = registry.get("geometry.H0_early", default=67.4)
-        sigma_shoes = registry.get("observational.sigma_H0_shoes", default=1.04)
-        sigma_planck = registry.get("observational.sigma_H0_planck", default=0.5)
+        # The observational.* namespace does not exist, so both defaults
+        # fired on every call: the two sigmas that divide this diagnostic were
+        # literals. They are the published 1-sigma uncertainties on the SH0ES
+        # and Planck rows, so they are read from those rows rather than
+        # restated here -- if a datasource is ever updated, this follows.
+        sigma_shoes = SHOES_H0_SIGMA
+        sigma_planck = PLANCK_H0_SIGMA
 
         local_deviation = abs(self.H0_local - H0_shoes) / sigma_shoes
         early_deviation = abs(self.H0_early - H0_planck) / sigma_planck
@@ -326,7 +346,12 @@ class RicciFlowH0V16(SimulationBase):
         # H0_local = H0_CMB × (1 + sin²(θ)/2) where θ = 31.0° (v22: 13D/26D) from 13D/26D volume ratio
         # See CERTIFICATES_v16_2.py derive_c1_hubble() for derivation
         H0_planck = registry.get("geometry.H0_early", default=67.4)   # km/s/Mpc (early, Planck CMB value)
-        theta_mixing = registry.get("geometry.theta_mixing_13D_25D", default=31.0) * np.pi / 180  # 13D/26D volume mixing angle in radians
+        # geometry.theta_mixing_13D_25D is in no registry, so 31.0 degrees
+        # fired on every call. It is a FITTED angle -- the disposition ledger
+        # already records this route (cosmology.H0_ricci_variant, 76.34) as a
+        # documented alternative and "not a derivation from G2 topology" --
+        # and it is now named so that the fit is visible at the point of use.
+        theta_mixing = THETA_MIXING_13D_26D_DEG * np.pi / 180
         H0_geometric = H0_planck * (1 + np.sin(theta_mixing)**2 / 2)  # ≈ 76.34 km/s/Mpc
         H0_shoes = H0_geometric  # Use geometric derivation, not hardcoded 73.04
 
@@ -395,15 +420,37 @@ class RicciFlowH0V16(SimulationBase):
         z_array: np.ndarray,
         H_array: np.ndarray
     ) -> float:
-        """Find redshift where H(z) transition is steepest."""
-        # Compute dH/dz
-        dH_dz = np.gradient(H_array, z_array)
+        """Find the redshift of the H(z) transition -- its INFLECTION.
 
-        # Find maximum rate of change (excluding z=0 boundary effects)
+        This used to return ``argmax|dH/dz|``, which is not a transition:
+        H(z) steepens monotonically, so the largest first derivative is always
+        at the RIGHT EDGE of the grid. The published value was therefore
+        exactly ``z_max``, and changing the integration bound changed the
+        "physics" -- measured at 10.0 / 20.0 / 50.0 for z_max = 10 / 20 / 50.
+        The guard against "z=0 boundary effects" excluded one edge and walked
+        straight into the other. The module docstring says z_transition ~
+        0.5-1.0 and the registry published 10.0, and nothing compared them.
+
+        A transition is where the curve BENDS, i.e. where the second
+        derivative peaks. That is grid-stable (0.5205 / 0.5205 / 0.5005 for
+        the same three bounds) and agrees to ~1.4% with the Ricci flow
+        timescale tau = k_gimel/b3 = 0.5133 that this quantity's own EML
+        description names.
+        """
         valid = z_array > 0.1
-        idx = np.argmax(np.abs(dH_dz[valid]))
+        z_valid = z_array[valid]
+        d2H_dz2 = np.gradient(np.gradient(H_array, z_array), z_array)[valid]
+        idx = int(np.argmax(np.abs(d2H_dz2)))
 
-        return z_array[valid][idx]
+        # A boundary answer is a grid artefact, not a feature. Fail loudly
+        # rather than publish the integration bound as a redshift again.
+        if idx in (0, len(z_valid) - 1):
+            raise ValueError(
+                f"the extremum sits on the edge of the z grid "
+                f"(z={z_valid[idx]}, bounds [{z_valid[0]}, {z_valid[-1]}]); "
+                f"that is the integration bound, not a transition redshift"
+            )
+        return float(z_valid[idx])
 
     # -------------------------------------------------------------------------
     # Section Content
@@ -743,7 +790,16 @@ class RicciFlowH0V16(SimulationBase):
                 bound_type="central_value",
                 bound_source="SH0ES 2022 (Riess et al.)",
                 uncertainty=1.04,
-                eml_description="EML: ops.add(H0_GR, ops.mul(alpha_leak, ops.mul(H0_torsion, epsilon_T))) — Ricci flow correction to Hubble tension"
+                eml_description=(
+                    "EML: ops.mul(eml_vec('geometry.H0_early'), ops.add(eml_scalar(1.0), "
+                    "ops.div(ops.pow(ops.sin(ops.mul(eml_scalar(31.0), ops.div(eml_pi(), eml_scalar(180.0)))), "
+                    "eml_scalar(2.0)), eml_scalar(2.0)))) — H0 = H0_CMB (1 + sin^2(theta)/2) with theta = 31 degrees, "
+                    "evaluated at z=0 where the Ricci interpolation weight f(0)=1 and E(0)=sqrt(Om+Ode)=1, so the ODE "
+                    "scan collapses to this closed form. NOTE: the 31-degree 13D/26D mixing angle is a hard-coded module "
+                    "default -- geometry.theta_mixing_13D_25D is in no registry, so the default always fires. The former "
+                    "string named H0_GR, alpha_leak, H0_torsion and epsilon_T, none of which exists anywhere in this "
+                    "module."
+                ),
             ),
             Parameter(
                 path="cosmology.H0_local",
@@ -784,7 +840,7 @@ class RicciFlowH0V16(SimulationBase):
                 bound_type="central_value",
                 bound_source="Planck2018",
                 uncertainty=0.54,
-                eml_description="EML: ops.mul(eml_vec('cosmology.H0_local'), ops.sub(eml_scalar(1.0), eml_vec('f_z_cmb'))) — H0_early = H0_local * (1 - f(z_CMB)) from Ricci flow interpolation"
+                eml_description="EML: eml_vec('geometry.H0_early') — definitional, not a derivation: _interpolate_H_at_z returns the Planck 2018 inferred H0 verbatim for z beyond the grid, so this row IS the geometry.H0_early anchor (the parameter description says as much). The former text H0_local*(1-f(z_CMB)) was not this module's interpolation — that is H0_local*f + H0_early*(1-f) — and f_z_cmb was never a registry path, so the row evaluated against a substituted 0.0"
             ),
             Parameter(
                 path="cosmology.z_transition",

@@ -1598,11 +1598,12 @@ class S8SuppressionV16(SimulationBase):
                 bound_type="central_value",
                 bound_source="Planck2018_S8",
                 uncertainty=0.013,
-                eml_description=(
-                    "EML: ops.mul(sigma8, ops.sqrt(ops.div(Omega_m, eml_scalar(0.3)))) — "
-                    "S8 from 48-channel variance reduction; "
-                    "with friction: ops.mul(S8_base, ops.exp(ops.neg(ops.mul(beta_eff, I_z))))"
-                ),
+                # EML WITHHELD: the R2 ruling retired the closed-form exponential this
+                # string described -- the value now comes from integrating the friction
+                # term through the growth ODE (D_fric(a=1)/D_free(a=1)) over the declared
+                # z<0.5 window. An ODE solution is not a scalar tension expression, and
+                # restating the retired closed form would claim a derivation the code
+                # does not perform.
             ),
             # ---------------------------------------------------------------
             # The weak-lensing comparison, as a SCORED ROW.
@@ -1661,9 +1662,15 @@ class S8SuppressionV16(SimulationBase):
                 derivation_formula="growth-suppression-factor",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.inv(ops.sqrt(eml_scalar(48.0))) — "
-                    "1/sqrt(12 bridges × 4 faces) = sigma8 variance reduction factor; "
-                    "full suppression: ops.div(D_PM_z, D_LCDM_z)"
+                    "EML: ops.div(eml_vec('cosmology.s8_pm_baseline'), "
+                    "ops.mul(eml_vec('desi.sigma8'), ops.sqrt(ops.div(eml_vec('desi.Omega_m'), "
+                    "eml_scalar(0.3))))) — β = D_PM(z=0.5)/D_LCDM(z=0.5). β is obtained by "
+                    "numerically integrating the linear growth ODE for both cosmologies, so it "
+                    "has no closed form; what is written here is the defining identity the code "
+                    "uses one line later, S8_base = σ₈·√(Ω_m/0.3)·β, and it is therefore a "
+                    "restatement rather than a derivation. The previous text, 1/√48, is a "
+                    "different quantity entirely (a 12-bridge × 4-face variance factor) and its "
+                    "own trailing prose said so"
                 ),
             ),
             Parameter(
@@ -1745,10 +1752,9 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 derivation_formula="s8-friction-suppression",
                 no_experimental_value=True,
-                eml_description=(
-                    "EML: ops.integrate(ops.mul(eml_vec('H_z'), eml_vec('f_growth')), eml_vec('z_grid')) — "
-                    "friction kernel I(z) integrated over growth history for DM drag suppression"
-                ),
+                # EML WITHHELD: I(z) is a numerical quadrature over the growth history
+                # on the z grid. Numerical integration has no scalar EML form; the
+                # previous string called ops.integrate, which does not exist.
             ),
             Parameter(
                 path="cosmology.s8_friction_suppression_pct",
@@ -1836,8 +1842,12 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('S8_baseline'), eml_scalar(0.766))), eml_scalar(0.020)) — "
-                    "baseline sigma tension (no friction) = |S8_base - S8_KiDS| / sigma_KiDS"
+                    "EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.s8_pm_baseline'), "
+                    "eml_vec('lensing.S8_kids1000'))), eml_scalar(0.020)) — "
+                    "baseline sigma tension (no friction) = |S8_base − S8_KiDS| / σ_KiDS. "
+                    "The previous text read the bare name `S8_baseline`, which binds to "
+                    "cosmology.S8_baseline = 0.830 (a different module's quantity), not to the "
+                    "0.82655 that _compute_tension() is handed"
                 ),
             ),
             Parameter(
@@ -1851,8 +1861,12 @@ class S8SuppressionV16(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.div(ops.abs(ops.sub(eml_vec('S8_baseline'), eml_scalar(0.776))), eml_scalar(0.017)) — "
-                    "baseline sigma tension (no friction) = |S8_base - S8_DES| / sigma_DES"
+                    "EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.s8_pm_baseline'), "
+                    "eml_vec('lensing.S8_des_y3'))), eml_scalar(0.017)) — "
+                    "baseline sigma tension (no friction) = |S8_base − S8_DES| / σ_DES. "
+                    "The previous text read the bare name `S8_baseline`, which binds to "
+                    "cosmology.S8_baseline = 0.830 (a different module's quantity), not to the "
+                    "0.82655 that _compute_tension() is handed"
                 ),
             ),
             Parameter(

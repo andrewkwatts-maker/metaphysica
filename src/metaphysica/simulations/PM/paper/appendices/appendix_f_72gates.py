@@ -1861,7 +1861,10 @@ class Appendix72Gates(SimulationBase):
                 units="count",
                 status="VALIDATION",
                 description="Number of gates that passed validation",
-                eml_description="Integer count of the 72 gates that returned PASS status; equals 72 when the model reaches sterile terminal state.",
+                # EML WITHHELD: a tally of gate outcomes from GateRegistry.run_full_audit.
+                # A count of how many members of a collection returned PASS is not an
+                # arithmetic derivation, and hard-coding the current tally as a scalar
+                # would assert an identity that only holds until a gate flips.
                 no_experimental_value=True,
             ),
             Parameter(
@@ -1870,7 +1873,7 @@ class Appendix72Gates(SimulationBase):
                 units="count",
                 status="VALIDATION",
                 description="Number of gates that failed validation",
-                eml_description="Integer count of the 72 gates that returned FAIL status; must equal 0 for the Omega seal to be issued.",
+                # EML WITHHELD: a tally of gate outcomes -- see gates.total_passed above.
                 no_experimental_value=True,
             ),
             Parameter(

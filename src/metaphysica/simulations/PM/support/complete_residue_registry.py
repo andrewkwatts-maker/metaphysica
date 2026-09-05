@@ -115,6 +115,11 @@ class SpectralResidue:
     experimental_mass: Optional[float]  # Experimental mass (if known)
     uncertainty: Optional[float]    # Experimental uncertainty
     description: str                # Physical interpretation
+    # Predicted value in the residue's OWN units, for entries whose prediction
+    # is not a mass in GeV (e.g. residue 53, a lifetime in years). Without it
+    # `mass_gev` is None for those rows and the computed prediction is lost,
+    # which is how spectral.tau_proton came to publish the Super-K bound.
+    predicted_value: Optional[float] = None
 
 
 # ============================================================================
@@ -465,8 +470,10 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #        ~ 2.6e76 * (6.58e-25 s) ~ 1.7e52 s ~ 5e44 yr
     #
     #   This is too long! Need dimension-6 suppression from G2 instantons.
-    #   With instanton suppression factor ~ exp(-S_inst) ~ exp(-chi_eff/10):
-    #   tau_p ~ 10^34 yr (within Hyper-K reach!)
+    #   With instanton suppression factor ~ exp(-S_inst) ~ exp(-chi_eff/12):
+    #   tau_p ~ 4.24e39 yr -- NOT within Hyper-K reach. The "~10^34 yr (within
+    #   Hyper-K reach!)" claim previously written here was never produced by
+    #   the code below; it was the Super-K bound leaking in through set_param.
     #
     # Branching ratios from E8 breaking pattern:
     #   p -> e+ pi0  ~ 30% (dominant)
@@ -496,7 +503,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     hbar_s = _pdg_v("fundamental_constants", "HBAR", 6.582e-25)  # GeV * s
     tau_s = tau_base_gev * hbar_s  # in seconds
     tau_yr = tau_s / (3.15e7)  # in years
-    # Result: ~ 10^34 years
+    # Result: ~ 4.24e39 years. (This comment said "~ 10^34 years" until
+    # 2026-09; it never matched the arithmetic above. The 10^34 that used to
+    # be published came from the Super-K field, not from here.)
 
     proton_decay_data = [
         (53, "tau_proton", tau_yr, 1e34, 0.5e34, "Proton lifetime (years)"),
@@ -514,7 +523,8 @@ def _make_registry() -> Dict[int, SpectralResidue]:
             mass_gev=value if "GeV" in desc else None,
             experimental_mass=exp_val,
             uncertainty=unc,
-            description=f"{desc} - Proton decay from G2 dimension-6"
+            description=f"{desc} - Proton decay from G2 dimension-6",
+            predicted_value=value,
         )
 
     # ------------------------------------------------------------------------
@@ -810,9 +820,9 @@ class CompleteResidueRegistryV18(SimulationBase):
             source=self._metadata.id,
             status="DERIVED",
             metadata={
-                "derivation": "Maximum eigenvalue in registry",
-                "units": "dimensionless (k_gimel normalized)",
-                "eml_description": "EML: ops.mul(eml_vec('constants.k_gimel'), eml_scalar(80.5)) — maximum Laplace-Beltrami eigenvalue on G2 manifold, normalized by spectral gap k_gimel. NOTE: 80.5 is CALIBRATED (fitted to the residue count in run()); it is not derived from b₃ or any other geometric quantity. The ratio registered_value/EML ≈ 1e15 misses an exact power of ten by 0.124%, indicating an unexplained normalisation factor. See SCALE_DISAGREEMENTS.md §5."
+                "derivation": "max(lambda_n) over the residue registry; the winner is residue 61 (M_Planck), whose lambda_n rule is value/k_gimel",
+                "units": "GeV (M_Planck[GeV] / k_gimel) -- NOT dimensionless",
+                "eml_description": "EML: ops.div(eml_scalar(1.22e19), eml_vec('constants.k_gimel')) — max(lambda_n) is attained by residue 61 (M_Planck), whose lambda_n is assigned as value/k_gimel because value >= 1e10; so this parameter is M_Planck/k_gimel = 9.904e17 GeV. The previous text, k_gimel x 80.5, is withdrawn: 80.5 was an INVENTED constant (no derivation from b₃ or anything else), and the ~1e15 said to separate it from the registered value is not a normalisation — it is the residual of reverse-fitting 80.5 to M_Planck/k_gimel². TWO THINGS NEED AN AUTHOR RULING: (a) this is not a Laplace-Beltrami eigenvalue and not dimensionless, so the parameter name \"Maximum Eigenvalue\" and its declared units are both wrong; (b) lambda_n is assigned by at least seven mutually incompatible rules across the registry (value/k_gimel, (value/k_gimel)^2, value*k_gimel, log10(value)*k_gimel, ...), so max() over that column selects whichever rule produced the largest float, not any physical maximum"
             }
         )
 
@@ -948,7 +958,16 @@ class CompleteResidueRegistryV18(SimulationBase):
         BR_K = self.get_residue(56)
 
         if tau_p:
-            tau_yr = tau_p.experimental_mass if tau_p.experimental_mass else 1e34
+            # This used to read `tau_p.experimental_mass`, shadowing the
+            # computed lifetime with the Super-K bound 1e34 yr, so the
+            # "prediction" was the measurement it is supposed to be tested
+            # against. Read the computed value.
+            if tau_p.predicted_value is None:
+                raise ValueError(
+                    "residue 53 carries no predicted proton lifetime; refusing "
+                    "to publish the experimental bound in its place"
+                )
+            tau_yr = tau_p.predicted_value
             registry.set_param(
                 path="spectral.tau_proton",
                 value=tau_yr,
@@ -960,16 +979,15 @@ class CompleteResidueRegistryV18(SimulationBase):
                 metadata={
                     "derivation": "Dimension-6 operators with G2 instanton suppression",
                     "units": "years",
-                    "note": "Testable by Hyper-K (sensitivity to 10^35 yr)",
+                    "note": "NOT reachable by Hyper-K: 4.24e39 yr is ~5 orders of magnitude beyond its ~10^35 yr sensitivity",
                     # (M_GUT/m_p)^4 = 3.05e68 is dimensionless and is not the
                     # lifetime this module computes. The module computes
                     #   tau_base_gev = M_GUT_eff^4 / (alpha_GUT^2 * m_p^5)   [GeV^-1]
                     #   tau_yr       = tau_base_gev * hbar_s / 3.15e7        [years]
                     # with alpha_GUT = 0.04 and hbar_s = 6.582e-25 GeV*s, giving
-                    # tau_p ~ 4.24e39 yr. The registered value is 1e34 -- see the note
-                    # below: the set_param call reads the Super-K experimental field,
-                    # not the computed prediction, so this expression will DISAGREE
-                    # until that is fixed. Left disagreeing on purpose.
+                    # tau_p ~ 4.24e39 yr, which is now what is registered. Until
+                    # 2026-09 the set_param call read the Super-K experimental
+                    # field instead, so the published "prediction" was the bound.
                     "eml_description": (
                         "EML: ops.div(ops.mul(ops.div("
                         "ops.pow(eml_vec('spectral.M_GUT_G2'), eml_scalar(4.0)), "
@@ -980,11 +998,17 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "dimension-6 operator with G₂ instanton suppression"
                     ),
                     "note_value_provenance": (
-                        "REGISTERED VALUE IS THE EXPERIMENTAL LIMIT, NOT THE PREDICTION. "
-                        "The enclosing block does `tau_yr = tau_p.experimental_mass if "
-                        "tau_p.experimental_mass else 1e34`, which shadows the computed "
-                        "tau_yr with the Super-K bound 1e34 yr. The module's own "
-                        "computation gives ~4.24e39 yr."
+                        "FIXED 2026-09. The registered value is now the module's own "
+                        "computation, tau_p = 4.24e39 yr. It previously published "
+                        "1e34 yr, the Super-K bound, because the enclosing block did "
+                        "`tau_yr = tau_p.experimental_mass if tau_p.experimental_mass "
+                        "else 1e34` and shadowed the computed tau_yr. CONSEQUENCE: the "
+                        "proton lifetime is 4.24e39 yr, five orders of magnitude beyond "
+                        "Hyper-K sensitivity (~1e35 yr) -- this prediction is NOT "
+                        "testable by Hyper-K, contrary to what the surrounding comments "
+                        "claimed while the bound was being published as the prediction. "
+                        "The inputs alpha_GUT = 0.04 and the instanton exponent "
+                        "chi_eff/12 are hardcoded and unsourced."
                     )
                 }
             )
@@ -1053,7 +1077,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             "spectral.sum_m_nu": sum_nu.mass_gev * 1e9 if sum_nu and sum_nu.mass_gev else 0.0625,
             "spectral.hierarchy": "normal",
             # Proton decay
-            "spectral.tau_proton": tau_p.experimental_mass if tau_p else 1e34,
+            "spectral.tau_proton": tau_p.predicted_value if tau_p else None,
             "spectral.M_GUT_G2": M_GUT.mass_gev if M_GUT and M_GUT.mass_gev else 2e17,
             "spectral.BR_e_pi0": 0.30,
             "spectral.BR_nu_K": 0.60,
@@ -1449,9 +1473,13 @@ class CompleteResidueRegistryV18(SimulationBase):
                 status="PREDICTED",
                 description=(
                     "PM prediction for proton lifetime from dimension-6 GUT operators "
-                    "with G2 instanton suppression (tau_p ~ 10^34 yr). The Super-K "
-                    "lower limit of ~10^34 yr is cited as a reference bound, not as "
-                    "a constraint applied within this simulation."
+                    "with G2 instanton suppression: tau_p = 4.24e39 yr. This satisfies "
+                    "the Super-K lower limit by five orders of magnitude and is "
+                    "correspondingly NOT testable by Hyper-K. The parameter previously "
+                    "published 1e34 yr, which was the bound itself, not the prediction. "
+                    "NOTE: the cited bound 1e34 is also not the current Super-K limit "
+                    "-- this repository carries 1.67e34 (bounds.tau_proton_lower) and "
+                    "2.4e34 (pdg_2024.csv) elsewhere; which to adopt needs a ruling."
                 ),
                 experimental_bound=1e34,
                 bound_type="lower_limit",

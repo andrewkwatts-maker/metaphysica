@@ -204,25 +204,51 @@ def main() -> int:
     silent_defaults = []
     if known_paths:
         try:
-            import re as _re
+            import ast as _ast
             from pathlib import Path as _Path
 
-            _pat = _re.compile(
-                r"""registry\.get\(\s*["']([\w.]+)["']\s*,\s*default\s*=\s*([^)\n]+)\)"""
-            )
+            # AST, not a regex over raw text. The earlier regex matched any
+            # occurrence of the pattern ANYWHERE in a file, including inside
+            # the comments written to explain a site that had already been
+            # repaired -- so documenting a fix made the count go UP, and the
+            # audit punished exactly the behaviour it exists to encourage.
+            # Walking the tree counts calls, so prose about a call is prose.
+            def _default_arg(call):
+                for kw in call.keywords:
+                    if kw.arg == "default":
+                        try:
+                            return _ast.unparse(kw.value)
+                        except Exception:
+                            return "<unparseable>"
+                return None
+
             _root = _Path(__file__).resolve().parents[1]
             for _f in sorted(_root.rglob("*.py")):
                 try:
-                    _text = _f.read_text(encoding="utf-8")
-                except (OSError, UnicodeDecodeError):
+                    _tree = _ast.parse(_f.read_text(encoding="utf-8"))
+                except (OSError, UnicodeDecodeError, SyntaxError):
                     continue
-                for _m in _pat.finditer(_text):
-                    if _m.group(1) not in known_paths:
-                        silent_defaults.append({
-                            "path": _m.group(1),
-                            "default": _m.group(2).strip()[:60],
-                            "file": _f.relative_to(_root).as_posix(),
-                        })
+                for _node in _ast.walk(_tree):
+                    if not isinstance(_node, _ast.Call):
+                        continue
+                    _func = _node.func
+                    if not (isinstance(_func, _ast.Attribute)
+                            and _func.attr == "get"):
+                        continue
+                    if not (_node.args
+                            and isinstance(_node.args[0], _ast.Constant)
+                            and isinstance(_node.args[0].value, str)):
+                        continue
+                    _path = _node.args[0].value
+                    _dflt = _default_arg(_node)
+                    if _dflt is None or _path in known_paths:
+                        continue
+                    silent_defaults.append({
+                        "path": _path,
+                        "default": _dflt[:60],
+                        "file": _f.relative_to(_root).as_posix(),
+                        "line": _node.lineno,
+                    })
         except Exception:
             silent_defaults = []
 

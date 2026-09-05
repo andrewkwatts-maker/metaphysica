@@ -559,7 +559,15 @@ class MasterActionSimulationV22(SimulationBase):
                     "Bridge Lagrangian: sum over 12 pairs of sqrt(g_{(2,0)}^i) * "
                     "[breathing mode rho_breath^i + local OR reduction OR^i(Psi_P)]."
                 ),
-                inputParams=["bridge.n_pairs", "bridge.breathing_mode", "bridge.or_operator"],
+                # bridge.breathing_mode and bridge.or_operator named no
+                # registry parameters. Neither is a scalar: rho_breath^i is a
+                # local field density on the i-th bridge plane and OR^i is an
+                # operator acting on the Pneuma spinor. What the registry can
+                # hold is the aggregate this Lagrangian PRODUCES, and it does
+                # -- bridge.breathing_aggregation, already an output below.
+                # cosmology.breathing_mode_vev is NOT the same object: a VEV
+                # is not the local density it is the expectation of.
+                inputParams=["bridge.n_pairs"],
                 outputParams=["bridge.n_pairs", "bridge.breathing_aggregation"],
                 derivation={
                     "steps": [
@@ -597,7 +605,12 @@ class MasterActionSimulationV22(SimulationBase):
                     "R_perp = tensor_{i=1}^{12} R_perp^i: Kronecker product of 12 "
                     "2x2 pi/2 rotation matrices; total rank 2^12 = 4096 matching Cl(24,2) spinor."
                 ),
-                inputParams=["bridge.n_pairs", "bridge.local_or_matrix"],
+                # bridge.local_or_matrix named no registry parameter. It is
+                # the 2x2 matrix [[0,-1],[1,0]] repeated over 12 planes; a
+                # matrix has no scalar registry value. Its invariant content
+                # -- the rank of the tensor product, 2^12 = 4096 -- is the
+                # declared output.
+                inputParams=["bridge.n_pairs"],
                 outputParams=["bridge.distributed_or_rank"],
                 derivation={
                     "steps": [
@@ -637,7 +650,11 @@ class MasterActionSimulationV22(SimulationBase):
                     "rho_breath = (1/12) * sum_{i=1}^{12} |T_normal^i - R_perp^i * T_mirror^i|: "
                     "average normal-mirror tension across 12 bridge pairs."
                 ),
-                inputParams=["bridge.n_pairs", "bridge.normal_mirror_tension", "bridge.distributed_or_rank"],
+                # bridge.normal_mirror_tension named no registry parameter.
+                # It is the per-pair quantity |T_normal^i - R_perp^i
+                # T_mirror^i| being averaged, i.e. the summand, not a
+                # registry scalar; the average IS the output below.
+                inputParams=["bridge.n_pairs", "bridge.distributed_or_rank"],
                 outputParams=["bridge.breathing_aggregation"],
                 derivation={
                     "steps": [
@@ -735,7 +752,16 @@ class MasterActionSimulationV22(SimulationBase):
                 # already declared as an output below. No parameter for g_s
                 # itself exists, so the declaration is dropped rather than
                 # repointed at alpha_s, which is a different quantity.
-                inputParams=["geometry.associative_3cycle_volume"],
+                # "geometry.associative_3cycle_volume" named no registry
+                # parameter, and no associative 3-cycle volume is computed
+                # ANYWHERE in this codebase. The derivation says the
+                # coupling is "locked by" that volume; nothing locks
+                # it, and alpha_s reaches the registry by a different
+                # route entirely. Dropping the declaration removes an
+                # edge that was never real; it does not repair the
+                # derivation, which still claims an input it does not
+                # have. Recorded, not repaired.
+                inputParams=[],
                 outputParams=["gauge.qcd_gluon_count", "gauge.qcd_alpha_s_mz"],
                 derivation={
                     "steps": [
@@ -782,7 +808,16 @@ class MasterActionSimulationV22(SimulationBase):
                 # declaration at gauge.weak_coupling_g2 would make the formula
                 # declare that it consumes what it produces, so the input is
                 # dropped instead; the real input is the cycle volume.
-                inputParams=["geometry.coassociative_4cycle_volume"],
+                # "geometry.coassociative_4cycle_volume" named no registry
+                # parameter, and no coassociative 4-cycle volume is computed
+                # ANYWHERE in this codebase. The derivation says the
+                # coupling is "locked by" that volume; nothing locks
+                # it, and g_2 reaches the registry by a different
+                # route entirely. Dropping the declaration removes an
+                # edge that was never real; it does not repair the
+                # derivation, which still claims an input it does not
+                # have. Recorded, not repaired.
+                inputParams=[],
                 outputParams=["gauge.weak_boson_count", "gauge.weak_coupling_g2"],
                 derivation={
                     "steps": [
@@ -827,7 +862,16 @@ class MasterActionSimulationV22(SimulationBase):
                 # OUTPUT gauge.hypercharge_coupling_gp, fixed here by the
                 # residual Abelian cycle volume. Dropped rather than repointed
                 # at its own output.
-                inputParams=["geometry.residual_abelian_cycle_volume"],
+                # "geometry.residual_abelian_cycle_volume" named no registry
+                # parameter, and no residual abelian cycle volume is computed
+                # ANYWHERE in this codebase. The derivation says the
+                # coupling is "locked by" that volume; nothing locks
+                # it, and g' reaches the registry by a different
+                # route entirely. Dropping the declaration removes an
+                # edge that was never real; it does not repair the
+                # derivation, which still claims an input it does not
+                # have. Recorded, not repaired.
+                inputParams=[],
                 outputParams=["gauge.hypercharge_coupling_gp"],
                 derivation={
                     "steps": [
@@ -1049,7 +1093,10 @@ class MasterActionSimulationV22(SimulationBase):
                 # R_chirality = R_perp_global * P_LR * R_face^(f) or in its
                 # terms. The lineage to the mixing sector is already carried by
                 # parentFormulas -> electroweak-mixing-v22.
-                inputParams=["bridge.distributed_or_rank", "geometry.tcs_face_count"],
+                # Was "geometry.tcs_face_count", a path in no registry. The
+                # face count of the TCS manifold is geometry.n_faces = 4,
+                # which the registry already holds.
+                inputParams=["bridge.distributed_or_rank", "geometry.n_faces"],
                 outputParams=["gauge.chirality_reversal_probability"],
                 derivation={
                     "steps": [
@@ -1600,16 +1647,25 @@ class MasterActionSimulationV22(SimulationBase):
                 name="Rho Parameter",
                 units="dimensionless",
                 status="DERIVED",
-                description="rho = M_W^2 / (M_Z^2 * cos^2 theta_W) = 1 at tree level",
+                description=(
+                    "rho = M_W^2 / (M_Z^2 * cos^2 theta_W) = 1 at tree level. "
+                    "ASSERTED, not computed: electroweak_mixing.py sets "
+                    "rho_parameter = Decimal('1') as the custodial-SU(2) tree value "
+                    "and never evaluates the mass ratio."
+                ),
                 experimental_bound=1.00037,
                 bound_type="measured",
                 bound_source="PDG2024",
                 uncertainty=0.00023,
                 eml_description=(
-                    "EML: ops.div(ops.pow(eml_vec('M_W'), eml_scalar(2.0)), "
-                    "ops.mul(ops.pow(eml_vec('M_Z'), eml_scalar(2.0)), "
-                    "ops.sub(eml_scalar(1.0), eml_vec('sin2_theta_W')))) "
-                    "— rho = M_W^2 / (M_Z^2 cos^2(theta_W)) = 1 at tree level (custodial SU(2))."
+                    "EML: eml_scalar(1.0) — ρ = 1, the custodial-SU(2) tree value "
+                    "electroweak_mixing.py asserts. The previous text wrote the mass ratio "
+                    "M_W²/(M_Z² cos²θ_W), which is correct algebra but scheme-inconsistent "
+                    "as evaluated: gauge.m_w_gev and gauge.m_z_gev are built from the ON-SHELL "
+                    "sin²θ_W = 0.22320, while gauge.sin2_theta_w is the PDG MS-bar 0.23122, so "
+                    "the ratio returns 1.0104 — the same on-shell/MS-bar confusion the 2026-08 "
+                    "canonical ruling already recorded for gauge.sin2_theta_w. Computing ρ from "
+                    "the mass ratio requires Δr; that path is not implemented here"
                 ),
             ),
             # U(1)_Y Hypercharge Parameters

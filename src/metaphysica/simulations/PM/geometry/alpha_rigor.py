@@ -663,7 +663,15 @@ if SCHEMA_AVAILABLE:
                     # Theoretical tolerance: ~0.0005% of value (intrinsic formula precision)
                     # This gives sigma ~ 1.0 for the Geometric Anchors derivation
                     uncertainty=0.0007,
-                    eml_description="EML: ops.add(ops.pow(k_gimel, 2), ops.neg(ops.div(b3, phi)), ops.div(phi, ops.mul(eml_scalar(4.0), eml_pi()))) — Geometric Anchors formula for alpha^-1 using b3=24",
+                    eml_description=(
+                        "EML: ops.add(ops.pow(eml_vec('geometry.k_gimel'), eml_scalar(2.0)), "
+                        "ops.neg(ops.div(eml_vec('topology.elder_kads'), eml_vec('geometry.phi'))), "
+                        "ops.div(eml_vec('geometry.phi'), ops.mul(eml_scalar(4.0), eml_pi()))) — alpha^-1 = k_gimel^2 - "
+                        "b3/phi + phi/(4 pi), the Geometric Anchors NUMEROLOGICAL_FIT (see derive_alpha_inverse_geometric). "
+                        "The former string named bare k_gimel, b3 and phi; k_gimel is an AMBIGUOUS short name in this "
+                        "registry (constants/geometry/topology all claim it and neutrino.k_gimel is 1.5), so it must be "
+                        "qualified."
+                    ),
                 ),
                 Parameter(
                     path="electromagnetic.alpha_inv_error",
@@ -678,7 +686,12 @@ if SCHEMA_AVAILABLE:
                     ),
                     derivation_formula="alpha-inverse-geometric",
                     no_experimental_value=True,
-                    eml_description="EML: ops.abs(ops.add(alpha_inv_derived, ops.neg(eml_scalar(137.035999177)))) — absolute difference from CODATA target",
+                    eml_description=(
+                        "EML: ops.abs(ops.add(eml_vec('electromagnetic.alpha_inv'), ops.neg(eml_scalar(137.035999177)))) — "
+                        "|alpha^-1_derived - 137.035999177| against the CODATA 2022 target. The former string named bare "
+                        "alpha_inv_derived, which is not a registry path; the derived value is registered at "
+                        "electromagnetic.alpha_inv."
+                    ),
                 ),
             ]
 

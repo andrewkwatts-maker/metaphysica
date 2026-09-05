@@ -839,7 +839,17 @@ class CosmologicalConstantV16(SimulationBase):
                 bound_type="measured",
                 bound_source="DESI2025",
                 uncertainty=0.1e-52,
-                eml_description="EML: ops.mul(ops.div(k_gimel*log(k_gimel)^2, b3^3), (l_Pl/R_H)^2 * exp(-2*pi*26)) — cosmological constant from G2 entropy"
+                eml_description=(
+                    "EML: ops.div(ops.mul(ops.pow(ops.mul(eml_scalar(8.0), eml_pi()), eml_scalar(2.0)), "
+                    "ops.pow(eml_vec('constants.k_gimel'), eml_scalar(2.0))), ops.mul(eml_scalar(3.0), "
+                    "ops.mul(ops.pow(eml_vec('topology.elder_kads'), eml_scalar(3.0)), "
+                    "ops.pow(ops.div(eml_scalar(299792458.0), ops.div(ops.mul(eml_vec('desi.H0'), eml_scalar(1000.0)), "
+                    "eml_scalar(3.086e22))), eml_scalar(2.0))))) — Lambda = (8*pi)^2 k_gimel^2 / (3 b3^3 R_H^2) with R_H "
+                    "= c/H0 the Hubble radius (v16.2 Demon-Lock, _derive_lambda). The former string described a DIFFERENT "
+                    "formula -- k_gimel ln(k_gimel)^2/b3^3 times (l_Pl/R_H)^2 exp(-2 pi 26) -- which this module has "
+                    "never computed. Circular on H0 by construction; see _compute_lambda_dynamical for the non-circular "
+                    "route."
+                ),
             ),
             Parameter(
                 path="cosmology.rho_vacuum",
@@ -856,7 +866,12 @@ class CosmologicalConstantV16(SimulationBase):
                 bound_type="measured",
                 bound_source="Planck2018",
                 uncertainty=0.3e-10,
-                eml_description="EML: ops.div(ops.mul(Lambda, c^4), ops.mul(eml_scalar(8), ops.mul(eml_pi(), G))) — vacuum energy density"
+                eml_description=(
+                    "EML: ops.div(ops.mul(eml_vec('cosmology.Lambda_derived'), ops.pow(eml_scalar(299792458.0), "
+                    "eml_scalar(4.0))), ops.mul(eml_scalar(8.0), ops.mul(eml_pi(), eml_scalar(6.67430e-11)))) — rho_vac = "
+                    "Lambda c^4 / (8 pi G) in J/m^3. The former string named bare Lambda, c and G, none of which is a "
+                    "registry path."
+                ),
             ),
             Parameter(
                 path="cosmology.entropy_density",

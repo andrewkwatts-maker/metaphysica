@@ -188,7 +188,11 @@ class MultiSectorV16(SimulationBase):
 
         # Step 5: Compute effective dark energy EoS
         # From dimensional reduction: w_eff = -(D_eff - 1)/(D_eff + 1)
-        D_eff = registry.get("D_eff", default=12.576)  # From shared dimensions
+        # Was registry.get("D_eff", ...) -- an UNQUALIFIED name, which is in
+        # no registry, so the default fired on every call and w_eff was a
+        # constant wearing the costume of a derived quantity. The registry
+        # holds this as cosmology.D_eff.
+        D_eff = registry.get("cosmology.D_eff")  # From shared dimensions
         w_eff = -(D_eff - 1) / (D_eff + 1)
 
         # Step 6: Compute blended observables
@@ -919,7 +923,7 @@ class MultiSectorV16(SimulationBase):
                 bound_type="central_value",
                 bound_source="DESI2025_THAWING",
                 uncertainty=0.067,
-                eml_description="EML: ops.neg(ops.div(ops.sub(eml_vec('D_eff'), eml_scalar(1.0)), ops.add(eml_vec('D_eff'), eml_scalar(1.0)))) — w_eff = -(D_eff-1)/(D_eff+1) from dimensional reduction"
+                eml_description="EML: ops.neg(ops.div(ops.sub(eml_vec('cosmology.D_eff'), eml_scalar(1.0)), ops.add(eml_vec('cosmology.D_eff'), eml_scalar(1.0)))) — w_eff = -(D_eff-1)/(D_eff+1) from dimensional reduction. Qualified: the bare name D_eff is ambiguous (cosmology.D_eff = 12.576 vs geometry.D_eff = 13) and the cross-check refuses to bind it"
             ),
             Parameter(
                 path="cosmology.Omega_DM_over_b",
@@ -933,9 +937,9 @@ class MultiSectorV16(SimulationBase):
                 bound_source="Planck2018",
                 uncertainty=0.15,
                 eml_description=(
-                    "EML: ops.pow(ops.inv(T_prime_over_T), eml_scalar(3.0)) — "
-                    "(T/T')³ = (1/0.57)³ ≈ 5.4; "
-                    "multi-sector: ops.add(omega_face2, ops.add(omega_face3, omega_face4))"
+                    "EML: ops.pow(ops.inv(eml_vec('cosmology.T_mirror_ratio')), eml_scalar(3.0)) — Omega_DM/Omega_b = "
+                    "(T/T')^3 from mirror-sector entropy dilution. The former string named T_prime_over_T, which is not a "
+                    "registry path; the ratio is registered as cosmology.T_mirror_ratio."
                 ),
             ),
             Parameter(
@@ -947,9 +951,11 @@ class MultiSectorV16(SimulationBase):
                 derivation_formula="sector-temperature-ratio",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: ops.mul(ops.pow(g_ratio, ops.div(eml_scalar(1.0), eml_scalar(3.0))), "
-                    "ops.sqrt(decay_asymmetry)) — "
-                    "(g_*/g'_*)^(1/3) × (Γ'/Γ)^(1/2) from asymmetric reheating"
+                    "EML: eml_scalar(0.57) — CALIBRATED, not derived. The asymmetric-reheating formula (g_*/g'_*)^(1/3) "
+                    "(Gamma'/Gamma)^(1/2) that the former string described gives the TREE-LEVEL 0.25; "
+                    "_compute_temperature_ratio computes it, discards it, and returns 0.57 -- the value required by the "
+                    "Planck DM abundance. (The getattr(_REG, 'T_mirror_ratio', 0.57) lookup finds no such attribute, so "
+                    "the literal default is what is registered.)"
                 ),
             ),
             Parameter(

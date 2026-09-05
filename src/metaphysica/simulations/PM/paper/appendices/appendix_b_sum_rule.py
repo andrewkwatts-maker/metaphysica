@@ -34,6 +34,13 @@ from metaphysica.simulations.base import (
 )
 
 
+#: The value every consumer of topology.vol_v7 was already receiving, from a
+#: default argument on a path no registry held. Named here so the placeholder
+#: is a declared choice rather than an accident of a lookup. See the
+#: topology.vol_v7 Parameter below for why it is not a derived volume.
+VOL_V7_PLACEHOLDER = 1.0
+
+
 class AppendixBSumRule(SimulationBase):
     """
     Appendix B: The Global Sum Rule and Geometric Invariance.
@@ -87,6 +94,7 @@ class AppendixBSumRule(SimulationBase):
             "validation.trace_convergence",
             "validation.phi_g2",
             "validation.sum_rule_tolerance",
+            "topology.vol_v7",
         ]
 
     @property
@@ -98,7 +106,11 @@ class AppendixBSumRule(SimulationBase):
         # Dynamic param extraction - use registry.get() with geometric defaults
         b3 = registry.get("topology.elder_kads", default=24)
         chi = registry.get("topology.mephorash_chi", default=144)
-        vol_v7 = registry.get("topology.vol_v7", default=1.0)
+        # topology.vol_v7 existed in NO registry, so this default fired on
+        # every call and phi_g2 was chi/b3 with an invisible factor of 1. It
+        # is now a declared placeholder (see the Parameter below) rather than
+        # a default argument: same number, but visible and contradictable.
+        vol_v7 = VOL_V7_PLACEHOLDER
 
         # Φ_G2 is the total invariant from 26D ancestral bulk
         phi_g2 = vol_v7 * chi / b3  # Simplified geometric constraint
@@ -108,6 +120,7 @@ class AppendixBSumRule(SimulationBase):
             "validation.trace_convergence": True,
             "validation.phi_g2": phi_g2,
             "validation.sum_rule_tolerance": 1e-15,
+            "topology.vol_v7": VOL_V7_PLACEHOLDER,
         }
 
 
@@ -411,6 +424,34 @@ class AppendixBSumRule(SimulationBase):
         """Return parameter definitions for this appendix."""
         return [
             Parameter(
+                path="topology.vol_v7",
+                name="G2 Manifold Volume Vol(V7)",
+                units="dimensionless",
+                status="ANSATZ",
+                description=(
+                    "PLACEHOLDER, value 1.0. No G2 manifold volume is derived "
+                    "anywhere in this framework, yet Vol(V7) is declared as an "
+                    "input to ten formulas across five modules. Every one of "
+                    "them received 1.0 from a default argument on a registry "
+                    "path that did not exist, so the factor was unobservable "
+                    "-- validation.phi_g2 = Vol(V7)*chi/b3 = 6 is really just "
+                    "chi/b3 with an invisible 1. "
+                    "holonomy-volume-constraint claims to derive it as "
+                    "(chi/b3)*(c/H0)^7, but its own two derivation steps "
+                    "disagree: inverting the stated H0 bridge gives the "
+                    "exponent 2, and the next step raises it to 7 by asserting "
+                    "a generalisation to 7D. Taken literally that value is of "
+                    "order 10^183 in Hubble units, which is not the volume of "
+                    "a compact 7-manifold. Registered at the value every "
+                    "consumer was already using, so the gap is scored instead "
+                    "of hidden. It must NOT be read as a measured or derived "
+                    "volume."
+                ),
+                derivation_formula="holonomy-volume-constraint",
+                no_experimental_value=True,
+                eml_description="EML: eml_scalar(1.0) — placeholder; no G2 volume is derived anywhere in the framework",
+            ),
+            Parameter(
                 path="validation.sum_rule_result",
                 name="Sum Rule Validation Result",
                 units="status",
@@ -425,7 +466,8 @@ class AppendixBSumRule(SimulationBase):
                 units="boolean",
                 status="VALIDATION",
                 description="Whether the spectral trace converges to expected Vol(V₇)",
-                eml_description="Boolean flag indicating convergence of the spectral trace Tr(exp(-t*Delta_V7)) to the geometric volume invariant of the V7 manifold.",
+                # EML WITHHELD: boolean convergence flag for the spectral trace. Not a
+                # scalar arithmetic expression.
                 no_experimental_value=True,
             ),
             Parameter(
@@ -438,7 +480,7 @@ class AppendixBSumRule(SimulationBase):
                     "residual is compared. Set to 1e-15, the double-precision floor for the "
                     "125-term weighted sum; a residual below it is indistinguishable from zero."
                 ),
-                eml_description="Convergence threshold constant (1e-15) for the sum-rule residual; not a derived quantity.",
+                # EML WITHHELD: a convergence threshold (1e-15), not a derived quantity.
                 no_experimental_value=True,
             ),
             Parameter(
@@ -447,7 +489,13 @@ class AppendixBSumRule(SimulationBase):
                 units="dimensionless",
                 status="FOUNDATIONAL",
                 description="Total invariant Φ_G₂ from ancestral 26D bulk",
-                eml_description="Dimensionless G2 holonomy invariant Phi_G2 = Vol(V7) * chi / b3; serves as the right-hand side target of the global sum rule.",
+                eml_description=(
+                    "EML: ops.div(ops.mul(eml_scalar(1.0), eml_vec('topology.mephorash_chi')), "
+                    "eml_vec('topology.elder_kads')) — Phi_G2 = Vol(V7) chi / b3. NOTE: topology.vol_v7 is in no "
+                    "registry, so the module default Vol(V7) = 1.0 always fires and Phi_G2 is 144/24 = 6 -- the volume "
+                    "factor is written as the literal it actually is rather than as a reference that would silently "
+                    "resolve to zero."
+                ),
                 no_experimental_value=True,
             ),
         ]

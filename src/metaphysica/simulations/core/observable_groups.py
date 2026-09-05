@@ -284,6 +284,17 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
         "the STALE name cosmology.H0_local; the parameter was later renamed "
         "and the canonical name now carries 71.55. The prior ruling stands; "
         "its 3.17-sigma FAIL is tracked by the validation layer."),
+    "cosmology.H0_physical": (DISTINCT,
+        "Appendix Z's terminal-ledger H0: (125/288)/24 * 400 * 10.1 = 73.06. "
+        "DISTINCT on the same R4 grounds as H0_baseline_km_s_Mpc. Only the "
+        "PRODUCT 400 * 10.1 = 4040 enters the arithmetic, neither factor has "
+        "a source in the framework, and the product is what places the result "
+        "on 73. A free constant that absorbs the answer is not an independent "
+        "late-time derivation, and scoring it inside the comparison group "
+        "would manufacture another self-agreement row. It IS still scored "
+        "against SH0ES on its own parameter, so the claim stays visible. "
+        "Whether either factor can be sourced is an author ruling; if one can "
+        "be, this should be revisited as a MEMBER."),
     "cosmology.H0_tension_sigma": (INTERMEDIATE, "sigma, not an H0 value"),
     "cosmology.H0_tension_remaining_sigma": (INTERMEDIATE,
         "residual tension in sigmas, not a value of H0"),

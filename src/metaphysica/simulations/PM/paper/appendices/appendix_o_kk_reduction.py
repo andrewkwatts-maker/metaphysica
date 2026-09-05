@@ -87,6 +87,22 @@ def _arithma_div(a, b):
     return None if a is None or b is None else a / b
 
 
+#: G2 volume used by the KK reduction. NOT derived, and not registered:
+#: geometry.V_G2 exists in no registry, so this was a default argument that
+#: fired on every call.
+#:
+#: It is the THIRD mutually inconsistent G2 volume in the framework -- see the
+#: topology.vol_v7 Parameter in appendix_b_sum_rule, registered at 1.0 with
+#: the finding that no G2 volume is derived anywhere. Worth recording for
+#: whoever rules on this: 0.1667 is 1/6 to four figures, and 1/6 = b3/chi_eff
+#: = 24/144, so the two values differ by exactly the factor chi/b3 = 6 that
+#: appears in phi_G2 = Vol(V7)*chi/b3. That is consistent with their being one
+#: quantity under two normalisation conventions, but nothing in the framework
+#: states which convention is meant, so it is an observation and not a
+#: reconciliation.
+V_G2_LITERAL = Decimal("0.1667")
+
+
 class AppendixOKKReduction(SimulationBase):
     """
     Appendix O: Kaluza-Klein Reduction Steps (v24.2).
@@ -175,8 +191,8 @@ class AppendixOKKReduction(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute KK reduction computations (v24.2)."""
         # Get geometric inputs with defaults
-        b3 = registry.get("topology.elder_kads", default=24)
-        V_G2 = registry.get("geometry.V_G2", default=Decimal("0.1667"))
+        b3 = registry.get("topology.elder_kads")
+        V_G2 = V_G2_LITERAL
 
         # v24.2 parameters
         n_bridge_pairs = 12  # Number of consciousness channel pairs

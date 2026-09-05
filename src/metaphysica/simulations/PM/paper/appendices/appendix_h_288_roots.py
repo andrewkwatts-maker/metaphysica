@@ -37,6 +37,42 @@ from metaphysica.simulations.base import (
 )
 
 
+# ---------------------------------------------------------------------------
+# Declared counts behind the 288-root budget.
+#
+# Each of these was previously read as registry.get(path, default=X) against a
+# path no registry held, so the default fired on every call and the number was
+# invisible to every audit that walks the registry. They are POSITED counts,
+# not derived ones, and saying so is the point of lifting them here.
+# ---------------------------------------------------------------------------
+
+#: Torsion pins carried by each shadow brane. Two branes give the 24 total.
+#: Independently, the same 24 distribute as 6 per spacetime dimension (H.8).
+TORSION_PER_SHADOW = 12
+
+#: Symmetry directions spent projecting the bulk onto the manifold: the -12 in
+#: 288 = 276 + 24 - 12. This is the SAME integer the registry already publishes
+#: as terminal.manifold_tax ("the only integer that balances the root budget
+#: equation"), so it is not registered a second time under a topology.* name --
+#: two paths for one fact is how a value comes to be published two ways.
+#: It is also numerically equal to TORSION_PER_SHADOW and to
+#: topology.orientation_sum, and nothing derives it or shows those 12s to be
+#: the same 12.
+MANIFOLD_PROJECTION_COST = 12
+
+#: |E8| -- the root system of E8 has 240 roots (a theorem, not a fit).
+E8_ROOT_COUNT = 240
+
+#: Roots surviving on the compactified second E8 factor: 288 - 240 = 48.
+E8_TILDE_COMPACTIFIED_ROOTS = 48
+
+#: Reference values used only to render the sterile angle in a description
+#: string. The angle that is REGISTERED is computed in run() from the live
+#: registry, not from these.
+ACTIVE_RESIDUE_REFERENCE = 125
+ANCESTRAL_ROOT_TOTAL = 288
+
+
 class AppendixH288Roots(SimulationBase):
     """
     Appendix H: The 288-Root Basis.
@@ -104,6 +140,10 @@ class AppendixH288Roots(SimulationBase):
             "topology.shadow_torsion_total",
             "topology.hidden_supports",
             "topology.sterile_ratio",
+            "topology.sterile_angle",
+            "topology.torsion_per_shadow",
+            "topology.e8_root_count",
+            "topology.e8_tilde_compactified_roots",
         ]
 
     @property
@@ -114,9 +154,17 @@ class AppendixH288Roots(SimulationBase):
         """Execute 288-Root derivation and validation."""
         # Fundamental constants from geometry
         n_transverse = registry.get("topology.elder_kads", default=24)
-        torsion_per_shadow = registry.get("topology.torsion_per_shadow", default=12)
-        manifold_cost = registry.get("topology.manifold_cost", default=12)
-        active_residues = registry.get("registry.node_count", default=125)
+        # These three were read with registry.get(path, default=X) against
+        # paths that existed in NO registry, so the default fired on every
+        # call and the lookup was decorative: 288 = 276 + 24 - 12 rested on
+        # two literals wearing the costume of a registry read. They are now
+        # declared explicitly -- torsion_per_shadow as a registered parameter,
+        # manifold_cost as the terminal.manifold_tax the registry already
+        # holds -- so the values are visible and can be contradicted.
+        torsion_per_shadow = TORSION_PER_SHADOW
+        manifold_cost = MANIFOLD_PROJECTION_COST
+        # registry.node_count DOES exist, so this read is genuine.
+        active_residues = registry.get("registry.node_count")
 
         # SO(24) generators: n(n-1)/2
         so24_generators = (n_transverse * (n_transverse - 1)) // 2  # 276
@@ -143,7 +191,15 @@ class AppendixH288Roots(SimulationBase):
             "topology.shadow_torsion_total": shadow_torsion_total,
             "topology.hidden_supports": hidden_supports,
             "topology.sterile_ratio": sterile_ratio,
-            "topology.sterile_angle_deg": sterile_angle_deg,
+            # Was returned under "topology.sterile_angle_deg" while
+            # sterile-projection-filter declared its output as
+            # "topology.sterile_angle". Neither name was in output_params, so
+            # the angle was computed on every run and then discarded.
+            "topology.sterile_angle": sterile_angle_deg,
+            "topology.torsion_per_shadow": float(torsion_per_shadow),
+            "topology.e8_root_count": float(E8_ROOT_COUNT),
+            "topology.e8_tilde_compactified_roots": float(
+                E8_TILDE_COMPACTIFIED_ROOTS),
             "validation.288_root_verified": ancestral_roots == 288,
         }
 
@@ -533,7 +589,7 @@ class AppendixH288Roots(SimulationBase):
                     "E8 root system dimension (240) plus 48 shadow-torsion roots, connecting "
                     "this accounting to the exceptional Lie algebra classification."
                 ),
-                input_params=["topology.so24_generators", "topology.shadow_torsion_total", "topology.manifold_cost"],
+                input_params=["topology.so24_generators", "topology.shadow_torsion_total", "terminal.manifold_tax"],
                 output_params=["topology.ancestral_roots"],
                 derivation={
                     "method": "Symmetry budget accounting for 26D to 4D projection",
@@ -675,7 +731,11 @@ class AppendixH288Roots(SimulationBase):
                     "governing fermion generation count: n_gen = χ_eff / (4 b₃) = 144/48 = 3."
                 ),
                 input_params=["topology.elder_kads"],
-                output_params=["topology.pressure_divisor"],
+                # b3^2/4 = 144 is chi_eff, which the registry already holds as
+                # topology.mephorash_chi -- this module's own text uses the
+                # same 144 as chi_eff in n_gen = chi_eff/(2*b3) = 3. It was
+                # declared under a second name that no registry held.
+                output_params=["topology.mephorash_chi"],
                 derivation={
                     "method": "Geometric pressure from Betti number squaring",
                     "steps": [
@@ -700,6 +760,8 @@ class AppendixH288Roots(SimulationBase):
 
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions for the 288-Root basis."""
+        sterile_angle_deg = np.degrees(
+            np.arcsin(ACTIVE_RESIDUE_REFERENCE / ANCESTRAL_ROOT_TOTAL))
         return [
             Parameter(
                 path="topology.ancestral_roots",
@@ -713,6 +775,69 @@ class AppendixH288Roots(SimulationBase):
                 ),
                 no_experimental_value=True,
                 eml_description="EML: eml_scalar(288.0) — total ancestral root count = 276 + 24 - 12 = 288 (SO(24) generators + shadow torsion - manifold cost)",
+            ),
+            Parameter(
+                path="topology.torsion_per_shadow",
+                name="Torsion Pins per Shadow Brane",
+                units="count",
+                status="FOUNDATIONAL",
+                description=(
+                    "Torsion pins carried by each of the two shadow branes, "
+                    "giving the 24 total. POSITED, not derived: it was "
+                    "previously a default argument on a registry path that did "
+                    "not exist, so the number never appeared in any audit "
+                    "while the whole 288-root budget rested on it."
+                ),
+                derivation_formula="shadow-torsion-sum",
+                no_experimental_value=True,
+                eml_description="EML: ops.div(eml_vec('topology.shadow_torsion_total'), eml_scalar(2.0)) — 24 pins over 2 shadow branes",
+            ),
+            Parameter(
+                path="topology.sterile_angle",
+                name="Sterile Projection Angle",
+                units="degrees",
+                status="DERIVED",
+                description=(
+                    "Projection angle of the sterile sector: "
+                    f"theta = arcsin(125/288) = {sterile_angle_deg:.4f} "
+                    "degrees. Computed on "
+                    "every run and then discarded -- run() returned it under "
+                    "topology.sterile_angle_deg while the formula declared "
+                    "topology.sterile_angle, and neither name was in "
+                    "output_params."
+                ),
+                derivation_formula="sterile-projection-filter",
+                no_experimental_value=True,
+                eml_description="EML: ops.mul(ops.asin(ops.div(eml_vec('registry.node_count'), eml_vec('topology.ancestral_roots'))), ops.div(eml_scalar(180.0), eml_pi())) — theta_sterile = arcsin(125/288) in degrees",
+            ),
+            Parameter(
+                path="topology.e8_root_count",
+                name="E8 Root Count",
+                units="count",
+                status="ESTABLISHED",
+                description=(
+                    "Number of roots of the E8 root system: 240. A theorem of "
+                    "Lie theory, not a fit. Half of the 288 + 192 budget "
+                    "bookkeeping: 288 = 240 + 48."
+                ),
+                derivation_formula="e8xe8-root-decomposition",
+                no_experimental_value=True,
+                eml_description="EML: eml_scalar(240.0) — |E8| = 240, the root count of the E8 lattice",
+            ),
+            Parameter(
+                path="topology.e8_tilde_compactified_roots",
+                name="Compactified E8-tilde Roots",
+                units="count",
+                status="DERIVED",
+                description=(
+                    "Roots surviving on the second, compactified E8 factor: "
+                    "288 - 240 = 48. Note the direction of the inference -- "
+                    "this is what the ancestral total leaves over once |E8| is "
+                    "removed, not an independently counted root system."
+                ),
+                derivation_formula="e8xe8-root-decomposition",
+                no_experimental_value=True,
+                eml_description="EML: ops.sub(eml_vec('topology.ancestral_roots'), eml_vec('topology.e8_root_count')) — 288 - 240 = 48 compactified roots",
             ),
             Parameter(
                 path="topology.so24_generators",

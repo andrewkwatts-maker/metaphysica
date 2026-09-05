@@ -612,9 +612,23 @@ class CosmologyIntroV16(SimulationBase):
                 plain_text="S_14 = (1/2kappa^2_14) integral d^14 x sqrt(-G) R_14",
                 category="DERIVED",
                 description="14D Einstein-Hilbert action before compactification",
-                inputParams=["geometry.D_bulk", "cosmology.kappa_14", "cosmology.V_9_internal"],
+                # cosmology.kappa_14 named no registry parameter and no
+                # 14D gravitational coupling is computed anywhere; the
+                # action is written in terms of a constant the framework
+                # never fixes. Note also that cosmology.V_9_internal is
+                # declared BOTH here and as an output of this same
+                # formula -- a one-step cycle -- so it is dropped from
+                # the inputs and kept as the output it actually is.
+                inputParams=["geometry.D_bulk"],
                 outputParams=["cosmology.M_Pl_4D", "cosmology.V_9_internal"],
-                input_params=["geometry.D_bulk", "cosmology.kappa_14", "cosmology.V_9_internal"],
+                # cosmology.kappa_14 named no registry parameter and no
+                # 14D gravitational coupling is computed anywhere; the
+                # action is written in terms of a constant the framework
+                # never fixes. Note also that cosmology.V_9_internal is
+                # declared BOTH here and as an output of this same
+                # formula -- a one-step cycle -- so it is dropped from
+                # the inputs and kept as the output it actually is.
+                input_params=["geometry.D_bulk"],
                 output_params=["cosmology.M_Pl_4D", "cosmology.V_9_internal"],
                 derivation={
                     "steps": [
@@ -788,7 +802,7 @@ class CosmologyIntroV16(SimulationBase):
                 description="9-dimensional internal volume V9 = V7(G2) × V2(T²)",
                 derivation_formula="einstein-hilbert-14D",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(ops.pow(eml_vec('chi_eff'), eml_scalar(7.0/6.0)), eml_scalar(39.478)) — V9 = chi_eff^(7/6) × (2π)² in Planck units"
+                eml_description="EML: ops.mul(ops.pow(eml_vec('topology.mephorash_chi'), eml_scalar(7.0/6.0)), ops.pow(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(2.0))) — V9 = χ_eff^(7/6) × (2π)² in Planck units. χ_eff is read from topology.mephorash_chi = 144, which is what run() loads; the bare name `chi_eff` is not used because it binds to the FormulasRegistry seed = 72 (per-shadow). (2π)² is now written out instead of the pre-evaluated literal 39.478"
             ),
             Parameter(
                 path="cosmology.breathing_mode_vev",
@@ -798,7 +812,7 @@ class CosmologyIntroV16(SimulationBase):
                 description="Breathing mode VEV ⟨σ⟩ = φ₀ ≈ 0.075 M_Pl from racetrack stabilization",
                 derivation_formula="breathing-mode",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(eml_scalar(0.075), eml_vec('M_PLANCK')) — ⟨σ⟩ = 0.075 × M_Pl, VEV from racetrack superpotential minimum at T_min=1.4885"
+                eml_description="EML: ops.mul(eml_scalar(0.075), eml_vec('constants.M_PLANCK')) — ⟨σ⟩ = 0.075 × M_Pl, VEV from racetrack superpotential minimum at T_min=1.4885. Qualified: M_PLANCK is ambiguous (reduced 2.435e18 vs codata full 1.22089e19); run() reads constants.M_PLANCK"
             ),
             Parameter(
                 path="cosmology.epsilon_KK",
@@ -837,7 +851,7 @@ class CosmologyIntroV16(SimulationBase):
                 description="BPS-saturated tension for (5,1) brane per shadow from SO(24,1) Casimir (v21)",
                 derivation_formula="bps-bound",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(ops.sqrt(ops.mul(eml_scalar(6.0), ops.div(ops.mul(eml_scalar(6.0), eml_scalar(29.0)), eml_scalar(4.0)))), ops.pow(eml_vec('M_PLANCK'), eml_scalar(6.0))) — T_BPS = sqrt(C2) × M_Pl^6, C2 = p(p+23)/4 = 43.5 for p=6"
+                eml_description="EML: ops.mul(ops.sqrt(ops.div(ops.mul(eml_scalar(6.0), eml_scalar(29.0)), eml_scalar(4.0))), ops.pow(eml_vec('constants.M_PLANCK'), eml_scalar(6.0))) — T_BPS = sqrt(C2) × M_Pl^6, C2 = p(p+23)/4 = 6×29/4 = 43.5 for p=6. Two fixes: the old tree multiplied C2 by a spurious extra 6 (sqrt(261) instead of sqrt(43.5), a factor 2.45), and M_PLANCK is ambiguous — run() reads constants.M_PLANCK"
             ),
             Parameter(
                 path="cosmology.pneuma_components_4D",

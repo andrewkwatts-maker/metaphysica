@@ -773,7 +773,11 @@ class YukawaTexturesV18(SimulationBase):
                 units="dex (log10 RMS)",
                 status="DERIVED",
                 description="RMS error in log10 for φ scaling hypothesis.",
-                eml_description="EML: ops.sqrt(ops.div(ops.sum(ops.pow(ops.sub(ops.log10(m_pred), ops.log10(m_obs)), eml_scalar(2.0))), eml_scalar(N_fermions))) — RMS log10 error of φ^(-N) mass predictions vs PDG",
+                # EML WITHHELD: an RMS over the log10 residuals of every fermion
+                # in the table. A reduction over an indexed family has no scalar
+                # EML form -- the previous string named m_pred, m_obs and
+                # N_fermions, none of which is a registry path, and ops.sum has
+                # no sequence to sum over.
                 no_experimental_value=True
             ),
             Parameter(
@@ -782,7 +786,11 @@ class YukawaTexturesV18(SimulationBase):
                 units="dex (log10 RMS)",
                 status="DERIVED",
                 description="RMS error in log10 for k_gimel scaling hypothesis.",
-                eml_description="EML: ops.sqrt(ops.div(ops.sum(ops.pow(ops.sub(ops.log10(m_pred), ops.log10(m_obs)), eml_scalar(2.0))), eml_scalar(N_fermions))) — RMS log10 error of k_gimel^(-N) mass predictions vs PDG",
+                # EML WITHHELD: an RMS over the log10 residuals of every fermion
+                # in the table. A reduction over an indexed family has no scalar
+                # EML form -- the previous string named m_pred, m_obs and
+                # N_fermions, none of which is a registry path, and ops.sum has
+                # no sequence to sum over.
                 no_experimental_value=True
             ),
             Parameter(
