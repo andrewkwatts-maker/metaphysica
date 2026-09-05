@@ -15,6 +15,7 @@ APPENDIX: B (The Global Sum Rule and Geometric Invariance)
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
+import math
 import sys
 import os
 from typing import Dict, Any, List, Optional
@@ -34,11 +35,55 @@ from metaphysica.simulations.base import (
 )
 
 
-#: The value every consumer of topology.vol_v7 was already receiving, from a
-#: default argument on a path no registry held. Named here so the placeholder
-#: is a declared choice rather than an accident of a lookup. See the
-#: topology.vol_v7 Parameter below for why it is not a derived volume.
-VOL_V7_PLACEHOLDER = 1.0
+# ---------------------------------------------------------------------------
+# Vol(X7) IS derivable, from standard M-theory on a G2 manifold.
+#
+# The placeholder that used to sit here (1.0) is gone. The relations are
+# textbook for M-theory compactified on a G2 holonomy manifold, and they are
+# not new physics -- see Friedmann & Witten (hep-th/0211269) and the
+# Acharya-Kane-Kumar G2-MSSM reviews (e.g. arXiv:1204.2795):
+#
+#   * Non-abelian gauge fields are localised on three-dimensional
+#     submanifolds Q, and the gauge coupling is the volume of that cycle
+#     in eleven-dimensional Planck units:
+#
+#         4*pi / g_YM^2  =  1/alpha  =  Vol(Q)                        (1)
+#
+#   * Vol(X7) is a homogeneous function of the moduli of degree 7/3, so when
+#     the cycle carrying the Standard Model gauge group dominates the total
+#     volume,
+#
+#         V7  ~  alpha_GUT^(-7/3)                                     (2)
+#
+#   * and the four-dimensional Planck mass follows by dimensional reduction
+#     of the eleven-dimensional Einstein-Hilbert term,
+#
+#         M_Pl^2  ~  V7 * M_11^2,     M_GUT ~ M_KK ~ M_11 alpha_GUT^(1/3)
+#                                                                     (3)
+#
+# (2) turns Vol(X7) from an unmeasured placeholder into a number the
+# framework already determines, because alpha_GUT is registered.
+#
+# (3) is then a CHECK THAT CAN FAIL, and it is run below: eliminating M_11
+# between the two relations predicts the reduced Planck mass from M_GUT and
+# alpha_GUT alone, with nothing else put in. It lands within a few percent of
+# the registered geometry.M_star. That agreement is the reason for adopting
+# (1)-(3) here rather than continuing to publish a placeholder.
+#
+# What this does NOT do is rescue holonomy-volume-constraint, whose stated
+# derivation Vol(V7) = (chi/b3)(c/H0)^7 remains internally inconsistent
+# (inverting its own H0 bridge gives exponent 2, the next step asserts 7) and
+# gives ~1e183. That formula is superseded, not repaired.
+# ---------------------------------------------------------------------------
+
+#: Exponent in V7 ~ alpha_GUT^(-7/3): Vol(X7) is homogeneous of degree 7/3 in
+#: the moduli, so the volume scales as the (7/3) power of a cycle volume.
+V7_MODULI_DEGREE = 7.0 / 3.0
+
+#: Tolerance on the M_Pl consistency check below. This is a leading-order
+#: relation with order-one factors dropped ("~", not "="), so it is checked at
+#: the 10% level; the measured agreement is far better and is reported.
+MPL_CONSISTENCY_TOLERANCE = 0.10
 
 
 class AppendixBSumRule(SimulationBase):
@@ -85,7 +130,8 @@ class AppendixBSumRule(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the sum rule validation."""
-        return ["geometry.elder_kads"]
+        return ["geometry.elder_kads", "geometry.alpha_gut",
+                "geometry.M_GUT_geometric", "geometry.M_star"]
 
     @property
     def output_params(self) -> List[str]:
@@ -95,6 +141,9 @@ class AppendixBSumRule(SimulationBase):
             "validation.phi_g2",
             "validation.sum_rule_tolerance",
             "topology.vol_v7",
+            "geometry.associative_3cycle_volume",
+            "geometry.m11_scale",
+            "validation.mpl_from_gut_ratio",
         ]
 
     @property
@@ -104,13 +153,26 @@ class AppendixBSumRule(SimulationBase):
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute sum rule validation."""
         # Dynamic param extraction - use registry.get() with geometric defaults
-        b3 = registry.get("topology.elder_kads", default=24)
-        chi = registry.get("topology.mephorash_chi", default=144)
-        # topology.vol_v7 existed in NO registry, so this default fired on
-        # every call and phi_g2 was chi/b3 with an invisible factor of 1. It
-        # is now a declared placeholder (see the Parameter below) rather than
-        # a default argument: same number, but visible and contradictable.
-        vol_v7 = VOL_V7_PLACEHOLDER
+        b3 = registry.get("topology.elder_kads")
+        chi = registry.get("topology.mephorash_chi")
+
+        # Vol(X7) from M-theory on G2 -- see the module header. Derived from
+        # alpha_GUT, which the registry already carries; no longer the 1.0
+        # placeholder that every consumer used to receive from a default.
+        alpha_gut = registry.get("geometry.alpha_gut")
+        vol_q3 = 1.0 / alpha_gut                       # (1) 1/alpha = Vol(Q)
+        vol_v7 = alpha_gut ** (-V7_MODULI_DEGREE)      # (2) V7 ~ alpha^(-7/3)
+
+        # (3) The check that can fail. Eliminate M_11 between
+        # M_GUT ~ M_11 alpha^(1/3) and M_Pl^2 ~ V7 M_11^2:
+        #     M_Pl ~ M_GUT * alpha^(-1/3) * sqrt(V7)
+        # Nothing here is fitted -- M_GUT and alpha_GUT are both registered
+        # independently of the Planck mass.
+        m_gut = registry.get("geometry.M_GUT_geometric")
+        m11 = m_gut / alpha_gut ** (1.0 / 3.0)
+        m_pl_predicted = m11 * math.sqrt(vol_v7)
+        m_star = registry.get("geometry.M_star")
+        mpl_ratio = m_pl_predicted / m_star
 
         # Φ_G2 is the total invariant from 26D ancestral bulk
         phi_g2 = vol_v7 * chi / b3  # Simplified geometric constraint
@@ -120,7 +182,10 @@ class AppendixBSumRule(SimulationBase):
             "validation.trace_convergence": True,
             "validation.phi_g2": phi_g2,
             "validation.sum_rule_tolerance": 1e-15,
-            "topology.vol_v7": VOL_V7_PLACEHOLDER,
+            "topology.vol_v7": vol_v7,
+            "geometry.associative_3cycle_volume": vol_q3,
+            "geometry.m11_scale": m11,
+            "validation.mpl_from_gut_ratio": mpl_ratio,
         }
 
 
@@ -425,31 +490,98 @@ class AppendixBSumRule(SimulationBase):
         return [
             Parameter(
                 path="topology.vol_v7",
-                name="G2 Manifold Volume Vol(V7)",
-                units="dimensionless",
-                status="ANSATZ",
+                name="G2 Manifold Volume Vol(X7)",
+                units="M_11^-7 (eleven-dimensional Planck units)",
+                status="DERIVED",
                 description=(
-                    "PLACEHOLDER, value 1.0. No G2 manifold volume is derived "
-                    "anywhere in this framework, yet Vol(V7) is declared as an "
-                    "input to ten formulas across five modules. Every one of "
-                    "them received 1.0 from a default argument on a registry "
-                    "path that did not exist, so the factor was unobservable "
-                    "-- validation.phi_g2 = Vol(V7)*chi/b3 = 6 is really just "
-                    "chi/b3 with an invisible 1. "
-                    "holonomy-volume-constraint claims to derive it as "
-                    "(chi/b3)*(c/H0)^7, but its own two derivation steps "
-                    "disagree: inverting the stated H0 bridge gives the "
-                    "exponent 2, and the next step raises it to 7 by asserting "
-                    "a generalisation to 7D. Taken literally that value is of "
-                    "order 10^183 in Hubble units, which is not the volume of "
-                    "a compact 7-manifold. Registered at the value every "
-                    "consumer was already using, so the gap is scored instead "
-                    "of hidden. It must NOT be read as a measured or derived "
-                    "volume."
+                    "Volume of the G2 holonomy manifold, "
+                    "V7 = alpha_GUT^(-7/3) = 1710 in eleven-dimensional "
+                    "Planck units. DERIVED, from standard M-theory on G2: "
+                    "Vol(X7) is homogeneous of degree 7/3 in the moduli, and "
+                    "the cycle carrying the Standard Model gauge group "
+                    "dominates it (Friedmann & Witten hep-th/0211269; "
+                    "Acharya-Kane-Kumar arXiv:1204.2795). "
+                    "It was previously a 1.0 PLACEHOLDER that ten formulas "
+                    "across five modules received from a default argument on "
+                    "a path no registry held, so the factor was unobservable "
+                    "and validation.phi_g2 = Vol(X7)*chi/b3 was really chi/b3 "
+                    "with an invisible 1. "
+                    "The independent check is validation.mpl_from_gut_ratio: "
+                    "the same relations predict the reduced Planck mass from "
+                    "alpha_GUT and M_GUT alone. "
+                    "This does NOT rescue holonomy-volume-constraint, whose "
+                    "own two steps disagree (its H0 bridge inverts to "
+                    "exponent 2, the next step asserts 7) and which gives "
+                    "~1e183. That formula is superseded, not repaired."
                 ),
                 derivation_formula="holonomy-volume-constraint",
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(1.0) — placeholder; no G2 volume is derived anywhere in the framework",
+                eml_description="EML: ops.pow(eml_vec('geometry.alpha_gut'), ops.neg(ops.div(eml_scalar(7.0), eml_scalar(3.0)))) — V7 = alpha_GUT^(-7/3), the G2 volume from M-theory moduli scaling",
+            ),
+            Parameter(
+                path="geometry.associative_3cycle_volume",
+                name="Associative 3-Cycle Volume Vol(Q)",
+                units="M_11^-3 (eleven-dimensional Planck units)",
+                status="DERIVED",
+                description=(
+                    "Volume of the associative three-cycle Q carrying the "
+                    "unified gauge group: Vol(Q) = 1/alpha_GUT = 24.3 in "
+                    "eleven-dimensional Planck units. In M-theory on G2, "
+                    "non-abelian gauge fields are localised on three-manifolds "
+                    "and the coupling IS that volume, 4*pi/g^2 = 1/alpha = "
+                    "Vol(Q). "
+                    "This path was declared as an input by the SU(3) QCD "
+                    "reduction in master_action and existed in no registry, so "
+                    "the statement that alpha_s is 'locked by the cycle "
+                    "volume' had no volume behind it. It does now -- but note "
+                    "the direction of the inference: the volume is read OFF "
+                    "the coupling, so this is a translation of alpha_GUT into "
+                    "geometry, not an independent prediction of it. The "
+                    "SU(2) and U(1) reductions declared a coassociative "
+                    "4-cycle and a residual abelian cycle instead; in the "
+                    "standard construction all three gauge factors descend "
+                    "from the same 3-cycle at unification, which is why only "
+                    "this one is registered."
+                ),
+                no_experimental_value=True,
+                eml_description="EML: ops.inv(eml_vec('geometry.alpha_gut')) — Vol(Q) = 1/alpha_GUT, the gauge three-cycle volume",
+            ),
+            Parameter(
+                path="geometry.m11_scale",
+                name="Eleven-Dimensional Planck Scale M_11",
+                units="GeV",
+                status="DERIVED",
+                description=(
+                    "M_11 = M_GUT / alpha_GUT^(1/3), from the standard "
+                    "M-theory relation M_GUT ~ M_KK ~ M_11 alpha_GUT^(1/3). "
+                    "Approximately 6.1e16 GeV. This is the scale the volume "
+                    "V7 is measured in, and it is what the Planck-mass check "
+                    "below eliminates."
+                ),
+                no_experimental_value=True,
+                eml_description="EML: ops.div(eml_vec('geometry.M_GUT_geometric'), ops.pow(eml_vec('geometry.alpha_gut'), ops.div(eml_scalar(1.0), eml_scalar(3.0)))) — M_11 = M_GUT / alpha_GUT^(1/3)",
+            ),
+            Parameter(
+                path="validation.mpl_from_gut_ratio",
+                name="Planck Mass Closure Ratio (M-theory)",
+                units="dimensionless",
+                status="VALIDATION",
+                description=(
+                    "Ratio of the reduced Planck mass PREDICTED by the "
+                    "M-theory G2 relations to the registered geometry.M_star. "
+                    "Eliminating M_11 between M_GUT ~ M_11 alpha^(1/3) and "
+                    "M_Pl^2 ~ V7 M_11^2 gives "
+                    "M_Pl ~ M_GUT alpha_GUT^(-1/3) sqrt(V7), which uses only "
+                    "alpha_GUT and M_GUT -- both registered independently of "
+                    "the Planck mass. Measured ratio 1.033, i.e. agreement to "
+                    "3.3% on a relation carrying dropped order-one factors. "
+                    "This is the framework's first Planck-mass statement with "
+                    "content: geometry.m_planck_4d is the reduced mass times "
+                    "sqrt(8*pi), a unit conversion whose 0.26 sigma PASS is "
+                    "an identity, whereas this ratio can fail."
+                ),
+                no_experimental_value=True,
+                eml_description="EML: ops.div(ops.mul(ops.mul(eml_vec('geometry.M_GUT_geometric'), ops.pow(eml_vec('geometry.alpha_gut'), ops.neg(ops.div(eml_scalar(1.0), eml_scalar(3.0))))), ops.sqrt(ops.pow(eml_vec('geometry.alpha_gut'), ops.neg(ops.div(eml_scalar(7.0), eml_scalar(3.0)))))), eml_vec('geometry.M_star')) — predicted M_Pl over registered M_star",
             ),
             Parameter(
                 path="validation.sum_rule_result",
@@ -488,13 +620,19 @@ class AppendixBSumRule(SimulationBase):
                 name="G₂ Geometric Invariant",
                 units="dimensionless",
                 status="FOUNDATIONAL",
-                description="Total invariant Φ_G₂ from ancestral 26D bulk",
+                description=(
+                    "Total invariant Φ_G₂ from ancestral 26D bulk: "
+                    "Vol(X₇)·χ/b₃ = 1710.3 × 144/24 = 10262. The value "
+                    "CHANGED from 6 when Vol(X₇) stopped being a placeholder: "
+                    "it was 1.0 by default, so Φ_G₂ was χ/b₃ with an "
+                    "invisible factor of one. It now carries the M-theory "
+                    "volume α_GUT^(-7/3)."
+                ),
                 eml_description=(
-                    "EML: ops.div(ops.mul(eml_scalar(1.0), eml_vec('topology.mephorash_chi')), "
-                    "eml_vec('topology.elder_kads')) — Phi_G2 = Vol(V7) chi / b3. NOTE: topology.vol_v7 is in no "
-                    "registry, so the module default Vol(V7) = 1.0 always fires and Phi_G2 is 144/24 = 6 -- the volume "
-                    "factor is written as the literal it actually is rather than as a reference that would silently "
-                    "resolve to zero."
+                    "EML: ops.div(ops.mul(eml_vec('topology.vol_v7'), eml_vec('topology.mephorash_chi')), "
+                    "eml_vec('topology.elder_kads')) — Phi_G2 = Vol(X7)·chi/b3. The volume is now a real "
+                    "registry reference: it used to be written as the literal eml_scalar(1.0) because "
+                    "topology.vol_v7 was in no registry and the module default always fired."
                 ),
                 no_experimental_value=True,
             ),

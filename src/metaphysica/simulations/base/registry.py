@@ -156,6 +156,25 @@ DECLARED_ANCHORS: Dict[str, Dict[str, str]] = {
 
 
 
+
+def _emit(message: str) -> None:
+    """Print a progress line that cannot take a module load down with it.
+
+    Console encoding is a property of the terminal, not of the physics. A
+    diagnostic that raises UnicodeEncodeError on a cp1252 console must
+    degrade to a readable approximation, never propagate: the loaders that
+    call this wrap module loading in `except Exception`, so anything raised
+    from a progress message is indistinguishable from the module itself
+    failing, and is reported as such.
+    """
+    try:
+        print(message)
+    except UnicodeEncodeError:
+        import sys
+        encoding = getattr(sys.stdout, "encoding", None) or "ascii"
+        print(message.encode(encoding, errors="replace").decode(encoding))
+
+
 class PMRegistry:
     """
     Singleton registry for parameters, formulas, and sections.
@@ -694,7 +713,20 @@ class PMRegistry:
             results[module_label] = result
             if verbose:
                 keys = ", ".join(sorted(result.keys()))
-                print(f"  [OK]   {module_label}: {keys}")
+                # This print is a DIAGNOSTIC and must never be able to break a
+                # load. It could, and it did: on a console with a cp1252
+                # codepage, a parameter key containing a non-ASCII character
+                # raised UnicodeEncodeError here. The exception escaped _try,
+                # escaped load_v26_modules, and was caught by the caller's
+                # `except Exception` as "v26.0 module loading failed" -- so a
+                # progress message silently dropped the four modules after
+                # this one and fourteen registry parameters with them,
+                # including the whole cosmological_tensions block
+                # (S8_baseline, S8_resolved, H0_baseline_km_s_Mpc, ...).
+                # The build happened to run under a UTF-8 stream and so
+                # carried them; a bare run did not, and the two artifact
+                # copies silently disagreed by fourteen parameters.
+                _emit(f"  [OK]   {module_label}: {keys}")
 
         if verbose:
             print("\n[INITIALIZATION] Loading v25.0 Sprint 4 modules")
@@ -815,7 +847,7 @@ class PMRegistry:
             results[module_label] = result
             if verbose:
                 keys = ", ".join(sorted(result.keys()))
-                print(f"  [OK]   {module_label}: {keys}")
+                _emit(f"  [OK]   {module_label}: {keys}")
 
         if verbose:
             print("\n[INITIALIZATION] Loading v26.0 Sprint 5 modules")
@@ -946,7 +978,7 @@ class PMRegistry:
             results[module_label] = result
             if verbose:
                 keys = ", ".join(sorted(result.keys()))
-                print(f"  [OK]   {module_label}: {keys}")
+                _emit(f"  [OK]   {module_label}: {keys}")
 
         if verbose:
             print("\n[INITIALIZATION] Loading v27.0 Sprint T6 modules")

@@ -167,6 +167,10 @@ class DarkEnergyEvolution(SimulationBase):
             "cosmology.w0_desi_sigma",        # Sigma deviation from DESI w0
             "cosmology.wa_desi_sigma",        # Sigma deviation from DESI wa
             "cosmology.thawing_validated",    # Overall validation status
+            "cosmology.wa_thawing_band_min",  # Caldwell-Linder -3/b3
+            "cosmology.wa_thawing_band_max",  # Caldwell-Linder -1/b3
+            "cosmology.wa_in_thawing_band",   # does wa satisfy the definition?
+            "cosmology.m_phi_over_H0",        # field mass implied by z_thaw
         ]
 
     @property
@@ -251,6 +255,93 @@ class DarkEnergyEvolution(SimulationBase):
             "wa": (wa_desi, wa_desi_unc),
         }
 
+        # ------------------------------------------------------------------
+        # THE THAWING DEFINITION IS ITSELF A CONSTRAINT, AND IT BINDS.
+        #
+        # Caldwell & Linder (2005), "The Limits of Quintessence"
+        # (astro-ph/0505494), show that thawing models occupy a narrow wedge
+        # of the w-w' plane:
+        #
+        #       (1 + w)  <=  w'  <=  3(1 + w)
+        #
+        # In the CPL parametrisation w(a) = w0 + wa(1-a), the present-day
+        # w' = dw/dln(a) evaluated at a = 1 is exactly -wa, so the wedge reads
+        #
+        #       (1 + w0)  <=  -wa  <=  3(1 + w0)
+        #
+        # This framework's w0 is -(b3-1)/b3, so 1 + w0 = 1/b3 EXACTLY, and the
+        # band collapses to a pure statement about b3:
+        #
+        #       wa  in  [ -3/b3, -1/b3 ]
+        #
+        # That is a zero-parameter prediction, derived rather than posited:
+        # given the topological w0 and the published definition of thawing,
+        # wa is no longer free. It is a band, not a point, and the honest
+        # reading is that the framework predicts a RANGE for wa.
+        #
+        # The current wa = -1/sqrt(b3) = -0.2041 is OUTSIDE it, exceeding the
+        # upper limit by a factor of 1.63. The retired -4/sqrt(b3) = -0.8165
+        # is outside by 6.5x, and wa = 0 fails the lower limit. So the module
+        # named "thawing", which registers cosmology.wa_thawing, does not
+        # currently satisfy the definition of thawing.
+        #
+        # Reported, not repaired: replacing -1/sqrt(b3) with a point in the
+        # band is a physics ruling, and every point in the band is FURTHER
+        # from DESI DR2 (-0.86 +/- 0.22) than the present value -- 3.34 sigma
+        # at the band edge -3/b3 against 2.98 sigma now. Deriving wa properly
+        # makes the tension worse, which is exactly why it must not be chosen
+        # to make a number look good.
+        # ------------------------------------------------------------------
+        # ------------------------------------------------------------------
+        # WHAT z_thaw = sqrt(b3) ACTUALLY SAYS: a field mass.
+        #
+        # A scalar frozen by Hubble friction begins to roll when the standard
+        # onset condition is met,
+        #
+        #       3 H(z_thaw) = m_phi
+        #
+        # so the framework's z_thaw is not an independent ansatz -- it is a
+        # statement about the mass of the field, in units of H0:
+        #
+        #       m_phi / H0 = 3 E(z_thaw),   E(z) = sqrt(Om (1+z)^3 + OL)
+        #
+        # Evaluated at z_thaw = sqrt(b3) = 4.899 this gives 24.25, which is
+        # b3 to 1.05%. So "z_thaw = sqrt(b3)" and "m_phi = b3 * H0" are the
+        # same claim to one percent, and the second form is the physical one:
+        # it is falsifiable, it is in natural units, and it can be compared
+        # against other sectors.
+        #
+        # THIS ALSO SETTLES THE S8 FRICTION ONSET (register 1.4), which asked
+        # for the onset to be derived from the compactification. It cannot be
+        # a MODULUS. Running the same condition backwards for a realistic
+        # modulus mass:
+        #
+        #       m = 1 TeV   -> z_osc ~ 3e22
+        #       m = 30 TeV  -> z_osc ~ 2e23      (the BBN-safe floor)
+        #
+        # A string modulus starts oscillating twenty-two orders of magnitude
+        # before the z ~ 3-4 that a weak-lensing-friendly S8 requires. The
+        # field that has to switch on at z ~ 3-5 has m ~ 15-25 H0 ~ 3e-32 eV,
+        # which is a quintessence mass, not a modulus mass.
+        #
+        # That is consistent with moduli_dm_coupling.py's own numerical
+        # verdict that multiplying the moduli coupling by 8 moves S8 by 0.2%:
+        # the moduli coupling was never the relevant knob. If the S8
+        # suppression is real, the field responsible is THIS field -- the
+        # dark energy scalar, at m_phi = b3 H0 -- and the two sectors are one
+        # sector. Recorded as a finding; wiring S8 to it is a physics ruling
+        # and is not taken here.
+        # ------------------------------------------------------------------
+        omega_m = registry.get("geometry.Omega_matter")
+        e_of_z_thaw = float(np.sqrt(
+            omega_m * (1.0 + self.z_thaw) ** 3 + (1.0 - omega_m)))
+        m_phi_over_h0 = 3.0 * e_of_z_thaw
+
+        one_plus_w0 = 1.0 + self.w0_derived
+        wa_band_max = -one_plus_w0           # = -1/b3
+        wa_band_min = -3.0 * one_plus_w0     # = -3/b3
+        wa_in_band = wa_band_min <= self.wa_derived <= wa_band_max
+
         # Overall validation: both must be within 3 sigma
         validated = (abs(sigma_w0) < 3.0) and (abs(sigma_wa) < 3.0)
 
@@ -262,6 +353,10 @@ class DarkEnergyEvolution(SimulationBase):
             "cosmology.w0_desi_sigma": sigma_w0,
             "cosmology.wa_desi_sigma": sigma_wa,
             "cosmology.thawing_validated": validated,
+            "cosmology.wa_thawing_band_min": wa_band_min,
+            "cosmology.wa_thawing_band_max": wa_band_max,
+            "cosmology.wa_in_thawing_band": 1.0 if wa_in_band else 0.0,
+            "cosmology.m_phi_over_H0": m_phi_over_h0,
         }
 
 
@@ -1390,6 +1485,89 @@ class DarkEnergyEvolution(SimulationBase):
                     "uncertainty (0.32) that matches no datasource row at all. 0.23 is the 1-sigma on the "
                     "desi.wa datasource row"
                 ),
+            ),
+            Parameter(
+                path="cosmology.m_phi_over_H0",
+                name="Dark Energy Field Mass in Hubble Units",
+                units="H_0",
+                status="DERIVED",
+                description=(
+                    "Mass of the thawing scalar implied by the framework's "
+                    "own z_thaw, via the standard onset condition "
+                    "3 H(z_thaw) = m_phi: m_phi/H0 = 3 E(sqrt(b3)) = 24.25. "
+                    "That is b3 to 1.05%, so z_thaw = sqrt(b3) and "
+                    "m_phi = b3 H0 are the same statement -- and the second "
+                    "is the physical one, being falsifiable and in natural "
+                    "units. "
+                    "It also settles the S8 friction onset that register 1.4 "
+                    "asks to be derived: the field cannot be a modulus. Run "
+                    "the same condition backwards and a 1 TeV modulus starts "
+                    "oscillating at z ~ 3e22, a BBN-safe 30 TeV one at "
+                    "z ~ 2e23 -- twenty-two orders of magnitude before the "
+                    "z ~ 3-4 a weak-lensing-friendly S8 needs. The field that "
+                    "switches on there has m ~ 3e-32 eV, a quintessence mass. "
+                    "This matches moduli_dm_coupling.py's finding that "
+                    "multiplying the moduli coupling by 8 moves S8 by 0.2%: "
+                    "the moduli coupling was never the relevant knob. If the "
+                    "S8 suppression is real, the responsible field is this "
+                    "one and the two sectors are one sector."
+                ),
+                derivation_formula="thawing-w0-derivation",
+                no_experimental_value=True,
+                eml_description="EML: ops.mul(eml_scalar(3.0), ops.sqrt(ops.add(ops.mul(eml_vec('geometry.Omega_matter'), ops.pow(ops.add(eml_scalar(1.0), eml_vec('cosmology.z_thaw')), eml_scalar(3.0))), ops.sub(eml_scalar(1.0), eml_vec('geometry.Omega_matter'))))) — m_phi/H0 = 3E(z_thaw), the onset condition 3H = m_phi",
+            ),
+            Parameter(
+                path="cosmology.wa_thawing_band_max",
+                name="Thawing Band Upper Limit on wa",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "Upper limit -1/b3 = -0.041667 on wa from the Caldwell & "
+                    "Linder (2005) definition of thawing, (1+w) <= w' <= "
+                    "3(1+w), with w' = -wa in CPL at a = 1. Because this "
+                    "framework's w0 = -(b3-1)/b3 gives 1 + w0 = 1/b3 exactly, "
+                    "the bound is a pure function of b3 with nothing fitted."
+                ),
+                derivation_formula="thawing-wa-derivation",
+                no_experimental_value=True,
+                eml_description="EML: ops.neg(ops.add(eml_scalar(1.0), eml_vec('cosmology.w0_thawing'))) — wa <= -(1+w0) = -1/b3, the Caldwell-Linder thawing lower wedge",
+            ),
+            Parameter(
+                path="cosmology.wa_thawing_band_min",
+                name="Thawing Band Lower Limit on wa",
+                units="dimensionless",
+                status="DERIVED",
+                description=(
+                    "Lower limit -3/b3 = -0.125 on wa from the same "
+                    "Caldwell & Linder wedge. Together with the upper limit "
+                    "this makes wa a DERIVED BAND rather than an ansatz: "
+                    "given the topological w0, thawing forces "
+                    "wa in [-3/b3, -1/b3]."
+                ),
+                derivation_formula="thawing-wa-derivation",
+                no_experimental_value=True,
+                eml_description="EML: ops.neg(ops.mul(eml_scalar(3.0), ops.add(eml_scalar(1.0), eml_vec('cosmology.w0_thawing')))) — wa >= -3(1+w0) = -3/b3, the Caldwell-Linder thawing upper wedge",
+            ),
+            Parameter(
+                path="cosmology.wa_in_thawing_band",
+                name="wa Satisfies the Thawing Definition",
+                units="boolean",
+                status="VALIDATION",
+                description=(
+                    "Whether the registered wa lies in [-3/b3, -1/b3]. It "
+                    "does NOT: wa = -1/sqrt(b3) = -0.2041 exceeds the upper "
+                    "limit -0.125 by a factor of 1.63, so the module named "
+                    "'thawing' does not satisfy the published definition of "
+                    "thawing. The retired -4/sqrt(b3) = -0.8165 misses by "
+                    "6.5x and wa = 0 fails the other end. "
+                    "This is recorded rather than repaired, because every "
+                    "point in the band is FURTHER from DESI DR2 "
+                    "(-0.86 +/- 0.22) than the present value: 3.34 sigma at "
+                    "the band edge -3/b3 against 2.98 sigma now. Deriving wa "
+                    "correctly makes the tension worse, which is precisely "
+                    "why the choice must not be made to improve a number."
+                ),
+                no_experimental_value=True,
             ),
             Parameter(
                 path="cosmology.thawing_validated",

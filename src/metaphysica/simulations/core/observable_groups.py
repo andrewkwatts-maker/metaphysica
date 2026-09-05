@@ -301,6 +301,9 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "geometry.H0_tension_ratio": (INTERMEDIATE,
         "late/early H0 ratio, dimensionless"),
     "cosmology.h0_unwinding_scale": (INTERMEDIATE, "model scale, not H0"),
+    "cosmology.m_phi_over_H0": (INTERMEDIATE,
+        "a scalar field MASS expressed in units of H0, not a value of H0. "
+        "m_phi/H0 = 3 E(z_thaw) = 24.25, which is b3 to 1.05%."),
 
     # -- S8: four registered values, one curated group member -------------
     "cosmology.s8_pm_predicted": (MEMBER, "friction-suppressed prediction"),
