@@ -332,14 +332,29 @@ if SCHEMA_AVAILABLE:
                         "EML: ops.div(ops.mul(ops.pow(eml_vec('geometry.c_kaf'), eml_scalar(2.0)), ops.div(eml_vec('topology.k_gimel'), eml_pi())), ops.mul(eml_scalar(1.5427971665), ops.add(eml_scalar(1.0), ops.div(eml_scalar(0.57721566), eml_vec('topology.elder_kads'))))) — m_p/m_e = C_kaf²·(k_ℷ/π) / h, h = 1.5427971665·(1 + γ_E/b₃). C_kaf and k_ℷ are qualified because the bare names bind elsewhere: `C_kaf` resolves to neutrino.C_kaf = 2.0, not geometry.c_kaf = 27.2, and `k_gimel` is refused as ambiguous. h is FITTED to CODATA (see module docstring)"
                     ),
                     derivation_formula="mass-ratio-geometric",
-                    experimental_bound=1836.15267343,
-                    uncertainty=0.0000005,  # v18.0: Combined theoretical+experimental uncertainty
+                    experimental_bound=1836.152673426,
+                    # Was 5e-07, described in its own comment as a "combined
+                    # theoretical+experimental uncertainty" but published in the
+                    # experimental slot as CODATA2022. The row already recorded
+                    # the split below and then quoted the combination, so the
+                    # geometric tolerance was being presented as measurement
+                    # precision. CODATA 2022 gives mu_pe = 1836.152673426(32).
+                    uncertainty=3.2e-08,
                     bound_type="measured",
                     bound_source="CODATA2022",
+                    # Geometric derivation limit, ~4 ppm. Uncited, so under the
+                    # active `cited_only` policy the experimental-only verdict
+                    # is published.
+                    theory_uncertainty=4e-7,
                     validation={
                         "theoretical_uncertainty": 4e-7,  # Geometric precision limit
-                        "experimental_uncertainty": 1.1e-7,  # CODATA 2022
-                        "note": "v18.0: Use combined uncertainty; geometric limit is 4 ppm"
+                        # 1.1e-7 was wrong: CODATA 2022 quotes (32), i.e.
+                        # 3.2e-08. The stale figure also appeared in the
+                        # geometry.mu_pe prose as "+/- 0.00000011".
+                        "experimental_uncertainty": 3.2e-08,  # CODATA 2022
+                        "note": "geometric limit is 4 ppm; it is declared as a "
+                                "theory uncertainty rather than folded into "
+                                "the experimental sigma"
                     }
                 ),
                 Parameter(

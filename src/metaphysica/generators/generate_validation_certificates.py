@@ -331,13 +331,20 @@ def build_report() -> Dict[str, Any]:
             "scoreboard_if_always": _tally("verdict_with_theory"),
             "scoreboard_if_experimental_only": _tally("verdict_experimental_only"),
             "load_bearing_rows": deflated,
+            # Counted, not spelled out. This note used to read "Ten of the
+            # fifteen rows", a census frozen into generated prose that went
+            # stale the moment the duplicated uncertainty slots in
+            # geometric_anchors were separated and four more rows became
+            # load-bearing.
             "note": (
                 "A theory uncertainty is load-bearing when it changes the "
-                "verdict. Ten of the fifteen rows carrying one are NOT "
-                "load-bearing -- the allowance is modest and the answer is "
-                "the same either way; those are untouched by this policy. "
-                "Only where a buffer decides the answer does its provenance "
-                "matter."
+                "verdict. %d of the %d rows carrying one are NOT load-bearing "
+                "-- the allowance is modest and the answer is the same either "
+                "way; those are untouched by this policy. Only where a buffer "
+                "decides the answer does its provenance matter."
+                % (sum(1 for v in validations if v["theory_uncertainty"])
+                   - len(deflated),
+                   sum(1 for v in validations if v["theory_uncertainty"]))
             ),
         },
         "worst_offenders": [

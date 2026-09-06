@@ -677,9 +677,22 @@ if SCHEMA_AVAILABLE:
                     experimental_bound=137.035999177,  # alpha inverse (CODATA 2022 full)
                     bound_type="measured",
                     bound_source="CODATA2022",
-                    # Theoretical tolerance: ~0.0005% of value (intrinsic formula precision)
-                    # This gives sigma ~ 1.0 for the Geometric Anchors derivation
-                    uncertainty=0.0007,
+                    # CODATA 2022 measures alpha^-1 to 2.1e-08. The 0.0007
+                    # that used to sit here was a THEORY tolerance -- the
+                    # comment said so, and said why it was chosen: "this gives
+                    # sigma ~ 1.0 for the Geometric Anchors derivation", i.e.
+                    # the tolerance was picked to produce the verdict. It is
+                    # now declared as what it is, so the generator's
+                    # cited / load_bearing policy can see it.
+                    uncertainty=2.1e-08,
+                    # Missing QED radiative corrections. geometric_anchors_core
+                    # argues the deviation is the expected tree-to-running
+                    # difference, O(alpha/2pi) ~ 0.0012, which is the right
+                    # ORDER for the observed 7.0e-04. No calculation is cited,
+                    # so under the active `cited_only` policy this does not
+                    # carry the verdict and the experimental-only result is
+                    # published instead.
+                    theory_uncertainty=0.0007,
                     eml_description=(
                         "EML: ops.add(ops.pow(eml_vec('geometry.k_gimel'), eml_scalar(2.0)), "
                         "ops.neg(ops.div(eml_vec('topology.elder_kads'), eml_vec('geometry.phi'))), "

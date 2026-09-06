@@ -115,24 +115,83 @@ def test_registry_band_matches_the_registrys_own_thresholds():
 # ── what the policy actually does to the live build ─────────────────────────
 
 
+#: The rows where a theory uncertainty decides the verdict. Pinned as a SET,
+#: not a count, so that a row entering or leaving has to be looked at.
+#:
+#: Four of these were invisible until 2026-09-06. geometric_anchors.run()
+#: carried an experimental_references table that wrote the SAME number into
+#: experimental_uncertainty and theory_uncertainty:
+#:
+#:     mu_pe          experimental 2.0     theory 2.0     # "Theory uncertainty"
+#:     alpha_inverse  experimental 0.01    theory 0.01    # "Theory uncertainty"
+#:
+#: Since load_bearing is `v_with_theory != v_exp_only`, equal slots move sigma
+#: by only sqrt(2) and almost never cross a band, so load_bearing stayed False
+#: and this policy never fired on them. The apparatus was inert for precisely
+#: the rows built to need it. With the slots independent -- CODATA's real
+#: sigmas are 2.1e-08 and 3.2e-08 -- all four are load-bearing and uncited, and
+#: the experimental-only verdict is what gets published.
+_LOAD_BEARING = {
+    "geometry.eta_baryon",
+    "geometry.G_F_matched",
+    "geometry.T_CMB",
+    "gauge.sin2_theta_w_geometric",
+    "higgs.m_higgs_pred",
+    # added 2026-09-06, when the duplicated uncertainty slots were separated
+    "electromagnetic.alpha_inv",
+    "fermion.mass_ratio_proton_electron",
+    "geometry.alpha_inverse",
+    "geometry.mu_pe",
+}
+
+
 def test_load_bearing_buffers_are_identified_and_none_is_cited():
     tp = _report()["theory_uncertainty_policy"]
     assert tp["n_rows_with_theory_uncertainty"] >= 15
-    assert tp["n_load_bearing"] == 5, tp["load_bearing_rows"]
+    found = {r["path"] for r in tp["load_bearing_rows"]}
+    assert found == _LOAD_BEARING, (
+        "the set of rows whose verdict rests on a theory uncertainty changed.\n"
+        "  newly load-bearing: %s\n"
+        "  no longer:          %s\n"
+        "Either a buffer started deciding an answer it did not decide before, "
+        "or one stopped. Both are worth reading before this list is updated."
+        % (sorted(found - _LOAD_BEARING) or "none",
+           sorted(_LOAD_BEARING - found) or "none")
+    )
+    assert tp["n_load_bearing"] == len(_LOAD_BEARING), tp["load_bearing_rows"]
     assert tp["n_load_bearing_cited"] == 0, (
         "a citation appeared -- verify it is real, then this count may rise"
     )
 
 
 def test_non_load_bearing_rows_are_untouched():
-    """Ten rows carry a modest allowance that changes no verdict.
+    """A row not carried by its buffer must score the same either way.
 
-    The policy must not demote them; it only bites where a buffer decides
-    the answer.
+    This used to assert `untouched >= 10`, a census that went stale the moment
+    four rows became load-bearing. The count was never the point: what matters
+    is that the policy bites ONLY where a buffer decides the answer, which is
+    checkable directly and cannot drift.
     """
-    tp = _report()["theory_uncertainty_policy"]
-    untouched = tp["n_rows_with_theory_uncertainty"] - tp["n_load_bearing"]
-    assert untouched >= 10
+    report = _report()
+    load_bearing = {r["path"] for r in
+                    report["theory_uncertainty_policy"]["load_bearing_rows"]}
+
+    demoted = []
+    for r in report["validations"]:
+        if not r.get("theory_uncertainty") or r["path"] in load_bearing:
+            continue
+        if r.get("verdict_with_theory") != r.get("verdict_experimental_only"):
+            demoted.append(
+                "  %s: with_theory=%s experimental_only=%s"
+                % (r["path"], r.get("verdict_with_theory"),
+                   r.get("verdict_experimental_only"))
+            )
+
+    assert not demoted, (
+        "these rows carry a theory uncertainty, are not marked load-bearing, "
+        "and yet score differently with and without it -- so load_bearing is "
+        "not identifying what it claims to:\n" + "\n".join(sorted(demoted))
+    )
 
 
 def test_the_same_number_no_longer_gets_two_verdicts():

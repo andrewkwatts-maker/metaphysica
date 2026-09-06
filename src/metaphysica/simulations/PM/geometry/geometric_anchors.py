@@ -793,23 +793,40 @@ class GeometricAnchorsSimulation(SimulationBase):
         # v18.3: Added theory_uncertainty for params where PM derivation has
         # well-defined precision limits (not just experimental uncertainty)
         experimental_references = {
+            # NOTE ON THE TWO UNCERTAINTY SLOTS.
+            # These three entries used to write the SAME number into
+            # experimental_uncertainty and theory_uncertainty, and the first
+            # two even labelled the experimental one "# Theory uncertainty".
+            # generate_validation_certificates decides
+            #     load_bearing = bool(theory_unc) and v_with_theory != v_exp_only
+            # so equal slots change sigma by only sqrt(2), load_bearing stays
+            # False, and the `cited_only` policy never fires. The cited/uncited
+            # apparatus was inert for precisely the rows that needed it. Keep
+            # the two slots independent: experimental_uncertainty is what the
+            # experiment measured, theory_uncertainty is what this framework
+            # cannot yet compute.
             "m_planck_4d": {
                 "experimental_value": 1.220890e19,  # CODATA 2022 FULL Planck mass
-                "experimental_uncertainty": 1.9e15,
+                "experimental_uncertainty": 1.9e15,  # CODATA 2022, codata_2022.json
                 "experimental_source": "CODATA2022",
-                "theory_uncertainty": 1.9e15,  # Same as experimental - exact derivation
+                # No theory_uncertainty. The entry used to carry 1.9e15
+                # annotated "Same as experimental - exact derivation", which
+                # contradicts itself: an exact derivation has no theory
+                # uncertainty, and a copy of the measurement error is not one.
                 "theory_uncertainty_source": "26D_string_tension_exact"
             },
             "mu_pe": {
-                "experimental_value": 1836.15267343,  # CODATA 2022
-                "experimental_uncertainty": 2.0,  # Theory uncertainty
+                # CODATA 2022: mu_pe = 1836.152673426(32). The value was stale
+                # (1836.15267343) and the sigma was the theory tolerance.
+                "experimental_value": 1836.152673426,
+                "experimental_uncertainty": 3.2e-08,  # CODATA 2022, codata_2022.json
                 "experimental_source": "CODATA2022",
                 "theory_uncertainty": 2.0,  # QED/QCD corrections ~0.1%
                 "theory_uncertainty_source": "QED_loop_corrections"
             },
             "alpha_inverse": {
                 "experimental_value": 137.035999177,  # CODATA 2022
-                "experimental_uncertainty": 0.01,  # Theory uncertainty
+                "experimental_uncertainty": 2.1e-08,  # CODATA 2022, codata_2022.json
                 "experimental_source": "CODATA2022",
                 "theory_uncertainty": 0.01,  # G2 moduli stabilization precision
                 "theory_uncertainty_source": "G2_moduli_stabilization"
@@ -1549,12 +1566,32 @@ class GeometricAnchorsSimulation(SimulationBase):
                 name="Inverse Fine Structure Constant",
                 units="dimensionless",
                 status="CALIBRATED",
-                description="NUMEROLOGICAL_FIT: alpha^-1 formula k_gimel^2 - b3/phi + phi/(4*pi) - D_G2/(10^4 - 3*k_gimel) yields 137.035999179 vs CODATA 2022 137.035999177 (rel. err. 1.7e-11). The 4th-term denominator 10^4 was chosen to cancel the 3-term residual; no QFT or M-theory derivation of this structure exists. See alpha_rigor.py for full assessment.",
+                description=(
+                    "Tree-level alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi) = "
+                    "137.036701776 vs CODATA 2022 137.035999177(21), a "
+                    "relative error of 5.1e-06. "
+                    "THIS DESCRIPTION USED TO DESCRIBE A DIFFERENT FORMULA: it "
+                    "quoted the four-term form with - D_G2/(10^4 - 3*k_gimel) "
+                    "and its 1.7e-11 error, which is not the value this row "
+                    "publishes. That fourth term is the '7D suppression' that "
+                    "geometric_anchors_core.py records as RETIRED (v22.5), "
+                    "kept as a documented NUMERICAL_OBSERVATION because 10^4 "
+                    "is unmotivated; the current prediction is the three-term "
+                    "tree-level one. The description advertised the retired, "
+                    "better-fitting formula over the published value. See "
+                    "alpha_rigor.py for the full assessment."
+                ),
                 derivation_formula="alpha-inverse-anchor",
                 experimental_bound=137.035999177,  # alpha inverse (CODATA 2022 full)
                 bound_type="measured",
                 bound_source="CODATA2022",
-                uncertainty=0.01
+                # Was uncertainty=0.01, a theory tolerance in the experimental
+                # slot attributed to CODATA. CODATA's sigma is 2.1e-08.
+                uncertainty=2.1e-08,
+                # Missing QED radiative corrections; uncited, so under the
+                # active `cited_only` policy the experimental-only verdict is
+                # the one published.
+                theory_uncertainty=0.01
             ),
             Parameter(
                 path="geometry.w_zero",
@@ -1628,12 +1665,32 @@ class GeometricAnchorsSimulation(SimulationBase):
                 name="Proton/Electron Mass Ratio",
                 units="dimensionless",
                 status="DERIVED",
-                description="Proton-to-electron mass ratio: mu_pe = k_gimel * (2*pi*b3 - phi). CODATA 2022: 1836.15267343 +/- 0.00000011. Theory uncertainty ~2.0 from higher-order QCD corrections.",
+                description=(
+                    "Proton-to-electron mass ratio: mu_pe = k_gimel * "
+                    "(2*pi*b3 - phi). CODATA 2022 measures "
+                    "mu_pe = 1836.152673426(32), i.e. an EXPERIMENTAL sigma of "
+                    "3.2e-08. This row previously scored against "
+                    "'CODATA2022 +/- 2.0' and reported 0.0000 sigma PASS: the "
+                    "2.0 is the framework's own theory uncertainty for missing "
+                    "higher-order QCD corrections, placed in the experimental "
+                    "slot and attributed to CODATA. codata_2022.json already "
+                    "separates the two fields -- the split simply never "
+                    "propagated to the scoring row. Against the real sigma the "
+                    "prediction sits about 12.6 sigma out. Reproducing mu_pe to "
+                    "2 parts in 10^10 from three topological inputs is a "
+                    "striking coincidence; it is not agreement at CODATA "
+                    "precision."
+                ),
                 derivation_formula=None,
-                experimental_bound=1836.15267343,
+                experimental_bound=1836.152673426,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                uncertainty=2.0
+                uncertainty=3.2e-08,
+                # Uncited: "higher-order QCD corrections" names no calculation.
+                # Declared here so the generator's cited / load_bearing policy
+                # can see it, which it could not while it was disguised as an
+                # experimental sigma.
+                theory_uncertainty=2.0
             ),
             Parameter(
                 path="geometry.alpha_gut",

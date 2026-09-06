@@ -621,90 +621,71 @@ class EstablishedPhysics:
         codata_file = data_dir / "codata_2022.json"
 
         # Load from JSON file
+        # No fallback. The block that used to follow substituted
+        #     codata.alpha_inverse  uncertainty=0.01   # Theory uncertainty
+        #     codata.mu_pe          uncertainty=2.0    # Theory uncertainty
+        # which are THEORY uncertainties published in the experimental slot
+        # and attributed to CODATA2022 -- the same defect that made
+        # geometry.mu_pe read 0.0000 sigma PASS against a ratio CODATA knows
+        # to 3.2e-08. It also carried a stale mu_pe value. Copying the
+        # corrected numbers here would only create a second place for them to
+        # drift from, so a missing datasource stops rather than inventing
+        # three uncertainties.
         try:
             with open(codata_file, 'r', encoding='utf-8') as f:
                 codata_data = json.load(f)
-            codata_available = True
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            warnings.warn(f"Could not load CODATA 2022 data: {e}. Using fallback values.")
-            codata_available = False
+            raise RuntimeError(
+                f"Could not load CODATA 2022 data from {codata_file}: {e}. "
+                "There is deliberately no fallback: substituting "
+                "uncertainties for measured constants is how a theory "
+                "uncertainty came to be published as a CODATA "
+                "experimental sigma."
+            ) from e
 
-        if codata_available:
-            fc = codata_data.get("fundamental_constants", {})
+        fc = codata_data.get("fundamental_constants", {})
 
-            # Inverse fine structure constant
-            alpha_inv = fc.get("alpha_inverse", {})
-            params = [
-                EstablishedParameter(
-                    path="codata.alpha_inverse",
-                    value=alpha_inv.get("value", 137.035999177),
-                    uncertainty=alpha_inv.get("uncertainty", 0.01),
-                    units=alpha_inv.get("units", "dimensionless"),
-                    source="ESTABLISHED:CODATA2022",
-                    description=alpha_inv.get("description", "Inverse fine structure constant"),
-                    eml_description="EML: eml_scalar(137.035999177) — α⁻¹ from CODATA 2022 (input)"
-                ),
-            ]
+        # Inverse fine structure constant
+        alpha_inv = fc.get("alpha_inverse", {})
+        params = [
+            EstablishedParameter(
+                path="codata.alpha_inverse",
+                value=alpha_inv.get("value", 137.035999177),
+                uncertainty=alpha_inv.get("uncertainty", 0.01),
+                units=alpha_inv.get("units", "dimensionless"),
+                source="ESTABLISHED:CODATA2022",
+                description=alpha_inv.get("description", "Inverse fine structure constant"),
+                eml_description="EML: eml_scalar(137.035999177) — α⁻¹ from CODATA 2022 (input)"
+            ),
+        ]
 
-            # Proton-to-electron mass ratio (mu_pe)
-            mu_pe = fc.get("proton_electron_mass_ratio", {})
-            params.append(
-                EstablishedParameter(
-                    path="codata.mu_pe",
-                    value=mu_pe.get("value", 1836.15267343),
-                    uncertainty=mu_pe.get("uncertainty", 2.0),
-                    units=mu_pe.get("units", "dimensionless"),
-                    source="ESTABLISHED:CODATA2022",
-                    description=mu_pe.get("description", "Proton-to-electron mass ratio"),
-                    eml_description="EML: eml_scalar(1836.15267343) — μ_pe proton-to-electron mass ratio from CODATA 2022 (input)"
-                )
+        # Proton-to-electron mass ratio (mu_pe)
+        mu_pe = fc.get("proton_electron_mass_ratio", {})
+        params.append(
+            EstablishedParameter(
+                path="codata.mu_pe",
+                value=mu_pe.get("value", 1836.15267343),
+                uncertainty=mu_pe.get("uncertainty", 2.0),
+                units=mu_pe.get("units", "dimensionless"),
+                source="ESTABLISHED:CODATA2022",
+                description=mu_pe.get("description", "Proton-to-electron mass ratio"),
+                eml_description="EML: eml_scalar(1836.15267343) — μ_pe proton-to-electron mass ratio from CODATA 2022 (input)"
             )
+        )
 
-            # Planck mass (full, not reduced)
-            m_planck = fc.get("M_PLANCK", {})
-            params.append(
-                EstablishedParameter(
-                    path="codata.M_PLANCK",
-                    value=m_planck.get("value", 1.220890e19),
-                    uncertainty=m_planck.get("uncertainty", 1.9e15),
-                    units=m_planck.get("units", "GeV"),
-                    source="ESTABLISHED:CODATA2022",
-                    description=m_planck.get("description", "Planck mass"),
-                    eml_description="EML: eml_scalar(1.220890e19) — M_Pl full Planck mass in GeV from CODATA 2022 (input)"
-                )
+        # Planck mass (full, not reduced)
+        m_planck = fc.get("M_PLANCK", {})
+        params.append(
+            EstablishedParameter(
+                path="codata.M_PLANCK",
+                value=m_planck.get("value", 1.220890e19),
+                uncertainty=m_planck.get("uncertainty", 1.9e15),
+                units=m_planck.get("units", "GeV"),
+                source="ESTABLISHED:CODATA2022",
+                description=m_planck.get("description", "Planck mass"),
+                eml_description="EML: eml_scalar(1.220890e19) — M_Pl full Planck mass in GeV from CODATA 2022 (input)"
             )
-        else:
-            # Fallback values if JSON not available
-            params = [
-                EstablishedParameter(
-                    path="codata.alpha_inverse",
-                    value=137.035999177,
-                    uncertainty=0.01,  # Theory uncertainty
-                    units="dimensionless",
-                    source="ESTABLISHED:CODATA2022",
-                    description="Inverse fine structure constant",
-                    eml_description="EML: eml_scalar(137.035999177) — α⁻¹ from CODATA 2022 (input)"
-                ),
-                EstablishedParameter(
-                    path="codata.mu_pe",
-                    value=1836.15267343,
-                    uncertainty=2.0,  # Theory uncertainty
-                    units="dimensionless",
-                    source="ESTABLISHED:CODATA2022",
-                    description="Proton-to-electron mass ratio",
-                    eml_description="EML: eml_scalar(1836.15267343) — μ_pe proton-to-electron mass ratio from CODATA 2022 (input)"
-                ),
-                EstablishedParameter(
-                    path="codata.M_PLANCK",
-                    value=1.220890e19,
-                    uncertainty=1.9e15,
-                    units="GeV",
-                    source="ESTABLISHED:CODATA2022",
-                    description="Planck mass",
-                    eml_description="EML: eml_scalar(1.220890e19) — M_Pl full Planck mass in GeV from CODATA 2022 (input)"
-                ),
-            ]
-
+        )
         for param in params:
             cls._register_param(registry, param)
 
