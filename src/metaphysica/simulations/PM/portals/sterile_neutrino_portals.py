@@ -70,10 +70,14 @@ from metaphysica.simulations.base.simulation_base import (
 
 # --- triple-track helpers (Sprint 2 task #7) ---
 try:  # pragma: no cover
-    import arithma as _A
+    # Probed, not merely imported: a stub arithma imports cleanly and
+    # binds Expression to None, which `except ImportError` cannot see.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA as _A
+    if _A is None:
+        raise ImportError('arithma backend is not usable')
     def _arithma_num(v):
         return _A.Expression.number(float(v))
-except ImportError:  # pragma: no cover
+except Exception:  # pragma: no cover
     _A = None
     def _arithma_num(v):
         return None

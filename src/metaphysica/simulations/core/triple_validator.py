@@ -41,10 +41,12 @@ from typing import Any, Mapping, Optional
 # ── Optional backends ────────────────────────────────────────────────────────
 
 try:
-    import arithma as _arithma  # type: ignore[import-not-found]
-    _ARITHMA_OK = (_arithma is not None
-                   and getattr(_arithma, "Expression", None) is not None)
-except ImportError:
+    # Probed, not merely imported. Checking `Expression is not None` catches
+    # one shape of stub; it does not catch a backend that exposes the names
+    # and then raises, or one that cannot round-trip a literal.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA as _arithma
+    _ARITHMA_OK = _arithma is not None
+except Exception:
     _arithma = None
     _ARITHMA_OK = False
 

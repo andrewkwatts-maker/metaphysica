@@ -43,7 +43,11 @@ from metaphysica.simulations.base import (
     PMRegistry,
 )
 try:  # pragma: no cover - optional during early migration
-    import arithma as _A
+    # Probed, not merely imported: a stub arithma imports cleanly and
+    # binds Expression to None, which `except ImportError` cannot see.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA as _A
+    if _A is None:
+        raise ImportError('arithma backend is not usable')
     def _arithma_num(v):
         return _A.Expression.number(float(v))
     def _arithma_const(name):
@@ -54,7 +58,7 @@ try:  # pragma: no cover - optional during early migration
         return _A.Expression.variable(name)
     def _arithma_var(name):
         return _A.Expression.variable(name)
-except ImportError:  # pragma: no cover
+except Exception:  # pragma: no cover
     _A = None  # type: ignore[assignment]
     def _arithma_num(v):
         return None

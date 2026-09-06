@@ -36,9 +36,12 @@ ROOT = _out_dir()
 sys.path.insert(0, str(ROOT))
 
 try:
-    import arithma  # type: ignore[import-not-found]
-    ARITHMA_AVAILABLE = True
-except ImportError:
+    # Probed: ARITHMA_AVAILABLE must mean "can compute", not "can be
+    # imported". It reported True for a backend on which every expression
+    # failed, which is how 422 formulas came to carry no arithma tree.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA as arithma
+    ARITHMA_AVAILABLE = arithma is not None
+except Exception:
     arithma = None  # type: ignore[assignment]
     ARITHMA_AVAILABLE = False
 

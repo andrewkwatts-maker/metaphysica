@@ -59,35 +59,29 @@ dependencies = [
     # repo call those operators; against 2.3 they raise AttributeError and
     # every affected parameter is scored as unevaluable.
     "eml-math>=2.4.0",
-    # arithma backs the ARITHMA track of the triple-track guard, and until
-    # 2026-09-06 it was not declared here at all -- an entire computation
-    # track resting on whatever happened to be installed.
-    #
-    # The upper bound is not caution, it is a measured requirement. An
-    # unreleased 2.0.4 (PyPI's latest is 2.0.2) is a FIXED-POINT rewrite with
-    # usable range about [1e-15, 9.223372e18] = i64. This framework's values
-    # span 1.9e-93 (portal-dm-cross-section-v23) to 4.8e34
-    # (proton-lifetime), roughly 128 decades against its 33, so the portal
-    # cross-section evaluated to exactly 0.0 and the proton lifetime
-    # saturated. Nine simulations failed the triple-track comparison, which
-    # is the guard working: without a second track those values would have
-    # been published as zero.
-    #
-    # tests/test_arithma_dynamic_range.py states the requirement as a
-    # property of the library, so a future swap is diagnosed rather than
-    # rediscovered.
-    "arithma>=2.0.1,<2.0.3",
 ]
 
 [project.optional-dependencies]
 # Heavy / build-only deps live behind extras so plain `pip install metaphysica`
 # stays slim â€” the bundled Get() datasheet fast path needs none of these.
 # The full website builder should use `pip install metaphysica[full]`.
-sims  = ["eml-spectral>=2.3.0"]   # advanced algebra (E8 / Leech / Octonion / Clifford) for the sim engine
+# arithma backs the ARITHMA track of the triple-track guard. It is an EXTRA,
+# not a hard dependency, and deliberately so: every call site is written to
+# degrade when the backend is absent, and declaring it as required made CI
+# install a build whose compiled extension does not load. That stub imports
+# cleanly and binds Expression to None, which `except ImportError` cannot
+# see, so a graceful degradation became an import crash that took four test
+# modules and the whole simulations package with it.
+#
+# The upper bound is measured, not cautious: an unreleased 2.0.4 is a
+# FIXED-POINT rewrite whose usable range is about [1e-15, 9.2e18], while this
+# framework spans 1.9e-93 to 4.8e34. See tests/test_arithma_dynamic_range.py.
+sims  = ["eml-spectral>=2.3.0", "arithma>=2.0.1,<2.0.3"]   # advanced algebra (E8 / Leech / Octonion / Clifford) for the sim engine
 pdf   = ["xhtml2pdf>=0.2.16"]      # PDF paper export
 plots = ["matplotlib>=3.7.0", "pandas>=2.0.0"]   # plot regeneration
 full = [
     "eml-spectral>=2.3.0",
+    "arithma>=2.0.1,<2.0.3",
     "xhtml2pdf>=0.2.16",
     "matplotlib>=3.7.0",
     "pandas>=2.0.0",

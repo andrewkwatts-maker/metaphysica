@@ -43,9 +43,14 @@ B3_LEAF_LABELS = ("b3", "b_3", "b3_leaf")
 B3_LATEX_TOKENS = ("b_3", "b3", "\\beta_3", "topology.elder_kads")
 
 try:
-    import arithma  # type: ignore[import-not-found]
-    ARITHMA_AVAILABLE = True
-except ImportError:
+    # ARITHMA_AVAILABLE is published in the artifact and gates a test, so it
+    # has to mean "can compute", not "can be imported". It reported True for
+    # a backend on which every expression failed, which is how 422 formulas
+    # came to carry no arithma tree while the flag said the package was there.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA as arithma
+    ARITHMA_AVAILABLE = arithma is not None
+except Exception:
+    arithma = None
     ARITHMA_AVAILABLE = False
 
 
