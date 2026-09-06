@@ -88,9 +88,16 @@ def _load(name: str):
 # tensor-calculus and vielbein constructions that legitimately do not reach
 # b3 and legitimately carry no symbolic tree, which is what moves non_b3 and
 # degraded. Both floors still bite: below 381 rooted is a regression.
+# 2026-09-06 (c): non_b3_max 180 -> 181, with b3_rooted UNCHANGED at 381.
+# root-lattice-288 was given a real tree (2 * chi_eff) and turns out not to
+# reach b3 at all -- chi_eff is not b3. It had been counted rooted by the
+# degraded latex scan. Third time this pattern has appeared: supplying the
+# tree is what reveals the edge was never there. The other three formulas
+# given trees in the same pass (harmonic-cycle-fraction, metric-conversion,
+# bulk-metric-ratio) are genuinely b3-rooted.
 _ARITHMA_BASELINE = {"total": 569, "b3_rooted_min": 381,
-                     "non_b3_max": 180, "ambiguous_max": 8,
-                     "degraded_max": 49}
+                     "non_b3_max": 181, "ambiguous_max": 8,
+                     "degraded_max": 45}
 _EML_BASELINE = {"total": 569, "b3_rooted_min": 109,
                  "non_b3_max": 460, "ambiguous_max": 7}
 
@@ -111,7 +118,23 @@ def test_arithma_b3_coverage_never_regresses():
 #: a Jordan-algebra, E7/E8 or Clifford construction whose content is a
 #: reduction over an indexed family -- the same quantities withheld from the
 #: EML cross-check, for the same reason.
-_NO_SYMBOLIC_TREE_COUNT = 49  # see test_arithma_walk_degradation_is_bounded
+# The 45 formulas that carry no symbolic tree in EITHER dialect, and why.
+# This is a PRINCIPLED floor, not a backlog: each kind below has no scalar
+# form to supply, so writing one would mean inventing content.
+#
+#   15  action / Lagrangian        an integral over a field configuration
+#    7  reduction over an indexed  products and direct sums over a family
+#       family
+#    6  tensor / spinor equation   carries free indices; not a scalar
+#    3  metric decomposition       ds^2 = ... is not an expression with a value
+#   14  other structural           Jordan-27 / E7 / E8 pairings, manifold
+#                                  structure statements, counting chains
+#
+# It came down from 49 when four ARITHMETIC identities were found among them
+# and given trees: harmonic-cycle-fraction (18/24), bulk-metric-ratio,
+# metric-conversion and root-lattice-288 (2 chi_eff). Those were genuine
+# omissions. The remainder are not.
+_NO_SYMBOLIC_TREE_COUNT = 45  # see test_arithma_walk_degradation_is_bounded
 
 
 def test_arithma_walk_degradation_is_bounded():

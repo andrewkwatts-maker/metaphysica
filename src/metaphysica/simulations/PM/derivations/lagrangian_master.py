@@ -1583,14 +1583,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Yang-Mills action in 26D for the E8 x E8 gauge group (dim = 496). "
                 "The field strength F_MN = d_M A_N - d_N A_M + i[A_M, A_N] transforms "
                 "in the adjoint representation. The 1/4g^2 prefactor ensures canonical "
-                "normalization of the gauge kinetic term (2 derivation steps)."
+                "normalization of the gauge kinetic term (3 derivation steps)."
             ),
             inputParams=["gauge.g_gut"],
             outputParams=[],
             derivation={
                 "steps": [
                     "Construct the gauge-covariant field strength F_MN^a = d_M A_N^a - d_N A_M^a + f^a_bc A_M^b A_N^c for E8 x E8 with structure constants f^a_bc",
-                    "Form the gauge-invariant, diffeomorphism-invariant action S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN) using the Killing form for the trace"
+                    "Form the gauge-invariant, diffeomorphism-invariant action S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN) using the Killing form for the trace",
+                    "Varying S_YM with respect to A_M^a gives the 26D Yang-Mills equations of motion, which reduce to the Standard Model gauge sectors under the KK ansaetze"
                 ],
                 "method": "Gauge principle: local E8 x E8 invariance in curved 26D spacetime",
                 "parentFormulas": ["master-action-26d-full"]
@@ -1704,14 +1705,15 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "Einstein field equations in 26D. The Einstein tensor G_munu = R_munu - 1/2 "
                 "g_munu R is automatically divergence-free by the contracted Bianchi identity "
-                "(nabla^mu G_munu = 0), ensuring energy-momentum conservation (2 derivation steps)."
+                "(nabla^mu G_munu = 0), ensuring energy-momentum conservation (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "From the Euler-Lagrange equation (2.1.10), identify the Einstein tensor G_munu = R_munu - 1/2 g_munu R on the left-hand side",
-                    "The contracted Bianchi identity nabla^mu G_munu = 0 guarantees covariant conservation nabla^mu T_munu = 0 of the stress-energy source"
+                    "The contracted Bianchi identity nabla^mu G_munu = 0 guarantees covariant conservation nabla^mu T_munu = 0 of the stress-energy source",
+                    "Equating the geometric and matter sides gives G_munu = 8 pi G_26 T_munu, the 26D Einstein field equations"
                 ],
                 "method": "Direct identification from the variational principle (Hilbert 1915)",
                 "parentFormulas": ["euler-lagrange-gravity"]
@@ -1733,14 +1735,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Key metric variations used in deriving the Einstein equations from the action "
                 "principle. The variation of sqrt(-g) follows from det(g) = exp(tr(ln g)), and "
                 "the Palatini identity shows that delta R_munu contributes only a boundary term "
-                "that vanishes for compact spacetimes (2 derivation steps)."
+                "that vanishes for compact spacetimes (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "Compute delta sqrt(-g) = -1/2 sqrt(-g) g_munu delta g^munu from the Jacobi formula for matrix determinants: delta det(g) = det(g) g^munu delta g_munu",
-                    "Apply the Palatini identity: delta R_munu = nabla_lambda (delta Gamma^lambda_munu) - nabla_nu (delta Gamma^lambda_mulambda), which integrates to a boundary term"
+                    "Apply the Palatini identity: delta R_munu = nabla_lambda (delta Gamma^lambda_munu) - nabla_nu (delta Gamma^lambda_mulambda), which integrates to a boundary term",
+                    "Combining both variations in delta(sqrt(-g) R) and discarding the total derivative yields the Einstein tensor, which is what the action principle requires"
                 ],
                 "method": "Matrix calculus (Jacobi formula) and Palatini identity for metric variation",
                 "parentFormulas": ["einstein-hilbert-26d"]
@@ -1764,13 +1767,15 @@ class LagrangianMasterDerivation(SimulationBase):
             description=(
                 "First Sp(2,R) constraint: position-momentum orthogonality in phase space. "
                 "This removes one degree of freedom by requiring the position and momentum "
-                "vectors to be orthogonal in the 26D target space (1 derivation step)."
+                "vectors to be orthogonal in the 26D target space (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
-                    "Impose the first-class constraint X^M P_M = 0 from the Sp(2,R) gauge symmetry of the 2T physics worldline action, requiring orthogonality of position and momentum in 26D phase space"
+                    "Impose the first-class constraint X^M P_M = 0 from the Sp(2,R) gauge symmetry of the 2T physics worldline action, requiring orthogonality of position and momentum in 26D phase space",
+                    "Together with X^2 = tau^2 this is the pair of first-class constraints whose gauge orbits reduce the two-time phase space to a one-time one",
+                    "Being first class, the constraint generates a gauge transformation rather than fixing a value, so it removes one degree of freedom from the physical phase space"
                 ],
                 "method": "Sp(2,R) gauge symmetry constraint analysis (Bars 2001)",
                 "parentFormulas": ["master-action-26d-full"]
@@ -1791,13 +1796,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Second Sp(2,R) constraint: fixes the conformal time parameter tau by "
                 "requiring the norm of the position vector to equal tau^2. Together with "
                 "the X.P = 0 constraint, this reduces 26D to an effective 13D description "
-                "with two shadows (1 derivation step)."
+                "with two shadows (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
-                    "Impose the second Sp(2,R) constraint X^M X_M = tau^2 as a conformal gauge-fixing condition, identifying the scale of the position vector with conformal time"
+                    "Impose the second Sp(2,R) constraint X^M X_M = tau^2 as a conformal gauge-fixing condition, identifying the scale of the position vector with conformal time",
+                    "With X.P = 0 already imposed, the two constraints together leave a one-time description carrying the same physical content",
+                    "Fixing the norm to tau^2 identifies tau as the conformal time of the surviving one-time description"
                 ],
                 "method": "Sp(2,R) conformal gauge fixing (Bars 2001)",
                 "parentFormulas": ["sp2r-constraint-xp"]
@@ -1818,14 +1825,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Sp(2,R) gauge-fixing action with Lagrange multipliers lambda and zeta "
                 "enforcing the orthogonality and conformal constraints. This action is added "
                 "to the master action to implement the Sp(2,R) gauge fixing, reducing the "
-                "effective dimension from 26 to 13 per shadow (2 derivation steps)."
+                "effective dimension from 26 to 13 per shadow (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "Introduce Lagrange multipliers lambda and zeta to enforce the Sp(2,R) constraints X.P = 0 and X^2 = tau^2 respectively",
-                    "Add the gauge-fixing term S_gf = integral d^26x [lambda(X.P) + zeta(X^2 - tau^2)] to the master action, yielding the constrained dynamics"
+                    "Add the gauge-fixing term S_gf = integral d^26x [lambda(X.P) + zeta(X^2 - tau^2)] to the master action, yielding the constrained dynamics",
+                    "Varying with respect to lambda and zeta returns the two constraints, confirming the gauge-fixed action is equivalent to the constrained system"
                 ],
                 "method": "Lagrange multiplier method for constrained systems (Dirac 1964; Bars 2001)",
                 "parentFormulas": ["sp2r-constraint-xp", "sp2r-constraint-x2"]
@@ -1880,14 +1888,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "v22 metric tensor with 12-pair bridge decomposition. The signature (24,1) has "
                 "1 timelike direction (-dt^2) and 24 spacelike directions from 12 bridge pairs, "
                 "each contributing 2 Euclidean dimensions. This is the flat background metric for "
-                "the v22 architecture before gravitational perturbation (2 derivation steps)."
+                "the v22 architecture before gravitational perturbation (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "From the bulk structure M^{24,2} = T^1 x_fiber (direct_sum_i B_i^{2,0}), write the metric as ds^2 = g_tt dt^2 + sum_i g_i(dy_1i, dy_2i)",
-                    "For flat background: g_tt = -1 (Lorentzian time) and each B_i^{2,0} has Euclidean metric dy_1i^2 + dy_2i^2, giving ds^2 = -dt^2 + sum_i (dy_1i^2 + dy_2i^2)"
+                    "For flat background: g_tt = -1 (Lorentzian time) and each B_i^{2,0} has Euclidean metric dy_1i^2 + dy_2i^2, giving ds^2 = -dt^2 + sum_i (dy_1i^2 + dy_2i^2)",
+                    "Counting the resulting directions gives 1 timelike and 24 spacelike, which is the signature (24,1) the v22 architecture declares"
                 ],
                 "method": "Metric decomposition from fiber bundle structure",
                 "parentFormulas": ["v22-bulk-structure"]
@@ -1909,14 +1918,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "v22 bridge kinetic Lagrangian for 12 I/O pairs. Each bridge pair contributes "
                 "two canonical scalar field kinetic terms, one for each channel (input y_1i and "
                 "output y_2i). The total bridge sector has 24 real scalar degrees of freedom "
-                "distributed across the 12 pairs (2 derivation steps)."
+                "distributed across the 12 pairs (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "From the v22 metric (2.1.17), extract the bridge sector: each coordinate y_1i and y_2i is promoted to a dynamical scalar field",
-                    "Write the canonical kinetic Lagrangian for 24 real scalars grouped into 12 pairs: L_bridge = sum_i [(d y_1i)^2 + (d y_2i)^2]"
+                    "Write the canonical kinetic Lagrangian for 24 real scalars grouped into 12 pairs: L_bridge = sum_i [(d y_1i)^2 + (d y_2i)^2]",
+                    "Summing over the 12 pairs gives L_bridge = sum_{i=1}^{12} [(d y_1i)^2 + (d y_2i)^2], the kinetic term for 24 real scalars"
                 ],
                 "method": "Canonical scalar field Lagrangian from dimensional decomposition",
                 "parentFormulas": ["v22-metric-12-pair"]
@@ -1972,14 +1982,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "information and y_2i carries output (motor/cognitive) responses. A minimum of 6 "
                 "active pairs is required for coherence times exceeding 25ms (wet microtubule "
                 "stability threshold from Orch-OR theory). This interpretation builds on the "
-                "Penrose-Hameroff orchestrated objective reduction framework (2 derivation steps)."
+                "Penrose-Hameroff orchestrated objective reduction framework (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=["derivations.min_active_pairs", "derivations.bridge_coherence_time"],
             derivation={
                 "steps": [
                     "Each bridge pair B_i^{2,0} in the v22 architecture has two real coordinates (y_1i, y_2i) which are interpreted as input and output channels for information flow",
-                    "The decoherence threshold from Orch-OR theory requires a minimum of 6 active pairs to maintain quantum coherence for tau > 25ms in wet biological environments (microtubule stability criterion)"
+                    "The decoherence threshold from Orch-OR theory requires a minimum of 6 active pairs to maintain quantum coherence for tau > 25ms in wet biological environments (microtubule stability criterion)",
+                    "STATED HYPOTHESIS, not a derivation: no observable is computed from it, and the module labels it [PM Hypothesis]"
                 ],
                 "method": "Penrose-Hameroff Orch-OR interpretation of v22 bridge pair geometry [PM Hypothesis]",
                 "parentFormulas": ["v22-bulk-structure", "v22-distributed-or-reduction"]
@@ -2037,14 +2048,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "spatial dimensions from the bridge system pair into 12 complex coordinates, "
                 "which map to the 288-element root lattice from E8 x E8 breaking: 288 = 240 "
                 "(E8 roots) + 8 (Cartan generators) + 40 (second E8 surviving roots) = "
-                "2 x chi_eff = 2 x 144 (2 derivation steps)."
+                "2 x chi_eff = 2 x 144 (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=["derivations.n_root_lattice"],
             derivation={
                 "steps": [
                     "The 24 real spatial DOF from 12 bridge pairs combine into 12 complex coordinates z_i = y_1i + i y_2i via complexification",
-                    "The 12 complex coordinates map to the E8 x E8 root lattice under the G2 breaking pattern, yielding 288 = 240 + 8 + 40 = 2 * chi_eff roots"
+                    "The 12 complex coordinates map to the E8 x E8 root lattice under the G2 breaking pattern, yielding 288 = 240 + 8 + 40 = 2 * chi_eff roots",
+                    "The chain 24 real -> 12 complex -> 288 roots is therefore a counting identity, not a dynamical statement"
                 ],
                 "method": "Complexification of bridge coordinates followed by E8 x E8 root lattice identification",
                 "parentFormulas": ["sp2r-gauge-fixed-action", "root-lattice-288"]
@@ -2093,9 +2105,28 @@ class LagrangianMasterDerivation(SimulationBase):
             latex=r"\varphi = dx^{123} + dx^{145} + dx^{167} + dx^{246} - dx^{257} - dx^{347} - dx^{356}",
             plain_text="phi = dx^123 + dx^145 + dx^167 + dx^246 - dx^257 - dx^347 - dx^356",
             category="ESTABLISHED",
-            description="Standard G2 associative 3-form defining the geometric structure",
+            description=(
+                "Standard G2 associative 3-form defining the geometric "
+                "structure. Its seven terms are the seven lines of the Fano "
+                "plane, one associative triple each."
+            ),
             inputParams=[],
-            outputParams=[]
+            outputParams=[],
+            derivation={
+                "method": "canonical_three_form",
+                "steps": [
+                    "Take the standard associative 3-form on R^7 in the Fano-plane basis, phi = dx^123 + dx^145 + dx^167 + dx^246 - dx^257 - dx^347 - dx^356",
+                    "Its seven terms are the seven lines of the Fano plane, each contributing one associative triple, and the three signs distinguish the two inequivalent orientations",
+                    "The stabiliser of phi in GL(7,R) is the exceptional group G2, which is what makes this 3-form define the geometry rather than merely label it",
+                ],
+                "references": ["Joyce, Compact Manifolds with Special Holonomy"],
+            },
+            terms={
+                "phi": "The associative 3-form on R^7",
+                "dx^{ijk}": "Wedge product dx^i ^ dx^j ^ dx^k of coordinate 1-forms",
+                "Fano plane": "The order-2 projective plane: 7 points, 7 lines, 3 points per line",
+                "G2": "Stabiliser of phi in GL(7,R), the 14-dimensional exceptional Lie group",
+            }
         ))
 
         formulas.append(Formula(
@@ -2108,14 +2139,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Kaluza-Klein ansatz for 26D to 13D reduction. The 26D metric is decomposed "
                 "into a warped product of a 13D spacetime and a 13D internal space, with warp "
                 "factor e^{2A(y)} depending on internal coordinates. This is the first step in "
-                "the dimensional reduction chain 26D -> 13D -> 7D -> 4D (2 derivation steps)."
+                "the dimensional reduction chain 26D -> 13D -> 7D -> 4D (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "Decompose the 26D metric as a warped product: ds^2_26 = e^{2A(y)} ds^2_13 + g_mn(y) dy^m dy^n where A(y) is the warp factor and g_mn is the internal metric",
-                    "The warp factor e^{2A(y)} allows the 13D effective Planck mass to depend on the internal geometry, relating M_Pl^2 to M_*^24 * Vol(internal)"
+                    "The warp factor e^{2A(y)} allows the 13D effective Planck mass to depend on the internal geometry, relating M_Pl^2 to M_*^24 * Vol(internal)",
+                    "Integrating over the internal coordinates y^m gives the 13D effective action, with the warp factor absorbed into the 13D Planck mass"
                 ],
                 "method": "Kaluza-Klein warped compactification (Kaluza 1921; Randall-Sundrum 1999)",
                 "parentFormulas": ["master-action-26d-full"]
@@ -2138,14 +2170,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "7 compact dimensions carry G2 holonomy, which preserves exactly N=1 "
                 "supersymmetry in the effective lower-dimensional theory. The third Betti "
                 "number b_3 of the G2 manifold determines the number of fermion generations "
-                "(2 derivation steps)."
+                "(3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "Decompose the 13D metric as ds^2_13 = e^{2B(z)} ds^2_6 + h_ab(z) dz^a dz^b where h_ab is the G2 holonomy metric on the compact 7-manifold",
-                    "The G2 holonomy condition Hol(h) subset G2 ensures N=1 SUSY and determines b_3 = 24 independent 3-cycles"
+                    "The G2 holonomy condition Hol(h) subset G2 ensures N=1 SUSY and determines b_3 = 24 independent 3-cycles",
+                    "Integrating over the G2 seven-manifold gives the 6D effective action and fixes the number of massless moduli by b_3"
                 ],
                 "method": "G2 holonomy compactification (Acharya-Witten 2001; Joyce 2000)",
                 "parentFormulas": ["kk-ansatz-26-13", "g2-holonomy-constraint"]
@@ -2167,14 +2200,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Final Kaluza-Klein ansatz from 7D to 4D spacetime. The remaining 3 compact "
                 "dimensions are reduced, yielding the 4D Einstein gravity with 2 graviton "
                 "polarizations (matching LIGO/Virgo observations). Gauge fields emerge from "
-                "the isometries of the compact space (2 derivation steps)."
+                "the isometries of the compact space (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=["derivations.dof_after_g2"],
             derivation={
                 "steps": [
                     "Decompose the 7D metric as ds^2_7 = e^{2C(w)} ds^2_4 + r^2 d Omega^2_3 where d Omega^2_3 is the metric on the remaining compact 3-space",
-                    "In the 4D effective theory, the graviton has D(D-3)/2 = 4*1/2 = 2 physical polarizations, consistent with LIGO/Virgo observations of gravitational waves"
+                    "In the 4D effective theory, the graviton has D(D-3)/2 = 4*1/2 = 2 physical polarizations, consistent with LIGO/Virgo observations of gravitational waves",
+                    "Integrating over the remaining three compact directions gives the 4D Einstein-Hilbert action"
                 ],
                 "method": "Final step of Kaluza-Klein reduction chain 26D -> 13D -> 7D -> 4D",
                 "parentFormulas": ["kk-ansatz-13-7"]
@@ -2197,14 +2231,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 "4D gauge coupling derived from the higher-dimensional coupling and internal "
                 "volume via Kaluza-Klein reduction. The effective 4D coupling g_4 is suppressed "
                 "by the volume of the compact space Vol(X), relating the GUT-scale coupling "
-                "to the fundamental D-dimensional coupling g_D (2 derivation steps)."
+                "to the fundamental D-dimensional coupling g_D (3 derivation steps)."
             ),
             inputParams=["gauge.g_gut"],
             outputParams=[],
             derivation={
                 "steps": [
                     "Integrate the D-dimensional Yang-Mills action S_YM = -(1/4g_D^2) integral Tr(F^2) over the compact internal space X",
-                    "The integral over the internal dimensions yields Vol(X), giving the 4D effective action S_4D_YM = -(Vol(X)/4g_D^2) integral_4D Tr(F^2), so 1/g_4^2 = Vol(X)/g_D^2"
+                    "The integral over the internal dimensions yields Vol(X), giving the 4D effective action S_4D_YM = -(Vol(X)/4g_D^2) integral_4D Tr(F^2), so 1/g_4^2 = Vol(X)/g_D^2",
+                    "Reading off the coefficient gives 1/g_4^2 = Vol(X)/g_D^2, so the four-dimensional coupling is fixed by the internal volume"
                 ],
                 "method": "Dimensional reduction of gauge kinetic term over compact internal space",
                 "parentFormulas": ["yang-mills-26d", "kk-ansatz-7-4"]
@@ -2221,6 +2256,12 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.24)",
             latex=r"288 = 240_{E_8} + 8_{\text{Cartan}} + 40_{E_8'} = 2\chi_{\text{eff}}",
             plain_text="288 = 240 (E8 roots) + 8 (Cartan) + 40 (second E8) = 2 * chi_eff",
+            eml_tree_str=(
+                "ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi'))"
+            ),
+            eml_description=(
+                "EML: ops.mul(eml_scalar(2.0), eml_vec('topology.mephorash_chi')) — 288 = 2 chi_eff = 2 x 144, the same total the E8 decomposition 240 + 8 + 40 gives"
+            ),
             category="DERIVED",
             description=(
                 "Structure of the 288-element root lattice from E8 x E8 breaking under G2 "

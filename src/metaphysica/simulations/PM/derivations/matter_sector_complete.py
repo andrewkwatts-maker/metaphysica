@@ -829,6 +829,16 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["topology.mephorash_chi", "higgs.vev_geometric"],
             outputParams=["higgs.mu_squared", "higgs.lambda_quartic"],
+            derivation={
+                "method": "scalar_potential",
+                "steps": [
+                    "Write the Higgs potential V(H) = -mu^2 |H|^2 + lambda |H|^4",
+                    "A negative mass-squared term, mu^2 > 0 in this sign convention, destabilises H = 0 and triggers electroweak symmetry breaking",
+                    "The quartic lambda > 0 bounds the potential from below and fixes the minimum at |H|^2 = mu^2/(2 lambda)",
+                    "At the minimum mu^2 = lambda v^2 with v = 246 GeV",
+                ],
+                "note": "The attribution of mu^2 to G2 Kahler moduli stabilisation is stated; no moduli potential is minimised in this module.",
+            },
             terms={
                 "mu^2": "Higgs mass parameter from moduli stabilization",
                 "lambda": "Quartic coupling = m_H^2 / (2*v^2) ~ 0.129",
@@ -854,6 +864,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["pdg.m_higgs"],
             outputParams=["higgs.lambda_quartic"],
+            derivation={
+                "method": "algebraic_inversion",
+                "steps": [
+                    "Take the potential-minimum relation m_H^2 = 2 lambda v^2",
+                    "Invert it for the quartic: lambda = m_H^2 / (2 v^2)",
+                    "Substituting m_H = 125.1 GeV and v = 246 GeV gives lambda = 0.129",
+                ],
+                "note": "DESPITE THE ID, this is not derived from geometry: it inverts the measured Higgs mass and the measured VEV. The description says as much -- 'derived from measured Higgs mass'.",
+            },
             terms={
                 "m_H": "Higgs mass = 125.20 GeV (PDG 2024)",
                 "v": "Higgs VEV = 246.22 GeV"
@@ -878,6 +897,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["higgs.mu_squared", "higgs.lambda_quartic"],
             outputParams=["higgs.v_ew_derived"],
+            derivation={
+                "method": "potential_minimisation",
+                "steps": [
+                    "Differentiate V(H) = -mu^2 |H|^2 + lambda |H|^4 with respect to |H|",
+                    "Set dV/d|H| = 0, giving -2 mu^2 |H| + 4 lambda |H|^3 = 0",
+                    "The non-trivial root is |H| = mu / sqrt(2 lambda), quoted here as v = mu/sqrt(lambda) in the module's normalisation",
+                ],
+                "note": "v = 246 GeV is the measured electroweak VEV; it is reproduced by the algebra rather than predicted, because mu is fixed from it.",
+            },
             terms={
                 "v": "VEV at potential minimum",
                 "mu": "Mass parameter sqrt(mu^2)"
@@ -899,6 +927,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["higgs.lambda_quartic", "higgs.v_ew_derived"],
             outputParams=["higgs.m_higgs_derived"],
+            derivation={
+                "method": "second_derivative",
+                "steps": [
+                    "Expand V about the minimum |H| = v",
+                    "The physical mass-squared is the curvature there, m_H^2 = d^2V/d|H|^2 evaluated at H = v",
+                    "Carrying out the differentiation gives m_H^2 = 2 lambda v^2",
+                ],
+                "note": "Circular with higgs-quartic-from-geometry-v19, which obtains lambda by inverting this same relation against the measured m_H. One of the two is an input.",
+            },
             terms={
                 "m_H": "Physical Higgs mass = 125.10 GeV",
                 "lambda": "Quartic coupling",
@@ -924,6 +961,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["topology.elder_kads"],
             outputParams=[],
+            derivation={
+                "method": "moduli_identification",
+                "steps": [
+                    "Select the Kahler modulus T_H = Vol(Sigma_H) + i C_3 associated with a particular 3-cycle Sigma_H",
+                    "Its complexified fluctuation carries the quantum numbers of an SU(2) doublet",
+                    "Identify that doublet with H = (H+, H0), coupling to visible fermions through 3-cycle overlaps",
+                ],
+                "note": "An identification, not a computation: no overlap integral is evaluated.",
+            },
             terms={
                 "T_H": "Kahler modulus for Higgs",
                 "Sigma_H^3": "Associative 3-cycle hosting Higgs",
@@ -950,6 +996,14 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["topology.elder_kads"],
             outputParams=["yukawa.n_generations"],
+            derivation={
+                "method": "topological_index",
+                "steps": [
+                    "Take the third Betti number of the G2 manifold, b3 = 24",
+                    "One generation is taken to occupy 8 spinor components",
+                    "N_gen = b3 / 8 = 24 / 8 = 3, exactly and with no free parameter",
+                ],
+            },
             terms={
                 "b3": "Third Betti number = 24 for TCS G2 #187",
                 "8": "Spin(7) spinor dimension = 2^(7/2)"
@@ -974,6 +1028,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["topology.elder_kads"],
             outputParams=["yukawa.epsilon_fn"],
+            derivation={
+                "method": "froggatt_nielsen",
+                "steps": [
+                    "Assign each fermion f a geometric charge Q_f set by its cycle separation from the Higgs cycle",
+                    "Suppress its Yukawa by that power of a common factor: Y_f = A_f epsilon^{Q_f}",
+                    "With epsilon = exp(-3/2) = 0.223, successive charges give the observed order-of-magnitude hierarchy",
+                ],
+                "note": "The prefactors A_f are O(1) coefficients fitted per fermion (A_b = 0.48, A_tau = 0.2); only the epsilon^{Q_f} scaling is geometric.",
+            },
             terms={
                 "A_f": "O(1) geometric coefficient from angular overlaps",
                 "epsilon": "Froggatt-Nielsen suppression ~ 0.22",
@@ -999,6 +1062,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=[],
             outputParams=["yukawa.epsilon_fn"],
+            derivation={
+                "method": "numerical_comparison",
+                "steps": [
+                    "Evaluate the Froggatt-Nielsen suppression epsilon = exp(-3/2) = 0.22313",
+                    "Compare with the measured Cabibbo sine, sin(theta_C) = 0.2265",
+                    "The two agree to about 1%, which the module reads as tying quark mixing to the mass hierarchy",
+                ],
+                "note": "A numerical coincidence at the 1% level, not a derivation of either quantity from the other. The exponent -3/2 is not derived here.",
+            },
             terms={
                 "theta_C": "Cabibbo angle ~ 13 degrees",
                 "V_us": "CKM element |V_us| ~ 0.226 (PDG 2024)"
@@ -1023,6 +1095,14 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["yukawa.epsilon_fn"],
             outputParams=["yukawa.y_top"],
+            derivation={
+                "method": "charge_assignment",
+                "steps": [
+                    "Assign the top quark charge Q_t = 0, i.e. it sits on the same cycle as the Higgs",
+                    "Then its suppression factor is epsilon^0 = 1",
+                    "So y_t = A_t ~ 1, which is why the top is uniquely heavy",
+                ],
+            },
             terms={
                 "Q_t": "Top quark topological charge = 0",
                 "A_t": "Geometric coefficient ~ 1"
@@ -1049,6 +1129,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["yukawa.epsilon_fn"],
             outputParams=["yukawa.y_top", "yukawa.y_bottom", "yukawa.y_tau"],
+            derivation={
+                "method": "texture_construction",
+                "steps": [
+                    "Assign charges 6, 2, 0 to the first, second and third generations",
+                    "Apply the suppression epsilon^{Q} to each diagonal entry",
+                    "This gives the texture diag(epsilon^6, epsilon^2, 1) times O(1) coefficients",
+                ],
+                "note": "The charges 6, 2, 0 are assigned to reproduce the observed hierarchy, not computed from wavefunction overlaps.",
+            },
             terms={
                 "Y_33": "Third generation ~ 1",
                 "Y_22": "Second generation ~ epsilon^2",
@@ -1072,6 +1161,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["topology.mephorash_chi"],
             outputParams=[],
+            derivation={
+                "method": "arithmetic_decomposition",
+                "steps": [
+                    "Start from the effective Euler characteristic chi_eff = 144",
+                    "Add 9 to obtain 153",
+                    "Note that 153 = 12^2 + 3^2",
+                ],
+                "note": "FITTED, and the formula's own description says so. The 9 is NOT the SU(3) Cartan dimension -- rank(SU(3)) = 2 -- so the decomposition is arithmetic, not group-theoretic.",
+            },
             terms={
                 "chi_eff": "Effective Euler characteristic = 144",
                 "9": "Fitted remainder 153 - 144 (not an SU(3) invariant: rank(SU(3)) = 2, dim = 8)"
@@ -1099,6 +1197,14 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["neutrino.m_r_scale", "higgs.v_ew_derived"],
             outputParams=["neutrino.m_nu_lightest"],
+            derivation={
+                "method": "seesaw",
+                "steps": [
+                    "Write the neutrino mass matrix with a Dirac block m_D and a heavy Majorana block M_R",
+                    "Integrate out the heavy right-handed states, valid when M_R >> m_D",
+                    "The light eigenvalues are m_nu = -m_D^T M_R^{-1} m_D, i.e. m_nu ~ v^2 Y_nu^2 / M_R",
+                ],
+            },
             terms={
                 "m_D": "Dirac mass matrix = Y_nu * v",
                 "M_R": "Right-handed Majorana mass ~ 10^15 GeV",
@@ -1124,6 +1230,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["gauge.M_GUT", "topology.mephorash_chi"],
             outputParams=["neutrino.m_r_scale"],
+            derivation={
+                "method": "scale_ratio",
+                "steps": [
+                    "Take the GUT scale M_GUT = 2.118e16 GeV",
+                    "Divide by sqrt(chi_eff) = sqrt(144) = 12",
+                    "M_R = 2.118e16 / 12 = 1.765e15 GeV",
+                ],
+                "note": "Uses the 2.118e16 gut-scale value, which the register still carries under an unresolved ruling against 6.32456e15; the seesaw scale moves with that choice.",
+            },
             terms={
                 "M_GUT": "Grand unified scale ~ 2e16 GeV",
                 "chi_eff": "Effective Euler characteristic = 144"
@@ -1148,6 +1263,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             ),
             inputParams=["higgs.v_ew_derived", "neutrino.m_r_scale"],
             outputParams=["neutrino.m_nu_lightest"],
+            derivation={
+                "method": "seesaw_estimate",
+                "steps": [
+                    "Insert v = 246 GeV and a Dirac Yukawa Y_nu ~ 1e-6 into m_nu ~ v^2 Y_nu^2 / M_R",
+                    "Use the Majorana scale M_R ~ 1e15 GeV from majorana-scale-v19",
+                    "The result is m_nu ~ 0.06 eV, sub-eV because of the M_R suppression",
+                ],
+                "note": "An order-of-magnitude estimate: Y_nu ~ 1e-6 is chosen, not derived.",
+            },
             terms={
                 "v": "Electroweak VEV = 246 GeV",
                 "Y_nu": "Neutrino Yukawa ~ 10^-6"
@@ -1172,6 +1296,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.sub(eml_vec('m3'), eml_vec('m1'))"
             ),
+            derivation={
+                "method": "observational_input",
+                "steps": [
+                    "Read the atmospheric splitting sign from NuFIT 6.0 (2025)",
+                    "Delta_m31^2 = -2.51e-3 eV^2 is negative, so m3 is the lightest state",
+                    "The ordering is therefore INVERTED, m3 < m1 < m2, at a stated 3.6 sigma preference",
+                ],
+                "note": "This is an observational input restated, not a prediction of the framework.",
+            },
             terms={
                 "Delta_m31^2": "Atmospheric mass-squared difference (NEGATIVE for IO)",
                 "Delta_m21^2": "Solar mass-squared difference ~ 7.4e-5 eV^2"
@@ -1200,6 +1333,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.div(ops.sqrt(ops.mul(eml_vec('b2'), eml_vec('n_gen'))), eml_vec('b3'))"
             ),
+            derivation={
+                "method": "tribimaximal_plus_corrections",
+                "steps": [
+                    "Start from the tribimaximal base, theta_12 = arcsin(1/sqrt(3)) and theta_23 = 45 degrees, as an A4 flavour-symmetry ansatz",
+                    "Add corrections to theta_23 from G4-flux on the relevant cycles",
+                    "Take theta_13 from the cycle geometry via sqrt(b2 * n_gen) scaling",
+                ],
+                "note": "theta_13 has NO surviving zero-parameter derivation -- the R1 ruling falsified the asin(1/6) candidate at ~9 sigma and enumerated 6243 forms without a replacement. The scaling quoted here is an ansatz.",
+            },
             terms={
                 "theta_12": "Solar angle ~ 33.4 deg",
                 "theta_23": "Atmospheric angle ~ 49 deg (upper octant)",

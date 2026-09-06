@@ -730,6 +730,14 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.add(ops.mul(eml_vec('chi_bar'), ops.mul(eml_vec('i_gamma_D_minus_m'), eml_vec('chi'))), ops.mul(ops.div(eml_vec('epsilon'), eml_scalar(2.0)), ops.mul(eml_vec('F_mn'), eml_vec('F_prime_mn'))))"
             ),
+            derivation={
+                "method": "mirror_sector",
+                "steps": [
+                    "Introduce a Dirac fermion chi living in the G2 shadow (mirror) sector",
+                    "Give it the standard kinetic and mass terms chi-bar (i gamma^mu D_mu - m_chi) chi",
+                    "Couple it to the visible sector only through kinetic mixing, (epsilon/2) F_mn F'^mn, so it is dark by construction",
+                ],
+            },
             terms={
                 "chi": "Shadow sector Dirac fermion (DM candidate)",
                 "m_chi": "DM mass (~100 GeV for WIMP)",
@@ -756,6 +764,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.mul(ops.div(eml_scalar(163.0), eml_scalar(288.0)), ops.mul(eml_vec('Omega_m'), eml_vec('f_corr')))"
             ),
+            derivation={
+                "method": "state_counting",
+                "steps": [
+                    "Count the sterile (shadow) states: 163 of the 288 ancestral roots",
+                    "Form the sterile fraction 163/288 = 0.566",
+                    "Multiply by a factor 0.48 to obtain Omega_DM = 0.2717",
+                ],
+                "note": "The 0.48 is commented in source as 'From Omega_m/(1 - Omega_DE/2)' and is not derived. A second, DEAD computation in the same file gives sterile_ratio * Omega_m * 0.85 = 0.152 for this same parameter -- a 79% disagreement that nothing compared.",
+            },
             terms={
                 "163": "Sterile (shadow) sector states",
                 "288": "Logic closure (total states)",
@@ -781,6 +798,14 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.add(eml_vec('visible_parity_plus1'), eml_vec('shadow_parity_minus1'))"
             ),
+            derivation={
+                "method": "discrete_symmetry",
+                "steps": [
+                    "The G2 mirror construction admits a Z2 exchanging visible and shadow sectors",
+                    "Assign parity +1 to the 125 visible states and -1 to the 163 shadow states",
+                    "The lightest odd state cannot decay into even states, so dark matter is stable",
+                ],
+            },
             terms={
                 "125": "Visible SM sector states",
                 "163": "Shadow (sterile) sector states",
@@ -806,6 +831,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.mul(eml_scalar(0.1), ops.mul(ops.div(eml_vec('g_eff'), eml_scalar(100.0)), ops.pow(ops.div(eml_vec('T_f'), eml_vec('m_chi')), eml_scalar(2.0))))"
             ),
+            derivation={
+                "method": "freeze_out_estimate",
+                "steps": [
+                    "Assume a WIMP of mass m_chi ~ 100 GeV in thermal equilibrium",
+                    "Freeze-out occurs when the annihilation rate drops below the expansion rate, at T_f ~ m_chi/20",
+                    "The resulting relic scales as Omega h^2 ~ 0.1 (g_eff/100) (T_f/m_chi)^2, giving ~0.12",
+                ],
+                "note": "An order-of-magnitude estimate matching the Planck measurement; no Boltzmann equation is integrated in this module.",
+            },
             terms={
                 "T_f": "Freeze-out temperature ~ m_chi/20",
                 "g_eff": "Effective degrees of freedom at freeze-out",
@@ -836,6 +870,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.neg(ops.sub(eml_scalar(1.0), ops.inv(eml_vec('b3'))))"
             ),
+            derivation={
+                "method": "topological_ratio",
+                "steps": [
+                    "Take the contraction/expansion ratio of the tzimtzum pressure as (b3 - 1)/b3",
+                    "With b3 = 24 this is 23/24",
+                    "The equation of state is w_0 = -(1 - 1/b3) = -23/24 = -0.9583, just above -1",
+                ],
+                "note": "Ruled by the dark_energy_betti fork: b2 = 4 would give -3/4 and fit DESI DR2 thirteen times better, but is excluded because the Kahler moduli are stabilised 45 orders of magnitude too heavy to be the rolling field.",
+            },
             terms={
                 "b3": "Third Betti number = 24",
                 "tzimtzum": "Contraction principle (23/24)",
@@ -862,6 +905,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.mul(eml_vec('H_CMB'), ops.add(eml_scalar(1.0), ops.div(ops.pow(eml_vec('sin_theta_mix'), eml_scalar(2.0)), eml_scalar(2.0))))"
             ),
+            derivation={
+                "method": "volume_mixing",
+                "steps": [
+                    "Start from the CMB-inferred H_CMB",
+                    "Apply the 13D/26D volume mixing angle theta_mix = 31.0 degrees",
+                    "H_0 = H_CMB (1 + sin^2(theta_mix)/2) = 71.55 km/s/Mpc",
+                ],
+                "note": "theta_mix = 31.0 degrees is FITTED, not derived; the disposition ledger already records this route as 'not a derivation from G2 topology'.",
+            },
             terms={
                 "H_CMB": "Planck CMB value = 67.36 km/s/Mpc",
                 "theta_mix": "13D/26D mixing angle = 31.0 degrees (v22)",
@@ -887,6 +939,14 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.add(ops.add(ops.add(eml_vec('R'), ops.mul(ops.inv(ops.pow(eml_vec('b3'), eml_scalar(2.0))), ops.pow(eml_vec('R'), eml_scalar(2.0)))), ops.mul(ops.inv(eml_vec('chi_eff')), eml_vec('T_trace'))), ops.mul(ops.div(eml_scalar(1.0), ops.mul(eml_vec('b3'), ops.sqrt(eml_vec('chi_eff')))), ops.mul(eml_vec('R'), eml_vec('tau'))))"
             ),
+            derivation={
+                "method": "modified_gravity",
+                "steps": [
+                    "Extend Einstein-Hilbert with curvature, trace and torsion terms: R + R^2/b3^2 + T/chi_eff + R tau/(b3 sqrt(chi_eff))",
+                    "Fix each coefficient from topology alone: alpha_F = 1/b3^2, beta_F = 1/chi_eff, gamma_F = 1/(b3 sqrt(chi_eff))",
+                    "With b3 = 24 and chi_eff = 144 this gives alpha_F = 1/576, beta_F = 1/144, gamma_F = 1/288",
+                ],
+            },
             terms={
                 "R": "4D Ricci scalar",
                 "T": "Stress-energy trace",
@@ -913,6 +973,14 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.mul(eml_vec('V_0'), ops.add(eml_scalar(1.0), ops.mul(eml_vec('A'), ops.mul(eml_vec('cos_omega_tau_over_f'), eml_scalar(1.0)))))"
             ),
+            derivation={
+                "method": "modulus_potential",
+                "steps": [
+                    "Write the modulus potential V(tau) = V_0 [1 + A cos(omega tau/f)]",
+                    "Set the decay constant from the compactification, f = M_Pl/sqrt(chi_eff)",
+                    "The field rolls to the attractor phi_star where V'(phi_star) = 0, which fixes the late-time equation of state",
+                ],
+            },
             terms={
                 "V_0": "Vacuum energy scale ~ rho_Lambda",
                 "A": "Amplitude ~ 1/sqrt(b3) ~ 0.2",
@@ -939,6 +1007,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.sub(eml_vec('H0_local'), eml_vec('H0_CMB'))"
             ),
+            derivation={
+                "method": "interpolation",
+                "steps": [
+                    "Take the two measurements in tension: Planck H0_CMB = 67.36 and SH0ES H0_local = 73.04",
+                    "The geometric prediction from de-h0-odowd-v19 is 71.55",
+                    "That value lies between them, which the module reads as easing rather than resolving the tension",
+                ],
+                "note": "'Tension Resolved' overstates it: 71.55 is 1.43 sigma from SH0ES and remains in tension with Planck. The registry scores it as such.",
+            },
             terms={
                 "71.55": "PM prediction from geometry",
                 "67.36": "Planck CMB measurement",
@@ -968,6 +1045,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.mul(ops.div(eml_vec('J'), eml_vec('N_eff')), ops.mul(eml_vec('delta_b3'), ops.mul(ops.div(eml_vec('b3'), eml_vec('chi_eff')), ops.mul(eml_vec('sin_delta_CP'), ops.exp(ops.neg(eml_vec('Re_T')))))))"
             ),
+            derivation={
+                "method": "sakharov_chain",
+                "steps": [
+                    "Take the G2 cycle asymmetry delta_b3 and the topological ratio b3/chi_eff",
+                    "Multiply by the Jarlskog invariant over the effective degrees of freedom, J/N_eff, supplying CP violation",
+                    "Apply the out-of-equilibrium moduli damping exp(-Re(T)) to obtain eta_b ~ 6.2e-10",
+                ],
+                "note": "Re(T) = 7.086 is CALIBRATED to the observed baryon asymmetry (see cosmology.racetrack_Re_T), so this chain is not a zero-parameter prediction of eta_b.",
+            },
             terms={
                 "J": "Jarlskog invariant ~ 3.08e-5",
                 "N_eff": "Effective cycles = b3 - 14 = 10",
@@ -994,6 +1080,14 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.add(eml_scalar(3.046), eml_vec('delta_N_eff'))"
             ),
+            derivation={
+                "method": "degree_of_freedom_counting",
+                "steps": [
+                    "Start from the Standard Model value N_eff = 3.046",
+                    "The G2 compactification introduces no additional light degrees of freedom below the BBN scale",
+                    "Therefore delta_N_eff = 0 and N_eff stays 3.046, consistent with BBN",
+                ],
+            },
             terms={
                 "3.046": "SM prediction for effective neutrino number",
                 "delta_N_eff": "Extra light species (PM predicts 0)"
@@ -1017,6 +1111,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             eml_tree_str=(
                 "ops.add(eml_vec('Omega_b'), eml_vec('Omega_DM'))"
             ),
+            derivation={
+                "method": "component_sum",
+                "steps": [
+                    "Take the baryon density Omega_b = 0.049",
+                    "Take the dark matter density Omega_DM = 0.266",
+                    "Their sum is Omega_m = 0.315, with the DM fraction Omega_DM/Omega_m = 0.84",
+                ],
+                "note": "The 0.84 is quoted as following from the 163/288 sterile ratio (0.566); the two differ, so the identification is approximate at best.",
+            },
             terms={
                 "Omega_b": "Baryon density = 0.049",
                 "Omega_DM": "Dark matter density = 0.266",

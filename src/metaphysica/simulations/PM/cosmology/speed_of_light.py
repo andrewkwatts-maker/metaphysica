@@ -623,6 +623,12 @@ class SpeedOfLightV17(SimulationBase):
                 label="(5.60a)",
                 latex=r"C_{\text{geo}} = \frac{\Delta_{\text{eff}}}{b_3} = \frac{b_3 - 6}{b_3} = \frac{18}{24} = \frac{3}{4}",
                 plain_text="C_geo = Δ_eff/b₃ = 18/24 = 3/4",
+                eml_tree_str=(
+                    "ops.div(eml_scalar(18.0), eml_vec('topology.elder_kads'))"
+                ),
+                eml_description=(
+                    "EML: ops.div(eml_scalar(18.0), eml_vec('topology.elder_kads')) — C_geo = Delta_eff/b3 = 18/24 = 3/4"
+                ),
                 category="GEOMETRIC",
                 description=(
                     "Harmonic cycle fraction: of the b₃ = 24 harmonic 3-cycles, "
@@ -654,6 +660,12 @@ class SpeedOfLightV17(SimulationBase):
                 label="(5.60b)",
                 latex=r"B_v = \frac{N_{\text{root}}}{N_{\text{bdy}}} \cdot \frac{N_{\text{shadow}}}{N_{\text{vis}}} = \frac{288}{163} \cdot \frac{153}{135} = 2.00245",
                 plain_text="B_v = (288/163)·(153/135) = 2.00245",
+                eml_tree_str=(
+                    "ops.mul(ops.div(eml_vec('topology.ancestral_roots'), eml_vec('topology.hidden_supports')), ops.div(eml_scalar(153.0), eml_scalar(135.0)))"
+                ),
+                eml_description=(
+                    "EML: ops.mul(ops.div(eml_vec('topology.ancestral_roots'), eml_vec('topology.hidden_supports')), ops.div(eml_scalar(153.0), eml_scalar(135.0))) — B_v = (288/163)(153/135) = 2.00245"
+                ),
                 category="FITTED",
                 description=(
                     "Bulk metric ratio from the root-lattice sector counts. "
@@ -688,6 +700,12 @@ class SpeedOfLightV17(SimulationBase):
                 label="(5.60c)",
                 latex=r"\chi_{\text{gc}} = \frac{N_{\text{root}} - b_3}{N_{\text{bdy}} + 1} = \frac{264}{164} = 1.60976",
                 plain_text="χ_gc = (288-24)/(163+1) = 264/164 = 1.60976",
+                eml_tree_str=(
+                    "ops.div(ops.sub(eml_vec('topology.ancestral_roots'), eml_vec('topology.elder_kads')), ops.add(eml_vec('topology.hidden_supports'), eml_scalar(1.0)))"
+                ),
+                eml_description=(
+                    "EML: ops.div(ops.sub(eml_vec('topology.ancestral_roots'), eml_vec('topology.elder_kads')), ops.add(eml_vec('topology.hidden_supports'), eml_scalar(1.0))) — chi_gc = (288-24)/(163+1) = 264/164 = 1.60976"
+                ),
                 category="FITTED",
                 description=(
                     "Weyl rescaling factor converting the internal G₂ metric to "

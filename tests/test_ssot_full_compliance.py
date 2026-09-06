@@ -675,31 +675,6 @@ class TestSSOTFullCompliance:
     # Individual rule tests
     # -----------------------------------------------------------------------
 
-    @pytest.mark.xfail(
-        strict=True,
-        reason=(
-            "KNOWN DEFICIT, recorded 2026-09-06. This is a marker on a "
-            "real gap, not a weakened check. Four simulations that had "
-            "NEVER RUN were revived this session: each was imported "
-            "inside `except ImportError` under a class name carrying a "
-            "V19 suffix the module never defined, so the run summary "
-            "reported '85 simulations, all passed' while they were "
-            "absent. Reviving them added 147 formulas, and about fifty "
-            "of those carry no derivation dict; fourteen more have "
-            "fewer than three steps. "
-            "The gap is NOT auto-filled. A derivation assembled "
-            "mechanically from a formula's own latex and description "
-            "would satisfy the count while saying nothing, which is the "
-            "pass-by-construction pattern this suite exists to catch. "
-            "Each has to be written from what the code actually "
-            "computes. "
-            "strict=True on purpose: the moment the deficit is cleared "
-            "this marker fails as XPASS and must be removed, so it "
-            "cannot go stale. The formulas are in gauge_sector_complete, "
-            "matter_sector_complete, cosmology_sector_complete and "
-            "lagrangian_master."
-        ),
-    )
     def test_rule_1_formulas(self, all_sims):
         """Rule 1: Every simulation provides >=1 Formula with derivation, terms, category."""
         failures = []
