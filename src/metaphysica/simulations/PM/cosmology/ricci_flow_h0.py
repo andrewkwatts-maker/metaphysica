@@ -252,7 +252,11 @@ class RicciFlowH0V16(SimulationBase):
         # SH0ES 2022 (Riess et al.): H0 = 73.04 +/- 1.04 km/s/Mpc
         # Planck 2018: H0 = 67.4 +/- 0.5 km/s/Mpc
         H0_shoes = registry.get("geometry.H0_local", default=73.04)
-        H0_planck = registry.get("geometry.H0_early", default=67.4)
+        # No default. 67.4 used to sit here as a fallback, which is the very
+        # number whose provenance this module is meant to establish: a missing
+        # key would have manufactured the agreement instead of reporting the
+        # failure.
+        H0_planck = registry.get("geometry.H0_early")
         # The observational.* namespace does not exist, so both defaults
         # fired on every call: the two sigmas that divide this diagnostic were
         # literals. They are the published 1-sigma uncertainties on the SH0ES
@@ -345,7 +349,7 @@ class RicciFlowH0V16(SimulationBase):
         # v16.2 GEOMETRIC FIX: Derive H0_local from mixing angle formula
         # H0_local = H0_CMB × (1 + sin²(θ)/2) where θ = 31.0° (v22: 13D/26D) from 13D/26D volume ratio
         # See CERTIFICATES_v16_2.py derive_c1_hubble() for derivation
-        H0_planck = registry.get("geometry.H0_early", default=67.4)   # km/s/Mpc (early, Planck CMB value)
+        H0_planck = registry.get("geometry.H0_early")  # km/s/Mpc (early, Planck CMB value)
         # geometry.theta_mixing_13D_25D is in no registry, so 31.0 degrees
         # fired on every call. It is a FITTED angle -- the disposition ledger
         # already records this route (cosmology.H0_ricci_variant, 76.34) as a
@@ -833,8 +837,16 @@ class RicciFlowH0V16(SimulationBase):
                     "Planck 2018: 67.36 +/- 0.54 km/s/Mpc. NOT an independent "
                     "prediction: the interpolation is normalised so that the "
                     "z >> z_* limit returns the Planck value, so agreement "
-                    "here is definitional (2026-08 review)."
+                    "here is definitional (2026-08 review). That was recorded "
+                    "here while the row still published 0.0741 sigma PASS. "
+                    "The ODE is built with H(z) -> geometry.H0_early for "
+                    "z >> z_star and this value is read back off the same "
+                    "curve at z = 1089, so it recovers the asymptote it was "
+                    "given; it is now declared a pass-through and reported as "
+                    "INPUT rather than scored against the number it returns."
                 ),
+                # Returned, not predicted.
+                passthrough_of="geometry.H0_early",
                 derivation_formula="hubble-evolution-ode",
                 experimental_bound=67.36,
                 bound_type="central_value",

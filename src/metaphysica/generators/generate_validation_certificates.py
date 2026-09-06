@@ -76,6 +76,49 @@ def _is_declared_passthrough(meta) -> bool:
     return bool((meta or {}).get("passthrough_of"))
 
 
+#: Registry statuses that mean the value was tuned to data rather than
+#: predicted ahead of it. A row carrying one of these and scored against the
+#: same measurement is reporting the success of its own fit.
+_TUNED_STATUSES = frozenset({"FITTED", "CALIBRATED", "FITTED_COMPOSITE",
+                             "RETRODICTED_VARIANT"})
+
+
+def _passes_by_provenance(validations) -> Dict[str, Any]:
+    """Split the PASS count by how each value was obtained.
+
+    The headline "44 PASS" treats a zero-parameter geometric prediction and a
+    three-angle fit to NuFIT as the same event. They are not: fourteen of the
+    passes carry FITTED or CALIBRATED, i.e. the value was tuned to the
+    measurement it is then scored against.
+
+    This does not change any verdict -- whether such rows should score at all
+    is an author ruling, open in the register. It makes the composition of the
+    number visible, which is the part that was missing: _is_input_anchor
+    already removes ESTABLISHED anchors from the tally for exactly this
+    reason, and a fit is the same shape one step removed.
+    """
+    by_status: Dict[str, int] = {}
+    tuned: List[str] = []
+    for v in validations:
+        if v.get("verdict") != "PASS":
+            continue
+        status = str(v.get("registry_status") or "UNKNOWN").upper()
+        by_status[status] = by_status.get(status, 0) + 1
+        if status in _TUNED_STATUSES:
+            tuned.append(v["path"])
+    return {
+        "by_registry_status": dict(sorted(by_status.items())),
+        "n_tuned_to_the_data_they_are_scored_against": len(tuned),
+        "tuned_rows": sorted(tuned),
+        "note": (
+            "A PASS on a FITTED or CALIBRATED row reports that a fit "
+            "reproduces what it was fitted to, which is not independent "
+            "evidence. Listed, not demoted: whether they should score is an "
+            "author ruling."
+        ),
+    }
+
+
 def _is_roundtrip_identity(value, exp) -> bool:
     """True when a 'prediction' reproduces its own input to machine precision.
 
@@ -330,6 +373,18 @@ def build_report() -> Dict[str, Any]:
         "summary": {
             "total": len(validations),
             **{k.lower(): n for k, n in sorted(counts.items())},
+            # A PASS does not say how the value got there. _is_input_anchor
+            # already keeps ESTABLISHED anchors out of the tally, because
+            # "counting those as passes inflated the scoreboard with
+            # tautologies" -- but a FITTED or CALIBRATED row scored against
+            # the very data it was tuned to is the same shape one step
+            # removed: not an identity, and not evidence either. Fourteen of
+            # the passes are of that kind, and the headline number said only
+            # "44". Reported here so the distinction is visible in the
+            # artifact; whether such rows should score at all is an author
+            # ruling, open in the register, and is NOT decided by counting
+            # them.
+            "pass_by_provenance": _passes_by_provenance(validations),
         },
         "theory_uncertainty_policy": {
             "active": policy,
