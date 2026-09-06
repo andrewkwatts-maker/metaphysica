@@ -289,11 +289,23 @@ def build_report() -> Dict[str, Any]:
             v_exp_only = _registry_band(sigma_exp_only)
         cited = _theory_uncertainty_is_cited(meta)
         load_bearing = bool(theory_unc) and v_with_theory != v_exp_only
+        # The headline sigma must be the one the headline verdict was reached
+        # from. When the policy demotes a row, `sigma` (the registry's
+        # theory-folded value) no longer corresponds to `verdict`, and the row
+        # reads as a contradiction: geometry.alpha_inverse published
+        # "FAIL" beside "sigma 0.07026" while the deviation that produced the
+        # FAIL was 3.35e+04. It also kept the framework's largest real
+        # disagreements out of worst_offenders, which ranks on sigma. The
+        # folded value is not lost -- it is emitted as sigma_with_theory.
+        sigma_with_theory = sigma
+        demoted = False
         if policy == "experimental_only":
-            verdict = v_exp_only
+            verdict, demoted = v_exp_only, True
         elif policy == "cited_only" and load_bearing and not cited:
-            verdict = v_exp_only
+            verdict, demoted = v_exp_only, True
         # policy == "always" leaves the folded verdict in place
+        if demoted and sigma_exp_only is not None:
+            sigma = sigma_exp_only
 
         validations.append({
             "path": path,
@@ -301,7 +313,11 @@ def build_report() -> Dict[str, Any]:
             "experimental_value": exp,
             "experimental_uncertainty": unc,
             "experimental_source": rec.get("experimental_source"),
+            # `sigma` always corresponds to `verdict` -- see the demotion note
+            # above. The registry's theory-folded value is kept alongside so
+            # nothing is lost when the two differ.
             "sigma": sigma,
+            "sigma_with_theory": sigma_with_theory,
             "sigma_experimental_only": sigma_exp_only,
             "theory_uncertainty": _num(theory_unc),
             "theory_uncertainty_cited": cited if theory_unc else None,
