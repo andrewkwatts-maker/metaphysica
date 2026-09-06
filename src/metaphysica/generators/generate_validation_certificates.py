@@ -57,6 +57,25 @@ def _is_input_anchor(rec, value, exp) -> bool:
         return False
 
 
+def _is_declared_passthrough(meta) -> bool:
+    """True when the record DECLARES that it returns one of its own inputs.
+
+    _is_roundtrip_identity catches round-trips numerically, at 1e-10. That is
+    the right bound for floating-point noise and the wrong one for an
+    algebraic pass-through carrying a small real admixture:
+    cosmology.H0_early_normalized returns H0_eff(z_cmb) = H0_late*f +
+    H0_early*(1-f) with f(1100) = 3.1e-06, i.e. the Planck input plus 1.8e-05,
+    a relative deviation of 2.6e-07. It scored 0.0000 sigma PASS against the
+    very number it was handed, and widening 1e-10 until it were caught would
+    be tuning a tolerance to produce a verdict.
+
+    So the relationship is declared instead, via Parameter(passthrough_of=...),
+    and tests/test_declared_passthroughs.py checks that the named input really
+    is reproduced -- a declaration that cannot quietly become false.
+    """
+    return bool((meta or {}).get("passthrough_of"))
+
+
 def _is_roundtrip_identity(value, exp) -> bool:
     """True when a 'prediction' reproduces its own input to machine precision.
 
@@ -190,7 +209,7 @@ def build_report() -> Dict[str, Any]:
         unc = _num(rec.get("experimental_uncertainty"))
         status = rec.get("validation_status") or ""
         meta = rec.get("metadata") or {}
-        if _is_input_anchor(rec, value, exp):
+        if _is_input_anchor(rec, value, exp) or _is_declared_passthrough(meta):
             verdict = "INPUT"
         elif _is_roundtrip_identity(value, exp):
             verdict = "IDENTITY"

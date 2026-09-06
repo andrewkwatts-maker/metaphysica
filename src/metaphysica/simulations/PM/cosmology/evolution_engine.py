@@ -934,14 +934,31 @@ class EvolutionEngineV16(SimulationBase):
                 units="km/s/Mpc",
                 status="PREDICTED",
                 description=(
-                    "Hubble constant inferred at CMB (z=1100) after normalization: "
-                    "Target = 67.4 km/s/Mpc (Planck 2018)."
+                    "Hubble constant inferred at CMB (z=1100) after "
+                    "normalisation. THIS RETURNS ITS OWN INPUT and does not "
+                    "predict Planck. The evolution is H(z) = H0_eff(z) E(z), "
+                    "and the normalisation divides by the SAME E(z), so E "
+                    "cancels identically and H0_early_inferred = H0_eff(z_cmb) "
+                    "= H0_late f + H0_early (1 - f) -- independent of Omega_m, "
+                    "Omega_de and z_cmb, which cannot affect the result at "
+                    "all. With f(1100) = 3.1371e-06 this is 67.4 + 3.1371e-06 "
+                    "x (73.04 - 67.4) = 67.4000176934533, the published value "
+                    "to all thirteen digits, where 67.4 is geometry.H0_early, "
+                    "the Planck 2018 input to the interpolation. It scored "
+                    "0.0000 sigma PASS against the number it was handed. "
+                    "CERTIFICATES.py already carried this as a CIRCULARITY "
+                    "WARNING on the gate that consumes it; the published row "
+                    "did not. The non-trivial content here is that b3 = 24 "
+                    "sets z_star ~ 1.95 as the transition scale -- not the "
+                    "agreement with Planck."
                 ),
                 derivation_formula="h-evolution-log-scaling",
                 experimental_bound=67.4,
                 bound_type="central_value",
                 bound_source="Planck2018",
                 uncertainty=0.5,
+                # Returned, not predicted: reported as INPUT rather than scored.
+                passthrough_of="geometry.H0_early",
                 # EML WITHHELD. The live path is H(z_cmb)/E(z_cmb),
                 # with H(z_cmb) taken from the interpolated Ricci-flow
                 # evolution -- an ODE solution, which has no closed

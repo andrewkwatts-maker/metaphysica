@@ -246,6 +246,14 @@ class Parameter:
     uncertainty: Optional[float] = None
     theory_uncertainty: Optional[float] = None  # Theoretical precision limit (1σ)
     no_experimental_value: bool = False
+    #: Registry path this parameter RETURNS rather than predicts. Set it when
+    #: the derivation provably reproduces one of its own inputs, so the
+    #: comparison against that input is an identity and not evidence. Declared
+    #: rather than inferred: _is_roundtrip_identity catches numeric round-trips
+    #: at machine precision, but an algebraic pass-through can carry a small
+    #: genuine admixture and still be a tautology -- widening that tolerance
+    #: until it matched would be tuning a threshold to produce a verdict.
+    passthrough_of: Optional[str] = None
     validation: Optional[Dict[str, Any]] = None
     eml_description: str = ""  # EML/Mirror Phase Mathematics description of derivation path
 
@@ -459,6 +467,13 @@ class SimulationBase(ABC):
                 # Add theory_uncertainty to metadata if present in param_def
                 if param_def and param_def.theory_uncertainty is not None:
                     metadata['theory_uncertainty'] = param_def.theory_uncertainty
+
+                # A declared pass-through: the path this parameter returns
+                # rather than predicts. Carried so the certificate generator
+                # can report it as an INPUT instead of scoring it against the
+                # number it was handed.
+                if param_def and getattr(param_def, "passthrough_of", None):
+                    metadata['passthrough_of'] = param_def.passthrough_of
 
                 # Propagate eml_description from param_def to metadata
                 if param_def and param_def.eml_description:
