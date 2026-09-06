@@ -361,7 +361,9 @@ class AppendixNVielbein(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the vielbein appendix."""
-        return []
+        # D = 4 was hardcoded in run(); it now reads this, which removes the
+        # hardcode as well as declaring the dependency.
+        return ["geometry.D_visible_total"]
 
     @property
     def output_params(self) -> List[str]:
@@ -388,8 +390,10 @@ class AppendixNVielbein(SimulationBase):
         Returns:
             Dictionary of vielbein-related parameters
         """
-        # Spacetime dimension (4D for standard application)
-        D = 4
+        # Spacetime dimension. This was a hardcoded 4 while required_inputs
+        # was empty; the registry already carries it as
+        # geometry.D_visible_total, so read it rather than restate it.
+        D = int(registry.get_param("geometry.D_visible_total"))
 
         # Lorentz group SO(1,3) dimension
         lorentz_dim = D * (D - 1) // 2  # = 6
@@ -848,8 +852,8 @@ class AppendixNVielbein(SimulationBase):
                     "Metric tensor constructed from vielbein (tetrad) fields. "
                     "The fundamental relation showing metric is derived from vielbein."
                 ),
-                input_params=["vielbein.e_A_mu", "constants.eta_AB"],
-                output_params=["metric.g_munu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Vielbein soldering of flat tangent space to curved manifold",
                     "parentFormulas": ["vielbein-orthonormality-v19"],
@@ -876,7 +880,7 @@ class AppendixNVielbein(SimulationBase):
                     "Orthonormality condition for vielbein. The vielbein vectors form "
                     "an orthonormal basis with respect to the Minkowski metric."
                 ),
-                input_params=["metric.g_munu", "vielbein.e_A_mu"],
+                input_params=[],
                 output_params=[],
                 derivation={
                     "method": "Orthonormality requirement of local Lorentz frame",
@@ -904,8 +908,8 @@ class AppendixNVielbein(SimulationBase):
                     "The inverse vielbein allows conversion from flat Lorentz indices "
                     "to curved spacetime indices."
                 ),
-                input_params=["vielbein.e_A_mu"],
-                output_params=["vielbein.E_A_mu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Matrix inversion of vielbein",
                     "parentFormulas": ["vielbein-orthonormality-v19"],
@@ -931,7 +935,7 @@ class AppendixNVielbein(SimulationBase):
                     "Completeness relation in spacetime. Summing over Lorentz indices "
                     "gives the identity in the spacetime manifold."
                 ),
-                input_params=["vielbein.e_A_mu", "vielbein.E_A_mu"],
+                input_params=[],
                 output_params=[],
                 derivation={
                     "method": "Completeness from vielbein-inverse product",
@@ -959,7 +963,7 @@ class AppendixNVielbein(SimulationBase):
                     "Completeness relation in tangent space. Summing over spacetime indices "
                     "gives the identity in the flat Lorentz frame."
                 ),
-                input_params=["vielbein.e_A_mu", "vielbein.E_A_mu"],
+                input_params=[],
                 output_params=[],
                 derivation={
                     "method": "Completeness from inverse-vielbein product in tangent space",
@@ -988,7 +992,7 @@ class AppendixNVielbein(SimulationBase):
                     "the antisymmetry of the Lorentz algebra generators."
                 ),
                 input_params=[],
-                output_params=["connection.omega_AB_mu"],
+                output_params=[],
                 derivation={
                     "method": "Lorentz algebra antisymmetry requirement",
                     "parentFormulas": [],
@@ -1015,8 +1019,8 @@ class AppendixNVielbein(SimulationBase):
                     "Torsion-free condition (first Cartan structure equation with T=0). "
                     "This determines the spin connection from the vielbein."
                 ),
-                input_params=["vielbein.e_A_mu", "vielbein.de_A_mu"],
-                output_params=["connection.omega_AB_mu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "First Cartan structure equation with vanishing torsion",
                     "parentFormulas": ["spin-connection-definition-v19"],
@@ -1043,8 +1047,8 @@ class AppendixNVielbein(SimulationBase):
                     "Component form of the first Cartan structure equation (torsion-free). "
                     "This equation can be solved for omega given e."
                 ),
-                input_params=["vielbein.e_A_mu", "vielbein.partial_e"],
-                output_params=["connection.omega_AB_mu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Component expansion of torsion-free condition",
                     "parentFormulas": ["torsion-free-condition-v19"],
@@ -1071,8 +1075,8 @@ class AppendixNVielbein(SimulationBase):
                     "Second Cartan structure equation defining curvature from spin connection. "
                     "This is the differential form version of the Riemann tensor."
                 ),
-                input_params=["connection.omega_AB_mu", "connection.d_omega"],
-                output_params=["curvature.R_AB_munu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Curvature as field strength of Lorentz gauge connection",
                     "parentFormulas": ["spin-connection-definition-v19"],
@@ -1099,8 +1103,8 @@ class AppendixNVielbein(SimulationBase):
                     "Component form of Riemann curvature tensor with Lorentz indices, "
                     "computed from spin connection and its derivatives."
                 ),
-                input_params=["connection.omega_AB_mu", "connection.partial_omega"],
-                output_params=["curvature.R_AB_munu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Component expansion of second Cartan structure equation",
                     "parentFormulas": ["cartan-second-structure-v19"],
@@ -1127,8 +1131,8 @@ class AppendixNVielbein(SimulationBase):
                     "Covariant derivative of a Dirac spinor in curved spacetime. "
                     "The spin connection couples to spinors through Lorentz generators."
                 ),
-                input_params=["spinor.psi", "connection.omega_AB_mu", "spinor.Sigma_AB"],
-                output_params=["spinor.D_mu_psi"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Gauge covariant derivative for local Lorentz symmetry",
                     "parentFormulas": ["spin-connection-definition-v19", "lorentz-generator-spinor-v19"],
@@ -1155,8 +1159,8 @@ class AppendixNVielbein(SimulationBase):
                     "Lorentz algebra generators in the spinor representation. "
                     "Built from commutators of Dirac gamma matrices."
                 ),
-                input_params=["spinor.gamma_A"],
-                output_params=["spinor.Sigma_AB"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Commutator construction from Clifford algebra",
                     "parentFormulas": [],
@@ -1183,8 +1187,8 @@ class AppendixNVielbein(SimulationBase):
                     "Relation between spin connection and Christoffel symbols. "
                     "Shows how vielbein formalism encodes standard GR connection."
                 ),
-                input_params=["vielbein.e_A_mu", "vielbein.E_A_mu", "metric.Gamma_rho_mu_nu"],
-                output_params=["connection.omega_AB_mu"],
+                input_params=[],
+                output_params=[],
                 derivation={
                     "method": "Vielbein postulate (covariant constancy of vielbein)",
                     "parentFormulas": ["torsion-free-condition-v19", "vielbein-inverse-v19"],
@@ -1239,6 +1243,7 @@ class AppendixNVielbein(SimulationBase):
         return [
             {
                 "id": "cartan1904",
+                "url": "https://www.numdam.org/item/ASENS_1904_3_21__153_0/",
                 "authors": "Cartan, E.",
                 "title": "Sur la structure des groupes infinis de transformations",
                 "year": "1904",
@@ -1249,6 +1254,7 @@ class AppendixNVielbein(SimulationBase):
             },
             {
                 "id": "kibble1961",
+                "doi": "10.1063/1.1703702",
                 "authors": "Kibble, T. W. B.",
                 "title": "Lorentz invariance and the gravitational field",
                 "year": "1961",
@@ -1258,7 +1264,8 @@ class AppendixNVielbein(SimulationBase):
                 "notes": "Gauging the Poincare group to derive vielbein formulation of gravity"
             },
             {
-                "id": "carroll2004",
+                "id": "carroll2004_gr",
+                "doi": "10.1017/9781108770385",
                 "authors": "Carroll, S. M.",
                 "title": "Spacetime and Geometry: An Introduction to General Relativity",
                 "year": "2004",
@@ -1267,6 +1274,7 @@ class AppendixNVielbein(SimulationBase):
             },
             {
                 "id": "nakahara2003",
+                "doi": "10.1201/9781315275826",
                 "authors": "Nakahara, M.",
                 "title": "Geometry, Topology and Physics",
                 "year": "2003",
@@ -1274,20 +1282,13 @@ class AppendixNVielbein(SimulationBase):
                 "notes": "Comprehensive reference on fiber bundles, connections, and Cartan formalism"
             },
             {
-                "id": "weinberg1972",
+                "id": "weinberg-1972",
+                "url": "https://www.wiley.com/en-us/Gravitation+and+Cosmology%3A+Principles+and+Applications+of+the+General+Theory+of+Relativity-p-9780471925675",
                 "authors": "Weinberg, S.",
                 "title": "Gravitation and Cosmology",
                 "year": "1972",
                 "publisher": "John Wiley & Sons",
                 "notes": "Classical treatment of general relativity and vielbein approach"
-            },
-            {
-                "id": "eigenchris2021",
-                "authors": "eigenchris",
-                "title": "Tensor Calculus and Relativity Tutorial Series",
-                "year": "2021",
-                "publisher": "YouTube",
-                "notes": "Pedagogical video series on tensor calculus and differential geometry"
             },
         ]
 

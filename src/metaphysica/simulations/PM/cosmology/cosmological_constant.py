@@ -1016,10 +1016,18 @@ class CosmologicalConstantV16(SimulationBase):
             {
                 "id": "desi2025_lambda",
                 "authors": "DESI Collaboration",
-                "title": "DESI 2025 Cosmological Parameters",
+                # Was titled "DESI 2025 Cosmological Parameters" and pointed at
+                # arXiv:2404.03002, which is DESI 2024 VI -- a 2025 entry
+                # carrying the 2024 paper's identifier. Both ids were fetched
+                # and their titles checked: 2404.03002 is "DESI 2024 VI" and
+                # 2503.14738 is "DESI DR2 Results II", which is the 2025
+                # cosmological-constraints paper this entry means and the one
+                # established.py already cites for desi.w0 / desi.wa.
+                "title": ("DESI DR2 Results II: Measurements of Baryon "
+                          "Acoustic Oscillations and Cosmological Constraints"),
                 "journal": "arXiv",
                 "year": 2025,
-                "url": "https://arxiv.org/abs/2404.03002",
+                "url": "https://arxiv.org/abs/2503.14738",
                 "notes": "Lambda ~ 1.1e-52 m^-2"
             },
             {

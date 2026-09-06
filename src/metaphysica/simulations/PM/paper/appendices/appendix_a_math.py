@@ -685,7 +685,8 @@ class AppendixAMathFoundations(SimulationBase):
                 "arxiv": "math/0010054",
             },
             {
-                "id": "bryant1987",
+                "id": "bryant-1987",
+                "doi": "10.2307/1971360",
                 "authors": "Bryant, R. L.",
                 "title": "Metrics with Exceptional Holonomy",
                 "journal": "Ann. of Math.",

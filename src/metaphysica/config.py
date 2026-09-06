@@ -1503,7 +1503,7 @@ class CoreFormulas:
                 description="Definitive text on G₂ geometry and holonomy groups"
             ),
             FormulaReference(
-                id="bryant1987",
+                id="bryant-1987",
                 title="Metrics with exceptional holonomy",
                 authors="Bryant, R.L.",
                 year=1987,

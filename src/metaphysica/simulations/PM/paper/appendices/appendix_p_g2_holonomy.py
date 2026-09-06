@@ -113,7 +113,7 @@ class AppendixPG2Holonomy(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
-        return []
+        return ["topology.b2"]
 
     @property
     def output_params(self) -> List[str]:
@@ -167,8 +167,23 @@ class AppendixPG2Holonomy(SimulationBase):
         dim_so7 = 21         # dim(SO(7)) = 7*6/2
         num_octonion_units = 7  # Imaginary octonion units e1..e7
 
-        # For G2 holonomy manifolds: b2 = 0 (no harmonic 2-forms)
-        b2 = 0
+        # b2 is NOT zero for G2 holonomy manifolds, and this used to say it
+        # was: "For G2 holonomy manifolds: b2 = 0 (no harmonic 2-forms)".
+        #
+        # That is false, and it is very likely a confusion with b1. Holonomy
+        # exactly G2 forces the fundamental group to be finite and therefore
+        # b1 = 0; it places NO constraint on b2. H^2 of a G2 manifold
+        # decomposes under G2 as 14 + 7 and is generically non-trivial --
+        # Joyce's orbifold resolutions of T^7/Gamma realise b2 anywhere in
+        # [0, 28] over 252 distinct (b2, b3) pairs.
+        #
+        # Worse, the framework simultaneously carries topology.b2 = 4, the
+        # "four faces" / h^{1,1} = 4 on which the whole face structure rests,
+        # so this appendix was publishing 0 for the same Betti number another
+        # module publishes as 4, and an assertion in this file's __main__
+        # block ("b2 should be 0 for G2 manifolds") was pinning the wrong
+        # one. Read the registry instead of restating a non-theorem.
+        b2 = registry.get_param("topology.b2")
 
         # Number of fermion generations from b3
         # n_gen = b3 / 8 (each generation has 8 spinor components)
@@ -1020,8 +1035,17 @@ class AppendixPG2Holonomy(SimulationBase):
                 name="Second Betti Number",
                 units="dimensionless",
                 status="FOUNDATIONAL",
-                description="Second Betti number of compact G2 manifold (always 0)",
-                eml_description="EML: eml_scalar(0.0)",
+                description=(
+                    "Second Betti number of the compact G2 manifold, read "
+                    "from topology.b2 = 4. It is NOT 'always 0' -- that "
+                    "claim, which this description used to make, confuses b2 "
+                    "with b1. Holonomy exactly G2 forces a finite "
+                    "fundamental group and hence b1 = 0, but places no "
+                    "constraint on b2: H^2 decomposes under G2 as 14 + 7 and "
+                    "Joyce's resolutions of T^7/Gamma realise b2 anywhere in "
+                    "[0, 28]."
+                ),
+                eml_description="EML: eml_vec('topology.b2') — read from the registry, not asserted",
                 no_experimental_value=True,
             ),
             Parameter(
@@ -1184,7 +1208,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
             },
             {
-                "id": "bryant1987",
+                "id": "bryant-1987",
+                "doi": "10.2307/1971360",
                 "authors": "Bryant, R. L.",
                 "title": "Metrics with Exceptional Holonomy",
                 "journal": "Annals of Mathematics",
@@ -1192,7 +1217,8 @@ class AppendixPG2Holonomy(SimulationBase):
                 "year": "1987",
             },
             {
-                "id": "harvey-lawson1982",
+                "id": "harvey_lawson1982",
+                "doi": "10.1007/BF02392726",
                 "authors": "Harvey, R. & Lawson, H. B.",
                 "title": "Calibrated Geometries",
                 "journal": "Acta Mathematica",
@@ -1202,6 +1228,7 @@ class AppendixPG2Holonomy(SimulationBase):
             },
             {
                 "id": "karigiannis2009",
+                "doi": "10.1093/qmath/han020",
                 "authors": "Karigiannis, S.",
                 "title": "Flows of G2 Structures",
                 "journal": "Quarterly Journal of Mathematics",
@@ -1211,12 +1238,17 @@ class AppendixPG2Holonomy(SimulationBase):
                 "arxiv": "math/0702077",
             },
             {
-                "id": "acharya-witten2001",
+                "id": "acharya_witten2001",
                 "authors": "Acharya, B. S. & Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "journal": "arXiv",
                 "year": "2001",
                 "arxiv": "hep-th/0109152",
+                # The reference rule requires a url or a doi; "arxiv" alone
+                # does not satisfy it. Verified by fetching the abs page,
+                # whose citation_title is "Chiral Fermions from Manifolds of
+                # $G_2$ Holonomy".
+                "url": "https://arxiv.org/abs/hep-th/0109152",
             },
         ]
 
@@ -1317,7 +1349,12 @@ def main():
     print("=" * 70)
     assert results["g2_holonomy.dim_g2"] == 14, "G2 dimension should be 14"
     assert results["g2_holonomy.dim_so7"] == 21, "SO(7) dimension should be 21"
-    assert results["g2_holonomy.b2"] == 0, "b2 should be 0 for G2 manifolds"
+    # NOT "b2 should be 0": holonomy G2 forces b1 = 0, not b2, and Joyce's
+    # examples span b2 in [0, 28]. What must hold is that this appendix agrees
+    # with the b2 the rest of the framework uses.
+    assert results["g2_holonomy.b2"] == 4, (
+        "g2_holonomy.b2 disagrees with topology.b2 = 4"
+    )
     assert results["g2_holonomy.n_gen"] == 3, "Should have 3 fermion generations"
     print("[PASS] All verification checks passed!")
     print()

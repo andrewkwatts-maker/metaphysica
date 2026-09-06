@@ -135,7 +135,8 @@ class AppendixQIndexTheorem(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
-        return []
+        # both read via registry.get_param in run().
+        return ["topology.elder_kads", "topology.mephorash_chi"]
 
     @property
     def output_params(self) -> List[str]:
@@ -1214,7 +1215,7 @@ class AppendixQIndexTheorem(SimulationBase):
                 "assertion": "Dirac index on G2 manifold yields exactly 3 fermion generations",
                 "condition": "ind(D) = b_3 / 8 = 24 / 8 = 3",
                 "tolerance": 0,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "Third Betti number of Joyce G2 manifold",
                 "wolfram_result": "b_3 = 24 for resolved orbifold constructions",
             },
@@ -1223,7 +1224,7 @@ class AppendixQIndexTheorem(SimulationBase):
                 "assertion": "Chiral anomaly cancellation verified via Fujikawa method",
                 "condition": "A-hat genus contribution cancels gauge anomaly",
                 "tolerance": 1e-12,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "Fujikawa method anomaly",
                 "wolfram_result": "Anomaly = integral of A-hat class",
             },
@@ -1232,7 +1233,7 @@ class AppendixQIndexTheorem(SimulationBase):
                 "assertion": "Family index = b_3/8 = 3 over moduli space",
                 "condition": "family_index == 3",
                 "tolerance": 0,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "Family index theorem",
                 "wolfram_result": "Index varies continuously over parameter space",
             },
@@ -1351,7 +1352,7 @@ class AppendixQIndexTheorem(SimulationBase):
         """
         return [
             {
-                "id": "atiyah-singer-1963",
+                "id": "atiyah-singer-1968",
                 "authors": "Atiyah, M.F. & Singer, I.M.",
                 "title": "The Index of Elliptic Operators I",
                 "journal": "Annals of Mathematics",
@@ -1371,7 +1372,7 @@ class AppendixQIndexTheorem(SimulationBase):
                 "doi": "10.1007/BF01205500",
             },
             {
-                "id": "acharya-2001",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
                 "title": "M Theory, Joyce Orbifolds and Super Yang-Mills",
                 "journal": "Advances in Theoretical and Mathematical Physics",

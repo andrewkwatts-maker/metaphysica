@@ -174,7 +174,8 @@ class AppendixOKKReduction(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the KK reduction appendix."""
-        return []
+        # read via registry.get in run().
+        return ["topology.elder_kads"]
 
     @property
     def output_params(self) -> List[str]:
@@ -1129,7 +1130,7 @@ class AppendixOKKReduction(SimulationBase):
                 "assertion": "12 paired (2,0) bridges connect bulk to brane",
                 "condition": "bridge_count == 12",
                 "tolerance": 0,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "N/A",
                 "wolfram_result": "N/A",
             },
@@ -1142,7 +1143,7 @@ class AppendixOKKReduction(SimulationBase):
                 ),
                 "condition": "1 + 12 * 2 == 25",
                 "tolerance": 0,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "1 + 12*2",
                 "wolfram_result": "25",
             },
@@ -1151,7 +1152,7 @@ class AppendixOKKReduction(SimulationBase):
                 "assertion": "First KK mode mass is at Planck scale for Planck-radius compactification",
                 "condition": "m_1 ~ M_Planck",
                 "tolerance": 0.1,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "Planck mass in GeV",
                 "wolfram_result": "1.22089e19 GeV",
             },
@@ -1160,7 +1161,7 @@ class AppendixOKKReduction(SimulationBase):
                 "assertion": "Distributed OR: R_total = tensor product of R_perp_i",
                 "condition": "R_total is well-defined tensor product",
                 "tolerance": 0,
-                "status": "STERILE",
+                "status": "STRUCTURAL",
                 "wolfram_query": "N/A",
                 "wolfram_result": "N/A",
             },

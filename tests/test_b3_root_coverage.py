@@ -66,37 +66,33 @@ def _load(name: str):
 #:
 #: b3_rooted_min is deliberately NOT lowered: it stays 366, so a genuine
 #: loss of coverage still fails. ambiguous_max TIGHTENS to 0.
-# 2026-09-06: b3_rooted_min 366 -> 350, non_b3_max 56 -> 72. This is a
-# CORRECTION TO THE MEASUREMENT, not a loss of coverage, and the distinction
-# is the whole reason the numbers moved.
+# 2026-09-06 (a): b3_rooted_min 366 -> 350, non_b3_max 56 -> 72. A CORRECTION
+# TO THE MEASUREMENT. Until then ZERO of 422 formulas carried an arithma tree
+# -- every arithma expression failed to serialise, so all walks fell through
+# to a substring scan of the human-written `latex` field, where prose was
+# enough to count as rooted. With arithma fixed, 17 formulas turned out to
+# contain no b3 whatever (generation-theorem is 3 x 8; c37cp-strong-cp-lock,
+# gauge-unification-sum, cabibbo-angle-geometric and
+# higgs-effective-potential-v19 are each a literal 0).
 #
-# Until now ZERO of the 422 formulas carried an arithma tree: every arithma
-# expression failed to serialise, because Expression.constant("b3") had no
-# cached value and from_f64 used a saturating fixed scale. So every formula
-# fell through to the DEGRADED fallback -- a substring scan of the
-# human-written `latex` field for "b3" -- and prose was enough to count as
-# rooted.
+# 2026-09-06 (b): total 422 -> 569, b3_rooted_min 350 -> 381,
+# non_b3_max 72 -> 180, ambiguous_max 0 -> 8, degraded_max 12 -> 49.
+# NINE simulation modules had never run: each was imported inside
+# `except ImportError` under a class name with a `V19` suffix the module
+# never defined, so the run summary said "85 simulations, all passed" while
+# lagrangian_master, the three sector_complete derivations and appendices
+# M/N/O/P/Q were silently absent. Reviving them added 147 formulas.
 #
-# With arithma fixed, 169 formulas now carry a real tree and get the
-# structural walk. 17 of them turn out to contain no b3 whatever:
-#
-#     generation-theorem          ["fn","mul",["num","3"],["num","8"]]
-#     c37cp-strong-cp-lock        ["num","0"]
-#     gauge-unification-sum       ["num","0"]
-#     cabibbo-angle-geometric     ["num","0"]
-#     higgs-effective-potential-v19  ["num","0"]
-#
-# All 17 were counted rooted by the string scan and reach the seed through
-# nothing. This is the same finding as the 2026-09-04 ratchet move, in a new
-# place: making the edges real shows which ones were never there.
-#
-# The floor is therefore lowered ONCE, against a named cause. A future drop
-# below 350 is a genuine regression and must fail.
-_ARITHMA_BASELINE = {"total": 422, "b3_rooted_min": 350,
-                     "non_b3_max": 72, "ambiguous_max": 0,
-                     "degraded_max": 12}
-_EML_BASELINE = {"total": 422, "b3_rooted_min": 102,
-                 "non_b3_max": 320, "ambiguous_max": 6}
+# The ceilings rise because there is MORE CONTENT, not because coverage got
+# worse: b3-rooted went UP, 350 -> 381. The revived formulas are largely
+# tensor-calculus and vielbein constructions that legitimately do not reach
+# b3 and legitimately carry no symbolic tree, which is what moves non_b3 and
+# degraded. Both floors still bite: below 381 rooted is a regression.
+_ARITHMA_BASELINE = {"total": 569, "b3_rooted_min": 381,
+                     "non_b3_max": 180, "ambiguous_max": 8,
+                     "degraded_max": 49}
+_EML_BASELINE = {"total": 569, "b3_rooted_min": 109,
+                 "non_b3_max": 460, "ambiguous_max": 7}
 
 
 def test_arithma_b3_coverage_never_regresses():
@@ -115,13 +111,7 @@ def test_arithma_b3_coverage_never_regresses():
 #: a Jordan-algebra, E7/E8 or Clifford construction whose content is a
 #: reduction over an indexed family -- the same quantities withheld from the
 #: EML cross-check, for the same reason.
-_NO_SYMBOLIC_TREE = frozenset({
-    "freudenthal-cubic-norm", "freudenthal-quartic-invariant",
-    "freudenthal-triple-product", "e7-quartic-invariant", "e7-alp-mass",
-    "e8x8-visible-action", "e8x8-hidden-condensate", "e8x8-portal-coupling",
-    "clifford-appendix-quadratic", "harmonic-cycle-fraction",
-    "bulk-metric-ratio", "metric-conversion",
-})
+_NO_SYMBOLIC_TREE_COUNT = 49  # see test_arithma_walk_degradation_is_bounded
 
 
 def test_arithma_walk_degradation_is_bounded():
@@ -141,11 +131,20 @@ def test_arithma_walk_degradation_is_bounded():
     """
     d = _load("dependency_chains.json")
     assert d["degraded_walks"] <= _ARITHMA_BASELINE["degraded_max"]
-    assert d["degraded_walks"] == len(_NO_SYMBOLIC_TREE), (
-        f"{d['degraded_walks']} walks degrade but "
-        f"{len(_NO_SYMBOLIC_TREE)} formulas lack a symbolic tree — a "
-        f"formula that HAS a tree is degrading, which points at the walker "
-        f"rather than at the formula set"
+    # Degradation must equal the number of formulas that supply NO symbolic
+    # tree in either dialect -- computed from the artifacts, not listed by
+    # name, so it stays true as the formula set grows. If a formula that HAS
+    # a tree is degrading, that points at the walker rather than the set.
+    formulas = _load("formulas.json")["formulas"]
+    eml = _load("eml_trees.json").get("f", {})
+    treeless = sum(
+        1 for fid, f in formulas.items()
+        if not f.get("arithma_compact")
+        and not isinstance(eml.get(fid, {}).get("c"), list)
+    )
+    assert d["degraded_walks"] == treeless, (
+        f"{d['degraded_walks']} walks degrade but {treeless} formulas lack a "
+        f"symbolic tree in either dialect"
     )
 
 

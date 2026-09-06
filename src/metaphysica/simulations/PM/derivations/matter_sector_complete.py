@@ -852,7 +852,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
                 "ops.mul(eml_scalar(2.0), ops.pow(eml_vec('v_ew'), eml_scalar(2.0)))"
                 ")"
             ),
-            inputParams=["higgs.m_higgs_experimental"],
+            inputParams=["pdg.m_higgs"],
             outputParams=["higgs.lambda_quartic"],
             terms={
                 "m_H": "Higgs mass = 125.20 GeV (PDG 2024)",
@@ -1229,7 +1229,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="GeV^2",
             status="DERIVED",
             description="Tachyonic Higgs mass parameter from moduli stabilization",
-            eml_description="Higgs tachyonic mass parameter mu^2 derived from G2 moduli potential; negative value triggers EWSB",
+            eml_description="EML: ops.div(ops.pow(eml_vec('higgs.m_higgs_derived'), eml_scalar(2.0)), eml_scalar(2.0)) — mu^2 = m_H^2/2 at the minimum",
             derivation_formula="higgs-potential-moduli-v19",
             no_experimental_value=True
         ))
@@ -1240,7 +1240,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="lambda = m_H^2 / (2*v^2) ~ 0.129",
-            eml_description="Higgs quartic self-coupling lambda computed from G2 associative cycle volumes; fixes Higgs potential stability",
+            eml_description="EML: ops.div(ops.pow(eml_vec('higgs.m_higgs_derived'), eml_scalar(2.0)), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('higgs.v_ew_derived'), eml_scalar(2.0)))) — lambda = m_H^2/(2 v^2)",
             derivation_formula="higgs-quartic-from-geometry-v19",
             experimental_bound=0.129,
             bound_type="measured",
@@ -1254,7 +1254,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="GeV",
             status="DERIVED",
             description="Higgs VEV from potential minimization",
-            eml_description="Electroweak vacuum expectation value v = mu/sqrt(lambda) derived from G2 moduli; sets the EWSB scale at 246 GeV",
+            # EML WITHHELD: 246.22 GeV is the PDG electroweak VEV restated, described as 'from
+            # potential minimisation' but not minimised anywhere here.
             derivation_formula="higgs-vev-minimization-v19",
             experimental_bound=246.22,  # PDG 2024: Higgs VEV (experimental)
             bound_type="measured",
@@ -1268,7 +1269,9 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="GeV",
             status="DERIVED",
             description="Higgs mass from potential curvature",
-            eml_description="Higgs boson mass m_H = sqrt(2*lambda)*v derived from the second derivative of the G2 moduli potential",
+            # EML WITHHELD: 125.1 GeV is the PDG measurement, not a derivation. It is also
+            # circular with higgs.lambda_quartic, which is computed FROM it as
+            # m_H^2/(2 v^2): writing an expression for both would close a loop.
             derivation_formula="higgs-mass-from-potential-v19",
             experimental_bound=125.10,  # PDG 2024: Higgs mass (experimental)
             bound_type="measured",
@@ -1296,7 +1299,9 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="y_b from geometric suppression with Q_b = 2",
-            eml_description="Bottom quark Yukawa coupling y_b = A_b * epsilon^2 suppressed by two powers of the Froggatt-Nielsen parameter from G2 cycle geometry",
+            # EML WITHHELD: Y_f = A_f * epsilon^Q_f with A_b = 0.48, an O(1) coefficient that is
+            # fitted rather than derived. Writing the expression would publish the
+            # fit as a derivation.
             derivation_formula="yukawa-froggatt-nielsen-v19",
             experimental_bound=0.024,
             bound_type="measured",
@@ -1309,7 +1314,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="y_tau from geometric suppression",
-            eml_description="Tau lepton Yukawa coupling y_tau = A_tau * epsilon^Q_tau suppressed by Froggatt-Nielsen mechanism from G2 topology",
+            # EML WITHHELD: as y_bottom: A_tau = 0.2 is a fitted O(1) coefficient.
             derivation_formula="yukawa-froggatt-nielsen-v19",
             experimental_bound=0.0102,
             bound_type="measured",
@@ -1322,7 +1327,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="epsilon = exp(-1.5) ~ 0.223 ~ Cabibbo angle",
-            eml_description="Froggatt-Nielsen suppression parameter epsilon = exp(-3/2) derived from the G2 associative cycle geodesic length; numerically equals the Cabibbo angle",
+            eml_description="EML: ops.exp(ops.neg(eml_scalar(1.5))) — Froggatt-Nielsen suppression epsilon = exp(-3/2) = 0.22313",
             derivation_formula="yukawa-epsilon-cabibbo-v19",
             experimental_bound=0.22500,
             bound_type="measured",
@@ -1335,7 +1340,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="count",
             status="DERIVED",
             description="N_gen = b3/8 = 24/8 = 3 (exact)",
-            eml_description="Number of SM fermion generations N_gen = b3/8 = 24/8 = 3 derived exactly from the G2 manifold third Betti number",
+            eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(8.0)) — N_gen = b3/8 = 3, exact",
             derivation_formula="fermion-generations-v19",
             experimental_bound=3,
             bound_type="measured",
@@ -1349,7 +1354,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="eV",
             status="DERIVED",
             description="m3 (lightest in IO) from seesaw formula",
-            eml_description="Lightest neutrino mass m3 (inverted ordering) computed via type-I seesaw m_nu = v^2 Y_nu^2 / M_R",
+            # EML WITHHELD: a hardcoded 0.001 eV. The R5 chain audit already recorded this
+            # literal as undercutting the module's own seesaw formula by 3.1x.
             derivation_formula="light-neutrino-masses-v19",
             no_experimental_value=True
         ))
@@ -1360,7 +1366,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="GeV",
             status="DERIVED",
             description="M_R ~ M_GUT/sqrt(chi) ~ 1.7e15 GeV",
-            eml_description="Right-handed neutrino Majorana mass scale M_R = M_GUT / sqrt(chi_eff) set by G2 compactification geometry near the GUT scale",
+            eml_description="EML: ops.div(eml_scalar(2.118e16), ops.sqrt(eml_vec('topology.mephorash_chi'))) — M_R = M_GUT/sqrt(chi_eff). NOTE the 2.118e16: this uses the gut-scale value the register still has under an unresolved ruling, not geometry.M_GUT_geometric",
             derivation_formula="majorana-scale-v19",
             no_experimental_value=True
         ))
@@ -1382,7 +1388,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
             units="eV",
             status="DERIVED",
             description="Sum(m_nu) from seesaw, should be < 0.12 eV (cosmo)",
-            eml_description="Sum of three neutrino masses from seesaw mechanism; constrained below 0.12 eV by Planck CMB data",
+            # EML WITHHELD: a sum of three seesaw masses of which ~94% is measured oscillation
+            # splittings, and whose lightest term is the hardcoded 0.001 eV above.
             derivation_formula="light-neutrino-masses-v19",
             experimental_bound=0.12,
             bound_type="upper",
@@ -1661,7 +1668,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
                 "type": "dataset"
             },
             {
-                "id": "nufit60_2025",
+                "id": "nufit_6_0",
                 "authors": "Esteban, I., Gonzalez-Garcia, M.C., Maltoni, M., Schwetz, T., Zhou, A.",
                 "title": "NuFIT 6.0: Updated global analysis of neutrino oscillation parameters",
                 "year": 2025,
@@ -1669,7 +1676,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
                 "type": "dataset"
             },
             {
-                "id": "higgs1964_broken",
+                "id": "higgs1964",
                 "authors": "Higgs, P.W.",
                 "title": "Broken Symmetries and the Masses of Gauge Bosons",
                 "year": 1964,
@@ -1693,7 +1700,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
                 "type": "review"
             },
             {
-                "id": "acharya2002_mtheory",
+                "id": "acharya2007",
                 "authors": "Acharya, B.S.",
                 "title": "M-theory, G2-manifolds and four-dimensional physics",
                 "year": 2002,

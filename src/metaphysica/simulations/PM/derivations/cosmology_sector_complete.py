@@ -239,8 +239,8 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         return [
             "topology.elder_kads",              # Third Betti number b3 = 24
             "topology.mephorash_chi",         # Effective Euler characteristic = 144
-            "geometry.sophian_modulus",  # Visible states = 125
-            "geometry.barbelo_modulus",  # Sterile states = 163
+            "registry.node_count",       # Visible/active states = 125 (was geometry.sophian_modulus, absent)
+            "topology.hidden_supports",  # Sterile/hidden states = 163 (was geometry.barbelo_modulus, absent)
         ]
 
     @property
@@ -518,6 +518,12 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         omega_dm = omega_m - omega_b  # ~ 0.266
 
         # Geometric prediction
+        # DEAD, and kept only so the disagreement stays visible: this gives
+        # 0.566 * 0.315 * 0.85 = 0.152, while the value actually registered
+        # as cosmology.omega_dm_geometric is DarkMatterDerivation's
+        # sterile_ratio * 0.48 = 0.2717. Two computations of one parameter,
+        # differing by 79%, in the same file -- the comment below already
+        # said "needs adjustment" and nothing compared the two.
         omega_dm_geometric = sterile_ratio * omega_m * 0.85  # correction factor
         # ~ 0.566 * 0.315 * 0.85 ~ 0.152 (needs adjustment)
 
@@ -745,7 +751,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "Dark matter density from sterile sector counting. The 163 sterile "
                 "states (shadow sector) out of 288 total determine the DM fraction."
             ),
-            inputParams=["geometry.barbelo_modulus", "geometry.logic_closure"],
+            inputParams=["topology.hidden_supports"],
             outputParams=["cosmology.omega_dm_geometric"],
             eml_tree_str=(
                 "ops.mul(ops.div(eml_scalar(163.0), eml_scalar(288.0)), ops.mul(eml_vec('Omega_m'), eml_vec('f_corr')))"
@@ -770,7 +776,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "Z2 parity from G2 mirror symmetry. Visible sector is even, shadow "
                 "sector is odd. DM stability follows from being lightest odd particle."
             ),
-            inputParams=["geometry.sophian_modulus", "geometry.barbelo_modulus"],
+            inputParams=["registry.node_count", "topology.hidden_supports"],
             outputParams=[],
             eml_tree_str=(
                 "ops.add(eml_vec('visible_parity_plus1'), eml_vec('shadow_parity_minus1'))"
@@ -851,7 +857,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "mixing angle theta_mix ~ 31.0 degrees determines the H_0 correction "
                 "from CMB value, naturally splitting the Hubble tension."
             ),
-            inputParams=["cosmology.H0_cmb"],
+            inputParams=["cosmology.H0_early"],
             outputParams=["cosmology.H0_odowd"],
             eml_tree_str=(
                 "ops.mul(eml_vec('H_CMB'), ops.add(eml_scalar(1.0), ops.div(ops.pow(eml_vec('sin_theta_mix'), eml_scalar(2.0)), eml_scalar(2.0))))"
@@ -1040,7 +1046,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Omega_DM from 163/288 sterile ratio ~ 0.27",
-            eml_description="Dark matter density parameter Omega_DM = (163/288) * Omega_m * f_corr derived from the ratio of sterile shadow states to total G2 root lattice states",
+            eml_description="EML: ops.mul(eml_vec('cosmology.sterile_ratio'), eml_scalar(0.48)) — Omega_DM = (163/288) * 0.48. The 0.48 is commented 'From Omega_m / (1 - Omega_DE/2)' and is not derived anywhere. NOTE: this file computes this parameter TWICE. The live value comes from DarkMatterDerivation (sterile_ratio * 0.48 = 0.2717); a second line in CosmologicalParametersDerivation computes sterile_ratio * omega_m * 0.85 = 0.152 for the same name, carries the comment 'needs adjustment', and is dead",
             derivation_formula="dm-omega-sterile-ratio-v19",
             experimental_bound=0.261,
             bound_type="measured",
@@ -1054,7 +1060,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="GEOMETRIC",
             description="163/288 = sterile states / total states ~ 0.566",
-            eml_description="Sterile sector fraction 163/288 from G2 root lattice: 163 shadow/sterile states out of 288 total (Ennoia=288, Barbelo=163); determines dark matter abundance",
+            eml_description="EML: ops.div(eml_vec('topology.hidden_supports'), eml_vec('topology.ancestral_roots')) — sterile fraction 163/288 = 0.56597",
             derivation_formula="dm-omega-sterile-ratio-v19",
             no_experimental_value=True
         ))
@@ -1065,7 +1071,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="GEOMETRIC",
             description="163/125 = shadow sector / visible sector ~ 1.3",
-            eml_description="Ratio of shadow/sterile sector states (163) to visible SM sector states (125) from G2 topology; determines DM-to-baryon abundance ratio",
+            eml_description="EML: ops.div(eml_vec('topology.hidden_supports'), eml_vec('registry.node_count')) — shadow/visible = 163/125 = 1.304",
             no_experimental_value=True
         ))
 
@@ -1075,7 +1081,9 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Omega_chi h^2 ~ 0.12 from WIMP freeze-out",
-            eml_description="Thermal relic dark matter density Omega_chi h^2 = 0.1 * (g_eff/100) * (T_f/m_chi)^2 from WIMP freeze-out mechanism; matches observed 0.120 from Planck",
+            # EML WITHHELD: 0.12 is the Planck relic-density measurement, not a computed
+            # freeze-out. The description says 'from WIMP freeze-out'; no
+            # Boltzmann integration happens.
             derivation_formula="dm-thermal-relic-v19",
             experimental_bound=0.120,
             bound_type="measured",
@@ -1428,7 +1436,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "type": "article"
             },
             {
-                "id": "acharya2002_g2",
+                "id": "acharya1999",
                 "authors": "Acharya, B.S.",
                 "title": "M-theory, G2-manifolds and four-dimensional physics",
                 "year": 2002,

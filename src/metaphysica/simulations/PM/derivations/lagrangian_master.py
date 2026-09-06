@@ -207,7 +207,7 @@ class LagrangianMasterDerivation(SimulationBase):
             "topology.elder_kads",           # Third Betti number b_3 = 24
             "topology.mephorash_chi",      # Effective Euler characteristic chi = 144
             "constants.M_PLANCK",    # Planck mass
-            "constants.M_STAR",      # 26D fundamental scale
+            "geometry.M_star",      # 26D fundamental scale (was constants.M_STAR, a path no registry holds)
             "gauge.g_gut",           # GUT coupling
         ]
 
@@ -1434,7 +1434,7 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.2)",
             latex=r"\partial_\mu e_a^\nu + \Gamma^\nu_{\mu\lambda} e_a^\lambda - \omega_\mu{}^b{}_a e_b^\nu = 0",
             plain_text="d_mu e_a^nu + Gamma^nu_mulambda e_a^lambda - omega_mu^b_a e_b^nu = 0",
-            category="FOUNDATIONAL",
+            category="ESTABLISHED",
             description=(
                 "Tetrad postulate relating the Christoffel connection (coordinate basis) to "
                 "the spin connection (frame basis). This compatibility condition ensures "
@@ -1525,7 +1525,7 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="S_26 = integral d^26x sqrt(-g_26) [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
             category="DERIVED",
             description="Complete 26D master action with gravity, gauge, fermion, and moduli sectors",
-            inputParams=["constants.M_STAR", "gauge.g_gut"],
+            inputParams=["geometry.M_star", "gauge.g_gut"],
             outputParams=["derivations.dof_26d_gravity"],
             derivation={
                 "steps": [
@@ -1555,7 +1555,7 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="S_EH = M*^24/2 integral d^26x sqrt(-g_26) R_26 = M*^24/2 integral d^26x e e_a^mu e_b^nu R^ab_munu",
             category="DERIVED",
             description="Einstein-Hilbert action in 26D, written in vielbein formalism",
-            inputParams=["constants.M_STAR"],
+            inputParams=["geometry.M_star"],
             outputParams=[],
             derivation={
                 "steps": [
@@ -2092,7 +2092,7 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.19)",
             latex=r"\varphi = dx^{123} + dx^{145} + dx^{167} + dx^{246} - dx^{257} - dx^{347} - dx^{356}",
             plain_text="phi = dx^123 + dx^145 + dx^167 + dx^246 - dx^257 - dx^347 - dx^356",
-            category="FOUNDATIONAL",
+            category="ESTABLISHED",
             description="Standard G2 associative 3-form defining the geometric structure",
             inputParams=[],
             outputParams=[]
@@ -2321,7 +2321,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "the Fernandez-Gray tau_1 class. Gated by enable_4face_terms (default OFF)."
             ),
             inputParams=[
-                "constants.M_STAR",
+                "geometry.M_star",
                 "topology.elder_kads",
             ],
             outputParams=[],
@@ -2402,13 +2402,13 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.G1)",
             latex=r"S = \int \sqrt{-g} \Big[ R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
             plain_text="S = integral sqrt(-g) [ R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
-            category="geometric",
+            category="GEOMETRIC",
             description=(
                 "Full 26D master action with explicit two-layer OR warping potentials. "
                 "V_bridge governs shadow creation (Layer 1), V_face governs face selection "
                 "(Layer 2). All terms sterile."
             ),
-            inputParams=["constants.M_STAR", "geometry.D_bulk"],
+            inputParams=["geometry.M_star", "geometry.D_bulk"],
             outputParams=[],
             derivation={
                 "steps": [
@@ -2438,7 +2438,7 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.G2)",
             latex=r"S_{13D} = \int \sqrt{-g_{13}} \left[ R_{13} + \bar{\Psi}_P i \gamma^m (\partial_m + T_\omega^m) \Psi_P + V_{\text{face}}^{(f)\text{(local OR)}} \right]",
             plain_text="S_13D = integral sqrt(-g_13) [ R_13 + Psi_P_bar i gamma^m (d_m + T_omega^m) Psi_P + V_face^(f)(local OR) ]",
-            category="geometric",
+            category="GEOMETRIC",
             description=(
                 "13D per-shadow Lagrangian -- after bridge/global OR integrates out bridge "
                 "directions. Each shadow inherits face OR potential."
@@ -2469,12 +2469,12 @@ class LagrangianMasterDerivation(SimulationBase):
             label="(2.1.G3)",
             latex=r"\mathscr{L}_{4D} = -\frac{M_{\text{Pl}}^2}{2} R_4 + \bar{\chi} i \slashed{D} \chi + |D_\mu \phi|^2 - V(\phi) + \frac{1}{4} F_{\mu\nu}^a F^{a\mu\nu} + y_f \bar{\psi} \phi \psi + \Lambda",
             plain_text="L_4D = -(M_Pl^2/2) R_4 + chi_bar i D_slash chi + |D_mu phi|^2 - V(phi) + (1/4) F_munu^a F^a_munu + y_f psi_bar phi psi + Lambda",
-            category="geometric",
+            category="GEOMETRIC",
             description=(
                 "4D effective Lagrangian -- after face/local OR in dominant visible face. "
                 "M_Pl^2 = M_*^{9} Vol(V_7), Lambda = (integral F wedge phi)^2 / Vol."
             ),
-            inputParams=["constants.M_STAR"],
+            inputParams=["geometry.M_star"],
             outputParams=[],
             derivation={
                 "steps": [
@@ -2528,7 +2528,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "+ sum_n R_n psi_bar_n D_slash psi_n "
                 "+ V_bridge + sum_f V_face^(f) ]"
             ),
-            category="THEORETICAL",
+            category="ANSATZ",
             description=(
                 "Full 26D bulk action with explicit two-layer OR structure "
                 "(Topic 03: 26D Master Lagrangian). The 26 dimensions decompose as 26D = (12,1) + (12,1): each 13D "
@@ -2566,7 +2566,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "asymptotic formula to the G2 internal space."
             ),
             inputParams=[
-                "constants.M_STAR",
+                "geometry.M_star",
                 "topology.elder_kads",
                 "topology.mephorash_chi",
             ],
@@ -2667,7 +2667,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "V({T_i}) = sum_{i=1}^4 Lambda_i exp(-a_i T_i) + Lambda_0, "
                 "a_i = b3/i = 24/i => a_1=24, a_2=12, a_3=8, a_4=6"
             ),
-            category="THEORETICAL",
+            category="ANSATZ",
             description=(
                 "Racetrack moduli potential for the 26D master Lagrangian "
                 "(Topic 03) with explicit geometric scaling a_i = b_3/i. "
@@ -3383,6 +3383,7 @@ class LagrangianMasterDerivation(SimulationBase):
         return [
             {
                 "id": "weinberg1995",
+                "doi": "10.1017/CBO9781139644174",
                 "authors": "Weinberg, S.",
                 "title": "The Quantum Theory of Fields, Volume I: Foundations",
                 "publisher": "Cambridge University Press",
@@ -3391,6 +3392,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             {
                 "id": "peskin_schroeder1995",
+                "doi": "10.1201/9780429503559",
                 "authors": "Peskin, M.E., Schroeder, D.V.",
                 "title": "An Introduction to Quantum Field Theory",
                 "publisher": "Westview Press",
@@ -3398,7 +3400,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "notes": "Standard QFT textbook covering Yang-Mills theory, spinor fields, and Feynman rules"
             },
             {
-                "id": "misner_thorne_wheeler1973",
+                "id": "mtw1973_gravitation",
+                "url": "https://press.princeton.edu/books/hardcover/9780691177793/gravitation",
                 "authors": "Misner, C.W., Thorne, K.S., Wheeler, J.A.",
                 "title": "Gravitation",
                 "publisher": "W.H. Freeman",
@@ -3406,7 +3409,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "notes": "Comprehensive GR reference for vielbein/tetrad formalism, Einstein equations, and Kaluza-Klein reduction"
             },
             {
-                "id": "carroll2004",
+                "id": "carroll2004_gr",
+                "doi": "10.1017/9781108770385",
                 "authors": "Carroll, S.M.",
                 "title": "Spacetime and Geometry: An Introduction to General Relativity",
                 "publisher": "Addison-Wesley",
@@ -3447,8 +3451,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "notes": "KKLT construction for moduli stabilisation in Type IIB string theory. Non-perturbative superpotential from D3-brane instantons combined with flux-generated tree-level W_0 stabilises all Kahler moduli and produces a de Sitter vacuum after anti-D3-brane uplift. Adapted here for the racetrack-moduli-potential formula (L.R1) in the G2 setting.",
             },
             {
-                "id": "lvs2005",
-                "key": "lvs2005",
+                "id": "bbcq2005",
+                "key": "bbcq2005",
                 "authors": "Balasubramanian, V., Berglund, P., Conlon, J.P., Quevedo, F.",
                 "title": "Systematics of Moduli Stabilisation in Calabi-Yau Flux Compactifications",
                 "year": 2005,

@@ -253,7 +253,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         return [
             "topology.elder_kads",              # Third Betti number b3 = 24
             "topology.mephorash_chi",         # Effective Euler characteristic = 144
-            "gauge.alpha_gut",          # GUT coupling alpha = 1/24
+            "geometry.alpha_gut",       # GUT coupling (was gauge.alpha_gut, a path no registry holds)
         ]
 
     @property
@@ -1298,7 +1298,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="Y = 125/144 from visible/total chi_eff ratio",
-            eml_description="Hypercharge normalization Y = chi_visible / chi_eff = 125/144 from ratio of visible-sector Euler characteristic to total G2 effective chi",
+            eml_description="EML: ops.div(eml_vec('registry.node_count'), eml_vec('topology.mephorash_chi')) — Y = 125/144, visible over total chi_eff",
             derivation_formula="u1-hypercharge-ratio-v19",
             no_experimental_value=True
         ))
@@ -1338,7 +1338,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description="cos(theta_W) = sqrt(1 - sin^2(theta_W))",
-            eml_description="Cosine of Weinberg angle cos(theta_W) = sqrt(1 - sin^2(theta_W)) used in electroweak boson mass matrix and Z/photon mixing",
+            eml_description="EML: ops.sqrt(ops.sub(eml_scalar(1.0), eml_vec('gauge.sin2_theta_w'))) — cos(theta_W) from sin^2(theta_W)",
             derivation_formula="ew-weinberg-angle-v19",
             experimental_bound=0.8768,
             bound_type="measured",
@@ -1351,7 +1351,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="degrees",
             status="DERIVED",
             description="theta_W ~ 28.7 degrees from geometric derivation",
-            eml_description="Weinberg angle theta_W in degrees derived from G2 shadow-tilt geometry; equals arcsin(sqrt(12/b3 * f_RG))",
+            eml_description="EML: ops.mul(ops.asin(ops.sqrt(eml_vec('gauge.sin2_theta_w'))), ops.div(eml_scalar(180.0), eml_pi())) — theta_W in degrees",
             derivation_formula="ew-weinberg-angle-v19",
             experimental_bound=28.75,
             bound_type="measured",
@@ -1364,7 +1364,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="boolean",
             status="DERIVED",
             description="True if electroweak mixing matches PDG values",
-            eml_description="Boolean flag set to True when the derived Weinberg angle and EW mixing matrix reproduce PDG-2024 values within uncertainty",
+            # EML WITHHELD: a BOOLEAN flag (True when the derived mixing matches PDG). A yes/no
+            # answer has no derivation.
             no_experimental_value=True
         ))
 
@@ -1719,7 +1720,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         """Return academic references for gauge sector derivations."""
         return [
             {
-                "id": "pdg2024_gauge",
+                "id": "pdg2024",
                 "authors": "Particle Data Group (Navas, S. et al.)",
                 "title": "Review of Particle Physics",
                 "year": 2024,
@@ -1727,7 +1728,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "dataset"
             },
             {
-                "id": "weinberg1967_leptons",
+                "id": "weinberg1967",
                 "authors": "Weinberg, S.",
                 "title": "A Model of Leptons",
                 "year": 1967,
@@ -1735,7 +1736,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "article"
             },
             {
-                "id": "glashow1961_weak",
+                "id": "glashow_1961",
                 "authors": "Glashow, S.L.",
                 "title": "Partial-symmetries of weak interactions",
                 "year": 1961,
@@ -1743,7 +1744,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "article"
             },
             {
-                "id": "joyce2000_holonomy",
+                "id": "joyce2000",
                 "authors": "Joyce, D.",
                 "title": "Compact Manifolds with Special Holonomy",
                 "year": 2000,
@@ -1751,7 +1752,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "textbook"
             },
             {
-                "id": "carroll2004_spacetime",
+                "id": "carroll2004_gr",
                 "authors": "Carroll, S.",
                 "title": "Spacetime and Geometry: An Introduction to General Relativity",
                 "year": 2004,
@@ -1759,8 +1760,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "textbook"
             },
             {
-                "id": "acharya2002_g2",
-                "key": "acharya2002_g2",
+                "id": "acharya1999",
+                "key": "acharya1999",
                 "authors": "Acharya, B.S.",
                 "title": "M theory, Joyce Orbifolds and Super Yang-Mills",
                 "year": 2002,
@@ -1769,8 +1770,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "article",
             },
             {
-                "id": "acharya_witten2001_chiral",
-                "key": "acharya_witten2001_chiral",
+                "id": "acharya_witten2001",
+                "key": "acharya_witten2001",
                 "authors": "Acharya, B.S., Witten, E.",
                 "title": "Chiral Fermions from Manifolds of G2 Holonomy",
                 "year": 2001,
@@ -1796,8 +1797,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "type": "review",
             },
             {
-                "id": "corti_haskins2015",
-                "key": "corti_haskins2015",
+                "id": "chnp2015",
+                "key": "chnp2015",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
                 "title": "G2-manifolds and associative submanifolds via semi-Fano 3-folds",
                 "year": 2015,

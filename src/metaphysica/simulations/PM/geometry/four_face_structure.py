@@ -159,6 +159,12 @@ def _arithma_ln(a):
     return None if a is None else _ArithmaExpression.ln(a)
 
 
+#: Hubble constant today in eV, for comparing a field mass against H0. Taken
+#: from H0 ~ 70 km/s/Mpc; only the order of magnitude matters for the
+#: 45-decade comparison below, and the conclusion is unchanged anywhere in
+#: the 67-74 range the framework itself spans.
+HUBBLE_TODAY_EV = 1.44e-33
+
 # Output parameter paths for this simulation
 _OUTPUT_PARAMS = [
     "geometry.n_faces",
@@ -170,6 +176,8 @@ _OUTPUT_PARAMS = [
     "geometry.shadow_asymmetry_delta_T",
     "geometry.racetrack_stability",
     "geometry.n_aligned_pairs",
+    "geometry.kahler_modulus_mass_GeV",
+    "geometry.kahler_over_quintessence_mass",
 ]
 
 # Output formula IDs
@@ -523,6 +531,7 @@ class FourFaceG2Structure(SimulationBase):
             "geometry.h11",
             "geometry.k_gimel",
             "topology.mephorash_chi",
+            "susy.m_3_2_GeV",
         ]
 
     @property
@@ -597,6 +606,50 @@ class FourFaceG2Structure(SimulationBase):
         n_bridges = int(n_faces) * n_e8_blocks
         n_aligned_pairs = float(n_bridges // 2)
 
+        # ------------------------------------------------------------------
+        # CAN A KAHLER MODULUS BE THE QUINTESSENCE FIELD?  No, by 45 orders.
+        #
+        # This is the question the dark_energy_betti fork turns on. Scanning
+        # the framework's structural integers through w0 = -(n-1)/n, the best
+        # fit by far is n = b2 = 4 (0.25 sigma in the 2D plane against 3.3 for
+        # the adopted b3 = 24). b2 counts KAHLER moduli. So: could one of the
+        # four face moduli be rolling today?
+        #
+        # The framework answers with its own numbers, and no new input.
+        #
+        # Its racetrack sets a_i = i*pi/b3 and T_i = b3*k_gimel/(i*pi), so
+        #
+        #       a_i T_i = k_gimel   for EVERY face
+        #
+        # -- the 1/i hierarchy cancels exactly, which is the real content of
+        # the construction: all four condensates are equally suppressed. That
+        # combination is precisely what fixes the modulus mass in KKLT-type
+        # stabilisation (Choi et al, hep-th/0503216):
+        #
+        #       m_T = 2 (a T) m_3/2 = 2 k_gimel m_3/2
+        #
+        # With this framework's own gravitino mass, susy.m_3_2_GeV = 1 TeV,
+        # that is m_T = 24.6 TeV. Quintessence needs m_phi = b3 H0 = 3.5e-32
+        # eV (see cosmology.m_phi_over_H0). The gap is ~10^45.
+        #
+        # So the four Kahler moduli are stabilised roughly forty-five orders
+        # of magnitude above the scale a rolling dark-energy field must sit
+        # at, and b2 = 4 is ruled out as the origin of w0 DESPITE fitting
+        # thirteen times better. The quintessence direction has to be one
+        # protected by a shift symmetry -- a C3 axion, counted by b3 -- which
+        # is the option already adopted.
+        #
+        # This is the same argument that settled the S8 friction onset: a
+        # stabilised modulus is far too heavy to switch on at low redshift.
+        # Both are computed here rather than asserted, so if the gravitino
+        # mass or the racetrack changes, the conclusion moves with them.
+        # ------------------------------------------------------------------
+        m_3_2_gev = registry.get("susy.m_3_2_GeV")
+        kahler_modulus_mass_gev = 2.0 * k_gimel * m_3_2_gev
+        quintessence_mass_ev = b3 * HUBBLE_TODAY_EV
+        kahler_over_quintessence = (
+            kahler_modulus_mass_gev * 1.0e9 / quintessence_mass_ev)
+
         results = {
             "geometry.n_faces": n_faces,
             "geometry.alpha_leak": alpha_leak,
@@ -607,6 +660,8 @@ class FourFaceG2Structure(SimulationBase):
             "geometry.shadow_asymmetry_delta_T": shadow_asymmetry,
             "geometry.racetrack_stability": 1.0 if racetrack_stability else 0.0,
             "geometry.n_aligned_pairs": n_aligned_pairs,
+            "geometry.kahler_modulus_mass_GeV": kahler_modulus_mass_gev,
+            "geometry.kahler_over_quintessence_mass": kahler_over_quintessence,
         }
 
         # Register outputs to the registry
@@ -1738,6 +1793,50 @@ class FourFaceG2Structure(SimulationBase):
                 derivation_formula="racetrack-moduli-vev",
                 no_experimental_value=True,
                 eml_description="EML: ops.div(ops.mul(eml_vec('b3'), eml_vec('constants.k_gimel')), ops.mul(eml_scalar(4.0), eml_pi())) — T4 = b3·k_gimel/(4π), subdominant Kähler modulus of deepest shadow sector",
+            ),
+            Parameter(
+                path="geometry.kahler_modulus_mass_GeV",
+                name="Kahler Modulus Mass",
+                units="GeV",
+                status="DERIVED",
+                description=(
+                    "Mass of the stabilised face moduli, m_T = 2 (a T) m_3/2 "
+                    "= 2 k_gimel m_3/2 = 24.6 TeV. The combination a*T is "
+                    "fixed by this framework's own racetrack: a_i = i*pi/b3 "
+                    "and T_i = b3*k_gimel/(i*pi) give a_i T_i = k_gimel for "
+                    "EVERY face, the 1/i hierarchy cancelling exactly. That "
+                    "combination is what sets the modulus mass in KKLT-type "
+                    "stabilisation (Choi et al, hep-th/0503216), so the "
+                    "framework predicts m_T/m_3/2 = 2 k_gimel = 24.64 with "
+                    "nothing fitted."
+                ),
+                derivation_formula="racetrack-moduli-vev",
+                no_experimental_value=True,
+                eml_description="EML: ops.mul(ops.mul(eml_scalar(2.0), eml_vec('geometry.k_gimel')), eml_vec('susy.m_3_2_GeV')) — m_T = 2 k_gimel m_3/2, the KKLT modulus mass",
+            ),
+            Parameter(
+                path="geometry.kahler_over_quintessence_mass",
+                name="Kahler Modulus over Quintessence Mass",
+                units="dimensionless",
+                status="VALIDATION",
+                description=(
+                    "Ratio of the stabilised Kahler modulus mass to the mass "
+                    "a rolling dark-energy field must have, m_phi = b3 H0. "
+                    "It is 7.1e44 -- about forty-five orders of magnitude. "
+                    "This is the quantity that rules on the "
+                    "dark_energy_betti fork: b2 counts Kahler moduli and is "
+                    "by far the best numerical fit for w0 = -(n-1)/n (0.25 "
+                    "sigma against 3.3 for the adopted b3 = 24), but a field "
+                    "stabilised at 24.6 TeV cannot be rolling today. The "
+                    "quintessence direction must be shift-symmetry protected "
+                    "-- a C3 axion, counted by b3. "
+                    "The same argument settles the S8 friction onset. Both "
+                    "are computed from the framework's own racetrack and its "
+                    "own gravitino mass, so if either changes the conclusion "
+                    "moves with them."
+                ),
+                no_experimental_value=True,
+                eml_description="EML: ops.div(ops.mul(eml_vec('geometry.kahler_modulus_mass_GeV'), eml_scalar(1e9)), ops.mul(eml_vec('topology.elder_kads'), eml_scalar(1.44e-33))) — m_T / (b3 H0)",
             ),
             Parameter(
                 path="geometry.n_aligned_pairs",

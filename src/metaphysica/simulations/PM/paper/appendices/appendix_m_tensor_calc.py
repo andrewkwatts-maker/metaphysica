@@ -86,7 +86,11 @@ class AppendixMTensorCalculus(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
-        return []
+        # This module reads constants.M_PLANCK in run() and declared nothing,
+        # so the dependency was undeclared as well as unchecked -- the same
+        # class as the four phantom required_inputs found in the revived
+        # derivation modules.
+        return ["constants.M_PLANCK"]
 
     @property
     def output_params(self) -> List[str]:
@@ -1203,6 +1207,7 @@ class AppendixMTensorCalculus(SimulationBase):
         return [
             {
                 "id": "levi_civita1900",
+                "doi": "10.1007/BF01454201",
                 "authors": "Levi-Civita, T., Ricci-Curbastro, G.",
                 "title": "Methodes de calcul differentiel absolu et leurs applications",
                 "year": "1900",
@@ -1212,25 +1217,8 @@ class AppendixMTensorCalculus(SimulationBase):
                 "notes": "Foundational paper establishing absolute differential calculus (tensor analysis)"
             },
             {
-                "id": "ricci1904",
-                "authors": "Ricci-Curbastro, G.",
-                "title": "Direzioni e invarianti principali in una varieta qualunque",
-                "year": "1904",
-                "journal": "Atti del Reale Istituto Veneto",
-                "volume": "63",
-                "pages": "1233-1239",
-                "notes": "Ricci curvature tensor and principal directions"
-            },
-            {
-                "id": "eigenchris2018",
-                "authors": "eigenchris",
-                "title": "Tensor Calculus - YouTube Series",
-                "year": "2018",
-                "publisher": "YouTube",
-                "notes": "Pedagogical video series on tensor calculus with geometric intuition"
-            },
-            {
-                "id": "carroll2004",
+                "id": "carroll2004_gr",
+                "doi": "10.1017/9781108770385",
                 "authors": "Carroll, S. M.",
                 "title": "Spacetime and Geometry: An Introduction to General Relativity",
                 "year": "2004",
@@ -1239,6 +1227,7 @@ class AppendixMTensorCalculus(SimulationBase):
             },
             {
                 "id": "wald1984",
+                "doi": "10.7208/chicago/9780226870373.001.0001",
                 "authors": "Wald, R. M.",
                 "title": "General Relativity",
                 "year": "1984",
@@ -1246,7 +1235,8 @@ class AppendixMTensorCalculus(SimulationBase):
                 "notes": "Mathematically rigorous treatment of GR and differential geometry"
             },
             {
-                "id": "mtw1973",
+                "id": "mtw1973_gravitation",
+                "url": "https://press.princeton.edu/books/hardcover/9780691177793/gravitation",
                 "authors": "Misner, C. W., Thorne, K. S., Wheeler, J. A.",
                 "title": "Gravitation",
                 "year": "1973",

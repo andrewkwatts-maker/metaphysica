@@ -301,6 +301,19 @@ DISPOSITIONS: Dict[str, Tuple[str, str]] = {
     "geometry.H0_tension_ratio": (INTERMEDIATE,
         "late/early H0 ratio, dimensionless"),
     "cosmology.h0_unwinding_scale": (INTERMEDIATE, "model scale, not H0"),
+    "cosmology.H0_odowd": (DISTINCT,
+        "the O'Dowd composite H0 from the revived cosmology_sector_complete. "
+        "cosmology.H0_local already carries this composite as the canonical "
+        "late-time value, so scoring it a second time inside the group would "
+        "double-count one derivation."),
+    "higgs.m_higgs_derived": (INTERMEDIATE,
+        "125.1 GeV is the PDG Higgs mass restated, not a derivation, and it "
+        "is circular with higgs.lambda_quartic which is computed FROM it as "
+        "m_H^2/(2 v^2). Its EML expression is withheld for the same reason."),
+    "neutrino.m_nu_lightest": (INTERMEDIATE,
+        "a hardcoded 0.001 eV, not a mass prediction. The R5 chain audit "
+        "already recorded this literal as undercutting the module's own "
+        "seesaw formula by 3.1x."),
     "cosmology.m_phi_over_H0": (INTERMEDIATE,
         "a scalar field MASS expressed in units of H0, not a value of H0. "
         "m_phi/H0 = 3 E(z_thaw) = 24.25, which is b3 to 1.05%."),

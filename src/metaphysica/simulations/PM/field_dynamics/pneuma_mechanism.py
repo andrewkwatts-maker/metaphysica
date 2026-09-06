@@ -1422,7 +1422,7 @@ class PneumaMechanismV16(SimulationBase):
                     "S_26": {"symbol": "S_{26}", "description": "26D bulk action with Pneuma spinor"},
                     "Ψ_P": {"symbol": "\\Psi_P", "description": "4096-component Weyl Pneuma spinor of Cl(24,2)"},
                     "L_13": {"symbol": "\\mathcal{L}_{13}", "description": "13D shadow effective Lagrangian (64 spinor components)"},
-                    "M_*": {"symbol": "M_*", "description": "Fundamental mass scale (string scale)", "param_id": "constants.M_STAR"},
+                    "M_*": {"symbol": "M_*", "description": "Fundamental mass scale (string scale)", "param_id": "geometry.M_star"},
                     "α_F": {"symbol": "\\alpha_F", "description": "Starobinsky coefficient", "param_id": "gravity.alpha_F"},
                     "β_F": {"symbol": "\\beta_F", "description": "Matter coupling coefficient", "param_id": "gravity.beta_F"},
                     "γ_F": {"symbol": "\\gamma_F", "description": "Two-time coupling coefficient", "param_id": "gravity.gamma_F"},

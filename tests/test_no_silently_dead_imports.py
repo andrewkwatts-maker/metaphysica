@@ -114,24 +114,16 @@ def _collect_dead():
 #: decision rather than a typo fix. Until that ruling, the debt is recorded
 #: here and cannot grow -- an 11th dead import fails this test.
 _KNOWN_DEAD = {
-    ("metaphysica.simulations.PM.derivations.lagrangian_master",
-     "LagrangianMasterDerivationV19"),
-    ("metaphysica.simulations.PM.derivations.gauge_sector_complete",
-     "GaugeSectorCompleteV19"),
-    ("metaphysica.simulations.PM.derivations.matter_sector_complete",
-     "MatterSectorCompleteV19"),
-    ("metaphysica.simulations.PM.derivations.cosmology_sector_complete",
-     "CosmologySectorCompleteV19"),
-    ("metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc",
-     "AppendixMTensorCalcV19"),
-    ("metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein",
-     "AppendixNVielbeinV19"),
-    ("metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction",
-     "AppendixOKKReductionV19"),
-    ("metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy",
-     "AppendixPG2HolonomyV19"),
-    ("metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem",
-     "AppendixQIndexTheoremV19"),
+    # 2026-09-06: the nine V19 entries that used to sit here are GONE because
+    # they were fixed, not because they were reclassified. Every one named a
+    # class the module never defined, so `except ImportError` dropped the
+    # simulation from the run while the summary still said "85 simulations,
+    # all passed". Reviving them added 147 formulas, 61 parameters and 24
+    # scored validation rows.
+    #
+    # Recording a dead import as known-dead keeps the count from growing, but
+    # it does not make the module run. This list should stay as close to
+    # empty as the codebase allows.
     ("metaphysica.generators.validation.gemini_peer_review",
      "run_post_simulation_review"),
 }

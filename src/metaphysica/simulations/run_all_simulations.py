@@ -608,25 +608,25 @@ except ImportError:
 
 # v19.0 Complete Derivations (Wave 4 - Comprehensive sector derivations)
 try:
-    from metaphysica.simulations.PM.derivations.lagrangian_master import LagrangianMasterDerivationV19
+    from metaphysica.simulations.PM.derivations.lagrangian_master import LagrangianMasterDerivation
     LAGRANGIAN_MASTER_V19_AVAILABLE = True
 except ImportError:
     LAGRANGIAN_MASTER_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.derivations.gauge_sector_complete import GaugeSectorCompleteV19
+    from metaphysica.simulations.PM.derivations.gauge_sector_complete import GaugeSectorCompleteDerivations
     GAUGE_SECTOR_V19_AVAILABLE = True
 except ImportError:
     GAUGE_SECTOR_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.derivations.matter_sector_complete import MatterSectorCompleteV19
+    from metaphysica.simulations.PM.derivations.matter_sector_complete import MatterSectorCompleteDerivations
     MATTER_SECTOR_V19_AVAILABLE = True
 except ImportError:
     MATTER_SECTOR_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.derivations.cosmology_sector_complete import CosmologySectorCompleteV19
+    from metaphysica.simulations.PM.derivations.cosmology_sector_complete import CosmologySectorCompleteDerivations
     COSMOLOGY_SECTOR_V19_AVAILABLE = True
 except ImportError:
     COSMOLOGY_SECTOR_V19_AVAILABLE = False
@@ -639,31 +639,31 @@ except ImportError:
 
 # v19.0 Eigenchris-style Mathematical Appendices
 try:
-    from metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc import AppendixMTensorCalcV19
+    from metaphysica.simulations.PM.paper.appendices.appendix_m_tensor_calc import AppendixMTensorCalculus
     APPENDIX_M_V19_AVAILABLE = True
 except ImportError:
     APPENDIX_M_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein import AppendixNVielbeinV19
+    from metaphysica.simulations.PM.paper.appendices.appendix_n_vielbein import AppendixNVielbein
     APPENDIX_N_V19_AVAILABLE = True
 except ImportError:
     APPENDIX_N_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction import AppendixOKKReductionV19
+    from metaphysica.simulations.PM.paper.appendices.appendix_o_kk_reduction import AppendixOKKReduction
     APPENDIX_O_V19_AVAILABLE = True
 except ImportError:
     APPENDIX_O_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy import AppendixPG2HolonomyV19
+    from metaphysica.simulations.PM.paper.appendices.appendix_p_g2_holonomy import AppendixPG2Holonomy
     APPENDIX_P_V19_AVAILABLE = True
 except ImportError:
     APPENDIX_P_V19_AVAILABLE = False
 
 try:
-    from metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem import AppendixQIndexTheoremV19
+    from metaphysica.simulations.PM.paper.appendices.appendix_q_index_theorem import AppendixQIndexTheorem
     APPENDIX_Q_V19_AVAILABLE = True
 except ImportError:
     APPENDIX_Q_V19_AVAILABLE = False
@@ -1390,17 +1390,17 @@ class SimulationRunner:
             # Phase 7: v19.0 Comprehensive derivation simulations
             7: (
                 # Complete sector derivations with step-by-step mathematics
-                ([LagrangianMasterDerivationV19()] if LAGRANGIAN_MASTER_V19_AVAILABLE else []) +
-                ([GaugeSectorCompleteV19()] if GAUGE_SECTOR_V19_AVAILABLE else []) +
-                ([MatterSectorCompleteV19()] if MATTER_SECTOR_V19_AVAILABLE else []) +
-                ([CosmologySectorCompleteV19()] if COSMOLOGY_SECTOR_V19_AVAILABLE else []) +
+                ([LagrangianMasterDerivation()] if LAGRANGIAN_MASTER_V19_AVAILABLE else []) +
+                ([GaugeSectorCompleteDerivations()] if GAUGE_SECTOR_V19_AVAILABLE else []) +
+                ([MatterSectorCompleteDerivations()] if MATTER_SECTOR_V19_AVAILABLE else []) +
+                ([CosmologySectorCompleteDerivations()] if COSMOLOGY_SECTOR_V19_AVAILABLE else []) +
                 ([GRSpacetimeDerivationsV19()] if GR_SPACETIME_V19_AVAILABLE else []) +
                 # Eigenchris-style mathematical appendices
-                ([AppendixMTensorCalcV19()] if APPENDIX_M_V19_AVAILABLE else []) +
-                ([AppendixNVielbeinV19()] if APPENDIX_N_V19_AVAILABLE else []) +
-                ([AppendixOKKReductionV19()] if APPENDIX_O_V19_AVAILABLE else []) +
-                ([AppendixPG2HolonomyV19()] if APPENDIX_P_V19_AVAILABLE else []) +
-                ([AppendixQIndexTheoremV19()] if APPENDIX_Q_V19_AVAILABLE else []) +
+                ([AppendixMTensorCalculus()] if APPENDIX_M_V19_AVAILABLE else []) +
+                ([AppendixNVielbein()] if APPENDIX_N_V19_AVAILABLE else []) +
+                ([AppendixOKKReduction()] if APPENDIX_O_V19_AVAILABLE else []) +
+                ([AppendixPG2Holonomy()] if APPENDIX_P_V19_AVAILABLE else []) +
+                ([AppendixQIndexTheorem()] if APPENDIX_Q_V19_AVAILABLE else []) +
                 ([AppendixRVacuumStabilityV19()] if APPENDIX_R_V19_AVAILABLE else []) +
                 ([AppendixSSpectralResidueV19()] if APPENDIX_S_V19_AVAILABLE else []) +
                 ([AppendixTQECBridge()] if APPENDIX_T_AVAILABLE else []) +
@@ -3314,6 +3314,35 @@ def run_wolfram_executor(verbose: bool = True, force: bool = False) -> bool:
         if verbose:
             print(f"[ERROR] Could not run Wolfram executor: {e}")
         return False
+
+
+# ---------------------------------------------------------------------------
+# NOTE ON THE `except ImportError` PATTERN ABOVE.
+#
+# Every optional simulation is imported as
+#
+#     try:
+#         from ...some_module import SomeClass
+#         SOME_FLAG = True
+#     except ImportError:
+#         SOME_FLAG = False
+#
+# which cannot tell "this module is genuinely absent" from "the class name is
+# misspelled". On 2026-09-06 NINE modules were found disabled by the second
+# case -- every one of them asked for a class with a `V19` suffix that the
+# module never defined:
+#
+#     lagrangian_master, gauge_sector_complete, matter_sector_complete,
+#     cosmology_sector_complete, and appendices M, N, O, P, Q
+#
+# The run summary reported "85 simulations, all passed" the whole time. The
+# absence showed up only indirectly, as g2_holonomy.b2 missing from the
+# registry while topology.b2 = 4 sat beside it.
+#
+# tests/test_no_simulation_is_silently_disabled.py now checks every one of
+# these imports resolves, so a rename is a failure rather than a quiet
+# thirteen-percent reduction in the run.
+# ---------------------------------------------------------------------------
 
 
 def main():

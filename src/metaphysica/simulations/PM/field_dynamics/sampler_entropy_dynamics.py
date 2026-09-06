@@ -820,7 +820,7 @@ class SamplerEntropyDynamics(SimulationBase):
                     "+ (1/N_OR) * sum_j p_j ln(1/p_j) * Gamma_collapse "
                     "+ kappa_sampler * laplacian(S_sampler)"
                 ),
-                category="PLAUSIBLE",
+                category="SPECULATIVE",
                 description=(
                     "Full entropy gradient equation for the sampler S^{2,0} sector of "
                     "M^{26}(24,2). Combines bridge thermodynamics (von Neumann entropy "

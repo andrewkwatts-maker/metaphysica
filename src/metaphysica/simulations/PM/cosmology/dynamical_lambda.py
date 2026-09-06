@@ -1104,7 +1104,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
                     r"e^{-S_{\text{Pneuma}}}"
                 ),
                 plain_text="V_eff = V_bare * exp(-S_Pneuma)",
-                category="PLAUSIBLE",
+                category="SPECULATIVE",
                 description=(
                     "Effective cosmological constant from dynamical relaxation. "
                     "The entire bare potential is suppressed by the exponential "
@@ -1168,7 +1168,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
                     r"V_{\text{torsion}}"
                 ),
                 plain_text="V_bare = V_racetrack(T_min) + V_torsion",
-                category="PLAUSIBLE",
+                category="SPECULATIVE",
                 description=(
                     "Bare potential combining the KKLT racetrack minimum "
                     "(AdS, typically negative) with the G2 torsion uplift. "
@@ -1247,7 +1247,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
                     r"14 \times T_{\min}"
                 ),
                 plain_text="S_naive = (N_bridges + kappa_sampler) * T_min = 14 * T_min",
-                category="PLAUSIBLE",
+                category="SPECULATIVE",
                 description=(
                     "Naive late-time entropy estimate. Each bridge contributes "
                     "S_vN ~ T_min and the sampler contributes kappa * T_min. "
