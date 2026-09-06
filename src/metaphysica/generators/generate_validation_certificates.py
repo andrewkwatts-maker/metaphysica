@@ -134,8 +134,26 @@ def _registry_band(sigma) -> str:
     return "FAIL"
 
 
-def _verdict(sigma, registry_status: str) -> str:
-    """Classify by sigma with the registry's own validation_status as guide."""
+#: Bound types that compare a value against a central value, so a residual
+#: exists and an uncertainty is required to form it. One-sided bounds are
+#: excluded on purpose: for an `upper` or `lower` bound sigma is legitimately
+#: None because a margin is not a residual.
+_TWO_SIDED_BOUNDS = frozenset({"measured", "central_value", "two_sided"})
+
+
+def _verdict(sigma, registry_status: str, bound_type: str = "") -> str:
+    """Classify by sigma with the registry's own validation_status as guide.
+
+    A two-sided comparison with no uncertainty cannot score. This check comes
+    FIRST, ahead of the registry status, because the status short-circuit is
+    what let eight rows reach PASS without a comparison: the registry sets
+    validation_status when a bound is present, whether or not an uncertainty
+    is, and `sigma is None -> UNBOUNDED` below was then unreachable.
+    quantum_bio.topological_pitch published 6.12 against a stated 13.0 -- a
+    factor of two -- as a PASS.
+    """
+    if sigma is None and (bound_type or "").lower() in _TWO_SIDED_BOUNDS:
+        return "UNBOUNDED"
     s = (registry_status or "").upper()
     if s in ("PASS", "FAIL", "MARGINAL", "TENSION"):
         return s
@@ -177,7 +195,8 @@ def build_report() -> Dict[str, Any]:
         elif _is_roundtrip_identity(value, exp):
             verdict = "IDENTITY"
         else:
-            verdict = _verdict(sigma, status)
+            verdict = _verdict(sigma, status,
+                               rec.get("bound_type") or "")
 
         # Dual sigma reporting. Where a record declares a theory
         # uncertainty, the registry folds it into sigma in quadrature -

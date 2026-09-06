@@ -208,9 +208,23 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         # Experimental references
         self.omega_dm_exp = float(OMEGA_DM_PLANCK)
         self.omega_dm_unc = 0.007
-        # DESI 2025: w0 = -0.958 +/- 0.02 (thawing quintessence)
-        self.w0_exp = -0.958  # DESI 2025 value (replaces Planck+BAO -1.03)
-        self.w0_unc = 0.02    # DESI 2025 uncertainty
+        # w0 anchor. This USED to read
+        #     self.w0_exp = -0.958   # DESI 2025 value
+        #     self.w0_unc = 0.02     # DESI 2025 uncertainty
+        # and there is no such measurement. The datasources carry two DESI w0
+        # rows -- desi.w0 = -0.752 +/- 0.057 (the DR2 w0waCDM headline) and
+        # desi.w0_thawing = -0.957 +/- 0.067 (attribution UNVERIFIED). The
+        # -0.958 +/- 0.02 was this framework's own prediction, -23/24 =
+        # -0.95833, rounded to three decimals with an uncertainty tight
+        # enough to make the agreement read as exact: a prediction scored
+        # against itself, at 0.0167 sigma, published as "DESI_2025".
+        #
+        # Deferred to the registry, so the number cannot drift from the
+        # datasource again. established.py names desi.w0 the primary scoring
+        # anchor.
+        self.w0_exp = None    # resolved from the registry in run()
+        self.w0_unc = None
+        self.w0_source = "desi.w0 (unresolved)"
         self.H0_exp_planck = float(H0_PLANCK)
         self.H0_exp_shoes = float(H0_SHOES)
         self.H0_unc = 1.0
@@ -241,6 +255,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             "topology.mephorash_chi",         # Effective Euler characteristic = 144
             "registry.node_count",       # Visible/active states = 125 (was geometry.sophian_modulus, absent)
             "topology.hidden_supports",  # Sterile/hidden states = 163 (was geometry.barbelo_modulus, absent)
+            "desi.w0",                   # DR2 w0waCDM headline; replaces a fabricated -0.958 +/- 0.02 literal
         ]
 
     @property
@@ -385,6 +400,38 @@ class CosmologySectorCompleteDerivations(SimulationBase):
     # SECTION B: DARK ENERGY / f(R,T,tau) WITH ATTRACTOR
     # =========================================================================
 
+    def _resolve_w0_anchor(self, registry=None) -> None:
+        """Read the w0 anchor from the registry. No literal fallback.
+
+        established.py names desi.w0 the primary scoring anchor; desi.w0_thawing
+        exists too but its attribution is recorded UNVERIFIED.
+
+        `registry` is optional because validate_self() derives without going
+        through run() and would otherwise trip the guard below. Falling back to
+        the registry SINGLETON is not a literal default -- it reads the same
+        established.py row run() reads. If desi.w0 is absent this still raises
+        rather than substituting a number.
+        """
+        if registry is None:
+            from metaphysica.simulations.base import PMRegistry
+            from metaphysica.simulations.base.established import EstablishedPhysics
+            registry = PMRegistry.get_instance()
+            EstablishedPhysics.load_into_registry(registry)
+        entry = registry.get_entry("desi.w0")
+        if entry is None:
+            raise KeyError(
+                "desi.w0 is not in the registry; refusing to substitute a "
+                "literal anchor."
+            )
+        self.w0_exp = float(entry.value)
+        unc = entry.uncertainty
+        if unc is None:
+            unc = entry.experimental_uncertainty
+        if unc is None or float(unc) <= 0.0:
+            raise ValueError("desi.w0 carries no usable 1-sigma uncertainty")
+        self.w0_unc = float(unc)
+        self.w0_source = entry.source or "desi.w0"
+
     def derive_dark_energy_frt_attractor(self) -> DarkEnergyDerivation:
         """
         Derive dark energy / f(R,T,tau) modified gravity with attractor mechanism.
@@ -456,6 +503,11 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         )
 
         # Sigma deviations
+        if self.w0_exp is None:
+            # Resolve from the SSOT rather than defaulting. A literal default is
+            # how -0.958 +/- 0.02 came to be published as a DESI measurement;
+            # this reads established.py's desi.w0 and raises if it is missing.
+            self._resolve_w0_anchor()
         sigma_w0 = abs(w0_tzimtzum - self.w0_exp) / self.w0_unc
         sigma_H0 = abs(H0_odowd - 70.2) / self.H0_unc  # Compare to midpoint
 
@@ -578,6 +630,9 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         Returns:
             Dictionary containing all derived cosmological parameters
         """
+        # Resolve the w0 anchor from the registry before anything uses it.
+        self._resolve_w0_anchor(registry)
+
         print("\n" + "=" * 70)
         print("COSMOLOGY SECTOR COMPLETE DERIVATIONS FROM G2 HOLONOMY")
         print("=" * 70)
@@ -1203,10 +1258,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             status="DERIVED",
             description="w_0 = -23/24 ~ -0.9583 from tzimtzum pressure",
             derivation_formula="de-w0-tzimtzum-v19",
-            experimental_bound=-0.958,
+            # Was -0.958 +/- 0.02 sourced "DESI_2025", which is not a
+            # measurement that exists -- see the note in __init__. Scored
+            # against the real DR2 headline this is 3.62 sigma, the same
+            # number cosmology.w0_thawing already reported for the identical
+            # prediction.
+            experimental_bound=-0.752,
             bound_type="measured",
-            bound_source="DESI_2025",
-            uncertainty=0.02
+            bound_source="DESI DR2 w0waCDM (arXiv:2503.14738)",
+            uncertainty=0.057
         ))
 
         params.append(Parameter(
@@ -1605,10 +1665,19 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         # Check 2: w_0 prediction within 3 sigma of DESI
         w0_ok = de.sigma_w0 < 3.0
+        # The interval USED to be hardcoded {"lower": -0.998, "upper": -0.918},
+        # which is -0.958 +/- 0.02: the same fabricated DESI_2025 band that
+        # __init__ carried, written out by hand as two bounds so that replacing
+        # the anchor upstream left it standing. It is now formed from the
+        # resolved anchor, so it cannot drift from the datasource again.
         checks.append({
-            "name": "w_0 within 3-sigma of DESI 2025",
+            "name": f"w_0 within 3-sigma of {self.w0_source}",
             "passed": w0_ok,
-            "confidence_interval": {"lower": -0.998, "upper": -0.918, "sigma": de.sigma_w0},
+            "confidence_interval": {
+                "lower": self.w0_exp - self.w0_unc,
+                "upper": self.w0_exp + self.w0_unc,
+                "sigma": de.sigma_w0,
+            },
             "log_level": "INFO" if w0_ok else "WARNING",
             "message": f"w_0 = {de.w0_predicted:.4f}, sigma = {de.sigma_w0:.2f}"
         })

@@ -1473,7 +1473,15 @@ class MatterSectorCompleteDerivations(SimulationBase):
             derivation_formula="yukawa-epsilon-cabibbo-v19",
             experimental_bound=0.22500,
             bound_type="measured",
-            bound_source="PDG2024_Vus"
+            bound_source="PDG2024_Vus",
+            # The uncertainty was MISSING, so sigma came out None and the
+            # verdict defaulted to PASS -- a comparison that could not fail.
+            # The identical value, 0.22313, scores 2.791 sigma TENSION under
+            # ckm.V_us against this same PDG row, so the framework was
+            # publishing one number as both a TENSION and a PASS. 0.00067 is
+            # the 1-sigma already carried on pdg.V_us, the row this bound
+            # cites; it is read across, not invented.
+            uncertainty=0.00067
         ))
 
         params.append(Parameter(
