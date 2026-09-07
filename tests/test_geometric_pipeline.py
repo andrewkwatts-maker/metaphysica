@@ -19,6 +19,25 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "simulations"))
 from metaphysica.simulations.PM.validation.geometric_pipeline import GeometricPipeline
 
 
+def _skip_unless_leech():
+    """These assert Lambda_24 numbers, so they only apply on that branch.
+
+    The `lattice_24d` fork can put the model on the Niemeier lattice E8^3,
+    whose kissing number is 720 rather than 196560 and whose minimum norm is 2
+    rather than 4. Asserting the Leech values there is asserting the wrong
+    lattice's properties, not detecting a regression.
+    """
+    try:
+        from metaphysica.simulations.core.variants import resolve
+        branch = resolve("lattice_24d")
+    except Exception:
+        return
+    if branch != "leech":
+        import pytest as _pt
+        _pt.skip("lattice_24d fork is on %r, not leech" % branch)
+
+
+
 @pytest.fixture(scope="module")
 def pipeline():
     """Run the pipeline once for all tests."""
@@ -43,6 +62,7 @@ class TestPipelineExecution:
             assert key in r, f"Missing pipeline stage: {key}"
 
     def test_pipeline_valid(self, pipeline):
+        _skip_unless_leech()
         assert pipeline._results['pipeline_valid']
 
 
@@ -73,6 +93,7 @@ class TestLeechStage:
         assert pipeline._results['leech']['dimension'] == 24
 
     def test_kissing_196560(self, pipeline):
+        _skip_unless_leech()
         assert pipeline._results['leech']['kissing_number'] == 196_560
 
     def test_n_gen_3(self, pipeline):
@@ -179,6 +200,7 @@ class TestSensitivity:
 
 class TestFullVerification:
     def test_all_checks_pass(self):
+        _skip_unless_leech()
         p = GeometricPipeline()
         checks = p.verify()
         for key, val in checks.items():

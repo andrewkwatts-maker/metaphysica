@@ -20,6 +20,25 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "simulations"))
 from metaphysica.simulations.PM.algebra.leech_lattice import GolayCode, LeechLattice
 
 
+def _skip_unless_leech():
+    """These assert Lambda_24 numbers, so they only apply on that branch.
+
+    The `lattice_24d` fork can put the model on the Niemeier lattice E8^3,
+    whose kissing number is 720 rather than 196560 and whose minimum norm is 2
+    rather than 4. Asserting the Leech values there is asserting the wrong
+    lattice's properties, not detecting a regression.
+    """
+    try:
+        from metaphysica.simulations.core.variants import resolve
+        branch = resolve("lattice_24d")
+    except Exception:
+        return
+    if branch != "leech":
+        import pytest as _pt
+        _pt.skip("lattice_24d fork is on %r, not leech" % branch)
+
+
+
 # ------------------------------------------------------------------
 # Golay Code Tests
 # ------------------------------------------------------------------
@@ -148,6 +167,7 @@ class TestLeechLatticeBasic:
         assert leech.dimension == 24
 
     def test_kissing_number_196560(self, leech):
+        _skip_unless_leech()
         assert leech.kissing_number == 196_560
 
     def test_n_gen_equals_3(self, leech):
@@ -248,6 +268,7 @@ class TestLeechVerification:
         return LeechLattice(compute_minimal=True)
 
     def test_all_checks_pass(self, leech):
+        _skip_unless_leech()
         results = leech.verify()
         for key, val in results.items():
             if key == 'computed_count':

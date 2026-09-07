@@ -515,15 +515,30 @@ class AppendixPG2Holonomy(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Betti numbers b_k count independent k-cycles. For G2 holonomy "
-                        "manifolds, we have the remarkable constraint:"
+                        "The Betti numbers b_k count independent k-cycles. Holonomy "
+                        "exactly G2 forces the fundamental group to be finite, and "
+                        "therefore:"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"b_2 = 0 \quad \text{(no harmonic 2-forms on compact G2 manifolds)}",
+                    content=r"b_1 = 0 \quad \text{(finite fundamental group; b_2 is unconstrained)}",
                     formula_id="betti-number-relation-v19",
                     label="(P.11)"
+                ),
+                ContentBlock(
+                    type="paragraph",
+                    content=(
+                        "This block previously read b_2 = 0, \"no harmonic 2-forms on "
+                        "compact G2 manifolds\". That is false and is very likely a "
+                        "confusion with b_1. G2 holonomy places no constraint on b_2: "
+                        "H^2 decomposes under G2 as 14 + 7 and is generically "
+                        "non-trivial, and Joyce's orbifold resolutions of T^7/Gamma "
+                        "realise b_2 anywhere in [0, 28] across 252 distinct (b_2, b_3) "
+                        "pairs. The framework carries b_2 = 4, so this appendix was "
+                        "publishing 0 for the same Betti number another module "
+                        "publishes as 4."
+                    )
                 ),
                 ContentBlock(
                     type="paragraph",
@@ -592,7 +607,11 @@ class AppendixPG2Holonomy(SimulationBase):
                     headers=["Quantity", "Symbol", "Value", "Physical Meaning"],
                     rows=[
                         ["Effective Euler", "chi_eff", "144", "Total topological complexity"],
-                        ["Second Betti", "b_2", "0", "No abelian gauge fields"],
+                        # Was ["Second Betti", "b_2", "0", "No abelian gauge fields"]
+                        # -- false, and contradicted topology.b2 = 4 in the same
+                        # build. b_2 counts H^2, which for M-theory on a G2
+                        # manifold gives the U(1) vector multiplets.
+                        ["Second Betti", "b_2", "4", "U(1) vector multiplets"],
                         ["Third Betti", "b_3", "24", "Number of 3-cycles"],
                         ["Fermion generations", "n_gen", "3", "From b_3/8"],
                         ["G2 dimension", "dim(G2)", "14", "Lie group dimension"],
@@ -872,22 +891,47 @@ class AppendixPG2Holonomy(SimulationBase):
             Formula(
                 id="betti-number-relation-v19",
                 label="(P.10)",
-                latex=r"b_2(M) = 0 \quad \text{for compact G2 holonomy manifolds}",
-                plain_text="Second Betti number vanishes for compact G2 manifolds",
+                latex=r"b_1(M) = 0 \quad \text{for holonomy exactly } G_2 "
+                      r"\quad (b_2 \text{ unconstrained})",
+                plain_text=(
+                    "Holonomy exactly G2 forces a finite fundamental group, so "
+                    "b_1 = 0. It places no constraint on b_2."
+                ),
                 eml_tree_str="eml_scalar(0.0)",
-                category="ESTABLISHED",
-                description="Topological constraint: no harmonic 2-forms",
+                category="FALSIFIED",
+                description=(
+                    "FALSIFIED as stated. This formula asserted b_2(M) = 0 for "
+                    "compact G2 holonomy manifolds, was categorised ESTABLISHED, "
+                    "and carried value 0.0 into g2_holonomy.b2 -- while run() in "
+                    "this same module sets that parameter from topology.b2 = 4. "
+                    "The surviving true statement is b_1 = 0."
+                ),
                 input_params=[],
                 output_params=["g2_holonomy.b2"],
                 derivation={
-                    "method": "Hodge theory on G2 manifolds",
+                    "method": "Hodge theory on G2 manifolds -- the last step fails",
                     "steps": [
                         "Harmonic forms decompose under G2 action",
-                        "2-forms in 7D: Lambda^2 = 7 + 14 under G2",
+                        "2-forms in 7D: Lambda^2 = 7 + 14 under G2  [TRUE]",
                         "The 7 is parallel to phi (3-form contracted with vector)",
                         "The 14 is g2 Lie algebra valued",
-                        "For holonomy = G2 (not proper subgroup): no G2-invariant 2-forms",
-                        "Therefore b_2 = 0",
+                        "For holonomy = G2 (not proper subgroup): no G2-invariant "
+                        "2-forms  [TRUE, but pointwise]",
+                        "Therefore b_2 = 0  [DOES NOT FOLLOW -- this is the error]",
+                        "WHY IT FAILS: the two true steps are pointwise "
+                        "representation theory about the bundle Lambda^2, whose "
+                        "summands 7 and 14 contain no trivial representation, so "
+                        "no 2-form is G2-invariant AT A POINT. b_2 counts "
+                        "HARMONIC 2-forms, i.e. dim H^2(M), a global topological "
+                        "quantity. A harmonic form need not be a pointwise "
+                        "G2-invariant section, so H^2 need not vanish -- and "
+                        "generically does not.",
+                        "WHAT IS TRUE: holonomy exactly G2 forces the fundamental "
+                        "group finite, hence b_1 = 0. That is very likely the "
+                        "statement this was confused with.",
+                        "COUNTEREXAMPLES: Joyce's orbifold resolutions of "
+                        "T^7/Gamma realise b_2 anywhere in [0, 28] across 252 "
+                        "distinct (b_2, b_3) pairs.",
                     ]
                 },
                 terms={
