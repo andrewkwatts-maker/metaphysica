@@ -130,6 +130,82 @@ def test_it_has_no_roots(generator):
     assert best >= 4 - 1e-9, "a small integer combination has norm %.6g" % best
 
 
+def test_the_kissing_number_is_derived_not_asserted():
+    """196560, counted from the Golay code rather than written down.
+
+    ``kissing_number`` used to ``return 196_560  # Known exact value``, and two
+    callers then "validated" it with
+    ``results['leech']['kissing_number'] == 196_560`` -- a hardcoded constant
+    compared against a hardcoded constant, which cannot fail. It was
+    unfalsifiable twice over: while the generator was not the Leech lattice at
+    all, the literal still read 196560, so the check passed for a lattice whose
+    real kissing number was something else.
+    """
+    lat = LeechLattice()
+    weights = lat.golay.weight_distribution()
+    assert weights.get(8) == 759, (
+        "G24 has 759 octads; got %r" % weights.get(8)
+    )
+    assert sum(weights.values()) == 4096, "G24 has 2^12 codewords"
+
+    expected = 4 * (24 * 23 // 2) + 759 * 2 ** 7 + 24 * 4096
+    assert expected == 196560, "the three shape counts do not sum correctly"
+    assert lat.kissing_number == expected
+
+
+def test_every_minimal_vector_really_lies_in_the_lattice():
+    """Generate all three shapes and solve B x = v for each.
+
+    The counting argument above is only as good as the claim that these
+    vectors are IN the lattice. A sample from each family is checked
+    explicitly, which is what ties the combinatorics to the construction.
+    """
+    lat = LeechLattice()
+    M = lat._generator_matrix()
+    B = np.round(M * np.sqrt(8.0)).astype(np.int64)
+    Binv = np.linalg.inv(B.astype(np.float64))
+
+    def in_lattice(v):
+        x = v @ Binv
+        return np.allclose(x, np.round(x), atol=1e-6)
+
+    # shape (+-4^2, 0^22)
+    checked = 0
+    for i, j in itertools.combinations(range(24), 2):
+        for si, sj in ((4, 4), (4, -4), (-4, 4), (-4, -4)):
+            v = np.zeros(24, dtype=np.int64)
+            v[i], v[j] = si, sj
+            assert int(v @ v) == 32, "wrong norm for the (4,4) shape"
+            assert in_lattice(v), "(%d,%d) 4-4 vector not in the lattice" % (i, j)
+            checked += 1
+            if checked >= 120:
+                break
+        if checked >= 120:
+            break
+
+    # shape (+-2^8, 0^16) on Golay octads, even number of minus signs
+    words = np.asarray(lat.golay.enumerate_codewords()) % 2
+    octads = [w for w in words if int(w.sum()) == 8]
+    assert len(octads) == 759
+    for oc in octads[:25]:
+        support = np.flatnonzero(oc)
+        v = np.zeros(24, dtype=np.int64)
+        v[support] = 2
+        assert int(v @ v) == 32
+        assert in_lattice(v), "octad vector not in the lattice"
+
+    # shape (-+3, +-1^23)
+    found = 0
+    for w in words[:40]:
+        base = np.where(w == 1, -1, 1).astype(np.int64)
+        for pos in range(24):
+            v = base.copy()
+            v[pos] = -3 * base[pos]
+            if int(v @ v) == 32 and in_lattice(v):
+                found += 1
+    assert found > 0, "no (3, 1^23) minimal vector landed in the lattice"
+
+
 def test_the_golay_code_underneath_is_the_binary_golay_code(generator):
     """The replacement is built from this code, so it has to be right.
 

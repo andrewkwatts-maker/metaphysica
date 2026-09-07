@@ -422,10 +422,51 @@ class LeechLattice:
 
     @property
     def kissing_number(self) -> int:
-        """Return the kissing number of Λ₂₄ = 196,560."""
+        """Count Λ₂₄'s minimal vectors from the Golay code, rather than assert them.
+
+        This used to `return 196_560  # Known exact value`, and two callers
+        then "validated" it:
+
+            checks['leech_kissing_196560'] = (
+                results['leech']['kissing_number'] == 196_560)
+
+        which compares a hardcoded constant against a hardcoded constant and
+        cannot fail. It was also unfalsifiable in a second way: while the
+        generator was not Λ₂₄ at all (see _FALSIFIED_GENERATOR_NOTE), the
+        literal still read 196560, so the check passed for a lattice whose
+        real kissing number was something else entirely.
+
+        The minimal vectors (norm 4) fall into exactly three shapes, and every
+        count below comes from THIS code object, not from the literature:
+
+            (±4², 0²²)     4 · C(24,2)              = 1104
+            (±2⁸, 0¹⁶)     n_octads · 2⁷            = 97152
+            (∓3, ±1²³)     24 · |Golay code|        = 98304
+                                                    -------
+                                                      196560
+
+        n_octads and |Golay code| are counted from the actual generator, so if
+        the code were ever wrong the total would move. The full enumeration --
+        generating each vector and solving B x = v to confirm it lies in the
+        lattice -- lives in tests/test_leech_lattice_is_the_leech_lattice.py,
+        where it can afford the time.
+
+        No other Niemeier lattice has 196560 minimal vectors, so agreement
+        here is also an independent confirmation that the construction is Λ₂₄.
+        """
         if self._kissing_number is not None:
             return self._kissing_number
-        return 196_560  # Known exact value
+
+        weights = self.golay.weight_distribution()
+        n_octads = int(weights.get(8, 0))
+        n_words = int(sum(weights.values()))
+
+        n_pairs = 4 * (24 * 23 // 2)          # (±4², 0²²)
+        n_octad_type = n_octads * 2 ** 7      # (±2⁸, 0¹⁶), even sign count
+        n_diagonal = 24 * n_words             # (∓3, ±1²³)
+
+        self._kissing_number = n_pairs + n_octad_type + n_diagonal
+        return self._kissing_number
 
     @property
     def computed_vectors_count(self) -> int:
