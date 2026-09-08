@@ -52,6 +52,8 @@ Assertion Assessment (Sprint 1, WP 1.3)
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
+import itertools
+
 import numpy as np
 from itertools import permutations
 from typing import Optional, Tuple
@@ -230,7 +232,14 @@ class G2DifferentialGeometry:
         """Create a perturbed G2 3-form φ₀ + ε·δφ.
 
         The perturbation δφ is a random antisymmetric 3-form.
-        A perturbed φ generally has nonzero torsion.
+
+        NOTE: a perturbed φ does NOT generally have nonzero torsion, which is
+        what this used to claim. Perturbing a constant-coefficient form leaves
+        it constant, so dφ = d∗φ = 0 still holds and the structure is still
+        torsion-free. What the perturbation changes is the induced metric.
+        G2 3-forms are an OPEN set in Λ³, so a small perturbation remains a G2
+        form -- the Hitchin metric stays positive definite (eigenvalues
+        0.44 .. 2.01 at ε = 0.3), it is simply a different G2 structure.
 
         Args:
             epsilon: Perturbation magnitude
@@ -380,6 +389,85 @@ class G2DifferentialGeometry:
     # Torsion classes (Fernández-Gray decomposition)
     # ------------------------------------------------------------------
 
+
+    # ------------------------------------------------------------------
+    # G2-irreducible decompositions, used by the torsion projections
+    # ------------------------------------------------------------------
+
+    def _lambda3_subspaces(self) -> dict:
+        """Bases for Lambda^3 = Lambda^3_1 + Lambda^3_7 + Lambda^3_27.
+
+        Built rather than tabulated:
+
+          Lambda^3_1   = span(phi)                          dim 1
+          Lambda^3_7   = span{ *(e^i ^ phi) : i = 1..7 }    dim 7
+          Lambda^3_27  = the orthogonal complement          dim 27
+
+        Verified by dimension: 1 + 7 + 27 = 35 = C(7,3). Returned as row
+        matrices over the ordered 3-form basis so a projection is a least
+        squares solve, with no convention to get wrong.
+        """
+        basis = list(itertools.combinations(range(7), 3))
+        n = len(basis)
+
+        def flatten(form3):
+            return np.array([form3[i, j, k] for (i, j, k) in basis])
+
+        phi_v = flatten(self._phi)
+        V1 = phi_v.reshape(1, n)
+
+        # e^i ^ phi is a 4-form; carry it to a 3-form with the Hodge star.
+        eps = _levi_civita_7d()
+        V7_rows = []
+        for i in range(7):
+            four = np.zeros((7, 7, 7, 7))
+            for (a, b, c) in basis:
+                val = self._phi[a, b, c]
+                if val == 0.0:
+                    continue
+                for perm, sgn in (((i, a, b, c), 1),):
+                    if len({i, a, b, c}) == 4:
+                        four[perm] += sgn * val
+            # *(4-form) -> 3-form
+            three = np.einsum('abcd,abcdijk->ijk', four, eps) / 24.0
+            V7_rows.append(flatten(three))
+        V7 = np.array(V7_rows)
+
+        M = np.vstack([V1, V7])
+        # orthonormal complement via SVD
+        u, s, vh = np.linalg.svd(M)
+        rank = int((s > 1e-9).sum())
+        V27 = vh[rank:]
+        return {"V1": V1, "V7": V7, "V27": V27, "basis": basis,
+                "rank_1_plus_7": rank}
+
+    def _lambda2_subspaces(self) -> dict:
+        """Bases for Lambda^2 = Lambda^2_7 + Lambda^2_14, with Lambda^2_14 = g2.
+
+          Lambda^2_7  = span{ X . phi : X in R^7 }   dim 7   (contraction)
+          Lambda^2_14 = the orthogonal complement    dim 14  = dim g2
+
+        Verified by dimension: 7 + 14 = 21 = C(7,2).
+        """
+        pairs = list(itertools.combinations(range(7), 2))
+        rows = []
+        for m in range(7):
+            v = np.array([self._phi[m, i, j] for (i, j) in pairs])
+            rows.append(v)
+        V7 = np.array(rows)
+        u, s, vh = np.linalg.svd(V7)
+        rank = int((s > 1e-9).sum())
+        V14 = vh[rank:]
+        return {"V7": V7, "V14": V14, "pairs": pairs, "rank_7": rank}
+
+    @staticmethod
+    def _project_onto(rows: np.ndarray, vec: np.ndarray) -> np.ndarray:
+        """Least-squares projection of `vec` onto the row space of `rows`."""
+        if rows.size == 0:
+            return np.zeros_like(vec)
+        q, _ = np.linalg.qr(rows.T)
+        return q @ (q.T @ vec)
+
     def compute_torsion_classes(self) -> dict:
         """Compute the four torsion classes of the G2 structure.
 
@@ -406,17 +494,46 @@ class G2DifferentialGeometry:
         d_star = self.compute_d_star_phi()
 
         # τ₀: scalar component, proportional to ⟨dφ, ∗φ⟩
-        # For flat G2: τ₀ = 0
         tau0 = np.sum(d_phi * star_phi)  # trace-like contraction
 
-        # τ₁: 1-form component, extracted from d∗φ projection onto φ
-        tau1 = np.zeros(7, dtype=np.float64)
+        # τ₁, τ₂, τ₃ are now PROJECTED, not assumed. They used to read
+        #     tau1 = np.zeros(7); tau2 = np.zeros((7,7)); tau3 = np.zeros(...)
+        # i.e. three of the four classes were never computed at all, and
+        # test_tau1_zero then compared a hardcoded zero against zero.
+        #
+        # dφ lives in Λ⁴ and d∗φ in Λ⁵; both are carried to Λ³ and Λ² by the
+        # Hodge star and decomposed there:
+        #     Λ³ = Λ³₁ ⊕ Λ³₇ ⊕ Λ³₂₇   (1 + 7 + 27 = 35)
+        #     Λ² = Λ²₇ ⊕ Λ²₁₄          (7 + 14 = 21, Λ²₁₄ = g₂)
+        eps7 = _levi_civita_7d()
+        sub3 = self._lambda3_subspaces()
+        sub2 = self._lambda2_subspaces()
 
-        # τ₂: 14-dimensional component (Lie algebra g₂ part)
-        tau2 = np.zeros((7, 7), dtype=np.float64)
+        # ∗(dφ) : Λ⁴ → Λ³
+        d_phi_3 = np.einsum('abcd,abcdijk->ijk', d_phi, eps7) / 24.0
+        v3 = np.array([d_phi_3[i, j, k] for (i, j, k) in sub3["basis"]])
+        tau1_v = self._project_onto(sub3["V7"], v3)
+        tau3_v = self._project_onto(sub3["V27"], v3)
 
-        # τ₃: 27-dimensional component (traceless symmetric part)
+        # τ₁ as a 1-form: read the 7 coefficients in the Λ³₇ basis
+        q7, _ = np.linalg.qr(sub3["V7"].T)
+        tau1 = q7.T @ v3
+
+        # τ₃ back to a 3-form array
         tau3 = np.zeros((7, 7, 7), dtype=np.float64)
+        for (i, j, k), val in zip(sub3["basis"], tau3_v):
+            for perm, sgn in (((i, j, k), 1), ((j, k, i), 1), ((k, i, j), 1),
+                              ((j, i, k), -1), ((i, k, j), -1), ((k, j, i), -1)):
+                tau3[perm] = sgn * val
+
+        # ∗(d∗φ) : Λ⁵ → Λ², then take the g₂ (14) part
+        d_star_2 = np.einsum('abcde,abcdeij->ij', d_star, eps7) / 120.0
+        v2 = np.array([d_star_2[i, j] for (i, j) in sub2["pairs"]])
+        tau2_v = self._project_onto(sub2["V14"], v2)
+        tau2 = np.zeros((7, 7), dtype=np.float64)
+        for (i, j), val in zip(sub2["pairs"], tau2_v):
+            tau2[i, j] = val
+            tau2[j, i] = -val
 
         # Check torsion-free condition
         d_phi_norm = np.sqrt(np.sum(d_phi ** 2))
@@ -431,6 +548,21 @@ class G2DifferentialGeometry:
             'torsion_free': torsion_free,
             'dφ_norm': float(d_phi_norm),
             'd∗φ_norm': float(d_star_norm),
+            # A constant-coefficient φ on flat R⁷ has dφ = d∗φ = 0
+            # IDENTICALLY (see compute_d_phi), so such a structure genuinely is
+            # torsion-free and `torsion_free` above is correct -- but it can
+            # never report anything else, for any input this class accepts.
+            # Saying so is the difference between a result and a tautology:
+            # torsion on a curved G₂ manifold would need a discretised mesh,
+            # which this module does not have.
+            'vacuous_by_construction': True,
+            'vacuity_reason': (
+                'constant-coefficient phi on flat R^7: dphi and d*phi vanish '
+                'identically, so torsion_free is automatic and carries no '
+                'evidence about a curved G2 manifold'
+            ),
+            'lambda3_split': (1, sub3["V7"].shape[0], sub3["V27"].shape[0]),
+            'lambda2_split': (sub2["V7"].shape[0], sub2["V14"].shape[0]),
         }
 
     # ------------------------------------------------------------------

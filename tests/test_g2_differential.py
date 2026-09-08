@@ -268,3 +268,114 @@ class TestFullVerification:
             if key == 'hodge_max_error':
                 continue  # This is a float, not a boolean
             assert val, f"G2 verification failed: {key}"
+
+
+# ------------------------------------------------------------------
+# Torsion projections: real linear algebra, not hardcoded zeros
+# ------------------------------------------------------------------
+class TestTorsionProjectionsAreReal:
+    """The four torsion classes used to be three hardcoded zeros.
+
+    ``compute_torsion_classes`` returned ``tau1 = np.zeros(7)``,
+    ``tau2 = np.zeros((7,7))`` and ``tau3 = np.zeros((7,7,7))`` -- never
+    computed -- and ``test_tau1_zero`` above then compared a hardcoded zero
+    against zero. tau2 and tau3 were not tested at all.
+
+    They are projections now. The subtlety worth stating: on flat R^7 with a
+    constant-coefficient phi, dphi and d*phi vanish IDENTICALLY, so the
+    structure genuinely is torsion-free and every class really is zero. The old
+    verdict was right; what was wrong was that it could not be anything else.
+
+    So these tests check the PROJECTORS on arbitrary input, where they must
+    return something non-zero, and check that the vacuity of the
+    manifold-level verdict is declared rather than hidden.
+    """
+
+    def test_lambda3_splits_as_1_7_27(self, g2):
+        sub = g2._lambda3_subspaces()
+        assert sub["V1"].shape[0] == 1
+        assert sub["V7"].shape[0] == 7
+        assert sub["V27"].shape[0] == 27
+        assert 1 + 7 + 27 == 35
+
+    def test_lambda2_splits_as_7_14(self, g2):
+        sub = g2._lambda2_subspaces()
+        assert sub["V7"].shape[0] == 7
+        assert sub["V14"].shape[0] == 14, "Lambda^2_14 is g2, dimension 14"
+        assert 7 + 14 == 21
+
+    def test_the_seven_part_is_independent_not_degenerate(self, g2):
+        """If span{*(e^i ^ phi)} collapsed, the 7 would be fake."""
+        sub = g2._lambda3_subspaces()
+        assert sub["rank_1_plus_7"] == 8, (
+            "span(phi) + span(*(e^i ^ phi)) should have rank 8; got %d"
+            % sub["rank_1_plus_7"]
+        )
+
+    def test_projector_returns_a_vector_it_is_given(self, g2):
+        """Project an element OF the subspace and get it back -- non-vacuously."""
+        sub = g2._lambda3_subspaces()
+        rows = sub["V7"]
+        v = rows[2] * 1.7 + rows[5] * -0.4          # lives in V7 by construction
+        out = g2._project_onto(rows, v)
+        assert np.linalg.norm(v) > 1e-9, "test vector must be non-zero"
+        assert np.allclose(out, v, atol=1e-8), (
+            "projection changed a vector already in the subspace"
+        )
+
+    def test_projector_kills_the_orthogonal_complement(self, g2):
+        """A V27 element must have no V7 component. This can fail."""
+        sub = g2._lambda3_subspaces()
+        v = sub["V27"][0] * 3.0
+        assert np.linalg.norm(v) > 1e-9
+        out = g2._project_onto(sub["V7"], v)
+        assert np.linalg.norm(out) < 1e-8, (
+            "a Lambda^3_27 element leaked %.3e into Lambda^3_7"
+            % np.linalg.norm(out)
+        )
+
+    def test_the_splits_are_complementary(self, g2):
+        """1 + 7 + 27 must reconstruct an arbitrary 3-form exactly."""
+        sub = g2._lambda3_subspaces()
+        rng = np.random.RandomState(7)
+        v = rng.randn(35)
+        rec = (g2._project_onto(sub["V1"], v)
+               + g2._project_onto(sub["V7"], v)
+               + g2._project_onto(sub["V27"], v))
+        assert np.allclose(rec, v, atol=1e-8), (
+            "the three subspaces do not span Lambda^3"
+        )
+
+    def test_the_vacuity_is_declared(self, g2):
+        """torsion_free: True must not be readable as evidence."""
+        t = g2.compute_torsion_classes()
+        assert t["vacuous_by_construction"] is True
+        assert "vanish" in t["vacuity_reason"]
+        assert t["lambda3_split"] == (1, 7, 27)
+        assert t["lambda2_split"] == (7, 14)
+
+    def test_all_classes_vanish_and_that_is_correct_here(self, g2):
+        """Zero because the input is zero, not because the array was made so."""
+        t = g2.compute_torsion_classes()
+        assert abs(t["tau0"]) < 1e-10
+        assert np.linalg.norm(t["tau1"]) < 1e-10
+        assert np.linalg.norm(t["tau2"]) < 1e-10
+        assert np.linalg.norm(t["tau3"]) < 1e-10
+        assert t["dφ_norm"] < 1e-10 and t["d∗φ_norm"] < 1e-10
+
+    def test_a_perturbed_phi_is_still_torsion_free_and_still_g2(self, g2):
+        """The old docstring claimed otherwise; it was wrong.
+
+        Perturbing a constant form leaves it constant, so torsion stays zero.
+        And G2 3-forms are OPEN in Lambda^3, so the perturbation is still a G2
+        form -- the Hitchin metric stays positive definite.
+        """
+        from metaphysica.simulations.PM.geometry.g2_differential import (
+            G2DifferentialGeometry,
+        )
+        pert = G2DifferentialGeometry(
+            phi=G2DifferentialGeometry.perturbed_phi(0.3, 2))
+        t = pert.compute_torsion_classes()
+        assert t["torsion_free"], "a constant perturbation is still torsion-free"
+        ev = np.linalg.eigvalsh(pert.compute_metric())
+        assert ev.min() > 1e-9, "a small perturbation should stay a G2 form"
