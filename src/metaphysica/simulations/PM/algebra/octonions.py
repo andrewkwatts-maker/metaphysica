@@ -87,6 +87,37 @@ class OctonionAlgebra:
         self._C_geom = self._build_geometric_constants()
         self._C_mult = self._build_multiplication_constants()
 
+    def _phi_tensor(self) -> np.ndarray:
+        """Which tensor serves as the associative 3-form.
+
+        THE DEFECT THIS EXPOSES. G2 = Aut(O), so the associative 3-form and the
+        multiplication structure constants are the SAME tensor -- there is no
+        separate "geometric" orientation to pick. Keeping _C_geom and _C_mult
+        as two tensors is therefore not a convention, it is an error:
+
+            dim {A in so(7) : A.phi = 0}   with _C_geom  =  6
+            dim {A in so(7) : A.phi = 0}   with _C_mult  =  14  = dim g2
+
+        so _C_geom is not a G2 3-form under any change of basis, while _C_mult
+        is. They differ in exactly one sign, on the triple (1,3,5), which the
+        comment above OCTONION_TRIPLES already says "must be -1".
+
+        Routed through the `g2_form_convention` fork rather than corrected
+        outright, because substituting phi moves published numbers and that is
+        a physics ruling. The adopted branch keeps _C_geom, so nothing moves by
+        default; selecting `octonion_derived` switches EVERY consumer at once,
+        which is what makes the branch coherent -- switching only some of them
+        leaves the framework comparing one convention against the other.
+        """
+        try:
+            from metaphysica.simulations.core.variants import resolve
+
+            if resolve("g2_form_convention") == "octonion_derived":
+                return self._C_mult
+        except Exception:              # fork undeclared, or import cycle
+            pass
+        return self._C_geom
+
     @staticmethod
     def _build_geometric_constants() -> np.ndarray:
         """Build the (7,7,7) G2 3-form tensor φ_{ijk} (all-positive orientation).
@@ -133,7 +164,7 @@ class OctonionAlgebra:
         constants, matching G2_TRIPLES in g2_differential.py.
         Used for G2 geometry (metric derivation, Hodge star, etc).
         """
-        return self._C_geom.copy()
+        return self._phi_tensor().copy()
 
     @property
     def multiplication_constants(self) -> np.ndarray:
@@ -159,7 +190,7 @@ class OctonionAlgebra:
             (7,7,7) antisymmetric tensor — identical to the standard
             G2 3-form from g2_differential.py
         """
-        return self._C_geom.copy()
+        return self._phi_tensor().copy()
 
     def multiply(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         """Multiply two octonions.
@@ -245,7 +276,7 @@ class OctonionAlgebra:
         )
 
         # Geometric constants also antisymmetric
-        Cg = self._C_geom
+        Cg = self._phi_tensor()
         checks['geom_antisymmetric'] = bool(
             np.allclose(Cg, -np.transpose(Cg, (1, 0, 2)))
             and np.allclose(Cg, -np.transpose(Cg, (0, 2, 1)))
