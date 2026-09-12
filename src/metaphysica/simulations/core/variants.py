@@ -104,6 +104,14 @@ class Fork:
         raise ValueError(f"fork {self.id!r} declares no adopted option")
 
 
+def _g2_form_adopted() -> str:
+    """Read the live signs off G2_TRIPLES rather than restating them here."""
+    from metaphysica.simulations.PM.geometry.g2_differential import G2_TRIPLES
+
+    signs = [s for (_i, _j, _k, s) in G2_TRIPLES]
+    return "all_plus_one" if all(s > 0 for s in signs) else "octonion_derived"
+
+
 def _bulk_signature_adopted() -> str:
     from metaphysica.simulations.core.canonical_values import CANON
 
@@ -164,6 +172,81 @@ def _face_genericity_adopted() -> str:
 #: what a result MEANS rather than what the code computes. Declaring them
 #: here would imply a switch that does nothing.
 FORKS: Dict[str, Fork] = {
+    "g2_form_convention": Fork(
+        id="g2_form_convention",
+        question="Which signs does the associative 3-form carry on its 7 triples?",
+        source="simulations.PM.geometry.g2_differential.G2_TRIPLES",
+        status="OPEN",
+        read_adopted=_g2_form_adopted,
+        notes=(
+            "Opened 2026-09-13 by measurement, not by preference. g2 is the "
+            "subalgebra of so(7) annihilating phi and has dimension 14. "
+            "Building the map A -> A.phi and taking its kernel gives dim 6 for "
+            "the adopted all-(+1) assignment and dim 14 for the signs the "
+            "framework's own octonion product implies on the SAME seven "
+            "triples. dim ann is a GL(7) similarity invariant, so the two lie "
+            "in different GL(7) orbits and no basis change, relabelling or "
+            "sign flip connects them, checked exhaustively over all 128 "
+            "diagonal sign patterns. Exactly 16 of the 128 assignments give a "
+            "genuine G2 form.\n\n"
+            "ROOT CAUSE, located the same day: the octonion module is NOT at "
+            "fault. Its multiply() is a genuine octonion product, verified "
+            "norm-multiplicative to 4e-16 and alternative to 6e-16. But "
+            "g2_structure_as_3form() returns a separate all-(+1) tensor "
+            "(_C_geom) instead of the 3-form its own multiplication implies. "
+            "The two differ in exactly ONE sign, on the triple (1,3,5), so the "
+            "correct form was already in the codebase.\n\n"
+            "The adopted branch is kept anyway because substituting phi moves "
+            "published numbers, and that is a physics ruling. The fork exists "
+            "so both states can be run and the cost measured first. Note the "
+            "obvious check does not discriminate: the induced metric "
+            "phi_imn phi_jmn is 6 * I for BOTH forms, which is why this was "
+            "not caught earlier. A header note in g2_differential.py had ruled "
+            "the all-(+1) code correct and its signed docstring wrong; that "
+            "ruling is backwards and is marked superseded there."
+        ),
+        options=[
+            VariantOption(
+                id="all_plus_one",
+                summary="all (+1) on the seven Fano triples -- the status quo",
+                consequence=(
+                    "BUYS: every currently published number is unchanged, and "
+                    "the combinatorial results are untouched. R1 to R4 and the "
+                    "arc flag identity read WHICH triples carry phi, not their "
+                    "signs, and were verified identical under both branches.\n"
+                    "COSTS: phi is not a G2 3-form. Its annihilator in so(7) "
+                    "is 6-dimensional where g2 needs 14, so the holonomy claim "
+                    "has no object behind it. Lambda^2 = 7 + 14 has the right "
+                    "dimensions but the 14 does not annihilate phi and is "
+                    "therefore not g2; Lambda^3 = 1 + 7 + 27 is not a G2 irrep "
+                    "split; and the torsion classes are projections onto "
+                    "subspaces that are not the ones they are named after."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="octonion_derived",
+                summary="signs read off the framework's own octonion product",
+                consequence=(
+                    "BUYS: phi becomes an actual G2 3-form with a "
+                    "14-dimensional annihilator, and the signs are DERIVED "
+                    "rather than imported from a textbook convention. They are "
+                    "read off the framework's own multiplication table via "
+                    "phi[i,j,k] = (e_i e_j)_k. Lambda^2_14 then really is g2, "
+                    "the Lambda^3 split really is 1 + 7 + 27, and the torsion "
+                    "classes project onto the subspaces they name. Because the "
+                    "algebra picks the signs, WHICH of the 16 G2 forms to use "
+                    "is not an open choice here.\n"
+                    "COSTS: measured, not speculated. Running the suite on "
+                    "this branch gives 15 failed and 40 errors against 1820 "
+                    "passing on the adopted branch. The failures are the "
+                    "consistency assertion in from_e8 and everything "
+                    "downstream of it, so the cost is real and is the reason "
+                    "this is a ruling rather than a patch."
+                ),
+            ),
+        ],
+    ),
     "lattice_24d": Fork(
         id="lattice_24d",
         question="Which even unimodular rank-24 lattice does the model use?",

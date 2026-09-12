@@ -59,11 +59,33 @@ from itertools import permutations
 from typing import Optional, Tuple
 
 
-# Standard G2 index triples defining the associative 3-form
-# φ = e¹²³ + e¹⁴⁵ + e¹⁶⁷ + e²⁴⁶ + e²⁵⁷ + e³⁴⁷ + e³⁵⁶
-# (using the convention where indices are 0-based: 0=1, ..., 6=7)
-# All positive signs — consistent with the Fano plane / octonion convention
-# that yields a positive definite metric via Hitchin's formula.
+# The seven Fano triples carrying the associative 3-form, 0-based.
+#
+# MEASURED 2026-09-13, and it corrects a ruling recorded in this file's header.
+# The all-(+1) assignment below is NOT a G2 3-form. g2 is the subalgebra of
+# so(7) annihilating phi and has dimension 14; building the map A -> A.phi and
+# taking its kernel gives
+#
+#     all (+1)            dim ann(phi) = 6
+#     (+,+,+,+,-,-,-)     dim ann(phi) = 14
+#
+# and dim ann is a GL(7) similarity invariant, so the two lie in different
+# GL(7) orbits -- no basis change, relabelling or sign flip connects them
+# (verified exhaustively over all 128 diagonal sign patterns). Exactly 16 of
+# those 128 assignments are genuine G2 forms.
+#
+# The header note claiming "the code is correct (all +1 Fano plane convention);
+# the docstring describes a different sign convention" is therefore backwards,
+# and is marked superseded there. The earlier justification -- that all-(+1)
+# "yields a positive definite metric via Hitchin's formula" -- does not
+# discriminate either: phi_imn phi_jmn is 6 * I for BOTH forms, which is why
+# this went unnoticed.
+#
+# NOT silently corrected. Substituting a signed form changes the framework's
+# convention and may move published numbers, so it is staged as the
+# `g2_form_convention` fork and the adopted branch remains the status quo.
+# See tests/test_phi_is_not_yet_a_g2_form.py, which is green while the defect
+# stands and fails the moment phi changes.
 G2_TRIPLES = [
     (0, 1, 2, +1),
     (0, 3, 4, +1),
@@ -73,6 +95,37 @@ G2_TRIPLES = [
     (2, 3, 6, +1),
     (2, 4, 5, +1),
 ]
+
+def phi_from_octonion_product() -> np.ndarray:
+    """Derive phi from the framework's OWN octonion multiplication.
+
+    For imaginary units, e_i e_j = -delta_ij + C_ijk e_k with C totally
+    antisymmetric, and that C IS the associative 3-form. So phi is read off the
+    product rather than tabulated:
+
+        phi[i, j, k] = ( e_i e_j )_k
+
+    This matters because the framework's multiply() is a genuine octonion
+    product -- verified norm-multiplicative to 4e-16 and alternative to 6e-16 --
+    and the 3-form it implies has a 14-dimensional annihilator in so(7), i.e. it
+    IS a G2 form. The separate `_C_geom` tensor that `g2_structure_as_3form()`
+    returns is all-(+1) and has a 6-dimensional annihilator, so it is not.
+
+    The two differ in exactly ONE sign, on the triple (1, 3, 5). The correct
+    form was therefore already present in the codebase, inside the
+    multiplication table, and is derived here rather than imported from a
+    textbook convention.
+    """
+    from metaphysica.simulations.PM.algebra.octonions import OctonionAlgebra
+
+    octonions = OctonionAlgebra()
+    basis = np.eye(8, dtype=np.float64)
+    phi = np.zeros((7, 7, 7), dtype=np.float64)
+    for i in range(7):
+        for j in range(7):
+            product = octonions.multiply(basis[i + 1], basis[j + 1])
+            phi[i, j, :] = product[1:]
+    return phi
 
 
 def _levi_civita_7d() -> np.ndarray:
@@ -213,10 +266,24 @@ class G2DifferentialGeometry:
     def _standard_phi() -> np.ndarray:
         """Construct the standard flat G2 3-form φ₀.
 
-        φ₀ = e¹²³ + e¹⁴⁵ + e¹⁶⁷ + e²⁴⁶ + e²⁵⁷ + e³⁴⁷ + e³⁵⁶
+        Which signs are used is the `g2_form_convention` fork. The adopted
+        branch is `all_plus_one`, the status quo, so nothing moves by default.
+        Selecting `fano_signed` substitutes the signs that actually give a G2
+        form -- see the G2_TRIPLES comment for the measurement.
 
-        (All-positive Fano plane convention, matching G2_TRIPLES.)
+        The fork is resolved here rather than at import time so the environment
+        override takes effect per construction and the two branches can be run
+        against each other in one session.
         """
+        try:
+            from metaphysica.simulations.core.variants import resolve
+            choice = resolve("g2_form_convention")
+        except Exception:                      # fork not declared / import cycle
+            choice = "all_plus_one"
+
+        if choice == "octonion_derived":
+            return phi_from_octonion_product()
+
         phi = np.zeros((7, 7, 7), dtype=np.float64)
         for (i, j, k, s) in G2_TRIPLES:
             phi[i, j, k] = s

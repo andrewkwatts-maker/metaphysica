@@ -226,3 +226,91 @@ def test_the_lambda2_split_is_not_g2_and_the_d4_calibration_says_so():
     assert calib["calibrated"] is False
     assert calib["why_not_calibrated"]
     assert "not a G2 3-form" in calib["why_not_calibrated"]
+
+
+# ------------------------------------------------------- the root cause, located
+
+
+def _octonions():
+    from metaphysica.simulations.PM.algebra.octonions import OctonionAlgebra
+
+    return OctonionAlgebra()
+
+
+def test_the_octonion_product_is_genuinely_octonionic():
+    """The algebra is NOT at fault, and this establishes it.
+
+    A composition algebra satisfies |xy| = |x||y| and the octonions are
+    alternative. Both hold to machine precision, so whatever is wrong is not
+    the multiplication.
+    """
+    o = _octonions()
+    rng = np.random.default_rng(0)
+    worst_norm = 0.0
+    worst_alt = 0.0
+    for _ in range(200):
+        a = rng.normal(size=8)
+        b = rng.normal(size=8)
+        lhs = np.linalg.norm(o.multiply(a, b))
+        rhs = np.linalg.norm(a) * np.linalg.norm(b)
+        worst_norm = max(worst_norm, abs(lhs - rhs) / rhs)
+        left = o.multiply(o.multiply(a, a), b)
+        right = o.multiply(a, o.multiply(a, b))
+        worst_alt = max(worst_alt,
+                        np.linalg.norm(left - right) / (np.linalg.norm(left) + 1e-30))
+    assert worst_norm < 1e-12, "multiply() is not norm-multiplicative"
+    assert worst_alt < 1e-12, "multiply() is not alternative"
+
+
+def test_the_form_implied_by_the_product_is_a_genuine_g2_form():
+    """phi[i,j,k] = (e_i e_j)_k has a 14-dimensional annihilator."""
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        phi_from_octonion_product,
+    )
+
+    assert _annihilator_dim(phi_from_octonion_product()) == 14
+
+
+def test_the_extraction_disagrees_with_the_product_it_claims_to_come_from():
+    """THE ROOT CAUSE.
+
+    g2_structure_as_3form() returns a separate all-(+1) tensor rather than the
+    3-form its own multiplication implies.
+    """
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        phi_from_octonion_product,
+    )
+
+    extracted = np.asarray(_octonions().g2_structure_as_3form(), dtype=float)
+    implied = phi_from_octonion_product()
+    assert not np.allclose(extracted, implied)
+    assert _annihilator_dim(extracted) == 6
+    assert _annihilator_dim(implied) == 14
+
+
+def test_they_differ_in_exactly_one_triple():
+    """One sign, on (1,3,5). The correct form was already in the codebase."""
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        phi_from_octonion_product,
+    )
+
+    extracted = np.asarray(_octonions().g2_structure_as_3form(), dtype=float)
+    implied = phi_from_octonion_product()
+    differing = [t for t in itertools.combinations(range(7), 3)
+                 if not np.isclose(extracted[t], implied[t])]
+    assert differing == [(1, 3, 5)], "expected one differing triple, got %s" % differing
+    assert np.isclose(extracted[(1, 3, 5)], -implied[(1, 3, 5)])
+
+
+def test_the_correction_is_staged_as_a_fork_and_not_adopted():
+    """It must be switchable and it must not have been switched."""
+    from metaphysica.simulations.core.variants import FORKS
+
+    fork = FORKS["g2_form_convention"]
+    assert fork.status == "OPEN"
+    assert fork.option_ids() == ["all_plus_one", "octonion_derived"]
+    assert fork.default() == "all_plus_one", (
+        "the correction has been adopted; that is a physics ruling and the "
+        "register must record it"
+    )
+    assert fork.read_adopted() == fork.default(), "fork has drifted from source"
