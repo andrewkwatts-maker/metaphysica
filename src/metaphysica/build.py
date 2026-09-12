@@ -130,6 +130,16 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     # ── Stage 0: copy bundled website templates so the JS loaders have a home ──
     ("Copy bundled website templates", ["__copy_static__"], False),
 
+    # ── Free-variable ledger ─────────────────────────────────────────────────
+    # Must run BEFORE the sims: abstract.py publishes
+    # validation.free_variable_count (and the two aliases that replaced the
+    # 0 and the 3) by reading the artifact this step writes. Without it the
+    # accessor falls back to sweeping the tree in-process, which is correct
+    # but costs seconds on every parameter table.
+    ("Measure the free-variable ledger",
+     [sys.executable, "-m", "metaphysica.simulations.core.free_variable_ledger"],
+     False),
+
     # ── Core sim run: produces theory_output, parameters, sections, formulas, refs ──
     ("Run all simulations",
      [sys.executable, "-m", "metaphysica.simulations.run_all_simulations"],
