@@ -1282,12 +1282,14 @@
     },
     "topology.elder_kads": {
       "value": 24,
-      "source": "GEOMETRIC:TCS_G2_187",
+      "source": "INPUT:B3_ORIGIN_OPEN",
       "uncertainty": null,
-      "status": "GEOMETRIC",
-      "timestamp": "2026-04-27T20:18:39.192852",
+      "status": "INPUT",
+      "timestamp": "2026-09-14T00:00:00.000000",
       "metadata": {
-        "eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it"
+        "eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it",
+        "ruling": "2026-09-14: DERIVED/GEOMETRIC status removed. Nothing on the books derives b_3 = 24 — the TCS route places it far below its exhibited 71-155 range, and the Joyce (Z/2)^3 route is UNDETERMINED pending the ch.12 contribution table (see fork joyce_contribution_table). Candidate origins are enumerated in fork b3_origin; b3_candidate_sweep pushes alternative values through the downstream chain. A conditional narrowing exists that uses no measurement: n_gen = b_3/8 integral plus D_bulk - b_3 = 2 leave exactly 24, but both are prior commitments rather than derivations.",
+        "previous_status": "GEOMETRIC (source GEOMETRIC:TCS_G2_187), withdrawn 2026-09-14"
       },
       "experimental_value": null,
       "experimental_uncertainty": null,
@@ -1296,7 +1298,7 @@
       "sigma_deviation": null,
       "validation_status": "NO_DATA",
       "eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it",
-      "source_simulation": "GEOMETRIC:TCS_G2_187",
+      "source_simulation": "INPUT:B3_ORIGIN_OPEN",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
     },

@@ -54,6 +54,44 @@ def params():
     return _load_params()
 
 
+def test_the_seed_ruling_was_executed(params):
+    """2026-09-14: topology.elder_kads is INPUT, not GEOMETRIC.
+
+    The ruling removed b_3 = 24's derived status at the SEED. This fails if it
+    is ever quietly restored without a derivation landing.
+    """
+    seed = params.get("topology.elder_kads")
+    assert seed is not None
+    assert seed.get("status") == "INPUT", (
+        "the seed's status is %s; the 2026-09-14 ruling set it to INPUT and "
+        "nothing on the books derives b_3 = 24" % seed.get("status")
+    )
+    ruling = (seed.get("metadata") or {}).get("ruling", "")
+    assert "2026-09-14" in ruling
+    assert seed.get("value") == 24
+
+
+def test_the_echo_rows_still_claim_derived_and_that_is_recorded(params):
+    """RESIDUAL INCONSISTENCY, pinned rather than hidden.
+
+    The seed is INPUT but particle.b3 and cosmology.b3 -- downstream echoes of
+    the same integer, emitted through result dicts where set_param's status
+    defaults to DERIVED -- still ship DERIVED. They are derived from nothing;
+    they restate the input. Fixing them means threading an explicit status
+    through those two registration paths, which touches published rows and is
+    therefore staged rather than done here.
+    """
+    for path in _RECORDED_STATUS:
+        assert params[path].get("status") == "DERIVED", (
+            "%s changed status; if the echoes now follow the seed, update this "
+            "file and record the fix in the register" % path
+        )
+    seed_status = params["topology.elder_kads"].get("status")
+    assert seed_status != "DERIVED", (
+        "seed and echoes agree again -- re-examine whether a derivation landed"
+    )
+
+
 def test_the_question_is_open_not_refuted():
     """The withdrawal must hold: no refutation may be quietly reinstated."""
     from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
