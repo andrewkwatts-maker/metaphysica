@@ -347,7 +347,7 @@ class PMRegistry:
         value: Any,
         source: str,
         uncertainty: Optional[float] = None,
-        status: str = "DERIVED",
+        status: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         experimental_value: Optional[float] = None,
         experimental_uncertainty: Optional[float] = None,
@@ -369,6 +369,31 @@ class PMRegistry:
             experimental_source: Citation (e.g., "PDG2024", "NuFIT6.0", "DESI2025")
             bound_type: Type of bound ("measured", "upper", "lower", "range")
         """
+        # STATUS IS NO LONGER SILENTLY "DERIVED".
+        #
+        # The old signature defaulted status to "DERIVED", so any caller that
+        # simply omitted it published a derivation nobody claimed -- the
+        # laundering pattern, at its source. Forty-five call sites relied on
+        # that default, and rows echoed out of result dicts inherited it too.
+        #
+        # Behaviour is preserved (the effective status is still DERIVED) so
+        # nothing moves, but the row now CARRIES THE FACT that its status was
+        # defaulted rather than declared. That makes "this was computed and
+        # declared derived" distinguishable from "nobody said, so it became
+        # derived" -- which is the distinction a free-parameter count depends
+        # on, and which was previously unrecoverable.
+        status_defaulted = status is None
+        if status_defaulted:
+            status = "DERIVED"
+            metadata = dict(metadata or {})
+            metadata["status_defaulted"] = True
+            metadata.setdefault(
+                "status_defaulted_note",
+                "No status was declared at the call site; DERIVED is the "
+                "legacy default, not a claim made by the simulation. Treat as "
+                "unverified provenance until the call site declares one."
+            )
+
         # A declared anchor fills in only where none was supplied. An
         # explicit binding at the call site always wins; this exists for
         # parameters whose registration path offers no way to pass one.
