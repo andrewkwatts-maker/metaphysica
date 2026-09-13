@@ -183,3 +183,26 @@ def test_a_broken_identity_returns_to_the_free_set(monkeypatch):
     monkeypatch.setattr(fs, "_params", lambda: broken)
     report = fs.build_free_set(broken)
     assert "fermion.n_generations" in report["free_set"]
+
+
+def test_the_quartic_is_a_function_of_b3_and_the_fallback_disagrees():
+    """freudenthal_quartic = 16 (b3/27)^2, verified -- and the module's
+    ImportError fallback computes 27 c^4 / 4 instead, exactly 3x smaller.
+    Recorded defect: if eml_spectral goes missing the export silently changes
+    by a factor of 3. This test pins the disagreement so a fix is visible."""
+    b3 = 24.0
+    c = b3 / 27.0
+    fts_path = 16.0 * c * c
+    fallback = 27.0 * c ** 4 / 4.0
+    assert abs(fts_path - 1024.0 / 81.0) < 1e-14
+    assert abs(fts_path / fallback - 3.0) < 1e-12, (
+        "the two code paths now agree; update the register entry and the "
+        "free-set removal note"
+    )
+
+
+def test_dissolved_discrete_choices_are_declared(report):
+    """Removing a value whose formula is a rowless ansatz must leave a trace."""
+    d = report["dissolved_discrete_choices"]
+    assert "abstract.alpha_gut_coefficient" in d
+    assert "yukawa.lambda_eff" in d

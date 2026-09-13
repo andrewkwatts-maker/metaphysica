@@ -187,7 +187,33 @@ def verify_geometric_identities(params=None) -> Dict[str, Any]:
         _check("yukawa.lambda_eff", (1.0 + math.sqrt(5.0)) / 2.0,
                "the golden ratio, determined by the discrete choice "
                "yukawa.best_scaling = 'phi', which stays in the free set")
+    if b3:
+        _check("algebra.freudenthal_quartic", 16.0 * (b3 / 27.0) ** 2,
+               "16 (b_3/27)^2 -- a function of b_3 alone, verified against "
+               "the eml_spectral path's output. NOTE the module's ImportError "
+               "fallback computes a DIFFERENT formula (27 c^4 / 4, exactly 3x "
+               "smaller); that inconsistency is registered separately")
+    _check("abstract.alpha_gut_coefficient",
+           round(1.0 / (10.0 * math.pi), 6),
+           "declared in code as round(1/(10 pi), 6) at paper/abstract.py; "
+           "the value is arithmetic on pi. The FORMULA choice 1/(10 pi) is a "
+           "discrete ansatz with no row of its own -- listed under "
+           "dissolved_discrete_choices so the count's caveat is explicit")
     return checks
+
+
+def metadata_rows(params=None) -> Dict[str, str]:
+    """Rows that describe the fit rather than parameterise the model.
+
+    abstract.fitted_pmns = 2 is a COUNT of fitted parameters -- bookkeeping
+    about the model, not a quantity the model could turn. Counting it as a
+    free parameter double-counts the parameters it counts.
+    """
+    params = params if params is not None else _params()
+    reasons = {
+        "abstract.fitted_pmns": "a count of fitted parameters, not a knob",
+    }
+    return {k: v for k, v in reasons.items() if k in params}
 
 
 def duplicate_groups(params=None) -> Dict[str, List[str]]:
@@ -289,6 +315,10 @@ def build_free_set(params=None) -> Dict[str, Any]:
         if name in rows:
             removals.setdefault(name, {"reason": REASON_NOT_A_KNOB, "detail": why})
 
+    for name, why in metadata_rows(params).items():
+        if name in rows:
+            removals.setdefault(name, {"reason": REASON_NOT_A_KNOB, "detail": why})
+
     removed = {k: v for k, v in removals.items() if v["reason"] != REASON_CLAIMED}
     free = [r for r in rows if r not in removed]
 
@@ -307,6 +337,10 @@ def build_free_set(params=None) -> Dict[str, Any]:
         "removed_by_reason": by_reason,
         "unverified_claims": {k: v for k, v in removals.items()
                               if v["reason"] == REASON_CLAIMED},
+        "dissolved_discrete_choices": {
+            "abstract.alpha_gut_coefficient": "the formula 1/(10 pi)",
+            "yukawa.lambda_eff": "carried by yukawa.best_scaling, which stays",
+        },
         "removed": removed,
         "free_set": sorted(free),
         "still_asserted_edof": (
