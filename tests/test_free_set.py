@@ -132,3 +132,54 @@ def test_duplicate_groups_name_real_rows():
     assert any(len(v) >= 2 for v in groups.values()), (
         "no duplicate group matched two registered rows; the reduction is inert"
     )
+
+
+# ------------------------------------------------ geometric identities
+
+
+def test_the_geometric_identities_are_exact():
+    from metaphysica.simulations.core.free_set import verify_geometric_identities
+
+    checks = verify_geometric_identities()
+    for name in ("fermion.n_generations", "yukawa.lambda_eff",
+                 "cosmology.wa_thawing"):
+        if name not in checks:
+            continue
+        assert checks[name]["reproduced"], (
+            "%s: registered %s vs predicted %s"
+            % (name, checks[name]["registered"], checks[name]["predicted"])
+        )
+        assert checks[name]["rel_error"] < 1e-9
+
+
+def test_the_discrete_choice_stays_free(report):
+    """Removing lambda_eff must not smuggle out the phi ansatz itself."""
+    if "yukawa.best_scaling" in report["removed"]:
+        raise AssertionError("the discrete scaling choice was removed; the "
+                             "free content of the yukawa ansatz is the choice")
+    assert "yukawa.best_scaling" in report["free_set"]
+
+
+def test_the_wa_removal_does_not_revive_the_retired_formula():
+    """The detail must name the retirement, so nobody reads it as adoption."""
+    from metaphysica.simulations.core.free_set import build_free_set
+
+    rec = build_free_set()["removed"].get("cosmology.wa_thawing")
+    if rec is None:
+        return
+    assert "RETIRED" in rec["detail"]
+    assert "not a revival" in rec["detail"]
+
+
+def test_a_broken_identity_returns_to_the_free_set(monkeypatch):
+    import metaphysica.simulations.core.free_set as fs
+
+    real = fs._params()
+    if "fermion.n_generations" not in real:
+        return
+    broken = dict(real)
+    broken["fermion.n_generations"] = dict(real["fermion.n_generations"])
+    broken["fermion.n_generations"]["value"] = 5
+    monkeypatch.setattr(fs, "_params", lambda: broken)
+    report = fs.build_free_set(broken)
+    assert "fermion.n_generations" in report["free_set"]

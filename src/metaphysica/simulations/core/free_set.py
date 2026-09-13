@@ -141,6 +141,55 @@ def verify_ckm_block(params=None) -> Dict[str, Any]:
     return {"available": True, "inputs": inputs, "derived": derived}
 
 
+def verify_geometric_identities(params=None) -> Dict[str, Any]:
+    """Rows whose values are exact arithmetic on geometric rows. Checked.
+
+    Three, each verified to tolerance every run, each with its caveat stated:
+
+    * fermion.n_generations = b_3 / 8. The ANSATZ row restates arithmetic on
+      the registered particle.b3; its free content is b_3's, counted (or
+      contested) there, not here.
+    * yukawa.lambda_eff = (1 + sqrt 5)/2 exactly. The free content is the
+      DISCRETE choice yukawa.best_scaling = "phi", which STAYS in the free
+      set; the continuous value adds nothing once the choice is made.
+    * cosmology.wa_thawing = -4 / sqrt(b_3) exactly. That formula is RETIRED
+      on the register ("do not resurrect") -- removing the row from the free
+      set does not revive the physics claim, it records that a legacy artefact
+      of a falsified derivation carries no independent numeric content.
+    """
+    import math
+
+    params = params if params is not None else _params()
+    b3 = _value(params, "particle.b3")
+
+    checks: Dict[str, Dict[str, Any]] = {}
+
+    def _check(name: str, predicted, detail: str) -> None:
+        actual = _value(params, name)
+        if actual is None or predicted is None:
+            return
+        rel = abs(predicted - actual) / max(abs(actual), 1e-300)
+        checks[name] = {
+            "registered": actual,
+            "predicted": predicted,
+            "rel_error": rel,
+            "reproduced": rel < 1e-9,
+            "detail": detail,
+        }
+
+    if b3:
+        _check("fermion.n_generations", b3 / 8.0,
+               "b_3 / 8 from the registered particle.b3")
+        _check("cosmology.wa_thawing", -4.0 / math.sqrt(b3),
+               "-4/sqrt(b_3) -- the RETIRED formula's legacy artefact; "
+               "removal records no independent content, not a revival")
+    if _value(params, "yukawa.best_scaling") == "phi":
+        _check("yukawa.lambda_eff", (1.0 + math.sqrt(5.0)) / 2.0,
+               "the golden ratio, determined by the discrete choice "
+               "yukawa.best_scaling = 'phi', which stays in the free set")
+    return checks
+
+
 def duplicate_groups(params=None) -> Dict[str, List[str]]:
     """The same physical quantity registered under more than one name.
 
@@ -213,6 +262,20 @@ def build_free_set(params=None) -> Dict[str, Any]:
                               "(rel err %.1e); stays in the free set"
                               % rec["rel_error"],
                 }
+
+    for name, rec in verify_geometric_identities(params).items():
+        if name in rows and rec["reproduced"]:
+            removals.setdefault(name, {
+                "reason": REASON_DERIVED,
+                "detail": rec["detail"] + " (rel err %.1e)" % rec["rel_error"],
+            })
+        elif name in rows:
+            removals.setdefault(name, {
+                "reason": REASON_CLAIMED,
+                "detail": "identity did NOT reproduce the registered value "
+                          "(rel err %.1e); stays in the free set"
+                          % rec["rel_error"],
+            })
 
     for canonical, members in duplicate_groups(params).items():
         present = [m for m in members if m in rows]
