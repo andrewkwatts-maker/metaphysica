@@ -1,209 +1,247 @@
-"""The half-shift enumeration and the parity theorem refuting b_3 = 24.
+"""The corrected half-shift moduli space, and the withdrawal it enforces.
 
-The load-bearing tests here are the NON-VACUITY ones. A search that reports
-"17 is unachievable" is worthless unless the same search finds achievable
-targets, and a count of 14336 is worthless unless it moves when its inputs do.
-Both are checked.
+The previous version of this file asserted a parity refutation of b_3 = 24.
+That refutation is WITHDRAWN — its enumeration covered 1/32 of the moduli
+space, its additivity premise failed on the stratum it did cover, and its
+component action carried a labelling defect. These tests pin the corrected
+state: the full moduli space, the non-removability of relative shifts (the
+mathematical fact that voids the old reduction), Joyce's admissibility
+condition, and the corrected group action — plus a guard that the module
+never again claims the refutation.
 """
 
 from __future__ import annotations
 
 import itertools
+import random
 
-import numpy as np
 import pytest
 
 from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
-    achievable_twisted,
-    enumerate_all,
+    act_on_component,
+    assignments,
+    elements,
     fixed_coords,
+    fixed_sets_disjoint,
+    flip_profile,
     generating_triples,
+    is_singular,
     moved_coords,
-    refutation_report,
-    singular_profile,
-    twisted_is_always_even,
+    relative_slots,
+    status_report,
+    survey,
+    survey_assignment,
+)
+from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+    _compose,
+    _group,
+    _non_identity,
 )
 
-_TRIPLES = [(0, 1, 2), (0, 3, 4), (0, 5, 6), (1, 3, 5),
-            (1, 4, 6), (2, 3, 6), (2, 4, 5)]
+
+@pytest.fixture(scope="module")
+def group():
+    return _group()
 
 
 @pytest.fixture(scope="module")
-def report():
-    return refutation_report()
+def triple(group):
+    return generating_triples(group)[0]
 
 
 @pytest.fixture(scope="module")
-def enum():
-    return enumerate_all()
+def gens(group, triple):
+    nz = _non_identity(group)
+    return [nz[i] for i in triple]
 
 
-class _FakePhi:
-    def __init__(self, phi):
-        self.phi = phi
+# ------------------------------------------------------- the moduli space
 
 
-def _perturbed():
-    from metaphysica.simulations.PM.geometry.g2_differential import (
-        G2DifferentialGeometry,
-    )
-
-    phi = G2DifferentialGeometry().phi.copy()
-    for perm, sign in (((0, 1, 3), 1), ((1, 3, 0), 1), ((3, 0, 1), 1),
-                       ((1, 0, 3), -1), ((0, 3, 1), -1), ((3, 1, 0), -1)):
-        phi[perm] = sign
-    return _FakePhi(phi)
+def test_there_are_28_generating_triples(group):
+    assert len(generating_triples(group)) == 28
 
 
-# ------------------------------------------------------------- the reduction
+def test_the_flip_profile_is_the_triangle_structure(gens):
+    """1 coordinate flipped by all three, 3 by two, 3 by one."""
+    prof = flip_profile(gens)
+    counts = sorted(len(v) for v in prof.values())
+    assert counts == [1, 1, 1, 2, 2, 2, 3]
 
 
-def test_there_are_28_generating_triples():
-    """Non-collinear triples in F_2^3: 28 of the 35."""
-    assert len(generating_triples()) == 28
+def test_five_relative_bits_per_triple(gens):
+    """2 on the triply-flipped coordinate + 1 on each doubly-flipped one.
+
+    These are exactly the strata the withdrawn enumeration missed.
+    """
+    assert len(relative_slots(gens)) == 5
 
 
-def test_moved_and_fixed_split_is_four_and_three():
-    from metaphysica.simulations.PM.geometry.joyce_orbifold import (
-        diagonal_stabiliser,
-    )
-
-    for g in diagonal_stabiliser():
-        if not any(s < 0 for s in g):
-            continue
-        assert len(moved_coords(g)) == 4
-        assert len(fixed_coords(g)) == 3
+def test_the_full_space_is_16384_per_triple_and_the_old_was_512(group, triple):
+    full = sum(1 for _ in assignments(triple, group, include_relative=True))
+    old = sum(1 for _ in assignments(triple, group, include_relative=False))
+    assert full == 8 ** 3 * 2 ** 5 == 16384
+    assert old == 8 ** 3 == 512
+    assert full == 32 * old
 
 
-def test_the_enumeration_size_is_eight_cubed_times_28(enum):
-    assert enum["n_assignments"] == 8 ** 3 * 28 == 14336
+# ------------------------- the fact that voids the withdrawn reduction
 
 
-# ---------------------------------------------------------------- the theorem
-
-
-def test_every_profile_entry_is_even(enum):
-    """The whole refutation rests on this, so it is asserted directly."""
-    assert twisted_is_always_even(list(enum["profiles"]))
-    for profile in enum["profiles"]:
-        for n in profile:
-            assert n % 2 == 0, "odd family-class count %s" % (profile,)
-
-
-def test_family_counts_are_all_even(enum):
-    for n in enum["family_counts"]:
-        assert n % 2 == 0
-    assert 17 not in enum["family_counts"]
-
-
-def test_there_are_22_distinct_profiles(enum):
-    assert len(enum["profiles"]) == 22
-
-
-def test_twisted_17_is_unachievable(report):
-    assert report["twisted_needed_for_b3_24"] == 17
-    assert report["twisted_24_is_achievable"] is False
-
-
-def test_b3_is_always_odd_so_24_is_refuted(report):
-    assert report["flat_contribution"] == 7
-    assert report["b3_parity"] == "odd"
-    assert "REFUTED" in report["verdict"]
-    assert report["model_independent"] is True
-
-
-# ------------------------------------------------- NON-VACUITY: the search works
-
-
-def test_the_search_finds_achievable_targets(enum):
-    """If achievable_twisted always returned False the theorem would be empty."""
-    profiles = list(enum["profiles"])
-    assert achievable_twisted(profiles, 0) is True
-    # an even target reachable from a profile containing a 2
-    assert achievable_twisted(profiles, 2) is True
-    assert achievable_twisted(profiles, 4) is True
-    assert achievable_twisted(profiles, 16) is True
-
-
-def test_every_odd_target_is_unachievable(enum):
-    """The parity claim, checked directly rather than argued."""
-    profiles = list(enum["profiles"])
-    for odd in (1, 3, 5, 7, 9, 15, 17, 19):
-        assert achievable_twisted(profiles, odd) is False, (
-            "odd twisted contribution %d became achievable" % odd
+def test_relative_flipped_shifts_are_not_removable_by_conjugation(gens):
+    """Conjugation moves every flipper's shift by the same -2t, so the
+    DIFFERENCE on a shared flipped coordinate is invariant. A difference of
+    1/2 therefore survives every translation — checked by exhausting t in
+    quarter steps, which covers all values of -2t mod 1."""
+    g1, g2 = gens[0], gens[1]
+    shared = [a for a in range(7) if g1[a] < 0 and g2[a] < 0]
+    assert shared, "a generating pair always shares flipped coordinates"
+    a = shared[0]
+    s1, s2 = 0.0, 0.5
+    for t4 in range(4):
+        t = t4 / 4.0
+        n1 = (s1 - 2 * t) % 1.0
+        n2 = (s2 - 2 * t) % 1.0
+        assert not (n1 == 0.0 and n2 == 0.0), (
+            "a translation removed a relative shift of 1/2; the withdrawal "
+            "rationale would be wrong"
         )
 
 
-def test_even_targets_are_broadly_achievable(enum):
-    """Complementing the above, so the result is parity and not blanket denial."""
-    profiles = list(enum["profiles"])
-    reachable = [t for t in range(0, 33, 2) if achievable_twisted(profiles, t)]
-    assert len(reachable) >= 10, "only %s even targets reachable" % reachable
+def test_a_joyce_style_assignment_is_valid_and_outside_the_old_stratum(
+        group, triple, gens):
+    """A relative shift on a shared flipped coordinate gives a genuine
+    (Z/2)^3 whose singular sets are disjoint — the structure Joyce's examples
+    use — and no fixed-line-only assignment can express it."""
+    g1, g2 = gens[0], gens[1]
+    shared = [a for a in range(7) if g1[a] < 0 and g2[a] < 0]
+    sv = [[0] * 7 for _ in range(3)]
+    sv[1][shared[0]] = 1                     # 1/2 on a coordinate g2 FLIPS
+    svecs = tuple(tuple(r) for r in sv)
+
+    # outside the old stratum: support is not inside fixed(g2)
+    assert shared[0] not in fixed_coords(g2)
+
+    els = elements(gens, svecs)
+    # every element is an involution
+    for e, s in els.values():
+        ee, ss = _compose(e, s, e, s)
+        assert ee == tuple([1] * 7) and ss == tuple([0] * 7)
+
+    # g1 and g2 are both singular and their fixed sets are DISJOINT
+    e1 = els[(1, 0, 0)]
+    e2 = els[(0, 1, 0)]
+    assert is_singular(e1) and is_singular(e2)
+    assert fixed_sets_disjoint(e1, e2)
 
 
-# ------------------------------------------- NON-VACUITY: it reads its inputs
+def test_in_the_old_stratum_pure_flip_pairs_always_intersect(gens):
+    """The additivity premise of the withdrawn argument could not hold on
+    what it covered: two pure sign flips share fixed points."""
+    e1 = (tuple(gens[0]), tuple([0] * 7))
+    e2 = (tuple(gens[1]), tuple([0] * 7))
+    assert not fixed_sets_disjoint(e1, e2)
 
 
-def test_a_perturbed_phi_changes_the_enumeration():
-    """The counts must come from the group, not from constants in this file."""
-    from metaphysica.simulations.PM.geometry.joyce_orbifold import (
-        diagonal_stabiliser,
+# ------------------------------------------------- the corrected action
+
+
+def test_the_component_action_is_functorial(group, gens):
+    """act(d1 . d2) == act(d1) . act(d2) — the property the old labelling
+    defect broke for elements carrying their own flipped shifts."""
+    rng = random.Random(0)
+    checked = 0
+    while checked < 100:
+        svecs = tuple(tuple(rng.randint(0, 1) for _ in range(7))
+                      for _ in range(3))
+        els = elements(gens, svecs)
+        singular = [el for b, el in els.items()
+                    if b != (0, 0, 0) and is_singular(el)]
+        if not singular:
+            continue
+        sigma = singular[0]
+        moved = moved_coords(sigma[0])
+        comp = dict(zip(moved, [rng.randint(0, 1) for _ in moved]))
+        d1 = rng.choice(list(els.values()))
+        d2 = rng.choice(list(els.values()))
+        d12 = _compose(*d1, *d2)
+        lhs = act_on_component(d12, sigma, comp)
+        rhs = act_on_component(d1, sigma, dict(act_on_component(d2, sigma, comp)))
+        assert lhs == rhs
+        checked += 1
+
+
+def test_the_sigma_twist_matters(gens):
+    """With a flipped-coordinate shift on sigma, the corrected action differs
+    from the withdrawn formula — so the old family counts were wrong where it
+    applied, and this cannot regress silently."""
+    g1 = gens[0]
+    moved = moved_coords(g1)
+    a = moved[0]
+    ss = [0] * 7
+    ss[a] = 1                                  # sigma carries a flipped shift
+    sigma = (tuple(g1), tuple(ss))
+    delta = (tuple(gens[1]), tuple([0] * 7))
+    if delta[0][a] < 0:
+        comp = dict.fromkeys(moved, 0)
+        with_twist = dict(act_on_component(delta, sigma, comp))[a]
+        without = dict(act_on_component(delta, (sigma[0], tuple([0] * 7)),
+                                        comp))[a]
+        assert with_twist != without
+
+
+# ------------------------------------------------------ the survey layer
+
+
+def test_the_canonical_joyce_structure_exists(group, triple):
+    """3 singular elements, pairwise disjoint, 12 plain-T3 families — the
+    family structure of Joyce's first example. The withdrawn enumeration
+    could never produce it; the corrected one must."""
+    result = survey(include_relative=True, group=group, triples=[triple])
+    assert result["joyce_structure_assignments"] > 0
+    assert 12 in result["admissible_family_counts"]
+
+
+def test_admissibility_is_not_vacuous(group, triple, gens):
+    """Both verdicts occur, so the filter genuinely discriminates."""
+    seen = set()
+    for svecs in assignments(triple, group, include_relative=True):
+        rec = survey_assignment(triple, svecs, group)
+        if rec["n_singular"] >= 2:
+            seen.add(rec["admissible"])
+        if seen == {True, False}:
+            break
+    assert seen == {True, False}
+
+
+# ---------------------------------------------------------- the withdrawal
+
+
+def test_the_module_declares_the_withdrawal():
+    report = status_report()
+    assert report["b3_24_status"] == "UNDETERMINED"
+    assert "WITHDRAWN" not in report["b3_24_status"]
+    assert "1/32" in report["withdrawn"]
+    assert report["moduli_space_size"] == 458752
+    assert report["withdrawn_stratum_size"] == 14336
+
+
+def test_no_refutation_is_claimed_anywhere_in_the_module():
+    """The word may appear only in the withdrawal narrative, never as a live
+    verdict; and the old verdict key must be gone."""
+    import metaphysica.simulations.PM.geometry.half_shift_enumeration as m
+
+    assert not hasattr(m, "refutation_report"), (
+        "the withdrawn API returned; the register must rule before any "
+        "refutation is republished"
     )
-
-    fake = _perturbed()
-    group = diagonal_stabiliser(fake)
-    assert len(group) != 8, "perturbation did not move the group order"
-    assert len(generating_triples(group)) != 28, (
-        "the triple count did not respond to a perturbed phi, so the "
-        "enumeration is not reading the group it was handed"
-    )
+    report = status_report()
+    assert "REFUTED" not in str(report.get("b3_24_status"))
 
 
-def test_a_shift_on_a_fixed_direction_removes_the_fixed_points():
-    """The mechanism the whole enumeration turns on."""
-    triple = generating_triples()[0]
-    no_shift = ((0, 0, 0), (0, 0, 0), (0, 0, 0))
-    with_shift = ((1, 0, 0), (0, 0, 0), (0, 0, 0))
-    a = singular_profile(triple, no_shift)
-    b = singular_profile(triple, with_shift)
-    assert a is not None and b is not None
-    assert a["freely_acting_involutions"] == 0
-    assert b["freely_acting_involutions"] > 0, (
-        "a half-shift along a fixed direction must make some element act freely"
-    )
-    assert b["n_families"] < a["n_families"]
-
-
-def test_the_unshifted_case_reproduces_112_components():
-    """Cross-check against arc_flag_structure's independent count."""
-    from metaphysica.simulations.PM.geometry.arc_flag_structure import (
-        fixed_locus_components,
-    )
-
-    triple = generating_triples()[0]
-    rec = singular_profile(triple, ((0, 0, 0), (0, 0, 0), (0, 0, 0)))
-    assert rec["n_families"] == 112
-    assert fixed_locus_components()["total_three_torus_components"] == 112
-
-
-# ------------------------------------------------------------ honest scoping
-
-
-def test_the_report_states_its_assumptions_and_limits(report):
-    assert len(report["assumptions"]) >= 4
-    joined = " ".join(report["assumptions"]).lower()
-    assert "flat contribution is exactly 7" in joined
-    assert "additively" in joined
-    assert "fano_tcs" in report["does_not_refute"]
-    assert "ODD" in report["falsifiable_prediction"]
-
-
-def test_no_published_betti_number_is_asserted():
-    """The calibration gate is discharged by a prediction, not by a quoted table."""
-    from metaphysica.simulations.PM.geometry import half_shift_enumeration
-
-    doc = half_shift_enumeration.__doc__ or ""
-    assert "No number from them is" in doc or "no number from them is" in doc.lower()
-    blob = str(refutation_report())
-    for suspicious in ("43", "215", "155"):
-        assert ("b_3 = " + suspicious) not in blob
+def test_betti_statements_stay_conditional():
+    report = status_report()
+    assert "Not asserted" in report["conditional_gate"]
+    assert "calibration" in report["conditional_gate"]
+    assert report["flat_contribution"] == 7
+    assert "at least 6" in report["unconditional_bound"]

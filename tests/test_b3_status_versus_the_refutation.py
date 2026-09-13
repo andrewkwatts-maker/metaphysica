@@ -1,22 +1,23 @@
-"""b_3 = 24 is published as DERIVED, and it has been refuted as a derivation.
+"""b_3 = 24 is published as DERIVED while no derivation of it is on the books.
 
-RECORDED, NOT RESOLVED. half_shift_enumeration proves b_3 = 24 is unreachable by
-the Joyce (Z/2)^3 construction -- b_3 = 7 + even is always odd -- and fano_tcs
-was already recorded as putting b_3 = 24 far below its exhibited 71-155 range.
-So neither construction the framework declares can derive it.
+HISTORY, which this file must not lose. A parity refutation of b_3 = 24 briefly
+stood here and was WITHDRAWN on review: its enumeration covered 1/32 of the
+half-shift moduli space, its additivity premise failed on the stratum it did
+cover, and its component action carried a labelling defect. So the status of
+b_3 = 24 for the Joyce (Z/2)^3 construction is UNDETERMINED — not refuted, and
+not derived.
 
-Meanwhile particle.b3 and cosmology.b3 ship with status DERIVED.
+The contradiction of record is therefore narrower but still real:
 
-Relabelling them is a physics ruling: it changes how the theory presents itself,
-moves the free-variable count, and makes w_0 = -23/24 and n_gen = 24/8 into
-predictions from a stated input. The standing rule is to prepare the evidence and
-leave the decision to the author, so nothing is relabelled here.
+  * particle.b3 and cosmology.b3 ship with status DERIVED;
+  * neither declared construction supplies the derivation — Joyce (Z/2)^3 is
+    UNDETERMINED pending the corrected enumeration and the cited contribution
+    table, and fano_tcs was separately recorded as placing b_3 = 24 far below
+    its exhibited 71-155 range.
 
-What this file does instead is make the contradiction impossible to lose. It is
-GREEN while the disagreement stands and FAILS when b_3's published status
-changes -- at which point the register must be updated to record the ruling. That
-is the same staleness-guard pattern as
-test_no_theory_uncertainty_in_experimental_slot's _OPEN_RULINGS.
+Relabelling is a physics ruling and is not taken here. This file is GREEN while
+the disagreement stands and FAILS when b_3's published status changes, at which
+point the register must record the ruling.
 """
 
 from __future__ import annotations
@@ -27,7 +28,6 @@ from pathlib import Path
 
 import pytest
 
-#: The rows that publish b_3 and the status each currently carries.
 _RECORDED_STATUS = {
     "particle.b3": "DERIVED",
     "cosmology.b3": "DERIVED",
@@ -54,32 +54,29 @@ def params():
     return _load_params()
 
 
-def test_the_refutation_stands():
-    """If this ever fails, the contradiction below has dissolved on its own."""
+def test_the_question_is_open_not_refuted():
+    """The withdrawal must hold: no refutation may be quietly reinstated."""
     from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
-        refutation_report,
+        status_report,
     )
 
-    report = refutation_report()
-    assert report["twisted_24_is_achievable"] is False
-    assert report["b3_parity"] == "odd"
-    assert "REFUTED" in report["verdict"]
+    report = status_report()
+    assert report["b3_24_status"] == "UNDETERMINED"
 
 
 def test_b3_is_still_published_as_derived(params):
-    """The contradiction, recorded.
+    """The contradiction of record: DERIVED with no derivation on the books.
 
-    Fails when the status changes -- which is the point. A change means the
+    Fails when the status changes — which is the point. A change means the
     author has ruled, and the register must say so.
     """
     for path, recorded in _RECORDED_STATUS.items():
         assert path in params, "%s is no longer published" % path
         actual = params[path].get("status")
         assert actual == recorded, (
-            "%s status moved from %s to %s. If b_3 has been relabelled following "
-            "the refutation, update this file and record the ruling in "
-            "docs/OUTSTANDING_ISSUES.md; the free-variable count moves with it."
-            % (path, recorded, actual)
+            "%s status moved from %s to %s. Record the ruling in "
+            "docs/OUTSTANDING_ISSUES.md and update this file; the "
+            "free-variable count moves with it." % (path, recorded, actual)
         )
 
 
@@ -97,11 +94,11 @@ def test_b3_is_consumed_so_it_cannot_be_comparison_only(params):
     )
 
 
-def test_the_contradiction_is_recorded_in_the_register():
-    """The evidence must be written down, not only encoded in a test."""
+def test_the_withdrawal_is_recorded_in_the_register():
+    """Both the refutation and its withdrawal must be on the books."""
     reg = Path("H:/Github/PrincipiaMetaphysica/docs/OUTSTANDING_ISSUES.md")
     if not reg.is_file():
         pytest.skip("register not available")
     text = reg.read_text(encoding="utf-8", errors="replace")
-    assert "REFUTED" in text
-    assert "LOAD_BEARING_INPUT" in text
+    assert "REFUTED" in text            # the history stays visible
+    assert "WITHDRAWN" in text          # and so does the correction
