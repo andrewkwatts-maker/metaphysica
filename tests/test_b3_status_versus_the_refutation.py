@@ -54,13 +54,30 @@ def params():
     return _load_params()
 
 
-def test_the_seed_ruling_was_executed(params):
+def _datasource_row(path: str):
+    """Read the CHECKED-IN datasource, not a build artifact.
+
+    The seed's status lives in src/metaphysica/data/parameters.json, which is
+    its single source of truth and is always current. Reading the export
+    instead would make this test depend on build freshness -- and there are two
+    export trees, one of which goes stale, which has already caused one false
+    "the ruling did not land" conclusion.
+    """
+    src = Path(__file__).resolve().parents[1] / "src" / "metaphysica" / "data" \
+        / "parameters.json"
+    if not src.is_file():
+        pytest.skip("curated datasource not available")
+    blob = json.loads(src.read_text(encoding="utf-8"))
+    return (blob.get("parameters") or blob).get(path)
+
+
+def test_the_seed_ruling_was_executed():
     """2026-09-14: topology.elder_kads is INPUT, not GEOMETRIC.
 
     The ruling removed b_3 = 24's derived status at the SEED. This fails if it
     is ever quietly restored without a derivation landing.
     """
-    seed = params.get("topology.elder_kads")
+    seed = _datasource_row("topology.elder_kads")
     assert seed is not None
     assert seed.get("status") == "INPUT", (
         "the seed's status is %s; the 2026-09-14 ruling set it to INPUT and "
@@ -86,8 +103,8 @@ def test_the_echo_rows_still_claim_derived_and_that_is_recorded(params):
             "%s changed status; if the echoes now follow the seed, update this "
             "file and record the fix in the register" % path
         )
-    seed_status = params["topology.elder_kads"].get("status")
-    assert seed_status != "DERIVED", (
+    seed = _datasource_row("topology.elder_kads")
+    assert seed.get("status") != "DERIVED", (
         "seed and echoes agree again -- re-examine whether a derivation landed"
     )
 
