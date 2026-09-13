@@ -1079,3 +1079,31 @@ html[data-reading-level="layperson"] .reading-block[data-level="full"] { display
 @media (prefers-reduced-motion: no-preference) {
     .reading-toggle-btn { transition: background-color 120ms ease, color 120ms ease; }
 }
+
+/* ------------------------------------------------------------------ *
+ * EML diagrams: scale to the window instead of overflowing it.
+ *
+ * eml_flow.js emits SVG with fixed width/height attributes (720px default)
+ * but ALSO a correct viewBox, so constraining the CSS width rescales the
+ * whole diagram losslessly. height: auto preserves the aspect ratio from
+ * the viewBox. overflow-x: auto is the fallback for any non-SVG EML
+ * content (long ops.* expressions), which scrolls inside its own block
+ * rather than widening the page.
+ * ------------------------------------------------------------------ */
+
+.math-mode-block[data-mode="eml"],
+.eml-formula {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.math-mode-block[data-mode="eml"] svg,
+.eml-formula svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.math-mode-inline[data-mode="eml"] {
+    overflow-wrap: anywhere;
+}
