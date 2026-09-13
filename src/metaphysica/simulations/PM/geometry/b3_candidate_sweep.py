@@ -75,6 +75,75 @@ CANDIDATES: Tuple[Tuple[int, str, bool], ...] = (
 )
 
 
+def arithma_formulas() -> Dict[str, Any]:
+    """The b_3 relations on the Arithma track, with their drift checks.
+
+    Each is stated three ways -- Python in downstream_of, LaTeX for the paper,
+    and an Arithma tree here -- so the three can be compared. `check()` does
+    the comparing; a disagreement means one statement has drifted from the
+    others, which is the whole reason the third track exists.
+
+    Coefficients come from the registry via `inputs`, so no numeral appears.
+    """
+    from metaphysica.simulations.core.arithma_formula import ArithmaFormula
+
+    b3_path = "topology.elder_kads"
+
+    return {
+        "w0_from_b3": ArithmaFormula(
+            name="w0_from_b3",
+            latex_hint=r"w_0 = -\frac{b_3 - 1}{b_3}",
+            build=lambda E, v: E.div(
+                E.neg(E.sub(v("b3"), E.number(1.0))), v("b3")),
+            inputs={"b3": b3_path},
+            python=lambda b3: -(b3 - 1.0) / b3,
+            notes="dark energy equation of state from the seed",
+        ),
+        "n_gen_from_b3": ArithmaFormula(
+            name="n_gen_from_b3",
+            latex_hint=r"n_{\rm gen} = b_3 / 8",
+            build=lambda E, v: E.div(v("b3"), E.number(8.0)),
+            inputs={"b3": b3_path},
+            python=lambda b3: b3 / 8.0,
+            notes="the 8 is dim O; integrality is the structural constraint",
+        ),
+        "racetrack_exponent": ArithmaFormula(
+            name="racetrack_exponent",
+            latex_hint=r"a = 2\pi / b_3",
+            build=lambda E, v: E.div(
+                E.mul(E.number(2.0), v("pi")), v("b3")),
+            inputs={"b3": b3_path},
+            constants={"pi": "pi"},
+            python=lambda b3, pi: 2.0 * pi / b3,
+            notes="the instanton exponent entering W",
+        ),
+        "freudenthal_quartic": ArithmaFormula(
+            name="freudenthal_quartic",
+            latex_hint=r"16 (b_3/27)^2",
+            build=lambda E, v: E.mul(
+                E.number(16.0),
+                E.pow_(E.div(v("b3"), E.number(27.0)), E.number(2.0))),
+            inputs={"b3": b3_path},
+            python=lambda b3: 16.0 * (b3 / 27.0) ** 2,
+            notes="27 = dim J_3(O); verified exact against the registry row",
+        ),
+    }
+
+
+def arithma_track_report() -> Dict[str, Any]:
+    """Run every b_3 formula's drift check and report, hiding nothing."""
+    formulas = arithma_formulas()
+    checks = {name: f.check() for name, f in formulas.items()}
+    statuses = [c["status"] for c in checks.values()]
+    return {
+        "n_formulas": len(formulas),
+        "checks": checks,
+        "all_agree": all(c.get("agrees") for c in checks.values()),
+        "statuses": sorted(set(statuses)),
+        "exports": {name: f.export() for name, f in formulas.items()},
+    }
+
+
 def _registry() -> Dict[str, Any]:
     import glob
     import json
