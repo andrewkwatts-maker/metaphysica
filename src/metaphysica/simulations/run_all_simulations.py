@@ -1606,10 +1606,18 @@ class SimulationRunner:
             # Using GEOMETRIC (not ESTABLISHED) allows validation against experiment
             import numpy as np
 
+            # RULED 2026-09-14: b_3 = 24 is an INPUT while its origin is open.
+            # The old status was GEOMETRIC with source TCS_G2_187, but the
+            # register excludes b_3 = 24 from the TCS range (71-155), the
+            # Joyce (Z/2)^3 route is UNDETERMINED pending the ch.12
+            # contribution table, and no other derivation is on the books.
+            # Candidate origins are enumerated in the b3_origin fork; the
+            # b3_candidate_sweep pushes each through the downstream pipeline.
             if not self.registry.has_param("topology.elder_kads"):
                 self.registry.set_param("topology.elder_kads", 24,
-                                         source="GEOMETRIC:TCS_G2_187", status="GEOMETRIC",
-                                         metadata={"eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it"})
+                                         source="INPUT:B3_ORIGIN_OPEN", status="INPUT",
+                                         metadata={"eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it",
+                                                   "ruling": "2026-09-14: DERIVED/GEOMETRIC status removed; input until a derivation lands (see fork b3_origin)"})
 
             # Canonical chi_eff = 144 (full manifold Euler characteristic)
             # mephorash_chi = 144 gives n_gen = 3: 144/48 = 3

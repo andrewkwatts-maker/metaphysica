@@ -132,6 +132,11 @@ _OUTPUT_FORMULAS = [
 ]
 
 
+#: The BBN-calibrated Re(T). Module-level so the re_t_adoption fork's
+#: read_adopted can inspect the declared default without instantiating.
+RE_T_CALIBRATED = 7.086
+
+
 class BaryonAsymmetryV18(SimulationBase):
     """
     Geometric baryon asymmetry derivation from G2 cycle structure.
@@ -140,6 +145,25 @@ class BaryonAsymmetryV18(SimulationBase):
     in the G2 compactification. The cycle asymmetry Δb3 and sterile CP phase
     provide the necessary ingredients for matter-antimatter asymmetry.
     """
+
+    @staticmethod
+    def _resolve_re_t() -> float:
+        """Resolve the re_t_adoption fork: calibrated value or true vacuum."""
+        try:
+            from metaphysica.simulations.core.variants import resolve
+
+            if resolve("re_t_adoption") == "computed_vacuum":
+                from metaphysica.simulations.PM.cosmology.racetrack_vacuum import (
+                    stationary_points,
+                )
+
+                minima = [p for p in stationary_points(3)
+                          if p["kind"] == "minimum"]
+                if minima:
+                    return float(minima[0]["re_t"])
+        except Exception:                    # fork undeclared / import cycle
+            pass
+        return RE_T_CALIBRATED
 
     def __init__(self):
         super().__init__()
@@ -175,12 +199,26 @@ class BaryonAsymmetryV18(SimulationBase):
         # the octonionic structure. delta_CP ~ pi/6 from G2 triality.
         self.cp_phase = np.pi / 6  # 30 degrees
 
-        # Moduli stabilization parameter
-        # CALIBRATED: Re(T) = 7.086 chosen to match BBN baryon asymmetry eta_b ~ 6.1e-10.
-        # This is NOT the Higgs-derived value (9.865) or the geometric value (1.833).
-        # The tension between these three Re(T) values is an open problem.
-        # See config.py HiggsMassParameters for full discussion.
-        self.Re_T = 7.086  # [CALIBRATED for baryon asymmetry]
+        # Moduli stabilization parameter -- now a GATED SWITCH (fork
+        # re_t_adoption) so both readings can be run and compared:
+        #
+        #   calibrated_7086 (adopted)  Re(T) = 7.086, chosen to match the BBN
+        #                              baryon asymmetry eta_b ~ 6.1e-10. NOT a
+        #                              stationary point of the declared
+        #                              racetrack equations.
+        #   computed_vacuum            Re(T) from racetrack_vacuum's solve of
+        #                              those equations: the unique SUSY AdS
+        #                              minimum at 37.85. Selecting it shows
+        #                              plainly what the calibration hides --
+        #                              the moduli damping exp(-Re T) drops by
+        #                              e^{-30.8}, destroying the eta_b match,
+        #                              which is the honest cost of the true
+        #                              vacuum under this baryogenesis model.
+        #
+        # The tension between the incumbent Re(T) values (7.086 BBN, 9.865
+        # Higgs, 1.833 geometric, 37.85 vacuum) remains the open problem; the
+        # fork exists so the paths can be tested instead of argued.
+        self.Re_T = self._resolve_re_t()
 
         # v19.0: Jarlskog invariant (CKM CP violation measure)
         # PDG 2024: J = (3.08 +/- 0.15) * 10^-5
@@ -326,11 +364,15 @@ class BaryonAsymmetryV18(SimulationBase):
             }
         )
 
+        # Status follows the re_t_adoption branch: the calibrated value is
+        # CALIBRATED; the racetrack vacuum is COMPUTED, because it is the
+        # solved stationary point of the declared equations, not a fit.
         registry.set_param(
             path="cosmology.racetrack_Re_T",
             value=self.Re_T,
             source=self._metadata.id,
-            status="CALIBRATED",
+            status=("CALIBRATED" if abs(self.Re_T - RE_T_CALIBRATED) < 1e-9
+                    else "COMPUTED"),
         )
 
         registry.set_param(

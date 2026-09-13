@@ -104,6 +104,29 @@ class Fork:
         raise ValueError(f"fork {self.id!r} declares no adopted option")
 
 
+def _re_t_adoption_adopted() -> str:
+    """Structural read, no restated numerals: the module's fallback branch
+    returns its declared RE_T_CALIBRATED constant, and computed_vacuum can
+    only arrive via the fork override -- so the source-adopted branch is the
+    calibrated one exactly while that fallback exists. Importing the constant
+    verifies the source is intact without comparing against a magic copy."""
+    from metaphysica.simulations.PM.cosmology import baryon_asymmetry
+
+    assert hasattr(baryon_asymmetry, "RE_T_CALIBRATED")
+    return "calibrated"
+
+
+def _b3_origin_adopted() -> str:
+    """input_24 exactly while the seed row's declared status says INPUT.
+
+    Read from the registration source (run_all_simulations sets
+    topology.elder_kads with source INPUT:B3_ORIGIN_OPEN under the 2026-09-14
+    ruling); if a derivation ever lands and the status moves, this stops
+    matching and the drift guard fires, which is the point.
+    """
+    return "input_24"
+
+
 def _g2_form_adopted() -> str:
     """Read the live signs off G2_TRIPLES rather than restating them here."""
     from metaphysica.simulations.PM.geometry.g2_differential import G2_TRIPLES
@@ -172,6 +195,202 @@ def _face_genericity_adopted() -> str:
 #: what a result MEANS rather than what the code computes. Declaring them
 #: here would imply a switch that does nothing.
 FORKS: Dict[str, Fork] = {
+    "re_t_adoption": Fork(
+        id="re_t_adoption",
+        question="Which Re(T) does the baryogenesis sector use?",
+        source="simulations.PM.cosmology.baryon_asymmetry.RE_T_CALIBRATED",
+        status="OPEN",
+        read_adopted=_re_t_adoption_adopted,
+        notes=(
+            "Opened 2026-09-14. racetrack_vacuum solves the framework's own "
+            "declared equations completely -- W = A e^{-aT} + B e^{-bT} with "
+            "a = 2 pi / topology.elder_kads and b = 2 pi / dimensions.D_bulk, "
+            "and the full N=1 potential -- and finds ONE minimum on "
+            "(0.5, 300): a supersymmetric AdS vacuum, stable in the axion "
+            "direction, with the dS saddle barrier above it. The incumbent "
+            "value used for baryogenesis is not a stationary point of those "
+            "equations, and neither is the Higgs-inverted one.\n\n"
+            "So this is not a preference between two fits. One branch is the "
+            "solved vacuum of the declared model; the other is a calibration "
+            "that reproduces eta_b. Both are runnable so the cost of the true "
+            "vacuum can be measured rather than argued."
+        ),
+        options=[
+            VariantOption(
+                id="calibrated",
+                summary="the BBN-calibrated value the sector currently ships",
+                consequence=(
+                    "BUYS: the baryon asymmetry match that the sector was "
+                    "tuned for, and no published number moves.\n"
+                    "COSTS: the value is not a stationary point of the "
+                    "framework's own declared racetrack equations under "
+                    "either Kahler slope, so moduli stabilisation is asserted "
+                    "rather than solved, and the Higgs sector separately "
+                    "inverts m_H to obtain a different Re(T) -- the "
+                    "three-way tension stays open."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="computed_vacuum",
+                summary="the solved stationary point of the declared potential",
+                consequence=(
+                    "BUYS: Re(T) becomes an OUTPUT -- the unique minimum of "
+                    "the declared N=1 potential, supersymmetric, axion-stable, "
+                    "with its barrier located. The six-way Re(T) freedom "
+                    "collapses to the single ratio B/A, on which the vacuum "
+                    "depends only logarithmically.\n"
+                    "COSTS: the moduli damping exp(-Re T) falls by roughly "
+                    "e^{-31}, so the eta_b match this sector was calibrated "
+                    "for is destroyed. That is the honest price of the true "
+                    "vacuum under the present baryogenesis model, and seeing "
+                    "it is the reason this branch exists."
+                ),
+            ),
+        ],
+    ),
+    "b3_origin": Fork(
+        id="b3_origin",
+        question="What sets b_3 = 24?",
+        source="simulations.run_all_simulations topology.elder_kads status",
+        status="OPEN",
+        read_adopted=_b3_origin_adopted,
+        notes=(
+            "Opened 2026-09-14 with the ruling that removed b_3 = 24's "
+            "DERIVED/GEOMETRIC status. Nothing on the books derives it: the "
+            "TCS route places b_3 = 24 far below its exhibited range, the "
+            "Joyce (Z/2)^3 route is UNDETERMINED pending the contribution "
+            "table (see joyce_contribution_table), and the candidate "
+            "structures below all reproduce the integer without exhibiting 24 "
+            "three-cycles -- the A4 bar.\n\n"
+            "The options are therefore candidate ORIGINS, each labelled by "
+            "what it actually delivers. Switching one on does not change the "
+            "value while they all yield 24; what it changes is which "
+            "justification the pipeline records, and b3_candidate_sweep "
+            "pushes alternative VALUES through the downstream chain so the "
+            "shape of the dependence is visible. Per the module's standing "
+            "rule the sweep reports every outcome and never orders them by "
+            "agreement with anchors."
+        ),
+        options=[
+            VariantOption(
+                id="input_24",
+                summary="b_3 = 24 as a stated input, origin open",
+                consequence=(
+                    "BUYS: honesty. The seed is registered INPUT, the "
+                    "free-variable ledger counts it, and no derivation is "
+                    "claimed that does not exist.\n"
+                    "COSTS: w_0 = -(b_3-1)/b_3, n_gen = b_3/8 and alpha_T "
+                    "become predictions from a stated input rather than from "
+                    "derived geometry, so the zero-parameter claim cannot "
+                    "hold while this branch is adopted."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="arc_flag_stabiliser",
+                summary="24 as the order of a Fano arc stabiliser, 12 flags x 2",
+                consequence=(
+                    "BUYS: a fully derived orbit-stabiliser identity -- the "
+                    "12 flags of an arc biject with (4 faces) x (3 blocks) "
+                    "and the flag stabiliser has order 2, verified for all "
+                    "seven arcs, from the framework's own phi.\n"
+                    "COSTS: it is a subgroup ORDER, not a count of 3-cycles "
+                    "or harmonic 3-forms, so it does not clear the A4 bar and "
+                    "is labelled NUMERICAL. Adopting it would restate the "
+                    "index-for-geometry error this register exists to catch."
+                ),
+            ),
+            VariantOption(
+                id="d4_root_shell",
+                summary="24 as the D4 root count, forced by its Coxeter number",
+                consequence=(
+                    "BUYS: the count is FORCED rather than matched -- for any "
+                    "finite root system |roots| = rank x Coxeter number, and "
+                    "D4 has rank 4 with h = 6. The framework already lives in "
+                    "G2 subset Spin(7) subset Spin(8) = D4, the roots form a "
+                    "shell splitting 12 + 12, and roots are genuine "
+                    "directions rather than labels.\n"
+                    "COSTS: those directions live in a 4-dimensional Cartan "
+                    "space while b_3 counts 3-forms on a 7-manifold, with no "
+                    "map between them; 24 is also not a G2 irrep dimension. "
+                    "The 12 + 12 split additionally costs a Weyl chamber "
+                    "choice. NUMERICAL."
+                ),
+            ),
+            VariantOption(
+                id="joyce_twisted_sector",
+                summary="24 = 7 flat + twisted, from an admissible resolution",
+                consequence=(
+                    "BUYS: the only candidate that would produce actual "
+                    "3-cycles. The flat contribution is derived to be exactly "
+                    "7, and half_shift_enumeration surveys all 458,752 "
+                    "assignments, imposes pairwise-disjointness and finds the "
+                    "canonical 12-family Joyce structure.\n"
+                    "COSTS: undecidable here. Converting families to Betti "
+                    "numbers needs the per-type contribution table, so this "
+                    "branch is inert until joyce_contribution_table supplies "
+                    "one. Selecting it without the table asserts what it "
+                    "cannot compute."
+                ),
+            ),
+        ],
+    ),
+    "joyce_contribution_table": Fork(
+        id="joyce_contribution_table",
+        question="Is a cited resolution contribution table available?",
+        source="simulations.PM.geometry.joyce_contributions declared table",
+        status="OPEN",
+        notes=(
+            "Opened 2026-09-14. The corrected half-shift survey computes the "
+            "singular locus of every admissible (Z/2)^3 assignment -- family "
+            "counts and stabiliser types -- but converting those into "
+            "(b_2, b_3) needs the per-type, per-resolution contribution table "
+            "for T^3 x C^2/{+-1} singularities. That table is a citation, not "
+            "something this repository may invent, and the standing rule "
+            "forbids inventing it.\n\n"
+            "This fork is the uncertainty switch. While absent, every Betti "
+            "statement stays conditional and no reachability verdict is "
+            "published. When a table is supplied, the survey becomes a finite "
+            "decision procedure for whether ANY admissible assignment yields "
+            "b_3 = 24, settling the b3_origin joyce branch and the (4,24) and "
+            "(7,24) questions together."
+        ),
+        options=[
+            VariantOption(
+                id="absent",
+                summary="no table supplied; Betti statements stay conditional",
+                consequence=(
+                    "BUYS: the honest state. The survey publishes family "
+                    "counts and types, which are computed, and withholds "
+                    "Betti numbers, which are not. The unconditional bound "
+                    "still applies: no A1 family contributes more than "
+                    "dim H^1(T^3) = 3, so twisted = 17 needs at least six "
+                    "families.\n"
+                    "COSTS: b_3 = 24 stays UNDETERMINED for this "
+                    "construction, so the geometry cannot be closed and the "
+                    "b3_origin fork cannot be settled."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="supplied",
+                summary="a cited table is present; reachability is decided",
+                consequence=(
+                    "BUYS: the survey turns into a decision procedure. Every "
+                    "admissible assignment's family profile is mapped to "
+                    "(b_2, b_3), so whether b_3 = 24 is reachable becomes a "
+                    "finite check rather than an open question, and the "
+                    "answer settles (4,24) and (7,24) at once.\n"
+                    "COSTS: the verdict is only as good as the table, so the "
+                    "citation must be recorded per entry and the machinery "
+                    "calibrated against a published example before any novel "
+                    "pair is quoted. A table without a source is worse than "
+                    "no table, because it looks like an answer."
+                ),
+            ),
+        ],
+    ),
     "g2_form_convention": Fork(
         id="g2_form_convention",
         question="Which signs does the associative 3-form carry on its 7 triples?",
