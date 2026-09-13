@@ -1,0 +1,236 @@
+"""Solve the declared racetrack vacuum equations completely.
+
+WHY THIS EXISTS
+===============
+Re(T) is the framework's single largest free knob: six mutually incompatible
+values ship (1.833 / 3.739 / 7.086 / 9.865 / 37.85 / 174.03), one CALIBRATED
+"to match BBN", one fixed circularly by the observed Higgs mass. Yet the
+governing equations are already declared in dynamical_lambda.py:
+
+    W = A e^{-aT} + B e^{-bT}        A = 1, B = -1/2
+    a = 2 pi / b_3 = 2 pi / 24       b = 2 pi / N_b = 2 pi / 26
+    K = -n ln(T + T_bar)             n = 3 (CY form) or n = 7 (G2 7/3 form)
+    V = e^K [ K^{T T_bar} |D_T W|^2 - 3 |W|^2 ]
+
+The exponents are geometry (b_3 and the bulk dimension); the only continuous
+freedom the vacuum location sees is the RATIO B/A, because D_T W = 0 is
+invariant under rescaling W. This module solves those equations completely --
+every stationary point of V over the complex T plane's real slice, classified
+by the Hessian in both the Re(T) and axion directions -- instead of stopping at
+the single D_T W = 0 root the incumbent code finds.
+
+WHAT THE SOLVE ESTABLISHES (verified by the tests, re-derived every run)
+========================================================================
+1. The equations DO stabilise the modulus. There is exactly one minimum on
+   (0.5, 300): a supersymmetric AdS vacuum at
+
+       Re(T) = 37.8527   (n = 3)        Re(T) = 37.314   (n = 7)
+
+   with positive curvature in BOTH the Re(T) and axion directions, and a dS
+   saddle above it (~41.7 / ~40.6) forming the barrier before runaway.
+2. The D_T W = 0 point IS that minimum -- the SUSY condition and the full
+   stationarity of V agree here, so the incumbent 37.85 registry value is the
+   genuine vacuum of the declared equations.
+3. The values in use elsewhere -- 7.086 (BBN-calibrated) and 9.865 (fixed by
+   m_H) -- are NOT stationary points of the declared equations under either
+   Kahler slope. Nothing the framework has written down produces them.
+4. The Kahler ruling barely moves this output: n = 3 -> n = 7 shifts the
+   vacuum by ~1.4%. Re(T) is robust against that open fork.
+5. The vacuum is AdS (V < 0). No declared ingredient uplifts it to dS; the
+   cosmological-constant story cannot come from this potential as it stands,
+   and that is recorded rather than patched.
+
+FREE-PARAMETER ACCOUNTING
+=========================
+Re(T) = f(B/A; b_3, N_b). The exponents are geometric integers; A's overall
+scale only sets the depth. So the six-way Re(T) freedom reduces to ONE knob,
+the ratio B/A = -1/2, whose provenance ("second instanton prefactor") is a
+choice, not a derivation -- and the dependence is only logarithmic:
+d Re(T) / d ln|B/A| ~ 1/(a - b), so order-one changes in the ratio move the
+vacuum by ~ln-factors, not orders of magnitude.
+
+NOT DONE HERE: adopting 37.85 as the published Re(T). That moves the Higgs and
+BBN sectors and is the author's ruling. This module supplies the computed
+verdict; the register carries the contradiction.
+
+Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
+"""
+
+from __future__ import annotations
+
+import math
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+#: The six Re(T) values currently found in the codebase, for the comparison
+#: table. Sources: config.py canonicalisation-pending block and the 72-gate
+#: generator. Values, not adoptions.
+INCUMBENT_RE_T = (1.833, 3.739, 7.086, 9.865, 37.85, 174.03)
+
+
+def _declared_coefficients() -> Tuple[float, float, float, float]:
+    """Read W's coefficients from their single source of truth."""
+    from metaphysica.simulations.PM.cosmology.dynamical_lambda import (
+        DynamicalLambdaRelaxation,
+    )
+
+    return (DynamicalLambdaRelaxation.RACETRACK_A, DynamicalLambdaRelaxation.RACETRACK_B,
+            DynamicalLambdaRelaxation.RACETRACK_a, DynamicalLambdaRelaxation.RACETRACK_b)
+
+
+def scalar_potential(t: float, theta: float, n: int,
+                     coeffs: Optional[Tuple[float, float, float, float]] = None
+                     ) -> float:
+    """V at T = t + i theta for K = -n ln(T + T_bar).
+
+    The full N=1 expression, complex W kept complex:
+        V = (2t)^{-n} [ (2t)^2 / n * |dW - (n / 2t) W|^2 - 3 |W|^2 ]
+    """
+    A, B, a, b = coeffs or _declared_coefficients()
+    if t <= 0:
+        return float("inf")
+    T = t + 1j * theta
+    Ea = np.exp(-a * T)
+    Eb = np.exp(-b * T)
+    W = A * Ea + B * Eb
+    dW = -a * A * Ea - b * B * Eb
+    DW = dW - (n / (2.0 * t)) * W
+    return float((2 * t) ** (-n)
+                 * (((2 * t) ** 2 / n) * abs(DW) ** 2 - 3.0 * abs(W) ** 2))
+
+
+def susy_condition_roots(n: int,
+                         coeffs: Optional[Tuple[float, float, float, float]] = None,
+                         lo: float = 1.0, hi: float = 300.0
+                         ) -> List[float]:
+    """Real roots of D_T W = 0 -- the supersymmetric stationarity condition."""
+    A, B, a, b = coeffs or _declared_coefficients()
+
+    def f(t: float) -> float:
+        W = A * math.exp(-a * t) + B * math.exp(-b * t)
+        dW = -a * A * math.exp(-a * t) - b * B * math.exp(-b * t)
+        return dW - (n / (2.0 * t)) * W
+
+    from scipy.optimize import brentq
+
+    ts = np.linspace(lo, hi, 6000)
+    roots = []
+    for i in range(len(ts) - 1):
+        if f(ts[i]) * f(ts[i + 1]) < 0:
+            roots.append(float(brentq(f, ts[i], ts[i + 1], xtol=1e-13)))
+    return roots
+
+
+def stationary_points(n: int,
+                      coeffs: Optional[Tuple[float, float, float, float]] = None,
+                      lo: float = 0.5, hi: float = 300.0,
+                      samples: int = 400000) -> List[Dict[str, Any]]:
+    """Every stationary point of V on the real slice, Hessian-classified.
+
+    This is the computation the incumbent code does not do: it finds sign
+    changes of dV/dT itself, so maxima and saddles are reported alongside the
+    minimum rather than silently skipped, and each point carries the axion
+    curvature so "minimum" means minimum in the complex plane, not just along
+    the real axis.
+    """
+    coeffs = coeffs or _declared_coefficients()
+    ts = np.linspace(lo, hi, samples)
+    vs = np.array([scalar_potential(t, 0.0, n, coeffs) for t in ts])
+    dv = np.gradient(vs, ts)
+
+    out: List[Dict[str, Any]] = []
+    for i in range(len(ts) - 1):
+        if not (dv[i] == 0 or dv[i] * dv[i + 1] < 0):
+            continue
+        t0, t1 = float(ts[i]), float(ts[i + 1])
+        for _ in range(64):
+            tm = 0.5 * (t0 + t1)
+            h = 1e-7 * max(1.0, tm)
+
+            def num_dv(x: float) -> float:
+                return (scalar_potential(x + h, 0.0, n, coeffs)
+                        - scalar_potential(x - h, 0.0, n, coeffs))
+
+            if num_dv(t0) * num_dv(tm) <= 0:
+                t1 = tm
+            else:
+                t0 = tm
+        tm = 0.5 * (t0 + t1)
+        h = 1e-5 * max(1.0, tm)
+        v0 = scalar_potential(tm, 0.0, n, coeffs)
+        v_tt = (scalar_potential(tm + h, 0.0, n, coeffs) - 2 * v0
+                + scalar_potential(tm - h, 0.0, n, coeffs)) / h ** 2
+        v_thth = (scalar_potential(tm, h, n, coeffs) - 2 * v0
+                  + scalar_potential(tm, -h, n, coeffs)) / h ** 2
+        if v_tt > 0 and v_thth > 0:
+            kind = "minimum"
+        elif v_tt < 0 and v_thth < 0:
+            kind = "maximum"
+        else:
+            kind = "saddle"
+        out.append({
+            "re_t": tm,
+            "V": v0,
+            "V_tt": v_tt,
+            "V_axion": v_thth,
+            "kind": kind,
+            "vacuum_energy_sign": ("AdS" if v0 < -1e-300
+                                   else ("dS" if v0 > 1e-300 else "Minkowski")),
+        })
+    return out
+
+
+def vacuum_report() -> Dict[str, Any]:
+    """The complete solve, both Kahler slopes, with the incumbent comparison."""
+    A, B, a, b = _declared_coefficients()
+    report: Dict[str, Any] = {
+        "declared": {
+            "A": A, "B": B, "B_over_A": B / A,
+            "a": a, "b": b,
+            "a_is_geometric": "2 pi / b_3 = 2 pi / 24",
+            "b_is_geometric": "2 pi / N_b = 2 pi / 26",
+        },
+        "w_zero_at": math.log(abs(A / B)) / (a - b) if B else None,
+        "branches": {},
+    }
+    for n, label in ((3, "cy_no_scale"), (7, "g2_seven_thirds")):
+        pts = stationary_points(n)
+        minima = [p for p in pts if p["kind"] == "minimum"]
+        report["branches"][label] = {
+            "n": n,
+            "susy_roots": susy_condition_roots(n),
+            "stationary_points": pts,
+            "n_minima": len(minima),
+            "vacuum_re_t": minima[0]["re_t"] if minima else None,
+            "vacuum_V": minima[0]["V"] if minima else None,
+        }
+
+    v3 = report["branches"]["cy_no_scale"]["vacuum_re_t"]
+    v7 = report["branches"]["g2_seven_thirds"]["vacuum_re_t"]
+    comparison = []
+    for cand in INCUMBENT_RE_T:
+        near3 = v3 is not None and abs(cand - v3) / cand < 0.01
+        near7 = v7 is not None and abs(cand - v7) / cand < 0.01
+        comparison.append({
+            "incumbent": cand,
+            "is_the_vacuum_n3": near3,
+            "is_the_vacuum_n7": near7,
+        })
+    report["incumbent_comparison"] = comparison
+    report["kahler_sensitivity"] = (
+        None if not (v3 and v7) else abs(v3 - v7) / v3
+    )
+    report["free_content"] = (
+        "Re(T) = f(B/A; b_3, N_b). Exponents geometric, |A| sets depth only, "
+        "so the vacuum location has exactly one continuous knob: B/A = %.3f. "
+        "Dependence is logarithmic, ~1/(a-b) per e-fold of the ratio."
+        % (B / A)
+    )
+    report["not_adopted"] = (
+        "The published racetrack_Re_T = 7.086 and moduli value 9.865 are not "
+        "stationary points of these equations; replacing them with the "
+        "computed vacuum moves the BBN and Higgs sectors and is the author's "
+        "ruling. This report is the evidence, not the decision."
+    )
+    return report
