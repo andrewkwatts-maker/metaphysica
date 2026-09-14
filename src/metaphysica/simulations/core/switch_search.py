@@ -203,11 +203,37 @@ def consistency_checks() -> List[Dict[str, Any]]:
         )
 
         report = arithma_track_report()
+        statuses = list(report["statuses"])
+        # An absent backend is not a disagreement. Every published arithma
+        # binds Expression to None, so check() returns BACKEND_UNAVAILABLE for
+        # every formula and there is no second statement to disagree WITH.
+        # Scoring that as CONTRADICTION made all 16 combinations report a
+        # contradiction the framework does not have, and drove
+        # n_internally_consistent to 0 for a reason that is about the
+        # environment rather than the theory. It is VACUOUS by this module's
+        # own definition -- a check that cannot fail in this configuration --
+        # and a configuration whose consistency rests on a check that cannot
+        # fail is still not demonstrated consistent, so it still counts
+        # against the row.
+        unevaluable = {"BACKEND_UNAVAILABLE", "INPUTS_MISSING", "TREE_FAILED",
+                       "NO_PYTHON_REFERENCE"}
+        if report["all_agree"]:
+            kind, ok, here = None, True, True
+        elif statuses and set(statuses) <= unevaluable:
+            kind, ok, here = "VACUOUS", False, False
+        else:
+            kind, ok, here = "CONTRADICTION", False, True
         checks.append({
             "name": "arithma_track_agrees",
-            "kind": None if report["all_agree"] else "CONTRADICTION",
-            "ok": bool(report["all_agree"]),
-            "detail": "statuses %s" % report["statuses"],
+            "kind": kind,
+            "ok": ok,
+            # False means THIS ENVIRONMENT could not evaluate the check, which
+            # is different from the theory being vacuous here. The Joyce check
+            # below is genuinely VACUOUS -- a branch asserting what it cannot
+            # compute is a property of the theory -- and must keep counting
+            # against its row.
+            "evaluable_here": here,
+            "detail": "statuses %s" % statuses,
         })
     except Exception as exc:
         checks.append({"name": "arithma_track_agrees", "kind": "ERROR",
@@ -277,6 +303,14 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
 
     problems = [c for c in checks if not c["ok"]]
     kinds = sorted({c["kind"] for c in problems if c.get("kind")})
+    # A row held back ONLY by checks that could not be evaluated here is a
+    # different state from a row that contradicts itself, and conflating the
+    # two makes the search unreadable wherever an optional backend is absent
+    # -- which, for arithma, is everywhere it installs from PyPI. Reported
+    # separately; NOT counted as consistent, because an unevaluated check is
+    # not a passed one.
+    blocked_only_by_unevaluable = bool(problems) and all(
+        c.get("evaluable_here") is False for c in problems)
     return {
         "selection": selection,
         "digest": digest_of(selection),
@@ -284,6 +318,7 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
         "n_problems": len(problems),
         "problem_kinds": kinds,
         "internally_consistent": not problems,
+        "blocked_only_by_unevaluable_checks": blocked_only_by_unevaluable,
         "free_set_size": free_set_size,
         "verdict": VERDICT,
     }
@@ -302,6 +337,7 @@ def search(fork_ids: Optional[Iterable[str]] = None,
     rows.sort(key=lambda r: r["digest"])
 
     consistent = [r for r in rows if r["internally_consistent"]]
+    blocked = [r for r in rows if r["blocked_only_by_unevaluable_checks"]]
     return {
         "what_this_reports": (
             "Every combination's internal consistency and cost. It does not "
@@ -314,6 +350,15 @@ def search(fork_ids: Optional[Iterable[str]] = None,
         "rows": rows,
         "n_internally_consistent": len(consistent),
         "internally_consistent_digests": [r["digest"] for r in consistent],
+        "n_blocked_only_by_unevaluable_checks": len(blocked),
+        "blocked_only_by_unevaluable_digests": [r["digest"] for r in blocked],
+        "why_that_second_count_exists": (
+            "A check that cannot be evaluated is not a check that failed. "
+            "With no usable arithma the third-track check is VACUOUS for every "
+            "combination, so n_internally_consistent reads 0 for a reason "
+            "about the environment rather than the theory. These rows have "
+            "nothing else against them."
+        ),
         "ordering": "digest; never by residual or agreement",
         "closure_would_look_like": (
             "exactly one internally consistent combination whose free set has "
