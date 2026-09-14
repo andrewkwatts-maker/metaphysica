@@ -310,3 +310,71 @@ def test_arithma_builds_and_exports_the_superpotential():
     exact = _arithma_dw(37.8527)
     assert exact is not None
     assert exact == pytest.approx(-1.4096631e-07, rel=1e-4)
+
+
+# ------------------------------------------------- the A4 bar as a check
+
+
+def test_the_a4_bar_discriminates_the_b3_origins():
+    """Added after the first search proved the other checks blind to b3_origin.
+
+    input_24 claims no origin and passes. arc_flag_stabiliser and d4_root_shell
+    each ASSERT a geometric origin while being recorded NUMERICAL -- they
+    reproduce the integer 24 without exhibiting 24 three-cycles -- so claiming
+    one is an internal contradiction. This references no measurement.
+    """
+    import os
+
+    from metaphysica.simulations.core.switch_search import consistency_checks
+    from metaphysica.simulations.core.variants import _ENV_PREFIX
+
+    key = _ENV_PREFIX + "B3_ORIGIN"
+    saved = os.environ.get(key)
+    try:
+        verdicts = {}
+        for option in ("input_24", "arc_flag_stabiliser", "d4_root_shell"):
+            os.environ[key] = option
+            check = [c for c in consistency_checks()
+                     if c["name"] == "b3_origin_clears_the_a4_bar"][0]
+            verdicts[option] = check["ok"]
+    finally:
+        if saved is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = saved
+
+    assert verdicts["input_24"] is True, "claiming nothing cannot be a contradiction"
+    assert verdicts["arc_flag_stabiliser"] is False
+    assert verdicts["d4_root_shell"] is False
+
+
+def test_consistency_does_not_imply_closure():
+    """The finding that matters: the two rulings buy coherence, not closure.
+
+    Every internally consistent combination still carries the same free set.
+    If this ever fails, a switch has started reducing the parameter count and
+    that is a result worth chasing.
+    """
+    from metaphysica.simulations.core.free_set import build_free_set
+    from metaphysica.simulations.core.switch_search import search
+
+    baseline = build_free_set()["free_set_size"]
+    result = search(["g2_form_convention", "re_t_adoption"], cap=8)
+    for row in result["rows"]:
+        if row["internally_consistent"] and row["free_set_size"] is not None:
+            assert row["free_set_size"] == baseline, (
+                "a consistent combination changed the free set from %d to %d "
+                "-- investigate, this would be closure progress"
+                % (baseline, row["free_set_size"])
+            )
+
+
+def test_the_search_still_selects_nothing():
+    """Even with one survivor, the module must not crown it."""
+    from metaphysica.simulations.core.switch_search import VERDICT, search
+
+    result = search(["g2_form_convention", "re_t_adoption"], cap=8)
+    assert result["verdict"] == VERDICT == "NO_SELECTION_MADE"
+    assert "never orders by agreement" in result["what_this_reports"]
+    digests = [r["digest"] for r in result["rows"]]
+    assert digests == sorted(digests), "rows must stay digest-ordered"
