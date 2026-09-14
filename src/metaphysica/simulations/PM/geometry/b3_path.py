@@ -212,6 +212,72 @@ def downstream(path: Optional[str] = None) -> Dict[str, Any]:
     return out
 
 
+def narration(path: Optional[str] = None) -> Dict[str, str]:
+    """Paper wording generated FROM the active path, not hardcoded.
+
+    The appendices narrated "b3 = 24 from TCS #187 yields exactly 3
+    generations". Two things are wrong with that sentence and both are fixed by
+    generating it:
+
+      * the TCS provenance is false. fano_tcs exhibits 71 <= b_3 <= 155, so it
+        does not supply 24 at all -- the register has carried that exclusion
+        for several passes while the paper kept citing it.
+      * it hardcodes the seed, so the text cannot follow a ruling.
+
+    Every string here is built from the path's own values, so switching
+    b3_seed rewrites the paper's claim instead of contradicting it.
+    """
+    key = path or resolve_path()
+    b3, b2 = seed_values(key)
+    gen = n_gen_report(key)
+    n_faces, dim_o = 4, 8
+
+    if gen["declared_source"] == "b3_over_dim_O":
+        gen_sentence = (
+            "n_gen = b_3 / %d = %d / %d = %g" % (dim_o, b3, dim_o, gen["n_gen"])
+        )
+        gen_basis = "the %d being dim O" % dim_o
+    else:
+        gen_sentence = (
+            "n_gen = b_2 / %d = %d / %d = %g" % (n_faces, b2, n_faces,
+                                                 gen["n_gen"])
+        )
+        gen_basis = (
+            "the %d being the faces, derived as the moved coordinates of an "
+            "involution" % n_faces
+        )
+
+    if key == "seed_43_joyce":
+        seed_sentence = (
+            "b_3 = %d and b_2 = %d are DERIVED from the resolution of "
+            "T^7/(Z/2)^3: b_3 = 7 flat invariants + 3 x %d A1 families, and "
+            "b_2 = %d from one exceptional 2-class per family. The pair "
+            "(%d, %d) is Joyce's canonical example."
+            % (b3, b2, b2, b2, b2, b3)
+        )
+    else:
+        seed_sentence = (
+            "b_3 = %d is an INPUT whose origin is open. It is NOT supplied by "
+            "TCS #187, which exhibits 71 <= b_3 <= 155, and it is not "
+            "reachable by a Joyce (Z/2)^3 resolution, which reaches only "
+            "b_3 = 7 (mod 12). b_2 = %d traces to a previously fitted h^{1,1}."
+            % (b3, b2)
+        )
+
+    return {
+        "path": key,
+        "seed_sentence": seed_sentence,
+        "n_gen_sentence": gen_sentence,
+        "n_gen_basis": gen_basis,
+        "n_gen_assertion": "Fermion generation count %s (exact)" % gen_sentence,
+        "n_gen_condition": "%s, %s" % (gen_sentence, gen_basis),
+        "provenance_correction": (
+            "Earlier wording attributed b_3 = 24 to TCS #187. That is false: "
+            "fano_tcs exhibits 71 <= b_3 <= 155. Corrected here."
+        ),
+    }
+
+
 def compare_paths() -> Dict[str, Any]:
     """Both paths side by side. Reports; does not choose.
 

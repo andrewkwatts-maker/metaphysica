@@ -875,19 +875,51 @@ class AppendixCExtendedDerivations(SimulationBase):
         ]
 
 
+    @staticmethod
+    def _generation_certificate() -> Dict[str, Any]:
+        """The generation-count certificate, narrated FROM the active b_3 path.
+
+        This used to read "n_gen = b3/8 = 24/8 = 3" with the condition "b3 = 24
+        from TCS #187". Both parts were wrong to hardcode:
+
+          * the TCS attribution is FALSE -- fano_tcs exhibits 71 <= b_3 <= 155,
+            so it never supplied 24. The register carried that exclusion for
+            several passes while this sentence kept citing it.
+          * hardcoding the seed means the paper contradicts the ruling instead
+            of following it. Under the b_3 = 43 path the generation count comes
+            from b_2/4, not b_3/8, and the text must say so.
+
+        Generated, so switching b3_seed rewrites the claim.
+        """
+        try:
+            from metaphysica.simulations.PM.geometry.b3_path import narration
+
+            text = narration()
+            return {
+                "id": "cert-gen-count-from-path",
+                "assertion": text["n_gen_assertion"],
+                "condition": text["n_gen_condition"],
+                "seed_provenance": text["seed_sentence"],
+                "provenance_correction": text["provenance_correction"],
+                "b3_path": text["path"],
+                "tolerance": 0,
+                "status": "EXACT",
+                "sector": "topology",
+            }
+        except Exception as exc:                    # never break the appendix
+            return {
+                "id": "cert-gen-count-from-path",
+                "assertion": "generation count unavailable",
+                "condition": "b3_path could not be read: %s" % type(exc).__name__,
+                "tolerance": 0,
+                "status": "UNAVAILABLE",
+                "sector": "topology",
+            }
+
     def get_certificates(self) -> List[Dict[str, Any]]:
         """Return validation certificates for extended derivations."""
         return [
-            {
-                "id": "cert-gen-count-b3-8",
-                "assertion": "Fermion generation count n_gen = b3/8 = 24/8 = 3 (exact)",
-                "condition": "b3 = 24 from TCS #187 yields exactly 3 generations",
-                "tolerance": 0,
-                "status": "EXACT",
-                "wolfram_query": "24 / 8",
-                "wolfram_result": "3",
-                "sector": "topology",
-            },
+            self._generation_certificate(),
             {
                 "id": "cert-gauge-unification",
                 "assertion": "3-loop RG evolution unifies gauge couplings at M_GUT ~ 10^16 GeV",

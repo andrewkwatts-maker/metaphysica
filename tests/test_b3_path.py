@@ -146,3 +146,44 @@ def test_the_ruling_is_framed_with_both_sides():
     assert "Joyce's canonical published pair" in text
     assert "0.94 sigma" in text
     assert "broken +2 identity" in text
+
+
+# ------------------------------------------------- the paper follows the path
+
+
+def test_the_narration_is_generated_not_hardcoded():
+    """Switching the seed must rewrite the paper's claim, not contradict it."""
+    from metaphysica.simulations.PM.geometry.b3_path import narration
+
+    at_24 = narration("seed_24")
+    at_43 = narration("seed_43_joyce")
+    assert "b_3 / 8" in at_24["n_gen_assertion"]
+    assert "b_2 / 4" in at_43["n_gen_assertion"]
+    assert at_24["n_gen_assertion"] != at_43["n_gen_assertion"]
+    for text in (at_24, at_43):
+        assert "= 3 (exact)" in text["n_gen_assertion"], (
+            "both paths must still narrate three generations"
+        )
+
+
+def test_the_false_tcs_provenance_is_corrected():
+    """The appendix asserted b_3 = 24 comes from TCS #187. It does not."""
+    from metaphysica.simulations.PM.geometry.b3_path import narration
+
+    at_24 = narration("seed_24")
+    assert "NOT supplied by TCS #187" in at_24["seed_sentence"]
+    assert "71 <= b_3 <= 155" in at_24["seed_sentence"]
+    assert "That is false" in at_24["provenance_correction"]
+
+
+def test_the_appendix_certificate_reads_the_path():
+    import metaphysica.simulations.PM.paper.appendices.appendix_c_derivations as m
+
+    holders = [v for v in vars(m).values()
+               if isinstance(v, type) and hasattr(v, "_generation_certificate")]
+    assert holders, "the generated certificate helper went missing"
+    cert = holders[0]._generation_certificate()
+    assert cert["status"] == "EXACT"
+    assert cert["b3_path"] in PATHS
+    assert "TCS #187" in cert["provenance_correction"]
+    assert "24 / 8" in cert["assertion"] or "12 / 4" in cert["assertion"]
