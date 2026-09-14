@@ -1,5 +1,55 @@
 """Derive the resolution contribution table, rather than transcribe it.
 
+THE (15, 24) VERDICT IS WITHDRAWN. READ THIS FIRST.
+===================================================
+An earlier version of this module concluded that b_3 = 24 is reachable uniquely
+at (b_2, b_3) = (15, 24), via the (0,16) profile. That conclusion is WITHDRAWN,
+and the flaw was found by following the author's observation that one face sits
+lop-sided.
+
+The Kunneth derivation below models the transverse singularity as C^2/{+-1} --
+the A1 case, transverse group of order 2. That is correct only when a
+component's stabiliser is exactly <sigma>. Measured over the enumeration, the
+stabilisers are NOT all of that form:
+
+    |stabiliser|   transverse group   orbit size   count    type
+             2                    2            4   43664    A1, C^2/{+-1}
+             4                    4            2    4688    WORSE THAN A1
+             8                    8            1      16    WORSE THAN A1
+
+The 16 families of the (0,16) profile -- the ONLY profile that reached
+b_3 = 24 -- are exactly the orbit-size-1 rows: each component is stabilised by
+the WHOLE group, so its transverse quotient is C^2 by a group of order 8, not
+order 2. Eguchi-Hanson resolves C^2/{+-1}; it does not resolve C^2/(order 8),
+whose resolution has a different and larger exceptional divisor.
+
+So (15, 24) rested on applying an A1 model outside its domain, to the one
+profile where the singularity is worst. It is retracted rather than adjusted:
+b_3 = 24 for this construction returns to UNDETERMINED.
+
+WHAT SURVIVES
+=============
+The A1 rows are genuine. For components whose stabiliser is exactly <sigma>
+(43,664 of them, orbit size 4), the derivation below holds as written, and the
+corroborations it produced -- the canonical (12, 43) and the b_2 + b_3 = 55
+series -- come from profiles built of plain and single-reflection families, not
+from the order-8 rows. Those are unaffected.
+
+WHAT IS NOW NEEDED, AND IT IS SMALLER THAN A BOOK
+=================================================
+The resolution data for C^2/G with |G| = 4 and 8 acting as a subgroup of the
+diagonal sign group. These are A_k / D_k type quotient singularities whose
+resolutions are classical (McKay correspondence: the exceptional divisor's
+second cohomology has one class per non-trivial conjugacy class of G). That is
+derivable in the same style as the A1 case and is the next mechanism to build
+-- NOT an invented constant, and not a citation either.
+
+Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
+
+
+ORIGINAL MODULE DOCUMENTATION FOLLOWS, VALID FOR THE A1 ROWS ONLY
+================================================================
+
 THE MECHANISM, WHICH IS THE POINT
 =================================
 The Joyce gate has been waiting on a CITED contribution table (ch. 12). But the
@@ -75,6 +125,7 @@ import itertools
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 __all__ = [
+    "transverse_group_census",
     "eguchi_hanson_betti",
     "derived_table",
     "verify_k_equals_one",
@@ -238,16 +289,98 @@ def reachable_set(full_survey: Optional[Dict[str, Any]] = None
     }
 
 
+def transverse_group_census() -> Dict[str, Any]:
+    """Measure the transverse group order per family. The check that withdrew
+    the (15, 24) verdict, kept live so it cannot be forgotten.
+
+    A1 -- the case the Kunneth derivation models -- requires transverse order 2.
+    Anything larger is a worse quotient singularity that Eguchi-Hanson does not
+    resolve.
+    """
+    import collections
+
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        act_on_component,
+        assignments,
+        elements,
+        fixed_sets_disjoint,
+        generating_triples,
+        is_singular,
+        moved_coords,
+    )
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        _group,
+        _non_identity,
+    )
+
+    group = _group()
+    nz = _non_identity(group)
+    census: Dict[int, int] = collections.Counter()
+    for tri in generating_triples(group)[:3]:
+        gens = [nz[i] for i in tri]
+        for svecs in itertools.islice(
+                assignments(tri, group, include_relative=True), 0, None, 13):
+            els = elements(gens, svecs)
+            sing = [(b, e) for b, e in els.items()
+                    if b != (0, 0, 0) and is_singular(e)]
+            if not all(fixed_sets_disjoint(a[1], b[1])
+                       for a, b in itertools.combinations(sing, 2)):
+                continue
+            for _b, (eps, s) in sing:
+                mv = moved_coords(eps)
+                for c in itertools.product((0, 1), repeat=len(mv)):
+                    comp = dict(zip(mv, c))
+                    key = tuple(sorted(comp.items()))
+                    stab = [d for d in els.values()
+                            if act_on_component(d, (eps, s), comp) == key]
+                    transverse = {tuple(d[0][a] for a in mv) for d in stab}
+                    census[len(transverse)] += 1
+    return {
+        "transverse_group_orders": dict(sorted(census.items())),
+        "a1_count": census.get(2, 0),
+        "worse_than_a1_count": sum(n for k, n in census.items() if k > 2),
+        "kunneth_applies_only_to": "transverse order 2 (A1, C^2/{+-1})",
+        "why_this_matters": (
+            "the (0,16) profile that reached b_3 = 24 consists entirely of "
+            "transverse-order-8 components, so the A1 model does not apply "
+            "there and the (15, 24) verdict was withdrawn"
+        ),
+    }
+
+
 def b3_verdict(full_survey: Optional[Dict[str, Any]] = None
                ) -> Dict[str, Any]:
-    """Is b_3 = 24 reachable, and at what b_2? Conditional, and it says so."""
+    """WITHDRAWN. b_3 = 24 is UNDETERMINED for this construction.
+
+    The reachability arithmetic is retained for the A1 rows, but the only
+    profile that reached b_3 = 24 was built from transverse-order-8 components
+    where the Kunneth/Eguchi-Hanson model does not apply. See the module
+    docstring; transverse_group_census() measures it live.
+    """
     reach = reachable_set(full_survey)
     hits = [(eval(k), v) for k, v in reach["pairs"].items()
             if eval(k)[1] == 24]
     return {
-        "status": "CONDITIONAL_ON_DERIVED_TABLE",
-        "b3_24_reachable": bool(hits),
-        "pairs_with_b3_24": [k for k, _v in hits],
+        "status": "WITHDRAWN_A1_MODEL_MISAPPLIED",
+        "b3_24_status": "UNDETERMINED",
+        "withdrawn_verdict": "(15, 24) reachable uniquely via the (0,16) profile",
+        "why_withdrawn": (
+            "the (0,16) profile's components have transverse group order 8, "
+            "not 2, so they are not A1 and Eguchi-Hanson does not resolve "
+            "them. The A1 contribution table was applied outside its domain."
+        ),
+        "still_valid": (
+            "the A1 rows (43,664 components of transverse order 2) and the "
+            "corroborations built from them: (12, 43) and the b_2 + b_3 = 55 "
+            "series"
+        ),
+        "next_mechanism": (
+            "resolution data for C^2/G with |G| = 4 and 8 in the diagonal sign "
+            "group -- classical quotient singularities, derivable by McKay "
+            "(one exceptional 2-class per non-trivial conjugacy class), not an "
+            "invented constant and not a citation"
+        ),
+        "pairs_with_b3_24_under_the_misapplied_model": [k for k, _v in hits],
         "profiles_reaching_it": sorted({p for _k, v in hits for p in v}),
         "pair_4_24_reachable": (4, 24) in [k for k, _ in hits],
         "pair_7_24_reachable": (7, 24) in [k for k, _ in hits],

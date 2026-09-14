@@ -105,27 +105,46 @@ def test_the_55_series_comes_from_the_mixed_profile():
     assert len(pairs) == 9
 
 
-def test_b3_24_is_reachable_only_at_b2_15():
-    """THE result. (0,16) with exactly one epsilon=-1 family."""
-    hits = {p for p in profile_reachable(0, 16) if p[1] == 24}
-    assert hits == {(15, 24)}
-    for n_t3, n_refl in ((0, 0), (4, 0), (8, 0), (12, 0), (4, 8), (8, 8),
-                         (0, 8)):
-        assert not any(b3 == 24 for _b2, b3 in
-                       profile_reachable(n_t3, n_refl)), (
-            "profile (%d,%d) reached b_3 = 24; the uniqueness claim is wrong"
-            % (n_t3, n_refl)
-        )
+def test_the_a1_model_does_not_cover_every_family():
+    """THE withdrawal. Found by following the lop-sidedness observation.
+
+    The Kunneth derivation models C^2/{+-1}, transverse group order 2. The
+    census shows components with transverse order 4 and 8 as well, and the
+    (0,16) profile that reached b_3 = 24 is built entirely of order-8 ones.
+    """
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        transverse_group_census,
+    )
+
+    census = transverse_group_census()
+    orders = census["transverse_group_orders"]
+    assert census["a1_count"] > 0, "no A1 components at all would be suspicious"
+    assert census["worse_than_a1_count"] > 0, (
+        "if every component were A1 the withdrawal rationale would be wrong "
+        "and (15, 24) should be reinstated after review"
+    )
+    assert set(orders) - {2}, "orders beyond 2 must be present: %s" % orders
 
 
-def test_the_published_pairs_are_unreachable():
+def test_the_b3_24_verdict_is_withdrawn_not_published():
     verdict = b3_verdict(_SURVEY_STUB)
-    assert verdict["b3_24_reachable"] is True
-    assert verdict["pairs_with_b3_24"] == [(15, 24)]
-    assert verdict["pair_4_24_reachable"] is False
-    assert verdict["pair_7_24_reachable"] is False
-    assert verdict["canonical_12_43_reachable"] is True
-    assert verdict["status"] == "CONDITIONAL_ON_DERIVED_TABLE"
+    assert verdict["status"] == "WITHDRAWN_A1_MODEL_MISAPPLIED"
+    assert verdict["b3_24_status"] == "UNDETERMINED"
+    assert "15, 24" in verdict["withdrawn_verdict"]
+    assert "transverse group order 8" in verdict["why_withdrawn"]
+    assert "b3_24_reachable" not in verdict, (
+        "a reachability boolean must not be published while the model is "
+        "known to be misapplied"
+    )
+
+
+def test_what_survives_is_named_and_still_computed():
+    """The A1 rows and their corroborations are not withdrawn."""
+    verdict = b3_verdict(_SURVEY_STUB)
+    assert "12, 43" in verdict["still_valid"]
+    assert "55" in verdict["still_valid"]
+    assert "McKay" in verdict["next_mechanism"]
+    assert profile_reachable(12, 0) == {(12, 43)}
 
 
 # ------------------------------------------------------------- non-vacuity
