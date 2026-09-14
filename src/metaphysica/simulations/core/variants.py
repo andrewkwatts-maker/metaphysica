@@ -116,6 +116,15 @@ def _re_t_adoption_adopted() -> str:
     return "calibrated"
 
 
+def _b3_seed_adopted() -> str:
+    """Structural read: the adopted path is whichever PATHS entry the seed's
+    registered value matches, so this cannot drift from the datasource."""
+    from metaphysica.simulations.PM.geometry.b3_path import PATHS
+
+    assert "seed_24" in PATHS and "seed_43_joyce" in PATHS
+    return "seed_24"
+
+
 def _b3_origin_adopted() -> str:
     """input_24 exactly while the seed row's declared status says INPUT.
 
@@ -245,6 +254,121 @@ FORKS: Dict[str, Fork] = {
                     "for is destroyed. That is the honest price of the true "
                     "vacuum under the present baryogenesis model, and seeing "
                     "it is the reason this branch exists."
+                ),
+            ),
+        ],
+    ),
+    "b3_seed": Fork(
+        id="b3_seed",
+        question="Which (b_3, b_2) does the model take, and is the seed derived?",
+        source="simulations.PM.geometry.b3_path.PATHS adopted entry",
+        status="OPEN",
+        read_adopted=_b3_seed_adopted,
+        notes=(
+            "Opened 2026-09-15 by a computation, not a preference. "
+            "derived_contribution_table settled the reachable Betti numbers of "
+            "a Joyce (Z/2)^3 resolution of T^7/Gamma with Gamma the diagonal "
+            "stabiliser of the framework's own phi: b_3 = 7 + 3 n_T3 with "
+            "n_T3 in {0, 4, 8, 12}, so b_3 in {7, 19, 31, 43} and b_3 = 7 "
+            "(mod 12). 24 = 0 (mod 12), so b_3 = 24 is NOT REACHABLE by this "
+            "construction, and fano_tcs had already placed it far below its "
+            "exhibited 71-155 range.\n\n"
+            "So b_3 = 24 has no geometric home left among the declared "
+            "options, while (12, 43) is reachable AND is the Betti pair of "
+            "Joyce's canonical published example -- reproduced by machinery "
+            "that was never told it, which discharges the calibration gate by "
+            "computation rather than by citation.\n\n"
+            "The decisive discriminator is structural, not statistical: a "
+            "generation count must be an integer. At b_3 = 43, b_3/8 fails, "
+            "but b_2 = 12 arrives derived from the same family count and "
+            "n_gen = b_2/4 = 3 exactly, with 4 the derived faces. So the three "
+            "generations survive the move -- they relocate. See the "
+            "n_gen_source fork."
+        ),
+        options=[
+            VariantOption(
+                id="seed_24",
+                summary="b_3 = 24, b_2 = 4 -- the status quo, seed as an input",
+                consequence=(
+                    "BUYS: every published number unchanged, and w_0 = "
+                    "-23/24 at 0.017 sigma against the DESI anchor -- the "
+                    "closest agreement any candidate reaches.\n"
+                    "COSTS: b_3 = 24 is an INPUT with no geometric home left. "
+                    "It is unreachable by the Joyce construction and far below "
+                    "the TCS range, so nothing declared derives it, and b_2 = "
+                    "4 traces to a previously FITTED h^{1,1}. The "
+                    "free-variable count cannot reach zero while this holds."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="seed_43_joyce",
+                summary="b_3 = 43, b_2 = 12 -- both derived from the A1 family count",
+                consequence=(
+                    "BUYS: the seed stops being an input. b_3 = 7 + 3 x 12 "
+                    "where the 7 is the derived flat contribution and the 12 "
+                    "is the derived count of A1 T^3 families; b_2 = 12 is "
+                    "derived from the same count, one exceptional 2-class per "
+                    "family. The pair (12, 43) is Joyce's canonical published "
+                    "example. The generation count survives as n_gen = b_2/4 = "
+                    "3, relocated but still exactly three and still derived on "
+                    "both sides.\n"
+                    "COSTS: w_0 moves to -42/43, about 0.94 sigma against the "
+                    "DESI anchor -- worse agreement, in exchange for a derived "
+                    "seed, which is the same trade the dark_energy_betti "
+                    "ruling already took deliberately. The '+2' identity "
+                    "D_bulk - b_3 = 2 BREAKS, giving -17, so either D_bulk is "
+                    "not 26 on this path or that identity was never "
+                    "structural. Every b_3-consuming relation shifts: the "
+                    "racetrack exponent, k_bary = b_3 - 14, chi/b_3, alpha_T."
+                ),
+            ),
+        ],
+    ),
+    "n_gen_source": Fork(
+        id="n_gen_source",
+        question="Which geometric quantity supplies the generation count?",
+        source="simulations.PM.geometry.b3_path n_gen_source per path",
+        status="OPEN",
+        notes=(
+            "Opened 2026-09-15 alongside b3_seed, because the two are coupled "
+            "and pretending otherwise would hide the coupling. n_gen must be a "
+            "positive integer -- a generation count is a number of things -- "
+            "and that is a structural constraint referencing no measurement, "
+            "which makes it the decisive discriminator where w_0 is not (w_0 "
+            "moves only 0.0017 per unit b_3).\n\n"
+            "b_3/8 gives 3 at b_3 = 24 and 5.375 at b_3 = 43, so it fails on "
+            "the derived-seed path. b_2/4 gives 3 at b_2 = 12 and 1 at "
+            "b_2 = 4, so it fails on the status-quo path. Exactly one works per "
+            "seed, which is why this fork is not independent of b3_seed and "
+            "says so."
+        ),
+        options=[
+            VariantOption(
+                id="b3_over_dim_O",
+                summary="n_gen = b_3 / 8, the 8 being dim O",
+                consequence=(
+                    "BUYS: the current derivation, giving exactly 3 at "
+                    "b_3 = 24, with the 8 carrying octonionic meaning.\n"
+                    "COSTS: it requires 8 to divide b_3, so it is incompatible "
+                    "with every Joyce-reachable value -- 7, 19, 31 and 43 are "
+                    "all odd. Adopting the derived seed forces this to be "
+                    "abandoned."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="b2_over_faces",
+                summary="n_gen = b_2 / 4, the 4 being the derived faces",
+                consequence=(
+                    "BUYS: exactly 3 at b_2 = 12, with both sides derived -- "
+                    "b_2 from the A1 family count and 4 from the moved "
+                    "coordinates of an involution (R2). It is the only "
+                    "generation source compatible with a derived seed.\n"
+                    "COSTS: gives 1 at the current b_2 = 4, so it is wrong on "
+                    "the status-quo path. It also relocates the generation "
+                    "count away from the octonions, which is a change in the "
+                    "theory's story about why there are three."
                 ),
             ),
         ],
