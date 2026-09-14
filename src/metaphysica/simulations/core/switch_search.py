@@ -318,6 +318,40 @@ def consistency_checks() -> List[Dict[str, Any]]:
         checks.append({"name": "joyce_branch_is_decidable", "kind": "ERROR",
                        "ok": False, "detail": type(exc).__name__})
 
+    # 6. THE A4 BAR, as a consistency check.
+    #
+    #    Added after the first search showed the other five checks were BLIND
+    #    to b3_origin: input_24, arc_flag_stabiliser and d4_root_shell all came
+    #    out identically consistent. They are not equivalent. Two of them CLAIM
+    #    an origin for b_3 while being recorded NUMERICAL -- they reproduce the
+    #    integer 24 without exhibiting 24 three-cycles or harmonic 3-forms.
+    #
+    #    Claiming a geometric origin that does not clear that bar is an
+    #    internal contradiction, and it references no measurement. input_24
+    #    claims nothing, so it passes; the Joyce branch would clear the bar if
+    #    it could be computed, which check 5 handles separately.
+    try:
+        from metaphysica.simulations.core.variants import FORKS, resolve
+
+        origin = resolve("b3_origin")
+        numerical_origins = {"arc_flag_stabiliser", "d4_root_shell"}
+        claims_geometry = origin in numerical_origins
+        checks.append({
+            "name": "b3_origin_clears_the_a4_bar",
+            "kind": "CONTRADICTION" if claims_geometry else None,
+            "ok": not claims_geometry,
+            "detail": (
+                "b3_origin = %s asserts a geometric origin for b_3 but is "
+                "recorded NUMERICAL: it reproduces the integer without "
+                "exhibiting 24 three-cycles or harmonic 3-forms" % origin
+                if claims_geometry else
+                "b3_origin = %s claims no unearned geometric origin" % origin
+            ),
+        })
+    except Exception as exc:
+        checks.append({"name": "b3_origin_clears_the_a4_bar", "kind": "ERROR",
+                       "ok": False, "detail": type(exc).__name__})
+
     return checks
 
 
