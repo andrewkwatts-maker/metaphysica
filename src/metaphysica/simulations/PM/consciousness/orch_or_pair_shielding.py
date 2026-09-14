@@ -26,8 +26,14 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+from __future__ import annotations
+
 import numpy as np
-import matplotlib.pyplot as plt
+# matplotlib is the [plots] extra and this is a SIMULATION module. Importing
+# it at top level made the whole simulation -- and its formula
+# pair-shielding-enhancement -- disappear from any install without that extra,
+# CI included. See simulations/core/optional_plotting.
+from metaphysica.simulations.core import optional_plotting as _plots
 from dataclasses import dataclass
 from typing import Tuple, List, Optional, Dict, Any
 import os
@@ -526,6 +532,7 @@ def plot_coherence_vs_pairs(output_dir: str = None):
         output_dir = os.path.join(os.path.dirname(__file__), "..", "visualizations", "output")
     os.makedirs(output_dir, exist_ok=True)
 
+    plt = _plots.pyplot()
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
     # Wet regime
@@ -572,6 +579,7 @@ def plot_grw_comparison(output_dir: str = None):
         output_dir = os.path.join(os.path.dirname(__file__), "..", "visualizations", "output")
     os.makedirs(output_dir, exist_ok=True)
 
+    plt = _plots.pyplot()
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
     # Range of tubulin counts

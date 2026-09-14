@@ -36,12 +36,16 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+from __future__ import annotations
+
 import numpy as np
 from typing import Dict, List, Tuple, Any, Optional
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, FancyBboxPatch
-from matplotlib.collections import PatchCollection
-import matplotlib.colors as mcolors
+
+# matplotlib is the [plots] extra and this is a SIMULATION module. Importing
+# it at top level made the whole simulation -- and its formula
+# four-dice-branch-count -- disappear from any install without that extra,
+# CI included. See simulations/core/optional_plotting.
+from metaphysica.simulations.core import optional_plotting as _plots
 
 
 # =============================================================================
@@ -411,6 +415,7 @@ class MandalaVisualizer:
         Returns:
             Matplotlib figure
         """
+        plt = _plots.pyplot()
         fig, ax = plt.subplots(figsize=self.figsize)
         ax.set_aspect('equal')
         ax.set_xlim(-1.8, 1.8)
@@ -524,6 +529,7 @@ class MandalaVisualizer:
         Returns:
             Matplotlib figure
         """
+        plt = _plots.pyplot()
         fig, ax = plt.subplots(figsize=(14, 6))
 
         n_branches = len(branch_counts)
@@ -716,6 +722,7 @@ def generate_visualizations(
     Returns:
         List of generated figures
     """
+    plt = _plots.pyplot()
     sampler = FourDiceSampler(seed=42)
     sampler.initialize_pair_fluxes("golden")
     result = sampler.roll_all_dice()

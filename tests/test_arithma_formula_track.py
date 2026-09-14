@@ -21,8 +21,13 @@ from metaphysica.simulations.core.arithma_formula import (
     registry_value,
 )
 
-pytestmark = pytest.mark.skipif(not available(),
-                                reason="arithma backend unusable (stub or absent)")
+#: 2026-09-14: this was a MODULE-LEVEL pytestmark, so every test here skipped
+#: when the backend was a stub -- including the coverage ratchet, which reads
+#: source files and needs no backend at all. A ratchet that never runs is not a
+#: ratchet. The skip now decorates only the tests that genuinely evaluate an
+#: Arithma expression.
+needs_backend = pytest.mark.skipif(
+    not available(), reason="arithma backend unusable (stub or absent)")
 
 
 def _simple() -> ArithmaFormula:
@@ -38,6 +43,7 @@ def _simple() -> ArithmaFormula:
 # ------------------------------------------------------------- the basics
 
 
+@needs_backend
 def test_a_declared_formula_builds_exports_and_evaluates():
     f = _simple()
     assert f.expression() is not None
@@ -47,18 +53,21 @@ def test_a_declared_formula_builds_exports_and_evaluates():
     assert f.evaluate() == pytest.approx(12.0)
 
 
+@needs_backend
 def test_the_exact_derivative_is_symbolic_not_a_difference():
     """d(b3/2)/d b3 = 1/2 exactly, for any b3."""
     f = _simple()
     assert f.derivative("b3") == pytest.approx(0.5, abs=1e-12)
 
 
+@needs_backend
 def test_numbers_come_from_the_registry_not_the_formula():
     f = _simple()
     assert f.provenance() == {"b3": "topology.elder_kads"}
     assert registry_value("topology.elder_kads") == pytest.approx(24.0)
 
 
+@needs_backend
 def test_mathematical_constants_come_from_arithmas_table():
     """pi is not a physics parameter and must not be a literal either."""
     assert arithma_constant("pi") == pytest.approx(3.141592653589793)
@@ -77,12 +86,20 @@ def test_mathematical_constants_come_from_arithmas_table():
 # --------------------------------------------- THE drift check, both ways
 
 
+@needs_backend
 def test_the_drift_check_passes_on_a_consistent_formula():
     assert _simple().check()["status"] == "OK"
 
 
+@needs_backend
 def test_the_drift_check_FAILS_when_the_two_tracks_disagree():
-    """The load-bearing test. A checker that cannot fail verifies nothing."""
+    """The load-bearing test. A checker that cannot fail verifies nothing.
+
+    Note what the skip above costs: with a stub backend check() returns
+    BACKEND_UNAVAILABLE for every formula, so in CI this proof that the drift
+    check CAN fail does not run. The drift check is unverified wherever the
+    backend is unusable, which is everywhere the package installs from PyPI.
+    """
     drifted = ArithmaFormula(
         name="drifted",
         latex_hint="b_3 / 2",
@@ -96,6 +113,7 @@ def test_the_drift_check_FAILS_when_the_two_tracks_disagree():
     assert result["rel_error"] > 0.1
 
 
+@needs_backend
 def test_a_missing_input_refuses_to_evaluate_rather_than_guessing():
     f = ArithmaFormula(
         name="unknown_input",
@@ -110,6 +128,7 @@ def test_a_missing_input_refuses_to_evaluate_rather_than_guessing():
     assert "x" in result["missing"]
 
 
+@needs_backend
 def test_a_formula_with_no_python_reference_says_so():
     f = ArithmaFormula(
         name="no_reference",
@@ -120,6 +139,7 @@ def test_a_formula_with_no_python_reference_says_so():
     assert f.check()["status"] == "NO_PYTHON_REFERENCE"
 
 
+@needs_backend
 def test_a_broken_build_degrades_instead_of_crashing():
     f = ArithmaFormula(
         name="broken",
@@ -135,6 +155,7 @@ def test_a_broken_build_degrades_instead_of_crashing():
 # --------------------------------------------------- the b_3 track, live
 
 
+@needs_backend
 def test_the_b3_relations_all_agree_across_tracks():
     from metaphysica.simulations.PM.geometry.b3_candidate_sweep import (
         arithma_track_report,
@@ -146,6 +167,7 @@ def test_the_b3_relations_all_agree_across_tracks():
     assert report["all_agree"] is True
 
 
+@needs_backend
 def test_every_b3_formula_exports_latex_and_roundtrips():
     from metaphysica.simulations.PM.geometry.b3_candidate_sweep import (
         arithma_formulas,
@@ -160,41 +182,120 @@ def test_every_b3_formula_exports_latex_and_roundtrips():
 # ------------------------------------------------------ coverage ratchet
 
 
-def _arithma_coverage() -> tuple:
+def _simulation_modules():
     root = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica" \
         / "simulations"
-    total = 0
-    covered = 0
-    for path in root.rglob("*.py"):
+    for path in sorted(root.rglob("*.py")):
         text = path.read_text(encoding="utf-8", errors="replace")
         if "SimulationBase" not in text or "class " not in text:
             continue
+        yield path, text
+
+
+def _mentions_arithma() -> tuple:
+    """Modules where the WORD arithma appears. Not a measure of anything."""
+    total = covered = 0
+    for _path, text in _simulation_modules():
         total += 1
         if "arithma" in text or "ARITHMA" in text:
             covered += 1
     return covered, total
 
 
-#: Measured 2026-09-14: 51 of 121 simulation modules carry the Arithma track.
-#: A ratchet -- coverage may rise but must not fall.
-ARITHMA_COVERAGE_BASELINE = 51
+def _declares_arithma_formula() -> tuple:
+    """Modules that declare an ArithmaFormula: the real third-track count.
+
+    Counted by PARSING for a call to ArithmaFormula(...), so a mention in a
+    docstring, a comment, or the legacy ``except ImportError`` guard does not
+    count. That distinction is the entire point of this measurement.
+
+    Scanned over the WHOLE simulations tree rather than the SimulationBase
+    corpus, because b3_candidate_sweep -- the only module declaring the new
+    track at all -- contains no SimulationBase and is therefore invisible to
+    that corpus. The worked example of the third track was outside the thing
+    measuring third-track coverage.
+    """
+    root = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica" \
+        / "simulations"
+    total = covered = 0
+    for path in sorted(root.rglob("*.py")):
+        total += 1
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+        except SyntaxError:                    # not this test's business
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                func = node.func
+                name = (func.id if isinstance(func, ast.Name)
+                        else getattr(func, "attr", None))
+                if name == "ArithmaFormula":
+                    covered += 1
+                    break
+    return covered, total
 
 
-def test_arithma_coverage_does_not_regress():
-    covered, total = _arithma_coverage()
-    assert total > 0
-    assert covered >= ARITHMA_COVERAGE_BASELINE, (
-        "Arithma coverage fell to %d of %d simulation modules, below the %d "
-        "baseline. The third track is how formula drift gets caught; removing "
-        "it from a module removes that check." % (covered, total,
-                                                 ARITHMA_COVERAGE_BASELINE)
+# 2026-09-14: THE RATCHET WAS COUNTING THE WORD "arithma".
+#
+# It reported 51 of 121 modules "covered", and the campaign brief read that as
+# 51 working third tracks with 70 to go. Measured: of those 51, the number
+# declaring an ArithmaFormula is ZERO. All 51 are the legacy copied guard
+#
+#     try:
+#         import arithma as _A
+#     except ImportError:
+#         _A = None
+#
+# which is the scaffolding ArithmaFormula exists to REPLACE. A substring match
+# cannot tell a third track from a comment about one, so the old number could
+# be raised by writing the word in a docstring.
+#
+# Both counts are kept, because the gap between them IS the backlog, and both
+# ratchet. The mention count may not fall (removing the legacy guard is fine
+# only if a real declaration replaces it, which raises the other number).
+MENTION_BASELINE = 51
+#: Modules declaring an ArithmaFormula, over the whole simulations tree.
+#: Measured 2026-09-14: b3_candidate_sweep, and nothing else.
+DECLARATION_BASELINE = 1
+
+
+def test_the_two_coverage_measures_are_not_the_same_measure():
+    """The load-bearing one. If these agreed, the substring count was fine."""
+    mentions, total = _mentions_arithma()
+    declarations, total_all = _declares_arithma_formula()
+    assert total > 0 and total_all >= total
+    assert mentions > declarations, (
+        "mentions (%d) and declarations (%d) agree, so counting the substring "
+        "would be harmless -- rewrite this test rather than deleting it, "
+        "because the gap is what the backlog is measured by"
+        % (mentions, declarations)
     )
 
 
-def test_the_coverage_baseline_is_not_stale():
-    """If coverage has risen, raise the ratchet so it keeps its grip."""
-    covered, total = _arithma_coverage()
-    assert covered <= ARITHMA_COVERAGE_BASELINE + 10, (
-        "coverage is now %d of %d; raise ARITHMA_COVERAGE_BASELINE from %d so "
-        "the ratchet still bites." % (covered, total, ARITHMA_COVERAGE_BASELINE)
+def test_arithma_declaration_coverage_does_not_regress():
+    """The third track, counted by what declares one."""
+    declarations, total = _declares_arithma_formula()
+    assert declarations >= DECLARATION_BASELINE, (
+        "ArithmaFormula declarations fell to %d of %d simulation modules, "
+        "below the %d baseline. The third track is how formula drift gets "
+        "caught; removing a declaration removes that check."
+        % (declarations, total, DECLARATION_BASELINE)
+    )
+
+
+def test_the_declaration_baseline_is_not_stale():
+    declarations, total = _declares_arithma_formula()
+    assert declarations <= DECLARATION_BASELINE + 10, (
+        "declarations are now %d of %d; raise DECLARATION_BASELINE from %d so "
+        "the ratchet still bites." % (declarations, total, DECLARATION_BASELINE)
+    )
+
+
+def test_the_legacy_guard_count_does_not_regress():
+    mentions, total = _mentions_arithma()
+    assert mentions >= MENTION_BASELINE, (
+        "modules mentioning arithma fell to %d of %d, below %d. This counts "
+        "the legacy import guard as well as real declarations, so a fall "
+        "means a guard was deleted without a declaration replacing it."
+        % (mentions, total, MENTION_BASELINE)
     )

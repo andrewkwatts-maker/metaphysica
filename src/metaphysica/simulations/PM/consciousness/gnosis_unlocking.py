@@ -41,16 +41,20 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+from __future__ import annotations
+
 import numpy as np
 from decimal import Decimal, getcontext
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field
 import sys
 from pathlib import Path
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle, Wedge
-from matplotlib.collections import PatchCollection
-import matplotlib.colors as mcolors
+# matplotlib is the [plots] extra and this is a SIMULATION module. Importing
+# it at top level made the whole simulation -- and its formulas
+# gnosis-coherence-enhancement and gnosis-unlocking-probability -- disappear
+# from any install without that extra, CI included. See
+# simulations/core/optional_plotting.
+from metaphysica.simulations.core import optional_plotting as _plots
 
 # High precision for fundamental constant calculations
 getcontext().prec = 50
@@ -537,6 +541,9 @@ def create_gnosis_mandala_visualization(
     Returns:
         matplotlib Figure
     """
+    plt = _plots.pyplot()
+    Circle = _plots.patches().Circle
+    Wedge = _plots.patches().Wedge
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
     ax.set_xlim(-1.5, 1.5)
     ax.set_ylim(-1.5, 1.5)
@@ -642,6 +649,7 @@ def plot_gnosis_trajectory(
     Returns:
         matplotlib Figure
     """
+    plt = _plots.pyplot()
     fig, axes = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
     fig.suptitle('Gnosis Unlocking Trajectory', fontsize=14, fontweight='bold')
 
@@ -707,6 +715,7 @@ def plot_coherence_vs_pairs(
     Returns:
         matplotlib Figure
     """
+    plt = _plots.pyplot()
     fig, ax = plt.subplots(1, 1, figsize=(10, 6))
 
     pairs = np.arange(1, 13)
@@ -1353,4 +1362,4 @@ if __name__ == "__main__":
     """)
 
     # Show plots
-    plt.show()
+    _plots.pyplot().show()

@@ -43,8 +43,42 @@ SMALLEST_REQUIRED = 1.9038579508229144e-93
 LARGEST_REQUIRED = 4.757399129595567e34
 
 
+def _usable_backend():
+    """The arithma module only if it can actually build and evaluate.
+
+    2026-09-14. These tests guarded with ``pytest.importorskip("arithma")``
+    and then called ``Expression.number``. That guard asks whether the package
+    IMPORTS -- the precise distinction arithma_backend.py was written to make
+    -- and every published arithma passes it while failing the next line:
+    2.0.1 and 2.0.2 both ship
+
+        Expression = None   # "Wave 3 -- not yet exposed via PyO3"
+
+    so the three range tests died with ``'NoneType' object has no attribute
+    'number'`` on every CI run rather than skipping, and CI read red for six
+    days over a missing optional dependency.
+
+    A correction to this file's own diagnosis while we are here: the WHY
+    section above attributes the failure to arithma 2.0.4's fixed-point range,
+    and the commit that left these failing said the pinned 2.0.2 "cannot
+    represent the span the physics uses". That is not what the pinned version
+    does. It cannot represent ANY value, because it has no Expression class at
+    all. The dynamic-range requirement below is unchanged and still the right
+    requirement; it simply cannot be evaluated against a backend that does not
+    compute, so it skips instead of failing.
+    """
+    from metaphysica.simulations.core.arithma_backend import (
+        ARITHMA,
+        ARITHMA_UNAVAILABLE_REASON,
+    )
+
+    if ARITHMA is None:
+        pytest.skip("arithma backend unusable: %s" % ARITHMA_UNAVAILABLE_REASON)
+    return ARITHMA
+
+
 def _number(value):
-    from arithma import Expression
+    Expression = _usable_backend().Expression
 
     expr = Expression.number(value)
     try:
@@ -56,6 +90,37 @@ def _number(value):
 
 def test_arithma_is_importable():
     pytest.importorskip("arithma")
+
+
+def test_the_backend_probe_distinguishes_importable_from_usable():
+    """Load-bearing: the skip above must be able to NOT fire.
+
+    If the probe reported every arithma usable, the three range requirements
+    would skip forever and this file would assert nothing. So check the probe
+    against the thing it claims to measure rather than trusting its verdict.
+    """
+    import arithma
+
+    from metaphysica.simulations.core.arithma_backend import ARITHMA
+
+    if getattr(arithma, "Expression", None) is None:
+        assert ARITHMA is None, (
+            "arithma.Expression is None and the probe still reports the "
+            "backend usable -- the stub guard is not guarding"
+        )
+    else:
+        # The probe promises more than "the class exists": it promises the
+        # class evaluates. Hold it to exactly that, so a backend that builds
+        # and returns nonsense is reported unusable.
+        expr = arithma.Expression.number(2.0)
+        try:
+            value = expr.evaluate({})
+        except TypeError:
+            value = expr.evaluate()
+        assert (ARITHMA is not None) == (float(value) == 2.0), (
+            "the probe's verdict disagrees with whether arithma can evaluate "
+            "a literal"
+        )
 
 
 def test_arithma_represents_the_smallest_value_the_physics_uses():
@@ -84,8 +149,7 @@ def test_arithma_represents_the_largest_value_the_physics_uses():
 
 def test_arithma_covers_the_whole_span_in_one_expression():
     """The range matters end to end, not one endpoint at a time."""
-    pytest.importorskip("arithma")
-    from arithma import Expression
+    Expression = _usable_backend().Expression
 
     small = Expression.number(SMALLEST_REQUIRED)
     large = Expression.number(LARGEST_REQUIRED)

@@ -142,10 +142,14 @@ def superpotential_expression():
     W = A e^{-aT} + B e^{-bT}, and the numbers arrive only at evaluate time
     from _declared_coefficients, which itself reads the registry.
     """
-    try:
-        from arithma import Expression as E
-    except ImportError:                       # pragma: no cover
+    # The probe, not a bare ImportError guard. Every published arithma so far
+    # imports cleanly and binds Expression to None, so `except ImportError`
+    # lets a stub through and the next line dies on NoneType.variable.
+    from metaphysica.simulations.core.arithma_backend import ARITHMA
+
+    if ARITHMA is None:
         return None, ()
+    E = ARITHMA.Expression
 
     T = E.variable("T")
     A, B = E.variable("A"), E.variable("B")
