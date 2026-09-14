@@ -40,6 +40,7 @@ import math
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 __all__ = [
+    "disqualify",
     "primitives",
     "generate",
     "search_target",
@@ -126,6 +127,52 @@ def generate(prims: Dict[str, Tuple[float, str]],
     return unique
 
 
+#: Unit suffixes and paths whose value depends on a HUMAN convention. Matching
+#: such a number is meaningless: change the unit and the match evaporates.
+_UNIT_DEPENDENT_HINTS = (
+    "theta", "delta_cp", "delta_CP", "angle", "_deg", "H0", "_eV", "mass_sum",
+    "M_GUT", "m_higgs", "_GeV", "_MeV",
+)
+
+
+def disqualify(name: str, target: float,
+               status: Optional[str] = None) -> Optional[str]:
+    """Why this target must not be searched, or None if it is fair game.
+
+    Tolerance filters coincidences. It does NOT filter these two, which is a
+    limit discovered the hard way: the search produced an EXACT hit on
+    theta_23 = 168*7/24 = 49, unaffected by any tightening, and it was
+    worthless for both reasons below.
+
+      UNIT_DEPENDENT     the value depends on a human convention. theta_23 is
+                         49 in DEGREES and 0.855 in radians; a match to the
+                         former is a match to the choice of degree.
+      LOW_PRECISION      a value quoted to two or three significant figures is
+                         hit exactly by a great many rationals. Matching a
+                         rounded number measures rounding, not physics.
+      EXPERIMENTAL       an anchor is DATA. Matching it is not deriving it,
+                         and a formula that reproduces a measurement without a
+                         mechanism is the strongest form of this trap, not the
+                         weakest.
+    """
+    if status == "MEASURED":
+        return "EXPERIMENTAL: an anchor is data to be predicted by a mechanism, not matched"
+    lowered = name.lower()
+    for hint in _UNIT_DEPENDENT_HINTS:
+        if hint.lower() in lowered:
+            return ("UNIT_DEPENDENT: value depends on a human unit convention "
+                    "(%s); a match to it is a match to the unit" % hint)
+    text = repr(float(target))
+    digits = sum(1 for ch in text.split("e")[0] if ch.isdigit())
+    stripped = text.split("e")[0].rstrip("0").rstrip(".")
+    significant = len(stripped.replace("-", "").replace(".", "").lstrip("0"))
+    if significant <= 3:
+        return ("LOW_PRECISION: %g carries ~%d significant figures, which many "
+                "rationals hit exactly; a match measures rounding"
+                % (target, significant))
+    return None
+
+
 def search_target(target: float, name: str = "",
                   tol: float = DEFAULT_TOL,
                   max_terms: int = 3) -> Dict[str, Any]:
@@ -208,6 +255,14 @@ def search_free_set(tol: float = DEFAULT_TOL,
             continue
         if value == 0:
             continue
+        reason = disqualify(path, float(value), row.get("status"))
+        if reason:
+            results.append({
+                "target_name": path, "target": float(value),
+                "status": row.get("status"), "verdict": "DISQUALIFIED",
+                "disqualified_because": reason, "n_matches": 0, "matches": [],
+            })
+            continue
         found = search_target(float(value), name=path, tol=tol,
                               max_terms=max_terms)
         found["status"] = row.get("status")
@@ -217,6 +272,8 @@ def search_free_set(tol: float = DEFAULT_TOL,
     significant = [r for r in results if r["verdict"] == "SIGNIFICANT"]
     return {
         "n_targets": len(results),
+        "n_disqualified": sum(1 for r in results if r["verdict"] == "DISQUALIFIED"),
+        "n_searched": sum(1 for r in results if r["verdict"] != "DISQUALIFIED"),
         "tolerance": tol,
         "results": results,
         "n_significant": len(significant),
