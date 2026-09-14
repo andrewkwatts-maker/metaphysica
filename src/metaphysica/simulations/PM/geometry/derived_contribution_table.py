@@ -1,7 +1,89 @@
 """Derive the resolution contribution table, rather than transcribe it.
 
-THE (15, 24) VERDICT IS WITHDRAWN. READ THIS FIRST.
-===================================================
+THE SETTLED RESULT: b_3 in {7, 19, 31, 43}, SO b_3 = 24 IS UNREACHABLE
+======================================================================
+Following the withdrawal below to its cause produced a clean answer, with no
+assumption left over.
+
+The A1 model applies exactly when a component's transverse group is {+-1},
+order 2. Classifying the transverse groups by which of sigma's 4 moved
+coordinates each element flips:
+
+    order 2   flips (4,)                      43664 components
+    order 4   flips (2, 2, 4)                  4688 components
+    order 8   flips (2,2,2,2,2,2,4)              16 components
+
+Pair the four transverse real coordinates into C^2. An element flipping all 4
+acts as -1 in SU(2): that is A1, hyperkahler, resolved by Eguchi-Hanson. An
+element flipping exactly 2 is either NOT complex-linear, or complex-linear with
+det = -1. Either way it is outside SU(2), so the quotient is not a complex
+orbifold and admits no hyperkahler ALE resolution. Joyce's construction uses
+C^2/{+-1} precisely because that is the case that works.
+
+So the admissibility condition was incomplete. Pairwise-disjoint singular sets
+are necessary but not sufficient; every component must also be A1. Imposing it:
+
+    pairwise-disjoint only          446964 assignments
+    plus every component A1         411488 assignments
+
+and the surviving profiles are ONLY
+
+    (n_T3, n_reflected) in {(0,0), (4,0), (8,0), (12,0)}
+
+Every reflected family disappears -- the reflected ones WERE the non-A1 ones.
+That removes the epsilon-dichotomy assumption entirely, because with no
+reflected families there is no resolution choice to make. The table reduces to
+its one unambiguous entry, plain T3 -> (1, 3), and the reachable set is
+
+     n_T3   b_2   b_3
+        0     0     7
+        4     4    19
+        8     8    31
+       12    12    43
+
+    b_3 = 7 + 3 n_T3  with n_T3 in {0, 4, 8, 12},  so  b_3 = 7 (mod 12)
+
+24 = 0 (mod 12), so **b_3 = 24 is UNREACHABLE** by a Joyce (Z/2)^3 resolution
+of T^7/Gamma with Gamma the diagonal stabiliser of the framework's own phi.
+(4, 24) and (7, 24) fall with it -- b_2 = 4 forces b_3 = 19, and b_2 = 7 is not
+even attainable since family counts are multiples of 4.
+
+CALIBRATION, AND WHY THE FAMILY COUNTS LOOK FAMILIAR
+====================================================
+(12, 43) is in the reachable set, and 43 is the b_3 of Joyce's canonical
+T^7/(Z/2)^3 example. The machinery reproduces a published value it was never
+told, which is the A6 gate discharged by computation rather than by citation.
+
+The counts are multiples of 4 with maximum 12 -- the 4 faces of an involution,
+and 4 x 3 = 12 faces x blocks, the same structure the arc/flag work derived
+independently.
+
+SCOPE, STATED
+=============
+This refutes b_3 = 24 for Joyce's construction with hyperkahler ALE
+resolutions. It does not exclude some other resolution of the non-A1
+components; but such a resolution is not Joyce's, carries no guarantee of a G2
+metric, and would have to be exhibited rather than assumed. Within the
+construction the framework actually names, b_3 = 24 is closed.
+
+WHAT THIS COSTS, FOR THE AUTHOR TO RULE ON
+==========================================
+b_3 = 24 was already INPUT rather than derived (2026-09-14 ruling). This
+removes its last possible geometric home among the declared options: fano_tcs
+places it far below its exhibited 71-155 range, and Joyce (Z/2)^3 now cannot
+produce it at all. So either the seed is not 24, or the manifold is neither
+declared construction.
+
+The nearest reachable value is b_3 = 43 at b_2 = 12, which is also the
+canonical Joyce example. Note 43 is odd and 24 is even, so w_0 = -(b_3-1)/b_3
+would move from -0.9583 to -0.9767 -- a 0.9 sigma shift against the registry's
+DESI anchor, which is a real but not decisive change. n_gen = b_3/8 would stop
+being an integer, which IS decisive: 43/8 is not a generation count. That
+tension is the substance of the ruling.
+
+
+THE (15, 24) VERDICT IS WITHDRAWN. THE HISTORY FOLLOWS.
+=======================================================
 An earlier version of this module concluded that b_3 = 24 is reachable uniquely
 at (b_2, b_3) = (15, 24), via the (0,16) profile. That conclusion is WITHDRAWN,
 and the flaw was found by following the author's observation that one face sits
@@ -125,6 +207,8 @@ import itertools
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 __all__ = [
+    "all_components_are_a1",
+    "a1_admissible_survey",
     "transverse_group_census",
     "eguchi_hanson_betti",
     "derived_table",
@@ -344,6 +428,114 @@ def transverse_group_census() -> Dict[str, Any]:
             "the (0,16) profile that reached b_3 = 24 consists entirely of "
             "transverse-order-8 components, so the A1 model does not apply "
             "there and the (15, 24) verdict was withdrawn"
+        ),
+    }
+
+
+def all_components_are_a1(els, singular) -> bool:
+    """Joyce admissibility, completed: every component's transverse group is A1.
+
+    Pairwise-disjointness is necessary but not sufficient. A component whose
+    transverse group has order > 2 contains an element flipping exactly 2 of
+    the 4 transverse coordinates, which sits outside SU(2) -- so the quotient
+    is not a complex orbifold and has no hyperkahler ALE resolution. Joyce's
+    construction needs C^2/{+-1}; this is the condition that enforces it.
+    """
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        act_on_component,
+        moved_coords,
+    )
+
+    for _bits, (eps, s) in singular:
+        mv = moved_coords(eps)
+        for choice in itertools.product((0, 1), repeat=len(mv)):
+            comp = dict(zip(mv, choice))
+            key = tuple(sorted(comp.items()))
+            stab = [d for d in els.values()
+                    if act_on_component(d, (eps, s), comp) == key]
+            transverse = {tuple(d[0][a] for a in mv) for d in stab}
+            if len(transverse) != 2:
+                return False
+    return True
+
+
+def a1_admissible_survey(cap_triples: Optional[int] = None) -> Dict[str, Any]:
+    """Re-run the survey with A1 admissibility imposed. The settled answer.
+
+    Returns the surviving profiles and the reachable (b_2, b_3), which come out
+    b_3 = 7 + 3 n with n in {0, 4, 8, 12} -- so b_3 = 7 mod 12 and 24 is not
+    attainable.
+    """
+    import collections
+
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        assignments,
+        elements,
+        families_of,
+        fixed_sets_disjoint,
+        generating_triples,
+        is_singular,
+    )
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        _group,
+        _non_identity,
+    )
+
+    group = _group()
+    nz = _non_identity(group)
+    triples = generating_triples(group)
+    if cap_triples is not None:
+        triples = triples[:cap_triples]
+
+    profiles: Dict[Tuple[int, int], int] = collections.Counter()
+    n_disjoint = 0
+    n_a1 = 0
+    for tri in triples:
+        gens = [nz[i] for i in tri]
+        for svecs in assignments(tri, group, include_relative=True):
+            els = elements(gens, svecs)
+            singular = [(b, e) for b, e in els.items()
+                        if b != (0, 0, 0) and is_singular(e)]
+            if not all(fixed_sets_disjoint(a[1], b[1])
+                       for a, b in itertools.combinations(singular, 2)):
+                continue
+            n_disjoint += 1
+            if not all_components_are_a1(els, singular):
+                continue
+            n_a1 += 1
+            fams = []
+            for _b, el in singular:
+                fams.extend(families_of(els, el))
+            profiles[(sum(1 for fam in fams if fam["type"] == "T3"),
+                      sum(1 for fam in fams if fam["type"] != "T3"))] += 1
+
+    pairs = sorted({(FLAT_B2 + n_t3, FLAT_B3 + 3 * n_t3)
+                    for (n_t3, n_refl) in profiles})
+    b3s = sorted({b3 for _b2, b3 in pairs})
+    return {
+        "status": "SETTLED_NO_ASSUMPTION",
+        "n_pairwise_disjoint": n_disjoint,
+        "n_a1_admissible": n_a1,
+        "profiles": {str(k): v for k, v in sorted(profiles.items())},
+        "all_reflected_eliminated": all(n_refl == 0 for _n, n_refl in profiles),
+        "reachable_pairs": pairs,
+        "reachable_b3": b3s,
+        "b3_formula": "b_3 = 7 + 3 n_T3, n_T3 in multiples of 4 up to 12",
+        "b3_mod_12": sorted({b3 % 12 for b3 in b3s}),
+        "b3_24_reachable": 24 in b3s,
+        "pair_4_24_reachable": (4, 24) in pairs,
+        "pair_7_24_reachable": (7, 24) in pairs,
+        "canonical_12_43_present": (12, 43) in pairs,
+        "why_no_assumption_remains": (
+            "the epsilon-dichotomy only applied to reflected families, and A1 "
+            "admissibility eliminates all of them, so no resolution choice is "
+            "left to assume"
+        ),
+        "scope": (
+            "Joyce's construction with hyperkahler ALE resolutions. Another "
+            "resolution of the non-A1 components is not excluded, but it is "
+            "not Joyce's, carries no G2 guarantee, and would have to be "
+            "exhibited"
         ),
     }
 

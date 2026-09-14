@@ -197,3 +197,90 @@ def test_the_verdict_names_its_check():
     verdict = b3_verdict(_SURVEY_STUB)
     assert "Joyce ch. 12" in verdict["what_would_confirm_or_destroy"]
     assert "corrected, not the book" in verdict["what_would_confirm_or_destroy"]
+
+
+# ----------------------------------------- the settled result, no assumption
+
+
+def test_a1_admissibility_eliminates_every_reflected_family():
+    """The structural collapse that removes the epsilon-dichotomy assumption.
+
+    Reflected families are exactly the non-A1 ones, so imposing A1
+    admissibility leaves no resolution choice to assume.
+    """
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        a1_admissible_survey,
+    )
+
+    survey = a1_admissible_survey(cap_triples=3)
+    assert survey["all_reflected_eliminated"] is True
+    assert survey["n_a1_admissible"] < survey["n_pairwise_disjoint"], (
+        "A1 admissibility must be STRICTLY stronger than pairwise-disjointness, "
+        "or it is not doing anything"
+    )
+    assert survey["status"] == "SETTLED_NO_ASSUMPTION"
+    assert "no resolution choice" in survey["why_no_assumption_remains"]
+
+
+def test_b3_is_seven_mod_twelve_so_24_is_unreachable():
+    """THE settled verdict. b_3 = 7 + 3 n_T3 with n_T3 a multiple of 4."""
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        a1_admissible_survey,
+    )
+
+    survey = a1_admissible_survey(cap_triples=3)
+    assert survey["reachable_b3"] == [7, 19, 31, 43]
+    assert survey["b3_mod_12"] == [7]
+    assert survey["b3_24_reachable"] is False
+    assert 24 % 12 == 0, "the parity argument needs 24 to miss 7 mod 12"
+    assert survey["pair_4_24_reachable"] is False
+    assert survey["pair_7_24_reachable"] is False
+
+
+def test_the_canonical_joyce_value_is_reproduced_uncited():
+    """A6 discharged by computation: 43 is Joyce's published b_3 and the
+    machinery was never told it."""
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        a1_admissible_survey,
+    )
+
+    survey = a1_admissible_survey(cap_triples=3)
+    assert survey["canonical_12_43_present"] is True
+    assert (12, 43) in survey["reachable_pairs"]
+
+
+def test_family_counts_are_multiples_of_four_capped_at_twelve():
+    """4 faces, and 4 x 3 = 12 faces x blocks -- the arc/flag structure again."""
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        a1_admissible_survey,
+    )
+
+    survey = a1_admissible_survey(cap_triples=3)
+    counts = sorted({eval(k)[0] for k in survey["profiles"]})
+    assert counts == [0, 4, 8, 12]
+    assert all(n % 4 == 0 for n in counts)
+
+
+def test_the_a1_condition_is_not_vacuous():
+    """It must reject something, and reject the right something: the order-4
+    and order-8 transverse components the census found."""
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        transverse_group_census,
+    )
+
+    census = transverse_group_census()
+    assert census["worse_than_a1_count"] > 0
+    assert set(census["transverse_group_orders"]) - {2}, (
+        "if only order-2 components existed, A1 admissibility would be a "
+        "no-op and the collapse to four profiles would need another cause"
+    )
+
+
+def test_the_scope_is_stated_not_overclaimed():
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        a1_admissible_survey,
+    )
+
+    scope = a1_admissible_survey(cap_triples=2)["scope"]
+    assert "hyperkahler ALE" in scope
+    assert "not excluded" in scope
