@@ -66,6 +66,26 @@ __all__ = [
 
 VERDICT = "NO_SELECTION_MADE"
 
+#: Registered rows that each claim to be the sum of the neutrino masses, in eV.
+#: Named rather than pattern-matched, so the set is auditable and a row cannot
+#: join or leave it silently. Measured 2026-09-14, all under the framework's own
+#: declared INVERTED ordering (`neutrino.ordering`, PREDICTED):
+#:
+#:     neutrino.sum_masses        0.101975   DERIVED   matter_sector_complete_v19
+#:     particle.sigma_m_base_eV   0.060517   DERIVED   neutrino_sector v26.0
+#:     particle.sigma_m_refined_eV 0.042517  DERIVED   neutrino_sector v26.0
+#:
+#: neutrino.mass_sum (0.101214) is deliberately EXCLUDED: it is FITTED, and a fit
+#: disagreeing with a derivation is not the theory contradicting itself.
+#: base and refined are also both listed on purpose -- the module presents the
+#: refined value as superseding the base one, yet registers both as DERIVED, so
+#: the register carries two live derived answers rather than one.
+NEUTRINO_MASS_SUM_ROWS = (
+    "neutrino.sum_masses",
+    "particle.sigma_m_base_eV",
+    "particle.sigma_m_refined_eV",
+)
+
 
 def _variants():
     from metaphysica.simulations.core import variants
@@ -239,7 +259,42 @@ def consistency_checks() -> List[Dict[str, Any]]:
         checks.append({"name": "arithma_track_agrees", "kind": "ERROR",
                        "ok": False, "detail": type(exc).__name__})
 
-    # 5. Is the Joyce Betti route actually decidable here, or is a branch
+    # 5. Is the neutrino mass sum stated ONCE? Three registered rows claim to
+    #    be the sum of the neutrino masses and disagree by a factor of 2.4.
+    #    This compares the framework's own rows against each other; nothing
+    #    measured enters, and the row names live in a module constant so the
+    #    anti-anchor source scan over this function stays exact.
+    try:
+        from metaphysica.simulations.core.arithma_formula import (
+            registry_value,
+            reset_cache,
+        )
+
+        reset_cache()
+        values = {path: registry_value(path) for path in NEUTRINO_MASS_SUM_ROWS}
+        live = {k: v for k, v in values.items() if v is not None}
+        # 1e-9 is not a tolerance chosen here: it is the relative tolerance
+        # ArithmaFormula.check() already uses for "two statements of one
+        # number agree", reused so this check invents nothing.
+        agree = True
+        if len(live) > 1:
+            lo, hi = min(live.values()), max(live.values())
+            agree = abs(hi - lo) <= 1e-9 * max(abs(hi), 1e-300)
+        checks.append({
+            "name": "neutrino_mass_sum_is_stated_once",
+            "kind": None if agree else "CONTRADICTION",
+            "ok": bool(agree),
+            "evaluable_here": len(live) > 1,
+            "detail": ("%d rows claim the neutrino mass sum: %s"
+                       % (len(live),
+                          ", ".join("%s=%.6g" % (k, v)
+                                    for k, v in sorted(live.items())))),
+        })
+    except Exception as exc:
+        checks.append({"name": "neutrino_mass_sum_is_stated_once", "kind": "ERROR",
+                       "ok": False, "detail": type(exc).__name__})
+
+    # 6. Is the Joyce Betti route actually decidable here, or is a branch
     #    claiming what it cannot compute?
     try:
         from metaphysica.simulations.core.variants import resolve
@@ -338,6 +393,28 @@ def search(fork_ids: Optional[Iterable[str]] = None,
 
     consistent = [r for r in rows if r["internally_consistent"]]
     blocked = [r for r in rows if r["blocked_only_by_unevaluable_checks"]]
+
+    # A check with the same outcome in EVERY combination says nothing about the
+    # switches -- it is a standing property of the theory that no setting of
+    # these forks addresses. Reporting it per row buries the structure the
+    # search exists to expose: one fork-independent contradiction makes all
+    # sixteen rows inconsistent and the sweep stops discriminating.
+    #
+    # Separated, NOT excused. A standing contradiction still makes every row
+    # internally inconsistent, and `internally_consistent` is unchanged.
+    names = sorted({c["name"] for r in rows for c in r["checks"]})
+    outcomes = {n: {tuple(c["ok"] for c in r["checks"] if c["name"] == n)
+                    for r in rows} for n in names}
+    failing_everywhere = sorted(
+        n for n in names
+        if outcomes[n] == {(False,)} )
+    varies_with_the_switches = sorted(
+        n for n in names if len(outcomes[n]) > 1)
+    fork_dependent_clean = [
+        r for r in rows
+        if not [c for c in r["checks"]
+                if not c["ok"] and c["name"] in varies_with_the_switches]
+    ]
     return {
         "what_this_reports": (
             "Every combination's internal consistency and cost. It does not "
@@ -352,6 +429,20 @@ def search(fork_ids: Optional[Iterable[str]] = None,
         "internally_consistent_digests": [r["digest"] for r in consistent],
         "n_blocked_only_by_unevaluable_checks": len(blocked),
         "blocked_only_by_unevaluable_digests": [r["digest"] for r in blocked],
+        "problems_no_combination_fixes": failing_everywhere,
+        "problems_the_switches_control": varies_with_the_switches,
+        "n_clean_on_every_switch_controlled_check": len(fork_dependent_clean),
+        "clean_on_every_switch_controlled_check_digests": [
+            r["digest"] for r in fork_dependent_clean],
+        "why_those_are_separated": (
+            "A check failing in every combination is a standing property of "
+            "the theory that no setting of these forks addresses. It is "
+            "reported apart so one such defect does not flatten the sweep, "
+            "and it is NOT excused: those rows remain internally "
+            "inconsistent. The last count is 'as good as these switches can "
+            "make it', which is a structural statement and not a ranking -- "
+            "no row is ordered ahead of another and the digests are sorted."
+        ),
         "why_that_second_count_exists": (
             "A check that cannot be evaluated is not a check that failed. "
             "With no usable arithma the third-track check is VACUOUS for every "

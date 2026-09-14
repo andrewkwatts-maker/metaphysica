@@ -183,6 +183,7 @@ def test_the_checks_report_the_known_open_contradictions(checks):
     assert set(by_name) >= {"phi_is_a_g2_form", "n_gen_is_integral",
                             "re_t_is_the_solved_vacuum",
                             "arithma_track_agrees",
+                            "neutrino_mass_sum_is_stated_once",
                             "joyce_branch_is_decidable"}
     assert by_name["n_gen_is_integral"]["ok"] is True, (
         "b_3/8 is no longer an integer -- a generation count is a number of "
@@ -210,3 +211,83 @@ def test_open_forks_are_the_forks_declared_open():
     assert len(open_forks()) >= 2, (
         "a search over fewer than two open forks searches nothing"
     )
+
+
+# ------------------------------- standing defects vs switch-controlled ones
+
+
+def test_the_mass_sum_is_compared_only_against_the_frameworks_own_rows():
+    """Three DERIVED rows claim the neutrino mass sum and disagree by 2.4x.
+
+    Measured 2026-09-14, all under the framework's own declared INVERTED
+    ordering:
+
+        neutrino.sum_masses          0.101975   matter_sector_complete_v19
+        particle.sigma_m_base_eV     0.060517   neutrino_sector v26.0
+        particle.sigma_m_refined_eV  0.042517   neutrino_sector v26.0
+
+    No measurement enters: this compares the theory's statements to each
+    other. The FITTED row neutrino.mass_sum is excluded on purpose, because a
+    fit disagreeing with a derivation is not the theory contradicting itself.
+    """
+    from metaphysica.simulations.core.arithma_formula import (
+        registry_value,
+        reset_cache,
+    )
+    from metaphysica.simulations.core.switch_search import NEUTRINO_MASS_SUM_ROWS
+
+    assert "neutrino.mass_sum" not in NEUTRINO_MASS_SUM_ROWS, (
+        "a FITTED row must not be used to accuse the theory of contradicting "
+        "itself"
+    )
+    reset_cache()
+    values = [registry_value(p) for p in NEUTRINO_MASS_SUM_ROWS]
+    assert all(v is not None for v in values), (
+        "a named neutrino mass-sum row vanished from the registry: %s"
+        % list(zip(NEUTRINO_MASS_SUM_ROWS, values))
+    )
+    assert len(set(values)) > 1, (
+        "the three rows now agree. That is a RESULT -- one of the neutrino "
+        "derivations was reconciled -- and belongs in the register, not "
+        "absorbed by deleting this test."
+    )
+
+
+def test_a_check_failing_everywhere_is_separated_but_not_excused(result):
+    """One fork-independent defect must not flatten the whole sweep.
+
+    Reported apart so the switch-dependent structure stays visible; still
+    counted against every row, so nothing is laundered.
+    """
+    standing = result["problems_no_combination_fixes"]
+    assert standing, "no standing problems at all -- verify the checks ran"
+    for name in standing:
+        failing = [r for r in result["rows"]
+                   if any(c["name"] == name and not c["ok"]
+                          for c in r["checks"])]
+        assert len(failing) == result["n_combinations"], (
+            "%s is listed as failing everywhere but does not" % name)
+    # not excused
+    assert result["n_internally_consistent"] == 0 or not standing
+
+
+def test_the_partition_is_a_real_partition(result):
+    """Standing and switch-controlled must be disjoint, or the split is fake."""
+    standing = set(result["problems_no_combination_fixes"])
+    controlled = set(result["problems_the_switches_control"])
+    assert not (standing & controlled)
+    assert controlled, (
+        "no check varies with the switches, so the sweep discriminates "
+        "nothing and the search has no content"
+    )
+
+
+def test_clean_on_switch_controlled_checks_is_not_a_ranking(result):
+    """It names a set, in digest order, with no row placed ahead of another."""
+    digests = result["clean_on_every_switch_controlled_check_digests"]
+    assert digests == sorted(digests)
+    for d in digests:
+        row = next(r for r in result["rows"] if r["digest"] == d)
+        bad = [c["name"] for c in row["checks"]
+               if not c["ok"] and c["name"] in result["problems_the_switches_control"]]
+        assert bad == [], "%s is listed clean but fails %s" % (d, bad)
