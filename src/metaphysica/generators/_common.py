@@ -30,4 +30,86 @@ def autogen_dir() -> Path:
     return p
 
 
-__all__ = ["out_dir", "autogen_dir"]
+#: Fields that record WHEN a generator ran rather than what it produced.
+#: Stripped before comparing an artifact against its previous content.
+TIMESTAMP_KEYS = ("timestamp", "generated_at", "generated", "build_time")
+
+
+def _strip_timestamps(value, keys=TIMESTAMP_KEYS):
+    """A deep copy with every timestamp key removed, for comparison only."""
+    if isinstance(value, dict):
+        return {k: _strip_timestamps(v, keys)
+                for k, v in value.items() if k not in keys}
+    if isinstance(value, list):
+        return [_strip_timestamps(v, keys) for v in value]
+    return value
+
+
+def write_json_stable(path, payload, *, indent: int = 2,
+                      keys=TIMESTAMP_KEYS) -> bool:
+    """Write JSON, keeping timestamps stable when nothing else changed.
+
+    WHY THIS EXISTS
+    ===============
+    A timestamp records when the CONTENT was generated, not when the generator
+    last ran. Restamping unconditionally made a no-op build rewrite every
+    artifact -- 45 datasource files in one generator, 164 certificate files in
+    another -- so a real edit arrived invisible inside a wall of churn and
+    `git status` stopped being a signal anyone could read. That is not cosmetic:
+    it is how three Windows icon-cache files sat committed at a repo root for
+    two weeks, and it is why a changed parameter cannot be distinguished from a
+    rebuild.
+
+    The previous timestamps are carried forward when the rest of the payload is
+    identical, and are left alone the moment any real content moves. Both
+    halves matter -- "never update the timestamp" would be the same defect
+    facing the other way.
+
+    Returns True if the file's content (ignoring timestamps) actually changed.
+    """
+    import json
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    existing = None
+    if path.is_file():
+        try:
+            existing = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            existing = None
+
+    changed = True
+    if existing is not None:
+        if _strip_timestamps(existing, keys) == _strip_timestamps(payload, keys):
+            changed = False
+            payload = _carry_timestamps(existing, payload, keys)
+
+    path.write_text(
+        json.dumps(payload, indent=indent, ensure_ascii=False, default=str),
+        encoding="utf-8",
+    )
+    return changed
+
+
+def _carry_timestamps(old, new, keys=TIMESTAMP_KEYS):
+    """Copy timestamp values from ``old`` onto a structural clone of ``new``."""
+    if isinstance(new, dict) and isinstance(old, dict):
+        out = {}
+        for k, v in new.items():
+            if k in keys and k in old:
+                out[k] = old[k]
+            else:
+                out[k] = _carry_timestamps(old.get(k), v, keys)
+        return out
+    if isinstance(new, list) and isinstance(old, list) and len(new) == len(old):
+        return [_carry_timestamps(o, n, keys) for o, n in zip(old, new)]
+    return new
+
+
+__all__ = [
+    "out_dir",
+    "autogen_dir",
+    "TIMESTAMP_KEYS",
+    "write_json_stable",
+]

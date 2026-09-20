@@ -749,8 +749,10 @@ def main():
         # Save individual certificate
         cert_filename = f"G{gate['id']:02d}_{cert['proof_id'].split('_', 1)[-1][:30]}.json"
         cert_path = os.path.join(CERT_DIR, cert_filename)
-        with open(cert_path, 'w', encoding='utf-8') as f:
-            json.dump(cert, f, indent=2)
+        # Stable timestamps: a no-op build must not rewrite 164 files and bury
+        # a real change in churn. See _common.write_json_stable.
+        from metaphysica.generators._common import write_json_stable
+        write_json_stable(cert_path, cert)
 
     # Create summary file
     summary = {
@@ -827,8 +829,7 @@ def main():
         "certificates": all_certificates
     }
 
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        json.dump(summary, f, indent=2)
+    write_json_stable(OUTPUT_FILE, summary)
 
     print(f"\n=== Gate Certificates Generated ===")
     print(f"VERIFIED:       {verified_count}")
