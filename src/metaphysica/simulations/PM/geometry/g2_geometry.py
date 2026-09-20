@@ -149,26 +149,97 @@ class G2GeometryV16(SimulationBase):
     """
 
     def __init__(self):
-        """Initialize G2 geometry simulation with TCS #187 parameters."""
-        # TCS #187 topology (ESTABLISHED from literature)
+        """Initialize the root topology simulation from the b3_seed fork.
+
+        WHY THIS READS A FORK NOW
+        ========================
+        This is the ROOT simulation: nothing upstream feeds it, and it EMITS
+        `topology.elder_kads`, `topology.b2`, `topology.mephorash_chi` and
+        `topology.n_gen`. While those were literals the `b3_seed` fork could not
+        propagate at all -- flipping it moved `b3_path`'s own report and nothing
+        else, because the pipeline's source of b_3 was here and was constant.
+
+        (b_3, b_2) now come from `b3_path.seed_values()`, which resolves the
+        fork. The adopted branch is `seed_24`, so the published values are
+        unchanged; `seed_43_joyce` gives (43, 12) and now reaches the rest of
+        the pipeline.
+
+        A FALSE PROVENANCE, CORRECTED
+        =============================
+        `self._b3 = 24` carried the comment "From TCS construction". It is not:
+        `fano_tcs` exhibits 71 <= b_3 <= 155, so TCS #187 does not supply 24 at
+        all, and the register has carried that exclusion for several passes.
+        Note also that the old code set `_b3` INDEPENDENTLY of h31 -- the TCS
+        Hodge numbers below feed chi_eff, never b_3 -- so the comment described
+        a derivation that was not even being attempted.
+        """
+        # TCS #187 Hodge numbers, kept because chi_eff is built from them.
+        # They do NOT determine b_3; see the docstring.
         self.tcs_id = 187
-        self.h11 = 4    # Kahler moduli (b2)
+        self.h11 = 4    # Kahler moduli
         self.h21 = 0    # Complex structure (none for G2)
         self.h31 = 68   # Associative 3-cycle moduli
 
-        # Derived topology
-        self._b2 = self.h11
-        self._b3 = 24   # From TCS construction
-        self._chi_eff = 2 * (self.h11 - self.h21 + self.h31)  # = 144
-        self._n_gen = self._chi_eff // 48  # = 3
+        # (b_3, b_2) from the seed fork rather than from literals here.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        self._b3_seed_path = resolve_path()
+        b3, b2 = seed_values(self._b3_seed_path)
+        self._b3 = b3
+        self._b2 = b2
+
+        # chi_eff has TWO claimed origins in the framework, and they COINCIDE at
+        # b_3 = 24 while disagreeing elsewhere -- which is the "matching values
+        # are not the same statement" trap. Both are exposed rather than one
+        # being silently preferred:
+        #   (a) 2 (h11 - h21 + h31) = 144, a TCS Hodge-number expression that
+        #       does not reference b_3 at all;
+        #   (b) b_3^2 / 4 = 576/4 = 144, recorded in FormulasRegistry.
+        # At b_3 = 43 route (b) gives 462.25, not an integer, so it cannot be an
+        # effective Euler characteristic there. Route (a) is used because it is
+        # the one that stays integral, and the divergence is REPORTED, not
+        # resolved -- which of the two is meant is an author ruling.
+        self._chi_eff_from_hodge = 2 * (self.h11 - self.h21 + self.h31)
+        self._chi_eff_from_b3 = (self._b3 ** 2) / 4.0
+        self._chi_eff = self._chi_eff_from_hodge
+        self._chi_eff_routes_agree = (
+            abs(self._chi_eff_from_b3 - self._chi_eff_from_hodge) < 1e-9
+        )
+
+        # n_gen: b_3/8 fails on every Joyce-reachable b_3 (all odd), so the
+        # source is the n_gen_source fork, coupled to b3_seed by construction.
+        self._n_gen = self._resolve_n_gen()
 
         # Matching and separation parameters
         self._K_matching = self.h11  # = 4 K3 fibres
         self._d_over_R = 0.12  # Cycle separation (from TCS gluing)
 
         # Geometric anchors for stability checks
-        self._k_gimel = (self._b3 / 2.0) + (1.0 / np.pi)  # ≈ 12.318
-        self._c_kaf = self._b3 * (self._b3 - 7) / (self._b3 - 9)  # = 27.2
+        self._k_gimel = (self._b3 / 2.0) + (1.0 / np.pi)  # 12.318 at b_3 = 24
+        self._c_kaf = self._b3 * (self._b3 - 7) / (self._b3 - 9)
+
+    def _resolve_n_gen(self) -> int:
+        """The generation count, from whichever source the fork selects.
+
+        b_3/8 is an integer at 24 and not at any Joyce-reachable value, so the
+        two forks are coupled: `seed_43_joyce` requires `b2_over_faces`. The
+        report from `b3_path.n_gen_report` carries both and says which holds.
+        """
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+        report = n_gen_report(self._b3_seed_path)
+        if not report["equals_three"]:
+            raise ValueError(
+                "seed path %r gives n_gen = %s via %s, which is not three. "
+                "The n_gen_source fork must move with b3_seed; a generation "
+                "count is a number of things."
+                % (self._b3_seed_path, report["n_gen"],
+                   report["declared_source"])
+            )
+        return int(round(report["n_gen"]))
 
     def verify_stability(self) -> Dict[str, Any]:
         """

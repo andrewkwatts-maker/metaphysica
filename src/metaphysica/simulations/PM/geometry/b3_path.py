@@ -59,6 +59,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 from __future__ import annotations
 
 import math
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 __all__ = [
@@ -144,7 +145,26 @@ def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
 
     from_b3 = b3 / dim_o
     from_b2 = b2 / n_faces
+
+    # The n_gen_source fork was INERT: this line read PATHS[key]["n_gen_source"]
+    # and nothing ever called resolve("n_gen_source"), so the fork was slaved to
+    # b3_seed and could not select anything. That also made the coupling between
+    # the two forks unfalsifiable -- no inconsistent state was reachable, so a
+    # guard against one could not fire, and a check that cannot fire is a defect.
+    #
+    # The fork is now live, with the path's own declaration as the default. An
+    # EXPLICIT override selects the other source, which makes the inconsistent
+    # combination reachable and therefore checkable: seed_43_joyce with
+    # b3_over_dim_O gives 43/8 = 5.375, not a generation count.
     declared = PATHS[key]["n_gen_source"]
+    try:
+        from metaphysica.simulations.core.variants import _ENV_PREFIX, resolve
+
+        if os.environ.get(_ENV_PREFIX + "N_GEN_SOURCE"):
+            declared = resolve("n_gen_source")
+    except Exception:                      # fork not declared / import cycle
+        pass
+
     value = from_b3 if declared == "b3_over_dim_O" else from_b2
 
     def integral(x: float) -> bool:
