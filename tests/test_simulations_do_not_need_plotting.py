@@ -128,7 +128,18 @@ def test_the_three_modules_import_with_matplotlib_unavailable(module_name,
 
 
 def test_the_import_block_is_real(monkeypatch):
-    """If the block above does not block, the three tests prove nothing."""
+    """If the block above does not block, the three tests prove nothing.
+
+    This passed alone and failed in the full run for months. The cause is not
+    flakiness: importlib.import_module resolves through sys.modules and returns
+    a cached module WITHOUT ever calling builtins.__import__, so once anything
+    earlier in the session has imported matplotlib.pyplot the patched `blocked`
+    is never reached and pytest.raises sees DID NOT RAISE. Collection is
+    alphabetical, so test_g*/test_i* got there first.
+
+    The sibling above already purged sys.modules; this one did not. Same two
+    lines, same reason.
+    """
     real_import = builtins.__import__
 
     def blocked(name, *args, **kwargs):
@@ -136,6 +147,8 @@ def test_the_import_block_is_real(monkeypatch):
             raise ImportError("matplotlib blocked by this test")
         return real_import(name, *args, **kwargs)
 
+    for loaded in [m for m in sys.modules if m.startswith("matplotlib")]:
+        monkeypatch.delitem(sys.modules, loaded, raising=False)
     monkeypatch.setattr(builtins, "__import__", blocked)
     with pytest.raises(ImportError):
         importlib.import_module("matplotlib.pyplot")
