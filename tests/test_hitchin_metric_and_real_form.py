@@ -255,3 +255,80 @@ def test_the_bilinear_is_cubic_in_phi():
     assert np.allclose(b_two, 8.0 * b_one), (
         "B did not scale as s^3 under phi -> s phi; it is not Hitchin's form"
     )
+
+
+# --------------------------------- the irrep decomposition, both real forms
+
+@pytest.mark.parametrize("label,phi", [("compact", _COMPACT), ("split", _SPLIT)])
+def test_the_irrep_dimensions_are_identical_on_both_real_forms(label, phi):
+    """The register lists Lambda^2 = 7 + 14 and Lambda^3 = 1 + 7 + 27 as part of
+    the "BROKEN blast radius" of the wrong phi. Measured, the DIMENSIONS are
+    correct on both forms -- as they must be, since the split and compact real
+    forms share a complexification and therefore share irrep dimensions.
+
+    What the split branch actually breaks is the IDENTIFICATION of the 14 with
+    the compact g2. That is a naming error with physical consequences, not a
+    dimension error, and the distinction matters: nothing needs recomputing,
+    but every sentence calling the 14 "g2" is wrong on that branch.
+    """
+    g2 = G2DifferentialGeometry(phi)
+    s3 = g2._lambda3_subspaces()
+    s2 = g2._lambda2_subspaces()
+
+    r3 = [np.linalg.matrix_rank(s3[k], tol=1e-9) for k in ("V1", "V7", "V27")]
+    r2 = [np.linalg.matrix_rank(s2[k], tol=1e-9) for k in ("V7", "V14")]
+
+    assert r3 == [1, 7, 27], "%s: Lambda^3 split is %s" % (label, r3)
+    assert sum(r3) == 35
+    assert r2 == [7, 14], "%s: Lambda^2 split is %s" % (label, r2)
+    assert sum(r2) == 21
+
+
+def test_the_unantisymmetrised_v7_spans_the_same_space():
+    """Pins the factor-of-24 non-bug, so it is not 'fixed' into a regression.
+
+    The V7 rows are built from a single ordered tuple rather than a full wedge.
+    The epsilon contraction antisymmetrises regardless, so the properly
+    antisymmetrised construction spans the identical subspace and differs by
+    exactly 24. These rows are a span for a least-squares projection; scale is
+    irrelevant. If someone antisymmetrises the loop, this test still passes --
+    which is the point.
+    """
+    import itertools as _it
+
+    basis = list(_it.combinations(range(7), 3))
+
+    def perm_sign(seq):
+        s, q = 1, list(seq)
+        for i in range(len(q)):
+            for j in range(i + 1, len(q)):
+                if q[i] > q[j]:
+                    s = -s
+        return s
+
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        _levi_civita_7d,
+    )
+    eps = _levi_civita_7d()
+
+    for phi in (_COMPACT, _SPLIT):
+        rows = []
+        for i in range(7):
+            four = np.zeros((7, 7, 7, 7))
+            for (a, b, c) in basis:
+                val = phi[a, b, c]
+                if val == 0.0 or i in (a, b, c):
+                    continue
+                idx = (i, a, b, c)
+                for p in _it.permutations(range(4)):
+                    four[tuple(idx[k] for k in p)] += perm_sign(p) * val
+            three = np.einsum('abcd,abcdijk->ijk', four, eps) / 24.0
+            rows.append(np.array([three[t] for t in basis]))
+        full = np.array(rows)
+
+        current = G2DifferentialGeometry(phi)._lambda3_subspaces()["V7"]
+        assert np.linalg.matrix_rank(current, tol=1e-9) == 7
+        assert np.linalg.matrix_rank(full, tol=1e-9) == 7
+        assert np.linalg.matrix_rank(np.vstack([current, full]), tol=1e-9) == 7, (
+            "the two constructions no longer span the same subspace"
+        )

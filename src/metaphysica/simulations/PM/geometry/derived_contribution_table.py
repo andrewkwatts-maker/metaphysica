@@ -218,9 +218,19 @@ __all__ = [
     "b3_verdict",
 ]
 
-#: Flat contributions of T^7/Gamma itself, both DERIVED in joyce_orbifold:
-#: b_2 flat = 0 (each 2-form carries a non-trivial character product) and
-#: b_3 flat = 7 (exactly phi's triples survive).
+#: Flat contributions of T^7/Gamma itself, both now DERIVED in joyce_orbifold:
+#: b_2 flat = 0 and b_3 flat = 7, from `joyce_orbifold.flat_betti_report` (R5).
+#:
+#: PROVENANCE CORRECTION (2026-09-21). This comment previously said both were
+#: "DERIVED in joyce_orbifold". Only b_3 was -- that module had no Lambda^2
+#: computation at all, so b_2 = 0 was an assertion wearing a citation. The value
+#: was right and its provenance was false, which is the worse of the two failure
+#: modes because it reads as settled. R5 now derives it, and the mechanism turns
+#: out to settle every degree at once: the 7 coordinates realise the 7
+#: NON-TRIVIAL characters of (Z/2)^3 bijectively, so chi_i * chi_j is trivial
+#: only when i = j (hence no invariant 2-form can exist), while zero-sum triples
+#: of characters are exactly the 7 lines of PG(2,2) (hence b_3 flat = 7, and
+#: hence R3 and R4 were always one fact seen twice).
 FLAT_B2 = 0
 FLAT_B3 = 7
 

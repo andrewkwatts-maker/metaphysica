@@ -72,6 +72,9 @@ __all__ = [
     "diagonal_stabiliser",
     "involution_arc_correspondence",
     "invariant_three_forms",
+    "coordinate_characters",
+    "invariant_p_forms",
+    "flat_betti_report",
     "group_fano_lines",
     "orbifold_report",
 ]
@@ -185,6 +188,120 @@ def invariant_three_forms(g2=None) -> List[Tuple[int, int, int]]:
     actions = [sign_action_on_lambda3(eps) for eps in group]
     return [basis[i] for i in range(len(basis))
             if all(a[i] == 1 for a in actions)]
+
+
+def coordinate_characters(g2=None) -> Dict[int, Tuple[int, ...]]:
+    """Each coordinate's character under Gamma, as a tuple of signs.
+
+    This is the object that makes every flat Betti number fall out at once, and
+    the reason they are what they are.
+    """
+    group = diagonal_stabiliser(g2)
+    return {i: tuple(eps[i] for eps in group) for i in range(_N_COORDS)}
+
+
+def invariant_p_forms(p: int, g2=None) -> List[Tuple[int, ...]]:
+    """The Gamma-invariant coordinate p-forms. Generalises R3 to any degree.
+
+    A basis p-form e_{i1} ^ ... ^ e_{ip} survives the quotient exactly when the
+    product of its coordinates' characters is trivial.
+    """
+    group = diagonal_stabiliser(g2)
+    out = []
+    for idx in itertools.combinations(range(_N_COORDS), p):
+        if all(_prod(eps[i] for i in idx) == 1 for eps in group):
+            out.append(idx)
+    return out
+
+
+def _prod(values) -> int:
+    out = 1
+    for v in values:
+        out *= v
+    return out
+
+
+def flat_betti_report(g2=None) -> Dict[str, Any]:
+    """R5: the flat cohomology of T^7/Gamma, derived from the characters.
+
+    WHY b_2 FLAT = 0, AND WHY IT WAS NOT SAFE TO ASSERT IT
+    ======================================================
+    derived_contribution_table carried `FLAT_B2 = 0` with the comment that both
+    it and b_3 = 7 are "DERIVED in joyce_orbifold". Only b_3 was: this module
+    had no Lambda^2 function at all. The claim was true and its stated
+    provenance was false, which is the more dangerous of the two failure modes
+    because it reads as settled. Computed here.
+
+    THE MECHANISM, AND IT SETTLES EVERY DEGREE AT ONCE
+    ==================================================
+    (Z/2)^3 has exactly 8 characters: the trivial one and 7 non-trivial ones.
+    Measured, the 7 coordinates of T^7 realise the 7 NON-TRIVIAL characters
+    BIJECTIVELY -- one each, none trivial. Everything follows:
+
+      b_1 flat = 0   no coordinate carries the trivial character.
+
+      b_2 flat = 0   chi_i * chi_j is trivial iff chi_i = chi_j iff i = j, and a
+                     2-form needs i /= j. So there is no invariant 2-form --
+                     not "none were found", but none can exist.
+
+      b_3 flat = 7   chi_i chi_j chi_k trivial means the three characters sum to
+                     zero in (Z/2)^3. The 7 non-trivial characters ARE the 7
+                     points of PG(2,2), and zero-sum triples are exactly its 7
+                     LINES. So the invariant 3-forms are the Fano lines -- which
+                     is why they coincide with phi's own support, and why R3 and
+                     R4 were always the same fact seen twice.
+
+    So the coordinate index set is a copy of the Fano plane, and that single
+    fact -- not phi, and not the real form -- is what fixes the flat sector.
+    """
+    chars = coordinate_characters(g2)
+    distinct = sorted(set(chars.values()))
+    group = diagonal_stabiliser(g2)
+    trivial = tuple([1] * len(group))
+
+    inv = {p: invariant_p_forms(p, g2) for p in range(_N_COORDS + 1)}
+    betti = {p: len(v) for p, v in inv.items()}
+
+    # Two self-checks that can fail, and both are non-trivial consequences
+    # rather than restatements of the computation:
+    #   Poincare duality b_p = b_{7-p} on a closed orientable 7-manifold, and
+    #   chi = 0, which is forced in any odd dimension.
+    poincare = all(betti[p] == betti[_N_COORDS - p]
+                   for p in range(_N_COORDS + 1))
+    euler = sum((-1) ** p * betti[p] for p in range(_N_COORDS + 1))
+
+    return {
+        "group_order": len(group),
+        "poincare_duality_holds": poincare,
+        "euler_characteristic": euler,
+        "euler_is_zero_as_odd_dimension_requires": euler == 0,
+        "n_distinct_coordinate_characters": len(distinct),
+        "any_coordinate_is_trivial": trivial in distinct,
+        "characters_realise_all_nontrivial_bijectively": (
+            len(distinct) == _N_COORDS
+            and len(distinct) == len(group) - 1
+            and trivial not in distinct
+        ),
+        "flat_betti": betti,
+        "b1_flat": len(inv[1]),
+        "b2_flat": len(inv[2]),
+        "b3_flat": len(inv[3]),
+        "invariant_two_forms": inv[2],
+        "invariant_three_forms": inv[3],
+        "b3_flat_equals_fano_lines": (
+            sorted(inv[3]) == sorted(group_fano_lines(g2))
+        ),
+        "why_b2_is_zero": (
+            "chi_i * chi_j is trivial only when chi_i = chi_j, and the seven "
+            "coordinate characters are distinct, so no i /= j pair is "
+            "invariant. b_2 flat = 0 is forced, not observed."
+        ),
+        "provenance_correction": (
+            "derived_contribution_table's FLAT_B2 = 0 was commented as DERIVED "
+            "in joyce_orbifold, which had no Lambda^2 computation. The value "
+            "was right; the citation was not. Derived here as R5."
+        ),
+    }
 
 
 def group_fano_lines(g2=None) -> List[Tuple[int, int, int]]:

@@ -688,6 +688,25 @@ class G2DifferentialGeometry:
         Verified by dimension: 1 + 7 + 27 = 35 = C(7,3). Returned as row
         matrices over the ordered 3-form basis so a projection is a least
         squares solve, with no convention to get wrong.
+
+        TWO MEASURED NOTES, both recorded so they are not re-flagged:
+
+        1. The V7 loop below writes only the single ordered tuple (i,a,b,c)
+           rather than antisymmetrising the wedge over all 24 permutations.
+           That LOOKS like a bug and is not: the einsum against the totally
+           antisymmetric epsilon projects onto the antisymmetric part anyway, so
+           the fully antisymmetrised construction spans the IDENTICAL
+           7-dimensional space and differs by exactly a factor of 24 --
+           measured, on both real forms. These rows are used only as a span for
+           a least-squares projection, where overall scale is irrelevant.
+
+        2. The decomposition dimensions are the SAME for both real forms:
+           1 + 7 + 27 here and 7 + 14 in Lambda^2, on the compact phi and on
+           the split one alike. They must be -- the split and compact real forms
+           share a complexification, hence share irrep dimensions. So the
+           register's "BROKEN" listing for "Lambda^2 = 7 + 14 as g2" is not
+           about dimensions; what the split branch breaks is the IDENTIFICATION
+           of the 14 with the compact g2. It is g2*, the split form.
         """
         basis = list(itertools.combinations(range(7), 3))
         n = len(basis)
