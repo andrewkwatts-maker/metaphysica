@@ -429,6 +429,52 @@ class G2DifferentialGeometry:
             )
         return B / (abs(det) ** (1.0 / 9.0))
 
+    #: The two metric constructions available, by fork option id. Kept here so
+    #: the fork's read_adopted can resolve against live behaviour rather than
+    #: against a restated constant.
+    METRIC_CONSTRUCTIONS = ("quadratic_contraction", "hitchin_cubic")
+
+    def metric_by_convention(self, construction: Optional[str] = None
+                             ) -> np.ndarray:
+        """The metric under the `metric_construction` fork.
+
+        Two genuinely different objects, both implemented:
+
+          quadratic_contraction   phi_iab phi_jab / 6. Positive-definite for
+                                  either real form, and therefore blind to
+                                  which one phi is. The status quo: every
+                                  metric-dependent quantity in the framework
+                                  currently rides on this.
+
+          hitchin_cubic           Hitchin's construction, degree 3 in phi. Sees
+                                  the real form: signature (7,0) for the
+                                  compact orbit and (4,3) for the split one. It
+                                  will REFUSE an unstable phi rather than
+                                  returning a matrix, which the quadratic
+                                  cannot do.
+
+        Adopted stays `quadratic_contraction` so nothing published moves. The
+        switch exists so the Hitchin metric can be run downstream and the cost
+        measured before any ruling, and so this work is not lost if the compact
+        branch is later adopted.
+        """
+        if construction is None:
+            try:
+                from metaphysica.simulations.core.variants import resolve
+
+                construction = resolve("metric_construction")
+            except Exception:              # fork not declared / import cycle
+                construction = "quadratic_contraction"
+
+        if construction == "hitchin_cubic":
+            return self.compute_hitchin_metric()
+        if construction == "quadratic_contraction":
+            return self.compute_metric()
+        raise ValueError(
+            "unknown metric construction %r; expected one of %s"
+            % (construction, list(self.METRIC_CONSTRUCTIONS))
+        )
+
     def real_form_report(self) -> dict:
         """Which real form of G2 stabilises this phi, measured not assumed.
 

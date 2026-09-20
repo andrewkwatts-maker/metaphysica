@@ -332,3 +332,57 @@ def test_the_unantisymmetrised_v7_spans_the_same_space():
         assert np.linalg.matrix_rank(np.vstack([current, full]), tol=1e-9) == 7, (
             "the two constructions no longer span the same subspace"
         )
+
+
+# ------------------------------------------------- the metric_construction fork
+
+def test_the_metric_construction_fork_is_executable(monkeypatch):
+    """A fork whose branches do the same thing is a constant in disguise."""
+    from metaphysica.simulations.core.variants import FORKS
+
+    fork = FORKS["metric_construction"]
+    assert fork.status == "OPEN"
+    assert fork.default() == "quadratic_contraction", (
+        "adoption is the author's; the status quo must stay adopted"
+    )
+
+    g2 = G2DifferentialGeometry(_SPLIT)
+    quad = g2.metric_by_convention("quadratic_contraction")
+    cubic = g2.metric_by_convention("hitchin_cubic")
+    assert not np.allclose(quad, cubic), "both branches returned the same metric"
+
+    # the default route must agree with the adopted branch
+    monkeypatch.delenv("METAPHYSICA_VARIANT_METRIC_CONSTRUCTION", raising=False)
+    assert np.allclose(g2.metric_by_convention(), quad)
+
+
+def test_switching_the_fork_by_environment_moves_the_metric(monkeypatch):
+    g2 = G2DifferentialGeometry(_SPLIT)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_METRIC_CONSTRUCTION", "hitchin_cubic")
+    switched = g2.metric_by_convention()
+    eig = np.linalg.eigvalsh(switched)
+    assert np.sum(eig > 0) == 4 and np.sum(eig < 0) == 3, (
+        "the switch did not take effect: %s" % eig
+    )
+
+
+def test_the_forks_drift_guard_reads_live_behaviour(monkeypatch):
+    """Not a returned constant. Three existing forks are; this one must not be."""
+    from metaphysica.simulations.core.variants import (
+        FORKS,
+        _metric_construction_adopted,
+    )
+
+    assert FORKS["metric_construction"].read_adopted is not None
+    assert _metric_construction_adopted() == "quadratic_contraction"
+
+    # Point the dispatcher at the cubic branch and the guard must follow.
+    monkeypatch.setenv("METAPHYSICA_VARIANT_METRIC_CONSTRUCTION", "hitchin_cubic")
+    assert _metric_construction_adopted() == "hitchin_cubic", (
+        "the drift guard returned a constant instead of reading live behaviour"
+    )
+
+
+def test_an_unknown_construction_fails_loudly():
+    with pytest.raises(ValueError, match="unknown metric construction"):
+        G2DifferentialGeometry(_SPLIT).metric_by_convention("something_else")

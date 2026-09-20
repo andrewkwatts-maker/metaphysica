@@ -144,6 +144,33 @@ def _g2_form_adopted() -> str:
     return "all_plus_one" if all(s > 0 for s in signs) else "octonion_derived"
 
 
+def _metric_construction_adopted() -> str:
+    """Which construction the live dispatcher actually returns.
+
+    A genuine read of behaviour, not a restated constant: build both candidate
+    metrics and report which one ``metric_by_convention()`` matches. If the
+    dispatcher's default is ever changed this moves with it, which is the whole
+    point of a drift guard -- three forks in this file return a string literal
+    and cannot detect their own source changing at all.
+    """
+    import numpy as np
+
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        G2DifferentialGeometry,
+    )
+
+    g2 = G2DifferentialGeometry()
+    live = g2.metric_by_convention()
+    if np.allclose(live, g2.compute_metric()):
+        return "quadratic_contraction"
+    try:
+        if np.allclose(live, g2.compute_hitchin_metric()):
+            return "hitchin_cubic"
+    except ValueError:                     # unstable phi: no Hitchin metric
+        pass
+    return "quadratic_contraction"
+
+
 def _bulk_signature_adopted() -> str:
     from metaphysica.simulations.core.canonical_values import CANON
 
@@ -604,6 +631,86 @@ FORKS: Dict[str, Fork] = {
                     "shadow_asymmetry_delta_T, V_cb, J_CKM) are all invariant. "
                     "Consistent with R1-R4 and the arc flag identity, which "
                     "were verified identical under both branches."
+                ),
+            ),
+        ],
+    ),
+    "metric_construction": Fork(
+        id="metric_construction",
+        question="Which construction turns phi into a metric?",
+        source=("simulations.PM.geometry.g2_differential."
+                "G2DifferentialGeometry.metric_by_convention"),
+        status="OPEN",
+        read_adopted=_metric_construction_adopted,
+        notes=(
+            "Opened 2026-09-21. compute_metric() is the QUADRATIC contraction "
+            "phi_iab phi_jab / 6, and its docstring called that Hitchin's "
+            "formula. It is not: Hitchin's construction is CUBIC in phi, "
+            "B_ij = eps^{a1..a7} phi_{i a1 a2} phi_{j a3 a4} phi_{a5 a6 a7} "
+            "with g = B / |det B|^(1/9), and cubic is the lowest degree that "
+            "can see the difference. Measured: the quadratic returns exactly "
+            "1.0 * I_7 for BOTH the all-(+1) phi and the octonion-derived one, "
+            "so every claim of 'the unique compatible Riemannian metric' made "
+            "through it was unfalsifiable -- which is why g2_form_convention "
+            "went unnoticed as long as it did.\n\n"
+            "WHAT THE CUBIC FORM REVEALS, refining the earlier finding rather "
+            "than confirming it: Lambda^3(R^7) has exactly TWO open GL(7,R) "
+            "orbits and BOTH have 14-dimensional stabilisers, so 'dim 14 vs 6' "
+            "is not the invariant it was read as. The one that discriminates is "
+            "the unordered signature of B -- (7,0) for octonion_derived, (4,3) "
+            "for all_plus_one. So the adopted phi IS a G2-structure, for the "
+            "SPLIT real form g2*, whose maximal compact SU(2)xSU(2) has "
+            "dimension 6: exactly the 6 measured in so(7). What it is not is "
+            "RIEMANNIAN, and Joyce's construction needs the compact form.\n\n"
+            "This also settles the Lambda decomposition question. The "
+            "dimensions 1 + 7 + 27 and 7 + 14 are correct on BOTH branches, as "
+            "a shared complexification requires; only the IDENTIFICATION of the "
+            "14 with compact g2 breaks, not any dimension.\n\n"
+            "NOT AFFECTED, verified: the diagonal (Z/2)^3 stabiliser depends "
+            "only on phi's SUPPORT, which both branches share exactly, so R1 "
+            "to R4, the half-shift enumeration, the A1 census and "
+            "b_3 = 7 + 3 n_T3 are fork-independent either way. The closure "
+            "rides on Fano incidence, not on the real form."
+        ),
+        options=[
+            VariantOption(
+                id="quadratic_contraction",
+                summary="phi_iab phi_jab / 6 -- the status quo",
+                consequence=(
+                    "BUYS: nothing published moves. Every metric-dependent "
+                    "quantity in the framework already rides on this, and it "
+                    "is a genuine identity for a genuine G2 form.\n"
+                    "COSTS: it is blind to the real form, returning 1.0 * I_7 "
+                    "for compact and split alike, so it cannot certify any "
+                    "orientation as Riemannian and cannot detect an unstable "
+                    "phi at all. It is a consistency check wearing a metric "
+                    "derivation's clothes."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="hitchin_cubic",
+                summary="Hitchin's cubic construction on the 3-form",
+                consequence=(
+                    "BUYS: a metric that actually depends on the GL(7) orbit. "
+                    "It gives a flat positive-definite metric on the compact "
+                    "branch, exhibits signature (4,3) on the adopted split "
+                    "branch, is stable under rotation, general GL(7) and "
+                    "reflection, and RAISES on an unstable phi instead of "
+                    "returning a matrix for a 3-form that induces no metric.\n"
+                    "COSTS: on the adopted all-(+1) phi it is INDEFINITE, so "
+                    "anything downstream expecting a Riemannian metric would be "
+                    "consuming a signature-(4,3) object. That is not a defect "
+                    "in the construction but an honest report of what the "
+                    "adopted phi induces -- and it means this branch and "
+                    "g2_form_convention = octonion_derived belong together if a "
+                    "Riemannian metric is wanted.\n"
+                    "ALSO LIMITED, measured: g_phi is not covariant under the "
+                    "obvious pushforward, because B contracts with epsilon, "
+                    "which transforms as a density rather than a fixed array. "
+                    "g(h*phi) is not proportional to h^T g(phi) h. The "
+                    "signature is still frame-robust up to overall sign, which "
+                    "is what the classification uses."
                 ),
             ),
         ],
