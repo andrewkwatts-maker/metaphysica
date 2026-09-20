@@ -51,6 +51,26 @@ def _registry():
     return get_registry()
 
 
+def _params_path():
+    """parameters.json, preferring the build output over the bundled datasource.
+
+    Without the fallback a gate that reads parameters.json is unevaluable in any
+    environment that has not run the build -- which made G23 skip rather than
+    run. The bundled copy ships in the wheel, so the gate can always be scored;
+    an unevaluated gate is not a passed one.
+    """
+    from pathlib import Path
+
+    from metaphysica.generators._common import autogen_dir
+
+    built = autogen_dir() / "parameters.json"
+    if built.exists():
+        return built
+    import metaphysica
+
+    return Path(metaphysica.__file__).parent / "data" / "parameters.json"
+
+
 # ---------------------------------------------------------------------------
 # G01: Integer Root Parity — N_total = 288
 # Claim: the total root count is 288 exactly.
@@ -160,10 +180,9 @@ def gate_G22_gluon_string_tension() -> GateResult:
 #         parameters.json — both are registry values, nothing invented.
 # ---------------------------------------------------------------------------
 def gate_G23_proton_stability_floor() -> GateResult:
-    import json, os
-    from metaphysica.generators._common import autogen_dir
-    params_path = autogen_dir() / "parameters.json"
-    with open(params_path) as fh:
+    import json
+
+    with open(_params_path(), encoding="utf-8") as fh:
         params = json.load(fh)["parameters"]
 
     tau_p = params["proton_decay.tau_p_years"]["value"]
