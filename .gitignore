@@ -101,3 +101,11 @@ Cargo.lock
 # src/ for months, shadowing live modules in greps and file listings. Git
 # history is the backup -- these never need tracking.
 *.bak
+
+# Litter from a malformed path expansion. Something ran a command containing
+# the cmd.exe variable %SystemDrive% under a shell that does not expand it
+# (Git Bash), so Windows created a LITERAL '%SystemDrive%' directory at the
+# repo root and filled it with icon-cache .db files. It is ignored here so it
+# can never be committed; the underlying call should use $SYSTEMDRIVE or a
+# POSIX path.
+/%SystemDrive%/
