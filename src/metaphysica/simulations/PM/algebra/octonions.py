@@ -179,16 +179,25 @@ class OctonionAlgebra:
     def g2_structure_as_3form(self) -> np.ndarray:
         """Return the G2 associative 3-form φ derived from octonion structure.
 
-        The G2 3-form uses the all-positive Fano plane orientation,
-        which is the correct convention for metric derivation via
-        Hitchin's formula (g_{ij} = φ_{iab}φ_{jab}/6 = δ_{ij}).
+        The orientation follows the `g2_form_convention` fork, through the
+        shared `_phi_tensor()` accessor, so this cannot drift from
+        g2_differential's view of the same object.
+
+        CORRECTION: an earlier version of this docstring called
+        g_{ij} = φ_{iab}φ_{jab}/6 = δ_{ij} "Hitchin's formula". It is not.
+        Hitchin's construction is CUBIC in φ; that contraction is quadratic and
+        returns exactly δ_{ij} for BOTH real forms, so it cannot certify any
+        orientation as "the correct convention". The sign choice on triple
+        (1,3,5) decides whether φ sits in the compact orbit (Riemannian metric,
+        signature (7,0)) or the split one (signature (4,3)) -- see
+        `g2_differential.G2DifferentialGeometry.real_form_report`.
 
         G₂ = Aut(O) preserves both the multiplication and the 3-form,
         connecting octonion algebra to G2 differential geometry.
 
         Returns:
-            (7,7,7) antisymmetric tensor — identical to the standard
-            G2 3-form from g2_differential.py
+            (7,7,7) antisymmetric tensor, matching g2_differential's φ on the
+            same fork branch.
         """
         return self._phi_tensor().copy()
 

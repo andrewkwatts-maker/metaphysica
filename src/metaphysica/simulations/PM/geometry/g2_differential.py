@@ -199,13 +199,24 @@ class G2DifferentialGeometry:
         octonions = OctonionAlgebra()
         phi = octonions.g2_structure_as_3form()
 
-        # Verify consistency: E8-derived phi must match standard phi
+        # The former `assert np.allclose(phi, standard)` here FIRED whenever
+        # g2_form_convention was flipped to octonion_derived, because
+        # g2_structure_as_3form() returns the tabulated all-(+1) tensor while
+        # _standard_phi() then returns the octonion-derived one -- so the branch
+        # the fork exists to test could not be run at all. The comparison is
+        # kept as a reported diagnostic rather than a crash: the two differ in
+        # exactly one sign, on triple (1,3,5), and that single sign is what
+        # separates the split real form from the compact one.
         standard = cls._standard_phi()
-        assert np.allclose(phi, standard), (
-            "E8-derived phi must match standard G2 3-form"
-        )
+        agrees = bool(np.allclose(phi, standard))
+        differing = [] if agrees else [
+            t for t in itertools.combinations(range(7), 3)
+            if not np.isclose(phi[t], standard[t])
+        ]
 
         instance = cls(phi=phi)
+        instance._e8_matches_standard_phi = agrees
+        instance._e8_differing_triples = differing
         instance._e8_source = e8
         return instance
 
@@ -266,10 +277,16 @@ class G2DifferentialGeometry:
     def _standard_phi() -> np.ndarray:
         """Construct the standard flat G2 3-form φ₀.
 
-        Which signs are used is the `g2_form_convention` fork. The adopted
-        branch is `all_plus_one`, the status quo, so nothing moves by default.
-        Selecting `fano_signed` substitutes the signs that actually give a G2
-        form -- see the G2_TRIPLES comment for the measurement.
+        Which signs are used is the `g2_form_convention` fork. Its two options
+        are `all_plus_one` (adopted, the status quo, so nothing moves by
+        default) and `octonion_derived`. An earlier version of this docstring
+        named a branch `fano_signed`, which has never existed in variants.py --
+        corrected here so the text names only branches that can be selected.
+
+        The difference is one sign, on triple (1,3,5), and it decides the real
+        form: `all_plus_one` gives the SPLIT form G2* with an induced metric of
+        signature (4,3); `octonion_derived` gives the COMPACT form and a
+        Riemannian metric. See `real_form_report()`.
 
         The fork is resolved here rather than at import time so the environment
         override takes effect per construction and the two branches can be run
@@ -335,18 +352,28 @@ class G2DifferentialGeometry:
     # ------------------------------------------------------------------
 
     def compute_metric(self) -> np.ndarray:
-        """Derive the metric g_{ij} from the 3-form φ.
+        """The QUADRATIC contraction g_{ij} = (1/6) phi_{iab} phi_{jab}.
 
-        Uses the contraction identity for G2 structures:
-          g_{ij} = (1/6) Σ_{a,b} φ_{iab} φ_{jab}
+        WHAT THIS IS NOT
+        ================
+        This is NOT Hitchin's formula, and an earlier version of this docstring
+        claimed it was. Hitchin's construction is CUBIC in phi; this contraction
+        is quadratic, and the difference is not cosmetic:
 
-        This is equivalent to Hitchin's formula for stable 3-forms
-        and gives the unique compatible Riemannian metric.
+            measured, both forms give exactly 1.0 * I_7 here --
+            the framework's all-(+1) phi and the octonion-derived phi alike.
 
-        For the standard G2 form, this yields g = I₇.
+        So this function CANNOT distinguish the two, and every claim of "the
+        unique compatible Riemannian metric" made through it was unfalsifiable.
+        It is kept because it is a genuine identity for a genuine G2 form, and
+        because `verify_lattice_consistency` cross-checks phi against it -- but
+        it is a consistency check, not a metric derivation.
+
+        Use `compute_hitchin_metric()` for the real construction and
+        `real_form_report()` for the invariant that actually discriminates.
 
         Returns:
-            (7, 7) metric tensor
+            (7, 7) symmetric tensor. Positive-definite for both real forms.
         """
         if self._metric is not None:
             return self._metric
@@ -355,6 +382,194 @@ class G2DifferentialGeometry:
         # g_{ij} = (1/6) φ_{iab} φ_{jab} (sum over a,b)
         self._metric = np.einsum('iab,jab->ij', phi, phi) / 6.0
         return self._metric
+
+    # ------------------------------------------------------------------
+    # Hitchin's metric, and the real form it selects
+    # ------------------------------------------------------------------
+
+    def hitchin_bilinear(self) -> np.ndarray:
+        """Hitchin's CUBIC bilinear form B_{ij}, before normalisation.
+
+            B_{ij} = eps^{a1..a7} phi_{i a1 a2} phi_{j a3 a4} phi_{a5 a6 a7}
+
+        Degree 3 in phi, so it sees orientation and sign structure that the
+        quadratic contraction cannot. For a stable 3-form B is non-degenerate,
+        and its SIGNATURE is the GL(7,R) invariant that names the real form.
+
+        Reference: Hitchin, "The geometry of three-forms in six and seven
+        dimensions" (2000).
+        """
+        phi = self._phi
+        return np.einsum('abcdefg,iab,jcd,efg->ij',
+                         self._eps, phi, phi, phi)
+
+    def compute_hitchin_metric(self) -> np.ndarray:
+        """The metric Hitchin's construction actually induces.
+
+            g = B / |det B|^(1/9)
+
+        The 1/9 power is forced by homogeneity: B is cubic in phi, so det B has
+        degree 21 in phi and degree 7 in B; dividing by |det B|^(1/9) makes g
+        degree 21/9 - ... i.e. the unique scaling under which g transforms as a
+        metric. The sign of det B is retained, so an indefinite B yields an
+        indefinite g rather than a silently absolute-valued one.
+
+        Raises:
+            ValueError: if phi is not stable (det B = 0), because there is then
+                no induced metric at all and returning something would be worse
+                than failing.
+        """
+        B = self.hitchin_bilinear()
+        det = float(np.linalg.det(B))
+        if abs(det) < 1e-9:
+            raise ValueError(
+                "phi is not stable: det(Hitchin B) = %.3g, so no metric is "
+                "induced. This is a degenerate 3-form, not a G2 structure of "
+                "either real form." % det
+            )
+        return B / (abs(det) ** (1.0 / 9.0))
+
+    def real_form_report(self) -> dict:
+        """Which real form of G2 stabilises this phi, measured not assumed.
+
+        THE INVARIANT, AND WHY IT IS THE RIGHT ONE
+        ==========================================
+        Lambda^3(R^7) has exactly two OPEN GL(7,R) orbits. Both have a
+        14-dimensional stabiliser, so "dim stab = 14" does not discriminate:
+
+            compact G2      stabiliser sits inside so(7)
+                            -> dim(stab ^ so(7)) = 14
+                            -> Hitchin metric signature (7,0), Riemannian
+
+            split G2* (G2^{2,14})   maximal compact is SU(2) x SU(2)
+                            -> dim(stab ^ so(7)) = 6
+                            -> Hitchin metric signature (4,3), indefinite
+
+        So the discriminating invariants are the so(7) stabiliser dimension and
+        the signature of Hitchin's B. Measured on this framework:
+
+            octonion_derived   gl7 = 14, so7 = 14, signature (7,0)  COMPACT
+            all_plus_one       gl7 = 14, so7 =  6, signature (4,3)  SPLIT
+
+        This REFINES the register's finding. The framework's phi is not "not a
+        G2 form" -- it is a perfectly good G2-structure for the SPLIT real
+        form, with a 14-dimensional symmetry algebra g2*. What it is not is
+        RIEMANNIAN: its induced metric has signature (4,3), so there is no
+        G2-holonomy Riemannian manifold behind it, and Joyce's construction
+        (which needs the compact form) does not apply to it.
+
+        NOT AFFECTED, and this is load-bearing: the diagonal (Z/2)^3 stabiliser
+        depends only on the SUPPORT of phi -- which triples are non-zero -- and
+        the two branches share it exactly. So R1-R4, the half-shift
+        enumeration, the A1 census and b_3 = 7 + 3 n_T3 are fork-independent.
+        The closure rides on Fano incidence, not on the real form.
+        """
+        phi = self._phi
+
+        def stab_dim(basis, rtol: float = 1e-8) -> int:
+            """dim of the subalgebra annihilating phi, by RELATIVE rank.
+
+            The cutoff must be relative, and the basis normalised. An earlier
+            absolute 1e-9 on an unnormalised basis reported 0 instead of 14 for
+            a compact-form phi moved by a non-orthogonal GL(7) element -- the
+            so(g) basis there is g^-1 M, whose scale rides on det(B)^(1/9), so
+            an absolute threshold measures the normalisation and not the rank.
+            """
+            rows = []
+            for A in basis:
+                nrm = float(np.linalg.norm(A))
+                if nrm == 0.0:
+                    continue
+                A = A / nrm
+                act = (np.einsum('ia,ajk->ijk', A, phi)
+                       + np.einsum('ja,iak->ijk', A, phi)
+                       + np.einsum('ka,ija->ijk', A, phi))
+                rows.append(act.ravel())
+            if not rows:
+                return 0
+            sv = np.linalg.svd(np.array(rows), compute_uv=False)
+            if sv.size == 0 or sv[0] == 0.0:
+                return len(rows)
+            return int(np.sum(sv <= rtol * sv[0]))
+
+        gl_basis = []
+        for a in range(7):
+            for b in range(7):
+                M = np.zeros((7, 7))
+                M[a, b] = 1.0
+                gl_basis.append(M)
+        so_basis = []
+        for a in range(7):
+            for b in range(a + 1, 7):
+                M = np.zeros((7, 7))
+                M[a, b] = 1.0
+                M[b, a] = -1.0
+                so_basis.append(M)
+
+        B = self.hitchin_bilinear()
+        det = float(np.linalg.det(B))
+        eigs = np.linalg.eigvalsh(B)
+        n_pos = int(np.sum(eigs > 1e-9))
+        n_neg = int(np.sum(eigs < -1e-9))
+
+        # The COORDINATE so(7) count is frame-dependent and must not classify.
+        # Measured: perturbing a compact-form phi keeps signature (7,0) and
+        # gl(7) stabiliser 14, but drops this number from 14 to 0 -- the
+        # conjugated G2 copy simply no longer sits inside the coordinate so(7).
+        so7_coord = stab_dim(so_basis)
+
+        # Classify by signature UP TO OVERALL SIGN. B is cubic in phi and
+        # contracts with epsilon, so a GL(7) element with det < 0 flips every
+        # eigenvalue; {7,0} and {0,7} are the same real form, as are {4,3} and
+        # {3,4}. Taking the unordered pair is what makes this frame-robust.
+        hi, lo = max(n_pos, n_neg), min(n_pos, n_neg)
+
+        if abs(det) < 1e-9:
+            form = "DEGENERATE"
+        elif (hi, lo) == (7, 0):
+            form = "COMPACT_G2"
+        elif (hi, lo) == (4, 3):
+            form = "SPLIT_G2_STAR"
+        else:
+            form = "UNRECOGNISED"
+
+        # A stabiliser-inside-so(g_phi) diagnostic was implemented here and
+        # REMOVED. Two measured reasons, both fatal to it:
+        #   * the stabiliser conjugates as h A h^-1, not h^-1 A h; and
+        #   * g_phi is NOT covariant under the obvious pushforward, because B
+        #     contracts with epsilon, which transforms as a density rather than
+        #     as a fixed array -- measured: g(h*phi) is not proportional to
+        #     h^T g(phi) h, one ratio eigenvalue even coming out negative.
+        # It reported 0 where the truth is 14 for a non-orthogonally-moved
+        # compact form. Signature settles the real form without it, so a number
+        # that cannot be computed correctly is dropped rather than shipped.
+
+        return {
+            "real_form": form,
+            "stabiliser_dim_gl7": stab_dim(gl_basis),
+            "stabiliser_dim_so7_coordinate": so7_coord,
+            "coordinate_frame_is_adapted": so7_coord == 14,
+            "hitchin_signature": (n_pos, n_neg),
+            "hitchin_signature_unordered": (hi, lo),
+            "hitchin_det": det,
+            "is_riemannian": (hi, lo) == (7, 0),
+            "supports_g2_holonomy": form == "COMPACT_G2",
+            "classified_by": (
+                "the unordered signature of Hitchin's cubic B. The coordinate "
+                "so(7) count is reported but NOT used to classify: it is "
+                "frame-dependent and reads 0 for a rotated compact-form phi, "
+                "while the signature stays (7,0)."
+            ),
+            "why_the_quadratic_cannot_tell": (
+                "phi_iab phi_jab / 6 is degree 2 in phi and gives 1.0 * I_7 "
+                "for both real forms; the discriminating invariant is cubic."
+            ),
+            "what_is_unaffected": (
+                "the diagonal (Z/2)^3 stabiliser depends only on phi's "
+                "support, which both branches share, so b_3 = 7 + 3 n_T3 and "
+                "every R1-R4 result is fork-independent"
+            ),
+        }
 
     # ------------------------------------------------------------------
     # Hodge star
