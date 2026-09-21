@@ -213,8 +213,13 @@ class G2GeometryV16(SimulationBase):
         # source is the n_gen_source fork, coupled to b3_seed by construction.
         self._n_gen = self._resolve_n_gen()
 
-        # Matching and separation parameters
-        self._K_matching = self.h11  # = 4 K3 fibres
+        # Matching and separation parameters. K_matching is h^{1,1}, which is a
+        # TCS Hodge number and does NOT ride on the seed -- so on seed_43_joyce
+        # it stays 4 while b_2 becomes 12, and the identity "K = h11 = b_2"
+        # that the certificates assert BREAKS. Recorded rather than papered
+        # over; which of the two b_2 means is an author ruling.
+        self._K_matching = self.h11
+        self._k_matching_equals_b2 = (self._K_matching == self._b2)
         self._d_over_R = 0.12  # Cycle separation (from TCS gluing)
 
         # Geometric anchors for stability checks
@@ -240,6 +245,24 @@ class G2GeometryV16(SimulationBase):
                    report["declared_source"])
             )
         return int(round(report["n_gen"]))
+
+    def _seed_spec(self) -> Dict[str, Any]:
+        """The active path's own row, read live rather than restated."""
+        from metaphysica.simulations.PM.geometry.b3_path import PATHS
+
+        return PATHS[self._b3_seed_path]
+
+    def _b3_provenance(self) -> str:
+        return str(self._seed_spec()["b3_provenance"])
+
+    def _b2_provenance(self) -> str:
+        return str(self._seed_spec()["b2_provenance"])
+
+    def _n_gen_source(self) -> str:
+        """Which relation supplies the generation count on the active path."""
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+        return str(n_gen_report(self._b3_seed_path)["declared_source"])
 
     def verify_stability(self) -> Dict[str, Any]:
         """
@@ -1452,8 +1475,16 @@ class G2GeometryV16(SimulationBase):
                     "Apply Hodge decomposition to cohomology: H^k(M, C) = direct_sum_{p+q=k} H^{p,q}(M)",
                     "For G2 manifolds, h^{2,1} = 0 because G2 holonomy admits no complex structure deformations",
                     "The effective Euler characteristic for flux-dressed G2 compactifications is chi_eff = 2(h^{1,1} - h^{2,1} + h^{3,1})",
-                    "Substitute TCS #187 Hodge numbers: h^{1,1}=4, h^{2,1}=0, h^{3,1}=68 (from Corti-Haskins-Nordstrom-Pacini classification)",
-                    "Evaluate: chi_eff = 2(4 - 0 + 68) = 2 * 72 = 144"
+                    "Substitute TCS #187 Hodge numbers: h^{1,1}=%d, h^{2,1}=%d, h^{3,1}=%d (from Corti-Haskins-Nordstrom-Pacini classification)"
+                    % (self.h11, self.h21, self.h31),
+                    "Evaluate: chi_eff = 2(%d - %d + %d) = 2 * %d = %d"
+                    % (self.h11, self.h21, self.h31,
+                       self.h11 - self.h21 + self.h31, self._chi_eff_from_hodge),
+                    "NOTE: the competing route chi_eff = b_3^2/4 gives %g on the "
+                    "active seed (b_3 = %d). The two routes %s; which is meant "
+                    "is an author ruling and neither is withdrawn."
+                    % (self._chi_eff_from_b3, self._b3,
+                       "agree" if self._chi_eff_routes_agree else "DIVERGE"),
                 ],
                 "method": "Hodge decomposition and flux-dressed index computation on TCS G2 manifolds",
                 "parentFormulas": ["g2-holonomy"],
@@ -1466,28 +1497,50 @@ class G2GeometryV16(SimulationBase):
                 r"\chi_{\text{eff}}": {
                     "description": "Effective Euler characteristic: the flux-dressed topological invariant controlling the chiral fermion count in M-theory compactification",
                     "symbol": "chi_eff",
-                    "value": "144",
+                    "value": str(self._chi_eff),
                     "param_id": "topology.mephorash_chi"
                 },
                 r"h^{1,1}": {
-                    "description": "Hodge number counting Kahler moduli (2-cycle deformations); equals second Betti number b2 for G2",
+                    "description": (
+                        "Hodge number counting Kahler moduli (2-cycle "
+                        "deformations). It equals b_2 on the seed_24 path; on "
+                        "the active seed b_2 = %d, so the identity %s here."
+                        % (self._b2,
+                           "holds" if self._k_matching_equals_b2 else "BREAKS")
+                    ),
                     "symbol": "h^{1,1}",
-                    "value": "4"
+                    "value": str(self.h11)
                 },
                 r"h^{2,1}": {
                     "description": "Hodge number counting complex structure deformations; vanishes for G2 holonomy since G2 admits no integrable complex structure",
                     "symbol": "h^{2,1}",
-                    "value": "0"
+                    "value": str(self.h21)
                 },
                 r"h^{3,1}": {
                     "description": "Hodge number counting associative 3-cycle moduli in the G2 manifold",
                     "symbol": "h^{3,1}",
-                    "value": "68"
+                    "value": str(self.h31)
                 }
             },
-            eml_latex=r"\chi_{\text{eff}} = \mathrm{ops.mul}(\mathrm{eml\_scalar}(6),\, \mathrm{b3\_leaf}()) = 144,\ \text{verified by}\ 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144",
+            eml_latex=(
+                r"\chi_{\text{eff}} = \mathrm{ops.mul}(\mathrm{eml\_scalar}(6),"
+                r"\, \mathrm{b3\_leaf}()) = %g,\ \text{verified by}\ "
+                r"2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(%d - %d + %d) = %d"
+                % (6.0 * self._b3, self.h11, self.h21, self.h31,
+                   self._chi_eff_from_hodge)
+            ),
             eml_tree_str="ops.mul(eml_scalar(6.0), b3_leaf())",
-            eml_description="EML: ops.mul(eml_scalar(6), b3_leaf()) — chi_eff = 6 * b3 = 144 is the chain-link expressing the Atiyah-Singer-derived effective Euler characteristic in terms of the foundational seed; the Hodge-number derivation 2*(h11 - h21 + h31) = 2*(4-0+68) = 144 is an independent verification consistent with 6*b3=144",
+            eml_description=(
+                "EML: ops.mul(eml_scalar(6), b3_leaf()) — chi_eff = 6 * b3 = %g "
+                "on the active seed; the Hodge-number derivation "
+                "2*(h11 - h21 + h31) = 2*(%d - %d + %d) = %d is an INDEPENDENT "
+                "route that does not reference b_3. The two %s, and the "
+                "agreement at b_3 = 24 is a coincidence of two different "
+                "statements rather than one fact."
+                % (6.0 * self._b3, self.h11, self.h21, self.h31,
+                   self._chi_eff_from_hodge,
+                   "agree" if self._chi_eff_routes_agree else "DIVERGE")
+            ),
             arithma=_arithma_mul(
                 _arithma_num(6.0),
                 _arithma_const("b3"),
@@ -1496,15 +1549,17 @@ class G2GeometryV16(SimulationBase):
                 _eml_scalar(6.0),
                 _b3_leaf(),
             ),
-            value=144.0,
+            value=float(self._chi_eff),
         ))
 
         # Betti numbers
         formulas.append(Formula(
             id="betti-numbers",
             label="(2.2a)",
-            latex=r"b_0=1, b_1=0, b_2=4, b_3=24, b_4=24, b_5=4, b_6=0, b_7=1",
-            plain_text="b0=1, b1=0, b2=4, b3=24, b4=24, b5=4, b6=0, b7=1",
+            latex=(r"b_0=1, b_1=0, b_2=%d, b_3=%d, b_4=%d, b_5=%d, b_6=0, b_7=1"
+                   % (self._b2, self._b3, self._b3, self._b2)),
+            plain_text=("b0=1, b1=0, b2=%d, b3=%d, b4=%d, b5=%d, b6=0, b7=1"
+                        % (self._b2, self._b3, self._b3, self._b2)),
             category="DERIVED",
             description="Betti number sequence for TCS G2 manifold #187",
             inputParams=["topology.g2_compatible", "topology.b2", "topology.elder_kads"],
@@ -1516,9 +1571,12 @@ class G2GeometryV16(SimulationBase):
                     "Apply TCS (Twisted Connected Sum) construction: glue two asymptotically cylindrical Calabi-Yau threefolds Z_+ and Z_- along their common K3 fibre boundary",
                     "By Poincare duality on a compact oriented 7-manifold: b_k(M^7) = b_{7-k}(M^7)",
                     "TCS G2 manifolds are simply connected (pi_1 = 0), so b_0 = b_7 = 1 and b_1 = b_6 = 0",
-                    "Compute b_2 from Kahler moduli: b_2 = h^{1,1} = rank of Picard group intersection = 4",
-                    "Assert b_3(M) = 24 (TCS value asserted from the framework's manifold choice; the CHNP Thm 7.2 building-block inputs reproducing 24 are not computed here)",
-                    "Apply Poincare duality: b_4 = b_3 = 24 and b_5 = b_2 = 4"
+                    "Take b_2 = %d, obtained on the active seed path (%s)"
+                    % (self._b2, self._b2_provenance()),
+                    "Take b_3(M) = %d: %s"
+                    % (self._b3, self._b3_provenance()),
+                    "Apply Poincare duality: b_4 = b_3 = %d and b_5 = b_2 = %d"
+                    % (self._b3, self._b2)
                 ],
                 "method": "Mayer-Vietoris spectral sequence for TCS decomposition with Poincare duality constraints",
                 "parentFormulas": ["g2-holonomy"],
@@ -1531,25 +1589,33 @@ class G2GeometryV16(SimulationBase):
                 r"b_3": {
                     "description": "Third Betti number: rank of the third homology group H_3(M, Z), counting independent associative 3-cycles where matter fields localize in M-theory",
                     "symbol": "b3",
-                    "value": "24",
+                    "value": str(self._b3),
                     "param_id": "topology.elder_kads"
                 },
                 r"b_2": {
                     "description": "Second Betti number: rank of H_2(M, Z), counting independent 2-cycles (Kahler moduli of the G2 compactification)",
                     "symbol": "b2",
-                    "value": "4",
+                    "value": str(self._b2),
                     "param_id": "topology.b2"
                 },
                 r"b_0": {
                     "description": "Zeroth Betti number: number of connected components (always 1 for a connected manifold)"
                 }
             },
-            eml_latex=r"b_3 = \mathrm{b3\_leaf}() = 24,\quad [b_k] = (1, 0, 4, b_3, b_3, 4, 0, 1)",
+            eml_latex=(r"b_3 = \mathrm{b3\_leaf}() = %d,\quad [b_k] = "
+                       r"(1, 0, %d, b_3, b_3, %d, 0, 1)"
+                       % (self._b3, self._b2, self._b2)),
             eml_tree_str="b3_leaf()",
-            eml_description="EML: b3_leaf() — third Betti number b3 is the foundational Ten-Pillar seed (=24); the full sequence (1, 0, 4, 24, 24, 4, 0, 1) is reconstructed from b3 plus Poincare duality and TCS pi1=0 simply-connected constraint",
+            eml_description=(
+                "EML: b3_leaf() — third Betti number b3 is the foundational "
+                "Ten-Pillar seed (=%d on the active path); the full sequence "
+                "(1, 0, %d, %d, %d, %d, 0, 1) is reconstructed from b3 plus "
+                "Poincare duality and TCS pi1=0 simply-connected constraint"
+                % (self._b3, self._b2, self._b3, self._b3, self._b2)
+            ),
             arithma=_arithma_const("b3"),
             eml=_b3_leaf(),
-            value=24.0,
+            value=float(self._b3),
         ))
 
         # Three generations
@@ -1569,8 +1635,16 @@ class G2GeometryV16(SimulationBase):
                     "Apply the Atiyah-Singer index theorem to the Dirac operator on the G2 manifold: Index(D) = (1/48) integral of ch(F) wedge A-hat(TM)",
                     "For M-theory on G2 with minimal G-flux, the chiral index reduces to Index = chi_eff / 48",
                     "The factor 48 arises from the dimension of the fundamental spinor representation times topological normalization for 7D compactification",
-                    "Substitute chi_eff = 144 from the TCS #187 Hodge number computation",
-                    "Obtain n_gen = 144 / 48 = 3 fermion generations, matching the observed Standard Model spectrum"
+                    "Substitute chi_eff = %d from the TCS #187 Hodge number computation"
+                    % self._chi_eff,
+                    "Obtain n_gen = %d / 48 = %g fermion generations, matching the observed Standard Model spectrum"
+                    % (self._chi_eff, self._chi_eff / 48.0),
+                    "NOTE: on the active seed the generation count is sourced "
+                    "from %s and equals %d. chi_eff/48 is the Atiyah-Singer "
+                    "route and is only the same statement when the two chi_eff "
+                    "routes agree, which here they %s."
+                    % (self._n_gen_source(), self._n_gen,
+                       "do" if self._chi_eff_routes_agree else "DO NOT"),
                 ],
                 "method": "Atiyah-Singer index theorem for Dirac operator on G2-holonomy manifold with flux-dressed cohomology",
                 "parentFormulas": ["euler-characteristic", "g2-holonomy"],
@@ -1584,22 +1658,37 @@ class G2GeometryV16(SimulationBase):
                 r"n_{\text{gen}}": {
                     "description": "Number of chiral fermion generations: the net number of chiral zero modes of the Dirac operator on the internal G2 manifold",
                     "symbol": "n_gen",
-                    "value": "3",
+                    "value": str(self._n_gen),
                     "param_id": "topology.n_gen"
                 },
                 r"\chi_{\text{eff}}": {
-                    "description": "Effective Euler characteristic of the flux-dressed G2 compactification (= 144)",
+                    "description": ("Effective Euler characteristic of the "
+                                    "flux-dressed G2 compactification (= %d)"
+                                    % self._chi_eff),
                     "symbol": "chi_eff",
-                    "value": "144",
+                    "value": str(self._chi_eff),
                     "param_id": "topology.mephorash_chi"
                 },
                 r"48": {
                     "description": "Normalization factor from the spinor representation dimension and topological index density in 7 dimensions"
                 }
             },
-            eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{ops.mul}(\mathrm{eml\_scalar}(6),\, \mathrm{b3\_leaf}()),\, \mathrm{eml\_scalar}(48)) = 144/48 = 3",
+            eml_latex=(
+                r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{ops.mul}("
+                r"\mathrm{eml\_scalar}(6),\, \mathrm{b3\_leaf}()),\, "
+                r"\mathrm{eml\_scalar}(48)) = %g/48 = %g"
+                % (6.0 * self._b3, 6.0 * self._b3 / 48.0)
+            ),
             eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), eml_scalar(48.0))",
-            eml_description="EML: n_gen = ops.div(ops.mul(eml_scalar(6), b3_leaf()), eml_scalar(48)) — chi_eff = 6*b3 propagates the foundational seed through the Atiyah-Singer index, yielding n_gen = 6*b3/48 = b3/8 = 3 generations",
+            eml_description=(
+                "EML: n_gen = ops.div(ops.mul(eml_scalar(6), b3_leaf()), "
+                "eml_scalar(48)) — chi_eff = 6*b3 propagates the foundational "
+                "seed through the Atiyah-Singer index, yielding "
+                "n_gen = 6*b3/48 = b3/8 = %g on the active seed. The PUBLISHED "
+                "generation count is %d, sourced from %s; these coincide only "
+                "when b_3/8 is an integer."
+                % (self._b3 / 8.0, self._n_gen, self._n_gen_source())
+            ),
             arithma=_arithma_div(
                 _arithma_mul(_arithma_num(6.0), _arithma_const("b3")),
                 _arithma_num(48.0),
@@ -1608,7 +1697,7 @@ class G2GeometryV16(SimulationBase):
                 _eml_mul(_eml_scalar(6.0), _b3_leaf()),
                 _eml_scalar(48.0),
             ),
-            value=3.0,
+            value=float(self._n_gen),
         ))
 
         # Cycle matching
@@ -1628,7 +1717,12 @@ class G2GeometryV16(SimulationBase):
                     "In the TCS construction, two asymptotically cylindrical CY3 halves Z_+, Z_- are glued along a common T^3-fibred neck region",
                     "Each half is a K3 fibration over a 3-sphere S^3, with the K3 fibre providing the Calabi-Yau structure",
                     "The number of independent matching conditions for the K3 fibres equals the rank of the Picard lattice intersection, which is h^{1,1}",
-                    "For TCS #187: K_matching = h^{1,1} = b_2 = 4 independent K3 matching fibres"
+                    "For TCS #187: K_matching = h^{1,1} = %d independent K3 matching fibres. "
+                    "On the active seed b_2 = %d, so the chain K = h^{1,1} = b_2 %s."
+                    % (self._K_matching, self._b2,
+                       "closes" if self._k_matching_equals_b2
+                       else "BREAKS at the last link -- K rides on the TCS "
+                            "Hodge number, which the seed fork does not move")
                 ],
                 "method": "Kovalev TCS gluing theorem with K3 fibration structure analysis",
                 "parentFormulas": ["betti-numbers"],
@@ -1678,37 +1772,73 @@ class G2GeometryV16(SimulationBase):
                 name="Second Betti Number",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Number of independent 2-cycles (Kahler moduli); equals h^{1,1} = 4 for TCS #187. Topological invariant: no experimental measurement exists since this is a pure mathematical property of the internal G2 manifold.",
+                description=(
+                    "Number of independent 2-cycles (Kahler moduli). On the "
+                    "active seed path b_2 = %d (%s). Topological invariant: no "
+                    "experimental measurement exists since this is a pure "
+                    "mathematical property of the internal G2 manifold."
+                    % (self._b2, self._b2_provenance())
+                ),
                 derivation_formula="betti-numbers",
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(4) — b2 = h11 = 4 from TCS Hodge data"
+                eml_description=("EML: eml_scalar(%d) — b2 on the active seed "
+                                 "path" % self._b2)
             ),
             Parameter(
                 path="topology.elder_kads",
                 name="Third Betti Number",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Number of associative 3-cycles (b3 = 24) where chiral matter fields localize in M-theory. Topological invariant of the TCS G2 construction; no direct experimental measurement exists for internal manifold topology.",
+                description=(
+                    "Number of associative 3-cycles (b3 = %d on the active "
+                    "seed path) where chiral matter fields localize in "
+                    "M-theory. Provenance: %s. No direct experimental "
+                    "measurement exists for internal manifold topology."
+                    % (self._b3, self._b3_provenance())
+                ),
                 derivation_formula="betti-numbers",
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(24) — b3 is the foundational topological seed of the entire framework"
+                eml_description=("EML: eml_scalar(%d) — b3 is the foundational "
+                                 "topological seed of the entire framework"
+                                 % self._b3)
             ),
             Parameter(
                 path="topology.mephorash_chi",
                 name="Effective Euler Characteristic",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Effective Euler characteristic chi_eff = 2(h11 - h21 + h31) = 144 from TCS #187 Hodge numbers. Topological invariant governing the chiral index; no direct experimental observable.",
+                description=(
+                    "Effective Euler characteristic chi_eff = "
+                    "2(h11 - h21 + h31) = %d from TCS #187 Hodge numbers. The "
+                    "competing route b_3^2/4 gives %g on the active seed, so "
+                    "the two %s. Topological invariant governing the chiral "
+                    "index; no direct experimental observable."
+                    % (self._chi_eff, self._chi_eff_from_b3,
+                       "agree" if self._chi_eff_routes_agree else "DIVERGE")
+                ),
                 derivation_formula="euler-characteristic",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(eml_scalar(2), ops.add(eml_scalar(4), ops.neg(eml_scalar(0)), eml_scalar(68)))"
+                eml_description=(
+                    "EML: ops.mul(eml_scalar(2), ops.add(eml_scalar(%d), "
+                    "ops.neg(eml_scalar(%d)), eml_scalar(%d)))"
+                    % (self.h11, self.h21, self.h31)
+                )
             ),
             Parameter(
                 path="topology.n_gen",
                 name="Number of Generations",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Number of chiral fermion generations from Atiyah-Singer index theorem: n_gen = chi_eff / 48 = 144 / 48 = 3. Matches the experimentally observed 3 generations of quarks and leptons (PDG 2024).",
+                description=(
+                    "Number of chiral fermion generations. On the active seed "
+                    "path the source is %s and the value is %d. The "
+                    "Atiyah-Singer route chi_eff/48 = %d/48 = %g is the same "
+                    "statement only where b_3/8 is an integer. Matches the "
+                    "experimentally observed 3 generations of quarks and "
+                    "leptons (PDG 2024)."
+                    % (self._n_gen_source(), self._n_gen, self._chi_eff,
+                       self._chi_eff / 48.0)
+                ),
                 derivation_formula="three-generations",
                 experimental_bound=3,
                 bound_type="measured",
@@ -1721,21 +1851,42 @@ class G2GeometryV16(SimulationBase):
                 name="Gimel Constant",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Geometric anchor k_gimel = b3/2 + 1/pi = 12.3183... Derived purely from the topological integer b3 = 24 and the transcendental constant pi. No direct experimental measurement; validated through downstream predictions (alpha, w0, etc.).",
+                description=(
+                    "Geometric anchor k_gimel = b3/2 + 1/pi = %.4f... Derived "
+                    "purely from the topological integer b3 = %d and the "
+                    "transcendental constant pi. No direct experimental "
+                    "measurement; validated through downstream predictions "
+                    "(alpha, w0, etc.)."
+                    % (self._k_gimel, self._b3)
+                ),
                 derivation_formula=None,
                 no_experimental_value=True,
-                eml_description="EML: ops.add(ops.div(eml_scalar(24.0), eml_scalar(2.0)), ops.inv(eml_pi())) — Gimel constant from b3 and 1/π",
+                eml_description=(
+                    "EML: ops.add(ops.div(eml_scalar(%.1f), eml_scalar(2.0)), "
+                    "ops.inv(eml_pi())) — Gimel constant from b3 and 1/π"
+                    % float(self._b3)
+                ),
             ),
             Parameter(
                 path="topology.K_MATCHING",
                 name="K3 Matching Parameter",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Number of independent K3 matching fibres in TCS gluing: K = h^{1,1} = b2 = 4. Topological invariant controlling the rank of the gauge sector; no direct experimental observable.",
+                description=(
+                    "Number of independent K3 matching fibres in TCS gluing: "
+                    "K = h^{1,1} = %d. On the active seed b_2 = %d, so the "
+                    "chain K = h^{1,1} = b_2 %s. Topological invariant "
+                    "controlling the rank of the gauge sector; no direct "
+                    "experimental observable."
+                    % (self._K_matching, self._b2,
+                       "closes" if self._k_matching_equals_b2 else "BREAKS")
+                ),
                 derivation_formula="cycle-matching",
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: eml_scalar(4) — K = h^{1,1} = b2 = 4 K3 matching fibres in TCS #187 gluing"
+                    "EML: eml_scalar(%d) — K = h^{1,1} = %d K3 matching fibres "
+                    "in TCS #187 gluing"
+                    % (self._K_matching, self._K_matching)
                 ),
             ),
             Parameter(

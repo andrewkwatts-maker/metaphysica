@@ -140,6 +140,86 @@ def test_the_consistent_combinations_do_not_raise(monkeypatch):
         assert sim._n_gen == 3, (seed, source, sim._n_gen)
 
 
+# ------------------------------------------- the CERTIFICATES, not just run()
+
+def _formulas(sim):
+    return {f.id: f for f in sim.get_formulas()}
+
+
+def test_the_published_certificates_move_with_the_seed(monkeypatch):
+    """run() consumed the fork while the certificates still said 24.
+
+    The Formula rows are what the website, the paper and the datasheets
+    publish. While their `value`, `latex` and `terms` were literals, a reader
+    of the generated artifacts could not tell the fork existed -- the simulation
+    emitted 43 and every certificate next to it still read 24.
+    """
+    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    at_24 = _formulas(_root()())
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    at_43 = _formulas(_root()())
+
+    assert at_24["betti-numbers"].value == 24.0
+    assert at_43["betti-numbers"].value == 43.0
+    assert "b3=24" in at_24["betti-numbers"].plain_text
+    assert "b3=43" in at_43["betti-numbers"].plain_text
+    assert "b2=4," in at_24["betti-numbers"].plain_text
+    assert "b2=12," in at_43["betti-numbers"].plain_text
+
+    # Poincare duality must survive the move, in the published string.
+    assert "b4=43" in at_43["betti-numbers"].plain_text
+    assert "b5=12" in at_43["betti-numbers"].plain_text
+
+
+def test_no_certificate_term_still_carries_a_frozen_seed(monkeypatch):
+    """Every `terms` entry bound to a seed-derived param must follow the seed."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    forms = _formulas(_root()())
+    terms = forms["betti-numbers"].terms
+    by_param = {v.get("param_id"): v.get("value")
+                for v in terms.values() if isinstance(v, dict)}
+    assert by_param["topology.elder_kads"] == "43"
+    assert by_param["topology.b2"] == "12"
+
+
+def test_the_adopted_branch_publishes_exactly_what_it_did_before(monkeypatch):
+    """Generating the certificates must not move the status quo."""
+    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    forms = _formulas(_root()())
+    assert forms["betti-numbers"].value == 24.0
+    assert forms["euler-characteristic"].value == 144.0
+    assert forms["three-generations"].value == 3.0
+    assert (forms["betti-numbers"].plain_text
+            == "b0=1, b1=0, b2=4, b3=24, b4=24, b5=4, b6=0, b7=1")
+
+
+def test_the_k_matching_identity_is_reported_as_broken_on_the_43_path(
+        monkeypatch):
+    """K = h^{1,1} = b_2 is a chain of two claims, and the seed breaks the
+    second one. It must be reported, not silently left reading 4 = 4."""
+    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    at_24 = _root()()
+    assert at_24._k_matching_equals_b2 is True
+
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    at_43 = _root()()
+    assert at_43._K_matching == 4, "h^{1,1} is a TCS Hodge number, not a seed"
+    assert at_43._b2 == 12
+    assert at_43._k_matching_equals_b2 is False
+
+    steps = _formulas(at_43)["cycle-matching"].derivation["steps"]
+    assert any("BREAKS" in s for s in steps), (
+        "the broken identity must appear in the published derivation"
+    )
+
+
+def test_the_chi_eff_divergence_reaches_the_published_certificate(monkeypatch):
+    """The two chi_eff routes diverge at 43; the certificate must say so."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    steps = _formulas(_root()())["euler-characteristic"].derivation["steps"]
+    assert any("DIVERGE" in s for s in steps)
+
+
 def test_the_default_path_is_untouched_by_the_fork_going_live(monkeypatch):
     """Making n_gen_source live must not move the adopted state."""
     monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
