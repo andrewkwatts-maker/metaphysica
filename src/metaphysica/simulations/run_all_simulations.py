@@ -1613,25 +1613,51 @@ class SimulationRunner:
             # contribution table, and no other derivation is on the books.
             # Candidate origins are enumerated in the b3_origin fork; the
             # b3_candidate_sweep pushes each through the downstream pipeline.
-            if not self.registry.has_param("topology.elder_kads"):
-                self.registry.set_param("topology.elder_kads", 24,
-                                         source="INPUT:B3_ORIGIN_OPEN", status="INPUT",
-                                         metadata={"eml_description": "EML: eml_scalar(24) — b3 is the foundational topological seed; all PM constants derive from it",
-                                                   "ruling": "2026-09-14: DERIVED/GEOMETRIC status removed; input until a derivation lands (see fork b3_origin)"})
+            # THE SEED IS PRE-LOADED HERE, AND THIS RAN BEFORE THE ROOT
+            # SIMULATION. `has_param` makes it first-writer-wins, so a literal
+            # 24 here silently overrode g2_geometry's fork-aware value. The
+            # result was worse than no propagation: b_2 moved to 12 (nothing
+            # pre-loads b_2) while b_3 stayed 24, so the pipeline ran in a MIXED
+            # state and its PMNS outputs looked like "the cost of the 43 path"
+            # when they were the cost of an inconsistent one. Read the fork.
+            from metaphysica.simulations.PM.geometry.b3_path import (
+                resolve_path as _seed_path,
+                seed_values as _seed_values,
+            )
 
-            # Canonical chi_eff = 144 (full manifold Euler characteristic)
-            # mephorash_chi = 144 gives n_gen = 3: 144/48 = 3
+            _b3_seed, _b2_seed = _seed_values(_seed_path())
+
+            if not self.registry.has_param("topology.elder_kads"):
+                self.registry.set_param("topology.elder_kads", _b3_seed,
+                                         source="INPUT:B3_ORIGIN_OPEN", status="INPUT",
+                                         metadata={"eml_description": "EML: eml_scalar(topology.elder_kads) — b3 is the foundational topological seed; all PM constants derive from it",
+                                                   "ruling": "2026-09-14: DERIVED/GEOMETRIC status removed; input until a derivation lands (see fork b3_origin)",
+                                                   "seed_path": _seed_path()})
+
+            if not self.registry.has_param("topology.b2"):
+                self.registry.set_param("topology.b2", _b2_seed,
+                                         source="INPUT:B3_ORIGIN_OPEN", status="INPUT",
+                                         metadata={"eml_description": "EML: eml_scalar(topology.b2) — second Betti number, from the same seed as b3",
+                                                   "seed_path": _seed_path()})
+
+            # Canonical chi_eff = 144 (full manifold Euler characteristic).
+            # NOT seed-derived: it comes from the TCS Hodge numbers via
+            # 2(h11 - h21 + h31) and never references b_3. The rival route
+            # b_3^2/4 also gives 144 at b_3 = 24 but 462.25 at 43, so the two
+            # agree there by coincidence rather than by being the same
+            # statement. Which is meant is an author ruling; see g2_geometry.
             if not self.registry.has_param("topology.mephorash_chi"):
                 self.registry.set_param("topology.mephorash_chi", 144,
                                          source="GEOMETRIC:TCS_G2_manifold", status="GEOMETRIC",
-                                         metadata={"eml_description": "EML: ops.mul(eml_scalar(2), eml_scalar(72))"})
+                                         metadata={"eml_description": "EML: ops.mul(eml_scalar(2), eml_scalar(72))",
+                                                   "not_seed_derived": "2(h11-h21+h31); the b_3^2/4 route diverges off b_3 = 24"})
 
-            # Pre-compute k_gimel for early use
-            k_gimel = 24 / 2 + 1 / np.pi
+            # Pre-compute k_gimel for early use. Rides on the seed.
+            k_gimel = _b3_seed / 2 + 1 / np.pi
             if not self.registry.has_param("topology.k_gimel"):
                 self.registry.set_param("topology.k_gimel", k_gimel,
                                          source="GEOMETRIC:k_gimel_formula", status="GEOMETRIC",
-                                         metadata={"eml_description": "EML: ops.add(ops.div(eml_scalar(24), eml_scalar(2)), ops.inv(eml_pi())) — b3/2 + 1/π"})
+                                         metadata={"eml_description": "EML: ops.add(ops.div(eml_vec('topology.elder_kads'), eml_scalar(2)), ops.inv(eml_pi())) — b3/2 + 1/π"})
 
             if self.verbose:
                 print(f"[OK] Pre-loaded core topology parameters (GEOMETRIC status)")
