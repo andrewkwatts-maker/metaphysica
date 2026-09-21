@@ -130,3 +130,54 @@ def test_the_report_declares_what_it_counts(report):
     counts = report["counts"]
     assert "cohomology classes" in counts
     assert "moved coordinates" in counts
+
+
+# ------------------------------------------------- why the cap is 3
+
+@pytest.fixture(scope="module")
+def census():
+    from metaphysica.simulations.PM.geometry.generation_selection import (
+        singular_involution_census,
+    )
+    return singular_involution_census()
+
+
+def test_families_are_always_four_per_singular_involution(census):
+    """So b_2/4 RECOVERS the singular-involution count; it is not a ratio."""
+    assert census["families_always_four_per_singular"] is True
+    assert set(census["by_singular_count"]) == {0, 1, 2, 3}
+    for n_s, row in census["by_singular_count"].items():
+        assert row["assignments"] == row["families_is_four_times"], (n_s, row)
+
+
+def test_the_singular_involutions_form_a_basis_of_gamma(census):
+    """Which is why there can never be more than rank(Gamma) = 3 of them."""
+    assert census["n_three_singular_assignments"] > 0
+    assert census["n_of_those_independent_over_f2"] == \
+        census["n_three_singular_assignments"]
+    assert census["singular_set_is_always_a_basis"] is True
+
+
+def test_no_assignment_exceeds_the_group_rank(census):
+    assert census["max_singular_observed"] == census["group_rank"] == 3
+
+
+def test_the_rank_routine_is_not_trivially_three():
+    """A rank function that always returned 3 would make the basis claim empty."""
+    from metaphysica.simulations.PM.geometry.generation_selection import (
+        rank_over_f2,
+    )
+    assert rank_over_f2([(1, 0, 0), (0, 1, 0), (0, 0, 1)]) == 3
+    assert rank_over_f2([(1, 0, 0), (0, 1, 0), (1, 1, 0)]) == 2   # dependent
+    assert rank_over_f2([(1, 0, 0), (1, 0, 0)]) == 1
+    assert rank_over_f2([]) == 0
+
+
+def test_the_chain_and_its_types_are_stated(census):
+    """A4 bar: the chain crosses type boundaries and must say so."""
+    chain = census["the_chain"]
+    assert "rank(Gamma)" in chain and "n_gen" in chain
+    counts = census["counts"]
+    assert "group ELEMENTS" in counts
+    assert "COHOMOLOGY CLASSES" in counts
+    assert "not an identification" in counts

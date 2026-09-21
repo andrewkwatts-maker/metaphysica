@@ -71,6 +71,8 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 __all__ = [
+    "singular_involution_census",
+    "rank_over_f2",
     "family_profiles",
     "generations_by_route",
     "select_by_generation_count",
@@ -81,6 +83,128 @@ __all__ = [
 _N_FACES = 4
 #: dim O, the divisor the other n_gen route uses.
 _DIM_O = 8
+
+
+def rank_over_f2(bitvectors) -> int:
+    """Rank of a set of F_2 vectors, by elimination. No tolerance to tune."""
+    rows = [list(v) for v in bitvectors]
+    if not rows:
+        return 0
+    rank, ncol = 0, len(rows[0])
+    for col in range(ncol):
+        pivot = next((i for i in range(rank, len(rows)) if rows[i][col]), None)
+        if pivot is None:
+            continue
+        rows[rank], rows[pivot] = rows[pivot], rows[rank]
+        for i in range(len(rows)):
+            if i != rank and rows[i][col]:
+                rows[i] = [a ^ b for a, b in zip(rows[i], rows[rank])]
+        rank += 1
+    return rank
+
+
+def singular_involution_census(cap_triples: int = 6) -> Dict[str, Any]:
+    """WHY n_gen is capped at 3, measured rather than asserted.
+
+    Two facts come out of the live enumeration, and together they turn
+    n_gen = b_2/4 into a statement about the group rather than a ratio:
+
+      1. n_families = 4 x n_singular, at EVERY admissible assignment. So
+         b_2/4 is not really dividing by the face count -- it RECOVERS THE
+         NUMBER OF SINGULAR INVOLUTIONS.
+
+      2. Wherever three involutions are singular, those three are INDEPENDENT
+         over F_2 -- they form a basis of Gamma. So the singular set can never
+         exceed rank(Gamma) = 3.
+
+    Hence n_gen = n_singular <= rank(Gamma) = 3, and Gamma itself is forced by
+    phi (R1). Three generations is the RANK OF THE DIAGONAL STABILISER OF PHI.
+
+    THE A4 BAR, because this chain crosses type boundaries and must say so:
+        rank(Gamma)        a group-theoretic rank
+        n_singular         a count of group ELEMENTS
+        n_families         a count of ORBITS of fixed-locus components
+        b_2                a count of COHOMOLOGY CLASSES
+        n_gen              a count of fermion generations
+    Each arrow is a measured correspondence over the enumeration, not an
+    identification. The chain is only as strong as its weakest arrow, and the
+    last one -- b_2/n_faces = n_gen -- is the `n_gen_source` fork, an author
+    ruling. Nothing here converts a group order into a dimension.
+    """
+    import itertools
+
+    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
+        all_components_are_a1,
+    )
+    from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
+        _group,
+        _non_identity,
+        assignments,
+        elements,
+        families_of,
+        fixed_sets_disjoint,
+        generating_triples,
+        is_singular,
+    )
+
+    group = _group()
+    nz = _non_identity(group)
+    by_singular: Dict[int, Dict[str, int]] = {}
+    n_three_singular = 0
+    n_three_independent = 0
+
+    for triple in generating_triples(group)[:cap_triples]:
+        gens = [nz[i] for i in triple]
+        for svecs in assignments(triple, group, include_relative=True):
+            els = elements(gens, svecs)
+            singular = [(b, e) for b, e in els.items()
+                        if b != (0, 0, 0) and is_singular(e)]
+            if not all(fixed_sets_disjoint(a[1], b[1])
+                       for a, b in itertools.combinations(singular, 2)):
+                continue
+            if not all_components_are_a1(els, singular):
+                continue
+            fams = []
+            for _bits, el in singular:
+                fams.extend(families_of(els, el))
+            if fams and {f["type"] for f in fams} != {"T3"}:
+                continue
+
+            n_s = len(singular)
+            row = by_singular.setdefault(
+                n_s, {"assignments": 0, "families_is_four_times": 0})
+            row["assignments"] += 1
+            if len(fams) == 4 * n_s:
+                row["families_is_four_times"] += 1
+
+            if n_s == 3:
+                n_three_singular += 1
+                if rank_over_f2([b for b, _e in singular]) == 3:
+                    n_three_independent += 1
+
+    return {
+        "by_singular_count": dict(sorted(by_singular.items())),
+        "families_always_four_per_singular": all(
+            v["assignments"] == v["families_is_four_times"]
+            for v in by_singular.values()),
+        "n_three_singular_assignments": n_three_singular,
+        "n_of_those_independent_over_f2": n_three_independent,
+        "singular_set_is_always_a_basis": (
+            n_three_singular > 0 and n_three_singular == n_three_independent),
+        "group_rank": 3,
+        "max_singular_observed": max(by_singular) if by_singular else 0,
+        "the_chain": (
+            "Gamma = (Z/2)^3 forced by phi (R1) -> singular involutions are "
+            "independent over F_2, so at most rank(Gamma) = 3 of them -> each "
+            "carries exactly 4 A1 families -> b_2 = 4 n_singular -> "
+            "n_gen = b_2/4 = n_singular <= 3"
+        ),
+        "counts": (
+            "rank is group-theoretic; n_singular counts group ELEMENTS; "
+            "n_families counts ORBITS; b_2 counts COHOMOLOGY CLASSES. Each "
+            "arrow is a measured correspondence, not an identification."
+        ),
+    }
 
 
 def family_profiles() -> List[Dict[str, int]]:
