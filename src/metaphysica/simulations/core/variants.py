@@ -171,6 +171,29 @@ def _metric_construction_adopted() -> str:
     return "quadratic_contraction"
 
 
+def _twisted_norm_convention_adopted() -> str:
+    """Which normalisation the live pairing actually applies.
+
+    A behavioural read, following `_metric_construction_adopted` rather than
+    the three forks in this file that return a string literal and so cannot
+    detect their own source changing: build one family's twisted entry at a
+    known orbit size and see whether the orbit factor is present. If
+    metric_pairing's default moves, this moves with it.
+    """
+    import sympy as sp
+
+    from metaphysica.simulations.PM.geometry.metric_pairing import (
+        _resolve_orbit_convention,
+        twisted_block_entry,
+    )
+
+    probe_orbit = 4
+    live = twisted_block_entry(probe_orbit, _resolve_orbit_convention())
+    averaged = twisted_block_entry(probe_orbit, "orbit_average")
+    return ("orbit_average" if sp.simplify(live - averaged) == 0
+            else "orbit_sum")
+
+
 def _bulk_signature_adopted() -> str:
     from metaphysica.simulations.core.canonical_values import CANON
 
@@ -711,6 +734,74 @@ FORKS: Dict[str, Fork] = {
                     "g(h*phi) is not proportional to h^T g(phi) h. The "
                     "signature is still frame-robust up to overall sign, which "
                     "is what the classification uses."
+                ),
+            ),
+        ],
+    ),
+    "twisted_norm_convention": Fork(
+        id="twisted_norm_convention",
+        question=(
+            "Is a family's twisted representative the SUM over its orbit of "
+            "T^3 components, or the average?"
+        ),
+        source=("simulations.PM.geometry.metric_pairing."
+                "_resolve_orbit_convention"),
+        status="OPEN",
+        read_adopted=_twisted_norm_convention_adopted,
+        notes=(
+            "Opened 2026-09-21 while computing K_IJ. Each of the 12 A1 "
+            "families is an ORBIT of T^3 components -- orbit_size is read live "
+            "from intersection_tensor.sector_families() and is 4 at the "
+            "canonical point -- and the class that survives the quotient is "
+            "built from the whole orbit. Whether the representative is the sum "
+            "over the orbit or its average is a NORMALISATION the framework "
+            "has never fixed, and it multiplies every twisted diagonal entry "
+            "of K_IJ by the orbit size.\n\n"
+            "This is a fork rather than a choice because writing either factor "
+            "into metric_pairing would have been an invented constant. It is "
+            "wired: metric_pairing._resolve_orbit_convention consults it and "
+            "twisted_block_entry consumes the result, so flipping it moves "
+            "every twisted entry of the 43 x 43 matrix.\n\n"
+            "NEITHER BRANCH CHANGES THE ISOTROPY VERDICT, measured: the flat "
+            "entries go as L^7 and the twisted ones as L^3 under both, so K is "
+            "not proportional to the identity either way. What moves is the "
+            "RATIO between the blocks, which is what any downstream "
+            "normalisation of the twisted sector would consume."
+        ),
+        options=[
+            VariantOption(
+                id="orbit_sum",
+                summary="representative is the sum over the family's orbit",
+                consequence=(
+                    "BUYS: the representative is the honest push-forward of a "
+                    "single component's form to the quotient, which is what "
+                    "'the class of the exceptional divisor' normally means, "
+                    "and it keeps the twisted entries integral multiples of "
+                    "8 pi^2 L^3.\n"
+                    "COSTS: the twisted entries carry a factor equal to the "
+                    "orbit size, so they are not comparable across families "
+                    "with different orbit sizes without dividing it back out. "
+                    "At the canonical point every orbit has size 4, so this "
+                    "cost is invisible there and would only appear at a point "
+                    "with mixed orbit sizes -- which is exactly the kind of "
+                    "hidden dependence a fork is for."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="orbit_average",
+                summary="representative is normalised per component",
+                consequence=(
+                    "BUYS: twisted entries that are directly comparable across "
+                    "families whatever their orbit sizes, and a K_IJ whose "
+                    "twisted block is Vol(T^3) * 8 pi^2 with no group order in "
+                    "it at all.\n"
+                    "COSTS: the representative is no longer the push-forward "
+                    "of a component's form, so its periods are divided by the "
+                    "orbit size and it is not an integral class. Any later "
+                    "comparison against an intersection number -- including "
+                    "the -2 that eguchi_hanson reproduces -- would have to "
+                    "restore the factor."
                 ),
             ),
         ],
