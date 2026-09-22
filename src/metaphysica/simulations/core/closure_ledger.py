@@ -164,8 +164,11 @@ def closure_report() -> Dict[str, Any]:
     """How far geometry can close the model, and where it stops."""
     import collections
 
+    from metaphysica.simulations.core.free_set import artifact_seed_provenance
+
     ledger = closure_ledger()
     counts = collections.Counter(row["layer"] for row in ledger)
+    provenance = artifact_seed_provenance()
 
     reachable_now = counts.get("TOPOLOGICAL", 0)
     partial = counts.get("METRIC_DEPENDENT", 0)
@@ -177,6 +180,7 @@ def closure_report() -> Dict[str, Any]:
         "by_layer": dict(sorted(counts.items())),
         "layers": LAYERS,
         "ledger": ledger,
+        "free_set_artifact_provenance": provenance,
         "closable_by_topology_today": reachable_now,
         "partially_open_via_the_glued_metric": partial,
         "not_continuous_knobs_at_all": not_a_knob,
