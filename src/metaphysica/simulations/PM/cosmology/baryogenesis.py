@@ -117,6 +117,58 @@ _RET_DECAY_SCALE: float = 100.0
 _VOL_NORM: float = 2.0
 
 
+#: Observed baryon-to-photon ratio and its experimental uncertainty.
+#: Source: Planck 2018 + BBN, the SAME anchor
+#: ``validation/candidate_closure_gate._ETA_B`` uses and the same pair the
+#: registry carries on ``geometry.eta_baryon``. Declared here only as the
+#: fallback for :func:`observed_comparison`, which prefers the registry.
+_ETA_B_OBSERVED: float = 6.12e-10
+_ETA_B_OBSERVED_UNCERTAINTY: float = 4.0e-12
+
+
+def observed_comparison(eta_B: float) -> str:
+    """The comparison sentence, COMPUTED from the live value.
+
+    DEBT (c), CLOSED 2026-09-22. This was a frozen string --
+
+        "eta_B ~ 6.19e-10 (canonical, v18 geometric) vs. observed
+         6.12e-10 -- within 1.1 % (2.2 sigma)"
+
+    -- returned regardless of what the pipeline actually computed. Under the
+    b3_seed adoption the canonical eta_B moved to 6.846485e-10, which is
+    18.16 sigma from the Planck/BBN anchor, and the prose went on reporting
+    1.1 % and 2.2 sigma. A number that cannot move is not a comparison; it is
+    a caption, and the seed-blindness detector classifies exactly this shape
+    as a FROZEN_CLAIM.
+
+    The 18.16 sigma is a RECORDED COST of the ruling. It is not to be
+    softened here, and the uncertainty used is named in the sentence so the
+    figure cannot be quietly re-based on a wider one: the registry also
+    carries a `sigma_deviation` of 2.40 for the same value, computed under
+    the theory-uncertainty policy with an effective ~3.0e-11. Both are
+    defensible; conflating them is not, so this states which it used.
+    """
+    observed, uncertainty = _ETA_B_OBSERVED, _ETA_B_OBSERVED_UNCERTAINTY
+    try:
+        row = get_registry().get_parameter("geometry.eta_baryon")
+        exp = row.get("experimental_value")
+        unc = row.get("experimental_uncertainty")
+        if isinstance(exp, (int, float)) and isinstance(unc, (int, float)) \
+                and unc > 0:
+            observed, uncertainty = float(exp), float(unc)
+    except Exception:            # registry not loaded; the anchors above hold
+        pass
+
+    percent = abs(eta_B - observed) / observed * 100.0
+    sigma = abs(eta_B - observed) / uncertainty
+    return (
+        "eta_B = %.6e (canonical, v18 geometric) vs. observed %.6e "
+        "+/- %.1e (Planck 2018 + BBN) -- %.2f %% away, %.2f sigma "
+        "[experimental uncertainty only]" % (
+            eta_B, observed, uncertainty, percent, sigma)
+    )
+
+
 class ModuliBaryogenesis:
     """Baryon asymmetry generation via Re(T) moduli decay + sphalerons,
     with G2-topological entropy dilution.
@@ -280,10 +332,7 @@ class ModuliBaryogenesis:
                     "comes from BaryonAsymmetryV18."
                 ),
             },
-            "observed_comparison": (
-                "eta_B ~ 6.19e-10 (canonical, v18 geometric) vs. observed "
-                "6.12e-10 -- within 1.1 % (2.2 sigma)"
-            ),
+            "observed_comparison": observed_comparison(float(eta_B)),
         }
 
         self.baryo_tree.register_derivation(

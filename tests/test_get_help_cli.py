@@ -11,12 +11,18 @@ from pathlib import Path
 
 import pytest
 
+from tests._artifact_search import published_tree
+
 import metaphysica
 from metaphysica._catalog import set_last_build_dir
 from metaphysica._help import cli
 
 
-PM_TREE = Path("H:/Github/PrincipiaMetaphysica")
+#: The built PrincipiaMetaphysica checkout, RESOLVED rather than
+#: hard-coded: this was one machine's absolute Windows path, so the
+#: fixture below silently fell back to bundled data everywhere else.
+PM_TREE = published_tree() or (
+    Path(__file__).resolve().parents[1] / "_no_published_tree")
 
 
 @pytest.fixture(scope="module", autouse=True)

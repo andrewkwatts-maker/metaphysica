@@ -58,6 +58,15 @@ OPTIONAL_DEPS = {
     # missing input whenever its own producer had been skipped.
     "Pre-render formula multi-format renders": ("sims", ("eml_spectral",)),
     "Generate all visualization plots": ("plots", ("matplotlib", "pandas")),
+    # `proof_completeness.build_ledger` imports pandas and raises ImportError
+    # naming the `plots` extra -- but the step was absent from this map, so
+    # nothing caught it and the whole build HALTED on a missing optional
+    # dependency. Measured 2026-09-22: a tree with `sims` installed but not
+    # `plots` got "Build halted: ... exited with code 1" and every step after
+    # it never ran, which is precisely the failure the comment below this map
+    # says must not happen ("a missing optional extra should yield an
+    # incomplete build, never a failed one"). The rule existed; the row did not.
+    "Build proof-completeness ledger":  ("plots", ("pandas",)),
     "Generate PDF paper":               ("pdf",   ("xhtml2pdf",)),
     "Generate high-quality PDF (playwright)": ("hq-pdf", ("playwright", "pypdf")),
 }

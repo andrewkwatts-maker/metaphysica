@@ -112,10 +112,27 @@ def test_the_confirmed_costs_really_move():
             "on the register is a frozen value wearing a result" % name
         )
 
-    frozen_prose = "particle.axion_photon_coupling_status"
-    if frozen_prose in at_24 and frozen_prose in at_43:
-        assert at_24[frozen_prose]["value"] == at_43[frozen_prose]["value"], (
-            "the axion status string now MOVES with the seed -- debt (a) "
-            "closed, so the ceiling breach became a published cost and the "
-            "register's correction should be updated to say so"
+    # DEBT (a) CLOSED 2026-09-22, and this assertion is flipped rather than
+    # deleted. It used to require the axion status string to be IDENTICAL
+    # under both seeds, which is what a frozen literal does and is why the
+    # 2.69e-11 ceiling breach was correctly refused as a published cost:
+    # the pipeline was not reporting it.
+    #
+    # The module now resolves b_3 through resolve_flavour_b3() and computes
+    # the verdict, so the row MOVES -- and the breach is published. The
+    # register's correction ("it stays on the books as the expected
+    # consequence of debt (a), and becomes a published cost only when that
+    # debt closes") is satisfied by exactly this change.
+    status_row = "particle.axion_photon_coupling_status"
+    if status_row in at_24 and status_row in at_43:
+        assert at_24[status_row]["value"] != at_43[status_row]["value"], (
+            "the axion status string is frozen again -- it reads the same "
+            "under both seeds, so debt (a) has regressed and the ceiling "
+            "breach has stopped being a published cost"
+        )
+        assert "lies within" in str(at_24[status_row]["value"]), \
+            at_24[status_row]["value"]
+        assert "ABOVE the BabyIAXO" in str(at_43[status_row]["value"]), (
+            "the adopted branch no longer reports the BabyIAXO ceiling "
+            "breach: %r" % at_43[status_row]["value"]
         )

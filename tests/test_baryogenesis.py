@@ -98,8 +98,21 @@ def test_derive_baryogenesis_returns_canonical_keys() -> None:
         "secondary_estimate",
         "observed_comparison",
     }
-    # Canonical comparison line should mention the 6e-10 ballpark.
-    assert "6.19e-10" in result["observed_comparison"]
+    # The comparison line is COMPUTED from the live eta_B (debt (c), closed
+    # 2026-09-22). It used to be a frozen string reading "6.19e-10 ... within
+    # 1.1 % (2.2 sigma)" whatever the pipeline produced, so asserting a
+    # literal substring here was asserting that the caption had not been
+    # edited -- not that the comparison was right. Checked for structure and
+    # for agreement with the value actually returned.
+    line = result["observed_comparison"]
+    assert "%.6e" % result["eta_B"] in line, line
+    assert "Planck 2018 + BBN" in line
+    assert "sigma" in line and "%" in line
+    assert "[experimental uncertainty only]" in line, (
+        "the comparison stopped naming which uncertainty it used; the same "
+        "value is 18.16 sigma on the experimental uncertainty and 2.40 under "
+        "the theory-uncertainty policy, and conflating them is the defect"
+    )
     # Secondary estimate still carries the Sprint 6.2 ~2.3e-10 value.
     secondary = result["secondary_estimate"]
     assert isinstance(secondary, dict)

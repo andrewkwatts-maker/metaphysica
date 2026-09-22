@@ -72,6 +72,87 @@ E8_TILDE_COMPACTIFIED_ROOTS = 48
 ACTIVE_RESIDUE_REFERENCE = 125
 ANCESTRAL_ROOT_TOTAL = 288
 
+#: The transverse count at which the SO(24) reading is TRUE. Named, because
+#: the label and the computation parted company at the b3_seed adoption.
+SO_READING_HOLDS_AT_N = 24
+
+
+def _live_budget() -> Dict[str, Any]:
+    """The budget for the LIVE seed, for section text that has no registry.
+
+    ``get_section_content`` is called without a registry, so it cannot read
+    ``topology.elder_kads`` the way ``run`` does. It resolves the same seed
+    through the fork instead, and falls back to the historical 24 only when
+    the fork is unreadable -- with the fallback visible in the emitted note
+    rather than silent.
+    """
+    try:
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        return root_budget(int(seed_values(resolve_path())[0]))
+    except Exception:
+        return root_budget(SO_READING_HOLDS_AT_N)
+
+
+def root_budget(n_transverse: int) -> Dict[str, Any]:
+    """The root budget for ``n_transverse`` transverse directions, LABELLED.
+
+    DEBT (d), CLOSED 2026-09-22. The computation reads
+    ``topology.elder_kads`` -- the seed -- so under the adoption it emits
+    n(n-1)/2 + 12 = 915 while every label in this module still said
+    "SO(24) generators" and "276 + 24 - 12 = 288". The numbers moved and the
+    words did not, which is the precise shape of the conflation the whole
+    sweep was about.
+
+    The labels are now GENERATED from n, so they cannot drift again, and the
+    SO(24) reading is reported per branch rather than asserted: it is true at
+    n = 24 and false everywhere else.
+
+    WHAT THE NUMBERS COUNT, and the open reading
+    --------------------------------------------
+    ``n(n-1)/2``   generators of SO(n) on n transverse directions.
+    ``2 x 12``     torsion pins, 12 per shadow brane over two branes.
+    ``-12``        symmetry directions spent projecting onto the manifold.
+
+    Whether ``n`` is b_3 or the BULK's 24 spacelike core dimensions is OPEN
+    and is not decided here. The module reads elder_kads, so on the adopted
+    path the budget is 915; the register carries that as a measured cost of
+    the ruling. If the reading is later settled as "the bulk's 24", this
+    function takes 24 and the budget returns to 288 -- which is why the
+    source of ``n`` is the caller's business and the labelling is this
+    function's.
+    """
+    so_generators = (n_transverse * (n_transverse - 1)) // 2
+    shadow_torsion = TORSION_PER_SHADOW * 2
+    total = so_generators + shadow_torsion - MANIFOLD_PROJECTION_COST
+    holds = n_transverse == SO_READING_HOLDS_AT_N
+    return {
+        "n_transverse": int(n_transverse),
+        "so_generators": int(so_generators),
+        "shadow_torsion_total": int(shadow_torsion),
+        "manifold_cost": int(MANIFOLD_PROJECTION_COST),
+        "ancestral_roots": int(total),
+        "group_label": "SO(%d)" % n_transverse,
+        "budget_label": "%d + %d - %d = %d" % (
+            so_generators, shadow_torsion, MANIFOLD_PROJECTION_COST, total),
+        "so24_reading_holds": bool(holds),
+        "reading_note": (
+            "n = 24, so the SO(24) reading and the 276 + 24 - 12 = 288 budget "
+            "both hold on this branch."
+            if holds else
+            "n = %d, NOT 24: the 'SO(24) generators' label and the "
+            "276 + 24 - 12 = 288 budget are FALSE on this branch. The group "
+            "is SO(%d) with %d generators and the budget is %d. Whether n "
+            "should be b_3 (which this module reads) or the bulk's 24 "
+            "spacelike dimensions is an open reading, recorded on the "
+            "register as a measured cost of the b3_seed ruling."
+            % (n_transverse, n_transverse, so_generators, total)
+        ),
+    }
+
 
 class AppendixH288Roots(SimulationBase):
     """
@@ -162,18 +243,15 @@ class AppendixH288Roots(SimulationBase):
         # manifold_cost as the terminal.manifold_tax the registry already
         # holds -- so the values are visible and can be contradicted.
         torsion_per_shadow = TORSION_PER_SHADOW
-        manifold_cost = MANIFOLD_PROJECTION_COST
         # registry.node_count DOES exist, so this read is genuine.
         active_residues = registry.get("registry.node_count")
 
-        # SO(24) generators: n(n-1)/2
-        so24_generators = (n_transverse * (n_transverse - 1)) // 2  # 276
-
-        # Shadow torsion: 12 per shadow brane × 2 branes
-        shadow_torsion_total = torsion_per_shadow * 2  # 24
-
-        # Ancestral roots: generators + torsion - cost
-        ancestral_roots = so24_generators + shadow_torsion_total - manifold_cost  # 288
+        # Every count and every LABEL comes from one place, so the words
+        # cannot drift from the arithmetic again (debt (d)).
+        budget = root_budget(int(n_transverse))
+        so24_generators = budget["so_generators"]
+        shadow_torsion_total = budget["shadow_torsion_total"]
+        ancestral_roots = budget["ancestral_roots"]
 
         # Hidden supports: roots - active
         hidden_supports = ancestral_roots - active_residues  # 163
@@ -200,7 +278,17 @@ class AppendixH288Roots(SimulationBase):
             "topology.e8_root_count": float(E8_ROOT_COUNT),
             "topology.e8_tilde_compactified_roots": float(
                 E8_TILDE_COMPACTIFIED_ROOTS),
+            # Records whether the HISTORICAL 288 budget is reproduced on this
+            # branch. Left comparing against the literal 288 on purpose: it is
+            # the claim the appendix is named for, and a check rewritten to
+            # compare the computation against itself could never fail. On the
+            # adopted seed this is False, and that is the honest answer.
             "validation.288_root_verified": ancestral_roots == 288,
+            # The labels, generated alongside the numbers they describe.
+            "topology.ancestral_group_label": budget["group_label"],
+            "topology.ancestral_budget_label": budget["budget_label"],
+            "validation.so24_reading_holds": budget["so24_reading_holds"],
+            "topology.ancestral_reading_note": budget["reading_note"],
         }
 
 
@@ -231,6 +319,21 @@ class AppendixH288Roots(SimulationBase):
                     "observable residues are not arbitrary but are the <strong>Observable Subset</strong> "
                     "of a 288-generator symmetry in the 26D ancestral bulk. This section introduces "
                     "the SO(24) transverse group and the 12-per-shadow torsion mechanism."
+                )
+            ),
+
+            # Branch state, GENERATED. The narrative below is written at
+            # n = 24 and is kept as the historical statement of the claim;
+            # this block says, from the live fork, whether that statement
+            # holds on the branch the reader is looking at. Without it the
+            # appendix asserts "SO(24)" and "288" over a computation that
+            # emits SO(43) and 915.
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "<strong>Branch state (generated):</strong> %s The figures "
+                    "in the narrative below are stated at n = 24."
+                    % _live_budget()["reading_note"]
                 )
             ),
 

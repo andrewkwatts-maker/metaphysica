@@ -2,7 +2,9 @@
 
 WHAT THIS IS FOR
 ================
-Eight forks are open. Each encodes a decision nobody has been able to make from
+Eighteen forks are declared and eleven are OPEN (measured 2026-09-22 from
+`variants.FORKS`, which had drifted from the "eight" this line used to
+assert). Each open fork encodes a decision nobody has been able to make from
 the armchair, and their combinations are a space the theory might close
 somewhere inside. This module enumerates that space and reports what each
 combination does.
@@ -28,8 +30,11 @@ Internal consistency, which references no measurement:
                       6-dimensional.
   VACUOUS             a check that cannot fail in this configuration.
   STRUCTURAL_FAILURE  a constraint that mentions no experiment is violated --
-                      n_gen = b_3/8 must be an integer; a generation count is a
-                      number of things.
+                      n_gen must be a positive integer on the RULED route
+                      (n_gen_source = b2_over_faces, n_gen = b_2/4); a
+                      generation count is a number of things. Evaluated on
+                      the ruled route, never the abandoned b_3/8 one, whose
+                      refutation is carried as its own labelled row.
 
 A combination with none of these is INTERNALLY_CONSISTENT. That is a real,
 measurement-free discriminator, and it is the only kind this module applies.
@@ -207,22 +212,73 @@ def consistency_checks() -> List[Dict[str, Any]]:
         checks.append({"name": "phi_is_a_g2_form", "kind": "ERROR",
                        "ok": False, "detail": type(exc).__name__})
 
-    # 2. n_gen = b_3/8 must be an integer. A generation count is a number of
-    #    things -- this references no measurement.
+    # 2. n_gen must be a positive integer, evaluated on the RULED route.
+    #
+    #    DEBT (f), CLOSED 2026-09-22. This probed b_3/8 as though it were the
+    #    live route. It is not: `n_gen_source` was RULED to `b2_over_faces`
+    #    (n_gen = b_2/4 = rank(Gamma) = 3), and b_3/8 is the ABANDONED route.
+    #    Probing it meant the search reported a STRUCTURAL_FAILURE against the
+    #    adopted path for failing a relation the framework no longer claims --
+    #    43/8 is not an integer, and that is a fact about a refuted route, not
+    #    a contradiction in the theory as ruled.
+    #
+    #    The refutation is not discarded. It moves to its own row below, as a
+    #    RECORDED structural failure, because a falsified candidate stays on
+    #    the books labelled rather than deleted.
     try:
         from metaphysica.simulations.core.arithma_formula import (
             registry_value,
             reset_cache,
         )
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
 
         reset_cache()
-        b3 = registry_value("topology.elder_kads")
-        integral = b3 is not None and abs(b3 / 8.0 - round(b3 / 8.0)) < 1e-12
+        # b_3 from the SEED FORK, with the registry as a cross-check. The
+        # registry read goes through the arithma backend, which is an
+        # optional extra: when it is absent `registry_value` returns None and
+        # the refuted-route row below reported "b_3 = None", saying nothing
+        # about the branch it was supposed to describe.
+        b3_seeded, b2 = seed_values(resolve_path())[:2]
+        b3_registered = registry_value("topology.elder_kads")
+        b3 = b3_seeded if b3_seeded is not None else b3_registered
+        n_gen = b2 / 4.0
+        integral = abs(n_gen - round(n_gen)) < 1e-12 and round(n_gen) > 0
         checks.append({
             "name": "n_gen_is_integral",
             "kind": None if integral else "STRUCTURAL_FAILURE",
             "ok": bool(integral),
-            "detail": "b_3 = %s, b_3/8 = %s" % (b3, None if b3 is None else b3 / 8.0),
+            "detail": "RULED route b2_over_faces: b_2 = %s, n_gen = b_2/4 = %s"
+                      % (b2, n_gen),
+        })
+
+        # The abandoned route, kept runnable and LABELLED. Its failure is a
+        # recorded property of a refuted candidate, so it never contributes a
+        # STRUCTURAL_FAILURE to the live verdict -- that is what `kind: None`
+        # means here, and the `recorded_refutation` flag says why.
+        b3_over_8 = None if b3 is None else b3 / 8.0
+        b3_integral = (b3_over_8 is not None
+                       and abs(b3_over_8 - round(b3_over_8)) < 1e-12)
+        checks.append({
+            "name": "n_gen_via_b3_over_8_refuted_route",
+            "kind": None,
+            "ok": True,
+            "recorded_refutation": True,
+            "holds_on_this_branch": bool(b3_integral),
+            "registry_cross_check": b3_registered,
+            "detail": (
+                "ABANDONED route (not n_gen_source): b_3 = %s, b_3/8 = %s. "
+                "%s" % (
+                    b3, b3_over_8,
+                    "Integral here -- a coincidence of the off-path seed_24."
+                    if b3_integral else
+                    "Not an integer, and a generation count is a number of "
+                    "things: the route is refuted on this branch, which is "
+                    "the recorded result, not a live contradiction."
+                )
+            ),
         })
     except Exception as exc:
         checks.append({"name": "n_gen_is_integral", "kind": "ERROR",

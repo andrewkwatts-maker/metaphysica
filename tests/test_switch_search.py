@@ -198,20 +198,33 @@ def test_the_generation_count_is_still_a_number_of_things(checks):
     now reporting the failure of the route the framework has left, and it
     must keep reporting it.
 
-    What the check no longer covers is the claim itself, so this test
-    carries it: n_gen from the LIVE n_gen_source is an integer, and it is 3.
-    Both halves are asserted, so re-rooting switch_search's check on the
-    live source fails here and gets read rather than absorbed.
+    RE-ROOTED 2026-09-22 (debt (f)), and this test was the tripwire that said
+    to read the change rather than absorb it. `n_gen_is_integral` now
+    evaluates the RULED route, and the b_3/8 refutation moved to its own
+    labelled row. Both are asserted below, because the point of the move was
+    to stop reporting a refuted route's failure as a live contradiction
+    WITHOUT losing the refutation.
     """
     by_name = {c["name"]: c for c in checks}
-    b3_over_eight = by_name["n_gen_is_integral"]
-    assert b3_over_eight["ok"] is False, (
-        "b_3 / 8 is integral again, so the seed has moved back onto the "
-        "off-path branch or the check has been re-rooted; either way the "
-        "generation source below must be re-read"
+
+    # The live check runs on the ruled route and must be satisfied there.
+    ruled = by_name["n_gen_is_integral"]
+    assert ruled["ok"] is True, ruled["detail"]
+    assert ruled["kind"] is None
+    assert "b2_over_faces" in ruled["detail"], ruled["detail"]
+    assert "n_gen = b_2/4 = 3.0" in ruled["detail"], ruled["detail"]
+
+    # The refutation is kept, labelled, and does NOT contribute a live
+    # structural failure -- a falsified candidate stays on the books.
+    refuted = by_name["n_gen_via_b3_over_8_refuted_route"]
+    assert refuted["recorded_refutation"] is True
+    assert refuted["kind"] is None, (
+        "the abandoned b_3/8 route is contributing a live STRUCTURAL_FAILURE "
+        "again; it is a recorded refutation, not a contradiction in the "
+        "theory as ruled"
     )
-    assert b3_over_eight["kind"] == "STRUCTURAL_FAILURE"
-    assert "5.375" in b3_over_eight["detail"], b3_over_eight["detail"]
+    assert refuted["holds_on_this_branch"] is False
+    assert "5.375" in refuted["detail"], refuted["detail"]
 
     from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
 

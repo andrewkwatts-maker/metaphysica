@@ -70,8 +70,12 @@ _SETTLED = frozenset({"CLOSED", "RESOLVED"})
 def _register_text():
     raw = os.environ.get("METAPHYSICA_OUT")
     roots = [pathlib.Path(raw)] if raw else []
-    roots += [pathlib.Path("H:/Github/PrincipiaMetaphysica"),
-              pathlib.Path(__file__).resolve().parents[2] / "PrincipiaMetaphysica"]
+    # repo-local first, then the portable sibling, then the legacy
+    # Windows root LAST -- the order pinned by
+    # tests/test_artifact_search_order.py.
+    roots += [pathlib.Path(__file__).resolve().parents[1],
+              pathlib.Path(__file__).resolve().parents[2] / "PrincipiaMetaphysica",
+              pathlib.Path("H:/Github/PrincipiaMetaphysica")]
     for root in roots:
         candidate = root / "docs" / "OUTSTANDING_ISSUES.md"
         if candidate.is_file():

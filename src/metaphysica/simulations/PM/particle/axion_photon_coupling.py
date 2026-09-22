@@ -66,7 +66,7 @@ Dedicated To:
 from __future__ import annotations
 
 import math
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from metaphysica.simulations.core.eml_tree_adapter import (
     b3_leaf,
@@ -93,8 +93,29 @@ DEFAULT_F_A: float = 1.0e10
 #: electroweak-VEV-aligned 174.033 GeV.
 DEFAULT_RE_T: float = 174.033
 
-#: G₂ third Betti number — Ten-Pillar topological seed. Always 24.
-DEFAULT_B3: int = 24
+#: The b₃ the v26 axion calibration was built at. NOT a default any more:
+#: it is the value the `calibrated_24` branch of the `flavour_seed_coupling`
+#: fork consumes, kept under its own name so the costed branch stays runnable.
+#:
+#: DEBT (a), CLOSED 2026-09-22. This was `DEFAULT_B3 = 24` with the comment
+#: "Always 24", read as a default argument, which made the module the last
+#: seed-blind writer in the flavour sector: it published the same coupling
+#: under both seeds while `particle.b3` carried the adopted 43. Resolution now
+#: happens at CALL time through the same `resolve_flavour_b3()` the rest of
+#: the flavour sector uses, because a default argument is exactly where a
+#: silent seed-blind value hides.
+CALIBRATED_B3: int = 24
+
+#: Retained name for the calibration constant. Kept because it is exported and
+#: because deleting a name is not the same as fixing what it did.
+DEFAULT_B3: int = CALIBRATED_B3
+
+#: BabyIAXO 2028 discovery window for g_aγγ, in GeV⁻¹. These are the two
+#: numbers the module's own docstrings already quoted
+#: (``8·10⁻¹² < g_aγγ < 2·10⁻¹¹``); lifting them to named constants is what
+#: lets the status be COMPUTED instead of asserted.
+BABYIAXO_WINDOW_LOW: float = 8.0e-12
+BABYIAXO_WINDOW_HIGH: float = 2.0e-11
 
 #: Fine-structure constant (low-energy limit). Standard QED value used
 #: in the PQ anomaly expression ``g_aγγ = (α_EM/(2π f_a)) · C_aγγ · S``.
@@ -116,6 +137,63 @@ RE_T_SUPPRESSION_SCALE: float = 200.0
 AXION_PHOTON_SCALE: float = 8.075e1
 
 
+# ── Seed resolution and the window verdict ----------------------------------
+
+
+def resolve_axion_b3() -> int:
+    """Which b₃ the axion anomaly consumes, per ``flavour_seed_coupling``.
+
+    Delegates to the flavour sector's resolver rather than re-implementing the
+    fork read. The anomaly coefficient's formula text claims b₃
+    (``C_aγγ = (b₃/2π)·exp(−Re(T)/200)``), so it is a flavour-sector consumer
+    by the same argument that put θ₁₃ on the fork: a formula that names b₃
+    must consume the b₃ the framework is running.
+    """
+    from metaphysica.simulations.PM.particle.yukawa_derivation import (
+        resolve_flavour_b3,
+    )
+
+    return resolve_flavour_b3()
+
+
+def window_verdict(g_a_gamma: float) -> str:
+    """The BabyIAXO verdict for a coupling, COMPUTED rather than asserted.
+
+    THE DEFECT THIS REPLACES
+    ------------------------
+    The status was a frozen literal -- ``"lies within BabyIAXO/IAXO discovery
+    window"`` -- returned whatever the computed coupling was. It therefore
+    read identically under both seeds, which is how the seed-blindness
+    detector classified the row FROZEN_CLAIM and why the 2.69e-11 breach was
+    correctly refused as a published cost on 2026-09-22: the pipeline was not
+    reporting it, a direct call to the class was.
+
+    MEASURED, on closing debt (a): at the calibration b₃ = 24 the coupling is
+    1.500554e-11 and the window claim is TRUE; on the adopted seed b₃ = 43 it
+    is 2.688492e-11, which is ABOVE the 2e-11 ceiling and the claim is FALSE.
+    That breach is the recorded cost of the b3_seed ruling. It is not to be
+    softened, re-scaled, or moved back inside the window by adjusting
+    :data:`AXION_PHOTON_SCALE` -- the scale factor is fixed by the v26.0 lock
+    and re-tuning it to preserve a headline would be fitting.
+    """
+    if g_a_gamma < BABYIAXO_WINDOW_LOW:
+        return (
+            "below the BabyIAXO/IAXO discovery window "
+            "(%.6e < %.1e GeV^-1)" % (g_a_gamma, BABYIAXO_WINDOW_LOW)
+        )
+    if g_a_gamma > BABYIAXO_WINDOW_HIGH:
+        return (
+            "ABOVE the BabyIAXO/IAXO discovery window "
+            "(%.6e > %.1e GeV^-1) -- the in-window claim does NOT hold on "
+            "this branch" % (g_a_gamma, BABYIAXO_WINDOW_HIGH)
+        )
+    return (
+        "lies within BabyIAXO/IAXO discovery window "
+        "(%.1e < %.6e < %.1e GeV^-1)"
+        % (BABYIAXO_WINDOW_LOW, g_a_gamma, BABYIAXO_WINDOW_HIGH)
+    )
+
+
 # ── Axion-photon coupling derivation ----------------------------------------
 
 
@@ -130,8 +208,13 @@ class AxionPhotonCoupling:
         Stabilised value of the G₂ volume modulus Re(T). Defaults to
         :data:`DEFAULT_RE_T`.
     b3:
-        Third Betti number of the G₂ manifold. Defaults to
-        :data:`DEFAULT_B3` (the Ten-Pillar seed).
+        Third Betti number of the G₂ manifold. ``None`` (the default)
+        resolves the LIVE value through
+        :func:`~metaphysica.simulations.PM.particle.yukawa_derivation.resolve_flavour_b3`,
+        so this module follows the ``flavour_seed_coupling`` fork exactly as
+        the rest of the flavour sector does -- 43 on the adopted branch, 24
+        under ``calibrated_24``. Pass an explicit value only to probe a
+        hypothetical.
 
     Notes
     -----
@@ -147,8 +230,10 @@ class AxionPhotonCoupling:
         self,
         f_a: float = DEFAULT_F_A,
         ReT_stabilized: float = DEFAULT_RE_T,
-        b3: int = DEFAULT_B3,
+        b3: Optional[int] = None,
     ) -> None:
+        if b3 is None:
+            b3 = resolve_axion_b3()
         if f_a <= 0:
             raise ValueError(
                 f"AxionPhotonCoupling.__init__: f_a must be positive, "
@@ -269,8 +354,12 @@ class AxionPhotonCoupling:
         C = self.compute_anomaly_coefficient()
         g = self.compute_g_a_gamma_gamma(C)
 
-        _status_msg = "lies within BabyIAXO/IAXO discovery window"
+        _status_msg = window_verdict(float(g))
         results: Dict[str, Any] = {
+            # The seed this run actually consumed, published so a reader of
+            # parameters.json can tell which branch produced the coupling
+            # without re-deriving it.
+            "axion_b3_consumed": int(self.b3),
             "g_aγγ_GeV": float(g),
             "f_a_GeV": float(self.f_a),
             # Per-module status key avoids the `particle.status` collision
@@ -312,6 +401,11 @@ __all__ = [
     "AXION_PHOTON_SCALE",
     "AxionPhotonCoupling",
     "DEFAULT_B3",
+    "CALIBRATED_B3",
+    "BABYIAXO_WINDOW_LOW",
+    "BABYIAXO_WINDOW_HIGH",
+    "resolve_axion_b3",
+    "window_verdict",
     "DEFAULT_F_A",
     "DEFAULT_RE_T",
     "RE_T_SUPPRESSION_SCALE",
