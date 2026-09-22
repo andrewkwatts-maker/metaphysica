@@ -42,6 +42,15 @@ from metaphysica.simulations.PM.cosmology.racetrack_pairs import (
 )
 
 
+# The enumeration is 28 solves per slope at roughly 0.8s each, and five tests
+# below need it. Built ONCE per module rather than per test: re-running it
+# five times added about four minutes to every full-suite run, which is a real
+# cost paid on every CI invocation for no additional coverage.
+@pytest.fixture(scope="module")
+def single_slope():
+    return enumerate_pairs(slopes=(3,))
+
+
 # ── the cross-checks ────────────────────────────────────────────────────────
 
 
@@ -105,23 +114,23 @@ def test_every_menu_integer_says_what_it_counts():
         assert why and len(why) > 15, (n, why)
 
 
-def test_the_trials_factor_is_published_as_a_field():
+def test_the_trials_factor_is_published_as_a_field(single_slope):
     """An enumeration whose cost is not stated is a fit wearing a table."""
-    payload = enumerate_pairs(slopes=(3,))
+    payload = single_slope
     assert payload["trials_factor"] == len(ordered_pairs()) * 1
     assert "trials_factor" in payload
     assert "means nothing" in payload["trials_note"]
 
 
-def test_the_prefactors_are_held_fixed_across_pairs():
+def test_the_prefactors_are_held_fixed_across_pairs(single_slope):
     """B/A is the one continuous knob; letting it float makes this a fit."""
-    payload = enumerate_pairs(slopes=(3,))
+    payload = single_slope
     assert payload["held_fixed"]["A"] == 1.0
     assert payload["held_fixed"]["B"] == -0.5
 
 
-def test_the_enumeration_adopts_nothing_and_ranks_nothing():
-    payload = enumerate_pairs(slopes=(3,))
+def test_the_enumeration_adopts_nothing_and_ranks_nothing(single_slope):
+    payload = single_slope
     assert payload["verdict"] == "NO_SELECTION_MADE"
     assert payload["adopted"] is None
     assert "never by agreement" in payload["ordering"]
@@ -130,9 +139,9 @@ def test_the_enumeration_adopts_nothing_and_ranks_nothing():
         payload["rows"], key=lambda r: (r["N1"], r["N2"]))]
 
 
-def test_no_row_carries_a_comparison_to_an_experimental_anchor():
+def test_no_row_carries_a_comparison_to_an_experimental_anchor(single_slope):
     """The rows describe structure; they never score it against anything."""
-    payload = enumerate_pairs(slopes=(3,))
+    payload = single_slope
     banned = ("sigma", "agreement", "best", "preferred", "matches", "closest")
     for row in payload["rows"]:
         blob = str(row).lower()
@@ -143,7 +152,7 @@ def test_no_row_carries_a_comparison_to_an_experimental_anchor():
 # ── the structural reading ──────────────────────────────────────────────────
 
 
-def test_no_pair_on_the_derived_menu_gives_a_de_sitter_minimum():
+def test_no_pair_on_the_derived_menu_gives_a_de_sitter_minimum(single_slope):
     """A structural result, measured across all 28 pairs at n = 3.
 
     Every pair that restores the ordering produces an AdS minimum. Nothing on
@@ -152,7 +161,7 @@ def test_no_pair_on_the_derived_menu_gives_a_de_sitter_minimum():
     recording because "try other exponents" is the obvious next thought after
     the adopted vacuum vanished.
     """
-    payload = enumerate_pairs(slopes=(3,))
+    payload = single_slope
     signs = {row["by_slope"]["n_3"].get("vacuum_energy_sign")
              for row in payload["rows"]}
     assert "dS" not in signs, signs
