@@ -45,16 +45,59 @@ __all__ = [
     "chi_eff_claim",
     "narrate",
     "forbidden_phrases",
+    "fork_reads_degraded",
 ]
 
 
+#: Set by `_resolve` whenever it had to fall back, and read by
+#: `narrate`/`forbidden_phrases` so a degraded read is REPORTED rather than
+#: presented as a live one.
+_FALLBACKS_USED: Dict[str, str] = {}
+
+
 def _resolve(fork_id: str, fallback: str) -> str:
+    """The live branch of `fork_id`, or a LOUD failure.
+
+    WHAT THIS USED TO DO, AND WHY IT WAS THE WRONG SHAPE
+    ====================================================
+    It caught bare `Exception` and returned `fallback`. That made the module
+    built to stop silent defaults contain one: `variants.resolve` raises
+    KeyError for a fork that is not declared and ValueError for an option that
+    does not exist, and both were swallowed. A renamed or deleted fork would
+    have left this module narrating `all_plus_one` while its own docstring
+    promised it was reading the live fork -- the exact failure the narration
+    was written to prevent, in the narration.
+
+    Now only ImportError is tolerated, because that is the one condition the
+    fallback was ever meant for: `variants` importing this module back during
+    a partial import. Every other failure propagates with the fork named.
+
+    Even the tolerated case is not silent: it is recorded in `_FALLBACKS_USED`
+    and surfaced by `narrate()` as `fork_reads_degraded`, so a consumer can
+    tell a live read from a fallback instead of having to trust that there was
+    no difference.
+    """
     try:
         from metaphysica.simulations.core.variants import resolve
-
-        return resolve(fork_id)
-    except Exception:                      # fork absent / import cycle
+    except ImportError as exc:             # import cycle: the one real case
+        _FALLBACKS_USED[fork_id] = (
+            "variants could not be imported (%s); narrated the declared "
+            "fallback %r instead of a live read" % (exc, fallback)
+        )
         return fallback
+
+    branch = resolve(fork_id)
+    _FALLBACKS_USED.pop(fork_id, None)
+    return branch
+
+
+def fork_reads_degraded() -> Dict[str, str]:
+    """Forks whose branch came from a fallback rather than a live read.
+
+    Empty is the healthy state. Non-empty means some sentence below was
+    generated from a declared default, and the caller is entitled to know which.
+    """
+    return dict(_FALLBACKS_USED)
 
 
 def holonomy_claim(convention: Optional[str] = None) -> Dict[str, Any]:
@@ -285,12 +328,20 @@ def narrate(**overrides) -> Dict[str, Any]:
                                         overrides.get("b3_seed")),
         "chi_eff": chi_eff_claim(),
     }
+    degraded = fork_reads_degraded()
     return {
         "claims": claims,
         "paragraph": " ".join(c["sentence"] for c in claims.values()),
         "forbidden_phrases": forbidden_phrases(),
+        "fork_reads_degraded": degraded,
+        "all_reads_were_live": not degraded,
         "note": (
             "generated from the live forks. Switching a fork rewrites these "
             "sentences; it does not leave them contradicting the code."
+            if not degraded else
+            "WARNING: %d fork read(s) fell back to a declared default rather "
+            "than reading the live registry, so the sentences above are not "
+            "guaranteed to describe the branch in force: %s"
+            % (len(degraded), degraded)
         ),
     }

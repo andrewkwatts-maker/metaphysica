@@ -68,7 +68,9 @@ __all__ = [
     "evaluate_routes",
     "unique_intersection",
     "reachable_family",
+    "CLAIMED_CHI_EFF",
     "how_cheap_is",
+    "kummer_defect_entry",
     "chi_eff_report",
 ]
 
@@ -106,6 +108,14 @@ ROUTES: Dict[str, Dict[str, Any]] = {
 #: TCS #187's Hodge numbers, carried only so route A can be EVALUATED and shown
 #: to be type-incorrect on the Joyce path. Not asserted as Joyce data.
 _TCS_HODGE = {"h11": 4, "h21": 0, "h31": 68}
+
+#: The value chi_eff is CLAIMED to take -- b_3^2/4 at b_3 = 24, which is also
+#: 6 b_3 there. Named once rather than written as a bare literal at each use:
+#: it is the TARGET the trials-factor searches cost, it appears in three of
+#: them, and three copies of a number is three places for it to drift. Naming
+#: it asserts nothing: whether chi_eff IS this is the open ruling this whole
+#: module exists to leave open.
+CLAIMED_CHI_EFF: float = 144.0
 
 
 def reachable_family() -> List[Dict[str, int]]:
@@ -199,6 +209,107 @@ def how_cheap_is(target: float, b2: int, b3: int) -> Dict[str, Any]:
     }
 
 
+def kummer_defect_entry() -> Dict[str, Any]:
+    """chi(K3) = 24 as an ENTRY in the enumeration. Never a derivation.
+
+    `kummer_transverse` measured that the structure transverse to each singular
+    involution is the orbifold-limit Kummer K3 -- 16 fixed T^3 on the cover per
+    involution, matching its 16 A_1 points -- and derives chi(K3) = 24 from the
+    construction. That gives chi_eff a geometric entry point at 24, so the
+    honest question is the trials-factor one: how CHEAP is 144 in the integers
+    that entry point supplies?
+
+    The defect-count pool is read from the live enumeration, not chosen: the
+    number of singular involutions, families per involution, orbit size, total
+    fixed tori, A_1 points per involution, and chi(K3). Every one of them is a
+    count this geometry actually produces.
+
+    THIS SELECTS NOTHING. A cheap target is weak evidence however geometric its
+    ingredients look, and the ruling on chi_eff remains the author's.
+    """
+    import itertools
+
+    from metaphysica.simulations.PM.geometry.kummer_transverse import (
+        chi_k3_from_kummer,
+        fixed_tori_per_involution,
+    )
+
+    per_involution = fixed_tori_per_involution()
+    n_singular = len(per_involution)
+    n_families = sum(rec["n_families"] for rec in per_involution)
+    orbit_size = per_involution[0]["orbit_sizes"][0]
+    tori_per_involution = per_involution[0]["n_fixed_tori_on_cover"]
+    total_tori = sum(rec["n_fixed_tori_on_cover"] for rec in per_involution)
+    chi_k3 = chi_k3_from_kummer()["chi_K3"]
+
+    pool = {
+        "chi_K3": chi_k3,
+        "n_singular": n_singular,
+        "n_families": n_families,
+        "orbit_size": orbit_size,
+        "tori_per_involution": tori_per_involution,
+        "total_tori": total_tori,
+    }
+
+    built: Dict[str, float] = {}
+    for (na, a), (nb, b) in itertools.product(pool.items(), repeat=2):
+        built["%s*%s" % (na, nb)] = a * b
+        built["%s+%s" % (na, nb)] = a + b
+        built["%s-%s" % (na, nb)] = a - b
+    for na, a in pool.items():
+        built["%s^2" % na] = a * a
+        built["%s/2" % na] = a / 2.0
+
+    hits = sorted(k for k, v in built.items()
+                  if abs(v - CLAIMED_CHI_EFF) < 1e-9)
+    hits_through_chi = [h for h in hits if "chi_K3" in h]
+
+    return {
+        "status": "ENTRY_IN_THE_ENUMERATION",
+        "chi_K3": chi_k3,
+        "chi_K3_derivation": chi_k3_from_kummer()["derivation"],
+        "hits_through_chi_K3": hits_through_chi,
+        "chi_K3_reaches_144": bool(hits_through_chi),
+        "defect_pool": pool,
+        "pool_provenance": ("every integer is a count the live enumeration "
+                            "produces: involutions, orbits, orbit size, fixed "
+                            "tori, and an Euler characteristic"),
+        "n_expressions_searched": len(built),
+        "n_hits_at_144": len(hits),
+        "hit_rate": len(hits) / float(len(built)),
+        "hits_at_144": hits,
+        "reaches_144": bool(hits),
+        "a4_bar": (
+            "chi_K3 is an EULER CHARACTERISTIC; n_singular counts GROUP "
+            "ELEMENTS; n_families counts ORBITS; orbit_size and the tori counts "
+            "count COMPONENTS OF A FIXED LOCUS. Multiplying them is arithmetic "
+            "on integers of four different kinds, which is exactly why a hit "
+            "here is an entry and not a derivation."
+        ),
+        "verdict": (
+            "chi(K3) = 24 does NOT reach 144: of the %d expressions searched, "
+            "%d hit 144 and NONE of them involves chi_K3 (%s). The hits run "
+            "through n_families^2 = 12^2 and n_singular x total_tori = 3 x 48, "
+            "both already on the books. So the Kummer measurement gives "
+            "chi_eff a genuine geometric entry point at 24 and supplies no "
+            "route from it to the claimed value. The overall hit rate, %.1f%%, "
+            "is the same order of cheapness the register measured for 144 in "
+            "the framework's own integers (~2.5%%), so even the hits that do "
+            "occur are not evidence. Recorded as an entry; nothing is selected."
+            % (len(built), len(hits), hits,
+               100.0 * len(hits) / len(built))
+        ) if not hits_through_chi else (
+            "144 IS reachable through chi(K3) = 24, via %s, at an overall hit "
+            "rate of %.1f%% (%d of %d). A cheap target is weak evidence however "
+            "geometric its ingredients look. Recorded as an entry; nothing is "
+            "selected."
+            % (hits_through_chi, 100.0 * len(hits) / len(built), len(hits),
+               len(built))
+        ),
+        "ruling_stays_with_the_author": True,
+    }
+
+
 def chi_eff_report() -> Dict[str, Any]:
     """The three routes, evaluated across the reachable family, with the verdict."""
     family = reachable_family()
@@ -217,8 +328,8 @@ def chi_eff_report() -> Dict[str, Any]:
         })
 
     crossing = unique_intersection()
-    cheap_at_24 = how_cheap_is(144.0, 4, 24)
-    cheap_at_43 = how_cheap_is(144.0, 12, 43)
+    cheap_at_24 = how_cheap_is(CLAIMED_CHI_EFF, 4, 24)
+    cheap_at_43 = how_cheap_is(CLAIMED_CHI_EFF, 12, 43)
 
     # Which expressions give 144 at BOTH points? Only ones with no b dependence.
     both = sorted(set(cheap_at_24["hits"]) & set(cheap_at_43["hits"]))

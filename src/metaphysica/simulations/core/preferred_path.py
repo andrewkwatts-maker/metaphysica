@@ -259,13 +259,27 @@ def compare_states(state_a: Optional[Dict[str, str]] = None,
 
 
 def _invalidate_caches() -> None:
-    """Drop module caches that would otherwise survive a switch flip."""
+    """Drop module caches that would otherwise survive a switch flip.
+
+    Narrowed from `except Exception` on 2026-09-22. A stale cache surviving a
+    switch flip is the exact thing this function exists to prevent, so an
+    AttributeError -- the cache attribute renamed or removed -- must not be
+    swallowed: it would mean the cache was NOT dropped while this function
+    reported success. Only the module being absent is tolerated, because then
+    there is no cache to drop.
+    """
     try:
         from metaphysica.simulations.PM.cosmology import racetrack_vacuum
+    except ImportError:                    # nothing imported it, nothing cached
+        return
 
-        racetrack_vacuum._PARAMS_CACHE = None
-    except Exception:
-        pass
+    if not hasattr(racetrack_vacuum, "_PARAMS_CACHE"):
+        raise AttributeError(
+            "racetrack_vacuum no longer has _PARAMS_CACHE, so this function is "
+            "silently failing to invalidate the cache it was written for. "
+            "Update the attribute name here when that module's cache is renamed."
+        )
+    racetrack_vacuum._PARAMS_CACHE = None
 
 
 def history_entry(label: str, notes: str = "") -> Dict[str, Any]:

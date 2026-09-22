@@ -19,6 +19,36 @@ So: the total is pinned as a ceiling, the modules that now KNOW better are
 required to be clean, and the narration module is the supported way to say any
 of it going forward.
 
+WHAT THIS FILE'S NUMBER COUNTS, AND WHAT IT DOES NOT
+====================================================
+`_CEILING` counts **source FILES** containing at least one of the four phrases
+in `_CLAIM_PHRASES`. It is not a count of occurrences, and it is not a count of
+anything a reader of the published site can see. A file with 43 mentions
+contributes 1.
+
+Per the author's directive the meaningful measure is **published on-path
+strings**, and that one lives in `test_published_holonomy_ratchet.py`:
+PUBLISHED STRING OCCURRENCES in the built JSON artifacts, pinned separately and
+measured against a fresh build. Both are kept because they move independently:
+
+    this file   rises when a NEW file starts making the claim, even if no
+                published text changed.
+    that file   rises when existing wording is duplicated into more output,
+                which leaves this file's count flat.
+
+The two ceilings differ (92 here, 93 there) because the phrase SETS differ --
+this file scans 4 phrases, that one scans the 9 that
+`holonomy_wording_audit.phrases()` generates from
+`geometry_narration.forbidden_phrases()` plus typographic variants. Neither
+number is stale and they are not in conflict; each states its own phrase set.
+
+For the record, measured 2026-09-22 on the adopted branch over the 9-phrase
+set: 93 source files, 538 source occurrences, 742 published occurrences. Of the
+source occurrences a line-local classifier reads 459 as bare ASSERTION, 43 as
+ATTRIBUTED to the literature or a named construction, 14 as CONDITIONAL and 22
+as DENIAL -- so the reading task this docstring describes is ~459 sites, not 93
+files, and that is why it is not being done with a regex.
+
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
@@ -30,10 +60,11 @@ import pytest
 
 _SRC = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica"
 
-#: MEASURED 2026-09-22 on the adopted branch, across all four phrases. A
-#: ceiling, not a target. It was first set to 90 from an earlier single-phrase
-#: grep and the ratchet immediately failed at 92 -- which is the ratchet working:
-#: a number typed from memory is not a measurement.
+#: MEASURED 2026-09-22 on the adopted branch, across all four phrases in
+#: `_CLAIM_PHRASES`. Counts source FILES. A ceiling, not a target. It was first
+#: set to 90 from an earlier single-phrase grep and the ratchet immediately
+#: failed at 92 -- which is the ratchet working: a number typed from memory is
+#: not a measurement. Re-measured 2026-09-22 and it is still exactly 92.
 _CEILING = 92
 
 #: Modules that carry the new findings. These must not assert what they refute.
@@ -43,6 +74,8 @@ _MUST_BE_CLEAN = (
     "simulations/PM/geometry/generation_selection.py",
     "simulations/PM/geometry/multilinear_degree_audit.py",
     "simulations/PM/geometry/intersection_tensor.py",
+    "simulations/PM/geometry/holonomy_wording_audit.py",
+    "simulations/PM/geometry/glued_orbit_scan.py",
 )
 
 _CLAIM_PHRASES = ("G2 holonomy", "G2-holonomy", "G₂ holonomy",

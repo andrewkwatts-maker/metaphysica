@@ -194,6 +194,28 @@ def _twisted_norm_convention_adopted() -> str:
             else "orbit_sum")
 
 
+def _chi_eff_route_adopted() -> str:
+    """Whether the framework is still refusing to name a chi_eff derivation.
+
+    A behavioural read of the narration rather than a literal: `chi_eff_claim`
+    returns `may_claim_a_derivation = False` exactly while the ruling is open.
+    If a route is ever adopted there, this moves with it and the drift guard
+    fires against a declaration that still says `unruled`.
+    """
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        chi_eff_claim,
+    )
+
+    claim = chi_eff_claim()
+    if claim["may_claim_a_derivation"]:
+        raise RuntimeError(
+            "chi_eff_claim now permits a derivation but this fork still "
+            "declares `unruled`; the declaration and the narration have "
+            "diverged and one of them is wrong"
+        )
+    return "unruled"
+
+
 def _bulk_signature_adopted() -> str:
     from metaphysica.simulations.core.canonical_values import CANON
 
@@ -734,6 +756,91 @@ FORKS: Dict[str, Fork] = {
                     "g(h*phi) is not proportional to h^T g(phi) h. The "
                     "signature is still frame-robust up to overall sign, which "
                     "is what the classification uses."
+                ),
+            ),
+        ],
+    ),
+    "chi_eff_route": Fork(
+        id="chi_eff_route",
+        question=(
+            "Is chi_eff a CONSTANT independent of the seed, or SEED-DEPENDENT? "
+            "The framework currently wants both."
+        ),
+        source=("simulations.PM.geometry.geometry_narration.chi_eff_claim "
+                "-- which returns the dichotomy and no value"),
+        status="OPEN",
+        read_adopted=_chi_eff_route_adopted,
+        notes=(
+            "Opened 2026-09-22 so the two branches can be RUN rather than "
+            "argued. chi_eff = 144 is load-bearing -- n_gen is taken as "
+            "chi_eff/48, alpha_leak as 1/sqrt(chi_eff/b_3), reid_invariant as "
+            "1/chi_eff -- and 112 modules mention it under one of its names "
+            "(measured). Three derivations are claimed and all three return 144 "
+            "at b_3 = 24, which is precisely where the two b_3-dependent ones "
+            "CROSS, uniquely.\n\n"
+            "The default is `unruled` because adopting either branch is an "
+            "author act and neither has been made. `unruled` is not a "
+            "placeholder: it is what the code does today, and chi_eff_claim() "
+            "returns the dichotomy rather than a value.\n\n"
+            "TWO COSTS MEASURED 2026-09-22, both new, and they COUPLE this "
+            "fork to n_gen_source. First, 6 b_3 / 48 = b_3 / 8 IDENTICALLY, so "
+            "`seed_dependent` via route C is not an independent route to the "
+            "generation count -- it IS n_gen_source = b3_over_dim_O, and "
+            "inherits that route's refutation across the whole Joyce family. "
+            "Second, n_gen = chi_eff/48 fails on BOTH branches on that family: "
+            "seed-dependent gives a non-integer at every reachable profile "
+            "(0.2552, 1.8802, 5.0052, 9.6302 via b_3^2/4), while the constant "
+            "branch gives n_gen = 3 even at n_T3 = 0, where the manifold "
+            "carries no A_1 families and the count should be 0.\n\n"
+            "See PM.geometry.chi_eff_branches for the executable branches and "
+            "the full cost table. Nothing there selects either."
+        ),
+        options=[
+            VariantOption(
+                id="unruled",
+                summary="no route adopted; chi_eff_claim returns the dichotomy",
+                consequence=(
+                    "BUYS: the framework does not assert a derivation it "
+                    "cannot defend, and both branches stay runnable and "
+                    "costed. This is the honest state and it is what the code "
+                    "actually does.\n"
+                    "COSTS: the EML track stays blocked -- the triple-track "
+                    "mismatch at FormulasRegistry.py:653 is waiting on exactly "
+                    "this ruling -- and every downstream consumer keeps reading "
+                    "a literal 144 whose provenance is open."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="constant_144",
+                summary="chi_eff is a constant, independent of the seed",
+                consequence=(
+                    "BUYS: every consumer of the literal 144 keeps working "
+                    "unchanged, at either seed, and nothing downstream moves.\n"
+                    "COSTS: chi_eff carries NO topological content, and this is "
+                    "demonstrated rather than interpreted -- n_gen = "
+                    "chi_eff/48 = 3 at every reachable profile INCLUDING "
+                    "n_T3 = 0, where there are no A_1 families and the "
+                    "generation count should be 0. Routes B and C are then "
+                    "both wrong, and the three-derivation agreement at 144 was "
+                    "never evidence."
+                ),
+            ),
+            VariantOption(
+                id="seed_dependent",
+                summary="chi_eff = f(b_3), so it is not 144 off b_3 = 24",
+                consequence=(
+                    "BUYS: chi_eff becomes a genuine function of the topology "
+                    "rather than a constant, so it can carry topological "
+                    "content at all.\n"
+                    "COSTS: it is not 144 on the 43 path -- 462.25 via b_3^2/4 "
+                    "or 258 via 6 b_3 -- so every consumer of the literal "
+                    "moves, across 112 modules that mention it. Worse, n_gen = "
+                    "chi_eff/48 is then NON-INTEGER at every Joyce-reachable "
+                    "profile on both sub-routes, so adopting this also forces "
+                    "a ruling on n_gen_source. The two b_3-dependent routes "
+                    "also disagree with each other everywhere except b_3 = 24, "
+                    "so this branch is not one option but two."
                 ),
             ),
         ],

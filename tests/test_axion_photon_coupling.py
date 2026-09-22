@@ -47,7 +47,16 @@ def test_derive_axion_photon_coupling_return_shape():
     """The public dict carries the three documented keys with their values."""
     mod = _import_module()
     result = mod.derive_axion_photon_coupling()
-    assert {"g_aγγ_GeV", "f_a_GeV", "status"}
+    # Was `assert {"g_aγγ_GeV", "f_a_GeV", "status"}` -- a non-empty set
+    # literal, so always true. It checked that three strings had been typed,
+    # not that the returned dict carried them, and the docstring's claim was
+    # going unverified. The three `result[...]` reads below would have raised
+    # KeyError anyway, so the line was inert twice over; the subset assertion
+    # is what the docstring actually says.
+    assert {"g_aγγ_GeV", "f_a_GeV", "status"} <= set(result), (
+        "the documented keys are missing from the returned dict: %s"
+        % sorted({"g_aγγ_GeV", "f_a_GeV", "status"} - set(result))
+    )
     assert isinstance(result["g_aγγ_GeV"], float)
     assert result["f_a_GeV"] == pytest.approx(1.0e10, rel=0.0)
     assert result["status"] == "lies within BabyIAXO/IAXO discovery window"

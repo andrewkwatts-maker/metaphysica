@@ -128,11 +128,27 @@ def phi_from_octonion_product() -> np.ndarray:
     return phi
 
 
-def _levi_civita_7d() -> np.ndarray:
-    """Compute the 7D Levi-Civita symbol ε_{i₁...i₇}.
+#: Built once per process. The symbol is a constant of the dimension, but it is
+#: a 7^7 = 823,543-entry array filled by iterating 5,040 permutations, and
+#: `G2DifferentialGeometry.__init__` asked for a fresh one every time. The
+#: pointwise orbit scan constructs one object per grid point, so rebuilding it
+#: dominated that measurement entirely: caching took `orbit_at` from 0.18 s to
+#: well under a millisecond.
+_EPS_7D: Optional[np.ndarray] = None
 
-    Returns a (7,7,7,7,7,7,7) tensor with values ±1 or 0.
+
+def _levi_civita_7d() -> np.ndarray:
+    """The 7D Levi-Civita symbol eps_{i1...i7}.
+
+    Returns a READ-ONLY (7,)*7 tensor with values +-1 or 0. Read-only because
+    it is shared: a caller that mutated it would corrupt every later
+    computation in the process, and the flag turns that into an immediate
+    error rather than a wrong number.
     """
+    global _EPS_7D
+    if _EPS_7D is not None:
+        return _EPS_7D
+
     eps = np.zeros([7] * 7, dtype=np.float64)
     for perm in permutations(range(7)):
         # Count inversions to determine sign
@@ -143,7 +159,9 @@ def _levi_civita_7d() -> np.ndarray:
                 if p[i] > p[j]:
                     sign *= -1
         eps[perm] = sign
-    return eps
+    eps.flags.writeable = False
+    _EPS_7D = eps
+    return _EPS_7D
 
 
 class G2DifferentialGeometry:
@@ -400,8 +418,22 @@ class G2DifferentialGeometry:
         dimensions" (2000).
         """
         phi = self._phi
+        # `optimize=True` picks a pairwise contraction order instead of forming
+        # the full 7^7 intermediate: ~500x faster (0.156 s -> 0.0003 s), which
+        # is what makes the pointwise orbit scan along the neck feasible.
+        #
+        # It is NOT bitwise identical, and an earlier version of this comment
+        # said it was on the strength of one test case. Measured across the
+        # glued forms the two orders differ by ~1e-13 absolute on entries of
+        # order 400 -- relative ~3e-16, i.e. floating-point reassociation at
+        # machine epsilon. What IS checked, and what actually matters, is that
+        # the ORBIT CLASSIFICATION agrees: sign of det B and the eigenvalue
+        # signs are identical under both orders across the scan grid. Near the
+        # det B = 0 wall itself no contraction order is meaningful to better
+        # than that noise floor, which bounds how sharply the wall can be
+        # located and not whether it is there.
         return np.einsum('abcdefg,iab,jcd,efg->ij',
-                         self._eps, phi, phi, phi)
+                         self._eps, phi, phi, phi, optimize=True)
 
     def compute_hitchin_metric(self) -> np.ndarray:
         """The metric Hitchin's construction actually induces.
