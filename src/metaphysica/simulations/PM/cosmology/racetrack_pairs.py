@@ -243,8 +243,15 @@ def write_report(out_path=None) -> Dict[str, Any]:
 
 
 def main(argv=None) -> int:
-    """CLI: run the enumeration and print one line per pair per slope."""
-    payload = enumerate_pairs()
+    """CLI: run the enumeration, WRITE the artifact, and print the table.
+
+    `write_report`, not `enumerate_pairs`. Wired into the build as a
+    generator, this printed all 56 rows, reported OK in 31.2s, and produced
+    no file -- a step that looks like it worked because the evidence of its
+    working is on stdout rather than on disk. Caught by looking for the
+    artifact instead of reading the build summary.
+    """
+    payload = write_report()
     print("racetrack pairs: %d pairs x %d slopes = %d solves (trials factor)"
           % (payload["n_pairs"], len(payload["kahler_slopes"]),
              payload["trials_factor"]))
