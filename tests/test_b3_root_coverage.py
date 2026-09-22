@@ -140,12 +140,29 @@ _ARITHMA_BASELINE_WITH_BACKEND = {"total": 569, "b3_rooted_min": 380,
                                   "non_b3_max": 181, "ambiguous_max": 8,
                                   "degraded_max": 51}
 #: Measured 2026-09-14 on a build with the PyPI stub arithma. b3_rooted is
-#: HIGHER here (398) and that is not better coverage: with no tree to walk the
+#: HIGHER here and that is not better coverage: with no tree to walk the
 #: walker falls back to scanning human-written latex, where prose mentioning
 #: b_3 counts as a root. The two b3_rooted numbers are not comparable, which
 #: is the whole reason they are stated separately.
-_ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 398,
-                                "non_b3_max": 161, "ambiguous_max": 10,
+#:
+#: RE-MEASURED 2026-09-22 by the review pass: b3_rooted 398 -> 397 and
+#: ambiguous 10 -> 11. This pair had NOT been re-measured after the b3_seed
+#: adoption -- only the WITH_BACKEND pair above was -- and it could not be,
+#: because in any environment without the author's drive layout the artifact
+#: was unreachable and this whole file SKIPPED. Fixing the artifact search
+#: order is what made it run, and the first thing it reported was that its
+#: own baseline predated a ruling.
+#:
+#: Lowering a ratchet needs a reason, and "it failed" is not one. The reason
+#: was established by MEASUREMENT rather than inferred: the pre-review commit
+#: (f289f94) was checked out into a worktree and its walker run against the
+#: SAME formulas.json, giving 397 / 161 / 11 -- identical. So the movement
+#: is the adoption's, not this pass's, and it is the same single formula the
+#: WITH_BACKEND note describes: `b3-generations`, rewired from n_gen = b_3/8
+#: to the RULED n_gen = b_2/4, no longer mentions b_3 in the prose this
+#: walker scans. The ratchet still bites in both directions from here.
+_ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 397,
+                                "non_b3_max": 161, "ambiguous_max": 11,
                                 "degraded_max": 66}
 #: UNSTABLE, and that instability is the finding. Measured three times on
 #: 2026-09-22/23 over the same tree: b3_rooted 101, then 134, then 113.

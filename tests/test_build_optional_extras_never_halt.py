@@ -42,7 +42,34 @@ from pathlib import Path
 
 import pytest
 
-from metaphysica.build import OPTIONAL_DEPS, STEPS
+
+def _build_module():
+    """Load ``metaphysica.build`` WITHOUT binding it onto the package.
+
+    `metaphysica.build` is both a submodule and the public callable exposed by
+    `metaphysica/__init__.py`, and importing the submodule normally replaces
+    the function with the module object -- breaking `metaphysica.build(...)`
+    for every later caller in the process. `__init__.py` documents this and
+    rebinds the wrapper defensively; `tests/test_build_out_dir.py` avoids the
+    import entirely for the same reason.
+
+    A plain `from metaphysica.build import STEPS` here broke
+    `tests/test_smoke.py::test_build_callable_exposed`, three hundred test
+    files later in the same session. Loading from the spec into a standalone
+    module object reads the same source without touching the package
+    attribute.
+    """
+    import importlib.util
+
+    spec = importlib.util.find_spec("metaphysica.build")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+_BUILD = _build_module()
+OPTIONAL_DEPS = _BUILD.OPTIONAL_DEPS
+STEPS = _BUILD.STEPS
 
 #: Packages that live behind an extra, mapped to the extra that supplies them.
 #: Taken from `pyproject.toml`'s optional-dependencies, not invented here.

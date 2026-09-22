@@ -98,10 +98,25 @@ def test_the_backend_probe_distinguishes_importable_from_usable():
     If the probe reported every arithma usable, the three range requirements
     would skip forever and this file would assert nothing. So check the probe
     against the thing it claims to measure rather than trusting its verdict.
-    """
-    import arithma
 
+    THREE states, not two. This used to `import arithma` bare, so in an
+    environment where the package is simply ABSENT the test ERRORED with
+    ModuleNotFoundError while its four siblings skipped cleanly -- an optional
+    dependency reported as a broken test, which is the same shape as a build
+    halting for want of an extra. Absence is not an excuse to assert nothing,
+    though: the probe still makes a checkable promise there, namely that it
+    reports the backend unusable. That is now asserted instead of skipped.
+    """
     from metaphysica.simulations.core.arithma_backend import ARITHMA
+
+    try:
+        import arithma
+    except ImportError:
+        assert ARITHMA is None, (
+            "arithma is not importable at all and the probe still reports a "
+            "usable backend -- the probe is not probing"
+        )
+        return
 
     if getattr(arithma, "Expression", None) is None:
         assert ARITHMA is None, (
