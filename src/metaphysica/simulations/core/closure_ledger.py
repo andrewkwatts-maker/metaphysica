@@ -71,7 +71,12 @@ LAYERS: Dict[str, Dict[str, Any]] = {
         "needs": "the G2 metric on Y_7 (moduli VEVs)",
         "available": "PARTIAL",
         "note": ("K_IJ has leading-order-in-t values from the glued metric; "
-                 "every result here is asymptotic and must be labelled so"),
+                 "every result here is asymptotic and must be labelled so. "
+                 "Two freezing mechanisms MEASURED NULL 2026-09-22: integer "
+                 "flux cannot freeze these rows at leading order because the "
+                 "leading-order pairing is t-free (flux_quantization), and "
+                 "no discrete ansatz reaches them either -- zero traced "
+                 "edges (ansatz_dependency_graph)"),
     },
     "FLAVOUR": {
         "needs": "zero-mode overlap integrals: metric, singular locus, wavefunctions",
@@ -83,7 +88,10 @@ LAYERS: Dict[str, Dict[str, Any]] = {
         "needs": "flux quanta",
         "available": False,
         "note": ("independent DISCRETE inputs to an M-theory compactification; "
-                 "no geometry on Y_7 supplies them"),
+                 "no geometry on Y_7 supplies them. MEASURED 2026-09-22: at "
+                 "leading order the 43 flux integers collapse to 2 invariants "
+                 "because the pairing is t-free, so flux fixes the overall "
+                 "scale and nothing else (flux_quantization)"),
     },
     "EXPERIMENTAL": {
         "needs": "nothing -- it is a measured anchor, not a model output",

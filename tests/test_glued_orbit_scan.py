@@ -379,3 +379,46 @@ def test_the_shared_levi_civita_symbol_cannot_be_mutated():
     with pytest.raises(ValueError):
         eps[0, 1, 2, 3, 4, 5, 6] = 99.0
     assert _levi_civita_7d() is eps, "the symbol is being rebuilt on every call"
+
+
+def test_the_wall_exponent_is_one_half_not_merely_of_order_one():
+    """The sqrt-t claim, pinned as an EXPONENT rather than an order-one ratio.
+
+    The order-one test above (t a^2/r_*^2 in (0.5, 1.5) over t in [1, 100])
+    tolerates any exponent p with |1 - 2p| ln(100) < ln(3) -- roughly
+    p in [0.38, 0.62] -- so r_* ~ t^0.47 would pass it while the register
+    says sqrt(t). This test fits the LOCAL log-log slope between successive
+    sampled decades and pins the convergence that eta ~ a^2/r^2 actually
+    forces: slopes approach 1/2 FROM BELOW (the subleading a^4/r^4 term only
+    ever lowers the wall), monotonically, and the last measured slope sits
+    within a stated margin of 1/2.
+
+    MEASURED 2026-09-22: local slopes 0.49667 (100->300), 0.49867
+    (300->1000), 0.49948 (1000->3000); final deviation from 1/2 is 5.2e-4.
+    The margin below is 10x that, stated, not tuned.
+    """
+    ts = (100.0, 300.0, 1000.0, 3000.0)
+    report = gos.wall_scaling_report(t_values=ts)
+    rs = [w["r_star"] for w in report["walls"]]
+    assert len(rs) == len(ts), "a wall was not found at every sampled t"
+
+    slopes = [
+        math.log(rs[i] / rs[i - 1]) / math.log(ts[i] / ts[i - 1])
+        for i in range(1, len(ts))
+    ]
+
+    for slope in slopes:
+        assert slope < 0.5, (
+            "a local slope reached %.5f >= 1/2: the approach must be from "
+            "BELOW, because the subleading a^4/r^4 term in eta only ever "
+            "lowers the wall radius" % slope
+        )
+    assert slopes == sorted(slopes), (
+        "local slopes are not monotonically increasing toward 1/2: %s -- the "
+        "correction term is not dying off, so the exponent is not 1/2" % slopes
+    )
+    assert abs(slopes[-1] - 0.5) < 5e-3, (
+        "the final local slope is %.5f, more than 5e-3 from 1/2 (measured "
+        "deviation 5.2e-4, margin 10x). r_* does not scale as sqrt(t)"
+        % slopes[-1]
+    )
