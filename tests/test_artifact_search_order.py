@@ -147,3 +147,35 @@ def test_the_published_parameters_are_reachable_in_this_environment():
         pytest.skip("no parameters.json in any root; run the build first")
     payload = json.loads(found.read_text(encoding="utf-8"))
     assert payload.get("parameters"), found
+
+
+# ── the suite must not write through to the published checkout ──────────────
+
+
+def test_the_test_session_never_targets_the_published_checkout():
+    """METAPHYSICA_OUT is the WRITE target as well as the read hint.
+
+    conftest points it at a staged COPY of the artifacts rather than at the
+    published tree, because generator write paths honour the same variable the
+    read paths do. The first version of that conftest pointed it straight at
+    the sibling checkout, and one full suite run silently removed FOURTEEN
+    rows from the published `parameters.json`.
+
+    A test run that degrades the published build is worse than the skips the
+    change was made to fix, so the guarantee is asserted rather than assumed.
+    """
+    raw = os.environ.get("METAPHYSICA_OUT")
+    if not raw:
+        pytest.skip("METAPHYSICA_OUT not set in this session")
+
+    target = Path(raw).resolve()
+    repo = Path(__file__).resolve().parents[1]
+    published = (repo.parent / "PrincipiaMetaphysica").resolve()
+
+    if not published.exists() or published == repo:
+        pytest.skip("no separate published checkout in this environment")
+    assert target != published, (
+        "the suite is writing into the published checkout at %s -- a "
+        "generator run from any test will degrade the shipped artifacts"
+        % published
+    )
