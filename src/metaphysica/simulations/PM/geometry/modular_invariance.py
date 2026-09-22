@@ -155,6 +155,7 @@ class ModularInvarianceV16(SimulationBase):
             "topology.critical_dim",      # D = b₃ + 2 = 26
             "topology.modular_weight",    # Weight of partition function
             "topology.dedekind_eta_phase",  # pi/12 from eta(tau+1)
+            "topology.b3_modular_identification",  # per-branch status of the old b3<->24 conflation
         ]
 
     @property
@@ -180,8 +181,28 @@ class ModularInvarianceV16(SimulationBase):
 
         b3_input = registry.get_param("topology.elder_kads")
 
-        # Step 1: Compute required b₃ from anomaly cancellation
+        # Step 1: the single-valuedness of eta^(-n) selects n = 24. What the
+        # 24 COUNTS is transverse oscillators of the bosonic string in the
+        # bulk -- the D_space_24 spacelike core of the adopted (24,2)
+        # two-time signature -- NOT cohomology classes of Y_7. The old check
+        # asserted b3 == 24, which held as a numerical coincidence on
+        # seed_24 and broke on the adopted seed (b_3 = 43). Corrected
+        # 2026-09-22 with the b3_seed adoption: the modular constraint is
+        # verified against the bulk core it actually constrains, and the old
+        # identification is RECORDED per branch, not enforced. (A4 bar: the
+        # two objects are named; nothing converts one into the other.)
         self.b3_required = self._compute_modular_constraint()
+
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+        core = get_registry().D_space_24
+        if core != self.b3_required:
+            raise ValueError(
+                "Modular invariance selects %d transverse oscillators but "
+                "the bulk's spacelike core is %d -- the adopted (24,2) bulk "
+                "no longer satisfies the eta single-valuedness constraint"
+                % (self.b3_required, core)
+            )
 
         # Step 2: Compute vacuum energy
         self.vacuum_energy = self._compute_vacuum_energy(self.b3_required)
@@ -195,12 +216,11 @@ class ModularInvarianceV16(SimulationBase):
         # Step 5: Modular weight
         modular_weight = -self.b3_required / 2  # η^(-24) has weight -12
 
-        # Validate consistency
-        if b3_input != self.b3_required:
-            raise ValueError(
-                f"Modular invariance requires b₃={self.b3_required}, "
-                f"but input has b₃={b3_input}"
-            )
+        identification = (
+            "HOLDS(coincidence of seed_24)" if b3_input == self.b3_required
+            else "BROKEN_ON_ADOPTED_SEED(b3=%s, oscillators=%d)"
+                 % (b3_input, self.b3_required)
+        )
 
         return {
             "topology.b3_modular": self.b3_required,
@@ -209,6 +229,7 @@ class ModularInvarianceV16(SimulationBase):
             "topology.critical_dim": critical_dim,
             "topology.modular_weight": modular_weight,
             "topology.dedekind_eta_phase": float(np.pi / 12.0),
+            "topology.b3_modular_identification": identification,
         }
 
 
@@ -516,7 +537,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"E_0 = -\frac{b_3}{24} = -1",
                 plain_text="E0 = -b3/24 = -1",
                 category="DERIVED",
-                description="Vacuum energy from zeta-regularized zero-point sum over b3 bosonic oscillators. For b3 = 24 (the G2 manifold value), E0 = -24/24 = -1 exactly, satisfying the Virasoro on-shell condition L0|phys> = 0 for the physical spectrum.",
+                description="Vacuum energy from the zeta-regularized zero-point sum over the D-2 = 24 TRANSVERSE bosonic oscillators of the (24,2) bulk. E0 = -24/24 = -1 exactly, satisfying the Virasoro on-shell condition L0|phys> = 0. The oscillator count is the bulk's spacelike core (D_space_24), NOT the third Betti number -- the two were conflated while both read 24; the identification broke with the b3_seed adoption (2026-09-22).",
                 inputParams=["topology.elder_kads"],
                 outputParams=["topology.vacuum_energy"],
                 input_params=["topology.elder_kads"],
@@ -534,13 +555,13 @@ class ModularInvarianceV16(SimulationBase):
                 terms={
                     "E_0": "Vacuum energy (zero-point energy of string oscillators)",
                     "D": "Spacetime dimension (26 for bosonic string)",
-                    "b_3": "Third Betti number (= D-2 = 24 transverse dimensions)"
+                    "D-2": "The 24 transverse dimensions of the (24,2) bulk (D_space_24) -- formerly conflated with b_3, decoupled by the b3_seed adoption"
                 },
                 eml_latex=r"E_0 = \mathrm{ops.neg}(\mathrm{ops.div}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(24)))",
-                eml_tree_str="ops.neg(ops.div(b3_leaf(), eml_scalar(24.0)))",
-                eml_description="EML: vacuum energy = ops.neg(ops.div(b3_leaf(), eml_scalar(24))) = -24/24 = -1 — on-shell condition satisfied only for b3=24",
-                arithma=_arithma_neg(_arithma_div(_arithma_const("b3"), _arithma_num(24.0))),
-                eml=_eml_neg(_eml_div(_b3_leaf(), _eml_scalar(24.0))),
+                eml_tree_str="ops.neg(ops.div(eml_scalar(24.0), eml_scalar(24.0)))  # D_space_24 transverse oscillators, not b3",
+                eml_description="EML: vacuum energy = -(D-2)/24 = -24/24 = -1, where 24 counts the bulk's transverse oscillators (D_space_24 of the adopted (24,2) signature), not cohomology classes",
+                arithma=_arithma_neg(_arithma_div(_arithma_num(24.0), _arithma_num(24.0))),
+                eml=_eml_neg(_eml_div(_eml_scalar(24.0), _eml_scalar(24.0))),
                 value=-1.0,
                 triple_rel=1e-12,
             ),

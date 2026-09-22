@@ -267,6 +267,91 @@ def generation_claim(source: Optional[str] = None,
     }
 
 
+def layperson_narration(seed: Optional[str] = None) -> Dict[str, Any]:
+    """The plain-register story of the topology, generated from the live fork.
+
+    The site's reading toggle (pm-layperson-toggle.js) demands a plain
+    statement for every derivation, as an audit instrument: a derivation whose
+    plain statement cannot be written without hand-waving does not exist. This
+    is that statement for the topological layer, with every number read from
+    the fork rather than typed, so a seed switch rewrites the story instead of
+    leaving it contradicting the code.
+
+    Three corrections against the circulated draft are baked in, because each
+    would teach a wrong fact: Betti numbers COUNT, they do not measure area
+    (area is metric data; this layer is metric-free); the seams are
+    3-DIMENSIONAL tori, not lines; and the generation count enters as the
+    RANK of the folding symmetry, not as a dial anyone sets.
+    """
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    seed = seed or resolve_path()
+    b3, b2 = seed_values(seed)
+    on_family = (b3 == 7 + 3 * b2)
+
+    story = {
+        "hole_counter": (
+            "Think of Betti numbers as a hole counter for shapes. b_1 counts "
+            "loops a rubber band can wrap without slipping off (a coffee "
+            "mug's handle has one); b_2 counts trapped 2D bubbles; b_3 counts "
+            "trapped 3D chambers. They are COUNTS of independent holes -- "
+            "never lengths or areas, which is why no ruler is needed to fix "
+            "them."
+        ),
+        "the_base": (
+            "Start with a flat 7-dimensional torus. Of its 35 possible 3D "
+            "direction-combinations, folding by the symmetry group leaves "
+            "exactly 7 global 3D hallways intact. That is the constant 7."
+        ),
+        "the_seams": (
+            "The folding pinches the space along 3-dimensional seams -- "
+            "creases, each one a small 3D torus. Counting the independent "
+            "families of seams gives b_2 = %d: each repaired seam family "
+            "traps exactly one new 2D bubble." % b2
+        ),
+        "the_repairs": (
+            "Physics cannot live on a crease, so each seam is repaired by "
+            "gluing in a smooth patch (an Eguchi-Hanson space). Every repair "
+            "spawns exactly 3 new independent 3D chambers along its seam."
+        ),
+        "the_total": (
+            "So the chamber count is locked by an assembly line: "
+            "b_3 = 7 + 3 x b_2 = 7 + 3 x %d = %d. Seven global hallways plus "
+            "%d repair-generated chambers." % (b2, 7 + 3 * b2, 3 * b2)
+            if on_family else
+            "On this branch b_3 = %d and b_2 = %d, and the assembly-line "
+            "relation b_3 = 7 + 3 b_2 FAILS (it would give %d) -- which is "
+            "one of the reasons this branch is off the constructible family."
+            % (b3, b2, 7 + 3 * b2)
+        ),
+        "the_generations": (
+            "Why three generations of particles? The folding symmetry has "
+            "rank 3 -- three independent folds. Each fold that pinches the "
+            "space contributes one family of seams, and counting seams "
+            "recovers the same three. The number of generations is the rank "
+            "of the folding, not a dial anyone set."
+        ),
+    }
+
+    return {
+        "fork": "b3_seed",
+        "branch": seed,
+        "b3": b3,
+        "b2": b2,
+        "on_reachable_family": on_family,
+        "story": story,
+        "paragraph": " ".join(story.values()),
+        "register": "layperson",
+        "corrections_applied": (
+            "counts-not-areas; seams are 3D tori, not lines; generations "
+            "enter as the rank of the folding symmetry"
+        ),
+    }
+
+
 def chi_eff_claim() -> Dict[str, Any]:
     """chi_eff has no ruled derivation. Report the dichotomy, invent nothing."""
     return {

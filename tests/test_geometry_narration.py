@@ -79,19 +79,23 @@ def test_the_cubic_metric_branch_narrates_differently():
 
 # ------------------------------------------------- betti and generations
 
-def test_the_adopted_seed_is_narrated_as_off_the_family(monkeypatch):
+def test_the_adopted_seed_is_narrated_as_one_input(monkeypatch):
+    """ADOPTED seed_43_joyce by author ruling 2026-09-22; the default narration
+    must carry the found solution: (12, 43), one topological input."""
     monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
     claim = betti_claim()
-    assert (claim["b3"], claim["b2"]) == (24, 4)
-    assert claim["on_reachable_family"] is False
-    assert "FAILS here" in claim["sentence"]
-
-
-def test_the_43_seed_is_narrated_as_one_input(monkeypatch):
-    claim = betti_claim("seed_43_joyce")
     assert (claim["b3"], claim["b2"]) == (43, 12)
     assert claim["on_reachable_family"] is True
     assert "ONE topological input" in claim["sentence"]
+
+
+def test_the_off_path_24_seed_is_narrated_as_off_the_family(monkeypatch):
+    """seed_24 stays runnable as the labelled off-path branch, and its
+    narration must say the family relation FAILS there."""
+    claim = betti_claim("seed_24")
+    assert (claim["b3"], claim["b2"]) == (24, 4)
+    assert claim["on_reachable_family"] is False
+    assert "FAILS here" in claim["sentence"]
 
 
 def test_the_b2_route_narrates_the_rank_result():

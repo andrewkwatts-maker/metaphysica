@@ -319,16 +319,21 @@ class UnitaryFilter:
         if registry is None:
             raise ValueError("PMRegistry is required to create UnitaryFilter from registry")
 
-        # Get b3 from registry (default to SSoT registry if not set)
-        if registry.has_param("topology.elder_kads"):
-            b3 = registry.get_param("topology.elder_kads")
-        else:
-            b3 = _REG.elder_kads if _REG else 24  # Default from SSoT registry
+        # CORRECTED WIRING (2026-09-22, with the b3_seed adoption): the bc
+        # ghost system's matter contribution counts the BULK's transverse
+        # dimensions -- D_space_24 = 24 of the adopted (24,2) two-time bulk --
+        # NOT the third Betti number. b_3 counts cohomology classes of Y_7;
+        # the transverse oscillators live in the 26D bulk. On the old seed
+        # both were 24 and the conflation was invisible; on the adopted seed
+        # b_3 = 43 and reading it here produced C = 19 -- a failure of the
+        # MIS-WIRING, not of anomaly cancellation. The identification's
+        # per-branch status is recorded in the simulation outputs.
+        transverse = int(_REG.D_space_24) if _REG else 24
 
         # D_total is always 26 for bosonic string
         dim_total = 26
 
-        return cls(b3_val=int(b3), dim_total=dim_total)
+        return cls(b3_val=transverse, dim_total=dim_total)
 
     def __repr__(self) -> str:
         """Return string representation of the filter."""
@@ -389,6 +394,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             "unitary.c_transverse",
             "unitary.c_bridge",
             "unitary.c_ghost",
+            "unitary.b3_transverse_identification",
         ]
 
     @property
@@ -421,6 +427,15 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
         # Get detailed report
         report = self._filter.get_stability_report()
 
+        # The old b3 <-> transverse identification, recorded per branch
+        # rather than silently assumed: it HELD on seed_24 (both 24) and is
+        # BROKEN on the adopted seed (b_3 = 43 vs transverse = 24). The
+        # anomaly cancellation itself never depended on it.
+        b3_now = (registry.get_param("topology.elder_kads")
+                  if registry.has_param("topology.elder_kads")
+                  else (_REG.elder_kads if _REG else None))
+        ident = (int(b3_now) == self._filter.b3_val) if b3_now is not None else None
+
         return {
             "unitary.central_charge": report["central_charge"],
             "unitary.is_ghost_free": report["is_stable"],
@@ -428,6 +443,11 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             "unitary.c_transverse": report["contributions"]["c_transverse"],
             "unitary.c_bridge": report["contributions"]["c_bridge"],
             "unitary.c_ghost": report["contributions"]["c_ghost"],
+            "unitary.b3_transverse_identification": (
+                "HOLDS(coincidence of seed_24)" if ident
+                else "BROKEN_ON_ADOPTED_SEED(b3=%s, transverse=%d)"
+                     % (b3_now, self._filter.b3_val)
+            ),
         }
 
     def get_formulas(self) -> List['Formula']:

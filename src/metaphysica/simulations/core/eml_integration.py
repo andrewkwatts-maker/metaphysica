@@ -90,10 +90,12 @@ def b3_leaf() -> "EMLPoint":
     """
     Labelled b₃ leaf node for EML formula trees.
 
-    Returns an ``EMLPoint`` carrying the value of the G₂ third Betti number
-    b₃ = 24, sourced from the SSoT :class:`FormulasRegistry`. The value is
-    identical to ``eml_scalar(24.0)`` numerically, but this helper is the
-    *canonical site* for any kernel that depends on b₃.
+    Returns an ``EMLPoint`` carrying the third Betti number b₃ of the ADOPTED
+    seed path, sourced from the SSoT :class:`FormulasRegistry` (which reads
+    the ``b3_seed`` fork -- 43 on the adopted ``seed_43_joyce`` branch,
+    24 under the ``seed_24`` override). This helper is the *canonical site*
+    for any kernel that depends on b₃, which is exactly why it must never
+    carry a literal.
     """
     require_eml()
     # Lazy import to avoid circular dependency at module load time.

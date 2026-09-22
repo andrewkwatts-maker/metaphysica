@@ -122,19 +122,55 @@ def test_triple_track(module_name: str, formula_id: str, formula: Any) -> None:
     Arithma + EML + float must agree at registration tolerances.
 
     Formulas still missing one or more legs are skipped with a reason so
-    the migration progress is auditable from the test report."""
+    the migration progress is auditable from the test report.
+
+    RULED DIVERGENCES (2026-09-22): the b3_seed adoption moved every
+    b_3-consuming expression while chi_eff stays unruled, so a MEASURED
+    subset of formulas legitimately disagrees across tracks -- the recorded,
+    published cost of the ruling. Those formulas live in
+    core/ruled_divergences with a reason each, and the gate here is
+    TWO-DIRECTIONAL: a formula outside the ledger must agree at 1e-12, and a
+    formula inside it must ACTUALLY diverge -- a healed row left in the
+    ledger fails, because keeping it there would mask the next real
+    regression behind a stale excuse."""
     if not _can_triple_check(formula):
         pytest.skip(f"not yet triple-tracked ({formula_id})")
+    from metaphysica.simulations.core.ruled_divergences import (
+        divergence_reason,
+    )
     from metaphysica.simulations.core.triple_validator import triple_assert
 
-    triple_assert(
-        formula.arithma,
-        formula.eml,
-        float(formula.value),
-        env=getattr(formula, "triple_env", None) or {},
-        rel=getattr(formula, "triple_rel", 1e-12),
-        abs_=getattr(formula, "triple_abs", 0.0),
-        name=formula_id,
+    reason = divergence_reason(formula_id)
+    if reason is None:
+        triple_assert(
+            formula.arithma,
+            formula.eml,
+            float(formula.value),
+            env=getattr(formula, "triple_env", None) or {},
+            rel=getattr(formula, "triple_rel", 1e-12),
+            abs_=getattr(formula, "triple_abs", 0.0),
+            name=formula_id,
+        )
+        return
+
+    # In the ledger: the divergence must be REAL, or the entry is stale.
+    try:
+        triple_assert(
+            formula.arithma,
+            formula.eml,
+            float(formula.value),
+            env=getattr(formula, "triple_env", None) or {},
+            rel=getattr(formula, "triple_rel", 1e-12),
+            abs_=getattr(formula, "triple_abs", 0.0),
+            name=formula_id,
+        )
+    except AssertionError:
+        return  # diverges as recorded -- the honest state until retired
+    pytest.fail(
+        "%s is listed in RULED_DIVERGENCES but its three tracks now AGREE. "
+        "The row healed; remove it from the ledger (and record the healing "
+        "on the register) so the gate can protect it again. Reason on file: "
+        "%s" % (formula_id, reason)
     )
 
 

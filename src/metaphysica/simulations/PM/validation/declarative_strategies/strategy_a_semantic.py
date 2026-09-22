@@ -270,7 +270,7 @@ def gate_G40_sterile_active_mixing() -> GateResult:
 def gate_G32_wz_gut_ratio() -> GateResult:
     import json
     from metaphysica.generators._common import autogen_dir
-    with open(autogen_dir() / "parameters.json") as fh:
+    with open(autogen_dir() / "parameters.json", encoding="utf-8") as fh:
         params = json.load(fh)["parameters"]
     measured = params["gauge.sin2_theta_W_gut"]["value"]
     expected = 3.0 / 8.0

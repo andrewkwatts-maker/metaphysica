@@ -117,12 +117,22 @@ def _re_t_adoption_adopted() -> str:
 
 
 def _b3_seed_adopted() -> str:
-    """Structural read: the adopted path is whichever PATHS entry the seed's
-    registered value matches, so this cannot drift from the datasource."""
+    """ADOPTED seed_43_joyce by author ruling, 2026-09-22.
+
+    The author directed that the active path match the found solution --
+    (b_2, b_3) = (12, 43), selected by n_gen = rank(Gamma) = 3 out of the four
+    enumerated candidates, with b_3 = 7 + 3 b_2 making the pair one input.
+    seed_24 stays on the books as the labelled off-path branch: it remains
+    runnable via METAPHYSICA_VARIANT_B3_SEED=seed_24, its costs stay recorded
+    in the option's consequence field, and nothing is deleted.
+
+    The chi_eff dichotomy is NOT decided by this ruling; the EML track stays
+    pinned on it.
+    """
     from metaphysica.simulations.PM.geometry.b3_path import PATHS
 
     assert "seed_24" in PATHS and "seed_43_joyce" in PATHS
-    return "seed_24"
+    return "seed_43_joyce"
 
 
 def _b3_origin_adopted() -> str:
@@ -334,7 +344,7 @@ FORKS: Dict[str, Fork] = {
         id="b3_seed",
         question="Which (b_3, b_2) does the model take, and is the seed derived?",
         source="simulations.PM.geometry.b3_path.PATHS adopted entry",
-        status="OPEN",
+        status="RULED",
         read_adopted=_b3_seed_adopted,
         notes=(
             "Opened 2026-09-15 by a computation, not a preference. "
@@ -371,7 +381,6 @@ FORKS: Dict[str, Fork] = {
                     "4 traces to a previously FITTED h^{1,1}. The "
                     "free-variable count cannot reach zero while this holds."
                 ),
-                adopted=True,
             ),
             VariantOption(
                 id="seed_43_joyce",
@@ -394,6 +403,7 @@ FORKS: Dict[str, Fork] = {
                     "structural. Every b_3-consuming relation shifts: the "
                     "racetrack exponent, k_bary = b_3 - 14, chi/b_3, alpha_T."
                 ),
+                adopted=True,
             ),
         ],
     ),
@@ -401,7 +411,7 @@ FORKS: Dict[str, Fork] = {
         id="n_gen_source",
         question="Which geometric quantity supplies the generation count?",
         source="simulations.PM.geometry.b3_path n_gen_source per path",
-        status="OPEN",
+        status="RULED",
         notes=(
             "Opened 2026-09-15 alongside b3_seed, because the two are coupled "
             "and pretending otherwise would hide the coupling. n_gen must be a "
@@ -427,7 +437,6 @@ FORKS: Dict[str, Fork] = {
                     "all odd. Adopting the derived seed forces this to be "
                     "abandoned."
                 ),
-                adopted=True,
             ),
             VariantOption(
                 id="b2_over_faces",
@@ -437,11 +446,15 @@ FORKS: Dict[str, Fork] = {
                     "b_2 from the A1 family count and 4 from the moved "
                     "coordinates of an involution (R2). It is the only "
                     "generation source compatible with a derived seed.\n"
-                    "COSTS: gives 1 at the current b_2 = 4, so it is wrong on "
-                    "the status-quo path. It also relocates the generation "
+                    "COSTS: gives 1 at the off-path b_2 = 4, so it is wrong on "
+                    "the seed_24 branch. It also relocates the generation "
                     "count away from the octonions, which is a change in the "
-                    "theory's story about why there are three."
+                    "theory's story about why there are three -- and the "
+                    "measured chain behind it is n_gen = rank(Gamma) = 3, of "
+                    "which b_2/4 is the RECOVERY (n_families = 4 x n_singular "
+                    "at every admissible assignment)."
                 ),
+                adopted=True,
             ),
         ],
     ),

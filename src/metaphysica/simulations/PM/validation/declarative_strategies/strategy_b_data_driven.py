@@ -52,7 +52,7 @@ class GateResult:
 def _params() -> dict:
     from metaphysica.generators._common import autogen_dir
     path = autogen_dir() / "parameters.json"
-    with open(path) as fh:
+    with open(path, encoding="utf-8") as fh:
         return json.load(fh)["parameters"]
 
 

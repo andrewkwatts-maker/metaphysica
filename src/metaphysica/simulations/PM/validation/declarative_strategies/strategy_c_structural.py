@@ -84,7 +84,7 @@ def _load_cert(gate_id: int) -> Optional[Dict[str, Any]]:
     certs_dir = _certs_dir()
     # Certificates are named G##_<snake_name>.json
     for path in certs_dir.glob(f"G{gate_id:02d}_*.json"):
-        with open(path) as fh:
+        with open(path, encoding="utf-8") as fh:
             return json.load(fh)
     return None
 

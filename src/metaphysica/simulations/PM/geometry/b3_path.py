@@ -96,7 +96,11 @@ PATHS: Dict[str, Dict[str, Any]] = {
 
 
 def resolve_path() -> str:
-    """Which path is in force. Adopted is seed_24 until the author rules.
+    """Which path is in force. ADOPTED: seed_43_joyce, author ruling 2026-09-22.
+
+    The author directed that the active path match the found solution:
+    (12, 43), selected by n_gen = rank(Gamma) = 3 with b_3 = 7 + 3 b_2.
+    seed_24 stays runnable as the labelled off-path branch via the override.
 
     Narrowed from `except Exception` on 2026-09-22. This is the most widely
     consumed fork read in the geometry tree -- `seed_values`, `n_gen_report`
@@ -104,12 +108,12 @@ def resolve_path() -> str:
     swallowed KeyError or ValueError here would put the ADOPTED seed under
     every downstream number while an override said otherwise, which is the
     worst possible place for a silent default. Only the import cycle is
-    tolerated.
+    tolerated, and its fallback must MATCH the adopted branch.
     """
     try:
         from metaphysica.simulations.core.variants import resolve
     except ImportError:                    # import cycle: the one real case
-        return "seed_24"
+        return "seed_43_joyce"
     return resolve("b3_seed")
 
 

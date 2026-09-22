@@ -195,6 +195,7 @@ class LeechPartitionV16(SimulationBase):
             "topology.partition_exact",  # Boolean: is 24/8 exact integer?
             "topology.g2_compatible",    # Boolean: G₂ = Aut(O)?
             "topology.niemeier_count",   # 24 even unimodular lattices in dim 24
+            "topology.b3_leech_identification",  # per-branch status of the old b3<->24 conflation
         ]
 
     @property
@@ -233,14 +234,31 @@ class LeechPartitionV16(SimulationBase):
         # Step 4: Verify G₂ compatibility
         g2_compatible = self._verify_g2_compatibility()
 
-        # Step 5: Cross-check with topology.elder_kads
-        b3 = registry.get_param("topology.elder_kads")
-        consistency = (b3 == self.leech.dimension)
+        # Step 5: the Leech lattice lives in the BULK's 24 spacelike core
+        # dimensions of the adopted (24,2) two-time signature -- a lattice
+        # dimension, not a Betti number. The old cross-check asserted
+        # b3 == dim(Leech), which HELD as a numerical coincidence on seed_24
+        # and is BROKEN on the adopted seed (b_3 = 43 counts cohomology
+        # classes of Y_7). Corrected wiring: the lattice is checked against
+        # the bulk core it actually occupies; the old identification is
+        # RECORDED per branch rather than enforced (2026-09-22, with the
+        # b3_seed adoption; the A4 bar names the two objects).
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
 
-        if not consistency:
+        core = get_registry().D_space_24
+        if self.leech.dimension != core:
             raise ValueError(
-                f"Inconsistency: b3={b3} but Leech dimension={self.leech.dimension}"
+                "Leech dimension %d does not match the bulk's spacelike core "
+                "%d -- the lattice no longer fits the adopted (24,2) bulk"
+                % (self.leech.dimension, core)
             )
+
+        b3 = registry.get_param("topology.elder_kads")
+        identification = (
+            "HOLDS(coincidence of seed_24)" if b3 == self.leech.dimension
+            else "BROKEN_ON_ADOPTED_SEED(b3=%s, leech_dim=%d)"
+                 % (b3, self.leech.dimension)
+        )
 
         return {
             "topology.n_gen_leech": n_gen,
@@ -249,6 +267,7 @@ class LeechPartitionV16(SimulationBase):
             "topology.partition_exact": is_exact,
             "topology.g2_compatible": g2_compatible,
             "topology.niemeier_count": float(NIEMEIER_LATTICE_COUNT),
+            "topology.b3_leech_identification": identification,
         }
 
 
@@ -492,10 +511,10 @@ class LeechPartitionV16(SimulationBase):
                     "Lambda_24": "Leech lattice, unique 24D even unimodular lattice with no norm-2 vectors",
                     "Niemeier": "Classification of even unimodular lattices in 24D"
                 },
-                eml_latex=r"\dim(\Lambda_{24}) = \mathrm{b3\_leaf}() = 24",
-                eml_tree_str="b3_leaf()",
-                eml_description="EML: b3_leaf() — Leech lattice dimension is canonically identified with b3=24; Conway (1969) uniqueness + Niemeier classification fixes dim=24, which is the same integer as the G2 third Betti number b3, so the chain links to the foundational seed",
-            arithma=_arithma_const("b3"), eml=_b3_leaf(), value=24.0),
+                eml_latex=r"\dim(\Lambda_{24}) = \mathrm{eml\_scalar}(24) = 24",
+                eml_tree_str="eml_scalar(24.0)  # Leech lattice dimension, a lattice constant (Conway/Niemeier), NOT b3",
+                eml_description="EML: eml_scalar(24) — the Leech lattice dimension is a MATHEMATICAL constant fixed by Conway (1969) uniqueness + the Niemeier classification. It was formerly identified with b3; that identification was a numerical coincidence of the seed_24 branch and is BROKEN on the adopted seed (b3 = 43 counts cohomology classes of Y_7; the lattice lives in the bulk's 24 spacelike core). Recorded per branch in topology.b3_leech_identification.",
+            arithma=_arithma_num(24.0), eml=_eml_scalar(24.0), value=24.0),
             Formula(
                 id="g2-automorphism-relation",
                 label="(3.16)",

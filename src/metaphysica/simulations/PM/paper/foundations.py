@@ -790,7 +790,7 @@ class FoundationsV16_2(SimulationBase):
                     "parentFormulas": []
                 },
                 eml_tree_str=(
-                    "ops.add(b3_leaf(), eml_scalar(2.0))"
+                    "ops.add(eml_scalar(24.0), eml_scalar(2.0))  # D_space_24 + 2 times; the b3 + 2 identity broke with the b3_seed adoption"
                 ),
                 eml_description=(
                     "Bulk signature (24,2): 24 spacelike dimensions plus 2 timelike (one per 13D shadow)."
@@ -800,7 +800,7 @@ class FoundationsV16_2(SimulationBase):
                     "ds^2": "Line element of the bulk metric",
                     "dy_{1i}, dy_{2i}": "Bridge pair coordinates for the i-th pair"
                 },
-            arithma=_arithma_add(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_add(_b3_leaf(), _eml_scalar(2.0)), value=26.0),
+            arithma=_arithma_add(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_add(_eml_scalar(24.0), _eml_scalar(2.0)), value=26.0),
             Formula(
                 id="euclidean-bridge",
                 label="(1.2)",
@@ -860,7 +860,7 @@ class FoundationsV16_2(SimulationBase):
                     "R_perp^full": "Full tensor product OR operator over 12 pairs",
                     "bigotimes": "Tensor product over all bridge pairs"
                 },
-            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)), value=12.0),
+            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_eml_scalar(24.0), _eml_scalar(2.0)), value=12.0),
             Formula(
                 id="central-sampler-formula",
                 label="(1.2c)",
@@ -891,7 +891,7 @@ class FoundationsV16_2(SimulationBase):
                     "n_local": "Number of active local pairs (6 baseline to 12 full)",
                     "phi": "Golden ratio (1+sqrt(5))/2"
                 },
-            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)), value=12.0),
+            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(2.0)), eml=_eml_div(_eml_scalar(24.0), _eml_scalar(2.0)), value=12.0),
             Formula(
                 id="g2-holonomy-foundations",
                 label="(1.3)",
@@ -946,22 +946,25 @@ class FoundationsV16_2(SimulationBase):
                         "-- that fails. This obstruction is independent of the bulk-signature "
                         "ruling and remains open.",
                         "Fermion zero modes counted by chi_eff/(2*b3) = 144/48 = 3",
-                        "Alternatively simplified: b3/8 = 24/8 = 3 generations per shadow"
+                        "RELOCATED by the b3_seed adoption: the generation count is n_gen = rank(Gamma) = b2/4 = 3; the b3/8 form held only at the off-path b3 = 24"
                     ],
                     "parentFormulas": ["g2-holonomy-foundations"]
                 },
                 eml_tree_str=(
-                    "ops.div(b3_leaf(), eml_scalar(8.0))"
+                    "ops.div(eml_scalar(12.0), eml_scalar(8.0/2.0))  # b2/4 = 12/4, the adopted n_gen route"
                 ),
                 eml_description=(
-                    "Three fermion generations: b3=24 divided by 8 flux quantization divisor."
+                    "Three fermion generations: n_gen = b2/4 = 12/4 = 3, the RANK of the "
+                    "orbifold group recovered from the derived family count. The former "
+                    "b3/8 reading is the off-path n_gen_source branch (integer nowhere "
+                    "on the Joyce family)."
                 ),
                 terms={
-                    "N_gen": "Number of fermion generations",
-                    "b_3": "Third Betti number of G2 manifold (24)",
-                    "8": "Divisor from flux quantization constraint"
+                    "N_gen": "Number of fermion generations = rank(Gamma)",
+                    "b_2": "Second Betti number, the derived A1 family count (12 on the adopted seed)",
+                    "4": "The derived faces: moved coordinates of an involution (R2)"
                 },
-            arithma=_arithma_div(_arithma_num(24.0), _arithma_num(8.0)), eml=_eml_div(_b3_leaf(), _eml_scalar(8.0)), value=3.0),
+            arithma=_arithma_div(_arithma_num(12.0), _arithma_num(4.0)), eml=_eml_div(_eml_scalar(12.0), _eml_scalar(4.0)), value=3.0),
             Formula(
                 id="calabi-yau-projection",
                 label="(1.4)",

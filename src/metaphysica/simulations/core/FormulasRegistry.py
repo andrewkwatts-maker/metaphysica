@@ -1104,20 +1104,35 @@ class FormulasRegistry:
         # =======================================================================
         # TOPOLOGICAL INVARIANTS (The Foundation)
         # =======================================================================
-        # b3 = 24: Third Betti number of G2 manifold (Joyce-Karigiannis TCS)
+        # b3: Third Betti number, follows the b3_seed fork (43 adopted, 24 off-path)
         #
-        # NOTE ON b3 = D_core_24 = 24:
-        # b3 (G2 Betti number) and D_core_24 (G2 core spatial dims) have the
-        # same numerical value (24) representing connected concepts:
-        # - b3: Topological invariant from G2 cohomology (rank of H^3)
-        # - D_core_24: Core spatial dimensions in 26D(24,2) bulk
+        # NOTE ON b3 vs D_core_24 (they are NOT the same object):
+        # b3 follows the ADOPTED SEED (author ruling 2026-09-22: the active
+        # path matches the found solution, (b_2, b_3) = (12, 43), selected by
+        # n_gen = rank(Gamma) = 3 with b_3 = 7 + 3 b_2).
         #
-        # Two-time: 26D = 24 space + 2 times = (24,2) signature.
-        # The 24D core supports Cl(24,2) physics while the two shadow times provide
-        # architectural global averaging outside the fiber product.
+        # The old comment here identified b3 with D_core_24 ("same numerical
+        # value (24) representing connected concepts"). That identification is
+        # BROKEN by the ruling: b3 counts cohomology classes and is 43 on the
+        # adopted path; the bulk stays 26D = (24,2) from the two-time
+        # migration, whose 24 is the spacelike core dimension, NOT b3. The
+        # b3 + 2 = D_bulk identity was a coincidence of the seed_24 branch and
+        # is recorded as such (see the b3_seed fork's consequence field).
+        #
+        # Two-time: 26D = 24 space + 2 times = (24,2) signature -- unchanged.
         #
         # Reference: Joyce, D. (2000). Compact Manifolds with Special Holonomy
-        self._b3 = 24                    # Third Betti number of G2 manifold
+        try:
+            from metaphysica.simulations.PM.geometry.b3_path import (
+                resolve_path as _resolve_b3_path,
+                seed_values as _seed_values,
+            )
+
+            self._b3 = _seed_values(_resolve_b3_path())[0]
+        except ImportError:
+            # Import cycle only. The fallback must MATCH the adopted branch
+            # (same convention as b3_path.resolve_path's own fallback).
+            self._b3 = 43
 
         # v20.1: DUAL CHI_EFF STRUCTURE
         # ================================================================

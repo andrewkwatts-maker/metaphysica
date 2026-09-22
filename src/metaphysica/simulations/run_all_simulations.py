@@ -1138,6 +1138,21 @@ def validate_section_assignments(simulations: List['SimulationBase'], verbose: b
     }
 
 
+def _console_safe(text: str) -> str:
+    """Make error text printable on any console encoding.
+
+    A simulation raised with a Unicode subscript in its message and the
+    RUNNER died reporting it: print() hit cp1252, raised UnicodeEncodeError
+    inside the except block, and the uncaught encode error killed the
+    process with the log truncated mid-simulation. The failure was
+    survivable; reporting it was not. Every error print goes through here
+    so a message can never crash its own reporter.
+    """
+    import sys
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    return str(text).encode(enc, errors="backslashreplace").decode(enc)
+
+
 @dataclass
 class SimulationResult:
     """Result of running a single simulation."""
@@ -1800,7 +1815,7 @@ class SimulationRunner:
             result.status = "FAILED"
             result.error_message = str(e)
             if self.verbose:
-                print(f"  [X] Simulation failed with error: {e}")
+                print("  [X] Simulation failed with error: %s" % _console_safe(e))
 
         self.results.append(result)
 
@@ -1919,7 +1934,7 @@ class SimulationRunner:
             result.status = "FAILED"
             result.error_message = str(e)
             if self.verbose:
-                print(f"  [X] Simulation failed with error: {e}")
+                print("  [X] Simulation failed with error: %s" % _console_safe(e))
 
         self.results.append(result)
 
@@ -3475,6 +3490,18 @@ def main():
         uq_mode=args.uq,
         use_experimental=args.use_experimental,
     )
+    # Console-encoding armour: three separate crashes this campaign came from
+    # printing an error message carrying a Unicode subscript on a cp1252
+    # console -- the reporter died, not the simulation. Backslash-replace at
+    # the stream level makes every print survivable without touching content.
+    import sys as _sys
+    for _stream in (_sys.stdout, _sys.stderr):
+        if hasattr(_stream, "reconfigure"):
+            try:
+                _stream.reconfigure(errors="backslashreplace")
+            except (ValueError, OSError):
+                pass
+
     output_data = runner.run_all()
 
     # =========================================================================
