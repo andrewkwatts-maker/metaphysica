@@ -317,8 +317,21 @@ def vacuum_report() -> Dict[str, Any]:
         "declared": {
             "A": A, "B": B, "B_over_A": B / A,
             "a": a, "b": b,
-            "a_is_geometric": "2 pi / b_3 = 2 pi / 24",
-            "b_is_geometric": "2 pi / N_b = 2 pi / 26",
+            # The string is COMPUTED from the declared exponent, never typed:
+            # it froze once at "2 pi / 24" while a was already 2 pi / 43
+            # (caught 2026-09-22). On the adopted seed a < b, the racetrack
+            # ordering is lost, and no vacuum exists -- which this report
+            # must describe rather than contradict.
+            "a_is_geometric": "2 pi / b_3 = 2 pi / %d" % round(2 * math.pi / a),
+            "b_is_geometric": "2 pi / N_b = 2 pi / %d" % round(2 * math.pi / b),
+            "ordering_a_gt_b": a > b,
+            "ordering_note": (
+                "a > b holds; the racetrack mechanism is available"
+                if a > b else
+                "a < b: the racetrack ordering is LOST on this seed and no "
+                "vacuum exists (0 stationary points, 0 SUSY roots, measured "
+                "2026-09-22); see the b3_seed fork's consequence field"
+            ),
         },
         "w_zero_at": math.log(abs(A / B)) / (a - b) if B else None,
         "branches": {},

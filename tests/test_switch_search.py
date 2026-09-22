@@ -185,10 +185,44 @@ def test_the_checks_report_the_known_open_contradictions(checks):
                             "arithma_track_agrees",
                             "neutrino_mass_sum_is_stated_once",
                             "joyce_branch_is_decidable"}
-    assert by_name["n_gen_is_integral"]["ok"] is True, (
-        "b_3/8 is no longer an integer -- a generation count is a number of "
-        "things, so this is a structural failure, not a tolerance question"
+
+
+def test_the_generation_count_is_still_a_number_of_things(checks):
+    """A generation count must be an integer. It is -- via a different route.
+
+    Measured 2026-09-22, b3_seed adoption. ``n_gen_is_integral`` in
+    switch_search tests b_3 / 8, the b3_over_dim_O route, and on the adopted
+    seed b_3 = 43 makes that 5.375. That is NOT news to be re-pinned away:
+    the non-integrality of 43/8 is the stated discriminator that moved the
+    n_gen_source fork to b2_over_faces in the first place, so the check is
+    now reporting the failure of the route the framework has left, and it
+    must keep reporting it.
+
+    What the check no longer covers is the claim itself, so this test
+    carries it: n_gen from the LIVE n_gen_source is an integer, and it is 3.
+    Both halves are asserted, so re-rooting switch_search's check on the
+    live source fails here and gets read rather than absorbed.
+    """
+    by_name = {c["name"]: c for c in checks}
+    b3_over_eight = by_name["n_gen_is_integral"]
+    assert b3_over_eight["ok"] is False, (
+        "b_3 / 8 is integral again, so the seed has moved back onto the "
+        "off-path branch or the check has been re-rooted; either way the "
+        "generation source below must be re-read"
     )
+    assert b3_over_eight["kind"] == "STRUCTURAL_FAILURE"
+    assert "5.375" in b3_over_eight["detail"], b3_over_eight["detail"]
+
+    from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+    report = n_gen_report()
+    assert report["declared_source"] == "b2_over_faces"
+    assert report["n_gen"] == 3
+    assert report["is_integer"] is True, (
+        "a generation count is a number of things, so this is a structural "
+        "failure, not a tolerance question: %r" % (report["n_gen"],)
+    )
+    assert report["equals_three"] is True
 
 
 def test_evaluating_one_combination_restores_the_environment():
@@ -291,3 +325,93 @@ def test_clean_on_switch_controlled_checks_is_not_a_ranking(result):
         bad = [c["name"] for c in row["checks"]
                if not c["ok"] and c["name"] in result["problems_the_switches_control"]]
         assert bad == [], "%s is listed clean but fails %s" % (d, bad)
+
+
+def test_a_capped_search_always_includes_the_adopted_state():
+    """FOUND 2026-09-23 by adding options: declaration order meant a capped
+    sweep could omit the very state everything is compared against.
+
+    When `b3_seed` grew from two options to five (the reachable family
+    becoming runnable), `cap=3` explored seed_24, seed_7_joyce,
+    seed_19_joyce and never reached the adopted seed_43_joyce. Enumeration
+    is now adopted-first, so truncation drops the most exotic combinations
+    instead of the baseline. This matters more with every option added,
+    which is the direction the framework is going.
+    """
+    from metaphysica.simulations.core.switch_search import combinations_for
+    from metaphysica.simulations.core.variants import FORKS
+
+    ids = ["b3_seed", "n_gen_source"]
+    adopted = {fid: FORKS[fid].default() for fid in ids}
+
+    first = combinations_for(ids, cap=1)
+    assert first and first[0] == adopted, (
+        "the first combination of a capped search is %s, not the adopted "
+        "state %s -- a truncated sweep would omit the baseline"
+        % (first[0] if first else None, adopted)
+    )
+
+    # And every prefix keeps containing it, not just the cap=1 case.
+    for cap in (1, 2, 3, 5):
+        combos = combinations_for(ids, cap=cap)
+        assert adopted in combos, (
+            "cap=%d dropped the adopted state" % cap)
+
+
+def test_the_uncapped_search_still_covers_every_option():
+    """Adopted-first reorders; it must never drop."""
+    from metaphysica.simulations.core.switch_search import combinations_for
+    from metaphysica.simulations.core.variants import FORKS
+
+    seen = {d["b3_seed"] for d in combinations_for(["b3_seed"])}
+    assert seen == set(FORKS["b3_seed"].option_ids()), (
+        "reordering lost options: %s vs %s"
+        % (sorted(seen), sorted(FORKS["b3_seed"].option_ids()))
+    )
+
+def test_a_capped_search_leads_with_the_adopted_state():
+    """FOUND 2026-09-23 by adding options: declaration order meant a capped
+    sweep could omit the very state everything is compared against.
+
+    When `b3_seed` grew from two options to five (the reachable family
+    becoming runnable), `cap=3` explored seed_24, seed_7_joyce,
+    seed_19_joyce and never reached the adopted seed_43_joyce. Enumeration
+    is now adopted-first, then by DECLARED priority, so a truncated sweep
+    spends its budget on combinations someone might adopt rather than on
+    candidates already refuted.
+    """
+    from metaphysica.simulations.core.switch_search import combinations_for
+    from metaphysica.simulations.core.variants import FORKS
+
+    ids = ["b3_seed", "n_gen_source"]
+    adopted = {fid: FORKS[fid].default() for fid in ids}
+    for cap in (1, 2, 3, 5):
+        combos = combinations_for(ids, cap=cap)
+        assert combos[0] == adopted, (
+            "cap=%d leads with %s, not the adopted state %s"
+            % (cap, combos[0], adopted))
+
+
+def test_priority_orders_the_alternatives_after_the_adopted_one():
+    """The live alternative sweeps before the retained-for-completeness ones."""
+    from metaphysica.simulations.core.switch_search import combinations_for
+    from metaphysica.simulations.core.variants import FORKS
+
+    order = [d["b3_seed"] for d in combinations_for(["b3_seed"])]
+    assert order[0] == FORKS["b3_seed"].default()
+    assert order[1] == "seed_24", (
+        "the live alternative (priority 0) must sweep second; order is %s"
+        % order)
+    refuted = {"seed_7_joyce", "seed_19_joyce", "seed_31_joyce"}
+    assert set(order[2:]) == refuted, (
+        "the structurally refuted profiles must sweep LAST; order is %s"
+        % order)
+
+
+def test_reordering_never_drops_an_option():
+    """Priority reorders; it must never lose a branch."""
+    from metaphysica.simulations.core.switch_search import combinations_for
+    from metaphysica.simulations.core.variants import FORKS
+
+    seen = {d["b3_seed"] for d in combinations_for(["b3_seed"])}
+    assert seen == set(FORKS["b3_seed"].option_ids())

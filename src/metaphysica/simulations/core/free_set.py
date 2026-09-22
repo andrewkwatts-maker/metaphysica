@@ -192,9 +192,22 @@ def verify_geometric_identities(params=None) -> Dict[str, Any]:
             "uses_b3": uses_b3,
         }
 
-    if b3:
-        _check("fermion.n_generations", b3 / 8.0,
-               "b_3 / 8 from the registered particle.b3", uses_b3=True)
+    # n_generations follows the RULED n_gen_source route, not b_3/8. The
+    # b_3/8 form was the seed_24 route and yields 5.375 on the adopted seed
+    # -- a non-integral generation count, which is exactly the structural
+    # failure that moved the ruling. Checking the abandoned route here made
+    # the row look un-reproducible and pushed it back into the free set
+    # (b3_seed adoption, 2026-09-22).
+    try:
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+        _ruled_n_gen = n_gen_report()
+        _check("fermion.n_generations", float(_ruled_n_gen["n_gen"]),
+               "the RULED n_gen_source route (%s); the b_3/8 form is the "
+               "seed_24 route and is non-integral on the adopted seed"
+               % _ruled_n_gen["declared_source"])
+    except ImportError:                    # import cycle only
+        pass
         _check("cosmology.wa_thawing", -4.0 / math.sqrt(b3),
                "-4/sqrt(b_3) -- the RETIRED formula's legacy artefact; "
                "removal records no independent content, not a revival",

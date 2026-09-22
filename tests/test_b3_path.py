@@ -20,22 +20,48 @@ from metaphysica.simulations.PM.geometry.b3_path import (
 )
 
 
-def test_both_paths_are_declared_with_provenance():
-    assert set(PATHS) == {"seed_24", "seed_43_joyce"}
+def test_every_path_is_declared_with_provenance():
+    """The family is GENERATED (2026-09-23), so this checks the shape of
+    what the generator produces rather than a hand-written list."""
+    assert set(PATHS) == {"seed_24", "seed_7_joyce", "seed_19_joyce",
+                          "seed_31_joyce", "seed_43_joyce"}, (
+        "the declared paths are %s; the reachable family is generated from "
+        "b_3 = 7 + 3 n_T3 over n_T3 in {0,4,8,12} plus the off-family "
+        "seed_24" % sorted(PATHS)
+    )
+    reachable = {k for k, v in PATHS.items() if v["reachable_by_joyce"]}
+    assert len(reachable) == 4, reachable
     for key, spec in PATHS.items():
         assert spec["b3_provenance"], key
         assert spec["b2_provenance"], key
         assert spec["n_gen_source"] in ("b3_over_dim_O", "b2_over_faces")
 
 
-def test_the_adopted_path_is_still_the_status_quo():
-    """Nothing published moves until the author rules."""
-    b3, b2 = seed_values("seed_24")
-    assert (b3, b2) == (24, 4)
-    from metaphysica.simulations.core.variants import FORKS
+def test_the_adopted_path_is_the_ruled_seed(monkeypatch):
+    """The author ruled on 2026-09-22: the active path IS the found solution.
 
-    assert FORKS["b3_seed"].default() == "seed_24"
-    assert FORKS["n_gen_source"].default() == "b3_over_dim_O"
+    Measured 2026-09-22, b3_seed adoption: the default fork reads
+    seed_43_joyce, (b_3, b_2) = (43, 12), and n_gen_source follows it to
+    b2_over_faces. seed_24 = (24, 4) is not deleted -- it stays the labelled
+    off-path branch, reachable through the fork's own environment switch,
+    which is asserted below so the ruling cannot quietly become the only
+    runnable path.
+    """
+    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.delenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", raising=False)
+    from metaphysica.simulations.core.variants import FORKS
+    from metaphysica.simulations.PM.geometry.b3_path import resolve_path
+
+    assert FORKS["b3_seed"].default() == "seed_43_joyce"
+    assert FORKS["n_gen_source"].default() == "b2_over_faces"
+    assert resolve_path() == "seed_43_joyce"
+    assert seed_values() == (43, 12)
+
+    # the off-path branch stays runnable, and still carries its own pair
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    assert resolve_path() == "seed_24"
+    assert seed_values() == (24, 4)
+    assert seed_values("seed_24") == (24, 4)
 
 
 def test_the_43_path_derives_both_betti_numbers():
@@ -51,14 +77,28 @@ def test_the_43_path_derives_both_betti_numbers():
 # ------------------------------------------- the generation count, both ways
 
 
-def test_three_generations_survive_on_both_paths():
-    """The 43 path does not lose them -- it relocates their origin."""
-    for key in PATHS:
+def test_three_generations_survive_the_relocation():
+    """The 43 path does not LOSE the three generations -- it relocates them.
+
+    Scoped to the two adopted-candidate paths. Since the whole reachable
+    family became runnable (2026-09-23) the other profiles give 0, 1 and 2
+    generations, and that is the SELECTION rather than a failure of this
+    claim: see test_the_family_members_are_structurally_refuted below.
+    """
+    for key in ("seed_24", "seed_43_joyce"):
         report = n_gen_report(key)
         assert report["equals_three"], (
             "%s gives n_gen = %s via %s"
             % (key, report["n_gen"], report["declared_source"])
         )
+
+
+def test_the_family_members_are_structurally_refuted():
+    """0, 1 and 2 generations -- a count is a number of things."""
+    counts = {k: n_gen_report(k)["n_gen"]
+              for k in ("seed_7_joyce", "seed_19_joyce", "seed_31_joyce")}
+    assert counts == {"seed_7_joyce": 0.0, "seed_19_joyce": 1.0,
+                      "seed_31_joyce": 2.0}, counts
 
 
 def test_each_generation_source_fails_on_the_other_path():
@@ -134,9 +174,22 @@ def test_the_comparison_selects_nothing():
     assert "never by agreement" in result["ordering"]
     paths = [r["path"] for r in result["rows"]]
     assert paths == sorted(paths), "rows must be ordered by path id"
-    assert result["both_pass_structurally"] is True, (
-        "both paths give three generations, so the structural test does NOT "
-        "decide between them -- the ruling is genuinely the author's"
+    # Since the reachable family became runnable the structural test DOES
+    # select -- within the family. It eliminates the 0/1/2-generation
+    # profiles and leaves exactly one; what it does NOT do is separate
+    # (12,43) from the off-family seed_24, which also gives three. That
+    # separation is reachability, and the two criteria are independent.
+    assert result["structural_test_is_decisive_within_the_family"] is True, (
+        "more than one REACHABLE profile gives three generations, so the "
+        "selection argument behind the adoption needs re-deriving: %s"
+        % result["reachable_paths_passing_structural"]
+    )
+    assert result["reachable_paths_passing_structural"] == ["seed_43_joyce"]
+    assert "REACHABILITY" in result["what_separates_the_two_that_pass"]
+    assert set(result["paths_passing_structural"]) == {
+        "seed_24", "seed_43_joyce"}, (
+        "the paths giving three generations changed: %s"
+        % result["paths_passing_structural"]
     )
 
 

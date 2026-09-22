@@ -72,6 +72,42 @@ __all__ = [
 ]
 
 #: path id -> (b_3, b_2, how each was obtained)
+#: The Joyce-reachable family, GENERATED rather than listed.
+#:
+#: derived_contribution_table settles b_3 = 7 + 3 n_T3 with n_T3 in
+#: {0, 4, 8, 12} over the admissible enumeration, and b_2 = n_T3 (one
+#: exceptional 2-class per A1 family). That is FOUR profiles, and until
+#: 2026-09-23 only two entries existed here -- so "n_gen = 3 selects
+#: (12, 43) uniquely out of four candidates" was a claim about candidates
+#: the pipeline could not run. Every profile is now executable, which turns
+#: the selection argument into something the suite can CHECK rather than
+#: restate: n_gen = b_2/4 gives 0, 1, 2, 3 across the family, and only the
+#: last is three.
+#:
+#: Off-family entries (seed_24) stay declared by hand and LABELLED, because
+#: the point of keeping them is that they are not reachable.
+def _joyce_family() -> Dict[str, Dict[str, Any]]:
+    """The reachable profiles, from the contribution table's own relation."""
+    out: Dict[str, Dict[str, Any]] = {}
+    for n_t3 in (0, 4, 8, 12):
+        b3 = 7 + 3 * n_t3
+        b2 = n_t3
+        out["seed_%d_joyce" % b3] = {
+            "b3": b3,
+            "b2": b2,
+            "b3_provenance": (
+                "DERIVED: 7 flat (joyce_orbifold R3) + 3 x %d A1 families "
+                "(derived_contribution_table, b_3 = 7 + 3 n_T3)" % n_t3
+            ),
+            "b2_provenance":
+                "DERIVED: one exceptional 2-class per A1 family, %d" % b2,
+            "n_gen_source": "b2_over_faces",
+            "reachable_by_joyce": True,
+            "n_t3": n_t3,
+        }
+    return out
+
+
 PATHS: Dict[str, Dict[str, Any]] = {
     "seed_24": {
         "b3": 24,
@@ -81,18 +117,14 @@ PATHS: Dict[str, Dict[str, Any]] = {
         "n_gen_source": "b3_over_dim_O",
         "reachable_by_joyce": False,
     },
-    "seed_43_joyce": {
-        "b3": 43,
-        "b2": 12,
-        "b3_provenance": (
-            "DERIVED: 7 flat (joyce_orbifold R3) + 3 x 12 A1 families "
-            "(derived_contribution_table)"
-        ),
-        "b2_provenance": "DERIVED: one exceptional 2-class per A1 family, 12",
-        "n_gen_source": "b2_over_faces",
-        "reachable_by_joyce": True,
-    },
 }
+PATHS.update(_joyce_family())
+
+#: Back-compatible alias: the adopted profile was named before the family
+#: was generated, and the register, the forks and every override that users
+#: have typed say `seed_43_joyce`. The generator produces the same key, so
+#: this is an assertion that the naming did not drift, not a remapping.
+assert "seed_43_joyce" in PATHS, "the generated family lost the adopted key"
 
 
 def resolve_path() -> str:
@@ -329,6 +361,27 @@ def compare_paths() -> Dict[str, Any]:
         ),
         "paths_passing_structural": structural_pass,
         "both_pass_structurally": len(structural_pass) == len(rows),
+        # Sharper framing, available since the whole reachable family became
+        # runnable (2026-09-23). The structural discriminator DOES select
+        # now -- it eliminates the family members giving 0, 1 and 2
+        # generations -- but it does not separate the two candidates that
+        # both give three. Those are separated by REACHABILITY instead:
+        # seed_24 fails b_3 = 7 + 3 b_2, b_3 = 7 (mod 12) and the TCS range.
+        # Two independent criteria, and together they are unique.
+        "reachable_paths_passing_structural": sorted(
+            p for p in structural_pass
+            if PATHS[p].get("reachable_by_joyce")),
+        "structural_test_is_decisive_within_the_family": (
+            len([p for p in structural_pass
+                 if PATHS[p].get("reachable_by_joyce")]) == 1),
+        "what_separates_the_two_that_pass": (
+            "REACHABILITY, not the generation count: seed_24 also gives "
+            "three (24/8) but fails b_3 = 7 + 3 b_2, b_3 = 7 (mod 12) and "
+            "the exhibited TCS range, so it is not on the family at all. "
+            "The generation count selects WITHIN the family; reachability "
+            "excludes the off-family candidate. Neither criterion "
+            "references a measurement."
+        ),
         "note_on_w0": (
             "w_0 residuals are reported per row because hiding them would be "
             "its own dishonesty, but they order nothing: w_0 moves only 0.0017 "

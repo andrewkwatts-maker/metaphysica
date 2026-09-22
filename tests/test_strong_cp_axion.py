@@ -118,8 +118,17 @@ def test_b3_leaf_is_in_derivation_tree():
     # The tree numerically evaluates to f_a.
     assert eml_compute(instance._f_a_tree) == pytest.approx(instance.f_a, rel=1e-9)
 
-    # The b3 seed evaluates to 24 (sanity check on b3_leaf itself).
-    assert eml_compute(b3_leaf()) == pytest.approx(24.0, rel=0.0)
+    # The b3 seed evaluates to the live fork's b_3 (sanity check on
+    # b3_leaf itself). Measured 2026-09-22, b3_seed adoption: 43.0 on the
+    # adopted seed_43_joyce branch, where it read 24.0 before the ruling.
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    seed_b3 = float(seed_values(resolve_path())[0])
+    assert seed_b3 == 43.0, "the adopted b3_seed branch moved; re-measure"
+    assert eml_compute(b3_leaf()) == pytest.approx(seed_b3, rel=0.0)
 
 
 def test_b3_traceback_flag_set_in_persisted_tree():

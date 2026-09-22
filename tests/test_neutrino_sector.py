@@ -172,20 +172,45 @@ def test_b3_leaf_in_m_lightest_tree():
     """Constructing the class builds an EML tree anchored at ``b3_leaf()``.
 
     Walking the symbolic tree must evaluate numerically to ``m_lightest``,
-    while the underlying b3 seed evaluates to 24.0.
+    while the underlying b3 seed evaluates to the live fork's b_3.
+
+    KNOWN FAILING, and deliberately not reconciled (2026-09-22, b3_seed
+    adoption). ``NeutrinoSectorRefinement.__init__`` builds the tree as
+
+        _m_lightest_tree = (b3_leaf() * (1 / 24)) * m_seed
+
+    with the (1/24) commented in the source as an "identity factor:
+    (1/24) * b3 = 1". That is an identity only at b_3 = 24. On the adopted
+    seed_43_joyce branch ``b3_leaf()`` returns 43, so the tree evaluates to
+    m_lightest * 43/24 = 0.0017916666666666669 eV against m_lightest =
+    0.001 eV -- the tree no longer computes the quantity it is the tree OF.
+    Unlike the seed-blind defaults elsewhere in this sector there is no
+    constructor argument that restores the identity, so this is a source
+    defect to be fixed by re-rooting the normalisation on the live seed,
+    not a moved number to re-pin. The assertion stays live and failing
+    until that lands; weakening it would erase the only signal.
     """
     mod = _import_module()
     from metaphysica.simulations.core.eml_tree_adapter import (
         b3_leaf,
         eml_compute,
     )
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    seed_b3 = float(seed_values(resolve_path())[0])
+    assert seed_b3 == 43.0, "the adopted b3_seed branch moved; re-measure"
+    # Measured 2026-09-22, b3_seed adoption: b3_leaf() reports the adopted
+    # seed's 43.0 where it reported 24.0 before the ruling.
+    assert eml_compute(b3_leaf()) == pytest.approx(seed_b3, rel=0.0)
 
     inst = mod.NeutrinoSectorRefinement()
     assert inst._m_lightest_tree is not None
     assert eml_compute(inst._m_lightest_tree) == pytest.approx(
         inst.m_lightest, rel=1e-9
     )
-    assert eml_compute(b3_leaf()) == pytest.approx(24.0, rel=0.0)
 
 
 def test_b3_traceback_flag_set_in_persisted_tree():

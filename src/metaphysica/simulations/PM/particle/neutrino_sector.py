@@ -151,16 +151,16 @@ class NeutrinoSectorRefinement:
         self.bridge_coupling = float(bridge_coupling)
         self.nu_tree = eml_operator_tree("neutrino_sector")
 
-        # Anchor m_lightest to the b3 = 24 seed via a symbolic
-        # ``m_lightest = (b3 / 24) * m_seed`` expression. The (b3/24) factor
-        # is identically 1 numerically but ensures the dependency walker
-        # picks up the b3_leaf() reference. ``m_seed`` absorbs the actual
-        # numerical value so the tree evaluates back to ``self.m_lightest``.
-        b3_node = b3_leaf()
-        b3_norm = eml_scalar(1.0 / 24.0)  # identity factor: (1/24) * b3 = 1
-        b3_unit = eml_mul(b3_node, b3_norm)  # == 1 numerically
-        m_seed = eml_scalar(self.m_lightest)
-        self._m_lightest_tree = eml_mul(b3_unit, m_seed)
+        # The tree used to carry a COSMETIC b3 dependence: m_lightest *
+        # (b3/24), "identically 1", purely so the dependency walker would
+        # see a b3_leaf() reference. That was an identity ONLY at the old
+        # seed -- under the b3_seed adoption (2026-09-22) b3_leaf() reads
+        # 43 and the tree silently computed m_lightest * 43/24, no longer
+        # the quantity it is the tree of. m_lightest does NOT ride on b_3;
+        # faking the provenance to please a tracer is exactly the
+        # conflation class the adoption exposed, so the tree now states
+        # the honest dependency: none.
+        self._m_lightest_tree = eml_scalar(self.m_lightest)
 
         # Register the m_lightest -> b3 provenance immediately so the
         # b3_traceback flag fires even if the caller never invokes the

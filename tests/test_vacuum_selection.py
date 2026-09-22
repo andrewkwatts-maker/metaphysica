@@ -25,6 +25,17 @@ from metaphysica.simulations.PM.cosmology.vacuum_selection import (
 )
 
 
+def _seed_b3() -> int:
+    """b_3 of the live seed. Tests that hardcoded 24 were pinning the
+    off-path branch by accident once the adoption landed."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
+
+
 # ── Test 1: suppression worked ──────────────────────────────────────────────
 
 def test_dynamically_selected_less_than_raw():
@@ -54,26 +65,66 @@ def test_b3_leaf_in_eml_tree():
     if not EML_AVAILABLE:
         pytest.skip("eml-math + eml-spectral not installed in this env")
 
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    seed_b3 = seed_values(resolve_path())[0]
+    assert seed_b3 == 43, "the adopted b3_seed branch moved; re-measure"
+
     selector = DynamicalVacuumSelector()
     result = selector.select_vacuum()
 
     tree = selector.eml_tree
     # Tree must carry a b3_leaf handle from the build path.
     assert "b3_leaf" in tree, "EML tree missing b3 leaf reference"
-    # Tree's b3 leaf must report value 24 via tension().
+    # The tree's b3 leaf reports the LIVE seed via tension(). Measured
+    # 2026-09-22, b3_seed adoption: 43.0, where it read 24.0 before the
+    # ruling.
     b3_tension = float(tree["b3_leaf"].tension())
-    assert math.isclose(b3_tension, 24.0, rel_tol=1e-9), (
-        f"b3 leaf tension {b3_tension} != 24 (G2 third Betti number)"
+    assert math.isclose(b3_tension, float(seed_b3), rel_tol=1e-9), (
+        f"b3 leaf tension {b3_tension} != {seed_b3} (G2 third Betti number "
+        f"of the adopted seed)"
     )
-    # Tree root EML evaluation must agree with the float pipeline.
+
+    # HEALED 2026-09-23. The two sides used to sit on different b_3 values:
+    # the tree followed the seed through b3_leaf() while the float pipeline
+    # took its b_3 from the class's own seed-blind ``DEFAULT_B3 = 24``, the
+    # fifth seed-blind writer (it published cosmology.b3 = 24 beside
+    # particle.b3 = 43, which the ambiguous-alias guard caught). The frozen
+    # default is gone -- resolution happens at call time from the live seed
+    # -- so both sides now sit on the SAME b_3 and this is an agreement
+    # check rather than a recorded divergence.
     assert result["eml_value"] is not None, "EML value not computed"
+    assert result["b3"] == _seed_b3(), (
+        "select_vacuum no longer follows the live seed; a frozen default "
+        "has come back"
+    )
+    # RETIRED 2026-09-23, exactly as the old assertion instructed: "the
+    # seed-blind default has healed; re-measure this pin and retire the
+    # divergence rather than leaving a check that cannot fire." It healed,
+    # so the divergence pin is gone and AGREEMENT is required instead.
+    # Measured on the adopted seed: both sides 1.6753435421813e+37. The old
+    # float side, 2.0470466728037693e+24, was the b_3 = 24 value the frozen
+    # DEFAULT_B3 produced; it survives on the off-path branch below.
     assert math.isclose(
-        result["eml_value"],
-        result["dynamically_selected"],
+        result["eml_value"], result["dynamically_selected"], rel_tol=1e-6
+    ), (
+        "the EML tree and the float pipeline disagree again (%r vs %r) -- "
+        "a seed-blind default has come back somewhere in this module"
+        % (result["eml_value"], result["dynamically_selected"])
+    )
+
+    seeded = DynamicalVacuumSelector().select_vacuum(b3=seed_b3)
+    assert math.isclose(
+        seeded["eml_value"],
+        seeded["dynamically_selected"],
         rel_tol=1e-6,
     ), (
-        f"EML tree ({result['eml_value']:.6e}) disagrees with float "
-        f"pipeline ({result['dynamically_selected']:.6e})"
+        f"EML tree ({seeded['eml_value']:.6e}) disagrees with float "
+        f"pipeline ({seeded['dynamically_selected']:.6e}) at b_3 = "
+        f"{seed_b3}, so the tree is not the pipeline's expression"
     )
 
 
@@ -90,10 +141,18 @@ def test_raw_vacua_exceeds_ten_to_the_thirty():
 
 # ── Bonus sanity checks ─────────────────────────────────────────────────────
 
-def test_default_inputs_match_topology():
-    """Default b3=24 and flux_modes=12 (= b3/2 paired bridges)."""
-    assert DynamicalVacuumSelector.DEFAULT_B3 == 24
+def test_the_class_carries_no_frozen_b3():
+    """The seed-blind DEFAULT_B3 is gone and must not return.
+
+    It was a default ARGUMENT, which is exactly where a frozen value hides:
+    callers that pass nothing get the literal, and the row it publishes
+    (cosmology.b3) disagrees with every other b_3 in the artifact.
+    """
+    assert not hasattr(DynamicalVacuumSelector, "DEFAULT_B3"), (
+        "DEFAULT_B3 is back on the class; resolution belongs at call time"
+    )
     assert DynamicalVacuumSelector.DEFAULT_FLUX_MODES == 12
+    assert DynamicalVacuumSelector().select_vacuum()["b3"] == _seed_b3()
 
 
 def test_attractor_constants_match_spec():
@@ -111,18 +170,18 @@ def test_anthropic_rejected_string_present():
 
 
 def test_log_vacua_raw_matches_formula():
-    """log_vacua_raw = b3 * ln(flux_modes) + 8 * ln(10)."""
+    """log_vacua_raw = b3 * ln(flux_modes) + 8 * ln(10), on the LIVE seed."""
     result = prune_landscape()
-    expected = 24 * math.log(12) + 8 * math.log(10)
+    expected = _seed_b3() * math.log(12) + 8 * math.log(10)
     assert math.isclose(
         result["log_vacua_raw"], expected, rel_tol=1e-12
     ), f"log_vacua_raw {result['log_vacua_raw']} != formula {expected}"
 
 
 def test_pruning_factor_matches_formula():
-    """pruning_factor = exp(-0.92 * b3) with b3=24."""
+    """pruning_factor = exp(-0.92 * b3), on the LIVE seed."""
     result = prune_landscape()
-    expected = math.exp(-0.92 * 24)
+    expected = math.exp(-0.92 * _seed_b3())
     assert math.isclose(
         result["pruning_factor"], expected, rel_tol=1e-12
     )

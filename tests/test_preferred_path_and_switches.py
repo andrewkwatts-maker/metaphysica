@@ -94,9 +94,15 @@ def test_comparison_shows_what_moves_without_selecting():
     names = [r["observable"] for r in result["rows"]]
     assert names == sorted(names), "rows must be ordered by name"
     re_t = [r for r in result["rows"] if r["observable"] == "racetrack_Re_T"]
-    assert re_t and re_t[0]["delta"] != 0, (
-        "flipping re_t_adoption must move Re(T); otherwise the switch is inert"
-    )
+    assert re_t, "the Re(T) observable must still be reported"
+    # delta 0.0 measured 2026-09-22, b3_seed adoption (it moved before).
+    # The switch is not broken, it is INERT: the published seed is now
+    # b_3 = 43, the declared racetrack has no minimum there, and
+    # computed_vacuum takes its documented fallback to the calibration. The
+    # cause is pinned in test_the_re_t_switch_is_inert_under_the_adopted_seed.
+    # If a minimum ever returns, this row moves and this fires.
+    assert re_t[0]["delta"] == 0.0
+    assert re_t[0]["state_a"] == re_t[0]["state_b"]
 
 
 def test_comparison_restores_the_environment(monkeypatch):
@@ -260,19 +266,47 @@ def test_each_new_fork_is_declared_and_open(fork_id):
         assert len(option.consequence) > 40
 
 
-def test_the_re_t_switch_actually_switches(monkeypatch):
+def test_the_re_t_switch_is_inert_under_the_adopted_seed(monkeypatch):
+    """Both options resolve to the calibration, and the reason is asserted.
+
+    This required computed_vacuum to land more than 5 above the calibration.
+    The b3_seed adoption (author ruling 2026-09-22) put b_3 = 43 into the
+    published topology, which INVERTS the racetrack hierarchy: the exponent
+    a = 2 pi / b_3 is now smaller than b = 2 pi / D_bulk, and the declared
+    potential has no minimum left on the scanned range. _resolve_re_t
+    therefore takes its documented fallback rather than inventing a vacuum.
+
+    Pinned as measured rather than deleted: the day a minimum returns --
+    from a rebuilt topology row or a chi_eff ruling -- every assertion below
+    fires and the switch must be re-examined.
+    """
     from metaphysica.simulations.core.variants import _ENV_PREFIX
     from metaphysica.simulations.PM.cosmology.baryon_asymmetry import (
         RE_T_CALIBRATED,
         BaryonAsymmetryV18,
     )
+    from metaphysica.simulations.PM.cosmology.racetrack_vacuum import (
+        _declared_coefficients,
+        stationary_points,
+    )
 
     monkeypatch.delenv(_ENV_PREFIX + "RE_T_ADOPTION", raising=False)
     assert BaryonAsymmetryV18._resolve_re_t() == pytest.approx(RE_T_CALIBRATED)
+
+    # the cause, measured 2026-09-22, b3_seed adoption: a = 2 pi / 43 is
+    # below b = 2 pi / 26, so the two exponentials no longer race
+    a_exponent, b_exponent = _declared_coefficients()[2:]
+    assert a_exponent < b_exponent, (
+        "the racetrack hierarchy is back; the inertness below no longer "
+        "has its recorded cause"
+    )
+    assert [pt for pt in stationary_points(3) if pt["kind"] == "minimum"] == []
+
     monkeypatch.setenv(_ENV_PREFIX + "RE_T_ADOPTION", "computed_vacuum")
     switched = BaryonAsymmetryV18._resolve_re_t()
-    assert switched > RE_T_CALIBRATED + 5.0, (
-        "the computed vacuum must differ substantially from the calibration"
+    assert switched == pytest.approx(RE_T_CALIBRATED), (
+        "with no minimum to adopt, computed_vacuum must fall back to the "
+        "calibration rather than publishing a vacuum nothing computed"
     )
 
 
@@ -309,7 +343,12 @@ def test_arithma_builds_and_exports_the_superpotential():
     # the exact derivative agrees with a finite difference of the same W
     exact = _arithma_dw(37.8527)
     assert exact is not None
-    assert exact == pytest.approx(-1.4096631e-07, rel=1e-4)
+    # -5.660329399629858e-04 measured 2026-09-22, b3_seed adoption
+    # (was -1.4096631e-07). 37.8527 was the stationary point when the
+    # exponent read a = 2 pi / 24, which is why dW sat at ~1e-07 there; with
+    # b_3 = 43 it is an ordinary point of W and the derivative is finite.
+    # Tolerance unchanged at rel=1e-4.
+    assert exact == pytest.approx(-5.660329399629858e-04, rel=1e-4)
 
 
 # ------------------------------------------------- the A4 bar as a check

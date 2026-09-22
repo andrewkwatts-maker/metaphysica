@@ -121,8 +121,13 @@ class DynamicalVacuumSelector:
     All numeric inputs trace back to b3=24 (the G2 third Betti number).
     """
 
-    # Default G2 inputs (overridable on `select_vacuum`).
-    DEFAULT_B3: int = 24
+    # Default G2 inputs (overridable on `select_vacuum`). DEFAULT_B3 is a
+    # PROPERTY-LIKE resolution, not a literal: it was a frozen 24 and kept
+    # publishing cosmology.b3 = 24 while particle.b3 carried the adopted
+    # seed's 43 -- two rows with the same short name and different values,
+    # which the ambiguous-alias guard caught on 2026-09-22. A default
+    # argument is exactly where a silent seed-blind value hides, so the
+    # resolution happens at call time instead (see select_vacuum).
     DEFAULT_FLUX_MODES: int = 12
 
     def __init__(self) -> None:
@@ -140,15 +145,28 @@ class DynamicalVacuumSelector:
     # CORE COMPUTATION
     # =====================================================================
 
+    @staticmethod
+    def _seed_b3() -> int:
+        """The live seed's b_3; the class carries no frozen default."""
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        return seed_values(resolve_path())[0]
+
     def select_vacuum(
         self,
-        b3: int = DEFAULT_B3,
+        b3: Optional[int] = None,
         flux_modes: int = DEFAULT_FLUX_MODES,
     ) -> Dict[str, Any]:
         """Compute the dynamically selected vacuum count.
 
         Args:
-            b3: G2 third Betti number (default 24, the SSoT value).
+            b3: G2 third Betti number. None (default) resolves the LIVE
+                seed via the b3_seed fork -- 43 on the adopted branch, 24
+                under the seed_24 override. Pass an explicit value only to
+                probe a hypothetical.
             flux_modes: bridge-pair count (default 12 = b3/2).
 
         Returns:
@@ -157,6 +175,9 @@ class DynamicalVacuumSelector:
             72-gate validation pipeline.
         """
         # ── 1. Raw landscape size (pre-selection) ────────────────────
+        if b3 is None:
+            b3 = self._seed_b3()
+
         # log N_raw = b3 * log(flux_modes) + 8 * log(10)
         log_vacua_raw = (
             b3 * math.log(flux_modes)

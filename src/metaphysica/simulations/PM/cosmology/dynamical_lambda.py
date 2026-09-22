@@ -191,11 +191,29 @@ class DynamicalLambdaRelaxation(SimulationBase):
     N_BRIDGES = 12              # Bridge pairs (b3/2)
     KAPPA_SAMPLER = 2           # dim(S^{2,0})
 
-    # Racetrack parameters (from bridge_geometry.py BridgeSystem)
+    # Racetrack parameters (from bridge_geometry.py BridgeSystem).
+    # RACETRACK_a rides on b_3 and is resolved in __init__ from the live
+    # seed fork -- the class-level value here was 2*pi/24 and acted as a
+    # silent fallback: on an unbuilt tree the racetrack reverted to the
+    # off-path seed and "found" Re(T) = 37.85 again while the fork said 43
+    # (caught 2026-09-22 in the adoption sweep). MEASURED on the adopted
+    # seed: with a = 2*pi/43 < b = 2*pi/26 the racetrack ordering a > b is
+    # LOST and no vacuum exists at all -- zero stationary points, zero SUSY
+    # roots, V strictly decreasing. That absence is the recorded state, not
+    # something this fallback may paper over.
     RACETRACK_A = 1.0           # First instanton prefactor
     RACETRACK_B = -0.5          # Second instanton prefactor
-    RACETRACK_a = 2 * math.pi / 24   # 2*pi/b3
     RACETRACK_b = 2 * math.pi / 26   # 2*pi/N_b (N_b=26 = spacelike dims)
+
+    @property
+    def RACETRACK_a(self):
+        """2*pi/b_3 from the live seed fork; never a frozen literal."""
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        return 2 * math.pi / seed_values(resolve_path())[0]
 
     # Observed cosmological constant in Planck units
     # Lambda_obs ~ 2.846e-122 M_Pl^4 (Planck 2018 + DESI)

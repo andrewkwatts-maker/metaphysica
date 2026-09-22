@@ -84,18 +84,11 @@ KNOWN_CONFLICTS = {
     # register 1.1 -- 9.594 deg has no surviving derivation (9.31 sigma),
     # while particle.theta_13_deg carries 8.669. Two live predictions.
     "theta_13",
-    # register 1.7, after triage: the 76.34 Ricci variant turned out to
-    # carry a PRIOR documented-alternative ruling (fitted 31-deg angle) under
-    # a stale parameter name, so it is dispositioned DISTINCT. The residual
-    # conflict is the framework prediction 71.55 against the 73.04 SH0ES
-    # anchor family -- 2.06%, just over the 2% tolerance, the same 1.43-sigma
-    # MARGINAL the validation layer reports. Ruling still open: does the
-    # anchor belong inside the shadow group at all?
-    "H0_local",
-    # register 1.4 -- 0.7841 (5.13% friction suppression) against 0.8333.
-    # Reconciling the suppression branches is worth ~0.5 sigma, not the
-    # ~1.5 the register estimates.
-    "S8",
+    # H0_local and S8 HEALED under the b3_seed adoption (2026-09-22): the
+    # audit's own two-directional rule removed them -- their conflicting
+    # derivations moved together with the seed and now sit inside
+    # tolerance. The old readings stay in the register (1.7, 1.4); if a
+    # conflict returns it is a NEW measurement, not a resurrection.
     # slow-roll n_s (0.9996) against the canonical 0.9636. The inflation
     # module itself registers this as a documented_divergence -- the
     # disagreement is real and self-acknowledged; the ruling is whether
@@ -108,7 +101,18 @@ KNOWN_CONFLICTS = {
     # override. THREE registered mass sums (0.060 / 0.082 / 0.101) need a
     # canonical ruling; note the choice decides whether the framework sits
     # above or below the DESI LCDM bound of 0.072 eV.
-    "sigma_m_nu",
+    # sigma_m_nu HEALED 2026-09-22 with the adoption (removed per the
+    # two-directional rule; the mass-sum ruling itself remains open on the
+    # register).
+    #
+    # NEW 2026-09-22, a measured cost of the b3_seed adoption: the
+    # b_3-consuming Higgs VEV formula moved with the seed and
+    # higgs.m_higgs_local now reads 70.5675 against pdg.m_higgs 125.2
+    # (43.64%). Same class as eta_B (18.16 sigma) and the axion ceiling
+    # breach: the 24-calibrated agreement did not survive the ruling, and
+    # the divergence is RECORDED, not tuned away. Retired by the higgs
+    # formula's wording pass or a genuine derivation on the adopted path.
+    "m_higgs",
 }
 
 def _effective_tolerance(observable: str, default_pct: float) -> float:

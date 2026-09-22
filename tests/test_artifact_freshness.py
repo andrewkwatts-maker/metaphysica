@@ -128,6 +128,30 @@ def test_shipped_certificate_counts_match_their_own_records():
         )
 
 
+#: Gates whose live evaluation legitimately parts company with the PUBLISHED
+#: bundle after the b3_seed adoption (author ruling 2026-09-22, seed_43_joyce).
+#: The published parameters.json already carries b_3 = 43 while its
+#: GATES_CERTIFICATES.json predates the ruling, so the bundle is only half
+#: republished. Each entry is gate_id -> (live status, shipped status),
+#: MEASURED 2026-09-22. When the bundle is rebuilt these pins fire, and the
+#: right response is to delete the entry -- never to widen it.
+#: EMPTY, and that is the healed state. The G22 entry retired 2026-09-22
+#: the same day it was written: the bundle was republished, shipped now
+#: reads COMPUTED_FAIL exactly like live, and the pin's own note said to
+#: DELETE rather than widen when that happened. G22 remains an honest
+#: COMPUTED_FAIL on both sides -- 43/288 = 0.149306 against the gate's own
+#: 24/288 expectation -- and it is now compared normally, so a drift in
+#: either direction fires the plain assertion below.
+_GATES_AWAITING_REPUBLISH: dict = {}
+
+#: EMPTY. G17 was excluded while registry n_gen routed through
+#: chi_eff // b_3 (= 72 // 43 = 1 on the adopted seed). That property now
+#: resolves the RULED n_gen_source fork (b2_over_faces -> b_2/4 = 3), so
+#: G17 evaluates COMPUTED_PASS from a ruled route with no chi_eff
+#: dependence at all, and the exclusion retired with the defect.
+_GATES_BLOCKED_ON_CHI_EFF: frozenset = frozenset()
+
+
 def test_semantic_gates_still_evaluate_the_same_way():
     """Recompute every promoted gate and compare to the shipped certificate."""
     from metaphysica.generators.generate_72_certificates import evaluate_gate
@@ -136,15 +160,51 @@ def test_semantic_gates_still_evaluate_the_same_way():
 
     certs = {c["gate_id"]: c for c in _load("GATES_CERTIFICATES.json")["certificates"]}
     params = _load("parameters.json")["parameters"]
+    compared = []
     for gate_id in sorted(SEMANTIC_EVALUATORS):
         shipped = certs.get(gate_id)
-        if shipped is None:
+        if shipped is None or gate_id in _GATES_BLOCKED_ON_CHI_EFF:
             continue
         live = evaluate_gate(gate_id, {}, params)
+        compared.append(gate_id)
+        pinned = _GATES_AWAITING_REPUBLISH.get(gate_id)
+        if pinned is not None:
+            assert (live["status"], shipped["evaluation_status"]) == pinned, (
+                f"G{gate_id:02d} was pinned as a known post-ruling divergence "
+                f"{pinned}, but now reads "
+                f"({live['status']}, {shipped['evaluation_status']}) -- "
+                f"either the bundle was republished (drop the pin) or the "
+                f"evaluation moved again"
+            )
+            continue
         assert live["status"] == shipped["evaluation_status"], (
             f"G{gate_id:02d}: code says {live['status']}, artifact says "
             f"{shipped['evaluation_status']} -- rebuild"
         )
+    # The gates actually compared, measured 2026-09-22 after the n_gen
+    # rewiring: ALL 8 semantic evaluators, G17 included now that it no
+    # longer depends on chi_eff. Pinned as a literal set rather than derived
+    # from the exclusion lists, because deriving it would let a growing
+    # exclusion list quietly empty this loop without the guard noticing. A
+    # newly promoted gate fires this, and belongs in the comparison.
+    assert compared == [1, 13, 17, 22, 23, 29, 32, 40], (
+        f"the compared gates are {compared}, not the measured set -- either "
+        f"the shipped bundle is missing certificates the evaluators cover, "
+        f"or an evaluator was added or excluded without review"
+    )
+
+
+def test_g17_generation_gate_awaits_the_chi_eff_ruling():
+    """G17 asserts registry n_gen == 3 and now measures 1.
+
+    The b3_seed adoption (author ruling 2026-09-22) put b_3 = 43 under
+    n_gen = chi_eff // b_3, giving 72 // 43 = 1, so the live gate is
+    COMPUTED_FAIL while the published certificate still records
+    COMPUTED_PASS. The RULED generation route is n_gen_source =
+    b2_over_faces (b_2 / 4 = 3), not this one, so whether the chi_eff route
+    recovers 3 is a chi_eff question. It is not decided here.
+    """
+    pytest.skip(reason="awaiting chi_eff ruling")
 
 
 def test_g72_seal_reflects_the_gates_it_aggregates():
@@ -187,7 +247,7 @@ def test_no_orphan_references_survive_in_the_shipped_bundle():
 # ── the statistical rigor validator's input contract ────────────────────────
 
 
-def test_validation_report_rows_reach_the_rigor_validator():
+def test_validation_report_rows_reach_the_rigor_validator(tmp_path):
     """Guards a rename that silently emptied a validator.
 
     The validator read ``sigma_table`` from validation_report.json. No such
@@ -197,14 +257,27 @@ def test_validation_report_rows_reach_the_rigor_validator():
     still loads, so the constructor reported "Loaded validation data:
     chi^2 = ..., DoF = ..." either way.
     """
+    from metaphysica.generators.generate_validation_certificates import (
+        build_report,
+    )
     from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
         StatisticalRigorValidator,
     )
 
-    path = _autogen() / "validation_report.json"
-    if not path.is_file():
-        pytest.skip("validation_report.json not present")
-    validator = StatisticalRigorValidator(validation_file=str(path))
+    # RECOMPUTED, like every other check in this file. The wheel ships a
+    # permanent placeholder validation_report.json (generator
+    # "placeholder", generated_at null, zero rows) so the certificates page
+    # fetches a valid payload instead of a 404, and reading it made this
+    # guard silently depend on whether the build had run its validation
+    # step -- the exact "trust the artifact" failure this module exists to
+    # prevent. build_report() derives the rows from parameters.json.
+    report = build_report()
+    if report.get("error"):
+        pytest.skip(f"cannot build the report: {report['error']}")
+    live_path = tmp_path / "validation_report.json"
+    live_path.write_text(json.dumps(report), encoding="utf-8")
+
+    validator = StatisticalRigorValidator(validation_file=str(live_path))
     assert validator.validation_results, (
         "the rigor validator received no rows -- its input key has drifted "
         "from the report's schema again"
@@ -216,6 +289,16 @@ def test_validation_report_rows_reach_the_rigor_validator():
         "a row with no experimental uncertainty survived; the consumer "
         "divides by it"
     )
+
+    # and the shipped copy too, whenever a real report has been published
+    shipped = _autogen() / "validation_report.json"
+    if shipped.is_file():
+        data = json.loads(shipped.read_text(encoding="utf-8"))
+        if data.get("generator") != "placeholder":
+            assert StatisticalRigorValidator._adapt_validation_rows(data), (
+                "a published, non-placeholder report reaches the validator "
+                "with no rows -- regenerate it or fix the adapter"
+            )
 
 
 def test_rigor_validator_still_honours_a_legacy_sigma_table():

@@ -26,6 +26,26 @@ import math
 import pytest
 
 
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _calibrated_branch(monkeypatch):
+    """These tests pin the CALIBRATED_24 branch contract of the flavour fork.
+
+    flavour_seed_coupling (2026-09-22): the adopted branch is follow_seed,
+    where the flavour formulas consume the live seed's b_3 (43) and theta_13
+    moves to its measured 4.8351 deg -- the honest divergence of a
+    24-calibrated ansatz whose formula claims b_3. The v25 calibration
+    remains a runnable branch, and THIS FILE is its regression contract:
+    every original assertion still fires here, so the costed branch cannot
+    rot. The adopted branch's measured behaviour is pinned separately in
+    test_flavour_seed_coupling.py.
+    """
+    monkeypatch.setenv("METAPHYSICA_VARIANT_FLAVOUR_SEED_COUPLING",
+                       "calibrated_24")
+
+
 # ── Test 1: holomorphic shape & schema ─────────────────────────────────────
 
 

@@ -9,6 +9,25 @@ from metaphysica.simulations.PM.cosmology.baryogenesis import (
     ModuliBaryogenesis,
     get_baryogenesis,
 )
+from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+# ----------------------------------------------------------------------
+# The b_3 seed this process is running on.
+#
+# Every number below rides on b_3: D_top = exp(-b3/2) directly, and the
+# canonical eta_B through the v18 G2 cycle count k_bary = b_3 - 14. The
+# b3_seed fork was adopted on 2026-09-22 (seed_43_joyce, (b_3, b_2) =
+# (43, 12)); seed_24 stays runnable as the labelled off-path branch via
+# METAPHYSICA_VARIANT_B3_SEED=seed_24. The registry singleton is built once
+# per process, so the branch cannot be flipped mid-process -- the per-seed
+# expectations are therefore tabulated and selected by the live seed, and
+# each entry was MEASURED by running this module under that branch.
+# ----------------------------------------------------------------------
+
+
+def _live_b3() -> int:
+    """The b_3 the module itself consumes, read from the same source it reads."""
+    return int(get_registry().elder_kads)
 
 
 # ----------------------------------------------------------------------
@@ -24,13 +43,28 @@ def test_lepton_asymmetry_formula() -> None:
     assert math.isclose(epsilon_L, expected, rel_tol=1e-12)
 
 
+#: b_3 -> D_top = exp(-b3 / 2). Measured 2026-09-22, b3_seed adoption, by
+#: running ModuliBaryogenesis().topological_dilution() under each branch.
+_D_TOP_BY_B3 = {
+    24: 6.14421235332821e-06,      # off-path branch, exp(-12)
+    43: 4.5990553786523166e-10,    # ADOPTED seed_43_joyce, exp(-21.5)
+}
+
+
 def test_topological_dilution_formula() -> None:
-    """D_top = exp(-b3 / 2) with b3 = 24 -> D_top = exp(-12)."""
+    """D_top = exp(-b3 / 2), with b3 read from the live seed."""
+    b3 = _live_b3()
     sim = ModuliBaryogenesis()
     d_top = sim.topological_dilution()
-    expected = math.exp(-12.0)
+    # the formula, against the seed the module actually consumed
+    expected = math.exp(-b3 / 2.0)
     # EML evaluation has finite precision; accept ~1e-9 relative tolerance.
     assert math.isclose(d_top, expected, rel_tol=1e-9)
+    # and the measured value for this branch, so a silent seed swap is caught
+    assert math.isclose(d_top, _D_TOP_BY_B3[b3], rel_tol=1e-9), (
+        f"D_top = {d_top:.6e} at b_3 = {b3} does not match the value measured "
+        f"on that branch; the dilution scale moved without the seed moving"
+    )
 
 
 def test_compute_eta_B_formula() -> None:
@@ -70,7 +104,18 @@ def test_derive_baryogenesis_returns_canonical_keys() -> None:
     secondary = result["secondary_estimate"]
     assert isinstance(secondary, dict)
     assert "eta_B" in secondary
-    assert 1e-11 < secondary["eta_B"] < 1e-9
+    # The Sprint 6.2 estimate is dominated by D_top = exp(-b3/2), so it moves
+    # four orders of magnitude with the seed. Measured 2026-09-22, b3_seed
+    # adoption: 2.3018305698236694e-10 at b_3 = 24, 1.722962302427502e-14 at
+    # b_3 = 43 (ADOPTED). Pinned per branch rather than bounded, because a
+    # window wide enough to hold both would no longer constrain anything.
+    secondary_by_b3 = {
+        24: 2.3018305698236694e-10,
+        43: 1.722962302427502e-14,
+    }
+    assert math.isclose(
+        secondary["eta_B"], secondary_by_b3[_live_b3()], rel_tol=1e-9
+    )
 
 
 def test_module_entry_point() -> None:
@@ -87,26 +132,52 @@ def test_module_entry_point() -> None:
 # ----------------------------------------------------------------------
 
 
+#: Planck+BBN central value and its 1 sigma.
+_ETA_B_OBSERVED = 6.12e-10
+_ETA_B_OBSERVED_SIGMA = 0.04e-10
+
+#: b_3 -> (canonical eta_B, sigma vs Planck+BBN, does it agree within 3 sigma).
+#: Measured 2026-09-22, b3_seed adoption, by running derive_baryogenesis()
+#: under each branch. The canonical value is the v18 geometric derivation,
+#: whose G2 cycle count k_bary = b_3 - 14 rides on the seed, so the seed
+#: ruling moved it off the Planck agreement it had at 24. That loss is the
+#: ruling's RECORDED cost -- pinned here, not hidden behind a wider bound.
+_CANONICAL_ETA_B = {
+    24: (6.185164569435048e-10, 1.6291142358762039, True),
+    43: (6.846485445932354e-10, 18.162136148308868, False),
+}
+
+
 def test_eta_B_in_observed_range() -> None:
     """eta_B must lie in the observationally allowed window [1e-11, 1e-8].
 
-    Post-T1.2 rewiring: canonical eta_B = 6.19e-10 (v18 geometric), which
-    must additionally be within 3 sigma of the Planck+BBN central value
-    (6.12 +/- 0.04) x 10^-10.
+    Post-T1.2 rewiring: canonical eta_B is the v18 geometric value. On the
+    off-path seed_24 branch it sits 1.63 sigma from the Planck+BBN central
+    value (6.12 +/- 0.04) x 10^-10; on the ADOPTED seed_43_joyce branch it
+    sits 18.16 sigma away. Both are pinned, and the agreement flag is
+    asserted either way, so neither the agreement nor its loss can drift
+    unnoticed.
     """
+    b3 = _live_b3()
+    expected_eta_B, expected_sigma, agrees_with_planck = _CANONICAL_ETA_B[b3]
+
     result = ModuliBaryogenesis().derive_baryogenesis()
     eta_B = result["eta_B"]
     assert 1e-11 < eta_B < 1e-8, (
         f"eta_B = {eta_B:.3e} is outside the observed window "
         f"[1e-11, 1e-8]"
     )
-    # Canonical (v18) source: 1.6 sigma from Planck+BBN.
-    eta_obs = 6.12e-10
-    sigma_obs = 0.04e-10
-    sigma_dev = abs(eta_B - eta_obs) / sigma_obs
-    assert sigma_dev < 3.0, (
-        f"eta_B = {eta_B:.3e} is {sigma_dev:.2f} sigma from Planck+BBN "
-        f"(canonical v18 derivation expected ~1.6 sigma)"
+    assert math.isclose(eta_B, expected_eta_B, rel_tol=1e-9), (
+        f"eta_B = {eta_B:.6e} at b_3 = {b3} is not the value measured on "
+        f"that branch ({expected_eta_B:.6e})"
+    )
+
+    sigma_dev = abs(eta_B - _ETA_B_OBSERVED) / _ETA_B_OBSERVED_SIGMA
+    assert math.isclose(sigma_dev, expected_sigma, rel_tol=1e-9)
+    assert (sigma_dev < 3.0) is agrees_with_planck, (
+        f"eta_B = {eta_B:.3e} is {sigma_dev:.2f} sigma from Planck+BBN at "
+        f"b_3 = {b3}; the recorded state of that branch is "
+        f"{'agreement' if agrees_with_planck else 'disagreement'}"
     )
 
 

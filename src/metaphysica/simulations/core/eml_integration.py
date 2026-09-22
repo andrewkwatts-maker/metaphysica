@@ -103,6 +103,22 @@ def b3_leaf() -> "EMLPoint":
     return eml_scalar(float(get_registry().elder_kads))
 
 
+def flavour_b3_leaf() -> "EMLPoint":
+    """b3 leaf for the FLAVOUR sector's EML trees, per flavour_seed_coupling.
+
+    The flavour formulas claim b_3 but were calibrated at 24; the fork decides
+    which value they consume (follow_seed -> the live seed; calibrated_24 ->
+    the admitted calibration constant). Their EML trees must route through
+    the SAME resolution or the triple-track check would compare a followed
+    value against a calibrated one and report a phantom divergence.
+    """
+    require_eml()
+    from metaphysica.simulations.PM.particle.yukawa_derivation import (
+        resolve_flavour_b3,
+    )
+    return eml_scalar(float(resolve_flavour_b3()))
+
+
 def eml_compute(expr: "EMLPoint") -> float:
     """Evaluate an EML expression tree to a float via .tension()."""
     require_eml()

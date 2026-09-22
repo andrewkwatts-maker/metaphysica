@@ -130,6 +130,10 @@ metaphysica            = "metaphysica._help:cli"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "slow: runs the full pipeline in subprocesses (seed-blindness harvest)",
+]
+
 python_files = "test_*.py"
 python_functions = "test_*"
 addopts = "-v --tb=short"

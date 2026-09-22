@@ -2190,49 +2190,62 @@ class G2GeometryV16(SimulationBase):
         ]
 
     def get_beginner_explanation(self) -> Dict[str, Any]:
-        """
-        Return beginner-friendly explanation for auto-generation of guide content.
+        """Beginner guide content, GENERATED from the live fork.
 
-        Returns:
-            Dictionary with beginner explanation fields
+        The previous version hand-wrote the off-path story ("24 special loops
+        give us 3 generations, 24/8 = 3") and a TCS technical detail the
+        adopted construction does not use. Every number and mechanism below
+        now comes from `geometry_narration.layperson_narration()` and the
+        seed itself, so a fork switch rewrites the guide instead of leaving
+        it contradicting the site's own parameters (b3_seed adoption,
+        2026-09-22).
         """
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            layperson_narration,
+        )
+
+        plain = layperson_narration()
+        story = plain["story"]
+        b3, b2 = plain["b3"], plain["b2"]
+
         return {
             "icon": "🌀",
-            "title": "Hidden Dimensions and G2 Manifolds",
+            "title": "Hidden Dimensions and the Folded 7D Shape",
             "simpleExplanation": (
-                "Our universe might have 7 hidden dimensions curled up so small we can't see them. "
-                "These hidden dimensions have a special shape called a 'G2 manifold' - think of it "
-                "like origami in 7 dimensions. The way this origami is folded determines everything "
-                "we see in our 3D world: how many types of particles exist, why they have the masses "
-                "they do, and even why protons don't decay instantly."
+                "Our universe might have 7 hidden dimensions curled up so "
+                "small we can't see them. Their shape is built by folding a "
+                "7-dimensional donut (a torus) under three independent "
+                "mirror symmetries and then smoothing the creases. How that "
+                "folded shape is stitched together determines what we see: "
+                "how many kinds of particles exist and which interactions "
+                "they can have. " + story["hole_counter"]
             ),
             "analogy": (
-                "Imagine rolling up a 2D sheet of paper into a thin tube. From far away, the tube "
-                "looks like a 1D line, but up close you'd see it has a hidden circular dimension "
-                "wrapped around it. Now imagine doing this with 7 dimensions instead of 1, and "
-                "folding them into a very specific shape (like a Calabi-Yau origami) - that's a "
-                "G2 manifold. The number of 'holes' and 'loops' in this origami (called Betti "
-                "numbers) directly determines particle physics: 24 special loops give us 3 "
-                "generations of particles (24 ÷ 8 = 3)."
+                story["the_base"] + " " + story["the_seams"] + " "
+                + story["the_repairs"] + " " + story["the_total"]
             ),
-            "keyTakeaway": (
-                "The shape of hidden dimensions isn't random - it's a precise geometric structure "
-                "that predicts exactly 3 generations of particles with no free parameters."
-            ),
+            "keyTakeaway": story["the_generations"],
             "technicalDetail": (
-                "The TCS (Twisted Connected Sum) construction #187 provides an explicit example of "
-                "a compact G2 manifold with Betti numbers b2=4, b3=24, and effective Euler "
-                "characteristic χ_eff=144. The number of fermion generations follows from the "
-                "Atiyah-Singer index theorem: n_gen = χ_eff/48 = 3. The third Betti number b3=24 "
-                "counts associative 3-cycles where matter fields localize, while b2=4 counts Kähler "
-                "moduli that control the compactification geometry."
+                "The construction is a Joyce orbifold T^7/(Z/2)^3 with A_1 "
+                "singularities resolved by Eguchi-Hanson patches: b2 = %d "
+                "counts one exceptional 2-class per resolved seam family, "
+                "and b3 = 7 + 3 x %d = %d splits as 7 flat 3-forms plus 3 "
+                "twisted 3-forms per family. The generation count is the "
+                "rank of the orbifold group: n_gen = rank((Z/2)^3) = 3, "
+                "recovered as b2/4 with both sides derived. The effective "
+                "Euler characteristic's derivation is an OPEN question the "
+                "project tracks honestly rather than papering over."
+                % (b2, b2, b3)
             ),
             "prediction": (
-                "This geometric structure makes no adjustable predictions, but it *derives* why we "
-                "observe exactly 3 generations of quarks and leptons rather than 2, 4, or any other "
-                "number. Traditional particle physics simply accepts 3 generations as an empirical "
-                "fact; G2 geometry explains it from pure mathematics."
-            )
+                "The generation count is not adjustable: it is the rank of "
+                "the folding symmetry, an integer fixed by the construction "
+                "-- and the same construction fixes the pair (b2, b3) = "
+                "(%d, %d) as ONE topological input rather than two. "
+                "Traditional particle physics accepts 3 generations as an "
+                "empirical fact; here it selects the topology."
+                % (b2, b3)
+            ),
         }
 
 

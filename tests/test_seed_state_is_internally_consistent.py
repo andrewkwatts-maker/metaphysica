@@ -51,9 +51,28 @@ def _artifact():
 
 
 def test_the_declared_paths_give_distinct_coherent_pairs():
-    """Guards the guard: if both paths gave the same pair this proves nothing."""
-    assert _COHERENT == {(24, 4), (43, 12)}, _COHERENT
-    assert len(_COHERENT) == len(PATHS) == 2
+    """Guards the guard: if paths shared a pair this would prove nothing.
+
+    Since the reachable family became runnable (2026-09-23) there are five
+    declared paths, and the distinctness matters MORE, not less: (19, 4)
+    and (24, 4) share b_2 = 4 while carrying different b_3. So a chimera
+    check that compared b_2 alone would now pass on a mismatched build.
+    The pair is what must match, and every declared pair must be distinct.
+    """
+    assert _COHERENT == {(spec["b3"], spec["b2"]) for spec in PATHS.values()}
+    assert len(_COHERENT) == len(PATHS) == 5, (
+        "%d declared paths produced %d distinct pairs -- two paths now "
+        "share a (b_3, b_2) pair and the chimera guard below would not be "
+        "able to tell them apart" % (len(PATHS), len(_COHERENT))
+    )
+    by_b2 = {}
+    for b3, b2 in _COHERENT:
+        by_b2.setdefault(b2, set()).add(b3)
+    assert by_b2[4] == {19, 24}, (
+        "b_2 = 4 is expected to be claimed by BOTH the reachable (19, 4) "
+        "and the off-family (24, 4); if that stops being true the "
+        "distinctness argument above needs re-deriving: %s" % by_b2
+    )
 
 
 def test_the_built_artifact_is_not_a_chimera():

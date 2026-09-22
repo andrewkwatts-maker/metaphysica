@@ -1815,15 +1815,29 @@ class FormulasRegistry:
 
     @property
     def n_gen(self) -> int:
-        """
-        Number of fermion generations derived from topology.
+        """Number of fermion generations, via the RULED n_gen_source route.
 
-        n_gen = chi_eff_sector / b3 = 72/24 = 3
-
-        This connects dimensional reduction to particle physics:
-        The G2 topology (b3=24, chi_eff=72) determines generations.
+        n_gen = b_2 / n_faces = rank(Gamma) = 3 (n_gen_source RULED
+        b2_over_faces with the b3_seed adoption, 2026-09-22). The previous
+        route here, chi_eff_sector // b_3, was 72 // 24 = 3 only on the
+        off-path seed -- on the adopted seed it floor-divides to 1, and the
+        chi_eff quantity it consumed is itself UNRULED. A generation count
+        must come from the ruled route, not from an unruled numerator over
+        a moved denominator.
         """
-        return self._chi_eff // self._b3  # 72/24 = 3
+        try:
+            from metaphysica.simulations.PM.geometry.b3_path import (
+                n_gen_report,
+            )
+
+            n = n_gen_report()["n_gen"]
+            if n != int(n):
+                raise ValueError(
+                    "the resolved n_gen_source yields a non-integral "
+                    "generation count (%r); a count must be an integer" % n)
+            return int(n)
+        except ImportError:                # import cycle only
+            return 3                       # rank(Gamma), the ruled value
 
     @property
     def decad(self) -> int:

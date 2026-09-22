@@ -90,6 +90,7 @@ from typing import Any, Dict
 from metaphysica.simulations.core.eml_integration import (  # noqa: F401
     EML_AVAILABLE,
     b3_leaf,
+    flavour_b3_leaf,
     eml_add,
     eml_compute,
     eml_div,
@@ -302,6 +303,7 @@ __all__ = [
     # import surface.
     "EML_AVAILABLE",
     "b3_leaf",
+    "flavour_b3_leaf",
     "eml_add",
     "eml_compute",
     "eml_div",

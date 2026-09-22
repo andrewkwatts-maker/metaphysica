@@ -81,7 +81,7 @@ from metaphysica.simulations.core.eml_integration import (
     eml_div as _eml_div,
     eml_pow as _eml_pow,
     eml_sqrt as _eml_sqrt,
-    b3_leaf as _b3_leaf,
+    flavour_b3_leaf as _b3_leaf,  # flavour fork decides which b3 (2026-09-22)
 )
 def _arithma_add(a, b):
     return None if a is None or b is None else a + b
@@ -90,7 +90,13 @@ def _arithma_div(a, b):
 def _arithma_pow(a, b):
     return None if a is None or b is None else a ** b
 def _arithma_b3():
-    return _arithma_num(24.0)
+    # Follows the flavour_seed_coupling fork like the EML side -- a
+    # hardcoded 24 here would make triple-track report a phantom
+    # divergence between two sides of the SAME formula (2026-09-22).
+    from metaphysica.simulations.PM.particle.yukawa_derivation import (
+        resolve_flavour_b3,
+    )
+    return _arithma_num(float(resolve_flavour_b3()))
 
 
 @dataclass
@@ -176,8 +182,19 @@ class YukawaTexturesV18(SimulationBase):
 
         # Geometric constants from SSoT registry
         self.phi = (1 + np.sqrt(5)) / 2  # ~ 1.618
-        self.k_gimel = float(_REG.demiurgic_coupling)  # = b3/2 + 1/pi = 12.318...
-        self.elder_kads = _REG.elder_kads  # = 24 (Third Betti number)
+        # The flavour sector's b_3 goes through ONE fork
+        # (flavour_seed_coupling, 2026-09-22): follow_seed consumes the live
+        # seed (43 adopted), calibrated_24 reproduces the v25 calibration.
+        # Reading the registry directly here would half-split the flavour
+        # sector across two sources on the calibrated branch.
+        from metaphysica.simulations.PM.particle.yukawa_derivation import (
+            resolve_flavour_b3,
+        )
+
+        import math as _math
+
+        self.elder_kads = resolve_flavour_b3()
+        self.k_gimel = self.elder_kads / 2 + 1 / _math.pi  # rides on the same b_3
         self.v_higgs = 246.22             # GeV [PDG2024: Higgs VEV]
 
         # v19.0: CP phase from G2 triality (same as baryon asymmetry)

@@ -89,16 +89,44 @@ def test_a_mismatch_names_the_removals_that_rest_on_it(monkeypatch):
     _, mismatching = _matching_and_mismatching_seed()
     monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", mismatching)
 
+    from metaphysica.simulations.core.free_set import (
+        verify_geometric_identities,
+    )
+
     report = build_free_set()
     assert report["artifact_seed_provenance"]["consistent"] is False
     stale = report["removals_resting_on_stale_b3"]
-    assert "fermion.n_generations" in stale, (
-        "n_generations was removed as b_3/8 arithmetic on a b_3 the live "
-        "fork does not carry; the mismatch must name it"
-    )
+
     # Every named row must actually be a removal that used b_3.
     for name in stale:
         assert name in report["removed"], name
+
+    # n_generations left this set on 2026-09-22 when free_set stopped
+    # checking the abandoned b_3/8 route and started checking the RULED
+    # n_gen_source route, which does not consume b_3 at all.
+    assert "fermion.n_generations" not in stale, (
+        "n_generations is resting on b_3 again, which would mean the "
+        "geometric-identity check reverted to the abandoned b_3/8 route"
+    )
+
+    # The naming is only REQUIRED when a b_3-arithmetic removal actually
+    # fires. Right now none does -- the only remaining uses_b3 identity,
+    # algebra.freudenthal_quartic, does not reproduce, so it stays in the
+    # free set and is never removed. That is a legitimate transient, not a
+    # broken guard, and asserting otherwise would be asserting a premise
+    # that stopped being true. The mechanism is still checked: if such a
+    # removal exists, it MUST be named.
+    fired = {name for name, rec in verify_geometric_identities().items()
+             if rec.get("uses_b3") and name in report["removed"]}
+    if not fired:
+        pytest.skip(
+            "no b_3-arithmetic removal currently fires (n_generations moved "
+            "to the ruled route; freudenthal_quartic does not reproduce), so "
+            "there is nothing for the mismatch to name")
+    assert fired <= set(stale), (
+        "these b_3-arithmetic removals fired but were not named as resting "
+        "on the stale b_3: %s" % sorted(fired - set(stale))
+    )
 
 
 def test_a_match_labels_nothing(monkeypatch):

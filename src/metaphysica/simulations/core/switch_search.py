@@ -102,10 +102,48 @@ def open_forks() -> List[str]:
 def combinations_for(fork_ids: Iterable[str],
                      cap: Optional[int] = None
                      ) -> List[Dict[str, str]]:
-    """Every combination over the named forks, in declaration order."""
+    """Every combination over the named forks, ADOPTED OPTION FIRST.
+
+    The order used to be declaration order, and a capped search then
+    explored whatever happened to be written first. That was harmless while
+    forks had two options; it broke the moment `b3_seed` grew to five
+    (2026-09-23, the reachable family becoming runnable): `cap=3` explored
+    seed_24, seed_7_joyce, seed_19_joyce and NEVER REACHED the adopted
+    seed_43_joyce, so a truncated sweep silently omitted the baseline every
+    result is compared against.
+
+    Enumerating adopted-first fixes it structurally: the first combination
+    is always the fully adopted state, and truncation then drops the most
+    exotic combinations rather than the most important one. This matters
+    more as options are added, which is the direction the framework is
+    going.
+    """
     forks = _variants().FORKS
     ids = [f for f in fork_ids if f in forks]
-    option_lists = [forks[f].option_ids() for f in ids]
+
+    option_lists = []
+    for fid in ids:
+        fork = forks[fid]
+        try:
+            adopted = fork.default()
+        except Exception:                  # a fork with no resolvable default
+            adopted = None
+
+        # Order: adopted first, then by DECLARED priority (0 = live
+        # alternative worth costing early, 2 = retained-for-completeness),
+        # then declaration order as the stable tie-break. A capped sweep
+        # then spends its budget on combinations someone might adopt
+        # instead of on candidates already refuted.
+        ordered = sorted(
+            enumerate(fork.options),
+            key=lambda pair: (
+                pair[1].id != adopted,
+                getattr(pair[1], "priority", 1),
+                pair[0],
+            ),
+        )
+        option_lists.append([opt.id for _idx, opt in ordered])
+
     out: List[Dict[str, str]] = []
     for choice in itertools.product(*option_lists):
         out.append(dict(zip(ids, choice)))

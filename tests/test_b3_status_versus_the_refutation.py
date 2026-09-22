@@ -135,9 +135,29 @@ def test_b3_is_still_published_as_derived(params):
         )
 
 
-def test_the_value_is_still_24(params):
+def test_the_value_now_follows_the_adopted_seed(params):
+    """These echoes were FROZEN at 24; they now follow the seed.
+
+    particle.b3 and cosmology.b3 restate the seed through result dicts. Both
+    read 24 regardless of the fork until 2026-09-22: particle.b3 was the last
+    seed-blind writer, harvested from the v25 flavour complex, and it moved
+    when flavour_seed_coupling routed that sector through the live seed. The
+    test that pinned "still 24" recorded a DEFECT (a frozen echo), so it is
+    replaced by one pinning the fix: the echoes agree with the seed, whatever
+    the seed is. Parameterised over the branch rather than the value, so it
+    cannot rot the next time a ruling moves.
+    """
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    expected = seed_values(resolve_path())[0]
     for path in _RECORDED_STATUS:
-        assert params[path].get("value") == 24
+        assert params[path].get("value") == expected, (
+            "%s reads %r while the live seed carries %d -- a frozen echo "
+            "has come back" % (path, params[path].get("value"), expected)
+        )
 
 
 def test_b3_is_consumed_so_it_cannot_be_comparison_only(params):

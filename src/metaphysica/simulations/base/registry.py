@@ -1367,23 +1367,46 @@ class PMRegistry:
         has_value = getattr(formula, "value", None) is not None
 
         if has_value and (has_arithma or has_eml):
+            ruled_reason = None
             try:
                 from metaphysica.simulations.core.triple_validator import (
                     triple_assert,
                 )
-                triple_assert(
-                    formula.arithma,
-                    formula.eml,
-                    float(formula.value),
-                    env=formula.triple_env or {},
-                    rel=formula.triple_rel,
-                    abs_=formula.triple_abs,
-                    name=formula.id,
-                )
+                try:
+                    triple_assert(
+                        formula.arithma,
+                        formula.eml,
+                        float(formula.value),
+                        env=formula.triple_env or {},
+                        rel=formula.triple_rel,
+                        abs_=formula.triple_abs,
+                        name=formula.id,
+                    )
+                except AssertionError:
+                    # A formula in the RULED-DIVERGENCE ledger diverges BY
+                    # RECORD (the b3_seed adoption's measured cost, or the
+                    # unruled chi_eff dichotomy). Raising here used to kill
+                    # the sim MID-REGISTRATION, so every later formula of
+                    # that sim silently vanished from the published
+                    # artifacts -- the site omitted exactly the formulas it
+                    # must show as honest FAILs (61 missing, 22 dangling
+                    # derivation ids, measured 2026-09-22). A ledger row
+                    # registers WITH its divergence labelled; a formula
+                    # OUTSIDE the ledger still raises, so the gate keeps
+                    # its teeth and an unrecorded disagreement still halts.
+                    from metaphysica.simulations.core.ruled_divergences \
+                        import divergence_reason
+
+                    ruled_reason = divergence_reason(formula.id)
+                    if ruled_reason is None:
+                        raise
             except ImportError:
                 pass
 
-            if has_arithma and has_eml:
+            if ruled_reason is not None:
+                formula.triple_status = "RULED_DIVERGENCE"
+                formula.triple_note = ruled_reason
+            elif has_arithma and has_eml:
                 formula.triple_status = "OK"
             elif has_arithma:
                 formula.triple_status = "ARITHMA_ONLY"

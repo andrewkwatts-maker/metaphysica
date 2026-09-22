@@ -98,10 +98,22 @@ def test_b3_leaf_in_eml_tree(isolated_autogen: Path) -> None:
         "EML structural tree missing b3 leaf reference"
     )
 
-    # The b₃ leaf must report tension == 24 (SSoT third Betti number).
+    # The b₃ leaf must report the live seed's third Betti number. Measured
+    # 2026-09-22, b3_seed adoption: the adopted branch is seed_43_joyce, so
+    # b3_leaf() reports 43.0 where it reported 24.0 before the ruling. Read
+    # from the fork as well as pinned, so the leaf is asserted to FOLLOW the
+    # seed rather than merely to equal a number someone typed.
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    seed_b3 = float(seed_values(resolve_path())[0])
+    assert seed_b3 == 43.0, "the adopted b3_seed branch moved; re-measure"
     b3_tension = float(handles["b3_leaf"].tension())
-    assert math.isclose(b3_tension, 24.0, rel_tol=1e-9), (
-        f"b3 leaf tension {b3_tension} != 24 (G2 third Betti number)"
+    assert math.isclose(b3_tension, seed_b3, rel_tol=1e-9), (
+        f"b3 leaf tension {b3_tension} != {seed_b3} (G2 third Betti number "
+        f"of the adopted seed)"
     )
 
     # The structural tree's omega computation must agree with the float

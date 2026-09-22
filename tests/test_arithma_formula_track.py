@@ -50,7 +50,15 @@ def test_a_declared_formula_builds_exports_and_evaluates():
     assert "b3" in f.latex()
     assert f.compact()
     assert f.roundtrips() is True
-    assert f.evaluate() == pytest.approx(12.0)
+    # b_3 / 2 on the live registry seed. Measured 2026-09-22, b3_seed
+    # adoption: topology.elder_kads = 43, so the half is 21.5 where it was
+    # 12.0 before the ruling. Read from the registry as well as pinned, so
+    # the formula is asserted to CONSUME the seed rather than to equal a
+    # number someone typed.
+    assert f.evaluate() == pytest.approx(
+        registry_value("topology.elder_kads") / 2.0
+    )
+    assert f.evaluate() == pytest.approx(21.5)
 
 
 @needs_backend
@@ -64,7 +72,20 @@ def test_the_exact_derivative_is_symbolic_not_a_difference():
 def test_numbers_come_from_the_registry_not_the_formula():
     f = _simple()
     assert f.provenance() == {"b3": "topology.elder_kads"}
-    assert registry_value("topology.elder_kads") == pytest.approx(24.0)
+    # Measured 2026-09-22, b3_seed adoption: the registry's seed row is 43
+    # on the adopted seed_43_joyce branch, where it read 24 before the
+    # ruling. Checked against the fork's own declared value so this pins the
+    # registry FOLLOWING the seed, not a restated constant.
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    assert seed_values(resolve_path())[0] == 43
+    assert registry_value("topology.elder_kads") == pytest.approx(
+        float(seed_values(resolve_path())[0])
+    )
+    assert registry_value("topology.elder_kads") == pytest.approx(43.0)
 
 
 @needs_backend

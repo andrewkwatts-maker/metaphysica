@@ -146,7 +146,7 @@ from typing import Any, Dict, List, Optional
 try:
     from metaphysica.simulations.core.eml_tree_adapter import (
         EML_AVAILABLE,
-        b3_leaf,
+        flavour_b3_leaf as b3_leaf,  # flavour fork decides which b3 (2026-09-22)
         eml_add,
         eml_compute,
         eml_div,
@@ -836,13 +836,51 @@ def get_geometric_pmns() -> Dict[str, Any]:
     "0.99 sigma from 8.54 +- 0.13" figure in this docstring used both a
     superseded central value and a superseded asymmetric-upper sigma;
     it is withdrawn.
+
+    FLAVOUR SEED COUPLING (fork, 2026-09-22): the formula TEXT claims b_3
+    ("theta_13 = arcsin(sqrt(2/3) * sqrt(2) * sin(pi/b3))"), so under the
+    b3_seed adoption the entry point resolves which b_3 the flavour sector
+    actually consumes:
+
+      follow_seed (adopted)  b_3 from the live seed. On seed_43_joyce this
+                             gives theta_13 = 4.8351 deg (measured) -- far
+                             off NuFIT -- which is the honest state of a
+                             24-calibrated ansatz whose formula claims a
+                             topological origin. The divergence publishes.
+      calibrated_24          the v25 calibration as it was: b_3 = 24 in the
+                             flavour formulas regardless of the seed, i.e.
+                             the 24 is admitted to be a CALIBRATED constant
+                             wearing b_3's name. Runnable for costing.
     """
-    return GeometricYukawaT4().derive_pmns_angles()
+    return GeometricYukawaT4(b3=resolve_flavour_b3()).derive_pmns_angles()
+
+
+def resolve_flavour_b3() -> int:
+    """Which b_3 the flavour sector consumes, per the flavour_seed_coupling fork."""
+    import os
+
+    branch = os.environ.get("METAPHYSICA_VARIANT_FLAVOUR_SEED_COUPLING", "")
+    if branch not in ("follow_seed", "calibrated_24"):
+        try:
+            from metaphysica.simulations.core.variants import resolve
+
+            branch = resolve("flavour_seed_coupling")
+        except Exception:                  # import cycle only
+            branch = "follow_seed"
+    if branch == "calibrated_24":
+        return DEFAULT_B3
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
 
 
 __all__ = [
     "GeometricYukawaT4",
     "get_geometric_pmns",
+    "resolve_flavour_b3",
     "DEFAULT_B3",
     "DEFAULT_ETA",
     "DEFAULT_XI",

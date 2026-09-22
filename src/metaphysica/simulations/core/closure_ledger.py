@@ -76,7 +76,11 @@ LAYERS: Dict[str, Dict[str, Any]] = {
                  "flux cannot freeze these rows at leading order because the "
                  "leading-order pairing is t-free (flux_quantization), and "
                  "no discrete ansatz reaches them either -- zero traced "
-                 "edges (ansatz_dependency_graph)"),
+                 "edges (ansatz_dependency_graph). And the racetrack supplies "
+                 "NO value on the adopted seed: a = 2*pi/43 < b = 2*pi/26 "
+                 "deletes the vacuum entirely (0 stationary points, 0 SUSY "
+                 "roots, measured 2026-09-22), so Re(T) is unbound-by-"
+                 "racetrack until the re_t_adoption ruling"),
     },
     "FLAVOUR": {
         "needs": "zero-mode overlap integrals: metric, singular locus, wavefunctions",
@@ -136,8 +140,13 @@ _RULES = [
      "a gauge coupling or unification scale: needs flux and thresholds"),
 
     ("METRIC_DEPENDENT",
-     lambda name, row: bool(re.search(r"H0_|Omega_|entropy_damping", name)),
-     "a cosmological observable downstream of the full reduction"),
+     lambda name, row: bool(re.search(
+         r"H0_|Omega_|entropy_damping|wa_thawing", name)),
+     "a cosmological observable downstream of the full reduction "
+     "(wa_thawing returned to the free set when its -4/sqrt(b_3) removal "
+     "stopped reproducing under the adopted seed, 2026-09-22 -- the "
+     "removal was 24-arithmetic; it re-fires after a rebuild registers "
+     "the seed-consistent value)"),
 ]
 
 

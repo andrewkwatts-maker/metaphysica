@@ -143,13 +143,34 @@ requires_eml = pytest.mark.skipif(
     _eml_missing(), reason="requires the optional eml-math/eml-spectral extra"
 )
 
+def _seed_b3() -> int:
+    """The live b_3 of the adopted b3_seed branch."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
+
+
 @requires_eml
 def test_b3_leaf_is_in_C_tree():
     """The EML tree for C_aγγ is anchored at ``b3_leaf()``.
 
-    Walking ``_C_tree`` reveals a node numerically equal to ``b₃ = 24``
-    from the SSoT registry. This is the operational form of the
-    constraint that *C_aγγ derives from b₃*.
+    Walking ``_C_tree`` reveals a node numerically equal to the live seed's
+    b₃. This is the operational form of the constraint that *C_aγγ derives
+    from b₃*.
+
+    Measured 2026-09-22, b3_seed adoption: ``b3_leaf()`` now evaluates to
+    43.0, and the tree with it, but the module's scalar path still takes
+    ``self.b3`` from its own module constant ``DEFAULT_B3 = 24``. So the
+    tree and the scalar DISAGREE by exactly 43/24 on the default instance --
+    the recorded cost carried by ``portal-alp-photon-v23`` in
+    ``core.ruled_divergences``, retired by that row's wording pass. It is
+    pinned here in both directions rather than smoothed over: the ratio is
+    asserted exactly, and constructing the class on the seed is asserted to
+    bring the two back into agreement, which is what proves the tree is a
+    faithful transcription of the formula and the gap is the stale default.
     """
     mod = _import_module()
     from metaphysica.simulations.core.eml_tree_adapter import (
@@ -157,28 +178,71 @@ def test_b3_leaf_is_in_C_tree():
         eml_compute,
     )
 
+    b3 = _seed_b3()
     instance = mod.AxionPhotonCoupling()
     # The tree exists.
     assert instance._C_tree is not None
-    # The b3 leaf evaluates to 24 (sanity check on b3_leaf itself).
-    assert eml_compute(b3_leaf()) == pytest.approx(24.0, rel=0.0)
-    # The C tree numerically evaluates to compute_anomaly_coefficient().
+    # The b3 leaf follows the seed (sanity check on b3_leaf itself).
+    assert eml_compute(b3_leaf()) == pytest.approx(float(b3), rel=0.0)
+    assert eml_compute(b3_leaf()) == pytest.approx(43.0, rel=0.0)
+
+    # The default instance's scalar path is still seed-blind, and the gap is
+    # exactly the ratio of the two b_3 values -- nothing else drifted.
+    scalar = instance.compute_anomaly_coefficient()
+    assert mod.DEFAULT_B3 == 24
+    assert scalar == pytest.approx(1.6000130155615222, rel=1e-9)
     assert eml_compute(instance._C_tree) == pytest.approx(
-        instance.compute_anomaly_coefficient(), rel=1e-9
+        2.8666899862143924, rel=1e-9
+    )
+    assert eml_compute(instance._C_tree) / scalar == pytest.approx(
+        b3 / mod.DEFAULT_B3, rel=1e-12
+    )
+
+    # Fed the seed explicitly, tree and scalar agree exactly.
+    seeded = mod.AxionPhotonCoupling(b3=b3)
+    assert eml_compute(seeded._C_tree) == pytest.approx(
+        seeded.compute_anomaly_coefficient(), rel=1e-9
     )
 
 
 @requires_eml
 def test_b3_leaf_is_in_g_tree():
-    """The EML tree for g_aγγ is anchored at ``b3_leaf()`` via C_aγγ."""
+    """The EML tree for g_aγγ is anchored at ``b3_leaf()`` via C_aγγ.
+
+    Same recorded divergence as ``test_b3_leaf_is_in_C_tree``, propagated
+    through the linear g_aγγ relation. Measured 2026-09-22, b3_seed
+    adoption: the tree gives 2.688491815337442e-11 GeV^-1 (b₃ = 43) against
+    the default instance's 1.5005535713511313e-11 (DEFAULT_B3 = 24).
+    Note what the seeded value means physically, recorded here because it
+    is the ruling's cost and not a rounding detail: 2.69e-11 GeV^-1 sits
+    ABOVE the BabyIAXO ceiling this file's window test uses, so the axion
+    sector's discovery-window claim survives only on the stale default.
+    """
     mod = _import_module()
     from metaphysica.simulations.core.eml_tree_adapter import eml_compute
 
+    b3 = _seed_b3()
     instance = mod.AxionPhotonCoupling()
     assert instance._g_tree is not None
     C = instance.compute_anomaly_coefficient()
     g = instance.compute_g_a_gamma_gamma(C)
-    assert eml_compute(instance._g_tree) == pytest.approx(g, rel=1e-9)
+    assert g == pytest.approx(1.5005535713511313e-11, rel=1e-9)
+
+    tree_value = eml_compute(instance._g_tree)
+    assert tree_value == pytest.approx(2.688491815337442e-11, rel=1e-9)
+    assert tree_value / g == pytest.approx(b3 / mod.DEFAULT_B3, rel=1e-12)
+    assert not BABYIAXO_FLOOR < tree_value < BABYIAXO_CEIL, (
+        "the seed-following tree value has re-entered the BabyIAXO window; "
+        "if that is real the window test and this pin must be re-measured "
+        "together, not silently reconciled"
+    )
+
+    # Fed the seed explicitly, tree and scalar agree exactly.
+    seeded = mod.AxionPhotonCoupling(b3=b3)
+    seeded_g = seeded.compute_g_a_gamma_gamma(
+        seeded.compute_anomaly_coefficient()
+    )
+    assert eml_compute(seeded._g_tree) == pytest.approx(seeded_g, rel=1e-9)
 
 
 @requires_eml

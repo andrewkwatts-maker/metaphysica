@@ -29,6 +29,32 @@ from typing import List, Tuple, Set
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
+def _registry_on_seed(seed: str):
+    """A FRESH registry built under a named branch of the b3_seed fork.
+
+    get_registry() hands back a singleton constructed at first use, so an
+    environment override cannot reach it. A new instance re-reads the fork.
+
+    The fork was RULED on 2026-09-22: seed_43_joyce is adopted, so the
+    default resolution is (b_3, b_2) = (43, 12). seed_24 = (24, 4) stays
+    runnable as the labelled off-path branch, which is what the twin
+    assertions in TestParityInvariants exercise.
+    """
+    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+    from metaphysica.simulations.core.variants import _ENV_PREFIX
+
+    key = _ENV_PREFIX + "B3_SEED"
+    saved = os.environ.get(key)
+    os.environ[key] = seed
+    try:
+        return FormulasRegistry()
+    finally:
+        if saved is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = saved
+
+
 class SterilityValidator(ast.NodeVisitor):
     """
     AST visitor that identifies numeric literals in Python source code.
@@ -350,83 +376,132 @@ class TestParityInvariants(unittest.TestCase):
 
     def test_h0_geometric_precision(self):
         """
-        Verify H0 derived from Base-24 hits the 71.55 target.
+        Verify H0 from the O'Dowd Formula tracks the adopted b_3 seed.
 
-        This tests the O'Dowd Formula using derived geometric values.
+        Only eta_S in that formula carries b_3, so the b3_seed adoption
+        (author ruling 2026-09-22) moves H0 by the eta_S shift alone:
+        163/239 -> 163/429.
         """
         h0 = self.registry.h0_local
-        expected = 71.55
+        # 71.73960724690849 measured 2026-09-22, b3_seed adoption
+        # (was 71.55, which is the seed_24 reading asserted below)
+        expected = 71.7396
 
-        # Allow 0.01 tolerance (same as test_physics_invariants.py)
+        # Tolerance unchanged at 0.01 (same as test_physics_invariants.py)
         self.assertAlmostEqual(
             h0, expected, delta=0.01,
             msg=f"H0 Drift detected: {h0:.4f} != {expected}"
         )
 
+        # the off-path twin still lands on the old target, so the switch is
+        # demonstrably what moved the number
+        off_path = _registry_on_seed("seed_24").h0_local
+        self.assertAlmostEqual(
+            off_path, 71.55, delta=0.01,
+            msg=f"seed_24 branch drifted: {off_path:.4f} != 71.55"
+        )
+
     def test_bulk_pressure_derivation(self):
         """
-        Ensure 163 is derived from (7 * 24) - 5.
+        Ensure the Heptagonal Scaling formula (7 * b_3) - 5 follows the seed.
 
-        The O'Dowd Bulk Pressure must match the Heptagonal Scaling formula.
+        The formula is unchanged; its input is not. The b3_seed adoption
+        (author ruling 2026-09-22) puts b_3 = 43 under it.
         """
         derived = self.registry.odowd_bulk_derived
-        expected = 163
+        # 296 = (7 * 43) - 5, measured 2026-09-22, b3_seed adoption
+        # (was 163 = (7 * 24) - 5)
+        expected = 296
 
         self.assertEqual(
             derived, expected,
             msg=f"Bulk Pressure Logic Leak: {derived} != {expected}"
         )
+        self.assertEqual(
+            _registry_on_seed("seed_24").odowd_bulk_derived, 163,
+            msg="the seed_24 branch must still give (7 * 24) - 5 = 163"
+        )
 
     def test_pressure_divisor_derivation(self):
         """
-        Ensure 144 is derived from B3^2 / 4.
-
-        The pressure divisor must be geometrically derived.
+        Ensure the pressure divisor stays b_3^2 / 4 with b_3 from the seed.
         """
         derived = self.registry.pressure_divisor
-        expected = 144.0
+        # 462.25 = 43^2 / 4, measured 2026-09-22, b3_seed adoption
+        # (was 144.0 = 24^2 / 4)
+        expected = 462.25
 
         self.assertEqual(
             derived, expected,
             msg=f"Pressure Divisor Logic Leak: {derived} != {expected}"
         )
+        self.assertEqual(
+            _registry_on_seed("seed_24").pressure_divisor, 144.0,
+            msg="the seed_24 branch must still give 24^2 / 4 = 144"
+        )
 
     def test_manifold_area_derivation(self):
         """
-        Ensure 576 is derived from B3^2.
-
-        The manifold area must equal 24^2.
+        Ensure the manifold area stays b_3^2 with b_3 from the adopted seed.
         """
         derived = self.registry.manifold_area_bulk
-        expected = 576
+        # 1849 = 43^2, measured 2026-09-22, b3_seed adoption (was 576 = 24^2)
+        expected = 1849
 
         self.assertEqual(
             derived, expected,
             msg=f"Manifold Area Logic Leak: {derived} != {expected}"
         )
+        self.assertEqual(
+            _registry_on_seed("seed_24").manifold_area_bulk, 576,
+            msg="the seed_24 branch must still give 24^2 = 576"
+        )
 
     def test_sterile_equals_bulk(self):
         """
-        Verify sterile sector equals O'Dowd bulk pressure.
+        The 163 = 288 - 125 = (7 * b_3) - 5 coincidence BREAKS on the seed.
 
-        163 = 288 - 125 = (7 * 24) - 5
+        Recorded, not dropped. The sterile sector is roots_total minus the
+        visible sector and carries no b_3, so it stays 163; the O'Dowd bulk
+        is (7 * b_3) - 5 and follows the seed to 296. The two agreed only
+        because b_3 was 24. The b3_seed adoption (author ruling 2026-09-22)
+        separates them, and pinning the break here means a silent
+        re-derivation of either side fires this test.
         """
-        self.assertTrue(
+        # (163, 296) measured 2026-09-22, b3_seed adoption: the two sides
+        # are equal at 163 under seed_24 and unequal under seed_43_joyce
+        self.assertEqual(self.registry.sterile_sector_derived, 163)
+        self.assertEqual(self.registry.odowd_bulk_derived, 296)
+        self.assertFalse(
             self.registry.verify_sterile_equals_bulk(),
-            msg="Sterile sector != O'Dowd bulk pressure"
+            msg="sterile sector and O'Dowd bulk agree again -- one of the "
+                "two derivations moved; re-examine rather than repin"
+        )
+
+        off_path = _registry_on_seed("seed_24")
+        self.assertTrue(
+            off_path.verify_sterile_equals_bulk(),
+            msg="the seed_24 branch must still close "
+                "163 = 288 - 125 = (7 * 24) - 5"
         )
 
     def test_parity_sum(self):
         """
-        Verify Manifold Parity: eta_S + sigma_T = 163/239 + 23/24 = 1.6403...
+        Verify Manifold Parity: eta_S + sigma_T, with eta_S following b_3.
         """
         parity = self.registry.parity_sum
-        # v23.0+: Derived from 163/239 + 23/24 = 1.64034169820...
-        expected = 1.6403
+        # 1.3382867132867133 = 163/429 + 23/24, measured 2026-09-22, b3_seed
+        # adoption (was 1.6403 = 163/239 + 23/24)
+        expected = 1.3383
 
+        # Tolerance unchanged at 0.0001
         self.assertAlmostEqual(
             parity, expected, delta=0.0001,
             msg=f"Parity Invariant Failed: {parity:.4f} != {expected}"
+        )
+        self.assertAlmostEqual(
+            _registry_on_seed("seed_24").parity_sum, 1.6403, delta=0.0001,
+            msg="the seed_24 branch must still give 163/239 + 23/24"
         )
 
 

@@ -74,6 +74,20 @@ class VariantOption:
     consequence: str
     #: True only for the option currently adopted at the fork's source.
     adopted: bool = False
+    #: SEARCH PRIORITY, lower sweeps first. The adopted option always leads
+    #: regardless of this number; among the rest it declares what is worth
+    #: testing NEXT versus what is kept only so it stays runnable.
+    #:
+    #:   0  the live alternative -- a real contender, cost it early
+    #:   1  plausible / under investigation
+    #:   2  retained for completeness: already refuted, kept because a
+    #:      falsified candidate stays on the books runnable and labelled
+    #:
+    #: This exists because a capped sweep must spend its budget on the
+    #: combinations someone would actually adopt. Before it, enumeration was
+    #: declaration order, and growing `b3_seed` from two options to five
+    #: pushed the ADOPTED state out of a cap=3 search entirely.
+    priority: int = 1
 
 
 @dataclass(frozen=True)
@@ -135,6 +149,26 @@ def _b3_seed_adopted() -> str:
     return "seed_43_joyce"
 
 
+def _flavour_seed_coupling_adopted() -> str:
+    """Behavioural read: which b_3 the flavour entry point actually resolves.
+
+    follow_seed exactly while resolve_flavour_b3() returns the live seed's
+    value; if the module reverts to its calibrated 24 while the seed says
+    otherwise, this stops matching and the drift guard fires.
+    """
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+    from metaphysica.simulations.PM.particle.yukawa_derivation import (
+        resolve_flavour_b3,
+    )
+
+    return ("follow_seed"
+            if resolve_flavour_b3() == seed_values(resolve_path())[0]
+            else "calibrated_24")
+
+
 def _b3_origin_adopted() -> str:
     """input_24 exactly while the seed row's declared status says INPUT.
 
@@ -142,8 +176,18 @@ def _b3_origin_adopted() -> str:
     topology.elder_kads with source INPUT:B3_ORIGIN_OPEN under the 2026-09-14
     ruling); if a derivation ever lands and the status moves, this stops
     matching and the drift guard fires, which is the point.
+
+    BRANCH-AWARE since 2026-09-22: on a Joyce-reachable seed the origin
+    question is ANSWERED (b_2 is the A1 family count, b_3 = 7 + 3 b_2), so
+    the adopted origin is derived_joyce_a1 and run_all registers the row
+    DERIVED. On seed_24 nothing derives the seed and the 2026-09-14 INPUT
+    ruling stands.
     """
-    return "input_24"
+    from metaphysica.simulations.PM.geometry.b3_path import PATHS, resolve_path
+
+    return ("derived_joyce_a1"
+            if PATHS[resolve_path()].get("reachable_by_joyce")
+            else "input_24")
 
 
 def _g2_form_adopted() -> str:
@@ -370,6 +414,7 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="seed_24",
+                priority=0,
                 summary="b_3 = 24, b_2 = 4 -- the status quo, seed as an input",
                 consequence=(
                     "BUYS: every published number unchanged, and w_0 = "
@@ -380,6 +425,38 @@ FORKS: Dict[str, Fork] = {
                     "the TCS range, so nothing declared derives it, and b_2 = "
                     "4 traces to a previously FITTED h^{1,1}. The "
                     "free-variable count cannot reach zero while this holds."
+                ),
+            ),
+            VariantOption(
+                id="seed_7_joyce",
+                priority=2,
+                summary="b_3 = 7, b_2 = 0 -- the unresolved orbifold limit",
+                consequence=(
+                    "BUYS: reachable and fully derived, so it belongs in "
+                    "the family the selection argument ranges over.\n"
+                    "COSTS: n_gen = b_2/4 = 0. No generations at all -- a "
+                    "STRUCTURAL refutation, not a disagreement with data."
+                ),
+            ),
+            VariantOption(
+                id="seed_19_joyce",
+                priority=2,
+                summary="b_3 = 19, b_2 = 4 -- four A1 families",
+                consequence=(
+                    "BUYS: reachable and derived; the b_2 = 4 that seed_24 "
+                    "carries as a FITTED h^{1,1} arrives here derived.\n"
+                    "COSTS: n_gen = b_2/4 = 1. One generation, refuted "
+                    "structurally."
+                ),
+            ),
+            VariantOption(
+                id="seed_31_joyce",
+                priority=2,
+                summary="b_3 = 31, b_2 = 8 -- eight A1 families",
+                consequence=(
+                    "BUYS: reachable and derived.\n"
+                    "COSTS: n_gen = b_2/4 = 2. Two generations, refuted "
+                    "structurally."
                 ),
             ),
             VariantOption(
@@ -483,8 +560,22 @@ FORKS: Dict[str, Fork] = {
         ),
         options=[
             VariantOption(
+                id="derived_joyce_a1",
+                summary="the seed is DERIVED: b_2 = A1 family count, b_3 = 7 + 3 b_2",
+                consequence=(
+                    "BUYS: the origin question is ANSWERED on the reachable "
+                    "family -- n_gen = rank(Gamma) = 3 selects (12, 43) out "
+                    "of the four profiles, the flat 7 is derived (R5), and "
+                    "the family count comes from the enumeration.\n"
+                    "COSTS: applies only on a Joyce-reachable seed; on "
+                    "seed_24 the candidate origins below stay exactly as "
+                    "open as they were."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
                 id="input_24",
-                summary="b_3 = 24 as a stated input, origin open",
+                summary="b_3 = 24 as a stated input, origin open (off-family)",
                 consequence=(
                     "BUYS: honesty. The seed is registered INPUT, the "
                     "free-variable ledger counts it, and no derivation is "
@@ -492,9 +583,8 @@ FORKS: Dict[str, Fork] = {
                     "COSTS: w_0 = -(b_3-1)/b_3, n_gen = b_3/8 and alpha_T "
                     "become predictions from a stated input rather than from "
                     "derived geometry, so the zero-parameter claim cannot "
-                    "hold while this branch is adopted."
+                    "hold while this branch is taken."
                 ),
-                adopted=True,
             ),
             VariantOption(
                 id="arc_flag_stabiliser",
@@ -689,6 +779,50 @@ FORKS: Dict[str, Fork] = {
                     "shadow_asymmetry_delta_T, V_cb, J_CKM) are all invariant. "
                     "Consistent with R1-R4 and the arc flag identity, which "
                     "were verified identical under both branches."
+                ),
+            ),
+        ],
+    ),
+    "flavour_seed_coupling": Fork(
+        id="flavour_seed_coupling",
+        question="Which b_3 does the flavour-ansatz sector consume?",
+        source="simulations.PM.particle.yukawa_derivation.resolve_flavour_b3",
+        status="RULED",
+        read_adopted=_flavour_seed_coupling_adopted,
+        notes=(
+            "Opened 2026-09-22 with the b3_seed adoption. The v25 flavour "
+            "formulas CLAIM b_3 in their text (theta_13 = arcsin(sqrt(2/3) "
+            "* sqrt(2) * sin(pi/b3))) but were CALIBRATED at 24 and "
+            "registered particle.b3 = 24 regardless of the seed -- the last "
+            "seed-blind writer. A formula claiming a topological origin must "
+            "consume the topology; one that will not follow the seed is a "
+            "calibrated constant wearing b_3's name and must say so. "
+            "MEASURED at the flip: theta_13 = 8.6686 deg at b_3 = 24 "
+            "(0.8 sigma vs NuFIT), 4.8351 deg at b_3 = 43."
+        ),
+        options=[
+            VariantOption(
+                id="follow_seed",
+                summary="the flavour formulas consume the live seed's b_3",
+                consequence=(
+                    "BUYS: consistency with the adopted path -- a formula "
+                    "claiming b_3 gets b_3, and particle.b3 stops being a "
+                    "frozen 24. theta_13 moves to 4.8351 deg (measured), "
+                    "publishing the ansatz's real disagreement with NuFIT.\n"
+                    "COSTS: the v25 'PMNS derived at 0.8 sigma' result is "
+                    "exposed as a property of the off-path calibration."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="calibrated_24",
+                summary="the flavour formulas keep their 24 as a calibrated constant",
+                consequence=(
+                    "BUYS: the v25 agreement figures remain reproducible "
+                    "for costing, regression-pinned under this branch.\n"
+                    "COSTS: the 24 must be ADMITTED to be a calibrated "
+                    "constant, not b_3 -- the formula text's claim to a "
+                    "topological origin is false on this branch."
                 ),
             ),
         ],

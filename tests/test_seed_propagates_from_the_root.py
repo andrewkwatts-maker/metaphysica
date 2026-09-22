@@ -41,33 +41,39 @@ def _root():
 # ------------------------------------------------------- propagation
 
 def test_the_root_reads_the_seed_instead_of_a_literal(monkeypatch):
+    """ADOPTED seed_43_joyce (author ruling 2026-09-22): the default IS the
+    found solution, and the root must read it from the fork, not a literal."""
     monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
     monkeypatch.delenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", raising=False)
     sim = _root()()
-    b3, b2 = seed_values("seed_24")
-    assert sim._b3 == b3 == 24
-    assert sim._b2 == b2 == 4
-    assert sim._b3_seed_path == "seed_24", (
-        "the adopted branch must stay the status quo; adoption is the author's"
+    b3, b2 = seed_values("seed_43_joyce")
+    assert sim._b3 == b3 == 43
+    assert sim._b2 == b2 == 12
+    assert sim._b3_seed_path == "seed_43_joyce", (
+        "the adopted branch is the ruled one; changing it is the author's"
     )
 
 
 def test_flipping_the_seed_moves_the_root_outputs(monkeypatch):
-    """The whole point: topology.* must respond to the fork."""
-    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    """The whole point: topology.* must respond to the fork -- now exercised
+    by flipping to the labelled OFF-PATH branch."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
     sim = _root()()
-    assert sim._b3 == 43
-    assert sim._b2 == 12
-    assert sim._n_gen == 3, "three generations must survive the relocation"
+    assert sim._b3 == 24
+    assert sim._b2 == 4
+    assert sim._n_gen == 3, "three generations hold on the off-path route too"
     # k_gimel = b_3/2 + 1/pi rides on the seed and must move with it
-    assert sim._k_gimel > 21.0
+    assert sim._k_gimel < 13.0
 
 
 def test_the_emitted_topology_rows_move_with_the_seed(monkeypatch):
     """Not just the attributes -- the dict run() actually publishes."""
-    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
     at_24 = _root()()
     monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b2_over_faces")
     at_43 = _root()()
 
     assert (at_24._b3, at_24._b2) != (at_43._b3, at_43._b2), (
@@ -87,18 +93,21 @@ def test_the_two_chi_eff_routes_agree_at_24_and_diverge_at_43(monkeypatch):
     even an integer -- so the agreement at 24 was a coincidence of two different
     statements, exactly the trap the register names.
     """
-    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
     at_24 = _root()()
     assert at_24._chi_eff_from_hodge == 144
     assert at_24._chi_eff_from_b3 == pytest.approx(144.0)
     assert at_24._chi_eff_routes_agree is True
 
     monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b2_over_faces")
     at_43 = _root()()
     assert at_43._chi_eff_from_hodge == 144
     assert at_43._chi_eff_from_b3 == pytest.approx(462.25)
     assert at_43._chi_eff_routes_agree is False, (
-        "the divergence must be reported, not smoothed over"
+        "the divergence must be reported, not smoothed over -- it is now the "
+        "ADOPTED branch's honest state, awaiting the chi_eff ruling"
     )
 
 
@@ -154,9 +163,11 @@ def test_the_published_certificates_move_with_the_seed(monkeypatch):
     of the generated artifacts could not tell the fork existed -- the simulation
     emitted 43 and every certificate next to it still read 24.
     """
-    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
     at_24 = _formulas(_root()())
     monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b2_over_faces")
     at_43 = _formulas(_root()())
 
     assert at_24["betti-numbers"].value == 24.0
@@ -182,26 +193,42 @@ def test_no_certificate_term_still_carries_a_frozen_seed(monkeypatch):
     assert by_param["topology.b2"] == "12"
 
 
-def test_the_adopted_branch_publishes_exactly_what_it_did_before(monkeypatch):
-    """Generating the certificates must not move the status quo."""
+def test_the_adopted_branch_publishes_the_found_solution(monkeypatch):
+    """The default certificates carry (12, 43) -- and the labelled off-path
+    branch still publishes exactly what it always did, so nothing was lost
+    in the adoption (author ruling 2026-09-22)."""
     monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.delenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", raising=False)
     forms = _formulas(_root()())
-    assert forms["betti-numbers"].value == 24.0
-    assert forms["euler-characteristic"].value == 144.0
+    assert forms["betti-numbers"].value == 43.0
+    assert forms["euler-characteristic"].value == 144.0, (
+        "chi_eff stays 144 pending its own ruling; the seed flip decides b_3"
+    )
     assert forms["three-generations"].value == 3.0
     assert (forms["betti-numbers"].plain_text
-            == "b0=1, b1=0, b2=4, b3=24, b4=24, b5=4, b6=0, b7=1")
+            == "b0=1, b1=0, b2=12, b3=43, b4=43, b5=12, b6=0, b7=1")
+
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
+    off = _formulas(_root()())
+    assert off["betti-numbers"].value == 24.0
+    assert (off["betti-numbers"].plain_text
+            == "b0=1, b1=0, b2=4, b3=24, b4=24, b5=4, b6=0, b7=1"), (
+        "the off-path branch must keep publishing its own record unchanged"
+    )
 
 
 def test_the_k_matching_identity_is_reported_as_broken_on_the_43_path(
         monkeypatch):
     """K = h^{1,1} = b_2 is a chain of two claims, and the seed breaks the
     second one. It must be reported, not silently left reading 4 = 4."""
-    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b3_over_dim_O")
     at_24 = _root()()
     assert at_24._k_matching_equals_b2 is True
 
     monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", "b2_over_faces")
     at_43 = _root()()
     assert at_43._K_matching == 4, "h^{1,1} is a TCS Hodge number, not a seed"
     assert at_43._b2 == 12
@@ -220,11 +247,12 @@ def test_the_chi_eff_divergence_reaches_the_published_certificate(monkeypatch):
     assert any("DIVERGE" in s for s in steps)
 
 
-def test_the_default_path_is_untouched_by_the_fork_going_live(monkeypatch):
-    """Making n_gen_source live must not move the adopted state."""
+def test_the_default_path_is_the_adopted_ruling(monkeypatch):
+    """The default state is the RULED one (b3_seed adoption 2026-09-22):
+    seed_43_joyce with n_gen = b_2/4 = 3 via b2_over_faces."""
     monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED", raising=False)
     monkeypatch.delenv("METAPHYSICA_VARIANT_N_GEN_SOURCE", raising=False)
     report = n_gen_report()
-    assert report["path"] == "seed_24"
-    assert report["declared_source"] == "b3_over_dim_O"
+    assert report["path"] == "seed_43_joyce"
+    assert report["declared_source"] == "b2_over_faces"
     assert report["n_gen"] == 3.0
