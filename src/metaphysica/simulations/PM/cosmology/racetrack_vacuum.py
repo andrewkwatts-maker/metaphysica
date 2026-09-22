@@ -120,8 +120,15 @@ def _declared_coefficients() -> Tuple[float, float, float, float]:
     b3 = _registry_value("topology.elder_kads")
     d_bulk = _registry_value("dimensions.D_bulk")
 
-    a = (2.0 * math.pi / b3) if b3 else DynamicalLambdaRelaxation.RACETRACK_a
-    b = (2.0 * math.pi / d_bulk) if d_bulk else DynamicalLambdaRelaxation.RACETRACK_b
+    # RACETRACK_a became a PROPERTY when the silent 2*pi/24 fallback was
+    # removed (2026-09-22), so reading it off the CLASS yields the property
+    # OBJECT, not a number, and float() raised TypeError. The fallback branch
+    # is the unbuilt-tree path, which is exactly the path the property exists
+    # to serve, so it is taken through an INSTANCE -- 24 racetrack errors and
+    # 4 failures came from this one attribute access.
+    _declaring = DynamicalLambdaRelaxation()
+    a = (2.0 * math.pi / b3) if b3 else _declaring.RACETRACK_a
+    b = (2.0 * math.pi / d_bulk) if d_bulk else _declaring.RACETRACK_b
 
     A = _registry_value("cosmology.racetrack_A")
     B = _registry_value("cosmology.racetrack_B")

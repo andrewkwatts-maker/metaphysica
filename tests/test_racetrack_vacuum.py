@@ -554,6 +554,46 @@ def test_the_declaring_modules_exponent_follows_the_fork(monkeypatch):
     )
 
 
+def test_the_unbuilt_tree_fallback_returns_a_number_not_a_property():
+    """The fix for RACETRACK_a's drift broke the path the fix was FOR.
+
+    Making RACETRACK_a a property removed the frozen 2 pi / 24, but
+    `_declared_coefficients` still read it off the CLASS, where a property
+    evaluates to the descriptor object rather than a number. `float()` then
+    raised TypeError on every call that took the fallback -- that is, on
+    exactly the unbuilt tree the property was introduced to serve. Measured
+    2026-09-22: 24 errors and 4 failures in the baseline, all from this one
+    attribute access.
+
+    This pins the fallback branch directly, with the registry lookups forced
+    to miss, because the branch is invisible whenever a build artifact
+    happens to be present -- which is how it shipped.
+    """
+    import metaphysica.simulations.PM.cosmology.racetrack_vacuum as rv
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    saved = rv._registry_value
+    try:
+        rv._registry_value = lambda _name: None      # force the fallback
+        A, B, a, b = rv._declared_coefficients()
+    finally:
+        rv._registry_value = saved
+
+    for name, value in (("A", A), ("B", B), ("a", a), ("b", b)):
+        assert isinstance(value, float), (
+            "%s came back as %r, not a float -- a class-level property read "
+            "is back" % (name, type(value).__name__))
+
+    # The fallback must still follow the live seed, which was the whole point
+    # of removing the literal: it is not enough for it to merely not crash.
+    assert a == pytest.approx(
+        2.0 * math.pi / seed_values(resolve_path())[0], rel=1e-12)
+    assert b == pytest.approx(2.0 * math.pi / 26, rel=1e-12)
+
+
 def test_the_report_does_not_adopt(report):
     assert "author" in report["not_adopted"]
     assert "7.086" in report["not_adopted"]
