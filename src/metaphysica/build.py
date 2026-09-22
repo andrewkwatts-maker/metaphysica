@@ -89,6 +89,12 @@ STANDALONE_STEPS = {
     "Evaluate topological cross-shadow coupling",
     "Copy bundled website templates",
     "Build named per-category certificates",
+    # Reads the generated seed family and live code, never the simulation
+    # output, so it is valid on a wheel-only tree.
+    "Publish the integer-identity ledger",
+    # Substitutes exponents into the declared potential and solves it; reads
+    # no build artifact.
+    "Enumerate racetrack exponent pairs",
 }
 
 
@@ -240,6 +246,31 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     # a build is self-describing about the choices it embodies.
     ("Report executable forks",
      [sys.executable, "-m", "metaphysica.simulations.core.variants"],
+     False),
+    # Every claimed integer identity, evaluated live per fork state. Cheap
+    # (pure arithmetic over the generated seed family), so it runs on every
+    # build: the point of the ledger is that the next broken coincidence is
+    # a published report rather than a crash in whichever simulation happens
+    # to assert it, and a report nobody generates is not a report.
+    ("Publish the integer-identity ledger",
+     [sys.executable, "-m", "metaphysica.simulations.core.identity_ledger"],
+     False),
+    # One-fork deviations from the adopted state. Marked EXTRA because it
+    # re-evaluates the observable set once per deviation -- 50 deviations,
+    # about six minutes -- so `--fast` skips it and a full build publishes
+    # it. Measured rather than guessed at: the cost is the whole reason it
+    # is not a normal step.
+    ("Publish the fork implication matrix",
+     [sys.executable, "-m", "metaphysica.simulations.core.fork_implications"],
+     True),
+    # The racetrack exponent-pair enumeration, feeding the OPEN re_t_adoption
+    # ruling an option table. 56 solves at ~0.8s each; runs on every build
+    # because a costed enumeration nobody regenerates goes stale silently,
+    # and its two cross-checks (the seed_24 minimum at 37.8527 and the
+    # ordering-restored control at 10.2085) are worth re-deriving each time.
+    ("Enumerate racetrack exponent pairs",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.cosmology.racetrack_pairs"],
      False),
     ("Audit reference integrity",
      [sys.executable, "-m",

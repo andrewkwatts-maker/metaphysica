@@ -50,8 +50,22 @@ WHAT IT COSTS, STATED PLAINLY
   b_3 - 14, chi/b_3, alpha_T. Those are consequences, not costs -- they follow
   from the seed whatever it is.
 
-NOT ADOPTED. seed_24 remains the adopted branch so no published number moves
-until the author rules. This module exists so the 43 path can be RUN.
+ADOPTED 2026-09-22, by author ruling: `b3_seed = seed_43_joyce`, so (b_2, b_3)
+= (12, 43) is the default everywhere and `n_gen_source = b2_over_faces` with
+it. This paragraph previously read "NOT ADOPTED. seed_24 remains the adopted
+branch so no published number moves until the author rules" -- written before
+the ruling and left standing after it, so the module's own explanation
+asserted the opposite of what it does. seed_24 stays RUNNABLE via
+METAPHYSICA_VARIANT_B3_SEED=seed_24 and stays LABELLED unreachable; keeping it
+is the point, and so is not pretending it is on the family.
+
+AND THERE ARE NOT TWO PATHS. The section above says "two live paths" because
+PATHS was two hand-written entries. It is now GENERATED from b_3 = 7 + 3 n_T3
+over n_T3 in {0, 4, 8, 12}, so the reachable family is FOUR profiles -- b_3 in
+{7, 19, 31, 43} -- plus the off-family seed_24, five in all. Only b_2 = 12
+gives n_gen = b_2/4 = 3; the other three fail STRUCTURALLY at 0, 1 and 2
+generations, which is a different kind of refutation from disagreeing with
+data. See PATHS below for the generator and the measured selection.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """

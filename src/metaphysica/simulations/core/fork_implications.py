@@ -73,6 +73,25 @@ ARTIFACT_BOUND_GATES = (
     "gate_G23_proton_stability_floor",
 )
 
+#: Observables whose value comes from a BUILD ARTIFACT rather than live code.
+#:
+#: These are the subtler half of the same problem, and getting it wrong is the
+#: exact defect this campaign keeps finding. `free_set_size` is built by
+#: reading `parameters.json`, whose b_3-arithmetic removals verify against
+#: WHICHEVER SEED BUILT IT. Flipping `b3_seed` in the environment does not
+#: rebuild it, so the count appears to move -- measured 39 -> 40 on a
+#: deviation to seed_24 -- when what actually happened is that the adopted
+#: artifact was re-read under a fork it does not match. That is not a
+#: measurement of seed_24's free set; `free_set`'s own
+#: `artifact_seed_provenance` guard reports the mismatch, and the register
+#: says the off-branch count exists only after a rebuild.
+#:
+#: Reporting such a row as "moved" would manufacture a consequence, which is
+#: worse than reporting nothing. They are labelled instead.
+ARTIFACT_BOUND_OBSERVABLES = (
+    "free_set_size",
+)
+
 
 # ---------------------------------------------------------------------------
 # The deviations
@@ -165,6 +184,62 @@ def _gate_verdicts() -> Dict[str, str]:
     return out
 
 
+def _cost_observables() -> Dict[str, Any]:
+    """The quantities the register carries as MEASURED costs of the ruling.
+
+    `preferred_path._default_observables` watches four quantities, and three
+    of them are seed-blind by construction, so a deviation matrix built on it
+    alone reported almost nothing -- most notably `flavour_seed_coupling`
+    came out with zero changes while its headline cost is theta_13 moving
+    from 8.6686 to 4.8351 degrees. A matrix that cannot see the cost it
+    exists to publish is worse than no matrix.
+
+    These are added by NAME, from the register's own cost table, so the
+    matrix answers the question the table poses.
+    """
+    def theta_13_deg() -> Any:
+        from metaphysica.simulations.PM.particle.yukawa_derivation import (
+            get_geometric_pmns,
+        )
+
+        return get_geometric_pmns().get("theta_13_deg")
+
+    def axion_g_a_gamma() -> Any:
+        from metaphysica.simulations.PM.particle.axion_photon_coupling import (
+            AxionPhotonCoupling,
+        )
+
+        return AxionPhotonCoupling().derive_axion_coupling()["g_aγγ_GeV"]
+
+    def axion_window_status() -> Any:
+        from metaphysica.simulations.PM.particle.axion_photon_coupling import (
+            AxionPhotonCoupling,
+        )
+
+        return AxionPhotonCoupling().derive_axion_coupling()["status"]
+
+    def ancestral_roots() -> Any:
+        from metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots \
+            import _live_budget
+
+        return _live_budget()["ancestral_roots"]
+
+    def seed_b3() -> Any:
+        return _live_seed_values()[0]
+
+    def seed_b2() -> Any:
+        return _live_seed_values()[1]
+
+    return {
+        "ancestral_roots": ancestral_roots,
+        "axion_g_a_gamma_GeV": axion_g_a_gamma,
+        "axion_window_status": axion_window_status,
+        "seed_b2": seed_b2,
+        "seed_b3": seed_b3,
+        "theta_13_deg": theta_13_deg,
+    }
+
+
 def _observables() -> Dict[str, Any]:
     """The watched observables, evaluated in the live state."""
     from metaphysica.simulations.core.preferred_path import (
@@ -172,7 +247,9 @@ def _observables() -> Dict[str, Any]:
         _evaluate,
     )
 
-    return _evaluate(_default_observables())
+    watched = dict(_default_observables())
+    watched.update(_cost_observables())
+    return _evaluate(watched)
 
 
 def _measure() -> Dict[str, Any]:
@@ -212,7 +289,20 @@ def _diff(base: Dict[str, Any], dev: Dict[str, Any]) -> Dict[str, Any]:
     for name in sorted(set(base["observables"]) | set(dev["observables"])):
         a, b = base["observables"].get(name), dev["observables"].get(name)
         if a != b:
-            moved.append({"observable": name, "adopted": a, "deviated": b})
+            moved.append({
+                "observable": name, "adopted": a, "deviated": b,
+                "artifact_bound": name in ARTIFACT_BOUND_OBSERVABLES,
+                # An artifact-bound row did not measure the deviated state; it
+                # re-read the ADOPTED build under a different fork. Saying so
+                # is the difference between a consequence and an artefact.
+                "reading": (
+                    "NOT A MEASUREMENT of the deviated branch: this value "
+                    "comes from the build artifact, which was produced under "
+                    "the adopted selection. Rebuild under the deviation to "
+                    "measure it."
+                    if name in ARTIFACT_BOUND_OBSERVABLES else "live"
+                ),
+            })
 
     flipped = []
     for name in sorted(set(base["identities"]) | set(dev["identities"])):
@@ -283,6 +373,7 @@ def build_matrix() -> Dict[str, Any]:
             "gates": sorted(base["gates"]),
         },
         "artifact_bound_gates": list(ARTIFACT_BOUND_GATES),
+        "artifact_bound_observables": list(ARTIFACT_BOUND_OBSERVABLES),
         "rows": rows,
         "ordering": (
             "fork id, then option id; never by how much a deviation improves "

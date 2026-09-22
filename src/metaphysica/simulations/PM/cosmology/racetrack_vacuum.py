@@ -19,8 +19,33 @@ every stationary point of V over the complex T plane's real slice, classified
 by the Hessian in both the Re(T) and axion directions -- instead of stopping at
 the single D_T W = 0 root the incumbent code finds.
 
-WHAT THE SOLVE ESTABLISHES (verified by the tests, re-derived every run)
-========================================================================
+READ THIS FIRST: THE NUMBERED FINDINGS BELOW ARE THE seed_24 BRANCH
+===================================================================
+They were written before the b3_seed adoption and describe the branch where
+a = 2 pi / 24 > b = 2 pi / 26. On the ADOPTED path (b_3 = 43) that ordering is
+LOST -- a = 2 pi / 43 < b = 2 pi / 26 -- and the solver finds ZERO stationary
+points, ZERO SUSY roots, and V strictly positive and strictly decreasing over
+the same window: a bare runaway to V -> 0+. Not a relocated minimum, a deleted
+one. The solver was proven innocent by an ordering-restored control (a <-> b),
+which brings the SUSY AdS minimum back at Re(T) = 10.2085 with a dS saddle at
+15.6529.
+
+So item 2 below -- "the incumbent 37.85 registry value is the genuine vacuum
+of the declared equations" -- is TRUE ON seed_24 AND FALSE ON THE ADOPTED
+PATH. The tests in tests/test_racetrack_vacuum.py pin the ABSENCE on the
+adopted branch, and a vacuum returning there without a documented mechanism is
+a regression, not a discovery. The seed_24 record is kept in full because
+deleting a measured result to match a later ruling is not how this campaign
+records anything.
+
+One consequence is a reporting defect rather than a physics one, and it is
+named rather than fixed here: `cosmology.racetrack_Re_T` publishes 7.086 on
+BOTH seeds, because the published row takes the calibrated fallback when the
+solver finds no minimum. A reader of parameters.json alone cannot see that the
+vacuum died.
+
+WHAT THE SOLVE ESTABLISHES ON seed_24 (verified by the tests, re-derived every run)
+==================================================================================
 1. The equations DO stabilise the modulus. There is exactly one minimum on
    (0.5, 300): a supersymmetric AdS vacuum at
 
