@@ -59,10 +59,64 @@ __all__ = [
     "resolve",
     "active_selection",
     "describe",
+    "ACTIVE",
+    "CONSIDERED",
+    "DISABLED",
+    "OPTION_STATUSES",
+    "SourceUnmeasurable",
+    "selected_status",
+    "off_table_selections",
 ]
 
 #: Environment prefix: METAPHYSICA_VARIANT_<FORK_ID_UPPER>=<option id>
 _ENV_PREFIX = "METAPHYSICA_VARIANT_"
+
+# ---------------------------------------------------------------------------
+# OPTION STATUS VOCABULARY
+# ---------------------------------------------------------------------------
+# Three words, because the registry previously had only two states that a
+# reader could distinguish -- adopted, and everything else -- while the
+# "everything else" pile mixed two completely different things: a rival
+# nobody has ruled out yet, and a candidate the framework has already
+# refuted and keeps only because a falsified claim stays on the books.
+#
+# Collapsing those loses the fact that matters most about an option, so the
+# distinction is now declared rather than inferred from a priority integer.
+
+#: The adopted option. Exactly one per fork, and it is what runs by default.
+ACTIVE = "active"
+
+#: A live rival: runnable, not refuted, and a real candidate for adoption.
+#: A sweep should cost these, because one of them might replace the ACTIVE
+#: option tomorrow.
+CONSIDERED = "considered"
+
+#: Refuted -- falsified against data, or structurally impossible -- and
+#: RETAINED ANYWAY, runnable and labelled, because this project never
+#: deletes a failed candidate: a candidate that fails is a result.
+#:
+#: DISABLED means "not on the table", NOT "not executable". A disabled
+#: option still runs end to end under an explicit override, which is the
+#: only way its refutation stays checkable rather than becoming folklore.
+DISABLED = "disabled"
+
+#: Declaration order, which is also sweep order: adopted, then rivals, then
+#: the refuted candidates kept for completeness.
+OPTION_STATUSES = (ACTIVE, CONSIDERED, DISABLED)
+
+
+class SourceUnmeasurable(RuntimeError):
+    """A fork's source could not be read, so no option may be claimed.
+
+    Raised instead of returning an option id. The distinction is the whole
+    point: a reader that returns the declared default when it cannot see
+    reports "the declaration is correct" on exactly the runs where it knows
+    nothing, and `describe()` then publishes that as a verified state.
+    """
+
+#: status -> default sweep priority. One mapping, so "is this refuted" has a
+#: single answer and the ordering cannot disagree with the label.
+_STATUS_PRIORITY = {ACTIVE: 0, CONSIDERED: 1, DISABLED: 2}
 
 
 @dataclass(frozen=True)
@@ -87,7 +141,61 @@ class VariantOption:
     #: combinations someone would actually adopt. Before it, enumeration was
     #: declaration order, and growing `b3_seed` from two options to five
     #: pushed the ADOPTED state out of a cap=3 search entirely.
-    priority: int = 1
+    #:
+    #: Left unset it is DERIVED from ``status`` via ``_STATUS_PRIORITY``, so
+    #: the label and the sweep order cannot drift apart. Set it explicitly
+    #: only to rank within a status -- e.g. priority 0 on a CONSIDERED
+    #: option marks the rival worth costing before the other rivals.
+    priority: Optional[int] = None
+    #: ACTIVE / CONSIDERED / DISABLED -- see the vocabulary above. Left unset
+    #: it is DERIVED from ``adopted``, which keeps every pre-existing
+    #: declaration valid and means the only way to get DISABLED is to say so.
+    status: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        """Derive the unset fields, then refuse an inconsistent declaration.
+
+        A frozen dataclass, so the derived values go in via object.__setattr__.
+        The checks here are the single place the three fields are reconciled:
+        without them ``adopted``, ``status`` and ``priority`` are three
+        independent ways to say the same thing, and the registry would be
+        able to publish an option that is adopted and refuted at once.
+        """
+        status = self.status
+        if status is None:
+            status = ACTIVE if self.adopted else CONSIDERED
+            object.__setattr__(self, "status", status)
+        if status not in OPTION_STATUSES:
+            raise ValueError(
+                f"option {self.id!r}: status {status!r} is not one of "
+                f"{list(OPTION_STATUSES)}"
+            )
+        # ACTIVE and adopted are the same statement, so they must agree.
+        if (status == ACTIVE) != self.adopted:
+            raise ValueError(
+                f"option {self.id!r}: status {status!r} contradicts "
+                f"adopted={self.adopted} -- ACTIVE means adopted and "
+                f"adopted means ACTIVE"
+            )
+        if self.priority is None:
+            object.__setattr__(self, "priority", _STATUS_PRIORITY[status])
+        # A refuted option must sweep last; otherwise a capped search spends
+        # its budget re-running candidates the framework already rejected.
+        if status == DISABLED and self.priority != _STATUS_PRIORITY[DISABLED]:
+            raise ValueError(
+                f"option {self.id!r}: DISABLED must carry priority "
+                f"{_STATUS_PRIORITY[DISABLED]}, not {self.priority}"
+            )
+        if status == CONSIDERED and self.priority not in (0, 1):
+            raise ValueError(
+                f"option {self.id!r}: CONSIDERED ranks 0 (cost it early) or "
+                f"1 (plausible), not {self.priority}"
+            )
+
+    @property
+    def refuted(self) -> bool:
+        """Kept on the books and off the table."""
+        return self.status == DISABLED
 
 
 @dataclass(frozen=True)
@@ -112,10 +220,43 @@ class Fork:
         return [o.id for o in self.options]
 
     def default(self) -> str:
+        active = [o.id for o in self.options if o.status == ACTIVE]
+        if not active:
+            raise ValueError(f"fork {self.id!r} declares no adopted option")
+        if len(active) > 1:
+            raise ValueError(
+                f"fork {self.id!r} declares {len(active)} ACTIVE options "
+                f"({active}); exactly one runs by default"
+            )
+        return active[0]
+
+    def option(self, option_id: str) -> VariantOption:
         for option in self.options:
-            if option.adopted:
-                return option.id
-        raise ValueError(f"fork {self.id!r} declares no adopted option")
+            if option.id == option_id:
+                return option
+        raise ValueError(
+            f"fork {self.id!r} has no option {option_id!r}; "
+            f"available: {self.option_ids()}"
+        )
+
+    def options_by_status(self, status: str) -> List[str]:
+        """Option ids carrying *status*, in declaration order."""
+        if status not in OPTION_STATUSES:
+            raise ValueError(
+                f"unknown status {status!r}; expected one of "
+                f"{list(OPTION_STATUSES)}"
+            )
+        return [o.id for o in self.options if o.status == status]
+
+    def sweepable_ids(self) -> List[str]:
+        """What a default sweep covers: the adopted option and its live rivals.
+
+        DISABLED options are excluded HERE and nowhere else -- they stay fully
+        runnable through ``resolve(fork, override)`` and through the
+        environment, which is what keeps a refutation reproducible. What they
+        do not do is consume sweep budget by default.
+        """
+        return [o.id for o in self.options if o.status != DISABLED]
 
 
 def _re_t_adoption_adopted() -> str:
@@ -271,14 +412,40 @@ def _chi_eff_route_adopted() -> str:
 
 
 def _bulk_signature_adopted() -> str:
+    """Which signature CANON["bulk"] actually states.
+
+    The trailing fallback here used to be `return "24_2"` -- the option this
+    fork declares adopted -- reached both when CANON carried no "form" key at
+    all and when it carried a signature no option claims. So a bulk rewritten
+    to an undeclared signature (the withdrawn (24,1) and 27D readings among
+    them) reported "no drift", which is the one thing this reader exists to
+    rule out. Same shape as `_dark_energy_betti_adopted`, found by the same
+    sweep on 2026-09-26.
+    """
     from metaphysica.simulations.core.canonical_values import CANON
 
-    form = CANON["bulk"].get("form", "")
+    try:
+        form = CANON["bulk"]["form"]
+    except KeyError as exc:
+        raise SourceUnmeasurable(
+            f"CANON['bulk'] states no signature: {exc}"
+        ) from exc
     for option, token in (("26_2", "(26,2)"), ("25_1", "(25,1)"), ("24_2", "(24,2)")):
         if token in form:
             return option
-    return "24_2"
+    raise SourceUnmeasurable(
+        f"CANON['bulk']['form'] = {form!r} names no declared option; "
+        f"declared: ['26_2', '25_1', '24_2']"
+    )
 
+
+
+#: n -> option id for the dark-energy Betti fork. Declared once, so the
+#: reader cannot invent a mapping and the test can assert over the same table.
+_DE_BETTI_BY_N = {
+    24: "b3_24", 12: "bridges_12", 8: "octonion_8",
+    6: "chi_over_b3_6", 4: "b2_4", 3: "ngen_3",
+}
 
 
 def _dark_energy_betti_adopted() -> str:
@@ -287,18 +454,68 @@ def _dark_energy_betti_adopted() -> str:
     Measured, not declared: n = 1/(1 + w0), so the live value of w0 reports
     which option is in force and a silent change to the derivation cannot
     leave this fork claiming the wrong one.
+
+    THAT PROMISE USED TO BE FALSE, in three ways at once. The body caught
+    bare Exception and returned the literal "b3_24"; a w0 of None or <= -1
+    returned the same literal; and an n outside the mapping returned it via
+    a `.get(n, "b3_24")` default. Since "b3_24" is also the DECLARED adopted
+    option, all three failure paths confirmed the declaration -- and the
+    ordinary case is a failure path, because `cosmology.w0_derived` is not in
+    the registry until a sim run populates it, so the except branch fired and
+    nothing was ever measured. A drift detector that answers "no drift"
+    whenever it cannot see is worse than none, because `describe()`
+    publishes its verdict.
+
+    Now: it measures when it can, and says it cannot when it cannot. The
+    caller distinguishes the two because unmeasurable RAISES rather than
+    returning an option id -- the same discipline
+    `test_silent_fork_defaults.py` imposed on every other fork-reading
+    module, which never covered this file.
     """
     try:
         from metaphysica.simulations.base.registry import PMRegistry
+    except ImportError as exc:  # the one tolerated failure: an import cycle
+        raise SourceUnmeasurable(f"registry unimportable: {exc}") from exc
 
+    try:
         w0 = PMRegistry.get_instance().get("cosmology.w0_derived")
-    except Exception:  # pragma: no cover - registry not populated
-        return "b3_24"
-    if w0 is None or w0 <= -1.0:
-        return "b3_24"
-    n = round(1.0 / (1.0 + float(w0)))
-    return {24: "b3_24", 12: "bridges_12", 8: "octonion_8",
-            6: "chi_over_b3_6", 4: "b2_4", 3: "ngen_3"}.get(n, "b3_24")
+    except Exception as exc:
+        # Not yet computed. The honest answer is "cannot tell", never the
+        # name of the option that happens to be declared adopted.
+        raise SourceUnmeasurable(
+            f"cosmology.w0_derived unavailable: {exc}"
+        ) from exc
+
+    if w0 is None:
+        raise SourceUnmeasurable("cosmology.w0_derived is None")
+    w0 = float(w0)
+    if w0 <= -1.0:
+        raise SourceUnmeasurable(
+            f"w0 = {w0} is not of the form -(n-1)/n for positive n"
+        )
+    n = round(1.0 / (1.0 + w0))
+    # The live-seed reading, checked before the frozen table: if the sector
+    # has moved with the seed, n is the live b_3 and no fixed table entry
+    # would name it. Skipped when the live b_3 is itself 24, where the two
+    # readings coincide and the frozen option is the one declared.
+    try:
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path, seed_values,
+        )
+        live_b3 = seed_values(resolve_path())[0]
+    except ImportError:  # pragma: no cover - import cycle
+        live_b3 = None
+    if live_b3 is not None and n == live_b3 and n not in _DE_BETTI_BY_N:
+        return "b3_live"
+    if n not in _DE_BETTI_BY_N:
+        # The case that matters: if the sector moved to n = b_3 on the
+        # adopted seed, n = 43 is not in the table. Reporting "b3_24" here
+        # would hide exactly the change this fork exists to catch.
+        raise SourceUnmeasurable(
+            f"w0 = {w0} implies n = {n}, which no declared option claims; "
+            f"declared: {sorted(_DE_BETTI_BY_N)}"
+        )
+    return _DE_BETTI_BY_N[n]
 
 
 def _render_policy_adopted() -> str:
@@ -429,7 +646,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="seed_7_joyce",
-                priority=2,
+                status=DISABLED,
                 summary="b_3 = 7, b_2 = 0 -- the unresolved orbifold limit",
                 consequence=(
                     "BUYS: reachable and fully derived, so it belongs in "
@@ -440,7 +657,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="seed_19_joyce",
-                priority=2,
+                status=DISABLED,
                 summary="b_3 = 19, b_2 = 4 -- four A1 families",
                 consequence=(
                     "BUYS: reachable and derived; the b_2 = 4 that seed_24 "
@@ -451,7 +668,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="seed_31_joyce",
-                priority=2,
+                status=DISABLED,
                 summary="b_3 = 31, b_2 = 8 -- eight A1 families",
                 consequence=(
                     "BUYS: reachable and derived.\n"
@@ -537,7 +754,7 @@ FORKS: Dict[str, Fork] = {
     ),
     "b3_origin": Fork(
         id="b3_origin",
-        question="What sets b_3 = 24?",
+        question="What sets b_3? (asked of whichever seed is live; the options below were written when it was 24)",
         source="simulations.run_all_simulations topology.elder_kads status",
         status="OPEN",
         read_adopted=_b3_origin_adopted,
@@ -1337,7 +1554,15 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="b3_24",
-                summary="n = b3 = 24, w0 = -23/24 = -0.9583 (adopted)",
+                summary=(
+                    "n = 24 as a FROZEN integer, w0 = -23/24 = -0.9583 "
+                    "(adopted). This summary read 'n = b3 = 24' until "
+                    "2026-09-26, which the b3_seed ruling made false: b_3 = "
+                    "43 on the adopted path, so 24 is no longer b_3 and this "
+                    "option is a constant rather than a topological read. "
+                    "See the b3_live option for the live-seed reading, and "
+                    "the fork notes for what else the ruling moved here."
+                ),
                 consequence="The framework's headline: pure b3 topology, zero "
                             "free parameters, and a stated derivation (static "
                             "pressure of the 24-cycle with 12-pair "
@@ -1348,6 +1573,29 @@ FORKS: Dict[str, Fork] = {
                             "wa in [-1/8, -1/24], excludes the DR2 central wa "
                             "= -0.86 by 3.20 sigma.",
                 adopted=True,
+            ),
+            VariantOption(
+                id="b3_live",
+                summary=(
+                    "n = b_3 on whatever seed is live -- 43 on the adopted "
+                    "path, giving w0 = -42/43 = -0.976744"
+                ),
+                consequence=(
+                    "NOT ADOPTED, and the gap it names is the point. This is "
+                    "the reading `b3_path.downstream()` already publishes as "
+                    "the adopted path's consequence: w0 moves from -0.958333 "
+                    "to -0.976744, i.e. from 0.017 sigma to 0.94 sigma "
+                    "against the registry's DESI anchor -- worse agreement, "
+                    "derived rather than frozen, and recorded there as an "
+                    "accepted cost of the b3_seed ruling.\n"
+                    "The fork did not carry this option until 2026-09-26, so "
+                    "there was no way to select the reading the geometry "
+                    "module says is in force, and no way for the drift "
+                    "detector to report that the sector had NOT moved with "
+                    "the seed. Which of b3_24 and b3_live is correct is the "
+                    "AUTHOR'S ruling; declaring the option decides nothing "
+                    "and changes no published number."
+                ),
             ),
             VariantOption(
                 id="b2_4",
@@ -1443,7 +1691,26 @@ FORKS: Dict[str, Fork] = {
               "every n >= 4. If DR2 holds, thawing quintessence is "
               "disfavoured on its own terms whichever integer is adopted, so "
               "the remaining work is not re-tuning n but asking whether the "
-              "dark energy sector is thawing at all.",
+              "dark energy sector is thawing at all. "
+              "WHAT THE b3_seed RULING MOVED HERE, recorded 2026-09-26 and "
+              "NOT resolved. This fork and every sigma figure in its options "
+              "were computed at b_3 = 24. The 2026-09-22 ruling adopted "
+              "(b_2, b_3) = (12, 43), and three things follow that the option "
+              "set does not yet reflect. (1) The adopted option's 24 is now a "
+              "FROZEN integer, not b_3; its summary said 'n = b3 = 24' and "
+              "was false. (2) The live-seed reading was not an option at all, "
+              "so the divergence between this sector and "
+              "b3_path.downstream() -- which publishes w0 = -0.976744 at 0.94 "
+              "sigma as the ruling's accepted cost -- could be neither "
+              "selected nor detected; it is now the b3_live option. (3) On "
+              "the adopted seed, n = b_2 is 12, so the b2_4 option's integer "
+              "and the bridges_12 option's integer COINCIDE, and the "
+              "mass-scale argument that settled the 2026-09-06 ruling was "
+              "computed against b_2 = 4 and b_3 = 24 throughout. Whether "
+              "that argument survives the reseeding is the AUTHOR'S ruling. "
+              "Nothing here adopts anything or changes a published number; "
+              "the sigma figures stay as measured at b_3 = 24 and are "
+              "labelled as such rather than silently reinterpreted.",
     ),
     "render_policy": Fork(
         id="render_policy",
@@ -1597,7 +1864,39 @@ def resolve(fork_id: str, override: Optional[str] = None) -> str:
             f"fork {fork_id!r} has no option {chosen!r}; "
             f"available: {fork.option_ids()}"
         )
+    # A DISABLED option resolves exactly like any other. It is refuted, not
+    # broken, and a refutation nobody can re-run is folklore -- so the
+    # override is honoured and the choice is merely recorded as off-table
+    # rather than refused.
     return chosen
+
+
+def selected_status(fork_id: str, override: Optional[str] = None) -> str:
+    """Status of whatever ``resolve`` would select for *fork_id*.
+
+    Lets a caller say "this run is off the table" without re-deriving the
+    resolution order, and lets an artifact record that it was produced under
+    a refuted option instead of publishing the numbers unlabelled.
+    """
+    fork = FORKS[fork_id]
+    return fork.option(resolve(fork_id, override)).status
+
+
+def off_table_selections() -> Dict[str, str]:
+    """Forks currently resolving to a DISABLED option, fork id -> option id.
+
+    Empty on a default run. Non-empty means the process is executing a
+    candidate the framework has already refuted, which is a legitimate thing
+    to do deliberately and a serious thing to do by accident -- so the
+    publishing path can check it rather than trusting that nobody set an
+    environment variable.
+    """
+    out: Dict[str, str] = {}
+    for fid in FORKS:
+        chosen = resolve(fid)
+        if FORKS[fid].option(chosen).status == DISABLED:
+            out[fid] = chosen
+    return out
 
 
 def active_selection() -> Dict[str, str]:
@@ -1608,7 +1907,18 @@ def active_selection() -> Dict[str, str]:
 def describe() -> Dict[str, Any]:
     """Machine-readable summary for the build artifact."""
     out: Dict[str, Any] = {
-        "schema_version": 1,
+        # 2: every option now carries a status (active / considered /
+        # disabled) and its sweep priority, and each fork carries its
+        # status counts and its sweepable set. Nothing was removed.
+        "schema_version": 2,
+        "option_statuses": {
+            ACTIVE: "adopted; this is what runs by default",
+            CONSIDERED: "a live rival: runnable, not refuted, a real candidate",
+            DISABLED: (
+                "refuted and RETAINED -- still runnable under an explicit "
+                "override, excluded from default sweeps, never deleted"
+            ),
+        },
         "note": (
             "Open decisions that can be executed either way. Defaults mirror "
             "the value adopted at each fork's source and are checked against "
@@ -1620,12 +1930,19 @@ def describe() -> Dict[str, Any]:
     }
     for fid, fork in FORKS.items():
         drift = None
+        # "could not measure" is NOT "no drift", and it is not drift either.
+        # Kept as its own field so a reader of the artifact can tell a fork
+        # that was checked from one that could not be.
+        source_read = "not_checkable" if fork.read_adopted is None else "live"
         if fork.read_adopted is not None:
             try:
                 live = fork.read_adopted()
                 if live != fork.default():
                     drift = f"source says {live!r}, declaration says {fork.default()!r}"
+            except SourceUnmeasurable as exc:
+                source_read = f"unmeasurable: {exc}"
             except Exception as exc:  # pragma: no cover - diagnostic only
+                source_read = f"error: {exc}"
                 drift = f"could not read source: {exc}"
         out["forks"][fid] = {
             "question": fork.question,
@@ -1639,11 +1956,23 @@ def describe() -> Dict[str, Any]:
                     "summary": o.summary,
                     "consequence": o.consequence,
                     "adopted": o.adopted,
+                    # Published so a reader of the artifact can tell a live
+                    # rival from a refuted candidate that is kept only
+                    # because this project never deletes one. Without it
+                    # both read as "an option", which is the distinction
+                    # the vocabulary exists to restore.
+                    "status": o.status,
+                    "priority": o.priority,
                 }
                 for o in fork.options
             ],
+            "status_counts": {
+                s: len(fork.options_by_status(s)) for s in OPTION_STATUSES
+            },
+            "sweepable": fork.sweepable_ids(),
             "notes": fork.notes,
             "drift": drift,
+            "source_read": source_read,
         }
     return out
 
@@ -1670,17 +1999,41 @@ def main(argv=None) -> int:
     print("=" * 70)
     print(" EXECUTABLE FORKS")
     print("=" * 70)
+    # One glyph per status, so a reader can see at a glance which options are
+    # on the table and which are kept only because a refuted candidate is
+    # never deleted. Before this the listing showed "adopted" or blank, and a
+    # live rival was typographically identical to a structural refutation.
+    glyph = {ACTIVE: "ACTIVE    ", CONSIDERED: "considered", DISABLED: "DISABLED  "}
+    off_table = off_table_selections()
     for fid, entry in payload["forks"].items():
         mark = "*" if entry["selected"] != entry["default"] else " "
         print(f" {mark}{fid}  [{entry['status']}]  selected={entry['selected']}")
         print(f"    {entry['question']}")
         for opt in entry["options"]:
-            flag = "adopted" if opt["adopted"] else "       "
-            print(f"      {flag}  {opt['id']}: {opt['summary']}")
+            print(f"      {glyph[opt['status']]}  {opt['id']}: {opt['summary']}")
         if entry["drift"]:
             print(f"    DRIFT: {entry['drift']}")
+        if entry["source_read"] != "live":
+            # Not drift and not agreement: the source could not be read, so
+            # this fork's declaration is UNCHECKED on this run.
+            print(f"    SOURCE NOT MEASURED: {entry['source_read']}")
+        if fid in off_table:
+            print(f"    OFF TABLE: running the refuted option "
+                  f"{off_table[fid]!r} by explicit override")
     print("")
+    if off_table:
+        print(f"  WARNING: {len(off_table)} fork(s) resolve to a REFUTED "
+              f"option: {off_table}")
+        print("  Results from this run describe a candidate the framework "
+              "has already rejected.")
+    unchecked = [f for f, e in payload["forks"].items()
+                 if e["source_read"] != "live"]
+    if unchecked:
+        print(f"  {len(unchecked)} fork(s) could not be checked against their "
+              f"source: {unchecked}")
     print(f"  override with {payload['env_prefix']}<FORK_ID>=<option>")
+    print(f"  statuses: {', '.join(OPTION_STATUSES)} "
+          "(disabled = refuted, retained, runnable only on request)")
     print(f"  Report written to: {out}")
     return 1 if any(e["drift"] for e in payload["forks"].values()) else 0
 

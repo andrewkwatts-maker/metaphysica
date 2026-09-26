@@ -105,7 +105,8 @@ def open_forks() -> List[str]:
 
 
 def combinations_for(fork_ids: Iterable[str],
-                     cap: Optional[int] = None
+                     cap: Optional[int] = None,
+                     include_refuted: bool = True,
                      ) -> List[Dict[str, str]]:
     """Every combination over the named forks, ADOPTED OPTION FIRST.
 
@@ -122,6 +123,13 @@ def combinations_for(fork_ids: Iterable[str],
     exotic combinations rather than the most important one. This matters
     more as options are added, which is the direction the framework is
     going.
+
+    *include_refuted* defaults to True because this module's central promise
+    is that it reports EVERY combination, and a DISABLED option is refuted,
+    not absent -- dropping it silently would make the promise false. Pass
+    False for a budget sweep that should cost only the adopted state and its
+    live rivals; then the omission is the caller's explicit choice and shows
+    up in the signature rather than in the results.
     """
     forks = _variants().FORKS
     ids = [f for f in fork_ids if f in forks]
@@ -134,13 +142,22 @@ def combinations_for(fork_ids: Iterable[str],
         except Exception:                  # a fork with no resolvable default
             adopted = None
 
+        if include_refuted:
+            candidates = list(enumerate(fork.options))
+        else:
+            sweepable = set(fork.sweepable_ids())
+            candidates = [
+                (idx, opt) for idx, opt in enumerate(fork.options)
+                if opt.id in sweepable
+            ]
+
         # Order: adopted first, then by DECLARED priority (0 = live
         # alternative worth costing early, 2 = retained-for-completeness),
         # then declaration order as the stable tie-break. A capped sweep
         # then spends its budget on combinations someone might adopt
         # instead of on candidates already refuted.
         ordered = sorted(
-            enumerate(fork.options),
+            candidates,
             key=lambda pair: (
                 pair[1].id != adopted,
                 getattr(pair[1], "priority", 1),
