@@ -277,6 +277,38 @@ above is a probe result and not a verified count. A genuine build at the
 adopted seed is the prerequisite, and it moves every published number — which
 is why it is flagged here rather than done unilaterally.
 
+### 3.8 w_0 has three DESI anchors, and the sigma depends which you pick
+
+After merging `origin/main` (`0b429d4`), the dark-energy sector DOES now compute
+w_0 from the live seed — `w0_from_b3(43)` returns −0.976744 = −42/43 — so the
+seed-blindness in §3.3 is fixed in the sector, while
+`FormulasRegistry.tzimtzum_pressure` remains the frozen 23/24 and still sets the
+`cosmology.w0_derived` bound's `target` field (that field is carried in the
+result but not used for the verdict, which scores against `experimental`).
+
+The sharper problem is the anchor. The same prediction scores:
+
+| anchor | value | sigma |
+|---|---|---|
+| `geometry.w0_observed_DESI` ± `geometry.w0_error_DESI` | −0.958 ± 0.02 | **0.937** |
+| `desi.w0` ± `abstract.desi_w0_uncertainty` | −0.957 ± 0.067 | **0.295** |
+| `desi.w0_thawing` | −0.957 ± 0.33 | **0.060** |
+
+A sixteen-fold spread in the error bar for one quantity. `established.py`
+declares `desi.w0` the **primary** scoring anchor (the DR2 headline), and
+`cosmology_sector_complete`, `dark_energy_thawing` and `established` itself all
+cite that — but `b3_path` scores against the `geometry.*` pair, which is where
+the framework's headline "0.94σ cost of the ruling" comes from.
+
+The direction is the safe one: the tightest anchor makes the adoption look
+*worse* than the primary anchor does, so the published cost is pessimistic
+rather than flattering, and a test pins that so a flip would fail. But a
+prediction whose sigma can be selected is weaker evidence than one whose anchor
+is named, so `downstream()` now publishes `w0_sigma_anchor`,
+`w0_sigma_anchor_is_primary` and `w0_sigma_vs_primary_anchor` alongside the
+number. No number changed. Choosing a single anchor for w_0 is the author's
+ruling; declaring which is in force is not.
+
 ## 4. Structural debt
 
 Five modules carry most of the size, and `config.py` alone is 8,779 lines:

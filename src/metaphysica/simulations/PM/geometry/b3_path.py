@@ -277,6 +277,38 @@ def downstream(path: Optional[str] = None) -> Dict[str, Any]:
     }
     if w0_obs is not None and w0_err:
         out["w0_sigma_vs_desi"] = abs(w0 - w0_obs) / w0_err
+        # NAME THE ANCHOR. This module's docstring quotes "0.94 sigma against
+        # the registry's DESI anchor" as the adopted path's cost, as though the
+        # framework had one anchor for w_0. It has at least three, and the same
+        # prediction scores very differently against them:
+        #
+        #   geometry.w0_observed_DESI  -0.958 +/- 0.02   -> 0.937 sigma  (here)
+        #   desi.w0                    -0.957 +/- 0.067  -> 0.295 sigma
+        #   desi.w0_thawing            -0.957 +/- 0.33   -> 0.060 sigma
+        #
+        # established.py declares desi.w0 the PRIMARY scoring anchor (the DR2
+        # headline), and cosmology_sector_complete, dark_energy_thawing and
+        # established itself all cite that. This module scores against the
+        # geometry.* pair instead -- the tightest of the three, so it reports
+        # the cost as WORSE than the primary anchor gives, which is the safe
+        # direction to be wrong in but still an undeclared choice.
+        #
+        # The number is unchanged. What is added is which anchor produced it
+        # and what the declared primary anchor gives, so a reader cannot take
+        # one sigma for the sigma. Choosing a single anchor for w_0 is the
+        # AUTHOR'S ruling; publishing both is not.
+        out["w0_sigma_anchor"] = "geometry.w0_observed_DESI +/- geometry.w0_error_DESI"
+        out["w0_sigma_anchor_is_primary"] = False
+        # Read the uncertainty from its registered row rather than typing it:
+        # there is no desi.w0_sigma row, the value lives at
+        # abstract.desi_w0_uncertainty, and a literal here would be the very
+        # ghost literal this file's campaign exists to remove. No row means no
+        # comparison, which is the honest outcome.
+        primary_obs = _registry("desi.w0")
+        primary_err = _registry("abstract.desi_w0_uncertainty")
+        if primary_obs is not None and primary_err:
+            out["w0_sigma_vs_primary_anchor"] = abs(w0 - primary_obs) / primary_err
+            out["w0_primary_anchor"] = "desi.w0 (established.py: primary scoring anchor)"
     if chi:
         out["chi_over_b3"] = chi / b3
     if d_bulk:
