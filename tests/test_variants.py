@@ -37,13 +37,40 @@ def test_defaults_match_the_value_adopted_at_the_source():
     disagree and this fails -- the same drift guard the SSOT audits apply to
     constants. Without it the registry becomes a fifth place a value lives.
     """
+    unmeasurable = {}
+    checked = []
     for fid, fork in variants.FORKS.items():
         if fork.read_adopted is None:
             continue
-        assert fork.read_adopted() == fork.default(), (
-            f"{fid}: source says {fork.read_adopted()!r} but the declaration "
+        try:
+            live = fork.read_adopted()
+        except variants.SourceUnmeasurable as exc:
+            # Recorded, not skipped silently. Until 2026-09-26 this fork's
+            # reader returned the literal "b3_24" whenever it could not
+            # measure, so this assertion compared the declaration against
+            # itself and passed no matter what the sector computed -- a test
+            # that could not fail, which this repo treats as a defect. It now
+            # raises, and the unmeasurable set is asserted below rather than
+            # being allowed to grow unnoticed.
+            unmeasurable[fid] = str(exc)
+            continue
+        checked.append(fid)
+        assert live == fork.default(), (
+            f"{fid}: source says {live!r} but the declaration "
             f"marks {fork.default()!r} as adopted"
         )
+
+    assert checked, "no fork source was actually read; the guard is inert"
+    # Pinned in both directions: a NEW unmeasurable fork fails this, and so
+    # does wiring one up, which is the edit that should come with the fix.
+    assert set(unmeasurable) == {"dark_energy_betti"}, (
+        "the set of forks whose source cannot be measured in a bare process "
+        f"changed: {unmeasurable}"
+    )
+    assert "w0_derived" in unmeasurable["dark_energy_betti"], (
+        "dark_energy_betti should be unmeasurable because the registry has "
+        "no w0 yet -- if the reason changed, the reader changed"
+    )
 
 
 def test_describe_reports_no_drift():

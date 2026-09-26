@@ -199,3 +199,117 @@ def test_the_ast_check_can_actually_fire():
     assert offenders, (
         "the detector did not flag the exact defect shape it was written for"
     )
+
+
+# ---------------------------------------------------------------------------
+# THE SWEEP ABOVE COULD NOT SEE THE REGISTRY'S OWN READERS
+# ---------------------------------------------------------------------------
+# `_FORK_READING_MODULES` never listed `simulations/core/variants.py`, and
+# listing it would not have helped: the detector's shape signature is "a
+# function that calls resolve()", while a fork's `read_adopted` reader does
+# the opposite -- it reads the SOURCE module directly so the declaration can
+# be checked against live state. So the readers were invisible to the sweep
+# written to protect them, and on 2026-09-26 one of them was found carrying
+# the defect in triplicate: `_dark_energy_betti_adopted` returned the literal
+# "b3_24" from a bare `except Exception`, from a `w0 is None` guard, and from
+# a `.get(n, "b3_24")` default -- and "b3_24" is also the option that fork
+# DECLARES adopted, so every failure path confirmed the declaration. The
+# ordinary path was a failure path, because `cosmology.w0_derived` is absent
+# from the registry until a sim run fills it.
+#
+# This detector has the reader's shape: a `*_adopted` function that hands
+# back a string literal when it cannot measure.
+
+_VARIANTS_REL = "simulations/core/variants.py"
+
+
+def _literal_fallbacks_in_readers(source: str):
+    """(function, lineno, literal) for each reader that can return a literal
+    option id without measuring anything."""
+    tree = ast.parse(source)
+    offenders = []
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if not node.name.endswith("_adopted"):
+            continue
+        for inner in ast.walk(node):
+            # shape 1: an except handler that returns a string literal
+            if isinstance(inner, ast.ExceptHandler):
+                for stmt in ast.walk(inner):
+                    if (isinstance(stmt, ast.Return)
+                            and isinstance(stmt.value, ast.Constant)
+                            and isinstance(stmt.value.value, str)):
+                        offenders.append(
+                            (node.name, stmt.lineno, stmt.value.value))
+            # shape 2: dict.get(key, "literal") -- the silent default that
+            # CLAUDE.md records as having published a whole statistics report
+            if (isinstance(inner, ast.Call)
+                    and getattr(inner.func, "attr", "") == "get"
+                    and len(inner.args) == 2
+                    and isinstance(inner.args[1], ast.Constant)
+                    and isinstance(inner.args[1].value, str)):
+                offenders.append(
+                    (node.name, inner.lineno, inner.args[1].value))
+    return offenders
+
+
+def test_no_fork_reader_hands_back_a_literal_when_it_cannot_measure():
+    """A reader that cannot see must raise, never name an option.
+
+    Naming one is worse than raising: `describe()` compares the reader's
+    answer to the declaration and publishes "no drift", so a reader that
+    returns the declared default when blind publishes a verified state it
+    never verified.
+    """
+    path = _SRC / _VARIANTS_REL
+    assert path.is_file(), "%s is the fork registry; it must exist" % _VARIANTS_REL
+    offenders = _literal_fallbacks_in_readers(path.read_text(encoding="utf-8"))
+    assert not offenders, (
+        "%s: fork reader(s) return a literal option id without measuring, at "
+        "%s. Raise SourceUnmeasurable instead -- 'cannot tell' is not 'the "
+        "declaration is correct'." % (_VARIANTS_REL, offenders)
+    )
+
+
+def test_the_reader_detector_can_actually_fire():
+    """Both shapes, or the test above is an empty walk that always passes."""
+    except_shape = (
+        "def _x_adopted():\n"
+        "    try:\n"
+        "        return measure()\n"
+        "    except Exception:\n"
+        "        return 'b3_24'\n"
+    )
+    get_shape = (
+        "def _y_adopted():\n"
+        "    n = measure()\n"
+        "    return {24: 'b3_24'}.get(n, 'b3_24')\n"
+    )
+    for label, source in (("except", except_shape), ("get", get_shape)):
+        found = _literal_fallbacks_in_readers(source)
+        assert found, (
+            "the detector missed the %s shape it was written for" % label
+        )
+
+
+def test_every_fork_reader_is_covered_by_the_detector():
+    """The detector is only worth its name if it walks every live reader.
+
+    Counts the readers it inspects against the readers the registry actually
+    wires up, so a reader added under a different naming convention fails
+    here rather than escaping the sweep the way these ones did.
+    """
+    from metaphysica.simulations.core import variants
+
+    wired = {
+        fork.read_adopted.__name__
+        for fork in variants.FORKS.values()
+        if fork.read_adopted is not None
+    }
+    assert wired, "no fork wires up a reader; the guard would be inert"
+    uncovered = {name for name in wired if not name.endswith("_adopted")}
+    assert not uncovered, (
+        "reader(s) %s are wired into FORKS but do not end in '_adopted', so "
+        "the detector above walks past them" % sorted(uncovered)
+    )

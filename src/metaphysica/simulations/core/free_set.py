@@ -208,6 +208,23 @@ def verify_geometric_identities(params=None) -> Dict[str, Any]:
                % _ruled_n_gen["declared_source"])
     except ImportError:                    # import cycle only
         pass
+
+    # This check was INSIDE the except branch above, after its bare `pass`,
+    # from f289f94 until 2026-09-26 -- so it ran only when the b3_path import
+    # failed, which is to say almost never. The row it removes therefore stayed
+    # in the free set on every ordinary run, and the framework counted the
+    # RETIRED -4/sqrt(b_3) artefact as one of its own free parameters. The
+    # module's docstring has described this removal as one of its three
+    # verified reductions the whole time.
+    #
+    # It also left the stale-b_3 guard with nothing to guard: the only two
+    # removals marked uses_b3 are this one and algebra.freudenthal_quartic, so
+    # with this one unreachable the "removals resting on a stale b_3" report
+    # could not populate from it.
+    #
+    # Guarded on b3 like its sibling below: an artifact with no particle.b3 row
+    # yields None, and math.sqrt(None) raises rather than declining to remove.
+    if b3:
         _check("cosmology.wa_thawing", -4.0 / math.sqrt(b3),
                "-4/sqrt(b_3) -- the RETIRED formula's legacy artefact; "
                "removal records no independent content, not a revival",
@@ -416,7 +433,32 @@ def build_free_set(params=None) -> Dict[str, Any]:
     resting_on_stale_b3 = sorted(
         name for name, rec in geometric.items()
         if rec.get("uses_b3") and name in removed
-    ) if provenance["consistent"] is False else []
+    ) if provenance["consistent"] is not True else []
+
+    # UNKNOWN provenance is not agreement. The guard above used to fire only on
+    # `consistent is False`, so an artifact carrying NO seed at all -- which is
+    # what the bundled snapshot does, having no particle.b3 row -- took the
+    # same path as one verified to match the live fork, and its b_3-arithmetic
+    # removals were reported as if checked against the adopted seed. This
+    # module's own provenance note already says an unknown read is "a
+    # reportable state, not a pass"; now the code agrees with it.
+    live_fork_count = provenance["consistent"] is True
+    if live_fork_count:
+        count_caveat = ""
+    elif provenance["consistent"] is None:
+        count_caveat = (
+            "NOT the live fork's count: the artifact carries no seed "
+            "(particle.b3 absent), so every b_3-arithmetic removal was "
+            "verified against an UNKNOWN seed. Rebuild before quoting this "
+            "number as the framework's free-parameter count."
+        )
+    else:
+        count_caveat = (
+            "NOT the live fork's count: the artifact was built at b_3 = %s "
+            "while the live fork resolves to b_3 = %s, so the "
+            "b_3-arithmetic removals are artifact-truth, not fork-truth."
+            % (provenance["artifact_b3"], provenance["live_fork_b3"])
+        )
 
     return {
         "what_this_counts": (
@@ -426,6 +468,13 @@ def build_free_set(params=None) -> Dict[str, Any]:
         "ledger_rows": len(rows),
         "free_set_size": len(free),
         "removed_count": len(removed),
+        #: Whether free_set_size may be quoted as the ADOPTED path's
+        #: free-parameter count. False whenever the artifact's seed is
+        #: mismatched OR unknown -- a free-parameter claim is the framework's
+        #: headline number, so it may not rest on an artifact that cannot say
+        #: which geometry produced it.
+        "count_is_the_live_forks": live_fork_count,
+        "count_caveat": count_caveat,
         "artifact_seed_provenance": provenance,
         "removals_resting_on_stale_b3": resting_on_stale_b3,
         "removed_by_reason": by_reason,
