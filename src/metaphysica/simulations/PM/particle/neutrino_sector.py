@@ -29,7 +29,8 @@ Physics basis
   under the opposite mass ordering — the two scenarios are alternatives,
   not simultaneous predictions.
 - Fully EML-traceable; every step is registered through
-  ``eml_operator_tree("neutrino_sector")`` and the b3 = 24 seed appears in
+  ``eml_operator_tree("neutrino_sector")`` and the b3 seed (read from the
+  adopted path; 24 on the retired seed_24 branch) appears in
   the symbolic provenance via :func:`b3_leaf`.
 
 Module surface
@@ -61,6 +62,13 @@ from __future__ import annotations
 
 import math
 from typing import Any, Dict
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 
 from metaphysica.simulations.core.eml_tree_adapter import (
     b3_leaf,
@@ -169,7 +177,7 @@ class NeutrinoSectorRefinement:
             param="m_lightest_eV",
             formula=(
                 "(b3 / 24) * m_seed  -- lightest neutrino mass anchored to "
-                "b3 = 24 seed via G2 triple-cycle Yukawa"
+                f"b3 = {int(_REG.elder_kads)} seed via G2 triple-cycle Yukawa"
             ),
             value=float(self.m_lightest),
         )

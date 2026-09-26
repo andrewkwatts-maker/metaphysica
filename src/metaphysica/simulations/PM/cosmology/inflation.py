@@ -89,7 +89,8 @@ EML tree
 Both observables are registered against the v25.0 EML tree
 ``"g2_inflation"`` via :class:`eml_operator_tree`.  The formula strings
 explicitly mention ``b3`` so the ``b3_traceback`` flag fires on
-registration (Re(T) itself is anchored to ``b_3 = 24`` through the
+registration (Re(T) itself is anchored to ``b_3`` -- read from the adopted
+seed, 24 on the retired seed_24 branch -- through the
 Sprint 4 stabilization residual).  A structural EML tree using
 :func:`b3_leaf` is also built so the website's b₃ tracer can land on
 the canonical seed leaf rather than just a string match.
@@ -118,6 +119,12 @@ from __future__ import annotations
 
 import math
 from typing import Any, Dict, Tuple
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
 
 # The adapter class is pure Python (writes JSON; no eml-math dependency).
 from metaphysica.simulations.core.eml_tree_adapter import eml_operator_tree
@@ -480,7 +487,7 @@ class G2Inflation:
                 "chi_eff = 6*b3 = 144 and phi = (1+sqrt(5))/2. "
                 "Slow-roll diagnostic: 1 - 6*epsilon + 2*eta where "
                 "epsilon = 3 / (2*ReT^2), eta = -1.5 / ReT^2, ReT "
-                "inherits from Sprint 4 Re(T) stabilization with b3 = 24."
+                f"inherits from Sprint 4 Re(T) stabilization with b3 = {int(_REG.elder_kads)}."
             ),
             value=float(n_s),
         )
@@ -488,7 +495,7 @@ class G2Inflation:
             param="r",
             formula=(
                 "16 * epsilon where epsilon = 3 / (2*ReT^2) and ReT "
-                "inherits from Sprint 4 Re(T) stabilization with b3 = 24"
+                f"inherits from Sprint 4 Re(T) stabilization with b3 = {int(_REG.elder_kads)}"
             ),
             value=float(r),
         )

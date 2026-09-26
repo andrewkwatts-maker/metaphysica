@@ -368,14 +368,38 @@ class LeechPartitionV16(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for the paper."""
+        # Live reads: nothing topological below is retyped. The numbers
+        # come from the b3_seed fork and the generation route from
+        # geometry_narration, so a ruling rewrites this section instead
+        # of leaving it contradicting the code.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            generation_claim,
+            holonomy_claim,
+        )
+
+        b3, b2 = seed_values(resolve_path())
+        gen = generation_claim()
+        hol = holonomy_claim()
+
         return SectionContent(
             section_id="3",
             subsection_id="3.4",
             title="Octonionic Generation Partition",
             abstract=(
-                "We prove that exactly three fermion generations arise from the "
-                "octonionic decomposition of the 24-dimensional vacuum state. "
-                "This is a mathematical theorem, not a parameter fit."
+                "The octonionic decomposition of the 24-dimensional Leech "
+                "vacuum partitions it as 24/8 = 3. The 24 here is "
+                "dim(Λ₂₄), a lattice dimension — NOT the third Betti "
+                "number, which is b₃ = %d on the adopted seed. This "
+                "abstract previously read \"we prove that exactly three "
+                "fermion generations arise ... a mathematical theorem, not "
+                "a parameter fit\". The arithmetic is exact and is kept; "
+                "the claim that it SUPPLIES the generation count is "
+                "withdrawn. The published count is %s"
+                % (b3, gen["sentence"])
             ),
             content_blocks=[
                 ContentBlock(
@@ -415,9 +439,12 @@ class LeechPartitionV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The octonions O form the largest normed division algebra "
-                        "(Hurwitz 1898). Their automorphism group is precisely G₂, "
-                        "the holonomy group of our compactification manifold."
+                        "The octonions O form the largest normed division "
+                        "algebra (Hurwitz 1898). Their automorphism group is "
+                        "precisely G₂. This sentence previously continued "
+                        "\"...the holonomy group of our compactification "
+                        "manifold\"; that is not available on the branch in "
+                        "force: %s" % hol["sentence"]
                     )
                 ),
                 ContentBlock(
@@ -434,13 +461,24 @@ class LeechPartitionV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Since G₂ holonomy preserves octonionic structure, the "
-                        "24-dimensional vacuum state decomposes into octonionic sectors. "
-                        "<Speculation>The physical identification of each octonionic sector "
-                        "with a fermion generation is a conjecture: while the arithmetic "
-                        "24/8 = 3 is exact, the correspondence between lattice sectors "
-                        "and SM generations requires a dynamical mechanism that has not "
-                        "yet been derived from first principles within this framework.</Speculation>"
+                        "The G₂ structure preserves the octonionic "
+                        "decomposition, so the 24-dimensional Leech vacuum "
+                        "splits into octonionic sectors. <Speculation>The "
+                        "physical identification of each octonionic sector "
+                        "with a fermion generation is a conjecture: the "
+                        "arithmetic 24/8 = 3 is exact, but the "
+                        "correspondence between lattice sectors and SM "
+                        "generations requires a dynamical mechanism that has "
+                        "not been derived from first principles within this "
+                        "framework. It is now doubly a side-route: the "
+                        "PUBLISHED generation count is %s — so 24/8 is a "
+                        "parallel arithmetic, not the source. Note also "
+                        "which 24 this is: dim(Λ₂₄), the Leech lattice "
+                        "dimension, and NOT b₃, which is %d here. The "
+                        "superficially identical b₃/8 route is abandoned on "
+                        "the Joyce-reachable family, where b₃ is odd at "
+                        "every profile.</Speculation>"
+                        % (gen["sentence"], b3)
                     )
                 ),
                 ContentBlock(
@@ -454,9 +492,15 @@ class LeechPartitionV16(SimulationBase):
                     callout_type="success",
                     title="Mathematical Necessity",
                     content=(
-                        "This is not a fit: 24/8 = 3 is exact arithmetic. The number "
-                        "of generations is as fixed as the ratio of a circle's "
-                        "circumference to its diameter."
+                        "24/8 = 3 is exact arithmetic over dim(Λ₂₄) and "
+                        "dim(O), and that much is not a fit. This callout "
+                        "previously went on to say \"the number of "
+                        "generations is as fixed as the ratio of a circle's "
+                        "circumference to its diameter\" — which reads the "
+                        "exactness of the division as settling the physics. "
+                        "It does not: %s, and the lattice partition supplies "
+                        "no dynamical mechanism tying a sector to a "
+                        "generation." % gen["sentence"]
                     )
                 ),
                 ContentBlock(

@@ -48,6 +48,12 @@ Dedicated To:
 """
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
 from scipy.integrate import solve_ivp, quad
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass
@@ -694,7 +700,7 @@ class EvolutionEngineV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The relaxation factor in the denominator encodes the logarithmic "
-                        "running from v14.2, with the topological parameter b3=24 from "
+                        f"running from v14.2, with the topological parameter b3={int(_REG.elder_kads)} from "
                         "G2 geometry providing the scale:"
                     )
                 ),
@@ -725,7 +731,7 @@ class EvolutionEngineV16(SimulationBase):
                         "The unified evolution engine naturally produces both "
                         "H0_late = 73.04 km/s/Mpc at z=0 and H0_early = 67.4 km/s/Mpc "
                         "at z=1100, resolving the Hubble tension without additional "
-                        "free parameters beyond b3=24."
+                        f"free parameters beyond b3={int(_REG.elder_kads)}."
                     )
                 ),
             ],
@@ -948,7 +954,7 @@ class EvolutionEngineV16(SimulationBase):
                     "0.0000 sigma PASS against the number it was handed. "
                     "CERTIFICATES.py already carried this as a CIRCULARITY "
                     "WARNING on the gate that consumes it; the published row "
-                    "did not. The non-trivial content here is that b3 = 24 "
+                    f"did not. The non-trivial content here is that b3 = {int(_REG.elder_kads)} "
                     "sets z_star ~ 1.95 as the transition scale -- not the "
                     "agreement with Planck."
                 ),
@@ -1036,7 +1042,7 @@ class EvolutionEngineV16(SimulationBase):
                 "id": "g2-topology",
                 "title": "G2 Topology",
                 "category": "geometry",
-                "description": "Third Betti number b3=24 from Joyce G2 manifold"
+                "description": f"Third Betti number b3={int(_REG.elder_kads)} from the Joyce orbifold T^7/(Z/2)^3, where b_3 = 7 + 3 b_2"
             }
         ]
 
@@ -1257,12 +1263,19 @@ class EvolutionEngineV16(SimulationBase):
             "message": f"relaxation(1100) = {relax_1100:.6f}, expected {expected_relax:.6f}"
         })
 
-        # Check 4: b3 = 24 (topological invariant)
-        b3_ok = self.elder_kads == 24
+        # Check 4: the b3 this simulation ran with matches the ADOPTED seed.
+        #
+        # This used to read `b3_ok = self.elder_kads == 24`, pinning the
+        # retired literal. It now compares the value actually used against the
+        # SSoT seed, which is a check a caller can still break by injecting a
+        # different topology -- unlike a constant comparison, which could only
+        # ever restate itself.
+        _b3_seed = int(_REG.elder_kads)
+        b3_ok = int(self.elder_kads) == _b3_seed
         checks.append({
-            "name": "b3 = 24 (G2 third Betti number)",
+            "name": f"b3 = {_b3_seed} (G2 third Betti number, adopted seed)",
             "passed": b3_ok,
-            "confidence_interval": {"lower": 24, "upper": 24, "sigma": 0.0},
+            "confidence_interval": {"lower": _b3_seed, "upper": _b3_seed, "sigma": 0.0},
             "log_level": "INFO" if b3_ok else "ERROR",
             "message": f"b3 = {self.elder_kads}"
         })

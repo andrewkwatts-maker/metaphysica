@@ -123,6 +123,12 @@ from __future__ import annotations
 import math
 from typing import Any, Dict
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
+
 from metaphysica.simulations.core.eml_tree_adapter import eml_operator_tree
 
 
@@ -319,7 +325,7 @@ class CosmologicalTensionsResolver:
             formula=(
                 "0.012 * exp(-Re(T) / 200) * g_mirror  "
                 "-- mirror-sector DE from Z2 bridge "
-                "(Re(T) anchored at b3 = 24 via Sprint 4 #3)"
+                f"(Re(T) anchored at b3 = {int(_REG.elder_kads)} via Sprint 4 #3)"
             ),
             value=float(delta_w),
         )
@@ -351,7 +357,7 @@ class CosmologicalTensionsResolver:
             formula=(
                 "73.04 + 5.8 * delta_w_mirror  "
                 "-- H0 + DESI-linear-response shift "
-                "(delta_w from b3 = 24 anchored mirror sector; "
+                f"(delta_w from b3 = {int(_REG.elder_kads)} anchored mirror sector; "
                 "magnitude currently ~10^13x too small to resolve tension)"
             ),
             value=float(H0_resolved),
@@ -384,7 +390,7 @@ class CosmologicalTensionsResolver:
             formula=(
                 "0.83 - 0.085 * delta_w_mirror  "
                 "-- S8 + KiDS/DES growth-suppression "
-                "(delta_w from b3 = 24 anchored mirror sector)"
+                f"(delta_w from b3 = {int(_REG.elder_kads)} anchored mirror sector)"
             ),
             value=float(S8_resolved),
         )
@@ -532,7 +538,7 @@ class CosmologicalTensionsResolver:
             f"f_EDE = {F_EDE_TARGET_RESOLUTION:.2g} needs m_KK / T = "
             f"{ratio_for_target:.3g} -- sub-threshold and viable, but the "
             "v27 framework does not yet derive this specific mass scale "
-            "from b3 = 24 / k_gimel without fit. Carried to v28."
+            f"from b3 = {int(_REG.elder_kads)} / k_gimel without fit. Carried to v28."
         )
 
         result: Dict[str, Any] = {
@@ -553,13 +559,13 @@ class CosmologicalTensionsResolver:
         }
 
         # Register both the naive and honest derivations in the EML tree
-        # with the b3 = 24 traceback so the cross-check report can
+        # with the b3 traceback (b3 from the adopted seed) so the report can
         # detect the v27 → v28 architectural gap.
         self.tension_tree.register_derivation(
             param="f_EDE_kk_naive_288",
             formula=(
                 "N_KK / (m_KK / T)  -- naive 288-mode template "
-                "(b3 = 24 * 12 bridges); UNPHYSICAL (>> 1)"
+                f"(b3 = {int(_REG.elder_kads)} * 12 bridges); UNPHYSICAL (>> 1)"
             ),
             value=float(f_ede_naive),
         )
@@ -568,7 +574,7 @@ class CosmologicalTensionsResolver:
             formula=(
                 "(30 zeta(3) / pi^4 g_*) * N_bridges * (m_KK / T)  "
                 "-- 12 bridge KK towers with proper radiation "
-                "normalisation; rooted at b3 = 24 cohomology"
+                f"normalisation; rooted at b3 = {int(_REG.elder_kads)} cohomology"
             ),
             value=float(f_ede_honest),
         )
@@ -576,7 +582,7 @@ class CosmologicalTensionsResolver:
             param="m_kk_for_target_f_EDE",
             formula=(
                 "F_EDE_TARGET / [(30 zeta(3) / pi^4 g_*) * N_bridges] "
-                "* T_recomb  -- inverted; b3 = 24 cohomology rooted, "
+                f"* T_recomb  -- inverted; b3 = {int(_REG.elder_kads)} cohomology rooted, "
                 "needs v28 derivation of natural m_KK"
             ),
             value=float(m_kk_for_target),
@@ -693,7 +699,7 @@ class CosmologicalTensionsResolver:
             param="full_cosmological_tension_resolution",
             formula=(
                 "mirror DE / early DE from 26D bulk + Re(T); "
-                "Re(T) anchored at b3 = 24 (Sprint 4 #3); "
+                f"Re(T) anchored at b3 = {int(_REG.elder_kads)} (Sprint 4 #3); "
                 "DOCUMENTED_TENSION -- magnitudes ~10^13x too small"
             ),
             value=float(H0_resolved),

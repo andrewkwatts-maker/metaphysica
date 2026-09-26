@@ -215,6 +215,55 @@ def _arithma_pow(a, b):
 def _arithma_sqrt(a):
     return None if a is None else _ArithmaExpression.sqrt(a)
 
+# ---------------------------------------------------------------------
+# THE 24 IN THIS FORMULA IS NO LONGER b_3.
+#
+# alpha^-1 = k_gimel^2 - 24/phi + phi/(4 pi) with k_gimel = 24/2 + 1/pi
+# was published as "derived from the single topological integer b_3 = 24".
+# On the adopted seed (b3_seed = seed_43_joyce, author ruling 2026-09-22)
+# the third Betti number is 43, so that IDENTIFICATION is withdrawn. The
+# numeric anchor is kept exactly as it was -- moving it would move a
+# published number, which is an author ruling, not a prose repair -- but it
+# is now named for what it is: a fitted integer whose topological origin is
+# OPEN. Every sentence about it below reads the live b_3 alongside it, so
+# the mismatch is visible instead of being narrated away.
+#
+# Nothing here decides the question. It stops the text asserting a
+# provenance the topology no longer supplies.
+# ---------------------------------------------------------------------
+ALPHA_FIT_ANCHOR = 24     # fitted integer; formerly identified with b_3
+
+
+def live_b3() -> int:
+    """The third Betti number actually in force, read from the seed fork."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
+
+
+def anchor_provenance_note() -> str:
+    """One generated sentence on where the anchor stands against b_3."""
+    b3 = live_b3()
+    if b3 == ALPHA_FIT_ANCHOR:
+        return (
+            "the anchor %d coincides with the live third Betti number on "
+            "this seed, so the formula's topological reading is available "
+            "here -- it is a coincidence of the seed, not a derivation"
+            % ALPHA_FIT_ANCHOR
+        )
+    return (
+        "the anchor is the fitted integer %d, and the live third Betti "
+        "number is b_3 = %d, so the identification anchor = b_3 is "
+        "WITHDRAWN on this seed. The formula is unchanged and the claim "
+        "that it derives from b_3 is not restated; whether the anchor has "
+        "any topological origin is OPEN and is an author ruling"
+        % (ALPHA_FIT_ANCHOR, b3)
+    )
+
+
 class AlphaRigorSolver:
     """
     Computes the Fine Structure Constant via the Geometric Anchors formula.
@@ -227,12 +276,16 @@ class AlphaRigorSolver:
     Where:
         - k_gimel = b3/2 + 1/π (Holonomy Precision Limit)
         - φ = (1 + √5)/2 (Golden Ratio - mathematical constant)
-        - b3 = 24 (Third Betti number - topological invariant)
+        - b3 = 24 (the FITTED anchor; see ALPHA_FIT_ANCHOR above -- its
+          identification with the third Betti number is withdrawn on the
+          adopted seed, where b_3 = 43)
     """
 
-    def __init__(self, b3: int = 24):
+    def __init__(self, b3: int = ALPHA_FIT_ANCHOR):
         self.elder_kads = b3
-        # Geometric anchors - k_gimel derived from b3
+        # Geometric anchors - k_gimel built from the fitted anchor. The
+        # attribute keeps its name for its consumers; what it holds is the
+        # anchor, not necessarily the live b_3.
         self.k_gimel = b3/2 + 1/np.pi  # Holonomy Precision Limit ≈ 12.318
 
     @property
@@ -327,7 +380,8 @@ class AlphaRigorSolver:
         Where:
         - k_gimel = b3/2 + 1/π = 12.3183... (Holonomy Precision Limit)
         - φ = (1 + √5)/2 = 1.618... (Golden Ratio)
-        - b3 = 24 (Third Betti number of G2 manifold)
+        - b3 = 24 (the FITTED anchor -- NOT the live third Betti number,
+          which is 43 on the adopted seed; see ALPHA_FIT_ANCHOR)
 
         NOTE (WP5.3): This formula is correctly self-labeled NUMEROLOGICAL_FIT.
         It achieves ~0.0005% agreement with CODATA by construction, but has no
@@ -417,13 +471,13 @@ def run_alpha_derivation():
     print(" FINE STRUCTURE CONSTANT - GEOMETRIC ANCHORS DERIVATION")
     print("=" * 60)
 
-    solver = AlphaRigorSolver(b3=24)
+    solver = AlphaRigorSolver(b3=ALPHA_FIT_ANCHOR)
     result = solver.validate()
 
     print("\nGeometric Anchors Formula:")
     print("  alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi)")
     print("\nInputs (pure geometry, no magic numbers):")
-    print(f"  b3 = {result['b3']} (topological invariant)")
+    print(f"  fit anchor = {result['b3']}; {anchor_provenance_note()}")
     print(f"  k_gimel = {result['k_gimel']:.6f} (b3/2 + 1/pi)")
     print(f"  phi = {result['phi']:.10f} (Golden Ratio)")
 
@@ -459,7 +513,7 @@ if SCHEMA_AVAILABLE:
         """
 
         def __init__(self):
-            self._solver = AlphaRigorSolver(b3=24)
+            self._solver = AlphaRigorSolver(b3=ALPHA_FIT_ANCHOR)
             self._result = None
 
         @property
@@ -511,10 +565,15 @@ if SCHEMA_AVAILABLE:
                     ContentBlock(
                         type="paragraph",
                         content=(
-                            "In the Principia Metaphysica framework, the fine structure constant "
-                            "emerges as the topological coupling ratio -- the geometric probability "
-                            "of a photon interacting with the 7D bulk. The derivation uses only "
-                            "the fixed topological anchors b₃ = 24, k<sub>ℷ</sub>, and C<sub>kaf</sub>."
+                            "In the Principia Metaphysica framework, the fine "
+                            "structure constant emerges as the topological "
+                            "coupling ratio -- the geometric probability of a "
+                            "photon interacting with the 7D bulk. The formula "
+                            "uses the fixed anchors %d, k<sub>ℷ</sub>, and "
+                            "C<sub>kaf</sub>. This paragraph previously called "
+                            "the first of those \"the fixed topological anchor "
+                            "b₃ = 24\"; %s."
+                            % (ALPHA_FIT_ANCHOR, anchor_provenance_note())
                         )
                     ),
                     ContentBlock(
@@ -525,12 +584,16 @@ if SCHEMA_AVAILABLE:
                     ContentBlock(
                         type="paragraph",
                         content=(
-                            "The derived value α<sup>−1</sup> = 137.036 matches the CODATA 2022 "
-                            "experimental value to within 0.0005%. "
-                            "<Speculation>This proximity suggests that electromagnetism may be "
-                            "a structural property of the b₃ = 24 G₂ manifold, though the "
-                            "formula is currently classified as a numerological fit without a "
-                            "rigorous derivation from QFT or M-theory compactification.</Speculation>"
+                            "The derived value α<sup>−1</sup> = 137.036 matches "
+                            "the CODATA 2022 experimental value to within "
+                            "0.0005%%. <Speculation>This proximity was read as "
+                            "suggesting that electromagnetism is a structural "
+                            "property of the b₃ = 24 G₂ manifold. That reading "
+                            "is suspended rather than deleted: %s. The formula "
+                            "remains classified as a numerological fit without "
+                            "a rigorous derivation from QFT or M-theory "
+                            "compactification.</Speculation>"
+                            % anchor_provenance_note()
                         )
                     )
                 ],
@@ -557,7 +620,13 @@ if SCHEMA_AVAILABLE:
                         "method": "Topological coupling ratio from G2 holonomy projection: the electromagnetic coupling emerges as the geometric probability of photon interaction with the 7D bulk, expressed through a combination of the squared holonomy anchor, golden-ratio modulated Betti correction, and transcendental residual.",
                         "parentFormulas": ["k-gimel-anchor", "betti-numbers"],
                         "steps": [
-                            "Start with the topological integer b3 = 24 from the TCS #187 G2 manifold (Kovalev 2003, Corti et al. 2015)",
+                            "Start with the fitted anchor %d. SUPERSEDED "
+                            "WORDING, retained: 'Start with the topological "
+                            "integer b3 = 24 from the TCS #187 G2 manifold "
+                            "(Kovalev 2003, Corti et al. 2015)'. Two things "
+                            "are wrong with it -- TCS exhibits 71 <= b_3 <= "
+                            "155 and so never supplied 24, and %s"
+                            % (ALPHA_FIT_ANCHOR, anchor_provenance_note()),
                             "Compute the holonomy precision limit: k_gimel = b3/2 + 1/pi = 12 + 0.31831... = 12.31831...",
                             "Recall the golden ratio phi = (1 + sqrt(5))/2 = 1.61803... (a mathematical constant from the G2 root system pentagon symmetry)",
                             f"Evaluate the dominant term (squared holonomy anchor): k_gimel^2 = {k_gimel**2:.6f}",
@@ -586,8 +655,12 @@ if SCHEMA_AVAILABLE:
                             "formula": "b3/2 + 1/pi"
                         },
                         r"b_3": {
-                            "description": "Third Betti number of the TCS #187 G2 manifold: the single topological integer input",
-                            "value": 24
+                            "description": ("The formula's single integer "
+                                            "input. Published as 'the third "
+                                            "Betti number of the TCS #187 G2 "
+                                            "manifold'; %s"
+                                            % anchor_provenance_note()),
+                            "value": ALPHA_FIT_ANCHOR
                         },
                         r"\varphi": {
                             "description": "Golden ratio: (1 + sqrt(5))/2 = 1.618..., arising from the pentagon symmetry of the G2 Dynkin diagram and icosahedral substructure of E8",
@@ -755,7 +828,11 @@ if SCHEMA_AVAILABLE:
                     "doi": "10.1093/oso/9780198506010.001.0001",
                     "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                     "type": "book",
-                    "relevance": "G2 holonomy theory providing the topological foundation (b3=24) for the alpha derivation",
+                    "relevance": ("G2 theory, cited as the topological "
+                                  "foundation (b3=24) for the alpha "
+                                  "derivation. That foundation is "
+                                  "withdrawn on the adopted seed: %s"
+                                  % anchor_provenance_note()),
                 },
                 {
                     "id": "kovalev2003",
@@ -767,7 +844,12 @@ if SCHEMA_AVAILABLE:
                     "type": "article",
                     "arxiv": "math/0012189",
                     "url": "https://arxiv.org/abs/math/0012189",
-                    "relevance": "TCS construction yielding G2 manifolds with b3=24"
+                    "relevance": ("TCS construction, formerly cited as "
+                                  "yielding G2 manifolds with b3=24. It does "
+                                  "not: the exhibited TCS range is "
+                                  "71 <= b_3 <= 155, and the adopted "
+                                  "construction is a Joyce orbifold "
+                                  "T^7/(Z/2)^3 with b_3 = %d." % live_b3())
                 },
                 {
                     "id": "parker2018",
@@ -807,7 +889,11 @@ if SCHEMA_AVAILABLE:
             return [
                 {
                     "id": "CERT_ALPHA_GEOMETRIC",
-                    "assertion": f"alpha^-1 = {result['derived_alpha_inv']:.6f} from geometric anchors (b3=24, phi, pi)",
+                    "assertion": (f"alpha^-1 = "
+                                  f"{result['derived_alpha_inv']:.6f} from the "
+                                  f"geometric anchors ({ALPHA_FIT_ANCHOR}, phi, "
+                                  f"pi). The first was written b3=24; "
+                                  f"{anchor_provenance_note()}"),
                     "condition": "abs(alpha_inv - 137.035999177) < 0.01",
                     "tolerance": 0.01,
                     "status": "PASS" if result['absolute_error'] < 0.01 else "FAIL",
@@ -817,7 +903,11 @@ if SCHEMA_AVAILABLE:
                 },
                 {
                     "id": "CERT_ALPHA_NO_MAGIC",
-                    "assertion": "Derivation uses only b3=24 (topological integer) and mathematical constants (pi, phi)",
+                    "assertion": ("Derivation uses only the integer anchor %d "
+                                  "and mathematical constants (pi, phi). "
+                                  "Written 'b3=24 (topological integer)'; %s"
+                                  % (ALPHA_FIT_ANCHOR,
+                                     anchor_provenance_note())),
                     "condition": "no_fitted_parameters == True",
                     "tolerance": 0.0,
                     "status": "PASS",
@@ -946,7 +1036,12 @@ if SCHEMA_AVAILABLE:
             return [
                 {
                     "gate_id": "G_ALPHA_GEOMETRIC",
-                    "assertion": f"alpha^-1 = {result['derived_alpha_inv']:.6f} from pure G2 topology",
+                    "assertion": (f"alpha^-1 = "
+                                  f"{result['derived_alpha_inv']:.6f} from "
+                                  f"the fitted anchor {ALPHA_FIT_ANCHOR} and "
+                                  f"mathematical constants. Not asserted as "
+                                  f"'from pure G2 topology': "
+                                  f"{anchor_provenance_note()}"),
                     "result": "PASS" if result['absolute_error'] < 0.01 else "FAIL",
                     "timestamp": "",
                     "details": {
@@ -954,7 +1049,11 @@ if SCHEMA_AVAILABLE:
                         "codata": result['codata_target'],
                         "absolute_error": result['absolute_error'],
                         "relative_error_pct": result['relative_error_pct'],
-                        "inputs": {"b3": 24, "k_gimel": result['k_gimel'], "phi": result['phi']}
+                        "inputs": {"fit_anchor": ALPHA_FIT_ANCHOR,
+                                   "live_b3": live_b3(),
+                                   "anchor_is_b3": live_b3() == ALPHA_FIT_ANCHOR,
+                                   "k_gimel": result['k_gimel'],
+                                   "phi": result['phi']}
                     }
                 },
                 {
@@ -977,7 +1076,12 @@ if SCHEMA_AVAILABLE:
                 {
                     "id": "proof_alpha_geometric_formula",
                     "theorem": "Geometric Anchors formula for alpha^-1",
-                    "statement": "alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi), where k_gimel = b3/2 + 1/pi and b3 = 24",
+                    "statement": ("alpha^-1 = k_gimel^2 - a/phi + phi/(4*pi), "
+                                  "where k_gimel = a/2 + 1/pi and a = %d is "
+                                  "the fitted anchor. Previously written with "
+                                  "a named b3; %s."
+                                  % (ALPHA_FIT_ANCHOR,
+                                     anchor_provenance_note())),
                     "proof_sketch": (
                         "This is a PROPOSED topological relationship, not a rigorous QED derivation. "
                         "The formula combines three terms: (1) k_gimel^2 = (b3/2 + 1/pi)^2 represents the "
@@ -990,7 +1094,10 @@ if SCHEMA_AVAILABLE:
                         "from first principles of M-theory compactification on G2 manifolds."
                     ),
                     "reference": "PM framework; compare Acharya & Witten (2001) arXiv:hep-th/0104135 for gauge couplings on G2",
-                    "verification": "Numerical evaluation with b3=24, phi=(1+sqrt(5))/2, pi = 3.14159..."
+                    "verification": ("Numerical evaluation with anchor=%d, "
+                                     "phi=(1+sqrt(5))/2, pi = 3.14159...; "
+                                     "live b_3 = %d"
+                                     % (ALPHA_FIT_ANCHOR, live_b3()))
                 },
             ]
 
@@ -1008,8 +1115,13 @@ if SCHEMA_AVAILABLE:
                     "title": "Fine Structure Constant from Zero Free Parameters",
                     "description": (
                         f"The inverse fine structure constant alpha^-1 = {result['derived_alpha_inv']:.6f} "
-                        f"is derived from the single topological integer b3 = 24 plus mathematical "
-                        f"constants (pi, phi). No fitted or adjusted parameters are used. "
+                        f"is computed from the single integer anchor "
+                        f"{ALPHA_FIT_ANCHOR} plus mathematical constants (pi, "
+                        f"phi). The earlier wording -- 'derived from the "
+                        f"single topological integer b3 = 24' with 'no "
+                        f"fitted or adjusted parameters' -- overstates it on "
+                        f"two counts: {anchor_provenance_note()}, and the "
+                        f"formula is self-labelled NUMEROLOGICAL_FIT. "
                         f"Relative error vs CODATA 2022: {result['relative_error_pct']:.6f}%."
                     ),
                     "significance": "HIGH",

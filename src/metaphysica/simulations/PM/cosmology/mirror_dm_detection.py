@@ -86,6 +86,12 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, Optional
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
+
 # In-tree EML adapter — see mirror_dm_relic.py for the rationale (the
 # third-party ``eml_math`` PyPI package shadows the internal name).
 from metaphysica.simulations.core.eml_tree_adapter import (
@@ -308,8 +314,8 @@ class MirrorDMDetection:
             param="sigma_SI_GeV_inv2",
             formula=(
                 "g_bridge^4 * m_N^2 * mu^2 / (pi * M_med^4) "
-                "| g_bridge from G2 triple-cycle (b3=24 via re_t_sector), "
-                "M_med = M_KK from bridge-fibre KK reduction (b3=24-rooted)"
+                f"| g_bridge from G2 triple-cycle (b3={int(_REG.elder_kads)} via re_t_sector), "
+                f"M_med = M_KK from bridge-fibre KK reduction (b3={int(_REG.elder_kads)}-rooted)"
             ),
             value=float(sigma_natural),
         )
@@ -317,7 +323,7 @@ class MirrorDMDetection:
             param="sigma_SI_cm2",
             formula=(
                 "sigma_SI_GeV_inv2 * 3.8937936e-28 (PDG hbar*c)^2 "
-                "| direct-detection cross-section per nucleon, b3=24 rooted"
+                f"| direct-detection cross-section per nucleon, b3={int(_REG.elder_kads)} rooted"
             ),
             value=float(sigma_cm2),
         )
@@ -325,7 +331,7 @@ class MirrorDMDetection:
             param="mirror_dm_detection",
             formula=(
                 "verdict classification vs XENONnT/LZ/PandaX-4T/DARWIN "
-                "| b3=24 rooted via g_bridge and M_KK"
+                f"| b3={int(_REG.elder_kads)} rooted via g_bridge and M_KK"
             ),
             value={
                 "sigma_SI_cm2": float(sigma_cm2),

@@ -179,7 +179,8 @@ class DynamicalLambdaRelaxation(SimulationBase):
         analogy), but the precise entropy value is NOT YET DERIVED.
 
     KEY PARAMETERS (from topology):
-        - b3 = 24: G2 Betti number
+        - b3: G2 Betti number, read from the adopted seed (24 on the
+          retired seed_24 branch)
         - chi_eff = 144: Effective Euler characteristic
         - N_bridges = 12: Number of bridge pairs
         - kappa_sampler = 2: dim(S^{2,0})
@@ -251,7 +252,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
     def required_inputs(self) -> List[str]:
         """Return required input parameter paths."""
         return [
-            "topology.elder_kads",              # b3 = 24
+            "topology.elder_kads",              # b3, from the adopted seed
         ]
 
     @property
@@ -1231,7 +1232,7 @@ class DynamicalLambdaRelaxation(SimulationBase):
                 category="DERIVED",
                 description=(
                     "Torsion potential from G2 manifold topology. chi_eff = 144 "
-                    "and b3 = 24 are topological invariants, making this term "
+                    f"and b3 = {int(_REG.elder_kads)} are topological invariants, making this term "
                     "fully DERIVED."
                 ),
                 inputParams=["topology.elder_kads"],

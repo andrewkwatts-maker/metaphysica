@@ -114,6 +114,13 @@ Dedicated To:
 
 import numpy as np
 from typing import Dict, Any, List, Optional
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 from datetime import datetime
 import sys
 import os
@@ -185,7 +192,8 @@ class HiggsBranePartitionSimulation(SimulationBase):
     across the 4 primary 4D branes of the Cl(24,2) Clifford algebra.
 
     Geometric Chain:
-        b3 = 24 → k_gimel = b3/2 + 1/π = 12.318
+        k_gimel = b3/2 + 1/π, with b3 from the adopted seed (it was 24, giving
+        12.318, on the retired seed_24 branch)
         → Projection factor = k_gimel / π = 3.92
         → Mirror overlap = 1.185 (from 13D/13D symmetry)
         → Effective scaling = 3.31
@@ -264,7 +272,9 @@ class HiggsBranePartitionSimulation(SimulationBase):
            Triality is a property of SO(8)/Spin(8), arising from the outer
            automorphism group S3 of the D4 Dynkin diagram. G2 is a rank-2
            exceptional Lie group with no such symmetry. The coincidence that
-           1/24 involves b3=24 does not constitute a derivation. Moreover,
+           1/24 involves the then-current b3 = 24 does not constitute a
+           derivation -- and on the adopted seed b3 is no longer 24 at all,
+           so the coincidence is gone as well as unjustified. Moreover,
            the SM Higgs quartic coupling is lambda_SM ~ 0.13 at M_Z, while
            1/24 ~ 0.042 -- off by a factor of ~3.
 
@@ -301,7 +311,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
             Dictionary with Wilson-line computation results and honest gap analysis.
         """
         # G2 topological inputs
-        b3 = 24                  # Betti number (Ten Pillar Seed)
+        b3 = int(_REG.elder_kads)   # Betti number, READ from the adopted seed
         chi_eff = 144            # Euler characteristic
         kappa_sampler = 2        # Sampler coupling
         T_min = 37.85            # Racetrack-stabilized modulus
@@ -597,7 +607,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                     "method": "G2 attractor mechanism with racetrack moduli stabilization",
                     "parentFormulas": ["higgs-mass", "higgs-quartic-coupling"],
                     "steps": [
-                        "Start with Re(T) = 1.833 from TCS G2 attractor",
+                        "Start with Re(T) = 1.833 from the G2 attractor (the earlier 'TCS' attribution is withdrawn; TCS is off-path here)",
                         "Compute λ_eff = λ_0 - κ × Re(T) × y_t²",
                         "λ_0 = 0.129 (SO(10) matching), κ = 0.00189",
                         "m_H² = 8π² v² λ_eff with v = 174 GeV",
@@ -657,7 +667,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                     "method": "Topological projection from Cl(24,2) Clifford algebra symmetry",
                     "parentFormulas": ["higgs-bulk-attractor"],
                     "steps": [
-                        "k_gimel = b3/2 + 1/pi = 12.318 (G2 holonomy anchor from associative 3-cycle count and torsional correction)",
+                        f"k_gimel = b3/2 + 1/pi = {float(_REG.demiurgic_coupling):.5f} (G2 holonomy anchor from the associative 3-cycle count and a torsional correction; it rides the adopted seed)",
                         "Projection factor = k_gimel / π = 3.92",
                         "Mirror overlap η = (13/11) × holonomy correction ≈ 1.185",
                         "Effective scaling = 3.92 / 1.185 = 3.31"
@@ -668,7 +678,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                         "name": "Holonomy Precision Limit",
                         "description": "G2 torsional anchor k_gimel = b3/2 + 1/π",
                         "symbol": "k_gimel",
-                        "value": "12.318",
+                        "value": f"{float(_REG.demiurgic_coupling):.5f}",
                         "units": "dimensionless",
                     },
                     "\\eta": {
@@ -1028,7 +1038,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
         })
 
         # Check 3: Mirror overlap in physical range
-        b3 = 24
+        b3 = int(_REG.elder_kads)   # adopted seed, read not typed
         base_overlap = 13.0 / 11.0
         hc = 1.0 + 2.0 / (b3 * np.pi * 13.0)
         mo = base_overlap * hc
@@ -1106,7 +1116,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 "into evidence for higher dimensions."
             ),
             "technicalDetail": (
-                "M_H_bulk = 414.22 GeV (G2 attractor), Projection = k_gimel/π = 12.318/π = 3.92, "
+                f"M_H_bulk = 414.22 GeV (G2 attractor), Projection = k_gimel/π = {float(_REG.demiurgic_coupling):.3f}/π = {float(_REG.demiurgic_coupling) / 3.141592653589793:.2f}, "
                 "Mirror overlap η = (α_em × b3)^(1/4) = 1.185, "
                 "M_H_local = 414.22 / (3.92/1.185) = 414.22 / 3.31 = 125.1 GeV (σ = 0.91 vs PDG 2024 125.20 +/- 0.11)"
             ),
@@ -1121,7 +1131,7 @@ def run_higgs_brane_partition(verbose: bool = True) -> Dict[str, Any]:
 
     # Ensure topology inputs are set
     if not registry.has_param("topology.elder_kads"):
-        registry.set_param("topology.elder_kads", 24, source="ESTABLISHED:TCS #187")
+        registry.set_param("topology.elder_kads", int(_REG.elder_kads), source="b3_path:adopted_seed")
     if not registry.has_param("topology.k_gimel"):
         k_gimel = 24/2 + 1/np.pi
         registry.set_param("topology.k_gimel", k_gimel, source="DERIVED:k_gimel_formula")

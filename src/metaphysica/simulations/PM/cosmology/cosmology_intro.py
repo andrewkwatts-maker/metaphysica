@@ -26,7 +26,9 @@ The breathing dark energy mechanism now uses 12 paired Euclidean bridges:
 - Equation of state: w = -1 + (1/φ²) × ⟨ρ_breath⟩ / max(ρ_breath)
 
 WHY 12 PAIRS:
-- From G₂ topology: b₃ = 24 associative 3-cycles
+- From G₂ topology: b₃ associative 3-cycles, READ from the adopted seed
+  (b_2, b_3) = (12, 43) of the Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson
+  resolutions, where b_3 = 7 + 3 b_2. The retired seed_24 branch had b₃ = 24.
 - Each pair couples normal ↔ mirror: 24/2 = 12 pairs
 - Aggregation reduces variance: σ_eff = σ_single/√12
 
@@ -45,6 +47,12 @@ Dedicated To:
 """
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed; the pair count below is b3//2
+#: and is generated, never typed.
+_REG = _get_reg()
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
@@ -431,7 +439,7 @@ class CosmologyIntroV16(SimulationBase):
                         "M²⁶(24,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
                         "Each shadow: 12 spatial (from bridge coordinate selection) + 1 shared time = 13D(12,1)\n"
                         "Dimensional structure: T¹ \u00d7_fiber (\u2295ᵢ₌₁¹² Bᵢ²·⁰)\n"
-                        "WHY 12 PAIRS: From b₃ = 24 associative 3-cycles, each pair couples normal \u2194 mirror.\n\n"
+                        f"WHY b₃//2 PAIRS: From b₃ = {int(_REG.elder_kads)} associative 3-cycles, each pair couples normal \u2194 mirror. b₃ is ODD on the adopted seed, so b₃//2 = {int(_REG.elder_kads) // 2} is a FLOOR and one cycle is left unpaired — recorded, not repaired. The old wording read '12 pairs from b₃ = 24'.\n\n"
                         "Step 3: Per-Pair Breathing Energy Density\n"
                         "Each bridge pair i contributes:\n"
                         "\u03c1ᵢ = |T_normal_i \u2212 R_\u22a5_i T_mirror_i|\n"
@@ -666,7 +674,7 @@ class CosmologyIntroV16(SimulationBase):
                         {"description": "Dimensional structure", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
                         {"description": "Aggregate metric", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
                         {"description": "Per-pair OR reduction", "formula": r"R_{\perp,i}^2 = -I \text{ (Möbius per pair)}"},
-                        {"description": "Why 12 pairs", "formula": r"b_3 = 24 \Rightarrow 24/2 = 12 \text{ normal/mirror pairs}"}
+                        {"description": f"Why {int(_REG.elder_kads) // 2} pairs (floor of b_3/2)", "formula": rf"b_3 = {int(_REG.elder_kads)} \Rightarrow \lfloor {int(_REG.elder_kads)}/2 \rfloor = {int(_REG.elder_kads) // 2} \text{{ normal/mirror pairs}}"}
                     ],
                     "references": ["v22 12-pair breathing aggregation", "Euclidean bridge mechanism"]
                 },
@@ -968,7 +976,7 @@ class CosmologyIntroV16(SimulationBase):
                 "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "notes": "TCS construction of compact G2 manifolds from K3 surface fibrations",
+                "notes": "TCS construction of compact G2 manifolds from K3 surface fibrations. OFF-PATH for this framework: the exhibited TCS range is 71 <= b_3 <= 155, which excludes the adopted b_3, so TCS is cited here as an exclusion. The construction in force is the Joyce orbifold T^7/(Z/2)^3.",
             },
             {
                 "id": "kklt2003",
@@ -1083,10 +1091,16 @@ class CosmologyIntroV16(SimulationBase):
                 "topic": "G2 Holonomy Manifolds",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
                 "relevance": (
-                    "G2 manifolds are 7-dimensional spaces with special holonomy used "
-                    "for string compactification to 4D with N=1 supersymmetry. The TCS "
-                    "construction gives b3=24 associative 3-cycles that determine the "
-                    "dark energy equation of state."
+                    f"G2 manifolds are 7-dimensional spaces with special holonomy used "
+                    f"for string compactification to 4D with N=1 supersymmetry. The "
+                    f"construction in force is a Joyce orbifold T^7/(Z/2)^3 with "
+                    f"Eguchi-Hanson resolutions, giving b3={int(_REG.elder_kads)} "
+                    f"associative 3-cycles that determine the dark energy equation of "
+                    f"state. PROVENANCE CORRECTION: the count was previously "
+                    f"attributed to the TCS (twisted connected sum) construction. TCS "
+                    f"as exhibited gives 71 <= b_3 <= 155, which EXCLUDES "
+                    f"b_3 = {int(_REG.elder_kads)}, so TCS serves here as an exclusion "
+                    f"rather than as the source."
                 ),
                 "validation_hint": (
                     "Check that G2 holonomy gives N=1 SUSY in 4D. "
@@ -1150,13 +1164,20 @@ class CosmologyIntroV16(SimulationBase):
             "message": f"C2 = {C2}"
         })
 
-        # Check 4: 12-pair aggregation from b3=24
-        pairs = 24 // 2
-        pairs_ok = pairs == 12
+        # Check 4: do the b3 associative 3-cycles pair off EXACTLY?
+        #
+        # This check used to read `pairs = 24 // 2; pairs_ok = pairs == 12`,
+        # which is constant arithmetic and could not fail. It now asks the
+        # question the pairing story actually depends on -- whether b3 is
+        # even -- and on the adopted seed the answer is NO, so it FAILS and
+        # records the cost instead of certifying a coincidence.
+        b3_live = int(_REG.elder_kads)
+        pairs = b3_live // 2
+        pairs_ok = (b3_live % 2 == 0)
         checks.append({
-            "name": "12-pair bridge from b3=24/2",
+            "name": f"the {b3_live} associative 3-cycles pair off exactly (b3 even); b3//2 = {pairs}",
             "passed": pairs_ok,
-            "confidence_interval": {"lower": 12, "upper": 12, "sigma": 0.0},
+            "confidence_interval": {"lower": pairs, "upper": pairs, "sigma": 0.0},
             "log_level": "INFO" if pairs_ok else "ERROR",
             "message": f"n_pairs = {pairs}"
         })
@@ -1253,7 +1274,7 @@ class CosmologyIntroV16(SimulationBase):
                 "Starting from 26D with (24,2) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
                 "13D(12,1) shadows (each: 12 spatial from bridge + 1 shared time). Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}). "
                 "Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²). Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|. "
-                "Aggregated: ρ_breath = (1/12) ∑ρ_i. Why 12 pairs: b₃ = 24 associative 3-cycles → 24/2 = 12 normal/mirror pairs. "
+                f"Aggregated: ρ_breath = (1/{int(_REG.elder_kads) // 2}) ∑ρ_i. Why {int(_REG.elder_kads) // 2} pairs: b₃ = {int(_REG.elder_kads)} associative 3-cycles → b₃//2 = {int(_REG.elder_kads) // 2} normal/mirror pairs, with one left over because b₃ is odd. "
                 "Aggregation reduces variance: σ_eff = σ_single/√12. <Speculation>Consciousness connection: 12 I/O channels.</Speculation>"
             ),
             "prediction": (

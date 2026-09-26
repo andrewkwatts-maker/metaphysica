@@ -1896,28 +1896,54 @@ class FourFaceG2Structure(SimulationBase):
 
     def get_section_content(self) -> SectionContent:
         """Return section content for paper rendering."""
+        # Live topology reads. Nothing below retypes a Betti number: the
+        # seed fork owns them, so a ruling rewrites this section instead of
+        # leaving it asserting a superseded profile.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        b3, b2 = seed_values(resolve_path())
+
         return SectionContent(
             section_id="2",
             subsection_id="2.7",
             title="Four-Face G2 Sub-Sector Structure",
             abstract=(
-                "The Hodge number h<sup>1,1</sup> = 4 of TCS #187 yields four independent "
-                "Kahler moduli, interpreted as four geometric 'faces' per shadow. "
-                "We derive the inter-face leakage coupling, racetrack-stabilised "
-                "moduli VEVs, and shadow asymmetry from pure G₂ topology."
+                f"Four geometric 'faces' per shadow organise the "
+                f"compactified geometry; the face count is DERIVED as the "
+                f"moved coordinates of an involution. We derive the "
+                f"inter-face leakage coupling, racetrack-stabilised moduli "
+                f"VEVs, and shadow asymmetry from the internal topology. "
+                f"RELOCATED PROVENANCE: this abstract previously read \"the "
+                f"Hodge number h<sup>1,1</sup> = 4 of TCS #187 yields four "
+                f"independent Kahler moduli\". TCS is off-path — it "
+                f"exhibits 71 ≤ b₃ ≤ 155 and b₃ = {b3} here — and the "
+                f"adopted construction is a Joyce orbifold "
+                f"T<sup>7</sup>/(ℤ/2)<sup>3</sup> whose b₂ = {b2} counts "
+                f"resolved A₁ families, so the identity h<sup>1,1</sup> = "
+                f"b₂ BREAKS. The old reading is kept because the exclusion "
+                f"it carries is what rules it out."
             ),
             content_blocks=[
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The TCS G₂ manifold #187 has Hodge number h<sup>1,1</sup> = 4, "
-                        "corresponding to four independent Kahler moduli. In the "
-                        "Principia Metaphysica dual-shadow architecture, these four "
-                        "moduli are interpreted as four geometric 'faces' per shadow: "
-                        "each face controls a distinct sub-sector of the compactified "
-                        "geometry, with the dominant face (T₁) governing the "
-                        "observable sector and the subdominant faces (T₂, T₃, T₄) "
-                        "governing progressively deeper shadow sectors."
+                        f"Four moduli faces organise the Principia "
+                        f"Metaphysica dual-shadow architecture: each face "
+                        f"controls a distinct sub-sector of the compactified "
+                        f"geometry, with the dominant face (T₁) governing "
+                        f"the observable sector and the subdominant faces "
+                        f"(T₂, T₃, T₄) governing progressively deeper shadow "
+                        f"sectors. This paragraph previously opened \"the "
+                        f"TCS G₂ manifold #187 has Hodge number "
+                        f"h<sup>1,1</sup> = 4, corresponding to four "
+                        f"independent Kahler moduli\". On the adopted Joyce "
+                        f"construction b₂ = {b2} and b₃ = {b3}, so the face "
+                        f"count no longer comes from a TCS Hodge number; it "
+                        f"comes from the moved coordinates of an involution, "
+                        f"which is derived."
                     ),
                 ),
                 ContentBlock(
@@ -1933,14 +1959,23 @@ class FourFaceG2Structure(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The inter-face leakage coupling α<sub>leak</sub> = 1/√(χ<sub>eff</sub>/b₃) "
-                        "= 1/√6 = 0.408 quantifies the geometric probability of "
-                        "wavefunction overlap between distinct face sectors. This "
-                        "coupling governs cross-sector gauge mixing and determines "
-                        "the strength of interactions between observable and shadow "
-                        "matter. The value 1/√6 is a pure topological invariant, "
-                        "fixed by the ratio of the effective Euler characteristic "
-                        "(χ<sub>eff</sub> = 144) to the third Betti number (b₃ = 24)."
+                        f"The inter-face leakage coupling α<sub>leak</sub> = "
+                        f"1/√(χ<sub>eff</sub>/b₃) quantifies the geometric "
+                        f"probability of wavefunction overlap between "
+                        f"distinct face sectors, governing cross-sector gauge "
+                        f"mixing and the strength of interactions between "
+                        f"observable and shadow matter. It was published as "
+                        f"1/√6 = 0.408, \"a pure topological invariant, "
+                        f"fixed by the ratio of the effective Euler "
+                        f"characteristic (χ<sub>eff</sub> = 144) to the third "
+                        f"Betti number (b₃ = 24)\". Two things have moved "
+                        f"under that sentence and neither is hidden here: "
+                        f"b₃ = {b3} on the live seed, so χ<sub>eff</sub>/b₃ "
+                        f"= {144.0 / b3:.4f} and α<sub>leak</sub> = "
+                        f"{(b3 / 144.0) ** 0.5:.3f}; and χ<sub>eff</sub> "
+                        f"itself is UNRULED, with three claimed derivations "
+                        f"and no ruling selecting one. The coupling is "
+                        f"therefore REPORTED, not asserted as an invariant."
                     ),
                 ),
                 ContentBlock(

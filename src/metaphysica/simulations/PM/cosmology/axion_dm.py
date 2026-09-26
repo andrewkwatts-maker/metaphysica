@@ -18,12 +18,15 @@ PHYSICS:
 GEOMETRIC ANSATZ:
     f_a = M_Pl / k_gimel^6
 
-    This gives f_a ~ 3.5x10^12 GeV, at the upper end of the "anthropic window"
-    (10^11-10^13 GeV; the narrower 10^11-10^12 quote excludes the module's own f_a)
+    f_a therefore rides the adopted seed through k_gimel = b_3/2 + 1/pi: it
+    MOVED when the seed moved, and no numeral for it is typed in this module.
+    The window it is tested against is the "anthropic window" 10^11-10^13 GeV
+    (the narrower 10^11-10^12 quote is not used, because it excluded the
+    module's own f_a even on the retired seed).
     where it can explain 100% of dark matter with θ_i ~ O(1).
 
 PREDICTIONS:
-    - f_a ~ 3×10^12 GeV (from Planck/k_gimel^6)
+    - f_a = M_Pl/k_gimel^6, computed from the live k_gimel (not quoted here)
     - m_a ~ 2 μeV (testable by ADMX, ABRACADABRA)
     - Ω_a h² ~ 0.12 for θ_i ~ 1 (natural!)
 
@@ -43,6 +46,11 @@ from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
 _REG = get_registry()
+
+#: k_gimel = b_3/2 + 1/pi. It RIDES THE ADOPTED SEED (21.818 on
+#: seed_43_joyce; it was 12.318 on the retired seed_24 branch), so every
+#: number derived from it below is generated from this read, never typed.
+_k_gimel = float(_REG.demiurgic_coupling)
 
 from metaphysica.simulations.base.simulation_base import (
     SimulationBase,
@@ -102,10 +110,11 @@ class AxionDMV18(SimulationBase):
             title="Axion Dark Matter from G2 Geometry",
             description=(
                 "Derives QCD axion mass and relic density from G2 geometry. "
-                "The geometric ansatz f_a = M_Pl/k_gimel^6 uses the 6D moduli "
-                "space of the associative 3-cycle to suppress the Planck scale, "
-                "predicting f_a ~ 3.5e12 GeV and m_a ~ 1.6 ueV -- within the "
-                "anthropic window and testable by ADMX."
+                f"The geometric ansatz f_a = M_Pl/k_gimel^6 uses the 6D moduli "
+                f"space of the associative 3-cycle to suppress the Planck scale, "
+                f"predicting f_a ~ {1.22e19 / (_k_gimel ** 6):.2e} GeV from "
+                f"k_gimel = {_k_gimel:.3f} -- tested against the anthropic window "
+                f"and by ADMX."
             ),
             section_id="7",
             subsection_id="7.1"
@@ -113,8 +122,11 @@ class AxionDMV18(SimulationBase):
 
         # Fundamental constants
         self.M_Planck = 1.22e19     # GeV
-        self.k_gimel = float(_REG.demiurgic_coupling)  # = b3/2 + 1/pi = 12.318...
-        self.elder_kads = _REG.elder_kads  # = 24 (Third Betti number)
+        # k_gimel = b3/2 + 1/pi RIDES THE SEED. It is read, never typed: it
+        # was 12.318 on the retired seed_24 branch and moved with the adopted
+        # (b_2, b_3) = (12, 43) Joyce seed.
+        self.k_gimel = float(_REG.demiurgic_coupling)
+        self.elder_kads = _REG.elder_kads  # third Betti number, adopted seed
 
         # QCD constants for axion mass
         self.Lambda_QCD = 0.217     # GeV
@@ -162,10 +174,13 @@ class AxionDMV18(SimulationBase):
         #
         # f_a = M_Pl / k_gimel^n
         #
-        # For n=6: f_a = 1.22e19 / (12.318)^6 = 1.22e19 / 3.5e6 ≈ 3.5e12 GeV
+        # For n=6: f_a = M_Pl / k_gimel^6, with k_gimel read from the seed.
+        # The old comment worked the arithmetic at k_gimel = 12.318 (the
+        # retired seed_24 value); that number is not the live one.
         #
-        # This places f_a in the "anthropic window" (10^11 - 10^12 GeV)
-        # where the axion can explain all of dark matter with θ_i ~ 1.
+        # The claim under test is that f_a lands in the "anthropic window"
+        # (10^11 - 10^13 GeV) where the axion can explain all of dark matter
+        # with θ_i ~ 1. Whether it does is checked, not asserted.
 
         k_power = 6  # Geometric suppression power
         f_a = self.M_Planck / (self.k_gimel ** k_power)
@@ -305,7 +320,7 @@ class AxionDMV18(SimulationBase):
                 # k_gimel = b_3/2 + 1/π (the Holonomy warp factor). Inlining the
                 # b_3 split here roots the EML tree at b3_leaf so the dependency
                 # walker no longer stops at the opaque k_gimel variable
-                # (T2.3 fix). Numerically equivalent to k_gimel = 12.318.
+                # (T2.3 fix). k_gimel rides the seed; no value is inlined.
                 eml_tree_str=(
                     "ops.div(M_Pl, ops.pow("
                     "ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.inv(eml_pi())), "
@@ -318,14 +333,21 @@ class AxionDMV18(SimulationBase):
                 ),
                 category="PREDICTED",
                 description=(
-                    "Axion decay constant derived from the Planck scale as "
-                    "f_a = M_Pl/k_gimel^6. The sixth power of k_gimel (= b3/2 + 1/pi "
-                    "= 12.318) arises from the 6-dimensional moduli space of the "
-                    "associative 3-cycle hosting the axion zero-mode in the TCS G2 "
-                    "manifold (3 tangential deformations + 3 normal deformations). "
-                    "This yields k_gimel^6 = 3.5e6, giving f_a = 3.5e12 GeV -- "
-                    "within the anthropic window (10^11-10^13 GeV) where the axion "
-                    "can explain 100% of observed dark matter with theta_i ~ O(1)."
+                    f"Axion decay constant derived from the Planck scale as "
+                    f"f_a = M_Pl/k_gimel^6. The sixth power of k_gimel "
+                    f"(= b3/2 + 1/pi = {_k_gimel:.3f} on the adopted seed) arises "
+                    f"from the 6-dimensional moduli space of the associative "
+                    f"3-cycle hosting the axion zero-mode (3 tangential "
+                    f"deformations + 3 normal deformations). This yields "
+                    f"k_gimel^6 = {_k_gimel ** 6:.2e}, giving "
+                    f"f_a = {1.22e19 / (_k_gimel ** 6):.2e} GeV, against the "
+                    f"anthropic window (10^11-10^13 GeV) where the axion can "
+                    f"explain 100% of observed dark matter with theta_i ~ O(1). "
+                    f"PROVENANCE CORRECTION: the manifold was previously called a "
+                    f"TCS G2 manifold. TCS is OFF-PATH -- the exhibited TCS range "
+                    f"is 71 <= b_3 <= 155, which excludes b_3 = {int(_REG.elder_kads)} "
+                    f"-- and the construction in force is the Joyce orbifold "
+                    f"T^7/(Z/2)^3 with Eguchi-Hanson resolutions."
                 ),
                 # T2.3 fix: declare topology.elder_kads as a direct input — the
                 # EML tree now inlines k_gimel = b_3/2 + 1/π so b_3 is a real
@@ -343,7 +365,7 @@ class AxionDMV18(SimulationBase):
                         },
                         {
                             "description": "k_gimel from G2 holonomy geometry",
-                            "formula": r"k_\gimel = \frac{b_3}{2} + \frac{1}{\pi} \approx 12.318"
+                            "formula": rf"k_\gimel = \frac{{b_3}}{{2}} + \frac{{1}}{{\pi}} = \frac{{{int(_REG.elder_kads)}}}{{2}} + \frac{{1}}{{\pi}} \approx {_k_gimel:.3f}"
                         },
                         {
                             "description": "Geometric suppression: k_gimel^6 from 6D moduli space of the associative 3-cycle (3 tangential + 3 normal deformations)",
@@ -359,7 +381,7 @@ class AxionDMV18(SimulationBase):
                 },
                 terms={
                     "M_Pl": "Planck mass = 1.22e19 GeV",
-                    "k_gimel": "Holonomy warp factor = 12 + 1/π ≈ 12.318"
+                    "k_gimel": f"Holonomy warp factor = b_3/2 + 1/π ≈ {_k_gimel:.3f} (rides the adopted seed)"
                 }
             ),
             Formula(
@@ -816,13 +838,17 @@ class AxionDMV18(SimulationBase):
             abstract=(
                 "The QCD axion decay constant f_a is derived from the Planck "
                 "scale via the geometric ansatz f_a = M_Pl/k_gimel^6, where the "
-                "sixth power of k_gimel = b3/2 + 1/pi = 12.318 provides a "
-                "suppression factor of ~3.5e6. The exponent 6 corresponds to the "
-                "real dimension of the associative 3-cycle in the TCS G2 manifold "
-                "(a 3-cycle in 7D has 6 tangential degrees of freedom in the "
-                "normal bundle). This ansatz yields f_a ~ 3.5e12 GeV, placing "
-                "the axion in the anthropic window for 100% dark matter with "
-                "natural initial misalignment angle theta_i ~ O(1)."
+                f"sixth power of k_gimel = b3/2 + 1/pi = {_k_gimel:.3f} provides a "
+                f"suppression factor of ~{_k_gimel ** 6:.2e}. The exponent 6 "
+                f"corresponds to the real dimension of the moduli space of the "
+                f"associative 3-cycle (a 3-cycle in 7D has 6 degrees of freedom "
+                f"in the normal bundle). This ansatz yields "
+                f"f_a ~ {1.22e19 / (_k_gimel ** 6):.2e} GeV, tested against the "
+                f"anthropic window for 100% dark matter with natural initial "
+                f"misalignment angle theta_i ~ O(1). The manifold is the Joyce "
+                f"orbifold T^7/(Z/2)^3, not a Twisted Connected Sum: TCS "
+                f"exhibits 71 <= b_3 <= 155 and so excludes "
+                f"b_3 = {int(_REG.elder_kads)}."
             ),
             content_blocks=[
                 ContentBlock(
@@ -834,10 +860,11 @@ class AxionDMV18(SimulationBase):
                         "k_gimel^6 uses the sixth power because the Peccei-Quinn symmetry "
                         "breaking scale is controlled by the volume of the internal cycle "
                         "hosting the axion zero-mode: a 3-cycle in 7D has a 6-dimensional "
-                        "moduli space (3 tangential + 3 normal deformations), so the "
-                        "effective suppression scales as k_gimel^6. With k_gimel = 12.318, "
-                        "this gives k_gimel^6 = 3.5e6, yielding f_a = 3.5e12 GeV in the "
-                        "cosmologically favored window."
+                        f"moduli space (3 tangential + 3 normal deformations), so the "
+                        f"effective suppression scales as k_gimel^6. With "
+                        f"k_gimel = {_k_gimel:.3f} read from the adopted seed, this "
+                        f"gives k_gimel^6 = {_k_gimel ** 6:.2e}, yielding "
+                        f"f_a = {1.22e19 / (_k_gimel ** 6):.2e} GeV."
                     )
                 ),
                 ContentBlock(

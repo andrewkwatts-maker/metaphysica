@@ -642,7 +642,7 @@ class SpeedOfLightV17(SimulationBase):
                 derivation={
                     "steps": [
                         {"description": "G₂ manifold carries b₃ = 24 independent harmonic 3-cycles",
-                         "formula": r"b_3 = 24"},
+                         "formula": rf"b_3 = {int(_REG.elder_kads)}"},
                         {"description": "6 cycles are locked by the G₂ structure group (fiber stabilizer generators)",
                          "formula": r"\Delta_{\text{eff}} = b_3 - 6 = 18"},
                         {"description": "Fraction of cycles available for propagation",
@@ -751,7 +751,7 @@ class SpeedOfLightV17(SimulationBase):
                         },
                         {
                             "description": "b₃ = Betti-3 (Logic Fabric base)",
-                            "formula": r"b_3 = 24"
+                            "formula": rf"b_3 = {int(_REG.elder_kads)}"
                         },
                         {
                             "description": "Pneuma Tensioner ratio",

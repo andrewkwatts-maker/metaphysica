@@ -73,7 +73,8 @@ Every derived parameter is registered with an EML operator tree named
 ``"lhc_predictions"`` so the Sprint 3 ``arithma_dependency_walker`` and
 the Sprint 4 dependency resolver can pick the derivation up and confirm
 back-propagation to the ``m_{3/2}`` seed (which itself traces back to
-the G_2 third Betti number seed ``b_3 = 24`` via
+the G_2 third Betti number seed ``b_3`` -- read from the adopted path, 24 on
+the retired seed_24 branch -- via
 ``soft_susy_breaking.py``).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.

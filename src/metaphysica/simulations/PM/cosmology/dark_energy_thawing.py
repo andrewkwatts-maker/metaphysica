@@ -13,36 +13,44 @@ The breathing dark energy mechanism now uses 12 paired (2,0) bridges:
 - Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
 - Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²)
 - Per-pair: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|
-- Aggregated: ρ_breath = (1/12) ∑_{i=1}^{12} ρ_i
+- Aggregated: ρ_breath = (1/(b₃//2)) ∑_{i=1}^{b₃//2} ρ_i
 - w = -1 + (1/φ²) × ⟨ρ_breath⟩ / max(ρ_breath)
-- Target: w ≈ -0.958 ± 0.003
 
-WHY 12 PAIRS (from b₃ = 24/2 = 12):
-- b₃ = 24 associative 3-cycles in G₂ manifold
+WHY b₃//2 PAIRS:
+- the b₃ associative 3-cycles of the G₂ manifold pair off
 - Each pair couples one normal-sector 3-cycle to one mirror-sector
-- Aggregation reduces variance: σ_eff = σ_single/√12
+- Aggregation reduces variance: σ_eff = σ_single/√(b₃//2)
+
+WITHDRAWN, KEPT ON THE BOOKS -- "12 pairs, from b₃ = 24/2 = 12": that count
+was an artefact of the retired seed_24 branch. On the ADOPTED seed
+(b_2, b_3) = (12, 43) -- a Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson
+resolutions, b_3 = 7 + 3 b_2 -- b₃ is ODD, so b₃/2 is not an integer, the
+code takes the floor b₃//2, and one 3-cycle is left UNPAIRED and unaccounted.
+Recorded, not repaired.
 
 CONNECTION TO CONSCIOUSNESS I/O:
 - Each pair represents one consciousness I/O channel
-- 12 channels provide redundancy for robust experience
+- b₃//2 channels provide redundancy for robust experience
 
 GEOMETRIC DERIVATION
 --------------------
-    w₀ = -1 + 1/b₃ = -1 + 1/24 = -23/24 ≈ -0.9583
+    w₀ = -1 + 1/b₃ = -(b₃-1)/b₃, with b₃ READ from the adopted seed
 
-    The factor 1/b₃ represents the "thawing pressure" from the 24
+    The factor 1/b₃ represents the "thawing pressure" from the b₃
     associative 3-cycles of the G₂ manifold. As the universe expands,
     this pressure is released, driving w above the cosmological constant.
 
-    wₐ = -1/√b₃ = -1/√24 ≈ -0.204
+    wₐ = -1/√b₃
 
     The evolution parameter comes from the square root of the cycle count,
     representing the rate of torsional leakage from the G₂ 3-form.
 
 EXPERIMENTAL COMPARISON (DESI 2025 Thawing)
 -------------------------------------------
-    w₀: PM = -0.9583, DESI = -0.957 ± 0.067  → < 1σ (BAO-only) PASS
-    wₐ: PM = -0.204,  DESI = -0.99 ± 0.33   → 2.38σ TENSION (acknowledged)
+    Both deviations are COMPUTED against the registry anchors in
+    get_certificates / get_gate_checks; no sigma is asserted here, because
+    every one of them moved when the seed moved. The wₐ tension in
+    particular is recorded there, not softened.
 
     The wₐ tension is acknowledged as a geometric constraint: PM predicts
     weaker thawing from G₂ holonomy than current DESI measurements indicate.
@@ -97,7 +105,7 @@ class DarkEnergyEvolution(SimulationBase):
     Dark energy thawing evolution from G2 geometry.
 
     Derives the CPL parametrization w(z) = w0 + wa * z/(1+z) from:
-    1. G2 topology (b3 = 24 associative 3-cycles)
+    1. G2 topology (b3 associative 3-cycles, read from the adopted seed)
     2. Torsional leakage from the G2 3-form
     3. Ricci flow relaxation dynamics
 
@@ -135,12 +143,14 @@ class DarkEnergyEvolution(SimulationBase):
             id="dark_energy_thawing_v16_2",
             version="22.0",
             domain="cosmology",
-            title="Dark Energy Thawing from G2 Geometry with 12-Pair Aggregation",
+            title="Dark Energy Thawing from G2 Geometry with Breathing Aggregation",
             description=(
-                "Derives CPL parameters w0, wa from G2 geometry with 12-pair breathing "
-                "aggregation, matching DESI 2025 thawing dark energy signature. The 'thawing' "
-                "is Ricci flow relaxation of the G2 3-form. 12 pairs from b₃=24/2=12. "
-                "Aggregation: ρ_breath = (1/12)∑ρ_i. Target: w ≈ -0.958 ± 0.003."
+                f"Derives CPL parameters w0, wa from G2 geometry with breathing "
+                f"aggregation over b₃//2 = {int(_REG.elder_kads) // 2} pairs, against the "
+                f"DESI 2025 thawing dark energy signature. The 'thawing' is Ricci flow "
+                f"relaxation of the G2 3-form. b₃ = {int(_REG.elder_kads)} is read from "
+                f"the adopted Joyce seed. Aggregation: "
+                f"ρ_breath = (1/{int(_REG.elder_kads) // 2})∑ρ_i."
             ),
             section_id="5",
             subsection_id="5.6"
@@ -395,44 +405,46 @@ class DarkEnergyEvolution(SimulationBase):
 
     def calculate_w_params_w0(self, b3: int) -> float:
         """
-        v22: Calculate w0 from static pressure of the 24-cycle with 12-pair aggregation.
+        v22: Calculate w0 from static b3-cycle pressure with b3//2-pair aggregation.
 
         The equation of state at z=0 is determined by the topological
-        pressure contribution from the b3 = 24 associative 3-cycles:
+        pressure contribution from the b3 associative 3-cycles:
 
-            w0 = -1 + 1/b3 = -1 + 1/24 = -0.958333...
+            w0 = -1 + 1/b3 = -(b3-1)/b3
 
-        v22 12-PAIR BREATHING AGGREGATION:
-        -----------------------------------
-        Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
-        Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²)
+        v22 BREATHING AGGREGATION:
+        --------------------------
+        Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{b3//2} B_i^{2,0})
+        Metric: ds² = -dt² + ∑_{i=1}^{b3//2} (dy_{1i}² + dy_{2i}²)
         Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|
-        Aggregated: ρ_breath = (1/12) ∑_{i=1}^{12} ρ_i
+        Aggregated: ρ_breath = (1/(b3//2)) ∑_{i=1}^{b3//2} ρ_i
 
-        WHY 12 PAIRS:
-        - b₃ = 24 associative 3-cycles → 24/2 = 12 normal/mirror pairs
-        - Aggregation reduces variance: σ_eff = σ_single/√12
-        - Consciousness: 12 I/O channels for robust experience
+        WHY b3//2 PAIRS:
+        - the b3 associative 3-cycles pair normal ↔ mirror
+        - Aggregation reduces variance: σ_eff = σ_single/√(b3//2)
+        - Consciousness: b3//2 I/O channels for robust experience
+        - RECORDED: on the adopted seed b3 is ODD, so the floor leaves one
+          3-cycle unpaired. The old text read "12 pairs from 24/2"; that is
+          withdrawn, and no exact halving is claimed in its place.
 
-        The 12-pair aggregation affects VARIANCE, not the w0 VALUE.
+        The aggregation affects VARIANCE, not the w0 VALUE.
         The w0 formula remains: w0 = -1 + 1/b3 (from topology).
-        Aggregation explains stability: σ_eff ≈ 0.003 instead of σ_single ≈ 0.01.
 
         Args:
-            b3: Number of associative 3-cycles (24 for TCS G2)
+            b3: Number of associative 3-cycles (read from the adopted seed by
+                run(); passing a literal here is an explicit off-path probe)
 
         Returns:
             w0 equation of state parameter
         """
-        # v22: Static pressure from 24-cycle, with 12-pair aggregation for variance
+        # v22: Static pressure from the b3-cycle, with b3//2-pair aggregation
         # The 1/b3 term arises from the inverse volume scaling of
         # the 3-form contribution to the stress-energy tensor
-        n_pairs = b3 // 2  # = 12 pairs for aggregation
+        n_pairs = b3 // 2  # FLOOR: b3 is odd on the adopted seed
         w0 = -1.0 + (1.0 / b3)
 
-        # Variance reduction from 12-pair aggregation:
-        # σ_eff = σ_single/√n_pairs = σ_single/√12 ≈ 0.29 × σ_single
-        # Target: w ≈ -0.958 ± 0.003
+        # Variance reduction from the n_pairs aggregation:
+        # σ_eff = σ_single/√n_pairs, with n_pairs = b3//2 from the adopted seed
 
         return w0
 
@@ -466,7 +478,7 @@ class DarkEnergyEvolution(SimulationBase):
         See Appendix O: Theorem of Dimensional Projection for full derivation.
 
         Args:
-            b3: Number of associative 3-cycles (24 for TCS G2)
+            b3: Number of associative 3-cycles (read from the adopted seed)
             k_gimel: Holonomy precision limit (defaults to b3/2 + 1/π)
 
         Returns:
@@ -531,10 +543,17 @@ class DarkEnergyEvolution(SimulationBase):
 
             epsilon_T = (b3 / chi_eff) * (1 - 1/sqrt(b3))
 
-        For TCS G2 with b3=24, chi_eff=144:
-            epsilon_T = (24/144) * (1 - 1/sqrt(24))
-                      = 0.1667 * 0.7959
-                      = 0.1327
+        Both b3 and chi_eff are read from the registry; the numeric value of
+        epsilon_T therefore moves with the seed and is not quoted here. The
+        worked example that used to sit here assumed b3 = 24 on the retired
+        seed_24 branch.
+
+        NOTE, UNRULED: chi_eff = 144 is an OPEN ruling. Its three claimed
+        derivations (2(h11-h21+h31), b_3^2/4 and 6 b_3) agree only at
+        b_3 = 24, so on the adopted seed chi_eff is either seed-independent
+        (and this ratio carries no topological content) or seed-dependent
+        (and is not 144). This module consumes whatever the registry holds
+        and does not decide the question.
 
         This coefficient determines the rate at which the G2 manifold
         transfers "frozen" dark energy into the "thawing" component.
@@ -564,7 +583,7 @@ class DarkEnergyEvolution(SimulationBase):
         This is the redshift at which the thawing dynamics become
         significant (where w(z) deviates notably from w0).
 
-        z_thaw ~ 1/|wa| = sqrt(b3) ~ 4.9 for b3=24
+        z_thaw ~ 1/|wa| = sqrt(b3), with b3 from the adopted seed
 
         Args:
             b3: Number of associative 3-cycles
@@ -690,7 +709,23 @@ class DarkEnergyEvolution(SimulationBase):
     # -------------------------------------------------------------------------
 
     def get_section_content(self) -> Optional[SectionContent]:
-        """Return section content for the paper."""
+        """Return section content for the paper.
+
+        Every topological number below is READ from the adopted seed rather
+        than typed, so a seed ruling rewrites the prose instead of leaving it
+        contradicting the code.
+        """
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path as _resolve_seed,
+            seed_values as _seed_values,
+        )
+
+        b3 = int(_REG.elder_kads)
+        b2 = int(_seed_values(_resolve_seed())[1])
+        chi_eff_total = int(_REG.chi_eff_total)
+        n_pairs = b3 // 2
+        w0_frac = "-%d/%d" % (b3 - 1, b3)
+        w0_val = -1.0 + 1.0 / b3
         return SectionContent(
             section_id="5",
             subsection_id="5.6",
@@ -739,26 +774,31 @@ class DarkEnergyEvolution(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The present-day equation of state w₀ is determined by the "
-                        "static topological pressure from the b₃ = 24 associative 3-cycles "
-                        "(derived geometrically in Section 5.2 from dimensional reduction; "
-                        "here we show how Ricci flow dynamics produce the thawing signature):"
+                        f"The present-day equation of state w₀ is determined by the "
+                        f"static topological pressure from the b₃ = {b3} associative 3-cycles "
+                        f"(derived geometrically in Section 5.2 from dimensional reduction; "
+                        f"here we show how Ricci flow dynamics produce the thawing signature):"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"w_0 = -1 + \frac{1}{b_3} = -1 + \frac{1}{24} \approx -0.958",
+                    content=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{b3}}} \approx {w0_val:.4f}",
                     formula_id="thawing-w0-derivation",
                     label="(5.12)"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The 1/b₃ correction represents the inverse volume scaling of "
-                        "the 3-form contribution to the stress-energy tensor. With "
-                        "exactly 24 associative cycles in TCS G₂ geometry, this gives "
-                        "a small but non-zero deviation from the cosmological constant "
-                        "limit w = -1."
+                        f"The 1/b₃ correction represents the inverse volume scaling of "
+                        f"the 3-form contribution to the stress-energy tensor. With "
+                        f"exactly {b3} associative cycles in the adopted Joyce orbifold "
+                        f"T^7/(Z/2)^3 (Eguchi-Hanson resolutions, b_3 = 7 + 3 b_2), this "
+                        f"gives a small but non-zero deviation from the cosmological "
+                        f"constant limit w = -1. CORRECTION ON THE RECORD: this paragraph "
+                        f"previously attributed the cycle count to a Twisted Connected Sum "
+                        f"G₂ geometry. TCS is OFF-PATH here -- the exhibited TCS range is "
+                        f"71 <= b_3 <= 155, which excludes b_3 = {b3} -- and the "
+                        f"construction in force is the Joyce orbifold."
                     )
                 ),
                 ContentBlock(
@@ -854,10 +894,16 @@ class DarkEnergyEvolution(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This coefficient determines the rate at which frozen dark "
-                        "energy (w = -1) converts to the dynamic thawing component. "
-                        "For TCS G₂ with b₃ = 24 and \u03c7_eff = 144, the leakage rate is "
-                        "approximately 13.3% per Hubble time."
+                        f"This coefficient determines the rate at which frozen dark "
+                        f"energy (w = -1) converts to the dynamic thawing component. "
+                        f"With b₃ = {b3} and \u03c7_eff = {chi_eff_total}, the leakage rate "
+                        f"is {100.0 * (b3 / float(chi_eff_total)) * (1.0 - 1.0 / (b3 ** 0.5)):.1f}% "
+                        f"per Hubble time. Two provenance corrections are on the record: "
+                        f"the geometry is the Joyce orbifold, not a Twisted Connected Sum "
+                        f"(TCS exhibits 71 <= b_3 <= 155 and so excludes b_3 = {b3}); and "
+                        f"\u03c7_eff = {chi_eff_total} is an UNRULED quantity whose three "
+                        f"claimed derivations agree only at b_3 = 24, so this ratio is "
+                        f"reported, not certified."
                     )
                 ),
                 ContentBlock(
@@ -868,15 +914,18 @@ class DarkEnergyEvolution(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The 12 bridge pairs in the breathing mechanism arise rigorously "
-                        "from the 4-face \u00d7 3-generation structure of the G₂ manifold. "
-                        "Each of the h(1,1) = 4 K\u00e4hler faces supports 3 independent "
-                        "bridge oscillations (one per fermion generation), giving "
-                        "12 = 4 \u00d7 3 = b₃/2 pairs. Furthermore, each bridge pair has "
-                        "4 face channels, yielding 48 = \u03c7_eff/3 total independent "
-                        "oscillations. The effective variance therefore reduces by \u221a48, "
-                        "not merely \u221a12, stabilizing the dark energy equation of state "
-                        "near w₀ = -23/24 with remarkable precision."
+                        f"FALSIFIED, KEPT ON THE BOOKS. This paragraph used to read: "
+                        f"'The 12 bridge pairs arise rigorously from the 4-face \u00d7 "
+                        f"3-generation structure: each of the h(1,1) = 4 K\u00e4hler faces "
+                        f"supports 3 independent bridge oscillations, giving "
+                        f"12 = 4 \u00d7 3 = b₃/2 pairs.' That identity required b₃ = 24 and "
+                        f"b₂ = 4 on the retired seed_24 branch. On the adopted Joyce seed "
+                        f"b₂ = {b2} and b₃ = {b3}: 4 \u00d7 3 = 12 is "
+                        f"no longer b₃/2 = {b3}/2, which is not even an integer. The "
+                        f"'4 \u00d7 3 = b₃/2' coincidence is FALSIFIED and is not replaced "
+                        f"by a new one. What survives is the weaker statement the code "
+                        f"actually uses: the pairing runs over b₃//2 = {n_pairs} pairs, "
+                        f"the variance reduces by \u221a{n_pairs}, and w₀ is {w0_frac}."
                     )
                 ),
                 ContentBlock(
@@ -896,8 +945,8 @@ class DarkEnergyEvolution(SimulationBase):
                         "DESI 2024/2025 data at 0.54\u03c3. However, face-face interactions "
                         "in the 4-face architecture introduce a perturbative non-linear "
                         "correction. The C(4,2) = 6 pairwise K\u00e4hler face couplings, normalized "
-                        "by the b₃ = 24 cycle count, give a correction parameter "
-                        "\u03b5_NL = 6/24 = 1/4. Combined with the \u03b1_leak coupling "
+                        f"by the b₃ = {b3} cycle count, give a correction parameter "
+                        f"\u03b5_NL = 6/{b3} = {6.0 / b3:.4f}. Combined with the \u03b1_leak coupling "
                         "\u03b1_leak = 1/(4\u03c0), the corrected w\u2090,NL shifts modestly toward "
                         "the DESI central value. This correction is documented for completeness "
                         "and future cross-validation with DESI Year 3+ data releases."
@@ -951,15 +1000,23 @@ class DarkEnergyEvolution(SimulationBase):
     # -------------------------------------------------------------------------
 
     def get_formulas(self) -> List[Formula]:
-        """Return list of formulas this simulation provides."""
+        """Return list of formulas this simulation provides.
+
+        Topological numbers are READ from the adopted seed, never typed.
+        """
+        b3 = int(_REG.elder_kads)
+        chi_eff_total = int(_REG.chi_eff_total)
+        n_pairs = b3 // 2
+        w0_val = -1.0 + 1.0 / b3
+        w0_frac = "-%d/%d" % (b3 - 1, b3)
         return [
             Formula(
                 id="thawing-w0-derivation",
                 label="(5.12)",
-                latex=r"w_0 = -1 + \frac{1}{b_3} = -1 + \frac{1}{24} \approx -0.958",
-                plain_text="w0 = -1 + 1/b3 = -1 + 1/24 ~ -0.958",
+                latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{b3}}} \approx {w0_val:.4f}",
+                plain_text=f"w0 = -1 + 1/b3 = -1 + 1/{b3} ~ {w0_val:.4f}",
                 category="PREDICTED",
-                description="Static dark energy equation of state from G2 24-cycle pressure",
+                description=f"Static dark energy equation of state from G2 {b3}-cycle pressure",
                 inputParams=["topology.elder_kads"],
                 outputParams=["cosmology.w0_thawing"],
                 input_params=["topology.elder_kads"],
@@ -980,11 +1037,11 @@ class DarkEnergyEvolution(SimulationBase):
                         },
                         {
                             "description": "Correction term from inverse cycle count",
-                            "formula": r"\Delta w = 1/b_3 = 1/24"
+                            "formula": rf"\Delta w = 1/b_3 = 1/{b3}"
                         },
                         {
                             "description": "Final result",
-                            "formula": r"w_0 = -1 + 1/24 = -0.9583\overline{3}"
+                            "formula": rf"w_0 = -1 + 1/{b3} = {w0_val:.6f}"
                         }
                     ],
                     "references": [
@@ -994,18 +1051,18 @@ class DarkEnergyEvolution(SimulationBase):
                 },
                 terms={
                     "w0": "Present-day equation of state",
-                    "b3": "Third Betti number (24 for TCS G2)",
+                    "b3": f"Third Betti number ({b3} on the adopted Joyce seed; the TCS attribution is off-path, TCS exhibiting 71 <= b_3 <= 155)",
                     "Phi": "G2 associative 3-form"
                 },
-                eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(24)))",
+                eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(b_3))",
                 eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(b3_leaf()))",
                 eml_description="EML: w0 = ops.add(ops.neg(1), ops.inv(b3)) — dark energy equation of state from b3 topology",
             ),
             Formula(
                 id="thawing-wa-derivation",
                 label="(5.13)",
-                latex=r"w_a = -\frac{1}{\sqrt{b_3}} \times \dim(\Psi) = -\frac{1}{\sqrt{24}} \times 4 \approx -0.816",
-                plain_text="wa = -1/sqrt(b3) × dim(Ψ) = -1/sqrt(24) × 4 ~ -0.816",
+                latex=rf"w_a = -\frac{{1}}{{\sqrt{{b_3}}}} \times \dim(\Psi) = -\frac{{1}}{{\sqrt{{{b3}}}}} \times 4 \approx {-4.0 / (b3 ** 0.5):.4f}",
+                plain_text=f"wa = -1/sqrt(b3) × dim(Ψ) = -1/sqrt({b3}) × 4 ~ {-4.0 / (b3 ** 0.5):.4f}",
                 category="FITTED",
                 description=(
                     "Dark energy evolution parameter from G2 4-form projection (v16.2). "
@@ -1041,8 +1098,8 @@ class DarkEnergyEvolution(SimulationBase):
                 },
                 terms={
                     "wa": "CPL evolution parameter (projected)",
-                    "wa_linear": "Raw G2 holonomy constraint (-0.204)",
-                    "b3": "Third Betti number (24)",
+                    "wa_linear": f"Raw G2 holonomy constraint ({-1.0 / (b3 ** 0.5):.3f})",
+                    "b3": f"Third Betti number ({b3}, read from the adopted seed)",
                     "Φ": "Associative 3-form on G2",
                     "Ψ": "Co-associative 4-form, Ψ = *Φ"
                 },
@@ -1127,9 +1184,9 @@ class DarkEnergyEvolution(SimulationBase):
                     ]
                 },
                 terms={
-                    "epsilon_T": "Torsional leakage coefficient (0.133)",
-                    "b3": "Third Betti number (24)",
-                    "chi_eff": "Effective Euler characteristic (144)"
+                    "epsilon_T": f"Torsional leakage coefficient ({(b3 / float(chi_eff_total)) * (1.0 - 1.0 / (b3 ** 0.5)):.3f})",
+                    "b3": f"Third Betti number ({b3}, read from the adopted seed)",
+                    "chi_eff": f"Effective Euler characteristic ({chi_eff_total}; UNRULED -- three competing derivations agreeing only at b_3 = 24)"
                 },
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{ops.div}(\mathrm{eml\_scalar}(b_3), \chi_{\mathrm{eff}}),\, \mathrm{ops.sub}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{eml\_scalar}(24)))))",
                 eml_tree_str="ops.mul(ops.div(b3_leaf(), chi_eff), ops.sub(eml_scalar(1.0), ops.inv(ops.sqrt(b3_leaf()))))",
@@ -1184,16 +1241,22 @@ class DarkEnergyEvolution(SimulationBase):
             Formula(
                 id="breathing-variance-reduction",
                 label="(DE.4F1)",
-                latex=r"\sigma_{\text{eff}} = \frac{\sigma_{\text{single}}}{\sqrt{n_{\text{pairs}} \times n_{\text{faces}}}} = \frac{\sigma_{\text{single}}}{\sqrt{12 \times 4}} = \frac{\sigma_{\text{single}}}{\sqrt{48}} \approx 0.144 \, \sigma_{\text{single}}",
-                plain_text="sigma_eff = sigma_single / sqrt(n_pairs x n_faces) = sigma_single / sqrt(12 x 4) = sigma_single / sqrt(48)",
+                latex=rf"\sigma_{{\text{{eff}}}} = \frac{{\sigma_{{\text{{single}}}}}}{{\sqrt{{n_{{\text{{pairs}}}} \times n_{{\text{{faces}}}}}}}} = \frac{{\sigma_{{\text{{single}}}}}}{{\sqrt{{{n_pairs} \times 4}}}} = \frac{{\sigma_{{\text{{single}}}}}}{{\sqrt{{{4 * n_pairs}}}}} \approx {1.0 / ((4 * n_pairs) ** 0.5):.3f} \, \sigma_{{\text{{single}}}}",
+                plain_text=f"sigma_eff = sigma_single / sqrt(n_pairs x n_faces) = sigma_single / sqrt({n_pairs} x 4) = sigma_single / sqrt({4 * n_pairs})",
                 category="DERIVED",
                 description=(
-                    "Variance reduction in the breathing dark energy mechanism from "
-                    "48 independent flux channels: 12 bridge pairs x 4 Kahler faces. "
-                    "The 12 pairs arise from b3/2 = 24/2 = 12, equivalently 4 faces x 3 "
-                    "generations. Each of the 12 pairs has 4 face channels (from h^{1,1} = 4), "
-                    "giving 48 = chi_eff/3 independent oscillations. By the central limit "
-                    "theorem over the 12 independent pair averages, variance reduces by sqrt(12) ~ 3.5x, stabilizing w0 near -23/24."
+                    f"Variance reduction in the breathing dark energy mechanism from "
+                    f"{4 * n_pairs} independent flux channels: {n_pairs} bridge pairs x 4 "
+                    f"Kahler faces, where {n_pairs} = b3//2 = {b3}//2 is read from the "
+                    f"adopted seed. By the central limit theorem over the {n_pairs} "
+                    f"independent pair averages, variance reduces by sqrt({n_pairs}) ~ "
+                    f"{n_pairs ** 0.5:.1f}x, stabilizing w0 near {w0_frac}. "
+                    f"WITHDRAWN SUB-CLAIM, on the books: the earlier text also asserted "
+                    f"'the 12 pairs arise from b3/2 = 24/2 = 12, equivalently 4 faces x 3 "
+                    f"generations', and '{4 * 12} = chi_eff/3'. Both required b3 = 24 on "
+                    f"the retired seed_24 branch; at b3 = {b3}, b3/2 is not an integer and "
+                    f"4 x 3 = 12 is not b3//2 = {n_pairs}. The coincidence is FALSIFIED "
+                    f"and no replacement identity is offered."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=[],
@@ -1201,64 +1264,67 @@ class DarkEnergyEvolution(SimulationBase):
                 output_params=[],
                 derivation={
                     "steps": [
-                        {"description": "The b3 = 24 associative 3-cycles pair into n_pairs = b3/2 = 12 normal/mirror bridge pairs",
-                         "formula": r"n_{\text{pairs}} = \frac{b_3}{2} = \frac{24}{2} = 12"},
-                        {"description": "The 12 pairs decompose as 4 Kahler faces x 3 fermion generations",
-                         "formula": r"n_{\text{pairs}} = h^{1,1} \times n_{\text{gen}} = 4 \times 3 = 12"},
-                        {"description": "Each bridge pair has h^{1,1} = 4 independent face channels from the Kahler moduli",
-                         "formula": r"n_{\text{faces}} = h^{1,1} = 4"},
-                        {"description": "Total independent channels = pairs x faces = 48 = chi_eff/3",
-                         "formula": r"N_{\text{channels}} = n_{\text{pairs}} \times n_{\text{faces}} = 12 \times 4 = 48 = \frac{\chi_{\text{eff}}}{3}"},
-                        {"description": "By the central limit theorem applied to 48 independent oscillations",
-                         "formula": r"\sigma_{\text{eff}} = \frac{\sigma_{\text{single}}}{\sqrt{48}} \approx 0.144 \, \sigma_{\text{single}}"}
+                        {"description": f"The b3 = {b3} associative 3-cycles pair into n_pairs = b3//2 = {n_pairs} normal/mirror bridge pairs (FLOOR: b3 is odd on the adopted seed, so one cycle is left unpaired)",
+                         "formula": rf"n_{{\text{{pairs}}}} = \left\lfloor \frac{{b_3}}{{2}} \right\rfloor = \left\lfloor \frac{{{b3}}}{{2}} \right\rfloor = {n_pairs}"},
+                        {"description": "WITHDRAWN STEP, kept on the books: 'the pairs decompose as 4 Kahler faces x 3 fermion generations'. That gave 12, which equalled b3/2 only at b3 = 24 on the retired seed_24 branch.",
+                         "formula": r"h^{1,1} \times n_{\text{gen}} = 4 \times 3 = 12 \neq n_{\text{pairs}}"},
+                        {"description": "Each bridge pair has 4 independent face channels (the faces, derived as the moved coordinates of an involution)",
+                         "formula": r"n_{\text{faces}} = 4"},
+                        {"description": f"Total independent channels = pairs x faces = {4 * n_pairs}",
+                         "formula": rf"N_{{\text{{channels}}}} = n_{{\text{{pairs}}}} \times n_{{\text{{faces}}}} = {n_pairs} \times 4 = {4 * n_pairs}"},
+                        {"description": f"By the central limit theorem applied to {4 * n_pairs} independent oscillations",
+                         "formula": rf"\sigma_{{\text{{eff}}}} = \frac{{\sigma_{{\text{{single}}}}}}{{\sqrt{{{4 * n_pairs}}}}} \approx {1.0 / ((4 * n_pairs) ** 0.5):.3f} \, \sigma_{{\text{{single}}}}"}
                     ],
-                    "method": "Central limit theorem applied to 48 independent bridge flux channels (12 pairs x 4 faces)",
+                    "method": f"Central limit theorem applied to {4 * n_pairs} independent bridge flux channels ({n_pairs} pairs x 4 faces)",
                     "parentFormulas": ["4face-bridge-flux", "v22-distributed-or-reduction"]
                 },
                 terms={
                     r"\sigma_{\text{eff}}": {"description": "Effective variance of dark energy breathing after averaging over 48 channels"},
                     r"\sigma_{\text{single}}": {"description": "Single-channel variance of bridge oscillation"},
-                    r"n_{\text{pairs}}": {"description": "Number of bridge pairs = b3/2 = 12"},
-                    r"n_{\text{faces}}": {"description": "Number of Kahler faces per shadow = h^{1,1} = 4"},
-                    r"n_{\text{gen}}": {"description": "Number of fermion generations = chi_eff/48 = 3"},
-                    r"\chi_{\text{eff}}": {"description": "Effective Euler characteristic = 144"}
+                    r"n_{\text{pairs}}": {"description": f"Number of bridge pairs = b3//2 = {n_pairs}"},
+                    r"n_{\text{faces}}": {"description": "Number of faces per shadow = 4, derived as the moved coordinates of an involution"},
+                    r"n_{\text{gen}}": {"description": f"Number of fermion generations = b_2/4 = rank(Gamma) = {int(_REG.n_gen)} (the RULED route). The alternative n_gen = chi_eff/48 is UNRULED and is neither asserted nor deleted here."},
+                    r"\chi_{\text{eff}}": {"description": f"Effective Euler characteristic = {chi_eff_total} (UNRULED: three competing derivations that agree only at b_3 = 24)"}
                 },
-                eml_latex=r"\mathrm{ops.div}(\sigma_{\mathrm{single}},\, \mathrm{ops.sqrt}(\mathrm{ops.mul}(\mathrm{eml\_scalar}(12),\, \mathrm{eml\_scalar}(4))))",
-                eml_tree_str="ops.div(sigma_single, ops.sqrt(ops.mul(eml_scalar(12.0), eml_scalar(4.0))))",
-                eml_description="EML: sigma_eff = ops.div(sigma_single, ops.sqrt(ops.mul(n_pairs, n_faces))) — variance reduction over 48 independent bridge channels",
+                eml_latex=rf"\mathrm{{ops.div}}(\sigma_{{\mathrm{{single}}}},\, \mathrm{{ops.sqrt}}(\mathrm{{ops.mul}}(\mathrm{{eml\_scalar}}({n_pairs}),\, \mathrm{{eml\_scalar}}(4))))",
+                eml_tree_str=f"ops.div(sigma_single, ops.sqrt(ops.mul(eml_scalar({float(n_pairs)}), eml_scalar(4.0))))",
+                eml_description=f"EML: sigma_eff = ops.div(sigma_single, ops.sqrt(ops.mul(n_pairs, n_faces))) — variance reduction over {4 * n_pairs} independent bridge channels",
             ),
             Formula(
                 id="4face-w0-prediction",
                 label="(DE.4F2)",
-                latex=r"w_0 = -1 + \frac{1}{b_3} = -1 + \frac{1}{24} = -\frac{23}{24}",
-                plain_text="w0 = -1 + 1/b3 = -1 + 1/24 = -23/24",
+                latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{b3}}} = -\frac{{{b3 - 1}}}{{{b3}}}",
+                plain_text=f"w0 = -1 + 1/b3 = -1 + 1/{b3} = {w0_frac}",
                 category="DERIVED",
                 description=(
-                    "Dark energy equation of state from Tzimtzum fraction, now interpreted "
-                    "through the 4-face lens: the deviation from w = -1 arises because "
-                    "one Tzimtzum cycle out of b3 = 24 leaks vacuum energy from the bulk. "
-                    "In the 4-face picture, this corresponds to 6 cycles per face x 4 faces = 24, "
-                    "with the leak coming from the lightest face modulus."
+                    f"Dark energy equation of state from the Tzimtzum fraction: the "
+                    f"deviation from w = -1 arises because one Tzimtzum cycle out of "
+                    f"b3 = {b3} leaks vacuum energy from the bulk, the leak coming from "
+                    f"the lightest face modulus. FALSIFIED SUB-CLAIM, kept on the books: "
+                    f"the 4-face reading '6 cycles per face x 4 faces = 24' required "
+                    f"b3 = 24 on the retired seed_24 branch; {b3} is not divisible by 4, "
+                    f"so there is no even per-face distribution on the adopted seed and "
+                    f"none is substituted."
                 ),
                 input_params=["topology.elder_kads", "constants.k_gimel", "geometry.alpha_leak"],
                 output_params=["cosmology.w0_derived"],
                 derivation={
                     "steps": [
-                        "The 24 associative 3-cycles distribute as 6 per face across 4 Kahler faces",
+                        f"FALSIFIED STEP, kept on the books: 'the 24 associative 3-cycles distribute as 6 per face across 4 Kahler faces'. At b3 = {b3} there is no even per-face distribution.",
                         "The lightest face modulus T_4 = b3 x k_gimel / (4*pi) has the smallest stabilization energy",
                         "One cycle on the lightest face tunnels vacuum energy to the 4D sector",
-                        "The fractional leakage 1/b3 = 1/24 shifts w from -1 to -23/24 = -0.9583"
+                        f"The fractional leakage 1/b3 = 1/{b3} shifts w from -1 to {w0_frac} = {w0_val:.6f}"
                     ],
                     "method": "Tzimtzum vacuum energy leakage from lightest face modulus in 4-face G2 geometry",
                     "parentFormulas": ["alpha-leak-coupling"]
                 },
                 terms={
                     r"w_0": {"description": "Dark energy equation of state at z=0; w=-1 is pure cosmological constant"},
-                    r"b_3": {"description": "Third Betti number = 24 (total associative 3-cycles across all faces)"}
+                    r"b_3": {"description": f"Third Betti number = {b3} (total associative 3-cycles, read from the adopted Joyce seed)"}
                 },
-                eml_latex=r"\mathrm{ops.div}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(23)),\, \mathrm{eml\_scalar}(24))",
-                eml_tree_str="ops.div(ops.neg(eml_scalar(23.0)), b3_leaf())",
-                eml_description="EML: w0 = ops.div(ops.neg(23), 24) = -23/24 from face-ratio topology",
+                eml_latex=rf"\mathrm{{ops.div}}(\mathrm{{ops.neg}}(\mathrm{{eml\_scalar}}({b3 - 1})),\, \mathrm{{eml\_scalar}}({b3}))",
+                eml_tree_str=f"ops.div(ops.neg(eml_scalar({float(b3 - 1)})), b3_leaf())",
+                eml_description=f"EML: w0 = ops.div(ops.neg({b3 - 1}), {b3}) = {w0_frac} from the Tzimtzum fraction",
             ),
             Formula(
                 id="wa-nonlinear-correction",
@@ -1383,7 +1449,7 @@ class DarkEnergyEvolution(SimulationBase):
                 bound_type="central_value",
                 bound_source="DESI2025",
                 uncertainty=w0_desi_unc,
-                eml_description="EML: ops.add(ops.neg(eml_scalar(1)), ops.inv(eml_scalar(24))) = -23/24 ≈ -0.9583"
+                eml_description=f"EML: ops.add(ops.neg(eml_scalar(1)), ops.inv(b_3)) = {-(int(_REG.elder_kads) - 1)}/{int(_REG.elder_kads)} ≈ {-1.0 + 1.0 / int(_REG.elder_kads):.4f}"
             ),
             Parameter(
                 path="cosmology.wa_thawing",
@@ -1643,8 +1709,12 @@ class DarkEnergyEvolution(SimulationBase):
             {
                 "id": "CERT_THAWING_W0_EXACT_TOPOLOGY",
                 "assertion": (
-                    f"w0 = -1 + 1/b3 = -1 + 1/24 = {w0:.10f} matches exact "
-                    f"fraction -23/24 = {-23.0/24.0:.10f}"
+                    f"w0 = -1 + 1/b3 = {w0:.10f} on the adopted seed is compared "
+                    f"against the RETIRED seed_24 value -23/24 = "
+                    f"{-23.0 / 24.0:.10f}. This certificate is kept, unmodified "
+                    f"and unsoftened, as the recorded cost of the seed move: it "
+                    f"FAILS whenever b3 is not 24, which on the adopted Joyce "
+                    f"seed it is not."
                 ),
                 "condition": f"abs({w0:.10f} - (-23/24)) < 1e-10",
                 "tolerance": 1e-10,
@@ -1656,10 +1726,11 @@ class DarkEnergyEvolution(SimulationBase):
             {
                 "id": "CERT_THAWING_WA_NL_CORRECTION",
                 "assertion": (
-                    "Non-linear correction epsilon_NL = C(4,2)/b3 = 6/24 = 1/4 "
-                    "is positive and bounded: 0 < epsilon_NL < 1"
+                    f"Non-linear correction epsilon_NL = C(4,2)/b3 = 6/{int(_REG.elder_kads)} "
+                    f"= {6.0 / int(_REG.elder_kads):.6f} is positive and bounded: "
+                    f"0 < epsilon_NL < 1"
                 ),
-                "condition": "0 < 6/24 < 1",
+                "condition": f"0 < 6/{int(_REG.elder_kads)} < 1",
                 "tolerance": 1e-10,
                 "status": "PASS",
                 "wolfram_query": "Binomial[4,2]/24",
@@ -1754,7 +1825,7 @@ class DarkEnergyEvolution(SimulationBase):
         w0_exact = -23.0 / 24.0
         exact_ok = abs(w0 - w0_exact) < 1e-10
         checks.append({
-            "name": "w0 matches -23/24 exactly",
+            "name": "w0 matches the RETIRED seed_24 fraction -23/24 exactly (kept as a recorded cost; fails off seed_24)",
             "passed": exact_ok,
             "confidence_interval": {"lower": w0_exact - 1e-10, "upper": w0_exact + 1e-10, "sigma": 0.0},
             "log_level": "INFO" if exact_ok else "ERROR",
@@ -1834,7 +1905,7 @@ class DarkEnergyEvolution(SimulationBase):
                     "w0_desi": w0_desi,
                     "w0_uncertainty": 0.067,
                     "deviation_sigma": sigma_w0,
-                    "derivation": "w0 = -1 + 1/b3 = -23/24",
+                    "derivation": f"w0 = -1 + 1/b3 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)}",
                 }
             },
             {
@@ -1955,11 +2026,11 @@ class DarkEnergyEvolution(SimulationBase):
 
     def get_beginner_explanation(self) -> Dict[str, Any]:
         """Return beginner-friendly explanation."""
-        b3 = 24
-        n_pairs = b3 // 2  # = 12 pairs
+        b3 = int(_REG.elder_kads)   # adopted seed, read not typed
+        n_pairs = b3 // 2           # FLOOR: b3 is odd on the adopted seed
         return {
             "icon": "🌡️",
-            "title": "Why Is Dark Energy 'Thawing'? (v22 with 12-Pair Aggregation)",
+            "title": f"Why Is Dark Energy 'Thawing'? (v22 with {n_pairs}-Pair Aggregation)",
             "simpleExplanation": (
                 "Dark energy is the mysterious force causing the universe to accelerate "
                 "its expansion. For decades, scientists assumed it was constant (like a "
@@ -1978,13 +2049,13 @@ class DarkEnergyEvolution(SimulationBase):
                 f"the {b3} special loops (associative 3-cycles) in the hidden G2 space pair up "
                 f"into {n_pairs} thermometer-pairs measuring the thaw. Each pair might fluctuate, but "
                 f"averaging them (ρ_breath = 1/{n_pairs} × ∑ρ_i) gives a stable reading. "
-                f"The aggregation reduces noise by √{n_pairs} ≈ 3.5×, explaining why w is so stable."
+                f"The aggregation reduces noise by √{n_pairs} ≈ {n_pairs ** 0.5:.1f}×, explaining why w is so stable."
             ),
             "keyTakeaway": (
                 f"Dark energy isn't constant - it's 'thawing' because the G2 manifold's "
-                f"curvature is relaxing under Ricci flow. v22: 12-pair aggregation (b₃ = {b3} → "
-                f"{n_pairs} pairs) reduces variance: σ_eff = σ_single/√{n_pairs}. "
-                f"Target: w ≈ -0.958 ± 0.003."
+                f"curvature is relaxing under Ricci flow. v22: {n_pairs}-pair aggregation "
+                f"(b₃ = {b3} → b₃//2 = {n_pairs} pairs) reduces variance: "
+                f"σ_eff = σ_single/√{n_pairs}."
             ),
             "technicalDetail": (
                 f"v22 Thawing Dark Energy with 12-Pair Aggregation:\n"
@@ -2032,9 +2103,13 @@ except Exception:  # pragma: no cover
 if _EML_OK:
     assert len(_validation_instance.get_formulas()) == 8
 
-# Test w0 and wa calculations with b3=24, k_gimel=12.318
+# Unit-probe of the two formulas at the FIXED off-path input b3 = 24. This is
+# a function test at a chosen argument, not a statement about the adopted seed:
+# run() reads b3 from the registry, where it is 43 on seed_43_joyce. The
+# literals below are the probe's input and its exact consequence, so they must
+# stay 24 even though no published number does.
 _test_w0 = _validation_instance.calculate_w_params_w0(24)
-_k_gimel = 24/2.0 + 1.0/np.pi  # 12.318309...
+_k_gimel = 24/2.0 + 1.0/np.pi  # k_gimel AT THE PROBE INPUT, not the live value
 _test_wa = _validation_instance.calculate_w_params_wa(24, _k_gimel)
 assert abs(_test_w0 - (-1 + 1/24)) < 1e-10, f"w0 calculation error: {_test_w0}"
 
@@ -2110,7 +2185,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print(" THAWING DARK ENERGY RESULTS")
     print("=" * 70)
-    print(f"\n  DERIVED FROM G2 GEOMETRY (b3 = 24):")
+    print(f"\n  DERIVED FROM G2 GEOMETRY (b3 = {int(_REG.elder_kads)}):")
     print(f"  {'='*50}")
     w0 = results['outputs']['cosmology.w0_thawing']
     wa = results['outputs']['cosmology.wa_thawing']

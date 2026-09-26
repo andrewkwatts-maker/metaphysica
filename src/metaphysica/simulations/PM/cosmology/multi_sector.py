@@ -20,7 +20,10 @@ This simulation computes:
 4. Modulation width from G2 wavefunction overlap integrals
 
 DERIVATION CHAIN:
-topology.mephorash_chi = 144, topology.elder_kads = 24 (TCS G2 manifold #187)
+topology.mephorash_chi = chi_eff (UNRULED), topology.elder_kads = b_3 (read
+from the adopted seed). The "TCS G2 manifold #187" provenance is WITHDRAWN:
+TCS as exhibited gives 71 <= b_3 <= 155, which excludes the adopted b_3 = 43,
+and the construction in force is the Joyce orbifold T^7/(Z/2)^3.
   -> sigma^2 = R^2 / chi_eff where R^2 ~ b3 * L_G2^2
   -> sigma = L_G2 * sqrt(b3/chi_eff) = sqrt(24/144) = 1/sqrt(6)
   -> modulation_width ≈ 0.408 (parameter-free, pure geometry)
@@ -250,8 +253,8 @@ class MultiSectorV16(SimulationBase):
             3. With R^2 ~ b3 * L_G2^2 (from 3-cycle volume scaling)
             4. Result: sigma = L_G2 * sqrt(b3 / chi_eff)
 
-        For TCS G2 manifold #187:
-            - b3 = 24 (associative 3-cycles)
+        For the adopted Joyce orbifold T^7/(Z/2)^3:
+            - b3 read from the seed (associative 3-cycles)
             - chi_eff = 144 (effective Euler characteristic)
             - L_G2 = 1.0 (normalized G2 length scale)
             - sigma = sqrt(24/144) = sqrt(1/6) ~ 0.408
@@ -280,7 +283,7 @@ class MultiSectorV16(SimulationBase):
             width_squared = (self.L_G2**2) * (b3 / chi_eff)
             width = np.sqrt(width_squared)
 
-            # Verification: For b3=24, chi_eff=144: width = sqrt(24/144) = sqrt(1/6) ≈ 0.408
+            # Verification: width = sqrt(b3/chi_eff), both read from the registry
             source = "G2_wavefunction_overlap_geometric"
 
             return {
@@ -629,7 +632,7 @@ class MultiSectorV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The total number of cosmological sectors equals the third Betti "
-                        "number b3 = 24, arising from three independent factors. First, the "
+                        f"number b3 = {int(_REG.elder_kads)}, arising from three independent factors. First, the "
                         "dual-shadow architecture provides a factor of 2: one normal shadow "
                         "and one mirror shadow, related by the Z2 orbifold symmetry of the "
                         "heterotic M-theory construction (Horava-Witten). Second, each shadow "
@@ -637,7 +640,7 @@ class MultiSectorV16(SimulationBase):
                         "each with an independent modulus controlling the face volume and "
                         "gauge coupling. Third, each face supports n_gen = 3 fermion "
                         "generations from the index theorem on the G2 manifold "
-                        "(n_gen = chi_eff/48 = 144/48 = 3). The product "
+                        f"(n_gen = chi_eff/48 = {int(_REG.chi_eff_total)}/48 -- an UNRULED route: chi_eff has three competing derivations agreeing only at b_3 = 24, and the RULED generation count is n_gen = b_2/4 = rank(Gamma) = 3). The product "
                         "2 shadows x 4 faces x 3 generations = 24 = b3 provides a "
                         "complete accounting of the cosmological sector structure in terms "
                         "of the topological invariants of the compactification manifold."
@@ -654,7 +657,7 @@ class MultiSectorV16(SimulationBase):
                         "determines the bridge pair count (12 = b3/2) and the variance "
                         "reduction in the breathing dark energy mechanism. The entire "
                         "multi-sector architecture is thus determined by three topological "
-                        "invariants: b3 = 24, h^{1,1} = 4, and chi_eff = 144."
+                        f"invariants: b3 = {int(_REG.elder_kads)}, four faces, and chi_eff = {int(_REG.chi_eff_total)} (UNRULED)."
                     )
                 ),
             ],
@@ -1092,7 +1095,7 @@ class MultiSectorV16(SimulationBase):
                 "journal": "arXiv preprint",
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": "M-theory on G2 manifolds producing chiral fermions. The b3 = 24 associative 3-cycles and generation counting n_gen = chi/48 are central to the multi-sector decomposition.",
+                "notes": "M-theory on G2 manifolds producing chiral fermions. The b3 associative 3-cycles (read from the adopted seed) are central to the multi-sector decomposition. The generation counting n_gen = chi_eff/48 is an UNRULED route and is reported, not certified; the ruled count is n_gen = b_2/4 = rank(Gamma) = 3.",
             },
             {
                 "id": "hori_vafa_2000",

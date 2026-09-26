@@ -85,7 +85,7 @@ try:
     _REG = get_registry()
 
     # G2 Topology (TCS #187) - from SSOT
-    B3_G2 = _REG.elder_kads             # Third Betti number = 24
+    B3_G2 = _REG.elder_kads             # Third Betti number, from the seed
     B2_G2 = 4                           # Second Betti number (TCS #187)
     CHI_EFF = _REG.qedem_chi_sum        # Full manifold Euler char = 144
 
@@ -1403,7 +1403,10 @@ class GRSpacetimeDerivationsV19(SimulationBase):
                 "steps": [
                     "The 4D Planck mass depends on the 26D scale M_26D and the G2 internal volume",
                     "The volume factor enters as Vol(G2)^(-1/5) from the dimensional reduction power law",
-                    "Topological correction f(chi_eff, b3) encodes the G2 holonomy invariants: chi_eff=144, b3=24",
+                    ("Topological correction f(chi_eff, b3) encodes the "
+                     "internal invariants: chi_eff=%g (route UNRULED) and "
+                     "b3=%d, read from the seed; this step used to type "
+                     "chi_eff=144, b3=24" % (CHI_EFF, B3_G2)),
                     "Together these fix M_Pl = 1.22e19 GeV from pure geometry without free parameters",
                 ],
                 "parentFormulas": ["gr-newton-from-g2-v19"],
@@ -1571,10 +1574,16 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             subsection_id="2.2",
             title="General Relativity and Spacetime from Master Action",
             abstract=(
-                "Complete derivation of 4D General Relativity from the 26D master action. "
-                "Shows how spacetime geometry, Einstein's equations, and Newton's constant "
-                "emerge through dimensional reduction over G2 holonomy manifolds, with "
-                "topology parameters chi_eff = 144 and b_3 = 24 determining the gravitational coupling."
+                "Complete derivation of 4D General Relativity from the 26D "
+                "master action. Shows how spacetime geometry, Einstein's "
+                "equations, and Newton's constant emerge through "
+                "dimensional reduction over the internal 7-manifold, with "
+                "topology parameters chi_eff = %g and b_3 = %d determining "
+                "the gravitational coupling. Both are read live: b_3 comes "
+                "from the b3_seed fork (this abstract used to type 24), and "
+                "the chi_eff route is UNRULED -- it has three claimed "
+                "derivations and no ruling selecting one."
+                % (CHI_EFF, B3_G2)
             ),
             content_blocks=[
                 # Introduction
@@ -1719,9 +1728,12 @@ class GRSpacetimeDerivationsV19(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The gravitational coupling G_N is not a free parameter but is determined "
-                        "by the geometry of the G2 compactification, specifically through chi_eff = 144 "
-                        "and b_3 = 24."
+                        "The gravitational coupling G_N is not a free "
+                        "parameter but is determined by the geometry of the "
+                        "compactification, specifically through "
+                        "chi_eff = %g (route UNRULED) and b_3 = %d (read "
+                        "from the seed; this sentence used to type 24)."
+                        % (CHI_EFF, B3_G2)
                     )
                 ),
                 ContentBlock(

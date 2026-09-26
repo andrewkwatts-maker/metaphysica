@@ -45,7 +45,8 @@ Dedicated To:
 # Why 3.17 sigma:
 #   - The Ricci flow interpolation depends on the transition redshift
 #     z_transition ~ 0.5-1.0 and the flow rate parameter
-#   - Both are determined by G2 topology (b3=24) with limited free parameters
+#   - Both are determined by G2 topology (b3 from the adopted seed) with
+#     limited free parameters
 #   - The model naturally produces H0_local > H0_early but the exact value
 #     depends on non-perturbative Ricci flow dynamics at late times
 #
@@ -168,7 +169,8 @@ class RicciFlowH0V16(SimulationBase):
         """
         Compute geometric anchor k_gimel from b3.
 
-        k_gimel = b3/2 + 1/pi = 12 + 1/pi ≈ 12.318 for b3=24
+        k_gimel = b3/2 + 1/pi, with b3 from the adopted seed. It RIDES the
+        seed and is read, never typed (12.318 on the retired seed_24 branch).
         """
         return (b3 / 2.0) + (1.0 / np.pi)
 
@@ -642,7 +644,7 @@ class RicciFlowH0V16(SimulationBase):
                         },
                         {
                             "description": "Numerical evaluation from geometric anchors",
-                            "formula": r"\tau = \frac{12.318}{24} = 0.513"
+                            "formula": rf"\tau = \frac{{{float(_REG.demiurgic_coupling):.3f}}}{{{int(_REG.elder_kads)}}} = {float(_REG.demiurgic_coupling) / int(_REG.elder_kads):.3f}"
                         },
                         {
                             "description": "Implied transition redshift where flow dynamics change",
@@ -655,7 +657,7 @@ class RicciFlowH0V16(SimulationBase):
                 },
                 terms={
                     "tau": "Flow timescale (0.513)",
-                    "k_gimel": "Geometric anchor (12.318)",
+                    "k_gimel": f"Geometric anchor ({float(_REG.demiurgic_coupling):.3f} = b3/2 + 1/pi; rides the adopted seed)",
                     "b3": "Third Betti number (24)"
                 }
             ),
@@ -1279,7 +1281,9 @@ def export_ricci_flow_h0_v16() -> Dict[str, Any]:
     if not registry.has_param("topology.elder_kads"):
         registry.set_param("topology.elder_kads", 24, source="ESTABLISHED:G2_topology", status="ESTABLISHED")
     if not registry.has_param("constants.k_gimel"):
-        registry.set_param("constants.k_gimel", 12.31831, source="torsional_constants_v16_1", status="DERIVED")
+        registry.set_param("constants.k_gimel", float(_REG.demiurgic_coupling),
+                           source="b3_path:adopted_seed (k_gimel = b3/2 + 1/pi)",
+                           status="DERIVED")
     if not registry.has_param("desi.Omega_m"):
         registry.set_param("desi.Omega_m", 0.311, source="DESI2025", status="ESTABLISHED")
     if not registry.has_param("desi.Omega_de"):

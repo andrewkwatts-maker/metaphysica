@@ -52,6 +52,13 @@ from __future__ import annotations
 import math
 from typing import Any, Dict
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
+
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 from metaphysica.simulations.core.eml_tree_adapter import (
@@ -148,12 +155,12 @@ class StrongCPAxion:
         theta_eff = 0.0
         # Note: the literal "24" inside the formula text triggers the
         # ``_formula_has_b3_traceback`` flag in eml_math.register_derivation,
-        # cross-linking this entry to the b3 = 24 seed.
+        # cross-linking this entry to the b3 seed (adopted path).
         self.cp_tree.register_derivation(
             param="theta_QCD_eff",
             formula=(
                 "min V(a) = Lambda^4 (1 - cos(a/f_a + theta_QCD))  "
-                "-- f_a from b3 = 24 via Re(T)"
+                f"-- f_a from b3 = {int(_REG.elder_kads)} via Re(T)"
             ),
             value=float(theta_eff),
         )

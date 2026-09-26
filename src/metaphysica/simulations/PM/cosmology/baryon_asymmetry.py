@@ -716,7 +716,9 @@ class BaryonAsymmetryV18(SimulationBase):
             abstract=(
                 "The observed matter-antimatter asymmetry \u03b7_b \u2248 6 \u00d7 10\u207b\u00b9\u2070 is "
                 "derived from a flux mismatch between associative and "
-                "coassociative 4-cycles in the TCS G₂ manifold, coupled with "
+                "coassociative 4-cycles in the G₂ manifold (Joyce orbifold "
+                "T^7/(Z/2)^3; the TCS attribution is withdrawn, TCS exhibiting "
+                "71 <= b_3 <= 155), coupled with "
                 "CP violation quantified by the Jarlskog invariant J \u2248 3.08 \u00d7 10\u207b\u2075. "
                 "The cycle imbalance (\u0394b₃ = 0.12 \u00d7 b₃) provides the B\u2212L "
                 "violation; the CP-violating phase \u03b4_CP = \u03c0/6 arises from "
@@ -738,8 +740,8 @@ class BaryonAsymmetryV18(SimulationBase):
                         "at 4-brane intersections in the G₂ compactification. The "
                         "three Sakharov conditions are satisfied by distinct geometric "
                         "mechanisms: (1) B\u2212L violation arises from the cycle asymmetry "
-                        "\u0394b₃ = 0.12 \u00d7 b₃, a flux mismatch between the 24 associative "
-                        "and coassociative 4-cycles of the TCS G₂ manifold \u2014 the "
+                        f"\u0394b₃ = 0.12 \u00d7 b₃, a flux mismatch between the {int(_REG.elder_kads)} associative "
+                        f"and coassociative 4-cycles of the G₂ manifold (Joyce orbifold; the TCS attribution is withdrawn) \u2014 the "
                         "torsion in the neck region of the twisted connected sum "
                         "breaks the symmetry between cycle types, generating a net "
                         "baryon-number-violating current; (2) CP violation enters "
@@ -1082,7 +1084,8 @@ def get_eta_baryon_geometric() -> float:
     This is the canonical baryon-to-photon ratio derived from G2 cycle
     asymmetry + Jarlskog invariant (see :class:`BaryonAsymmetryV18`).
 
-    With the default Ten-Pillar inputs (b3 = 24, chi_eff = 72, J = 3.08e-5,
+    With the default inputs (b3 from the adopted seed, chi_eff = 72 which is
+    an UNRULED quantity, J = 3.08e-5,
     Re(T) = 7.086, delta_CP = pi/6, delta_b3 = 0.12*b3, N_eff = 20), this
     returns eta_b ~ 6.185e-10, which sits at 1.6 sigma from the Planck+BBN
     measurement (6.12 +/- 0.04) x 10^-10 -- within ~3 % of observation.

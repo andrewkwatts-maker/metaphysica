@@ -7,9 +7,14 @@ Geometric Anchors Simulation v16.2 - SimulationBase Wrapper
 This module wraps the GeometricAnchors class in a SimulationBase-compliant
 interface for integration with the unified simulation pipeline.
 
-All parameters are derived from the single topological invariant b3=24.
-This is the "Truth Source" for the framework - every constant is a derived
-topological residue, not an experimental fit.
+All parameters are built from a single integer anchor, historically written
+b3=24 and read as the third Betti number. On the adopted seed
+(b3_seed = seed_43_joyce, author ruling 2026-09-22) the third Betti number
+is 43, so that reading is WITHDRAWN: the anchor is kept at its published
+value -- moving it would move published numbers, which is an author ruling
+and not a prose repair -- but it is named ANCHOR_FIT below and every
+sentence about it carries the live b_3 beside it. What the anchor's
+topological origin is, if any, is OPEN.
 
 v16.2: Demon-Lock architecture with Recursive Symmetry Gatekeeping.
 
@@ -169,10 +174,61 @@ _OUTPUT_FORMULAS = [
 ]
 
 
+# ---------------------------------------------------------------------
+# THE ANCHOR, AND WHY IT IS NOT CALLED b_3 ANY MORE
+#
+# Every constant in this module is built from the integer 24. That integer
+# was published as the third Betti number of a TCS G2 manifold. Both halves
+# of that provenance have since failed: TCS exhibits 71 <= b_3 <= 155 and
+# so never supplied 24, and the adopted Joyce construction gives b_3 = 43.
+# The number stays; the claim about where it comes from does not.
+# ---------------------------------------------------------------------
+ANCHOR_FIT = 24
+
+
+def live_b3() -> int:
+    """The third Betti number in force, read from the b3_seed fork."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
+
+
+def live_b2() -> int:
+    """The second Betti number in force, read from the b3_seed fork."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[1]
+
+
+def anchor_note() -> str:
+    """Generated sentence on where the anchor stands against the live b_3."""
+    b3 = live_b3()
+    if b3 == ANCHOR_FIT:
+        return (
+            "the anchor %d happens to equal the live third Betti number on "
+            "this seed; that is a property of the seed, not a derivation"
+            % ANCHOR_FIT
+        )
+    return (
+        "the anchor is the fitted integer %d while the live third Betti "
+        "number is b_3 = %d, so the identification anchor = b_3 is "
+        "WITHDRAWN here; the numbers below are unchanged and their "
+        "topological provenance is OPEN pending an author ruling"
+        % (ANCHOR_FIT, b3)
+    )
+
+
 class GeometricAnchorsSimulation(SimulationBase):
     """
-    Simulation wrapper for GeometricAnchors - derives all fundamental
-    constants from b3=24 topological invariant.
+    Simulation wrapper for GeometricAnchors - builds all fundamental
+    constants from the integer anchor ANCHOR_FIT (see above: its reading
+    as the third Betti number is withdrawn on the adopted seed).
 
     This simulation is the foundation of the v16.2 Demon-Lock architecture.
     All other simulations depend on the parameters computed here.
@@ -184,16 +240,17 @@ class GeometricAnchorsSimulation(SimulationBase):
             id="geometric_anchors",
             version="16.2",
             domain="geometric",
-            title="Geometric Anchors - Fundamental Constants from b3=24",
+            title="Geometric Anchors - Fundamental Constants from a Single Anchor",
             description=(
-                "Derives all fundamental physics constants from the single "
-                "topological invariant b3=24 (third Betti number of G2 manifold). "
-                "This is the 'Truth Source' for the Demon-Lock architecture."
+                "Builds all fundamental physics constants from the single "
+                "integer anchor %d. Published as 'the third Betti number of "
+                "the G2 manifold'; %s. This is the 'Truth Source' for the "
+                "Demon-Lock architecture." % (ANCHOR_FIT, anchor_note())
             ),
             section_id="2",  # Foundations section
             subsection_id="2.0"  # v19.0: Unique subsection (G2 Anchors)
         )
-        self._anchors = GeometricAnchors(b3=24)
+        self._anchors = GeometricAnchors(b3=ANCHOR_FIT)
 
     @property
     def metadata(self) -> SimulationMetadata:
@@ -219,7 +276,7 @@ class GeometricAnchorsSimulation(SimulationBase):
         return []
 
     def validate_inputs(self, registry: 'PMRegistry') -> bool:
-        """No inputs required - all derived from b3=24."""
+        """No inputs required - all built from the ANCHOR_FIT integer."""
         return True
 
     def get_formulas(self) -> List[Formula]:
@@ -590,18 +647,27 @@ class GeometricAnchorsSimulation(SimulationBase):
             subsection_id="2.0",
             title="Geometric Anchors: First Principles Derivation",
             abstract=(
-                "All fundamental constants are derived from the single topological "
-                "invariant b3=24. This eliminates fine-tuning by anchoring everything "
-                "to G2 manifold topology."
+                "All fundamental constants in this section are built from a "
+                "single integer anchor, %d. The abstract previously read "
+                "\"derived from the single topological invariant b3=24 ... "
+                "anchoring everything to G2 manifold topology\"; %s."
+                % (ANCHOR_FIT, anchor_note())
             ),
             content_blocks=[
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Principia Metaphysica framework derives all Standard Model "
-                        "parameters from the third Betti number b3=24 of the TCS G2 manifold. "
-                        "This section presents the core geometric anchors that underpin "
-                        "the entire theory."
+                        "The Principia Metaphysica framework builds all Standard "
+                        "Model parameters in this section from the single integer "
+                        "anchor %d. This paragraph previously read \"from the "
+                        "third Betti number b3=24 of the TCS G2 manifold\" -- a "
+                        "provenance that has failed twice over: the twisted "
+                        "connected sum exhibits 71 <= b_3 <= 155 and so never "
+                        "supplied 24, and the adopted construction is a Joyce "
+                        "orbifold T<sup>7</sup>/(ℤ/2)<sup>3</sup> with b₃ = %d. "
+                        "Concretely, %s. This section presents the core "
+                        "geometric anchors that underpin the entire theory."
+                        % (ANCHOR_FIT, live_b3(), anchor_note())
                     )
                 ),
                 ContentBlock(
@@ -617,9 +683,12 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Gimel constant k<sub>ℷ</sub> encodes the warping between the "
-                        "26D string frame and the 4D Einstein frame. It combines the "
-                        "purely topological b₃/2 with the transcendental 1/π factor."
+                        "The Gimel constant k<sub>ℷ</sub> encodes the warping "
+                        "between the 26D string frame and the 4D Einstein frame. "
+                        "It combines the half-anchor %d/2 with the "
+                        "transcendental 1/π factor. The half was described as "
+                        "\"purely topological b₃/2\"; %s."
+                        % (ANCHOR_FIT, anchor_note())
                     )
                 ),
                 ContentBlock(
@@ -690,30 +759,50 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Hodge number h<sup>1,1</sup> = 4 of TCS #187 corresponds to four independent "
-                        "Kahler moduli, interpreted as four geometric 'faces' per shadow in the "
-                        "dual-shadow architecture. In the TCS (Twisted Connected Sum) construction, "
-                        "h<sup>1,1</sup> = b₂ counts the independent 2-cycles arising from the K3 matching "
-                        "fibres of the Kovalev gluing. Each 2-cycle controls a distinct K3 fibre, and "
-                        "the corresponding Kahler modulus T<sub>i</sub> determines the volume of that cycle. "
-                        "The four faces are not an arbitrary decomposition but a direct consequence "
-                        "of the TCS topology: each face corresponds to a K3 matching fibre sector "
-                        "with its own racetrack-stabilised VEV."
+                        "Four geometric 'faces' per shadow organise the "
+                        "dual-shadow architecture, each with its own "
+                        "racetrack-stabilised VEV. The face count is DERIVED in "
+                        "four_face_structure as the moved coordinates of an "
+                        "involution. RELOCATED PROVENANCE: this paragraph "
+                        "previously derived the four faces from \"the Hodge "
+                        "number h<sup>1,1</sup> = 4 of TCS #187\", with "
+                        "h<sup>1,1</sup> = b₂ counting 2-cycles from the K3 "
+                        "matching fibres of the Kovalev gluing. That is off-path: "
+                        "the adopted construction is a Joyce orbifold "
+                        "T<sup>7</sup>/(ℤ/2)<sup>3</sup>, where b₂ = %d counts "
+                        "resolved A₁ families, not K3 fibres, and the identity "
+                        "h<sup>1,1</sup> = b₂ therefore BREAKS. The TCS reading "
+                        "is recorded, not deleted, because the exclusion it "
+                        "carries (71 ≤ b₃ ≤ 155 versus b₃ = %d) is what rules "
+                        "it out."
+                        % (live_b2(), live_b3())
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The inter-face leakage coupling α<sub>leak</sub> = 1/√(χ<sub>eff</sub>/b₃) = 1/√6 "
-                        "= 0.408 quantifies the geometric probability of wavefunction overlap between "
-                        "distinct face sectors. The ratio χ<sub>eff</sub>/b₃ = 144/24 = 6 counts the average "
-                        "number of associative 3-cycles per Kahler modulus sector; its inverse square "
-                        "root gives the tunnelling amplitude. The torsional leakage mechanism "
-                        "T<sub>leak</sub> = α<sub>leak</sub> · Ψ<sub>bridge</sub> (where Ψ<sub>bridge</sub> = k<sub>ℷ</sub>/b₃) formalises "
-                        "how the G₂ torsion tensor mediates cross-face field propagation. "
-                        "See the four_face_g2_structure simulation (Section 2.7) for the complete "
-                        "derivation of racetrack-stabilised moduli VEVs, shadow asymmetry, and "
-                        "face-dependent KK mass spectrum."
+                        "The inter-face leakage coupling α<sub>leak</sub> = "
+                        "1/√(χ<sub>eff</sub>/b₃) quantifies the geometric "
+                        "probability of wavefunction overlap between distinct "
+                        "face sectors. It was published as "
+                        "χ<sub>eff</sub>/b₃ = 144/24 = 6 and α<sub>leak</sub> = "
+                        "1/√6 = 0.408. On the live seed b₃ = %d, so the ratio "
+                        "reads %g and α<sub>leak</sub> = %.3f; the published "
+                        "0.408 corresponded to b₃ = 24 and is not restated as "
+                        "if it had not moved. χ<sub>eff</sub> is itself UNRULED "
+                        "— three claimed derivations, no ruling — so this "
+                        "coupling is REPORTED, not asserted. Its inverse "
+                        "square root gives the tunnelling amplitude. The "
+                        "torsional leakage mechanism T<sub>leak</sub> = "
+                        "α<sub>leak</sub> · Ψ<sub>bridge</sub> (where "
+                        "Ψ<sub>bridge</sub> = k<sub>ℷ</sub>/b₃) formalises how "
+                        "the G₂ torsion tensor mediates cross-face field "
+                        "propagation. See the four_face_g2_structure "
+                        "simulation (Section 2.7) for the complete derivation "
+                        "of racetrack-stabilised moduli VEVs, shadow "
+                        "asymmetry, and face-dependent KK mass spectrum."
+                        % (live_b3(), 144.0 / live_b3(),
+                           (live_b3() / 144.0) ** 0.5)
                     )
                 ),
                 ContentBlock(
@@ -898,15 +987,27 @@ class GeometricAnchorsSimulation(SimulationBase):
             PARAM_EML_DESCRIPTIONS = {
                 # Core topology
                 "elder_kads": (
-                    "EML: eml_scalar(24.0) — Betti number b₃=24 from G₂ TCS topology"
+                    "EML: eml_scalar(%.1f) — the integer anchor, formerly "
+                    "labelled 'Betti number b₃=24 from G₂ TCS topology'. "
+                    "%s" % (float(ANCHOR_FIT), anchor_note())
                 ),
                 "mephorash_chi": (
-                    "EML: ops.mul(eml_scalar(6.0), eml_scalar(24.0)) — Euler characteristic"
-                    " χ_eff=144 from 6×b₃ TCS construction"
+                    "EML: ops.mul(eml_scalar(6.0), eml_scalar(%.1f)) — "
+                    "Euler characteristic χ_eff=144 as 6×anchor. The route is "
+                    "UNRULED: χ_eff has three claimed derivations "
+                    "(2(h11-h21+h31), b₃²/4, 6b₃) that agree only at b₃ = 24, "
+                    "and none is ruled. Formerly written 'from 6×b₃ TCS "
+                    "construction'; %s"
+                    % (float(ANCHOR_FIT), anchor_note())
                 ),
                 "n_generations": (
-                    "EML: eml_scalar(3.0) — 3 fermion generations from G₂ topology"
-                    " n_gen = b₃/8 = 24/8"
+                    "EML: eml_scalar(3.0) — 3 fermion generations. RELOCATED: "
+                    "this read 'n_gen = b₃/8 = 24/8'. That route held at "
+                    "b₃ = 24 and is abandoned on the Joyce-reachable family "
+                    "(b₃ ∈ {7,19,31,43}, all odd; 8 divides none), so on the "
+                    "live seed b₃ = %d and b₃/8 = %g. The count now comes "
+                    "from n_gen = b₂/4 = %d/4 = rank(Γ), both sides derived."
+                    % (live_b3(), live_b3() / 8.0, live_b2())
                 ),
                 "phi": (
                     "EML: ops.div(ops.add(eml_scalar(1.0), ops.sqrt(eml_scalar(5.0))),"
@@ -953,7 +1054,11 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "k_matching": (
                     "EML: ops.div(eml_vec('elder_kads'), eml_scalar(6.0))"
-                    " — TCS matching number k_matching = b₃/6 = 4"
+                    " — matching number, published as the TCS "
+                    "k_matching = b₃/6 = 4. On the live seed b₃ = %d, so "
+                    "b₃/6 = %g and the identity does not hold there; TCS is "
+                    "off-path (71 ≤ b₃ ≤ 155)."
+                    % (live_b3(), live_b3() / 6.0)
                 ),
                 # GUT parameters
                 "alpha_gut": (
@@ -1547,7 +1652,16 @@ class GeometricAnchorsSimulation(SimulationBase):
                 name="Third Betti Number",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Third Betti number b3 = 24 of TCS G2 manifold #187. Topological invariant counting independent associative 3-cycles; the single input from which all other constants are derived. No experimental measurement exists for internal manifold topology.",
+                description=("The integer anchor %d, emitted under the name "
+                             "'Third Betti Number'. It was described as "
+                             "'b3 = 24 of TCS G2 manifold #187 ... counting "
+                             "independent associative 3-cycles'. Both halves "
+                             "have failed: TCS exhibits 71 <= b_3 <= 155 and "
+                             "never supplied 24, and the adopted Joyce "
+                             "orbifold has b_3 = %d. %s. No experimental "
+                             "measurement exists for internal manifold "
+                             "topology."
+                             % (ANCHOR_FIT, live_b3(), anchor_note())),
                 derivation_formula="k-gimel-anchor",
                 no_experimental_value=True
             ),
@@ -1734,7 +1848,9 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "doi": "10.1093/oso/9780198506010.001.0001",
                 "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
                 "type": "book",
-                "relevance": "Foundation for G2 holonomy geometry from which the Betti number b3=24 originates",
+                "relevance": ("Foundation for G2 geometry. Formerly cited as "
+                              "the source of 'the Betti number b3=24'; %s"
+                              % anchor_note()),
             },
             {
                 "key": "kovalev2003",
@@ -1747,7 +1863,11 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "type": "article",
                 "arxiv": "math/0012189",
                 "url": "https://arxiv.org/abs/math/0012189",
-                "relevance": "TCS construction theorem yielding compact G2 manifolds with controlled Betti numbers"
+                "relevance": ("TCS construction theorem for compact G2 "
+                              "manifolds. OFF-PATH for this framework: the "
+                              "exhibited range is 71 <= b_3 <= 155 and the "
+                              "adopted construction is a Joyce orbifold "
+                              "T^7/(Z/2)^3 with b_3 = %d." % live_b3())
             },
             {
                 "key": "chnp2015",
@@ -2074,21 +2194,34 @@ class GeometricAnchorsSimulation(SimulationBase):
                     "This is a proposed geometric relationship, not a rigorous QED derivation."
                 ),
                 "reference": "PM v22.5 framework; compare CODATA 2022: alpha^-1 = 137.035999177(21)",
-                "verification": "Numerical evaluation of formula with b3=24, phi=(1+sqrt(5))/2, pi"
+                "verification": ("Numerical evaluation of the formula with "
+                                 "anchor=%d, phi=(1+sqrt(5))/2, pi; live "
+                                 "b_3 = %d" % (ANCHOR_FIT, live_b3()))
             },
             {
                 "id": "proof_w0_tzimtzum",
                 "theorem": "Dark energy equation of state from Tzimtzum fraction",
-                "statement": "w0 = -1 + 1/b3 = -23/24",
+                "statement": ("w0 = -1 + 1/b3; published as -23/24 at "
+                              "b3 = 24, and -1 + 1/%d = %.6f on the live seed"
+                              % (live_b3(), -1.0 + 1.0 / live_b3())),
                 "proof_sketch": (
-                    "In the PM cosmological framework, the Pneuma field's residual vacuum energy "
-                    "after G2 compactification deviates from pure cosmological constant (w = -1) "
-                    "by exactly the Tzimtzum fraction 1/b3. Physically, one out of b3 = 24 "
-                    "associative 3-cycles contributes to vacuum energy leakage from the bulk "
-                    "into the 4D observable sector, yielding thawing quintessence with w0 = -23/24."
+                    "In the PM cosmological framework, the Pneuma field's "
+                    "residual vacuum energy after compactification deviates "
+                    "from a pure cosmological constant (w = -1) by exactly the "
+                    "Tzimtzum fraction 1/b3: one 3-cycle out of b3 leaks "
+                    "vacuum energy from the bulk into the 4D sector, yielding "
+                    "thawing quintessence. The published figure -23/24 came "
+                    "from b3 = 24; b3 is %d on the adopted seed, so w0 = "
+                    "%.6f there. This is the trade the b3_seed ruling makes "
+                    "explicitly -- b3 becomes derived and w0 moves -- and it "
+                    "is recorded rather than quietly restated."
+                    % (live_b3(), -1.0 + 1.0 / live_b3())
                 ),
                 "reference": "DESI 2025: w0 = -0.957 +/- 0.067",
-                "verification": "Direct arithmetic: -1 + 1/24 = -0.95833..."
+                "verification": ("Direct arithmetic: -1 + 1/%d = %.6f "
+                                 "(-1 + 1/24 = -0.95833... at the superseded "
+                                 "seed)"
+                                 % (live_b3(), -1.0 + 1.0 / live_b3()))
             },
         ]
 
@@ -2104,10 +2237,13 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "id": "discovery_alpha_from_b3",
                 "title": "Fine Structure Constant from Single Topological Input",
                 "description": (
-                    "The inverse fine structure constant alpha^-1 = 137.036 is derived from "
-                    "the single topological invariant b3 = 24 plus mathematical constants "
-                    "(pi, phi), with zero free parameters. The v22.5 formula achieves "
-                    "relative error 1.7e-11 against CODATA 2022."
+                    "The inverse fine structure constant alpha^-1 = 137.036 is "
+                    "computed from the single integer anchor %d plus "
+                    "mathematical constants (pi, phi), with zero fitted "
+                    "continuous parameters. It was published as derived from "
+                    "'the single topological invariant b3 = 24'; %s. The "
+                    "v22.5 formula achieves relative error 1.7e-11 against "
+                    "CODATA 2022." % (ANCHOR_FIT, anchor_note())
                 ),
                 "significance": "HIGH",
                 "testable": True,

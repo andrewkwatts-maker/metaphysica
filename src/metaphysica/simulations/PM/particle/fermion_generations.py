@@ -8,9 +8,39 @@ Licensed under the MIT License. See LICENSE file for details.
 Derives the number of fermion generations and Yukawa hierarchy from G2 manifold
 topology via the Pneuma Mechanism.
 
+WHERE THE GENERATION COUNT COMES FROM, AND WHERE IT MOVED TO
+============================================================
+Three routes to n_gen = 3 appear in this framework. They are NOT
+interchangeable, and the 2026-09-22 seed adoption separated them:
+
+  (a) RULED, and the one in force:
+          n_gen = b_2 / n_faces = b_2 / 4 = rank(Gamma) = 3
+      with (b_2, b_3) = (12, 43) the ADOPTED seed of a Joyce orbifold
+      T^7/(Z/2)^3 with Eguchi-Hanson resolutions, b_3 = 7 + 3 b_2. The 4 is
+      the faces, derived as the moved coordinates of an involution. Three
+      generations is the RANK of the diagonal stabiliser of phi.
+
+  (b) ABANDONED:
+          n_gen = b_3 / dim(O) = b_3 / 8 = 24 / 8 = 3
+      This worked only at b_3 = 24. On the Joyce-reachable family
+      b_3 in {7, 19, 31, 43} every value is ODD, and 8 divides no odd
+      number, so this route yields an integer NOWHERE on the family -- not
+      merely a wrong value at one point. It is abandoned, not adjusted.
+      Kept here on the books because the assessment below is about it.
+
+  (c) UNRULED, and what THIS MODULE actually computes:
+          n_gen = N_flux / spinor_DOF = (chi_eff / 6) / 8 = chi_eff / 48
+      chi_eff = 144 has three claimed derivations -- 2(h11-h21+h31),
+      b_3^2/4 and 6 b_3 -- which agree only at b_3 = 24. So chi_eff is
+      either seed-independent, in which case chi_eff/48 carries no
+      topological content; or seed-dependent, in which case it is not 144
+      on the adopted path. The framework has NOT ruled. This module
+      therefore reports what it computes and does NOT present chi_eff/48 = 3
+      as a live derivation. The ruling is awaited; nothing here decides it.
+
 MECHANISM:
-1. Generation count from flux quantization and spinor saturation:
-   n_gen = N_flux / spinor_DOF = (chi_eff / 6) / 8 = 144 / 48 = 3
+1. Generation count: see the three routes above. The code path below is
+   route (c), which is UNRULED.
 
 2. Yukawa hierarchy from geometric wave-function overlaps:
    Y_f = A_f * epsilon^Q_f
@@ -24,16 +54,24 @@ KEY RESULTS:
 - Yukawa texture from FN mechanism (epsilon ~ 0.223)
 - Chiral filter strength: 7/8 from spinor stabilization
 
-DERIVATION CHAIN:
-topology.mephorash_chi = 144 (TCS G2 manifold #187)
-  -> N_flux = chi_eff / 6 = 24
-  -> n_gen = N_flux / 8 = 3
+DERIVATION CHAIN (route (c), UNRULED):
+topology.mephorash_chi = chi_eff
+  -> N_flux = chi_eff / 6
+  -> n_gen = N_flux / 8 = chi_eff / 48
+
+PROVENANCE CORRECTION: chi_eff was previously attributed to "TCS G2 manifold
+#187". Twisted Connected Sum is OFF-PATH for this framework: the exhibited
+TCS range is 71 <= b_3 <= 155, which excludes the adopted b_3 = 43, and the
+construction in force is the Joyce orbifold T^7/(Z/2)^3.
   -> epsilon = exp(-1.5) ~ 0.223
   -> Y_f = A_f * epsilon^Q_f
 
 ASSERTION ASSESSMENT (2026-03-16, LLM (Opus) + Gemini 2.5 Flash debate):
 ================================================================================
-Assertion: "3 fermion generations from n_gen = b3/(2*h11) = 24/8 = 3,
+Assertion (AS ASSESSED IN 2026-03; the claim it assesses has since been
+ABANDONED -- see route (b) above -- and the assessment is retained because a
+falsified claim stays on the books):
+           "3 fermion generations from n_gen = b3/(2*h11) = 24/8 = 3,
            derived from G2 topology."
 
 Verdict: NUMEROLOGY
@@ -75,8 +113,17 @@ Evidence and reasoning:
 Classification: NUMEROLOGY - The arithmetic 24/8=3 is correct, and the
 ingredients (b3, Spin(7) dimension) are real mathematical objects from G2
 geometry. However, the specific combination b3/spinor_DOF has no derivation
-from established physics. The formula appears reverse-engineered to yield the
+from the established physics. The formula appears reverse-engineered to yield the
 known answer of 3 generations by selecting an appropriate divisor for b3=24.
+
+STATUS UPDATE (2026-09-22 seed adoption): route (b) above is now ABANDONED
+outright, which settles point 1 of this assessment in the assessment's favour
+-- b3/8 is not merely non-standard, it is non-integral everywhere on the
+Joyce-reachable family. Point 4 (chi_eff is framework-defined, not standard)
+is now an OPEN RULING carried explicitly: chi_eff and the n_gen = chi_eff/48
+route are neither asserted nor deleted here. The ruled replacement is
+n_gen = b_2/4 = rank(Gamma) = 3, route (a), which this module does not
+compute.
 ================================================================================
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -100,6 +147,13 @@ from metaphysica.simulations.base import (
     PMRegistry,
 )
 # --- triple-track helpers (Sprint 2 — Phase H) -----------------------------
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3, b2 and chi_eff FOLLOW THE ADOPTED SEED and are never typed
+#: as literals in this module's prose.
+_REG = _get_reg()
+
+# --- triple-track helpers (Sprint 2) ---------------------------------------
 try:  # pragma: no cover - optional during early migration
     # Probed, not merely imported: a stub arithma imports cleanly and
     # binds Expression to None, which `except ImportError` cannot see.
@@ -166,7 +220,8 @@ class FermionGenerationsV16(SimulationBase):
         # Each Q_f represents the geodesic distance (in units of the associative
         # cycle length) between the fermion's localization site on the 3-cycle
         # network and the Higgs/flavon VEV site. The associative 3-cycle network
-        # of TCS G2 #187 has b3=24 nodes; fermion wavefunctions peak at specific
+        # of the adopted Joyce orbifold has b3 nodes (read from the seed, not
+        # the retired literal 24); fermion wavefunctions peak at specific
         # nodes, and the suppression factor epsilon^Q_f gives the wavefunction
         # overlap integral that determines the Yukawa coupling Y_f.
         self.fn_charges = {
@@ -257,20 +312,25 @@ class FermionGenerationsV16(SimulationBase):
         # Compute flux quanta
         n_flux = chi_eff / 6.0  # Standard flux quantization
 
-        # Compute generation number from spinor saturation
-        # b3 = 24 flux units saturate 3 generations x 8 spinor DOF each.
+        # Compute generation number from spinor saturation.
+        # THIS IS THE UNRULED ROUTE (chi_eff/48). The RULED route for the
+        # generation count is n_gen = b_2/4 = rank(Gamma) = 3, which lives in
+        # the geometry layer (b3_path.n_gen_report). Nothing here decides the
+        # chi_eff ruling; this line reports what the flux route gives.
         # Spinor saturation determines generation COUNT but not mass hierarchy.
         # The mass hierarchy arises from the GEOMETRIC Froggatt-Nielsen mechanism:
         # fermion wavefunctions localize at different positions on the associative
         # 3-cycle network, and their Yukawa couplings are exponentially suppressed
         # by the geodesic distance to the Higgs localization site.
-        n_gen = n_flux / self.spinor_dof  # = 24 / 8 = 3
+        n_gen = n_flux / self.spinor_dof  # = chi_eff/48 (UNRULED route)
 
         # Compute Froggatt-Nielsen parameter from G2 curvature
         # lambda_curvature = 1.5 derives from the ratio of the G2 manifold's
         # Ricci curvature scale to the associative cycle length:
         #   lambda = R_G2 * L_cycle = (kappa/vol_G2^{2/7}) * (vol_G2^{3/7})
-        # For TCS G2 #187: lambda ~ 1.5 from the specific cycle geometry.
+        # lambda ~ 1.5 is hardcoded, with post-hoc justification (see the
+        # assessment header, point 5). Its earlier attribution to "TCS G2
+        # #187" is withdrawn: TCS is off-path here.
         # This sets the wavefunction decay rate along the 3-cycle network.
         epsilon = np.exp(-self.lambda_curvature)  # ~ 0.223
 
@@ -386,30 +446,69 @@ class FermionGenerationsV16(SimulationBase):
         Returns:
             SectionContent instance with full paper content
         """
+        chi_eff = int(_REG.chi_eff_total)
+        b3 = int(_REG.elder_kads)
+        n_flux_val = chi_eff / 6.0
+        n_gen_flux = n_flux_val / float(self.spinor_dof)
+
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path as _resolve_seed,
+            seed_values as _seed_values,
+        )
+
+        b2 = int(_seed_values(_resolve_seed())[1])
+        n_gen_ruled = b2 // 4
+
         blocks = [
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The number of fermion generations emerges from G2 manifold topology "
-                    "through spinor saturation. The TCS G2 manifold (#187) has an effective "
-                    "Euler characteristic chi_eff = 144, which quantizes flux into N_flux = "
-                    "chi_eff / 6 = 24 units. Each generation saturates the 8 real components "
-                    "of a 7D spinor (Spin(7) representation), yielding exactly three generations:"
+                    f"WHERE THE GENERATION COUNT COMES FROM. The RULED route is "
+                    f"n_gen = b_2 / 4 = {b2} / 4 = {n_gen_ruled}: the 4 is the faces, "
+                    f"derived as the moved coordinates of an involution, and the count "
+                    f"is the rank of the diagonal stabiliser of phi on the adopted "
+                    f"Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions, where "
+                    f"(b_2, b_3) = ({b2}, {b3}) and b_3 = 7 + 3 b_2."
                 )
-            ),
-            ContentBlock(
-                type="formula",
-                content=r"n_{\text{gen}} = \frac{N_{\text{flux}}}{\text{spinor DOF}} = \frac{24}{8} = 3",
-                formula_id="generation-number",
-                label="(4.2.1)"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This derivation is parameter-free and follows purely from topology. "
-                    "The result matches the observed three generations of the Standard Model "
-                    "without any fine-tuning or phenomenological input."
+                    f"THE GENERATION COUNT RELOCATED. It used to be read off b_3: "
+                    f"n_gen = b_3 / dim(O) = 24 / 8 = 3. That route is ABANDONED, not "
+                    f"adjusted. On the Joyce-reachable family b_3 = 7 + 3 n_T3 with "
+                    f"n_T3 in {{0, 4, 8, 12}}, so b_3 lies in {{7, 19, 31, 43}} and is "
+                    f"ODD at every profile; 8 divides no odd number, so b_3/8 is "
+                    f"non-integral EVERYWHERE on the family, and a generation count is "
+                    f"a number of things. At the adopted b_3 = {b3} it returns "
+                    f"{b3 / 8.0:.3f}. The claim is kept here, labelled, rather than "
+                    f"deleted."
                 )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    f"WHAT THIS SECTION COMPUTES, AND WHY IT IS NOT YET A DERIVATION. "
+                    f"The flux route below takes an effective Euler characteristic "
+                    f"chi_eff = {chi_eff}, quantizes flux into "
+                    f"N_flux = chi_eff / 6 = {n_flux_val:.0f} units, and saturates each "
+                    f"generation with the 8 real components of a 7D spinor (Spin(7) "
+                    f"representation), giving n_gen = chi_eff / 48 = {n_gen_flux:.0f}. "
+                    f"chi_eff is an OPEN RULING: its three claimed derivations -- "
+                    f"2(h11 - h21 + h31), b_3^2/4 and 6 b_3 -- agree only at b_3 = 24, "
+                    f"and a Joyce orbifold has no h21 or h31 at all. So chi_eff is "
+                    f"either independent of the seed, in which case chi_eff/48 carries "
+                    f"no topological content, or it depends on the seed, in which case "
+                    f"it is not {chi_eff} on the adopted path. This section therefore "
+                    f"REPORTS the flux route and does not present it as a live "
+                    f"derivation of three generations. The ruling is awaited."
+                )
+            ),
+            ContentBlock(
+                type="formula",
+                content=rf"n_{{\text{{gen}}}} = \frac{{b_2}}{{4}} = \frac{{{b2}}}{{4}} = {n_gen_ruled} \quad (\text{{ruled}}); \qquad \frac{{N_{{\text{{flux}}}}}}{{\text{{spinor DOF}}}} = \frac{{{n_flux_val:.0f}}}{{8}} = {n_gen_flux:.0f} \quad (\text{{unruled}})",
+                formula_id="generation-number",
+                label="(4.2.1)"
             ),
             ContentBlock(
                 type="paragraph",
@@ -498,13 +597,13 @@ class FermionGenerationsV16(SimulationBase):
             Formula(
                 id="generation-number",
                 label="(4.2.1)",
-                latex=r"n_{\text{gen}} = \frac{N_{\text{flux}}}{\text{spinor DOF}} = \frac{\chi_{\text{eff}}/6}{8} = \frac{144}{48} = 3",
-                plain_text="n_gen = N_flux / spinor_DOF = (chi_eff/6) / 8 = 144 / 48 = 3",
+                latex=rf"n_{{\text{{gen}}}} = \frac{{N_{{\text{{flux}}}}}}{{\text{{spinor DOF}}}} = \frac{{\chi_{{\text{{eff}}}}/6}}{{8}} = \frac{{{int(_REG.chi_eff_total)}}}{{48}}",
+                plain_text=f"n_gen = N_flux / spinor_DOF = (chi_eff/6) / 8 = {int(_REG.chi_eff_total)} / 48 (UNRULED route; the ruled route is b_2/4)",
                 eml_tree_str="ops.div(ops.div(chi_eff, eml_scalar(6.0)), eml_scalar(8.0))",
                 eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{ops.div}(\chi_{\text{eff}},\; \mathrm{eml\_scalar}(6)),\; \mathrm{eml\_scalar}(8))",
                 eml_description="EML: ops.div(ops.div(eml_scalar(144.0), eml_scalar(6.0)), eml_scalar(8.0)) = eml_scalar(3.0) — flux quantization then spinor saturation",
                 category="DERIVED",
-                description="Number of fermion generations from spinor saturation on G2 manifold",
+                description="Number of fermion generations from spinor saturation on the G2 manifold. UNRULED: chi_eff has three competing derivations agreeing only at b_3 = 24, so this is reported, not certified. The RULED route is n_gen = b_2/4 = rank(Gamma) = 3.",
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["fermion.n_generations", "fermion.n_flux"],
                 input_params=["topology.mephorash_chi", "topology.elder_kads"],
@@ -513,14 +612,14 @@ class FermionGenerationsV16(SimulationBase):
                     "method": "Spinor saturation via flux quantization on G2 manifold associative 3-cycles",
                     "parentFormulas": [],
                     "steps": [
-                        "Start with TCS G2 manifold #187 topology: chi_eff = 144",
-                        "Apply flux quantization: N_flux = chi_eff / 6 = 24",
+                        f"Start from the adopted Joyce orbifold T^7/(Z/2)^3 with chi_eff = {int(_REG.chi_eff_total)} (UNRULED quantity; the earlier 'TCS G2 manifold #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
+                        f"Apply flux quantization: N_flux = chi_eff / 6 = {int(_REG.chi_eff_total) / 6.0:.0f}",
                         "Count spinor DOF in 7D: spinor_DOF = 8 (Spin(7) representation)",
                         "Compute generation saturation: n_gen = N_flux / spinor_DOF",
-                        "Result: n_gen = 24 / 8 = 3 (exact, parameter-free)"
+                        f"Result: n_gen = chi_eff/48 = {int(_REG.chi_eff_total) / 48.0:.0f}. NOT presented as a live derivation: chi_eff is an OPEN RULING. The RULED generation count is n_gen = b_2/4 = rank(Gamma) = 3."
                     ],
                     "assumptions": [
-                        "TCS G2 manifold with chi_eff = 144",
+                        f"chi_eff = {int(_REG.chi_eff_total)} -- UNRULED, three competing derivations agreeing only at b_3 = 24",
                         "Standard flux quantization on 3-cycles",
                         "Complete spinor saturation (no partial filling)"
                     ],
@@ -731,9 +830,16 @@ class FermionGenerationsV16(SimulationBase):
                 units="dimensionless",
                 status="ANSATZ",
                 description=(
-                    "ANSATZ: spinor_DOF = 8 was chosen so that b3/spinor_DOF = 24/8 = 3 "
-                    "reproduces the observed number of generations; the input is not derived "
-                    "independently of the desired output. See module docstring for full assessment."
+                    f"ANSATZ: spinor_DOF = 8 was chosen so that b3/spinor_DOF = 24/8 = 3 "
+                    f"reproduced the observed number of generations; the input was not "
+                    f"derived independently of the desired output. That route is now "
+                    f"ABANDONED as well as unjustified: at the adopted b3 = "
+                    f"{int(_REG.elder_kads)} it gives {int(_REG.elder_kads) / 8.0:.3f}, "
+                    f"and b_3 is odd everywhere on the Joyce-reachable family so 8 "
+                    f"divides none of it. The RULED generation count is "
+                    f"n_gen = b_2/4 = rank(Gamma) = 3. The value this parameter still "
+                    f"carries comes from the UNRULED chi_eff/48 route. See the module "
+                    f"docstring for the full assessment."
                 ),
                 eml_description="EML: ops.div(ops.div(eml_scalar(144.0), eml_scalar(6.0)), eml_scalar(8.0)) — chi_eff flux then spinor saturation",
                 derivation_formula="generation-number",
@@ -1067,17 +1173,20 @@ def run_fermion_generations(verbose: bool = True) -> Dict[str, Any]:
     # Create registry and populate inputs
     registry = PMRegistry.get_instance()
 
-    # Set topology inputs (from TCS G2 manifold #187)
+    # Set topology inputs. These are READ from the SSoT registry, which
+    # follows the adopted Joyce seed. The retired literals (144 sourced to
+    # "TCS_G2_187", and elder_kads = 24) are gone: TCS is off-path (it
+    # exhibits 71 <= b_3 <= 155) and 24 is not Joyce-reachable.
     registry.set_param(
         "topology.mephorash_chi",
-        value=144,
-        source="ESTABLISHED:TCS_G2_187",
+        value=int(_REG.chi_eff_total),
+        source="FormulasRegistry:chi_eff_total (UNRULED quantity)",
         status="GEOMETRIC"
     )
     registry.set_param(
         "topology.elder_kads",
-        value=24,
-        source="ESTABLISHED:TCS_G2_187",
+        value=int(_REG.elder_kads),
+        source="b3_path:adopted_seed",
         status="GEOMETRIC"
     )
 

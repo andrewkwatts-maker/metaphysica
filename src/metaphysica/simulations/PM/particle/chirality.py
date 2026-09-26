@@ -24,7 +24,10 @@ PHYSICAL PICTURE:
 - Saturation: 24 flux units / 8 spinor DOF = 3 generations
 
 DERIVATION CHAIN:
-topology.mephorash_chi = 144 (TCS G2 manifold #187)
+topology.mephorash_chi = chi_eff (UNRULED; the "TCS G2 manifold #187"
+provenance is WITHDRAWN -- TCS as exhibited gives 71 <= b_3 <= 155, which
+excludes the adopted b_3 = 43, and the construction in force is the Joyce
+orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions)
 topology.elder_kads = 24 (third Betti number)
   -> spinor components = 8 (Spin(7) representation)
   -> preserved spinors = 1 (G2 holonomy)
@@ -46,6 +49,12 @@ Dedicated To:
 """
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and chi_eff FOLLOW THE ADOPTED SEED; nothing topological in
+#: this module's prose is typed as a literal.
+_REG = _get_reg()
 from datetime import datetime
 from typing import Dict, Any, List, Optional
 import sys
@@ -200,8 +209,12 @@ class ChiralitySpinorSimulation(SimulationBase):
         # Generation count from spinor saturation
         # CONNECTION: index = 6 chiral zero modes, but each generation requires
         # 2 zero modes (one per chiral doublet in SU(2)_L), giving n_gen = 6/2 = 3.
-        # Equivalently via flux counting: b3 = 24 flux units, 8 spinor DOF per
-        # generation (from the 7+1 decomposition), so n_gen = 24/8 = 3.
+        # The "equivalently via flux counting" reading -- b3 = 24 flux units,
+        # 8 spinor DOF per generation, n_gen = 24/8 = 3 -- is ABANDONED. On the
+        # Joyce-reachable family b_3 in {7, 19, 31, 43} is ODD at every
+        # profile and 8 divides no odd number, so b_3/8 is non-integral
+        # EVERYWHERE on the family. The ruled generation count is
+        # n_gen = b_2/4 = rank(Gamma) = 3. Kept here, labelled, not deleted.
         # The 7/8 ratio has physical meaning: 7 of 8 spinor components pair up
         # and gain mass via torsion coupling, while 1 remains massless -- this is
         # the chiral fermion that defines each generation.
@@ -456,14 +469,18 @@ class ChiralitySpinorSimulation(SimulationBase):
                     type="paragraph",
                     content=(
                         "where F is the gauge field strength (flux), and the integral "
-                        "is over the G2 manifold M_7. For TCS G2 manifold #187, the "
-                        "topology is characterized by the effective Euler characteristic "
-                        "χ_eff = 144. The index formula simplifies to:"
+                        f"is over the G2 manifold M_7. The topology is characterized "
+                        f"by the effective Euler characteristic χ_eff = "
+                        f"{int(_REG.chi_eff_total)}, an UNRULED quantity whose three "
+                        f"claimed derivations agree only at b_3 = 24. The earlier "
+                        f"'TCS G2 manifold #187' attribution is WITHDRAWN: TCS as "
+                        f"exhibited gives 71 <= b_3 <= 155 and so excludes the adopted "
+                        f"b_3 = {int(_REG.elder_kads)}. The index formula simplifies to:"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"\text{index}(\not{D}) = \frac{\chi_{\text{eff}}}{24} = \frac{144}{24} = 6",
+                    content=rf"\text{{index}}(\not{{D}}) = \frac{{\chi_{{\text{{eff}}}}}}{{24}} = \frac{{{int(_REG.chi_eff_total)}}}{{24}} = {int(_REG.chi_eff_total) // 24}",
                     label="(4.1.5)"
                 ),
                 ContentBlock(
@@ -487,30 +504,51 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "The connection from index = 6 to n_gen = 3 proceeds as follows: "
                         "the index counts NET chiral zero modes (n_L - n_R = 6). Each "
                         "fermion generation requires a chiral doublet under SU(2)_L, "
-                        "consuming 2 chiral zero modes. Thus n_gen = 6/2 = 3. Equivalently, "
-                        "via flux counting: the third Betti number b_3 = 24 counts the "
-                        "independent associative 3-cycles (flux units), and each fermion "
-                        "generation saturates 8 real spinor degrees of freedom (from the "
-                        "8 = 1 + 7 decomposition of Spin(7) under G2: 7 components gain mass "
-                        "via torsion coupling, 1 remains as the massless chiral fermion). "
-                        "Therefore:"
+                        f"consuming 2 chiral zero modes. Thus n_gen = 6/2 = 3.\n\n"
+                        f"THE FLUX-COUNTING ROUTE IS ABANDONED, AND THE COUNT MOVED. "
+                        f"This paragraph used to continue: 'equivalently, via flux "
+                        f"counting, the third Betti number b_3 = 24 counts the "
+                        f"independent associative 3-cycles (flux units), and each "
+                        f"fermion generation saturates 8 real spinor degrees of freedom "
+                        f"from the 8 = 1 + 7 decomposition of Spin(7) under G2, so "
+                        f"n_gen = b_3/8 = 24/8 = 3.' That equivalence held only at "
+                        f"b_3 = 24. On the Joyce-reachable family b_3 = 7 + 3 n_T3 with "
+                        f"n_T3 in {{0, 4, 8, 12}}, so b_3 lies in {{7, 19, 31, 43}} and "
+                        f"is ODD at every profile; 8 divides no odd number, so b_3/8 is "
+                        f"non-integral EVERYWHERE on the family, not merely wrong at "
+                        f"one point. At the adopted b_3 = {int(_REG.elder_kads)} it "
+                        f"returns {int(_REG.elder_kads) / 8.0:.3f}, and a generation "
+                        f"count is a number of things.\n\n"
+                        f"The generation count RELOCATED rather than vanishing: the "
+                        f"ruled route is n_gen = b_2 / 4 = rank(Gamma) = 3, with the 4 "
+                        f"being the faces, derived as the moved coordinates of an "
+                        f"involution. The abandoned identity is kept here, labelled, "
+                        f"because a falsified claim stays on the books:"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"n_{\text{gen}} = \frac{b_3}{\text{spinor DOF}} = \frac{24}{8} = 3",
+                    content=rf"n_{{\text{{gen}}}} \neq \frac{{b_3}}{{\text{{spinor DOF}}}} = \frac{{{int(_REG.elder_kads)}}}{{8}} = {int(_REG.elder_kads) / 8.0:.3f} \quad (\text{{ABANDONED}}); \qquad n_{{\text{{gen}}}} = \frac{{b_2}}{{4}} = 3 \quad (\text{{ruled}})",
                     formula_id="spinor-saturation-generations",
                     label="(4.1.6)"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This derivation is completely parameter-free and follows purely "
-                        "from the topology of the TCS G2 manifold. The saturation is "
-                        "exact: 3 generations × 8 DOF = 24 flux units, with no remainder. "
-                        "<Speculation>This may explain why nature has exactly three generations "
-                        "of fermions, if the G2 manifold topology is the correct compactification "
-                        "for the physical universe.</Speculation>"
+                        f"The index route above (index = 6, n_gen = 6/2 = 3) is "
+                        f"untouched by the seed move, because it consumes chi_eff "
+                        f"rather than b_3 -- but chi_eff is itself an OPEN RULING, so "
+                        f"it is reported here, not certified. The earlier claim that "
+                        f"the saturation was 'exact: 3 generations x 8 DOF = 24 flux "
+                        f"units, with no remainder' is FALSIFIED at "
+                        f"b_3 = {int(_REG.elder_kads)}: 3 x 8 = 24 leaves a remainder "
+                        f"of {int(_REG.elder_kads) - 24} flux units, and no replacement "
+                        f"saturation is asserted. "
+                        f"<Speculation>Whether nature has exactly three generations "
+                        f"because of this topology remains speculative; the ruled route "
+                        f"makes it the RANK of the diagonal stabiliser of phi, which is "
+                        f"at least a count of independent objects rather than a "
+                        f"ratio.</Speculation>"
                     )
                 ),
 
@@ -725,8 +763,9 @@ class ChiralitySpinorSimulation(SimulationBase):
                 description=(
                     "Atiyah-Singer index theorem for Dirac operator on G2 manifold. "
                     "Relates topological chirality imbalance (n_L - n_R) to geometry "
-                    "(associative 4-form Φ) and gauge flux (F). For TCS G2 #187: "
-                    "index = χ_eff/24 = 6."
+                    f"(associative 4-form Φ) and gauge flux (F): "
+                    f"index = χ_eff/24 = {int(_REG.chi_eff_total) // 24}. chi_eff is "
+                    f"UNRULED; the 'TCS G2 #187' provenance is withdrawn."
                 ),
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["chirality.chiral_index", "chirality.imbalance"],
@@ -740,8 +779,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "For G2: Â-genus simplifies, characteristic classes related to Φ",
                         "With gauge bundle E: include Chern character ch(E)",
                         "Flux F on associative cycles: ∫ Φ ∧ F ∧ F picks out flux contribution",
-                        "TCS G2 #187: topology characterized by χ_eff = 144",
-                        "Index formula: n_L - n_R = χ_eff / 24 = 144 / 24 = 6",
+                        f"Joyce orbifold T^7/(Z/2)^3: topology characterized by χ_eff = {int(_REG.chi_eff_total)} (UNRULED; the earlier 'TCS G2 #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
+                        f"Index formula: n_L - n_R = χ_eff / 24 = {int(_REG.chi_eff_total)} / 24 = {int(_REG.chi_eff_total) // 24}",
                         "Physical interpretation: 6 more LH than RH zero modes per cycle"
                     ],
                     "assumptions": [
@@ -772,16 +811,21 @@ class ChiralitySpinorSimulation(SimulationBase):
                 id="spinor-saturation-generations",
                 label="(4.1.6)",
                 latex=r"n_{\text{gen}} = \frac{b_3}{\text{spinor DOF}} = \frac{24}{8} = 3",
-                plain_text="n_gen = b_3 / spinor_DOF = 24 / 8 = 3",
+                plain_text=f"ABANDONED: n_gen = b_3 / spinor_DOF = {int(_REG.elder_kads)} / 8 = {int(_REG.elder_kads) / 8.0:.3f}, not an integer. Ruled route: n_gen = b_2/4 = 3",
                 eml_tree_str="ops.div(b3_leaf(), eml_scalar(8.0))",
-                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(24),\; \mathrm{eml\_scalar}(8))",
+                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(b_3,\; \mathrm{eml\_scalar}(8))",
                 eml_description="EML: n_gen = ops.div(b3, spinor_dof) = ops.div(b3_leaf(), eml_scalar(8.0)) = eml_scalar(3.0)",
                 category="PREDICTED",
                 description=(
-                    "Number of fermion generations from spinor saturation on G2 manifold. "
-                    "The third Betti number b_3 = 24 gives flux units, each generation "
-                    "requires 8 spinor DOF (Spin(7) representation), yielding exactly "
-                    "3 generations. This is parameter-free and topological."
+                    f"ABANDONED ROUTE, kept on the books. Number of fermion "
+                    f"generations from spinor saturation: the third Betti number gives "
+                    f"flux units and each generation requires 8 spinor DOF (Spin(7) "
+                    f"representation). This yielded exactly 3 only at b_3 = 24. Every "
+                    f"Joyce-reachable b_3 in {{7, 19, 31, 43}} is ODD, so b_3/8 is "
+                    f"non-integral throughout; at the adopted "
+                    f"b_3 = {int(_REG.elder_kads)} it gives "
+                    f"{int(_REG.elder_kads) / 8.0:.3f}. The RULED generation count is "
+                    f"n_gen = b_2/4 = rank(Gamma) = 3."
                 ),
                 inputParams=["topology.elder_kads", "chirality.spinor_dimension"],
                 outputParams=["chirality.generation_count", "chirality.saturation_ratio"],
@@ -791,18 +835,18 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "parentFormulas": ["g2-spinor-preservation", "chirality-index-theorem"],
                     "method": "Spinor degree of freedom counting",
                     "steps": [
-                        "TCS G2 manifold #187: b_3 = 24 (third Betti number)",
+                        f"Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions: b_3 = {int(_REG.elder_kads)} (third Betti number, b_3 = 7 + 3 b_2)",
                         "Each associative 3-cycle carries one flux unit",
                         "Spinor representation: Spin(7) has dimension 8 (real)",
                         "Each generation saturates 8 spinor DOF",
                         "Saturation condition: N_gen × 8 = b_3",
-                        "Solve: N_gen = 24 / 8 = 3 (exact)",
-                        "Saturation ratio: (3 × 8) / 24 = 1 (complete, no remainder)"
+                        f"Solve: N_gen = b_3 / 8 = {int(_REG.elder_kads)} / 8 = {int(_REG.elder_kads) / 8.0:.3f} -- NOT an integer, so the saturation condition has no solution on the adopted seed",
+                        f"Saturation ratio: (3 x 8) / b_3 = 24 / {int(_REG.elder_kads)} = {24.0 / int(_REG.elder_kads):.3f}; the 'complete, no remainder' claim is FALSIFIED"
                     ],
                     "assumptions": [
-                        "Complete spinor saturation (no partial filling)",
+                        "Complete spinor saturation (no partial filling) -- UNAVAILABLE at odd b_3",
                         "All flux units participate equally",
-                        "TCS G2 topology with b_3 = 24"
+                        f"b_3 = {int(_REG.elder_kads)} from the adopted Joyce seed; the earlier assumption 'TCS G2 topology with b_3 = 24' is withdrawn on both counts"
                     ],
                     "references": [
                         "Acharya-Witten (2001): Chiral fermions from M-theory, §5",
@@ -875,8 +919,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Topological index of the Dirac operator: index(D-slash) = n_L - n_R. "
-                    "For TCS G2 manifold #187, this equals chi_eff/24 = 144/24 = 6. "
+                    f"Topological index of the Dirac operator: index(D-slash) = n_L - n_R. "
+                    f"This equals chi_eff/24 = {int(_REG.chi_eff_total)}/24 = {int(_REG.chi_eff_total) // 24}, with chi_eff UNRULED and the 'TCS G2 manifold #187' provenance withdrawn. "
                     "Represents the net chirality imbalance from topology. "
                     "Topological derivation parameter, no experimental measurement."
                 ),
@@ -925,7 +969,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                 description=(
                     "Net chirality imbalance: n_L - n_R. This is the topological "
                     "invariant that cannot be changed by continuous deformations. "
-                    "For TCS G2 #187: imbalance = 6 (from chi_eff = 144). "
+                    f"Imbalance = {int(_REG.chi_eff_total) // 24} (from chi_eff = {int(_REG.chi_eff_total)}, an UNRULED quantity). "
                     "Topological derivation parameter, no experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(144.0), eml_scalar(24.0)) — topological chirality imbalance",
@@ -1279,10 +1323,15 @@ class ChiralitySpinorSimulation(SimulationBase):
                 "defines chirality projectors P_L = (1 + *Φ)/2 and P_R = (1 - *Φ)/2, with "
                 "the parallel spinor being automatically left-handed: P_L η = η. The Dirac "
                 "operator ∂/ = γ^μ D_μ has zero modes localized on associative 3-cycles. "
-                "The Atiyah-Singer index theorem gives index(∂/) = n_L - n_R = χ_eff/24 = "
-                "144/24 = 6, where χ_eff is the effective Euler characteristic of TCS G2 "
-                "manifold #187. Spinor saturation: b_3 = 24 flux units, spinor_DOF = 8, "
-                "therefore n_gen = 24/8 = 3. This is exact and parameter-free."
+                f"The Atiyah-Singer index theorem gives index(∂/) = n_L - n_R = "
+                f"χ_eff/24 = {int(_REG.chi_eff_total)}/24 = {int(_REG.chi_eff_total) // 24}, "
+                f"where χ_eff is the effective Euler characteristic (an UNRULED "
+                f"quantity; the 'TCS G2 manifold #187' provenance is withdrawn). The "
+                f"spinor-saturation route -- b_3 flux units over spinor_DOF = 8 -- is "
+                f"ABANDONED: at the adopted b_3 = {int(_REG.elder_kads)} it gives "
+                f"{int(_REG.elder_kads) / 8.0:.3f}, and b_3 is odd everywhere on the "
+                f"Joyce-reachable family. The ruled generation count is "
+                f"n_gen = b_2/4 = rank(Gamma) = 3."
             ),
             "prediction": (
                 "The chirality structure predicts that all Standard Model fermions must be "
@@ -1317,18 +1366,20 @@ def main():
     registry = PMRegistry()
     EstablishedPhysics.load_into_registry(registry)
 
-    # Add required topology parameters (from TCS G2 manifold #187)
+    # Add required topology parameters, READ from the SSoT registry so a
+    # standalone run follows the adopted seed. The retired literals (144 and
+    # 24, both sourced to "TCS_G2_187") are gone: TCS is off-path here.
     registry.set_param(
         path="topology.mephorash_chi",
-        value=144,
-        source="ESTABLISHED:TCS_G2_187",
+        value=int(_REG.chi_eff_total),
+        source="FormulasRegistry:chi_eff_total (UNRULED quantity)",
         status="GEOMETRIC",
         metadata={"description": "Effective Euler characteristic", "units": "dimensionless"}
     )
     registry.set_param(
         path="topology.elder_kads",
-        value=24,
-        source="ESTABLISHED:TCS_G2_187",
+        value=int(_REG.elder_kads),
+        source="b3_path:adopted_seed",
         status="GEOMETRIC",
         metadata={"description": "Third Betti number", "units": "dimensionless"}
     )

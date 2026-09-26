@@ -43,10 +43,18 @@ THEORETICAL BASIS:
     - theta_12: Tri-bimaximal base with topological perturbation
     - theta_23: Octonionic maximal mixing (G2 ~ Aut(O))
 
-TOPOLOGICAL INPUTS (TCS #187):
-    - b2 = 4 (Kahler moduli from h^{1,1})
-    - b3 = 24 (associative 3-cycles)
-    - chi_eff_total = 144 (PMNS uses both shadows: b3²/4 = 576/4)
+TOPOLOGICAL INPUTS (adopted Joyce seed, READ not typed):
+    - b2 (one exceptional 2-class per A1 family)
+    - b3 (associative 3-cycles), with b3 = 7 + 3 b2
+    - chi_eff_total (PMNS uses both shadows) -- an UNRULED quantity
+
+PROVENANCE CORRECTION: these were previously attributed to "TCS #187" with
+b2 = 4 and b3 = 24. Twisted Connected Sum is OFF-PATH: the exhibited TCS range
+is 71 <= b_3 <= 155, which excludes the adopted b_3 = 43, so TCS functions here
+as an exclusion rather than a source. The construction in force is the Joyce
+orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions, whose reachable Betti
+numbers are b_3 = 7 + 3 n_T3 for n_T3 in {0, 4, 8, 12}; 24 = 0 (mod 12) is not
+among them. All mixing-angle numbers below MOVED when the seed moved.
     - chi_eff = 72 (per-shadow: b3²/8 = 576/8, used for baryon physics)
     - n_gen = 3 (generations = |chi_eff_total|/48)
     - orientation_sum = 12 (from Euclidean bridge OR reduction, single bridge)
@@ -84,8 +92,11 @@ Verdict: PARTIALLY SUPPORTED -- stronger than CKM but with caveats.
 Parameter-by-parameter classification (6 PMNS mixing parameters):
   5. PMNS theta_12: GENUINELY PREDICTED (if b2, b3 accepted as topological)
      - sin(theta_12) = 1/sqrt(3) * (1 - (b3-b2*n_gen)/(2*chi_eff))
-     - Uses only b2=4, b3=24, chi_eff=144, n_gen=3 -- all interdependent
-       topological constants (chi_eff=b3^2/4, n_gen=chi_eff/48).
+     - Uses only b2, b3, chi_eff and n_gen -- all interdependent topological
+       constants. The relations asserted here (chi_eff = b3^2/4 and
+       n_gen = chi_eff/48) held simultaneously only at b3 = 24; chi_eff is an
+       OPEN RULING and the ruled generation count is n_gen = b_2/4 =
+       rank(Gamma) = 3, not chi_eff/48.
      - Tribimaximal base 1/sqrt(3) is from discrete symmetry (A4/S4),
        not uniquely octonionic.
      - Prediction: 33.59 deg vs NuFIT 33.41 +/- 0.75 deg (0.24 sigma).
@@ -110,15 +121,25 @@ Parameter-by-parameter classification (6 PMNS mixing parameters):
 
 Free parameter count: 2 fitted (parity_offset, m_base) for 6 observables.
 Net predictive power: 3-4 genuine predictions (theta_12, theta_13, theta_23,
-  and arguably mass ordering = IO from b3=24 even parity).
+  and arguably mass ordering = IO, which rested on b3 = 24 being EVEN. On the
+  adopted seed b3 = 43 is ODD, so the even-parity argument for Inverted
+  Ordering is FALSIFIED; it is kept on the books below, labelled, and no
+  substitute parity argument is offered).
 
 Critical caveat -- the "topological inputs" question:
-  The entire PMNS derivation rests on b2=4 and b3=24 being the correct
-  Betti numbers of THE specific G2 manifold that describes our universe.
-  These values are plausible for TCS (Twisted Connected Sum) G2 manifolds
-  (Corti-Haskins-Nordstrom-Pacini 2015 catalogue), but:
-  - No unique selection mechanism picks TCS #187 from the landscape.
-  - b2 and b3 are effectively model-selection parameters, not predictions.
+  The entire PMNS derivation rests on b2 and b3 being the correct Betti
+  numbers of THE specific G2 manifold that describes our universe. The pair
+  used to be (4, 24), justified as plausible for TCS (Twisted Connected Sum)
+  G2 manifolds (Corti-Haskins-Nordstrom-Pacini 2015 catalogue). That
+  justification is WITHDRAWN on two counts: the exhibited TCS range is
+  71 <= b_3 <= 155, so TCS never supplied 24 either; and the construction in
+  force is a Joyce orbifold. What CHANGED, in the framework's favour:
+  - b_2 and b_3 are no longer free model-selection parameters. A Joyce
+    (Z/2)^3 resolution gives b_3 = 7 + 3 n_T3 with n_T3 in {0, 4, 8, 12}, and
+    n_gen = b_2/4 = rank(Gamma) = 3 selects (12, 43) out of that family.
+  What did NOT change:
+  - Nothing in the PMNS sector participates in that selection, so for this
+    module the seed remains an input handed down from elsewhere.
   - If b2 or b3 were different, all PMNS predictions would change.
 
 Methodology assessment:
@@ -130,7 +151,7 @@ Methodology assessment:
     specific functional forms.
   - The suspiciously precise matches (0.04, 0.16, 0.50 sigma) for 3 angles
     from just 2 inputs could indicate either a deep truth or overfitting
-    to a small integer system (b2=4, b3=24 generate many rational fractions).
+    to a small integer system (a b2/b3 pair generates many rational fractions).
 
 Overall verdict on combined assertion:
   CKM: OVERCLAIMED. 1/4 parameters genuinely predicted. Standard Wolfenstein
@@ -143,7 +164,8 @@ Overall verdict on combined assertion:
     octonion structure" is an overstatement. A more accurate claim would be:
     "Mixing parameters are constrained by a G2-inspired ansatz with
     4-6 genuinely predicted values out of 10, contingent on the choice
-    of G2 manifold (b2=4, b3=24)."
+    of G2 manifold -- which at the time of this assessment was (b2, b3) =
+    (4, 24) and is now the adopted Joyce seed (12, 43)."
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -153,6 +175,21 @@ Dedicated To:
 """
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT reads. b_3 and b_2 FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43) of the
+#: Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions, where
+#: b_3 = 7 + 3 b_2. Nothing topological in this module's prose is typed.
+_REG = _get_reg()
+
+
+def _b2_adopted() -> int:
+    """b_2 of the adopted seed, read rather than typed."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path as _rp, seed_values as _sv,
+    )
+    return int(_sv(_rp())[1])
 import sys
 import os
 from datetime import datetime
@@ -216,12 +253,16 @@ class NeutrinoMixingSimulation(SimulationBase):
     Implements the SimulationBase interface to compute all four PMNS
     mixing parameters from topological invariants alone.
 
-    NEW: Explicitly predicts Inverted Ordering (IO) from b3=24 topology.
+    FALSIFIED CLAIM, kept on the books: this predicted Inverted Ordering (IO)
+    from b3 = 24 being an EVEN Betti number. On the adopted seed b3 is odd,
+    so the parity argument no longer applies and no replacement is offered.
     """
 
     # NuFIT 6.0 experimental values for validation
     # Source: http://www.nu-fit.org/ (2024-11)
-    # Using Inverted Ordering (IO) values since PM predicts IO from b3=24 topology
+    # Using Inverted Ordering (IO) values. The IO prediction came from b3 = 24
+    # being even; that argument is FALSIFIED at the adopted odd b3 and the
+    # ordering is no longer predicted by this route.
     # SNAPSHOT PROVENANCE (2026-08 audit): this table is a MIXED
     # NuFIT 5.2 (2022) / 6.0 (2024) snapshot. Entries carrying 6.0
     # values are marked inline; theta_12, dm2_21 and delta_cp_NO are
@@ -466,7 +507,7 @@ class NeutrinoMixingSimulation(SimulationBase):
         """Cross-verify topological constants against Leech lattice decomposition.
 
         Checks that R24 = R8+R8+R8 bridge decomposition reproduces the
-        same invariants (b3=24, orientation_sum=12, b2=4, n_gen=3) used
+        same invariants (b3, orientation_sum=12, b2, n_gen) used
         by the PMNS derivation.  Returns None when lattice module is
         unavailable so the simulation remains standalone.
         """
@@ -642,9 +683,9 @@ class NeutrinoMixingSimulation(SimulationBase):
 
             The shift is NOT a free parameter - it's computed from:
             - orientation_sum = 12 (Euclidean bridge OR reduction)
-            - b3 = 24 (number of associative cycles)
-            - b2 = 4 (Kahler moduli)
-            - chi_eff = 144 (Euler characteristic)
+            - b3 (number of associative cycles, from the adopted seed)
+            - b2 (Kahler moduli, from the adopted seed)
+            - chi_eff (Euler characteristic; UNRULED)
 
         PREDICTION:
             theta_23 = 45° + 0.75° + 4.0° = 49.75°
@@ -722,7 +763,8 @@ class NeutrinoMixingSimulation(SimulationBase):
         """
         Derive neutrino mass eigenvalues in Inverted Ordering.
 
-        The b3=24 topology (even Betti number) naturally supports
+        FALSIFIED, kept on the books: the b3 = 24 topology (an EVEN Betti
+        number) was said to naturally support
         Inverted Ordering with two near-degenerate heavy states
         (m1, m2) and one lighter state (m3).
 
@@ -801,6 +843,31 @@ class NeutrinoMixingSimulation(SimulationBase):
 
         return is_io, dm2_32
 
+    def _seed_topology_if_unset(self) -> None:
+        """Fill the topology attributes from the ADOPTED seed.
+
+        `run()` loads them from the registry. Section content, formulas and
+        parameter definitions are also requested WITHOUT a prior run -- and
+        before this existed, the published prose simply carried typed angles
+        instead of asking. Reading the adopted seed here is what lets the text
+        be generated; it never overwrites values a run has already supplied.
+        """
+        if self._b3 is None:
+            self._b3 = int(_REG.elder_kads)
+        if self._b2 is None:
+            self._b2 = _b2_adopted()
+        if self._chi_eff is None:
+            self._chi_eff = int(_REG.chi_eff_total)
+        if self._n_gen is None:
+            self._n_gen = int(_REG.n_gen)
+        if self._orientation_sum is None:
+            # Single unified bridge orientation sum; not seed-dependent.
+            self._orientation_sum = 12
+        if self._k_gimel is None:
+            self._k_gimel = self._compute_k_gimel()
+        if self._c_kaf is None:
+            self._c_kaf = self._compute_c_kaf()
+
     def get_section_content(self) -> Optional[SectionContent]:
         """
         Return section content for Section 4.5: Neutrino Mixing.
@@ -808,6 +875,15 @@ class NeutrinoMixingSimulation(SimulationBase):
         Returns:
             SectionContent instance describing the neutrino mixing derivation
         """
+        # Every angle quoted below is COMPUTED from the live seed. They used to
+        # be typed (33.59 / 8.65 / 49.75 / 278.4), which were the values at the
+        # retired (b2, b3) = (4, 24); they MOVED when the seed moved and the
+        # move is published rather than papered over.
+        self._seed_topology_if_unset()
+        _t12 = self._compute_theta_12()
+        _t13 = self._compute_theta_13()
+        _t23 = self._compute_theta_23()
+        _dcp = self._compute_delta_cp()
         content_blocks = [
             ContentBlock(
                 type="paragraph",
@@ -819,7 +895,9 @@ class NeutrinoMixingSimulation(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The TCS G₂ manifold construction #187 provides all necessary topological "
+                content=f"The adopted Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions "
+                       f"(b_2, b_3) = ({_b2_adopted()}, {int(_REG.elder_kads)}), b_3 = 7 + 3 b_2, "
+                       f"provides all necessary topological "
                        "inputs to compute the mixing angles without any free parameters or calibration "
                        "(except δ_CP parity offset 45.9° and m_base = 0.049906 eV, both FITTED)."
             ),
@@ -879,8 +957,12 @@ class NeutrinoMixingSimulation(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="With the TCS #187 values (b₂=4, b₃=24, χ_eff=144, n_gen=3, S_orient=12), "
-                       "we obtain: θ₁₂=33.59°, θ₁₃=8.65°, θ₂₃=49.75°, δ_CP=278.4°. "
+                content=f"With the adopted Joyce seed (b₂={_b2_adopted()}, b₃={int(_REG.elder_kads)}, "
+                       f"χ_eff={int(_REG.chi_eff_total)} which is UNRULED, n_gen={int(_REG.n_gen)}, S_orient=12), "
+                       f"we obtain: θ₁₂={_t12:.2f}°, θ₁₃={_t13:.2f}°, θ₂₃={_t23:.2f}°, "
+                       f"δ_CP={_dcp:.1f}°. At the retired (b₂, b₃) = (4, 24) these read "
+                       f"33.59°, 8.65°, 49.75° and 278.4°; the difference is a RECORDED "
+                       f"COST of the seed adoption, not a refit. "
                        "The δ_CP includes a 45.9° parity offset from 13D→4D projection. "
                        "These predictions agree with NuFIT 6.0 (IO) global fit values to within 1σ, "
                        "with no calibration or free parameters "
@@ -1408,8 +1490,11 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "Neutrino mass eigenvalues from the Yukawa texture matrix determined by "
                     "associative 3-cycle intersection geometry. The mass hierarchy arises from "
                     "exponentially suppressed wavefunction overlaps between generations localized "
-                    "on distinct cycles of the G2 manifold. The b3=24 topology (even Betti number) "
-                    "naturally supports Inverted Ordering with two near-degenerate heavy states "
+                    f"on distinct cycles of the G2 manifold. FALSIFIED SUB-CLAIM, kept on "
+                    f"the books: 'the b3 = 24 topology (even Betti number) naturally supports "
+                    f"Inverted Ordering with two near-degenerate heavy states'. At the adopted "
+                    f"b3 = {int(_REG.elder_kads)} the Betti number is ODD, so the parity "
+                    f"argument is gone and no substitute is offered. The text continued: "
                     "(m1, m2 ~ 0.049 eV) and one flux-suppressed light state (m3 ~ 0.002 eV)."
                 ),
                 inputParams=["topology.b2", "topology.elder_kads", "topology.mephorash_chi"],
@@ -1864,7 +1949,7 @@ class NeutrinoMixingSimulation(SimulationBase):
                     "EML: ops.div(eml_vec('topology.mephorash_chi'), "
                     "ops.mul(eml_vec('topology.b2'), eml_vec('topology.elder_kads'))) "
                     "— k_gimel = χ/(b₂·b₃) = 144/(4·24) = 1.5 (this module's local k_gimel "
-                    "— name collision with the Higgs-VEV k_gimel = b₃/2 + 1/π ≈ 12.318)"
+                    f"— name collision with the Higgs-VEV k_gimel = b₃/2 + 1/π ≈ {float(_REG.demiurgic_coupling):.3f})"
                 ),
                 validation={
                     "bound_type": "theoretical",
@@ -2197,12 +2282,14 @@ def run_neutrino_mixing(verbose: bool = True) -> Dict[str, Any]:
     # Create registry and simulation
     registry = PMRegistry.get_instance()
 
-    # Set up topological inputs (from TCS #187)
-    registry.set_param("topology.b2", 4, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
-    registry.set_param("topology.elder_kads", 24, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
-    # PMNS uses chi_eff_total = 144 (both shadows) - neutrino oscillations involve both shadows
-    registry.set_param("topology.mephorash_chi", 144, source="ESTABLISHED:TCS #187 (both shadows)", status="ESTABLISHED")
-    registry.set_param("topology.n_gen", 3, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
+    # Set up topological inputs from the ADOPTED seed. The retired literals
+    # (b2 = 4, b3 = 24, both sourced to "TCS #187") are gone: TCS as exhibited
+    # gives 71 <= b_3 <= 155 and so never supplied 24 either.
+    registry.set_param("topology.b2", _b2_adopted(), source="b3_path:adopted_seed", status="ESTABLISHED")
+    registry.set_param("topology.elder_kads", int(_REG.elder_kads), source="b3_path:adopted_seed", status="ESTABLISHED")
+    # PMNS uses chi_eff_total (both shadows) - neutrino oscillations involve both shadows
+    registry.set_param("topology.mephorash_chi", int(_REG.chi_eff_total), source="FormulasRegistry:chi_eff_total (UNRULED)", status="ESTABLISHED")
+    registry.set_param("topology.n_gen", int(_REG.n_gen), source="b3_path:adopted_seed (n_gen = b_2/4 = rank(Gamma))", status="ESTABLISHED")
     registry.set_param("topology.orientation_sum", 12, source="ESTABLISHED:Euclidean bridge OR reduction", status="ESTABLISHED")
 
     # Create and execute simulation
@@ -2289,10 +2376,22 @@ if _EML_OK:
 assert len(_validation_instance.get_output_param_definitions()) >= 4, \
     f"NeutrinoMixing: expected at least 4 output params, got {len(_validation_instance.get_output_param_definitions())}"
 
-# Test key calculations with known topological inputs (TCS #187)
-# PMNS uses chi_eff_total = 144 (both shadows) because neutrino oscillations involve both shadows
+# ARITHMETIC PROBE AT FIXED INPUTS -- NOT A STATEMENT ABOUT THE ADOPTED SEED.
+#
+# The block below re-implements the three angle formulas at the literal pair
+# (b2, b3) = (4, 24) and pins each result. Those literals are the PROBE'S
+# INPUT, chosen so the arithmetic has a fixed expected answer. They are the
+# RETIRED seed_24 values, and the framework no longer runs there: the adopted
+# seed is (b_2, b_3) = (12, 43) on a Joyce orbifold T^7/(Z/2)^3 with
+# b_3 = 7 + 3 b_2.
+#
+# At the adopted seed these same formulas give DIFFERENT angles. That is a
+# RECORDED COST of the adoption, and it is published from live values in
+# get_section_content rather than hidden by repinning this probe. The literals
+# therefore stay 4 and 24 here even though no published number does, and the
+# tolerances below are untouched.
 _b2, _b3 = 4, 24
-_chi_eff, _n_gen = 144, 3  # chi_eff_total = 144 for PMNS
+_chi_eff, _n_gen = 144, 3  # chi_eff_total (UNRULED quantity) for PMNS
 _orientation_sum = 12  # Single unified bridge orientation sum
 
 # Test theta_13 calculation

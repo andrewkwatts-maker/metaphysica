@@ -673,7 +673,7 @@ class CKMMatrixSimulation(SimulationBase):
                     content=(
                         "The parameter η ~ sin(δ<sub>CP</sub>) where δ<sub>CP</sub> is a CP-violating phase. "
                         "In our framework, this phase arises from the topological structure of the "
-                        "G₂ holonomy. For TCS G₂ manifold #187 the holonomy phase is taken as "
+                        "G₂ holonomy. The holonomy phase is taken as "
                         "δ<sub>CP</sub> ~ π/6 (30 degrees). CAVEAT: π/K with the stated "
                         "K = 4 matching fibres gives π/4 = 45°, not π/6 — π/6 requires "
                         "K = 6. The fibre-count-to-phase step is unresolved:"
@@ -1283,11 +1283,14 @@ class CKMMatrixSimulation(SimulationBase):
                 status="ANSATZ",
                 description=(
                     "CP-violating phase in CKM matrix. Registered as delta_CP ~ pi/6 ~ 30 degrees "
-                    "from K=4 topological matching fibres in TCS G2 manifold "
+                    "from K=4 topological matching fibres in a TCS G2 manifold -- an "
+                    "OFF-PATH construction here, since TCS as exhibited gives "
+                    "71 <= b_3 <= 155 and so excludes the adopted b_3; the claim is "
+                    "kept on the books, labelled, "
                     "(inconsistent with atan2(eta, rho) = 68.7 deg — the pi/6 display value is a "
                     "legacy ansatz; numeric kept for downstream consumers)."
                 ),
-                eml_description="EML: ops.div(eml_pi(), eml_scalar(6.0)) — δ_CP = π/6 from K=4 TCS matching fibres topology",
+                eml_description="EML: ops.div(eml_pi(), eml_scalar(6.0)) — δ_CP = π/6 from K=4 TCS matching fibres topology (TCS is OFF-PATH; retained and labelled)",
                 derivation_formula="jarlskog-invariant",
                 no_experimental_value=True
             ),
@@ -1699,7 +1702,7 @@ class CKMMatrixSimulation(SimulationBase):
                 "3.08±0.13×10^-5). Wolfenstein parameters: lambda=epsilon, A=0.81 (FITTED), rho=0.14, eta=0.36 (FITTED)."
             ),
             "prediction": (
-                "The CP-violating phase delta_CP ~ 30° is associated with the TCS G2 matching fibres "
+                "The CP-violating phase delta_CP ~ 30° is associated with the TCS G2 matching fibres (an OFF-PATH construction, retained and labelled) "
                 "(CAVEAT: pi/K with K=4 gives 45°, not 30° - the fibre-count-to-phase step is "
                 "unresolved). The Jarlskog invariant J ~ 3x10^-5 follows, "
                 "within 5.4% (1.3 sigma) of the experimental value, with A and eta FITTED. This connection between CP violation and "
