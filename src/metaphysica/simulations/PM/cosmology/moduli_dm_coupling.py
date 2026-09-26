@@ -172,6 +172,13 @@ Dedicated To:
 
 import math
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
 from datetime import datetime
@@ -292,7 +299,7 @@ class ModuliDMCouplingV24(SimulationBase):
             "geometry.alpha_leak",       # 1/sqrt(6) from four_face_structure
             "geometry.mephorash_chi",    # 144 (chi_eff canonical name)
             "geometry.elder_kads",       # 24  (b3 canonical name)
-            "cosmology.w0_derived",      # -23/24
+            "cosmology.w0_derived",      # -(b3-1)/b3, adopted seed
             "cosmology.wa_derived",      # ~0.29
             "desi.sigma8",               # 0.827 +/- 0.011
             "desi.Omega_m",              # 0.3069 +/- 0.005
@@ -480,7 +487,7 @@ class ModuliDMCouplingV24(SimulationBase):
                 "The entropy-modulated friction is a theoretically motivated "
                 "but practically IRRELEVANT extension. The S8 suppression in "
                 "this model is dominated by the dark energy equation of state "
-                "(w0=-23/24, wa=0.29), not by the moduli-DM coupling beta. "
+                f"(w0=-{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)}, wa=0.29), not by the moduli-DM coupling beta. "
                 "Increasing beta by 8% (or even 8x) changes S8 by < 0.3%. "
                 "To reach S8 ~ 0.77, one would need to increase phi_dot_frac "
                 "(modulus rolling velocity), which is an independent model "
@@ -764,7 +771,7 @@ class ModuliDMCouplingV24(SimulationBase):
         self.validate_inputs(registry)
 
         # Read inputs
-        w0 = registry.get_param("cosmology.w0_derived")     # -23/24
+        w0 = registry.get_param("cosmology.w0_derived")     # -(b3-1)/b3
         wa = registry.get_param("cosmology.wa_derived")      # ~0.29
         sigma8_desi = registry.get_param("desi.sigma8")      # 0.827
         Omega_m = registry.get_param("desi.Omega_m")         # 0.3069
@@ -1016,7 +1023,7 @@ class ModuliDMCouplingV24(SimulationBase):
                     "weak lensing surveys (KiDS-1000: $S_8 = 0.766 \\pm 0.020$; "
                     "DES Y3: $S_8 = 0.776 \\pm 0.017$) represents an $\\sim 8\\%$ "
                     "discrepancy in the amplitude of matter clustering. "
-                    "PM's dark energy equation of state $w_0 = -23/24 > -1$ alone "
+                    f"PM's dark energy equation of state $w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} > -1$ alone "
                     "predicts \\textit{higher} S8 than $\\Lambda$CDM, going in the "
                     "wrong direction. We address this via moduli-DM coupling from "
                     "the G2 hidden-face sector."
@@ -1316,7 +1323,7 @@ def main():
     # LCDM Hubble
     H_lcdm = _standalone_hubble(z_grid, -1.0, 0.0, Omega_m)
 
-    # PM Hubble (w0 = -23/24, wa = 0.29)
+    # PM Hubble (w0 = -(b3-1)/b3 from the adopted seed, wa = 0.29)
     w0 = -23.0 / 24.0
     wa = 0.29
     H_pm = _standalone_hubble(z_grid, w0, wa, Omega_m)

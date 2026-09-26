@@ -71,6 +71,12 @@ import math
 from typing import Any, Dict, Optional
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
 from scipy.integrate import solve_ivp
 
 # IMPORTANT: import from the local adapter, NOT eml_math.
@@ -296,7 +302,7 @@ class MirrorDMRelic:
             param="omega_mirror_h2",
             formula=(
                 "solve Boltzmann + bridge_coupling from G2 cycles "
-                "| b3=24 rooted via re_t_sector "
+                f"| b3={int(_REG.elder_kads)} rooted via re_t_sector "
                 "| CALIBRATED: IC-dominated (see Y_INITIAL note)"
             ),
             value=float(omega_h2),
@@ -311,7 +317,7 @@ class MirrorDMRelic:
         )
         self.relic_tree.register_derivation(
             param="mirror_dm_relic",
-            formula="2.74e8 * m_mirror * Y_today | full freeze-out from Z2 bridge (b3=24)",
+            formula=f"2.74e8 * m_mirror * Y_today | full freeze-out from Z2 bridge (b3={int(_REG.elder_kads)})",
             value={
                 "omega_mirror_h2": float(omega_h2),
                 "Y_today": float(Y_today),

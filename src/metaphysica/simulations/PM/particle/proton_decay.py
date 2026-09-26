@@ -8,6 +8,26 @@ Licensed under the MIT License. See LICENSE file for details.
 Computes proton lifetime from TCS G2 cycle separation geometry using the
 SimulationBase framework.
 
+OFF-PATH CONSTRUCTION -- READ THIS FIRST
+========================================
+Every geometric claim in this module rests on the TWISTED CONNECTED SUM (TCS)
+construction: the S^1 x K3 neck, the K3 fibre matching number K = 4, the
+"TCS G2 #187" label. That construction is OFF-PATH for this framework as of
+the 2026-09-22 seed adoption.
+
+The construction in force is a JOYCE ORBIFOLD T^7/(Z/2)^3 with Eguchi-Hanson
+resolutions, whose reachable Betti numbers are b_3 = 7 + 3 n_T3 for n_T3 in
+{0, 4, 8, 12}, i.e. b_3 in {7, 19, 31, 43}; the adopted pair is
+(b_2, b_3) = (12, 43). TCS, as exhibited, gives 71 <= b_3 <= 155. That range
+EXCLUDES b_3 = 43, which is exactly why TCS is used in this framework as an
+exclusion rather than as a source: it cannot supply the adopted seed.
+
+This module is NOT deleted, and its numbers are NOT re-derived on the Joyce
+construction -- there is no Joyce analogue of the K3 neck to substitute, and
+inventing one would be manufacturing a mechanism. The claims stay on the
+books, labelled: the proton lifetime computed here is the TCS-geometry
+prediction, and it is off the adopted path.
+
 Key Physics:
 - Geometric suppression factor S = exp(2*pi*d/R) from TCS neck topology
 - Cycle separation d/R ~ 0.12 obtained from K=4 matching fibres
@@ -113,6 +133,23 @@ except Exception:  # pragma: no cover
     _A = None  # type: ignore[assignment]
     def _arithma_num(v):
         return None
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT reads. The adopted seed supplies b_3 and b_2; this module's TCS
+#: geometry is OFF-PATH and these are read so the exclusion argument quotes
+#: live numbers rather than retyped ones.
+_REG = _get_reg()
+
+
+def _b2_adopted() -> int:
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path as _rp, seed_values as _sv,
+    )
+    return int(_sv(_rp())[1])
+
+
+_B2 = _b2_adopted()
+
 from metaphysica.simulations.core.eml_integration import (
     eml_scalar as _eml_scalar,
     eml_mul as _eml_mul,
@@ -152,11 +189,14 @@ class ProtonDecaySimulation(SimulationBase):
             id="proton_decay_v17_2",
             version="17.2",
             domain="proton",
-            title="Proton Decay Lifetime from TCS Geometry",
+            title="Proton Decay Lifetime from TCS Geometry (OFF-PATH construction)",
             description=(
                 "Computes proton lifetime using geometric suppression from "
                 "TCS G2 cycle separation. Derives d/R from K3 matching fibres "
-                "and applies wavefunction overlap selection rule."
+                "and applies a wavefunction overlap selection rule. OFF-PATH: "
+                "the construction in force is the Joyce orbifold T^7/(Z/2)^3, "
+                "and TCS (exhibited range 71 <= b_3 <= 155) cannot supply the "
+                "adopted b_3 = 43. Retained and labelled, not deleted."
             ),
             section_id="4",
             subsection_id="4.6"
@@ -316,14 +356,35 @@ class ProtonDecaySimulation(SimulationBase):
             subsection_id="4.6",
             title="Proton Decay Lifetime",
             abstract=(
-                "We compute the proton lifetime from the TCS (twisted connected sum) "
-                "G2 manifold, where the neck topology separating the two building "
-                "blocks exponentially suppresses dimension-6 proton decay operators. "
-                "The K3 fibre matching number K = 4 fixes the cycle separation "
-                "d/R = 1/(2*pi*K), yielding tau_p ~ 3.9 x 10^34 years -- above the "
-                "Super-Kamiokande bound and testable by Hyper-Kamiokande."
+                f"We compute the proton lifetime from the TCS (twisted connected "
+                f"sum) G2 manifold, where the neck topology separating the two "
+                f"building blocks exponentially suppresses dimension-6 proton decay "
+                f"operators. The K3 fibre matching number K = 4 fixes the cycle "
+                f"separation d/R = 1/(2*pi*K). OFF-PATH: the construction in force "
+                f"for this framework is the Joyce orbifold T^7/(Z/2)^3 with "
+                f"Eguchi-Hanson resolutions and adopted seed "
+                f"(b_2, b_3) = ({_B2}, {int(_REG.elder_kads)}); TCS as exhibited "
+                f"gives 71 <= b_3 <= 155, which EXCLUDES b_3 = "
+                f"{int(_REG.elder_kads)}, so TCS serves here as an exclusion, not "
+                f"as a source. This section is retained and labelled rather than "
+                f"deleted, and its lifetime is the TCS-geometry prediction."
             ),
             content_blocks=[
+                ContentBlock(
+                    type="callout",
+                    callout_type="warning",
+                    title="Off-path construction",
+                    content=(
+                        f"The mechanism below is TCS-specific throughout: the "
+                        f"S^1 x K3 neck, the matching number K = 4, and the "
+                        f"'TCS G2 #187' label. The adopted construction is the "
+                        f"Joyce orbifold T^7/(Z/2)^3, b_3 = 7 + 3 b_2, with "
+                        f"(b_2, b_3) = ({_B2}, {int(_REG.elder_kads)}). No Joyce "
+                        f"analogue of the K3 neck is substituted here, because "
+                        f"none has been derived; supplying one would be inventing "
+                        f"a mechanism. The claim stays on the books, labelled."
+                    )
+                ),
                 ContentBlock(
                     type="paragraph",
                     content=(
@@ -482,13 +543,18 @@ class ProtonDecaySimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This geometric selection rule arises from the sum over "
-                        "orientations of the associative matter 3-cycles within the "
-                        "TCS G2 manifold. Of the 24 possible orientations of the "
-                        "3-cycle relative to the G2 structure, exactly 12 contribute "
-                        "to the e+pi0 channel (those aligned with the SU(5) -> "
-                        "SU(3) x SU(2) x U(1) breaking pattern), giving "
-                        "BR = (12/24)^2 = 0.25."
+                        f"This geometric selection rule arises from the sum over "
+                        f"orientations of the associative matter 3-cycles within the "
+                        f"TCS G2 manifold. Of the 24 possible orientations of the "
+                        f"3-cycle relative to the G2 structure, exactly 12 contribute "
+                        f"to the e+pi0 channel (those aligned with the SU(5) -> "
+                        f"SU(3) x SU(2) x U(1) breaking pattern), giving "
+                        f"BR = (12/24)^2 = 0.25. NOTE ON THE 24: this 24 is an "
+                        f"orientation count of the G2 structure, NOT the third Betti "
+                        f"number, which on the adopted seed is "
+                        f"{int(_REG.elder_kads)}. The two were numerically equal on "
+                        f"the retired seed_24 branch and the coincidence is recorded "
+                        f"here so the reader does not re-identify them."
                     )
                 ),
             ],
@@ -1229,7 +1295,10 @@ class ProtonDecaySimulation(SimulationBase):
             "as.coupling_classification": "MOTIVATED_IDENTIFICATION",
             "as.base_classification": "PHENOMENOLOGICAL (C_PREFACTOR fitted)",
             "as.fitted_params_in_suppression": 0,
-            "as.pillar_seeds_used": ["b3=24", "chi_eff=144"],
+            "as.pillar_seeds_used": [
+                "b3=%d" % int(_REG.elder_kads),
+                "chi_eff=%d (UNRULED)" % int(_REG.chi_eff_total),
+            ],
         }
 
         if verbose:

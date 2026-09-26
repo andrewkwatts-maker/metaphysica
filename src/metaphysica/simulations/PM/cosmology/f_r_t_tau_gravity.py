@@ -13,7 +13,8 @@ LAGRANGIAN:
     - R: 4D Ricci scalar
     - T: Trace of stress-energy tensor
     - tau: G2 modulus field (cycle volume)
-    - alpha_F: R^2 coefficient from b3=24 associative cycles
+    - alpha_F: R^2 coefficient from the b3 associative cycles (b3 read from
+      the adopted seed)
     - beta_F: Matter coupling from G2 volume modulus
     - gamma_F: Holonomy-scalar cross coupling
     - delta_F: Kinetic mixing from flux dynamics
@@ -23,13 +24,15 @@ DERIVATION FROM G2 COMPACTIFICATION:
     reduction over G2 yields 4D effective action with f(R,T,tau) structure.
 
     Key geometric inputs:
-    - b3 = 24: Third Betti number (associative 3-cycles)
+    - b3: Third Betti number (associative 3-cycles), read from the adopted
+      (b_2, b_3) = (12, 43) Joyce seed rather than typed
     - chi_eff = 144: Effective Euler characteristic (flux quanta)
     - Vol(G2) proxy = 1e12: G2 volume in Planck units
 
 PHYSICAL PREDICTIONS:
     The modified gravity yields:
-    1. Attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583, DESI 0.027σ)
+    1. Attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -(b_3-1)/b_3;
+       the deviation against DESI is computed, not quoted)
     2. Gravitational slip eta_G = 1 + O(10^-5)
     3. Effective Newton constant G_eff = G_N * (1 + corrections)
 
@@ -123,8 +126,9 @@ class FRTTauGravityV18(SimulationBase):
             title="f(R,T,tau) Modified Gravity from G2",
             description=(
                 "Derives modified gravity Lagrangian from G2 compactification. "
-                "Coefficients emerge from b3=24 cycles and flux stabilization. "
-                "Attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583)."
+                f"Coefficients emerge from b3={int(_REG.elder_kads)} cycles and flux "
+                f"stabilization. Attractor-dynamics variant w_0 ≈ -0.980 "
+                f"(canonical w0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)})."
             ),
             section_id="5",
             subsection_id="5.1.1"
@@ -213,7 +217,8 @@ class FRTTauGravityV18(SimulationBase):
         # where R_0 ~ H_0^2 is the Hubble scale curvature
         #
         # Numerically the full dynamics give ≈ -0.980 — a variant of the
-        # canonical w0 = -23/24 = -0.9583 (the canonical value is the ruling)
+        # canonical w0 = -(b3-1)/b3 from the adopted seed (the canonical
+        # value is the ruling; it moved when the seed moved)
 
         # Simplified attractor result:
         # w_0 = -1 + (2/3) * (1/sqrt(chi_eff)) * correction_factor
@@ -466,7 +471,7 @@ class FRTTauGravityV18(SimulationBase):
                 category="DERIVED",
                 description=(
                     "f(R,T,tau) modified gravity Lagrangian from G2 compactification. "
-                    "Coefficients derived from b3=24 associative cycles and chi_eff=144 flux quanta."
+                    f"Coefficients derived from b3={int(_REG.elder_kads)} associative cycles and chi_eff={int(_REG.chi_eff_total)} flux quanta (chi_eff UNRULED)."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["gravity.alpha_F_r2", "gravity.beta_F_trace", "gravity.gamma_F_cross", "gravity.delta_F_kinetic"],
@@ -536,7 +541,7 @@ class FRTTauGravityV18(SimulationBase):
                         }
                     ],
                     "references": [
-                        "G2 topology: TCS manifold #187 with b3=24",
+                        f"G2 topology: Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions, b3={int(_REG.elder_kads)}, b_3 = 7 + 3 b_2. The earlier 'TCS manifold #187 with b3=24' provenance is WITHDRAWN: TCS as exhibited gives 71 <= b_3 <= 155, which excludes {int(_REG.elder_kads)}.",
                         "Flux stabilization: chi_eff = 144 quanta"
                     ],
                     "method": "topological_coefficient_derivation",
@@ -635,7 +640,7 @@ class FRTTauGravityV18(SimulationBase):
                     "parentFormulas": ["alpha-f-derivation-v18"]
                 },
                 terms={
-                    "alpha_F": "R^2 coefficient from b3=24 cycles",
+                    "alpha_F": f"R^2 coefficient from b3={int(_REG.elder_kads)} cycles",
                     "R_0": "Background curvature (cosmological: ~H_0^2)",
                     "GW170817": "Observational constraint: |v_gw - c| < 10^-15"
                 },
@@ -700,8 +705,8 @@ class FRTTauGravityV18(SimulationBase):
                 name="R^2 Coefficient",
                 units="dimensionless",
                 status="DERIVED",
-                description="R^2 coefficient from b3=24 associative 3-cycles.",
-                eml_description="EML: ops.inv(ops.pow(eml_scalar(24.0), eml_scalar(2.0))) — α_F = 1/b₃² = 1/576 from b₃=24 associative 3-cycles",
+                description=f"R^2 coefficient from b3={int(_REG.elder_kads)} associative 3-cycles.",
+                eml_description=f"EML: ops.inv(ops.pow(b3_leaf(), eml_scalar(2.0))) — α_F = 1/b₃² = 1/{int(_REG.elder_kads) ** 2} from b₃={int(_REG.elder_kads)} associative 3-cycles",
                 no_experimental_value=True
             ),
             Parameter(
@@ -740,7 +745,7 @@ class FRTTauGravityV18(SimulationBase):
                 description=(
                     "Dark energy equation of state from f(R,T,tau) attractor. "
                     "The published value is w_0 = -0.9796, not the canonical "
-                    "w_0 = -23/24 = -0.9583: this module applies an additional "
+                    f"w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)}: this module applies an additional "
                     "delta_attractor = 0.034 that is asserted, not integrated. "
                     "See the note on gravity.w_0_modified."
                 ),
@@ -818,8 +823,10 @@ class FRTTauGravityV18(SimulationBase):
             abstract=(
                 "The effective 4D gravity Lagrangian emerges from dimensional reduction "
                 "of 11D M-theory over the G2 manifold. Higher-curvature corrections (R^2) "
-                "and scalar-tensor couplings arise from flux stabilization on the b3=24 "
-                "associative cycles, predicting an attractor-dynamics variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583)."
+                f"and scalar-tensor couplings arise from flux stabilization on the "
+                f"b3={int(_REG.elder_kads)} associative cycles, predicting an "
+                f"attractor-dynamics variant w_0 ≈ -0.980 "
+                f"(canonical w0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)})."
             ),
             content_blocks=[
                 ContentBlock(
@@ -831,7 +838,7 @@ class FRTTauGravityV18(SimulationBase):
                     content=(
                         "Starting from the 11D M-theory action S_11 = integral d^11x sqrt(-g) "
                         "[R_11 + F_4^2 + ...], dimensional reduction over the G2 manifold "
-                        "K_Pneuma (b3 = 24, chi_eff = 144) yields a 4D effective action that "
+                        f"K_Pneuma (b3 = {int(_REG.elder_kads)}, chi_eff = {int(_REG.chi_eff_total)}; chi_eff UNRULED) yields a 4D effective action that "
                         "is not pure Einstein gravity but a modified f(R,T,tau) theory. "
                         "The higher-curvature corrections (R^2 term) arise from the "
                         "associative 3-cycle fluctuations, while the stress-energy trace "
@@ -869,7 +876,7 @@ class FRTTauGravityV18(SimulationBase):
                     callout_type="info",
                     title="Dark Energy Prediction",
                     content=(
-                        "The modified gravity attractor dynamics predict a variant w_0 ≈ -0.980 (canonical w0 = -23/24 = -0.9583), "
+                        f"The modified gravity attractor dynamics predict a variant w_0 ≈ -0.980 (canonical w0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)}), "
                         "consistent with Planck 2018 + BAO observations (w_0 = -1.03 +/- 0.03). "
                         "The tau modulus acts as quintessence, with the potential driving "
                         "the attractor behavior toward w = -1."

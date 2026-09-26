@@ -88,9 +88,17 @@ _REG = get_registry()
 # =============================================================================
 
 # G2 Topology Constants (TCS #187) - from FormulasRegistry SSoT
-B3_G2 = _REG.elder_kads   # Third Betti number = 24
-B2_G2 = 4                 # Second Betti number
-CHI_EFF = _REG.qedem_chi_sum  # Effective Euler characteristic = 144
+# b_3 and b_2 are READ from the live b3_seed fork. B2_G2 was the
+# literal 4 while the registry had already moved to the Joyce profile,
+# which is the stale-number defect this campaign closes.
+from metaphysica.simulations.PM.geometry.b3_path import (
+    resolve_path as _resolve_b3_path,
+    seed_values as _seed_values,
+)
+
+B3_SEED_PATH = _resolve_b3_path()
+B3_G2, B2_G2 = _seed_values(B3_SEED_PATH)   # (b_3, b_2) from the seed
+CHI_EFF = _REG.qedem_chi_sum  # Effective Euler characteristic (UNRULED)
 
 # Gauge Group Dimensions
 DIM_SU3 = 8         # dim(SU(3)) adjoint
@@ -239,7 +247,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             title="Complete Gauge Sector Lagrangian Derivations from G2 Holonomy",
             description=(
                 "Comprehensive derivations for SM gauge sectors (SU(3)_C, SU(2)_L, U(1)_Y) "
-                "and electroweak mixing from G2 holonomy geometry. Shows how gauge "
+                "and electroweak mixing from the internal G2-structure geometry. Shows how gauge "
                 "Lagrangians emerge from associative/co-associative cycle structure "
                 "following Carroll's spin connection formalism."
             ),
@@ -1509,7 +1517,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             title="Complete Gauge Sector Lagrangian Derivations from G2 Holonomy",
             abstract=(
                 "Comprehensive derivation of Standard Model gauge Lagrangians from "
-                "G2 holonomy geometry. Shows how SU(3)_C emerges from associative 3-cycles, "
+                "the internal G2-structure geometry. Shows how SU(3)_C emerges from associative 3-cycles, "
                 "SU(2)_L from co-associative 4-cycles, U(1)_Y from residual Abelian structure, "
                 "and electroweak mixing from shadow tilt."
             ),
@@ -1524,7 +1532,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                     type="paragraph",
                     content=(
                         "This section presents complete derivations of the Standard Model "
-                        "gauge sector from G2 holonomy geometry. Following Carroll's formalism "
+                        "gauge sector from the internal G2-structure geometry. Following Carroll's formalism "
                         "connecting spin connections to gauge fields, we show how the full "
                         "SU(3)_C x SU(2)_L x U(1)_Y gauge structure emerges naturally from "
                         "the topology of a compact 7-dimensional G2 manifold."
@@ -1680,12 +1688,18 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "In M-theory compactified on a G2 holonomy manifold, the non-Abelian "
-                        "gauge symmetry arises from codimension-4 singularities (ADE type) "
-                        "in the compact 7-dimensional space (Acharya 2002; Acharya-Witten "
-                        "2001). For the four-face TCS (twisted connected sum) construction, "
-                        "a unified SO(10) gauge symmetry is supported at the singular locus "
-                        "of the G2 manifold. The breaking chain"
+                        "In M-theory compactified on a G2-structure "
+                        "7-manifold, the non-Abelian gauge symmetry arises "
+                        "from codimension-4 singularities (ADE type) in the "
+                        "compact 7-dimensional space (Acharya 2002; "
+                        "Acharya-Witten 2001). For the four-face "
+                        "construction -- a Joyce orbifold T^7/(Z/2)^3 with "
+                        "its A1 loci Eguchi-Hanson resolved, NOT the TCS "
+                        "(twisted connected sum) this paragraph used to "
+                        "name, since TCS exhibits 71 <= b_3 <= 155 and "
+                        "b_3 = %d here -- a unified SO(10) gauge symmetry "
+                        "is supported at the singular locus. The breaking "
+                        "chain" % B3_G2
                     )
                 ),
                 ContentBlock(
@@ -1697,12 +1711,19 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "is implemented by discrete Wilson lines (flat connections) threading "
-                        "the h^{1,1} = 4 independent 2-cycles of the TCS G2 manifold. Each "
-                        "of the four faces contributes a distinct topological flux quantum, "
-                        "and the pattern of breaking is dictated by the TCS gluing data. "
-                        "Concretely, the G-flux (4-form field strength of the M-theory 3-form "
-                        "C-field) on the G2 manifold has quantised periods:"
+                        "is implemented by discrete Wilson lines (flat "
+                        "connections) threading the four independent moduli "
+                        "faces, derived as the moved coordinates of an "
+                        "involution. Each face contributes a distinct "
+                        "topological flux quantum. This paragraph "
+                        "previously threaded \"the h^{1,1} = 4 independent "
+                        "2-cycles of the TCS G2 manifold\" with the pattern "
+                        "\"dictated by the TCS gluing data\"; that "
+                        "provenance is off-path (b_2 = %d counts resolved "
+                        "A1 families here, not K3 fibres) and is recorded "
+                        "rather than deleted. Concretely, the G-flux "
+                        "(4-form field strength of the M-theory 3-form "
+                        "C-field) has quantised periods:" % B2_G2
                     )
                 ),
                 ContentBlock(
@@ -1732,7 +1753,12 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                         "compactification scale M_KK >> M_GUT, consistent with Super-Kamiokande bounds",
                         "Chiral matter emerges at conical singularities: fermion zero modes are "
                         "localised at codimension-7 points where the singular locus meets the "
-                        "associative 3-cycles, producing exactly 3 generations when b_3 = 24",
+                        "associative 3-cycles. RELOCATED: this line read "
+                        "\"producing exactly 3 generations when b_3 = 24\". "
+                        "The count now comes from n_gen = b_2/4 = %d/4, "
+                        "since b_3/8 is an integer nowhere on the "
+                        "Joyce-reachable family (b_3 odd at every profile; "
+                        "b_3 = %d here)" % (B2_G2, B3_G2),
                         "Gauge coupling unification at M_GUT is automatic from the common ADE "
                         "singularity origin, with threshold corrections from KK tower modes"
                     ]
@@ -1754,7 +1780,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                     callout_type="success",
                     title="Gauge Sector Derivation Summary",
                     content=(
-                        "All Standard Model gauge structure emerges from G2 holonomy:\n"
+                        "All Standard Model gauge structure emerges from the "
+                        "internal G2-structure geometry:\n"
                         "- SU(3)_C: 8 gluons from A2 singularities on 3-cycles\n"
                         "- SU(2)_L: 3 weak bosons from A1 singularities on 4-cycles\n"
                         "- U(1)_Y: Y = 125/144 from visible/total ratio\n"
@@ -1935,7 +1962,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             {
                 "topic": "Standard Model gauge structure SU(3) x SU(2) x U(1)",
                 "url": "https://en.wikipedia.org/wiki/Standard_Model",
-                "relevance": "Overview of the SM gauge groups that emerge from G2 holonomy",
+                "relevance": "Overview of the SM gauge groups that emerge from the internal G2-structure geometry",
                 "validation_hint": "Check that SU(3)_C has 8 gluons, SU(2)_L has 3 bosons, U(1)_Y has 1 boson"
             },
             {
@@ -1959,7 +1986,14 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             {
                 "topic": "Gauge symmetry breaking in G2 compactifications via Wilson lines",
                 "url": "https://en.wikipedia.org/wiki/Wilson_loop",
-                "relevance": "In the four-face G2 architecture, SO(10) breaks to G_SM = SU(3) x SU(2) x U(1) via discrete Wilson lines threading the h^{1,1} = 4 independent 2-cycles. Each face contributes a distinct flux quantum dictated by TCS gluing data.",
+                "relevance": ("In the four-face G2 architecture, SO(10) "
+                              "breaks to G_SM = SU(3) x SU(2) x U(1) via "
+                              "discrete Wilson lines threading the four "
+                              "derived moduli faces. Each face contributes a "
+                              "distinct flux quantum. Formerly attributed to "
+                              "'the h^{1,1} = 4 independent 2-cycles ... "
+                              "dictated by TCS gluing data'; TCS is "
+                              "off-path at b_3 = %d." % B3_G2),
                 "validation_hint": "Verify that Wilson line breaking of SO(10) on G2 manifolds can yield the Standard Model gauge group without doublet-triplet splitting"
             },
         ]
@@ -2075,7 +2109,9 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             {
                 "gate_id": "G35",
                 "simulation_id": self.metadata.id,
-                "assertion": "QCD confinement from Wilson loop area law on b3 = 24 cycles",
+                "assertion": ("QCD confinement from the Wilson loop area law "
+                              "on the b_3 = %d cycles (read from the seed; "
+                              "this assertion used to type 24)" % B3_G2),
                 "result": "PASS",
                 "timestamp": ts
             },

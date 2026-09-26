@@ -10,16 +10,27 @@ DERIVATION:
     The Higgs VEV emerges from the G2 holonomy warp factor times the
     number of non-trivial 3-cycles participating in symmetry breaking:
 
-    v = k_gimel × (b3 - 4) = 12.318 × 20 = 246.37 GeV
+    v = k_gimel x (b3 - 4)
 
     Where:
-    - k_gimel = 12 + 1/π ≈ 12.318 (holonomy warp factor)
-    - b3 - 4 = 24 - 4 = 20 (non-trivial cycles for EWSB)
+    - k_gimel = b3/2 + 1/pi (holonomy warp factor; RIDES THE SEED)
+    - b3 - 4 (non-trivial cycles for EWSB)
 
-    RESULT:
-    - Geometric prediction: v = 246.37 GeV
-    - Experimental value: v = 246.22 GeV (PDG 2024)
-    - Deviation: +0.15 GeV (+0.06%)
+    RECORDED COST OF THE 2026-09-22 SEED ADOPTION -- DO NOT SOFTEN
+    -------------------------------------------------------------
+    Both factors consume b3, so this VEV moved TWICE over when the seed moved
+    from the retired b3 = 24 to the adopted (b_2, b_3) = (12, 43) of the Joyce
+    orbifold T^7/(Z/2)^3:
+
+        was:  k_gimel = 12.318, b3 - 4 = 20,  v = 246.37 GeV  (+0.06% vs PDG)
+        now:  k_gimel = b3/2 + 1/pi, b3 - 4 = 39, and v is what the formula
+              gives at the live seed -- a factor of ~3.45 above the PDG value
+              v = 246.22 GeV.
+
+    That is a large, published, honest cost. It is NOT tuned away, and the
+    "0.06% accuracy without calibration" claim that used to sit here is
+    FALSIFIED on the adopted path rather than deleted. The exact live numbers
+    are computed below and in get_section_content, never retyped.
 
 TREE-LEVEL PHYSICS:
     The geometric derivation yields the TREE-LEVEL Higgs VEV and Fermi constant.
@@ -205,7 +216,9 @@ class HiggsVEVRefinedV18(SimulationBase):
 
         # Topology constants from SSoT registry
         self.elder_kads = _REG.elder_kads  # = 24 (Third Betti number)
-        self.k_gimel = float(_REG.demiurgic_coupling)  # = b3/2 + 1/pi = 12.318...
+        # k_gimel = b3/2 + 1/pi RIDES THE SEED (12.318 on the retired
+        # seed_24 branch). Read, never typed.
+        self.k_gimel = float(_REG.demiurgic_coupling)
 
         # QED coupling for Schwinger correction
         self.alpha_em = 1 / 137.035999177  # CODATA 2022
@@ -242,7 +255,7 @@ class HiggsVEVRefinedV18(SimulationBase):
         Compute Higgs VEV from geometric derivation with full loop corrections.
 
         Derivation:
-            v = k_gimel x (b3 - 4) = 12.318 x 20 = 246.37 GeV
+            v = k_gimel x (b3 - 4), both factors from the adopted seed
             G_F_tree = 1/(sqrt(2) x v^2)
             G_F_schwinger = G_F_tree x (1 + alpha/(2*pi))  [1st order: QED]
             G_F_physical = G_F_schwinger / (1 - Delta_r)   [2nd order: EW]
@@ -255,7 +268,7 @@ class HiggsVEVRefinedV18(SimulationBase):
             HiggsVEVResult with computed values and sigma assessments
         """
         # Geometric VEV from holonomy warp x cycle count
-        v_geometric = self.k_gimel * (self.elder_kads - 4)  # = 246.366 GeV
+        v_geometric = self.k_gimel * (self.elder_kads - 4)
 
         # Tree-level G_F from geometric VEV
         G_F_tree = 1 / (np.sqrt(2) * v_geometric**2)
@@ -391,19 +404,40 @@ class HiggsVEVRefinedV18(SimulationBase):
         """
         return self.run(registry)
 
+    @staticmethod
+    def _live() -> Dict[str, float]:
+        """The live seed-derived quantities, for prose generation.
+
+        Every published number in this module is built from this dict, so a
+        seed ruling rewrites the text instead of leaving it contradicting the
+        arithmetic.
+        """
+        b3 = int(_REG.elder_kads)
+        k = float(_REG.demiurgic_coupling)
+        v = k * (b3 - 4)
+        return {"b3": b3, "k_gimel": k, "cycles": b3 - 4, "v": v,
+                "v_pdg": 246.22, "ratio": v / 246.22}
+
     def get_formulas(self) -> List[Formula]:
-        """Return formulas for Higgs VEV derivation."""
+        """Return formulas for Higgs VEV derivation. Numbers READ, not typed."""
+        _L = self._live()
         return [
             Formula(
                 id="higgs-vev-geometric-v18",
                 label="(4.5)",
-                latex=r"v = k_\gimel \times (b_3 - 4) = 12.318 \times 20 = 246.37 \text{ GeV}",
-                plain_text="v = k_gimel × (b3 - 4) = 12.318 × 20 = 246.37 GeV",
+                latex=rf"v = k_\gimel \times (b_3 - 4) = {_L['k_gimel']:.3f} \times {_L['cycles']} = {_L['v']:.2f} \text{{ GeV}}",
+                plain_text=f"v = k_gimel x (b3 - 4) = {_L['k_gimel']:.3f} x {_L['cycles']} = {_L['v']:.2f} GeV",
                 category="GEOMETRIC",
                 description=(
-                    "Higgs VEV from holonomy warp factor times non-trivial cycle count. "
-                    "This is a genuine geometric prediction achieving 0.06% accuracy "
-                    "(0.06% above the PDG value 246.22 GeV; PDG uncertainty is ~1e-4 GeV, so no meaningful σ can be quoted)."
+                    f"Higgs VEV from holonomy warp factor times non-trivial cycle "
+                    f"count. RECORDED COST, not softened: both factors consume b3, so "
+                    f"this moved twice over at the 2026-09-22 seed adoption. It gives "
+                    f"{_L['v']:.2f} GeV against the PDG value 246.22 GeV, a factor of "
+                    f"{_L['ratio']:.2f}. The earlier claim of '0.06% accuracy without "
+                    f"calibration' held at the retired b3 = 24 (k_gimel = 12.318, "
+                    f"b3 - 4 = 20, v = 246.37 GeV) and is FALSIFIED on the adopted "
+                    f"path. It is kept on the books rather than deleted, and no "
+                    f"parameter is introduced to recover it."
                 ),
                 inputParams=["geometry.k_gimel", "topology.elder_kads"],
                 outputParams=["higgs.vev_geometric"],
@@ -411,30 +445,30 @@ class HiggsVEVRefinedV18(SimulationBase):
                     "method": "Direct multiplication of G2 holonomy warp factor by non-trivial cycle count",
                     "parentFormulas": [],
                     "steps": [
-                        "Identify holonomy warp factor: k_gimel = 12 + 1/pi = 12.318",
-                        "Count non-trivial 3-cycles for EWSB: b3 - 4 = 24 - 4 = 20",
-                        "Higgs VEV: v = k_gimel * (b3 - 4) = 12.318 * 20 = 246.37 GeV",
+                        f"Identify holonomy warp factor: k_gimel = b3/2 + 1/pi = {_L['k_gimel']:.5f}",
+                        f"Count non-trivial 3-cycles for EWSB: b3 - 4 = {_L['b3']} - 4 = {_L['cycles']}",
+                        f"Higgs VEV: v = k_gimel * (b3 - 4) = {_L['k_gimel']:.3f} * {_L['cycles']} = {_L['v']:.2f} GeV (PDG: 246.22 GeV; ratio {_L['ratio']:.2f})",
                     ],
                 },
                 eml_tree_str=(
                     "ops.mul(eml_vec('constants.k_gimel'), ops.sub(b3_leaf(), eml_scalar(4.0)))"
                 ),
                 eml_description=(
-                    "Higgs VEV: k_gimel times (b3 - 4), where b3=24 giving 20 non-trivial cycles."
+                    f"Higgs VEV: k_gimel times (b3 - 4), where b3={_L['b3']} gives {_L['cycles']} non-trivial cycles."
                 ),
                 terms={
                     "k_\\gimel": {
                         "name": "Holonomy Warp Factor",
-                        "description": "G2 holonomy precision limit: k_gimel = 12 + 1/pi",
+                        "description": "G2 holonomy precision limit: k_gimel = b3/2 + 1/pi (rides the adopted seed)",
                         "symbol": "k_gimel",
-                        "value": "12.318",
+                        "value": f"{_L['k_gimel']:.5f}",
                         "units": "GeV per cycle",
                     },
                     "b_3 - 4": {
                         "name": "Non-trivial Cycle Count",
                         "description": "Number of 3-cycles participating in electroweak symmetry breaking",
                         "symbol": "b3 - 4",
-                        "value": "20",
+                        "value": f"{_L['cycles']}",
                         "units": "dimensionless",
                     },
                 },
@@ -576,14 +610,20 @@ class HiggsVEVRefinedV18(SimulationBase):
                         _eml_div(_eml_scalar(1.0 / 137.035999177), _eml_mul(_eml_scalar(2.0), _eml_pi())),  # CODATA 2022
                     ),
                 ),
-                value=(1.0 / (np.sqrt(2.0) * ((12.0 + 1.0 / np.pi) * 20.0) ** 2))
+                # Was written as (12.0 + 1/pi) * 20.0 -- the retired seed_24
+                # k_gimel and cycle count, frozen into an expected value. It is
+                # read from the live seed so it cannot silently describe a
+                # branch the framework no longer runs.
+                value=(1.0 / (np.sqrt(2.0) * (float(_REG.demiurgic_coupling)
+                                              * (int(_REG.elder_kads) - 4)) ** 2))
                       * (1.0 + (1.0 / 137.035999177) / (2.0 * np.pi)),  # CODATA 2022
                 triple_rel=1e-9,
             ),
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:
-        """Return parameter definitions."""
+        """Return parameter definitions. Numbers READ from the adopted seed."""
+        _L2 = self._live()
         return [
             Parameter(
                 path="higgs.vev_geometric",
@@ -591,10 +631,13 @@ class HiggsVEVRefinedV18(SimulationBase):
                 units="GeV",
                 status="DERIVED",
                 description=(
-                    "Higgs VEV from geometric derivation: v = k_gimel × (b3-4). "
-                    "v18.0: Pure derivation with 0.06% accuracy (0.3σ from PDG)."
+                    f"Higgs VEV from geometric derivation: v = k_gimel x (b3-4) = "
+                    f"{_L2['v']:.2f} GeV against the PDG 246.22 GeV (ratio "
+                    f"{_L2['ratio']:.2f}). RECORDED COST of the seed adoption: the "
+                    f"'0.06% accuracy' this carried at the retired b3 = 24 is "
+                    f"falsified, kept on the books, and not tuned away."
                 ),
-                eml_description="EML: ops.mul(eml_vec('geometry.k_gimel'), ops.sub(eml_vec('topology.elder_kads'), eml_scalar(4.0))) — v = k_gimel × (b3 − 4) = 12.318 × 20 = 246.37 GeV Higgs VEV from G2 holonomy warp factor",
+                eml_description=f"EML: ops.mul(eml_vec('geometry.k_gimel'), ops.sub(eml_vec('topology.elder_kads'), eml_scalar(4.0))) — v = k_gimel x (b3 - 4) = {_L2['k_gimel']:.3f} x {_L2['cycles']} = {_L2['v']:.2f} GeV Higgs VEV from the G2 holonomy warp factor",
                 experimental_bound=246.22,  # EXPERIMENTAL: PDG2024
                 bound_type="measured",
                 bound_source="PDG2024",
@@ -631,33 +674,45 @@ class HiggsVEVRefinedV18(SimulationBase):
         ]
 
     def get_section_content(self) -> Optional[SectionContent]:
-        """Return section content for paper."""
+        """Return section content for paper. Numbers READ, never typed."""
+        _L = self._live()
         return SectionContent(
             section_id="4",
             subsection_id="4.2.1",
             title="Geometric Higgs VEV from G2 Holonomy",
             abstract=(
-                "The Higgs VEV is derived from the G2 holonomy warp factor times "
-                "the non-trivial cycle count. This pure geometric prediction achieves "
-                "0.06% accuracy (0.3σ from PDG) without any calibration."
+                f"The Higgs VEV is derived from the G2 holonomy warp factor times "
+                f"the non-trivial cycle count: v = k_gimel x (b3 - 4) = "
+                f"{_L['v']:.2f} GeV, against the PDG value 246.22 GeV. This is a "
+                f"RECORDED COST of the 2026-09-22 seed adoption: both factors "
+                f"consume b3, so the prediction moved by a factor of "
+                f"{_L['ratio']:.2f} when the seed moved. The '0.06% accuracy without "
+                f"calibration' claim that stood at the retired b3 = 24 is FALSIFIED "
+                f"and is kept on the books, unsoftened and untuned."
             ),
             content_blocks=[
                 ContentBlock(
                     type="note",
                     content=(
-                        "<strong>Context:</strong> This subsection derives the Higgs vacuum expectation value "
-                        "(v ≈ 246 GeV) from G₂ holonomy. This VEV serves as input to the Higgs mass calculation "
-                        "in Section 4.4, where moduli stabilization determines m<sub>H</sub> ≈ 125 GeV."
+                        f"<strong>Context:</strong> This subsection derives the Higgs vacuum expectation "
+                        f"value from G₂ holonomy. On the adopted seed it evaluates to "
+                        f"{_L['v']:.2f} GeV against the measured 246.22 GeV. The VEV feeds the "
+                        f"Higgs mass calculation in Section 4.4, which carries its own recorded "
+                        f"cost from the same seed move."
                     ),
                     label="higgs-vev-context"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The electroweak scale v ~ 246 GeV emerges from the G2 "
-                        "holonomy warp factor k_gimel = 12 + 1/π times the number "
-                        "of non-trivial cycles (b3 - 4 = 20). This gives a pure "
-                        "geometric prediction v = 246.37 GeV."
+                        f"The electroweak scale is claimed to emerge from the G2 holonomy "
+                        f"warp factor k_gimel = b3/2 + 1/π = {_L['k_gimel']:.3f} times the "
+                        f"number of non-trivial cycles (b3 - 4 = {_L['cycles']}), giving "
+                        f"v = {_L['v']:.2f} GeV. The measured value is 246.22 GeV. Both "
+                        f"factors ride the seed, so the claim's agreement was specific to "
+                        f"the retired b3 = 24, where k_gimel = 12.318 and b3 - 4 = 20 gave "
+                        f"246.37 GeV. That agreement is FALSIFIED on the adopted path and "
+                        f"is recorded here rather than removed."
                     )
                 ),
                 ContentBlock(
@@ -666,13 +721,18 @@ class HiggsVEVRefinedV18(SimulationBase):
                 ),
                 ContentBlock(
                     type="callout",
-                    callout_type="success",
-                    title="Tree-Level Validation",
+                    callout_type="warning",
+                    title="Tree-Level Validation (conditional on the retired seed)",
                     content=(
-                        "The geometric G_F differs from PDG by 0.12%, which matches the "
-                        "Schwinger term alpha/(2*pi) = 0.116% to within 0.003%. This proves "
-                        "the geometric derivation yields TREE-LEVEL physics. The gap IS the "
-                        "expected 1-loop QED radiative correction - a validation, not a failure."
+                        f"CLAIM ON THE BOOKS, NOW CONDITIONAL. At the retired b3 = 24 the "
+                        f"geometric G_F differed from PDG by 0.12%, matching the Schwinger "
+                        f"term alpha/(2*pi) = 0.116% to within 0.003%, and that coincidence "
+                        f"was read as evidence the derivation yields TREE-LEVEL physics. It "
+                        f"depended on v landing within 0.06% of 246.22 GeV. On the adopted "
+                        f"seed v = {_L['v']:.2f} GeV, a factor of {_L['ratio']:.2f} out, so "
+                        f"G_F is off by orders of magnitude and the Schwinger-sized gap is "
+                        f"gone. The reading is FALSIFIED, not softened, and no correction "
+                        f"is introduced to restore it."
                     )
                 ),
             ],
@@ -788,7 +848,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                 "topic": "G2 Holonomy",
                 "url": "https://ncatlab.org/nlab/show/G2+manifold",
                 "relevance": "The G2 holonomy warp factor k_gimel = 12 + 1/pi is the fundamental geometric quantity from which the electroweak scale emerges.",
-                "validation_hint": "Verify k_gimel = b3/2 + 1/pi = 12 + 1/pi = 12.318 for b3 = 24."
+                "validation_hint": f"Verify k_gimel = b3/2 + 1/pi = {int(_REG.elder_kads)}/2 + 1/pi = {float(_REG.demiurgic_coupling):.5f} at the adopted b3 = {int(_REG.elder_kads)}."
             },
         ]
 

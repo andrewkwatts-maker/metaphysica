@@ -160,9 +160,10 @@ class CosmologicalConstantV16(SimulationBase):
             domain="cosmology",
             title="Cosmological Constant from Entropy Density",
             description=(
-                "Derives cosmological constant Lambda from G2 manifold entropy "
-                "density. Solves the cosmological constant problem by showing "
-                "Lambda ~ 10^-52 m^-2 emerges geometrically from b3=24."
+                f"Derives cosmological constant Lambda from G2 manifold entropy "
+                f"density. Addresses the cosmological constant problem by showing "
+                f"Lambda ~ 10^-52 m^-2 emerging geometrically from "
+                f"b3={int(_REG.elder_kads)}, read from the adopted Joyce seed."
             ),
             section_id="5",
             subsection_id="5.5"
@@ -180,7 +181,9 @@ class CosmologicalConstantV16(SimulationBase):
         """
         Compute geometric anchor k_gimel from b3.
 
-        k_gimel = b3/2 + 1/pi = 12 + 1/pi ≈ 12.318 for b3=24
+        k_gimel = b3/2 + 1/pi, with b3 read from the adopted seed. It rides
+        the seed: the value moved when the seed moved, and no numeral for it
+        is typed here.
         """
         return (b3 / 2.0) + (1.0 / np.pi)
 
@@ -461,7 +464,7 @@ class CosmologicalConstantV16(SimulationBase):
         # exponential suppression similar to instanton effects
         # For a G2 manifold with b3 3-cycles, the torsion scale is set by
         # the associative calibration
-        S_Pneuma = 2.0 * np.pi * b3  # ~ 150.8 for b3=24
+        S_Pneuma = 2.0 * np.pi * b3  # scales with the adopted seed's b3
         V_torsion = k_gimel / (b3 ** 2)  # Torsion scale ~ 0.0214
         V_torsion_suppressed = V_torsion * np.exp(-S_Pneuma)
         result["V_torsion"] = float(V_torsion)
@@ -515,7 +518,14 @@ class CosmologicalConstantV16(SimulationBase):
     # -------------------------------------------------------------------------
 
     def get_section_content(self) -> Optional[SectionContent]:
-        """Return section content for the paper (v16.2 updated)."""
+        """Return section content for the paper (v16.2 updated).
+
+        b3 and k_gimel are READ from the registry, which follows the adopted
+        seed; no topological numeral below is typed.
+        """
+        b3 = int(_REG.elder_kads)
+        k_gimel = float(_REG.demiurgic_coupling)
+        s_cycle = float(np.log(k_gimel))
         return SectionContent(
             section_id="5",
             subsection_id="5.5",
@@ -545,14 +555,16 @@ class CosmologicalConstantV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The G2 manifold has b3 = 24 associative 3-cycles, each carrying "
-                        "entropy proportional to ln(k_gimel). The total entropy density "
-                        "of the compact space determines the residual vacuum energy:"
+                        f"The G2 manifold has b3 = {b3} associative 3-cycles, each carrying "
+                        f"entropy proportional to ln(k_gimel). The total entropy density "
+                        f"of the compact space determines the residual vacuum energy. The "
+                        f"construction is the Joyce orbifold T^7/(Z/2)^3 with "
+                        f"Eguchi-Hanson resolutions, where b_3 = 7 + 3 b_2:"
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"S_{G_2} = b_3 \cdot \ln(k_{\gimel}) = 24 \cdot \ln(12.318) \approx 60.2",
+                    content=rf"S_{{G_2}} = b_3 \cdot \ln(k_{{\gimel}}) = {b3} \cdot \ln({k_gimel:.3f}) \approx {b3 * s_cycle:.1f}",
                     formula_id="g2-entropy-density",
                     label="(5.25)"
                 ),
@@ -637,7 +649,13 @@ class CosmologicalConstantV16(SimulationBase):
     # -------------------------------------------------------------------------
 
     def get_formulas(self) -> List[Formula]:
-        """Return list of formulas this simulation provides."""
+        """Return list of formulas this simulation provides.
+
+        Topological numbers are READ from the registry (adopted seed).
+        """
+        b3 = int(_REG.elder_kads)
+        k_gimel = float(_REG.demiurgic_coupling)
+        s_cycle = float(np.log(k_gimel))
         return [
             Formula(
                 id="g2-entropy-density",
@@ -651,17 +669,17 @@ class CosmologicalConstantV16(SimulationBase):
                 input_params=["topology.elder_kads", "constants.k_gimel"],
                 output_params=["cosmology.entropy_density"],
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{eml\_scalar}(b_3),\, \mathrm{ops.log}(\mathrm{eml\_scalar}(k_{\gimel})))",
-                eml_tree_str="ops.mul(b3_leaf(), ops.log(eml_scalar(12.318)))",
+                eml_tree_str=f"ops.mul(b3_leaf(), ops.log(eml_scalar({k_gimel:.5f})))",
                 eml_description="EML: S_G2 = ops.mul(b3, ops.log(k_gimel)) — G2 entropy from 3-cycle count",
                 derivation={
                     "steps": [
                         {
                             "description": "Each associative 3-cycle carries topological entropy proportional to ln(k_gimel)",
-                            "formula": r"s_{cycle} = \ln(k_{\gimel}) = \ln(12.318) \approx 2.51"
+                            "formula": rf"s_{{cycle}} = \ln(k_{{\gimel}}) = \ln({k_gimel:.3f}) \approx {s_cycle:.2f}"
                         },
                         {
-                            "description": "Total entropy summed over all b3 = 24 associative 3-cycles",
-                            "formula": r"S_{G_2} = 24 \times 2.51 = 60.2"
+                            "description": f"Total entropy summed over all b3 = {b3} associative 3-cycles",
+                            "formula": rf"S_{{G_2}} = {b3} \times {s_cycle:.2f} = {b3 * s_cycle:.1f}"
                         },
                         {
                             "description": "Entropy density per Hubble volume sets the vacuum energy scale",
@@ -674,8 +692,8 @@ class CosmologicalConstantV16(SimulationBase):
                 },
                 terms={
                     "S_G2": "G2 manifold entropy",
-                    "b3": "Number of 3-cycles (24)",
-                    "k_gimel": "Geometric anchor (12.318)"
+                    "b3": f"Number of 3-cycles ({b3}, read from the adopted Joyce seed)",
+                    "k_gimel": f"Geometric anchor ({k_gimel:.3f} = b3/2 + 1/pi; it rides the seed)"
                 }
             ),
             Formula(
@@ -699,11 +717,11 @@ class CosmologicalConstantV16(SimulationBase):
                     "steps": [
                         {
                             "description": "Geometric factor from topological suppression by b3 cubed",
-                            "formula": r"\frac{k_{\gimel}}{b_3^3} = \frac{12.318}{13824} \approx 8.9 \times 10^{-4}"
+                            "formula": rf"\frac{{k_{{\gimel}}}}{{b_3^3}} = \frac{{{k_gimel:.3f}}}{{{b3 ** 3}}} \approx {k_gimel / float(b3 ** 3):.2e}"
                         },
                         {
                             "description": "Entropy factor from G2 manifold information content",
-                            "formula": r"[\ln(k_{\gimel})]^2 = (2.51)^2 \approx 6.3"
+                            "formula": rf"[\ln(k_{{\gimel}})]^2 = ({s_cycle:.2f})^2 \approx {s_cycle ** 2:.1f}"
                         },
                         {
                             "description": "Horizon ratio encodes the IR/UV hierarchy of the cosmos",
@@ -1070,7 +1088,7 @@ class CosmologicalConstantV16(SimulationBase):
                 "publisher": "Oxford University Press",
                 "doi": "10.1093/oso/9780198506010.001.0001",
                 "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
-                "notes": "G2 manifold topology, Betti numbers b2=0, b3=24 for Joyce manifolds",
+                "notes": "G2 manifold topology. The construction in force is a Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions; its reachable Betti numbers are b_3 = 7 + 3 n_T3 for n_T3 in {0, 4, 8, 12}, i.e. b_3 in {7, 19, 31, 43}, with b_2 = n_T3. The adopted pair is (b_2, b_3) = (12, 43), Joyce's canonical example. The earlier note 'b2=0, b3=24 for Joyce manifolds' is WITHDRAWN: 24 = 0 (mod 12) is not reachable by this family.",
             },
             {
                 "id": "perlmutter1999",
@@ -1202,12 +1220,17 @@ class CosmologicalConstantV16(SimulationBase):
                 "relevance": (
                     "G2 holonomy manifolds are 7-dimensional Ricci-flat manifolds used "
                     "in M-theory compactification to preserve N=1 SUSY in 4D. The "
-                    "third Betti number b3 = 24 counts the associative 3-cycles, which "
-                    "this simulation uses to compute the topological suppression factor."
+                    "third Betti number b3 counts the associative 3-cycles, which "
+                    "this simulation uses to compute the topological suppression "
+                    "factor. b3 is read from the adopted seed rather than typed."
                 ),
                 "validation_hint": (
                     "Verify that G2 manifolds are 7-dimensional with holonomy in G2. "
-                    "Check that Joyce compact G2 manifolds have b3 = 24. "
+                    "Check the reachable Betti numbers of a Joyce (Z/2)^3 resolution "
+                    "of T^7/Gamma: b_3 = 7 + 3 n_T3 with n_T3 in {0, 4, 8, 12}, so "
+                    "b_3 in {7, 19, 31, 43} and b_3 = 7 (mod 12). The older hint here "
+                    "read 'check that Joyce compact G2 manifolds have b3 = 24'; that "
+                    "is WITHDRAWN, because 24 = 0 (mod 12) is unreachable. "
                     "Confirm Ricci-flatness follows from special holonomy."
                 )
             },
@@ -1271,8 +1294,8 @@ class CosmologicalConstantV16(SimulationBase):
         })
 
         # Check 4: b3 topological suppression is significant
-        b3 = 24
-        suppression = b3**3  # = 13824
+        b3 = int(_REG.elder_kads)   # adopted seed, read not typed
+        suppression = b3**3
         suppression_ok = suppression > 1000
         checks.append({
             "name": "Topological suppression b3^3 is significant (> 1000)",
@@ -1321,9 +1344,9 @@ class CosmologicalConstantV16(SimulationBase):
                     "Lambda_derived": Lambda_derived,
                     "Lambda_observed": Lambda_observed,
                     "log_deviation": log_dev,
-                    "b3": 24,
-                    "k_gimel": 12.318,
-                    "topological_suppression": 24**3,
+                    "b3": int(_REG.elder_kads),
+                    "k_gimel": float(_REG.demiurgic_coupling),
+                    "topological_suppression": int(_REG.elder_kads) ** 3,
                     "formula": "Lambda = (8*pi)^2 * k_gimel^2 / (3 * b3^3 * R_horizon^2)",
                     "mechanism": "G2_entropy_density_with_instanton_suppression",
                 }
@@ -1352,20 +1375,24 @@ class CosmologicalConstantV16(SimulationBase):
                 "Imagine a crowded room (high energy) vs. an empty room (low energy). "
                 "The G2 manifold's 24 special structures act like 'pressure release "
                 "valves' that let most of the vacuum energy escape into the compact "
-                "dimensions. Only a tiny residual (10^-52) remains in our 4D universe. "
-                "It's like water pressure distributed across 24 outlets - each one "
-                "small, but together they drain most of the energy."
+                f"dimensions. Only a tiny residual (10^-52) remains in our 4D universe. "
+                f"It's like water pressure distributed across {int(_REG.elder_kads)} "
+                f"outlets - each one small, but together they drain most of the energy."
             ),
             "keyTakeaway": (
-                "Lambda ~ 10^-52 m^-2 emerges from b3^3 = 24^3 topological suppression "
-                "plus the cosmic horizon scale. No fine-tuning needed."
+                f"Lambda ~ 10^-52 m^-2 emerges from b3^3 = {int(_REG.elder_kads)}^3 "
+                f"topological suppression plus the cosmic horizon scale. "
+                f"No fine-tuning needed."
             ),
             "technicalDetail": (
-                "The formula is: Lambda = (k_gimel * ln(k_gimel)^2 / b3^3) * (l_Pl/R_H)^2. "
-                "Components: (1) k_gimel/b3^3 = 12.318/13824 ~ 10^-3 (topological suppression), "
-                "(2) ln(k_gimel)^2 ~ 6 (entropy factor), (3) (l_Pl/R_H)^2 = (1.6e-35/1.4e26)^2 "
-                "~ 10^-122 (horizon ratio). Combined with moduli factor b3*pi ~ 75, "
-                "we get Lambda ~ 10^-3 * 6 * 10^-122 * 75 / 1000 ~ 10^-52 m^-2."
+                f"The formula is: Lambda = (k_gimel * ln(k_gimel)^2 / b3^3) * (l_Pl/R_H)^2. "
+                f"Components: (1) k_gimel/b3^3 = {float(_REG.demiurgic_coupling):.3f}/"
+                f"{int(_REG.elder_kads) ** 3} ~ "
+                f"{float(_REG.demiurgic_coupling) / float(int(_REG.elder_kads) ** 3):.1e} "
+                f"(topological suppression), (2) ln(k_gimel)^2 ~ "
+                f"{float(np.log(float(_REG.demiurgic_coupling))) ** 2:.1f} (entropy factor), "
+                f"(3) (l_Pl/R_H)^2 = (1.6e-35/1.4e26)^2 ~ 10^-122 (horizon ratio), "
+                f"(4) moduli factor b3*pi ~ {int(_REG.elder_kads) * np.pi:.0f}."
             ),
             "prediction": (
                 "If Lambda comes from G2 entropy: (1) Lambda is constant, not evolving. "
@@ -1413,10 +1440,16 @@ def export_cosmological_constant_v16() -> Dict[str, Any]:
     EstablishedPhysics.load_into_registry(registry)
 
     # Set required inputs
+    # Seed the standalone run from the ADOPTED seed, not from the retired
+    # literals 24 / 12.31831 that used to sit here. A standalone invocation
+    # must not silently run the off-path branch.
     if not registry.has_param("topology.elder_kads"):
-        registry.set_param("topology.elder_kads", 24, source="ESTABLISHED:G2_topology", status="ESTABLISHED")
+        registry.set_param("topology.elder_kads", int(_REG.elder_kads),
+                           source="b3_path:adopted_seed", status="DERIVED")
     if not registry.has_param("constants.k_gimel"):
-        registry.set_param("constants.k_gimel", 12.31831, source="torsional_constants_v16_1", status="DERIVED")
+        registry.set_param("constants.k_gimel", float(_REG.demiurgic_coupling),
+                           source="b3_path:adopted_seed (k_gimel = b3/2 + 1/pi)",
+                           status="DERIVED")
     if not registry.has_param("desi.H0"):
         registry.set_param("desi.H0", 67.4, source="DESI2025", status="ESTABLISHED")
 

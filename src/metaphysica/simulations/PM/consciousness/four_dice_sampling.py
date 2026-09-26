@@ -19,9 +19,10 @@ Physics Basis:
 - Residue flux: Contribution from each (2,0) pair to branch probability
 
 SSOT Constants:
-- b_3 = 24 (third Betti number)
+- b_3 (third Betti number, READ from the adopted seed; 24 on the retired
+  seed_24 branch)
 - total_pairs = 12
-- k_gimel = 12 + 1/pi = 12.318
+- k_gimel = b_3/2 + 1/pi (rides the adopted seed; 12.318 on seed_24)
 - phi = (1 + sqrt(5))/2 = 1.618
 
 References:
@@ -39,6 +40,13 @@ Dedicated To:
 from __future__ import annotations
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 from typing import Dict, List, Tuple, Any, Optional
 
 # matplotlib is the [plots] extra and this is a SIMULATION module. Importing
@@ -55,7 +63,9 @@ from metaphysica.simulations.core import optional_plotting as _plots
 # Geometric constants
 B_3 = 24                        # Third Betti number of G2 manifold
 TOTAL_PAIRS = 12                # Number of (2,0) bridge pairs
-K_GIMEL = 12 + 1/np.pi          # 12.318... (gimel coupling)
+#: k_gimel = b_3/2 + 1/pi. READ from the registry, not typed: the old
+#: `12 + 1/np.pi` froze the retired seed_24 value into this module.
+K_GIMEL = float(_REG.demiurgic_coupling)
 PHI = (1 + np.sqrt(5)) / 2      # Golden ratio = 1.618...
 
 # Derived constants
@@ -1021,7 +1031,7 @@ if _SCHEMA_AVAILABLE:
                     ContentBlock(
                         type="paragraph",
                         content=(
-                            "<Speculation>The 12 bridge pairs (from b3=24) are partitioned into 4 groups "
+                            f"<Speculation>The {int(_REG.elder_kads) // 2} bridge pairs (b3//2, from b3={int(_REG.elder_kads)}) are partitioned into 4 groups "
                             "of 3 pairs each, forming 4 'dice'. Each dice outcome is computed "
                             "via the R_perp reflection operator with mod-4 arithmetic, motivated "
                             "by the quaternionic structure of the G2 holonomy. The 4^4 = 256 "

@@ -91,7 +91,7 @@ _REG = get_registry()
 # =============================================================================
 
 # G2 Topology Constants - from FormulasRegistry SSoT
-B3_G2 = _REG.elder_kads             # Third Betti number = 24
+B3_G2 = _REG.elder_kads             # Third Betti number, from the seed
 B2_G2 = 4                           # Second Betti number
 CHI_EFF = _REG.qedem_chi_sum        # Effective Euler characteristic = 144
 
@@ -239,7 +239,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             title="Complete Cosmology Sector Derivations from G2 Holonomy",
             description=(
                 "Comprehensive derivations for dark matter, dark energy, and "
-                "cosmological parameters from G2 holonomy geometry. Shows how "
+                "cosmological parameters from the internal G2-structure geometry. Shows how "
                 "Omega_DM emerges from 163/288 sterile ratio, w_0 from tzimtzum "
                 "pressure 23/24, and H_0 from O'Dowd geometric formula."
             ),
@@ -251,7 +251,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
         return [
-            "topology.elder_kads",              # Third Betti number b3 = 24
+            "topology.elder_kads",              # Third Betti number b_3, from the seed
             "topology.mephorash_chi",         # Effective Euler characteristic = 144
             "registry.node_count",       # Visible/active states = 125 (was geometry.sophian_modulus, absent)
             "topology.hidden_supports",  # Sterile/hidden states = 163 (was geometry.barbelo_modulus, absent)
@@ -472,7 +472,9 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             DarkEnergyDerivation with complete derivation results
         """
         # Tzimtzum pressure: w_0 = -(1 - 1/b3) = -23/24
-        w0_tzimtzum = -1.0 + 1.0/self.elder_kads  # -1 + 1/24 = -23/24 = -0.9583...
+        # -1 + 1/b_3. Published as -23/24 = -0.9583 at b_3 = 24; b_3 now
+        # rides the seed, so this value moves with it by design.
+        w0_tzimtzum = -1.0 + 1.0/self.elder_kads
 
         # O'Dowd formula for H_0
         # H_0 = H_CMB * (1 + sin^2(theta_mix)/2)
@@ -1370,10 +1372,16 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             subsection_id="5.4.2",
             title="Complete Cosmology Sector Derivations from G2 Holonomy",
             abstract=(
-                "Comprehensive derivation of dark matter, dark energy, and cosmological "
-                "parameters from G2 holonomy geometry. Shows how Omega_DM ~ 0.27 emerges "
-                "from 163/288 sterile ratio, w_0 = -23/24 from tzimtzum pressure, and "
-                "H_0 = 71.55 km/s/Mpc from O'Dowd geometric formula."
+                "Comprehensive derivation of dark matter, dark energy, and "
+                "cosmological parameters from the internal geometry. Shows "
+                "how Omega_DM ~ 0.27 emerges from the 163/288 sterile "
+                "ratio, w_0 = -1 + 1/b_3 = %.6f from tzimtzum pressure, "
+                "and H_0 = 71.55 km/s/Mpc from O'Dowd geometric formula. "
+                "This abstract previously quoted w_0 = -23/24, which was "
+                "its value at b_3 = 24; b_3 = %d on the adopted seed and "
+                "w_0 moves with it -- that trade is what the b3_seed "
+                "ruling buys, and it is stated rather than hidden."
+                % (-1.0 + 1.0 / B3_G2, B3_G2)
             ),
             content_blocks=[
                 # Introduction
@@ -1385,11 +1393,15 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This section presents complete derivations of cosmological "
-                        "parameters from G2 holonomy geometry. The dark sector emerges "
-                        "naturally from the 163 sterile states (out of 288 total), while "
-                        "the dark energy equation of state derives from the tzimtzum "
-                        "principle encoded in the b3 = 24 structure."
+                        f"This section presents complete derivations of "
+                        f"cosmological parameters from the internal "
+                        f"G2-structure geometry. The dark sector emerges "
+                        f"naturally from the 163 sterile states (out of 288 "
+                        f"total), while the dark energy equation of state "
+                        f"derives from the tzimtzum principle encoded in "
+                        f"b_3, which is {B3_G2} on the live seed. This "
+                        f"paragraph previously typed \"the b3 = 24 "
+                        f"structure\"."
                     )
                 ),
 
@@ -1435,9 +1447,16 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The dark energy equation of state derives from the tzimtzum "
-                        "(contraction) principle. The cosmic expansion/contraction ratio "
-                        "is encoded in b3 = 24, giving w_0 = -(1 - 1/24) = -23/24."
+                        "The dark energy equation of state derives from the "
+                        "tzimtzum (contraction) principle: one 3-cycle out of "
+                        "b_3 leaks vacuum energy, giving w_0 = -(1 - 1/b_3) "
+                        "= %.6f at the live b_3 = %d. This paragraph "
+                        "previously read \"the cosmic expansion/contraction "
+                        "ratio is encoded in b3 = 24, giving w_0 = -(1 - "
+                        "1/24) = -23/24\" -- true at the superseded seed, "
+                        "and kept here so the move is visible rather than "
+                        "silent."
+                        % (-1.0 + 1.0 / B3_G2, B3_G2)
                     )
                 ),
                 ContentBlock(
@@ -1495,9 +1514,12 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                     callout_type="success",
                     title="Cosmology Sector Derivation Summary",
                     content=(
-                        "All cosmological parameters emerge from G2 holonomy:\n"
+                        "All cosmological parameters emerge from the internal "
+                        "geometry:\n"
                         "- Dark Matter: Omega_DM ~ 0.27 from 163/288 sterile ratio\n"
-                        "- Dark Energy: w_0 = -23/24 from tzimtzum pressure\n"
+                        f"- Dark Energy: w_0 = -1 + 1/b_3 = {-1.0 + 1.0 / B3_G2:.6f} "
+                        f"from tzimtzum pressure (published as -23/24 at "
+                        f"b_3 = 24)\n"
                         "- Hubble: H_0 = 71.55 from O'Dowd formula (tension resolved)\n"
                         "- Baryons: eta_b ~ 6.2e-10 from Jarlskog + cycles\n"
                         "- BBN: N_eff = 3 (no extra light species)\n"

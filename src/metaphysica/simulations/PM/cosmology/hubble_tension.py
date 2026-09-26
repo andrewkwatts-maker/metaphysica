@@ -73,7 +73,8 @@ v24.2 UPDATE: KNP-Aligned Bridge Axion EDE Attempt
 
 This module now computes a quantitative EDE cosmology using KNP-aligned
 bridge axions from the G2 manifold. The computation shows that even with
-the KNP alignment mechanism (12 axions from b3=24), the EDE fraction
+the KNP alignment mechanism (b3//2 axions, b3 from the adopted seed), the EDE
+fraction
 is orders of magnitude too small to resolve the Hubble tension.
 
 GEMINI CONSENSUS ON KNP EDE (3-round debate, 2026-03-16):
@@ -106,7 +107,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 # Explanation:
 #   This simulation computes the Early Dark Energy contribution from
 #   KNP-aligned bridge axions in the G2 manifold framework. Despite the
-#   theoretical improvement from axion alignment (12 axions, b3=24),
+#   theoretical improvement from axion alignment (b3//2 axions),
 #   the resulting EDE fraction f_EDE ~ 7.2e-9 is ~8 orders of magnitude
 #   below what is needed to meaningfully reduce the Hubble tension.
 #
@@ -178,10 +179,10 @@ H0_EV_FACTOR = 2.1331e-35  # H0 / (km/s/Mpc) in eV
 
 
 # =============================================================================
-# KNP Axion Parameters (from G2 manifold with b3=24)
+# KNP Axion Parameters (from the G2 manifold, b3 read from the adopted seed)
 # =============================================================================
 
-def compute_knp_parameters(b3=24):
+def compute_knp_parameters(b3=None):
     """
     Compute KNP-aligned axion parameters from G2 manifold topology.
 
@@ -189,8 +190,13 @@ def compute_knp_parameters(b3=24):
     generate an effective super-Planckian decay constant from sub-Planckian
     individual constants.
 
-    For G2 manifold with b3 Betti number:
-    - N_axion = b3 / 2 = 12 (one per bridge pair)
+    For a G2 manifold with third Betti number b3:
+    - N_axion = b3 // 2 (one per bridge pair)
+
+    b3 DEFAULTS TO THE ADOPTED SEED and is not typed here. The old default
+    was the literal 24, which gave N_axion = 12 exactly; on the adopted
+    (b_2, b_3) = (12, 43) Joyce seed b3 is ODD, so b3//2 is a FLOOR and one
+    3-cycle is left without a partner. That is recorded, not repaired.
     - f_single ~ M_GUT / sqrt(4*pi) ~ 2.82e15 GeV
     - f_eff ~ f_single / sqrt(N) for KNP alignment
 
@@ -201,7 +207,9 @@ def compute_knp_parameters(b3=24):
     Returns:
         dict with axion parameters
     """
-    N_axion = b3 // 2  # 12 axions from 12 bridge pairs
+    if b3 is None:
+        b3 = int(_REG.elder_kads)   # adopted seed, read not typed
+    N_axion = b3 // 2  # FLOOR: b3 is odd on the adopted seed
 
     # Individual axion decay constant
     # From M-theory: f ~ M_GUT / sqrt(4*pi)
@@ -442,7 +450,7 @@ class HubbleTensionV16(SimulationBase):
     manifold's KNP-aligned axion sector and its effect on the Hubble tension.
 
     The computation proceeds:
-    1. Compute KNP axion parameters from G2 topology (b3=24)
+    1. Compute KNP axion parameters from G2 topology (b3 from the adopted seed)
     2. Compute EDE energy density rho_EDE = m^2 * f_eff^2
     3. Compute EDE fraction f_EDE = rho_EDE / rho_crit at z_peak
     4. Compute modified expansion history H(z) with EDE
@@ -475,10 +483,12 @@ class HubbleTensionV16(SimulationBase):
             domain="cosmology",
             title="Hubble Tension: KNP-Aligned Bridge Axion EDE",
             description=(
-                "Computes Early Dark Energy from KNP-aligned bridge axions in "
-                "M^{26}(24,2). With 12 axions from b3=24 and f_eff ~ 1.19e14 GeV, "
-                "the EDE fraction f_EDE ~ 7.2e-9 is insufficient for Hubble tension "
-                "resolution. Original 47-order KK gap remains unresolved by KNP."
+                f"Computes Early Dark Energy from KNP-aligned bridge axions in "
+                f"M^{{26}}(24,2). With {int(_REG.elder_kads) // 2} axions from "
+                f"b3={int(_REG.elder_kads)} (b3//2, read from the adopted seed), "
+                f"the resulting EDE fraction is insufficient for Hubble tension "
+                f"resolution. The original 47-order KK gap remains unresolved by "
+                f"KNP. REFUTED, and kept on the books as such."
             ),
             section_id="5",
             subsection_id="5.4"
@@ -488,7 +498,7 @@ class HubbleTensionV16(SimulationBase):
     def required_inputs(self) -> List[str]:
         """Return required input parameter paths."""
         return [
-            "topology.elder_kads",  # b3 = 24
+            "topology.elder_kads",  # b3, from the adopted seed
         ]
 
     @property
@@ -659,7 +669,7 @@ class HubbleTensionV16(SimulationBase):
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for the paper."""
         # Use computed values if available, otherwise defaults
-        knp = self.knp_params or compute_knp_parameters(b3=24)
+        knp = self.knp_params or compute_knp_parameters()
         f_ede = self.f_ede_peak if self.f_ede_peak is not None else 7.2e-9
         H0_ede_val = self.H0_ede if self.H0_ede is not None else H0_PLANCK
         r_s_lcdm_val = self.r_s_lcdm if self.r_s_lcdm is not None else 144.12
@@ -674,7 +684,8 @@ class HubbleTensionV16(SimulationBase):
             abstract=(
                 f"REFUTED. We compute the Early Dark Energy (EDE) contribution from "
                 f"KNP-aligned bridge axions in the G2 manifold framework. "
-                f"With b3=24 giving N=12 axion species and f_eff = {f_eff:.2e} GeV, "
+                f"With b3={int(_REG.elder_kads)} giving N={int(_REG.elder_kads) // 2} "
+                f"axion species (b3//2) and f_eff = {f_eff:.2e} GeV, "
                 f"the EDE fraction f_EDE = {f_ede:.2e} is ~8 orders of magnitude "
                 f"below the 5-10% required for Hubble tension resolution. "
                 f"This mechanism is quantitatively insufficient (~57-order mass gap)."
@@ -721,7 +732,7 @@ class HubbleTensionV16(SimulationBase):
 
     def get_formulas(self) -> List[Formula]:
         """Return list of formulas this simulation provides."""
-        knp = self.knp_params or compute_knp_parameters(b3=24)
+        knp = self.knp_params or compute_knp_parameters()
         S_req = knp['S_required']
 
         return [
@@ -825,7 +836,7 @@ class HubbleTensionV16(SimulationBase):
 
     def get_output_param_definitions(self) -> List[Parameter]:
         """Return parameter definitions for outputs."""
-        knp = self.knp_params or compute_knp_parameters(b3=24)
+        knp = self.knp_params or compute_knp_parameters()
         H0_ede_val = self.H0_ede if self.H0_ede is not None else H0_PLANCK
         f_ede_val = self.f_ede_peak if self.f_ede_peak is not None else 7.2e-9
         r_s_lcdm_val = self.r_s_lcdm if self.r_s_lcdm is not None else 144.12
@@ -960,7 +971,7 @@ class HubbleTensionV16(SimulationBase):
 
     def detailed_report(self) -> str:
         """Generate a detailed text report of the EDE analysis."""
-        knp = self.knp_params or compute_knp_parameters(b3=24)
+        knp = self.knp_params or compute_knp_parameters()
         f_ede = self.f_ede_peak if self.f_ede_peak is not None else 7.2e-9
         H0_ede_val = self.H0_ede if self.H0_ede is not None else H0_PLANCK
         r_s_lcdm_val = self.r_s_lcdm if self.r_s_lcdm is not None else 144.12
@@ -971,7 +982,7 @@ class HubbleTensionV16(SimulationBase):
             "HUBBLE TENSION: KNP-ALIGNED BRIDGE AXION EDE ANALYSIS",
             "=" * 72,
             "",
-            "1. KNP AXION PARAMETERS (from G2 manifold, b3=24)",
+            f"1. KNP AXION PARAMETERS (from G2 manifold, b3={int(_REG.elder_kads)})",
             f"   N_axion        = {knp['N_axion']}",
             f"   f_single       = {knp['f_single_GeV']:.3e} GeV",
             f"   f_eff (PM)     = {knp['f_eff_GeV']:.3e} GeV",
@@ -1028,9 +1039,9 @@ def main():
     print()
 
     # Compute KNP parameters
-    params = compute_knp_parameters(b3=24)
+    params = compute_knp_parameters()
 
-    print(f"KNP Axion Parameters (b3=24, N=12):")
+    print(f"KNP Axion Parameters (b3={int(_REG.elder_kads)}, N={params['N_axion']}):")
     print(f"  f_single     = {params['f_single_GeV']:.3e} GeV")
     print(f"  f_eff        = {params['f_eff_GeV']:.3e} GeV")
     print(f"  m_required   = {params['m_required_eV']:.3e} eV")

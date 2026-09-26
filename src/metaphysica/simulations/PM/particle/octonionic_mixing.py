@@ -101,6 +101,21 @@ import os
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
+
+
+def _b2_adopted() -> int:
+    """b_2 of the adopted seed, read rather than typed."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path as _rp, seed_values as _sv,
+    )
+    return int(_sv(_rp())[1])
+
 # Add parent directories to path for imports
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _simulations_root = os.path.dirname(os.path.dirname(os.path.dirname(_current_dir)))
@@ -382,7 +397,8 @@ class OctonionicMixing(SimulationBase):
                  ~ 0.228^3 / 3.1 ~ 0.0038
 
         The flux correction comes from G4 flux threading associative 3-cycles.
-        The geometric and topological factors arise from the b3 = 24 structure.
+        The geometric and topological factors arise from the b3 structure,
+        with b3 read from the adopted seed (24 on the retired seed_24 branch).
         The cusp correction accounts for octonionic triality at singular locus.
 
         Returns:
@@ -406,7 +422,7 @@ class OctonionicMixing(SimulationBase):
         # λ_cusp = 1/sqrt(b3 + k_g) accounts for triality cusp at G2 singular locus
         # This correction arises from the octonionic product structure near the
         # Fano plane singularities where the associative 3-form degenerates.
-        k_gimel = self._b3 / 2.0 + 1.0 / np.pi  # ~ 12.318
+        k_gimel = self._b3 / 2.0 + 1.0 / np.pi  # rides the seed
         lambda_cusp = 1.0 / np.sqrt(self._b3 + k_gimel)  # ~ 0.166
         # The cusp correction normalizes the mixing angle near singular locus
         # v16.2 FIX: Adjusted coefficient from 0.12 to 0.037 for PDG 2024 alignment
@@ -431,7 +447,7 @@ class OctonionicMixing(SimulationBase):
         # but with generation_weight = 2 for the 2nd-order transition
         generation_weight = 2.0  # V_cb = 2nd order mixing
         g2_twist_correction = 1.0 + generation_weight * k_gimel / (self._b3 ** 2)
-        # = 1 + 2 * 12.318 / 576 = 1.0428
+        # = 1 + 2 * k_gimel / b3^2, both from the adopted seed
 
         V_cb = V_us ** 2 / geometric_factor * 0.81 * g2_twist_correction
         # ~ 0.0388 * 1.0428 ~ 0.0405
@@ -1639,12 +1655,15 @@ def run_octonionic_mixing(verbose: bool = True) -> Dict[str, Any]:
     # Create registry and simulation
     registry = PMRegistry.get_instance()
 
-    # Set up topological inputs (from TCS #187)
+    # Set up topological inputs from the ADOPTED seed. The retired literals
+    # sourced to "TCS #187" are gone: TCS as exhibited gives 71 <= b_3 <= 155,
+    # which excludes the adopted b_3, so TCS is an exclusion here, not a source.
+    # The construction in force is the Joyce orbifold T^7/(Z/2)^3.
     # PMNS uses chi_eff_total = 144 (both shadows) - neutrino oscillations involve both shadows
-    registry.set_param("topology.b2", 4, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
-    registry.set_param("topology.elder_kads", 24, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
+    registry.set_param("topology.b2", _b2_adopted(), source="b3_path:adopted_seed", status="ESTABLISHED")
+    registry.set_param("topology.elder_kads", int(_REG.elder_kads), source="b3_path:adopted_seed", status="ESTABLISHED")
     registry.set_param("topology.mephorash_chi", 144, source="ESTABLISHED:chi_eff_total for PMNS", status="ESTABLISHED")
-    registry.set_param("topology.n_gen", 3, source="ESTABLISHED:TCS #187", status="ESTABLISHED")
+    registry.set_param("topology.n_gen", int(_REG.n_gen), source="b3_path:adopted_seed (n_gen = b_2/4 = rank(Gamma))", status="ESTABLISHED")
     registry.set_param("topology.orientation_sum", 12, source="ESTABLISHED:single_unified_bridge", status="ESTABLISHED")
     registry.set_param("fermion.epsilon_fn", 0.22313, source="fermion_generations_v16_0", status="DERIVED")
 
@@ -1748,8 +1767,9 @@ assert abs(np.degrees(_validation_instance.THETA_G) - 31.72) < 0.1, \
 
 # Test key CKM calculation (with known inputs)
 # PMNS uses chi_eff_total = 144 (both shadows) - neutrino oscillations involve both shadows
-_validation_instance._b2 = 4
-_validation_instance._b3 = 24
+# READ from the adopted seed rather than pinned to the retired 4 / 24.
+_validation_instance._b2 = _b2_adopted()
+_validation_instance._b3 = int(_REG.elder_kads)
 _validation_instance._chi_eff = 144  # chi_eff_total = 144 for PMNS
 _validation_instance._n_gen = 3
 _validation_instance._orientation_sum = 12  # Single unified bridge

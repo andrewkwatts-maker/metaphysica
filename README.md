@@ -1,10 +1,10 @@
-# metaphysica v2.3.1 — A speculative G₂-manifold model proposing ~125 candidate physical constants from one seed (b₃=24)
+# metaphysica — A speculative G₂-manifold model proposing ~125 candidate physical constants from one derived topological seed (b₂, b₃) = (12, 43)
 
 [![PyPI](https://img.shields.io/pypi/v/metaphysica.svg)](https://pypi.org/project/metaphysica/)
 [![Python](https://img.shields.io/pypi/pyversions/metaphysica.svg)](https://pypi.org/project/metaphysica/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 [![Status: Speculative / Unvalidated](https://img.shields.io/badge/Status-Speculative%20%2F%20Unvalidated-orange.svg)](#research-status)
-[![Tests](https://img.shields.io/badge/tests-1641%20passed-brightgreen.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-3011%20collected-brightgreen.svg)](#testing)
 
 > ## Research status
 >
@@ -18,11 +18,49 @@
 
 `metaphysica` is the PyPI implementation of **Principia Metaphysica**: a
 candidate G₂-manifold model that proposes derivations for ~125 physical
-constants from a single topological seed — the third Betti number
-**b₃ = 24**. Every formula in the model carries three independent
-representations (Arithma symbolic, EML compressed tree, and float),
-cross-checked at registration time, with every derivation chain rooted at
-b₃.
+constants from a single topological seed. Every formula carries three
+independent representations (Arithma symbolic, EML compressed tree, and
+float), cross-checked at registration time.
+
+**The seed is (b₂, b₃) = (12, 43), and it is derived rather than assumed**
+(author ruling, 2026-09-22). The construction is a Joyce orbifold
+T⁷/(ℤ/2)³ whose A₁ singularities are resolved by Eguchi–Hanson patches:
+the reachable Betti numbers satisfy **b₃ = 7 + 3·b₂** with b₂ the count of
+A₁ families, so the pair is ONE topological input rather than two. Four
+profiles are reachable — (b₂, b₃) = (0,7), (4,19), (8,31), (12,43) — all
+four are runnable, and the generation count n_gen = b₂/4 = rank(Γ) gives
+0, 1, 2, 3 across them. **Only (12, 43) yields three generations.**
+
+The previous seed **b₃ = 24 remains runnable** as a labelled off-path
+branch (`METAPHYSICA_VARIANT_B3_SEED=seed_24`); it is excluded on three
+independent grounds — it fails b₃ = 7 + 3b₂, fails b₃ ≡ 7 (mod 12), and
+sits below the exhibited TCS range 71–155. Nothing falsified is deleted
+here; it is kept runnable and labelled.
+
+### What the derived seed costs, measured
+
+Adopting a derived seed moved every quantity that consumes b₃, and the
+costs are published rather than absorbed:
+
+| quantity | at b₃ = 24 | at b₃ = 43 |
+|---|---|---|
+| η_B (baryon asymmetry) | 1.63σ | **18.16σ** |
+| w₀ | −23/24, 0.017σ | −42/43, 0.94σ |
+| m_higgs (local) | 125.10 | **70.57** |
+| θ₁₃ (flavour ansatz) | 8.67°, 0.8σ | 4.84° |
+| racetrack vacuum | Re(T) = 37.85 | **does not exist** |
+
+The racetrack entry is structural, not numerical: the mechanism *is* the
+exponent ordering a = 2π/b₃ > b = 2π/D_bulk, and 43 > 26 inverts it, so
+the potential becomes a bare runaway with zero stationary points. Three
+long-standing internal conflicts (H₀, S₈, Σm_ν) **healed** on the same
+ruling. An integer-identity ledger publishes, per branch, which of 15
+claimed identities hold: 13 hold at 24 and break at 43; the two that hold
+at 43 (b₃ = 7 + 3b₂ and b₂/4 = 3) are the two that are *derived* rather
+than observed.
+
+None of this is a selection argument for or against the seed — it is the
+cost sheet, published so the ruling can be read rather than trusted.
 
 The bulk is **26-dimensional at signature (24,2)** — 24 space, two times, one
 per shadow, each shadow 13D(12,1) — ruled 2026-08-31 and recorded with its
@@ -236,10 +274,10 @@ Current status (v2.3.1):
 
 ---
 
-## b₃ = 24 root principle
+## The derived seed, and what it costs
 
 Every derivation in `metaphysica` traces back to the third Betti number of
-the G₂ manifold, **b₃ = 24**. This is the *single* topological seed; all
+the G₂ manifold. The seed is **(b₂, b₃) = (12, 43)**, derived from the A₁ family count via b₃ = 7 + 3b₂; all
 other constants are derived.
 
 Two independent walkers verify this at build time:
@@ -258,7 +296,7 @@ Two independent walkers verify this at build time:
 The remaining formulas are derived constants that consume already-derived
 values, so the b₃ trace exists transitively. The interactive "Walk to b₃"
 widget in `Pages/foundations.html` lets you click any formula and see the
-full dependency graph terminate at b₃ = 24.
+full dependency graph terminate at the seed. Which seed is a switch, not an assumption: every consumer reads it from the `b3_seed` fork.
 
 ---
 
@@ -390,7 +428,7 @@ Standing facts a reader should not have to dig for:
   derivation and scores **0.805σ PASS**. `geometry.theta_13` = 8.54° is the
   NuFIT value restated and is deliberately unscored — it is not a cross-check.
 - **Twenty "geometric anchors" are raw experimental INPUT** (status MEASURED),
-  not tuning-free consequences of b₃ = 24: the NuFIT angles, SH0ES H₀, Planck
+  not tuning-free consequences of the seed: the NuFIT angles, SH0ES H₀, Planck
   Ω_m, DESI w₀/wₐ, PDG Wolfenstein A and Jarlskog.
 - **S₈ is published against both anchors** — 0.718σ PASS vs Planck, **2.733σ
   TENSION vs KiDS-1000**. Friction does *not* resolve the weak-lensing tension.

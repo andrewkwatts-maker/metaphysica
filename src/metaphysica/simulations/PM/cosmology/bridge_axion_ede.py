@@ -20,7 +20,9 @@ PHYSICS:
 
     where:
         N_ax = 12          (number of bridge axions)
-        b3 = 24            (third Betti number of G2 manifold)
+        b3                 (third Betti number, READ from the adopted seed
+                            (b_2, b_3) = (12, 43); it was 24 on the retired
+                            seed_24 branch)
         kappa_sampler = 2  (dim(S^{2,0}), topologically fixed)
 
     This gives f_eff ~ 1.19e14 GeV, an enhancement of ~34x.
@@ -301,7 +303,8 @@ class BridgeAxionEDE(SimulationBase):
         # Fundamental constants from SSoT
         # ---------------------------------------------------------------
         self.M_Planck = 1.22e19                                  # GeV
-        self.k_gimel = float(_REG.demiurgic_coupling)            # 12.318...
+        # k_gimel = b3/2 + 1/pi RIDES THE SEED; it moved when the seed moved.
+        self.k_gimel = float(_REG.demiurgic_coupling)
         self.b3 = int(_REG.elder_kads)                           # 24
         self.N_ax = 12                                           # bridge count = b3/2
         self.kappa_sampler = 2                                   # dim(S^{2,0})
@@ -358,7 +361,7 @@ class BridgeAxionEDE(SimulationBase):
             f_eff = f_sub * enhancement
 
         The factor sqrt(N_ax * b3) arises from the alignment matrix
-        determinant of 12 axions in b3=24 dimensional instanton charge
+        determinant of b3//2 axions in b3-dimensional instanton charge
         space. The factor kappa_sampler=2=dim(S^{2,0}) accounts for the
         sampler sector contribution to the alignment (topologically fixed).
 
@@ -979,7 +982,7 @@ class BridgeAxionEDE(SimulationBase):
             metadata={
                 "derivation": "sqrt(12 * 24) * 2 = sqrt(288) * 2",
                 "units": "dimensionless",
-                "note": "KNP enhancement factor from 12 axions in b3=24 space"
+                "note": f"KNP enhancement factor from {int(_REG.elder_kads) // 2} axions in b3={int(_REG.elder_kads)} space"
             }
         )
 
@@ -1203,7 +1206,7 @@ class BridgeAxionEDE(SimulationBase):
                 ),
                 terms={
                     "M_Pl": "Planck mass = 1.22e19 GeV",
-                    "k_gimel": "Holonomy warp factor = b3/2 + 1/pi ~ 12.318",
+                    "k_gimel": f"Holonomy warp factor = b3/2 + 1/pi ~ {float(_REG.demiurgic_coupling):.3f} (rides the adopted seed)",
                     "T_i": "Complexified Kahler modulus of bridge i"
                 }
             ),
@@ -1219,7 +1222,7 @@ class BridgeAxionEDE(SimulationBase):
                 category="DERIVED",
                 description=(
                     "KNP enhancement factor from alignment of 12 bridge axions "
-                    "in b3=24 dimensional instanton charge space. The sqrt(N_ax*b3) "
+                    f"in b3={int(_REG.elder_kads)} dimensional instanton charge space. The sqrt(N_ax*b3) "
                     "factor arises from the alignment matrix determinant of 12 "
                     "axions in the 24D Leech lattice ambient space. The factor "
                     "kappa_sampler=2=dim(S^{2,0}) accounts for the sampler sector "
@@ -1236,7 +1239,7 @@ class BridgeAxionEDE(SimulationBase):
                             "formula": r"f_{\rm eff} \sim f_{\rm sub} \times \sqrt{N_1 N_2}"
                         },
                         {
-                            "description": "In G2: N_1=N_ax=12 axions, N_2=b3=24 charge dimensions",
+                            "description": f"In G2: N_1=N_ax={int(_REG.elder_kads) // 2} axions (b3//2), N_2=b3={int(_REG.elder_kads)} charge dimensions",
                             "formula": r"\sqrt{N_{\rm ax} \cdot b_3} = \sqrt{12 \times 24} = \sqrt{288} \approx 16.97"
                         },
                         {

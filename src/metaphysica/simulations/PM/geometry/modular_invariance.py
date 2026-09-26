@@ -349,32 +349,67 @@ class ModularInvarianceV16(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content."""
+        # Live reads: nothing topological below is retyped. The numbers
+        # come from the b3_seed fork and the generation route from
+        # geometry_narration, so a ruling rewrites this section instead
+        # of leaving it contradicting the code.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            generation_claim,
+            holonomy_claim,
+        )
+
+        b3, b2 = seed_values(resolve_path())
+        gen = generation_claim()
+        hol = holonomy_claim()
+
+        n_osc = 24            # transverse bosonic oscillators, D_space_24
+        osc_is_b3 = (b3 == n_osc)
+
         return SectionContent(
             section_id="3",
             subsection_id="3.6",  # v19.0: Unique subsection (Modular Invariance)
             title="Modular Invariance and Critical Dimension",
             abstract=(
-                "We prove that modular invariance of the partition function "
-                "requires exactly b₃ = 24, the third Betti number of the G₂ "
-                "manifold counting independent associative 3-cycles. Each "
-                "3-cycle contributes one bosonic oscillator mode to the "
-                "partition function Z(q) = η(τ)^{-b₃}, and anomaly "
-                "cancellation uniquely fixes b₃ = 24 (critical dimension "
-                "D = b₃ + 2 = 26)."
+                "Modular invariance of the partition function requires the "
+                "OSCILLATOR COUNT in Z(q) = η(τ)^{-n} to satisfy n ≡ 0 "
+                "(mod 24), whose minimal positive solution is n = %d. That "
+                "count is the bulk's transverse spacelike core (D_space_24), "
+                "and the critical dimension is D = %d + 2 = 26. This "
+                "abstract previously read \"requires exactly b₃ = 24, the "
+                "third Betti number of the G₂ manifold counting independent "
+                "associative 3-cycles\". The two quantities were conflated "
+                "while both read 24; the identification BROKE with the "
+                "b3_seed adoption (2026-09-22), and on the live seed "
+                "b₃ = %d, which is %s 0 (mod 24). The modular argument is "
+                "unaffected — it never needed b₃ — and the claim that it "
+                "fixes b₃ is withdrawn rather than deleted."
+                % (n_osc, n_osc, b3, "" if b3 % 24 == 0 else "NOT")
             ),
             content_blocks=[
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The partition function of the theory must be invariant "
-                        "under modular transformations τ → (aτ+b)/(cτ+d) with "
-                        "ad - bc = 1. In the G₂ framework, b₃ counts the "
-                        "independent associative 3-cycles in H₃(V₇, Z): each "
-                        "such cycle supports a harmonic 3-form that contributes "
-                        "one bosonic oscillator mode to the worldsheet partition "
-                        "function. The modular invariance of Z(q) = η(τ)^{-b₃} "
-                        "then severely constrains b₃, linking the topology of "
-                        "the internal G₂ manifold directly to anomaly cancellation."
+                        "The partition function of the theory must be "
+                        "invariant under modular transformations "
+                        "τ → (aτ+b)/(cτ+d) with ad - bc = 1. Modular "
+                        "invariance of Z(q) = η(τ)^{-n} constrains the "
+                        "OSCILLATOR COUNT n, and the count that enters is "
+                        "the %d transverse bosonic oscillators of the (24,2) "
+                        "bulk. This paragraph previously identified n with "
+                        "b₃, \"the independent associative 3-cycles in "
+                        "H₃(V₇, Z)\", each supporting a harmonic 3-form "
+                        "contributing one oscillator, and read the "
+                        "constraint as linking the internal topology to "
+                        "anomaly cancellation. That identification is "
+                        "withdrawn: b₃ = %d on the live seed, so n = b₃ "
+                        "fails here, and the modular constraint bears on "
+                        "the bulk's transverse core rather than on the "
+                        "internal manifold's third Betti number."
+                        % (n_osc, b3)
                     )
                 ),
                 ContentBlock(
@@ -391,8 +426,10 @@ class ModularInvarianceV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The partition function for the G₂ manifold with b₃ "
-                        "associative 3-cycles is:"
+                        "The partition function with n transverse bosonic "
+                        "oscillators (n = %d here; written Z(q) = "
+                        "η(τ)^{-b₃} while n and b₃ were conflated) is:"
+                        % n_osc
                     )
                 ),
                 ContentBlock(
@@ -415,7 +452,10 @@ class ModularInvarianceV16(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"b_3 \equiv 0 \mod 24 \implies b_3 = 24 \text{ (minimal)}",
+                    content=(r"n \equiv 0 \mod 24 \implies n = %d"
+                             r" \text{ (minimal); } b_3 = %d"
+                             r" \text{ on the live seed}"
+                             % (n_osc, b3)),
                     formula_id="modular-anomaly-condition",
                     label="(3.21)"
                 ),
@@ -426,7 +466,8 @@ class ModularInvarianceV16(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"E_0 = -\frac{b_3}{24} = -\frac{24}{24} = -1",
+                    content=(r"E_0 = -\frac{n}{24} = -\frac{%d}{24} = -1"
+                             % n_osc),
                     formula_id="vacuum-energy-formula",
                     label="(3.22)"
                 ),
@@ -435,14 +476,19 @@ class ModularInvarianceV16(SimulationBase):
                     callout_type="info",
                     title="Critical Dimension",
                     content=(
-                        "The critical dimension D = b₃ + 2 = 24 + 2 = 26 is the "
-                        "only value where the theory is consistent. This is not "
-                        "a choice—it is forced by modular invariance."
+                        "The critical dimension D = n + 2 = %d + 2 = 26 "
+                        "follows from the oscillator count, not from b₃. "
+                        "This callout previously read \"D = b₃ + 2 = 24 + 2 "
+                        "= 26\"; on the live seed b₃ = %d, so b₃ + 2 = %d "
+                        "and the +2 identity D_bulk − b₃ = 2 BREAKS — "
+                        "recorded, not dropped. What modular invariance "
+                        "forces is the oscillator count." % (n_osc, b3, b3 + 2)
                     )
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"D_{crit} = b_3 + 2 = 26",
+                    content=(r"D_{crit} = n + 2 = %d + 2 = 26"
+                             % n_osc),
                     formula_id="critical-dimension",
                     label="(3.23)"
                 ),

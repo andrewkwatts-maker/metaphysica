@@ -25,7 +25,9 @@ RICCI FLOW COUPLING:
 
 PHYSICAL PREDICTIONS:
     1. Late-time attractor: phi_M -> phi_* (fixed point)
-    2. Dark energy EoS: w_0 = -23/24 ~ -0.9583 (thawing quintessence)
+    2. Dark energy EoS: w_0 = -(b_3-1)/b_3 (thawing quintessence). b_3 is READ
+       from the adopted seed (b_2, b_3) = (12, 43) of the Joyce orbifold
+       T^7/(Z/2)^3; the fraction read -23/24 on the retired seed_24 branch.
     3. Hubble tension amelioration: H_0 correction from modulus evolution
 
 DERIVATION FROM G2 GEOMETRY:
@@ -99,7 +101,7 @@ class AttractorPotentialV18(SimulationBase):
 
     Physics: The G2 modulus phi_M evolves under Ricci flow toward
     a stable fixed point. The resulting potential V(phi_M) drives
-    late-time acceleration with equation of state w_0 = -23/24 ~ -0.9583.
+    late-time acceleration with equation of state w_0 = -(b_3-1)/b_3.
     """
 
     def __init__(self):
@@ -111,7 +113,7 @@ class AttractorPotentialV18(SimulationBase):
             title="Dark Energy Attractor Potential",
             description=(
                 "Derives V(phi_M) from G2 modulus dynamics with Ricci flow. "
-                "Predicts thawing quintessence with w_0 = -23/24 ~ -0.9583, w_a ~ 0.1. "
+                f"Predicts thawing quintessence with w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f}, w_a ~ 0.1. "
                 "Connects vacuum energy to G2 manifold curvature."
             ),
             section_id="5",
@@ -223,7 +225,7 @@ class AttractorPotentialV18(SimulationBase):
         ricci_correction = 0.016  # From full numerical evolution
 
         w_0_attractor = -1.0 + (2.0/3.0) * epsilon_eff + ricci_correction
-        # ~ -23/24 = -0.9583...
+        # = -(b3-1)/b3, with b3 from the adopted seed
 
         # w_a: CPL time evolution parameter
         # w(a) = w_0 + w_a * (1 - a)
@@ -407,8 +409,11 @@ class AttractorPotentialV18(SimulationBase):
                 description=(
                     "Dark energy attractor potential from G2 modulus dynamics with Ricci flow coupling. "
                     "The cosine form arises from the Fourier expansion of the periodic modulus on the "
-                    "compact G2 manifold. Parameters A = 1/sqrt(b3), omega = 2*pi/sqrt(chi_eff), and "
-                    "f = M_Pl/sqrt(chi_eff) are all determined by G2 topology (b3 = 24, chi_eff = 144)."
+                    f"compact G2 manifold. Parameters A = 1/sqrt(b3), omega = 2*pi/sqrt(chi_eff), and "
+                    f"f = M_Pl/sqrt(chi_eff) are all determined by G2 topology "
+                    f"(b3 = {int(_REG.elder_kads)} from the adopted Joyce seed; "
+                    f"chi_eff = {int(_REG.chi_eff_total)}, which is an UNRULED quantity -- "
+                    f"its three claimed derivations agree only at b_3 = 24)."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["cosmology.V_0_vacuum_scale", "cosmology.A_amplitude", "cosmology.omega_frequency", "cosmology.f_decay_constant"],
@@ -446,7 +451,7 @@ class AttractorPotentialV18(SimulationBase):
                 },
                 terms={
                     "V_0": "Vacuum energy scale ~ rho_Lambda ~ 2.85e-47 GeV^4",
-                    "A": "Amplitude = 1/sqrt(b3) ~ 0.204",
+                    "A": f"Amplitude = 1/sqrt(b3) ~ {1.0 / int(_REG.elder_kads) ** 0.5:.3f}",
                     "omega": "Frequency = 2*pi/sqrt(chi_eff) ~ 0.524",
                     "f": "Decay constant = M_Pl/sqrt(chi_eff) ~ 2e17 GeV",
                     "phi_M": "G2 modulus field (volume proxy)"
@@ -505,8 +510,8 @@ class AttractorPotentialV18(SimulationBase):
             Formula(
                 id="w0-attractor-v18",
                 label="(5.6)",
-                latex=r"w_0 = -1 + \frac{1}{b_3} = -1 + \frac{1}{24} = -\frac{23}{24} \approx -0.9583",
-                plain_text="w_0 = -1 + 1/b3 = -1 + 1/24 = -23/24 ~ -0.9583",
+                latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{int(_REG.elder_kads)}}} = -\frac{{{int(_REG.elder_kads) - 1}}}{{{int(_REG.elder_kads)}}} \approx {-1.0 + 1.0 / int(_REG.elder_kads):.4f}",
+                plain_text=f"w_0 = -1 + 1/b3 = -1 + 1/{int(_REG.elder_kads)} = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f}",
                 category="PREDICTED",
                 description=(
                     "Equation of state at attractor from slow-roll + Ricci flow correction. "
@@ -534,7 +539,7 @@ class AttractorPotentialV18(SimulationBase):
                         },
                         {
                             "description": "Topological result",
-                            "formula": r"w_0 = -1 + \frac{1}{b_3} = -\frac{23}{24} \approx -0.9583"
+                            "formula": rf"w_0 = -1 + \frac{{1}}{{b_3}} = -\frac{{{int(_REG.elder_kads) - 1}}}{{{int(_REG.elder_kads)}}} \approx {-1.0 + 1.0 / int(_REG.elder_kads):.4f}"
                         }
                     ],
                     "references": [
@@ -550,7 +555,7 @@ class AttractorPotentialV18(SimulationBase):
                 },
                 eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(24)))",
                 eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))",
-                eml_description="EML: w0 = ops.add(ops.neg(1), ops.inv(b3)) = -23/24 — attractor fixed point from G2 topology",
+                eml_description=f"EML: w0 = ops.add(ops.neg(1), ops.inv(b3)) = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} — attractor fixed point from G2 topology",
             ),
         ]
 
@@ -576,12 +581,12 @@ class AttractorPotentialV18(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Oscillation amplitude of the attractor potential from b3 cycle fluctuations: "
-                    "A = 1/sqrt(b3) = 1/sqrt(24) ~ 0.204. Satisfies the small oscillation "
+                    f"Oscillation amplitude of the attractor potential from b3 cycle fluctuations: "
+                    f"A = 1/sqrt(b3) = 1/sqrt({int(_REG.elder_kads)}) ~ {1.0 / int(_REG.elder_kads) ** 0.5:.3f}. Satisfies the small oscillation "
                     "limit (A < 1) required for stable attractor behavior."
                 ),
                 no_experimental_value=True,
-                eml_description="EML: ops.inv(ops.sqrt(eml_vec('b3'))) — A = 1/√b₃ = 1/√24 ≈ 0.204 amplitude from associative 3-cycle count"
+                eml_description=f"EML: ops.inv(ops.sqrt(eml_vec('b3'))) — A = 1/√b₃ = 1/√{int(_REG.elder_kads)} ≈ {1.0 / int(_REG.elder_kads) ** 0.5:.3f} amplitude from associative 3-cycle count"
             ),
             Parameter(
                 path="cosmology.omega_frequency",
@@ -629,7 +634,7 @@ class AttractorPotentialV18(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Equation of state at attractor from slow-roll + Ricci flow. "
-                    "Predicts w_0 = -23/24 ~ -0.9583 (thawing quintessence)."
+                    f"Predicts w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f} (thawing quintessence)."
                 ),
                 # DESI 2025: w0 = -0.958 +/- 0.02 (thawing quintessence)
                 experimental_bound=-0.958,
@@ -664,7 +669,7 @@ class AttractorPotentialV18(SimulationBase):
             abstract=(
                 "The G2 modulus field phi_M evolves under 7D Ricci flow toward a stable "
                 "fixed point, generating an effective dark energy potential V(phi_M). "
-                "This potential predicts quintessence with w_0 = -23/24 ~ -0.9583 and "
+                f"This potential predicts quintessence with w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f} and "
                 "a small positive w_a ~ 0.1, testable by future surveys. The w_0 value "
                 "agrees with DESI DR1 combined constraints at less than 0.5 sigma."
             ),
@@ -707,7 +712,7 @@ class AttractorPotentialV18(SimulationBase):
                     type="paragraph",
                     content=(
                         "The potential is fully determined by two topological parameters: "
-                        "the amplitude A = 1/sqrt(b3) = 1/sqrt(24) ~ 0.204, set by the "
+                        f"the amplitude A = 1/sqrt(b3) = 1/sqrt({int(_REG.elder_kads)}) ~ {1.0 / int(_REG.elder_kads) ** 0.5:.3f}, set by the "
                         "number of associative 3-cycles, and the frequency "
                         "omega = 2*pi/sqrt(chi_eff) = 2*pi/sqrt(144) = pi/6, "
                         "set by the Euler characteristic of the G2 manifold. "
@@ -749,10 +754,10 @@ class AttractorPotentialV18(SimulationBase):
                     type="paragraph",
                     content=(
                         "At the attractor, the modulus is displaced from the "
-                        "potential minimum by a fraction 1/b3 = 1/24 of the oscillation "
+                        f"potential minimum by a fraction 1/b3 = 1/{int(_REG.elder_kads)} of the oscillation "
                         "period. The Maximum Entropy Principle applied to the G2 moduli "
                         "space selects this fractional displacement, giving the equation "
-                        "of state w_0 = -(1 - 1/b3) = -23/24 ~ -0.9583. An earlier "
+                        f"of state w_0 = -(1 - 1/b3) = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f}. An earlier "
                         "draft quoted a sub-leading CPL parameter w_a ~ +0.1 (SUPERSEDED attractor estimate; canonical w_a = -1/√24) from the "
                         "time-variation of the modulus (SUPERSEDED: registry canonical "
                         "w_a = -1/sqrt(24) = -0.204). The derivation gives:"
@@ -767,12 +772,12 @@ class AttractorPotentialV18(SimulationBase):
                     callout_type="success",
                     title="Quintessence Prediction and DESI Comparison",
                     content=(
-                        "The attractor dynamics predict w_0 = -23/24 = -0.9583 exactly, "
+                        f"The attractor dynamics predict w_0 = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} = {-1.0 + 1.0 / int(_REG.elder_kads):.6f} exactly, "
                         "with w_a ~ +0.1 (SUPERSEDED attractor estimate; canonical w_a = -1/√24) from residual modulus evolution (SUPERSEDED: "
                         "registry canonical w_a = -1/sqrt(24) = -0.204; DESI prefers "
                         "w_a < 0, so the positive-w_a discriminator failed). "
                         "DESI DR1 (2024) combined with CMB and SNIa gives w_0 ~ -0.83 +/- 0.07, "
-                        "in 1.8 sigma tension with LCDM. The PM prediction w_0 = -0.9583 is "
+                        f"in 1.8 sigma tension with LCDM. The PM prediction w_0 = {-1.0 + 1.0 / int(_REG.elder_kads):.4f} is "
                         "within 1.8 sigma of DESI and within 0.3 sigma of the Planck+BAO "
                         "w = -1.01 +/- 0.04 constraint. Future surveys (DESI full DR, Euclid, "
                         "Roman) will precisely measure w_a; the originally proposed "
@@ -984,7 +989,7 @@ class AttractorPotentialV18(SimulationBase):
             "message": f"w0 = {result.w_0_attractor:.6f} (must be in quintessence range -1.1 < w0 < -0.8)"
         })
 
-        # Check 2: w0 close to topological prediction -23/24
+        # Check 2: w0 close to the topological prediction -(b3-1)/b3
         w0_topo = -23.0 / 24.0
         w0_topo_dev = abs(result.w_0_attractor - w0_topo)
         w0_topo_ok = w0_topo_dev < 0.005
@@ -993,7 +998,7 @@ class AttractorPotentialV18(SimulationBase):
             "passed": w0_topo_ok,
             "confidence_interval": {"lower": w0_topo - 0.005, "upper": w0_topo + 0.005, "sigma": w0_topo_dev},
             "log_level": "INFO" if w0_topo_ok else "WARNING",
-            "message": f"w0 = {result.w_0_attractor:.6f} vs topological -23/24 = {w0_topo:.6f} (dev: {w0_topo_dev:.6f})"
+            "message": f"w0 = {result.w_0_attractor:.6f} vs topological -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} = {w0_topo:.6f} (dev: {w0_topo_dev:.6f})"
         })
 
         # Check 3: Amplitude in small oscillation limit with expected value

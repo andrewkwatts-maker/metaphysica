@@ -42,7 +42,8 @@ Final formula
     D_top     = exp(-b3 / 2)                           # G2 dilution
     eta_B     = (28 / 79) * epsilon_L * D_top * (Gamma / H)
 
-With defaults (Re(T) = 174.033, Gamma = 1e-3, H = 1.66e-2, b3 = 24)
+With defaults (Re(T) = 174.033, Gamma = 1e-3, H = 1.66e-2, b3 from the
+adopted seed -- it was 24 on the retired seed_24 branch)
 this yields::
 
     epsilon_L = 1.756e-3
@@ -66,7 +67,9 @@ retained as ``secondary_estimate`` for diagnostic cross-checking.
 Notes
 -----
 * Zero new free parameters; Re(T) and decay_width are inherited from
-  the v25.0 Re(T) sector, and the dilution scale b3 = 24 is a Ten Pillar
+  the v25.0 Re(T) sector, and the dilution scale b3 is read from the adopted
+  seed (it is no longer a Ten Pillar input: on the Joyce orbifold T^7/(Z/2)^3
+  it is DERIVED as 7 + 3 b_2). The older wording called it a Ten Pillar
   seed (SSoT).
 * Sphaleron conversion factor 28/79 is the standard MSSM-like value
   (Khlebnikov-Shaposhnikov, Harvey-Turner).
@@ -81,6 +84,12 @@ import math
 from typing import Any, Dict
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
+#: quote the live value instead of the retired literal 24.
+_REG = _get_reg()
 
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 from metaphysica.simulations.core.eml_tree_adapter import (

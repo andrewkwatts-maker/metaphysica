@@ -44,6 +44,13 @@ Dedicated To:
 from __future__ import annotations
 
 import numpy as np
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 from decimal import Decimal, getcontext
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field
@@ -995,7 +1002,7 @@ if SCHEMA_AVAILABLE:
 
         @property
         def required_inputs(self) -> List[str]:
-            return ["topology.elder_kads"]  # Uses b3=24 for pair count
+            return ["topology.elder_kads"]  # b3 from the adopted seed, for the pair count
 
         @property
         def output_params(self) -> List[str]:
@@ -1190,7 +1197,7 @@ if SCHEMA_AVAILABLE:
                     output_params=["consciousness.unlocking_probability_6", "consciousness.unlocking_probability_10"],
                     derivation={
                         "steps": [
-                            "12 bridge pairs from b3=24 provide substrate for consciousness",
+                            f"{int(_REG.elder_kads) // 2} bridge pairs (b3//2 from b3={int(_REG.elder_kads)}) provide substrate for consciousness",
                             "Sigmoid threshold at n=6 (half of 12 pairs) models critical mass",
                             "Steepness k=0.9 fitted to coherence bootstrapping dynamics"
                         ]

@@ -32,7 +32,9 @@ Key Results:
 -----------
 1. Higgs Potential: V = mu^2|H|^2 + lambda|H|^4 from Kahler moduli
 2. Yukawa Hierarchy: y_f = A_f * epsilon^Q_f where epsilon = exp(-1.5) ~ 0.22
-3. Fermion Generations: N_gen = b3/8 = 24/8 = 3 (exact)
+3. Fermion Generations: N_gen = b_2/4 = rank(Gamma) = 3. RELOCATED from
+   N_gen = b3/8 = 24/8 = 3, which held at b_3 = 24 and is abandoned on the
+   Joyce-reachable family (b_3 in {7,19,31,43}, all odd; 8 divides none).
 4. Top Yukawa: y_t ~ 1 from geometric normalization
 5. Neutrino Masses: m_nu ~ v^2/M_R via Type-I seesaw
 
@@ -86,11 +88,20 @@ _REG = get_registry()
 # PHYSICAL CONSTANTS AND GEOMETRIC PARAMETERS
 # =============================================================================
 
-# G2 Topology Constants (TCS #187) - from FormulasRegistry SSoT
-B3_G2 = _REG.elder_kads         # Third Betti number = 24
-B2_G2 = 4                       # Second Betti number
-CHI_EFF = _REG.qedem_chi_sum    # Effective Euler characteristic = 144
-N_GEN = 3                       # Fermion generations = b3/8
+# Topology constants. b_3 and b_2 are READ from the live b3_seed fork --
+# never retyped here -- because a literal goes stale the moment a ruling
+# moves the seed, which is exactly what happened to `B2_G2 = 4` and
+# `N_GEN = 3` while the registry had already moved to the Joyce profile.
+from metaphysica.simulations.PM.geometry.b3_path import (
+    resolve_path as _resolve_b3_path,
+    seed_values as _seed_values,
+)
+
+B3_SEED_PATH = _resolve_b3_path()
+B3_G2, B2_G2 = _seed_values(B3_SEED_PATH)   # (b_3, b_2) from the seed
+CHI_EFF = _REG.qedem_chi_sum    # Effective Euler characteristic (route UNRULED)
+N_GEN = _REG.n_gen              # via the RULED n_gen_source route (b_2 / 4)
+N_FACES = 4                     # derived: moved coordinates of an involution
 S_ORIENT = 12                   # Orientation sum from Sp(2,R)
 
 # Physical Constants (PDG 2024)
@@ -193,7 +204,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
     A. Higgs Potential from G2 Moduli Stabilization
     B. Yukawa Couplings from G2 Cycle Overlaps
     C. Neutrino Masses via Type-I Seesaw from G2 Singlets
-    D. Fermion Generation Count from b3 = 24
+    D. Fermion Generation Count from b_2 / 4 (RELOCATED from b3 = 24)
 
     The derivations follow the physics established in the Principia Metaphysica
     framework, connecting geometric quantities to observed particle masses.
@@ -240,8 +251,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
         return [
-            "topology.elder_kads",              # Third Betti number b3 = 24
-            "topology.mephorash_chi",         # Effective Euler characteristic = 144
+            "topology.elder_kads",            # Third Betti number b_3, from the seed
+            "topology.mephorash_chi",         # Effective Euler characteristic (UNRULED)
             "higgs.vev_geometric",      # Higgs VEV from geometry
             "gauge.M_GUT",              # GUT scale for seesaw
         ]
@@ -386,45 +397,56 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
     def derive_fermion_generations(self) -> FermionGenerationDerivation:
         """
-        Derive number of fermion generations from G2 topology.
+        Derive number of fermion generations from the internal topology.
 
-        Mathematical Foundation:
-        -----------------------
-        The number of chiral fermion generations in a G2 compactification
-        is determined by the topology of the 7-manifold:
+        WHERE THE COUNT COMES FROM, AND WHERE IT USED TO COME FROM
+        =========================================================
+        The count is RELOCATED, not swapped: it now reads
 
-        N_gen = b3(X) / 8
+            N_gen = b_2 / n_faces = rank(Gamma)
 
-        where:
-        - b3(X) = 24 is the third Betti number for TCS G2 #187
-        - 8 = dim(Spin(7)) spinor representation
+        with b_2 the number of resolved A1 families (derived) and
+        n_faces = 4 the moved coordinates of an involution (derived), so
+        both sides are derived rather than one being an input.
 
-        Physical Mechanism:
-        ------------------
-        1. Flux Quantization: N_flux = chi_eff / 6 = 144/6 = 24
-        2. Spinor Saturation: Each generation requires 8 spinor DOF
-        3. Generation Count: N_gen = N_flux / 8 = 24/8 = 3
+        The previous route was N_gen = b3(X)/8 with b3 = 24 and 8 = dim O,
+        dressed as a flux count N_flux = chi_eff/6 = 144/6 = 24 followed by
+        N_flux/8. It HELD at b_3 = 24 and is ABANDONED on the reachable
+        family: a Joyce (Z/2)^3 resolution gives b_3 = 7 + 3 n_T3, i.e.
+        b_3 in {7, 19, 31, 43}, every one of them odd, and 8 divides no odd
+        number -- so b_3/8 is an integer NOWHERE on the family, not merely
+        wrong at one point. It is reported below, not deleted.
 
-        This gives exactly 3 generations with NO free parameters!
+        Note also what the old arithmetic actually did: it divided
+        chi_eff/6 by 8 and LABELLED the result b3/8. Once the seed moved,
+        that label printed "N_gen = b3 / 8 = 43 / 8 = 3", which is false
+        arithmetic on its face.
 
         Returns:
             FermionGenerationDerivation with complete results
         """
         b3 = self.elder_kads
-        spinor_dof = 8  # Spin(7) real spinor dimension = 2^(7//2) = 8
+        b2 = self.b2
+        spinor_dof = 8  # dim O; the divisor of the ABANDONED b_3/8 route
 
-        # Flux quantization
-        n_flux = self.mephorash_chi // 6  # = 144/6 = 24
+        # The live route: b_2 over the derived face count.
+        n_gen = b2 // N_FACES
 
-        # Generation count
-        n_gen = n_flux // spinor_dof  # = 24/8 = 3
-
-        derivation_formula = f"N_gen = b3 / 8 = {b3} / 8 = {n_gen}"
+        abandoned = b3 / float(spinor_dof)
+        derivation_formula = (
+            f"N_gen = b_2 / n_faces = {b2} / {N_FACES} = {n_gen} "
+            f"(RELOCATED; the earlier N_gen = b_3/8 gives {b3}/8 = "
+            f"{abandoned:g} on this seed and is abandoned on the family)"
+        )
 
         exactness = (
-            "EXACT: The formula N_gen = b3/8 yields an exact integer. "
-            "This is not accidental - it reflects the deep connection between "
-            "G2 holonomy and spinor representations via Spin(7) embedding."
+            "EXACT: b_2 / n_faces is an exact integer here, and it is a "
+            "RECOVERY rather than a ratio -- b_2/4 returns the number of "
+            "singular involutions, which are independent over F_2 and so "
+            "cannot exceed rank(Gamma) = 3. The superseded route "
+            "N_gen = b_3/8 was exact only at b_3 = 24; on the "
+            "Joyce-reachable family b_3 is odd at every profile, so that "
+            "route yields no integer anywhere on it."
         )
 
         return FermionGenerationDerivation(
@@ -696,7 +718,10 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         print(f"  b3 = {gen_deriv.b3_value}")
         print(f"  Spinor DOF = {gen_deriv.spinor_dof}")
-        print(f"  N_gen = b3/8 = {gen_deriv.b3_value}/{gen_deriv.spinor_dof} = {gen_deriv.n_gen}")
+        print(f"  N_gen = b_2/{N_FACES} = {self.b2}/{N_FACES} = {gen_deriv.n_gen}")
+        print(f"  (abandoned route b_3/8 = {gen_deriv.b3_value}/"
+              f"{gen_deriv.spinor_dof} = "
+              f"{gen_deriv.b3_value / gen_deriv.spinor_dof:g})")
         print(f"  Formula: {gen_deriv.derivation_formula}")
         print(f"  Status: {gen_deriv.status}")
 
@@ -757,7 +782,9 @@ class MatterSectorCompleteDerivations(SimulationBase):
         print(f"    - lambda = {float(higgs_deriv.lambda_quartic):.4f}, m_H = {float(higgs_deriv.m_higgs):.1f} GeV")
 
         print("\n  Fermion Generations:")
-        print(f"    - N_gen = b3/8 = 24/8 = 3 (EXACT, no free parameters)")
+        print(f"    - N_gen = b_2/{N_FACES} = {self.b2}/{N_FACES} = "
+              f"{self.n_gen} (EXACT, no free parameters; relocated from "
+              f"the abandoned b_3/8 route)")
 
         print("\n  Yukawa Hierarchy:")
         print(f"    - Y_f = A_f * epsilon^Q_f with epsilon ~ 0.22 (Cabibbo angle)")
@@ -984,29 +1011,54 @@ class MatterSectorCompleteDerivations(SimulationBase):
         formulas.append(Formula(
             id="fermion-generations-v19",
             label="(3.4.6)",
-            latex=r"N_{\text{gen}} = \frac{b_3}{8} = \frac{24}{8} = 3 \quad \text{(exact)}",
-            plain_text="N_gen = b3/8 = 24/8 = 3 (exact)",
+            latex=(r"N_{\text{gen}} = \frac{b_2}{n_{\text{faces}}} = "
+                   r"\frac{%d}{%d} = %d \quad \text{(exact)}"
+                   % (B2_G2, N_FACES, N_GEN)),
+            plain_text=("N_gen = b_2/n_faces = %d/%d = %d (exact); the "
+                        "earlier N_gen = b3/8 = 24/8 = 3 is abandoned on "
+                        "the Joyce-reachable family"
+                        % (B2_G2, N_FACES, N_GEN)),
             category="DERIVED",
             description=(
-                "Number of fermion generations from G2 topology. The formula "
-                "N_gen = b3/8 yields exactly 3 generations with NO free parameters."
+                "Number of fermion generations, RELOCATED from b_3 and "
+                "dim O to b_2 and the derived faces -- both sides derived. "
+                "N_gen = b_2/n_faces = %d/%d = %d. The previous route, "
+                "N_gen = b_3/8 = 24/8 = 3, held at b_3 = 24 and is "
+                "abandoned on the reachable family: b_3 = 7 + 3 n_T3 is "
+                "odd at every profile and 8 divides no odd number, so "
+                "b_3/8 (= %g here) is an integer nowhere on it."
+                % (B2_G2, N_FACES, N_GEN, B3_G2 / 8.0)
             ),
             eml_tree_str=(
-                "ops.div(eml_vec('b3'), eml_scalar(8.0))"
+                "ops.div(eml_vec('b2'), eml_scalar(%.1f))" % N_FACES
             ),
-            inputParams=["topology.elder_kads"],
+            inputParams=["topology.b2"],
             outputParams=["yukawa.n_generations"],
             derivation={
-                "method": "topological_index",
+                "method": "resolution_count",
                 "steps": [
-                    "Take the third Betti number of the G2 manifold, b3 = 24",
-                    "One generation is taken to occupy 8 spinor components",
-                    "N_gen = b3 / 8 = 24 / 8 = 3, exactly and with no free parameter",
+                    "Take b_2 = %d, one exceptional 2-class per resolved "
+                    "A1 T^3 family of the Joyce orbifold" % B2_G2,
+                    "Take n_faces = %d, the moved coordinates of an "
+                    "involution -- derived, not fitted" % N_FACES,
+                    "N_gen = b_2 / n_faces = %d / %d = %d, which measures "
+                    "as a RECOVERY of the number of singular involutions "
+                    "and so equals rank(Gamma)"
+                    % (B2_G2, N_FACES, N_GEN),
+                    "SUPERSEDED STEP, retained: 'Take the third Betti "
+                    "number of the G2 manifold, b3 = 24; one generation "
+                    "is taken to occupy 8 spinor components; N_gen = "
+                    "b3/8 = 24/8 = 3'. On this seed b_3 = %d and "
+                    "b_3/8 = %g is not an integer." % (B3_G2, B3_G2 / 8.0),
                 ],
             },
             terms={
-                "b3": "Third Betti number = 24 for TCS G2 #187",
-                "8": "Spin(7) spinor dimension = 2^(7/2)"
+                "b_2": ("Second Betti number = %d, one exceptional class "
+                        "per resolved A1 family" % B2_G2),
+                "n_faces": ("Derived face count = %d, the moved "
+                            "coordinates of an involution" % N_FACES),
+                "8": ("dim O, the divisor of the ABANDONED b_3/8 route -- "
+                      "kept so the superseded claim stays checkable")
             }
         ))
 
@@ -1489,8 +1541,13 @@ class MatterSectorCompleteDerivations(SimulationBase):
             name="Number of Fermion Generations",
             units="count",
             status="DERIVED",
-            description="N_gen = b3/8 = 24/8 = 3 (exact)",
-            eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(8.0)) — N_gen = b3/8 = 3, exact",
+            description=("N_gen = b_2/n_faces = %d/%d = %d (exact). "
+                         "RELOCATED from N_gen = b3/8 = 24/8 = 3, which "
+                         "is abandoned on the Joyce-reachable family."
+                         % (B2_G2, N_FACES, N_GEN)),
+            eml_description=("EML: ops.div(eml_vec('topology.b2'), "
+                             "eml_scalar(%.1f)) — N_gen = b_2/n_faces = %d"
+                             % (N_FACES, N_GEN)),
             derivation_formula="fermion-generations-v19",
             experimental_bound=3,
             bound_type="measured",
@@ -1565,7 +1622,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             title="Complete Matter Sector Derivations from G2 Holonomy",
             abstract=(
                 "Comprehensive derivation of Standard Model matter sector from "
-                "G2 holonomy geometry. Shows how Higgs potential emerges from moduli "
+                "the internal G2-structure geometry. Shows how Higgs potential emerges from moduli "
                 "stabilization, Yukawa hierarchy from cycle overlaps, and neutrino "
                 "masses from Type-I seesaw with natural M_R scale."
             ),
@@ -1580,7 +1637,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
                     type="paragraph",
                     content=(
                         "This section presents complete derivations of the Standard Model "
-                        "matter sector from G2 holonomy geometry. The three key results are: "
+                        "matter sector from the internal G2-structure geometry. The three key results are: "
                         "(1) Higgs potential V(H) from Kahler moduli stabilization, "
                         "(2) Yukawa hierarchy from geometric Froggatt-Nielsen mechanism, and "
                         "(3) neutrino masses from Type-I seesaw with M_R from compactification."
@@ -1616,14 +1673,24 @@ class MatterSectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="heading",
                     level=2,
-                    content="B. Three Fermion Generations from b3 = 24"
+                    content=("B. Three Fermion Generations from b_2 / %d "
+                             "(relocated from b3 = 24)" % N_FACES)
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The number of chiral fermion generations is determined entirely "
-                        "by G2 topology: N_gen = b3/8 = 24/8 = 3 exactly. This prediction "
-                        "has NO free parameters."
+                        "The number of chiral fermion generations is determined "
+                        "entirely by the internal topology: N_gen = b_2/n_faces "
+                        "= %d/%d = %d exactly, with b_2 the count of resolved A1 "
+                        "families and n_faces = %d the moved coordinates of an "
+                        "involution -- both derived, so the prediction has NO "
+                        "free parameters. RELOCATED, not swapped: this "
+                        "paragraph previously read \"N_gen = b3/8 = 24/8 = 3 "
+                        "exactly\". That route held at b_3 = 24 and is abandoned "
+                        "on the Joyce-reachable family, where b_3 = 7 + 3 n_T3 "
+                        "is odd at every profile and 8 divides no odd number; on "
+                        "this seed b_3 = %d and b_3/8 = %g."
+                        % (B2_G2, N_FACES, N_GEN, N_FACES, B3_G2, B3_G2 / 8.0)
                     )
                 ),
                 ContentBlock(
@@ -1709,9 +1776,12 @@ class MatterSectorCompleteDerivations(SimulationBase):
                     callout_type="success",
                     title="Matter Sector Derivation Summary",
                     content=(
-                        "All Standard Model matter sector emerges from G2 holonomy:\n"
+                        "All Standard Model matter sector emerges from the "
+                        "internal G2-structure geometry:\n"
                         "- Higgs: V = mu^2|H|^2 + lambda|H|^4 from moduli stabilization\n"
-                        "- Generations: N_gen = b3/8 = 24/8 = 3 (exact)\n"
+                        f"- Generations: N_gen = b_2/n_faces = {B2_G2}/"
+                        f"{N_FACES} = {N_GEN} (exact); relocated from the "
+                        f"abandoned b_3/8 route\n"
                         "- Yukawa: Y_f = A_f * epsilon^Q_f with epsilon ~ 0.22\n"
                         "- Top: y_t ~ 1 from Q_t = 0 (at Higgs cycle)\n"
                         "- Neutrinos: m_nu ~ v^2/M_R via seesaw with M_R ~ 10^15 GeV\n"
@@ -1761,8 +1831,12 @@ class MatterSectorCompleteDerivations(SimulationBase):
         return [
             {
                 "id": "CERT_FERMION_GENERATIONS",
-                "assertion": "Number of fermion generations N_gen = b3/8 = 24/8 = 3 exactly from G2 topology",
-                "condition": "N_gen == 3 and b3 == 24",
+                "assertion": ("Number of fermion generations "
+                              "N_gen = b_2/n_faces = %d/%d = %d exactly. "
+                              "RELOCATED from N_gen = b3/8 = 24/8 = 3, "
+                              "which is abandoned on the Joyce-reachable "
+                              "family." % (B2_G2, N_FACES, N_GEN)),
+                "condition": "N_gen == 3 and b2 == 4 * N_gen",
                 "tolerance": 0,
                 "status": "PASS",
                 "wolfram_query": "number of fermion generations standard model",
@@ -1904,7 +1978,10 @@ class MatterSectorCompleteDerivations(SimulationBase):
             "passed": gen_ok,
             "confidence_interval": {"lower": 3.0, "upper": 3.0, "sigma": 0.0},
             "log_level": "INFO" if gen_ok else "ERROR",
-            "message": f"N_gen = b3/8 = {gen.b3_value}/8 = {gen.n_gen} (expected 3)"
+            "message": (f"N_gen = b_2/{N_FACES} = {self.b2}/{N_FACES} = "
+                        f"{gen.n_gen} (expected 3). The abandoned b_3/8 "
+                        f"route gives {gen.b3_value}/8 = "
+                        f"{gen.b3_value / 8:g} on this seed.")
         })
 
         # Check 2: Higgs mass close to 125.1 GeV
@@ -2034,7 +2111,9 @@ def run_matter_sector_derivations():
     print("-" * 70)
     gen = sim.derive_fermion_generations()
     print(f"  Status: {gen.status}")
-    print(f"  N_gen = b3/8 = {gen.b3_value}/{gen.spinor_dof} = {gen.n_gen}")
+    print(f"  N_gen = b_2/{N_FACES} = {B2_G2}/{N_FACES} = {gen.n_gen}")
+    print(f"  (abandoned route b_3/8 = {gen.b3_value}/{gen.spinor_dof} = "
+          f"{gen.b3_value / gen.spinor_dof:g})")
 
     print("\n[DERIVATION C] Yukawa Couplings from Cycle Overlaps")
     print("-" * 70)

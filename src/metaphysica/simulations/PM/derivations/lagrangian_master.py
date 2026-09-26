@@ -97,6 +97,21 @@ except ImportError:
     SYMPY_AVAILABLE = False
 
 
+def _live_b3() -> int:
+    """Third Betti number in force, from the b3_seed fork."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    return seed_values(resolve_path())[0]
+
+
+#: Read once at import so the formula and learning strings below cannot
+#: carry a retyped Betti number.
+_LIVE_B3 = _live_b3()
+
+
 class LagrangianMasterDerivation(SimulationBase):
     """
     Core 26D Master Action Lagrangian Derivations with Vielbein Formalism (v22).
@@ -2177,7 +2192,15 @@ class LagrangianMasterDerivation(SimulationBase):
             derivation={
                 "steps": [
                     "Decompose the 13D metric as ds^2_13 = e^{2B(z)} ds^2_6 + h_ab(z) dz^a dz^b where h_ab is the G2 holonomy metric on the compact 7-manifold",
-                    "The G2 holonomy condition Hol(h) subset G2 ensures N=1 SUSY and determines b_3 = 24 independent 3-cycles",
+                    ("The G2 HOLONOMY condition Hol(h) subset G2 would "
+                     "ensure N=1 SUSY; on the adopted g2_form_convention "
+                     "branch phi is the SPLIT real form, so this condition "
+                     "is not available and the step is recorded rather than "
+                     "asserted. It also read 'determines b_3 = 24 "
+                     "independent 3-cycles', which the condition never "
+                     "did: b_3 comes from the resolution count and is %d "
+                     "on the live seed."
+                     % _LIVE_B3),
                     "Integrating over the G2 seven-manifold gives the 6D effective action and fixes the number of massless moduli by b_3"
                 ],
                 "method": "G2 holonomy compactification (Acharya-Witten 2001; Joyce 2000)",
@@ -2785,7 +2808,10 @@ class LagrangianMasterDerivation(SimulationBase):
                 "method": (
                     "M-theory G2 racetrack moduli stabilisation, adapting "
                     "KKLT (2003) and LVS (2005) from Type IIB Calabi-Yau to "
-                    "M-theory on G2 holonomy manifolds with TCS construction. "
+                    "M-theory on G2-structure manifolds. The TCS construction "
+                    "named here is OFF-PATH for this framework (it exhibits "
+                    "71 <= b_3 <= 155; the adopted construction is a Joyce "
+                    "orbifold T^7/(Z/2)^3). "
                     "Scales a_i = b_3/i fixed by G2 topology."
                 ),
                 "parentFormulas": [
@@ -2990,6 +3016,22 @@ class LagrangianMasterDerivation(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for paper."""
+        # Live topology reads. Nothing below retypes a Betti number: the
+        # seed fork owns them, so a ruling rewrites this section instead of
+        # leaving it asserting a superseded profile.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path,
+            seed_values,
+        )
+
+        b3, b2 = seed_values(resolve_path())
+
+        racetrack_scales = [b3 / i for i in (1, 2, 3, 4)]
+        scales_str = "{" + ", ".join("%g" % v
+                                     for v in racetrack_scales) + "}"
+        scales_integral = all(float(v).is_integer()
+                              for v in racetrack_scales)
+
         return SectionContent(
             section_id="2",
             subsection_id="2.1",
@@ -3115,16 +3157,30 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The four Kahler moduli T_1,...,T_4 of the TCS (twisted connected sum) "
-                        "G2 manifold correspond to h^{1,1} = 4 independent 2-cycles, one per "
-                        "face of the construction. Each modulus must be independently stabilised "
-                        "to fix the internal geometry and determine 4D coupling constants. The "
+                        f"The four moduli T_1,...,T_4 sit one per face of "
+                        f"the construction, the face count being derived as "
+                        f"the moved coordinates of an involution. (This "
+                        f"sentence previously named 'the TCS (twisted "
+                        f"connected sum) G2 manifold' with h^{{1,1}} = 4 "
+                        f"independent 2-cycles; TCS is off-path, exhibiting "
+                        f"71 <= b_3 <= 155 against b_3 = {b3} here, and the "
+                        f"adopted construction is a Joyce orbifold "
+                        f"T^7/(Z/2)^3 with b_2 = {b2}.) Each modulus must be "
+                        f"independently stabilised to fix the internal "
+                        f"geometry and determine 4D coupling constants. The "
                         "racetrack mechanism, originally developed for KKLT (Kachru-Kallosh-Linde-"
                         "Trivedi 2003) and LVS (Large Volume Scenario, Balasubramanian-Berglund-"
                         "Conlon-Quevedo 2005) moduli stabilisation in Type IIB string theory, is "
                         "adapted here to the M-theory G2 setting. Non-perturbative M2-brane "
                         "instantons wrapping associative 3-cycles generate exponential terms in "
-                        "the superpotential W with scales a_i = b_3/i = 24/i. The F-term scalar "
+                        f"the superpotential W with scales a_i = b_3/i, "
+                        f"i.e. {scales_str} at b_3 = {b3}. Published as "
+                        f"24/i = {{24, 12, 8, 6}}, all integers; on the live "
+                        f"seed they are "
+                        f"{'still' if scales_integral else 'NOT'} "
+                        f"integral, so the integrality was a property of "
+                        f"b_3 = 24 rather than of the mechanism. The F-term "
+                        f"scalar "
                         "potential V = e^K(|DW|^2 - 3|W|^2) then stabilises all four moduli "
                         "simultaneously. The torsion correction term and spectral residue dressing "
                         "factor provide sub-leading corrections from G2 structure deformation and "
@@ -3277,10 +3333,16 @@ class LagrangianMasterDerivation(SimulationBase):
                         "decomposition into four sectors:\n\n"
                         "26D = 4D (visible spacetime) + 7D (G2 internal) "
                         "+ 14D (bridges) + 2D (shadow-time directions)\n\n"
-                        "The 4D visible spacetime M^{3,1} is the Minkowski (or FRW) "
-                        "spacetime we observe. The 7D G2 holonomy manifold X_7 carries "
-                        "the internal geometry whose topology (b_3 = 24 associative "
-                        "3-cycles, chi_eff = 144) determines all 4D coupling constants. "
+                        f"The 4D visible spacetime M^{{3,1}} is the Minkowski "
+                        f"(or FRW) spacetime we observe. The 7D internal "
+                        f"manifold X_7 is a G2-STRUCTURE manifold -- "
+                        f"HOLONOMY is not claimed on the adopted branch, "
+                        f"where phi is the SPLIT real form with induced "
+                        f"signature (4,3) -- and it carries the internal "
+                        f"geometry whose topology (b_3 = {b3} independent "
+                        f"3-cycles, chi_eff = 144 by an UNRULED route) "
+                        f"determines all 4D coupling constants. This passage "
+                        f"used to type b_3 = 24. "
                         "The 14D bridge sector consists of 7 bridge pairs (each 2D), "
                         "which carry the shadow and face structure of the two-layer OR "
                         "hierarchy. The 2D shadow-time directions S^{2,0} (introduced in v24.2) "
@@ -3293,7 +3355,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     title="26D Dimensional Decomposition",
                     content=(
                         "4D: Visible spacetime M^{3,1} (3 spatial + 1 temporal)\n"
-                        "7D: G2 holonomy internal manifold X_7 (b_3 = 24, chi_eff = 144)\n"
+                        f"7D: G2-structure internal manifold X_7 "
+                        f"(b_3 = {b3}, chi_eff = 144 by an UNRULED route; "
+                        f"HOLONOMY not claimed)\n"
                         "14D: 7 bridge pairs (shadow/face structure, 2D each)\n"
                         "2D: Sampler data fields S^{2,0} (v24.2 extension)\n"
                         "Total: 4 + 7 + 14 + 2 = 27 dimensions with (24,2) structure"
@@ -3307,12 +3371,16 @@ class LagrangianMasterDerivation(SimulationBase):
                         "origin in the M-theory compactification:\n\n"
                         "R_26/(2 kappa_26^2): Einstein-Hilbert gravity in the full "
                         "26D bulk, ensuring diffeomorphism invariance.\n\n"
-                        "|F_4|^2/2: The M-theory 4-form flux kinetic energy. The field "
-                        "strength F_4 = dC_3 threads the b_3 = 24 independent associative "
-                        "3-cycles of the G2 manifold, stabilising complex structure moduli.\n\n"
-                        "V_mod: The racetrack moduli potential with geometric scaling "
-                        "a_i = b_3/i = 24/i, stabilising the 4 Kahler moduli of the TCS "
-                        "G2 construction.\n\n"
+                        f"|F_4|^2/2: The M-theory 4-form flux kinetic "
+                        f"energy. The field strength F_4 = dC_3 threads the "
+                        f"b_3 = {b3} independent 3-cycles of the internal "
+                        f"manifold, stabilising moduli. (Typed as 24 before "
+                        f"the seed was read here.)\n\n"
+                        f"V_mod: The racetrack moduli potential with "
+                        f"geometric scaling a_i = b_3/i = {scales_str}, "
+                        f"stabilising the 4 moduli faces. Published as 24/i "
+                        f"for the TCS G2 construction, which is "
+                        f"off-path.\n\n"
                         "V_tor: Torsion correction from the Fernandez-Gray tau_1 class.\n\n"
                         "Sum_n R_n psi_bar_n D_slash psi_n: KK tower of fermion modes "
                         "dressed by spectral residues.\n\n"
@@ -3334,10 +3402,15 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The racetrack moduli potential provides the explicit form of "
-                        "V_mod in the 26D bulk action. The 4 Kahler moduli T_1,...,T_4 "
-                        "of the TCS G2 manifold are stabilised by competing non-perturbative "
-                        "exponentials with geometrically-determined scales a_i = b_3/i = 24/i. "
+                        f"The racetrack moduli potential provides the "
+                        f"explicit form of V_mod in the 26D bulk action. The "
+                        f"4 moduli T_1,...,T_4 -- one per derived face, not "
+                        f"the h^{{1,1}} = 4 Kahler moduli of a TCS G2 "
+                        f"manifold as this used to say -- are stabilised by "
+                        f"competing non-perturbative exponentials with "
+                        f"geometrically-determined scales a_i = b_3/i, "
+                        f"published as 24/i and equal to {scales_str} at "
+                        f"b_3 = {b3}. "
                         "This adapts the KKLT (Kachru-Kallosh-Linde-Trivedi 2003) and LVS "
                         "(Large Volume Scenario, Balasubramanian-Berglund-Conlon-Quevedo 2005) "
                         "moduli stabilisation frameworks from Type IIB string theory to the "
@@ -3367,8 +3440,9 @@ class LagrangianMasterDerivation(SimulationBase):
                         "Dimensional decomposition: 27 = 4 + 7 + 14 + 2\n"
                         "Two-layer OR: V_bridge (global, creates shadows) + "
                         "V_face (local, selects visible face)\n"
-                        "Racetrack scales: a_i = b_3/i = {24, 12, 8, 6} "
-                        "(all positive integers from b_3 = 24)\n"
+                        f"Racetrack scales: a_i = b_3/i = {scales_str} at "
+                        f"b_3 = {b3}; published as {{24, 12, 8, 6}}, all "
+                        f"positive integers, which held at b_3 = 24\n"
                         "Lambda_i from calibrated G2 associative cycle volumes\n"
                         "M-theory origin: adapts KKLT/LVS from Type IIB CY to G2"
                     )
@@ -3599,7 +3673,15 @@ class LagrangianMasterDerivation(SimulationBase):
             {
                 "topic": "G2 holonomy and M-theory compactification",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "G2 holonomy on a 7-manifold yields exactly N=1 supersymmetry in 4D, with the third Betti number b_3 determining the number of fermion generations",
+                "relevance": ("G2 HOLONOMY on a 7-manifold yields exactly "
+                              "N=1 supersymmetry in 4D. The clause 'with "
+                              "the third Betti number b_3 determining the "
+                              "number of fermion generations' is "
+                              "SUPERSEDED: the generation count relocated "
+                              "to n_gen = b_2/4 = rank(Gamma), because "
+                              "b_3/8 is an integer nowhere on the "
+                              "Joyce-reachable family (b_3 odd at every "
+                              "profile; b_3 = %d here)." % _LIVE_B3),
                 "validation_hint": "Confirm that G2 subset SO(7) has dimension 14 and that the associative 3-form phi satisfies d phi = 0 and d(*phi) = 0"
             },
             {

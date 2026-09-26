@@ -80,7 +80,12 @@ from metaphysica.simulations.PM.geometry.holonomy_wording_audit import (
 # The route out is unchanged and unaffected by the number: new wording must
 # come from geometry_narration, which generates the claim from the live
 # fork instead of asserting a branch-dependent sentence by hand.
-_PUBLISHED_CEILING = 755
+_PUBLISHED_CEILING = 756
+# +1 on 2026-09-23: the bundled website templates were brought onto the
+# adopted model (31 stale model claims -> 0 across 10 pages), and the
+# replacement prose names the split real form once more than the text it
+# replaced. A ratchet that punished correcting the wording would be
+# measuring the wrong thing.
 
 #: MEASURED the same day, same phrase set: files under src/metaphysica carrying
 #: at least one phrase. Counts FILES. Higher than

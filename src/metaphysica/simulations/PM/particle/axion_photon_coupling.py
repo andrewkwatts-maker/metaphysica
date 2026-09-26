@@ -68,6 +68,13 @@ from __future__ import annotations
 import math
 from typing import Any, Dict, Optional
 
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
+
 from metaphysica.simulations.core.eml_tree_adapter import (
     b3_leaf,
     eml_compute,
@@ -296,7 +303,7 @@ class AxionPhotonCoupling:
 
             C_aγγ = (b3 / (2π)) · exp(−Re(T) / 200)
 
-        With ``b3 = 24`` and ``Re(T) = 174.033`` this evaluates to
+        With ``b3`` from the adopted seed and ``Re(T) = 174.033`` this evaluates to
         ``C_aγγ ≈ 1.60``.
         """
         C = (self.b3 / (2.0 * math.pi)) * math.exp(
@@ -336,7 +343,7 @@ class AxionPhotonCoupling:
             param="g_a_gamma_gamma_GeV",
             formula=(
                 "(alpha_EM / (2*pi*f_a)) * C_a_gamma_gamma * S  "
-                "-- C_a_gamma_gamma derived from b3 = 24 via G2 anomaly"
+                f"-- C_a_gamma_gamma derived from b3 = {int(_REG.elder_kads)} via G2 anomaly"
             ),
             value=float(g),
         )
@@ -376,7 +383,7 @@ class AxionPhotonCoupling:
         self.axion_tree.register_derivation(
             param="axion_photon_coupling_summary",
             formula=(
-                "g_a_gamma_gamma derived from b3 = 24 via G2 anomaly + Re(T)"
+                f"g_a_gamma_gamma derived from b3 = {int(_REG.elder_kads)} via G2 anomaly + Re(T)"
             ),
             value=float(results["g_aγγ_GeV"]),
         )

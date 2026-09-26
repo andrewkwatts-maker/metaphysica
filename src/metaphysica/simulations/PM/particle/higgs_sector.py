@@ -74,7 +74,8 @@ EML tree
 Every derived parameter is registered with an EML operator tree named
 ``"higgs_sector"`` so the Sprint 3 ``arithma_dependency_walker`` and the
 Sprint 4 dependency resolver can pick the derivation up and confirm
-back-propagation to the G_2 third Betti number seed ``b_3 = 24`` (via
+back-propagation to the G_2 third Betti number seed ``b_3`` -- read from the
+adopted path, 24 on the retired seed_24 branch -- (via
 the upstream Re(T) and soft-mass derivations).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -87,6 +88,13 @@ Dedicated To:
 from __future__ import annotations
 
 from typing import Any, Dict
+
+from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+
+#: SSoT read. b3 and k_gimel FOLLOW THE ADOPTED SEED (b_2, b_3) = (12, 43)
+#: of the Joyce orbifold T^7/(Z/2)^3; the prose below reads them instead of
+#: retyping the retired seed_24 literals.
+_REG = _get_reg()
 
 import numpy as np
 
@@ -291,7 +299,7 @@ class HiggsSector:
             (
                 "MSSM CP-even mass-matrix diagonalisation + stop-loop "
                 "correction; m_h^2 = m_h_tree^2(B_mu, tan_beta, m_Z) + "
-                "delta_radiative^2; soft terms seeded by b3=24 via Re(T) "
+                f"delta_radiative^2; soft terms seeded by b3={int(_REG.elder_kads)} via Re(T) "
                 "sector"
             ),
             float(m_h),
