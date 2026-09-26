@@ -309,6 +309,59 @@ is named, so `downstream()` now publishes `w0_sigma_anchor`,
 number. No number changed. Choosing a single anchor for w_0 is the author's
 ruling; declaring which is in force is not.
 
+### 3.9 A real adopted-seed build: the count is 38, and three rows still ship b_3 = 24
+
+`eml_spectral` was absent from this container, so "Run all simulations" was
+skipped for the missing `sims` extra — which is why 877 tests skipped locally
+and 20 failed. (Not `--fast`: CI installs `.[dev,sims]` and does run them.)
+Installing it from the local `EML-Spectral` checkout and building in an isolated
+worktree gives the first genuine adopted-seed artifact, and with it the number
+that had been unmeasurable:
+
+| | |
+|---|---|
+| `particle.b3` in the artifact | **43** |
+| `count_is_the_live_forks` | **true** — earned, not assumed |
+| ledger rows | 67 |
+| **independent knobs** | **38** |
+| verified removals | 29 (10 derived, 11 duplicate, 8 not-a-knob) |
+| removals resting on a stale b_3 | none |
+
+So **the adopted path's free-parameter count is 38**, and it can now be stated
+with its provenance rather than quoted from an artifact that could not say which
+geometry produced it. One row stays unverified on a *real* build too —
+`algebra.freudenthal_quartic`, whose `16 (b_3/27)^2` does not reproduce its
+registered value — so that is a genuine open item and not an artefact of the
+synthetic probe in §3.7.
+
+**But a fresh build at the adopted seed still publishes b_3 = 24 in three
+places:**
+
+| row | built at b_3 = 43 | should be |
+|---|---|---|
+| `cosmology.w0_derived` | −0.958333 (= −23/24) | −0.976744, which the same artifact publishes as `cosmology.w0_thawing` |
+| `topology.b3_modular` | 24 | 43 |
+| `geometry.k_gimel` | 12.31831 | 21.81831 (= b_3/2 + 1/π) |
+
+The first is the sharpest: **two rows for the same physical quantity, in the
+same artifact, disagreeing** — `w0_derived` at −23/24 and `w0_thawing` at
+−42/43. The third traces to `geometric_anchors.py:286`, which reads literally
+`k_gimel = 24 / 2 + 1 / np.pi` while its own caption says `k_gimel = b3/2 +
+1/pi`: a typed seed behind a formula that claims to be derived.
+
+**Not changed, because this one is load-bearing.** `alpha^-1 = k_gimel^2 -
+b3/phi + phi/(4 pi) - D_G2/(10^4 - 3 k_gimel) = 137.035999` depends on
+`k_gimel`, so making it ride the seed moves α⁻¹ far off its measured value.
+That is the same dichotomy §3.6 records for the `FormulasRegistry` constants,
+in a module the earlier scan did not cover, and resolving it is the author's
+ruling.
+
+A wider scan found 93 literal-24 arithmetic sites under `PM/`, but most are
+legitimate — the Leech lattice genuinely is 24-dimensional, and
+`D(D−1)(D−2)(D−3)//24` is a binomial denominator. Discriminating a 24 that
+means b_3 from one that does not needs the declared-formula method §3.6 uses,
+not a grep; the `w0 = -23.0/24.0` family is the unambiguous part.
+
 ## 4. Structural debt
 
 Five modules carry most of the size, and `config.py` alone is 8,779 lines:
