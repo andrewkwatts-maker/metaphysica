@@ -38,7 +38,7 @@ moved: `_demiurgic_coupling` (b_3/2 + 1/π) is 21.818, `pressure_divisor`
 | 3 | `FormulasRegistry._chi_eff` | `72` (line 1157) | `chi_eff_shadow = b3^2/8 = 576/8 = 72` (line 284, repeated at 300) | lines 284 / 300 | 72 | 231.125 | yes | **no** | quark Yukawa / CKM, gate transition, baryon asymmetry, torsional leakage; exported as `chi_eff`, `chi_eff_sector`, `mephorash_chi` | **none.** Forked as `chi_eff_route`, status OPEN / **unruled** |
 | 4 | `FormulasRegistry._chi_eff_total` | `144` (line 1158) | `GEOMETRIC: chi_eff_total = 72 + 72 = b3^2/4 = 576/4 = 144` (line 310) | line 310 | 144 | 462.25 | yes | **no** | 131 refs / 19 files: `reid_invariant = 1/144`, `chi_parity_product`, PMNS mixing, `N_flux`, `roots_per_sector`, `pneuma_mechanism`, `CERTIFICATES.py` | **none.** Forked as `chi_eff_route`, status OPEN / **unruled** — *must stay unruled* |
 | 5 | `FormulasRegistry.BULK_PRESSURE` = `163` (line 191); `_odowd_bulk_pressure` = `163` (line 1382); `_sterile_sector` = 288 − 125 = `163` (line 1188) | `163` | `- sterile_sector = BULK_PRESSURE = 163 (= 7*b3 - 5)` (line 1397); also `sterile_sector = 163 (shadow gauge degrees of freedom = 7*b3 - 5)` (line 3873) and the `odowd_bulk_derived` docstring `(7 * B3) - 5 = 163` (line 4107) | lines 1397 / 3873 / 4107 | 163 | 296 | yes | **no** | 118 refs / 13 files; `_sophian_drag = BULK_PRESSURE/(10·b_3 − 1)`, H0 O'Dowd formula, `terminal_closure.py`, `root_derivation.py`, `appendix_h_288_roots.py`, `generate_72gates_json.py` | `verify_bulk_pressure_derivation()` compares the two sides and **already returns False** at the live seed (163 vs 296). `tests/test_sterility_audit.py::test_sterile_equals_bulk` pins that break with `assertFalse`. `verify_sterile_equals_bulk()` is False for the same reason |
-| 6 | `identify_ghost_literals.GhostLiteralHunter.TARGET_LITERALS` | `163` (line 43), and in the same set `144` (42), `288` (44), `576` (47), `0.9583` (49), `71.55` (46) | `163,      # sterile_sector = (7*B3)-5` | line 43 (module docstring repeats it at line 8) | 163 | 296 | yes | **no** | the ghost-literal hunter itself. Consequence: the hunter hunts the **24-era** values and cannot see the live ones (296, 462.25, 1849, 42/43) | none |
+| 6 | `identify_ghost_literals.GhostLiteralHunter.TARGET_LITERALS` | `163` (line 43), and in the same set `144` (42), `288` (44), `576` (47), `0.9583` (48), `71.55` (46) | `163,      # sterile_sector = (7*B3)-5` | line 43 (module docstring repeats it at line 8) | 163 | 296 | yes | **no** | the ghost-literal hunter itself. Consequence: the hunter hunts the **24-era** values and cannot see the live ones (296, 462.25, 1849, 42/43) | none |
 | 7 | `FormulasRegistry._D_ancestral_total` | `26` (line 1206) | `return self._D_ancestral_total  # D_bulk = 26 = b3 + 2 (two-time)` (line 3675) | line 3675 | 26 | 45 | yes | **no** | `D_BULK` in `config.py`, every dimensional-reduction consumer, `horos` / `horos_limit` / `D_total_26` | `b3_path.downstream()` already reports `plus_two_identity_holds = False` with a `plus_two_identity_note` ("BROKEN on this path … Recorded, not dropped"), and `b3_path`'s module docstring states the cost. The registry docstring at 3675 was not updated with it |
 | 8 | `verify_sterility_report.IndependentDerivation.MANIFOLD_BASE` | `24` (line 66) | `MANIFOLD_BASE = 24       # b3 - the Betti number` | line 66, trailing comment | 24 | 43 | yes | **no** | `derive_independently()` (line 79) and line 179 — the "Clean Room" validator that exists specifically to avoid the tautology loop. Consequence: the independent cross-check derives 144 / 163 / 576 / 71.55 from b_3 = **24** and then compares them to a registry running at 43, so `pressure_divisor_derivation` and `sterile_derivation` in that report are scored against the abandoned seed | none |
 
@@ -82,9 +82,11 @@ registry:
 Both `verify_tzimtzum_fraction` and `verify_w0_seal` run inside
 `DemonLockGuard.run_preflight()` (lines 475–481), so **the preflight fails** if
 σ_T moves. Also pinned outside the guard: `identify_ghost_literals`'
-`TARGET_LITERALS` contains `0.9583  # tzimtzum_pressure = 23/24` (line 49), and
-`FormulasRegistry.IMMUTABLE_PARAMS`' counterpart in
-`DemonLockGuard.IMMUTABLE_PARAMS` lists `tzimtzum_pressure` and `sophian_drag`.
+`TARGET_LITERALS` contains `0.9583  # tzimtzum_pressure = 23/24` (line 48, and again in its
+value->name map at line 286), and
+`DemonLockGuard.IMMUTABLE_PARAMS` (line 72) lists `tzimtzum_pressure` and
+`sophian_drag` among the parameters the Demon Lock treats as immutable once
+registered.
 
 That is the cost side of unfreezing σ_T. It is stated here so the decision is
 taken with it in view; the decision itself is the author's.

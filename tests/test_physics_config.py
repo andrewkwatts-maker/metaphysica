@@ -153,9 +153,9 @@ def test_config_has_no_dimensional_literals_left():
     import io
     from pathlib import Path
 
-    cfg = (
+    cfg_pkg = (
         Path(__file__).resolve().parents[1]
-        / "src" / "metaphysica" / "config.py"
+        / "src" / "metaphysica" / "config"
     )
     # Every class that mirrored these -- FundamentalConstants,
     # V21BridgeParameters, PneumaVielbeinParameters and the two dimensional
@@ -171,11 +171,13 @@ def test_config_has_no_dimensional_literals_left():
                 "SIGNATURE_INITIAL = (24, 2)", "D_SHADOW_NORMAL = 13",
                 "D_SHADOW_MIRROR = 13")
     offenders = []
-    for lineno, line in enumerate(
-        io.open(cfg, encoding="utf-8").read().splitlines(), 1
-    ):
-        code = line.split("#", 1)[0]
-        for literal in literals:
-            if code.strip().startswith(literal):
-                offenders.append(f"{lineno}: {line.strip()[:70]}")
+    for cfg in sorted(cfg_pkg.rglob("*.py")):
+        rel = cfg.relative_to(cfg_pkg.parent).as_posix()
+        for lineno, line in enumerate(
+            io.open(cfg, encoding="utf-8").read().splitlines(), 1
+        ):
+            code = line.split("#", 1)[0]
+            for literal in literals:
+                if code.strip().startswith(literal):
+                    offenders.append(f"{rel}:{lineno}: {line.strip()[:70]}")
     assert not offenders, "dimensional literals survived:\n" + "\n".join(offenders)

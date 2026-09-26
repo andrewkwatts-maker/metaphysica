@@ -40,7 +40,8 @@ import pytest
 #: agrees with the others.
 _KNOWN_FORMS = {
     "-3ln(T+Tbar)": [
-        ("src/metaphysica/config.py", r"K = -3 ln\(T \+ T_bar\)"),
+        ("src/metaphysica/config/parameters/moduli.py",
+         r"K = -3 ln\(T \+ T_bar\)"),
         ("src/metaphysica/simulations/PM/cosmology/dynamical_lambda.py",
          r"K = -3 ln\(T \+ T_bar\)|K = -3 ln\(2T\)"),
         ("src/metaphysica/simulations/PM/geometry/bridge_geometry.py",
