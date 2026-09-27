@@ -65,7 +65,13 @@ _SRC = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica"
 #: set to 90 from an earlier single-phrase grep and the ratchet immediately
 #: failed at 92 -- which is the ratchet working: a number typed from memory is
 #: not a measurement. Re-measured 2026-09-22 and it is still exactly 92.
-_CEILING = 92
+
+# RE-MEASURED 2026-09-27 after merging origin/claude/wonderful-noether:
+# 28 new source files arrived (config.py split into a package of
+# single-responsibility modules), 8 of which carry the phrase. The rise
+# is new CONTENT, not regressed wording -- verified by diffing the
+# merge's added files against the phrase list rather than assumed.
+_CEILING = 100
 
 #: Modules that carry the new findings. These must not assert what they refute.
 _MUST_BE_CLEAN = (

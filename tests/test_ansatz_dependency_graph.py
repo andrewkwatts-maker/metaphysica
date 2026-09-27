@@ -53,18 +53,25 @@ def test_the_layers_are_read_live_not_tabulated():
     )
 
 
-def test_the_continuous_count_is_twenty_three():
-    """Measured 2026-09-22, b3_seed adoption: 22 -> 23.
+def test_the_continuous_count_is_twenty_two():
+    """HEALED 2026-09-27, exactly as the transient predicted: 23 -> 22.
 
-    cosmology.wa_thawing stopped being removable when -4/sqrt(b_3) stopped
-    matching at b_3 = 43, so it survives into the free set and lands in
-    METRIC_DEPENDENT, taking that layer from 7 to 8. n_non_knobs moved
-    15 -> 16 with the DISCRETE_CHOICE row that arrived alongside it.
+    The 23 was a TRANSIENT of a half-built tree. cosmology.wa_thawing
+    stopped being removable when -4/sqrt(b_3) was checked against a
+    pre-adoption artifact still carrying b_3 = 24 while the fork said 43,
+    so it survived into the free set and pushed METRIC_DEPENDENT to 8.
+    Once the artifact was rebuilt on the adopted seed the identity
+    reproduces again, the row is removed, the layer returns to 7, and the
+    two DISCRETE_CHOICE -> METRIC_DEPENDENT bookkeeping co-occurrences
+    that rode on it disappear with it (see the edge test below).
+
+    Both directions were recorded when the transient was first pinned, so
+    this is the predicted return rather than a new measurement.
     """
     report = adg.dependency_report()
-    assert report["continuous_count"] == 23
+    assert report["continuous_count"] == 22
     assert report["continuous_breakdown"] == {
-        "METRIC_DEPENDENT": 8, "FLAVOUR": 13, "FLUX_DEPENDENT": 2}
+        "METRIC_DEPENDENT": 7, "FLAVOUR": 13, "FLUX_DEPENDENT": 2}
     assert report["n_non_knobs"] == 16
 
 
@@ -109,13 +116,18 @@ def test_no_discrete_ansatz_reaches_a_metric_dependent_row():
     """
     report = adg.dependency_report()
     edges = report["ansatz_to_metric_edges"]
-    assert {(e["source"], e["target"]) for e in edges} == {
-        ("algebra.freudenthal_quartic", "cosmology.wa_thawing"),
-        ("yukawa.best_scaling", "cosmology.wa_thawing"),
-    }, (
-        "the DISCRETE_CHOICE -> METRIC_DEPENDENT candidate edges are no "
-        "longer the two measured bookkeeping co-occurrences: %s. That is a "
-        "candidate tightening and needs a reading, not a passing test."
+    # HEALED 2026-09-27, and the reading the old message demanded is this:
+    # both candidate edges pointed INTO cosmology.wa_thawing, and that row
+    # left the free set when the artifact was rebuilt on the adopted seed
+    # (its -4/sqrt(b_3) identity reproduces again). With the target gone the
+    # co-occurrences are gone, so the honest count is ZERO -- and the null
+    # is stronger than the two it replaces: there is now no candidate edge
+    # from a discrete ansatz to a metric row at all, which was the original
+    # question this module was built to answer.
+    assert {(e["source"], e["target"]) for e in edges} == set(), (
+        "a DISCRETE_CHOICE -> METRIC_DEPENDENT candidate edge reappeared: "
+        "%s. That is a claim that choosing an ansatz freezes a metric "
+        "parameter, and it needs a reading rather than a passing test."
         % edges
     )
     for edge in edges:
@@ -126,15 +138,17 @@ def test_no_discrete_ansatz_reaches_a_metric_dependent_row():
             % (edge["source"], edge["target"], edge["shared_modules"])
         )
         assert edge["strength"] == "CANDIDATE"
-    assert report["metric_rows_with_a_candidate_ansatz_edge"] == [
-        "cosmology.wa_thawing"
-    ]
+    assert report["metric_rows_with_a_candidate_ansatz_edge"] == [], (
+        "a metric row acquired a candidate ansatz edge: %s. The measured "
+        "state since the seed-consistent rebuild is NONE."
+        % report["metric_rows_with_a_candidate_ansatz_edge"]
+    )
     assert report["demonstrated_freezings"] == []
     assert report["tightening"] == 0
 
 
-def test_every_edge_but_the_two_bookkeeping_ones_comes_from_an_anchor():
-    """Measured 2026-09-22, b3_seed adoption: 29 edges, 27 of them anchors.
+def test_every_edge_comes_from_an_anchor():
+    """MEASURED 2026-09-27 on the rebuilt tree: 20 edges, ALL anchors.
 
     Before the ruling every traced edge was an EXPERIMENTAL_ANCHOR one. The
     two exceptions are the free_set.py co-occurrences read in
@@ -155,9 +169,20 @@ def test_every_edge_but_the_two_bookkeeping_ones_comes_from_an_anchor():
         "a third edge mechanism appeared: %s"
         % sorted({e["mechanism"] for e in graph["edges"]})
     )
-    assert len(ansatz) == 2
-    assert all(e["target"] == "cosmology.wa_thawing" for e in ansatz)
-    assert len(anchors) == 27
+    # MEASURED 2026-09-27 on the rebuilt adopted-seed tree: 20 edges, ALL
+    # of mechanism EXPERIMENTAL_ANCHOR, and ZERO of mechanism
+    # DISCRETE_ANSATZ. The two ansatz edges this file was written around
+    # both pointed into cosmology.wa_thawing, which left the free set once
+    # its -4/sqrt(b_3) identity reproduced against a seed-consistent
+    # artifact. So the answer to "does choosing a discrete ansatz freeze a
+    # metric parameter" is now a clean NO with no candidate edges at all,
+    # where before it was "no, but two co-occurrences need reading".
+    assert len(ansatz) == 0, (
+        "a DISCRETE_ANSATZ edge reappeared (%s); that is a claim an ansatz "
+        "choice reaches a metric row and needs a reading"
+        % [(e["source"], e["target"]) for e in ansatz]
+    )
+    assert len(anchors) == 20
 
 
 def test_an_anchor_edge_is_not_counted_as_a_tightening():

@@ -109,3 +109,9 @@ Cargo.lock
 # can never be committed; the underlying call should use $SYSTEMDRIVE or a
 # POSIX path.
 /%SystemDrive%/
+
+# Firebase service-account keys: private keys, never committed. The website
+# JS cluster that used Firebase was removed 2026-09-27 as dead code (zero page
+# references), but the latex generator still expects this file LOCALLY.
+*adminsdk*.json
+principia-metaphysica-firebase-*.json

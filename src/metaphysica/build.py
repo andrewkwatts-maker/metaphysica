@@ -23,6 +23,8 @@ from __future__ import annotations
 
 import argparse
 import os
+import sys as _sys
+import types as _types
 import subprocess
 import sys
 import time
@@ -565,6 +567,38 @@ def main() -> int:
     return build(out_dir=args.out, fast=args.fast,
                  skip_sims=args.skip_sims, only=args.only,
                  hq_pdf=args.hq_pdf)
+
+
+# ---------------------------------------------------------------------------
+# Keep `metaphysica.build` CALLABLE even after this submodule is imported.
+#
+# `metaphysica/__init__.py` exports a `build` FUNCTION, and this file is a
+# `build` MODULE. Python rebinds the package attribute to the module the
+# moment anyone runs `import metaphysica.build`, so the documented
+# `metaphysica.build(out_dir=...)` then raises TypeError: 'module' object is
+# not callable. That is a public-API defect, not a test artefact -- the
+# README's own quick-start breaks for any caller who imports the submodule
+# first, directly or through a dependency. It surfaced as a smoke test that
+# passed alone and failed in the suite (measured 2026-09-27), which is the
+# shape this class of bug always takes.
+#
+# Making the module itself callable means both resolutions work and neither
+# import order can break the other.
+class _CallableBuildModule(_types.ModuleType):
+    """This module, plus `__call__` delegating to :func:`build`."""
+
+    def __call__(self, *args, **kwargs):
+        return build(*args, **kwargs)
+
+
+# Defensive: a module can be executed WITHOUT being registered in
+# sys.modules (importlib.util.module_from_spec + exec_module does exactly
+# that, and one test loads this file that way). Assuming our own
+# registration raised KeyError during collection, so the presence check is
+# load-bearing rather than defensive decoration.
+_self = _sys.modules.get(__name__)
+if _self is not None:
+    _self.__class__ = _CallableBuildModule
 
 
 if __name__ == "__main__":

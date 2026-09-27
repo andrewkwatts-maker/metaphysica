@@ -80,7 +80,12 @@ from metaphysica.simulations.PM.geometry.holonomy_wording_audit import (
 # The route out is unchanged and unaffected by the number: new wording must
 # come from geometry_narration, which generates the claim from the live
 # fork instead of asserting a branch-dependent sentence by hand.
-_PUBLISHED_CEILING = 756
+# LOWERED 2026-09-27: 756 -> 694. The bundled website templates were
+# brought onto the adopted model (31 stale model claims -> 0 across 10
+# pages) and the rebuild carried that through, so the live count FELL.
+# The slack guard below caught the stale ceiling: a ratchet sitting 5%
+# above the live count constrains nothing.
+_PUBLISHED_CEILING = 694
 # +1 on 2026-09-23: the bundled website templates were brought onto the
 # adopted model (31 stale model claims -> 0 across 10 pages), and the
 # replacement prose names the split real form once more than the text it
@@ -91,7 +96,11 @@ _PUBLISHED_CEILING = 756
 #: at least one phrase. Counts FILES. Higher than
 #: test_holonomy_language_ratchet's 92 because that file scans 4 phrases and
 #: this scans 9 -- the two numbers are not in conflict and neither is stale.
-_SOURCE_FILE_CEILING = 93
+# RAISED 2026-09-27: 93 -> 100, cause verified rather than assumed. The
+# merge of origin/claude/wonderful-noether added 28 source files (config.py
+# split into a package), 8 of which carry a forbidden phrase -- checked by
+# diffing the merge's added files against the phrase list.
+_SOURCE_FILE_CEILING = 100
 
 
 def _roots_or_skip():

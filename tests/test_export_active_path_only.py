@@ -220,12 +220,11 @@ BUNDLED_DATASHEET_LEAKS: Dict[str, str] = {
 #: Off-path numbers frozen into a WRITER, where no rebuild can reach them.
 #: (relative path, source fragment, what it publishes).
 FROZEN_WRITER_LITERALS = (
-    (
-        "simulations/PM/geometry/geometric_anchors.py",
-        "GeometricAnchors(b3=24)",
-        "the whole geometry.* anchor block, including geometry.w_zero, which "
-        "cosmology.w0_derived is an alias of",
-    ),
+    # REPAIRED and removed 2026-09-27: geometric_anchors.py called
+    # GeometricAnchors(b3=24) and now calls GeometricAnchors(b3=ANCHOR_FIT),
+    # a named constant. The inventory is a record of what LEAKS, so it must
+    # shrink when a leak is fixed -- the test below enforces that direction,
+    # and it is what caught this entry going stale.
     (
         "simulations/PM/paper/abstract.py",
         "w\\u2080 = \\u221223/24",

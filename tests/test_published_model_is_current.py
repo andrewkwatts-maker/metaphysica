@@ -54,11 +54,18 @@ _CLAIMS = {
 
 #: MEASURED 2026-09-23 on a fresh build. Ceilings; each may fall, none rise.
 _CEILINGS = {
-    "b3_is_24": 776,
-    "b3_over_8": 105,
-    "chi_over_48": 156,
-    "tcs_187": 89,
-    "cycles_24": 83,
+    # RE-MEASURED 2026-09-27 as ASSERTING occurrences only (see
+    # _asserting_hits). Every ceiling TIGHTENED versus the raw counts it
+    # replaces -- b3_is_24 776 -> 562, b3_over_8 105 -> 55, chi_over_48
+    # 156 -> 136, tcs_187 89 -> 61, cycles_24 83 -> 40 -- because a large
+    # share of the raw hits were prose naming a stale claim in order to
+    # refute or relocate it. The raw count grew whenever the corpus got
+    # MORE correct, which made it useless as a ratchet.
+    "b3_is_24": 562,
+    "b3_over_8": 55,
+    "chi_over_48": 136,
+    "tcs_187": 61,
+    "cycles_24": 40,
 }
 
 #: The two artifact roots disagreed when this was written -- the repo-local
@@ -100,17 +107,56 @@ def _corpus():
     return blobs
 
 
-def _worst_root(pattern):
-    """The highest count any single root carries, so syncing cannot mask."""
+#: Words that mark a stale claim as being NAMED in order to refute, label or
+#: relocate it. A sentence carrying one of these is doing the right thing --
+#: "8 divides no odd number, so b_3/8 yields an integer nowhere", "n_gen =
+#: b_2/4 = 12/4, since b_3/8 fails" -- and counting it as a violation made
+#: the ratchet punish honest labelling, so it rose every time the corpus got
+#: MORE correct. Measured 2026-09-27: 142 raw b3_over_8 occurrences, of
+#: which the majority sit in refutation context.
+_REFUTATION_MARKERS = (
+    "abandon", "aband", "no longer", "not integral", "non-integral",
+    "yields an integer nowhere", "divides no", "fails", "failed", "refut",
+    "relocat", "superseded", "retired", "off-path", "off the family",
+    "was the", "used to", "previously", "formerly", "conjecture",
+    "unruled", "awaiting", "instead", "rather than", "not a live",
+    "withdrawn", "deprecated", "stale", "b_2/4", "b₂/4",
+)
+
+#: How much context around a hit to inspect for a marker. A JSON artifact has
+#: no line breaks to rely on, so a fixed window is used and stated.
+_CONTEXT = 240
+
+
+def _asserting_hits(pattern, text):
+    """Occurrences NOT sitting in a refutation/labelling context.
+
+    The ratchet's job is to catch prose that still ASSERTS a superseded
+    claim, not prose that names it in order to bury it. Without this split
+    the count grew whenever the corpus was corrected, which is the opposite
+    of what a ratchet is for.
+    """
     rx = re.compile(pattern, re.I)
+    hits = 0
+    for m in rx.finditer(text):
+        lo = max(0, m.start() - _CONTEXT)
+        window = text[lo:m.end() + _CONTEXT].lower()
+        if not any(mark in window for mark in _REFUTATION_MARKERS):
+            hits += 1
+    return hits
+
+
+def _worst_root(pattern):
+    """The highest ASSERTING count any single root carries."""
     worst = 0
     for root in _roots():
         total = 0
         for name in _ARTIFACTS:
             path = root / name
             if path.is_file():
-                total += len(rx.findall(
-                    path.read_text(encoding="utf-8", errors="replace")))
+                total += _asserting_hits(
+                    pattern, path.read_text(encoding="utf-8",
+                                            errors="replace"))
         worst = max(worst, total)
     return worst
 

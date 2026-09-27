@@ -188,6 +188,26 @@ _OUTPUT_FORMULAS = [
 ]
 
 
+
+def _v_geometric_live() -> float:
+    """v = k_gimel * (b_3 - 4), from the LIVE registry.
+
+    The symbolic (arithma / EML) tracks of this module hardcoded
+    `(12.0 + 1.0/np.pi) * 20.0` -- k_gimel at the off-path b_3 = 24, times
+    the old (24 - 4) factor -- while the float track computed it from the
+    registry. The three tracks then disagreed by ~12x on the adopted seed,
+    the registration cross-check raised, and the raise killed this
+    simulation mid-registration: one formula vanished from the published
+    artifacts entirely (measured 2026-09-27, 569 -> 568) and the publishing
+    gap grew by one. A symbolic track that does not read the seed is not a
+    second opinion about the formula, it is a copy of a retired one.
+    """
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+    reg = get_registry()
+    return float(reg.demiurgic_coupling) * (int(reg.elder_kads) - 4)
+
+
 class HiggsVEVRefinedV18(SimulationBase):
     """
     Geometric Higgs VEV derivation from G2 holonomy.
@@ -415,8 +435,11 @@ class HiggsVEVRefinedV18(SimulationBase):
         b3 = int(_REG.elder_kads)
         k = float(_REG.demiurgic_coupling)
         v = k * (b3 - 4)
+        # EXPERIMENTAL anchor, not a model output: the ratio below is scored
+        # against it, never fitted to it.
+        v_pdg = 246.22  # Higgs VEV, GeV. Source: PDG 2024 electroweak review
         return {"b3": b3, "k_gimel": k, "cycles": b3 - 4, "v": v,
-                "v_pdg": 246.22, "ratio": v / 246.22}
+                "v_pdg": v_pdg, "ratio": v / v_pdg}
 
     def get_formulas(self) -> List[Formula]:
         """Return formulas for Higgs VEV derivation. Numbers READ, not typed."""
@@ -480,7 +503,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                     _eml_add(_eml_scalar(12.0), _eml_div(_eml_scalar(1.0), _eml_pi())),
                     _eml_sub(_b3_leaf(), _eml_scalar(4.0)),
                 ),
-                value=(12.0 + 1.0 / np.pi) * 20.0,
+                value=_v_geometric_live(),
                 triple_rel=1e-9,
             ),
             Formula(
@@ -529,17 +552,17 @@ class HiggsVEVRefinedV18(SimulationBase):
                     _arithma_num(1.0),
                     _arithma_mul(
                         _arithma_num(np.sqrt(2.0)),
-                        _arithma_pow(_arithma_num((12.0 + 1.0 / np.pi) * 20.0), _arithma_num(2.0)),
+                        _arithma_pow(_arithma_num(_v_geometric_live()), _arithma_num(2.0)),
                     ),
                 ),
                 eml=_eml_div(
                     _eml_scalar(1.0),
                     _eml_mul(
                         _eml_sqrt(_eml_scalar(2.0)),
-                        _eml_pow(_eml_scalar((12.0 + 1.0 / np.pi) * 20.0), _eml_scalar(2.0)),
+                        _eml_pow(_eml_scalar(_v_geometric_live()), _eml_scalar(2.0)),
                     ),
                 ),
-                value=1.0 / (np.sqrt(2.0) * ((12.0 + 1.0 / np.pi) * 20.0) ** 2),
+                value=1.0 / (np.sqrt(2.0) * (_v_geometric_live()) ** 2),
                 triple_rel=1e-9,
             ),
             Formula(
@@ -589,7 +612,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                         _arithma_num(1.0),
                         _arithma_mul(
                             _arithma_num(np.sqrt(2.0)),
-                            _arithma_pow(_arithma_num((12.0 + 1.0 / np.pi) * 20.0), _arithma_num(2.0)),
+                            _arithma_pow(_arithma_num(_v_geometric_live()), _arithma_num(2.0)),
                         ),
                     ),
                     _arithma_add(
@@ -602,7 +625,7 @@ class HiggsVEVRefinedV18(SimulationBase):
                         _eml_scalar(1.0),
                         _eml_mul(
                             _eml_sqrt(_eml_scalar(2.0)),
-                            _eml_pow(_eml_scalar((12.0 + 1.0 / np.pi) * 20.0), _eml_scalar(2.0)),
+                            _eml_pow(_eml_scalar(_v_geometric_live()), _eml_scalar(2.0)),
                         ),
                     ),
                     _eml_add(
