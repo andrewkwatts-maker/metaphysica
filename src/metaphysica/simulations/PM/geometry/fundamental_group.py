@@ -64,6 +64,8 @@ __all__ = [
     "abelianization_presentation",
     "h1_of_resolution",
     "pi1_triviality_criterion",
+    "surviving_directions",
+    "pi1_finiteness",
     "wilson_line_verdict",
     "fundamental_group_report",
 ]
@@ -259,6 +261,76 @@ def pi1_triviality_criterion(point: Optional[Dict[str, Any]] = None
     }
 
 
+def surviving_directions(point: Optional[Dict[str, Any]] = None
+                         ) -> Tuple[int, ...]:
+    """Coordinates fixed by EVERY singular involution.
+
+    Along such a coordinate c no element with a fixed point moves anything:
+    it acts on x_c with sign +1, and its shift there is 0 exactly, because a
+    fixed point needs x_c + v_c = x_c in R, not merely mod 1 (that is the
+    enumeration's `is_singular` condition, re-checked below). So projecting
+    the affine group G onto the c-th coordinate, G -> Isom(R), kills every
+    generator of E and therefore E, while the translation t_c goes to
+    x -> x + 1, which has infinite order. t_c survives in pi_1 = G/E with
+    infinite order: each surviving coordinate is a WITNESS that pi_1 is
+    infinite, not a heuristic.
+    """
+    point = point if point is not None else _point()
+    singular = [e for _lab, e in point["singular"]]
+    out = []
+    for c in range(7):
+        if all(signs[c] > 0 for signs, _h in singular):
+            if any(h[c] != 0 for _signs, h in singular):
+                raise ValueError(
+                    "a singular element carries a shift on its own fixed "
+                    "coordinate %d; it has no fixed point and the enumeration "
+                    "is inconsistent" % c)
+            out.append(c)
+    return tuple(out)
+
+
+def pi1_finiteness(point: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Is pi_1 of the resolved quotient finite? Decided both ways.
+
+    Infinite is witnessed by a surviving direction (surviving_directions).
+    With none, the singular involutions leave no coordinate unflipped; since
+    the seven coordinates carry the seven non-trivial characters of Gamma
+    bijectively, that happens exactly when their span is all of Gamma, and
+    pi1_triviality_criterion then gives pi_1 = 1.
+
+    The two sides are LOGICALLY EQUIVALENT ("no surviving coordinate",
+    "the singular span is Gamma" and "the flips cover all seven" are the same
+    condition), so `sides_agree` checks the implementation, not the
+    mathematics twice. Recorded after the 2026-09-30 red-team review.
+
+    The number of surviving directions k is the rank of a finite-index free
+    abelian subgroup of pi_1 = G/E. That needs E = ker p for the projection
+    p onto the surviving coordinates, not merely E inside ker p. Proof of the
+    other inclusion: an element of ker p has its linear part in the singular
+    span, so it is a product of singular lifts times a translation supported
+    on the flipped coordinates, and each such unit translation t_a equals
+    (t_a sigma) sigma^-1, a product of two elements with fixed points. So
+    pi_1(Y) is isomorphic to p(G), a crystallographic group of rank k; by the
+    Cheeger-Gromoll splitting k is also the number of flat directions of the
+    universal cover.
+    """
+    point = point if point is not None else _point()
+    dirs = surviving_directions(point)
+    crit = pi1_triviality_criterion(point)
+    finite = not dirs
+    return {
+        "surviving_directions": dirs,
+        "flat_rank_k": len(dirs),
+        "pi1_finite": finite,
+        "pi1_trivial": crit["pi1_provably_trivial"],
+        "sides_agree": finite == crit["pi1_provably_trivial"],
+        "counts": (
+            "surviving directions count COORDINATES of T^7, i.e. loops of "
+            "infinite order; k is the rank of a free abelian subgroup of pi_1"
+        ),
+    }
+
+
 def wilson_line_verdict(point: Optional[Dict[str, Any]] = None
                         ) -> Dict[str, Any]:
     """Is the discrete-Wilson-line dock open on this assignment?"""
@@ -318,9 +390,11 @@ def fundamental_group_report(point: Optional[Dict[str, Any]] = None
         "wilson_line_dock": verdict["status"],
         "sentence": verdict["sentence"],
         "external_crosscheck": (
-            "Joyce states simple connectivity for his examples; pi_1 = 1 here "
-            "is derived from the enumeration alone, so agreement is a "
-            "reproduction, not a citation"
+            "Joyce proves his JDG I example T^7/(Z/2)^3 simply connected; "
+            "pi_1 = 1 here is derived from the enumeration alone, so the "
+            "agreement is a reproduction, not a citation. Simple "
+            "connectivity is example-specific: his JDG II Examples 1 and 2 "
+            "have pi_1 = Z^3 and Z"
         ),
         "method": "Armstrong on the affine group; SNF for the abelianisation",
     }

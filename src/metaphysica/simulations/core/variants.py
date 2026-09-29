@@ -735,6 +735,10 @@ FORKS: Dict[str, Fork] = {
             VariantOption(
                 id="b2_over_faces",
                 summary="n_gen = b_2 / 4, the 4 being the derived faces",
+                # D-006 (2026-09-30): b_2 / 4 counts the singular
+                # involutions only on the all-plain subfamily; on Joyce's
+                # full family the invariant count is n, the rank of the
+                # singular span. Scope recorded in generation_selection.
                 consequence=(
                     "BUYS: exactly 3 at b_2 = 12, with both sides derived -- "
                     "b_2 from the A1 family count and 4 from the moved "

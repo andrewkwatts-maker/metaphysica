@@ -1,7 +1,24 @@
 """Derive the resolution contribution table, rather than transcribe it.
 
-THE SETTLED RESULT: b_3 in {7, 19, 31, 43}, SO b_3 = 24 IS UNREACHABLE
-======================================================================
+SUPERSEDED IN PART -- 2026-09-30, D-006 (site repo docs/DECISION_LOG.md)
+=======================================================================
+The "SETTLED RESULT" below is correct only for the ALL-PLAIN SUBFAMILY:
+assignments whose every family has stabiliser {1, sigma}. Its filter,
+all_components_are_a1, tests a component's SETWISE stabiliser, not the
+isotropy at its points. Under pairwise disjointness every singular point is
+already A1, and a free extra stabiliser is Joyce's own JDG II setting
+(Theorems 2.2.2-2.2.3; Example 4 gives b_2 = 8 + l, b_3 = 47 - l, l = 0..8,
+simply connected, holonomy G2). The epsilon table withdrawn below -- (1, 1)
+or (0, 2) per reflected family -- was right; Joyce's eq. (27) states it.
+The reachable set of Joyce's construction is computed in joyce_reachability:
+(0, 7) plus the lines b_2 + b_3 = 23, 39, 55 (28 literature-checked pairs).
+b_3 = 24 remains unreachable there too, so the exclusion of the seed_24
+branch stands; "b_3 in {7, 19, 31, 43}", "b_3 = 7 mod 12" and "b_3 = 7 + 3 b_2"
+are properties of the all-plain subfamily only. Kept, labelled, runnable.
+
+THE ALL-PLAIN RESULT (formerly "THE SETTLED RESULT"):
+b_3 in {7, 19, 31, 43}, SO b_3 = 24 IS UNREACHABLE THERE
+========================================================
 Following the withdrawal below to its cause produced a clean answer, with no
 assumption left over.
 
@@ -523,7 +540,11 @@ def a1_admissible_survey(cap_triples: Optional[int] = None) -> Dict[str, Any]:
                     for (n_t3, n_refl) in profiles})
     b3s = sorted({b3 for _b2, b3 in pairs})
     return {
-        "status": "SETTLED_NO_ASSUMPTION",
+        "status": "ALL_PLAIN_SUBFAMILY",
+        "superseded_by": (
+            "joyce_reachability.reachable_set (D-006): the filter below tests "
+            "the setwise stabiliser, so this is the all-plain subfamily, not "
+            "the reachable set of Joyce's construction"),
         "n_pairwise_disjoint": n_disjoint,
         "n_a1_admissible": n_a1,
         "profiles": {str(k): v for k, v in sorted(profiles.items())},
@@ -537,15 +558,16 @@ def a1_admissible_survey(cap_triples: Optional[int] = None) -> Dict[str, Any]:
         "pair_7_24_reachable": (7, 24) in pairs,
         "canonical_12_43_present": (12, 43) in pairs,
         "why_no_assumption_remains": (
-            "the epsilon-dichotomy only applied to reflected families, and A1 "
-            "admissibility eliminates all of them, so no resolution choice is "
-            "left to assume"
+            "the epsilon-dichotomy only applied to reflected families, and "
+            "this filter removes all of them, so no resolution choice is left "
+            "to assume WITHIN the all-plain subfamily; Joyce resolves the "
+            "removed families with exactly that choice (D-006)"
         ),
         "scope": (
-            "Joyce's construction with hyperkahler ALE resolutions. Another "
-            "resolution of the non-A1 components is not excluded, but it is "
-            "not Joyce's, carries no G2 guarantee, and would have to be "
-            "exhibited"
+            "the all-plain subfamily of Joyce's construction with hyperkahler "
+            "ALE resolutions. Families with a free extra stabiliser are not "
+            "excluded: Joyce resolves them (JDG II Theorems 2.2.2-2.2.3, "
+            "Example 4), and joyce_reachability counts them"
         ),
     }
 

@@ -1716,24 +1716,38 @@ class G2GeometryV16(SimulationBase):
             eml_description="EML: parallel spinor condition encoded as operator predicate on spin bundle",
         arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0))
 
-        # Euler characteristic
+        # Effective index chi_eff -- NOT the Euler characteristic of Y_7,
+        # which is 0 and is published by closed_geometry as
+        # y7-euler-characteristic. The id is kept (ids are never renamed);
+        # what chi_eff should count is the open G1 ruling.
         formulas.append(Formula(
             id="euler-characteristic",
             label="(2.2)",
             latex=r"\chi_{\text{eff}} = 2(h^{1,1} - h^{2,1} + h^{3,1})",
             plain_text="chi_eff = 2(h^{1,1} - h^{2,1} + h^{3,1})",
             category="DERIVED",
-            description="Effective Euler characteristic from Hodge numbers of the TCS G2 manifold",
+            description=(
+                "Effective index chi_eff (open ruling): 2(h11 - h21 + h31) "
+                "with the Hodge data of the off-path TCS #187 model. It is "
+                "NOT the Euler characteristic of Y_7, which is 0 "
+                "(y7-euler-characteristic)"),
+            title="Effective index chi_eff (not chi(Y_7))",
             inputParams=[],
             outputParams=["topology.mephorash_chi"],
             input_params=["geometry.h11", "geometry.h21", "geometry.h31"],
             output_params=["topology.mephorash_chi"],
             derivation={
                 "steps": [
-                    "Apply Hodge decomposition to cohomology: H^k(M, C) = direct_sum_{p+q=k} H^{p,q}(M)",
-                    "For G2 manifolds, h^{2,1} = 0 because G2 holonomy admits no complex structure deformations",
-                    "The effective Euler characteristic for flux-dressed G2 compactifications is chi_eff = 2(h^{1,1} - h^{2,1} + h^{3,1})",
-                    "Substitute TCS #187 Hodge numbers: h^{1,1}=%d, h^{2,1}=%d, h^{3,1}=%d (from Corti-Haskins-Nordstrom-Pacini classification)"
+                    "chi_eff is an effective index, not an Euler "
+                    "characteristic of the internal manifold: a closed "
+                    "7-manifold has chi = 0 (y7-euler-characteristic), "
+                    "and a G2 manifold is a real manifold with no Hodge "
+                    "decomposition of its own",
+                    "The h^{p,q} are the Hodge data of the TCS #187 "
+                    "construction used by the off-path seed_24 model "
+                    "(Corti-Haskins-Nordstrom-Pacini); they are not "
+                    "invariants of the adopted Joyce manifold",
+                    "Substitute: h^{1,1}=%d, h^{2,1}=%d, h^{3,1}=%d"
                     % (self.h11, self.h21, self.h31),
                     "Evaluate: chi_eff = 2(%d - %d + %d) = 2 * %d = %d"
                     % (self.h11, self.h21, self.h31,
@@ -1744,7 +1758,12 @@ class G2GeometryV16(SimulationBase):
                     % (self._chi_eff_from_b3, self._b3,
                        "agree" if self._chi_eff_routes_agree else "DIVERGE"),
                 ],
-                "method": "Hodge decomposition and flux-dressed index computation on TCS G2 manifolds",
+                "method": (
+                    "Effective-index bookkeeping carried over from the "
+                    "seed_24 (TCS) model. What chi_eff should count on "
+                    "the adopted path, if anything, is the open G1 "
+                    "ruling: its consumers are inventoried before any "
+                    "definition is chosen"),
                 "parentFormulas": ["g2-holonomy"],
                 "references": [
                     "Corti, A., Haskins, M., Nordstrom, J., Pacini, T. (2015) arXiv:1503.05500",
@@ -1753,7 +1772,10 @@ class G2GeometryV16(SimulationBase):
             },
             terms={
                 r"\chi_{\text{eff}}": {
-                    "description": "Effective Euler characteristic: the flux-dressed topological invariant controlling the chiral fermion count in M-theory compactification",
+                    "description": (
+                        "Effective index (open ruling). Not an Euler "
+                        "characteristic of Y_7, which is 0; its "
+                        "definition on the adopted path is undecided"),
                     "symbol": "chi_eff",
                     "value": str(self._chi_eff),
                     "param_id": "topology.mephorash_chi"
@@ -1770,12 +1792,18 @@ class G2GeometryV16(SimulationBase):
                     "value": str(self.h11)
                 },
                 r"h^{2,1}": {
-                    "description": "Hodge number counting complex structure deformations; vanishes for G2 holonomy since G2 admits no integrable complex structure",
+                    "description": (
+                        "Hodge number of the TCS #187 building-block "
+                        "data (off-path seed_24 model). A real "
+                        "7-manifold has no h^{p,q} of its own"),
                     "symbol": "h^{2,1}",
                     "value": str(self.h21)
                 },
                 r"h^{3,1}": {
-                    "description": "Hodge number counting associative 3-cycle moduli in the G2 manifold",
+                    "description": (
+                        "Hodge number of the TCS #187 building-block "
+                        "data (off-path seed_24 model); it does not "
+                        "count associative 3-cycles"),
                     "symbol": "h^{3,1}",
                     "value": str(self.h31)
                 }

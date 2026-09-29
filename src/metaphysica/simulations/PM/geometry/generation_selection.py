@@ -1,5 +1,19 @@
 """Three generations SELECTS the topology, rather than being matched by it.
 
+SCOPE CORRECTED -- 2026-09-30, D-006 (site repo docs/DECISION_LOG.md)
+====================================================================
+Premise A1 below is false as stated: the filter behind it tests a
+component's setwise stabiliser, and Joyce resolves the order-4 case himself
+(JDG II Theorems 2.2.2-2.2.3, Example 4: b_2 = 8 + l, b_3 = 47 - l). So the
+four-profile table is the ALL-PLAIN SUBFAMILY, not the whole construction,
+and the forcing argument holds inside that subfamily only. On Joyce's full
+family (joyce_reachability): n = 3 singular involutions is the whole line
+b_2 + b_3 = 55; b_2 / 4 counts involutions only when every family is plain,
+and b_2 = 12 also occurs at (12, 27) on the n = 2 line. What singles out
+(12, 43) there -- all-plain (Joyce's Example 3), or agreement of b_2 / 4
+with n -- is carried to the author's Stage 2 digest. The table and code
+below are unchanged and runnable.
+
 THE RESULT
 ==========
 Given three things the framework already derives, and nothing else:

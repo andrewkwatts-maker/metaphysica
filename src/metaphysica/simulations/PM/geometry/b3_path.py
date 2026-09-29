@@ -110,7 +110,8 @@ def _joyce_family() -> Dict[str, Dict[str, Any]]:
             "b3": b3,
             "b2": b2,
             "b3_provenance": (
-                "DERIVED: 7 flat (joyce_orbifold R3) + 3 x %d A1 families "
+                "DERIVED: 7 flat (joyce_orbifold R3) + 3 x %d plain A1 "
+                "families -- the all-plain subfamily (D-006) "
                 "(derived_contribution_table, b_3 = 7 + 3 n_T3)" % n_t3
             ),
             "b2_provenance":

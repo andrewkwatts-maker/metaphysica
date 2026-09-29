@@ -340,6 +340,12 @@ try:
 except ImportError:
     FOUR_FACE_AVAILABLE = False
 
+# The closed-geometry certificate: the resolved topology theorem by
+# theorem (Betti numbers, chi(Y_7) = 0, the singular components, pi_1
+# across the family), each with its proof, test and falsifier. Not
+# guarded: a failure here is a defect in the geometry and must be loud.
+from metaphysica.simulations.PM.geometry.closed_geometry import ClosedGeometrySimulation
+
 # v16.2 - Two-Time Physics and Leech Partition (foundational geometric proofs)
 from metaphysica.simulations.PM.geometry.leech_partition import LeechPartitionV16
 from metaphysica.simulations.PM.geometry.modular_invariance import ModularInvarianceV16
@@ -1278,6 +1284,7 @@ class SimulationRunner:
                 # v16.2: GeometricAnchors FIRST - provides fundamental constants for all other simulations
                 GeometricAnchorsSimulation(),
                 G2GeometryV16(),
+                ClosedGeometrySimulation(),
             ] + ([FourFaceG2Structure()] if FOUR_FACE_AVAILABLE else []) + ([UnitaryFilterSimulation()] if UNITARY_FILTER_AVAILABLE else []) + [
                 # After UnitaryFilter validates ghost-free stability:
                 LeechPartitionV16(),       # v16.2 - Proves 24/8=3 generations
@@ -1675,7 +1682,11 @@ class SimulationRunner:
                                          metadata={"eml_description": "EML: eml_scalar(topology.b2) — second Betti number, from the same seed as b3",
                                                    "seed_path": _seed_path()})
 
-            # Canonical chi_eff = 144 (full manifold Euler characteristic).
+            # chi_eff = 144 is an effective index carried over from the
+            # seed_24 (TCS) model. It is NOT an Euler characteristic of the
+            # manifold: chi(Y_7) = 0 (closed_geometry,
+            # y7-euler-characteristic). What it should count on the adopted
+            # path is the open G1 ruling, so the value is left as it was.
             # NOT seed-derived: it comes from the TCS Hodge numbers via
             # 2(h11 - h21 + h31) and never references b_3. The rival route
             # b_3^2/4 also gives 144 at b_3 = 24 but 462.25 at 43, so the two

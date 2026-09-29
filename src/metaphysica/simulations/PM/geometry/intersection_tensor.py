@@ -82,7 +82,6 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
 from __future__ import annotations
 
-import itertools
 from typing import Any, Dict, List, Optional, Tuple
 
 __all__ = [
@@ -123,48 +122,38 @@ def canonical_point() -> Dict[str, Any]:
 
     Returns the group elements, the singular involutions and their family data.
     A perturbed phi changes the enumeration and therefore changes this.
+
+    The search is joyce_resolution.representative_point(3), the one search
+    loop for every family member. This used to be its own copy of that loop,
+    which skipped an admissible 3-involution point whose families were not 12
+    plain T^3 and kept looking. Under A1 admissibility that case cannot occur
+    (the survey measures only plain-T^3 families), so the first such point is
+    this one -- and if the enumeration ever changes so that it is not, the
+    call now fails loudly instead of silently returning a later point.
     """
-    from metaphysica.simulations.PM.geometry.derived_contribution_table import (
-        all_components_are_a1,
-    )
     from metaphysica.simulations.PM.geometry.half_shift_enumeration import (
-        _group,
-        _non_identity,
-        assignments,
-        elements,
         families_of,
-        fixed_sets_disjoint,
-        generating_triples,
-        is_singular,
+    )
+    from metaphysica.simulations.PM.geometry.joyce_resolution import (
+        representative_point,
     )
 
-    group = _group()
-    nz = _non_identity(group)
-
-    for triple in generating_triples(group):
-        gens = [nz[i] for i in triple]
-        for svecs in assignments(triple, group, include_relative=True):
-            els = elements(gens, svecs)
-            singular = [(b, e) for b, e in els.items()
-                        if b != (0, 0, 0) and is_singular(e)]
-            if len(singular) != 3:
-                continue
-            if not all(fixed_sets_disjoint(a[1], b[1])
-                       for a, b in itertools.combinations(singular, 2)):
-                continue
-            if not all_components_are_a1(els, singular):
-                continue
-            fams = []
-            for _bits, el in singular:
-                fams.extend(families_of(els, el))
-            if len(fams) == 12 and {f["type"] for f in fams} == {"T3"}:
-                return {
-                    "triple": triple,
-                    "shifts": svecs,
-                    "elements": els,
-                    "singular": singular,
-                    "n_families": len(fams),
-                }
+    try:
+        point = representative_point(3)
+    except LookupError:
+        point = None
+    if point is not None:
+        fams = []
+        for _bits, el in point["singular"]:
+            fams.extend(families_of(point["elements"], el))
+        if len(fams) == 12 and {f["type"] for f in fams} == {"T3"}:
+            return {
+                "triple": point["triple"],
+                "shifts": point["shifts"],
+                "elements": point["elements"],
+                "singular": point["singular"],
+                "n_families": len(fams),
+            }
     raise RuntimeError(
         "no admissible 3-involution / 12-family point found; the enumeration "
         "has changed and every count downstream must be re-derived"

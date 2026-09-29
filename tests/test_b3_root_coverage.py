@@ -173,8 +173,18 @@ _ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 397,
 #: floor is set at the observed MINIMUM and the instability is recorded
 #: here as an open defect rather than papered over with a loose bound;
 #: tightening it requires fixing the walker, not adjusting the number.
-_EML_BASELINE = {"total": 569, "b3_rooted_min": 101,
-                 "non_b3_max": 456, "ambiguous_max": 9}
+#: 2026-09-30: total 569 -> 576, non_b3_max 456 -> 463. A MEASUREMENT
+#: CORRECTION, named so it is auditable: the seven new closed-geometry
+#: certificate formulas -- y7-resolved-betti-numbers, y7-euler-characteristic,
+#: y7-singular-components, y7-fundamental-group, y7-gauge-content,
+#: y7-flux-potential-runaway, joyce-reachable-set -- are UPSTREAM of the seed:
+#: CG.1 derives b_3 (= 7 + 3 x 12) rather than consuming it, and the rest are
+#: topology or leading-order physics of the manifold. Rooting them in b3_leaf
+#: would manufacture exactly the fake provenance this module's docstring
+#: warns against. Measured against the committed artifacts: b3_rooted
+#: unchanged at 113, no existing formula changed status, the +7 is these.
+_EML_BASELINE = {"total": 576, "b3_rooted_min": 101,
+                 "non_b3_max": 463, "ambiguous_max": 9}
 
 
 def _arithma_baseline(d):

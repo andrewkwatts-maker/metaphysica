@@ -205,8 +205,11 @@ def test_the_verdict_names_its_check():
 def test_a1_admissibility_eliminates_every_reflected_family():
     """The structural collapse that removes the epsilon-dichotomy assumption.
 
-    Reflected families are exactly the non-A1 ones, so imposing A1
-    admissibility leaves no resolution choice to assume.
+    Reflected families are exactly the ones this filter removes, so no
+    resolution choice is left to assume WITHIN the all-plain subfamily.
+    D-006 (2026-09-30): the filter tests the setwise stabiliser, so the result
+    is that subfamily, not Joyce's reachable set; the status pin below was
+    updated from SETTLED_NO_ASSUMPTION when the evidence falsified the label.
     """
     from metaphysica.simulations.PM.geometry.derived_contribution_table import (
         a1_admissible_survey,
@@ -218,12 +221,17 @@ def test_a1_admissibility_eliminates_every_reflected_family():
         "A1 admissibility must be STRICTLY stronger than pairwise-disjointness, "
         "or it is not doing anything"
     )
-    assert survey["status"] == "SETTLED_NO_ASSUMPTION"
+    assert survey["status"] == "ALL_PLAIN_SUBFAMILY"
     assert "no resolution choice" in survey["why_no_assumption_remains"]
+    assert "joyce_reachability" in survey["superseded_by"]
 
 
 def test_b3_is_seven_mod_twelve_so_24_is_unreachable():
-    """THE settled verdict. b_3 = 7 + 3 n_T3 with n_T3 a multiple of 4."""
+    """On the all-plain subfamily: b_3 = 7 + 3 n_T3, n_T3 a multiple of 4.
+
+    D-006: this is no longer the whole reachable set. b_3 = 24 stays
+    unreachable in the full set too -- test_joyce_reachability.
+    """
     from metaphysica.simulations.PM.geometry.derived_contribution_table import (
         a1_admissible_survey,
     )
