@@ -285,6 +285,48 @@ class ClosedGeometrySimulation(SimulationBase):
                          rows=rows),
         ]
 
+    def get_beginner_explanation(self) -> Dict[str, Any]:
+        """The top-down story in plain words, from the provenance registry and
+        the live certificate -- the same source the paper section renders."""
+        from metaphysica.simulations.PM.geometry.closed_geometry.provenance import (
+            by_kind,
+        )
+
+        def plain(kind: str) -> str:
+            return " ".join(p.plain for p in by_kind(kind))
+
+        held = sum(1 for e in self._certificate() if e["holds"])
+        return {
+            "icon": "🧭",
+            "title": "The Closed Geometry: What Is Standard, What Is Ours, "
+                     "What Is Open",
+            "simpleExplanation": (
+                "Start with established physics: " + plain("STANDARD")
+                + " The model then adds its own assumptions: "
+                + plain("POSTULATE")),
+            "analogy": (
+                "Think of it as a recipe with a few house rules. The kitchen "
+                "(standard physics) is shared with everyone; the house rules "
+                "(the postulates) are the model's own; and the dishes it can "
+                "prove it made are its findings. " + plain("FINDING")),
+            "keyTakeaway": (
+                "%d of %d geometry theorems hold on the adopted shape, each "
+                "with a test that would fail if it were false. What was wrong "
+                "has been corrected: %s" % (held, len(self._certificate()),
+                                             plain("CORRECTION"))),
+            "technicalDetail": (
+                "Selection, top down: phi's symmetry forces Gamma = (Z/2)^3; "
+                "Joyce's construction from it reaches 28 checked (b_2, b_3) "
+                "and not the off-path b_3 = 24; holonomy exactly G2 (pi_1 "
+                "finite) requires all three generating involutions to be "
+                "singular, which is the line b_2 + b_3 = 55; on that line "
+                "(12, 43) is the all-plain member, and the only one where the "
+                "12 bridges match the 12 resolved components (working "
+                "assumption WA-1, the author's ruling)."),
+            "prediction": (
+                "Still open, stated plainly: " + plain("OPEN")),
+        }
+
     def get_references(self) -> List[Dict[str, Any]]:
         keys = [key for thm in THEOREMS for key in thm.references]
         return reference_records(keys)

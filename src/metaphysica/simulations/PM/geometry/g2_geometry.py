@@ -2464,19 +2464,20 @@ class G2GeometryV16(SimulationBase):
                 "counts one exceptional 2-class per resolved seam family, "
                 "and b3 = 7 + 3 x %d = %d splits as 7 flat 3-forms plus 3 "
                 "twisted 3-forms per family. The generation count is the "
-                "rank of the orbifold group: n_gen = rank((Z/2)^3) = 3, "
-                "recovered as b2/4 with both sides derived. The effective "
-                "Euler characteristic's derivation is an OPEN question the "
-                "project tracks honestly rather than papering over."
+                "number of singular involutions, n = 3 (the rank of their "
+                "span); b2/4 recovers it only because this member is "
+                "all-plain. The effective index chi_eff = 144 reads as one "
+                "Kummer K3 (chi = 24) per singular involution in each of the "
+                "two shadows -- an unruled reading, the author's to adopt."
                 % (b2, b2, b3)
             ),
             "prediction": (
-                "The generation count is not adjustable: it is the rank of "
-                "the folding symmetry, an integer fixed by the construction "
-                "-- and the same construction fixes the pair (b2, b3) = "
-                "(%d, %d) as ONE topological input rather than two. "
-                "Traditional particle physics accepts 3 generations as an "
-                "empirical fact; here it selects the topology."
+                "The generation count is not adjustable: it is the number "
+                "of singular involutions, fixed by the construction. Holonomy "
+                "exactly G2 requires all three of them, and on that line the "
+                "pair (b2, b3) = (%d, %d) is the all-plain member singled out "
+                "by the bridge correspondence (WA-1, the author's ruling) -- "
+                "so three generations would be an output, not an input."
                 % (b2, b3)
             ),
         }
