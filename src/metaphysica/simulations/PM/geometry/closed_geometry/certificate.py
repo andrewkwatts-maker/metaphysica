@@ -8,6 +8,9 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Tuple
 
+from metaphysica.simulations.PM.geometry.closed_geometry.findings import (
+    FINDINGS_THEOREMS,
+)
 from metaphysica.simulations.PM.geometry.closed_geometry.physics import (
     PHYSICS_THEOREMS,
 )
@@ -18,7 +21,8 @@ from metaphysica.simulations.PM.geometry.closed_geometry.topology import (
     TOPOLOGY_THEOREMS,
 )
 
-THEOREMS: Tuple[Theorem, ...] = TOPOLOGY_THEOREMS + PHYSICS_THEOREMS
+THEOREMS: Tuple[Theorem, ...] = (TOPOLOGY_THEOREMS + PHYSICS_THEOREMS
+                                 + FINDINGS_THEOREMS)
 
 
 def certificate() -> List[Dict[str, Any]]:

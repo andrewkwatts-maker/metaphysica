@@ -77,7 +77,9 @@ def test_off_the_family_only_the_family_level_theorem_publishes(monkeypatch):
         else:
             assert entry["derived"] and entry["holds"]
     published = [f.id for f in ClosedGeometrySimulation().get_formulas()]
-    assert published == ["joyce-reachable-set"]
+    family_level = [t.id for t in THEOREMS if not t.seed_following]
+    assert published == family_level
+    assert "joyce-reachable-set" in published
 
 
 def test_every_cited_test_exists():

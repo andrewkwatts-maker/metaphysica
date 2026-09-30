@@ -183,8 +183,13 @@ _ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 397,
 #: would manufacture exactly the fake provenance this module's docstring
 #: warns against. Measured against the committed artifacts: b3_rooted
 #: unchanged at 113, no existing formula changed status, the +7 is these.
-_EML_BASELINE = {"total": 576, "b3_rooted_min": 101,
-                 "non_b3_max": 463, "ambiguous_max": 9}
+#: 2026-09-30 (later): total 576 -> 580, non_b3_max 463 -> 467. The same
+#: named correction for the four further certificate formulas --
+#: bridge-component-correspondence, k3-reading-generations,
+#: confinement-exclusion, flux-no-acceleration -- upstream of the seed or
+#: seed-independent by construction (the latter two are family-level).
+_EML_BASELINE = {"total": 580, "b3_rooted_min": 101,
+                 "non_b3_max": 467, "ambiguous_max": 9}
 
 
 def _arithma_baseline(d):

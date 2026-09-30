@@ -238,6 +238,7 @@ class ClosedGeometrySimulation(SimulationBase):
                 type="callout", callout_type="info", title="How it could fail",
                 content="%s. Scope: %s." % (entry["falsifier"],
                                             entry["scope"])))
+        blocks.extend(self._provenance_blocks())
         return SectionContent(
             section_id="2",
             subsection_id="2.4",
@@ -251,6 +252,38 @@ class ClosedGeometrySimulation(SimulationBase):
             formula_refs=[e["id"] for e in cert if e["derived"]],
             param_refs=["topology.chi_y7"],
         )
+
+    @staticmethod
+    def _provenance_blocks() -> List[ContentBlock]:
+        """What is standard, postulated, found, corrected and open -- rendered
+        from the provenance registry, so every surface tells one story."""
+        from metaphysica.simulations.PM.geometry.closed_geometry.provenance import (
+            KINDS,
+            by_kind,
+        )
+
+        rows = []
+        for kind in KINDS:
+            for p in by_kind(kind):
+                cited = "; ".join(cite(k) for k in p.references) if (
+                    p.references and p.verified) else (
+                    "source to be verified" if not p.verified else "")
+                rows.append([kind.title(), p.technical, p.plain,
+                             cited or p.evidence])
+        return [
+            ContentBlock(type="heading", level=3,
+                         content="What is standard, what is postulated, "
+                                 "what is found"),
+            ContentBlock(type="paragraph", content=(
+                "Standard physics is cited to its source; postulates are the "
+                "model's own assumptions; findings are established by the "
+                "computations above; corrections record what was wrong; open "
+                "problems are stated as open.")),
+            ContentBlock(type="table",
+                         headers=["kind", "statement", "in plain words",
+                                  "source or evidence"],
+                         rows=rows),
+        ]
 
     def get_references(self) -> List[Dict[str, Any]]:
         keys = [key for thm in THEOREMS for key in thm.references]

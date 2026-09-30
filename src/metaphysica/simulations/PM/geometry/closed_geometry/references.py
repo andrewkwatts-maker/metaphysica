@@ -27,6 +27,7 @@ __all__ = [
     "REF_ACHARYA_1999",
     "REF_LUKAS_MORRIS",
     "REF_ADV_2005",
+    "REF_ACHARYA_1996",
     "cite",
     "reference_records",
 ]
@@ -38,6 +39,7 @@ REF_ARMSTRONG = "armstrong1968"
 REF_ACHARYA_1999 = "acharya1999"
 REF_LUKAS_MORRIS = "lukas_morris2004"
 REF_ADV_2005 = "acharya_denef_valandro2005"
+REF_ACHARYA_1996 = "acharya1996"
 
 REFERENCES: Dict[str, Dict[str, Any]] = {
     REF_JOYCE_1996: {
@@ -108,6 +110,21 @@ REFERENCES: Dict[str, Dict[str, Any]] = {
         "relevance": (
             "The local gauge theory on C^2/Gamma fibred over a 3-manifold M: "
             "pure N = (1 + b_1(M)) super Yang-Mills; N = 4 when M = T^3"),
+    },
+    REF_ACHARYA_1996: {
+        "authors": "Acharya, B. S.",
+        "title": "N=1 heterotic/M theory duality and Joyce manifolds",
+        "journal": "Nucl. Phys. B",
+        "volume": "475",
+        "pages": "579-596",
+        "year": 1996,
+        "type": "article",
+        "arxiv": "hep-th/9603033",
+        "url": "https://arxiv.org/abs/hep-th/9603033",
+        "relevance": (
+            "M-theory on Joyce manifolds (as K3 fibrations) dual to heterotic "
+            "strings on T^3-fibred Calabi-Yau threefolds; massless spectra "
+            "agree"),
     },
     REF_LUKAS_MORRIS: {
         "authors": "Lukas, A., Morris, S.",
