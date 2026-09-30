@@ -58,7 +58,6 @@ _FALSIFIED_BY_RULING = (
 RULED_DIVERGENCES: Dict[str, str] = {
     # -- chi_eff-coupled (await the ruling) --------------------------------
     "euler-characteristic": _CHI_EFF,
-    "abstract-framework-overview": _CHI_EFF,
     "dirac-zero-modes": _CHI_EFF,
     "three-generations": _CHI_EFF,
     # -- b_3-consuming relations (await their wording pass) ----------------

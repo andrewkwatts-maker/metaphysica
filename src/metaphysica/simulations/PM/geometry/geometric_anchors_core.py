@@ -184,7 +184,7 @@ class GeometricAnchors:
     @property
     def chi_eff_total(self) -> int:
         """
-        Total manifold Euler characteristic (v20.6).
+        Total effective index chi_eff (v20.6; not the Euler characteristic of Y_7, which is 0).
         chi_eff_total = 2 * chi_eff_sector = 6 * b3 = 144
         """
         return 6 * self.elder_kads  # = 144

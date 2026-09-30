@@ -1128,7 +1128,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Generation Count: Geometrically Derived from Flux-Dressed Topology",
-                content="The three generations of Standard Model fermions emerge geometrically from the G₂ manifold's flux-dressed Euler characteristic χ<sub>eff</sub> = 144, which accounts for both the intrinsic topology and flux stabilisation of the compactification. This represents a complete geometric derivation of n<sub>gen</sub> = 3 from the fundamental 26D structure, connecting the dimensionality of bosonic string theory to observed particle physics through G₂ topology."
+                content="The three generations of Standard Model fermions emerge geometrically from the G₂ manifold's effective index (not the Euler characteristic of Y_7, which is 0) χ<sub>eff</sub> = 144, which accounts for both the intrinsic topology and flux stabilisation of the compactification. This represents a complete geometric derivation of n<sub>gen</sub> = 3 from the fundamental 26D structure, connecting the dimensionality of bosonic string theory to observed particle physics through G₂ topology."
             ),
             ContentBlock(
                 type="callout",
@@ -1385,7 +1385,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The normalized G₂ manifold volume is computed from the effective Euler characteristic χ_eff and third Betti number b₃:"
+                content="The normalized G₂ manifold volume is computed from the effective index χ_eff (not the Euler characteristic of Y_7, which is 0) and third Betti number b₃:"
             ),
             ContentBlock(
                 type="formula",

@@ -785,7 +785,7 @@ class ResultsV16_2(SimulationBase):
                     "parentFormulas": ["w0-derivation", "h0-alignment"]
                 },
                 terms={
-                    r"\chi": {"description": "Euler characteristic of V₇ manifold", "value": 144},
+                    r"\chi": {"description": "Effective index chi_eff (the Euler characteristic of V₇ itself is 0)", "value": 144},
                     r"b_3": {"description": "Third Betti number", "value": 24},
                     "Vol(V7)": "Volume of V7, set by compactification scale",
                     "c": "Speed of light = 2.998×10⁵ km/s",

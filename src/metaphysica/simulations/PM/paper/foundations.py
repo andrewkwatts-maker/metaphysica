@@ -1053,7 +1053,7 @@ class FoundationsV16_2(SimulationBase):
                 "year": 2001,
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": "Chirality from G2 compactification; n_gen from Euler characteristic",
+                "notes": "n_gen counts the singular involutions; chirality is OPEN on the smooth G2 manifold (disjoint loci leave no codimension-7 points)",
             },
         ]
 

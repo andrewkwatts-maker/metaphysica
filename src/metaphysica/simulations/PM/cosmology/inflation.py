@@ -160,7 +160,7 @@ DEFAULT_RE_T_STABILIZED: float = 174.033
 #: without importing GeometricAnchors.
 B3_SEED: int = 24
 
-#: Effective Euler characteristic of the G₂ manifold — the v25.0 cycle
+#: Effective index chi_eff (not the Euler characteristic of Y_7, which is 0) — the v25.0 cycle
 #: count entering the golden-modulated e-fold expansion.  Derived
 #: ``χ_eff = 6 · b₃ = 144`` (see GeometricAnchors.mephorash_chi).
 CHI_EFF_TOTAL: int = 6 * B3_SEED

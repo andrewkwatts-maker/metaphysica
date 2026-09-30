@@ -252,9 +252,12 @@ class IntroductionV16(SimulationBase):
                 "via geometric running, with α<sub>GUT</sub>⁻¹ ≈ 42.7 determined by G₂ topology."
             ),
             "topological_generations": (
-                "Number of fermion generations n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3 follows "
-                "from G₂ Euler characteristic, providing parameter-free prediction "
-                "matching Standard Model exactly."
+                "Three generations: n<sub>gen</sub> = b<sub>2</sub>/4 = 3 counts the singular "
+                "involutions of the folding group Γ = (ℤ/2)³ (the ruled route), with no free "
+                "parameter. χ<sub>eff</sub> = 144 is an effective index, not the Euler "
+                "characteristic of Y₇ (which is 0); reading the count as χ<sub>eff</sub>/48 is "
+                "the unruled K3 reading of the same number. How the generations become "
+                "chiral is an open problem."
             ),
             "yukawa_hierarchy": (
                 "Fermion mass hierarchy emerges from exponential wavefunction overlap "

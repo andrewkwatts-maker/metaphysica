@@ -499,7 +499,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "experimental_source": "Planck 2018"
                     },
                     r"\chi_{\rm eff}": {
-                        "description": "Effective Euler characteristic of the G2 manifold (= 144)",
+                        "description": "Effective index chi_eff (= 144; not the Euler characteristic of Y_7, which is 0)",
                         "value": 144
                     },
                     r"\varphi": {
@@ -622,7 +622,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "value": 24
                     },
                     r"\chi_{\text{eff}}": {
-                        "description": "Effective Euler characteristic (= 144 = b3^2/4): measures total topological complexity of the G2 manifold",
+                        "description": "Effective index chi_eff (= 144): an open ruling, not the Euler characteristic of Y_7, which is 0",
                         "value": 144
                     }
                 },

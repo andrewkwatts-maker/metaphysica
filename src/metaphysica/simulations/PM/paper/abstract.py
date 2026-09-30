@@ -572,26 +572,52 @@ class AbstractV17_2(SimulationBase):
         and a generation-count formula. These reference the detailed
         derivations in the geometric, fermion, and cosmology sectors.
         """
+        from metaphysica.simulations.PM.geometry.b3_path import seed_values
+
+        b3, b2 = seed_values()
+        n_gen = b2 / 4.0
+        n_txt = "%g" % n_gen
         return [
             Formula(
                 id="abstract-framework-overview",
                 label="(0.1)",
-                latex=r"M^{26}(24{,}1{,}2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) \;\xrightarrow{G_2}\; 2 \times 4\text{D} \quad \Rightarrow \quad n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3",
-                plain_text="M^{26}(24,2) -> 2 x 13D(12,1) -> 2 x 4D => n_gen = chi_eff / (2*b3) = 144/48 = 3",
+                latex=(r"M^{26}(24,2) \;\xrightarrow{\text{OR}}\; 2 \times 13\text{D}(12,1) "
+                       r"\;\xrightarrow{Y_7}\; 2 \times 4\text{D} \quad \Rightarrow \quad "
+                       r"n_{\text{gen}} = \frac{b_2}{4} = \frac{%d}{4} = %s" % (b2, n_txt)),
+                plain_text=("M^26(24,2) -> 2 x 13D(12,1) -> 2 x 4D on Y_7 => "
+                            "n_gen = b2/4 = %d/4 = %s" % (b2, n_txt)),
                 category="DERIVED",
-                description="Framework overview: the M^{26}(24,2) ancestral bulk decomposes as T^1 (two-time structure) x S^(2,0) (shadow-time directions) x 12 bridge pairs B_i^(2,0). The OR reduction operator R_perp = tensor product of 12 Moebius double-covers (R_perp^2 = -I per pair) selects complementary coordinates from each bridge pair, splitting 26D into two 13D(12,1) shadows sharing the single time dimension. Each shadow then independently compactifies on a 7-dimensional TCS G2 holonomy manifold V7 (Ricci-flat, b3 = 24 associative 3-cycles), reducing 13D -> 4D(3,1) x V7 with Spin(3,1) Lorentz symmetry. The generation count n_gen = chi_eff/(2*b3) = 144/48 = 3 follows from the index theorem on V7 (Acharya-Witten 2001), fixing 3 chiral fermion families per shadow without free parameters.",
-                eml_tree_str="ops.div(eml_scalar(144.0), ops.mul(eml_scalar(2.0), b3_leaf()))",
-                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(144),\; \mathrm{ops.mul}(\mathrm{eml\_scalar}(2),\; \mathrm{b3\_leaf}()))",
-                eml_description="EML: n_gen = ops.div(chi_eff=144, ops.mul(2, b3_leaf())) — generation count as ratio of topological integers (Sprint T1.7: 4·b3 → 2·b3 LaTeX/EML fix consistent)",
-                input_params=["topology.elder_kads", "topology.mephorash_chi"],
+                description=(
+                    "Framework overview. The bulk is 26-dimensional with signature "
+                    "(24,2): 24 space directions, grouped as 12 bridge pairs "
+                    "B_i^(2,0), and 2 times, one per shadow (a postulate; signature "
+                    "ruling 2026-08-31). The OR reduction gives each shadow one "
+                    "coordinate of every bridge pair and its own time, so the bulk "
+                    "splits into two 13D(12,1) shadows. Each shadow's seven internal "
+                    "dimensions form Y_7, Joyce's resolution of T^7/(Z/2)^3 with "
+                    "(b_2, b_3) = (%d, %d): a compact 7-manifold with a torsion-free "
+                    "G2-structure, pi_1 = 1 and Euler characteristic 0 (certificate "
+                    "CG.1-CG.4). The generation count is n_gen = b_2/4 = %s, the "
+                    "number of singular involutions of Gamma = (Z/2)^3 (the ruled "
+                    "route). The route through chi_eff/(2 b_3) held only at the "
+                    "off-path seed b_3 = 24 and is retired." % (b2, b3, n_txt)
+                ),
+                eml_tree_str="ops.div(eml_scalar(b2), eml_scalar(4.0))",
+                eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{eml\_scalar}(b_2),\; \mathrm{eml\_scalar}(4))",
+                eml_description=(
+                    "EML: n_gen = ops.div(b_2, 4) -- four resolved A1 families "
+                    "per singular involution, so b_2/4 counts the singular "
+                    "involutions (ruled route)"
+                ),
+                input_params=["topology.b2"],
                 output_params=["topology.n_gen"],
                 derivation={
                     "steps": [
-                        {"description": "Start from M^{26}(24,2) ancestral bulk: the single time dimension (0,1) is shared by both shadows, 12 bridge pairs B_i^(2,0) each contribute 2 spatial dimensions, and S^(2,0) provides the shadow-time directions", "formula": r"M^{26} = T^1 \times S^{(2,0)} \times_{\text{fiber}} \bigoplus_{i=1}^{12} B_i^{(2,0)}"},
-                        {"description": "OR reduction: each bridge pair B_i^(2,0) admits a Moebius double-cover operator R_perp^i (satisfying R_perp^2 = -I) that selects one coordinate for Shadow_Aleph and the complementary coordinate for Shadow_Beth, yielding 12 spatial dims per shadow + 1 shared time = 13D(12,1) each", "formula": r"R_\perp^{\text{full}} = \bigotimes_{i=1}^{12} R_\perp^i \;\Rightarrow\; 2 \times 13\text{D}(12,1)"},
-                        {"description": "G2 compactification: each 13D shadow compactifies 9 dimensions on a 7D TCS G2 holonomy manifold V7 (Ricci-flat, b3=24 associative 3-cycles, h^{1,1}=4 Kaehler moduli sectors giving 4 face partitions), reducing to 4D with Spin(3,1) Lorentz symmetry", "formula": r"13\text{D}(12,1) \;\xrightarrow{G_2}\; 4\text{D}(3,1) \times V_7"},
-                        {"description": "Generation count from index theorem on V7: effective Euler characteristic chi_eff = 144 (from TCS topology #187) divided by 2*b3 = 48 gives exactly 3 chiral fermion generations per shadow, with no free parameter (Sprint 2.9 LaTeX fix: 4·b₃ → 2·b₃)", "formula": r"n_{\text{gen}} = \frac{\chi_{\text{eff}}}{2 \cdot b_3} = \frac{144}{48} = 3"},
-                        {"description": "Ghost-free unitarity: the single shared time dimension eliminates ghosts and closed timelike curves; Euclidean bridge ds^2 = dy_1^2 + dy_2^2 has positive-definite metric enabling coherent cross-shadow sampling via OR reduction", "formula": r"\text{ds}^2_{\text{bridge}} = dy_1^2 + dy_2^2 > 0"},
+                        {"description": "Bulk: 26 dimensions with signature (24,2) -- 24 space directions grouped as 12 bridge pairs B_i^(2,0), plus 2 times, one per shadow. A postulate of the model (signature ruling 2026-08-31).", "formula": r"M^{26}(24,2) = \bigoplus_{i=1}^{12} B_i^{(2,0)} \oplus T^{(0,2)}"},
+                        {"description": "OR reduction: each bridge pair B_i^(2,0) carries a Moebius double-cover operator R_perp^i (R_perp^2 = -I) that sends one coordinate to Shadow_Aleph and the other to Shadow_Beth. With its own time, each shadow is 13D(12,1).", "formula": r"R_\perp^{\text{full}} = \bigotimes_{i=1}^{12} R_\perp^i \;\Rightarrow\; 2 \times 13\text{D}(12,1)"},
+                        {"description": "Internal space: each shadow's seven internal dimensions form Y_7, Joyce's resolution of T^7/(Z/2)^3, Gamma = (Z/2)^3 being the diagonal stabiliser of phi. Betti numbers (1, 0, %d, %d, %d, %d, 0, 1) with b_3 = 7 + 3 b_2; pi_1 = 1; Euler characteristic 0 (certificate CG.1-CG.4)." % (b2, b3, b3, b2), "formula": r"Y_7 = \widetilde{T^7/(\mathbb{Z}_2)^3}, \quad (b_2, b_3) = (%d, %d)" % (b2, b3)},
+                        {"description": "Generations: b_2 = 4n counts the resolved A1 families, four for each singular involution, so n_gen = b_2/4 = n, the number of singular involutions (the ruled route). The earlier route chi_eff/(2 b_3) = 144/48 held only at the off-path seed b_3 = 24 and is retired.", "formula": r"n_{\text{gen}} = \frac{b_2}{4} = \frac{%d}{4} = %s" % (b2, n_txt)},
+                        {"description": "The bridge directions are spacelike, ds^2 = dy_1^2 + dy_2^2 > 0. Ghost control of the second time is an OPEN problem: the appeal to Bars' Sp(2,R) ghost-freedom theorem was withdrawn (signature ruling 2026-08-31).", "formula": r"\text{ds}^2_{\text{bridge}} = dy_1^2 + dy_2^2 > 0"},
                     ],
                     "method": "dimensional_descent",
                     "parentFormulas": [
@@ -601,17 +627,17 @@ class AbstractV17_2(SimulationBase):
                     ]
                 },
                 terms={
-                    "M^{26}(24,2)": "26-dimensional ancestral bulk with structure (24 physics core, 1 temporal, 2 shadow-time directions), decomposed as 12x(2,0) bridge pairs + (0,1) two-time structure + two shadow-time directions",
-                    "13D(12,1)": "13-dimensional observable shadow with signature (12 spatial from bridge, 1 shared temporal); each shadow compactifies independently on G2",
-                    "S^(2,0)": "2-dimensional shadow-time directions with positive-definite metric ds^2 = ds_1^2 + ds_2^2 enabling cross-shadow coherence via OR reduction",
-                    "n_gen": "Number of chiral fermion generations per shadow, topologically fixed at 3",
-                    "chi_eff": "Effective Euler characteristic of the G2 manifold (chi_eff = 144), computed from TCS topology #187",
-                    "b_3": "Third Betti number of the G2 manifold V7; 4*b_3 = 48 appears in the generation formula denominator",
+                    "M^{26}(24,2)": "26-dimensional bulk of signature (24,2): 24 space directions (12 bridge pairs B_i^(2,0)) and 2 times, one per shadow (a postulate)",
+                    "13D(12,1)": "13-dimensional shadow: one spatial coordinate from each of the 12 bridge pairs, and its own time",
+                    "Y_7": "The internal seven-manifold: Joyce's resolution of T^7/(Z/2)^3, (b_2, b_3) = (%d, %d)" % (b2, b3),
+                    "n_gen": "Number of fermion generations per shadow: b_2/4, the number of singular involutions of Gamma",
+                    "b_2": "Second Betti number of Y_7: four resolved A1 families for each singular involution",
+                    "b_3": "Third Betti number of Y_7: b_3 = 7 + 3 b_2 (7 flat classes plus 3 for each A1 family)",
+                    "chi_eff": "Effective index chi_eff = 144, an open ruling (not the Euler characteristic of Y_7, which is 0); on the unruled K3 reading chi_eff = 48 n",
                     "OR": "Orthogonal Reduction operator R_perp providing per-pair Moebius double-cover (R_perp^2 = -I) for cross-shadow coordinate selection",
-                    "G_2": "Exceptional Lie group G2 = Aut(O) providing holonomy for 7D compactification; Ricci-flat metric ensures spectral rigidity",
-                    "V_7": "7-dimensional internal G2 holonomy manifold (TCS construction) hosting the 125-residue spectral port",
-                }, 
-            arithma=_arithma_div(_arithma_num(144.0), _arithma_mul(_arithma_num(2.0), _arithma_num(24.0))), eml=_eml_div(_eml_scalar(144.0), _eml_mul(_eml_scalar(2.0), _b3_leaf())), value=3.0)
+                    "G_2": "Exceptional Lie group G2 = Aut(O); Y_7 carries a torsion-free G2-structure",
+                },
+            arithma=_arithma_div(_arithma_num(float(b2)), _arithma_num(4.0)), eml=_eml_div(_eml_scalar(float(b2)), _eml_scalar(4.0)), value=n_gen)
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

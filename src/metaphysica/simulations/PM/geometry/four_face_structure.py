@@ -921,7 +921,7 @@ class FourFaceG2Structure(SimulationBase):
                     },
                     r"\chi_{\text{eff}}": {
                         "description": (
-                            "Effective Euler characteristic of the G2 manifold (= 144)"
+                            "Effective index chi_eff (= 144; not the Euler characteristic of Y_7, which is 0)"
                         ),
                         "value": 144,
                     },
@@ -1127,7 +1127,7 @@ class FourFaceG2Structure(SimulationBase):
                         "description": "OR rotation operator: 90° Möbius rotation",
                     },
                     r"\chi_{\text{eff}}": {
-                        "description": "Effective Euler characteristic of G₂ manifold",
+                        "description": "Effective index chi_eff (not the Euler characteristic of Y_7, which is 0)",
                         "value": 144,
                     },
                 },

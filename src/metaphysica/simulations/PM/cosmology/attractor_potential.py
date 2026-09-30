@@ -485,7 +485,7 @@ class AttractorPotentialV18(SimulationBase):
                             "formula": r"M_{\rm Pl} = 2.435 \times 10^{18} \text{ GeV}"
                         },
                         {
-                            "description": "Effective Euler characteristic from G2",
+                            "description": "Effective index chi_eff (not the Euler characteristic of Y_7, which is 0)",
                             "formula": r"\chi_{eff} = 144"
                         },
                         {
@@ -715,7 +715,7 @@ class AttractorPotentialV18(SimulationBase):
                         f"the amplitude A = 1/sqrt(b3) = 1/sqrt({int(_REG.elder_kads)}) ~ {1.0 / int(_REG.elder_kads) ** 0.5:.3f}, set by the "
                         "number of associative 3-cycles, and the frequency "
                         "omega = 2*pi/sqrt(chi_eff) = 2*pi/sqrt(144) = pi/6, "
-                        "set by the Euler characteristic of the G2 manifold. "
+                        "set by the effective index chi_eff (not the Euler characteristic of Y_7, which is 0). "
                         "The vacuum energy scale V_0 is identified with the observed "
                         "dark energy density rho_Lambda ~ 2.85e-47 GeV^4. The potential reads:"
                     )

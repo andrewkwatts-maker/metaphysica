@@ -113,7 +113,7 @@ class AppendixQIndexTheorem(SimulationBase):
     """
 
     # Key topological constants (via FormulasRegistry SSoT)
-    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # Effective Euler characteristic of V_7
+    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # effective index chi_eff (chi(V_7) itself is 0)
     B3 = _REG.elder_kads if _REGISTRY_AVAILABLE else 24           # Third Betti number
     SPINOR_DOF = 8          # Spinor DOF in 7D (Spin(7) representation)
     N_GEN_OBSERVED = 3      # Observed number of generations

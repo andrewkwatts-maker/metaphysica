@@ -1232,7 +1232,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Apply bridge/global OR: the distributed OR operator R_perp = tensor_{i=1}^{12} R_perp_i splits the 26D bulk into two 13D shadow domains",
                         "Each shadow inherits 12 spatial dims (one from each bridge pair) + 1 shared time = 13D(12,1)",
                         "Shadow 1 receives left-chiral projections P_L Psi_P, Shadow 2 receives right-chiral projections P_R Psi_P",
-                        "The G2 manifold structure on each shadow has Euler characteristic chi_eff with chi_eff/48 = 3, fixing three fermion generations",
+                        "Each shadow's G2 manifold carries the effective index chi_eff (its Euler characteristic is 0); on the unruled K3 reading chi_eff/48 = 3 counts the singular involutions, the three generations",
                         "The face potential V_face^(f) implements local OR: among the 4 TCS faces, one is selected as the visible face, the other 3 become hidden (dark) faces",
                         "Integrate out the bridge degrees of freedom to obtain the effective 13D action S_13 on each shadow",
                     ],

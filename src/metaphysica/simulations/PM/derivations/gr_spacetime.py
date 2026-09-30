@@ -87,7 +87,7 @@ try:
     # G2 Topology (TCS #187) - from SSOT
     B3_G2 = _REG.elder_kads             # Third Betti number, from the seed
     B2_G2 = 4                           # Second Betti number (TCS #187)
-    CHI_EFF = _REG.qedem_chi_sum        # Full manifold Euler char = 144
+    CHI_EFF = _REG.qedem_chi_sum        # effective index chi_eff = 144 (chi(Y_7) = 0)
 
     # v21 Dimensional Chain - from SSOT
     # Level 0: ANCESTRAL (26D, signature 24,1) - v21 Two-time structure

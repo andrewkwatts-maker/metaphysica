@@ -401,7 +401,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 },
                 terms={
                     r"\varphi_{\rm assoc}": "Elementary holonomy angle = 2π/(b₃/n_gen) = π/4",
-                    r"\chi_{\rm eff}": "Effective Euler characteristic = 144 (full PM manifold)",
+                    r"\chi_{\rm eff}": "Effective index chi_eff = 144 (not the Euler characteristic of Y_7, which is 0)",
                     r"b_3": "G₂ Betti number = 24 (topological invariant)",
                     r"n_{\rm gen}": "Number of generations = 3",
                     r"\delta_{\rm CP}": (

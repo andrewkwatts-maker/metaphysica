@@ -950,7 +950,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "steps": [
                         "a_4 involves Euler integrand (Pfaffian of curvature)",
                         "Generalized Gauss-Bonnet: integral = chi(M)",
-                        "For G2: effective Euler chi_eff = 144",
+                        "For G2: effective index chi_eff = 144 (chi(Y_7) = 0)",
                         "This encodes topological information",
                         "Generation count: N_gen = chi_eff/48 = 3",
                     ]

@@ -279,7 +279,7 @@ class FormulasRegistry:
     # THEORETICAL BASIS: 12x(2,0) PAIRED BRIDGE SYSTEM
     # ------------------------------------------------
     # The v23 framework has TWO 13D shadow sectors connected by Euclidean bridges.
-    # Each shadow independently compactifies on G2 with effective Euler characteristic:
+    # Each shadow carries the effective index chi_eff (not the Euler characteristic of Y_7, which is 0):
     #
     #   chi_eff_shadow = b3^2/8 = 576/8 = 72
     #
@@ -1470,7 +1470,7 @@ class FormulasRegistry:
     @property
     def chi_eff_total(self) -> int:
         """
-        Total manifold effective Euler characteristic: chi_eff_total = 144.
+        Total effective index: chi_eff_total = 144 (not the Euler characteristic of Y_7, which is 0).
         LEGACY ALIAS for qedem_chi_sum.
 
         chi_eff_total = 2 * chi_eff_sector = 2 * 72 = 144

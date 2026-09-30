@@ -1701,7 +1701,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 ),
                 terms={
                     r"P_{\text{leak}}": "Dark force leakage probability across shadows",
-                    "144": "Effective Euler characteristic χ_eff from G₂ manifold topology",
+                    "144": "Effective index χ_eff, an open ruling (not the Euler characteristic of Y_7, which is 0)",
                     "e^{-12}": "Suppression from 12 Möbius double-cover bridge operators",
                 }, 
             arithma=_arithma_mul(_arithma_div(_arithma_num(1.0), _arithma_num(144.0)), _arithma_num(_math.exp(-12.0))), eml=_eml_mul(_eml_inv(_eml_scalar(144.0)), _eml_exp(_eml_neg(_eml_scalar(12.0)))), value=(1.0 / 144.0) * _math.exp(-12.0), triple_rel=1e-9),

@@ -32,7 +32,7 @@ SPECTRAL ZETA FUNCTION:
     The residues Res(zeta_V, s_n) at poles encode topological information:
     - Res(zeta_V, 7/2) ~ Vol(V_7)
     - Res(zeta_V, 5/2) ~ integral R dV
-    - Res(zeta_V, 3/2) ~ chi(V_7) (Euler characteristic)
+    - Res(zeta_V, 3/2) ~ chi(V_7) (Euler characteristic; 0 for any closed 7-manifold)
 
 NORMALIZATION:
     Eigenvalues are normalized to the fundamental scale k_gimel = 12 + 1/pi.
@@ -596,7 +596,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     topo_data = [
         (81, "b3", 24, 24, 0, "Third Betti number"),
         (82, "chi_eff", 144, 144, 0, "Effective Euler characteristic"),
-        (83, "chi_G2", 144, 144, 0, "G2 Euler characteristic (exact)"),
+        (83, "chi_G2", 144, 144, 0, "G2 effective index chi_eff (not its Euler characteristic, which is 0)"),
         (84, "vol_proxy", 1e12, 1e12, 1e10, "G2 volume proxy (Planck units)"),
     ]
 
