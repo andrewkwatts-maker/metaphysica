@@ -80,6 +80,8 @@ __all__ = [
     "kahler_hessian",
     "potential",
     "flux_vacuum_report",
+    "canonical_slope",
+    "acceleration_report",
 ]
 
 #: Lukas-Morris Table 1: (tau, a) -> the two bulk moduli (1-based) by which
@@ -292,4 +294,49 @@ def flux_vacuum_report(n_points: int = 40, seed: int = 20260930
         "scope": (
             "classical supergravity, large volume, leading-order K, G4 flux; "
             "membrane instantons and corrections to K are not covered"),
+    }
+
+
+def canonical_slope(s: Sequence[float], flux: Sequence[float],
+                    step: float = 1e-6) -> float:
+    """|grad V| / V in the canonical metric of the real moduli.
+
+    T = s + i a with K a function of T + Tbar gives the kinetic term
+    (1/4) K_ij ds^i ds^j, i.e. canonical metric g_ij = K_ij / 2 for
+    (1/2) g (d phi)^2. The gradient is taken by relative central differences.
+    """
+    s = np.asarray(s, dtype=float)
+    v = potential(s, flux)
+    grad = np.zeros_like(s)
+    for i in range(len(s)):
+        h = step * (abs(s[i]) if s[i] else 1.0)
+        e = np.zeros_like(s)
+        e[i] = h
+        grad[i] = (potential(s + e, flux) - potential(s - e, flux)) / (2 * h)
+    g_inv = 2.0 * np.linalg.inv(kahler_hessian(s))
+    return math.sqrt(float(grad @ g_inv @ grad)) / v
+
+
+def acceleration_report(n_points: int = 60, seed: int = 20260930
+                        ) -> Dict[str, Any]:
+    """C3 (D-010): can the flux potential drive accelerated expansion?
+
+    Homogeneity gives K_ij s^i s^j = 7 and s.grad V = -5 V; the radial unit
+    vector has canonical norm sqrt(7/2), so the radial slope is 5 sqrt(2/7)
+    and the full |grad V|/V can only be larger. Acceleration from an
+    exponential potential needs a slope below sqrt(2).
+    """
+    rng = np.random.default_rng(seed)
+    slopes = [canonical_slope(_random_point(rng), _random_flux(rng))
+              for _ in range(n_points)]
+    bound = 5.0 * math.sqrt(2.0 / 7.0)
+    return {
+        "min_slope": min(slopes),
+        "bound": bound,
+        "acceleration_threshold": math.sqrt(2.0),
+        "bound_respected": min(slopes) >= bound * (1 - 1e-6),
+        "can_accelerate": min(slopes) < math.sqrt(2.0),
+        "scope": ("leading-order K, single-field reading; multi-field "
+                  "rapid-turn trajectories are not excluded by a gradient "
+                  "bound"),
     }
