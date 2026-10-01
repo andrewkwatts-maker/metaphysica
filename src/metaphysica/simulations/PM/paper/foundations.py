@@ -1,28 +1,34 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v24.2 - Section 1: Foundations of Dimensional Descent
-============================================================================
+PRINCIPIA METAPHYSICA - Section 1.1: Foundations of Dimensional Descent
+=======================================================================
 
 DOI: 10.5281/zenodo.18079602
 
-v24.2 STERILE MODEL: M^{26}(24,2) = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0} oplus S^{2,0})
-The 12x(2,0) paired bridge system plus two shadow-time directions plus T^1 time.
-All 125 constants are geometric residues, not tuned.
+THE ADOPTED BULK (signature ruling 2026-08-31; author's rulings D-015):
+  - Bulk: M^{26}(24,2) = (bigoplus_{i=1}^{12} B_i^{(2,0)}) oplus R^{(0,2)}_{t_1, t_2}
+  - Metric: ds^2 = -dt_1^2 - dt_2^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
+  - 24 space directions, paired into 12 Euclidean (2,0) bridges, and two
+    times, one per 13D(12,1) shadow: (24,2) = (12,1) + (12,1)
+  - Shadows: the y_{1i} plus t_1 (normal), the y_{2i} plus t_2 (mirror)
+  - OR reduction: bigotimes_{i=1}^{12} R_perp_i on the bridge pairs
+  - Internal space of each shadow: Y_7 = Joyce's resolution of T^7/(Z/2)^3,
+    (b_2, b_3) = (12, 43), pi_1 = 1, chi = 0 (certificate, Section 2.4)
 
-KEY v24.2 ARCHITECTURE:
-  - Bulk: M^{26}(24,2) = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0} oplus S^{2,0})
-  - Metric: ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2) + ds_1^2 + ds_2^2
-  - 24 physics core from 12x2 pairs + 1 timelike + 2 two shadow-time directions = M^{26}(24,2)
-  - Shadow structure: y_{1i} aggregates (normal) + y_{2i} aggregates (mirror)
-  - OR reduction: bigotimes_{i=1}^{12} R_perp_i (S^{2,0} averages into both shadows)
+WHY 12 PAIRS: the bulk has 24 space directions, 24/2 = 12. The 24 counts
+bulk directions, not 3-cycles; reading it as b_3 = 24 belonged to the retired
+seed and is withdrawn (D-004/D-007: class BULK).
 
-WHY 12 PAIRS: b_3 = 24 => 24/2 = 12 paired bridges
+RETIRED READINGS kept as labelled history in the text: the single fibred
+time T^1 and the Euclidean "shadow-time" pair S^{(2,0)} (the '+2' now has one
+reading, one time per shadow); the Calabi-Yau filtering through the
+twisted-connected-sum building block (off-path construction); n_gen = b_3/8.
 
-This simulation generates the content for Section 1 of the paper:
+This simulation generates the content for subsection 1.1 of the paper:
   1.1 The M^{26}(24,2) Ancestral Bulk with 12x(2,0) Paired Bridge
   1.2 The Paired Bridge System and OR Reduction
-  1.3 The G2 Manifold (V7) per Shadow
-  1.4 The 6D->4D Projection
+  1.3 The Internal Manifold Y_7 per Shadow
+  1.4 From 13D to 4D
 
 SECTION: 1 (Foundations of Dimensional Descent)
 
@@ -89,25 +95,35 @@ def _arithma_inv(a):
     return None if a is None else 1.0 / a
 import math as _math
 
+from metaphysica.simulations.PM.geometry.geometry_narration import (
+    fragments as _fragments,
+    holonomy_claim as _holonomy_claim,
+    render as _render,
+)
+
+
+def _r(template: str) -> str:
+    """Fill `template` from the live geometry fragments, HTML register."""
+    return _render(template, "html")
+
 
 class FoundationsV16_2(SimulationBase):
     """
-    Section 1: Foundations of Dimensional Descent (v24.2).
+    Section 1.1: Foundations of Dimensional Descent.
 
-    Provides the sterile derivation narrative for the (24,2)->4D descent path
-    with 12x(2,0) paired bridge system:
-    - 1.1: The M^{26}(24,2) Ancestral Bulk with 12x(2,0) Paired Bridge
-    - 1.2: The Paired Bridge System and OR Reduction
-    - 1.3: The G2 Manifold V7 per Shadow (7D Geometric Hard-Lock)
-    - 1.4: The 6D->4D Projection (Calabi-Yau Filtering)
+    Provides the narrative for the (24,2) -> 4D descent path:
+    - 1.1: The M^{26}(24,2) bulk with 12 x (2,0) paired bridges
+    - 1.2: The paired bridge system and OR reduction
+    - 1.3: The internal manifold Y_7 per shadow
+    - 1.4: From 13D to 4D (the off-path Calabi-Yau filtering, labelled)
 
-    KEY v24.2 STRUCTURE:
-        M^{24,2} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})
-        ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
+    STRUCTURE:
+        M^{26}(24,2) = (bigoplus_{i=1}^{12} B_i^{(2,0)}) oplus R^{(0,2)}_{t_1, t_2}
+        ds^2 = -dt_1^2 - dt_2^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
 
     WHY 12 PAIRS:
-        b_3 = 24 (Betti number from G2 topology)
-        24 / 2 = 12 paired bridges
+        the bulk's 24 space directions, 24 / 2 = 12 paired bridges
+        (a count of bulk directions, not the Betti number b_3)
         Each pair: (y_{1i}, y_{2i}) with Euclidean (2,0) signature
     """
 
@@ -141,9 +157,13 @@ class FoundationsV16_2(SimulationBase):
             version="24.2",
             domain="foundations",
             title="Foundations of Dimensional Descent",
-            description="The M^{26}(24,2) bulk: 12x(2,0) paired bridges + two shadow-time directions + T^1 time; dual shadows and G2 compactification",
+            description=(
+                "The M^{26}(24,2) bulk: 24 space directions paired into 12 "
+                "(2,0) bridges and two times, one per 13D(12,1) shadow; the "
+                "dual shadows and the internal 7-manifold Y_7"
+            ),
             section_id="1",
-            subsection_id="1.1"  # v19.0: Unique subsection (introduction_v16_0 owns section 1)
+            subsection_id="1.1"  # unique subsection (introduction_v16_0 owns section 1)
         )
 
     @property
@@ -179,11 +199,39 @@ class FoundationsV16_2(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """
-        Return section content for Section 1: Foundations of Dimensional Descent.
+        Return section content for Section 1.1: Foundations of Dimensional Descent.
+
+        Seed numbers are rendered from the live fragments; the one sentence
+        that depends on the real form of phi branches on holonomy_claim().
+        Retired readings (the fibred single time, the Euclidean shadow-time
+        pair, the Calabi-Yau filtering of the off-path construction) are kept
+        as labelled history.
 
         Returns:
-            SectionContent instance with the sterile model foundation narrative
+            SectionContent instance with the foundation narrative
         """
+        frag = _fragments("plain")
+        compact = bool(_holonomy_claim()["may_claim_g2_holonomy"])
+        if compact:
+            holonomy_text = _r(
+                "On the compact real form of &phi;, adopted by the author&rsquo;s "
+                "ruling D-015, {manifold} has holonomy exactly G<sub>2</sub>: "
+                "&pi;<sub>1</sub> = 1, and for a compact torsion-free "
+                "G<sub>2</sub>-structure a finite fundamental group is equivalent "
+                "to full holonomy (Joyce, Prop. 1.1.1). Its metric is torsion-free "
+                "and Ricci-flat, as are those of T<sup>7</sup> and K3 &times; "
+                "T<sup>3</sup>, which carry more parallel spinors."
+            )
+        else:
+            holonomy_text = _r(
+                "The author&rsquo;s ruling D-015 adopts the compact real form of "
+                "&phi;, on which {manifold} has holonomy exactly G<sub>2</sub> "
+                "(&pi;<sub>1</sub> = 1; Joyce, Prop. 1.1.1) and a torsion-free, "
+                "Ricci-flat metric. The real-form branch the code currently runs "
+                "is the split form, whose induced metric has signature (4,3), so "
+                "no holonomy statement is made on it."
+            )
+
         content_blocks = [
             # NOTE: Abstract/lead paragraph removed - content is now in Section 0 (abstract_v17_2.py)
             # Section 1 should start directly with the foundational content
@@ -200,13 +248,14 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The foundational premise of the Sterile Model is that the observable universe "
-                    "is not an independent system, but a lower-dimensional <strong>residue</strong> "
-                    "of an <strong>M<sup>26</sup>(24,2) Bosonic Ancestral Bulk</strong>. This high-dimensional "
-                    "state represents the 'Total Potential' of the physical registry, with two "
-                    "timelike directions — one per 13D(12,1) shadow, ghosts and closed timelike "
-                    "curves controlled by the Sp(2,ℝ) gauge constraint (STRUCTURAL) — and a "
-                    "<strong>12×(2,0) paired bridge system</strong> enabling dual-shadow coherence."
+                    "The foundational premise of the Sterile Model &mdash; a postulate, "
+                    "not a result &mdash; is that the observable universe is not an "
+                    "independent system but a lower-dimensional <strong>residue</strong> "
+                    "of an <strong>M<sup>26</sup>(24,2) ancestral bulk</strong>. The bulk "
+                    "has 24 space directions, paired into a <strong>12×(2,0) bridge "
+                    "system</strong> that couples the two shadows, and two timelike "
+                    "directions, one per 13D(12,1) shadow. Whether the second time is "
+                    "free of ghosts and closed timelike curves is an open problem."
                 )
             ),
             ContentBlock(
@@ -217,12 +266,12 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "At the highest level, the framework connects to the algebraic structures of the "
-                    "<strong>Monster Group</strong> and the <strong>Leech Lattice</strong> via the "
-                    "bosonic string (26D parent, signature (24,2) before the S<sup>(2,0)</sup> extension). "
-                    "In PM v24.2, the actual bulk has structure <strong>M<sup>26</sup>(24,2)</strong>: twenty-four "
-                    "physics core dimensions from the 12×(2,0) bridge pairs, one two-time structurelike, "
-                    "and two shadow-time directions S<sup>(2,0)</sup>. "
+                    "The framework is motivated by the algebraic structures of the "
+                    "<strong>Monster Group</strong> and the <strong>Leech Lattice</strong>, "
+                    "whose 24-dimensional ambient space matches the bulk&rsquo;s 24 space "
+                    "directions. The bulk itself is <strong>M<sup>26</sup>(24,2)</strong>: "
+                    "24 space directions, paired into the 12×(2,0) bridges, and two "
+                    "times, one per shadow. "
                     "Ghost control in this configuration is an <strong>open problem</strong>. "
                     "Earlier text called the bulk ghost-free by appeal to &lsquo;the single "
                     "timelike direction&rsquo;, which is not a description of a (24,2) bulk, and "
@@ -237,16 +286,18 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Why (24,2) specifically?</strong> Because 26 = b₃ + 2 and one time "
-                    "per shadow. That is the framework&rsquo;s own dimensional identity, and the "
-                    "2026-08-31 ruling keeps it — at a price that is stated here rather than "
+                    "<strong>Why (24,2) specifically?</strong> Because the 24 space directions "
+                    "pair into the twelve bridges and each of the two shadows carries one "
+                    "time: 26 = 24 + 2. That is the framework&rsquo;s own dimensional identity "
+                    "(it coincided with b₃ + 2 only at the retired seed), and the 2026-08-31 "
+                    "ruling keeps it — at a price that is stated here rather than "
                     "buried. Three claims that previously supported this paragraph are "
                     "<strong>withdrawn</strong>. (i) <em>D<sub>bulk</sub> = D<sub>crit</sub> = 26.</em> "
                     "26 is the critical dimension of the <em>one-time</em> bosonic string at "
                     "signature (25,1), where 26 = 24 transverse + a lightcone pair (one space, one "
                     "time) — not two times. The two-time bosonic critical dimension is 27–28 "
                     "(Bars &amp; Kounnas, hep-th/9705205; Watabiki, hep-th/0303045). The framework "
-                    "may keep 26 = b₃ + 2 as its own identity but may no longer call it the "
+                    "may keep 26 = 24 + 2 as its own identity but may no longer call it the "
                     "critical dimension. (ii) <em>The appeal to Bars for ghost-freedom</em>, for "
                     "the reason given above. (iii) <em>The Leech/modular-invariance justification.</em> "
                     "An even unimodular lattice of signature (p,q) exists iff p − q ≡ 0 (mod 8). "
@@ -262,7 +313,7 @@ class FoundationsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="equation",
-                content=r"\text{Structure}(M^{26}) = (24, 2) \quad \Rightarrow \quad ds^2 = -dt^2 + \sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2) + ds_1^2 + ds_2^2",
+                content=r"\text{Structure}(M^{26}) = (24, 2) \quad \Rightarrow \quad ds^2 = -dt_1^2 - dt_2^2 + \sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)",
                 label="27d-signature"
             ),
             ContentBlock(
@@ -279,11 +330,13 @@ class FoundationsV16_2(SimulationBase):
                     "8-dimensional octonions, Aut(<strong>O</strong>), and acts faithfully on the "
                     "7-dimensional imaginary part Im(<strong>O</strong>) ≅ R<sup>7</sup>, "
                     "preserving the octonionic structure constants C<sub>ijk</sub>. These structure "
-                    "constants define the G<sub>2</sub> associative 3-form φ<sub>ijk</sub> = C<sub>ijk</sub>, "
-                    "from which the G<sub>2</sub> metric is derived via Hitchin's formula "
-                    "g<sub>ij</sub> = φ<sub>iab</sub>φ<sub>jab</sub>/6 = δ<sub>ij</sub>. "
+                    "constants define the G<sub>2</sub> associative 3-form φ<sub>ijk</sub> = C<sub>ijk</sub>. "
+                    "The quadratic contraction φ<sub>iab</sub>φ<sub>jab</sub>/6 = δ<sub>ij</sub> is a "
+                    "consistency identity that holds for either real form of φ; the metric itself "
+                    "comes from Hitchin&rsquo;s cubic construction, which depends on the real form. "
                     "The E<sub>8</sub> root system (240 roots in R<sup>8</sup> ≅ <strong>O</strong>) "
-                    "thus provides the algebraic origin for G<sub>2</sub> holonomy geometry."
+                    "shares this octonionic origin; the link motivates the construction rather "
+                    "than deriving it."
                 )
             ),
             ContentBlock(
@@ -313,8 +366,9 @@ class FoundationsV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "n<sub>faces</sub> = 4 was previously read off h<sup>1,1</sup> = 4 of the "
-                    "TCS #187 building block, a reading this repository labels <strong>FITTED</strong> "
-                    "because it depends on having chosen that manifold. It no longer needs to be. "
+                    "off-path twisted-connected-sum building block (&lsquo;TCS #187&rsquo;), a "
+                    "reading this repository labels <strong>FITTED</strong> because it depends on "
+                    "having chosen that manifold. It no longer needs to be. "
                     "On the R<sup>7</sup> side the allowed couplings resolve into the seven lines "
                     "of the Fano plane, and a maximal bridge placement fills four complete "
                     "triangles — 4 points × 3 lines through each = 12 slots, against 4 faces "
@@ -354,11 +408,17 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "What the join does <em>not</em> do is single out one configuration. It "
-                    "narrows C(21,12) = 293,930 placements → 35 → 7, and stops there: which of "
-                    "the 7 arcs, and which of its 18 labellings, remains open. The "
-                    "bridge-to-channel assignment is still underdetermined, and inventing a "
-                    "tie-break would not be a derivation. Two counts in this construction are "
+                    "On its own the join does <em>not</em> single out one configuration. It "
+                    "narrows C(21,12) = 293,930 placements → 35 → 7 and stops there, leaving "
+                    "open which of the 7 arcs, and which of its 18 labellings. The internal "
+                    "geometry now fixes the arc: the three singular involutions of the folding "
+                    "group are three non-concurrent Fano lines, and they determine the arc "
+                    "{0, 1, 3, 6} with complement line (2, 4, 5) (CG.8). With working "
+                    "assumption WA-1 adopted by the author&rsquo;s ruling D-015 &mdash; each "
+                    "bridge is one resolved A<sub>1</sub> component &mdash; that arc is the "
+                    "physical one. Whether the singular set also fixes the labelling is not "
+                    "established here, and inventing a tie-break would not be a derivation. "
+                    "Two counts in this construction are "
                     "also now enumerated rather than asserted: 15400 = 12!/((3!)<sup>4</sup>4!) "
                     "groupings of 12 bridges into 4 unordered triples, of which 576 = (4!)<sup>2</sup> "
                     "are cross-E<sub>8</sub>-valid. Note that the stride-4 triples {i, i+4, i+8} "
@@ -375,31 +435,36 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The M<sup>26</sup>(24,2) bulk decomposes into <strong>12 paired bridges</strong> plus the "
-                    "<strong>shadow-time directions</strong> S<sup>(2,0)</sup>, each with (2,0) signature. The total bulk structure is:"
+                    "The M<sup>26</sup>(24,2) bulk decomposes into <strong>12 paired "
+                    "bridges</strong>, each with (2,0) signature, and <strong>two times</strong>, "
+                    "one per shadow. The total bulk structure is:"
                 )
             ),
             ContentBlock(
                 type="equation",
-                content=r"M^{26}(24,2) = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0} \oplus S^{2,0}\right)",
+                content=r"M^{26}(24,2) = \bigoplus_{i=1}^{12} B_i^{(2,0)} \oplus \mathbb{R}^{(0,2)}_{(t_1,\,t_2)}, \qquad B_i = (y_{1i}, y_{2i})",
                 label="bulk-decomposition"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
                     "Each bridge pair B<sub>i</sub> = (y<sub>1i</sub>, y<sub>2i</sub>) contributes "
-                    "two spacelike dimensions. This gives 12×2 = 24 spacelike dimensions from the pairs, "
-                    "plus 1 two-time structurelike dimension, plus 2 shadow-time directions S<sup>(2,0)</sup> = (s<sub>1</sub>, s<sub>2</sub>): "
-                    "total <strong>M<sup>26</sup>(24,2)</strong>. The pairing "
-                    "arises from the G₂ topology: <strong>b₃ = 24 / 2 = 12 pairs</strong>."
+                    "two space directions, giving 12 × 2 = 24; the two times t<sub>1</sub> and "
+                    "t<sub>2</sub>, one per shadow, complete <strong>M<sup>26</sup>(24,2)</strong>. "
+                    "The 24 counts the bulk&rsquo;s space directions. It is not a Betti number: "
+                    "the earlier reading of the pair count as half of b₃ belonged to the retired "
+                    "seed and is withdrawn. Earlier versions also wrote the bulk with a single "
+                    "fibred time T<sup>1</sup> and a Euclidean &lsquo;shadow-time&rsquo; pair "
+                    "S<sup>(2,0)</sup>; under the 2026-08-31 ruling the &lsquo;+2&rsquo; has one "
+                    "reading, one time per shadow, and those forms are retired."
                 )
             ),
             ContentBlock(
                 type="list",
                 items=[
                     "<strong>Bridge Pairs:</strong> B<sub>i</sub><sup>(2,0)</sup> = (y<sub>1i</sub>, y<sub>2i</sub>) for i = 1,...,12",
-                    "<strong>Normal Shadow:</strong> Aggregate of all y<sub>1i</sub> (normal halves) + internal G₂",
-                    "<strong>Mirror Shadow:</strong> Aggregate of all y<sub>2i</sub> (mirror halves) + internal G₂",
+                    "<strong>Normal Shadow:</strong> all y<sub>1i</sub> (the normal halves) + its own time t<sub>1</sub> = 13D(12,1), compactified on the internal 7-manifold",
+                    "<strong>Mirror Shadow:</strong> all y<sub>2i</sub> (the mirror halves) + its own time t<sub>2</sub> = 13D(12,1), compactified on the internal 7-manifold",
                     "<strong>Per-pair OR:</strong> R<sub>⊥</sub><sup>i</sup> = [[0,-1],[1,0]] acts on each (y<sub>1i</sub>, y<sub>2i</sub>)"
                 ],
                 label="dual-shadow-structure"
@@ -412,39 +477,47 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The M<sup>26</sup>(24,2) state descends via <strong>Dimensional Collapse</strong>. "
-                    "The 26-dimensional bosonic string space 'shatters' into the dual-shadow configuration, "
-                    "with the Euclidean bridge providing the coherence substrate. This transition is a "
-                    "<strong>Topological Shattering</strong>, where the high-dimensional bulk breaks "
-                    "along the fault lines of the G₂ holonomy into two mirrored 4D condensates."
+                    "In the model&rsquo;s picture (a postulate), the M<sup>26</sup>(24,2) bulk "
+                    "descends by a <strong>dimensional collapse</strong> into the dual-shadow "
+                    "configuration, with the bridges providing the coherence substrate, and each "
+                    "shadow then compactifies on the internal 7-manifold to a 4D condensate. The "
+                    "model calls this transition a <strong>topological shattering</strong>; it "
+                    "is a description, not a computed process."
                 )
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "<strong>The Dimensional Descent Chain and Its Constraints:</strong> Each step in the "
-                    "descent from 26D to 4D is constrained by a specific mathematical consistency condition: "
-                    "(1) <strong>26D bosonic string</strong>: modular invariance of the worldsheet partition "
-                    "function fixes D=26 (Polyakov, 1981). (2) <strong>12×(2,0) bridge pairs</strong>: the "
-                    "topological constraint b₃=24 from the G₂ manifold fixes the pair count to 24/2=12; each "
-                    "pair must be Euclidean (2,0) to avoid ghosts. (3) <strong>Dual 13D shadows</strong>: "
-                    "OR reduction is the unique orientation-preserving projection consistent with spinor "
-                    "coherence ((R<sub>⊥</sub><sup>full</sup>)² = I for 12 pairs). (4) <strong>G₂ compactification</strong>: "
-                    "preserves exactly N=1 supersymmetry in 4D (Joyce, 2000), which is required to solve "
-                    "the hierarchy problem. (5) <strong>4D observable physics</strong>: the CY₃ projection "
-                    "within G₂ (via the natural CY₃ sub-manifold in the TCS construction) produces chiral "
-                    "fermions with n<sub>gen</sub> = χ<sub>eff</sub>/48 = 3 generations. Each step is necessary and uniquely "
-                    "determined by the preceding one."
+                content=_r(
+                    "<strong>The Dimensional Descent Chain and Its Status:</strong> each step in "
+                    "the descent from 26D to 4D, with what supports it. (1) <strong>The 26D bulk "
+                    "of signature (24,2)</strong>: a postulate &mdash; 24 space directions and one "
+                    "time per shadow; the earlier appeal to the bosonic critical dimension is "
+                    "withdrawn, because 26 is critical only for one time. (2) <strong>The 12 × "
+                    "(2,0) bridge pairs</strong>: the bulk&rsquo;s 24 space directions taken in "
+                    "pairs, 24/2 = 12; each pair is Euclidean, and ghost control of the second "
+                    "time is open. (3) <strong>The dual 13D(12,1) shadows</strong>: OR reduction, "
+                    "proposed as the orientation-preserving projection consistent with spinor "
+                    "coherence ((R<sub>⊥</sub><sup>full</sup>)² = I for 12 pairs). (4) "
+                    "<strong>Compactification on {manifold}</strong>: M-theory on a compact "
+                    "G<sub>2</sub> manifold preserves N = 1 supersymmetry in 4D (standard; Joyce, "
+                    "2000), and {manifold} = {construction}, with {betti_pair}, is selected as the "
+                    "Introduction describes (&sect;1.3.2). (5) <strong>4D physics</strong>: "
+                    "three generations are counted as {n_gen_route}; how they become chiral is "
+                    "open, because {manifold} has no codimension-7 points, and the earlier route "
+                    "through a Calabi&ndash;Yau sub-manifold of the twisted-connected-sum "
+                    "construction is off-path."
                 )
             ),
             ContentBlock(
                 type="note",
                 content=(
                     "<h4>Foundational Note: The Origin of Sterility</h4>"
-                    "<p>The 'Sterility' of our 4D reality is inherited from this 26D origin. Because "
-                    "the ancestral bulk contains a finite amount of 'Symmetry Budget,' the 125 residues "
-                    "extracted in 4D must sum to a specific topological constant. The dual-shadow "
-                    "structure enforces this via balanced b₃ residue splits (12/12) across shadows.</p>"
+                    "<p>In the model&rsquo;s picture (a postulate, not a computation), the "
+                    "&lsquo;sterility&rsquo; of our 4D reality is inherited from this 26D origin: "
+                    "the ancestral bulk is taken to carry a finite &lsquo;symmetry budget&rsquo;, "
+                    "so the residues extracted in 4D must sum to a fixed constant. The dual-shadow "
+                    "structure is proposed to enforce this through a balanced 12/12 split of the "
+                    "bulk&rsquo;s space directions across the two shadows.</p>"
                 ),
                 label="sterility-origin"
             ),
@@ -475,8 +548,10 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Each of the 12 bridge pairs has positive-definite (2,0) metric, eliminating ghost "
-                    "modes and closed timelike curves. The total bridge metric is the direct sum over all pairs:"
+                    "Each of the 12 bridge pairs has a positive-definite (2,0) metric, so the "
+                    "bridges themselves add no timelike directions; ghost control of the "
+                    "bulk&rsquo;s second time is a separate, open problem. The total bridge "
+                    "metric is the direct sum over all pairs:"
                 )
             ),
             ContentBlock(
@@ -487,7 +562,9 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The pairing structure arises naturally from the b₃ = 24 Betti number: 24/2 = 12 pairs. "
+                    "The pairing is of the bulk&rsquo;s 24 space directions: 24/2 = 12 pairs. "
+                    "(An earlier reading took the 24 to be the Betti number b₃; that reading "
+                    "belonged to the retired seed and is withdrawn.) "
                     "<Speculation>Each pair serves as a 'neural gate' for consciousness flow between shadows.</Speculation>"
                 )
             ),
@@ -520,36 +597,47 @@ class FoundationsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="1.2.3 The Breathing Dark Energy Mechanism",
+                content="1.2.3 The Breathing Dark Energy Proposal",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "The bridge pressure arises from <strong>condensate flux mismatch</strong> between shadows. "
-                    "Where normal and mirror shadow pressure profiles differ, the residue drives cosmic acceleration. "
-                    "This yields thawing dark energy with w₀ = −1 + 1/b₃ = −23/24 ≈ −0.9583, "
-                    "consistent with DESI 2025 thawing constraints. The breathing density formula is: ρ<sub>breath</sub> = |T<sup>ab</sup><sub>normal</sub> − R<sub>⊥</sub> T<sup>ab</sup><sub>mirror</sub>|."
+                content=_r(
+                    "The model proposes that a <strong>condensate flux mismatch</strong> between "
+                    "the shadows produces a bridge pressure, &rho;<sub>breath</sub> = "
+                    "|T<sup>ab</sup><sub>normal</sub> &minus; R<sub>&perp;</sub> "
+                    "T<sup>ab</sup><sub>mirror</sub>|, and that this residue drives cosmic "
+                    "acceleration. It is a proposal: dark energy is <strong>OPEN</strong>. The "
+                    "leading-order flux potential on {manifold} cannot accelerate the universe "
+                    "(|&nabla;V|/V &ge; 5&radic;(2/7) &asymp; 2.673 &gt; &radic;2, CG.11). The "
+                    "value w<sub>0</sub> = &minus;1 + 1/b<sub>3</sub> = &minus;23/24 once quoted "
+                    "here is frozen at {off_path_seed} and has no derivation; both it and the "
+                    "adopted-seed value &minus;" + str(int(frag["b3"]) - 1) + "/" + frag["b3"]
+                    + " lie more than 3&sigma; from the DESI DR2 headline w<sub>0</sub> = "
+                    "&minus;0.752 &plusmn; 0.057."
                 )
             ),
             ContentBlock(
                 type="heading",
-                content="1.2.4 Hierarchical Bridge Sampling: Local Pairs + Central (2,0) Ancestral Sampler",
+                content="1.2.4 Hierarchical Bridge Sampling (a Retired Reading)",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The v24.2 framework extends the 12 local (2,0) bridge pairs with a <strong>central (2,0) "
-                    "ancestral sampler</strong> that provides global averaging for macro-precision. This hierarchical "
-                    "structure enables two levels of condensate selection: local pairs for fine flux control, and the "
-                    "shadow-time directions for global coherence during dimensional descent."
+                    "RETIRED (signature ruling 2026-08-31): an earlier version extended the 12 "
+                    "local (2,0) bridge pairs with a <strong>central (2,0) ancestral "
+                    "sampler</strong> S<sup>(2,0)</sup>, built from the bulk&rsquo;s "
+                    "&lsquo;+2&rsquo;, to provide global averaging. Under the ruling the "
+                    "&lsquo;+2&rsquo; are the two times, one per shadow, so no Euclidean pair is "
+                    "left to carry the sampler. The construction is kept below as a labelled "
+                    "record; it enters no adopted result."
                 )
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Descent Flow:</strong><br/>"
+                    "<strong>Former descent flow:</strong><br/>"
                     "• Bulk → 12×(2,0) local pairs (fine flux sampling per bridge)<br/>"
                     "• Local → central (2,0) averaging → ancestral descent into condensate ((5,1) + 3×(3,1))"
                 )
@@ -562,56 +650,60 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Here p<sub>i</sub> is the local probability from bridge pair i, n<sub>local</sub> is the "
-                    "number of active local pairs (6 baseline → 12 full gnosis), and φ is the golden ratio. "
-                    "The shadow-time directions activate at mid-gnosis (n<sub>local</sub> ≥ 9)."
+                    "In that record, p<sub>i</sub> is the local probability from bridge pair i, "
+                    "n<sub>local</sub> is the number of active local pairs (6 baseline → 12 full "
+                    "gnosis), and φ is the golden ratio; the central pair was said to activate at "
+                    "mid-gnosis (n<sub>local</sub> ≥ 9)."
                 )
             ),
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>Dimensional Accounting:</strong> 24 core + 24 local + 2 central = 50 spacelike dimensions",
-                    "<strong>Local Level:</strong> 12×(2,0) pairs → micro-stability (per-branch selection)",
-                    "<strong>Central Level:</strong> 1×(2,0) pair → macro-precision (global averaging)",
-                    "<strong>Signature Preservation:</strong> Bridge+time subalgebra (24,2) = 12×(2,0) + (0,1) [pre-S<sup>(2,0)</sup> extension]; full bulk is M<sup>26</sup>(24,2) with Euclidean shadow-time directions"
+                    "<strong>Former dimensional accounting:</strong> 24 core + 24 local + 2 central = 50 spacelike dimensions (inconsistent with a (24,2) bulk; retired)",
+                    "<strong>Local level:</strong> 12×(2,0) pairs → micro-stability (per-branch selection)",
+                    "<strong>Central level (retired):</strong> 1×(2,0) pair → macro-precision (global averaging)",
+                    "<strong>Signature:</strong> the adopted bulk is M<sup>26</sup>(24,2) = 12×(2,0) ⊕ (0,2), the two times one per shadow; the Euclidean S<sup>(2,0)</sup> extension is retired"
                 ],
                 label="hierarchical-sampling-structure"
             ),
 
             # ================================================================
-            # 1.3 The G2 Manifold (V7) per Shadow
+            # 1.3 The internal manifold Y_7 per shadow
             # ================================================================
             ContentBlock(
                 type="heading",
-                content="The G₂ Manifold (V₇): Per-Shadow Compactification",
+                content="The Internal Manifold Y₇: Per-Shadow Compactification",
                 level=2,
                 label="1.3"
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "Each dual shadow undergoes independent <strong>G₂ compactification</strong> on a "
-                    "<strong>7-dimensional Riemannian manifold (7,0)</strong>. This per-shadow structure "
-                    "provides the geometric rigidity that prevents the constants of nature from drifting. "
-                    "The G₂ manifold is the 'Hard-Lock' that ensures each 4D condensate is a unique, "
-                    "non-negotiable state with n<sub>gen</sub> = χ<sub>eff</sub>/(2·b₃) = 144/48 = 3 generations per shadow."
+                content=_r(
+                    "Each shadow compactifies on the internal space {manifold} = "
+                    "{construction}: {structure}, with {betti_pair} (Introduction, "
+                    "&sect;1.3.2; certificate in Section 2.4). Three generations are counted as "
+                    "{n_gen_route}. The effective index &chi;<sub>eff</sub> = 48n = "
+                    + str(48 * int(round(float(frag["n_gen"])))) + " (the K3 reading, adopted by "
+                    "the author&rsquo;s ruling D-015) restates that count; it is not the Euler "
+                    "characteristic of {manifold}, which is 0. Earlier text called the manifold "
+                    "a &lsquo;hard-lock&rsquo; that keeps the constants of nature from drifting; "
+                    "that is not supported, because the metric moduli of {manifold}, Re(T) "
+                    "included, are not fixed at leading order (CG.6)."
                 )
             ),
             ContentBlock(
                 type="heading",
-                content="1.3.1 G₂ Holonomy and Path Independence",
+                content="1.3.1 Holonomy, Ricci-Flatness, and What They Do Not Fix",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The V₇ manifold is distinguished as a 7D space with holonomy exactly G₂, carrying a "
-                    "<strong>torsion-free, Ricci-flat metric</strong> (T⁷ and K3×T³ are also Ricci-flat, with larger spinor content). This G₂ holonomy implies that "
-                    "the extraction of physical residues is 'Path Independent.' Whether a particle mass "
-                    "is derived through the lepton sector or the gauge sector, the resulting value is "
-                    "identical because it is anchored to the manifold's global geometry. This eliminates "
-                    "the 'Fine-Tuning' problem; the numbers are not adjusted to match—they are locked "
-                    "by the manifold's inability to be anything other than itself."
+                    holonomy_text + " Ricci-flatness does not fix the constants of nature: the "
+                    "moduli are flat directions at leading order (CG.6), and the constants built "
+                    "on k<sub>ℷ</sub> = b<sub>3</sub>/2 + 1/π were calibrations (D-007). The "
+                    "earlier claim that the geometry makes every derivation &lsquo;path "
+                    "independent&rsquo; and removes fine-tuning is withdrawn."
                 )
             ),
             ContentBlock(
@@ -627,87 +719,101 @@ class FoundationsV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The defining mathematical feature of Section 1.3 is the <strong>Manifold Laplacian "
-                    "(Δ<sub>V₇</sub>)</strong>. Every one of the 125 residues observed in the Standard Model "
-                    "corresponds to a specific spectral eigenvalue of this operator:"
+                    "The model proposes (a postulate, not a computation) that the constants it "
+                    "calls residues correspond to spectral eigenvalues of the <strong>manifold "
+                    "Laplacian</strong> Δ<sub>Y₇</sub>, with this division of roles:"
                 )
             ),
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>Low-Frequency Modes:</strong> Correspond to global cosmological constants (e.g., H₀, Λ).",
-                    "<strong>High-Frequency Modes:</strong> Correspond to discrete particle masses (e.g., the Top Quark)."
+                    "<strong>Low-Frequency Modes:</strong> proposed to correspond to global cosmological constants (e.g., H₀, Λ).",
+                    "<strong>High-Frequency Modes:</strong> proposed to correspond to discrete particle masses (e.g., the Top Quark)."
                 ],
                 label="laplacian-modes"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "By identifying constants as resonant frequencies of the V₇ shape, we move from "
-                    "empirical observation to <strong>geometric derivation</strong>. If the 'shape' of "
-                    "the universe is V₇, then the 125 residues are its natural vibrations."
+                    "If the proposal holds, the constants would be resonant frequencies of the "
+                    "internal shape. It is a research programme, not a result: the spectrum "
+                    "depends on the metric moduli of Y₇, which are not fixed at leading order "
+                    "(CG.6)."
                 )
             ),
             ContentBlock(
                 type="heading",
-                content="1.3.3 The b₃ Cycles and Flux-Tube Screening",
+                content="1.3.3 The 3-Cycles and Flux-Tube Screening",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "Within the G₂ manifold, the vacuum energy is not a free-floating value. It is "
-                    "trapped within the <strong>b₃ Betti cycles</strong>. These 3-dimensional 'loops' "
-                    "act as flux-tubes that screen the high-energy tension of the 26D bulk. The "
-                    "cancellation of brane tensions within these cycles is what yields the "
-                    "<strong>10⁻⁵⁰ stability floor</strong>. This mechanism provides the first-principles "
-                    "resolution to the Cosmological Constant Problem."
+                content=_r(
+                    "The model proposes that vacuum energy is screened by flux through the "
+                    "3-cycles of {manifold} ({b3} of them), with brane-tension cancellation "
+                    "inside them setting a small floor. It is a proposal, not a resolution of the "
+                    "cosmological-constant problem: the leading-order G<sub>4</sub>-flux "
+                    "potential on {manifold} is positive and runs away (CG.6) and cannot "
+                    "accelerate the universe (CG.11), so dark energy and the cosmological "
+                    "constant are open."
                 )
             ),
             ContentBlock(
                 type="equation",
-                content=r"b_3 = 24 \quad \Rightarrow \quad N_{\text{gen}} = \frac{b_3}{8} = 3 \quad \text{(three fermion generations)}",
+                content=(
+                    r"n_{\text{gen}} = \frac{b_2}{4} = \frac{%s}{4} = %s \quad "
+                    r"\text{(the number of singular involutions)}"
+                    % (frag["b2"], frag["n_gen"])
+                ),
                 label="b3-generations"
             ),
 
             # ================================================================
-            # 1.4 The 6D→4D Projection
+            # 1.4 From 13D to 4D
             # ================================================================
             ContentBlock(
                 type="heading",
-                content="The 6D → 4D Projection: Calabi-Yau Filtering",
+                content="From 13D to 4D (and the Off-Path Calabi-Yau Filtering)",
                 level=2,
                 label="1.4"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The final stage of the dimensional descent is the projection of the 7D G₂ residues "
-                    "onto our 4-dimensional Minkowski spacetime. This process involves a transition through "
-                    "a <strong>6-dimensional Calabi-Yau intermediate</strong>, which acts as a 'Diffraction "
-                    "Grating' for the high-dimensional symmetries. It is at this stage that the abstract "
-                    "geometric nodes of the V₇ manifold manifest as the specific Flavor Physics and Gauge "
-                    "Couplings of the Standard Model."
+                    "On the adopted path each 13D(12,1) shadow splits as 13 = 7 + 6: the "
+                    "internal 7-manifold and a 6D external space, with 6 = 4 + 2 (the bulk ruling "
+                    "of 2026-08-31). OFF-PATH: earlier versions instead routed the descent through "
+                    "a <strong>6-dimensional Calabi-Yau intermediate</strong> inside the internal "
+                    "space &mdash; the Calabi&ndash;Yau building block of the twisted-connected-sum "
+                    "construction &mdash; which was said to act as a &lsquo;diffraction "
+                    "grating&rsquo; turning geometric nodes into flavour physics and gauge "
+                    "couplings. A Joyce orbifold resolution has no such building block, so that "
+                    "reading is retired."
                 )
             ),
             ContentBlock(
                 type="heading",
-                content="1.4.1 Calabi-Yau Sub-Manifolds and Chirality",
+                content="1.4.1 Calabi-Yau Sub-Manifolds and Chirality (Off-Path)",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "As the V₇ holonomy projects into 4D, the G₂ structure decomposes into a "
-                    "<strong>Calabi-Yau 3-fold (CY₃)</strong>. This 6-dimensional sub-manifold is "
-                    "responsible for the emergence of <strong>Chirality</strong> (the left-handed "
-                    "preference of the weak force). The specific 'Hodge numbers' (h<sup>1,1</sup>, h<sup>2,1</sup>) "
-                    "of this 6D filter determine the number of particle generations."
+                content=_r(
+                    "In the off-path reading, the Hodge numbers (h<sup>1,1</sup>, "
+                    "h<sup>2,1</sup>) of the Calabi&ndash;Yau threefold were said to produce "
+                    "chirality and to count generations. Neither holds on the adopted path: "
+                    "chirality is open, because the singular loci of {manifold} are disjoint and "
+                    "leave no codimension-7 points (D-011), and generations are counted as "
+                    "{n_gen_route}. The nearest standard relative of a Calabi&ndash;Yau step is "
+                    "the heterotic dual of M-theory on Joyce manifolds, in which the K3 fibration "
+                    "of {manifold} corresponds to a T<sup>3</sup>-fibred Calabi&ndash;Yau "
+                    "threefold on the heterotic side (Acharya 1996); whether that dual carries a "
+                    "chiral sector is an open research direction."
                 )
             ),
             ContentBlock(
                 type="equation",
-                content=r"V_7 \xrightarrow{\text{CY}_3} M^4 \times K^6 \quad \Rightarrow \quad SU(3)_C \times SU(2)_L \times U(1)_Y",
+                content=r"13 = \underbrace{7}_{Y_7} + \underbrace{6}_{\text{external}}, \qquad 6 = 4 + 2",
                 label="cy3-projection"
             ),
             ContentBlock(
@@ -719,15 +825,15 @@ class FoundationsV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "In 4D reality, fundamental particles are perceived as point-like excitations. "
-                    "However, in the Sterile Model, these are recognized as <strong>Shadows of "
-                    "Brane-Node Intersections</strong>:"
+                    "In the Sterile Model&rsquo;s picture &mdash; a metaphor, not a computation "
+                    "&mdash; they are <strong>shadows of brane-node intersections</strong>:"
                 )
             ),
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>Mass Generation:</strong> The mass of a particle is the 'shadow length' cast by a V₇ spectral node through the 6D Calabi-Yau filter.",
-                    "<strong>Charge & Coupling:</strong> The force couplings (g<sub>s</sub>, g<sub>w</sub>, e) are the 'aperture widths' of the Calabi-Yau pores through which the ancestral 26D flux passes."
+                    "<strong>Mass Generation:</strong> a particle's mass as the 'shadow length' cast by a spectral node of the internal manifold (the 'Calabi-Yau filter' this image once named belongs to the off-path construction).",
+                    "<strong>Charge & Coupling:</strong> the force couplings (g<sub>s</sub>, g<sub>w</sub>, e) as 'aperture widths' through which the ancestral 26D flux passes. Neither image yet carries computed content."
                 ],
                 label="brane-shadows"
             ),
@@ -738,23 +844,28 @@ class FoundationsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "Our observable universe is the <strong>4D World-Sheet</strong> upon which this "
-                    "entire descent is recorded. The 125 residues are the terminal artifacts of the "
-                    "M<sup>26</sup>(24,2) potential. At this level, the 'Fine-Structure Constant' and the "
-                    "'Proton-to-Electron Mass Ratio' are revealed not as lucky accidents, but as the "
-                    "<strong>Terminal Geometric Identity</strong> of the manifold. 4D reality is a "
-                    "'topologically locked' state, where the physical constants represent the only "
-                    "mathematically consistent residues of the ancestral 26D lineage."
+                content=_r(
+                    "Our observable universe is the <strong>4D end</strong> of this descent. The "
+                    "model&rsquo;s aim is to read the constants of nature as geometric residues "
+                    "of the M<sup>26</sup>(24,2) bulk. That aim is not yet met: the "
+                    "fine-structure constant and the proton-to-electron mass ratio, once "
+                    "presented as a &lsquo;terminal geometric identity&rsquo;, are built on "
+                    "k<sub>&#8503;</sub> = b<sub>3</sub>/2 + 1/&pi; and were fits made at "
+                    "{off_path_seed} (CALIBRATED, D-007), and the moduli that would fix the "
+                    "remaining scales are open (CG.6)."
                 )
             ),
             ContentBlock(
                 type="note",
-                content=(
+                content=_r(
                     "<h4>The Descent Path Summary</h4>"
-                    "<p>M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → [Bridge pairs WARP via OR] → 2×13D(12,1) → 7D [G₂ Manifold] → 6D [CY₃] → 4D [World-Sheet]</p>"
-                    "<p>At each stage, the 'Symmetry Budget' is conserved, and the 125 residues are "
-                    "progressively 'extracted' as the unique spectral eigenvalues of the descended geometry.</p>"
+                    "<p>M<sup>26</sup>(24,2) = 12×(2,0) ⊕ (0,2) → [bridges split by OR "
+                    "reduction] → 2×13D(12,1) → 13 = 7 + 6: the internal {manifold} "
+                    "({construction}, {betti_pair}) and a 6D external space → 4D</p>"
+                    "<p>Every arrow is a postulate of the model except the internal geometry, "
+                    "which is selected and certified (Introduction &sect;1.3.2; Section 2.4). The "
+                    "earlier picture of 125 &lsquo;residues&rsquo; extracted as spectral "
+                    "eigenvalues of the descended geometry is a proposal, not a computation.</p>"
                 ),
                 label="descent-summary"
             ),
@@ -762,9 +873,14 @@ class FoundationsV16_2(SimulationBase):
 
         return SectionContent(
             section_id="1",
-            subsection_id="1.1",  # v19.0: Unique subsection
+            subsection_id="1.1",  # unique subsection
             title="Foundations of Dimensional Descent",
-            abstract="The M<sup>26</sup>(24,2) ancestral bulk with Euclidean bridge, OR reduction, dual shadows, G₂ manifold, and 6D→4D projection.",
+            abstract=_r(
+                "The M<sup>26</sup>(24,2) bulk &mdash; 24 space directions paired into 12 "
+                "bridges and two times, one per 13D(12,1) shadow &mdash; its OR reduction "
+                "into the dual shadows, the internal 7-manifold {manifold}, and the descent "
+                "to 4D."
+            ),
             content_blocks=content_blocks
         )
 
@@ -785,7 +901,7 @@ class FoundationsV16_2(SimulationBase):
                     "steps": [
                         "Start from 26D total (24 spatial + 2 temporal)",
                         "Decompose 24 spacelike dimensions into 12 Euclidean (2,0) bridge pairs",
-                        "Assign one timelike direction per 13D shadow; the Sp(2,R) gauge constraint (STRUCTURAL) removes ghosts"
+                        "Assign one timelike direction per 13D shadow; ghost control of the second time is OPEN (the appeal to the Sp(2,R) gauge constraint is withdrawn, signature ruling 2026-08-31)"
                     ],
                     "parentFormulas": []
                 },
@@ -807,15 +923,22 @@ class FoundationsV16_2(SimulationBase):
                 latex=r"M^{24,2} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
                 plain_text="M^{24,2} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})",
                 category="DERIVED",
-                description="Fibered time structure with 12x(2,0) paired bridges. b_3=24 => 12 pairs.",
+                description=(
+                    "The bulk's 24 space directions as 12 Euclidean (2,0) bridge pairs: "
+                    "12 x 2 = 24. The two times, one per 13D(12,1) shadow, complete the "
+                    "(24,2) signature. The 24 counts bulk space directions, not 3-cycles "
+                    "(b_3 = 43 on the adopted seed); the earlier reading of it as the Betti "
+                    "number is retired, and the T^1-fibre notation in the displayed form is "
+                    "the retired single-time reading (signature ruling 2026-08-31)."
+                ),
                 input_params=["dimensions.D_bulk", "topology.elder_kads"],
                 output_params=["geometry.D_shadow"],
                 derivation={
                     "method": "topological_decomposition",
                     "steps": [
-                        "G2 topology fixes b3 = 24 Betti cycles",
-                        "Pair 24 cycles into 12 Euclidean bridge pairs: 24/2 = 12",
-                        "Fiber time T^1 over bridge direct sum to form (24,2) bulk"
+                        "The bulk carries 24 space directions (D_space = 24), the space part of the (24,2) signature; the earlier reading of this 24 as b3 Betti cycles is retired",
+                        "Pair the 24 space directions into 12 Euclidean bridge pairs: 24/2 = 12",
+                        "Add the two times, one per 13D(12,1) shadow, to form the (24,2) bulk (the single fibred time T^1 of earlier versions is retired)"
                     ],
                     "parentFormulas": ["26d-signature"]
                 },
@@ -826,9 +949,9 @@ class FoundationsV16_2(SimulationBase):
                     "Bridge bulk: 12 bridge pairs times 2 dimensions each = 24D spatial sector."
                 ),
                 terms={
-                    "T^1": "1-dimensional two-time structurelike fiber",
+                    "T^1": "Single fibred time of earlier versions (retired: the bulk has two times, one per shadow)",
                     "B_i^{2,0}": "i-th Euclidean bridge pair with (2,0) signature",
-                    "x_fiber": "Fiber product (fibered over time)"
+                    "x_fiber": "Fiber product over the retired single time"
                 },
             arithma=_arithma_mul(_arithma_num(12.0), _arithma_num(2.0)), eml=_eml_mul(_eml_scalar(12.0), _eml_scalar(2.0)), value=24.0),
             Formula(
@@ -867,7 +990,13 @@ class FoundationsV16_2(SimulationBase):
                 latex=r"p_{\text{anc}} = \frac{1}{12}\sum_{i=1}^{12} p_i + \sqrt{\frac{n_{\text{local}}}{12}} \cdot \phi",
                 plain_text="p_anc = (1/12)*sum(p_i) + sqrt(n_local/12)*phi",
                 category="DERIVED",
-                description="Central (2,0) ancestral sampler formula. Averages 12 local pairs with golden ratio scaling.",
+                description=(
+                    "RETIRED (signature ruling 2026-08-31): central (2,0) ancestral sampler "
+                    "formula, averaging the 12 local pairs with golden-ratio scaling. It was "
+                    "built on a Euclidean shadow-time pair S^(2,0); under the ruling the "
+                    "bulk's '+2' are the two times, one per shadow, so the sampler has no "
+                    "directions of its own. Kept as a labelled record."
+                ),
                 input_params=["topology.elder_kads"],
                 output_params=[],
                 derivation={
@@ -875,7 +1004,7 @@ class FoundationsV16_2(SimulationBase):
                     "steps": [
                         "Average local probabilities p_i across 12 bridge pairs",
                         "Apply golden ratio phi scaling based on active pair count n_local",
-                        "Central sampler activates at mid-gnosis (n_local >= 9)"
+                        "Central sampler was said to activate at mid-gnosis (n_local >= 9); retired with the Euclidean shadow-time pair"
                     ],
                     "parentFormulas": ["euclidean-bridge", "or-reduction-tensor"]
                 },
@@ -886,7 +1015,7 @@ class FoundationsV16_2(SimulationBase):
                     "Central sampler: (1/12)*sum(p_i) plus sqrt(n_local/12)*phi golden ratio scaling."
                 ),
                 terms={
-                    "p_anc": "Ancestral probability from shadow-time directions",
+                    "p_anc": "Ancestral probability from the retired Euclidean shadow-time pair",
                     "p_i": "Local probability from bridge pair i",
                     "n_local": "Number of active local pairs (6 baseline to 12 full)",
                     "phi": "Golden ratio (1+sqrt(5))/2"
@@ -930,23 +1059,30 @@ class FoundationsV16_2(SimulationBase):
                 latex=r"N_{\text{gen}} = \frac{b_3}{8} = \frac{24}{8} = 3",
                 plain_text="N_gen = b3/8 = 24/8 = 3",
                 category="DERIVED",
-                description="Three fermion generations from b3 Betti number of G2 manifold.",
+                description=(
+                    "RELOCATED (n_gen_source): three fermion generations, computed as "
+                    "n_gen = b2/4 = 3, the number of singular involutions of the folding "
+                    "group. The displayed b3/8 = 24/8 form is the retired route at the "
+                    "off-path seed b3 = 24; it yields an integer nowhere on the Joyce "
+                    "family, where b3 is odd."
+                ),
                 input_params=["topology.elder_kads"],
                 output_params=["geometry.n_generations"],
                 derivation={
                     "method": "topological_index",
                     "steps": [
-                        "G2 manifold 'TCS #187' has third Betti number b3 = 24. OPEN "
-                        "OBSTRUCTION: (b2, b3) = (4, 24) cannot exist as a twisted connected "
-                        "sum -- Crowley & Nordstrom (arXiv:1211.0269) Thm 1.7 gives nu = 24 "
-                        "for every TCS and the Thm 1.3 parity constraint then forces b2 + b3 "
-                        "to be ODD, while 4 + 24 = 28 is even. b3 = 24 itself is realizable "
-                        "(Joyce 1996 has a compact holonomy-G2 manifold with (b2, b3) = "
-                        "(7, 24)); it is the pairing with b2 = 4 -- the 'four faces' reading "
-                        "-- that fails. This obstruction is independent of the bulk-signature "
-                        "ruling and remains open.",
-                        "Fermion zero modes counted by chi_eff/(2*b3) = 144/48 = 3",
-                        "RELOCATED by the b3_seed adoption: the generation count is n_gen = rank(Gamma) = b2/4 = 3; the b3/8 form held only at the off-path b3 = 24"
+                        "OFF-PATH history (retired seed_24): the internal space was the "
+                        "G2 manifold 'TCS #187' with b3 = 24 and b2 = 4. That pair "
+                        "cannot exist as a twisted connected sum -- Crowley & Nordstrom "
+                        "(arXiv:1211.0269) Thm 1.7 gives nu = 24 for every TCS and the "
+                        "Thm 1.3 parity constraint then forces b2 + b3 to be ODD, while "
+                        "4 + 24 = 28 is even -- and b3 = 24 is unreachable by Joyce's "
+                        "construction from phi's (Z/2)^3 (CG.7).",
+                        "OFF-PATH: the retired route counted fermion zero modes as "
+                        "chi_eff/(2*b3) = 144/48 = 3, which holds only at b3 = 24. On the "
+                        "adopted path chi_eff = 48 n (the K3 reading, author's ruling "
+                        "D-015), and chi_eff/48 = n restates the count below.",
+                        "ADOPTED route: n_gen = b2/4 = 3, the number of singular involutions (the rank of their span, equal to rank(Gamma) at the adopted point); the b3/8 form held only at the off-path b3 = 24"
                     ],
                     "parentFormulas": ["g2-holonomy-foundations"]
                 },
@@ -960,7 +1096,7 @@ class FoundationsV16_2(SimulationBase):
                     "on the Joyce family)."
                 ),
                 terms={
-                    "N_gen": "Number of fermion generations = rank(Gamma)",
+                    "N_gen": "Number of fermion generations = the number of singular involutions",
                     "b_2": "Second Betti number, the derived A1 family count (12 on the adopted seed)",
                     "4": "The derived faces: moved coordinates of an involution (R2)"
                 },
@@ -971,7 +1107,14 @@ class FoundationsV16_2(SimulationBase):
                 latex=r"V_7 \xrightarrow{\text{CY}_3} M^4 \times K^6",
                 plain_text="V7 -> M^4 x K^6 via CY3",
                 category="DERIVED",
-                description="Calabi-Yau filtering from 7D G2 to 4D Minkowski spacetime.",
+                description=(
+                    "OFF-PATH (twisted-connected-sum construction, retired): Calabi-Yau "
+                    "filtering from the 7D internal space to 4D Minkowski spacetime through "
+                    "the CY3 building block of a TCS manifold. The adopted internal space "
+                    "Y_7 is a Joyce orbifold resolution with no such building block; on the "
+                    "adopted path a 13D shadow splits as 13 = 7 + 6 with 6 = 4 + 2. The "
+                    "value 4 = D_observable is unchanged."
+                ),
                 # dimensions.D_after_sp2r repointed at geometry.D_shadow_total:
                 # the same 13D(12,1) per-shadow dimension under the name that is
                 # actually registered (config.PMConstants keeps D_AFTER_SP2R as
@@ -981,10 +1124,10 @@ class FoundationsV16_2(SimulationBase):
                 derivation={
                     "method": "dimensional_reduction",
                     "steps": [
-                        "7D G2 manifold V7 is the b3=24 G2-holonomy compactification space (Ten-Pillar seed)",
-                        "V7 admits a CY3 sub-manifold as intermediate step in the dimensional descent",
+                        "OFF-PATH reading: V7 was the TCS manifold of the retired seed (b3 = 24); the adopted internal space is Y_7, Joyce's resolution of T^7/(Z/2)^3 with b3 = 43",
+                        "In the TCS reading, the building block's CY3 served as an intermediate step in the dimensional descent (a Joyce orbifold has no such building block)",
                         "Projection yields M^4 (Minkowski) x K^6 (internal Calabi-Yau)",
-                        "CY3 Hodge numbers determine chirality and gauge group in 4D"
+                        "In that reading, CY3 Hodge numbers were said to fix chirality and the gauge group in 4D; on the adopted path chirality is OPEN (D-011)"
                     ],
                     "parentFormulas": ["g2-holonomy-foundations", "b3-generations"]
                 },
@@ -995,7 +1138,7 @@ class FoundationsV16_2(SimulationBase):
                     "CY projection: 7D G2 minus 3 internal compactified dimensions yields 4D Minkowski."
                 ),
                 terms={
-                    "V_7": "7-dimensional G2 holonomy manifold",
+                    "V_7": "7-dimensional internal G2 manifold (Y_7 on the adopted path)",
                     "CY_3": "Calabi-Yau 3-fold intermediate",
                     "M^4": "4-dimensional Minkowski spacetime",
                     "K^6": "6-dimensional internal compact space"
@@ -1044,7 +1187,7 @@ class FoundationsV16_2(SimulationBase):
                 "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "notes": "TCS (Twisted Connected Sum) construction used for K_Pneuma",
+                "notes": "OFF-PATH: the twisted-connected-sum construction used by earlier versions; the adopted internal space is a Joyce orbifold resolution",
             },
             {
                 "id": "acharya_witten2001",
@@ -1089,7 +1232,7 @@ class FoundationsV16_2(SimulationBase):
             },
             {
                 "id": "CERT_FOUNDATIONS_B3_GENERATIONS",
-                "assertion": "b3 = 24 yields exactly 3 fermion generations (b3/8 = 3)",
+                "assertion": "OFF-PATH record (retired seed b3 = 24): the abandoned route b3/8 gave 3 there; the adopted count is n_gen = b2/4 = 3",
                 "condition": "24 / 8 == 3",
                 "tolerance": 0,
                 "status": "PASS",
@@ -1105,20 +1248,20 @@ class FoundationsV16_2(SimulationBase):
             {
                 "topic": "G2 manifolds and holonomy groups",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "Section 1.3 relies on G2 holonomy for torsion-free Ricci-flat compactification; the V7 manifold is the hard-lock that fixes all 125 constants",
-                "validation_hint": "G2 is the automorphism group of the octonions; G2 holonomy implies Ricci-flatness"
+                "relevance": "Section 1.3 compactifies each shadow on Y_7, a compact 7-manifold with a torsion-free G2-structure; its metric moduli are not fixed at leading order, so it does not by itself fix the constants",
+                "validation_hint": "G2 is the automorphism group of the octonions; a torsion-free G2-structure has a Ricci-flat metric"
             },
             {
                 "topic": "Kaluza-Klein dimensional reduction",
                 "url": "https://en.wikipedia.org/wiki/Kaluza%E2%80%93Klein_theory",
-                "relevance": "Section 1.4 describes the 7D to 4D projection via Calabi-Yau filtering; KK reduction is the mechanism by which gauge symmetries emerge from geometry",
+                "relevance": "Section 1.4 records the 13 = 7 + 6 split of each shadow and labels the earlier Calabi-Yau filtering as off-path; KK reduction is the mechanism by which gauge symmetries emerge from geometry",
                 "validation_hint": "Compactification on manifold K with isometry group G yields gauge theory with group G"
             },
             {
                 "topic": "Betti numbers in topology",
                 "url": "https://en.wikipedia.org/wiki/Betti_number",
-                "relevance": "b3 = 24 is the key topological invariant driving generation count, bridge pair structure, and dark energy prediction w0 = -1 + 1/b3",
-                "validation_hint": "b3 counts independent 3-cycles; for TCS G2 manifold #187, b3 = 24"
+                "relevance": "Y_7 has (b2, b3) = (12, 43); n_gen = b2/4 = 3 counts the singular involutions; the 12 bridge pairs count the bulk's 24 space directions, not b3",
+                "validation_hint": "b3 counts independent 3-cycles; for Joyce's resolution of T^7/(Z/2)^3, b3 = 7 + 3 b2 = 43 (the off-path TCS seed with b3 = 24 is retired)"
             },
         ]
 
@@ -1157,7 +1300,7 @@ class FoundationsV16_2(SimulationBase):
 
         gen_ok = 24 // 8 == 3
         checks.append({
-            "name": "b3/8 = 24/8 = 3 (fermion generation count)",
+            "name": "OFF-PATH record: b3/8 = 24/8 = 3 at the retired seed (adopted count: n_gen = b2/4)",
             "passed": gen_ok,
             "confidence_interval": {
                 "lower": 3,
@@ -1165,7 +1308,7 @@ class FoundationsV16_2(SimulationBase):
                 "sigma": 0.0
             },
             "log_level": "INFO" if gen_ok else "ERROR",
-            "message": "b3 = 24, generations = b3/8 = 3 (exact)"
+            "message": "retired seed b3 = 24: b3/8 = 3 there; the adopted count is n_gen = b2/4 = 3 (the b3/8 route is an integer nowhere on the Joyce family)"
         })
 
         return {

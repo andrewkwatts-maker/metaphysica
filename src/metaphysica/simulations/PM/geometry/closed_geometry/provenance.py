@@ -127,9 +127,11 @@ PROVENANCE: Tuple[Provenance, ...] = (
     Provenance(
         "two-time-physics", "STANDARD",
         "Two-time physics with an Sp(2,R) gauge symmetry removing the "
-        "relative time (Bars).",
-        "A framework in which a second time direction is harmless because a "
-        "symmetry removes its unwanted effects.",
+        "relative time (Bars). The model borrows its shape only; the "
+        "ghost-freedom theorem is not inherited (signature ruling "
+        "2026-08-31).",
+        "A framework in which a second time direction is made harmless by a "
+        "symmetry. The model borrows the idea but not the proof.",
         (), "canonical_values bulk entry", verified=False),
     # ------------------------------------------------------------ POSTULATE
     Provenance(
@@ -138,7 +140,7 @@ PROVENANCE: Tuple[Provenance, ...] = (
         "shadow of signature (12,1).",
         "The model starts from a 26-dimensional space with two time "
         "directions, split into two mirror halves.",
-        (), "memory: two-time migration ruling 2026-08-19"),
+        (), "canonical_values bulk entry (rulings 2026-08-19, 2026-08-31)"),
     Provenance(
         "bridges", "POSTULATE",
         "Twelve bridges: the directed edges of K4 on a Fano arc of four faces, "
@@ -146,11 +148,13 @@ PROVENANCE: Tuple[Provenance, ...] = (
         "Twelve links connect the two halves, grouped in three sets of four.",
         (), "docs/BRIDGE_CHANNEL_ASSIGNMENT.md (site repo)"),
     Provenance(
-        "wa1", "RULING",
-        "WA-1: one bridge per resolved A1 component (one U(1)).",
+        "wa1", "POSTULATE",
+        "WA-1 (adopted 2026-10-01): one bridge per resolved A1 component "
+        "(one U(1)). With the 3 x 4 bridge-component match it selects "
+        "(b_2, b_3) = (12, 43) without data (CG.12).",
         "Each link is identified with one smoothed-out crease of the "
-        "internal shape.",
-        (), "D-008 (the author's ruling)"),
+        "internal shape, and that identification picks out the shape.",
+        (), "D-008; ruled D-015"),
     # ------------------------------------------------------------ FINDING
     Provenance(
         "reachable-set", "FINDING",
@@ -168,14 +172,16 @@ PROVENANCE: Tuple[Provenance, ...] = (
     Provenance(
         "bridge-component-map", "FINDING",
         "The 12 bridges and the 12 A1 components form one 3 x 4 structure, "
-        "existing exactly on the all-plain members.",
+        "existing exactly on the all-plain members; blocks match involutions "
+        "canonically, while the matching inside a block is a free choice.",
         "The twelve links and the twelve creases match one-to-one, and only "
         "for the adopted shape.",
         (), "tests/test_bridge_component_map.py"),
     Provenance(
         "k3-reading", "FINDING",
         "chi_eff = 2 x sum over singular involutions of chi(Kummer K3) = 48n; "
-        "n_gen = chi_eff/48 counts singular involutions (an unruled reading).",
+        "n_gen = chi_eff/48 counts singular involutions (adopted "
+        "2026-10-01).",
         "The number 144 counts hidden K3 surfaces: three in each mirror "
         "half, each contributing 24, taken once for each half.",
         (), "tests/test_kummer_index.py"),
@@ -190,7 +196,8 @@ PROVENANCE: Tuple[Provenance, ...] = (
     Provenance(
         "split-form", "CORRECTION",
         "The adopted 3-form was the split real form, one transcription sign "
-        "away from the framework's own octonion product.",
+        "away from the framework's own octonion product. The compact form is "
+        "the active path since 2026-10-01; the split form stays switchable.",
         "A sign error made the internal shape the wrong kind; fixing it "
         "changes no number.",
         (), "D-003"),
@@ -206,6 +213,46 @@ PROVENANCE: Tuple[Provenance, ...] = (
         "retired seed, not derivations.",
         "Several headline numbers were tuned, not predicted.",
         (), "D-007"),
+    Provenance(
+        "chi-eff-label", "CORRECTION",
+        "chi_eff = 144 was called the Euler characteristic of the G2 "
+        "manifold. Every closed odd-dimensional manifold has chi = 0, so "
+        "chi_eff is an effective index, now defined by the K3 reading, "
+        "48 n (adopted 2026-10-01).",
+        "A number called the shape's Euler characteristic was not one: that "
+        "value is zero, and what 144 counts is still being decided.",
+        (), "D-009; CG.2"),
+    Provenance(
+        "tcs-construction", "CORRECTION",
+        "The internal space was formerly described as a twisted connected "
+        "sum ('TCS #187') with b_3 = 24. No published TCS enumeration has such "
+        "an entry, and b_3 = 24 lies below the published TCS ranges. The "
+        "construction is Joyce's orbifold resolution, which reaches "
+        "b_3 = 43 and never 24.",
+        "The internal shape was once said to be glued from two pieces, a "
+        "construction that cannot give the old numbers. It is built by "
+        "folding and smoothing instead.",
+        (REF_JOYCE_1996_II,), "CG.7; canonical_values tcs_obstruction"),
+    Provenance(
+        "racetrack-type", "CORRECTION",
+        "The racetrack exponent a = 2 pi / b_3 read a Betti number as the "
+        "rank of a gauge group. Y_7's singular loci carry N = 4 super "
+        "Yang-Mills, and with full holonomy no confining sector exists in "
+        "phi's Joyce family, so Y_7 has no gaugino racetrack; its values "
+        "were calibrations at the off-path seed.",
+        "A mechanism once used to fix the size of the extra dimensions "
+        "needs a kind of force this shape does not have.",
+        (REF_ACHARYA_1999,), "D-005; CG.5; CG.10"),
+    Provenance(
+        "two-time-claims", "CORRECTION",
+        "Two borrowed claims were withdrawn (signature ruling 2026-08-31): "
+        "Bars' Sp(2,R) ghost-freedom theorem, because gauging (24,2) gives "
+        "one (23,1) shadow rather than two (12,1) shadows; and "
+        "'26 = the bosonic critical dimension', because with two times the "
+        "critical dimension is 27-28.",
+        "Two results borrowed from other theories turned out not to apply "
+        "to this model's two time directions, and were withdrawn.",
+        (), "canonical_values bulk entry (signature ruling 2026-08-31)"),
     # ------------------------------------------------------------ OPEN
     Provenance(
         "chirality", "OPEN",
@@ -215,7 +262,9 @@ PROVENANCE: Tuple[Provenance, ...] = (
         (REF_ACHARYA_1996,), "D-011"),
     Provenance(
         "moduli", "OPEN",
-        "The 43 moduli, Re(T) included, are unfixed at leading order.",
+        "The 43 moduli, Re(T) included, are unfixed at leading order; Re(T) "
+        "is an open modulus, and values that need it use a labelled "
+        "calibration.",
         "The size and shape of the extra dimensions are not yet pinned.",
         (REF_ADV_2005,), "D-005, D-010"),
     Provenance(
@@ -229,6 +278,14 @@ PROVENANCE: Tuple[Provenance, ...] = (
         "Flavour structure awaits a chiral sector.",
         "Why particles come in different masses is not yet derived.",
         (), "D-011"),
+    Provenance(
+        "second-time", "OPEN",
+        "Ghost control of the second time direction has no computed "
+        "backing, and Nahm's bound on supersymmetric theories with one time "
+        "(at most 11 dimensions) must be evaded by the 13D(12,1) shadows.",
+        "Having two time directions raises consistency questions the model "
+        "has not yet answered.",
+        (), "canonical_values bulk entry (signature ruling 2026-08-31)"),
 )
 
 

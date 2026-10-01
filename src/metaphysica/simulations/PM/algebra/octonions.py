@@ -102,21 +102,21 @@ class OctonionAlgebra:
         is. They differ in exactly one sign, on the triple (1,3,5), which the
         comment above OCTONION_TRIPLES already says "must be -1".
 
-        Routed through the `g2_form_convention` fork rather than corrected
-        outright, because substituting phi moves published numbers and that is
-        a physics ruling. The adopted branch keeps _C_geom, so nothing moves by
-        default; selecting `octonion_derived` switches EVERY consumer at once,
-        which is what makes the branch coherent -- switching only some of them
-        leaves the framework comparing one convention against the other.
+        Routed through the `g2_form_convention` fork. RULED 2026-10-01
+        (D-015): `octonion_derived` -- _C_mult, the compact form -- is the
+        active path; `all_plus_one` (_C_geom, the split form) stays switchable.
+        The fork switches EVERY consumer at once, which is what keeps a branch
+        coherent -- switching only some of them would leave the framework
+        comparing one convention against the other.
         """
         try:
             from metaphysica.simulations.core.variants import resolve
 
-            if resolve("g2_form_convention") == "octonion_derived":
-                return self._C_mult
+            if resolve("g2_form_convention") == "all_plus_one":
+                return self._C_geom
         except Exception:              # fork undeclared, or import cycle
             pass
-        return self._C_geom
+        return self._C_mult            # the adopted branch
 
     @staticmethod
     def _build_geometric_constants() -> np.ndarray:

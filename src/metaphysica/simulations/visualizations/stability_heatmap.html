@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PM Stability Heatmap v16.2</title>
+    <title>PM Stability Heatmap</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: #eee; }
@@ -14,31 +14,35 @@
 </head>
 <body>
     <div class="container">
-        <h1>Principia Metaphysica v16.2 - Stability Heatmap</h1>
+        <h1>Principia Metaphysica - Stability Heatmap</h1>
 
         <div class="info">
             <h3>Topological Parameter Scan</h3>
             <p>This 3D surface shows the total deviation from experiment as a function of
-            the topological parameters (b2, b3). The z-axis is the RMS sigma deviation
-            across all certificate predictions.</p>
+            the integers (b2, b3) fed into the formulas. The z-axis is the RMS sigma deviation
+            across the five neutrino observables listed below.</p>
 
-            <p class="minimum">TCS #187 values: b2=4, b3=24 (marked with star)</p>
+            <p class="minimum">Marked point (diamond): b2 = 4, b3 = 24, the off-path seed,
+            formerly labelled "TCS #187". No published TCS enumeration has that entry, and
+            Joyce's construction never reaches b3 = 24 (certificate CG.7).</p>
 
-            <p>A clear minimum at (4, 24) demonstrates that PM's predictions arise from
-            a unique topological fixed point - not arbitrary parameter tuning.</p>
+            <p>The surface does not select a topology: the formulas are model constructs
+            (flavour is OPEN until a chiral sector exists), and the minimum moves with the
+            chi_eff value fed in. The adopted internal space is Joyce&rsquo;s resolution of T<sup>7</sup>/(&#8484;/2)<sup>3</sup>, (b<sub>2</sub>, b<sub>3</sub>) = (12, 43); this scan covers
+            b2 = 2-10 and b3 = 12-48 in steps of 2.</p>
         </div>
 
         <div id="plot"></div>
 
         <div class="info">
-            <h3>Certificate Observables</h3>
+            <h3>Observables in the Scan</h3>
             <ul>
-                <li><strong>alpha_inv:</strong> Fine structure constant inverse (137.036)</li>
                 <li><strong>theta_12:</strong> Solar neutrino mixing angle (33.41 deg)</li>
+                <li><strong>theta_13:</strong> Reactor neutrino mixing angle (8.63 deg)</li>
                 <li><strong>theta_23:</strong> Atmospheric neutrino mixing angle (49.3 deg)</li>
                 <li><strong>delta_CP:</strong> CP-violating phase (278 deg)</li>
                 <li><strong>mass_sum:</strong> Neutrino mass sum (< 0.12 eV)</li>
-                <li><strong>dm_ratio:</strong> Dark matter to baryon ratio (5.38)</li>
+                <li>Not in the scan: alpha_inv (it uses calibrated parameters) and the dark-matter ratio.</li>
             </ul>
         </div>
     </div>
@@ -68,7 +72,7 @@
             hovertemplate: 'b2: %{y}<br>b3: %{x}<br>Sigma: %{z:.2f}<extra></extra>'
         };
 
-        // Mark TCS #187 point
+        // Mark the off-path seed (b2, b3) = (4, 24), formerly labelled TCS #187
         const tcs_marker = {
             type: 'scatter3d',
             x: [24],
@@ -81,27 +85,27 @@
                 symbol: 'diamond',
                 line: { color: '#ffffff', width: 2 }
             },
-            text: ['TCS #187'],
+            text: ['off-path seed'],
             textposition: 'top center',
             textfont: { color: '#00ffff', size: 14 },
-            name: 'TCS #187 (b2=4, b3=24)',
-            hovertemplate: 'TCS #187<br>b2: 4<br>b3: 24<br>Sigma: %{z:.3f}<extra></extra>'
+            name: 'Off-path seed (b2=4, b3=24)',
+            hovertemplate: 'Off-path seed (retired)<br>b2: 4<br>b3: 24<br>Sigma: %{z:.3f}<extra></extra>'
         };
 
         const layout = {
             title: {
-                text: 'Stability Landscape: Total Deviation vs Topology',
+                text: 'Stability Landscape: Total Deviation vs (b2, b3)',
                 font: { color: '#00d4ff', size: 20 }
             },
             scene: {
                 xaxis: {
-                    title: 'b3 (Associative 3-cycles)',
+                    title: 'b3 (third Betti number)',
                     titlefont: { color: '#00d4ff' },
                     gridcolor: '#333',
                     zerolinecolor: '#666'
                 },
                 yaxis: {
-                    title: 'b2 (Kahler moduli)',
+                    title: 'b2 (second Betti number)',
                     titlefont: { color: '#00d4ff' },
                     gridcolor: '#333',
                     zerolinecolor: '#666'

@@ -1,39 +1,52 @@
 #!/usr/bin/env python3
 """
-Chirality and Spinorial Structure v16.0
-=========================================
+Chirality and Spinorial Structure
+=================================
 
 Licensed under the MIT License. See LICENSE file for details.
 
-Derives fermion chirality from G2 holonomy and spinorial representations.
-This simulation implements the complete chirality mechanism in PM theory.
+STATUS ON THE ADOPTED MODEL (read first)
+----------------------------------------
+Chirality is OPEN (D-011). Y_7 -- Joyce's resolution of T^7/(Z/2)^3 -- has
+disjoint singular loci, so it has no codimension-7 points, and a smooth G2
+compactification gives no chiral fermions (Acharya-Witten obtain them at
+conical singularities). This module records the spinorial structure of the
+G2 manifold, which is standard, and a PROPOSED chirality mechanism with its
+arithmetic. It does not derive chirality. Its index reading,
+index = chi_eff/24 = 6, is not an index theorem for chirality: chi_eff =
+2 x sum chi(K3) = 48n is an effective index (the K3 reading, D-015), not the
+Euler characteristic of Y_7, which is 0. The generation count is the ruled
+n_gen = b_2/4 = 3; the spinor-saturation route below is ABANDONED.
 
 KEY PHYSICS:
-- G2 holonomy preserves exactly 1 real spinor (η) in 7D
-- Associative 4-form Φ defines chirality projector: P_L = (1 + *Φ)/2
-- Dirac operator ∂/ = γ^μ D_μ has chiral zero modes
-- Chirality index theorem: n_L - n_R = ∫ Φ ∧ dΦ / (2π)^3
-- Connection to 3 generations via spinor saturation
+- G2 holonomy preserves exactly 1 real spinor (η) in 7D (standard)
+- PROPOSED: associative 4-form Φ defines a chirality projector P_L = (1 + *Φ)/2
+- PROPOSED: Dirac operator ∂/ = γ^μ D_μ has chiral zero modes
+- PROPOSED: chirality index n_L - n_R = ∫ Φ ∧ dΦ / (2π)^3 (not established)
+- ABANDONED: connection to 3 generations via spinor saturation
 
-PHYSICAL PICTURE:
+PHYSICAL PICTURE (the proposal):
 - G2 manifolds are spin manifolds admitting parallel spinors
 - Holonomy G2 ⊂ Spin(7) preserves 1 of 8 real spinor components
-- 4-form associative calibration Φ induces chirality structure
-- Zero modes of Dirac operator localize on associative 3-cycles
-- Index formula relates chirality imbalance to topology (χ_eff = 144)
-- Saturation: 24 flux units / 8 spinor DOF = 3 generations
+- 4-form associative calibration Φ would induce a chirality structure
+- Zero modes of the Dirac operator would localize on associative 3-cycles
+- An index formula would relate chirality imbalance to chi_eff = 144
+- ABANDONED: saturation, 24 flux units / 8 spinor DOF = 3 generations, held
+  only at the off-path seed b_3 = 24
 
-DERIVATION CHAIN:
-topology.mephorash_chi = chi_eff (UNRULED; the "TCS G2 manifold #187"
-provenance is WITHDRAWN -- TCS as exhibited gives 71 <= b_3 <= 155, which
-excludes the adopted b_3 = 43, and the construction in force is the Joyce
-orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions)
-topology.elder_kads = 24 (third Betti number)
+DERIVATION CHAIN (as written at the off-path seed b_3 = 24):
+topology.mephorash_chi = chi_eff (the K3 reading, 48n; the "TCS G2 manifold
+#187" provenance is WITHDRAWN -- TCS as exhibited gives 71 <= b_3 <= 155,
+which excludes the adopted b_3 = 43, and the construction in force is the
+Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson resolutions)
+topology.elder_kads = b_3 (43 on the adopted seed; the chain used the
+off-path seed 24)
   -> spinor components = 8 (Spin(7) representation)
   -> preserved spinors = 1 (G2 holonomy)
-  -> chiral index = χ_eff / 24 = 6
-  -> n_L - n_R = 6 per cycle
-  -> n_gen = b3 / spinor_DOF = 24 / 8 = 3
+  -> chiral index = χ_eff / 24 = 6 (proposed reading, not established)
+  -> n_L - n_R = 6 per cycle (proposed)
+  -> n_gen = b3 / spinor_DOF = 24 / 8 = 3 (ABANDONED: 8 divides no
+     Joyce-reachable b_3; the ruled count is n_gen = b_2/4)
 
 References:
 - Acharya-Witten (2001): Chiral fermions from G2 compactifications
@@ -97,15 +110,18 @@ def _arithma_b3():
 
 class ChiralitySpinorSimulation(SimulationBase):
     """
-    Chirality and spinorial structure from G2 holonomy.
+    Chirality and spinorial structure on the G2 manifold.
 
-    This simulation implements the complete derivation of fermion chirality:
+    Chirality is OPEN on the adopted model (see the module docstring); this
+    simulation records the standard spinor structure and a PROPOSED
+    chirality mechanism:
     1. Extract G2 topology parameters (χ_eff, b3) from registry
-    2. Compute spinor structure from G2 holonomy
-    3. Derive chirality index from associative 4-form
-    4. Calculate chiral zero mode count
-    5. Connect to generation number via spinor saturation
-    6. Validate consistency with observed chirality
+    2. Compute spinor structure from G2 holonomy (standard)
+    3. Evaluate the proposed chirality index from the associative 4-form
+    4. Calculate the proposed chiral zero mode count
+    5. Evaluate the ABANDONED spinor-saturation generation route (kept on
+       the books; the ruled count is n_gen = b_2/4)
+    6. Compare with observed chirality
     """
 
     # Physical constants and geometric parameters
@@ -124,10 +140,13 @@ class ChiralitySpinorSimulation(SimulationBase):
             domain="fermion",
             title="Chirality and Spinorial Structure from G2 Holonomy",
             description=(
-                "Derives fermion chirality from G2 manifold holonomy and spinorial "
-                "representations. Shows how associative 4-form defines chiral projector, "
-                "Dirac operator zero modes determine chiral fermion count, and index "
-                "theorem connects to topology. Links to n_gen = 3 via spinor saturation."
+                "Spinorial structure of the G2 manifold and a PROPOSED chirality "
+                "mechanism. Chirality is OPEN on the adopted model: Y_7's singular loci "
+                "are disjoint, so it has no codimension-7 points. Records how an "
+                "associative 4-form would define a chiral projector, how Dirac zero modes "
+                "would count chiral fermions, and an index reading that is not "
+                "established. The generation count is n_gen = b_2/4 (the ruled route); "
+                "the spinor-saturation link is abandoned."
             ),
             section_id="4",
             subsection_id="4.1"
@@ -192,11 +211,14 @@ class ChiralitySpinorSimulation(SimulationBase):
         spinor_dim = self.SPIN7_DIM  # 8 real components in Spin(7)
         preserved_spinors = self.G2_PRESERVED_SPINORS  # G2 preserves 1 (the singlet)
 
-        # Chirality index from Atiyah-Singer index theorem on G2 manifolds
-        # The precise form (Berline-Getzler-Vergne, "Heat Kernels and Dirac Operators"):
-        #   index(D/) = chi_eff / 24 = A-hat genus / 2
-        # This counts the NET number of chiral zero modes (n_L - n_R), not
-        # generations directly. The index is a topological invariant.
+        # PROPOSED chirality index (not established; chirality is OPEN on the
+        # adopted model). The proposal reads the Atiyah-Singer index as
+        #   index(D/) = chi_eff / 24
+        # (citing Berline-Getzler-Vergne, "Heat Kernels and Dirac Operators",
+        # for the general framework), with the effective index chi_eff in
+        # place of the Euler characteristic, which is 0 on Y_7. On the K3
+        # reading chi_eff = 48n (D-015) this is 2n, and chi_eff/48 = n
+        # restates b_2/4; it is not an index theorem for chirality.
         chiral_index = chi_eff / 24.0  # = 144 / 24 = 6
 
         # Zero mode counts from index theorem
@@ -215,13 +237,17 @@ class ChiralitySpinorSimulation(SimulationBase):
         # profile and 8 divides no odd number, so b_3/8 is non-integral
         # EVERYWHERE on the family. The ruled generation count is
         # n_gen = b_2/4 = rank(Gamma) = 3. Kept here, labelled, not deleted.
-        # The 7/8 ratio has physical meaning: 7 of 8 spinor components pair up
-        # and gain mass via torsion coupling, while 1 remains massless -- this is
-        # the chiral fermion that defines each generation.
-        generation_count = b3 / spinor_dim  # = 24 / 8 = 3
+        # The proposal reads the 7/8 ratio physically: 7 of 8 spinor
+        # components pair up and gain mass via torsion coupling, while 1
+        # remains massless as the chiral fermion of each generation (OPEN).
+        # ABANDONED route, still computed: int(b3 / 8) is what
+        # chirality.generation_count publishes -- 5 on the adopted b_3 = 43,
+        # not 3. It equalled 24/8 = 3 only at the off-path seed.
+        generation_count = b3 / spinor_dim
 
-        # Saturation ratio (should be exactly 1 for complete saturation)
-        saturation_ratio = (generation_count * spinor_dim) / b3  # = (3 * 8) / 24 = 1
+        # Saturation ratio: (b3/8) * 8 / b3, so 1 by construction on every
+        # seed; it no longer tests saturation (abandoned route).
+        saturation_ratio = (generation_count * spinor_dim) / b3
 
         # Validate results
         is_integer_generations = (abs(generation_count - round(generation_count)) < 1e-10)
@@ -316,12 +342,14 @@ class ChiralitySpinorSimulation(SimulationBase):
             subsection_id="4.1",
             title="Chirality and Spinorial Structure",
             abstract=(
-                "We derive the chiral structure of fermions from G2 holonomy and "
-                "spinorial representations. The key result is that G2 holonomy preserves "
-                "exactly one real spinor in seven dimensions, and the associative 4-form "
-                "defines a natural chirality projector. The Dirac operator has chiral "
-                "zero modes whose count is determined by topology via the index theorem, "
-                "leading to the prediction of three fermion generations."
+                "The spinorial structure of the G2 manifold, and a proposed chirality "
+                "mechanism. G2 holonomy preserves exactly one real spinor in seven "
+                "dimensions (standard). Chirality itself is OPEN on the adopted model: "
+                "Y_7's singular loci are disjoint, so it has no codimension-7 points, and "
+                "a smooth G2 compactification gives no chiral fermions. The associative "
+                "chirality projector, the chiral Dirac zero modes and the index reading "
+                "below are a proposal, not a derivation; the generation count is the "
+                "ruled n_gen = b_2/4, not a consequence of this mechanism."
             ),
             content_blocks=[
                 ContentBlock(
@@ -403,7 +431,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "These projectors satisfy P_L + P_R = 1, P_L P_R = 0, and split "
                         "the spinor bundle into chiral components: S = S_L ⊕ S_R. The "
                         "parallel spinor η is automatically left-handed: P_L η = η. "
-                        "This is the geometric origin of chiral fermions in the theory."
+                        "This is the proposed geometric origin of chiral fermions; it is "
+                        "not established, and chirality is OPEN on the adopted model."
                     )
                 ),
 
@@ -454,9 +483,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "The Atiyah-Singer index theorem determines the difference between "
                         "left-handed and right-handed zero modes (see Berline, Getzler, "
                         "and Vergne, 'Heat Kernels and Dirac Operators' for the general "
-                        "framework). On a G2 manifold, the index equals chi/24, which is "
-                        "one-half of the A-hat genus. For the Dirac operator "
-                        "on a G2 manifold with flux, the index is:"
+                        "framework). The proposal applies it to the Dirac operator on the "
+                        "G2 manifold with flux, writing the index as:"
                     )
                 ),
                 ContentBlock(
@@ -469,13 +497,16 @@ class ChiralitySpinorSimulation(SimulationBase):
                     type="paragraph",
                     content=(
                         "where F is the gauge field strength (flux), and the integral "
-                        f"is over the G2 manifold M_7. The topology is characterized "
-                        f"by the effective Euler characteristic χ_eff = "
-                        f"{int(_REG.chi_eff_total)}, an UNRULED quantity whose three "
-                        f"claimed derivations agree only at b_3 = 24. The earlier "
-                        f"'TCS G2 manifold #187' attribution is WITHDRAWN: TCS as "
-                        f"exhibited gives 71 <= b_3 <= 155 and so excludes the adopted "
-                        f"b_3 = {int(_REG.elder_kads)}. The index formula simplifies to:"
+                        f"is over the G2 manifold M_7. The proposal then substitutes "
+                        f"the effective index χ_eff = {int(_REG.chi_eff_total)} -- read "
+                        f"as 2 x sum chi(K3) = 48n, the K3 reading (D-015) -- for the "
+                        f"Euler characteristic, which is 0 on Y_7; nothing in the index "
+                        f"theorem licenses that substitution, so the result is not an "
+                        f"index theorem for chirality. (χ_eff's earlier derivations "
+                        f"agreed only at the off-path seed b_3 = 24, and the 'TCS G2 "
+                        f"manifold #187' attribution is WITHDRAWN: TCS as exhibited "
+                        f"gives 71 <= b_3 <= 155 and so excludes the adopted "
+                        f"b_3 = {int(_REG.elder_kads)}.) The proposed index formula reads:"
                     )
                 ),
                 ContentBlock(
@@ -486,10 +517,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This means there are six more left-handed zero modes than "
-                        "right-handed zero modes per associative 3-cycle. This chirality "
-                        "imbalance is topological and cannot be removed by continuous "
-                        "deformations."
+                        "If the proposal held, there would be six more left-handed than "
+                        "right-handed zero modes per associative 3-cycle, an imbalance "
+                        "that continuous deformations could not remove. It is not "
+                        "established: on the adopted Y_7 chirality is OPEN."
                     )
                 ),
 
@@ -500,18 +531,19 @@ class ChiralitySpinorSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The number of fermion generations emerges from spinor saturation. "
-                        "The connection from index = 6 to n_gen = 3 proceeds as follows: "
-                        "the index counts NET chiral zero modes (n_L - n_R = 6). Each "
-                        "fermion generation requires a chiral doublet under SU(2)_L, "
-                        f"consuming 2 chiral zero modes. Thus n_gen = 6/2 = 3.\n\n"
+                        "The proposal links its index to the generation count: the index "
+                        "counts NET chiral zero modes (n_L - n_R = 6), and each fermion "
+                        "generation requires a chiral doublet under SU(2)_L, consuming 2 "
+                        "chiral zero modes, so 6/2 = 3. Because the index reading is not "
+                        "established, this link is not a derivation; the generation count "
+                        f"stands on the ruled route n_gen = b_2/4.\n\n"
                         f"THE FLUX-COUNTING ROUTE IS ABANDONED, AND THE COUNT MOVED. "
                         f"This paragraph used to continue: 'equivalently, via flux "
                         f"counting, the third Betti number b_3 = 24 counts the "
                         f"independent associative 3-cycles (flux units), and each "
                         f"fermion generation saturates 8 real spinor degrees of freedom "
                         f"from the 8 = 1 + 7 decomposition of Spin(7) under G2, so "
-                        f"n_gen = b_3/8 = 24/8 = 3.' That equivalence held only at "
+                        f"n_gen = b_3/8 = 24/8 = 3.' That abandoned equivalence held only at "
                         f"b_3 = 24. On the Joyce-reachable family b_3 = 7 + 3 n_T3 with "
                         f"n_T3 in {{0, 4, 8, 12}}, so b_3 lies in {{7, 19, 31, 43}} and "
                         f"is ODD at every profile; 8 divides no odd number, so b_3/8 is "
@@ -535,10 +567,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        f"The index route above (index = 6, n_gen = 6/2 = 3) is "
-                        f"untouched by the seed move, because it consumes chi_eff "
-                        f"rather than b_3 -- but chi_eff is itself an OPEN RULING, so "
-                        f"it is reported here, not certified. The earlier claim that "
+                        f"The index route above (index = 6, n_gen = 6/2 = 3) "
+                        f"consumes chi_eff rather than b_3. On the adopted K3 reading "
+                        f"chi_eff = 48n, so chi_eff/24 = 2n and 2n/2 = n: the route "
+                        f"restates b_2/4, and it is not an index theorem for "
+                        f"chirality, which stays OPEN. The earlier claim that "
                         f"the saturation was 'exact: 3 generations x 8 DOF = 24 flux "
                         f"units, with no remainder' is FALSIFIED at "
                         f"b_3 = {int(_REG.elder_kads)}: 3 x 8 = 24 leaves a remainder "
@@ -555,13 +588,13 @@ class ChiralitySpinorSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The chirality structure, spinor preservation, and generation count "
-                        "are all interconnected consequences of G2 holonomy. The associative "
-                        "4-form provides the geometric foundation for chirality, the Dirac "
-                        "operator zero modes give the chiral fermion content, and the index "
-                        "theorem relates everything back to topology. This elegant geometric "
-                        "picture explains the chiral nature of Standard Model fermions "
-                        "without additional assumptions."
+                        "Spinor preservation is a consequence of G2 holonomy. Chirality is "
+                        "not: on the adopted Y_7 the singular loci are disjoint, so there "
+                        "are no codimension-7 points where Acharya-Witten chiral fermions "
+                        "arise, and a smooth G2 compactification gives none. The projector, "
+                        "zero-mode and index steps above are a proposal for supplying "
+                        "chirality; until a chiral sector is exhibited, chirality -- and "
+                        "with it flavour -- is OPEN."
                     )
                 ),
             ],
@@ -609,7 +642,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                 description=(
                     "Parallel spinor condition for G2 holonomy. G2 ⊂ Spin(7) preserves "
                     "exactly one real spinor out of 8 components. This is the defining "
-                    "property of G2 manifolds and the geometric origin of chiral fermions."
+                    "property of G2 manifolds; it secures N = 1 supersymmetry, not "
+                    "chirality, which is OPEN on the adopted model."
                 ),
                 inputParams=["topology.g2_compatible", "chirality.spinor_dimension"],
                 outputParams=["chirality.preserved_spinors", "chirality.spinor_dimension"],
@@ -656,10 +690,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 eml_description="EML: P_L = ops.div(ops.add(eml_scalar(1.0), star_Phi), eml_scalar(2.0)) — chirality projector from associative 4-form Hodge dual",
                 category="DERIVED",
                 description=(
-                    "Chirality projection operators from associative 4-form. The Hodge "
-                    "dual *Φ acts on spinors as a chirality operator, splitting S into "
-                    "left-handed and right-handed components. The parallel spinor η is "
-                    "automatically left-handed."
+                    "PROPOSED (chirality is OPEN on the adopted model): chirality "
+                    "projection operators from the associative 4-form. The Hodge "
+                    "dual *Φ is taken to act on spinors as a chirality operator, splitting "
+                    "S into left-handed and right-handed components, with the parallel "
+                    "spinor η left-handed."
                 ),
                 inputParams=["topology.mephorash_chi"],
                 outputParams=["chirality.chiral_index"],
@@ -708,9 +743,12 @@ class ChiralitySpinorSimulation(SimulationBase):
                 eml_description="EML: Dirac operator D-slash = ops.mul(gamma_mu, D_mu); zero-mode condition ops.mul(gamma_mu, D_mu, psi) = eml_scalar(0.0)",
                 category="DERIVED",
                 description=(
-                    "Dirac operator on G2 manifold with gauge connection. Zero modes "
-                    "(∂/ψ = 0) correspond to massless chiral fermions in 4D after "
-                    "dimensional reduction. These localize on associative 3-cycles."
+                    "Dirac operator on the G2 manifold with gauge connection. Zero modes "
+                    "(∂/ψ = 0) give massless fermions in 4D after dimensional reduction; "
+                    "whether they are chiral is OPEN on the adopted model, since a smooth "
+                    "G2 compactification gives no chiral fermions and Y_7 has no "
+                    "codimension-7 points. The proposal localizes them on associative "
+                    "3-cycles."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["chirality.zero_modes_left", "chirality.zero_modes_right"],
@@ -761,11 +799,15 @@ class ChiralitySpinorSimulation(SimulationBase):
                 eml_description="EML: index = ops.div(chi_eff, b3_leaf()) = ops.div(eml_scalar(144.0), b3_leaf()) = eml_scalar(6.0)",
                 category="DERIVED",
                 description=(
-                    "Atiyah-Singer index theorem for Dirac operator on G2 manifold. "
-                    "Relates topological chirality imbalance (n_L - n_R) to geometry "
-                    f"(associative 4-form Φ) and gauge flux (F): "
-                    f"index = χ_eff/24 = {int(_REG.chi_eff_total) // 24}. chi_eff is "
-                    f"UNRULED; the 'TCS G2 #187' provenance is withdrawn."
+                    "PROPOSED index reading, not established: chirality is OPEN on the "
+                    "adopted model, and chi_eff/48 = n (the K3 reading, D-015) restates "
+                    "b_2/4 rather than being an index theorem for chirality. The proposal "
+                    "applies the Atiyah-Singer "
+                    "theorem to the Dirac operator with gauge flux (F) and reads the "
+                    f"chirality imbalance (n_L - n_R) as index = χ_eff/24 = "
+                    f"{int(_REG.chi_eff_total) // 24}, with χ_eff = 48n the effective "
+                    f"index (not the Euler characteristic of Y_7, which is 0). The "
+                    f"'TCS G2 #187' provenance is withdrawn."
                 ),
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["chirality.chiral_index", "chirality.imbalance"],
@@ -779,9 +821,9 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "For G2: Â-genus simplifies, characteristic classes related to Φ",
                         "With gauge bundle E: include Chern character ch(E)",
                         "Flux F on associative cycles: ∫ Φ ∧ F ∧ F picks out flux contribution",
-                        f"Joyce orbifold T^7/(Z/2)^3: topology characterized by χ_eff = {int(_REG.chi_eff_total)} (UNRULED; the earlier 'TCS G2 #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
-                        f"Index formula: n_L - n_R = χ_eff / 24 = {int(_REG.chi_eff_total)} / 24 = {int(_REG.chi_eff_total) // 24}",
-                        "Physical interpretation: 6 more LH than RH zero modes per cycle"
+                        f"Joyce orbifold T^7/(Z/2)^3: substitute the effective index χ_eff = {int(_REG.chi_eff_total)} = 48n (the K3 reading) for the Euler characteristic, which is 0 on Y_7 -- the unjustified step (the earlier 'TCS G2 #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
+                        f"Proposed index formula: n_L - n_R = χ_eff / 24 = {int(_REG.chi_eff_total)} / 24 = {int(_REG.chi_eff_total) // 24}",
+                        "Proposed interpretation (not established): 6 more LH than RH zero modes per cycle"
                     ],
                     "assumptions": [
                         "Compact G2 manifold without boundary",
@@ -800,7 +842,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                     "Φ": "Associative 4-form",
                     "F": "Gauge field strength (curvature 2-form)",
                     "M_7": "Seven-dimensional G2 manifold",
-                    "χ_eff": "Effective Euler characteristic (topological invariant)",
+                    "χ_eff": "Effective index, 48n (the K3 reading); not the Euler characteristic of Y_7",
                 },
                 arithma=_arithma_div(_arithma_num(144.0), _arithma_b3()),
                 eml=_eml_div(_eml_scalar(144.0), _b3_leaf()),
@@ -840,8 +882,8 @@ class ChiralitySpinorSimulation(SimulationBase):
                         "Spinor representation: Spin(7) has dimension 8 (real)",
                         "Each generation saturates 8 spinor DOF",
                         "Saturation condition: N_gen × 8 = b_3",
-                        f"Solve: N_gen = b_3 / 8 = {int(_REG.elder_kads)} / 8 = {int(_REG.elder_kads) / 8.0:.3f} -- NOT an integer, so the saturation condition has no solution on the adopted seed",
-                        f"Saturation ratio: (3 x 8) / b_3 = 24 / {int(_REG.elder_kads)} = {24.0 / int(_REG.elder_kads):.3f}; the 'complete, no remainder' claim is FALSIFIED"
+                        f"ABANDONED route -- solve: N_gen = b_3 / 8 = {int(_REG.elder_kads)} / 8 = {int(_REG.elder_kads) / 8.0:.3f}, non-integral, so the saturation condition has no solution on the adopted seed",
+                        f"Saturation ratio (3 x 8) / b_3 is {24.0 / int(_REG.elder_kads):.3f} at the adopted b_3 = {int(_REG.elder_kads)}; the 'complete, no remainder' claim held only at the off-path seed and is FALSIFIED"
                     ],
                     "assumptions": [
                         "Complete spinor saturation (no partial filling) -- UNAVAILABLE at odd b_3",
@@ -919,10 +961,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    f"Topological index of the Dirac operator: index(D-slash) = n_L - n_R. "
-                    f"This equals chi_eff/24 = {int(_REG.chi_eff_total)}/24 = {int(_REG.chi_eff_total) // 24}, with chi_eff UNRULED and the 'TCS G2 manifold #187' provenance withdrawn. "
-                    "Represents the net chirality imbalance from topology. "
-                    "Topological derivation parameter, no experimental measurement."
+                    f"PROPOSED index of the Dirac operator, index(D-slash) = n_L - n_R, "
+                    f"evaluated as chi_eff/24 = {int(_REG.chi_eff_total)}/24 = {int(_REG.chi_eff_total) // 24}, with chi_eff = 48n the effective index (the K3 reading) and the 'TCS G2 manifold #187' provenance withdrawn. "
+                    "It would represent the net chirality imbalance; it is not established, "
+                    "since chirality is OPEN on the adopted model and chi_eff/48 = n is not "
+                    "an index theorem for chirality. No experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(144.0), eml_scalar(24.0)) — Atiyah-Singer index from chi_eff",
                 derivation_formula="chirality-index-theorem",
@@ -935,10 +978,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Number of left-handed Dirac zero modes. In the minimal scenario, "
-                    "this equals the chiral index = 6. In general, both n_L and n_R "
-                    "can be large, but their difference is fixed by topology. "
-                    "Topological derivation parameter, no experimental measurement."
+                    "Number of left-handed Dirac zero modes in the proposed chirality "
+                    "mechanism (chirality is OPEN on the adopted model). In the minimal "
+                    "scenario, this equals the proposed chiral index = 6. In general, both "
+                    "n_L and n_R can be large, with their difference set by the index. "
+                    "No experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(144.0), eml_scalar(24.0)) — left-handed zero modes equal chiral index in minimal scenario",
                 derivation_formula="dirac-zero-modes",
@@ -951,10 +995,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Number of right-handed Dirac zero modes. Set to 0 in minimal "
-                    "scenario. In reality could be n_R = n_L - 6 for large n_L, but "
-                    "difference is always 6 from topology. "
-                    "Topological derivation parameter, no experimental measurement."
+                    "Number of right-handed Dirac zero modes in the proposed chirality "
+                    "mechanism. Set to 0 in the minimal scenario; it could be "
+                    "n_R = n_L - 6 for large n_L, the difference being the proposed index "
+                    "(not established; chirality is OPEN). No experimental measurement."
                 ),
                 eml_description="EML: eml_scalar(0.0) — minimal scenario n_R = 0; general case ops.sub(n_L, eml_scalar(6.0))",
                 derivation_formula="dirac-zero-modes",
@@ -967,10 +1011,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Net chirality imbalance: n_L - n_R. This is the topological "
-                    "invariant that cannot be changed by continuous deformations. "
-                    f"Imbalance = {int(_REG.chi_eff_total) // 24} (from chi_eff = {int(_REG.chi_eff_total)}, an UNRULED quantity). "
-                    "Topological derivation parameter, no experimental measurement."
+                    "Net chirality imbalance n_L - n_R in the proposed mechanism: it would "
+                    "be a topological invariant, unchanged by continuous deformations. "
+                    f"Imbalance = {int(_REG.chi_eff_total) // 24} (from chi_eff = {int(_REG.chi_eff_total)} = 48n, the K3 reading). "
+                    "Not established: chirality is OPEN on the adopted model. "
+                    "No experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(144.0), eml_scalar(24.0)) — topological chirality imbalance",
                 derivation_formula="chirality-index-theorem",
@@ -983,10 +1028,13 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="PREDICTED",
                 description=(
-                    "Number of fermion generations from spinor saturation. Computed "
-                    "as b_3 / spinor_DOF = 24 / 8 = 3. This is an exact, parameter-free "
-                    "prediction from topology that perfectly matches the observed 3 "
-                    "generations."
+                    f"ABANDONED route, still computed: int(b_3 / spinor_DOF). It gave "
+                    f"24 / 8 = 3 only at the off-path seed b_3 = 24; on the seed in force "
+                    f"b_3 = {int(_REG.elder_kads)} it gives "
+                    f"int({int(_REG.elder_kads) / 8.0:.3f}) = {int(int(_REG.elder_kads) / 8.0)}, "
+                    f"and 8 divides no Joyce-reachable b_3 (all are odd). This value is "
+                    f"not a generation count. The ruled count is n_gen = b_2/4, the "
+                    f"number of singular involutions."
                 ),
                 eml_description="EML: ops.div(eml_scalar(24.0), eml_scalar(8.0)) — b3/spinor_DOF generation count",
                 derivation_formula="spinor-saturation-generations",
@@ -1001,10 +1049,10 @@ class ChiralitySpinorSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Spinor saturation ratio: (n_gen x spinor_DOF) / b_3. Should equal "
-                    "1 for complete saturation with no remainder. For n_gen = 3: "
-                    "ratio = (3 x 8) / 24 = 1 exactly (complete saturation). "
-                    "Topological derivation parameter, no experimental measurement."
+                    "Spinor saturation ratio of the ABANDONED route: (b_3/8 x 8) / b_3, "
+                    "which is 1 by construction on every seed and so no longer tests "
+                    "saturation. The saturation claim, (3 x 8) / 24 = 1, held only at the "
+                    "off-path seed b_3 = 24. No experimental measurement."
                 ),
                 eml_description="EML: ops.div(ops.mul(eml_scalar(3.0), eml_scalar(8.0)), eml_scalar(24.0)) — completeness check",
                 derivation_formula="spinor-saturation-generations",
@@ -1036,7 +1084,7 @@ class ChiralitySpinorSimulation(SimulationBase):
             },
             {
                 "id": "CERT_CHIRAL_INDEX_6",
-                "assertion": "Chirality index equals chi_eff/24 = 144/24 = 6",
+                "assertion": "Arithmetic of the PROPOSED index reading (not an index theorem for chirality, which is OPEN): chi_eff/24 = 144/24 = 6",
                 "condition": "index(D-slash) = chi_eff / 24 = 6",
                 "tolerance": 1e-10,
                 "status": "PASS",
@@ -1046,7 +1094,7 @@ class ChiralitySpinorSimulation(SimulationBase):
             },
             {
                 "id": "CERT_SPINOR_SATURATION",
-                "assertion": "Complete spinor saturation: 3 generations x 8 DOF = 24 flux units",
+                "assertion": "ABANDONED route (held only at the off-path seed b_3 = 24): complete spinor saturation, 3 generations x 8 DOF = 24 flux units",
                 "condition": "n_gen * spinor_DOF = b3, i.e., 3 * 8 = 24",
                 "tolerance": 0.0,
                 "status": "PASS",
@@ -1068,14 +1116,14 @@ class ChiralitySpinorSimulation(SimulationBase):
             {
                 "topic": "G2 Holonomy",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "G2 holonomy preserves exactly one spinor, which is the geometric origin of chirality",
+                "relevance": "G2 holonomy preserves exactly one spinor, which secures N = 1 supersymmetry; chirality needs more (conical singularities, which Y_7 lacks), and is OPEN on the adopted model",
                 "validation_hint": "Verify preserved_spinors=1 and spinor_dimension=8 match G2 theory"
             },
             {
                 "topic": "Atiyah-Singer Index Theorem",
                 "url": "https://en.wikipedia.org/wiki/Atiyah%E2%80%93Singer_index_theorem",
-                "relevance": "The index theorem relates chirality imbalance (n_L - n_R) to topology of the G2 manifold",
-                "validation_hint": "Confirm index = chi_eff/24 = 6 is correctly computed"
+                "relevance": "The index theorem relates chirality imbalance (n_L - n_R) to topology; the module's chi_eff/24 reading of it is a proposal, not established",
+                "validation_hint": "Confirm the proposed index arithmetic chi_eff/24 = 6 is correctly computed"
             }
         ]
 
@@ -1138,7 +1186,7 @@ class ChiralitySpinorSimulation(SimulationBase):
             {
                 "gate_id": "G17_generation_triality",
                 "simulation_id": self.metadata.id,
-                "assertion": "Three generations from spinor saturation with chiral structure",
+                "assertion": "Spinor structure and the PROPOSED chiral mechanism; the spinor-saturation generation route is ABANDONED (ruled count n_gen = b_2/4) and chirality is OPEN",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -1291,42 +1339,43 @@ class ChiralitySpinorSimulation(SimulationBase):
             "icon": "🌀",
             "title": "Why Fermions Have Chirality (Handedness)",
             "simpleExplanation": (
-                "In particle physics, fermions (quarks and leptons) come in two 'flavors': "
+                "In particle physics, fermions (quarks and leptons) come in two kinds: "
                 "left-handed and right-handed, like left and right gloves. This is called "
-                "chirality. The weak force only talks to left-handed particles, which is "
-                "super weird! Why? In this theory, it's because the hidden 7D space has "
-                "G2 geometry, which naturally picks out one special 'direction' for spinors "
-                "(quantum spin states). This creates a built-in asymmetry that forces "
-                "particles to have definite handedness. The math predicts exactly 3 "
-                "generations of matter with this chiral structure - matching what we observe."
+                "chirality, and the weak force only talks to left-handed particles. Why? "
+                "This model does not yet say. Its hidden 7D shape picks out one special "
+                "'direction' for spinors (quantum spin states), which explains a symmetry "
+                "called supersymmetry but not handedness. In the standard picture, "
+                "handedness comes from special pinch points in the hidden shape, and the "
+                "model's shape has none, so chirality is an open problem here. The number "
+                "of generations, three, comes from a different count (see the generations "
+                "section)."
             ),
             "analogy": (
-                "Imagine you're in a house where all the doors are designed for right-handed "
-                "people (handles on the left when you approach). Left-handed people can still "
-                "use them, but it's awkward. The G2 geometry is like that house - it's "
-                "'built' with a preference for one handedness. Specifically, G2 preserves "
-                "exactly 1 'master key' spinor (out of 8 possible) that defines what "
-                "'left-handed' means everywhere in the space. When particles propagate through "
-                "this geometry, they naturally split into left and right versions, with the "
-                "left ones 'fitting' better with the master spinor. The 4-form Φ acts like "
-                "a sorting machine that separates them. And because there are 24 'parking "
-                "spots' (3-cycles) and each generation needs 8 spots, you get exactly "
-                "24 ÷ 8 = 3 generations, all with this chiral structure."
+                "Imagine a house whose doors are all built for right-handed people. The "
+                "model's G2 geometry is like a house with one 'master key' spinor (out of "
+                "8 possible) - a real feature, but a key is not a handedness. A proposal in "
+                "this section uses the 4-form Φ as a sorting machine that would separate "
+                "left from right; it is not yet shown to work. An older story added that 24 "
+                "'parking spots' shared out 8 per generation give 24 ÷ 8 = 3 generations; "
+                "that only worked for a shape the model no longer uses."
             ),
             "keyTakeaway": (
-                "Fermion chirality and the three-generation structure both emerge from the "
-                "same G2 geometry - no additional assumptions needed."
+                "The G2 geometry preserves one spinor, which secures supersymmetry. Chirality "
+                "is OPEN: the adopted shape has no pinch points that produce chiral fermions, "
+                "so the chirality mechanism here is a proposal."
             ),
             "technicalDetail": (
                 "G2 ⊂ Spin(7) holonomy preserves exactly one parallel spinor η (out of 8 "
-                "real components in the Spin(7) representation). The associative 4-form Φ "
-                "defines chirality projectors P_L = (1 + *Φ)/2 and P_R = (1 - *Φ)/2, with "
-                "the parallel spinor being automatically left-handed: P_L η = η. The Dirac "
-                "operator ∂/ = γ^μ D_μ has zero modes localized on associative 3-cycles. "
-                f"The Atiyah-Singer index theorem gives index(∂/) = n_L - n_R = "
+                "real components in the Spin(7) representation). The PROPOSAL: the "
+                "associative 4-form Φ defines chirality projectors P_L = (1 + *Φ)/2 and "
+                "P_R = (1 - *Φ)/2, with the parallel spinor left-handed, P_L η = η, and the "
+                "Dirac operator ∂/ = γ^μ D_μ has zero modes localized on associative "
+                f"3-cycles, with index(∂/) = n_L - n_R read as "
                 f"χ_eff/24 = {int(_REG.chi_eff_total)}/24 = {int(_REG.chi_eff_total) // 24}, "
-                f"where χ_eff is the effective Euler characteristic (an UNRULED "
-                f"quantity; the 'TCS G2 manifold #187' provenance is withdrawn). The "
+                f"where χ_eff = 48n is the effective index (the K3 reading), not the "
+                f"Euler characteristic of Y_7, which is 0; the 'TCS G2 manifold #187' "
+                f"provenance is withdrawn. None of this is established: chirality is "
+                f"OPEN, since Y_7 has no codimension-7 points. The "
                 f"spinor-saturation route -- b_3 flux units over spinor_DOF = 8 -- is "
                 f"ABANDONED: at the adopted b_3 = {int(_REG.elder_kads)} it gives "
                 f"{int(_REG.elder_kads) / 8.0:.3f}, and b_3 is odd everywhere on the "
@@ -1334,12 +1383,11 @@ class ChiralitySpinorSimulation(SimulationBase):
                 f"n_gen = b_2/4 = rank(Gamma) = 3."
             ),
             "prediction": (
-                "The chirality structure predicts that all Standard Model fermions must be "
-                "chiral (left and right components transform differently under gauge groups), "
-                "and there must be exactly 3 generations. Both predictions match experiment "
-                "perfectly. Moreover, the 'handedness asymmetry' of the weak force (it only "
-                "couples to left-handed particles) is a direct reflection of G2 holonomy "
-                "preserving one spinor. No other geometry gives this - it's unique to G2."
+                "No chirality prediction is made yet. The proposal would require Standard "
+                "Model fermions to be chiral (left and right components transforming "
+                "differently under gauge groups), which they are, but the adopted Y_7 does "
+                "not supply a chiral sector, so this is a target, not a result. The "
+                "generation count, three, rests on the ruled route n_gen = b_2/4."
             )
         }
 
@@ -1372,9 +1420,9 @@ def main():
     registry.set_param(
         path="topology.mephorash_chi",
         value=int(_REG.chi_eff_total),
-        source="FormulasRegistry:chi_eff_total (UNRULED quantity)",
+        source="FormulasRegistry:chi_eff_total (effective index, the K3 reading)",
         status="GEOMETRIC",
-        metadata={"description": "Effective Euler characteristic", "units": "dimensionless"}
+        metadata={"description": "Effective index chi_eff = 48n (the K3 reading)", "units": "dimensionless"}
     )
     registry.set_param(
         path="topology.elder_kads",

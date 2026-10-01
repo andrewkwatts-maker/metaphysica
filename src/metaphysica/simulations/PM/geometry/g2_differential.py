@@ -81,20 +81,29 @@ from typing import Optional, Tuple
 # discriminate either: phi_imn phi_jmn is 6 * I for BOTH forms, which is why
 # this went unnoticed.
 #
-# NOT silently corrected. Substituting a signed form changes the framework's
-# convention and may move published numbers, so it is staged as the
-# `g2_form_convention` fork and the adopted branch remains the status quo.
-# See tests/test_phi_is_not_yet_a_g2_form.py, which is green while the defect
-# stands and fails the moment phi changes.
+# It was not silently corrected: it was staged as the `g2_form_convention`
+# fork, and the flip was measured first -- 0 of 788 parameters and 0 of 226
+# numeric formulas move (D-003).
+#
+# RULED 2026-10-01 (the author, decision D-015): the COMPACT form is the active
+# path. G2_TRIPLES now carries the signs the framework's own octonion product
+# implies -- one sign differs, on (1,3,5) -- and is the fork's source. The
+# all-(+1) split form stays a switchable path (METAPHYSICA_VARIANT_G2_FORM_
+# CONVENTION=all_plus_one), built from ALL_PLUS_TRIPLES below, so the two can
+# be run and compared.
 G2_TRIPLES = [
     (0, 1, 2, +1),
     (0, 3, 4, +1),
     (0, 5, 6, +1),
-    (1, 3, 5, +1),
+    (1, 3, 5, -1),
     (1, 4, 6, +1),
     (2, 3, 6, +1),
     (2, 4, 5, +1),
 ]
+
+#: The split form G2* (signature (4,3)): every Fano triple at +1. The
+#: `all_plus_one` branch of `g2_form_convention`; not the active path.
+ALL_PLUS_TRIPLES = [(i, j, k, +1) for (i, j, k, _s) in G2_TRIPLES]
 
 def phi_from_octonion_product() -> np.ndarray:
     """Derive phi from the framework's OWN octonion multiplication.
@@ -296,8 +305,9 @@ class G2DifferentialGeometry:
         """Construct the standard flat G2 3-form φ₀.
 
         Which signs are used is the `g2_form_convention` fork. Its two options
-        are `all_plus_one` (adopted, the status quo, so nothing moves by
-        default) and `octonion_derived`. An earlier version of this docstring
+        are `octonion_derived` (the compact form, adopted 2026-10-01, D-015)
+        and `all_plus_one` (the split form, kept switchable). An earlier
+        version of this docstring
         named a branch `fano_signed`, which has never existed in variants.py --
         corrected here so the text names only branches that can be selected.
 
@@ -314,13 +324,13 @@ class G2DifferentialGeometry:
             from metaphysica.simulations.core.variants import resolve
             choice = resolve("g2_form_convention")
         except Exception:                      # fork not declared / import cycle
-            choice = "all_plus_one"
+            choice = "octonion_derived"        # must match the adopted branch
 
         if choice == "octonion_derived":
             return phi_from_octonion_product()
 
         phi = np.zeros((7, 7, 7), dtype=np.float64)
-        for (i, j, k, s) in G2_TRIPLES:
+        for (i, j, k, s) in ALL_PLUS_TRIPLES:
             phi[i, j, k] = s
             phi[j, k, i] = s
             phi[k, i, j] = s

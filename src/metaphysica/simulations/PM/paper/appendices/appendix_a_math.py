@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Appendix A: Mathematical Foundations v24.2
-===========================================
+Appendix A: Mathematical Foundations
+====================================
 
 Comprehensive mathematical foundations for Principia Metaphysica, covering:
 - G2 holonomy and exceptional geometry
@@ -12,6 +12,14 @@ Comprehensive mathematical foundations for Principia Metaphysica, covering:
 
 This appendix consolidates mathematical concepts referenced throughout the paper,
 providing rigorous definitions and key theorems for the geometric framework.
+It is not run by the pipeline but ships in the package.
+
+STATUS ON THE ADOPTED PATH: the internal space Y_7 is Joyce's resolution of
+T^7/(Z/2)^3 with Betti numbers (1, 0, 12, 43, 43, 12, 0, 1) and
+n_gen = b_2/4 = 3. The TCS construction (A.7), the "TCS #187" Betti sequence
+(1, 0, 4, 24, 24, 4, 0, 1) and n_gen = b_3/8 are the off-path seed's and are
+labelled OFF-PATH; the identity 26 = b_3 + 2 is RETIRED (the 24 in the bulk's
+signature (24,2) counts its space directions, not b_3).
 
 References:
 - Joyce, D. (2000) "Compact Manifolds with Special Holonomy"
@@ -45,6 +53,12 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+
+
+def _geo(template: str, register: str = "plain") -> str:
+    """Fill a geometry phrase from the live seed (geometry_narration.render)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    return render(template, register)
 
 
 class AppendixAMathFoundations(SimulationBase):
@@ -133,7 +147,10 @@ class AppendixAMathFoundations(SimulationBase):
             "math.spinor_dimension": spinor_dim,
             "math.octonion_dimension": octonion_dim,
             "math.g2_lie_dimension": g2_lie_dim,
-            "math.betti_sequence": [1, 0, 4, 24, 24, 4, 0, 1],  # TCS G2 #187 (Poincare duality: b_k = b_{7-k})
+            # OFF-PATH (b3_seed = seed_24): the retired seed's sequence, earlier
+            # attributed to "TCS G2 #187" (a false attribution). Y_7 has
+            # (1, 0, 12, 43, 43, 12, 0, 1). Value unchanged in the wording pass.
+            "math.betti_sequence": [1, 0, 4, 24, 24, 4, 0, 1],  # Poincare duality: b_k = b_{7-k}
             "math.euler_characteristic": 0,  # All G2 manifolds have chi=0
             "math.validation_status": "CONSISTENT",
         }
@@ -183,8 +200,10 @@ class AppendixAMathFoundations(SimulationBase):
                         "string theory and is <em>not</em> a derivation of PM&rsquo;s bulk: the "
                         "two-time bosonic critical dimension is 27–28 (Bars &amp; Kounnas, "
                         "hep-th/9705205), so the claim D<sub>bulk</sub> = D<sub>crit</sub> = 26 at "
-                        "signature (24,2) is withdrawn. PM retains 26 = b<sub>3</sub> + 2 as its "
-                        "own dimensional identity."
+                        "signature (24,2) is withdrawn. The identity 26 = b<sub>3</sub> + 2 held only "
+                        "at the off-path seed b<sub>3</sub> = 24 and is RETIRED: on the adopted path "
+                        "b<sub>3</sub> = 43, and the 24 in the bulk's signature (24,2) counts its "
+                        "space directions, not b<sub>3</sub>."
                     )
                 ),
                 ContentBlock(
@@ -281,15 +300,17 @@ class AppendixAMathFoundations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The D = 26 bosonic string constraint and bridge+time signature (24,2) [before S<sup>(2,0)</sup> extension] enable the PM framework's dimensional reduction:"
+                        "The bulk's signature (24,2) organises the PM framework's dimensional reduction. "
+                        "(The D = 26 bosonic-string constraint above is a one-time result and is not "
+                        "claimed for the bulk.)"
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "- Bridge+time bulk: 26D with signature (24,2) = 12×(2,0) + (0,1) automatically satisfies Virasoro anomaly cancellation [full 26D(24,2) includes additional S<sup>(2,0)</sup> shadow-time directions]\n\n"
+                        "- Bulk: 26D with signature (24,2): 24 space directions, forming 12 bridge pairs 12×(2,0), and 2 times, one per 13D shadow. It is not claimed to satisfy the Virasoro condition (the two-time critical dimension is 27–28), and ghost control for the second time is OPEN\n\n"
                         "- Euclidean bridge: Reduces the 12×(2,0) pairs to shadows (12,1) via OR reconstruction\n\n"
-                        "- Shadow reduction: Yields 13-dimensional intermediate spacetime with two times (one per shadow)\n\n"
+                        "- Shadow reduction: Yields two 13-dimensional shadows of signature (12,1), each with one time\n\n"
                         "- Compactification: 9 spatial dimensions (from bridge reduction) + 13 shadow dimensions compactify on T<sup>15</sup> × G₂(7D)\n\n"
                         "- Observable physics: Effective 4D Minkowski (3,1) after full reduction"
                     )
@@ -353,12 +374,15 @@ class AppendixAMathFoundations(SimulationBase):
                 ),
                 ContentBlock(
                     type="subsection",
-                    content="A.7 Twisted Connected Sum (TCS) Construction"
+                    content="A.7 Twisted Connected Sum (TCS) Construction (Off-Path Background)"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The TCS construction builds compact G2 manifolds by gluing two "
+                        "OFF-PATH: the internal space is not a TCS but Joyce's resolution of "
+                        "T<sup>7</sup>/(&#8484;/2)<sup>3</sup>; its b<sub>3</sub> = 43 lies outside every "
+                        "published TCS range (71&ndash;155). As background, the TCS construction builds "
+                        "compact G2 manifolds by gluing two "
                         "asymptotically cylindrical (ACyl) G2 manifolds along their "
                         "cylindrical ends. Each ACyl piece has the form:"
                     )
@@ -382,9 +406,13 @@ class AppendixAMathFoundations(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "The cohomology of a TCS G2 manifold is determined by the topology "
-                        "of the building blocks. For TCS G2 manifold #187, the Betti numbers are:"
+                    content=_geo(
+                        "Betti numbers of a compact 7-manifold satisfy Poincar&eacute; duality, "
+                        "b<sub>k</sub> = b<sub>7&minus;k</sub>. On the adopted path the internal space is "
+                        "{construction}, with Betti numbers {betti_sequence}: {b3_split}. "
+                        "OFF-PATH (b3_seed = seed_24): the sequence below is the retired seed's, earlier "
+                        "attributed to a &ldquo;TCS G2 manifold #187&rdquo; (a false attribution):",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -394,9 +422,11 @@ class AppendixAMathFoundations(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "The third Betti number b₃ = 24 counts associative 3-cycles and "
-                        "determines the number of fermion generations: n<sub>gen</sub> = b₃/8 = 3."
+                    content=_geo(
+                        "At that retired seed, b₃ = 24 was read as 24 associative 3-cycles and the "
+                        "generation count as n<sub>gen</sub> = b₃/8 = 3. Both are retired: 8 divides "
+                        "no reachable b₃ (all are odd), and the generation count is {n_gen_route}.",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -789,7 +819,9 @@ class AppendixAMathFoundations(SimulationBase):
                 "topic": "G2 Holonomy Manifolds",
                 "url": "https://ncatlab.org/nlab/show/G2-manifold",
                 "relevance": "Core geometric structure underlying Principia Metaphysica",
-                "validation_hint": "Verify dim(G2) = 14, b3 = 24 for TCS #187",
+                "validation_hint": _geo("Verify dim(G2) = 14 and, on Y_7, {betti_pair} (b3 = 24 "
+                                        "was the retired off-path seed; the TCS #187 attribution "
+                                        "was false)"),
             },
             {
                 "topic": "Clifford Algebras and Spinors",
@@ -844,7 +876,9 @@ class AppendixAMathFoundations(SimulationBase):
             "message": f"G2 Lie algebra dimension = {lie_dim} (exact: 14)",
         })
 
-        # Check 4: Betti numbers satisfy Poincare duality
+        # Check 4: Betti numbers satisfy Poincare duality. The typed sequence
+        # is the off-path seed's (retired); Y_7's (1, 0, 12, 43, 43, 12, 0, 1)
+        # satisfies the same duality.
         betti = [1, 0, 4, 24, 24, 4, 0, 1]
         poincare_ok = all(betti[k] == betti[7 - k] for k in range(8))
         checks.append({
@@ -879,10 +913,12 @@ class AppendixAMathFoundations(SimulationBase):
             {
                 "gate_id": "G02",
                 "simulation_id": self.metadata.id,
-                "assertion": "Betti numbers satisfy Poincare duality for TCS G2 #187",
+                "assertion": ("Betti numbers satisfy Poincare duality (checked on the retired "
+                              "off-path seed's sequence; its TCS G2 #187 attribution was false)"),
                 "result": "PASS",
                 "timestamp": "2025-01-01T00:00:00Z",
-                "details": "b = (1,0,4,24,24,4,0,1) symmetric under b_k = b_{7-k}",
+                "details": ("OFF-PATH: b = (1,0,4,24,24,4,0,1) symmetric under b_k = b_{7-k}; "
+                            "Y_7 has (1,0,12,43,43,12,0,1)"),
             },
             {
                 "gate_id": "G03",

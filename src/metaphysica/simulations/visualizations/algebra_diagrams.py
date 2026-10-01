@@ -8,7 +8,7 @@ Licensed under the MIT License. See LICENSE file for details.
 Generates publication-quality diagrams for algebraic and theoretical
 concepts in Principia Metaphysica:
 1. clifford-algebra-structure.png - Clifford algebra Cl(10) structure for fermions
-2. swampland-criteria.png - Swampland bounds and how PM satisfies them
+2. swampland-criteria.png - Swampland bounds and the model's position on each
 
 Usage:
     python algebra_diagrams.py
@@ -77,7 +77,14 @@ def create_clifford_algebra_diagram():
 
     Shows how fermion representations emerge from Clifford algebra
     decomposition and connect to G2 holonomy structure.
+
+    The right panel draws the ABANDONED generation route n_gen = b3/8 =
+    24/8 at the off-path seed b3 = 24, and is labelled so: 8 divides no
+    reachable b3 (every b3 on Joyce's family is odd). The ruled route is
+    n_gen = b2/4 = 3, the number of singular involutions.
     """
+    # The ruled generation route, rendered from the live seed.
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
     fig, axes = plt.subplots(1, 2, figsize=(14, 9))
 
     # === Left panel: Clifford algebra decomposition ===
@@ -179,8 +186,10 @@ def create_clifford_algebra_diagram():
              ha='center', color=PM_PURPLE)
     ax1.text(2.5, 0.4, 'Spin(7) spinor $\\rightarrow$ 8 real DOF', fontsize=9,
              ha='center', color=PM_DARK)
-    ax1.text(2.5, 0.0, '$n_{gen} = b_3 / 8 = 24 / 8 = 3$', fontsize=10,
-             ha='center', color=PM_PURPLE, fontweight='bold')
+    ax1.text(2.5, 0.0, 'ABANDONED: $n_{gen} = b_3 / 8 = 24 / 8$ (8 divides no odd $b_3$)',
+             fontsize=10, ha='center', color=PM_PURPLE, fontweight='bold')
+    ax1.text(2.5, -0.35, render(r'ruled: {n_gen_route}', 'latex'), fontsize=9,
+             ha='center', color=PM_DARK)
 
     # === Right panel: Fermion generations visualization ===
     ax2 = axes[1]
@@ -189,10 +198,11 @@ def create_clifford_algebra_diagram():
     ax2.set_aspect('equal')
     ax2.axis('off')
 
-    ax2.set_title('Three Generations from Spinor Saturation', fontsize=14,
+    ax2.set_title('Abandoned Route: Generations from Spinor Saturation', fontsize=14,
                   fontweight='bold', color=PM_DARK, pad=20)
 
-    # Draw the 24 flux units as small circles arranged in a ring
+    # Draw the 24 flux units (the off-path seed b3 = 24) as small circles
+    # arranged in a ring
     n_flux = 24
     outer_radius = 1.2
     for i in range(n_flux):
@@ -227,9 +237,9 @@ def create_clifford_algebra_diagram():
                                  boxstyle="round,pad=0.02,rounding_size=0.1",
                                  facecolor='white', edgecolor=PM_PURPLE, linewidth=2)
     ax2.add_patch(center_box)
-    ax2.text(0, 0.1, r'$b_3 = 24$', fontsize=14, fontweight='bold',
+    ax2.text(0, 0.1, r'off-path $b_3 = 24$', fontsize=14, fontweight='bold',
              ha='center', va='center', color=PM_PURPLE)
-    ax2.text(0, -0.15, r'$\div$ 8 spinor DOF', fontsize=10,
+    ax2.text(0, -0.15, r'$\div$ 8 spinor DOF (abandoned)', fontsize=10,
              ha='center', va='center', color=PM_DARK)
 
     # Arrows to center showing saturation
@@ -241,7 +251,7 @@ def create_clifford_algebra_diagram():
                     arrowprops=dict(arrowstyle='->', color=color, lw=2, alpha=0.6))
 
     # Bottom explanation
-    ax2.text(0, -1.35, 'Each generation saturates 8 spinor degrees of freedom',
+    ax2.text(0, -1.35, r'8 divides no reachable $b_3$ (all odd); the ruled route is $n_{gen} = b_2/4$',
              fontsize=10, ha='center', va='center', color=PM_DARK, style='italic')
 
     plt.tight_layout()
@@ -250,9 +260,11 @@ def create_clifford_algebra_diagram():
 
 def create_swampland_criteria_diagram():
     """
-    Generate Swampland criteria diagram showing bounds and PM satisfaction.
+    Generate Swampland criteria diagram showing bounds and PM's position.
 
-    Shows the major Swampland conjectures and how PM theory satisfies each one.
+    Shows the major Swampland conjectures and the model's position on each.
+    Two of them (distance, de Sitter) rest on problems that are OPEN on the
+    adopted Y_7: the moduli (CG.6) and dark energy (CG.11).
     """
     fig, axes = plt.subplots(1, 2, figsize=(14, 9))
 
@@ -338,11 +350,11 @@ def create_swampland_criteria_diagram():
          True),
         ('Distance Conjecture', 'SDC',
          '$\\Delta\\phi < c \\cdot M_P$',
-         'PM: Moduli stabilized by $\\langle\\Psi_P\\rangle$, $\\Delta\\phi \\sim 0.5 M_P$',
+         'PM: moduli OPEN on $Y_7$ (CG.6); formerly $\\langle\\Psi_P\\rangle$, $\\Delta\\phi \\sim 0.5 M_P$',
          True),
         ('de Sitter Conjecture', 'dSC',
          '$|V\'| > c \\cdot V / M_P$',
-         'PM: Dark energy from quintessence, $w_0 = -0.95$',
+         'PM: leading-order slope $|\\nabla V|/V \\geq 2.67$ (CG.11); dark energy OPEN',
          True),
         ('Cobordism Conjecture', 'CC',
          'All bordism groups trivial',
@@ -395,9 +407,9 @@ def create_swampland_criteria_diagram():
                                   boxstyle="round,pad=0.02,rounding_size=0.1",
                                   facecolor=PM_LIGHT_PURPLE, edgecolor=PM_PURPLE, linewidth=2)
     ax2.add_patch(summary_box)
-    ax2.text(2.5, 0.25, 'PM Theory: All Swampland Criteria Satisfied', fontsize=11,
+    ax2.text(2.5, 0.25, 'PM Theory: Swampland Criteria as Drawn', fontsize=11,
              fontweight='bold', ha='center', va='center', color=PM_PURPLE)
-    ax2.text(2.5, -0.1, 'G2 holonomy + Pneuma mechanism = UV-complete framework',
+    ax2.text(2.5, -0.1, 'SDC and dSC rest on OPEN problems: moduli and dark energy',
              fontsize=9, ha='center', va='center', color=PM_DARK)
 
     plt.tight_layout()

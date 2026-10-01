@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
 """
-Lagrangian Master Derivation v22: Core 26D Action with 12×(2,0) Paired Bridge System
-======================================================================================
+Lagrangian Master Derivation: Core 26D Action with 12×(2,0) Paired Bridges
+==========================================================================
 
 This module provides comprehensive derivations for the core 26D master action
 using the vielbein/tetrad formalism following Carroll's GR Notes and eigenchris
 style pedagogy.
 
-v22 ARCHITECTURE: 12×(2,0) Paired Bridge System
------------------------------------------------
-Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+THE ADOPTED BULK (read first)
+-----------------------------
+The bulk is 26D of signature (24,2): 24 space directions and 2 times, one per
+13D (12,1) shadow, with the 24 space directions grouped as 12 paired (2,0)
+bridges (signature ruling 2026-08-31). Two borrowed claims were withdrawn by
+that ruling and are labelled wherever they appear below: "26 = the critical
+dimension" (the two-time critical dimension is 27-28), and the appeal to
+Bars' Sp(2,R) ghost-freedom theorem (Sp(2,R) gauging of (24,2) gives one
+(23,1) shadow, not two (12,1) shadows), so ghost control of the second time
+is OPEN. The internal space is Y₇, Joyce's resolution of T⁷/(ℤ/2)³ with
+(b₂, b₃) = (12, 43); its moduli are unfixed at leading order and it carries
+no gaugino racetrack, so the four-face TCS racetrack formulas below are
+OFF-PATH (calibrated at the off-path seed b₃ = 24).
 
-The v22 framework introduces 12 PAIRED Euclidean bridges, each a (2,0)
-consciousness I/O gate. This replaces the single bridge of v21.
+THE BRIDGE ARCHITECTURE, AND WHAT IS RETIRED IN IT
+--------------------------------------------------
+Historical decomposition: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) with
+ds² = -dt² + Σᵢ (dy₁ᵢ² + dy₂ᵢ²). Its single T¹ time fibre is the RETIRED
+shared-time picture; the adopted bulk has two times. The 12 PAIRED Euclidean
+bridges, each a (2,0) consciousness I/O gate, replaced an earlier single
+bridge.
 
-MATHEMATICAL FRAMEWORK (v22 - 12×(2,0) Paired Bridge System):
--------------------------------------------------------------
+MATHEMATICAL FRAMEWORK:
+-----------------------
 1. Vielbein/Tetrad Formalism:
    - e_a^mu relates coordinate and non-coordinate bases
    - Key relation: g_munu = e_a^mu e_b^nu eta^ab (vielbein is square root of metric)
@@ -23,22 +38,24 @@ MATHEMATICAL FRAMEWORK (v22 - 12×(2,0) Paired Bridge System):
    - Spin connection omega_mu^ab for covariant derivatives in non-coordinate bases
    - Torsion-free + metric compatibility uniquely determine spin connection
 
-2. 26D Master Action (v24.2 with 12 bridge pairs + 1 shadow-time directions):
+2. 26D Master Action (12 bridge pairs + one time per shadow):
    - S_26 = integral d^26X sqrt(-g_26) [R_26 + L_matter + L_gauge + L_bridge + pneuma]
-   - Structure (24,2) the Sp(2,R) gauge constraint (STRUCTURAL) controls ghosts and CTCs
+   - Signature (24,2). Sp(2,R) is invoked (STRUCTURAL), not derived; ghost
+     control of the second time is OPEN
    - L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
    - Step-by-step Euler-Lagrange derivation
 
-3. v22 12×(2,0) Paired Bridge Structure:
-   - M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+3. 12×(2,0) Paired Bridge Structure:
    - Each pair: B_i^{2,0} with (y₁ᵢ=input, y₂ᵢ=output) I/O channels
-   - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
+   - Bridge metric: Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²), positive definite
    - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair (not single R_⊥)
    - Consciousness gating: 6 pairs minimum for wet microtubule (τ>25ms)
    - Gnosis unlocking: 6→12 pairs via inner exploration
 
-4. G2 Holonomy Reduction per Shadow (v21 formulation retained):
-   - Each 11D shadow -> 4D via G2(7,0) compactification
+4. G₂ Reduction per Shadow:
+   - Each 13D (12,1) shadow -> 4D on the G₂ manifold Y₇ (a compact
+     7-manifold with a torsion-free G₂-structure); an earlier 11D-shadow
+     scaffold is superseded
    - Kaluza-Klein ansatz for each step
    - Show how gauge fields emerge from extra dimensions
 
@@ -114,19 +131,20 @@ _LIVE_B3 = _live_b3()
 
 class LagrangianMasterDerivation(SimulationBase):
     """
-    Core 26D Master Action Lagrangian Derivations with Vielbein Formalism (v22).
+    Core 26D Master Action Lagrangian Derivations with Vielbein Formalism.
 
     This simulation provides comprehensive mathematical derivations for:
     A. 26D Master Action with Einstein-Hilbert gravity, gauge fields, matter
-    B. v22 12×(2,0) Paired Bridge System (replaces v21 single bridge)
-    C. G2 Holonomy Reduction from 11D -> 4D per shadow
+    B. 12×(2,0) Paired Bridge System (replaced an earlier single bridge)
+    C. G₂ reduction from each 13D (12,1) shadow to 4D on Y₇
 
     All derivations follow the Carroll/eigenchris pedagogical style using
     vielbein/tetrad formalism for maximal clarity and rigor.
 
-    v22 Key Changes (12×(2,0) Paired Bridge System):
-    - Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
-    - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
+    Bridge system (the adopted bulk is (24,2), one time per shadow):
+    - Historical bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}), whose
+      single time fibre is the RETIRED shared-time picture
+    - Bridge metric: Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²), positive definite
     - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair (not single R_⊥)
     - Each pair is consciousness I/O gate (y₁ᵢ=input, y₂ᵢ=output)
     - Minimum 6 pairs for wet microtubule stability (τ>25ms)
@@ -136,11 +154,11 @@ class LagrangianMasterDerivation(SimulationBase):
     def __init__(self):
         """Initialize derivation parameters and symbolic variables (v22)."""
         # Dimensional structure (v22: 12×(2,0) paired bridge system)
-        self.D_critical = 26  # Critical dimension (bosonic string)
-        self.signature_26d = (24, 2)  # two-time: one time per shadow; Sp(2,R) gauge (STRUCTURAL) controls ghosts
+        self.D_critical = 26  # bulk dimension; historical name: "26 = the critical dimension" is withdrawn (two-time critical dimension is 27-28)
+        self.signature_26d = (24, 2)  # two-time: one time per shadow; Sp(2,R) invoked (STRUCTURAL), ghost control of the second time OPEN
 
-        # v22: 12×(2,0) Paired Bridge structure
-        # M^{24,2} = T^1 x_fiber (⊕_{i=1}^{12} B_i^{2,0})
+        # 12×(2,0) Paired Bridge structure (the historical T^1 x_fiber
+        # decomposition carried a single, now RETIRED, shared time)
         self.n_bridge_pairs = 12  # v22: 12 Euclidean bridge pairs
         self.D_bridge_per_pair = 2  # Each pair has 2D (y₁ᵢ, y₂ᵢ)
         self.D_bridge_total = self.n_bridge_pairs * self.D_bridge_per_pair  # 24D
@@ -153,7 +171,7 @@ class LagrangianMasterDerivation(SimulationBase):
         # v21 legacy structure (for G2 reduction - retained)
         self.D_shadow = 11  # SUPERSEDED v21 scaffold (spatial-only count); two-time ruling: shadows are 13D (12,1)
         self.signature_shadow = (11, 0)  # SUPERSEDED v21 scaffold; ruling: (12,1) per shadow, own time
-        self.D_7 = 7  # G2 holonomy manifold per shadow
+        self.D_7 = 7  # G₂ manifold Y₇ per shadow
         self.D_4 = 4  # Final spacetime
 
         # E8 root structure: 288 = 240 (E8 roots) + 8 (Cartan) + 40 (2nd E8 survivors)
@@ -201,15 +219,17 @@ class LagrangianMasterDerivation(SimulationBase):
             id="lagrangian_master_derivation_v22",
             version="22.0",
             domain="derivations",
-            title="Core 26D Master Action Lagrangian Derivations (v22)",
+            title="Core 26D Master Action Lagrangian Derivations",
             description=(
                 "Comprehensive 26D master action derivations using vielbein/tetrad formalism "
-                "with the v22 12x(2,0) paired bridge system. Covers (A) vielbein formalism "
+                "on the (24,2) bulk -- 24 space directions as 12 paired (2,0) bridges, and two "
+                "times, one per 13D (12,1) shadow. Covers (A) vielbein formalism "
                 "and spin connection, (B) Einstein-Hilbert + Yang-Mills + Dirac + Pneuma sectors, "
-                "(C) Euler-Lagrange derivation of 26D Einstein equations, (D) v22 bridge system "
-                "M^{24,2} = T^1 x_fiber (direct_sum B_i^{2,0}) with distributed OR reduction, "
-                "and (E) G2 holonomy Kaluza-Klein reduction 26D -> 4D yielding 2 graviton "
-                "polarizations and a 288-root lattice from E8 x E8."
+                "(C) Euler-Lagrange derivation of 26D Einstein equations, (D) the bridge system "
+                "with distributed OR reduction (its historical T^1 x_fiber form carried a single "
+                "shared time, now retired), and (E) the Kaluza-Klein reduction 26D -> 4D on the "
+                "G2 manifold Y_7, yielding 2 graviton polarizations and a 288-root lattice from "
+                "E8 x E8."
             ),
             section_id="2",
             subsection_id="2.1"
@@ -219,8 +239,8 @@ class LagrangianMasterDerivation(SimulationBase):
     def required_inputs(self) -> List[str]:
         """Return list of required input parameter paths."""
         return [
-            "topology.elder_kads",           # Third Betti number b_3 = 24
-            "topology.mephorash_chi",      # Effective Euler characteristic chi = 144
+            "topology.elder_kads",           # Third Betti number b_3 (43 on the adopted seed)
+            "topology.mephorash_chi",      # effective index chi_eff = 144 (not the Euler characteristic of Y_7, which is 0)
             "constants.M_PLANCK",    # Planck mass
             "geometry.M_star",      # 26D fundamental scale (was constants.M_STAR, a path no registry holds)
             "gauge.g_gut",           # GUT coupling
@@ -267,8 +287,8 @@ class LagrangianMasterDerivation(SimulationBase):
             "variation-metric",
 
             # Part D: v22 12×(2,0) Paired Bridge System (replaces v21 single bridge)
-            "v22-bulk-structure",           # M^{24,1} = T¹ ×_fiber (⊕ᵢ B_i^{2,0})
-            "v22-metric-12-pair",           # ds² = -dt² + Σᵢ (dy₁ᵢ² + dy₂ᵢ²)
+            "v22-bulk-structure",           # T¹ ×_fiber (⊕ᵢ B_i^{2,0}): single time fibre, RETIRED
+            "v22-metric-12-pair",           # ds² = -dt² + Σᵢ (...): single-time background, RETIRED
             "v22-bridge-lagrangian",        # L_bridge = Σᵢ [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
             "v22-distributed-or-reduction", # R_⊥ = ⊗ᵢ R_⊥_i
             "v22-consciousness-io-gate",    # Each pair: y₁ᵢ=input, y₂ᵢ=output
@@ -276,7 +296,7 @@ class LagrangianMasterDerivation(SimulationBase):
             "sp2r-constraint-xp",       # Legacy: now replaced by distributed OR
             "sp2r-constraint-x2",       # Legacy: now replaced by bridge geometry
             "sp2r-gauge-fixed-action",  # Legacy: now replaced by 12-pair structure
-            "ghost-elimination",        # v21: achieved via (24,1) two-time structure
+            "ghost-elimination",        # RETIRED claim: ghost control of the second time is OPEN
             "dof-reduction-sp2r",       # v21: replaced by distributed DOF counting
 
             # Part E: G2 Holonomy
@@ -349,21 +369,22 @@ class LagrangianMasterDerivation(SimulationBase):
            sqrt(-g) = det(e_a^mu) = e
         """)
 
-        # For 26D with (24,1) signature (v21 two-time structure)
+        # Historical single-time count, kept as computed; the adopted bulk
+        # is (24,2) with one time per shadow.
         D = 26
         n_spatial = 24
-        n_time = 1  # v21: Two-time structure eliminates ghosts and CTCs
+        n_time = 1  # historical count (retired single shared time); ghost control of the second time is OPEN
 
         # Vielbein has D^2 = 676 components, but gauge freedom reduces this
         vielbein_components = D * D
         lorentz_gauge = D * (D - 1) // 2  # SO(24,2) gauge freedom (v21)
         vielbein_physical = vielbein_components - lorentz_gauge
 
-        print(f"\nIn {D}D with ({n_spatial},{n_time}) signature (two-time):")
+        print(f"\nIn {D}D (historical count ({n_spatial},{n_time}); the adopted signature is (24,2), two times):")
         print(f"  - Total vielbein components: {vielbein_components}")
         print(f"  - Local Lorentz gauge freedom: {lorentz_gauge} (SO(24,2))")
         print(f"  - Physical components: {vielbein_physical} = metric components")
-        print(f"  - Two-time: Sp(2,R) gauge (STRUCTURAL) eliminates ghosts and CTCs")
+        print(f"  - Two-time: Sp(2,R) invoked (STRUCTURAL); ghost control of the second time is OPEN")
 
         results["vielbein_total"] = vielbein_components
         results["lorentz_gauge"] = lorentz_gauge
@@ -648,10 +669,10 @@ class LagrangianMasterDerivation(SimulationBase):
         - Gauge invariant (E8 x E8)
         - BRST invariant (after ghost sector)
 
-        The critical dimension D=26 ensures:
-        - Conformal anomaly cancellation
-        - Ghost degrees of freedom decouple
-        - Worldsheet consistency (Weyl invariance)
+        Calling D=26 the critical dimension is withdrawn (signature ruling
+        2026-08-31): 26 is the ONE-time bosonic critical dimension, at
+        signature (25,1); with two times it is 27-28. Ghost control of the
+        second time is OPEN.
         """)
 
         # Total degrees of freedom before gauge fixing
@@ -816,11 +837,12 @@ class LagrangianMasterDerivation(SimulationBase):
 
     def derive_dual_shadow_structure(self) -> Dict[str, Any]:
         """
-        Derive v22 12×(2,0) Paired Bridge structure.
+        Derive the 12×(2,0) Paired Bridge structure.
 
-        v22 replaces v21 single bridge with:
-        - Bulk: M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
-        - Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)
+        The 12 paired bridges (which replaced an earlier single bridge) are
+        the bulk's 24 space directions; the bulk has 2 times, one per 13D
+        (12,1) shadow. The historical form M^{24,2} = T¹ ×_fiber (⊕ B_i^{2,0})
+        with ds² = -dt² + Σᵢ (dy₁ᵢ² + dy₂ᵢ²) carried one shared time (RETIRED).
         - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair
         - Each pair is consciousness I/O gate (y₁ᵢ=input, y₂ᵢ=output)
         - Minimum 6 pairs for wet microtubule stability (τ>25ms)
@@ -842,30 +864,31 @@ class LagrangianMasterDerivation(SimulationBase):
         print("-" * 70)
 
         print("""
-        v22 12×(2,0) PAIRED BRIDGE SYSTEM
-        =================================
+        12×(2,0) PAIRED BRIDGE SYSTEM
+        =============================
 
-        Structure: M^{24,2} = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
+        Structure: the bulk's 24 space directions are 12 Euclidean bridge
+        pairs B_i^{2,0}; with 2 times, one per 13D (12,1) shadow, the bulk
+        has signature (24,2). (The historical form T^1 ×_fiber (⊕ B_i^{2,0})
+        with one shared time fibre is RETIRED.)
 
         Components:
-        - T^1: Two-time structure (0,1) - shared fiber base
+        - 2 times: one per shadow
         - B_i^{2,0}: 12 Euclidean bridge pairs, each (2,0)
         - Each pair has coordinates (y₁ᵢ, y₂ᵢ)
 
         Dimensional Check:
-        - Dimensions: 1 (time) + 12×2 (bridges) + 1×2 (central) = 26D total
-        - Spatial: 12×2 + 2 = 26 (24 core + 2 central)
-        - Temporal: 1 (shared) (CORRECT)
+        - Spatial: 12×2 = 24
+        - Temporal: 2 (one per shadow)
+        - Total: 26D, signature (24,2)
 
-        Total structure: (24,2) - v24.2 with shadow-time directions
-
-        Key v22 Features:
+        Key Features:
         - 12 bridge pairs: Each B_i^{2,0} has (y₁ᵢ=input, y₂ᵢ=output)
         - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair (not single R_⊥)
         - Consciousness gating: 6 pairs minimum for wet microtubule (τ>25ms)
         - Gnosis unlocking: 6→12 pairs via inner exploration
-        - Eliminates ghost modes (negative-norm states)
-        - Preserves unitarity naturally
+        - Ghost control of the second time: OPEN (the appeal to Bars'
+          Sp(2,R) ghost-freedom theorem is withdrawn)
         """)
 
         # ------------------------------------------------------------------
@@ -953,12 +976,12 @@ class LagrangianMasterDerivation(SimulationBase):
         - Each unlocked pair doubles consciousness bandwidth
         - Progressive awakening through bridge pair activation
 
-        Ghost Elimination (v21 formulation retained):
-        =============================================
-        The two-time signature (24,2) signature eliminates ghosts:
-        - Single time dimension: no negative-norm states
+        Ghost Control (OPEN):
+        =====================
         - All bridge dimensions are spatial (positive-definite)
-        - Unitarity preserved naturally via Euclidean bridges
+        - The single-time argument (no negative-norm states with one time)
+          is retired: the adopted bulk has two times, and ghost control of
+          the second time is OPEN
         """)
 
         # v22 consciousness parameters
@@ -977,9 +1000,9 @@ class LagrangianMasterDerivation(SimulationBase):
         dof_graviton_26 = 26 * (26 - 3) // 2  # = 299
         dof_graviton_27 = 27 * (27 - 3) // 2  # = 324 (v22: 26D effective)
 
-        print(f"\nGraviton DOF (v22):")
+        print(f"\nGraviton DOF:")
         print(f"  26D graviton: {dof_graviton_26} polarizations")
-        print(f"  26D graviton (effective): {dof_graviton_27} polarizations")
+        print(f"  27D count (retired 27-dimension bookkeeping): {dof_graviton_27} polarizations")
         print(f"  Bridge DOF: {n_bridge_pairs} × 2 = {D_bridge_total} scalar modes")
 
         results["dof_graviton_26"] = dof_graviton_26
@@ -1001,16 +1024,16 @@ class LagrangianMasterDerivation(SimulationBase):
         Each term (∂y_{1,2}ᵢ)² contributes 1 scalar DOF.
         Total bridge DOF: 12 × 2 = 24 scalar modes.
 
-        Full 26D Action (v22):
-        =====================
+        Full Action (historical 25D form, from the retired single-time count):
+        =====================================================================
         S_25 = ∫ d²⁵x √(-g_25) [R_25 + L_gauge + L_fermion + L_bridge + L_pneuma]
 
         DOF Transformation:
         ===================
         Step 1: 26D Bridge Structure
-        - M^{24,2} = T¹ × (⊕ᵢ B_i^{2,0})
-        - 1 time + 26 spatial = 26D effective
-        - Bridge pairs: 12 × 2 = 24 spatial DOF
+        - Bridge pairs: 12 × 2 = the bulk's 24 space directions
+        - With 2 times, one per shadow: 26D, signature (24,2)
+        - (The T¹ × (⊕ᵢ B_i^{2,0}) form with one shared time is retired)
 
         Step 2: E8 Root Structure (retained from v21)
         - E8 lattice: 240 root vectors + 8 Cartan
@@ -1043,10 +1066,13 @@ class LagrangianMasterDerivation(SimulationBase):
 
     def derive_g2_holonomy_reduction(self) -> Dict[str, Any]:
         """
-        Derive G2 holonomy reduction from 26D -> 4D.
+        Derive the G2 reduction from 26D -> 4D.
 
         Multiple reduction paths:
-        - 26D -> 13D (Sp(2,R)) -> 7D (G2) -> 4D
+        - 26D -> 13D per shadow -> 7D (G2) -> 4D. The (24,2) bulk splits into
+          two 13D (12,1) shadows; reading this step as an Sp(2,R) gauge fixing
+          is withdrawn (signature ruling 2026-08-31: Sp(2,R) gauging gives one
+          (23,1) shadow, not two (12,1) shadows)
         - 26D -> 26-7=19D -> 19-5=14D -> 14-3=11D -> 11-4=7D -> 7-3=4D
 
         Returns:
@@ -1084,7 +1110,8 @@ class LagrangianMasterDerivation(SimulationBase):
 
         Physical implications:
         - Exactly 1 preserved supersymmetry (N=1 in 4D)
-        - 3 generations from b_3 = 24
+        - Generations: n_gen = b_2/4, the number of singular involutions
+          (the ruled route; the earlier b_3 reading is abandoned)
         - Moduli space is finite-dimensional
         """)
 
@@ -1127,21 +1154,24 @@ class LagrangianMasterDerivation(SimulationBase):
         PATH A: 26D -> 13D -> 7D -> 4D
         ==============================
 
-        Stage 1: 26D -> 13D (Sp(2,R) gauge fixing)
-        ------------------------------------------
+        Stage 1: 26D -> 13D (one shadow of the (24,2) bulk)
+        ---------------------------------------------------
         ds^2_26 = e^{2A} ds^2_13 + g_mn dy^m dy^n
 
         - Warp factor A depends on internal coordinates
-        - g_mn is metric on gauge-fixed directions
-        - 13D inherits signature (12,1)
+        - g_mn is metric on the bridge directions
+        - 13D inherits signature (12,1), with its own time
+        - (Reading this stage as Sp(2,R) gauge fixing is withdrawn:
+          Sp(2,R) gauging gives one (23,1) shadow, not two (12,1) shadows)
 
         Stage 2: 13D -> 7D (G2 compactification)
         ----------------------------------------
         ds^2_13 = e^{2B} ds^2_6 + h_ab dz^a dz^b
 
         - 6D bulk spacetime
-        - h_ab is G2 manifold metric
-        - b_3 = 24 determines generation number
+        - h_ab is the metric of the G2 manifold Y_7
+        - generations from n_gen = b_2/4 (the ruled route); b_3 counts
+          the moduli, and the earlier b_3 reading is abandoned
 
         Stage 3: 7D -> 4D (final KK reduction)
         --------------------------------------
@@ -1157,17 +1187,17 @@ class LagrangianMasterDerivation(SimulationBase):
         Each step removes a specific geometric structure.
         """)
 
-        # v22 dimension chain (updated 2026-01-19)
-        # Chain: M^{26}(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) → [G2(7,0)] → 4D(3,1)
-        # v22: 12 bridge pairs WARP to create 2×13D(12,1) shadows
-        print("\nv22 Dimensional Cascade:")
-        print("  M^{26}(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions → 2×13D(12,1) → 4D(3,1)")
+        # Dimension chain: M^{26}(24,2) = 12×(2,0) bridge pairs + 2 times
+        # (one per shadow) → 2×13D(12,1) → [G2(7)] → 4D(3,1)
+        # The 12 bridge pairs WARP to create 2×13D(12,1) shadows
+        print("\nDimensional Cascade:")
+        print("  M^{26}(24,2) = 12×(2,0) bridge pairs + 2 times (one per shadow) → 2×13D(12,1) → 4D(3,1)")
         print("")
         print("  Level 0 (ANCESTRAL): 26D with structure (24,2) - two-time structure")
-        print("  Level 1 (STRUCTURE): 12×(2,0) + (0,1)")
-        print("    - (0,1): Shared time fiber")
+        print("  Level 1 (STRUCTURE): 12×(2,0) + 2 times")
+        print("    - 2 times: one per shadow (the shared time fibre is retired)")
         print("    - 12×(2,0): 12 Euclidean bridge pairs")
-        print("  Level 2 (SHADOW): 12×(2,0) + (0,1) WARP to create 2×13D(12,1)")
+        print("  Level 2 (SHADOW): 12×(2,0) + 2 times WARP to create 2×13D(12,1)")
         print("    - Each shadow: 13D(12,1) = 12 spatial + 1 time (its own)")
         print("  Level 3 (G2): 7D per shadow, signature (7,0) - RIEMANNIAN")
         print("  Level 4 (VISIBLE): 4D with signature (3,1) - Minkowski")
@@ -1319,11 +1349,11 @@ class LagrangianMasterDerivation(SimulationBase):
             Dictionary with all derivation results
         """
         print("\n" + "="*70)
-        print("LAGRANGIAN MASTER DERIVATION v22")
+        print("LAGRANGIAN MASTER DERIVATION")
         print("Core 26D Action with 12×(2,0) Paired Bridge System")
         print("="*70)
-        print("\nv22 Architecture: M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})")
-        print("Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)")
+        print("\nBulk: M^{26}(24,2) = 24 space (12 bridge pairs) + 2 times, one per 13D(12,1) shadow")
+        print("(the historical T¹ ×_fiber form with one shared time is retired)")
 
         # v23.7.0: Four-face racetrack/torsion terms toggle.
         # When False (default), the racetrack-moduli-potential, torsion-correction-term,
@@ -1413,6 +1443,13 @@ class LagrangianMasterDerivation(SimulationBase):
             List of Formula instances
         """
         formulas = []
+
+        # Wording only: what may be said about holonomy depends on the real
+        # form of phi (g2_form_convention), so it is read live, not typed.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            holonomy_claim,
+        )
+        _holonomy_sentence = holonomy_claim()["sentence"]
 
         # =================================================================
         # PART A: VIELBEIN FORMALISM
@@ -1550,7 +1587,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Add the Pneuma scalar/moduli sector S_Pneuma with Kahler moduli kinetic terms, dilaton, moduli potential V(T,phi), and conformal coupling xi R phi^2",
                     "Combine all sectors into the master action S_26 = S_EH + S_YM + S_Dirac + S_Pneuma and verify diffeomorphism, local Lorentz SO(24,2), and E8 x E8 gauge invariance"
                 ],
-                "method": "Lagrangian construction via gauge principle: diffeomorphism + local Lorentz + Yang-Mills invariance in D=26 critical dimension",
+                "method": "Lagrangian construction via gauge principle: diffeomorphism + local Lorentz + Yang-Mills invariance in the 26D bulk of signature (24,2) (calling 26 the critical dimension is withdrawn: with two times it is 27-28)",
                 "parentFormulas": ["einstein-hilbert-26d", "yang-mills-26d", "dirac-26d", "pneuma-coupling"]
             },
             terms={
@@ -1559,7 +1596,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "F^2": "Yang-Mills field strength squared (E8 x E8)",
                 "Psi": "26D Weyl spinor field (dim 2^13/2 = 4096)",
                 "T": "Kahler modulus (complex scalar parametrizing cycle volumes)",
-                "V(T)": "Moduli potential (Pneuma mechanism) stabilizing internal geometry"
+                "V(T)": "Moduli potential (Pneuma mechanism). Stabilising the internal geometry is OPEN on the adopted model: the leading-order flux potential on Y_7 is positive and runs away"
             }
         ))
 
@@ -1808,6 +1845,9 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="X^M X_M = tau^2 (conformal gauge)",
             category="DERIVED",
             description=(
+                "RETIRED (signature ruling 2026-08-31): Sp(2,R) gauging of (24,2) removes "
+                "two dimensions and gives ONE (23,1) shadow, not two 13D (12,1) shadows, so "
+                "the reduction claimed in the last sentence is withdrawn. "
                 "Second Sp(2,R) constraint: fixes the conformal time parameter tau by "
                 "requiring the norm of the position vector to equal tau^2. Together with "
                 "the X.P = 0 constraint, this reduces 26D to an effective 13D description "
@@ -1837,6 +1877,9 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="S_gf = integral d^26x [lambda(X.P) + zeta(X^2 - tau^2)]",
             category="DERIVED",
             description=(
+                "RETIRED (signature ruling 2026-08-31): Sp(2,R) gauging yields one (23,1) "
+                "shadow, not 13 dimensions per shadow, so the reduction claimed below is "
+                "withdrawn; the constraint action itself stands. "
                 "Sp(2,R) gauge-fixing action with Lagrange multipliers lambda and zeta "
                 "enforcing the orthogonality and conformal constraints. This action is added "
                 "to the master action to implement the Sp(2,R) gauge fixing, reducing the "
@@ -1870,7 +1913,10 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})",
             category="DERIVED",
             description=(
-                "v22 bulk structure: 26D spacetime M^{24,1} is decomposed as a fiber bundle "
+                "RETIRED form (signature ruling 2026-08-31): the single T^1 time fibre in the "
+                "formula is the shared-time picture; the adopted bulk has two times, one per "
+                "13D (12,1) shadow, as the rest of this description states. "
+                "Bulk structure: 26D spacetime M^{24,2} is decomposed "
                 "with one timelike direction per 13D shadow and 12 Euclidean bridge pairs B_i^{2,0}. "
                 "Each pair contributes 2 spatial dimensions for a total of 24 spatial + "
                 "2 temporal = 26 dimensions with (24,2) signature (3 derivation steps)."
@@ -1879,7 +1925,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=["derivations.n_bridge_pairs"],
             derivation={
                 "steps": [
-                    "Start from the 26D spacetime with (24,2) signature; the Sp(2,R) gauge constraint (STRUCTURAL) removes ghosts",
+                    "Start from the 26D spacetime with (24,2) signature; Sp(2,R) is invoked (STRUCTURAL), and ghost control of the second time is OPEN since the appeal to Bars' ghost-freedom theorem was withdrawn",
                     "Decompose the 24 spatial dimensions into 12 pairs of 2D Euclidean spaces B_i^{2,0}, each with positive-definite metric",
                     "Assemble the two 13D(12,1) shadows: M^{24,2} = (12,1) + (12,1), bridge pairs connecting corresponding spatial dimensions"
                 ],
@@ -1887,7 +1933,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["ghost-elimination"]
             },
             terms={
-                "T^1": "Two-time structure fiber with signature (0,1)",
+                "T^1": "Single time fibre of signature (0,1): the retired shared-time picture (the adopted bulk has one time per shadow)",
                 "B_i^{2,0}": "i-th Euclidean bridge pair with coordinates (y_1i, y_2i)",
                 "12": "Total number of bridge pairs (24 spatial / 2 per pair)"
             }
@@ -1900,10 +1946,13 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)",
             category="DERIVED",
             description=(
-                "v22 metric tensor with 12-pair bridge decomposition. The signature (24,1) has "
+                "RETIRED (signature ruling 2026-08-31): a single shared time; the adopted bulk "
+                "is (24,2), one time per 13D (12,1) shadow, and its 24 space directions are the "
+                "bridge sum below. "
+                "Historical metric tensor with 12-pair bridge decomposition. The signature (24,1) has "
                 "1 timelike direction (-dt^2) and 24 spacelike directions from 12 bridge pairs, "
                 "each contributing 2 Euclidean dimensions. This is the flat background metric for "
-                "the v22 architecture before gravitational perturbation (3 derivation steps)."
+                "the earlier architecture before gravitational perturbation (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
@@ -1911,13 +1960,13 @@ class LagrangianMasterDerivation(SimulationBase):
                 "steps": [
                     "From the bulk structure M^{24,2} = T^1 x_fiber (direct_sum_i B_i^{2,0}), write the metric as ds^2 = g_tt dt^2 + sum_i g_i(dy_1i, dy_2i)",
                     "For flat background: g_tt = -1 (Lorentzian time) and each B_i^{2,0} has Euclidean metric dy_1i^2 + dy_2i^2, giving ds^2 = -dt^2 + sum_i (dy_1i^2 + dy_2i^2)",
-                    "Counting the resulting directions gives 1 timelike and 24 spacelike, which is the signature (24,1) the v22 architecture declares"
+                    "Counting the resulting directions gives 1 timelike and 24 spacelike, which is the signature (24,1) the earlier architecture declared (retired: the adopted bulk has a second time)"
                 ],
                 "method": "Metric decomposition from fiber bundle structure",
                 "parentFormulas": ["v22-bulk-structure"]
             },
             terms={
-                "dt²": "Time component (unified, Lorentzian signature)",
+                "dt²": "Time component of the retired single-time picture (the adopted bulk has one time per shadow)",
                 "dy_{1i}²": "Input channel metric of i-th bridge pair (Euclidean)",
                 "dy_{2i}²": "Output channel metric of i-th bridge pair (Euclidean)"
             }
@@ -2018,7 +2067,8 @@ class LagrangianMasterDerivation(SimulationBase):
             }
         ))
 
-        # Ghost elimination formula (v22 base, with v24.2 shadow-time directions extension noted)
+        # Ghost elimination formula -- RETIRED claim (signature ruling
+        # 2026-08-31): ghost control of the second time is OPEN.
         formulas.append(Formula(
             id="ghost-elimination",
             label="(2.1.21)",
@@ -2026,29 +2076,31 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}",
             category="DERIVED",
             description=(
-                "Ghost elimination via two-time signature (24,2) (24,1). The v22 12x(2,0) bridge "
-                "pair system plus the two shadow-time directions (introduced in v24.2 as an "
-                "extension) gives the full 26D structure. The (24,2) two-time signature (24,2) "
-                "eliminates negative-norm ghost states and closed timelike curves (CTCs) that "
-                "would arise from multi-time signatures. Note: the shadow-time directions S^(2,0) are "
-                "a v24.2 extension of the base v22 framework (3 derivation steps)."
+                "RETIRED (signature ruling 2026-08-31): ghost control of the second time is "
+                "OPEN. The appeal to Bars' Sp(2,R) ghost-freedom theorem is withdrawn (Sp(2,R) "
+                "gauging of (24,2) gives one (23,1) shadow, not two (12,1) shadows), and the "
+                "shared clock t+ in step 3 is the retired single-time picture. "
+                "Historical claim: ghost elimination via the two-time signature (24,2). The "
+                "12x(2,0) bridge pair system plus two further directions gives the full 26D "
+                "structure, said to eliminate negative-norm ghost states and closed timelike "
+                "curves (CTCs) that would arise from multi-time signatures (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=["derivations.n_bridge_pairs"],
             derivation={
                 "steps": [
-                    "Start from the v22 bulk M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0}) with 12 bridge pairs providing 24 spatial + 1 time = 25 dimensions",
-                    "Add the shadow-time directions S^{2,0} (v24.2 extension) providing 2 additional spatial dimensions, for 27 total dimensions with (24,2) structure",
-                    "Verify ghost elimination: the shared clock t+ = (t1+t2)/sqrt(2) (single timelike direction) ensures all physical states have positive norm and prevents CTCs"
+                    "Start from the earlier bulk M^{24,1} = T^1 x_fiber (direct_sum_i B_i^{2,0}) with 12 bridge pairs providing 24 spatial + 1 time = 25 dimensions",
+                    "Add the directions S^{2,0} providing 2 additional spatial dimensions (this earlier bookkeeping counted 27; the adopted bulk is 26 = 24 space + 2 times)",
+                    "Historical check, retired: the shared clock t+ = (t1+t2)/sqrt(2) (single timelike direction) was said to ensure positive norm and prevent CTCs; with one time per shadow this argument no longer applies and ghost control is OPEN"
                 ],
-                "method": "Dimensional counting with signature analysis for ghost and CTC elimination",
+                "method": "Dimensional counting with signature analysis for ghost and CTC elimination (retired argument)",
                 "parentFormulas": ["v22-bulk-structure"]
             },
             terms={
-                "T^1": "Two-time structure fiber (single timelike direction)",
+                "T^1": "Single time fibre of the retired shared-time picture",
                 "B_i^{2,0}": "Euclidean bridge pairs (12 total, each 2D)",
-                "S^{2,0}": "Sampler data fields (v24.2 extension, 2D Euclidean)",
-                "(24,2)": "Structure with 24 physics core, 1 timelike, and 2 shadow-time direction dimensions (no ghosts)"
+                "S^{2,0}": "Sampler data fields (2D Euclidean)",
+                "(24,2)": "The adopted bulk signature: 24 space directions and 2 times, one per shadow; ghost control of the second time is OPEN"
             }
         ))
 
@@ -2181,26 +2233,26 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="ds^2_13 = e^{2B(z)} ds^2_6 + h_ab dz^a dz^b",
             category="DERIVED",
             description=(
-                "Kaluza-Klein ansatz for 13D to 6D reduction on a G2 holonomy manifold. The "
-                "7 compact dimensions carry G2 holonomy, which preserves exactly N=1 "
-                "supersymmetry in the effective lower-dimensional theory. The third Betti "
-                "number b_3 of the G2 manifold determines the number of fermion generations "
-                "(3 derivation steps)."
+                "Kaluza-Klein ansatz for 13D to 6D reduction on the G2 manifold Y_7, a compact "
+                "7-manifold with a torsion-free G2-structure. With phi the compact real form "
+                "(the active path, D-015) Y_7 has holonomy exactly G2 (pi_1 = 1) and the "
+                "reduction preserves N=1 supersymmetry; the split form stays a switchable path "
+                "on which that claim is not available (step 2 reports the branch in force). "
+                "The generation count is n_gen = b_2/4, the number of singular involutions "
+                "(the ruled route); b_3 counts the moduli (3 derivation steps)."
             ),
             inputParams=[],
             outputParams=[],
             derivation={
                 "steps": [
                     "Decompose the 13D metric as ds^2_13 = e^{2B(z)} ds^2_6 + h_ab(z) dz^a dz^b where h_ab is the G2 holonomy metric on the compact 7-manifold",
-                    ("The G2 HOLONOMY condition Hol(h) subset G2 would "
-                     "ensure N=1 SUSY; on the adopted g2_form_convention "
-                     "branch phi is the SPLIT real form, so this condition "
-                     "is not available and the step is recorded rather than "
-                     "asserted. It also read 'determines b_3 = 24 "
-                     "independent 3-cycles', which the condition never "
-                     "did: b_3 comes from the resolution count and is %d "
-                     "on the live seed."
-                     % _LIVE_B3),
+                    ("The holonomy condition Hol(h) = G2 ensures N=1 SUSY; "
+                     "whether it is available depends on the real form of "
+                     "phi. On the branch in force: %s This step formerly "
+                     "read 'determines b_3 = 24 independent 3-cycles', "
+                     "which the condition never did: b_3 comes from the "
+                     "resolution count and is %d on the live seed."
+                     % (_holonomy_sentence, _LIVE_B3)),
                     "Integrating over the G2 seven-manifold gives the 6D effective action and fixes the number of massless moduli by b_3"
                 ],
                 "method": "G2 holonomy compactification (Acharya-Witten 2001; Joyce 2000)",
@@ -2292,13 +2344,14 @@ class LagrangianMasterDerivation(SimulationBase):
                 "8 Cartan generators (maximal torus U(1)^8), plus 40 surviving roots from "
                 "the second E8 after G2 projection. Arithmetic check: 240 + 8 + 40 = 288. "
                 "This equals 2 * chi_eff = 2 * 144, linking the root lattice to the effective "
-                "Euler characteristic of the compactification (4 derivation steps)."
+                "index chi_eff = 48n (the K3 reading; not the Euler characteristic of Y_7, "
+                "which is 0) (4 derivation steps)."
             ),
             inputParams=["topology.mephorash_chi"],
             outputParams=["derivations.n_root_lattice"],
             derivation={
                 "steps": [
-                    "Begin with the E8 x E8 gauge group (496 generators total) arising from bosonic string anomaly cancellation in D=26",
+                    "Begin with the E8 x E8 gauge group (496 generators total), which anomaly cancellation selects for the 10D heterotic string and which is taken here as the bulk gauge group",
                     "Decompose the first E8: 248 = 240 root vectors + 8 Cartan generators, where the 240 roots form the E8 root lattice in 8 dimensions",
                     "From the second E8 breaking via G2 compactification, extract 40 additional roots that survive the projection to 4D (out of 248 total)",
                     "Sum contributions: 240 (E8 roots) + 8 (Cartan U(1)^8) + 40 (second E8 survivors) = 288 = 2 x chi_eff = 2 x 144"
@@ -2311,7 +2364,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "8_{Cartan}": "Cartan subalgebra generators of E8 (maximal torus U(1)^8, rank = 8)",
                 "40_{E_8'}": "Surviving roots from second E8 after G2 compactification projection to 4D",
                 "288": "Total root lattice size = 240 + 8 + 40 (verified: arithmetic sum is correct)",
-                "chi_eff": "Effective Euler characteristic = 144, so 288 = 2 x 144"
+                "chi_eff": "Effective index chi_eff = 2 x sum chi(K3) = 48n (the K3 reading), 144 here, so 288 = 2 x 144"
             }
         ))
 
@@ -2330,6 +2383,9 @@ class LagrangianMasterDerivation(SimulationBase):
             plain_text="V({T_i}) = e^K ( Sum_i |D_{T_i} W|^2 - 3|W|^2 ), W = Sum_i Lambda_i exp(-a_i T_i) + W_0",
             category="PREDICTED",
             description=(
+                "OFF-PATH (TCS construction; racetrack calibrated at the off-path seed "
+                "b_3 = 24): the adopted Y_7 is a Joyce orbifold with no gaugino racetrack, "
+                "and its moduli are unfixed at leading order (OPEN). "
                 "Racetrack moduli potential for the 4-face TCS G2 structure. The N=1 "
                 "supergravity F-term scalar potential V = e^K (|DW|^2 - 3|W|^2) is "
                 "evaluated with a racetrack superpotential W containing one non-perturbative "
@@ -2359,7 +2415,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 r"T_i": {"description": "Kahler modulus for face i (i=1..4), controlling the volume of the i-th 2-cycle in the TCS construction"},
                 r"\Lambda_i": {"description": "Non-perturbative scale for face i, from M2-brane instanton wrapping on associative 3-cycles"},
-                r"a_i": {"description": "Racetrack coefficient a_i = b_3/i = 24/i, geometric scaling from the third Betti number"},
+                r"a_i": {"description": "Racetrack coefficient a_i = b_3/i = 24/i, calibrated at the off-path seed b_3 = 24 (OFF-PATH)"},
                 r"W_0": {"description": "Tree-level flux superpotential contribution from G-flux through the G2 manifold"},
                 r"K": {"description": "Kahler potential K = -2 ln(Vol_7) for the G2 moduli space"},
                 r"D_{T_i} W": {"description": "Kahler-covariant derivative of the superpotential: D_{T_i} W = dW/dT_i + (dK/dT_i) W"}
@@ -2378,7 +2434,7 @@ class LagrangianMasterDerivation(SimulationBase):
             category="PREDICTED",
             description=(
                 "Torsion correction to the 26D master Lagrangian from G2 structure deformation. "
-                "In G2 holonomy the associative 3-form phi defines a preferred torsion class. "
+                "For a G2-structure the associative 3-form phi determines the intrinsic torsion classes. "
                 "The contorsion T^a_{bc} measures the deviation of the full connection from the "
                 "torsion-free Levi-Civita connection. The first term (T^2) is the standard "
                 "Cartan torsion scalar; the second term couples torsion to the G2 3-form via "
@@ -2393,7 +2449,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "steps": [
                     "The G2 structure on the internal 7-manifold defines an associative 3-form phi and co-associative 4-form *phi",
                     "The intrinsic torsion of a G2 structure decomposes into 4 irreducible classes tau_0 in Omega^0, tau_1 in Omega^1, tau_2 in Omega^2_14, tau_3 in Omega^3_27 (Fernandez-Gray 1982)",
-                    "For the TCS construction, tau_0 = 0 (d phi wedge phi = 0, closed 3-form) but tau_1, tau_2 receive small corrections O(epsilon) from the gluing region",
+                    "OFF-PATH (TCS construction; the adopted Y_7 is Joyce's resolution of T^7/(Z/2)^3): for the TCS construction, tau_0 = 0 (d phi wedge phi = 0, closed 3-form) but tau_1, tau_2 receive small corrections O(epsilon) from the gluing region",
                     "The contorsion tensor T^a_{bc} = Gamma^a_{[bc]} - Gamma_LC^a_{[bc]} captures the torsion arising from the non-Levi-Civita part of the connection",
                     "The torsion Lagrangian delta_L = (1/2 kappa^2) T^abc T_abc + (lambda/6) T^abc phi_abc is the most general parity-even scalar quadratic in torsion coupled to the G2 3-form"
                 ],
@@ -2442,7 +2498,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "By Weyl's asymptotic law for a d-dimensional compact Riemannian manifold, lambda_n ~ (4 pi)^{2/d} [Gamma(d/2+1)/Vol(X)]^{2/d} n^{2/d}; for d=7 this gives lambda_n ~ C_7 n^{2/7}",
                     "Each eigenvalue contributes a spectral residue factor R_n = exp(-lambda_n/b_3) to the Kaluza-Klein tower truncation of the effective 4D action",
                     "The total spectral dressing R_total = prod_n R_n is regularised using the spectral zeta function: ln R_total = -(1/b_3) zeta_{Delta_7}(-1), with zeta_{Delta_7}(s) = sum_n lambda_n^{-s} analytically continued to s = -1",
-                    "The exponential suppression by b_3 = 24 ensures rapid convergence: only the lowest ~b_3 KK modes contribute appreciably to 4D physics"
+                    f"The exponential suppression by b_3 (= {_LIVE_B3} on the seed in force) ensures rapid convergence: only the lowest ~b_3 KK modes contribute appreciably to 4D physics"
                 ],
                 "method": "analytical",
                 "derivation_type": "analytical",
@@ -2451,7 +2507,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 r"\mathcal{R}_n": {"description": "Spectral residue for KK mode n; exponentially suppresses high-lying Laplacian eigenvalues"},
                 r"\lambda_n": {"description": "n-th eigenvalue of the Laplacian Delta_7 on the compact G2 7-manifold"},
-                r"b_3": {"description": "Third Betti number of the G2 manifold (= 24); sets the natural energy scale for the spectral cutoff"},
+                r"b_3": {"description": f"Third Betti number of the G2 manifold (= {_LIVE_B3} on the seed in force); sets the natural energy scale for the spectral cutoff"},
                 r"\zeta_{\Delta_7}(s)": {"description": "Spectral zeta function of the Laplacian on X_7, defined as sum_n lambda_n^{-s} and analytically continued to all s"},
                 r"\mathcal{R}_{\text{total}}": {"description": "Total spectral dressing factor: regularised infinite product over all KK modes"}
             }
@@ -2543,7 +2599,7 @@ class LagrangianMasterDerivation(SimulationBase):
             derivation={
                 "steps": [
                     "Begin with the 13D per-shadow Lagrangian after bridge OR",
-                    "Apply face OR (V_face^(f)(local OR)): this selects the dominant visible face from the 4 faces of the TCS G2 manifold",
+                    "Apply face OR (V_face^(f)(local OR)): this selects the dominant visible face from the 4 faces (formerly attributed to a TCS G2 manifold, which is off-path; the adopted Y_7 is a Joyce orbifold)",
                     "Perform G2 Kaluza-Klein reduction on the selected face: 13D -> 4D, compactifying the 7D G2 internal space V_7",
                     "The 4D Planck mass emerges from the volume: M_Pl^2 = M_*^{9} Vol(V_7)",
                     "The cosmological constant arises from flux: Lambda = (integral F wedge phi)^2 / Vol",
@@ -2604,9 +2660,11 @@ class LagrangianMasterDerivation(SimulationBase):
                 "  |F_4|^2/2: M-theory 4-form flux kinetic term; F_4 = dC_3 is the "
                 "field strength of the C_3 potential, with 4-form flux threading "
                 "associative 3-cycles of the G2 manifold.\n"
-                "  V_mod: Racetrack moduli potential stabilising the 4 Kahler moduli "
+                "  V_mod: OFF-PATH -- the four-face TCS racetrack, calibrated at the "
+                "off-path seed b_3 = 24, meant to stabilise 4 Kahler moduli "
                 "T_1,...,T_4 via non-perturbative M2-brane instantons (see "
-                "racetrack-moduli-potential-26d-v23).\n"
+                "racetrack-moduli-potential-26d-v23). Y_7 has no gaugino racetrack, "
+                "and its moduli, Re(T) included, are OPEN.\n"
                 "  V_tor: Torsion correction from G2 structure deformation, encoding "
                 "the Fernandez-Gray tau_1 intrinsic torsion class.\n"
                 "  sum_n R_n psi_bar_n D_slash psi_n: Kaluza-Klein tower of fermion "
@@ -2617,7 +2675,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "the 26D bulk into dual 13D shadows.\n"
                 "  sum_f V_face^(f) (Layer 2 -- local OR): Per-face potential governing "
                 "face selection within each shadow. This implements the second OR layer, "
-                "selecting the visible face from the 4 TCS faces.\n"
+                "selecting the visible face from the 4 faces (formerly attributed to "
+                "the off-path TCS construction).\n"
                 "The two-layer hierarchy is strict: bridge OR (Layer 1) must act first "
                 "to create the dual shadows, then face OR (Layer 2) selects which face "
                 "is visible within each shadow. This mirrors the M-theory "
@@ -2637,22 +2696,26 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "Begin with the 26D spacetime M^{26,1} decomposed as "
-                    "26D = 4D (visible M^{3,1}) + 7D (G2 internal X_7) "
-                    "+ 14D (7 bridge pairs for shadow/face structure) "
-                    "+ 2D (shadow-time directions S^{2,0})",
+                    "Begin with the 26D bulk of signature (24,2): two 13D "
+                    "(12,1) shadows, each descending as 13 = 7 (G2 internal "
+                    "Y_7) + 6 (external) and 6 = 4 (visible M^{3,1}) + 2. "
+                    "(An earlier bookkeeping, 4 + 7 + 14 + 2 = 27 with a "
+                    "spacetime M^{26,1}, is retired.)",
                     "Write the Einstein-Hilbert gravitational sector "
                     "R_26/(2 kappa_26^2) with kappa_26^2 = 8 pi G_27, "
                     "the 26D Newton constant related to M_* via "
                     "kappa_26^2 ~ M_*^{-25}",
                     "Include the M-theory 4-form flux kinetic term "
-                    "-(1/2)|F_4|^2 where F_4 = dC_3 threads the b_3 = 24 "
-                    "independent associative 3-cycles of the G2 manifold, "
-                    "providing flux stabilisation of complex structure moduli",
-                    "Add the racetrack moduli potential V_mod = "
-                    "sum_i Lambda_i exp(-a_i T_i) + Lambda_0 with "
-                    "a_i = b_3/i = 24/i for i=1..4, stabilising the 4 "
-                    "Kahler moduli of the TCS G2 construction",
+                    "-(1/2)|F_4|^2 where F_4 = dC_3 threads the b_3 = %d "
+                    "independent 3-cycle classes of the G2 manifold (b_3 on "
+                    "the seed in force). On Y_7 the leading-order flux "
+                    "potential is positive and runs away, so flux alone "
+                    "does not stabilise the moduli (OPEN)" % _LIVE_B3,
+                    "OFF-PATH (calibrated at the off-path seed b_3 = 24; "
+                    "Y_7 has no gaugino racetrack): add the racetrack moduli "
+                    "potential V_mod = sum_i Lambda_i exp(-a_i T_i) + "
+                    "Lambda_0 with a_i = b_3/i = 24/i for i=1..4, meant to "
+                    "stabilise the 4 Kahler moduli of the TCS G2 construction",
                     "Include the torsion correction V_tor from the "
                     "Fernandez-Gray tau_1 class of the G2 structure, "
                     "coupling contorsion to the associative 3-form",
@@ -2665,7 +2728,8 @@ class LagrangianMasterDerivation(SimulationBase):
                     "dual 13D shadows through bridge direction integration",
                     "Introduce sum_f V_face^(f) as the Layer 2 (local) OR "
                     "potential that governs face selection within each shadow, "
-                    "choosing the visible face from the 4 TCS faces",
+                    "choosing the visible face from the 4 faces (formerly "
+                    "attributed to the off-path TCS construction)",
                     "Verify that the complete action is diffeomorphism-invariant, "
                     "locally Lorentz SO(24,2)-invariant, and respects the G2 "
                     "structure group of the internal manifold"
@@ -2691,10 +2755,12 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "|F_4|^2": (
                     "Squared norm of the M-theory 4-form flux F_4 = dC_3, "
-                    "threading b_3 = 24 associative 3-cycles"
+                    "threading the b_3 = %d independent 3-cycle classes "
+                    "(seed in force)" % _LIVE_B3
                 ),
                 "V_{mod}": (
-                    "Racetrack moduli potential: V = sum_i Lambda_i exp(-a_i T_i) + Lambda_0 "
+                    "OFF-PATH racetrack, calibrated at the off-path seed b_3 = 24: "
+                    "V = sum_i Lambda_i exp(-a_i T_i) + Lambda_0 "
                     "with a_i = 24/i (see racetrack-moduli-potential-26d-v23)"
                 ),
                 "V_{tor}": (
@@ -2710,11 +2776,13 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "V_{face}^{(f)}": (
                     "Layer 2 (local) OR potential for face f: governs face "
-                    "selection within each shadow (f = 1..4 TCS faces)"
+                    "selection within each shadow (f = 1..4 faces; their TCS "
+                    "attribution is off-path)"
                 ),
                 "26D decomposition": (
-                    "27 = 4 (visible spacetime M^{3,1}) + 7 (G2 internal X_7) "
-                    "+ 14 (7 bridge pairs) + 2 (shadow-time directions S^{2,0})"
+                    "26 = 24 space + 2 times = two 13D (12,1) shadows, each "
+                    "13 = 7 (Y_7) + 6 (external). Formerly written "
+                    "27 = 4 + 7 + 14 (7 bridge pairs) + 2 (S^{2,0}); retired"
                 ),
             }
         ))
@@ -2733,6 +2801,11 @@ class LagrangianMasterDerivation(SimulationBase):
             ),
             category="ANSATZ",
             description=(
+                "OFF-PATH (TCS construction; calibrated at the off-path seed "
+                "b_3 = 24): the adopted Y_7 is a Joyce orbifold with no gaugino "
+                "racetrack, and its moduli, Re(T) included, are unfixed at "
+                "leading order (OPEN). Kept on the books as the costed "
+                "alternative.\n"
                 "Racetrack moduli potential for the 26D master Lagrangian "
                 "(Topic 03) with explicit geometric scaling a_i = b_3/i. "
                 "This is the leading-order moduli potential V_mod appearing "
@@ -2742,8 +2815,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "controlling the volume of the i-th 2-cycle. The non-perturbative "
                 "exponential contributions Lambda_i exp(-a_i T_i) arise from "
                 "M2-brane instantons wrapping associative 3-cycles of the G2 "
-                "manifold, with wrapping numbers determined by the third Betti "
-                "number b_3 = 24.\n"
+                "manifold, with wrapping numbers read from the off-path seed "
+                "b_3 = 24.\n"
                 "The geometric scaling a_i = b_3/i = 24/i encodes the hierarchy "
                 "of wrapping numbers: the first face has the largest instanton "
                 "action (a_1 = 24, most strongly stabilised), while the fourth "
@@ -2766,8 +2839,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Here we adapt both frameworks from Type IIB Calabi-Yau to "
                 "M-theory G2: D3-brane instantons become M2-brane instantons, "
                 "the Calabi-Yau Kahler moduli become G2 Kahler moduli, and "
-                "the racetrack scales a_i are fixed by the G2 topology (b_3 = 24) "
-                "rather than being free parameters.\n"
+                "the racetrack scales a_i were tied to the off-path seed "
+                "b_3 = 24 rather than being free parameters.\n"
                 "At the minimum dV/dT_i = 0, all four moduli are stabilised and "
                 "the residual vacuum energy is Lambda_0 + sum_i Lambda_i exp(-a_i T_i^*), "
                 "contributing to the observed cosmological constant."
@@ -2800,10 +2873,11 @@ class LagrangianMasterDerivation(SimulationBase):
                     "a minimum at dV/dT_i = 0 where "
                     "Lambda_i a_i exp(-a_i T_i^*) = 0 for each i, fixing "
                     "T_i^* = ln(Lambda_i a_i / ...) / a_i",
-                    "Verify arithmetic: b_3 = 24 divides evenly by i=1,2,3,4, "
-                    "giving a_i = {24, 12, 8, 6}, all positive integers. "
-                    "This integrality is required for well-defined instanton "
-                    "wrapping numbers"
+                    "Verify arithmetic at the off-path seed: b_3 = 24 divides "
+                    "evenly by i=1,2,3,4, giving a_i = {24, 12, 8, 6}, all "
+                    "positive integers, as well-defined instanton wrapping "
+                    "numbers require. The integrality is a property of the "
+                    "off-path seed, not of the mechanism"
                 ],
                 "method": (
                     "M-theory G2 racetrack moduli stabilisation, adapting "
@@ -2842,9 +2916,10 @@ class LagrangianMasterDerivation(SimulationBase):
                     "offset enabling a metastable de Sitter minimum"
                 ),
                 "b_3 = 24": (
-                    "Third Betti number of the G2 manifold, counting the "
-                    "independent associative 3-cycles. Sets the natural scale "
-                    "for instanton actions: a_i = b_3/i"
+                    "The off-path seed (retired; unreachable by Joyce's "
+                    "construction) at which this racetrack was calibrated. "
+                    "It set the scale for the instanton actions a_i = b_3/i; "
+                    "it is not the adopted b_3"
                 ),
             }
         ))
@@ -2917,10 +2992,13 @@ class LagrangianMasterDerivation(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description=(
-                "Graviton DOF after Sp(2,R) gauge fixing reduces 26D to effective 13D per "
-                "shadow. In 13D, the graviton has D(D-3)/2 = 13 * 10 / 2 = 65 physical "
-                "polarizations. The Sp(2,R) constraints X.P=0 and X^2=tau^2 remove the "
-                "extra time-like degrees of freedom."
+                "RETIRED bookkeeping. The value is D(D-3)/2 at D = 27, i.e. 27 * 24 / 2 = 324, "
+                "the graviton DOF count of the retired 27-dimension decomposition "
+                "(derive_dual_shadow_structure's dof_graviton_27). The name records a RETIRED "
+                "reading (signature ruling 2026-08-31) in which the Sp(2,R) constraints X.P=0 "
+                "and X^2=tau^2 reduced 26D to 13D per shadow; Sp(2,R) gauging of (24,2) gives "
+                "one (23,1) shadow instead. A 13D (12,1) shadow of the adopted bulk would carry "
+                "13 * 10 / 2 = 65 graviton polarizations; the value is not that count."
             ),
             derivation_formula="sp2r-gauge-fixed-action",
             no_experimental_value=True
@@ -2960,9 +3038,11 @@ class LagrangianMasterDerivation(SimulationBase):
             units="dimensionless",
             status="GEOMETRIC",
             description=(
-                "v22: Total number of Euclidean bridge pairs in the bulk decomposition "
-                "M^{24,2} = T^1 x_fiber (direct_sum_{i=1}^{12} B_i^{2,0}). Each of the 12 "
-                "pairs contributes 2 spatial dimensions, totaling 24 spatial + 1 time = 25D."
+                "Total number of Euclidean bridge pairs: 12. Each pair contributes 2 spatial "
+                "dimensions, giving the bulk's 24 space directions; with 2 times, one per 13D "
+                "(12,1) shadow, the bulk is 26D of signature (24,2). Under WA-1 (adopted) each "
+                "bridge is one resolved A1 component of Y_7 (one U(1)). The historical "
+                "T^1 x_fiber decomposition counted one shared time (25D) and is retired."
             ),
             no_experimental_value=True
         ))
@@ -2973,7 +3053,7 @@ class LagrangianMasterDerivation(SimulationBase):
             units="dimensionless",
             status="DERIVED",
             description=(
-                "[PM Hypothesis] v22: Minimum number of active bridge pairs required for "
+                "[PM Hypothesis] Minimum number of active bridge pairs required for "
                 "quantum coherence stability in wet biological systems (tau > 25ms). Based "
                 "on the Penrose-Hameroff Orch-OR decoherence requirements for microtubule "
                 "quantum states. At least 6 of the 12 total pairs must be coherently active."
@@ -2989,7 +3069,7 @@ class LagrangianMasterDerivation(SimulationBase):
             units="seconds",
             status="DERIVED",
             description=(
-                "[PM Hypothesis] v22: Minimum coherence time for consciousness gating in "
+                "[PM Hypothesis] Minimum coherence time for consciousness gating in "
                 "the bridge pair system. The threshold tau > 25ms corresponds to the decoherence "
                 "timescale for quantum states in wet biological microtubules, as required by "
                 "the Penrose-Hameroff Orch-OR framework for quantum consciousness."
@@ -3005,9 +3085,9 @@ class LagrangianMasterDerivation(SimulationBase):
             units="dimensionless",
             status="GEOMETRIC",
             description=(
-                "v22: Total bridge spatial dimensions = 12 pairs x 2D per pair = 24D. "
-                "Combined with the 1D two-time structure, the full spacetime is 26D with (24,2) "
-                "signature. The 26D extension adds two shadow-time directions (v24.2)."
+                "Total bridge spatial dimensions = 12 pairs x 2D per pair = 24D: the bulk's 24 "
+                "space directions. With the 2 times, one per 13D (12,1) shadow, the full "
+                "spacetime is 26D with (24,2) signature."
             ),
             no_experimental_value=True
         ))
@@ -3026,6 +3106,12 @@ class LagrangianMasterDerivation(SimulationBase):
 
         b3, b2 = seed_values(resolve_path())
 
+        # Wording only: holonomy depends on the real form of phi.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            holonomy_claim,
+        )
+        hol_sentence = holonomy_claim()["sentence"]
+
         racetrack_scales = [b3 / i for i in (1, 2, 3, 4)]
         scales_str = "{" + ", ".join("%g" % v
                                      for v in racetrack_scales) + "}"
@@ -3035,16 +3121,17 @@ class LagrangianMasterDerivation(SimulationBase):
         return SectionContent(
             section_id="2",
             subsection_id="2.1",
-            title="Core M^{26}(24,2) Master Action: v24.2 12×(2,0) Paired Bridge System",
+            title="Core M^{26}(24,2) Master Action: the 12×(2,0) Paired Bridge System",
             abstract=(
                 "Comprehensive derivation of the M^{26}(24,2) master action using vielbein/tetrad "
-                "formalism with G2 holonomy compactification to 4D. The v24.2 architecture "
-                "decomposes the bulk as M^{26}(24,2) = T^1 x_fiber (direct_sum B_i^{2,0} oplus S^{2,0}) with "
-                "12 paired Euclidean bridges plus two shadow-time directions. Covers: (A) vielbein formalism and spin connection, "
+                "formalism with G2 compactification to 4D. The bulk has 24 space directions, "
+                "grouped as 12 paired Euclidean bridges, and two times, one per 13D (12,1) "
+                "shadow; the historical T^1 x_fiber form, with a single shared time, is retired. "
+                "Covers: (A) vielbein formalism and spin connection, "
                 "(B) 26D Einstein-Hilbert, Yang-Mills, Dirac, and Pneuma sectors, (C) Euler-Lagrange "
-                "equations yielding 26D Einstein field equations, (D) v22 bridge system with "
+                "equations yielding 26D Einstein field equations, (D) the bridge system with "
                 "distributed OR reduction, and (E) Kaluza-Klein reduction chain 26D -> 13D -> "
-                "7D -> 4D via G2 holonomy, yielding 2 graviton polarizations and a 288-root "
+                "7D -> 4D on the G2 manifold Y_7, yielding 2 graviton polarizations and a 288-root "
                 "lattice from E8 x E8 breaking."
             ),
             content_blocks=[
@@ -3077,8 +3164,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     type="paragraph",
                     content=(
                         "The master action in 26D contains gravity, gauge fields, fermions, "
-                        "and moduli (Pneuma coupling). The critical dimension D=26 ensures "
-                        "conformal anomaly cancellation in the bosonic string."
+                        "and moduli (Pneuma coupling), on a bulk of signature (24,2). Calling "
+                        "26 the critical dimension is withdrawn: with two times the bosonic "
+                        "critical dimension is 27-28 (signature ruling 2026-08-31)."
                     )
                 ),
                 ContentBlock(
@@ -3089,15 +3177,16 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="heading",
                     level=3,
-                    content="v24.2 12×(2,0) Paired Bridge System"
+                    content="The 12×(2,0) Paired Bridge System"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The v24.2 framework introduces 12 PAIRED Euclidean bridges plus S^{2,0} sampler data "
-                        "fields. The full bulk structure is M^{26}(24,2) = T¹ ×_fiber "
-                        "(⊕_{i=1}^{12} B_i^{2,0} ⊕ S^{2,0}), where each B_i has coordinates (y₁ᵢ, y₂ᵢ). "
-                        "The metric decomposes as ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂² with structure (24,2)."
+                        "The bulk's 24 space directions form 12 PAIRED Euclidean bridges B_i^{2,0}, "
+                        "each with coordinates (y₁ᵢ, y₂ᵢ), and the bulk carries two times, one per "
+                        "13D (12,1) shadow: signature (24,2). Under WA-1 (adopted) each bridge is one "
+                        "resolved A₁ component of Y₇ (one U(1)). The formula below is the historical "
+                        "T¹ ×_fiber form, whose single shared time is retired."
                     )
                 ),
                 ContentBlock(
@@ -3108,7 +3197,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The v22 distributed OR reduction uses R_⊥ = ⊗ᵢ₌₁¹² R_⊥_i, a tensor product "
+                        "The distributed OR reduction uses R_⊥ = ⊗ᵢ₌₁¹² R_⊥_i, a tensor product "
                         "of 12 Mobius operators. Each R_⊥_i² = -I gives the double-cover property, "
                         "but R_⊥² = (-I)^12 = +I since 12 is even. The bridge Lagrangian "
                         "L_bridge = Σᵢ [(∂y₁ᵢ)² + (∂y₂ᵢ)²] distributes kinetic energy across 12 I/O channels."
@@ -3151,12 +3240,17 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 ContentBlock(
                     type="heading",
-                    content="Four-Face Racetrack Potential",
+                    content="Four-Face Racetrack Potential (off-path)",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
+                        f"OFF-PATH: this racetrack was calibrated at the "
+                        f"off-path seed b_3 = 24. Y_7 has no gaugino "
+                        f"racetrack, and its moduli, Re(T) included, are "
+                        f"unfixed at leading order (OPEN); the potential is "
+                        f"kept on the books as the costed alternative. "
                         f"The four moduli T_1,...,T_4 sit one per face of "
                         f"the construction, the face count being derived as "
                         f"the moved coordinates of an involution. (This "
@@ -3181,7 +3275,7 @@ class LagrangianMasterDerivation(SimulationBase):
                         f"integral, so the integrality was a property of "
                         f"b_3 = 24 rather than of the mechanism. The F-term "
                         f"scalar "
-                        "potential V = e^K(|DW|^2 - 3|W|^2) then stabilises all four moduli "
+                        "potential V = e^K(|DW|^2 - 3|W|^2) would then stabilise all four moduli "
                         "simultaneously. The torsion correction term and spectral residue dressing "
                         "factor provide sub-leading corrections from G2 structure deformation and "
                         "Kaluza-Klein tower effects respectively. Note: these four-face terms are "
@@ -3207,11 +3301,11 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="success",
-                    title="Key Results (v22)",
+                    title="Key Results",
                     content=(
-                        "The v22 vielbein formalism derivation establishes:\n"
+                        "The vielbein formalism derivation establishes:\n"
                         "- 26D graviton has D(D-3)/2 = 299 physical DOF\n"
-                        "- v22 Bridge pairs: 12 × (2,0) = 24 spatial DOF\n"
+                        "- Bridge pairs: 12 × (2,0) = the bulk's 24 space directions\n"
                         "- G2 reduction yields 4D with 2 graviton polarizations\n"
                         "- Root lattice structure: 288 = 240 + 8 + 40\n"
                         "- Consciousness I/O: 12 gates (6 min for biological systems)"
@@ -3265,13 +3359,15 @@ class LagrangianMasterDerivation(SimulationBase):
                         "degree of freedom.\n\n"
                         "<strong>Stage 2 \u2014 Face OR Reduction (13D \u2192 4D):</strong> "
                         "The face/local OR potential V_face^(f)(local OR) selects the "
-                        "dominant visible face from the 4 K\u00e4hler moduli faces of the TCS "
-                        "G2 manifold. G2 Kaluza-Klein compactification then reduces the "
-                        "remaining 7 internal dimensions, yielding the "
-                        "<strong>L_4D</strong> \u2014 the 4D effective Lagrangian. This is "
+                        "dominant visible face from the 4 faces (formerly attributed to an "
+                        "off-path TCS G2 manifold). G2 Kaluza-Klein compactification on Y\u2087 "
+                        "then reduces the remaining 7 internal dimensions, yielding the "
+                        "<strong>L_4D</strong> \u2014 the 4D effective Lagrangian. Its target is "
                         "the Standard Model (SU(3)\u00d7SU(2)\u00d7U(1) gauge + Higgs + Yukawa) "
                         "coupled to Einstein gravity, with M_Pl\u00b2 = M_*\u00b9\u00b9 Vol(V_7) and "
-                        "\u039b = (\u222b F \u2227 \u03c6)\u00b2 / Vol determined entirely by internal geometry."
+                        "\u039b = (\u222b F \u2227 \u03c6)\u00b2 / Vol. On Y\u2087 the chiral sector, the "
+                        "moduli (Re(T) included) and dark energy are OPEN, so this stage is a "
+                        "programme rather than a result."
                     )
                 ),
                 ContentBlock(
@@ -3295,12 +3391,14 @@ class LagrangianMasterDerivation(SimulationBase):
                         "<strong>L_4D</strong>: The 4D effective Lagrangian after face OR "
                         "reduction followed by G2 Kaluza-Klein compactification. The face "
                         "OR selects the dominant visible face, and G2 compactification "
-                        "integrates out the 7 internal dimensions of V_7. The resulting "
-                        "4D(3,1) theory is the complete Standard Model coupled to Einstein "
-                        "gravity plus a cosmological constant from flux. The 4D Planck mass "
-                        "M_Pl^2 = M_*^{9} Vol(V_7) and the cosmological constant "
-                        "Lambda = (integral F wedge phi)^2 / Vol are both determined "
-                        "by the internal geometry, with no free parameters."
+                        "integrates out the 7 internal dimensions of V_7. The intended "
+                        "4D(3,1) theory is the Standard Model coupled to Einstein "
+                        "gravity plus a cosmological constant from flux, with the 4D Planck "
+                        "mass M_Pl^2 = M_*^{9} Vol(V_7) and the cosmological constant "
+                        "Lambda = (integral F wedge phi)^2 / Vol set by the internal "
+                        "geometry. That is not yet established on Y_7: its chiral sector, "
+                        "its moduli (Re(T) included) and dark energy are OPEN, and the "
+                        "leading-order flux potential runs away rather than fixing Vol."
                     )
                 ),
                 ContentBlock(
@@ -3315,7 +3413,7 @@ class LagrangianMasterDerivation(SimulationBase):
                         "26D \u2192 13D (bridge reduction): bridge OR integrates out 24 bridge DOF, creating dual 13D(12,1) shadows",
                         "L_13D: 13D(12,1) per-shadow Lagrangian \u2014 inherits face OR potential V_face^(f)(local OR)",
                         "13D \u2192 4D (face reduction): face OR selects visible face, G2 KK compactifies 7D internal space",
-                        "L_4D: 4D(3,1) effective Lagrangian \u2014 SM + GR + \u039b, all parameters fixed by geometry",
+                        "L_4D: 4D(3,1) effective Lagrangian \u2014 the intended SM + GR + \u039b; chirality, moduli and dark energy are OPEN on Y\u2087",
                     ]
                 ),
                 # =============================================================
@@ -3329,24 +3427,27 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The 27 dimensions of the PM framework admit a precise physical "
-                        "decomposition into four sectors:\n\n"
-                        "26D = 4D (visible spacetime) + 7D (G2 internal) "
-                        "+ 14D (bridges) + 2D (shadow-time directions)\n\n"
+                        "The 26 dimensions of the bulk, signature (24,2), split into two "
+                        "13D (12,1) shadows, each descending as 13 = 7 (the internal "
+                        "manifold) + 6 (external), with 6 = 4 (visible) + 2. An earlier "
+                        "four-sector bookkeeping, 4 + 7 + 14 (bridges) + 2 (shadow-time "
+                        "directions) = 27, is retired.\n\n"
                         f"The 4D visible spacetime M^{{3,1}} is the Minkowski "
                         f"(or FRW) spacetime we observe. The 7D internal "
-                        f"manifold X_7 is a G2-STRUCTURE manifold -- "
-                        f"HOLONOMY is not claimed on the adopted branch, "
-                        f"where phi is the SPLIT real form with induced "
-                        f"signature (4,3) -- and it carries the internal "
-                        f"geometry whose topology (b_3 = {b3} independent "
-                        f"3-cycles, chi_eff = 144 by an UNRULED route) "
-                        f"determines all 4D coupling constants. This passage "
-                        f"used to type b_3 = 24. "
-                        "The 14D bridge sector consists of 7 bridge pairs (each 2D), "
+                        f"manifold is Y_7, Joyce's resolution of T^7/(Z/2)^3 "
+                        f"with (b_2, b_3) = ({b2}, {b3}). What may be said "
+                        f"about its holonomy follows the real form of phi; on "
+                        f"the branch in force: {hol_sentence} Its effective "
+                        f"index chi_eff is read as 2 x sum chi(K3) = 48n over "
+                        f"the n singular involutions (the K3 reading, "
+                        f"adopted); the Euler characteristic of Y_7 is 0. "
+                        f"Which 4D couplings its topology fixes is still open, "
+                        f"since its moduli, Re(T) included, are unfixed at "
+                        f"leading order. This passage formerly typed "
+                        f"b_3 = 24. "
+                        "The bulk's 24 space directions are the 12 bridge pairs (2D each), "
                         "which carry the shadow and face structure of the two-layer OR "
-                        "hierarchy. The 2D shadow-time directions S^{2,0} (introduced in v24.2) "
-                        "provides the final two spatial dimensions completing the 26D total."
+                        "hierarchy; the two times, one per shadow, complete the 26."
                     )
                 ),
                 ContentBlock(
@@ -3354,13 +3455,14 @@ class LagrangianMasterDerivation(SimulationBase):
                     callout_type="info",
                     title="26D Dimensional Decomposition",
                     content=(
-                        "4D: Visible spacetime M^{3,1} (3 spatial + 1 temporal)\n"
-                        f"7D: G2-structure internal manifold X_7 "
-                        f"(b_3 = {b3}, chi_eff = 144 by an UNRULED route; "
-                        f"HOLONOMY not claimed)\n"
-                        "14D: 7 bridge pairs (shadow/face structure, 2D each)\n"
-                        "2D: Sampler data fields S^{2,0} (v24.2 extension)\n"
-                        "Total: 4 + 7 + 14 + 2 = 27 dimensions with (24,2) structure"
+                        "Bulk: 26D, signature (24,2) = 24 space + 2 times, one per shadow\n"
+                        "Each 13D (12,1) shadow: 13 = 7 (internal) + 6 (external); "
+                        "6 = 4 (visible M^{3,1}) + 2\n"
+                        f"7D: Y_7, Joyce's resolution of T^7/(Z/2)^3, "
+                        f"(b_2, b_3) = ({b2}, {b3}); chi_eff = 48n "
+                        f"(the K3 reading)\n"
+                        "24 space directions: 12 bridge pairs (shadow/face structure, 2D each)\n"
+                        "Retired: the four-sector count 4 + 7 + 14 + 2 = 27"
                     )
                 ),
                 ContentBlock(
@@ -3374,13 +3476,15 @@ class LagrangianMasterDerivation(SimulationBase):
                         f"|F_4|^2/2: The M-theory 4-form flux kinetic "
                         f"energy. The field strength F_4 = dC_3 threads the "
                         f"b_3 = {b3} independent 3-cycles of the internal "
-                        f"manifold, stabilising moduli. (Typed as 24 before "
-                        f"the seed was read here.)\n\n"
-                        f"V_mod: The racetrack moduli potential with "
-                        f"geometric scaling a_i = b_3/i = {scales_str}, "
-                        f"stabilising the 4 moduli faces. Published as 24/i "
-                        f"for the TCS G2 construction, which is "
-                        f"off-path.\n\n"
+                        f"manifold. On Y_7 the leading-order flux potential "
+                        f"is positive and runs away, so flux alone does not "
+                        f"stabilise the moduli (OPEN). (Formerly typed as 24, "
+                        f"before the seed was read here.)\n\n"
+                        f"V_mod: OFF-PATH -- the racetrack, calibrated at "
+                        f"the off-path seed b_3 = 24 for the TCS G2 "
+                        f"construction (a_i = 24/i); at the live b_3 the "
+                        f"same rule gives a_i = {scales_str}. Y_7 has no "
+                        f"gaugino racetrack.\n\n"
                         "V_tor: Torsion correction from the Fernandez-Gray tau_1 class.\n\n"
                         "Sum_n R_n psi_bar_n D_slash psi_n: KK tower of fermion modes "
                         "dressed by spectral residues.\n\n"
@@ -3402,6 +3506,9 @@ class LagrangianMasterDerivation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
+                        f"OFF-PATH (calibrated at the off-path seed "
+                        f"b_3 = 24; Y_7 has no gaugino racetrack and its "
+                        f"moduli are OPEN). "
                         f"The racetrack moduli potential provides the "
                         f"explicit form of V_mod in the 26D bulk action. The "
                         f"4 moduli T_1,...,T_4 -- one per derived face, not "
@@ -3415,12 +3522,11 @@ class LagrangianMasterDerivation(SimulationBase):
                         "(Large Volume Scenario, Balasubramanian-Berglund-Conlon-Quevedo 2005) "
                         "moduli stabilisation frameworks from Type IIB string theory to the "
                         "M-theory G2 setting.\n\n"
-                        "The key insight is that the instanton scales a_i are not free "
-                        "parameters but are fixed by the G2 topology: a_i = b_3/i = 24/i "
-                        "where b_3 = 24 is the third Betti number counting independent "
-                        "associative 3-cycles. The integrality of all a_i (a_1=24, a_2=12, "
-                        "a_3=8, a_4=6) follows from 24 being divisible by 1, 2, 3, and 4, "
-                        "and is required for well-defined M2-brane wrapping numbers.\n\n"
+                        "At the off-path seed the instanton scales were tied to b_3: "
+                        "a_i = b_3/i = 24/i, integral (a_1=24, a_2=12, a_3=8, a_4=6) "
+                        "because 24 is divisible by 1, 2, 3 and 4, as well-defined M2-brane "
+                        "wrapping numbers require. That integrality was a property of the "
+                        "off-path seed b_3 = 24, not of the mechanism.\n\n"
                         "The Lambda_i coefficients are determined by the geometric volumes "
                         "of calibrated G2 associative cycles: Lambda_i ~ Vol(Sigma_i)^{-1}. "
                         "The constant term Lambda_0 is the tree-level flux contribution, "
@@ -3437,12 +3543,13 @@ class LagrangianMasterDerivation(SimulationBase):
                     callout_type="success",
                     title="26D Master Lagrangian: Key Results (Topic 03)",
                     content=(
-                        "Dimensional decomposition: 27 = 4 + 7 + 14 + 2\n"
+                        "Bulk: 26D (24,2) = two 13D (12,1) shadows (the count "
+                        "27 = 4 + 7 + 14 + 2 is retired)\n"
                         "Two-layer OR: V_bridge (global, creates shadows) + "
                         "V_face (local, selects visible face)\n"
-                        f"Racetrack scales: a_i = b_3/i = {scales_str} at "
-                        f"b_3 = {b3}; published as {{24, 12, 8, 6}}, all "
-                        f"positive integers, which held at b_3 = 24\n"
+                        f"Racetrack (OFF-PATH, calibrated at the off-path "
+                        f"seed b_3 = 24): published as {{24, 12, 8, 6}}; "
+                        f"at b_3 = {b3} the rule gives {scales_str}\n"
                         "Lambda_i from calibrated G2 associative cycle volumes\n"
                         "M-theory origin: adapts KKLT/LVS from Type IIB CY to G2"
                     )
@@ -3549,7 +3656,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "year": 2001,
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
-                "notes": "G2 compactification yielding chiral fermions; b_3 determines generation number",
+                "notes": "Chiral fermions from conical (codimension-7) singularities of G2 compactifications. Y_7's singular loci are disjoint, so it has no such points and its chirality is OPEN; the generation count here is n_gen = b_2/4 (the ruled route), not b_3",
             },
             {
                 "key": "kklt2003",
@@ -3563,7 +3670,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "doi": "10.1103/PhysRevD.68.046005",
                 "arxiv": "hep-th/0301240",
                 "url": "https://arxiv.org/abs/hep-th/0301240",
-                "notes": "KKLT construction for moduli stabilisation in Type IIB string theory. Non-perturbative superpotential from D3-brane instantons combined with flux-generated tree-level W_0 stabilises all Kahler moduli and produces a de Sitter vacuum after anti-D3-brane uplift. Adapted here for the racetrack-moduli-potential formula (L.R1) in the G2 setting.",
+                "notes": "KKLT construction for moduli stabilisation in Type IIB string theory. Non-perturbative superpotential from D3-brane instantons combined with flux-generated tree-level W_0 stabilises all Kahler moduli and produces a de Sitter vacuum after anti-D3-brane uplift. Adapted here for the racetrack-moduli-potential formula (L.R1) in the G2 setting, which is off-path (calibrated at the off-path seed; Y_7 has no gaugino racetrack).",
             },
             {
                 "id": "bbcq2005",
@@ -3645,7 +3752,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             {
                 "id": "CERT_LAGRANGIAN_BRIDGE_PAIRS_12",
-                "assertion": "v22 architecture requires exactly 12 bridge pairs for M^{24,1} structure",
+                "assertion": "The bulk's 24 space directions form exactly 12 bridge pairs of the (24,2) structure",
                 "condition": f"n_bridge_pairs = {n_bridge_pairs} == 12",
                 "tolerance": 0,
                 "status": "PASS" if bridge_ok else "FAIL",
@@ -3748,7 +3855,7 @@ class LagrangianMasterDerivation(SimulationBase):
         dim_total = 1 + D_bridge  # time + bridges
         dim_ok = D_bridge == 24
         checks.append({
-            "name": "v22 bridge structure: 12 pairs * 2D = 24 spatial dimensions",
+            "name": "Bridge structure: 12 pairs * 2D = 24 spatial dimensions",
             "passed": dim_ok,
             "confidence_interval": {
                 "lower": 24,
@@ -3756,7 +3863,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "sigma": 0.0
             },
             "log_level": "INFO" if dim_ok else "ERROR",
-            "message": f"{self.n_bridge_pairs} pairs * {self.D_bridge_per_pair}D = {D_bridge}D spatial + 1D time = {dim_total}D total"
+            "message": f"{self.n_bridge_pairs} pairs * {self.D_bridge_per_pair}D = {D_bridge}D spatial, the bulk's space directions; with 2 times (one per shadow) the bulk is 26D (the older {dim_total}D count with one shared time is retired)"
         })
 
         # Check 5: Vielbein components consistency
@@ -3834,7 +3941,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "description": (
                     "The E8 x E8 heterotic string has a 496-dimensional gauge group. Each E8 "
                     "has rank 8, dimension 248, with 240 root vectors and 8 Cartan generators. "
-                    "Anomaly cancellation in D=26 requires this specific gauge group."
+                    "Anomaly cancellation (the Green-Schwarz mechanism) selects this gauge group "
+                    "for the 10D heterotic string; here it is taken as the bulk gauge group."
                 )
             },
             {
@@ -3858,8 +3966,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "In physics, a 'Lagrangian' is like a recipe that tells you all the rules "
                 "of the universe in one compact formula. It encodes how gravity works, how "
                 "particles interact, and how forces arise. This simulation builds the master "
-                "Lagrangian in 26 dimensions -- the special number where the math of string "
-                "theory works consistently. From this 26D 'recipe', we can derive all of "
+                "Lagrangian in 26 dimensions -- 24 space directions and 2 times, one for each "
+                "of two 13-dimensional 'shadows'. From this 26D 'recipe', the aim is to reach "
                 "4D physics by 'folding up' the extra dimensions."
             ),
             "analogy": (
@@ -3881,9 +3989,10 @@ class LagrangianMasterDerivation(SimulationBase):
                 "The vielbein e_a^mu maps between coordinate and frame indices, with "
                 "g_munu = e_a^mu e_b^nu eta^ab. The 26D master action S_26 = S_EH + S_YM + "
                 "S_Dirac + S_Pneuma contains Einstein-Hilbert gravity, E8 x E8 Yang-Mills, "
-                "Weyl fermions (dim 2^13/2 = 4096), and Pneuma moduli coupling. The v22 "
-                "architecture decomposes the 24 spatial dimensions into 12 pairs of 2D "
-                "Euclidean bridges. Kaluza-Klein reduction via G2 holonomy yields 4D physics."
+                "Weyl fermions (dim 2^13/2 = 4096), and Pneuma moduli coupling. The 24 "
+                "spatial dimensions decompose into 12 pairs of 2D Euclidean bridges, and the "
+                "two times, one per shadow, complete the 26. Kaluza-Klein reduction on the G2 "
+                "manifold Y_7 yields 4D physics."
             ),
             "prediction": (
                 "The 26D graviton has D(D-3)/2 = 299 DOF. After the full reduction chain "
@@ -3947,12 +4056,14 @@ class LagrangianMasterDerivation(SimulationBase):
                 "status": "PASS",
                 "sigma": 0.0,
                 "test_description": (
-                    "Racetrack moduli potential (L.R1) structural consistency: "
+                    "OFF-PATH (TCS racetrack, calibrated at the off-path seed "
+                    "b_3 = 24; Y_7 has no gaugino racetrack). Racetrack moduli "
+                    "potential (L.R1) structural consistency: "
                     "4 faces require h^{1,1}=4 independent Kahler moduli with "
                     "stabilisation scales a_i = b_3/i = 24/i (i=1..4). "
                     "Verify a_1=24, a_2=12, a_3=8, a_4=6."
                 ),
-                "assertion": "Racetrack scales a_i = 24/i are well-defined positive integers for all 4 faces",
+                "assertion": "At the off-path seed, the racetrack scales a_i = 24/i are well-defined positive integers for all 4 faces",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -3972,8 +4083,8 @@ class LagrangianMasterDerivation(SimulationBase):
                 "test_description": (
                     "Torsion correction term (L.R2) structural consistency: "
                     "Fernandez-Gray classification yields exactly 4 torsion classes "
-                    "(tau_0, tau_1, tau_2, tau_3) for G2 structures; TCS construction "
-                    "sets tau_0=0 with residual tau_1, tau_2 corrections."
+                    "(tau_0, tau_1, tau_2, tau_3) for G2 structures; the (off-path) "
+                    "TCS construction sets tau_0=0 with residual tau_1, tau_2 corrections."
                 ),
                 "assertion": "G2 intrinsic torsion has exactly 4 irreducible classes by Fernandez-Gray theorem",
                 "result": "PASS",
@@ -4019,18 +4130,18 @@ class LagrangianMasterDerivation(SimulationBase):
 
 if __name__ == "__main__":
     print("="*70)
-    print("LAGRANGIAN MASTER DERIVATION v22")
+    print("LAGRANGIAN MASTER DERIVATION")
     print("Core 26D Action with 12×(2,0) Paired Bridge System")
     print("="*70)
     print()
-    print("v22 Architecture: M^{24,1} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})")
-    print("Metric: ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)")
+    print("Bulk: M^{26}(24,2) = 24 space (12 bridge pairs) + 2 times, one per 13D(12,1) shadow")
+    print("(the historical T¹ ×_fiber form with one shared time is retired)")
     print()
     print("This module provides comprehensive derivations for:")
     print("  A. Vielbein/tetrad formalism (Carroll/eigenchris style)")
     print("  B. 26D master action with all sectors")
     print("  C. Euler-Lagrange equations -> Einstein equations")
-    print("  D. v22 12×(2,0) Paired Bridge System (replaces v21 single bridge)")
+    print("  D. 12×(2,0) Paired Bridge System (replaced an earlier single bridge)")
     print("     - Distributed OR: ⊗ᵢ₌₁¹² R_⊥_i per pair")
     print("     - Consciousness I/O gating: y₁ᵢ=input, y₂ᵢ=output")
     print("     - 6 pairs minimum for wet microtubule stability (τ>25ms)")

@@ -65,8 +65,12 @@ class TestOctonionAlgebra:
 
     def test_multiplication_constants_differ_by_one_sign(self, octonions):
         """Multiplication constants differ from geometric by sign on triple (1,3,5)."""
-        C_geom = octonions.structure_constants
+        # The split (all-plus) table against the product's own constants.
+        # Since D-015 the active path uses the product's constants, so the
+        # public accessor equals C_mult; the split table is the switch path.
+        C_geom = octonions._C_geom
         C_mult = octonions.multiplication_constants
+        assert np.allclose(octonions.structure_constants, C_mult)
         # They should differ only where indices involve the (1,3,5) triple
         diff = C_mult - C_geom
         # The nonzero diff entries are at the 6 permutations of (1,3,5)

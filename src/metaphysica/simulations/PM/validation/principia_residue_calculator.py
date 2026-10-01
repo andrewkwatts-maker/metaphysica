@@ -1,21 +1,30 @@
 """
-Principia Metaphysica - Residue Calculator v17.2
+Principia Metaphysica - Residue Calculator
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
-CRITICAL VALIDATION SCRIPT
+LEGACY VALIDATION SCRIPT (standalone; not in the simulation chain)
 
-Computes key predicted constants/residues directly from geometric inputs
-(G2 manifold topology, golden ratio, sterile angle). No free parameters -
-pure locked predictions from TCS #187 (b3=24, chi=144).
+Computes key constants/residues from geometric inputs (G2 manifold
+topology, golden ratio, sterile angle) and compares them to experimental
+values (CODATA/PDG/NuFIT).
 
-Compares to experimental values (CODATA/PDG/NuFIT/DESI ~2025-2026).
+OFF-PATH (b3_seed = seed_24): written as "pure locked predictions from TCS
+#187 (b3=24, chi=144)" with no free parameters. No published TCS
+enumeration has a "#187"; the adopted internal space is Joyce's resolution
+of T^7/(Z/2)^3 with (b_2, b_3) = (12, 43). self.elder_kads reads the live
+seed, so the formulas below that use it were written for b3 = 24 and do not
+reproduce their targets at b_3 = 43.
 
-Covers headline claims:
-- generations = 3 (exact from b3/8)
-- theta_23 = 49.75 degrees (exact from holonomy)
-- alpha^{-1} ~ 137.036 (geometric with 7D suppression)
-- w0 = -23/24 (dark energy thawing)
+Headline claims as originally listed, with their status now:
+- generations = 3: the registry's n_gen, i.e. the ruled route
+  n_gen = b_2/4; the former "exact from b3/8" is ABANDONED (8 divides no
+  reachable b_3; all are odd)
+- theta_23 = 49.75 degrees: a model construct using b2 = 4, the off-path
+  seed's b_2 (flavour is OPEN, D-011)
+- alpha^{-1} ~ 137.036: CALIBRATED (k_gimel layer, D-007)
+- w0 = -23/24: frozen at the off-path seed; no derivation (dark energy is
+  OPEN, CG.11)
 - Speed of light c (sovereign chain)
 - CKM lambda ~ 0.223 (Cabibbo from epsilon)
 """
@@ -63,19 +72,23 @@ class PrincipiaResidueCalculator:
     """
     Sterile residue calculator from G2 manifold topology.
 
-    Core geometric inputs (locked by manifold TCS #187):
-    - b3 = 24 (third Betti number)
-    - chi_eff = 144 (effective Euler characteristic)
+    Core inputs as originally written (OFF-PATH, b3_seed = seed_24: "locked
+    by manifold TCS #187", which appears in no published TCS enumeration):
+    - b3 = 24 (third Betti number) -- self.elder_kads now reads the live
+      seed, 43 on the adopted path
+    - chi_eff = 144, the effective index (the K3 reading: 48 n at n = 3);
+      not the Euler characteristic of the G2 manifold, which is 0
     - 125 residues / 288 ancestral roots
 
-    All predictions are pure computation - no tuning.
+    The alpha^{-1} and w0 values are calibrations at the off-path seed, not
+    tuning-free predictions.
     """
 
     def __init__(self):
         # Manifold topology from SSoT registry
-        self.elder_kads = _REG.elder_kads  # = 24 (Third Betti number)
-        self.mephorash_chi = _REG.qedem_chi_sum  # = 144 (Effective Euler characteristic)
-        self.n_gen = _REG.n_gen  # = 3 (fermion generations)
+        self.elder_kads = _REG.elder_kads  # the live seed b_3 (43 on the adopted path; 24 at the off-path seed)
+        self.mephorash_chi = _REG.qedem_chi_sum  # = 144, the effective index chi_eff (K3 reading, 48 n)
+        self.n_gen = _REG.n_gen  # = 3, the ruled route n_gen = b_2/4
 
         # Sterile projection
         self.num_residues = 125
@@ -92,8 +105,11 @@ class PrincipiaResidueCalculator:
 
     def compute_generations(self) -> Dict[str, Any]:
         """
-        Fermion generations from Betti number.
-        n_gen = b3 / 8 = 24 / 8 = 3 (EXACT)
+        Fermion generations. The count returned is the registry's n_gen,
+        i.e. the ruled route n_gen = b_2/4 = 3 (the number of singular
+        involutions). The 'b3' and 'divisor' fields record the ABANDONED
+        route n_gen = b3/8 = 24/8, which held only at the off-path seed:
+        8 divides no reachable b_3 (all are odd).
         """
         return {
             'b3': self.elder_kads,
@@ -106,10 +122,12 @@ class PrincipiaResidueCalculator:
 
     def compute_theta_23(self) -> Dict[str, Any]:
         """
-        Atmospheric mixing angle from G2 holonomy.
-        theta_23 = 45 + Kahler + Flux = 49.75 degrees (EXACT)
+        Atmospheric mixing angle (a model construct; flavour is OPEN, D-011).
+        theta_23 = 45 + Kahler + Flux = 49.75 degrees.
+        OFF-PATH (b3_seed = seed_24): the Kahler term uses b2 = 4, the
+        off-path seed's b_2 (the adopted b_2 is 12).
         """
-        b3, b2, n_gen = self.elder_kads, 4, self.n_gen
+        b3, b2, n_gen = self.elder_kads, 4, self.n_gen  # b2 = 4: the off-path seed's b_2
 
         base = 45.0
         kahler_delta = (b2 - n_gen) * n_gen / b2  # 0.75
@@ -128,13 +146,16 @@ class PrincipiaResidueCalculator:
 
     def compute_alpha_inverse(self) -> Dict[str, Any]:
         """
-        Fine structure constant from G2 geometry.
+        Fine structure constant, CALIBRATED (k_gimel layer, D-007): a fit
+        made at the retired seed b_3 = 24, not a derivation.
         alpha^{-1} = k_gimel^2 - b3/phi + phi/(4*pi) - 7D_suppression
+        self.elder_kads is the live seed, so at the adopted b_3 = 43 this
+        expression does not return 137.036.
         """
         b3 = self.elder_kads
         phi = self.phi
 
-        k_gimel = b3 / 2 + 1 / np.pi  # 12 + 1/pi ~ 12.318
+        k_gimel = b3 / 2 + 1 / np.pi  # 12 + 1/pi ~ 12.318 at the off-path seed b3 = 24
         base = k_gimel**2 - b3 / phi + phi / (4 * np.pi)
 
         # 7D hard-lock suppression
@@ -156,7 +177,13 @@ class PrincipiaResidueCalculator:
     def compute_w0_dark_energy(self) -> Dict[str, Any]:
         """
         Dark energy equation of state.
-        w0 = -23/24 ~ -0.9583 (EXACT from entropy/instanton)
+        OPEN (dark energy, CG.11): w0 = -23/24 ~ -0.9583 is frozen at the
+        off-path seed b_3 = 24 and has no derivation. The 'desi_2025'
+        reference below (-0.958 +/- 0.02) is not the DESI DR2 w0waCDM
+        headline (w0 = -0.752 +/- 0.057, BAO+CMB+DESY5, arXiv:2503.14738;
+        parameter desi.w0), from which -23/24 sits more than 3 sigma away.
+        The 'status' string keeps its 'EXACT' tag because
+        run_full_validation counts it.
         """
         w0 = -23 / 24
 
@@ -166,7 +193,7 @@ class PrincipiaResidueCalculator:
             'desi_2025': -0.958,
             'desi_sigma': 0.02,
             'sigma_match': abs(w0 - (-0.958)) / 0.02,
-            'status': 'EXACT (< 0.1 sigma from DESI)'
+            'status': 'EXACT (< 0.1 sigma from the reference anchor; not DESI DR2)'
         }
 
     def compute_speed_of_light(self) -> Dict[str, Any]:
@@ -277,7 +304,8 @@ class PrincipiaResidueCalculator:
         # Generations
         gen = self.compute_generations()
         print(f"\n1. Fermion Generations:")
-        print(f"   b3/8 = {gen['b3']}/8 = {gen['n_gen']} ({gen['status']})")
+        print(f"   n_gen = b_2/4 = {gen['n_gen']} ({gen['status']}; the ruled route -- "
+              f"the abandoned b3/8 route is not used; b3 = {gen['b3']})")
 
         # Sterile angle
         sterile = self.compute_sterile_angle()
@@ -301,7 +329,8 @@ class PrincipiaResidueCalculator:
         w0 = self.compute_w0_dark_energy()
         print(f"\n5. Dark Energy w0:")
         print(f"   {w0['formula']} = {w0['w0']:.6f}")
-        print(f"   DESI 2025: {w0['desi_2025']} +/- {w0['desi_sigma']}")
+        print(f"   Reference anchor (not the DESI DR2 w0waCDM headline -0.752 +/- 0.057): "
+              f"{w0['desi_2025']} +/- {w0['desi_sigma']}")
         print(f"   Status: {w0['status']}")
 
         # Speed of light
@@ -325,7 +354,8 @@ class PrincipiaResidueCalculator:
         print(f"Exact matches:   {result.exact_matches}")
         print(f"Within 1 sigma:  {result.within_1sigma}")
         print(f"Status:          {result.status}")
-        print("\nAll predictions from pure geometry - NO TUNING")
+        print("\nSeveral values above are calibrations at the off-path seed b3 = 24, "
+              "not tuning-free predictions (see each method's docstring)")
         print("=" * 70)
 
         return {

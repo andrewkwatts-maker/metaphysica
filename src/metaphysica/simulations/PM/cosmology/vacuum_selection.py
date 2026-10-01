@@ -1,52 +1,70 @@
 #!/usr/bin/env python3
 """
-Dynamical Vacuum Selection v25.0
-=================================
+Dynamical Vacuum Selection
+==========================
 
-Cosmological attractor + bubble nucleation prunes the
-~10^(10^8) G2 flux landscape down to a single dynamically selected
-vacuum, eliminating the need for anthropic hand-waving.
+A proposed cosmological attractor + bubble nucleation that would prune
+the ~10^(10^8) G2 flux landscape down to a single dynamically selected
+vacuum.
 
-DERIVATION (PossibleImprovements.txt section 3, v25.0 mandate):
+STATUS ON THE ADOPTED PATH (read first):
+    - Y_7 is Joyce's resolution of T^7/(Z/2)^3 with (b_2, b_3) = (12, 43).
+    - CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists
+      on Y_7 (CG.5, CG.10). The pruning mechanism is the Acharya-Kane
+      G2-MSSM moduli flow, driven by gaugino condensation in a hidden
+      sector. Y_7's singular loci carry N = 4 super Yang-Mills, and full
+      holonomy excludes a confining sector in phi's Joyce family, so that
+      sector does not exist here. The decay rate 0.92 was chosen so that
+      exp(-0.92 * 24) ~ 2.6e-10. It is not derived; the computation is
+      kept as a model calculation.
+    - select_vacuum() reads b_3 from the live seed (43 on the adopted
+      path), so the values it returns follow the seed in force. The worked
+      numbers below are the arithmetic at the off-path seed.
+    - Re(T) is OPEN on Y_7: the leading-order flux potential is positive
+      and runs away (CG.6).
+
+DERIVATION (PossibleImprovements.txt section 3):
 
     Early-universe moduli evolution under gaugino condensation funnels
     the system toward the long-lived SUSY-breaking vacuum. Eternal
-    inflation + bubble nucleation amplify the suppression. Both effects
-    are governed by the same b3=24 G2 topology that sets every other
-    derived constant in the framework.
+    inflation + bubble nucleation amplify the suppression. (On Y_7 there
+    is no gaugino condensate to drive this; see the status above.)
 
     Raw landscape size (pre-selection):
 
         log N_raw = b3 * log(flux_modes) + 8 * log(10)
 
-    where flux_modes = 12 (the 12 bridge pairs of M^{26}(24,2)).
-    With b3=24 and flux_modes=12, this gives log N_raw ~ 78 (natural
-    log), i.e. N_raw ~ 10^34 distinct flux vacua before selection.
+    where flux_modes = 12 counts the bulk's 12 bridge pairs (the
+    M^{26}(24,2) bulk). At the off-path seed (b_3 = 24, flux_modes = 12)
+    this gives log N_raw ~ 78 (natural log), i.e. N_raw ~ 10^34 distinct
+    flux vacua before selection.
 
     Dynamical pruning factor (G2-cycle gaugino condensation attractor):
 
         pruning_factor = exp(-0.92 * b3)
 
-    where 0.92 is the attractor decay rate per b3-cycle from the
-    Acharya-Kane G2-MSSM moduli flow. With b3=24 this gives
-    exp(-22.08) ~ 2.6e-10, so >99.9999999% of the landscape is
-    dynamically rejected before BabyIAXO can probe it.
+    where 0.92 is the attractor decay rate per b3-cycle, taken from the
+    Acharya-Kane G2-MSSM moduli flow and calibrated at the off-path seed:
+    there exp(-22.08) ~ 2.6e-10, so >99.9999999% of the landscape would
+    be dynamically rejected before BabyIAXO can probe it.
 
     Effective surviving vacua:
 
         N_eff = N_raw * pruning_factor
 
-    For b3=24, flux_modes=12: N_eff ~ 10^25. The remaining vacua are
-    further pruned by the 72 Gates + EML sterility constraints + the
-    falsifiable axion mass prediction, leaving a single attractor
-    basin around the observed Re(T) value.
+    At the off-path seed (flux_modes = 12): N_eff ~ 10^25. The remaining
+    vacua are further pruned by the 72 Gates + EML sterility constraints
+    + the falsifiable axion mass prediction. The original text ended with
+    "a single attractor basin around the observed Re(T) value"; Re(T) is
+    OPEN on Y_7 (CG.6), so no such basin is established.
 
 DEPENDENCY CHAIN:
-    Every numeric leaf in the EML tree traces back to b3 (the third
-    Betti number of the G2 manifold, == 24). The flux_modes=12 input
-    is itself b3/2 (paired bridges), the 8*log(10) scale factor is the
+    The b3 leaf of the EML tree is the live seed's b_3 (43 on the adopted
+    path), read through b3_leaf(). The flux_modes = 12 input counts the
+    bulk's 12 bridge pairs; it was formerly written as b3/2, which holds
+    only at the off-path seed. The 8*log(10) scale factor is the
     natural-log conversion of the 10^8 anthropic upper bound, and the
-    0.92 attractor rate is calibrated to the b3-cycle period.
+    0.92 attractor rate is calibrated at the off-path seed b_3 = 24.
 
 OUTPUTS:
     - vacuum_selection.raw_vacua: pre-selection landscape size
@@ -93,11 +111,13 @@ except ImportError:  # pragma: no cover - defensive
     EML_AVAILABLE = False
 
 
-# ── Module-level constants (all topology-rooted) ────────────────────────────
+# ── Module-level constants ──────────────────────────────────────────────────
 
 # Dynamical attractor decay rate per b3-cycle (Acharya-Kane G2-MSSM).
-# Calibrated so that exp(-0.92 * b3=24) ~ 2.6e-10, matching the
-# >99.9999999% anthropic rejection target from PossibleImprovements.txt.
+# CALIBRATED at the off-path seed b_3 = 24: chosen so that
+# exp(-0.92 * 24) ~ 2.6e-10, matching the >99.9999999% anthropic rejection
+# target from PossibleImprovements.txt. Not derived; at the live seed the
+# same rate gives a different factor.
 ATTRACTOR_DECAY_RATE = 0.92
 
 # Natural-log scale of the anthropic upper bound (10^8 vacua tolerated
@@ -113,17 +133,22 @@ ANTHROPIC_REJECTED_STR = "99.999%"
 class DynamicalVacuumSelector:
     """Prune 10^(10^8) G2 flux vacua to a single dynamically selected one.
 
-    The selector implements the Acharya-Kane G2-MSSM moduli flow:
-    gaugino condensation on the hidden sector funnels Re(T) toward
-    the long-lived SUSY-breaking minimum; everything outside that
-    attractor basin tunnels away during eternal inflation.
+    CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists
+    on Y_7 (CG.5, CG.10). The selector implements the Acharya-Kane G2-MSSM
+    moduli flow, in which gaugino condensation in a hidden sector funnels
+    Re(T) toward the long-lived SUSY-breaking minimum and everything
+    outside that attractor basin tunnels away during eternal inflation.
+    Y_7 has no confining hidden sector and Re(T) is an OPEN modulus (CG.6),
+    so this is a model calculation, not a mechanism of the adopted path.
 
-    All numeric inputs trace back to b3=24 (the G2 third Betti number).
+    b_3 is read from the live seed at call time (43 on the adopted path).
+    The decay rate 0.92 is calibrated at the off-path seed b_3 = 24, and
+    flux_modes = 12 counts the bulk's 12 bridge pairs.
     """
 
     # Default G2 inputs (overridable on `select_vacuum`). DEFAULT_B3 is a
-    # PROPERTY-LIKE resolution, not a literal: it was a frozen 24 and kept
-    # publishing cosmology.b3 = 24 while particle.b3 carried the adopted
+    # PROPERTY-LIKE resolution, not a literal: it was formerly a frozen 24
+    # and kept publishing cosmology.b3 = 24 while particle.b3 carried the adopted
     # seed's 43 -- two rows with the same short name and different values,
     # which the ambiguous-alias guard caught on 2026-09-22. A default
     # argument is exactly where a silent seed-blind value hides, so the
@@ -167,7 +192,9 @@ class DynamicalVacuumSelector:
                 seed via the b3_seed fork -- 43 on the adopted branch, 24
                 under the seed_24 override. Pass an explicit value only to
                 probe a hypothetical.
-            flux_modes: bridge-pair count (default 12 = b3/2).
+            flux_modes: bridge-pair count (default 12, the bulk's 12
+                bridge pairs; it equals b3/2 only at the off-path seed
+                b_3 = 24).
 
         Returns:
             Dict carrying ``raw_vacua``, ``dynamically_selected``,
@@ -238,15 +265,19 @@ class DynamicalVacuumSelector:
         """Build the EML-Math operator tree rooted at b3_leaf().
 
         Returns the numeric tension of the tree (== effective_vacua to
-        within float precision). The tree's leaves all trace back to
-        b3 (via :func:`b3_leaf`) or to literal scalars whose values are
-        themselves topology-determined (flux_modes = b3/2, etc.).
+        within float precision). The b3 leaf comes from :func:`b3_leaf`
+        (the live seed's b_3); the other leaves are literal scalars:
+        flux_modes (the bulk's 12 bridge pairs by default), the landscape
+        log-scale 8, and the decay rate 0.92 (calibrated at the off-path
+        seed b_3 = 24).
         """
-        # b3 leaf (the canonical b3=24 EMLPoint).
+        # b3 leaf: the live seed's b_3 (43 on the adopted path), read from
+        # the registry.
         b3_pt = b3_leaf()
 
-        # flux_modes leaf -- topology says flux_modes = b3/2, but the
-        # caller can override; honor the explicit value so the EML
+        # flux_modes leaf -- the bulk's 12 bridge pairs by default (formerly
+        # written as b3/2, which holds only at the off-path seed b_3 = 24);
+        # the caller can override; honor the explicit value so the EML
         # tree faithfully encodes the actual computation.
         flux_pt = eml_scalar(float(flux_modes))
 
@@ -306,11 +337,14 @@ class DynamicalVacuumSelector:
 def prune_landscape() -> Dict[str, Any]:
     """Module entry point: prune the G2 flux landscape via dynamical selection.
 
-    Defaults to b3=24, flux_modes=12. Returns the full results dict as
-    described in :meth:`DynamicalVacuumSelector.select_vacuum`.
+    b_3 defaults to the live seed's value (43 on the adopted path);
+    flux_modes defaults to 12, the bulk's bridge pairs. The decay rate is
+    calibrated at the off-path seed b_3 = 24, and no gaugino racetrack
+    exists on Y_7 (CG.5, CG.10). Returns the full
+    results dict as described in :meth:`DynamicalVacuumSelector.select_vacuum`.
 
     Used by:
-        - simulations/core/FormulasRegistry.py (v25.0 derivation hook)
+        - simulations/core/FormulasRegistry.py (derivation hook)
         - simulations/run_all_simulations.py  (72-gate validation)
         - tests/test_vacuum_selection.py      (regression suite)
     """

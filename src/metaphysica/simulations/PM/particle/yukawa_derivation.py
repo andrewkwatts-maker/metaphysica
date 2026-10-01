@@ -1,63 +1,80 @@
 #!/usr/bin/env python3
 """
-Geometric Yukawa Derivation — T4 / 24-cell route (v25.0 / Sprint 4 #2)
-======================================================================
+Geometric Yukawa ansatz — the T4 / 24-cell route to the PMNS angles
+===================================================================
 
-MARQUEE proof-killer #1 closure: replaces the v24.x fitted PMNS angles
-(θ₁₃, δ_CP) with a geometric derivation rooted in the binary tetrahedral
-group T₄ acting on the 24-cell of M-theory's G₂ flux compactification.
+STATUS ON THE ADOPTED MODEL (read first)
+----------------------------------------
+Flavour is OPEN (D-011). The internal space Y₇ -- Joyce's resolution of
+T⁷/(ℤ/2)³, (b₂, b₃) = (12, 43) -- supplies no chiral sector: its singular
+loci are disjoint, so it has no codimension-7 points, and a flavour
+structure cannot be derived before a chiral sector exists. This module is
+therefore a MODEL CONSTRUCT: a T₄ / 24-cell ansatz whose closed forms were
+calibrated at the off-path seed b₃ = 24 (retired, and unreachable by
+Joyce's construction).
 
-PHYSICS SUMMARY
----------------
+Which b₃ the formulas consume is decided by the ``flavour_seed_coupling``
+fork, read by :func:`resolve_flavour_b3`:
+
+* ``follow_seed`` (ADOPTED) -- the live seed's b₃ (43). θ₁₃ moves to
+  4.8351° (measured), far from NuFIT 6.0: the agreement quoted below was
+  a property of the calibration and does not survive on the adopted seed.
+* ``calibrated_24`` -- :data:`DEFAULT_B3`, the calibration constant 24,
+  admitted to be a fit rather than a topological count. It stays runnable
+  for costing; ``tests/test_yukawa_derivation.py`` is its regression
+  contract.
+
+Every value quoted below at b₃ = 24 describes that calibration at the
+off-path seed, not the adopted model.
+
+PHYSICS SUMMARY (the ansatz)
+----------------------------
 The binary tetrahedral group T₄ is the symmetry group of the 24-cell
-(the regular 4-polytope with 24 octahedral cells). In the v24.x
-metaphysica framework, the 12 paired (2,0) bridges of M^{26}(24,2)
-project onto the 24-cell's vertex set via the G₂ spinor bundle. The
-overlap integrals between the three lepton-doublet generations and the
-neutrino mass-eigenstate basis are governed by:
+(the regular 4-polytope with 24 octahedral cells). The ansatz projects
+the 12 paired (2,0) bridges of M^{26}(24,2) onto the 24-cell's vertex
+set via the G₂ spinor bundle, and takes the overlap integrals between
+the three lepton-doublet generations and the neutrino mass-eigenstate
+basis to be governed by:
 
-* A pure-topology amplitude  sqrt(2/3)  arising from the 2-out-of-3
-  vertex-orbit symmetry of T₄ on the 24-cell (Frampton-Petcov 2005;
-  Kobayashi-Tanimoto 2018).
+* An amplitude  sqrt(2/3)  from the 2-out-of-3 vertex-orbit symmetry of
+  T₄ on the 24-cell (Frampton-Petcov 2005; Kobayashi-Tanimoto 2018).
 
 * A distortion parameter
 
-      η = √2 · sin(π / b₃)              [Sprint 6 #1 retuning]
+      η = √2 · sin(π / b₃)
 
-  rooted in pure G₂ topology: ``sin(π/b₃)`` is the half-angle of one
-  T₄ vertex orbit around the central rotation axis of the 24-cell, and
-  the ``√2`` factor is the octahedral unit-cell diagonal (each of the
-  24-cell's 24 octahedral cells has unit edges and √2 diagonals). For
-  b₃ = 24 this yields η = 0.184592… — a closed form with **zero fitted
-  parameters**: every leaf traces through ``b₃ = 24`` via :func:`b3_leaf`.
+  where ``sin(π/b₃)`` is read as the half-angle of one T₄ vertex orbit
+  around the central rotation axis of the 24-cell, and the ``√2`` factor
+  as the octahedral unit-cell diagonal (each of the 24-cell's 24
+  octahedral cells has unit edges and √2 diagonals). That reading counts
+  the 24-cell's cells as b₃, so it holds only at the off-path seed
+  b₃ = 24, where η = 0.184592…. It is not parameter-free: the δ_CP
+  coefficients below are tuned, and 24 is the calibration point.
 
-The PMNS angles emerge as:
+The PMNS angles are then:
 
     θ₁₃ = arcsin(sqrt(2/3) · η)                          [rad]
     δ_CP = (3π/2) · (1 − a·η·ξ + b·ξ²)  with a=0.12, b=0.05   [rad]
 
-where ξ = cos(π / b₃) is the **second** b₃-rooted geometric parameter
-introduced in Sprint T5 #1 (T2.4 of the v25.1 roadmap). It is the
-algebraic conjugate of η: while η = √2·sin(π/b₃) carries the T₄
-vertex-orbit *half-angle sine* (the cell-diagonal-weighted overlap
-amplitude), ξ = cos(π/b₃) carries the *half-angle cosine* — i.e. the
-in-plane projection of the same orbit onto the bridge-pair axis.
-Together (η/√2, ξ) form the unit-circle pair sin²(π/b₃)+cos²(π/b₃)=1,
-so introducing ξ adds NO fitted parameter: it is closed-form in b₃ and
-traces through ``b3_leaf()`` exactly like η.
+where ξ = cos(π / b₃) is the second b₃-dependent parameter (roadmap item
+T2.4 of TIER_2_3_ROADMAP). It is the algebraic conjugate of η: while
+η = √2·sin(π/b₃) carries the T₄ vertex-orbit *half-angle sine* (the
+cell-diagonal-weighted overlap amplitude), ξ = cos(π/b₃) carries the
+*half-angle cosine* — i.e. the in-plane projection of the same orbit onto
+the bridge-pair axis. Together (η/√2, ξ) form the unit-circle pair
+sin²(π/b₃)+cos²(π/b₃)=1, so ξ is closed-form in b₃ and traces through
+``b3_leaf()`` exactly like η.
 
-SPRINT 6 #1 RETUNING — GEOMETRIC ORIGIN OF η
+THE CALIBRATION AT THE OFF-PATH SEED b₃ = 24
 ---------------------------------------------
-The v25.0 / Sprint 4 #2 module shipped with η = 0.037 sourced verbatim
-from PossibleImprovements.txt §1. That literal seed produced θ₁₃ ≈
-1.73° (~62σ from NuFIT 6.0 IO 8.63° ± 0.11) and was flagged as an
-open tension. Sprint 6 #1 closes the gap with a closed-form b₃-rooted
-expression:
+The first version shipped η = 0.037 as a literal (from
+PossibleImprovements.txt §1). That produced θ₁₃ ≈ 1.73° (~62σ from
+NuFIT 6.0 IO 8.63° ± 0.11). The closed form replaced it:
 
     η = √2 · sin(π / b₃)
     sin θ₁₃ = √(2/3) · √2 · sin(π/b₃) = (2/√3) · sin(π/b₃)
 
-With b₃ = 24:
+Calibrated at the off-path seed b₃ = 24:
 
     η = √2 · sin(π/24)   = 0.184592…
     ξ = cos(π/24)        = 0.991445…
@@ -72,60 +89,63 @@ With b₃ = 24:
 
 θ_13 and δ_CP each land within 1σ of their respective anchors, but in
 DIFFERENT mass orderings (θ_13: NO; δ_CP: IO) - they are not a joint
-single-ordering fit. The knob ξ is closed-form in b₃ via cos(π/b₃),
-but the coefficients (a, b) = (0.12, 0.05) are TUNED to the δ_CP
-target, so "zero fitted parameters" overstates the case: the
-structural inputs are the Pillar Seed b₃ = 24 and the two
-coefficients (a, b) which are fixed at
-(0.12, 0.05) — the 0.12 is the inherited T₄ bridge-pair handedness-flip
-weight from Sprint 6 #1; the 0.05 is the ξ² polynomial coefficient that
-fixes the δ_CP curvature. Sprint T5 #1 (T2.4 of TIER_2_3_ROADMAP) closes
-the proof-killer #2 (δ_CP independence) that Sprint 6 #1 documented as
-``open`` — the documented_divergence block now reports BOTH angles
-within 1σ.
+single-ordering fit. Nor is the calibration parameter-free: its inputs
+are the off-path seed b₃ = 24 and the two coefficients (a, b) =
+(0.12, 0.05), TUNED to the δ_CP target -- the 0.12 is the inherited T₄
+bridge-pair handedness-flip weight, the 0.05 the ξ² coefficient that
+fixes the δ_CP curvature. At the adopted b₃ the same formulas give
+θ₁₃ = 4.8351° (measured), and the documented_divergence block reports
+the b₃ actually consumed.
 
-GEOMETRIC PROVENANCE OF η = √2 · sin(π / b₃)
----------------------------------------------
-1. ``sin(π / b₃)``: The 24-cell has b₃ = 24 octahedral cells arranged
-   with discrete rotational symmetry. The smallest angular separation
-   between adjacent T₄ vertex orbits projected onto the bridge-pair
-   plane is 2π/b₃, hence the *half-angle* is π/b₃, and its sine is
-   the natural overlap-integral kernel.
+GEOMETRIC READING OF η = √2 · sin(π / b₃)
+------------------------------------------
+1. ``sin(π / b₃)``: the 24-cell has 24 octahedral cells arranged with
+   discrete rotational symmetry. Writing that cell count as b₃, the
+   smallest angular separation between adjacent T₄ vertex orbits
+   projected onto the bridge-pair plane is 2π/b₃, hence the *half-angle*
+   is π/b₃, and its sine is taken as the overlap-integral kernel. The
+   count belongs to the 24-cell, so the identification with b₃ held only
+   at the off-path seed b₃ = 24; at the adopted b₃ the formula no longer
+   describes the 24-cell.
 2. ``√2``: Each of the 24-cell's 24 octahedral cells has unit-length
    edges; the diagonal connecting opposite vertices through the cell
-   centre has length √2 in the unit metric. This appears as the
+   centre has length √2 in the unit metric. The ansatz uses it as the
    amplitude weight of the bridge-pair diagonal in the (2,0)+(2,0)
    sampler-projection inner product.
 
-The combined factor √2 · sin(π/b₃) is therefore the natural
-"diagonal-weighted vertex-orbit half-angle" of the T₄/24-cell symmetry
-group — the same geometric content the Sprint 4 agent intuited but
-expressed in closed form. No external scale, no fit.
+The combined factor √2 · sin(π/b₃) is the ansatz's "diagonal-weighted
+vertex-orbit half-angle" of the T₄/24-cell symmetry group.
 
-DEPENDENCY CHAIN (b₃ = 24 traceback)
-------------------------------------
-* η = √2 · sin(π / b₃)  — closed-form, b₃-rooted, no free parameters
-* ξ = cos(π / b₃)       — Sprint T5 #1 sister parameter, b₃-rooted
-* sqrt(2/3) — T₄ orbit-decomposition amplitude (pure topology)
-* y_e hierarchy = sqrt(2/3) · exp(−b₃ / 24) = sqrt(2/3) · exp(−1)
+DEPENDENCY CHAIN (b₃ as the flavour fork resolves it)
+-----------------------------------------------------
+* η = √2 · sin(π / b₃)  — closed-form in b₃
+* ξ = cos(π / b₃)       — sister parameter, closed-form in b₃
+* sqrt(2/3) — T₄ orbit-decomposition amplitude
+* y_e hierarchy = sqrt(2/3) · exp(−b₃ / 24); the 24 in the denominator
+  is a constant calibrated at the off-path seed b₃ = 24, where the
+  exponent is −1
 
-Every EML tree leaf in this module routes through :func:`b3_leaf` so
-the website's b₃ tracer hits b₃ = 24 as a genuine EMLPoint, not just
-as a string match in a formula text.
+Every EML tree leaf in this module routes through :func:`b3_leaf` (the
+flavour fork's b₃ leaf), so the website's b₃ tracer reaches the b₃ the
+flavour sector actually consumed as a genuine EMLPoint, not just as a
+string match in a formula text.
 
 PUBLIC API
 ----------
 * :class:`GeometricYukawaT4` — derivation object parameterised by
-  ``b3`` (default 24) and ``eta_distortion`` (default 0.037).
+  ``b3`` (default :data:`DEFAULT_B3`, the calibration constant) and
+  ``eta_distortion`` (default ``None``: η = √2 · sin(π/b₃)).
 * :meth:`GeometricYukawaT4.derive_pmns_angles` — returns the dict
   ``{"theta_13_deg", "delta_CP_rad", "y_e_hierarchy",
   "documented_divergence", ...}``.
 * :func:`get_geometric_pmns` — module entry-point used by
-  ``simulations/run_all_simulations.py`` to invoke the v25.0 PMNS gate.
+  ``simulations/run_all_simulations.py``; it consumes
+  :func:`resolve_flavour_b3`.
+* :func:`resolve_flavour_b3` — the flavour_seed_coupling fork's b₃.
 
 REFERENCES
 ----------
-* PossibleImprovements.txt §1 (v25.0 mandate, ``H:/Github/EyesOfAzrael/``)
+* PossibleImprovements.txt §1 (the original mandate, ``H:/Github/EyesOfAzrael/``)
 * Frampton, Petcov "Sterile-active mixing" Phys.Lett.B (2005)
 * Kobayashi, Tanimoto "T₄ / 24-cell PMNS textures" arXiv:1812.01505
 
@@ -208,41 +228,49 @@ from metaphysica.simulations.base import Formula
 
 # ── Module constants ────────────────────────────────────────────────────────
 
-#: G₂ third Betti number — THE Pillar Seed. Every numeric leaf in the
-#: EML tree of this module traces back to this value via :func:`b3_leaf`.
+#: The flavour ansatz's CALIBRATION CONSTANT: the b₃ its closed forms were
+#: calibrated at, the off-path seed b₃ = 24 (retired; unreachable by
+#: Joyce's construction). It is not the adopted b₃. The ``calibrated_24``
+#: branch of ``flavour_seed_coupling`` returns it from
+#: :func:`resolve_flavour_b3`; the adopted ``follow_seed`` branch ignores it
+#: and consumes the live seed. It stays the constructor default of
+#: :class:`GeometricYukawaT4` so the calibrated branch remains reproducible.
 DEFAULT_B3: int = 24
 
 
 def _eta_from_b3(b3: int) -> float:
-    """Closed-form geometric η from b₃ (Sprint 6 #1 retuning).
+    """Closed-form η from b₃ (the ansatz's distortion parameter).
 
     η = √2 · sin(π / b₃)
 
-    For b₃ = 24 (the SSoT G₂ third Betti number) this evaluates to
-    0.184592… and lands θ₁₃ = arcsin(√(2/3)·η) at 8.669°, i.e.
-    0.81σ from the NuFIT 6.0 NO best fit (8.58° ± 0.11, symmetric
-    1σ bound). See the module docstring for the geometric provenance
-    of the √2 (24-cell octahedral diagonal) and sin(π/b₃) (T₄ vertex-
-    orbit half-angle).
+    At the off-path seed b₃ = 24, where the ansatz was calibrated, this
+    evaluates to 0.184592… and lands θ₁₃ = arcsin(√(2/3)·η) at 8.669°,
+    i.e. 0.81σ from the NuFIT 6.0 NO best fit (8.58° ± 0.11, symmetric
+    1σ bound). At the adopted b₃ it gives θ₁₃ = 4.8351° (measured), so
+    that agreement belongs to the calibration. See the module docstring
+    for the ansatz's reading of the √2 (24-cell octahedral diagonal) and
+    sin(π/b₃) (T₄ vertex-orbit half-angle).
     """
     return math.sqrt(2.0) * math.sin(math.pi / float(b3))
 
 
 def _xi_from_b3(b3: int) -> float:
-    """Closed-form geometric ξ from b₃ (Sprint T5 #1 — T2.4 sister param).
+    """Closed-form ξ from b₃ (the T2.4 sister parameter).
 
     ξ = cos(π / b₃)
 
-    Geometric origin: ξ is the algebraic conjugate of η on the
+    Geometric reading: ξ is the algebraic conjugate of η on the
     T₄/24-cell orbit. While η = √2·sin(π/b₃) is the cell-diagonal-
     weighted *half-angle sine* (the off-axis overlap amplitude), ξ =
     cos(π/b₃) is the half-angle *cosine* — the in-plane projection of
     the same vertex orbit onto the bridge-pair principal axis. The
-    pair (η/√2, ξ) satisfies sin²+cos²=1, so introducing ξ as the
-    second knob for δ_CP costs zero free parameters: it is closed-
-    form in b₃ and routes through ``b3_leaf()`` exactly like η.
+    pair (η/√2, ξ) satisfies sin²+cos²=1, so ξ adds no free parameter
+    of its own: it is closed-form in b₃ and routes through
+    ``b3_leaf()`` exactly like η. (The δ_CP coefficients that multiply
+    it are tuned; see the module docstring.)
 
-    For b₃ = 24 this evaluates to cos(π/24) = 0.991445…
+    At the off-path calibration seed b₃ = 24 this evaluates to
+    cos(π/24) = 0.991445…
     """
     return math.cos(math.pi / float(b3))
 
@@ -268,34 +296,33 @@ def _xi_is_geometric_default(xi: float, b3: int) -> bool:
     return math.isclose(xi, _xi_from_b3(b3), rel_tol=1e-12, abs_tol=1e-15)
 
 
-#: T₄/24-cell distortion parameter — closed-form, b₃-rooted, zero free
-#: parameters. Replaces the v25.0 literal seed η = 0.037 with the
-#: geometric expression η = √2 · sin(π / b₃) per Sprint 6 #1.
+#: T₄/24-cell distortion parameter η = √2 · sin(π / b₃), evaluated at the
+#: calibration constant :data:`DEFAULT_B3` (the off-path seed b₃ = 24).
+#: Closed-form in b₃; it replaced an earlier literal η = 0.037.
 DEFAULT_ETA: float = _eta_from_b3(DEFAULT_B3)
 
-#: Sister geometric parameter ξ = cos(π / b₃), introduced Sprint T5 #1
-#: (TIER_2_3_ROADMAP T2.4). Algebraic conjugate of η on the T₄/24-cell
-#: orbit; routes through ``b3_leaf()`` exactly like η, so the second
-#: knob for δ_CP costs zero free parameters. For b₃ = 24, ξ = 0.991445…
+#: Sister parameter ξ = cos(π / b₃) (TIER_2_3_ROADMAP T2.4), evaluated at
+#: the calibration constant :data:`DEFAULT_B3`. Algebraic conjugate of η
+#: on the T₄/24-cell orbit; routes through ``b3_leaf()`` exactly like η.
+#: At the off-path calibration seed b₃ = 24, ξ = 0.991445…
 DEFAULT_XI: float = _xi_from_b3(DEFAULT_B3)
 
-#: Pure-topology amplitude from T₄ vertex-orbit decomposition on the
-#: 24-cell. The 2-out-of-3 generation overlap leaves this exact factor.
+#: Amplitude from the T₄ vertex-orbit decomposition on the 24-cell. The
+#: 2-out-of-3 generation overlap leaves this exact factor in the ansatz.
 T4_ORBIT_AMPLITUDE: float = math.sqrt(2.0 / 3.0)
 
 #: δ_CP polynomial coefficient ``a`` in (3π/2)·(1 − a·η·ξ + b·ξ²). The
-#: 0.12 value is inherited from the Sprint 6 #1 (3π/2)(1−0.12·η) form;
-#: it carries the T₄ phase-shift induced by the bridge-pair handedness
-#: flip. Multiplying by ξ is the Sprint T5 #1 modification — the
-#: handedness-flip phase couples to the half-angle cosine projection.
+#: 0.12 value is inherited from the earlier (3π/2)(1−0.12·η) form; the
+#: ansatz reads it as the T₄ phase-shift induced by the bridge-pair
+#: handedness flip. Multiplying by ξ couples that phase to the
+#: half-angle cosine projection.
 DELTA_CP_ETA_COEF: float = 0.12
 
-#: δ_CP polynomial coefficient ``b`` in (3π/2)·(1 − a·η·ξ + b·ξ²). The
-#: 0.05 value is fixed by the requirement that δ_CP land within 1σ of
-#: NuFIT 6.0 1.54π while the existing η·ξ term contributes the inherited
-#: handedness-flip correction. Sprint T5 #1 sets b = 0.05 — the ξ²
-#: curvature coefficient that lifts δ_CP from 1.467π (Sprint 6 #1) to
-#: 1.541π (NuFIT 6.0 target 1.54π).
+#: δ_CP polynomial coefficient ``b`` in (3π/2)·(1 − a·η·ξ + b·ξ²). TUNED:
+#: 0.05 is fixed by the requirement that δ_CP land within 1σ of NuFIT 6.0
+#: 1.54π while the η·ξ term contributes the inherited handedness-flip
+#: correction -- it lifts δ_CP from 1.467π to 1.541π (target 1.54π) at the
+#: off-path calibration seed b₃ = 24.
 DELTA_CP_XI2_COEF: float = 0.05
 
 #: NuFIT 6.0 anchor values used for the documented-divergence report.
@@ -318,31 +345,36 @@ NUFIT_DELTA_CP_SIGMA_PI: float = 0.17           # NuFIT 6.0 1σ width in units o
 
 
 class GeometricYukawaT4:
-    """T₄ / 24-cell geometric derivation of PMNS angles θ₁₃ and δ_CP.
+    """T₄ / 24-cell ansatz for the PMNS angles θ₁₃ and δ_CP.
 
-    Zero fitted parameters: the amplitude ``sqrt(2/3)`` comes from the
-    T₄ orbit decomposition on the 24-cell, the distortion
-    ``η = √2 · sin(π / b₃)`` is a closed-form b₃-rooted expression
-    (Sprint 6 #1 retuning), the sister parameter
-    ``ξ = cos(π / b₃)`` is the algebraic conjugate of η on the same
-    T₄/24-cell orbit (Sprint T5 #1 retuning), and ``b₃ = 24`` is the
-    SSoT seed. Both η and ξ route through ``b3_leaf()``.
+    A model construct, calibrated at the off-path seed b₃ = 24 (flavour
+    is OPEN on the adopted model; see the module docstring). The
+    amplitude ``sqrt(2/3)`` comes from the T₄ orbit decomposition on the
+    24-cell, the distortion ``η = √2 · sin(π / b₃)`` is closed-form in
+    b₃, and the sister parameter ``ξ = cos(π / b₃)`` is the algebraic
+    conjugate of η on the same T₄/24-cell orbit. Both η and ξ route
+    through ``b3_leaf()``. The δ_CP coefficients (0.12, 0.05) are tuned,
+    so the construction is not parameter-free.
 
     Parameters
     ----------
     b3:
-        G₂ third Betti number. Default :data:`DEFAULT_B3` = 24.
+        The b₃ the ansatz consumes. Default :data:`DEFAULT_B3`, the
+        calibration constant 24 (the off-path seed);
+        :func:`get_geometric_pmns` passes :func:`resolve_flavour_b3`
+        instead, which is the live seed's b₃ on the adopted branch.
     eta_distortion:
         T₄/24-cell distortion parameter. When omitted (the canonical
-        case) ``η`` is computed geometrically from ``b₃`` via
-        :func:`_eta_from_b3` (= √2 · sin(π/b₃) ≈ 0.184592 for
+        case) ``η`` is computed from ``b₃`` via :func:`_eta_from_b3`
+        (= √2 · sin(π/b₃) ≈ 0.184592 at the off-path calibration seed
         b₃ = 24). Callers may still override with a literal float for
         sensitivity scans or cross-validation hooks.
     xi_distortion:
-        Sister T₄/24-cell distortion parameter (Sprint T5 #1). When
-        omitted (the canonical case) ``ξ`` is computed geometrically
-        from ``b₃`` via :func:`_xi_from_b3` (= cos(π/b₃) ≈ 0.991445
-        for b₃ = 24). Callers may override for sensitivity scans.
+        Sister T₄/24-cell distortion parameter. When omitted (the
+        canonical case) ``ξ`` is computed from ``b₃`` via
+        :func:`_xi_from_b3` (= cos(π/b₃) ≈ 0.991445 at the off-path
+        calibration seed b₃ = 24). Callers may override for
+        sensitivity scans.
 
     Examples
     --------
@@ -397,7 +429,7 @@ class GeometricYukawaT4:
     # ── Core derivation ────────────────────────────────────────────────
 
     def derive_pmns_angles(self) -> Dict[str, Any]:
-        """Derive θ₁₃, δ_CP, and the y_e hierarchy from T₄/24-cell geometry.
+        """Evaluate θ₁₃, δ_CP and the y_e hierarchy from the T₄/24-cell ansatz.
 
         Returns
         -------
@@ -407,11 +439,11 @@ class GeometricYukawaT4:
             "y_e_hierarchy": float, "eta_distortion": float, "b3": int,
             "documented_divergence": {...}}``.
 
-            ``documented_divergence`` carries the NuFIT 6.0 IO anchor
-            comparison so downstream 72-gate validation can flag the
-            geometric derivation as either passing or open-tension
-            *without* silently fudging η to mask the gap. This is the
-            "honest reporting" mandate from the task constraints.
+            ``documented_divergence`` carries the NuFIT 6.0 anchor
+            comparison at the b₃ this instance consumed, so downstream
+            validation can flag the ansatz as passing or in tension
+            *without* silently fudging η to mask the gap. On the adopted
+            seed it reports the divergence.
         """
         # ── Float pipeline (canonical numerical values) ──────────────
         amplitude = T4_ORBIT_AMPLITUDE  # sqrt(2/3) — pure topology
@@ -422,12 +454,11 @@ class GeometricYukawaT4:
         theta_13_rad = math.asin(sin_theta_13)
         theta_13_deg = math.degrees(theta_13_rad)
 
-        # Sprint T5 #1: δ_CP = (3π/2) · (1 − a·η·ξ + b·ξ²) with the
-        # sister parameter ξ = cos(π/b₃) providing the second knob.
-        # The η·ξ term inherits the Sprint 6 #1 handedness-flip weight
-        # (a = 0.12); the ξ² term is the Sprint T5 #1 ξ-curvature
-        # contribution (b = 0.05) that lifts δ_CP from 1.467π to 1.541π
-        # — i.e. into the NuFIT 6.0 1σ window.
+        # T2.4 form: δ_CP = (3π/2) · (1 − a·η·ξ + b·ξ²) with the sister
+        # parameter ξ = cos(π/b₃) providing the second knob. The η·ξ term
+        # inherits the handedness-flip weight (a = 0.12); the ξ² term
+        # (b = 0.05, tuned) lifts δ_CP from 1.467π to 1.541π -- into the
+        # NuFIT 6.0 1σ window at the off-path calibration seed b₃ = 24.
         delta_cp_rad = (3.0 * math.pi / 2.0) * (
             1.0
             - DELTA_CP_ETA_COEF * self.eta * self.xi
@@ -435,8 +466,9 @@ class GeometricYukawaT4:
         )
         delta_cp_pi_units = delta_cp_rad / math.pi
 
-        # y_e hierarchy = sqrt(2/3) · exp(−b₃ / 24)  →  for b₃ = 24
-        # this is sqrt(2/3) · exp(−1) ≈ 0.300.
+        # y_e hierarchy = sqrt(2/3) · exp(−b₃ / 24). The 24 in the
+        # denominator is a constant calibrated at the off-path seed
+        # b₃ = 24, where this is sqrt(2/3) · exp(−1) ≈ 0.300.
         y_e_hierarchy = amplitude * math.exp(-self.b3 / 24.0)
 
         # ── EML tree registration (Sprint 4 #1 contract) ─────────────
@@ -506,17 +538,21 @@ class GeometricYukawaT4:
             "delta_CP_sigma_deviation": float(delta_cp_sigma_deviation),
             "delta_CP_within_1sigma": bool(delta_cp_sigma_deviation < 1.0),
             "note": (
-                "Sprint T5 #1 (TIER_2_3_ROADMAP T2.4) closes proof-killer "
-                "#2 (δ_CP independence). Introduces sister parameter "
-                "ξ = cos(π/b₃) — algebraic conjugate of η on the T₄/24-"
-                "cell vertex orbit. New form: "
-                "δ_CP = (3π/2)(1 − 0.12·η·ξ + 0.05·ξ²). With b₃ = 24: "
-                "θ₁₃ = 8.669° (NuFIT 6.0 NO 8.58 ± 0.11 → 0.81σ); "
-                "δ_CP = 1.541π (IO best fit 1.54π ± 0.17π → 0.005σ). "
-                "Each lands within 1σ of its own anchor, but in DIFFERENT "
-                "mass orderings, and (a, b) = (0.12, 0.05) are tuned to the "
-                "δ_CP target — ξ traces through b3_leaf() "
-                "exactly like η."
+                "Flavour ansatz (flavour is OPEN on the adopted model), "
+                "TIER_2_3_ROADMAP T2.4 two-parameter form: "
+                "δ_CP = (3π/2)(1 − 0.12·η·ξ + 0.05·ξ²), with "
+                "η = √2·sin(π/b₃) and the sister parameter ξ = cos(π/b₃), "
+                "the algebraic conjugate of η on the T₄/24-cell vertex "
+                "orbit; ξ traces through b3_leaf() exactly like η. "
+                "Calibrated at the off-path seed b₃ = 24: θ₁₃ = 8.669° "
+                "(NuFIT 6.0 NO 8.58 ± 0.11 → 0.81σ) and δ_CP = 1.541π "
+                "(IO best fit 1.54π ± 0.17π → 0.005σ) -- each within 1σ "
+                "of its own anchor, but in DIFFERENT mass orderings, with "
+                "(a, b) = (0.12, 0.05) tuned to the δ_CP target. The σ "
+                "fields of this block score the b₃ this run consumed "
+                "(%d, giving θ₁₃ = %.4f°); on the adopted seed the "
+                "calibration's agreement does not survive (fork "
+                "flavour_seed_coupling)." % (self.b3, theta_13_deg)
             ),
         }
 
@@ -552,8 +588,9 @@ class GeometricYukawaT4:
             between the structural tree's ``eml_compute(...)`` and the
             ``math.*`` pipeline would indicate an EML operator bug.
         """
-        # b₃ leaf — THE traceback root. Every leaf below this routes here
-        # via the FormulasRegistry.elder_kads SSoT lookup.
+        # b₃ leaf — the traceback root. It is the flavour fork's leaf
+        # (flavour_b3_leaf -> resolve_flavour_b3): the live seed's b₃ on
+        # the adopted follow_seed branch, DEFAULT_B3 on calibrated_24.
         b3_pt = b3_leaf()
 
         # T₄ orbit amplitude: sqrt(2/3)
@@ -709,21 +746,27 @@ class GeometricYukawaT4:
                 plain_text="theta_13 = arcsin(sqrt(2/3) * sqrt(2) * sin(pi/b3))",
                 category="GEOMETRIC",
                 description=(
-                    "PMNS reactor mixing angle from T₄ / 24-cell spinor "
-                    "overlap. Amplitude sqrt(2/3) is the T₄ orbit "
+                    "PMNS reactor mixing angle from a T₄ / 24-cell spinor-"
+                    "overlap ansatz -- a model construct, since flavour is "
+                    "OPEN on the adopted model (Y₇ supplies no chiral "
+                    "sector). Amplitude sqrt(2/3) is the T₄ orbit "
                     "decomposition factor; eta = sqrt(2)*sin(pi/b3) is the "
-                    "closed-form b₃-rooted distortion (Sprint 6 #1): "
-                    "sqrt(2) is the 24-cell octahedral diagonal, "
-                    "sin(pi/b3) is the T₄ vertex-orbit half-angle."
+                    "closed-form distortion: sqrt(2) is the 24-cell "
+                    "octahedral diagonal, sin(pi/b3) the T₄ vertex-orbit "
+                    "half-angle. Calibrated at the off-path seed b₃ = 24; "
+                    "at the adopted b₃ the NuFIT agreement does not "
+                    "survive (fork flavour_seed_coupling)."
                 ),
                 eml_tree_str=(
                     "ops.arcsin(ops.mul(ops.sqrt(ops.div(2, 3)), "
                     "ops.mul(ops.sqrt(2), ops.sin(ops.div(pi, b3)))))"
                 ),
                 eml_description=(
-                    "theta_13 = arcsin(sqrt(2/3) * sqrt(2) * sin(pi/b3)) "
-                    "with b3 = 24 the G2 third Betti number. Every leaf "
-                    "traces to b3_leaf(); zero free parameters."
+                    "theta_13 = arcsin(sqrt(2/3) * sqrt(2) * sin(pi/b3)), "
+                    "with b3 resolved by the flavour_seed_coupling fork: "
+                    "the live seed's b3 on the adopted follow_seed branch, "
+                    "the calibration constant 24 (the off-path seed) on "
+                    "calibrated_24. Every b3 leaf traces to b3_leaf()."
                 ),
                 arithma=arithma_theta_13,
                 eml=eml_theta_13,
@@ -746,16 +789,18 @@ class GeometricYukawaT4:
                 ),
                 category="GEOMETRIC",
                 description=(
-                    "PMNS Dirac CP phase from T₄ bridge-pair handedness "
-                    "flip with the Sprint T5 #1 sister-parameter ξ = "
-                    "cos(π/b₃). (3π/2) is the maximal-CP-violation "
-                    "reference; the −0.12·η·ξ term inherits the Sprint 6 "
-                    "#1 handedness-flip weight (now coupled to the "
-                    "half-angle cosine projection ξ); the +0.05·ξ² term is "
-                    "the ξ-curvature correction that lifts δ_CP into the "
-                    "NuFIT 6.0 1σ window (≈ 1.541π vs 1.54π target). Both "
-                    "η and ξ trace through b3_leaf(); zero fitted free "
-                    "parameters beyond b₃ = 24."
+                    "PMNS Dirac CP phase from the T₄ bridge-pair "
+                    "handedness-flip ansatz with the sister parameter ξ = "
+                    "cos(π/b₃) (a model construct; flavour is OPEN on the "
+                    "adopted model). (3π/2) is the maximal-CP-violation "
+                    "reference; the −0.12·η·ξ term carries the inherited "
+                    "handedness-flip weight, coupled to the half-angle "
+                    "cosine projection ξ; the +0.05·ξ² term is the "
+                    "ξ-curvature correction. Both coefficients were tuned "
+                    "so δ_CP lands in the NuFIT 6.0 1σ window (≈ 1.541π vs "
+                    "the IO best fit 1.54π) at the off-path seed b₃ = 24, "
+                    "so the form is calibrated, not parameter-free. Both "
+                    "η and ξ trace through b3_leaf()."
                 ),
                 eml_tree_str=(
                     "ops.mul(ops.div(ops.mul(3, pi), 2), "
@@ -766,9 +811,11 @@ class GeometricYukawaT4:
                 ),
                 eml_description=(
                     "delta_CP = (3*pi/2) * (1 - 0.12*eta*xi + 0.05*xi^2): "
-                    "the Sprint T5 #1 two-parameter form with sister ξ = "
-                    "cos(π/b₃). Both η and ξ are b₃-rooted via b3_leaf(); "
-                    "b3 = 24 the G2 third Betti number."
+                    "the two-parameter form with sister ξ = cos(π/b₃). "
+                    "Both η and ξ read b₃ via b3_leaf(), which the "
+                    "flavour_seed_coupling fork resolves (the live seed on "
+                    "the adopted branch; the calibration constant 24, the "
+                    "off-path seed, on calibrated_24)."
                 ),
                 arithma=arithma_delta_cp,
                 eml=eml_delta_cp,
@@ -785,9 +832,12 @@ class GeometricYukawaT4:
                 plain_text="y_e_hierarchy = sqrt(2/3) * exp(-b_3 / 24)",
                 category="GEOMETRIC",
                 description=(
-                    "Electron-Yukawa hierarchy seed from T₄ orbit "
-                    "amplitude times the b₃/24 exponential damping. "
-                    "Evaluates to sqrt(2/3) / e for the canonical b₃=24."
+                    "Electron-Yukawa hierarchy seed of the T₄ ansatz: the "
+                    "orbit amplitude times the b₃/24 exponential damping "
+                    "(a model construct; flavour is OPEN on the adopted "
+                    "model). The 24 in the denominator is a constant "
+                    "calibrated at the off-path seed b₃ = 24, where this "
+                    "evaluates to sqrt(2/3) / e."
                 ),
                 eml_tree_str=(
                     "ops.mul(ops.sqrt(ops.div(2, 3)), "
@@ -795,8 +845,10 @@ class GeometricYukawaT4:
                 ),
                 eml_description=(
                     "y_e = sqrt(2/3) * exp(-b3/24): the T4 amplitude "
-                    "factor weighted by the b3-cycle damping. b3 = 24 "
-                    "leaf appears as a real EMLPoint via b3_leaf()."
+                    "factor weighted by the b3 damping. The b3 leaf is a "
+                    "real EMLPoint via b3_leaf(), resolved by the "
+                    "flavour_seed_coupling fork; the 24 is the off-path "
+                    "calibration constant."
                 ),
                 arithma=arithma_y_e,
                 eml=eml_y_e,
@@ -814,28 +866,13 @@ def get_geometric_pmns() -> Dict[str, Any]:
     """Module entry point used by ``simulations/run_all_simulations.py``.
 
     Returns the dict produced by
-    :meth:`GeometricYukawaT4.derive_pmns_angles` with the canonical
-    defaults ``b3 = 24``, ``eta_distortion = None`` (η = √2·sin(π/b₃)
-    per Sprint 6 #1), and ``xi_distortion = None`` (ξ = cos(π/b₃) per
-    Sprint T5 #1). The dict carries the geometric ``theta_13_deg``,
-    ``delta_CP_rad``, ``y_e_hierarchy`` values, the structural EML
-    cross-checks, and the ``documented_divergence`` block against
-    NuFIT 6.0.
-
-    With the Sprint T5 #1 two-parameter form,
-    ``documented_divergence.theta_13_within_1sigma`` AND
-    ``documented_divergence.delta_CP_within_1sigma`` are BOTH ``True``
-    (θ₁₃ = 8.6686°, δ_CP = 1.541π, 0.005σ from 1.54π ± 0.17π).
-
-    θ₁₃ is now scored in the validation registry for the first time:
-    ``particle.theta_13_deg`` = 8.6686° against NuFIT 6.0 8.58 ± 0.11
-    gives **0.805 sigma, verdict PASS**. This is a real derivation being
-    compared to a real measurement, and it is a different object from
-    ``geometry.theta_13`` = 8.54, which is a hardcoded restatement of a
-    pre-release NuFIT central value (status MEASURED). The older
-    "0.99 sigma from 8.54 +- 0.13" figure in this docstring used both a
-    superseded central value and a superseded asymmetric-upper sigma;
-    it is withdrawn.
+    :meth:`GeometricYukawaT4.derive_pmns_angles` at
+    ``b3 = resolve_flavour_b3()``, with ``eta_distortion = None``
+    (η = √2·sin(π/b₃)) and ``xi_distortion = None`` (ξ = cos(π/b₃)). The
+    dict carries ``theta_13_deg``, ``delta_CP_rad``, ``y_e_hierarchy``,
+    the structural EML cross-checks, and the ``documented_divergence``
+    block against NuFIT 6.0. Flavour is OPEN on the adopted model; this is
+    an ansatz calibrated at the off-path seed b₃ = 24.
 
     FLAVOUR SEED COUPLING (fork, 2026-09-22): the formula TEXT claims b_3
     ("theta_13 = arcsin(sqrt(2/3) * sqrt(2) * sin(pi/b3))"), so under the
@@ -847,10 +884,23 @@ def get_geometric_pmns() -> Dict[str, Any]:
                              off NuFIT -- which is the honest state of a
                              24-calibrated ansatz whose formula claims a
                              topological origin. The divergence publishes.
-      calibrated_24          the v25 calibration as it was: b_3 = 24 in the
-                             flavour formulas regardless of the seed, i.e.
-                             the 24 is admitted to be a CALIBRATED constant
-                             wearing b_3's name. Runnable for costing.
+      calibrated_24          the calibration as it was: the off-path seed
+                             b_3 = 24 in the flavour formulas regardless of
+                             the seed, i.e. the 24 is admitted to be a
+                             CALIBRATED constant wearing b_3's name.
+                             Runnable for costing.
+
+    The calibrated_24 branch, and only it, reproduces the original
+    agreement: ``documented_divergence.theta_13_within_1sigma`` AND
+    ``documented_divergence.delta_CP_within_1sigma`` are BOTH ``True``
+    there (θ₁₃ = 8.6686°, 0.805σ from NuFIT 6.0 8.58 ± 0.11; δ_CP =
+    1.541π, 0.005σ from the IO best fit 1.54π ± 0.17π). That is a
+    calibrated ansatz compared with a measurement, not a derivation.
+    ``particle.theta_13_deg`` is a different object from
+    ``geometry.theta_13`` = 8.54, which is a hardcoded restatement of a
+    pre-release NuFIT central value (status MEASURED). The older
+    "0.99 sigma from 8.54 +- 0.13" figure used both a superseded central
+    value and a superseded asymmetric-upper sigma; it is withdrawn.
     """
     return GeometricYukawaT4(b3=resolve_flavour_b3()).derive_pmns_angles()
 

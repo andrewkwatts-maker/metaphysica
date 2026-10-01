@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 """
-Mirror Dark-Matter Direct-Detection Cross-Section — Sprint T6 / T3.6
-====================================================================
+Mirror Dark-Matter Direct-Detection Cross-Section
+=================================================
 
 Quantitative spin-independent cross-section per nucleon σ_SI for the
 Z₂ mirror DM sector, feeding XENONnT / LZ / PandaX-4T / DARWIN
 constraints.
 
+STATUS: CALIBRATED inputs. g_bridge = 1.2e-10 was computed at
+Re(T) = 174.033 and b₃ = 24, a calibration at the off-path seed; Re(T) is
+an OPEN modulus on Y₇ (CG.6), which has (b₂, b₃) = (12, 43). The mediator
+mass M_KK ≈ 5 TeV is taken from a moduli-stabilisation analysis, and the
+moduli are OPEN on Y₇. The cross-section below is the arithmetic of those
+inputs.
+
 Context
 -------
-Sprint 5 #1 (``mirror_dm_relic.py``) established that the Z₂ mirror
-sector contributes only a sub-dominant fraction of the dark-matter
-relic abundance (Ω_mirror·h² ≈ 9.6×10⁻⁵, vs Planck Ω_DM·h² ≈ 0.12).
+``mirror_dm_relic.py`` gives the Z₂ mirror sector a sub-dominant share of
+the dark-matter relic abundance (Ω_mirror·h² ≈ 9.6×10⁻⁵, a CALIBRATED
+value set by the solver's initial condition, vs Planck Ω_DM·h² ≈ 0.12).
 The roadmap (``TIER_2_3_ROADMAP.md §T3.6``) calls for the next step:
 predict the *direct-detection* cross-section so the mirror sector can
 be confronted with current and next-generation underground experiments
@@ -20,10 +27,12 @@ be confronted with current and next-generation underground experiments
 Physics
 -------
 Mirror DM couples to visible nucleons via the bridge sector with the
-same coupling that controls the freeze-out (g_bridge ≈ 1.2×10⁻¹⁰
-from G₂ triple-cycle intersections, re_t_sector v25.0).  The mediator
-is the KK tower of the bridge fibre at M_KK ≈ 5 TeV (Sprint 5.1
-moduli stabilisation).  At tree level, exchanging the mediator
+same coupling that controls the freeze-out (g_bridge ≈ 1.2×10⁻¹⁰,
+written as a G₂ triple-cycle quantity in re_t_sector and calibrated at
+Re(T) = 174.033 and the off-path seed b₃ = 24).  The mediator is the KK
+tower of the bridge
+fibre at M_KK ≈ 5 TeV (from a moduli-stabilisation analysis; the moduli
+are OPEN on Y₇).  At tree level, exchanging the mediator
 between a mirror DM particle and a nucleon gives a spin-independent
 contact interaction whose per-nucleon cross-section is::
 
@@ -31,20 +40,21 @@ contact interaction whose per-nucleon cross-section is::
 
 where
 
-* ``g_bridge``      — bridge coupling (1.2e-10, b₃-rooted via re_t_sector)
+* ``g_bridge``      — bridge coupling (1.2e-10, calibrated at the
+                      off-path seed via re_t_sector)
 * ``m_N ≈ 0.938``   — nucleon mass (GeV)
 * ``μ``             — reduced mass = m_N · m_χ / (m_N + m_χ).
-                      For the mirror DM mass m_χ = 3.51 meV << m_N
-                      this collapses to μ ≈ m_χ.
-* ``M_med = M_KK``  — bridge KK mediator mass (5 TeV, b₃-rooted via
-                      moduli stabilisation)
+                      For the mirror DM mass m_χ = 3.51e-3 GeV
+                      (3.51 MeV) << m_N this collapses to μ ≈ m_χ.
+* ``M_med = M_KK``  — bridge KK mediator mass (5 TeV, from moduli
+                      stabilisation, which is OPEN on Y₇)
 
 The natural-unit result (GeV⁻²) is converted to cm² via the
 PDG conversion factor 1 GeV⁻² = 3.8937936×10⁻²⁸ cm².
 
 Detection verdict
 -----------------
-Plugging the v26.0 defaults gives σ_SI ≈ 4.4×10⁻⁸⁸ cm² per nucleon,
+Plugging the calibrated defaults gives σ_SI ≈ 4.4×10⁻⁸⁸ cm² per nucleon,
 i.e. ~40 orders of magnitude below the XENONnT 2024 limit
 (σ_SI < 5×10⁻⁴⁸ cm² @ m_χ = 30 GeV) and ~39 orders below DARWIN's
 projected reach (~10⁻⁴⁹ cm²).  The verdict is therefore
@@ -54,15 +64,15 @@ that Ω_mirror·h² ≪ Ω_DM·h² — mirror DM is not the bulk DM, and the
 shared bridge coupling suppresses both the relic abundance and the
 direct-detection cross-section by the same parametric factor.
 
-This is a falsifiable architectural prediction:
+With these calibrated inputs this is a falsifiable architectural
+statement:
 
 * A direct-detection signal at XENONnT / LZ / PandaX-4T sensitivities
-  cannot be due to the v26.0 mirror sector — if one is observed, the
+  cannot be due to this mirror sector — if one is observed, the
   bulk DM must come from a different channel (axion DM, sterile
   neutrinos, …).
 * Conversely, a *null* result across all current and next-generation
-  experiments leaves the v26.0 mirror DM hypothesis completely
-  unconstrained.
+  experiments leaves the mirror DM hypothesis unconstrained.
 
 References
 ----------
@@ -72,8 +82,7 @@ References
 * DARWIN Collaboration (2016) JCAP 11, 017 — projected ~10⁻⁴⁹ cm²
 * Berezhiani (2018) arXiv:1807.07641 — mirror DM review
 
-Sprint T6 task #5 — Plan reference:
-``TIER_2_3_ROADMAP.md §T3.6``.
+Plan reference: ``TIER_2_3_ROADMAP.md §T3.6``.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -110,15 +119,16 @@ from metaphysica.simulations.core.eml_tree_adapter import (
 #: Nucleon mass in GeV (proton/neutron average, PDG 2024).
 M_NUCLEON_GEV: float = 0.938
 
-#: Default bridge-sector coupling g_bridge from G₂ half-instanton on the
-#: associative 3-cycle (re_t_sector v25.0).  Sprint T6 #3 closes the
-#: derivation gap: this O(1)-rounded value of 1.2e-10 is the rounded form
-#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.278e-10``
-#: derived in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
-#: Re(T) = 174.033, b₃ = 24.  Matches the same value used in
-#: :mod:`metaphysica.simulations.PM.cosmology.mirror_dm_relic` so that the
-#: relic-density and direct-detection predictions are driven by ONE
-#: topology-rooted parameter (b₃ = 24 via re_t_sector).
+#: Default bridge-sector coupling g_bridge, written as a G₂ half-instanton
+#: on the associative 3-cycle (re_t_sector). CALIBRATED at the off-path
+#: seed b₃ = 24: this O(1)-rounded value of 1.2e-10 is the rounded form of
+#: the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.278e-10``
+#: computed in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
+#: Re(T) = 174.033 (the Higgs-VEV anchor) and b₃ = 24; Re(T) is an OPEN
+#: modulus on Y₇ (CG.6). Matches the same value used in
+#: :mod:`metaphysica.simulations.PM.cosmology.mirror_dm_relic`, so the
+#: relic-density and direct-detection numbers share ONE calibrated
+#: parameter (formerly described as topology-rooted via re_t_sector).
 DEFAULT_G_BRIDGE: float = 1.2e-10
 
 #: Default mirror sector mass: 3.51e-3 = 3.51 MeV in this file's GeV
@@ -128,8 +138,9 @@ DEFAULT_G_BRIDGE: float = 1.2e-10
 DEFAULT_M_MIRROR_GEV: float = 3.51e-3
 
 #: Default KK mediator mass in GeV (≈ 5 TeV).  Inherited from the
-#: bridge-fibre KK reduction of M^{26}(24,2); see Sprint 5.1 moduli
-#: stabilisation analysis.
+#: bridge-fibre KK reduction of M^{26}(24,2) in a moduli-stabilisation
+#: analysis; the moduli are OPEN on Y₇ (CG.6), so this is an input, not a
+#: derived scale.
 DEFAULT_M_MEDIATOR_GEV: float = 5.0e3
 
 #: PDG conversion factor 1 GeV⁻² → cm² (ℏc = 0.1973269804 GeV·fm,
@@ -167,15 +178,15 @@ class MirrorDMDetection:
     """Direct-detection cross-section per nucleon for Z₂ mirror DM.
 
     Computes σ_SI from the bridge-mediated contact interaction with
-    visible nucleons.  Inputs default to the v26.0 values used by
-    :mod:`mirror_dm_relic`, so the two modules form a coherent pair:
-    relic abundance + direct detection from the same topology-rooted
-    coupling.
+    visible nucleons.  Inputs default to the values used by
+    :mod:`mirror_dm_relic`, so the two modules share one coupling,
+    calibrated at the off-path seed (see DEFAULT_G_BRIDGE).
 
     Parameters
     ----------
     g_bridge : float, optional
-        Bridge-sector coupling.  Default 1.2e-10 (b₃-rooted).
+        Bridge-sector coupling.  Default 1.2e-10 (calibrated at
+        Re(T) = 174.033, b₃ = 24).
     m_mirror_GeV : float, optional
         Mirror sector particle mass in GeV.  Default 3.51e-3.
     M_mediator_GeV : float, optional
@@ -221,8 +232,8 @@ class MirrorDMDetection:
         """Return the DM-nucleon reduced mass μ in GeV.
 
         μ = m_N · m_χ / (m_N + m_χ).  For m_χ ≪ m_N this collapses to
-        μ ≈ m_χ (within parts per mille for the v26.0 default
-        m_mirror = 3.51 meV).
+        μ ≈ m_χ (within a few parts per mille for the default
+        m_mirror = 3.51e-3 GeV).
         """
         m_N = M_NUCLEON_GEV
         m_chi = self.m_mirror_GeV
@@ -377,11 +388,13 @@ class MirrorDMDetection:
     def _build_structural_tree(self, sigma_natural: float) -> float:
         """Build the EML operator tree rooted at :func:`b3_leaf`.
 
-        ``g_bridge`` and ``M_mediator`` are both b₃-rooted (re_t_sector
-        v25.0 and bridge-fibre KK reduction respectively), so the tree
-        cross-links via a b3/b3 ratio leaf — the standard pattern used
-        by :mod:`mirror_dm_relic` to keep the structural tree
-        b3-traceable without altering the numerical value.
+        ``g_bridge`` and ``M_mediator`` are both written in b₃
+        (re_t_sector and the bridge-fibre KK reduction respectively),
+        though both are calibrated inputs, so the tree cross-links via a
+        b3/b3 ratio leaf — the standard pattern used by
+        :mod:`mirror_dm_relic` to keep the structural tree b3-traceable
+        without altering the numerical value. The cross-link is
+        structural; it does not make the value follow the seed.
 
         Returns
         -------
@@ -449,8 +462,8 @@ class MirrorDMDetection:
 def get_mirror_dm_detection() -> Dict[str, Any]:
     """Module entry point: compute σ_SI and classify against experiments.
 
-    Defaults to ``g_bridge = 1.2e-10``, ``m_mirror = 3.51 meV``, and
-    ``M_mediator = 5 TeV`` per Sprint T6 task #5 / TIER_2_3_ROADMAP §T3.6.
+    Defaults to ``g_bridge = 1.2e-10`` (calibrated), ``m_mirror =
+    3.51e-3 GeV``, and ``M_mediator = 5 TeV`` per TIER_2_3_ROADMAP §T3.6.
     Returns the full results dict as described in
     :meth:`MirrorDMDetection.predict_detection`.
 

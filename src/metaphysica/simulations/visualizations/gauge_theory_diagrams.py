@@ -13,7 +13,10 @@ Physics Background:
 - Anomaly cancellation is crucial for consistency of gauge theories
 - In PM, anomalies cancel via G2 holonomy constraints + SO(10) embedding
 - BRST cohomology provides ghost field structure for gauge fixing
-- The third Betti number b3=24 determines the physical state space
+- OFF-PATH (b3_seed = seed_24): the BRST figure was drawn with
+  dim H^0(Q) = b3 = 24, the off-path seed, and says so. On the adopted Y_7
+  (Joyce's resolution of T^7/(Z/2)^3, (b2, b3) = (12, 43)), b3 counts the
+  neutral chiral multiplets and b2 the U(1) gauge fields.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -276,8 +279,10 @@ def plot_anomaly_cancellation(output_path: str = None):
     # SIDE ANNOTATIONS
     # ============================================================
 
-    # Left annotation: G2 manifold
-    ax.text(0.2, 4.2, "G$_2$ Manifold\n$b_3 = 24$\nHodge diamond\nconstraints",
+    # Left annotation: G2 manifold (rendered from the live seed)
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    ax.text(0.2, 4.2, render("G$_2$ Manifold {manifold}\n$b_3 = {b3}$\nBetti-number\nconstraints",
+                             "latex"),
             ha='left', va='center', fontsize=9, color=PM_COLORS["purple"],
             bbox=dict(boxstyle='round', facecolor=PM_COLORS["bg_card"], alpha=0.8))
 
@@ -305,7 +310,8 @@ def plot_brst_cohomology(output_path: str = None):
     - Ghost number grading (-2 to +2)
     - BRST operator Q action
     - Physical state space H^0(Q)
-    - Connection to G2 topology (b3 = 24 physical states)
+    - Connection to G2 topology, drawn at the off-path seed b3 = 24 and
+      labelled so; the adopted Y_7 values are rendered from the live seed
 
     Args:
         output_path: Output file path (default: ../../images/brst-cohomology.png)
@@ -455,15 +461,19 @@ def plot_brst_cohomology(output_path: str = None):
             ha='center', va='center', fontsize=13, fontweight='bold',
             color=PM_COLORS["purple"])
 
-    # Key relationship
-    ax.text(5, 1.8, r"dim $H^0(Q)$ = $b_3$(G$_2$) = 24",
+    # Key relationship, as drawn at the off-path seed; the adopted values are
+    # rendered from the live seed.
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    ax.text(5, 1.8, r"OFF-PATH: dim $H^0(Q)$ = $b_3$ = 24 (retired seed)",
             ha='center', va='center', fontsize=14, fontweight='bold',
             color=PM_COLORS["gold"])
 
     ax.text(5, 1.3, "Third Betti number counts independent 3-cycles",
             ha='center', va='center', fontsize=11, color=PM_COLORS["text"])
 
-    ax.text(5, 0.95, r"$\Rightarrow$ 24 physical gauge field degrees of freedom",
+    ax.text(5, 0.95,
+            render(r"On {manifold}: $b_2 = {b2}$ U(1) gauge fields, $b_3 = {b3}$ neutral chiral multiplets",
+                   "latex"),
             ha='center', va='center', fontsize=11, color=PM_COLORS["green"])
 
     # ============================================================

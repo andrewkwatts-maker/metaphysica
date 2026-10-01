@@ -225,16 +225,11 @@ FROZEN_WRITER_LITERALS = (
     # a named constant. The inventory is a record of what LEAKS, so it must
     # shrink when a leak is fixed -- the test below enforces that direction,
     # and it is what caught this entry going stale.
-    (
-        "simulations/PM/paper/abstract.py",
-        "w\\u2080 = \\u221223/24",
-        "abstract prose in sections.json, bound to cosmology.w0_derived",
-    ),
-    (
-        "simulations/PM/paper/abstract.py",
-        "from b\\u2083=24 topology",
-        "the same sentence's attribution of w_0 to b_3 = 24",
-    ),
+    #
+    # REPAIRED and removed 2026-10-01: the abstract's frozen "w0 = -23/24 ...
+    # from b3=24 topology" sentence. The abstract is now generated from
+    # closed_geometry.overview (the author's request for a clear top-down
+    # overview), so it narrates the active path.
     (
         "website/js/theory-constants.js",
         "w0Denominator: 24",
@@ -518,11 +513,8 @@ def test_built_sections_prose_names_the_active_seed():
         "was produced under the off-path override, or the narration stopped "
         "following the seed." % active_marks
     )
-    assert text.count("23/24") > 0, (
-        "the frozen abstract sentence is gone from sections.json. If the "
-        "abstract now narrates the active path, drop its entries from "
-        "FROZEN_WRITER_LITERALS and this assertion in the same change."
-    )
+    # The frozen abstract sentence was removed 2026-10-01 (the abstract now
+    # narrates the active path), and with it the assertion that it was here.
 
 
 def test_the_fork_manifest_is_published_and_reports_the_adopted_seed():

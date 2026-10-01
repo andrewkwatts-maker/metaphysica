@@ -101,10 +101,11 @@ def test_the_gate_no_longer_publishes_a_literal_pass(geometry):
 
 
 def test_the_gate_details_carry_the_branch_not_three_literals(geometry):
+    # D-015 (2026-10-01): the compact form is the active path.
     details = geometry._holonomy_gate()["details"]
-    assert details["branch"] == "all_plus_one"
-    assert details["induced_metric_signature"] == [4, 3]
-    assert details["may_claim_g2_holonomy"] is False
+    assert details["branch"] == "octonion_derived"
+    assert details["induced_metric_signature"] == [7, 0]
+    assert details["may_claim_g2_holonomy"] is True
     assert details["conditions_placeholder"] == 3
     for gone in ("parallel_spinors", "ricci_scalar", "torsion_free"):
         assert gone not in details, (

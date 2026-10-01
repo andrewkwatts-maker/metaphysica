@@ -29,6 +29,7 @@ __all__ = [
     "REF_ADV_2005",
     "REF_ACHARYA_1996",
     "cite",
+    "short_cite",
     "reference_records",
 ]
 
@@ -169,6 +170,31 @@ def cite(key: str) -> str:
     if ref.get("arxiv"):
         text += ", " + ref["arxiv"]
     return text
+
+
+def short_cite(key: str) -> str:
+    """Author-year form for running text: 'Joyce 1996a', 'Lukas & Morris 2004'.
+
+    Surnames are the even tokens of the 'Surname, Initials, Surname, ...'
+    authors field. Two records sharing surnames and year get a, b, ... in
+    key order, so the two Joyce 1996 papers stay distinguishable.
+    """
+    def base(k: str) -> str:
+        ref = REFERENCES[k]
+        names = [t.strip() for t in ref["authors"].split(",")][0::2]
+        if len(names) == 1:
+            who = names[0]
+        elif len(names) == 2:
+            who = "%s & %s" % (names[0], names[1])
+        else:
+            who = "%s et al." % names[0]
+        return "%s %d" % (who, ref["year"])
+
+    mine = base(key)
+    twins = sorted(k for k in REFERENCES if base(k) == mine)
+    if len(twins) > 1:
+        mine += "abcdefghij"[twins.index(key)]
+    return mine
 
 
 def reference_records(keys: Sequence[str]) -> List[Dict[str, Any]]:

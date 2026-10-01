@@ -6,23 +6,37 @@ Principia Metaphysica - Ghost-Free Stability Check v16.2
 The "Guardian" validation filter that ensures no simulation can produce
 unphysical results by enforcing Weyl anomaly cancellation.
 
-PHYSICS BACKGROUND:
+STATUS ON THE ADOPTED PATH
+OFF-PATH (b3_seed = seed_24): this copy implements the off-path seed. Its
+create_from_registry reads topology.elder_kads, which carries the live b_3
+(43 on the adopted seed), so there it reports C = 43 + 2 - 26 = 19 and
+blocks. It is not in the simulation chain: run_all_simulations imports
+validation/unitary_filter_legacy.py, whose create_from_registry counts the
+bulk's 24 space directions instead of b_3. RETIRED (signature ruling
+2026-08-31): reading 26 as the bosonic critical dimension of this bulk
+(with two times the critical dimension is 27-28), and the single shared
+time. Ghost control of the second time is OPEN; Bars' Sp(2,R)
+ghost-freedom theorem is not inherited.
+
+PHYSICS BACKGROUND (the legacy count):
 In string theory, the Weyl anomaly must cancel for physical consistency.
 The total central charge must vanish:
 
     c_total = c_matter + c_ghost = 0
 
-For PM's v21 (24,1) signature theory with Euclidean bridge:
-- 24 transverse coordinates (b3): c = +24
+For the legacy (24,1) signature count with Euclidean bridge:
+- 24 transverse coordinates (formerly read as b3 = 24, the off-path seed): c = +24
 - 1 two-time structure + Euclidean bridge (0) for timeless substrate: c = +2 effective
 - Ghost contribution: c = -26 (from bc ghost system)
 
-Total: c = 24 + 2 - 26 = 0 [GHOST-FREE]
+Total: c = 24 + 2 - 26 = 0 [GHOST-FREE in the one-time count]
 
-The v21/v22 framework uses OR reduction via R_perp operator to produce dual 13D(12,1) shadows
-with shared time, replacing the legacy Sp(2,R) gauge fixing approach.
+RETIRED (signature ruling 2026-08-31): an earlier framework produced the
+dual 13D(12,1) shadows with a shared time by an OR reduction via the R_perp
+operator. The adopted bulk is 26D of signature (24,2), one time per 13D
+(12,1) shadow.
 
-If b3 != 24 or D_total != 26, the Weyl anomaly does NOT cancel, leading to:
+In this count, if b3 != 24 or D_total != 26, the Weyl anomaly does NOT cancel, leading to:
 1. Negative-norm states (ghosts) in the spectrum
 2. Non-unitary S-matrix
 3. Broken BRST cohomology
@@ -33,7 +47,7 @@ This filter BLOCKS any simulation that would violate unitarity.
 Usage:
     from metaphysica.simulations.validation.unitary_filter_legacy import UnitaryFilter
 
-    # Create filter with default values (b3=24, dim_total=26)
+    # Create filter with default values (b3=24, the off-path seed; dim_total=26)
     guardian = UnitaryFilter()
 
     # Check stability before running simulation
@@ -103,7 +117,8 @@ class UnitaryFilter:
 
     This filter ensures that no simulation can produce unphysical results
     by enforcing Weyl anomaly cancellation. If b3 != 24 or D != 26, the
-    theory breaks and the filter will BLOCK the simulation.
+    theory breaks and the filter will BLOCK the simulation. OFF-PATH
+    (b3_seed = seed_24): see the module docstring.
 
     The Weyl anomaly check:
         central_charge = b3 + 2 - 26  (transverse + Sp(2,R) - ghost)
@@ -111,8 +126,9 @@ class UnitaryFilter:
     For unitarity: central_charge MUST equal 0.
 
     Attributes:
-        b3_val: Third Betti number of the G2 manifold (transverse modes)
-        dim_total: Total spacetime dimension (should be 26)
+        b3_val: transverse count, named for the third Betti number of the
+                G2 manifold (24 only at the off-path seed b_3 = 24)
+        dim_total: Total bulk dimension (should be 26)
         dim_sp2r: Sp(2,R) symplectic contribution (always 2)
         dim_ghost: Ghost sector contribution (always -26 for bc system)
 
@@ -141,9 +157,13 @@ class UnitaryFilter:
         Initialize the UnitaryFilter.
 
         Args:
-            b3_val: Third Betti number (transverse dimensions from G2 manifold).
-                    Default is 24 for TCS G2 with 187 special Lagrangians.
-            dim_total: Total spacetime dimension. Default is 26 (critical dimension).
+            b3_val: Transverse count, named for the third Betti number.
+                    Default 24, the off-path seed (formerly described as a
+                    TCS G2 manifold with 187 special Lagrangians; OFF-PATH:
+                    the adopted Y_7 is Joyce's resolution of T^7/(Z/2)^3).
+            dim_total: Total bulk dimension. Default 26 = 24 space + 2 times.
+                    RETIRED (signature ruling 2026-08-31): its reading as the
+                    bosonic critical dimension (with two times it is 27-28).
 
         The central charge calculation:
             c = b3 + 2 - 26
@@ -243,7 +263,8 @@ class UnitaryFilter:
                 f"  Ghost = -{self.dim_ghost} (bc system)\n"
                 f"  Central charge = {self.central_charge} != 0\n"
                 f"\n"
-                f"Theory requires b3 = 24 and D_total = 26 for unitarity."
+                f"This legacy count cancels only for b3 = 24 (the off-path "
+                f"seed) and D_total = 26."
             )
 
     def get_stability_report(self) -> Dict[str, Any]:
@@ -323,9 +344,11 @@ class UnitaryFilter:
         if registry.has_param("topology.elder_kads"):
             b3 = registry.get_param("topology.elder_kads")
         else:
-            b3 = _REG.elder_kads if _REG else 24  # Default from SSoT registry
+            b3 = _REG.elder_kads if _REG else 24  # live seed from the SSoT registry (43 on the adopted path); 24 is the off-path fallback
 
-        # D_total is always 26 for bosonic string
+        # D_total = 26: the bulk dimension (24 space + 2 times). Its former
+        # reading as the bosonic string's critical dimension is RETIRED
+        # (signature ruling 2026-08-31).
         dim_total = 26
 
         return cls(b3_val=int(b3), dim_total=dim_total)
@@ -393,6 +416,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             domain="validation",
             title="Ghost-Free Stability Check (The Guardian)",
             description=(
+                "OFF-PATH (b3_seed = seed_24): "
                 "Validates Weyl anomaly cancellation to ensure ghost-free unitarity. "
                 "This filter BLOCKS simulations if b3 != 24 or D != 26, preventing "
                 "unphysical results from entering the prediction chain."
@@ -483,9 +507,12 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 eml_tree_str="ops.add(eml_vec('c_left'), ops.neg(eml_vec('c_right')))",
                 category="DERIVED",
                 description=(
-                    "Weyl anomaly cancellation in 26D. The matter contribution (26 from "
-                    "24 transverse + 2 Sp(2,R)) exactly cancels the ghost contribution (-26 "
-                    "from the bc ghost system), ensuring conformal invariance and unitarity."
+                    "RETIRED (signature ruling 2026-08-31): Weyl anomaly count for a 26D "
+                    "one-time bosonic string. The matter contribution (26 from "
+                    "24 transverse + 2 Sp(2,R)) cancels the ghost contribution (-26 "
+                    "from the bc ghost system). With two times the critical dimension "
+                    "is 27-28, so this does not establish ghost-freedom for the (24,2) "
+                    "bulk; ghost control of the second time is OPEN."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["unitary.central_charge", "unitary.is_ghost_free"],
@@ -525,8 +552,11 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 eml_tree_str="ops.sub(eml_vec('c_matter'), eml_scalar(26.0))",
                 category="DERIVED",
                 description=(
-                    "Unitarity requirement in terms of the G2 geometry. The third Betti "
-                    "number b3 = 24 provides transverse modes, two-time structure (1) + Euclidean "
+                    "OFF-PATH (b3_seed = seed_24): unitarity count written at the off-path "
+                    "seed. It reads the transverse modes as the third Betti number "
+                    "b3 = 24; they are the bulk's 24 space directions, and this copy, which "
+                    "reads topology.elder_kads, does not cancel on the adopted seed. "
+                    "Two-time structure (1) + Euclidean "
                     "bridge (0) contributes 2 for timeless substrate, and the ghost sector subtracts 26. Total must be exactly 0."
                 ),
                 input_params=["topology.elder_kads"],
@@ -536,7 +566,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                     "method": "Dimensional counting from G2 compactification",
                     "steps": [
                         {
-                            "description": "Third Betti number b3=24 of the TCS G2 manifold provides 24 transverse bosonic modes",
+                            "description": "OFF-PATH (b3_seed = seed_24): 24 transverse bosonic modes, formerly read as the third Betti number b3=24 of a TCS G2 manifold; they are the bulk's 24 space directions",
                             "formula": r"b_3(\mathrm{G}_2) = 24 \;\text{transverse modes}"
                         },
                         {
@@ -548,13 +578,13 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                             "formula": r"c_{\mathrm{ghost}} = -26"
                         },
                         {
-                            "description": "Total central charge vanishes: ghost-free theory confirmed",
+                            "description": "Total central charge vanishes in this one-time count (ghost control of the (24,2) bulk's second time is OPEN)",
                             "formula": r"c = b_3 + 2 - 26 = 24 + 2 - 26 = 0 \;\;[\text{GHOST-FREE}]"
                         },
                     ]
                 },
                 terms={
-                    "b3": "Third Betti number of G2 manifold = 24",
+                    "b3": "Transverse count, named for the third Betti number (24 at the off-path seed b_3 = 24; not the adopted b_3)",
                     "c": "Central charge (must equal 0 for ghost-free theory)",
                 }
             ),
@@ -572,6 +602,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 units="dimensionless",
                 status="DERIVED",
                 description=(
+                    "OFF-PATH (b3_seed = seed_24): "
                     "Total central charge c = b3 + 2 - 26. Must be exactly 0 for "
                     "ghost-free unitarity. Non-zero values indicate broken conformal "
                     "invariance and presence of negative-norm states."
@@ -642,7 +673,12 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "For PM's (24,2) signature theory with Euclidean bridge, the central charge calculation is:"
+                    "OFF-PATH (b3_seed = seed_24): the legacy count below writes the "
+                    "transverse term as b_3 and cancels only at b_3 = 24; the transverse "
+                    "modes are the bulk's 24 space directions. It is also RETIRED as a "
+                    "ghost-freedom argument for the (24,2) bulk (signature ruling "
+                    "2026-08-31): with two times the critical dimension is 27-28. "
+                    "The count reads:"
                 )
             ),
             ContentBlock(
@@ -654,9 +690,10 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This exact cancellation ensures: (1) no negative-norm states in the physical "
-                    "spectrum, (2) unitarity of the S-matrix, (3) consistent BRST cohomology, and "
-                    "(4) valid predictive power for all derived quantities."
+                    "For a one-time bosonic string this cancellation ensures: (1) no "
+                    "negative-norm states in the physical spectrum, (2) unitarity of the "
+                    "S-matrix, and (3) consistent BRST cohomology. For the (24,2) bulk, "
+                    "ghost control of the second time is OPEN."
                 )
             ),
             ContentBlock(
@@ -667,6 +704,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             ContentBlock(
                 type="paragraph",
                 content=(
+                    "OFF-PATH (b3_seed = seed_24): "
                     "Before any simulation produces physical predictions, it must pass through "
                     "the UnitaryFilter validation. If b3 != 24 or D != 26, the filter BLOCKS "
                     "the simulation with a UnitaryFilterError, preventing unphysical results "
@@ -680,6 +718,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             subsection_id="V.1",
             title="Ghost-Free Stability Check (The Guardian)",
             abstract=(
+                "OFF-PATH (b3_seed = seed_24): "
                 "Validation filter that enforces Weyl anomaly cancellation to ensure "
                 "ghost-free unitarity. Blocks simulations if b3 != 24 or D != 26."
             ),
@@ -783,14 +822,20 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 "is not perfectly cancelled."
             ),
             "technicalDetail": (
-                "Central charge calculation: c = b3 + 2 - 26, where b3 = 24 is the third "
-                "Betti number (transverse modes from G2 compactification), 2 comes from "
+                "OFF-PATH (b3_seed = seed_24): Central charge calculation: c = b3 + 2 - 26, "
+                "where b3 = 24 was read as the third Betti number (transverse modes from G2 "
+                "compactification); the transverse modes are the bulk's 24 space directions, "
+                "and the adopted b_3 is not 24. 2 comes from "
                 "two-time structure (1) + Euclidean bridge (0) for timeless substrate in dual-shadow structure, "
-                "and -26 is the bc ghost system contribution. For c = 0, the Weyl anomaly cancels and the theory "
-                "is unitary (ghost-free). For c != 0, negative-norm states appear and all "
+                "and -26 is the bc ghost system contribution. For c = 0, the Weyl anomaly cancels in this "
+                "one-time count. For c != 0, negative-norm states appear and all "
                 "predictions are invalid. The Guardian enforces c = 0 before any simulation runs."
             ),
             "prediction": (
+                "OFF-PATH (b3_seed = seed_24): this prediction was written for the off-path "
+                "seed, and the adopted b_3 is not 24. The copy of this filter in the "
+                "simulation chain (validation/unitary_filter_legacy.py) now counts the "
+                "bulk's 24 space directions instead of b_3. As written: "
                 "If b3 is ever measured or computed to be anything other than 24, or if "
                 "the spacetime dimension differs from 26, the entire PM framework would "
                 "require fundamental revision. The Guardian would block all simulations "
@@ -812,12 +857,12 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             },
             {
                 "id": "CERT-UF-002",
-                "assertion": "b3 = 24 is the third Betti number of TCS G2 manifold #187",
+                "assertion": "OFF-PATH (b3_seed = seed_24): b3 = 24, formerly attributed to a 'TCS G2 manifold #187' that appears in no published TCS enumeration",
                 "condition": "b3 == 24",
                 "tolerance": 0.0,
                 "status": "PASS",
                 "wolfram_query": "third Betti number G2 holonomy manifold TCS",
-                "wolfram_result": "b3 = 24 for TCS #187"
+                "wolfram_result": "OFF-PATH record (b3_seed = seed_24): b3 = 24 for TCS #187"
             },
             {
                 "id": "CERT-UF-003",
@@ -872,8 +917,10 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
             {
                 "topic": "Bosonic String Theory Critical Dimension",
                 "url": "https://en.wikipedia.org/wiki/Bosonic_string_theory",
-                "relevance": "D = 26 critical dimension from Weyl anomaly cancellation",
-                "validation_hint": "Confirm D = 26 for bosonic string consistency"
+                "relevance": ("D = 26 is the critical dimension of the one-time bosonic string; "
+                              "RETIRED as a claim about the (24,2) bulk (signature ruling "
+                              "2026-08-31), whose two-time critical dimension is 27-28"),
+                "validation_hint": "Confirm D = 26 for one-time bosonic string consistency"
             },
             {
                 "topic": "Polchinski's String Theory Volume 1",
@@ -898,7 +945,7 @@ class UnitaryFilterSimulation(SimulationBase if SimulationBase != object else ob
                 "passed": True,
                 "confidence_interval": {"lower": 24.0, "upper": 24.0, "sigma": 0.0},
                 "log_level": "INFO",
-                "message": "b3 = 24 (third Betti number of TCS G2 manifold #187)"
+                "message": "OFF-PATH (b3_seed = seed_24): b3 = 24, formerly called the third Betti number of a TCS G2 manifold #187 (no such entry is published)"
             },
             {
                 "name": "ghost_contribution_correct",
@@ -986,8 +1033,8 @@ def main():
     print(" PRINCIPIA METAPHYSICA - GHOST-FREE STABILITY CHECK (THE GUARDIAN)")
     print("=" * 70)
 
-    # Test with correct values
-    print("\n1. Testing with b3 = 24, D = 26 (correct values):")
+    # Test with the values this legacy count requires (the off-path seed)
+    print("\n1. Testing with b3 = 24, D = 26 (the off-path seed values this count requires):")
     guardian = UnitaryFilter(b3_val=24, dim_total=26)
     is_stable, message = guardian.check_stability()
     print(f"   Central charge: {guardian.central_charge}")
@@ -1048,19 +1095,19 @@ def main():
 # Self-Validation Assertions (catch silent failures at import time)
 # =============================================================================
 
-# Test with correct values (b3=24, D=26)
+# Test with the values this legacy count requires (b3=24, the off-path seed; D=26)
 _guardian_correct = UnitaryFilter(b3_val=24, dim_total=26)
 assert _guardian_correct.central_charge == 0, \
-    f"UnitaryFilter: central charge should be 0 for b3=24, got {_guardian_correct.central_charge}"
+    f"UnitaryFilter: central charge should be 0 for b3=24 (off-path seed), got {_guardian_correct.central_charge}"
 _is_stable, _message = _guardian_correct.check_stability()
-assert _is_stable is True, f"UnitaryFilter: should be stable for b3=24, got: {_message}"
+assert _is_stable is True, f"UnitaryFilter: should be stable for b3=24 (off-path seed), got: {_message}"
 assert "GHOST_FREE" in _message, f"UnitaryFilter: message should contain GHOST_FREE, got: {_message}"
 
-# Test validation method doesn't raise for correct values
+# Test validation method doesn't raise for the off-path seed values
 try:
     _guardian_correct.validate_before_simulation()
 except UnitaryFilterError:
-    raise AssertionError("UnitaryFilter: should not raise for b3=24")
+    raise AssertionError("UnitaryFilter: should not raise for b3=24 (off-path seed)")
 
 # Test with wrong b3=23 (should fail)
 _guardian_wrong_low = UnitaryFilter(b3_val=23, dim_total=26)

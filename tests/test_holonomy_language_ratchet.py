@@ -149,8 +149,23 @@ def test_the_narration_is_the_supported_route():
         narrate,
     )
 
+    import os
+
     assert narrate()["claims"]["holonomy"]["sentence"]
-    assert "G2 holonomy" in forbidden_phrases(), (
-        "on the adopted branch the phrase must be listed as forbidden, with a "
-        "reason, or the ratchet has no authority to cite"
-    )
+    # D-015 (2026-10-01): the compact form is the active path, where the
+    # claim is TRUE; the split form is a switch path, where it must be
+    # listed as forbidden with a reason. Both are checked.
+    env = "METAPHYSICA_VARIANT_G2_FORM_CONVENTION"
+    saved = os.environ.get(env)
+    try:
+        os.environ[env] = "all_plus_one"
+        assert "G2 holonomy" in forbidden_phrases(), (
+            "on the split branch the phrase must be listed as forbidden, with "
+            "a reason, or the ratchet has no authority to cite")
+        os.environ[env] = "octonion_derived"
+        assert "G2 holonomy" not in forbidden_phrases()
+    finally:
+        if saved is None:
+            os.environ.pop(env, None)
+        else:
+            os.environ[env] = saved

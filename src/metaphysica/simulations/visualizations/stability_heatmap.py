@@ -1,20 +1,32 @@
 #!/usr/bin/env python3
 """
-3D Stability Heatmap Visualization v16.2
-==========================================
+3D Stability Heatmap Visualization
+==================================
 
-Generates a 3D surface plot showing the stability of PM predictions
-as a function of the topological parameters (b2, b3).
+Generates a 3D surface plot of the deviation of five neutrino observables
+(theta_12, theta_13, theta_23, delta_CP and the mass sum) from experiment, as
+a function of the integers (b2, b3) fed into the formulas below.
 
-The z-axis represents the "total deviation" metric:
-    Sigma_total = sqrt(sum_i sigma_i^2)
+The z-axis represents the "total deviation" metric (an RMS):
+    Sigma_total = sqrt(mean_i sigma_i^2)
 
-where sigma_i is the deviation from experiment for each certificate.
+where sigma_i is the deviation from experiment for each observable.
 
-A stable prediction has a clear minimum at (b2=4, b3=24) - the TCS #187 values.
+OFF-PATH (b3_seed = seed_24): the marked point (b2, b3) = (4, 24) is the
+retired reading of the internal space as a twisted connected sum, formerly
+labelled "TCS #187" (b2 = 4 was its h^{1,1}). No published TCS enumeration has
+such an entry, and b3 = 24 is unreachable by Joyce's construction from Gamma
+(certificate CG.7). The data key `tcs_187` keeps the old name. The adopted
+internal space is Y_7, Joyce's resolution of T^7/(Z/2)^3, with
+(b2, b3) = (12, 43); that point is not on this grid (b2 runs 2-10, b3 over the
+even values 12-48).
 
-This visualization demonstrates that PM's predictions are not arbitrary
-tuning but arise from a unique topological minimum.
+The surface does not select a topology. The formulas are model constructs
+(flavour is OPEN until a chiral sector exists, D-011), and where the minimum
+falls depends on the chi_eff value fed in: the stored
+stability_heatmap_data.json was made with chi_eff = 144 and has its minimum
+at (4, 24); a run on 2026-10-01 with the registry's per-shadow value 72 put
+it at (5, 28).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -68,12 +80,18 @@ class StabilityHeatmapGenerator:
         Args:
             b2_range: Range of b2 values to scan
             b3_range: Range of b3 values to scan
-            chi_eff: Fixed Euler characteristic (from registry if None)
+            chi_eff: Fixed effective index chi_eff (from registry if None).
+                The K3 reading (adopted, D-015): chi_eff = 2 x sum chi(K3)
+                = 48 n, the Kummer K3 surfaces transverse to the n singular
+                involutions, counted once per shadow; 144 at n = 3. It is not
+                the Euler characteristic of Y_7, which is 0.
             n_gen: Number of generations
         """
         self.b2_range = b2_range
         self.b3_range = b3_range
-        self.mephorash_chi = chi_eff if chi_eff is not None else _REG.mephorash_chi  # 144 from SSoT
+        # From the registry when not given (its per-shadow value); the stored
+        # stability_heatmap_data.json was generated with 144.
+        self.mephorash_chi = chi_eff if chi_eff is not None else _REG.mephorash_chi
         self.n_gen = n_gen
 
     def compute_theta_13(self, b2: int, b3: int, orientation_sum: int = 12) -> float:
@@ -198,6 +216,8 @@ class StabilityHeatmapGenerator:
                 "b3": min_b3,
                 "sigma_total": min_sigma,
             },
+            # OFF-PATH (b3_seed = seed_24): the key keeps its old name; (4, 24)
+            # is the retired TCS reading, not a published TCS entry (CG.7).
             "tcs_187": {
                 "b2": 4,
                 "b3": 24,
@@ -225,10 +245,14 @@ class StabilityHeatmapGenerator:
         # Convert to JSON for embedding
         data_json = json.dumps(data)
 
+        # The adopted geometry, rendered from the live seed rather than typed.
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
+        adopted = render("{construction}, {betti_pair}", "html")
+
         html = f'''<!DOCTYPE html>
 <html>
 <head>
-    <title>PM Stability Heatmap v16.2</title>
+    <title>PM Stability Heatmap</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: #eee; }}
@@ -241,31 +265,35 @@ class StabilityHeatmapGenerator:
 </head>
 <body>
     <div class="container">
-        <h1>Principia Metaphysica v16.2 - Stability Heatmap</h1>
+        <h1>Principia Metaphysica - Stability Heatmap</h1>
 
         <div class="info">
             <h3>Topological Parameter Scan</h3>
             <p>This 3D surface shows the total deviation from experiment as a function of
-            the topological parameters (b2, b3). The z-axis is the RMS sigma deviation
-            across all certificate predictions.</p>
+            the integers (b2, b3) fed into the formulas. The z-axis is the RMS sigma deviation
+            across the five neutrino observables listed below.</p>
 
-            <p class="minimum">TCS #187 values: b2=4, b3=24 (marked with star)</p>
+            <p class="minimum">Marked point (diamond): b2 = 4, b3 = 24, the off-path seed,
+            formerly labelled "TCS #187". No published TCS enumeration has that entry, and
+            Joyce's construction never reaches b3 = 24 (certificate CG.7).</p>
 
-            <p>A clear minimum at (4, 24) demonstrates that PM's predictions arise from
-            a unique topological fixed point - not arbitrary parameter tuning.</p>
+            <p>The surface does not select a topology: the formulas are model constructs
+            (flavour is OPEN until a chiral sector exists), and the minimum moves with the
+            chi_eff value fed in. The adopted internal space is {adopted}; this scan covers
+            b2 = {self.b2_range[0]}-{self.b2_range[1]} and b3 = {self.b3_range[0]}-{self.b3_range[1]} in steps of 2.</p>
         </div>
 
         <div id="plot"></div>
 
         <div class="info">
-            <h3>Certificate Observables</h3>
+            <h3>Observables in the Scan</h3>
             <ul>
-                <li><strong>alpha_inv:</strong> Fine structure constant inverse (137.036)</li>
                 <li><strong>theta_12:</strong> Solar neutrino mixing angle (33.41 deg)</li>
+                <li><strong>theta_13:</strong> Reactor neutrino mixing angle (8.63 deg)</li>
                 <li><strong>theta_23:</strong> Atmospheric neutrino mixing angle (49.3 deg)</li>
                 <li><strong>delta_CP:</strong> CP-violating phase (278 deg)</li>
                 <li><strong>mass_sum:</strong> Neutrino mass sum (< 0.12 eV)</li>
-                <li><strong>dm_ratio:</strong> Dark matter to baryon ratio (5.38)</li>
+                <li>Not in the scan: alpha_inv (it uses calibrated parameters) and the dark-matter ratio.</li>
             </ul>
         </div>
     </div>
@@ -295,7 +323,7 @@ class StabilityHeatmapGenerator:
             hovertemplate: 'b2: %{{y}}<br>b3: %{{x}}<br>Sigma: %{{z:.2f}}<extra></extra>'
         }};
 
-        // Mark TCS #187 point
+        // Mark the off-path seed (b2, b3) = (4, 24), formerly labelled TCS #187
         const tcs_marker = {{
             type: 'scatter3d',
             x: [24],
@@ -308,27 +336,27 @@ class StabilityHeatmapGenerator:
                 symbol: 'diamond',
                 line: {{ color: '#ffffff', width: 2 }}
             }},
-            text: ['TCS #187'],
+            text: ['off-path seed'],
             textposition: 'top center',
             textfont: {{ color: '#00ffff', size: 14 }},
-            name: 'TCS #187 (b2=4, b3=24)',
-            hovertemplate: 'TCS #187<br>b2: 4<br>b3: 24<br>Sigma: %{{z:.3f}}<extra></extra>'
+            name: 'Off-path seed (b2=4, b3=24)',
+            hovertemplate: 'Off-path seed (retired)<br>b2: 4<br>b3: 24<br>Sigma: %{{z:.3f}}<extra></extra>'
         }};
 
         const layout = {{
             title: {{
-                text: 'Stability Landscape: Total Deviation vs Topology',
+                text: 'Stability Landscape: Total Deviation vs (b2, b3)',
                 font: {{ color: '#00d4ff', size: 20 }}
             }},
             scene: {{
                 xaxis: {{
-                    title: 'b3 (Associative 3-cycles)',
+                    title: 'b3 (third Betti number)',
                     titlefont: {{ color: '#00d4ff' }},
                     gridcolor: '#333',
                     zerolinecolor: '#666'
                 }},
                 yaxis: {{
-                    title: 'b2 (Kahler moduli)',
+                    title: 'b2 (second Betti number)',
                     titlefont: {{ color: '#00d4ff' }},
                     gridcolor: '#333',
                     zerolinecolor: '#666'
@@ -366,7 +394,7 @@ class StabilityHeatmapGenerator:
 
         report = []
         report.append("=" * 70)
-        report.append("STABILITY HEATMAP ANALYSIS v16.2")
+        report.append("STABILITY HEATMAP ANALYSIS")
         report.append("=" * 70)
         report.append("")
         report.append(f"Parameter scan: b2 in {self.b2_range}, b3 in {self.b3_range}")
@@ -380,7 +408,7 @@ class StabilityHeatmapGenerator:
         report.append(f"  Sigma_total = {data['minimum']['sigma_total']:.4f}")
         report.append("")
         report.append("-" * 70)
-        report.append("TCS #187 VALUES (b2=4, b3=24):")
+        report.append("OFF-PATH SEED (b2=4, b3=24; formerly labelled TCS #187):")
         report.append("-" * 70)
 
         tcs_result = self.compute_total_deviation(4, 24)
@@ -397,13 +425,16 @@ class StabilityHeatmapGenerator:
         report.append("CONCLUSION:")
         report.append("-" * 70)
 
+        # The adopted geometry, rendered from the live seed rather than typed.
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
         if data['minimum']['b2'] == 4 and data['minimum']['b3'] == 24:
-            report.append("  [OK] TCS #187 values (b2=4, b3=24) are the GLOBAL MINIMUM!")
-            report.append("  [OK] PM predictions arise from a unique topological fixed point.")
-            report.append("  [OK] This is NOT parameter tuning - it's topological selection.")
+            report.append("  The off-path seed (b2=4, b3=24) is the grid minimum for this chi_eff.")
+            report.append("  It does not select a topology: the minimum moves with chi_eff, and")
+            report.append("  Joyce's construction never reaches b3 = 24 (CG.7).")
         else:
             report.append(f"  ! Global minimum at b2={data['minimum']['b2']}, b3={data['minimum']['b3']}")
-            report.append(f"  ! TCS #187 deviation: {data['tcs_187']['sigma_total']:.4f} sigma")
+            report.append(f"  ! Off-path seed (b2=4, b3=24) deviation: {data['tcs_187']['sigma_total']:.4f} sigma")
+        report.append(render("  Adopted: {construction}, {betti_pair}."))
 
         report.append("=" * 70)
 

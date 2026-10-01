@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Appendix D: Parameter Tables v24.2
-===================================
+Appendix D: Parameter Tables
+============================
 
 Comprehensive tables of all parameters used in Principia Metaphysica:
 - Physical constants (Planck mass, fine structure constant, etc.)
@@ -11,7 +11,14 @@ Comprehensive tables of all parameters used in Principia Metaphysica:
 - Predictions (proton lifetime, neutrino masses, etc.)
 
 This appendix provides a complete reference of parameter values,
-uncertainties, sources, and experimental status.
+uncertainties, sources, and experimental status. It is not run by the
+pipeline but ships in the package.
+
+STATUS ON THE ADOPTED PATH: Table D.3 holds the retired off-path seed's
+geometry (b_2 = 4, b_3 = 24, K = 4, h^{1,1} = 4, h^{3,1} = 68), earlier
+attributed to "TCS G2 manifold #187" -- a false attribution. The adopted
+internal space is Joyce's resolution of T^7/(Z/2)^3 with (b_2, b_3) =
+(12, 43) and n_gen = b_2/4 = 3. Values are unchanged; the text labels them.
 
 References:
 - PDG (2024) "Review of Particle Physics"
@@ -44,6 +51,12 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+
+
+def _geo(template: str, register: str = "plain") -> str:
+    """Fill a geometry phrase from the live seed (geometry_narration.render)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    return render(template, register)
 
 # ------------------------------------------------------------------
 # SSOT helpers: read experimental values through ExperimentalDataLoader,
@@ -266,18 +279,18 @@ class AppendixDParameterTables(SimulationBase):
         """Return table of geometric/topological parameters."""
         return [
             {"name": "G2 Dimension", "symbol": "dim(M)", "value": 7, "units": "dimensionless", "source": "G2 geometry"},
-            {"name": "TCS Manifold ID", "symbol": "ID", "value": 187, "units": "dimensionless", "source": "CHNP 2015"},
-            {"name": "Betti Number b₀", "symbol": "b₀", "value": 1, "units": "dimensionless", "source": "TCS topology"},
-            {"name": "Betti Number b₁", "symbol": "b₁", "value": 0, "units": "dimensionless", "source": "TCS topology"},
-            {"name": "Betti Number b₂", "symbol": "b₂", "value": 4, "units": "dimensionless", "source": "TCS topology"},
-            {"name": "Betti Number b₃", "symbol": "b₃", "value": 24, "units": "dimensionless", "source": "TCS topology"},
+            {"name": "TCS Manifold ID (retired attribution)", "symbol": "ID", "value": 187, "units": "dimensionless", "source": "RETIRED: #187 appears in no published enumeration"},
+            {"name": "Betti Number b₀", "symbol": "b₀", "value": 1, "units": "dimensionless", "source": "OFF-PATH seed (retired TCS reading)"},
+            {"name": "Betti Number b₁", "symbol": "b₁", "value": 0, "units": "dimensionless", "source": "OFF-PATH seed (retired TCS reading)"},
+            {"name": "Betti Number b₂", "symbol": "b₂", "value": 4, "units": "dimensionless", "source": "OFF-PATH seed (retired TCS reading; 12 on Y₇)"},
+            {"name": "Betti Number b₃", "symbol": "b₃", "value": 24, "units": "dimensionless", "source": "OFF-PATH seed (retired TCS reading; 43 on Y₇)"},
             {"name": "Betti Number b₄", "symbol": "b₄", "value": 4, "units": "dimensionless", "source": "Poincaré duality"},
-            {"name": "Euler Characteristic", "symbol": "χ_eff", "value": 144, "units": "dimensionless", "source": "Derived"},
-            {"name": "Generation Number", "symbol": "n_gen", "value": 3, "units": "dimensionless", "source": "χ_eff/48"},
-            {"name": "K3 Matching Number", "symbol": "K", "value": 4, "units": "dimensionless", "source": "TCS construction"},
-            {"name": "Cycle Separation", "symbol": "d/R", "value": 0.12, "units": "dimensionless", "source": "TCS geometry"},
-            {"name": "Hodge Number h¹¹", "symbol": "h¹¹", "value": 4, "units": "dimensionless", "source": "TCS topology"},
-            {"name": "Hodge Number h³¹", "symbol": "h³¹", "value": 68, "units": "dimensionless", "source": "TCS topology"},
+            {"name": "Effective index (K3 reading)", "symbol": "χ_eff", "value": 144, "units": "dimensionless", "source": "48n at n = 3 (D-015); not χ(Y₇) = 0"},
+            {"name": "Generation Number", "symbol": "n_gen", "value": 3, "units": "dimensionless", "source": "b₂/4; χ_eff/48 restates it"},
+            {"name": "K3 Matching Number", "symbol": "K", "value": 4, "units": "dimensionless", "source": "OFF-PATH (TCS construction)"},
+            {"name": "Cycle Separation", "symbol": "d/R", "value": 0.12, "units": "dimensionless", "source": "OFF-PATH (TCS geometry)"},
+            {"name": "Hodge Number h¹¹", "symbol": "h¹¹", "value": 4, "units": "dimensionless", "source": "OFF-PATH (TCS topology)"},
+            {"name": "Hodge Number h³¹", "symbol": "h³¹", "value": 68, "units": "dimensionless", "source": "OFF-PATH (TCS topology)"},
             {"name": "Compactification Radius", "symbol": "R", "value": 2.0e-30, "units": "cm", "source": "M_KK ~ 10¹⁴ GeV"},
             {"name": "G2 Volume", "symbol": "Vol(M)", "value": 1.0, "units": "R⁷", "source": "Normalized"},
         ]
@@ -323,7 +336,7 @@ class AppendixDParameterTables(SimulationBase):
     def _get_predictions_table(self) -> List[Dict[str, Any]]:
         """Return table of theory predictions."""
         return [
-            {"name": "Proton Lifetime", "symbol": "τ_p", "value": 3.9e34, "lower_bound": 1.67e34, "units": "years", "source": "TCS suppression", "status": "TESTABLE"},
+            {"name": "Proton Lifetime", "symbol": "τ_p", "value": 3.9e34, "lower_bound": 1.67e34, "units": "years", "source": "TCS suppression (OFF-PATH: TCS matching number)", "status": "TESTABLE"},
             {"name": "Proton BR(p→e⁺π⁰)", "symbol": "BR_eπ", "value": 0.25, "units": "dimensionless", "source": "Geometric", "status": "PREDICTED"},
             {"name": "Neutrinoless 2β ⟨m_ββ⟩", "symbol": "⟨m_ββ⟩", "value": 0.0015, "upper_limit": 0.1, "units": "eV", "source": "Normal ordering", "status": "TESTABLE"},
             {"name": "Dark Matter Relic", "symbol": "Ω_DM h²", "value": 0.120, "units": "dimensionless", "source": "Pneuma sector", "status": "PREDICTED"},
@@ -388,13 +401,16 @@ class AppendixDParameterTables(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "Table D.3 lists geometric parameters of TCS G2 manifold #187, "
-                        "including Betti numbers, Hodge numbers, and cycle separations. "
-                        "These are determined by the TCS construction from Corti et al. (2015). "
-                        "The Betti number b3=24 is the single topological input to the Gimel "
-                        "constant (Eq. 2.1, k-gimel-anchor) and the effective dimension "
-                        "calculation (Eq. 5.9, effective-dimension)."
+                    content=_geo(
+                        "On the adopted path the internal space is {construction}, with "
+                        "{betti_pair} and {n_gen_route}. OFF-PATH (b3_seed = seed_24): Table D.3 "
+                        "lists the retired seed's geometric parameters (Betti numbers, Hodge numbers "
+                        "and cycle separations), earlier attributed to a &ldquo;TCS G2 manifold "
+                        "#187&rdquo; from Corti et al. (2015), a false attribution. The retired seed's "
+                        "b<sub>3</sub> = 24 fed the Gimel constant (Eq. 2.1, k-gimel-anchor), "
+                        "CALIBRATED there (D-007), and the effective dimension calculation "
+                        "(Eq. 5.9, effective-dimension).",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -446,8 +462,10 @@ class AppendixDParameterTables(SimulationBase):
                         "including proton lifetime, dark matter relic density, neutrinoless "
                         "double beta decay amplitude, and inflation scale. Each prediction "
                         "is compared with current experimental bounds where available. The "
-                        "dark energy equation of state is derived from the thawing anchor "
-                        "(Eq. 2.3, w0-thawing-anchor), and the spectral index from the "
+                        "dark energy equation of state (Eq. 2.3, w0-thawing-anchor) is not "
+                        "derived: the w0 anchor is calibrated at the off-path seed b3 = 24, and "
+                        "dark energy is OPEN on the adopted path (the leading-order flux "
+                        "potential cannot accelerate). The spectral index comes from the "
                         "golden-modulated e-fold formula (Eq. 2.4, spectral-index-anchor)."
                     )
                 ),
@@ -527,7 +545,7 @@ class AppendixDParameterTables(SimulationBase):
                 units="dimensionless",
                 status="TABULATED",
                 description="Count of topology parameters in Table D.3",
-                eml_description="Integer count of geometric and topological parameters in Table D.3; includes Betti numbers, Hodge numbers, and cycle separations for TCS G2 #187.",
+                eml_description="Integer count of geometric and topological parameters in Table D.3; includes Betti numbers, Hodge numbers, and cycle separations for the retired off-path seed (its TCS G2 #187 attribution was false).",
                 no_experimental_value=True,  # Table metadata - no experimental measurement
             ),
             Parameter(
@@ -642,12 +660,15 @@ class AppendixDParameterTables(SimulationBase):
             },
             {
                 "id": "cert-betti-numbers-tcs187",
-                "assertion": "Betti numbers match TCS G2 #187 from CHNP 2015",
+                "assertion": ("OFF-PATH (b3_seed = seed_24): Betti numbers of the retired seed, "
+                              "earlier attributed to TCS G2 #187 from CHNP 2015 (false: #187 "
+                              "appears in no published enumeration)"),
                 "condition": "b = (1, 0, 4, 24, 24, 4, 0, 1) with Poincare duality",
                 "tolerance": 0,
                 "status": "EXACT",
                 "wolfram_query": "Betti numbers G2 manifold TCS construction",
-                "wolfram_result": "b3 = 24 for manifold #187 in CHNP classification",
+                "wolfram_result": ("RETIRED: earlier text read 'b3 = 24 for manifold #187 in CHNP "
+                                   "classification', which is false; Y_7 has (b2, b3) = (12, 43)"),
                 "sector": "topology",
             },
         ]
@@ -722,10 +743,12 @@ class AppendixDParameterTables(SimulationBase):
             {
                 "gate_id": "G09",
                 "simulation_id": self.metadata.id,
-                "assertion": "Geometric parameters consistent with TCS #187 topology",
+                "assertion": ("OFF-PATH: geometric parameters of the retired seed (its TCS #187 "
+                              "attribution was false)"),
                 "result": "PASS",
                 "timestamp": "2025-01-01T00:00:00Z",
-                "details": "b3=24, chi_eff=144, n_gen=3 from CHNP 2015 classification",
+                "details": ("OFF-PATH: b3=24 (retired seed), chi_eff=144, n_gen=3; Y_7 has "
+                            "(b2, b3) = (12, 43) and n_gen = b2/4 = 3"),
             },
         ]
 

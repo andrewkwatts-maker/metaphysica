@@ -115,7 +115,8 @@ def fork_reads_degraded() -> Dict[str, str]:
 
 def holonomy_claim(convention: Optional[str] = None) -> Dict[str, Any]:
     """What may be said about holonomy, on the branch actually in force."""
-    convention = convention or _resolve("g2_form_convention", "all_plus_one")
+    convention = convention or _resolve("g2_form_convention",
+                                        "octonion_derived")
 
     if convention == "octonion_derived":
         return {
@@ -365,18 +366,58 @@ def layperson_narration(seed: Optional[str] = None) -> Dict[str, Any]:
     }
 
 
-def chi_eff_claim() -> Dict[str, Any]:
-    """chi_eff has no ruled derivation. Report the candidate, invent nothing.
+#: The ruled reading of chi_eff -- the `chi_eff_route` fork's source.
+#: RULED 2026-10-01 by the author (D-015): the K3 reading of D-009. The other
+#: routes stay switchable through METAPHYSICA_VARIANT_CHI_EFF_ROUTE.
+CHI_EFF_READING = "k3_reading"
 
-    D-009 (2026-09-30) found a reading that is an Euler characteristic of a
-    real object and follows the seed: chi_eff := 2 * sum over the singular
-    involutions of chi(K3), the Kummer K3 transverse to each, once per
-    shadow -- 48 n, which is 144 at the adopted n = 3. Adopting it is the
-    author's ruling, so this still narrates it as a CANDIDATE.
+
+def chi_eff_claim(branch: Optional[str] = None) -> Dict[str, Any]:
+    """What may be said about chi_eff, on the branch in force.
+
+    On the adopted `k3_reading` branch chi_eff is DERIVED: twice the Euler
+    characteristics of the Kummer K3 surfaces transverse to the n singular
+    involutions (one per shadow), 48 n -- 144 at n = 3 (D-009, ruled D-015).
+    The other branches narrate what they are: `unruled` the old dichotomy,
+    `constant_144` and `seed_dependent` the routes D-009 tested.
     """
+    branch = branch or _resolve("chi_eff_route", CHI_EFF_READING)
+    if branch == "k3_reading":
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+        n = n_gen_report()["n_gen"]
+        return {
+            "fork": "chi_eff_route",
+            "branch": "k3_reading",
+            "value": 48 * n,
+            "sentence": (
+                "chi_eff = 2 x sum over the n singular involutions of "
+                "chi(K3) = 48 n = %g: each singular involution has a Kummer "
+                "K3 surface transverse to its fixed three-tori (chi = 24), "
+                "counted once per shadow (D-009; ruled D-015). It is an index "
+                "of those surfaces, NOT the Euler characteristic of Y_7, "
+                "which is 0. n_gen = chi_eff/48 = n restates the ruled "
+                "generation route b_2/4; it is not a second derivation, and "
+                "it is not an index theorem for chirality, which stays open."
+                % (48 * n)
+            ),
+            "dichotomy": (
+                "The old dichotomy -- chi_eff a CONSTANT independent of the "
+                "seed, or SEED-DEPENDENT -- is resolved: the K3 reading is "
+                "SEED-DEPENDENT through n and equals 144 on the adopted point."
+            ),
+            "candidate": {
+                "reading": "K3",
+                "formula": "chi_eff = 2 * sum_sigma chi(K3_sigma) = 48 n",
+                "decision": "D-009, ruled D-015",
+                "module": "PM/geometry/kummer_index.py",
+            },
+            "may_claim_a_derivation": True,
+            "ruling_required": False,
+        }
     return {
-        "fork": None,
-        "branch": "UNRULED",
+        "fork": "chi_eff_route",
+        "branch": "UNRULED" if branch == "unruled" else branch,
         "sentence": (
             "chi_eff = 144 is an effective index, not the Euler "
             "characteristic of Y_7, which is 0 for every closed "
@@ -402,11 +443,11 @@ def chi_eff_claim() -> Dict[str, Any]:
         "candidate": {
             "reading": "K3",
             "formula": "chi_eff = 2 * sum_sigma chi(K3_sigma) = 48 n",
-            "decision": "D-009",
+            "decision": "D-009, ruled D-015 (adopted branch: k3_reading)",
             "module": "PM/geometry/kummer_index.py",
         },
         "may_claim_a_derivation": False,
-        "ruling_required": True,
+        "ruling_required": branch == "unruled",
     }
 
 
@@ -447,6 +488,8 @@ def fragments(register: str = "plain",
     n_txt = "%g" % n_gen
     seq = (1, 0, b2, b3, b3, b2, 0, 1)
     seq_txt = "(%s)" % ", ".join(str(x) for x in seq)
+    k3 = chi_eff_claim()["may_claim_a_derivation"]
+    chi_val = "%g" % (48 * n_gen)
 
     if register == "html":
         return {
@@ -463,9 +506,12 @@ def fragments(register: str = "plain",
                          % (3 * b2)),
             "n_gen_route": ("n<sub>gen</sub> = b<sub>2</sub>/4 = %s, the "
                             "number of singular involutions" % n_txt),
-            "chi_eff": ("the effective index &chi;<sub>eff</sub> (an open "
-                        "ruling; the Euler characteristic of Y<sub>7</sub> "
-                        "is 0)"),
+            "chi_eff": (("the effective index &chi;<sub>eff</sub> = 48n = "
+                         "%s (the K3 reading; the Euler characteristic of "
+                         "Y<sub>7</sub> is 0)" % chi_val) if k3 else
+                        ("the effective index &chi;<sub>eff</sub> (an open "
+                         "ruling; the Euler characteristic of Y<sub>7</sub> "
+                         "is 0)")),
             "chi_y7": "&chi;(Y<sub>7</sub>) = 0",
             "off_path_seed": "the off-path seed b<sub>3</sub> = 24",
             "calibrated_at_24": ("calibrated at the off-path seed "
@@ -485,8 +531,11 @@ def fragments(register: str = "plain",
             "b3_split": r"$b_3 = 7 + 3b_2 = 7 + %d$" % (3 * b2),
             "n_gen_route": (r"$n_{\rm gen} = b_2/4 = %s$, the number of "
                             r"singular involutions" % n_txt),
-            "chi_eff": (r"the effective index $\chi_{\rm eff}$ (an open "
-                        r"ruling; the Euler characteristic of $Y_7$ is 0)"),
+            "chi_eff": ((r"the effective index $\chi_{\rm eff} = 48n = %s$ "
+                         r"(the K3 reading; the Euler characteristic of $Y_7$ "
+                         r"is 0)" % chi_val) if k3 else
+                        (r"the effective index $\chi_{\rm eff}$ (an open "
+                         r"ruling; the Euler characteristic of $Y_7$ is 0)")),
             "chi_y7": r"$\chi(Y_7) = 0$",
             "off_path_seed": r"the off-path seed $b_3 = 24$",
             "calibrated_at_24": r"calibrated at the off-path seed $b_3 = 24$",
@@ -503,8 +552,11 @@ def fragments(register: str = "plain",
         "b3_split": "b_3 = 7 + 3 b_2 = 7 + %d" % (3 * b2),
         "n_gen_route": ("n_gen = b_2/4 = %s, the number of singular "
                         "involutions" % n_txt),
-        "chi_eff": ("the effective index chi_eff (an open ruling; the Euler "
-                    "characteristic of Y_7 is 0)"),
+        "chi_eff": (("the effective index chi_eff = 48n = %s (the K3 "
+                     "reading; the Euler characteristic of Y_7 is 0)"
+                     % chi_val) if k3 else
+                    ("the effective index chi_eff (an open ruling; the Euler "
+                     "characteristic of Y_7 is 0)")),
         "chi_y7": "chi(Y_7) = 0",
         "off_path_seed": "the off-path seed b_3 = 24",
         "calibrated_at_24": "calibrated at the off-path seed b_3 = 24",

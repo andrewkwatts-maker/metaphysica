@@ -12,6 +12,16 @@ Sectors:
   - Operational (C34-C42): Omega_comp, beta(Lambda) - SEALED
   - Bridge (C_PAIRS): 12-PAIR-BRIDGE validation (12 x (2,0) pairs) - LOCKED
 
+STATUS ON THE ADOPTED PATH
+Several gates below were written at the off-path seed b_3 = 24. Most read
+geometry.elder_kads, which is the integer anchor 24 (ANCHOR_FIT of
+geometric_anchors.py), not b_3: its reading as the third Betti number is
+withdrawn. The adopted internal space is Joyce's resolution of
+T^7/(Z/2)^3 with (b_2, b_3) = (12, 43); b_3 = 24 is not reachable by that
+construction (CG.7), and "TCS #187" appears in no published TCS
+enumeration. Each affected gate carries an OFF-PATH or CALIBRATED label in
+its docstring. Conditions, values and ids are unchanged.
+
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
@@ -62,7 +72,7 @@ class PrincipiaValidator:
     def run_all(self) -> Dict[str, Any]:
         """Run all 42+ certificate validations including C_PAIRS for 12-PAIR-BRIDGE."""
         print("=" * 70)
-        print("PRINCIPIA METAPHYSICA v22.0 CERTIFICATE VALIDATION")
+        print("PRINCIPIA METAPHYSICA CERTIFICATE VALIDATION")
         print("12-PAIR-BRIDGE Architecture")
         print(f"Timestamp: {datetime.now().isoformat()}")
         print("=" * 70)
@@ -171,13 +181,17 @@ class PrincipiaValidator:
     # ═══════════════════════════════════════════════════════════════════
 
     def cert_c001_b3_topology(self):
-        """C001: Third Betti Number b3 = 24
+        """C001: the integer anchor geometry.elder_kads = 24 (formerly "b3 = 24")
 
-        Validates the foundational topological invariant: the third Betti number
-        b3 = dim(H^3(X, R)) = 24 for the TCS G2 manifold (Joyce-Karigiannis).
-
-        For TCS construction: b3 = b2(K3) + 2 = 22 + 2 = 24.
-        This is Pillar Seed #1 and the single geometric input in EDOF=3.
+        OFF-PATH (b3_seed = seed_24): this gate checks that the registry's
+        geometry.elder_kads equals 24. That key is the integer anchor
+        ANCHOR_FIT = 24 of geometric_anchors.py, formerly published as the
+        third Betti number b3 = dim(H^3(X, R)) = 24 of a TCS G2 manifold
+        (with b3 = b2(K3) + 2 = 22 + 2) and used as Pillar Seed #1 of EDOF=3.
+        That identification is withdrawn: the adopted internal space is
+        Joyce's resolution of T^7/(Z/2)^3 with b_3 = 43, and b_3 = 24 is not
+        reachable by that construction (CG.7). A LOCKED status certifies the
+        anchor's value, not the topology.
 
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on empty/missing registry data.
@@ -197,30 +211,29 @@ class PrincipiaValidator:
         status = "LOCKED" if b3 == 24 else "FAILED"
         self.results['C001-B3'] = {
             "status": status,
-            "metric": f"b3 = {b3}",
+            "metric": f"integer anchor geometry.elder_kads = {b3} (off-path seed value; not b_3)",
             "expected": 24,
             "actual": b3,
             "sector": "FOUNDATIONAL"
         }
-        print(f"  C001-B3: {status} (b3 = {b3})")
+        print(f"  C001-B3: {status} (integer anchor geometry.elder_kads = {b3}; off-path seed value, not b_3)")
 
     def cert_c002_three_generations(self):
-        """C002: Three fermion generations from Atiyah-Singer index theorem.
+        """C002: n_gen = chi_eff / 48 = 3, a restatement of the ruled route.
 
-        Validates the foundational prediction: the number of chiral fermion
-        generations is fixed by the G2 manifold topology via the index theorem.
+        chi_eff = 2 x sum chi(K3) = 48 n (the K3 reading: the Kummer K3
+        surfaces transverse to the n singular involutions, counted once per
+        shadow); 144 at n = 3. So n_gen = chi_eff / 48 = n = 3 RESTATES the
+        ruled route n_gen = b_2/4 = 3, the number of singular involutions.
+        It is not a second derivation, and not an index theorem for chiral
+        generations: chirality is OPEN (D-011).
 
-        Canonical derivation (g2_geometry.py, FormulasRegistry):
-            chi_eff = 2*(h11 - h21 + h31) = 2*(4 - 0 + 68) = 144
-            n_gen = chi_eff / 48 = 144 / 48 = 3
-
-        The factor 48 arises from the dimension of the fundamental spinor
-        representation times topological normalization for 7D compactification
-        (Acharya 2002, arXiv:hep-th/0212294).
-
-        Equivalent shortcut: n_gen = b3/8 = 24/8 = 3 (since chi_eff = 6*b3
-        for TCS #187, and 6*b3/48 = b3/8). The canonical formula is preferred
-        because it generalizes to other G2 manifolds.
+        Formerly this gate cited an Atiyah-Singer index theorem with TCS
+        Hodge numbers, chi_eff = 2*(h11 - h21 + h31) = 2*(4 - 0 + 68), and
+        the shortcut n_gen = b3/8 = 24/8 via chi_eff = 6*b3 for "TCS #187".
+        Both are OFF-PATH: a Joyce orbifold has no h21 or h31, 6*b3 = 144
+        only at the off-path seed b_3 = 24, and n_gen = b3/8 is ABANDONED
+        (8 divides no reachable b_3; all are odd).
 
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on missing registry data.
@@ -257,25 +270,30 @@ class PrincipiaValidator:
         print(f"  C002-GEN: {status} (N_gen = {chi_eff}/48 = {n_gen})")
 
     def cert_c003_chi_effective(self):
-        """C003: Effective Euler characteristic chi_eff = 144
+        """C003: the effective index chi_eff = 144
 
-        Validates the effective Euler characteristic for the TCS #187
-        G2 manifold, computed from Hodge numbers:
+        chi_eff = 2 x sum chi(K3) = 48 n (the K3 reading: the Kummer K3
+        surfaces transverse to the n singular involutions, counted once per
+        shadow); 144 at n = 3. It is an effective index, not the Euler
+        characteristic of Y_7, which is 0 (CG.2).
 
-            chi_eff = 2*(h^{1,1} - h^{2,1} + h^{3,1}) = 2*(4 - 0 + 68) = 144
-
-        This is the TOTAL manifold chi_eff (both shadows combined):
+        This is the TOTAL over both shadows:
             chi_eff_total = chi_eff_normal + chi_eff_mirror = 72 + 72 = 144
 
-        Equivalently: chi_eff = 6*b3 = 6*24 = 144 for TCS #187.
+        n_gen = chi_eff/48 = 3 then restates the ruled route n_gen = b_2/4
+        (see C002).
 
-        The value 144 = 12^2 determines the generation count via
-        n_gen = chi_eff/48 = 3 (Acharya 2002, arXiv:hep-th/0212294).
+        OFF-PATH (b3_seed = seed_24): the cross-check below, chi_eff = 6*b3,
+        is one of the historical routes that agree only at b_3 = 24. It is
+        applied to geometry.elder_kads, the integer anchor 24, so 6*24 = 144
+        holds; at the adopted b_3 = 43 it would give 258. The gate formerly
+        called chi_eff the effective Euler characteristic of the "TCS #187"
+        G2 manifold, from Hodge numbers 2*(h^{1,1} - h^{2,1} + h^{3,1}) =
+        2*(4 - 0 + 68); that route is off-path too (a Joyce orbifold has no
+        h^{2,1} or h^{3,1}, and no published TCS enumeration has a "#187").
 
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on empty/missing registry data.
-
-        Reference: Corti et al. (2015), arXiv:1207.4470
         """
         chi = self._get_param('topology.mephorash_chi')
         b3 = self._get_param('geometry.elder_kads')
@@ -301,7 +319,8 @@ class PrincipiaValidator:
         # Primary check: chi_eff == 144
         value_ok = (chi == 144)
 
-        # Cross-check: chi_eff == 6 * b3 (TCS consistency)
+        # Cross-check: chi_eff == 6 * b3 -- an OFF-PATH route that holds only
+        # at the integer anchor 24 (see the docstring)
         consistent = (chi == 6 * b3)
 
         status = "LOCKED" if (value_ok and consistent) else "FAILED"
@@ -315,18 +334,21 @@ class PrincipiaValidator:
         print(f"  C003-CHI: {status} (chi_eff = {chi}, 6*b3 = {6 * b3})")
 
     def cert_c004_k_gimel(self):
-        """C004: Holonomy parameter k_gimel = b3/2 + 1/pi
+        """C004: k_gimel = b3/2 + 1/pi
 
-        Validates the G2 holonomy warp factor, derived purely from
-        Pillar Seed b3 = 24 and the transcendental constant pi:
+        CALIBRATED (k_gimel layer, D-007): k_gimel and the constants built on
+        it were fits made at the retired seed b_3 = 24, not derivations. The
+        gate reads geometry.elder_kads, the integer anchor 24 (formerly called
+        Pillar Seed b3 = 24 and read as a Betti number; that reading is
+        withdrawn), and checks the fit's internal arithmetic:
 
             k_gimel = b3/2 + 1/pi = 12 + 0.31831... = 12.31831...
 
-        The discrete part (b3/2 = 12) comes from half the Betti number;
-        the continuous correction (1/pi) arises from the holonomy volume
-        of the associative 3-cycle.
+        The discrete part (b3/2 = 12) was read as half the Betti number and
+        the correction (1/pi) as a holonomy volume of the associative
+        3-cycle; both readings belong to the calibration.
 
-        This parameter appears in:
+        This parameter appears in (each CALIBRATED with it):
         - Fine structure constant: alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi)
         - Higgs VEV: v_tree = k_gimel * (b3 - 4)
         - Neutrino mass sum: Sum(m_nu) = k_gimel / (2*pi*b3)
@@ -392,12 +414,18 @@ class PrincipiaValidator:
               f"b3/2+1/pi = {expected:.10f})")
 
     def cert_stab_005(self):
-        """STAB-005: Lambda Stability via Symplectic Screening"""
+        """STAB-005: Lambda Stability via Symplectic Screening
+
+        Evaluated at geometry.elder_kads, the integer anchor 24 (calibrated
+        at the off-path seed b_3 = 24), with the Chern-Simons level k set
+        equal to it as in TOPO-023 (itself OFF-PATH).
+        """
         b3 = self._get_param('geometry.elder_kads', 24)
         k = b3  # Chern-Simons level (k = b3 by anomaly cancellation, cf. TOPO-023)
 
         # beta(Lambda) = 1/(b3^2 * k^2)^4
-        # With b3=24, k=b3=24: beta = (576*576)^-4 ~ 8e-23
+        # At the integer anchor 24 (calibrated at the off-path seed b3=24),
+        # k = 24: beta = (576*576)^-4 ~ 8e-23
         # This is still 20+ orders of magnitude below detection (~1e-20)
         beta_lambda = (b3**2 * k**2)**-4
 
@@ -417,10 +445,20 @@ class PrincipiaValidator:
     # ═══════════════════════════════════════════════════════════════════
 
     def cert_cosmo_012(self):
-        """COSMO-012: Dark Energy w0 Alignment"""
+        """COSMO-012: Dark Energy w0 comparison
+
+        OPEN (dark energy, CG.11): w0 = -1 + 1/b3 = -23/24 has no derivation;
+        it is frozen at the off-path seed b_3 = 24 (this gate reads
+        geometry.elder_kads, the integer anchor 24). The reference value
+        -0.957 +/- 0.067 below is the framework's adopted thawing anchor
+        (attribution unverified), not the DESI DR2 w0waCDM headline
+        (w0 = -0.752 +/- 0.057, BAO+CMB+DESY5, arXiv:2503.14738; parameter
+        desi.w0), from which -23/24 sits more than 3 sigma away. A LOCKED
+        status means agreement with that anchor only.
+        """
         b3 = self._get_param('geometry.elder_kads', 24)
         w0_theory = -1 + 1/b3  # = -23/24
-        w0_desi = -0.957
+        w0_desi = -0.957  # framework thawing anchor (attribution unverified); not DESI DR2 w0waCDM
         sigma_desi = 0.067
 
         tension = abs(w0_theory - w0_desi) / sigma_desi
@@ -436,23 +474,29 @@ class PrincipiaValidator:
         print(f"  COSMO-012: {status} (w0 = {w0_theory:.6f}, tension = {tension:.2f}sigma)")
 
     def cert_cosmo_013_wa(self):
-        """COSMO-013: Dark Energy wa Alignment
+        """COSMO-013: Dark Energy wa comparison
 
-        Validates the dark energy evolution parameter wa = -1/sqrt(b3)
+        Compares the dark energy evolution parameter wa = -1/sqrt(b3)
         against DESI 2025 BAO+CMB+SN measurement.
+
+        OPEN (dark energy, CG.11): like w0 = -1 + 1/b3, the formula
+        wa = -1/sqrt(b3) has no derivation; the leading-order flux potential
+        cannot accelerate (|grad V|/V >= 5 sqrt(2/7) > sqrt(2)). OFF-PATH
+        (b3_seed = seed_24): the gate requires geometry.elder_kads, the
+        integer anchor 24, so it evaluates the formula at the off-path seed:
 
         Formula: wa = -1/sqrt(b3) = -1/sqrt(24) = -0.2041
         DESI 2025: wa = -0.99 +/- 0.32 (BAO+CMB+DESY5+PantheonPlus)
 
         The ~2.5 sigma tension is documented in dark_energy.py:
-        the leading-order geometric formula captures the correct thawing
-        sign (wa < 0) but underestimates the amplitude. Non-linear
-        corrections from moduli-quintessence coupling may reduce this.
+        the leading-order formula has the thawing sign (wa < 0) but
+        underestimates the amplitude.
 
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on empty/missing registry data.
 
-        Classification: PREDICTED (geometric derivation, no fitted parameters)
+        Classification recorded below: PREDICTED. On the adopted path the
+        formula is OPEN (no derivation) and written at the off-path seed.
         """
         b3 = self._get_param('geometry.elder_kads')
 
@@ -468,7 +512,9 @@ class PrincipiaValidator:
             print(f"  COSMO-013: {status} (geometry.elder_kads missing from registry)")
             return
 
-        # b3 cross-check: must be exactly 24 (TCS G2: b2(K3)+2 = 22+2 = 24)
+        # b3 cross-check: requires the integer anchor geometry.elder_kads = 24.
+        # OFF-PATH (b3_seed = seed_24): formerly justified as a TCS G2 value
+        # b2(K3)+2 = 22+2 = 24; the adopted Joyce orbifold is not a TCS.
         if b3 != 24:
             status = "FAILED"
             self.results['COSMO-013'] = {
@@ -505,7 +551,7 @@ class PrincipiaValidator:
             "honesty": {
                 "classification": "PREDICTED",
                 "formula": "wa = -1/sqrt(b3)",
-                "b3_source": "Pillar Seed (FormulasRegistry)",
+                "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
                 "fitted_params": 0,
                 "known_limitation": (
                     "Leading-order formula underestimates |wa|. "
@@ -526,6 +572,12 @@ class PrincipiaValidator:
         """COSMO-014: Neutrino Mass Sum from Hopf Fibration
 
         Validates Sum(m_nu) = k_gimel / (2*pi*b3) against cosmological bounds.
+
+        CALIBRATED (k_gimel layer, D-007): built on k_gimel and on
+        geometry.elder_kads, the integer anchor 24 (calibrated at the
+        off-path seed b_3 = 24); a fit made at the retired seed, not a
+        derivation. The "PREDICTED" classification recorded below predates
+        that ruling.
 
         Formula: Sum(m_nu) = k_gimel / (2*pi*b3) = 12.3183... / (2*pi*24) = 0.0817 eV
         This arises from the S3 Hopf Fibration residue in the G2 compactification
@@ -571,7 +623,9 @@ class PrincipiaValidator:
             print(f"  COSMO-014: {status} ({', '.join(missing)} missing from registry)")
             return
 
-        # b3 cross-check: must be exactly 24 (TCS G2: b2(K3)+2 = 22+2 = 24)
+        # b3 cross-check: requires the integer anchor geometry.elder_kads = 24.
+        # OFF-PATH (b3_seed = seed_24): formerly justified as a TCS G2 value
+        # b2(K3)+2 = 22+2 = 24; the adopted Joyce orbifold is not a TCS.
         if b3 != 24:
             status = "FAILED"
             self.results['COSMO-014'] = {
@@ -630,8 +684,8 @@ class PrincipiaValidator:
             "honesty": {
                 "classification": "PREDICTED",
                 "formula": "Sum(m_nu) = k_gimel / (2*pi*b3)",
-                "k_gimel_source": "Pillar Seed (FormulasRegistry: b3/2 + 1/pi)",
-                "b3_source": "Pillar Seed (FormulasRegistry)",
+                "k_gimel_source": "k_gimel = b3/2 + 1/pi (CALIBRATED, k_gimel layer, D-007)",
+                "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
                 "fitted_params": 0,
                 "ordering_note": (
                     "The Hopf formula predicts Sum(m_nu) = 0.0817 eV, which is "
@@ -671,8 +725,11 @@ class PrincipiaValidator:
         log-scaling formula (which does NOT use H0_early as input) gives
         H0_inferred ~ 101.4 km/s/Mpc (68sigma from Planck).
 
-        The non-trivial content of this gate is that b3=24 sets z_star~1.95
-        as the transition scale between early and late regimes.
+        The non-trivial content claimed for this gate is the transition scale
+        z_star = b3/k_gimel ~ 1.95 between early and late regimes. It is
+        computed with b3 = 24 hard-coded below: CALIBRATED at the off-path
+        seed b_3 = 24 (k_gimel is a k_gimel-layer fit, D-007), not the live
+        seed.
         """
         # Use the COMPUTED value from evolution engine, not the input anchor.
         # cosmology.H0_early_normalized is the H0 inferred at z=1100 after
@@ -693,7 +750,7 @@ class PrincipiaValidator:
         # H_raw(z) = H0_late * (1+z)^1.5 / (1 + ln(1+z)/b3)
         # H0_raw_inferred = H_raw(1100) / E(1100)
         import math
-        b3 = 24
+        b3 = 24  # CALIBRATED at the off-path seed b_3 = 24 (hard-coded; not the live seed)
         h0_late = 73.04
         z_cmb = 1100.0
         relaxation = 1.0 + math.log(1.0 + z_cmb) / b3
@@ -721,7 +778,7 @@ class PrincipiaValidator:
                 "source_param": "cosmology.H0_early_normalized",
                 "source_simulation": "evolution_engine_v16_2",
                 "H0_late_source": "SH0ES 2022 (73.04 km/s/Mpc, ESTABLISHED)",
-                "b3_source": "Pillar Seed (FormulasRegistry)",
+                "b3_source": "hard-coded 24 (calibrated at the off-path seed b_3 = 24)",
                 "experimental_ref": "Planck 2018: 67.4 +/- 0.5 km/s/Mpc",
                 "fitted_params": 0,
                 "circularity_diagnostic": {
@@ -738,7 +795,8 @@ class PrincipiaValidator:
                         f"The raw log-scaling formula (no H0_early input) gives "
                         f"H0={h0_raw_inferred:.1f} km/s/Mpc ({raw_tension:.0f}sigma "
                         f"from Planck). The non-trivial physics content is the "
-                        f"transition scale z*={z_star:.2f} set by b3=24."
+                        f"transition scale z*={z_star:.2f}, calibrated at the "
+                        f"off-path seed b3=24."
                     ),
                 },
                 "note": (
@@ -768,13 +826,18 @@ class PrincipiaValidator:
     def cert_topo_023_cs_level(self):
         """TOPO-023: Chern-Simons Level k = 24
 
-        Validates that the Chern-Simons level k is topologically fixed by
-        anomaly cancellation to equal b3.  For the TCS G2 manifold with
-        b3 = 24, k = 24 is not a free parameter but a topological requirement:
+        OFF-PATH (b3_seed = seed_24): the gate reads geometry.elder_kads, the
+        integer anchor 24, sets k equal to it and checks k = 24, integrality
+        and 24 | b3. It was written for "the TCS G2 manifold with b3 = 24",
+        reading k = b3 as an anomaly requirement. The adopted Y_7 has
+        b_3 = 43, which is neither 24 nor divisible by 24. The divisibility
+        by 24 is the eta^24 (transverse-oscillator) weight, a bulk property;
+        imposing it on b_3 conflates the two (identity ledger,
+        modular_anomaly_b3_mod_24). The checks, as written:
 
-        1. Anomaly cancellation in M-theory on G2: k = b3
+        1. Anomaly cancellation (the former reading): k = b3
         2. Integer quantization: k must be a non-negative integer
-        3. Modular constraint: b3 ≡ 0 (mod 24) — satisfied by b3 = 24
+        3. Modular constraint: b3 ≡ 0 (mod 24), met by the anchor 24
 
         Gate explicitly FAILS if the registry lacks b3, preventing vacuous pass.
         """
@@ -815,6 +878,8 @@ class PrincipiaValidator:
             },
             "sector": "TOPOLOGICAL",
             "note": (
+                "OFF-PATH (b3_seed = seed_24): evaluated on the integer anchor "
+                "geometry.elder_kads = 24, not the adopted b_3. "
                 "Chern-Simons level k is fixed by anomaly cancellation (k = b3). "
                 "Integer quantization protects all derived parameters from "
                 "continuous drift. b3 ≡ 0 (mod 24) from modular invariance."
@@ -935,11 +1000,14 @@ class PrincipiaValidator:
         of 3 bridges each, where each face draws one bridge from each
         E8 copy (cross-E8 property). Also verifies that the grouping
         partitions all 12 bridges without overlap and that the face/bridge
-        counts are consistent with h^{1,1}=4 and n_gen=3.
+        counts are consistent with 4 faces and n_gen=3. (The check is still
+        named for h^{1,1}=4, which was the off-path seed's b_2 = 4; on the
+        adopted path b_2 = 12 = 4 faces x 3, the ruled route n_gen = b_2/4.)
 
         Classification: DERIVED -- the {i,i+4,i+8} face grouping is one
         of 576 cross-E8-valid options (not unique). The identification
-        n_faces=h^{1,1} and n_bridges_per_face=n_gen is framework-specific.
+        n_bridges_per_face=n_gen is framework-specific; the former
+        n_faces=h^{1,1} is OFF-PATH (b3_seed = seed_24).
         """
         r = self._get_lattice_connector()
         if r is None:
@@ -1032,9 +1100,11 @@ class PrincipiaValidator:
             Steps 1-4 (E8, octonions, G2=Aut(O), Leech=E8³) are proven
             mathematical theorems. Steps 5-7 (12×2D decomposition, 4×3 face
             grouping, alpha_leak) are framework-specific choices among valid
-            alternatives, selected for consistency with h^{1,1}=4, n_gen=3.
-            The alpha_leak=1/√6 follows from n_aligned = n_bridges/2 = 6,
-            which equals chi_eff/b3 = 144/24.
+            alternatives, selected for consistency with 4 faces and n_gen=3
+            (the "h^{1,1}=4" in the checks is the off-path seed's b_2).
+            The alpha_leak=1/√6 follows from n_aligned = n_bridges/2 = 6;
+            its former equality with chi_eff/b3 = 144/24 holds only at the
+            off-path seed b_3 = 24 (OFF-PATH, b3_seed = seed_24).
 
         Note: The 21st check (chain_valid) is a composite boolean from
         derive_all() covering a 10-condition subset. It is redundant when
@@ -1073,24 +1143,28 @@ class PrincipiaValidator:
         """
         C_PAIRS: 12-PAIR-BRIDGE Dimensional Consistency
 
-        Validates the 12 x (2,0) paired bridge structure and its dimensional
-        consistency with the M^{26}(24,2) manifold architecture:
-          - pairs = b3/2 = 24/2 = 12 (derived from Betti number)
-          - pairs × 2 = 24 = D_physics_core
-          - Total: 24 (bridges) + 1 (time) + 2 (sampler) = 26D
-          - Signature: (24,2) = (24 + 2 spacelike, 1 timelike)
+        Validates the 12 x (2,0) paired bridge structure against the 26D
+        bulk of signature (24,2): 24 space directions (12 bridge pairs x 2)
+        and 2 times, one per 13D (12,1) shadow:
+          - pairs × 2 = 24 = the bulk's space directions
+          - Total: 24 (bridges) + 2 (times) = 26D, signature (24,2)
 
-        Classification: GEOMETRIC — the pair count 12 = b3/2 follows from
-        the G2 manifold Betti number b3 = 24. The 12×(2,0) decomposition
-        is a framework choice (PLAUSIBLE), but the dimensional arithmetic
-        is forced once the decomposition is adopted.
+        OFF-PATH (b3_seed = seed_24): check 2 reads geometry.elder_kads, the
+        integer anchor 24, so pairs == b3 // 2 holds; it was written as
+        "12 = b3/2 from the G2 manifold Betti number b3 = 24", which is not
+        the adopted topology (b_3 = 43). On the adopted path the 12 bridges
+        are the 12 resolved A1 components (WA-1), and b_2 = 12. The
+        12×(2,0) decomposition is a framework choice (PLAUSIBLE); the
+        dimensional arithmetic is forced once it is adopted. RETIRED
+        (signature ruling 2026-08-31): the former single shared time and the
+        27D count 24 + 1 + 2.
 
         Gate Logic (5 checks):
             1. pairs == 12
-            2. pairs == b3 // 2 (derivation from Betti number)
-            3. pairs × 2 == 24 (physics core dimension)
-            4. pairs × 2 + 1 + 2 == 27 (total bulk dimension)
-            5. signature = (26, 1) (spacelike + timelike = 27)
+            2. pairs == b3 // 2 (half the integer anchor; see OFF-PATH note)
+            3. pairs × 2 == 24 (the bulk's space directions)
+            4. pairs × 2 + 2 == 26 (total bulk dimension, two times)
+            5. signature = (24, 2)
         """
         pairs = self._get_param('seal.bridge_pairs', self.pairs)
         b3 = self._get_param('geometry.elder_kads', 24)
@@ -1098,7 +1172,7 @@ class PrincipiaValidator:
         # Dimensional constants from the M^{26}(24,2) architecture
         dims_per_pair = 2       # Each bridge pair is (2,0) Euclidean
         d_time = 2              # Two shadow times, one per 13D shadow
-        d_physics_core = 24     # G2 physics core
+        d_physics_core = 24     # the bulk's 24 space directions (12 pairs x 2)
         d_bulk = 26             # Total M^{26}(24,2)
 
         # Check 1: Pair count
@@ -1141,7 +1215,9 @@ class PrincipiaValidator:
             "sector": "BRIDGE",
             "bridge_architecture": "12-PAIR-BRIDGE",
             "classification": "GEOMETRIC",
-            "note": "12 = b3/2 follows from G2 Betti number; 12×(2,0) decomposition is framework choice (PLAUSIBLE)"
+            "note": ("OFF-PATH (b3_seed = seed_24): 12 = b3/2 holds for the integer anchor 24 only; "
+                     "on the adopted path the 12 bridges are the 12 resolved A1 components (WA-1). "
+                     "12×(2,0) decomposition is framework choice (PLAUSIBLE)")
         }
         print(f"  C_PAIRS: {status} ({bridge_status})")
 
@@ -1179,7 +1255,9 @@ class PrincipiaValidator:
         import numpy as np
 
         # ── Sub-test 3: kappa_sampler = dim(S^{2,0}) = 2 (topological) ──
-        # In M^{26}(24,2): 24 bridge dims + 1 time + 2 sampler = 27
+        # The count 24 bridge dims + 1 time + 2 sampler = 27 that this comment
+        # used to give is the superseded 27D sampler-pair formulation (one
+        # shared time, RETIRED); the adopted bulk is M^{26}(24,2).
         kappa_sampler = 2  # dim(S^{2,0}) from manifold architecture
         kappa_expected = 2
         kappa_pass = (kappa_sampler == kappa_expected)
@@ -1400,7 +1478,12 @@ class PrincipiaValidator:
     def cert_g81_asymptotic_safety_fixed_point(self):
         """G81: Asymptotic Safety UV Fixed Point from G₂ Topology.
 
-        Validates the AS fixed point derivation:
+        OFF-PATH (b3_seed = seed_24): the identities below were written at
+        the off-path seed b₃ = 24. reg.elder_kads returns the live seed, so
+        at the adopted b₃ = 43 the ratio χ_eff/b₃ = 144/43 is not an integer
+        and test 2 fails as written.
+
+        Validates the AS fixed point derivation (as written at b₃ = 24):
             α*⁻¹ = b₃ = dim(H³(X, ℝ)) = 24
             λ₆_eff = exp(−χ_eff / b₃) = exp(−6) ≈ 0.00248
 
@@ -1448,14 +1531,14 @@ class PrincipiaValidator:
             return
 
         # Retrieve values from SSoT
-        alpha_star_inv = get_alpha_star_inv()       # Should = b₃ = 24
-        lambda_6 = get_lambda6_suppression()        # Should = exp(-6)
-        enhancement = get_as_enhancement_factor()   # Should = exp(12)
+        alpha_star_inv = get_alpha_star_inv()       # = b₃, the live seed (24 only at the off-path seed)
+        lambda_6 = get_lambda6_suppression()        # exp(-6) only at the off-path seed b₃ = 24
+        enhancement = get_as_enhancement_factor()   # exp(12) only at the off-path seed b₃ = 24
 
         # Get b₃ and χ_eff from FormulasRegistry directly
         from metaphysica.simulations.core.FormulasRegistry import get_registry
         reg = get_registry()
-        b3 = reg.elder_kads       # = 24
+        b3 = reg.elder_kads       # the live seed b₃ (43 on the adopted path; 24 off-path)
         chi_eff = reg.mephorash_chi  # = 72 (per-sector)
         chi_eff_total = reg._chi_eff_total  # = 144 (total manifold)
 
@@ -1507,7 +1590,7 @@ class PrincipiaValidator:
         self.results['G81-AS'] = {
             "status": status,
             "metric": metric,
-            "expected": "α*⁻¹ = b₃ = 24, λ₆ = exp(−6), τ_p > 10³⁵ yr",
+            "expected": "OFF-PATH (b3_seed = seed_24): α*⁻¹ = b₃ = 24, λ₆ = exp(−6), τ_p > 10³⁵ yr",
             "sector": "ASYMPTOTIC_SAFETY",
             "honesty": {
                 "alpha_star_inv": alpha_star_inv,
@@ -1520,6 +1603,7 @@ class PrincipiaValidator:
                 "tau_p_AS_years": tau_AS,
                 "fitted_params_in_suppression": 0,
                 "what_IS_derived": (
+                    "At the off-path seed b₃ = 24: "
                     "exp(−χ_eff/b₃) = exp(−6) is purely topological arithmetic. "
                     "Both inputs are Pillar Seeds, ratio is integer."
                 ),
@@ -1539,7 +1623,15 @@ class PrincipiaValidator:
     def cert_g82_mirror_dm_relic_abundance(self):
         """G82: Mirror Dark Matter Relic Abundance from G2 Geometry.
 
-        The mirror sector temperature ratio T'/T is geometrically anchored:
+        CALIBRATED: the mirror-DM relic abundance is a calibration (the loop
+        correction below is chosen to match Planck). OFF-PATH (b3_seed =
+        seed_24): the width identities were written at the off-path seed
+        b_3 = 24, where 144/24 = 6. reg.elder_kads returns the live seed, so
+        at the adopted b_3 = 43 they do not hold and tests 1-3 fail as
+        written.
+
+        At the off-path seed b_3 = 24, the mirror sector temperature ratio
+        T'/T is anchored by:
             modulation_width = sqrt(b3/chi_eff) = sqrt(24/144) = 1/sqrt(6)
 
         The dark matter to baryon ratio follows from asymmetric reheating:
@@ -1585,7 +1677,7 @@ class PrincipiaValidator:
             print(f"  G82-DM: {status} ({metric})")
             return
 
-        b3 = reg.elder_kads           # 24
+        b3 = reg.elder_kads           # the live seed b_3 (43 on the adopted path; 24 off-path)
         chi_eff = reg.mephorash_chi   # 72 (per-sector)
         chi_eff_total = reg._chi_eff_total  # 144 (total)
 
@@ -1649,6 +1741,7 @@ class PrincipiaValidator:
                 "deviation_sigma": deviation,
                 "classification": "MOTIVATED_IDENTIFICATION",
                 "what_IS_geometric": (
+                    "At the off-path seed b_3 = 24: "
                     "modulation_width = sqrt(b3/chi_eff_total) = 1/sqrt(6) uses only "
                     "Pillar Seeds. alpha_leak = 1/sqrt(6) is consistent."
                 ),
@@ -1729,15 +1822,18 @@ class PrincipiaValidator:
                     "capacity are all theorems, not fitted parameters."
                 ),
                 "what_is_MOTIVATED_IDENTIFICATION": (
-                    "The mapping b3=24 -> 24 physical qubits and 12 bridges -> "
-                    "12 logical qubits shares a common mathematical root (Leech "
-                    "lattice) but equates different mathematical objects."
+                    "The mapping of the Golay code's 24 positions -> 24 physical "
+                    "qubits and 12 bridges -> 12 logical qubits shares a common "
+                    "mathematical root (Leech lattice) but equates different "
+                    "mathematical objects. Its former reading of the 24 as "
+                    "b3=24 is OFF-PATH (b3_seed = seed_24): the 24 is the code "
+                    "length (the Leech lattice's rank 24), not b_3."
                 ),
                 "documented_mismatches": (
                     "42 certificates != 12 stabilizer generators; "
                     "288 roots != 4096 codewords"
                 ),
-                "gemini_verdict": "CSS [[24,12,8]] DERIVED (standard mathematics). MOTIVATED_IDENTIFICATION appropriate for b3=24/12-bridge mapping. Documented mismatches (42!=12, 288!=4096) are hallmark of good scientific practice. Correction from [[24,12,4]] to [[24,12,8]] shows integrity. Score 9/10.",
+                "gemini_verdict": "Recorded verdict (its 'b3=24' is the off-path seed; see what_is_MOTIVATED_IDENTIFICATION): CSS [[24,12,8]] DERIVED (standard mathematics). MOTIVATED_IDENTIFICATION appropriate for b3=24/12-bridge mapping. Documented mismatches (42!=12, 288!=4096) are hallmark of good scientific practice. Correction from [[24,12,4]] to [[24,12,8]] shows integrity. Score 9/10.",
             },
         }
         print(f"  G83-QEC: {status} ({metric})")
@@ -1890,7 +1986,7 @@ class PrincipiaValidator:
     def _print_summary(self):
         """Print validation summary."""
         print("\n" + "=" * 70)
-        print("VALIDATION SUMMARY (v22.0 - 12-PAIR-BRIDGE)")
+        print("VALIDATION SUMMARY (12-PAIR-BRIDGE)")
         print("=" * 70)
 
         # Count by status
@@ -1921,7 +2017,7 @@ class PrincipiaValidator:
         print(f"Bridge Architecture: {bridge_arch}")
 
         if failed == 0:
-            print("\n[OK] ALL CERTIFICATES PASSED - v22.0 LOCKDOWN VALID (12-PAIR-BRIDGE)")
+            print("\n[OK] ALL CERTIFICATES PASSED (12-PAIR-BRIDGE)")
         else:
             print(f"\n[FAIL] {failed} CERTIFICATE(S) REQUIRE ATTENTION")
 
@@ -1962,7 +2058,7 @@ DEPRECATED_CERTIFICATES = {
 def print_deprecation_log():
     """Print the deprecation log for retired certificates."""
     print("\n" + "=" * 70)
-    print("DEPRECATION LOG - v22.0 12-PAIR-BRIDGE Cleanup")
+    print("DEPRECATION LOG - 12-PAIR-BRIDGE Cleanup")
     print("=" * 70)
     print("\nThe following certificates have been RETIRED:")
     print("(Transition to 12-PAIR-BRIDGE architecture rendered prior implementations obsolete)")

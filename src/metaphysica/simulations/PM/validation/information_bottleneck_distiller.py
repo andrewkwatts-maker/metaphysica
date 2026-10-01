@@ -25,6 +25,16 @@ Purpose:
 Output:
     compression_report.json - Information-theoretic and MDL analysis
 
+STATUS ON THE ADOPTED PATH
+OFF-PATH (b3_seed = seed_24): this analysis was written at the off-path seed
+b_3 = 24 and describes the internal space as a twisted connected sum (TCS).
+The adopted internal space is Joyce's resolution of T^7/(Z/2)^3 with
+(b_2, b_3) = (12, 43), and n_gen = b_2/4 = 3. Its "27 dimensions" are the
+superseded 27D count with one shared time (RETIRED, signature ruling
+2026-08-31); the adopted bulk is 26D of signature (24,2). The description
+string in analyze_input_description_length() is kept verbatim because its
+byte length is the input of the complexity estimate.
+
 Copyright (c) 2026 Andrew Keith Watts. All rights reserved.
 """
 
@@ -66,7 +76,7 @@ class InformationBottleneckDistiller:
     def __init__(self):
         """Initialize information bottleneck distiller."""
         # PM framework structure
-        self.n_input_dims = 27  # M^{26}(24,2) manifold dimensions
+        self.n_input_dims = 27  # the superseded 27D count; the adopted bulk M^{26}(24,2) has 26 (kept: the analysis is sized by it)
         self.n_output_params = 125  # Physical constants
         self.n_formulas = 116  # Topological formulas (from PM v23.9)
 
@@ -120,20 +130,28 @@ class InformationBottleneckDistiller:
         """
         logger.info("Analyzing input (26D manifold) description length...")
 
-        # The 26D manifold is FULLY specified by:
+        # The 26D manifold is specified here by:
         # 1. G₂ holonomy group (Lie group, 14-dimensional)
-        # 2. Third Betti number b₃ = 24 (integer)
+        # 2. Third Betti number b₃ (one integer; written b₃ = 24, the off-path
+        #    seed -- the adopted b₃ is 43, tied to b₂ = 12 by b₃ = 7 + 3b₂)
         # 3. Bridge structure: 12 pairs (integer)
         # 4. Structure: (24,2) (3 integers)
         # 5. Sampler data fields signature: (2,0) (2 integers)
 
-        # Description: "G2 manifold with b3=24, structure (24,2), 12 bridges (2,0), sampler (2,0)"
+        # OFF-PATH (b3_seed = seed_24): the description below is the retired
+        # wording -- a twisted connected sum, b₃ = 24, and shadow-time
+        # directions of Euclidean signature beside a single time fibre T¹
+        # (the shared single time is RETIRED, signature ruling 2026-08-31).
+        # The adopted internal space is Joyce's resolution of T^7/(Z/2)^3 and
+        # the bulk is (24,2), one time per shadow. The string is kept verbatim
+        # because its byte length is the input of the complexity estimate;
+        # rewriting it would change the computed bits.
         description = (
             "Manifold M^{26}(24,2) = Twisted Connected Sum of two G₂ holonomy 7-manifolds, "
             "connected by 12 bridge pairs with signature (2,0), "
             "plus shadow-time directions S^{(2,0)} with Euclidean signature (2,0), "
             "plus two-time structure fiber T¹ with signature (0,1). "
-            f"Third Betti number b₃ = 24. "
+            f"Third Betti number b₃ = 24. "  # retired wording (off-path seed), kept verbatim: see above
             "G₂ holonomy fixes Ricci-flatness and induces associative 3-cycles."
         )
 
@@ -155,9 +173,11 @@ class InformationBottleneckDistiller:
         total_universal_params = sum(universal_parameters.values())
 
         # Information content: log₂(parameter space volume)
-        # For b₃ = 24: log₂(1) = 0 bits (fixed by topology)
+        # For b₃ (one fixed integer; 24 at the off-path seed): log₂(1) = 0 bits
         # For structure (24,2): log₂(1) = 0 bits (fixed by construction)
-        # For 12 bridges: log₂(1) = 0 bits (derived from b₃/2)
+        # For 12 bridges: log₂(1) = 0 bits (formerly "derived from b₃/2", true
+        # only at the off-path seed; on the adopted path the 12 bridges are the
+        # 12 resolved A1 components, WA-1)
 
         # True free parameters: ZERO (all topological invariants)
         information_bits_free = 0
@@ -193,10 +213,12 @@ class InformationBottleneckDistiller:
         # The code IS the geometric constraints expressed as formal symbolic logic
         # Description length = Σ geometric_constraint_complexity
 
-        # Example geometric constraints from PM:
-        # - α⁻¹ = χ_eff × (G₂ holonomy correction)
+        # Example constraints from PM (as originally listed):
+        # - α⁻¹ = χ_eff × (G₂ holonomy correction)  [CALIBRATED, k_gimel layer, D-007]
         # - M_GUT = M_Planck / √(b₃)  [topological scale]
-        # - n_gen = b₃ / 8  [chiral index theorem]
+        # - n_gen = b₂ / 4 = 3  [the ruled route; the "n_gen = b₃ / 8 chiral
+        #   index theorem" listed here before is ABANDONED: 8 divides no
+        #   reachable b₃]
 
         # Each constraint is ~10-50 characters of symbolic logic
         # Estimate: average 30 characters per constraint
@@ -288,9 +310,10 @@ class InformationBottleneckDistiller:
         # - 65 established: Measured values (redundancy = experimental cross-checks)
 
         # Minimal Description Length: How many bits to encode M₂₇ phase space?
-        # In principle, ALL 125 could be derived from just:
-        # - b₃ = 24 (1 integer - topological invariant)
-        # - k_gimel = 12.3183... (1 spectral gap - G₂ associative 3-cycle)
+        # The claim made here: ALL 125 could be derived from just:
+        # - b₃ (1 integer - topological invariant; written b₃ = 24, the
+        #   off-path seed)
+        # - k_gimel = 12.3183... (CALIBRATED: a fit at the retired seed, D-007)
         # - φ = golden ratio (mathematical constant, 0 bits - universal)
 
         # So the MINIMAL description is just 2 numbers: b₃ and k_gimel
@@ -375,8 +398,9 @@ class InformationBottleneckDistiller:
         # = 125 × 64 bits = 8000 bits
 
         # WITH Topological Compression: Only specify fundamental topological invariants:
-        # - b₃ = 24 (5 bits for integer 0-31)
-        # - k_gimel ≈ 12.318... (64 bits for double precision)
+        # - b₃ (5 bits, sized for the off-path seed b₃ = 24 in 0-31; the
+        #   adopted b₃ = 43 needs 6 -- the tally below is unchanged)
+        # - k_gimel ≈ 12.318... (64 bits for double precision; CALIBRATED, D-007)
         # - φ = golden ratio (mathematical constant, 0 bits - universally defined)
 
         # Geometric constraints are REUSABLE LOGIC (Algorithmic Symmetry), not data
@@ -431,7 +455,7 @@ class InformationBottleneckDistiller:
             ),
             "note": "Geometric constraints are reusable logic (Algorithmic Symmetry), amortized across all applications",
             "mdl_principle": "Code complexity = Geometric constraint complexity (isomorphism, not simulation)",
-            "key_insight_288_24_4": "The 288/24/4 structure is DERIVED from G₂ topology, not arbitrary fitting"
+            "key_insight_288_24_4": "OFF-PATH (b3_seed = seed_24): the 288/24/4 structure was read as DERIVED from G₂ topology at the off-path seed b₃ = 24; on the adopted path its 24 is not b₃ (see structure_288_24_4)"
         }
 
     def analyze_code_theoretical_integrity(self) -> Dict[str, Any]:
@@ -482,12 +506,15 @@ class InformationBottleneckDistiller:
             ),
             "mechanism": (
                 "G₂ holonomy constrains the manifold's geometry, inducing discrete spectral gaps. "
-                "The Dirac operator's spectrum on this manifold yields fermion masses. "
+                "The Dirac operator's spectrum on this manifold is meant to yield fermion masses "
+                "(flavour is OPEN: it needs a chiral sector, D-011). "
                 "Gauge coupling unification is forced by dimensional reduction. "
                 "The 288/24/4 structure emerges from: "
-                "  - 288 = 24 × 12 (Betti number × bridge count) "
-                "  - 24 = b₃ (third Betti number of G₂ manifold) "
-                "  - 4 = Kähler moduli faces in compactification"
+                "  - 288 = 24 × 12 (the integer 24 × bridge count) "
+                "  - 24: formerly read as b₃, the third Betti number of the G₂ manifold; "
+                "OFF-PATH (b3_seed = seed_24) -- the adopted b₃ is not 24, so this 24 is "
+                "calibrated at the off-path seed "
+                "  - 4 = the four faces (formerly 'Kähler moduli faces in compactification')"
             ),
             "compression_type": "LOSSY (continuous → discrete) but OPTIMAL (MDL achieved)"
         }
@@ -510,8 +537,13 @@ class InformationBottleneckDistiller:
                 "Conversely, every geometric constraint MUST be encoded in code to be testable."
             ),
             "why_not_arbitrary": (
+                "OFF-PATH (b3_seed = seed_24): this argument was written at the off-path "
+                "seed and does not hold on the adopted path. b₃ is a topological "
+                "invariant, but the adopted b₃ is not 24; the 12 bridges are the 12 "
+                "resolved A1 components (WA-1), not b₃/2; and the 4 faces are not Kähler "
+                "moduli (a 7-manifold has none). As written: "
                 "If the 288/24/4 structure were arbitrary fitting, we could vary it freely. "
-                "But it's LOCKED by topology: b₃ = 24 is a topological invariant (cannot be tuned), "
+                "But it's LOCKED by topology: b₃ = 24 (the off-path seed) is a topological invariant (cannot be tuned), "
                 "12 bridges are derived from b₃/2 (Morse index theorem), "
                 "4 faces are the Kähler moduli of the compactification (fixed by complex structure). "
                 "These are mathematical necessities, not adjustable knobs."
@@ -544,20 +576,45 @@ class InformationBottleneckDistiller:
         structure_288_24_4 = {
             "288": {
                 "origin": "Total roots in dual-shadow G₂ × G₂ structure",
-                "derivation": "chi_eff = 144 per shadow (6·b₃), two shadows → 288; G₂ itself has 12 roots (dim 14) — 288 is not a root count",
+                "derivation": (
+                    "OFF-PATH (b3_seed = seed_24): formerly derived as chi_eff = 144 per "
+                    "shadow (6·b₃) × two shadows. On the adopted path chi_eff = 144 is the "
+                    "total over both shadows (the K3 reading: 48 n at n = 3) and 6·b₃ = 144 "
+                    "only at the off-path seed b₃ = 24, so this derivation of 288 does not hold. G₂ itself has "
+                    "12 roots (dim 14) — 288 is not a root count"
+                ),
                 "topological_invariant": "YES (fixed by G₂ Lie algebra structure)"
             },
             "24": {
-                "origin": "Third Betti number b₃ of G₂ manifold",
-                "derivation": "G₂ holonomy ⟹ b₃ = 24 (mathematical theorem, Joyce 2000)",
+                "origin": (
+                    "OFF-PATH (b3_seed = seed_24): formerly the third Betti number b₃ of the "
+                    "G₂ manifold; the adopted b₃ is not 24, so this 24 is calibrated at the "
+                    "off-path seed"
+                ),
+                "derivation": (
+                    "No theorem gives b₃ = 24 here: the adopted Y₇ (Joyce's resolution of "
+                    "T^7/(Z/2)^3) has b₃ = 7 + 3b₂, and b₃ = 24 is not reachable by that "
+                    "construction (CG.7). Formerly stated as 'G₂ holonomy ⟹ b₃ = 24 "
+                    "(mathematical theorem, Joyce 2000)'"
+                ),
                 "topological_invariant": "YES (characteristic class of G₂ manifold)"
             },
             "4": {
-                "origin": "Kähler moduli faces in twisted connected sum",
-                "derivation": "TCS construction ⟹ 4 matching pairs (Kovalev-Lee 2016)",
+                "origin": (
+                    "the four faces (the 12 bridges are the directed edges of K4 on a Fano "
+                    "arc of four faces); formerly 'Kähler moduli faces in twisted connected "
+                    "sum' -- OFF-PATH: the adopted internal space is Joyce's resolution of "
+                    "T^7/(Z/2)^3, not a TCS"
+                ),
+                "derivation": (
+                    "On the adopted path the ruled route n_gen = b₂/4 divides by the four faces; the "
+                    "former 'TCS construction ⟹ 4 matching pairs (Kovalev-Lee 2016)' is "
+                    "OFF-PATH"
+                ),
                 "topological_invariant": "YES (required for gluing compatibility)"
             },
             "conclusion": (
+                "OFF-PATH (b3_seed = seed_24): written at the off-path seed (see '24'). "
                 "None of these numbers are free parameters. They are topological invariants "
                 "determined by the choice of G₂ manifold with dual-shadow structure. "
                 "Changing any of them would require a different manifold (different theory)."
@@ -601,7 +658,7 @@ class InformationBottleneckDistiller:
             conclusion = "Theory shows signs of overfitting or parameter expansion - MDL criterion not satisfied"
 
         report = {
-            "framework": "Principia Metaphysica v24.1",
+            "framework": "Principia Metaphysica",
             "test_date": datetime.now().isoformat(),
             "test_name": "Topological Compression via Algorithmic Symmetry (MDL Analysis)",
             "framework_structure": {
@@ -674,7 +731,7 @@ class InformationBottleneckDistiller:
 def main():
     """Run Topological Compression analysis via Algorithmic Symmetry and MDL."""
     print("=" * 70)
-    print(" TOPOLOGICAL COMPRESSION ANALYZER - v24.1")
+    print(" TOPOLOGICAL COMPRESSION ANALYZER")
     print(" Algorithmic Symmetry via Minimal Description Length (MDL)")
     print("=" * 70)
     print(" Objective: Prove theory achieves Topological Compression (MDL)")

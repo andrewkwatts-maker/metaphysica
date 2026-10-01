@@ -1,24 +1,34 @@
 #!/usr/bin/env python3
 """
-Mirror Dark-Matter Relic Density v26.0
-======================================
+Mirror Dark-Matter Relic Density
+================================
 
 Quantitative Z₂ mirror dark-matter relic density Ω_mirror·h² from
 Boltzmann freeze-out + bridge-sector coupling.
 
+STATUS: CALIBRATED. The relic abundance is a calibration, not a
+freeze-out prediction: with g_bridge = 1.2e-10 the solver never leaves
+its hand-set initial condition (see Y_INITIAL). The coupling itself was
+computed at Re(T) = 174.033 and b₃ = 24, a calibration at the off-path
+seed; Re(T) is an OPEN modulus on Y₇ (CG.6), which has (b₂, b₃) = (12, 43).
+
 DERIVATION (PossibleImprovements.txt §v26.0 mirror_dm_relic):
 
     The Z₂ mirror sector is already encoded in your 12×(2,0) bridge +
-    S²⁰ sampler architecture of M^{26}(24,2); it provides a natural
+    S²⁰ sampler architecture of M^{26}(24,2); it provides a
     dark-matter candidate decoupled from the visible sector except via
-    the bridge coupling derived from G₂ triple-cycle intersections.
+    the bridge coupling, written as a G₂ triple-cycle quantity.
 
     We solve the standard freeze-out Boltzmann equation for the
     comoving number density Y = n/s with s-wave-dominated annihilation
-    via the bridge coupling. No new free parameters are introduced; the
-    bridge coupling g_bridge ≈ 1.2e-10 is the v25.0 G₂-cycle value and
-    the mirror mass m_mirror ≈ 3.51 meV is the axion-scale mirror mass
-    set by the same Re(T) potential that stabilises the visible sector.
+    via the bridge coupling. The bridge coupling g_bridge ≈ 1.2e-10 is the
+    G₂-cycle value calibrated at the off-path seed (Re(T) = 174.033,
+    b₃ = 24), and the mirror mass is m_mirror = 3.51e-3 (3.51 MeV in this
+    file's GeV convention; the axion-sector 3.51 meV quoted elsewhere is a
+    different quantity, see DEFAULT_M_MIRROR). The original text said both
+    were set by "the same Re(T)
+    potential that stabilises the visible sector"; on Y₇ no potential fixes
+    Re(T) at leading order (CG.6).
 
     Boltzmann equation (Kolmogorov-form, comoving Y, x = m/T):
 
@@ -36,10 +46,12 @@ DERIVATION (PossibleImprovements.txt §v26.0 mirror_dm_relic):
     where Y_today is Y(x=1000), i.e. evaluated deep into freeze-out.
 
 DEPENDENCY CHAIN:
-    g_bridge derives from the G₂ triple-cycle intersection numbers
-    (re_t_sector, v25.0) which trace back to b₃ = 24 (the third Betti
-    number of the G₂ manifold). m_mirror is the same axion-scale mass
-    used by axion_dm.py, also rooted in b₃ via k_gimel = b₃/2 + 1/π.
+    g_bridge = exp(−π·Re(T)/b₃) (re_t_sector) was evaluated at
+    Re(T) = 174.033 (a calibration to the Higgs VEV) and the off-path seed
+    b₃ = 24, so the chain does not trace the coupling to the topology of
+    Y₇. m_mirror is the same axion-scale mass
+    used by axion_dm.py, written through k_gimel = b₃/2 + 1/π, which is
+    CALIBRATED (k_gimel layer, D-007).
 
 OUTPUT:
     {"omega_mirror_h2": float, "status": str, ...}
@@ -132,16 +144,16 @@ X_END = 1000.0
 #: not a freeze-out prediction.
 Y_INITIAL = 1e-10
 
-#: Default bridge-sector coupling from G₂ triple-cycle intersections
-#: (re_t_sector v25.0). Topology-rooted: traces back to b₃ = 24 via the
-#: Acharya-Witten flux quantisation on the associative 3-cycles.
-#: Default bridge-sector coupling g_bridge.  Sprint T6 #3 closes the
-#: derivation gap: this O(1)-rounded value of 1.2e-10 is the rounded form
-#: of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.278e-10``
-#: derived in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
-#: Re(T) = 174.033, b₃ = 24.  The downstream defaults keep the rounded
-#: value so test outputs do not shift; the derivation tree captures the
-#: b₃-rooted chain explicitly.
+#: Default bridge-sector coupling g_bridge (re_t_sector). CALIBRATED at the
+#: off-path seed b₃ = 24: this O(1)-rounded value of 1.2e-10 is the rounded
+#: form of the G₂ half-instanton exponent ``exp(−π·Re(T)/b₃) ≈ 1.278e-10``
+#: computed in :meth:`NonPerturbativeReT.compute_bridge_coupling` at
+#: Re(T) = 174.033 (the Higgs-VEV anchor) and b₃ = 24. Re(T) is an OPEN
+#: modulus on Y₇ (CG.6), so the coupling is not traced to Y₇'s topology.
+#: It was formerly described as topology-rooted via the Acharya-Witten flux
+#: quantisation on the associative 3-cycles. The downstream defaults keep
+#: the rounded value so test outputs do not shift; the derivation tree
+#: records the b₃-written chain.
 DEFAULT_BRIDGE_COUPLING = 1.2e-10
 
 #: Default mirror mass: 3.51e-3 = 3.51 MeV in this file's GeV convention
@@ -155,14 +167,16 @@ class MirrorDMRelic:
 
     Solves the comoving Boltzmann equation for the mirror sector,
     decoupled from the visible sector except via the bridge coupling
-    derived from G₂ triple-cycle intersections. Output is Ω_mirror·h²
-    directly comparable to Planck/DESI limits.
+    (CALIBRATED at the off-path seed; see DEFAULT_BRIDGE_COUPLING).
+    Output is Ω_mirror·h², a calibrated value compared with the
+    Planck/DESI dark-matter density.
 
     Parameters
     ----------
     bridge_coupling : float, optional
-        Bridge-sector coupling g_bridge from G₂ triple-cycle
-        intersections (re_t_sector v25.0). Default 1.2e-10.
+        Bridge-sector coupling g_bridge, written as a G₂ triple-cycle
+        quantity (re_t_sector) and calibrated at Re(T) = 174.033 and
+        the off-path seed b₃ = 24. Default 1.2e-10.
     m_mirror : float, optional
         Mirror sector mass in GeV. Default 3.51e-3 = 3.51 MeV in this
         file's GeV convention (NOTE: the axion-sector 3.51 meV claim
@@ -366,10 +380,13 @@ class MirrorDMRelic:
             Tension of the relic-density tree, equal to Ω_mirror·h² to
             within float precision.
         """
-        # b₃ leaf — THE traceback root. The mirror mass m_mirror and
-        # the bridge coupling are both rooted in b₃ via re_t_sector
+        # b₃ leaf — the traceback root. The mirror mass m_mirror and
+        # the bridge coupling are both WRITTEN in b₃ via re_t_sector
         # (g_bridge ~ exp(-S_inst(b3))) and axion_dm (m_mirror ~
-        # M_Pl/k_gimel⁶ where k_gimel = b3/2 + 1/π).
+        # M_Pl/k_gimel⁶ where k_gimel = b3/2 + 1/π), but both are
+        # calibrated: the coupling at Re(T) = 174.033 and the off-path seed
+        # b₃ = 24, k_gimel in the k_gimel layer (D-007). The b3/b3 cross-link
+        # below is structural; it does not make the value follow the seed.
         b3_pt = b3_leaf()
 
         # m_mirror leaf: the value the caller passed in. Documented as
@@ -428,7 +445,7 @@ def get_mirror_relic() -> Dict[str, Any]:
     as described in :meth:`MirrorDMRelic.compute_relic`.
 
     Used by:
-        - simulations/core/FormulasRegistry.py (v26.0 derivation hook)
+        - simulations/core/FormulasRegistry.py (derivation hook)
         - simulations/run_all_simulations.py  (72-gate validation)
         - tests/test_mirror_dm_relic.py       (regression suite)
     """
