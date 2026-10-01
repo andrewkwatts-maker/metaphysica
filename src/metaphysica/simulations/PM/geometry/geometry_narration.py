@@ -24,11 +24,21 @@ WHAT IT COVERS, AND WHICH FORK DECIDES EACH
 
 THE ONE THAT CANNOT BE NARRATED YET
 ===================================
-chi_eff has three claimed derivations that agree only at b_3 = 24, where the two
-b_3-dependent ones cross uniquely. There is no fork for it because the framework
-has not ruled which route is meant, and inventing a default here would be
-choosing the ruling. `chi_eff_claim()` therefore returns the dichotomy rather
-than a value, and says so.
+chi_eff's three historical routes agree only at b_3 = 24. D-009 found a reading
+that holds on the whole family -- twice the Euler characteristics of the Kummer
+K3 surfaces transverse to the singular involutions, 48 n -- but adopting it is
+the author's ruling, and inventing a default here would be making it.
+`chi_eff_claim()` therefore reports the candidate and the old dichotomy, not a
+derivation.
+
+FRAGMENTS (the wording pass's API)
+==================================
+`fragments(register)` returns the phrases prose uses for the geometry -- the
+Betti pair and sequence, the construction, the generation route, the chi_eff
+label -- generated from the live seed in plain, HTML or LaTeX. `render(template)`
+fills a template from them and raises on an unknown key. A sentence written
+through them follows the seed when it is flipped; a typed "(12, 43)" would sit
+beside the values and contradict them.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -46,6 +56,9 @@ __all__ = [
     "narrate",
     "forbidden_phrases",
     "fork_reads_degraded",
+    "fragments",
+    "render",
+    "FRAGMENT_KEYS",
 ]
 
 
@@ -353,28 +366,164 @@ def layperson_narration(seed: Optional[str] = None) -> Dict[str, Any]:
 
 
 def chi_eff_claim() -> Dict[str, Any]:
-    """chi_eff has no ruled derivation. Report the dichotomy, invent nothing."""
+    """chi_eff has no ruled derivation. Report the candidate, invent nothing.
+
+    D-009 (2026-09-30) found a reading that is an Euler characteristic of a
+    real object and follows the seed: chi_eff := 2 * sum over the singular
+    involutions of chi(K3), the Kummer K3 transverse to each, once per
+    shadow -- 48 n, which is 144 at the adopted n = 3. Adopting it is the
+    author's ruling, so this still narrates it as a CANDIDATE.
+    """
     return {
         "fork": None,
         "branch": "UNRULED",
         "sentence": (
-            "chi_eff = 144 has THREE claimed derivations -- 2(h11-h21+h31), "
-            "b_3^2/4 and 6 b_3 -- which agree only at b_3 = 24. The two "
-            "b_3-dependent ones cross at exactly one point, and it is the "
-            "adopted seed, so their agreement is the definition of that "
-            "crossing rather than evidence for it. The Hodge-number route is "
-            "a Calabi-Yau THREEFOLD Euler characteristic and a Joyce orbifold "
-            "has no h21 or h31."
+            "chi_eff = 144 is an effective index, not the Euler "
+            "characteristic of Y_7, which is 0 for every closed "
+            "odd-dimensional manifold. Its three historical routes -- "
+            "2(h11-h21+h31), b_3^2/4 and 6 b_3 -- agree only at the off-path "
+            "seed b_3 = 24: a Joyce orbifold has no h21 or h31, b_3^2/4 is "
+            "not an integer at odd b_3, and 6 b_3 is 258 at b_3 = 43. One "
+            "reading survives on the whole family (D-009, unruled): chi_eff "
+            "= 2 x sum over the n singular involutions of chi(K3) = 48 n, "
+            "the Kummer K3 surfaces transverse to the singular loci counted "
+            "once per shadow."
         ),
         "dichotomy": (
-            "chi_eff is either a CONSTANT independent of the seed, in which "
-            "case n_gen = chi_eff/48 carries no topological content; or it is "
-            "SEED-DEPENDENT, in which case it is not 144 on the 43 path. The "
-            "framework currently wants both."
+            "The old dichotomy: chi_eff is either a CONSTANT independent of "
+            "the seed, in which case n_gen = chi_eff/48 carries no "
+            "topological content; or it is SEED-DEPENDENT, in which case it "
+            "must follow the seed. The K3 reading is SEED-DEPENDENT through "
+            "n and equals 144 on the adopted point, so it resolves the "
+            "dichotomy if the author adopts it -- and then n_gen = "
+            "chi_eff/48 = n restates the ruled route rather than adding a "
+            "second derivation."
         ),
+        "candidate": {
+            "reading": "K3",
+            "formula": "chi_eff = 2 * sum_sigma chi(K3_sigma) = 48 n",
+            "decision": "D-009",
+            "module": "PM/geometry/kummer_index.py",
+        },
         "may_claim_a_derivation": False,
         "ruling_required": True,
     }
+
+
+# ---------------------------------------------------------------- fragments
+#: Keys every register provides. `render` refuses any other key, so a typo in
+#: a template fails loudly instead of printing a literal brace.
+FRAGMENT_KEYS = (
+    "b2", "b3", "n_gen", "manifold", "construction", "structure",
+    "betti_pair", "betti_sequence", "b3_split", "n_gen_route", "chi_eff",
+    "chi_y7", "off_path_seed", "calibrated_at_24", "bulk",
+)
+
+_REGISTERS = ("plain", "html", "latex")
+
+
+def fragments(register: str = "plain",
+              seed: Optional[str] = None) -> Dict[str, str]:
+    """The phrases prose uses for the geometry, generated from the live seed.
+
+    Lane-0 API for the wording pass: a sentence written as
+    ``render("Y_7 has {betti_pair}.")`` follows the seed when it is flipped,
+    where a typed "(12, 43)" would silently contradict the values printed
+    beside it. Holonomy is deliberately absent: what may be said about it
+    depends on the real-form fork, and `holonomy_claim()` owns that.
+    """
+    if register not in _REGISTERS:
+        raise ValueError("register %r is not one of %s" % (register,
+                                                          _REGISTERS))
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        n_gen_report,
+        resolve_path,
+        seed_values,
+    )
+
+    seed = seed or resolve_path()
+    b3, b2 = seed_values(seed)
+    n_gen = n_gen_report(seed)["n_gen"]
+    n_txt = "%g" % n_gen
+    seq = (1, 0, b2, b3, b3, b2, 0, 1)
+    seq_txt = "(%s)" % ", ".join(str(x) for x in seq)
+
+    if register == "html":
+        return {
+            "b2": str(b2), "b3": str(b3), "n_gen": n_txt,
+            "manifold": "Y<sub>7</sub>",
+            "construction": ("Joyce&rsquo;s resolution of "
+                             "T<sup>7</sup>/(&#8484;/2)<sup>3</sup>"),
+            "structure": ("a compact 7-manifold with a torsion-free "
+                          "G<sub>2</sub>-structure"),
+            "betti_pair": ("(b<sub>2</sub>, b<sub>3</sub>) = (%d, %d)"
+                           % (b2, b3)),
+            "betti_sequence": seq_txt,
+            "b3_split": ("b<sub>3</sub> = 7 + 3b<sub>2</sub> = 7 + %d"
+                         % (3 * b2)),
+            "n_gen_route": ("n<sub>gen</sub> = b<sub>2</sub>/4 = %s, the "
+                            "number of singular involutions" % n_txt),
+            "chi_eff": ("the effective index &chi;<sub>eff</sub> (an open "
+                        "ruling; the Euler characteristic of Y<sub>7</sub> "
+                        "is 0)"),
+            "chi_y7": "&chi;(Y<sub>7</sub>) = 0",
+            "off_path_seed": "the off-path seed b<sub>3</sub> = 24",
+            "calibrated_at_24": ("calibrated at the off-path seed "
+                                 "b<sub>3</sub> = 24"),
+            "bulk": ("a 26D bulk of signature (24,2): 24 space directions "
+                     "and 2 times, one per shadow"),
+        }
+    if register == "latex":
+        return {
+            "b2": str(b2), "b3": str(b3), "n_gen": n_txt,
+            "manifold": r"$Y_7$",
+            "construction": r"Joyce's resolution of $T^7/(\mathbb{Z}_2)^3$",
+            "structure": (r"a compact 7-manifold with a torsion-free "
+                          r"$G_2$-structure"),
+            "betti_pair": r"$(b_2, b_3) = (%d, %d)$" % (b2, b3),
+            "betti_sequence": r"$%s$" % seq_txt,
+            "b3_split": r"$b_3 = 7 + 3b_2 = 7 + %d$" % (3 * b2),
+            "n_gen_route": (r"$n_{\rm gen} = b_2/4 = %s$, the number of "
+                            r"singular involutions" % n_txt),
+            "chi_eff": (r"the effective index $\chi_{\rm eff}$ (an open "
+                        r"ruling; the Euler characteristic of $Y_7$ is 0)"),
+            "chi_y7": r"$\chi(Y_7) = 0$",
+            "off_path_seed": r"the off-path seed $b_3 = 24$",
+            "calibrated_at_24": r"calibrated at the off-path seed $b_3 = 24$",
+            "bulk": (r"a 26D bulk of signature $(24,2)$: 24 space directions "
+                     r"and 2 times, one per shadow"),
+        }
+    return {
+        "b2": str(b2), "b3": str(b3), "n_gen": n_txt,
+        "manifold": "Y_7",
+        "construction": "Joyce's resolution of T^7/(Z/2)^3",
+        "structure": "a compact 7-manifold with a torsion-free G2-structure",
+        "betti_pair": "(b_2, b_3) = (%d, %d)" % (b2, b3),
+        "betti_sequence": seq_txt,
+        "b3_split": "b_3 = 7 + 3 b_2 = 7 + %d" % (3 * b2),
+        "n_gen_route": ("n_gen = b_2/4 = %s, the number of singular "
+                        "involutions" % n_txt),
+        "chi_eff": ("the effective index chi_eff (an open ruling; the Euler "
+                    "characteristic of Y_7 is 0)"),
+        "chi_y7": "chi(Y_7) = 0",
+        "off_path_seed": "the off-path seed b_3 = 24",
+        "calibrated_at_24": "calibrated at the off-path seed b_3 = 24",
+        "bulk": ("a 26D bulk of signature (24,2): 24 space directions and "
+                 "2 times, one per shadow"),
+    }
+
+
+class _Strict(dict):
+    def __missing__(self, key):
+        raise KeyError(
+            "unknown fragment {%s}; available: %s"
+            % (key, ", ".join(FRAGMENT_KEYS)))
+
+
+def render(template: str, register: str = "plain",
+           seed: Optional[str] = None) -> str:
+    """Fill `template`'s {keys} from `fragments`; an unknown key raises."""
+    return template.format_map(_Strict(fragments(register, seed)))
 
 
 def forbidden_phrases() -> Dict[str, str]:

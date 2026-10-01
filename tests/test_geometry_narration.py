@@ -180,3 +180,54 @@ def test_switching_forks_rewrites_the_paragraph():
     assert a != b
     assert "SPLIT real form" in a
     assert "COMPACT real form" in b
+
+
+# ------------------------------------------------- the fragment API
+
+def test_fragments_follow_the_seed(monkeypatch):
+    """A rendered sentence moves with the seed; a typed one would not."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_43_joyce")
+    assert render("{betti_pair}") == "(b_2, b_3) = (12, 43)"
+    assert render("{betti_sequence}") == "(1, 0, 12, 43, 43, 12, 0, 1)"
+    assert render("{n_gen_route}").startswith("n_gen = b_2/4 = 3")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_31_joyce")
+    assert render("{betti_pair}") == "(b_2, b_3) = (8, 31)"
+
+
+def test_every_register_provides_every_key():
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        FRAGMENT_KEYS,
+        fragments,
+    )
+
+    for register in ("plain", "html", "latex"):
+        assert set(fragments(register)) == set(FRAGMENT_KEYS), register
+
+
+def test_render_refuses_an_unknown_key():
+    """A typo must fail loudly, not print a literal brace."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+
+    with pytest.raises(KeyError, match="unknown fragment"):
+        render("{betti_pairs}")
+
+
+def test_fragments_never_claim_holonomy():
+    """Holonomy wording belongs to holonomy_claim(), which reads the fork."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        fragments,
+    )
+
+    for register in ("plain", "html", "latex"):
+        text = " ".join(fragments(register).values()).lower()
+        assert "holonomy" not in text, register
+
+
+def test_the_chi_eff_candidate_is_reported_not_adopted():
+    claim = chi_eff_claim()
+    assert claim["candidate"]["reading"] == "K3"
+    assert "48 n" in claim["candidate"]["formula"]
+    assert claim["may_claim_a_derivation"] is False
+    assert "not the Euler" in claim["sentence"]
