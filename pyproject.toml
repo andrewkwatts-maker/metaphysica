@@ -59,6 +59,9 @@ dependencies = [
     # repo call those operators; against 2.3 they raise AttributeError and
     # every affected parameter is scored as unevaluable.
     "eml-math>=2.4.0",
+    # The test ground (metaphysica.testground) keeps each theory's adopted
+    # selection, named configurations and assessment config as YAML.
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]

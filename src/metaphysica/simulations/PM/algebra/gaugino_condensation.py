@@ -1,12 +1,24 @@
 """
-Gaugino Condensation — Cabibbo Angle from N₁=24/N₂=23 Racetrack (DERIVED)
-===========================================================================
+Gaugino Condensation — Cabibbo Angle from an N₁=24/N₂=23 Racetrack (CALIBRATED)
+================================================================================
 
-Hidden E₈' gaugino condensation with competing fluxes on associative 3-cycles
-generates a non-perturbative racetrack superpotential. The Cabibbo-like
-suppression ε ≈ 0.22500 emerges from the competition between:
+CALIBRATED at the off-path seed b₃ = 24; no racetrack exists on Y₇. A gaugino
+racetrack needs a confining hidden sector, and the adopted geometry has none:
+Y₇'s singular loci carry N = 4 super Yang-Mills (certificate CG.5), and in
+φ's Joyce family holonomy exactly G₂ and a confining sector are mutually
+exclusive (CG.10). The exponent 2π/N₁ with N₁ = b₃ read a Betti number as the
+rank of a gauge group (provenance row `racetrack-type`), and Re(T) is an OPEN
+modulus on Y₇ (CG.6). The construction below was written at the off-path seed
+b₃ = 24 (N₁ = 24, N₂ = 23), and every number quoted in this text is that
+calibration. run() reads topology.elder_kads, which carries the b₃ in force,
+so the registered rows follow the seed; no value has been changed. The module
+is kept so the failure stays reproducible.
 
-    W_np(N₁=24) = A·exp(−2π/N₁)   dominant term (from b₃=24 topology)
+As written, hidden E₈' gaugino condensation with competing fluxes on
+associative 3-cycles generates a non-perturbative racetrack superpotential,
+and a Cabibbo-like suppression was sought in the competition between:
+
+    W_np(N₁=24) = A·exp(−2π/N₁)   dominant term (N₁ = the off-path seed b₃ = 24)
     W_np(N₂=23) = A·exp(−2π/N₂)   sub-dominant term (N₁−1)
 
 The effective Yukawa suppression at the racetrack minimum:
@@ -15,7 +27,7 @@ The effective Yukawa suppression at the racetrack minimum:
 The Cabibbo proxy (coarse):
     ε_proxy ≈ λ_eff³ ≈ 0.456   (order of magnitude for first-generation suppression)
 
-Algebraic Cabibbo derivation (DERIVED):
+Algebraic Cabibbo construction (FALSIFIED; numbers at the off-path seed):
     Step 1 — Racetrack moduli minimum from ∂W/∂T = 0:
         T_min = (N₁·N₂) / (2π·(N₁−N₂)) · ln(N₁/N₂) ≈ 3.739
     Step 2 — Evaluate both condensates at T_min:
@@ -27,18 +39,20 @@ Algebraic Cabibbo derivation (DERIVED):
         λ_W ≈ ε_racetrack^(1/n_gen) = 0.01566^(1/3) ≈ 0.2502
         cf. PDG Wolfenstein λ_W = 0.22500 ± 0.00067  —  37.6σ away
 
-Key: N₁=24 comes directly from b₃=24 (G₂ Betti number — topological invariant),
-N₂=N₁−1=23, n_gen=3 from G₂ geometry. No free parameters enter the construction.
+As written, N₁ = 24 was the off-path seed b₃ = 24 read as a gauge-group rank,
+N₂ = N₁ − 1 = 23, and n_gen = 3. No free parameters enter the construction,
+which is why it cannot be rescued.
 
 STATUS: FALSIFIED (2026-09). All three Cabibbo candidates produced by this
 module are scored against PDG Wolfenstein λ_W = 0.22500 ± 0.00067 and all
-three fail:
+three fail. At the off-path seed b₃ = 24 they were:
 
     algebra.gaugino_cabibbo_proxy    0.455938   344.7 sigma
     algebra.gaugino_cabibbo_derived  0.250163    37.6 sigma
     algebra.gaugino_cabibbo_refined  0.207880    25.6 sigma
 
-Between them they carry 95.4% of the framework's global chi-squared. Two
+The registered rows follow the seed in force and fail there too. At the
+values above they carried 95.4% of the framework's global chi-squared. Two
 claims are WITHDRAWN: that this "promotes the Cabibbo angle from CALIBRATED
 toward DERIVED", and that "11% agreement, zero free parameters" is an
 agreement at all. An 11% discrepancy on a quantity measured to 0.3% is a
@@ -46,7 +60,8 @@ failure. Zero free parameters makes a wrong prediction unavoidable, not
 excusable. The racetrack construction is kept on the books with its
 derivation intact so the failure stays visible and reproducible.
 
-Dependencies: g2_geometry_v16_0 (topology.elder_kads = b₃ = 24)
+Dependencies: g2_geometry_v16_0 (topology.elder_kads, the b₃ in force; the
+text below was written at the off-path seed b₃ = 24)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -71,10 +86,11 @@ from metaphysica.simulations.base import (
 
 class GauginoCondensationSimulation(SimulationBase):
     """
-    Hidden E₈' gaugino condensation with N₁/N₂ racetrack.
+    Hidden E₈' gaugino condensation with N₁/N₂ racetrack -- CALIBRATED; Y₇ has no racetrack.
 
-    Derives λ_eff = exp(−2π/N₁) and the Cabibbo proxy from purely topological
-    integer inputs N₁=b₃=24, N₂=b₃−1=23.
+    Computes λ_eff = exp(−2π/N₁) and the Cabibbo proxy from N₁ = b₃ and
+    N₂ = b₃ − 1. The text was written at the off-path seed b₃ = 24 (N₁ = 24,
+    N₂ = 23); Y₇ has no gaugino racetrack (CG.5, CG.10).
     """
 
     @property
@@ -83,12 +99,14 @@ class GauginoCondensationSimulation(SimulationBase):
             id="gaugino_condensation_v1_0",
             version="1.0",
             domain="algebra",
-            title="Hidden E8 Gaugino Condensation - Cabibbo from Racetrack",
+            title="Hidden E8 Gaugino Condensation - Cabibbo from Racetrack (Calibrated, Off-Path Seed)",
             description=(
-                "Derives Cabibbo-like suppression from N₁=24/N₂=23 racetrack superpotential. "
-                "FALSIFIED: all three candidates miss PDG λ_W = 0.22500 ± 0.00067 "
-                "(344.7σ / 37.6σ / 25.6σ). The 'promotes Cabibbo from CALIBRATED "
-                "toward DERIVED' claim is withdrawn."
+                "CALIBRATED at the off-path seed b₃ = 24: Y₇ has no gaugino racetrack (its "
+                "singular loci carry N = 4 SYM, CG.5; holonomy exactly G₂ excludes a "
+                "confining sector in φ's Joyce family, CG.10). Cabibbo-like suppression "
+                "from the N₁=24/N₂=23 racetrack superpotential. FALSIFIED: all three candidates miss PDG λ_W = 0.22500 ± 0.00067 "
+                "(344.7σ / 37.6σ / 25.6σ at the off-path seed). The 'promotes Cabibbo "
+                "from CALIBRATED toward DERIVED' claim is withdrawn."
             ),
             section_id="A4",
             appendix=True,
@@ -121,25 +139,30 @@ class GauginoCondensationSimulation(SimulationBase):
         ]
 
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
+        # topology.elder_kads carries the b_3 in force; the fallback below is
+        # the off-path seed b_3 = 24, used only when no seed is registered.
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
             b3 = 24
-        N1 = int(b3)    # dominant flux quanta = b₃ = 24
-        N2 = N1 - 1     # sub-dominant flux quanta = 23
+        N1 = int(b3)    # dominant flux quanta, read as b₃ (24 at the off-path seed)
+        N2 = N1 - 1     # sub-dominant flux quanta (23 at the off-path seed)
 
         n_gen_raw = registry.get_param("topology.n_gen")
         n_gen = int(n_gen_raw) if n_gen_raw is not None else 3
 
-        # Analytic racetrack at unit modulus T=1 (the topological normalization).
-        # W_np(N) = exp(-2π/N) with T=1; N₁=b₃ is forced by G₂ topology.
+        # Analytic racetrack at unit modulus T=1 (the construction's normalization).
+        # W_np(N) = exp(-2π/N) with T=1. Setting N₁ = b₃ read a Betti number as a
+        # gauge-group rank; Y₇ has no gaugino racetrack (CG.5, CG.10).
         W1 = math.exp(-2.0 * math.pi / N1)
         W2_val = math.exp(-2.0 * math.pi / N2)
         lambda_eff = W1
         cabibbo_proxy = lambda_eff ** 3
         # Refined estimate: first-generation suppression uses N1/4 cycles out of N1 total.
-        # Physical argument: E₆ has 4 SM-like gauge sectors (SU(3)×SU(2)×U(1)×hidden);
-        # first-generation Yukawa sees N1/4 = 6 racetrack suppressions.
+        # Physical argument as written: E₆ has 4 SM-like gauge sectors
+        # (SU(3)×SU(2)×U(1)×hidden); at the off-path seed N1 = 24 the first-generation
+        # Yukawa sees N1/4 = 6 racetrack suppressions.
         # cabibbo_refined = λ_eff^(N1/4) = exp(-π/2) ≈ 0.2079 (cf. PDG λ_W ≈ 0.2250).
+        # The value is fixed at exp(-π/2) and does not follow the seed.
         cabibbo_refined = math.exp(-math.pi / 2.0)   # = exp(-2π*6/24) = exp(-π/2)
 
         # Algebraic Cabibbo derivation from racetrack moduli minimum.
@@ -172,6 +195,8 @@ class GauginoCondensationSimulation(SimulationBase):
 
     def run_eml(self, registry: "PMRegistry") -> Dict[str, Any]:
         """EML path — same racetrack via EML exponential operators."""
+        # Same read as run(): the b_3 in force, falling back to the off-path
+        # seed b_3 = 24 only when no seed is registered.
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
             b3 = 24
@@ -226,6 +251,8 @@ class GauginoCondensationSimulation(SimulationBase):
         }
 
     def get_formulas(self) -> List[Formula]:
+        # The formula text is written at the off-path seed b_3 = 24
+        # (N1 = 24, N2 = 23); run() follows the seed in force.
         N1, N2 = 24, 23
         n_gen = 3
         W1 = math.exp(-2.0 * math.pi / N1)
@@ -243,14 +270,17 @@ class GauginoCondensationSimulation(SimulationBase):
                 label="(A4.1)",
                 latex=(
                     r"W_{\text{np}} = A\,e^{-2\pi T/N_1} + A\,e^{-2\pi T/N_2},\quad"
-                    r"N_1 = b_3 = 24,\; N_2 = b_3 - 1 = 23"
+                    r"N_1 = b_3 = 24,\; N_2 = b_3 - 1 = 23\ \ (\text{off-path seed})"
                 ),
                 plain_text="W_np = A*exp(-2π T/24) + A*exp(-2π T/23), N1=24, N2=23",
                 category="DERIVED",
                 description=(
-                    "Racetrack superpotential from competing hidden E₈' gaugino condensates. "
-                    "N₁=24 comes from b₃=24 (G₂ Betti number — topological invariant). "
-                    "N₂=N₁−1=23. No free parameters."
+                    "CALIBRATED at the off-path seed: no gaugino racetrack exists on Y₇ (its "
+                    "singular loci carry N = 4 SYM, CG.5; holonomy exactly G₂ excludes a confining sector "
+                    "in φ's Joyce family, CG.10). Racetrack superpotential from two competing "
+                    "hidden E₈' gaugino condensates, with N₁ = 24 read from the off-path seed "
+                    "b₃ = 24 and N₂ = N₁ − 1 = 23. Reading a Betti number as the rank of a "
+                    "gauge group was the error; the values are calibrations at that seed."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.gaugino_W_np_1", "algebra.gaugino_W_np_2"],
@@ -264,16 +294,17 @@ class GauginoCondensationSimulation(SimulationBase):
                 ),
                 eml_description=(
                     "Racetrack superpotential via EML: sum of two exponential condensates. "
-                    "N₁=b₃ and N₂=b₃−1 are forced by the G₂ topology."
+                    "N₁ = b₃ and N₂ = b₃ − 1 as written at the off-path seed b₃ = 24 "
+                    "(no racetrack on Y₇)."
                 ),
                 derivation={
                     "steps": [
-                        "Hidden E₈' factor has gaugino condensation from strong-coupling gauge dynamics",
+                        "As written: the hidden E₈' factor has gaugino condensation from strong-coupling gauge dynamics (Y₇ has no such confining sector: CG.5, CG.10)",
                         "Non-perturbative superpotential: W_np = A·exp(−2π T/N) for N associative 3-cycles",
-                        "b₃ = 24 gives N₁ = 24 dominant cycles (topological, from G₂ Betti number)",
+                        "At the off-path seed b₃ = 24, N₁ = 24 dominant cycles (a Betti number read as a gauge-group rank)",
                         "Sub-dominant: N₂ = 23 = N₁ − 1 (next-to-leading-order contribution)",
                         "Competition between W_np(24) and W_np(23) creates a racetrack minimum",
-                        "The minimum locks the modulus T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ = 2π/Nᵢ",
+                        "The minimum would lock the modulus T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ = 2π/Nᵢ; on Y₇ the moduli are OPEN (CG.6)",
                     ],
                     "method": "Racetrack moduli stabilization from E₈' gaugino condensation",
                     "references": [
@@ -283,9 +314,9 @@ class GauginoCondensationSimulation(SimulationBase):
                 },
                 terms={
                     r"W_{\text{np}}": "Non-perturbative racetrack superpotential from competing gaugino condensates",
-                    r"N_1 = b_3 = 24": "Dominant flux quanta = G₂ Betti number b₃ (topological invariant)",
+                    r"N_1 = b_3 = 24": "Dominant flux quanta, set to b₃ at the off-path seed b₃ = 24 (a Betti number read as a gauge-group rank; no racetrack on Y₇)",
                     r"N_2 = b_3 - 1 = 23": "Sub-dominant flux quanta = N₁ − 1 (next-to-leading order)",
-                    r"T": "Kähler modulus of the G₂ compactification (locked at racetrack minimum)",
+                    r"T": "Kähler modulus (the racetrack would lock it; on Y₇ the moduli, Re(T) included, are OPEN, CG.6)",
                 },
             ),
             Formula(
@@ -295,9 +326,11 @@ class GauginoCondensationSimulation(SimulationBase):
                 plain_text=f"lambda_eff = exp(-2π/24) ≈ {leff:.6f}",
                 category="DERIVED",
                 description=(
-                    f"Effective Yukawa texture suppression at the racetrack minimum. "
-                    f"λ_eff = exp(−2π/24) ≈ {leff:.6f}. "
-                    "Directly from the b₃=24 topology — zero free parameters."
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). "
+                    f"Effective Yukawa texture suppression at the racetrack minimum, "
+                    f"λ_eff = exp(−2π/N₁); at the off-path seed N₁ = 24 it is "
+                    f"exp(−2π/24) ≈ {leff:.6f}. The registered value follows the "
+                    "seed in force (run() reads topology.elder_kads)."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.gaugino_lambda_eff"],
@@ -305,19 +338,19 @@ class GauginoCondensationSimulation(SimulationBase):
                 eml_tree_str="ops.exp(ops.neg(ops.div(ops.mul(2, pi), b3_leaf())))",
                 eml_description="λ_eff = exp(−2π/24) via EML: ops.exp(ops.neg(ops.div(ops.mul(2,pi),24)))",
                 derivation={
-                    "method": "Yukawa suppression from racetrack minimum at N1=b3=24",
+                    "method": "Yukawa suppression from the racetrack minimum at N1 = 24 (off-path seed)",
                     "parentFormulas": ["gaugino-racetrack-superpotential"],
                     "steps": [
                         "At the racetrack minimum, the dominant condensate W_np(N₁) = exp(−2π/N₁) sets the scale",
-                        "With N₁ = b₃ = 24, λ_eff = exp(−2π/24) ≈ 0.7697",
-                        "This is the fundamental Yukawa suppression factor for first-generation fermion masses",
-                        "No free parameters: N₁ is the topological G₂ Betti number b₃",
+                        "At the off-path seed N₁ = b₃ = 24, λ_eff = exp(−2π/24) ≈ 0.7697",
+                        "As written, this is the Yukawa suppression factor for first-generation fermion masses",
+                        "No free parameters: N₁ was the Betti number b₃ read as a gauge-group rank, the reading that fails on Y₇ (no racetrack: CG.5, CG.10)",
                     ],
                     "references": ["Krasnikov, N.V. (1987) 'On supersymmetry breaking in superstring theories'"],
                 },
                 terms={
                     r"\lambda_{\text{eff}}": f"Effective Yukawa suppression = exp(−2π/24) ≈ {leff:.6f}",
-                    r"N_1": "Dominant flux quanta = b₃ = 24 (G₂ Betti number, topological invariant)",
+                    r"N_1": "Dominant flux quanta, set to b₃ at the off-path seed b₃ = 24 (no racetrack on Y₇)",
                 },
             ),
             Formula(
@@ -327,12 +360,13 @@ class GauginoCondensationSimulation(SimulationBase):
                 plain_text=f"epsilon_proxy = lambda_eff^3 ≈ {cab:.4f}",
                 category="DERIVED",
                 description=(
-                    f"FALSIFIED. Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} "
-                    "against PDG λ_W = 0.22500 ± 0.00067 — 344.7σ, off by roughly a "
-                    "factor of two. The 'promotes Cabibbo angle from CALIBRATED toward "
-                    "DERIVED' claim is withdrawn. Retained with its derivation intact "
-                    "because the racetrack construction is still carried by the refined "
-                    "and derived variants, which also fail."
+                    "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
+                    f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} at the "
+                    "off-path seed b₃ = 24, against PDG λ_W = 0.22500 ± 0.00067 — "
+                    "344.7σ, off by roughly a factor of two. The 'promotes Cabibbo angle "
+                    "from CALIBRATED toward DERIVED' claim is withdrawn. Kept with its "
+                    "derivation intact, with the refined and derived variants (which "
+                    "also fail), so the failure stays reproducible."
                 ),
                 inputParams=["algebra.gaugino_lambda_eff"],
                 outputParams=["algebra.gaugino_cabibbo_proxy"],
@@ -344,7 +378,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "parentFormulas": ["gaugino-lambda-eff"],
                     "steps": [
                         "The Wolfenstein parametrization gives the Cabibbo angle as the leading CKM parameter λ_W ≈ 0.2250",
-                        "From the racetrack, λ_eff ≈ 0.7697 is the fundamental suppression scale",
+                        "From the racetrack at the off-path seed, λ_eff ≈ 0.7697 is the suppression scale",
                         "The third power ε ≈ λ_eff³ ≈ 0.456 is the coarse proxy for Cabibbo suppression",
                         "The exact matching λ_W ≈ λ_eff^p requires minimization with SM matter content (p ≈ 3.4)",
                     ],
@@ -379,14 +413,17 @@ class GauginoCondensationSimulation(SimulationBase):
                 ),
                 category="FALSIFIED",
                 description=(
-                    f"FALSIFIED. Algebraic Wolfenstein parameter λ_W ≈ {cab_derived:.4f} from the racetrack moduli minimum. "
-                    f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23. "
+                    "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
+                    f"Algebraic Wolfenstein parameter λ_W ≈ {cab_derived:.4f} from the racetrack moduli minimum. "
+                    f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23 (the off-path seed). "
                     f"ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f} is the off-diagonal Yukawa texture. "
                     f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "PDG: 0.22500 ± 0.00067 — 37.6σ away. N₁=b₃=24 (topological), "
-                    "N₂=N₁−1=23, n_gen=3 (G₂ geometry): the construction takes no free "
-                    "parameters, which is why it cannot be rescued. The earlier "
-                    "'agreement ≈ 89%, DERIVED, zero free parameters' framing is withdrawn."
+                    "PDG: 0.22500 ± 0.00067 — 37.6σ away. N₁ = 24 was the off-path seed "
+                    "b₃ = 24 read as a gauge-group rank, N₂ = N₁ − 1 = 23 and n_gen = 3: "
+                    "the construction takes no free parameters, which is why it cannot be "
+                    "rescued. The registered value follows the seed in force and also "
+                    "fails. The earlier 'agreement ≈ 89%, DERIVED, zero free parameters' "
+                    "framing is withdrawn."
                 ),
                 inputParams=["topology.elder_kads", "topology.n_gen"],
                 outputParams=["algebra.gaugino_cabibbo_derived", "algebra.gaugino_racetrack_T_min"],
@@ -406,7 +443,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 eml_description=(
                     "Algebraic Cabibbo via EML: ops.pow(racetrack_epsilon, ops.inv(n_gen)). "
                     "racetrack_epsilon = ops.abs(W1_at_Tmin - W2_at_Tmin). "
-                    "All inputs topological: N₁=b₃=24, N₂=23, n_gen=3."
+                    "Inputs as written at the off-path seed: N₁ = b₃ = 24, N₂ = 23, n_gen = 3."
                 ),
                 derivation={
                     "method": "Racetrack moduli minimum + generation-weighted Yukawa texture",
@@ -420,7 +457,7 @@ class GauginoCondensationSimulation(SimulationBase):
                         f"Off-diagonal Yukawa texture: ε_rt = |W₁ - W₂| = {epsilon_rt:.6f}",
                         "The Wolfenstein parametrization of the CKM matrix has 3 eigenvalues (n_gen=3)",
                         f"Leading mixing angle: λ_W = ε_rt^(1/n_gen) = {epsilon_rt:.6f}^(1/3) = {cab_derived:.6f}",
-                        "PDG Wolfenstein λ_W = 0.22500 — agreement ≈ 89%, DERIVED (no fitting)",
+                        "PDG Wolfenstein λ_W = 0.22500 ± 0.00067: 37.6σ away, FALSIFIED (the earlier 'agreement ≈ 89%, DERIVED' reading is withdrawn)",
                     ],
                     "references": [
                         "Krasnikov (1987); de Carlos, Casas, Quevedo (1993) 'Supersymmetry breaking'",
@@ -431,9 +468,9 @@ class GauginoCondensationSimulation(SimulationBase):
                 terms={
                     r"T_{\min}": f"Racetrack moduli minimum ≈ {T_min_val:.4f} from ∂W/∂T = 0",
                     r"\varepsilon_{\text{rt}}": f"Off-diagonal Yukawa texture = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.6f}",
-                    r"n_{\text{gen}}": "Number of fermion generations = 3 (from G₂ geometry)",
+                    r"n_{\text{gen}}": "Number of fermion generations = 3 (on Y₇, n_gen = b₂/4, the number of singular involutions)",
                     r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: 0.22500)",
-                    r"N_1 = 24": "Dominant flux quanta = b₃ (G₂ Betti number, topological)",
+                    r"N_1 = 24": "Dominant flux quanta, set to b₃ at the off-path seed b₃ = 24 (no racetrack on Y₇)",
                     r"N_2 = 23": "Sub-dominant flux quanta = N₁ − 1",
                 },
             ),
@@ -443,27 +480,37 @@ class GauginoCondensationSimulation(SimulationBase):
         return [
             Parameter(
                 path="algebra.gaugino_W_np_1",
-                name="Dominant Gaugino Condensate W_np(N₁=24)",
+                name="Dominant Gaugino Condensate W_np(N₁)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Non-perturbative superpotential W_np(N₁) = exp(−2π/24). Dominant term from b₃=24.",
+                description=(
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Non-perturbative "
+                    "superpotential W_np(N₁) = exp(−2π/N₁), the dominant term, with N₁ read "
+                    "from topology.elder_kads (the b₃ in force). Written at the off-path "
+                    "seed b₃ = 24 as exp(−2π/24)."
+                ),
                 derivation_formula="gaugino-racetrack-superpotential",
                 eml_description=(
                     "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))) "
-                    "— W_np₁ = exp(−2π/24) dominant condensate from N₁=b₃=24 cycles"
+                    "— W_np₁ = exp(−2π/24), the dominant condensate at the off-path seed N₁ = 24"
                 ),
                 no_experimental_value=True,
             ),
             Parameter(
                 path="algebra.gaugino_W_np_2",
-                name="Sub-dominant Gaugino Condensate W_np(N₂=23)",
+                name="Sub-dominant Gaugino Condensate W_np(N₂)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Non-perturbative superpotential W_np(N₂) = exp(−2π/23). Sub-dominant term from N₂=b₃−1.",
+                description=(
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Non-perturbative "
+                    "superpotential W_np(N₂) = exp(−2π/N₂), the sub-dominant term, with "
+                    "N₂ = b₃ − 1 for the b₃ in force. Written at the off-path seed as "
+                    "exp(−2π/23)."
+                ),
                 derivation_formula="gaugino-racetrack-superpotential",
                 eml_description=(
                     "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)))) "
-                    "— W_np₂ = exp(−2π/23) sub-dominant condensate from N₂=b₃−1=23 cycles"
+                    "— W_np₂ = exp(−2π/23), the sub-dominant condensate at the off-path seed N₂ = 23"
                 ),
                 no_experimental_value=True,
             ),
@@ -472,7 +519,12 @@ class GauginoCondensationSimulation(SimulationBase):
                 name="Yukawa Texture Suppression λ_eff",
                 units="dimensionless",
                 status="DERIVED",
-                description="Effective Yukawa suppression λ_eff = exp(−2π/24) ≈ 0.7697 at the racetrack minimum.",
+                description=(
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Effective Yukawa "
+                    "suppression λ_eff = exp(−2π/N₁) at the racetrack minimum; at the "
+                    "off-path seed N₁ = 24 it is exp(−2π/24) ≈ 0.7697, the bound recorded "
+                    "here. The registered value follows the seed in force."
+                ),
                 derivation_formula="gaugino-lambda-eff",
                 eml_description=(
                     "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))) "
@@ -490,13 +542,14 @@ class GauginoCondensationSimulation(SimulationBase):
                 units="dimensionless",
                 status="FALSIFIED",
                 description=(
-                    "FALSIFIED. Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo "
-                    "parameter λ_W. Evaluates to 0.455938 against PDG 0.22500 ± 0.00067 "
-                    "— 344.7σ, off by roughly a factor of two. Retained on the books "
-                    "with its derivation intact rather than retired, because the "
-                    "racetrack construction behind it is still carried by the refined "
-                    "and derived variants. It no longer promotes the Cabibbo angle "
-                    "toward DERIVED; that claim is withdrawn."
+                    "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
+                    "Coarse proxy ε ≈ λ_eff³ for the Wolfenstein Cabibbo parameter λ_W. "
+                    "At the off-path seed b₃ = 24 it evaluates to 0.455938 against PDG "
+                    "0.22500 ± 0.00067 — 344.7σ, off by roughly a factor of two; the "
+                    "registered value follows the seed in force and also fails. Kept on "
+                    "the books with its derivation intact, beside the refined and derived "
+                    "variants, so the failure stays reproducible. It no longer promotes "
+                    "the Cabibbo angle toward DERIVED; that claim is withdrawn."
                 ),
                 derivation_formula="gaugino-cabibbo-proxy",
                 eml_description=(
@@ -515,11 +568,13 @@ class GauginoCondensationSimulation(SimulationBase):
                 units="dimensionless",
                 status="FALSIFIED",
                 description=(
-                    "FALSIFIED. Refined Cabibbo-like estimate exp(-pi/2) = "
+                    "FALSIFIED. The racetrack is a calibration at the off-path seed; Y7 has none (CG.5, CG.10). "
+                    "Refined Cabibbo-like estimate exp(-pi/2) = "
                     "lambda_eff^(N1/4) = 0.207880, against PDG 0.22500 +- 0.00067 "
                     "— 25.6 sigma. The physical argument was that first-generation "
                     "Yukawa suppression involves N1/4 = 6 racetrack cycles out of "
-                    "N1 = 24 total (E6 has 4 SM-like gauge sectors). This is the "
+                    "N1 = 24 total at the off-path seed b3 = 24 (E6 has 4 SM-like "
+                    "gauge sectors); the value is fixed at exp(-pi/2). This is the "
                     "closest of the three variants and still fails by a wide margin. "
                     "The residual gap was previously attributed to loop corrections "
                     "and SU(5) embedding; that attribution is untested and does not "
@@ -541,7 +596,12 @@ class GauginoCondensationSimulation(SimulationBase):
                 name="Racetrack Minimum Modulus T_min",
                 units="dimensionless",
                 status="DERIVED",
-                description="Analytic racetrack minimum T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ=2π/Nᵢ.",
+                description=(
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Analytic racetrack "
+                    "minimum T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ = 2π/Nᵢ, with N₁ = b₃ and "
+                    "N₂ = b₃ − 1 (24 and 23 at the off-path seed). It fixes no modulus of "
+                    "Y₇: the moduli, Re(T) included, are OPEN at leading order (CG.6)."
+                ),
                 eml_description=(
                     # a1 = 2pi/N1 and a2 = 2pi/N2 are inlined rather than named in a
                     # trailing "where" clause: the clause was prose, not EML, so a1 and
@@ -551,34 +611,40 @@ class GauginoCondensationSimulation(SimulationBase):
                     "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))), "
                     "ops.sub(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
                     "ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)))) "
-                    "— T_min = ln(a₂/a₁)/(a₂−a₁) with aᵢ = 2π/Nᵢ, N₁=24, N₂=23"
+                    "— T_min = ln(a₂/a₁)/(a₂−a₁) with aᵢ = 2π/Nᵢ, N₁=24, N₂=23 (the off-path seed)"
                 ),
                 no_experimental_value=True,
             ),
             Parameter(
                 path="algebra.gaugino_condensate_ratio",
-                name="Condensate Ratio W_np(24)/W_np(23)",
+                name="Condensate Ratio W_np(N₁)/W_np(N₂)",
                 units="dimensionless",
                 status="DERIVED",
-                description="Ratio of dominant to sub-dominant condensate strengths.",
+                description=(
+                    "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Ratio of dominant "
+                    "to sub-dominant condensate strengths; written at the off-path seed "
+                    "as W_np(24)/W_np(23)."
+                ),
                 eml_description=(
                     "EML: ops.div(eml_vec('algebra.gaugino_W_np_1'), eml_vec('algebra.gaugino_W_np_2')) "
-                    "— ratio W_np₁/W_np₂ = exp(−2π/24)/exp(−2π/23) of dominant to sub-dominant condensates"
+                    "— ratio W_np₁/W_np₂ = exp(−2π/24)/exp(−2π/23) of dominant to sub-dominant condensates at the off-path seed"
                 ),
                 no_experimental_value=True,
             ),
             Parameter(
                 path="algebra.gaugino_cabibbo_derived",
-                name="Wolfenstein λ_W from Racetrack Minimum (Algebraic, DERIVED)",
+                name="Wolfenstein λ_W from Racetrack Minimum (Algebraic)",
                 units="dimensionless",
                 status="FALSIFIED",
                 description=(
-                    "Algebraically derived Wolfenstein CKM parameter "
-                    "λ_W = |exp(-2π·T_min/N₁) - exp(-2π·T_min/N₂)|^(1/n_gen) ≈ 0.2502. "
-                    "T_min = (N₁·N₂)/(2π·(N₁-N₂))·ln(N₁/N₂) is the racetrack moduli minimum. "
-                    "N₁=b₃=24 (topological), N₂=23, n_gen=3 (G₂ geometry). "
-                    "FALSIFIED against PDG Wolfenstein λ_W = 0.22500 ± 0.00067: "
-                    "0.250163 is 37.6σ away. Minimising the racetrack moved the "
+                    "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
+                    "Wolfenstein CKM parameter "
+                    "λ_W = |exp(-2π·T_min/N₁) - exp(-2π·T_min/N₂)|^(1/n_gen) from the "
+                    "racetrack moduli minimum T_min = (N₁·N₂)/(2π·(N₁-N₂))·ln(N₁/N₂). "
+                    "At the off-path seed (N₁ = b₃ = 24, N₂ = 23, n_gen = 3) it is "
+                    "0.250163, 37.6σ from PDG Wolfenstein λ_W = 0.22500 ± 0.00067; the "
+                    "registered value follows the seed in force and also fails. "
+                    "Minimising the racetrack moved the "
                     "prediction toward the measurement relative to the λ_eff³ proxy "
                     "but overshot it; the mechanism does not fix the Cabibbo angle. "
                     "The earlier '11% agreement, zero free parameters' framing is "
@@ -603,6 +669,9 @@ class GauginoCondensationSimulation(SimulationBase):
         ]
 
     def get_section_content(self) -> Optional[SectionContent]:
+        # The section records the construction at the off-path seed
+        # b_3 = 24 (N1 = 24, N2 = 23); Y_7 has no racetrack, so these are
+        # calibrations.
         N1 = 24
         N2 = 23
         n_gen = 3
@@ -621,11 +690,16 @@ class GauginoCondensationSimulation(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The hidden E₈' gauge factor undergoes gaugino condensation on the two dominant "
-                    "classes of associative 3-cycles in the G₂ manifold. "
-                    f"The Betti number b₃ = {int(N1)} gives N₁ = b₃ = {int(N1)} dominant cycles "
-                    f"and N₂ = b₃ − 1 = {int(N2)} sub-dominant cycles. "
-                    "These integers are topological invariants — not free parameters."
+                    "CALIBRATED at the off-path seed. This section records a construction the adopted "
+                    "geometry does not support. A gaugino racetrack needs a confining "
+                    "hidden sector, but Y₇'s singular loci carry N = 4 super Yang-Mills "
+                    "(CG.5), and with holonomy exactly G₂ no confining sector exists in "
+                    "φ's Joyce family (CG.10). As written, the hidden E₈' gauge factor "
+                    "condensed on two classes of associative 3-cycles, with "
+                    f"N₁ = {int(N1)} taken from the off-path seed b₃ = {int(N1)} and "
+                    f"N₂ = N₁ − 1 = {int(N2)}. Reading a Betti number as the rank of a "
+                    "gauge group was the error; the numbers below are calibrations at "
+                    "the off-path seed, kept so the failure stays reproducible."
                 ),
             ),
             ContentBlock(
@@ -637,7 +711,7 @@ class GauginoCondensationSimulation(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="warning",
-                title="Racetrack Minimum (Zero Free Parameters) — FALSIFIED",
+                title="Racetrack Minimum at the Off-Path Seed — FALSIFIED; No Racetrack on Y₇",
                 content=(
                     f"W_np(N₁=24) = {W1:.8f},  W_np(N₂=23) = {W2:.8f}\n"
                     f"λ_eff = exp(−2π/24) = {leff:.8f}\n"
@@ -652,7 +726,8 @@ class GauginoCondensationSimulation(SimulationBase):
                 type="paragraph",
                 content=(
                     "<Normal>"
-                    f"The effective Yukawa suppression λ_eff = exp(−2π/24) ≈ {leff:.6f} at the racetrack minimum "
+                    "At the off-path seed (N₁ = 24, N₂ = 23), "
+                    f"the effective Yukawa suppression λ_eff = exp(−2π/24) ≈ {leff:.6f} at the racetrack minimum "
                     f"gives a Cabibbo-like proxy ε ≈ λ_eff³ ≈ {cab:.4f}. "
                     "Beyond this coarse proxy, the algebraic Wolfenstein parameter follows from evaluating "
                     "both condensates at the exact racetrack moduli minimum T_min. "
@@ -676,7 +751,8 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"W2_tmin = ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, eml_scalar({N2})))))); "
                     "epsilon_rt = ops.abs(ops.add(W1_tmin, ops.neg(W2_tmin))); "
                     "lambda_W = ops.pow(epsilon_rt, ops.inv(eml_scalar(3))). "
-                    "All operators topologically determined; no fitting."
+                    "N₁ and N₂ are the off-path seed's 24 and 23; no fitting, and no "
+                    "racetrack on Y₇."
                     "</EML>"
                 ),
             ),
@@ -694,13 +770,16 @@ class GauginoCondensationSimulation(SimulationBase):
         return SectionContent(
             section_id="A4",
             subsection_id=None,
-            title="Gaugino Condensation: Cabibbo from Racetrack N₁=24/N₂=23",
+            title="Gaugino Condensation: Cabibbo from Racetrack N₁=24/N₂=23 (Calibrated; No Racetrack on Y₇)",
             abstract=(
-                "Hidden E₈' gaugino condensation with b₃=24 topology gives N₁=24/N₂=23 racetrack. "
+                "CALIBRATED at the off-path seed: Y₇ has no gaugino racetrack (its singular loci carry "
+                "N = 4 SYM, CG.5; holonomy exactly G₂ excludes a confining sector in φ's "
+                "Joyce family, CG.10). As written at the off-path seed b₃ = 24, hidden E₈' "
+                "gaugino condensation gave an N₁=24/N₂=23 racetrack. "
                 f"The algebraic Wolfenstein parameter λ_W = ε_rt^(1/3) ≈ {cab_derived:.4f} "
                 "follows from the racetrack moduli minimum with no free parameters, and is "
                 "FALSIFIED against PDG λ_W = 0.22500 ± 0.00067 at 37.6σ. All three Cabibbo "
-                "candidates from this module fail (344.7σ / 37.6σ / 25.6σ)."
+                "candidates from this module fail (344.7σ / 37.6σ / 25.6σ at the off-path seed)."
             ),
             content_blocks=blocks,
             formula_refs=[

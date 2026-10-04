@@ -3,11 +3,22 @@
 theory_overview_diagrams.py - Theory Overview Visualization Diagrams
 
 Generates two diagrams for Principia Metaphysica theory overview:
-1. parameter-space.png - PM parameter space showing constraints from b3=24
+1. parameter-space.png - PM parameter space as drawn at the off-path seed
 2. experimental-signatures.png - Key experimental signatures to test PM predictions
 
-All visualizations emphasize b3=24 as the single topological input that determines
-everything else in the theory.
+OFF-PATH (b3_seed = seed_24): both diagrams were drawn when b3 = 24 was read
+as the single topological input from which everything else followed. That
+seed is retired and unreachable by Joyce's construction from Gamma (CG.7),
+and the "one input, no free parameters" claim is withdrawn: the k_gimel-layer
+constants are fits made at that seed (CALIBRATED, D-007). The diagrams now
+label the old picture instead of asserting it. On the adopted path the
+internal space is Y_7, Joyce's resolution of T^7/(Z/2)^3, with
+(b2, b3) = (12, 43); n_gen = b2/4 = 3, the number of singular involutions.
+chi_eff = 144 is the K3 reading, chi_eff = 2 x sum chi(K3) = 48 n (the Kummer
+K3 surfaces transverse to the n singular involutions, counted once per
+shadow), so n_gen = chi_eff/48 = n restates the ruled route n_gen = b_2/4;
+it is not the Euler characteristic of Y_7, which is 0. The b2 = 4 drawn here is the old
+TCS h^{1,1}, not the adopted b2 = 12.
 
 Output: ../../images/parameter-space.png, ../../images/experimental-signatures.png
 
@@ -48,14 +59,19 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     """
     Generate PM parameter space diagram.
 
-    Shows how b3=24 constrains the entire theory:
-    - Single topological input
-    - Derivation chains to all physical parameters
-    - Comparison with Standard Model free parameters
+    OFF-PATH (b3_seed = seed_24): draws the retired single-input picture, in
+    which b3 = 24 was read as the one topological input:
+    - the off-path seed as the input
+    - the derivation chains as they were drawn from it
+    - the comparison with Standard Model free parameters, as formerly claimed
+    Each box is labelled where it is off-path; the adopted geometry is
+    rendered from the live seed in the subtitle and the chain legend.
 
     Args:
         output_path: Path to save the PNG file
     """
+    # Adopted-geometry phrases, rendered from the live seed rather than typed.
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
     fig, ax = plt.subplots(figsize=(14, 11))
     ax.set_xlim(-0.5, 13.5)
     ax.set_ylim(-0.5, 10.5)
@@ -63,24 +79,27 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.axis('off')
 
     # Title
-    ax.text(6.75, 10.2, 'PM Parameter Space: Geometry Constrains Physics',
+    ax.text(6.75, 10.2, 'PM Parameter Space: the Retired Single-Input Picture',
             fontsize=18, fontweight='bold', ha='center', color=PM_DARK)
-    ax.text(6.75, 9.7, r'Single topological input $b_3=24$ determines all physical parameters',
+    ax.text(6.75, 9.7,
+            render(r'OFF-PATH: drawn at the retired seed $b_3=24$. Adopted: {manifold}, {betti_pair}',
+                   'latex'),
             fontsize=12, ha='center', color='#666666', style='italic')
 
     # ===========================================================================
-    # Central INPUT box - b3=24
+    # Central box - the off-path seed b3 = 24 (the retired input)
     # ===========================================================================
 
     input_box = FancyBboxPatch((5.0, 7.5), 3.5, 1.6, boxstyle="round,pad=0.15",
                                 facecolor=PM_GOLD, edgecolor=PM_DARK, linewidth=3, alpha=0.9)
     ax.add_patch(input_box)
 
-    ax.text(6.75, 8.7, 'THE INPUT', fontsize=10, ha='center', color=PM_DARK,
+    ax.text(6.75, 8.7, 'OFF-PATH SEED', fontsize=10, ha='center', color=PM_DARK,
             fontweight='bold', style='italic')
     ax.text(6.75, 8.2, r'$b_3 = 24$', fontsize=24, ha='center', color=PM_DARK,
             fontweight='bold')
-    ax.text(6.75, 7.7, 'Associative 3-cycles', fontsize=10, ha='center', color='#444444')
+    ax.text(6.75, 7.7, 'retired; Joyce never reaches it (CG.7)', fontsize=10, ha='center',
+            color='#444444')
 
     # ===========================================================================
     # Derived Geometry Layer
@@ -92,8 +111,12 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.add_patch(chi_box)
     ax.text(2.75, 6.5, r'$\chi_{eff} = 144$', fontsize=12, ha='center', color=PM_DARK,
             fontweight='bold')
-    ax.text(2.75, 6.0, 'Euler char.', fontsize=9, ha='center', color='#666666')
-    ax.text(2.75, 5.7, r'$= 2(h^{1,1}-h^{2,1}+h^{3,1})$', fontsize=8, ha='center', color='#888888')
+    # chi_eff is the K3 reading (adopted): an effective index, not the Euler
+    # characteristic of Y_7 (which is 0). The old route 2(h11 - h21 + h31) is
+    # one of three historical routes that agree only at the off-path seed; a
+    # Joyce orbifold has no h21 or h31.
+    ax.text(2.75, 6.0, 'effective index (K3 reading)', fontsize=9, ha='center', color='#666666')
+    ax.text(2.75, 5.7, r'$= 2\sum\chi(K3) = 48n$', fontsize=8, ha='center', color='#888888')
 
     # Arrow from b3 to chi_eff
     ax.annotate('', xy=(3.5, 6.8), xytext=(5.0, 7.8),
@@ -105,8 +128,9 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.add_patch(b2_box)
     ax.text(6.75, 6.5, r'$b_2 = 4$', fontsize=12, ha='center', color=PM_DARK,
             fontweight='bold')
-    ax.text(6.75, 6.0, 'Kahler moduli', fontsize=9, ha='center', color='#666666')
-    ax.text(6.75, 5.7, 'Gauge sectors', fontsize=8, ha='center', color='#888888')
+    ax.text(6.75, 6.0, r'old TCS $h^{1,1}$ (off-path)', fontsize=9, ha='center', color='#666666')
+    ax.text(6.75, 5.7, render(r'adopted: $b_2 = {b2}$', 'latex'), fontsize=8, ha='center',
+            color='#888888')
 
     # Arrow from b3 to b2
     ax.annotate('', xy=(6.75, 6.8), xytext=(6.75, 7.5),
@@ -119,7 +143,7 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.text(10.75, 6.5, r'$d/R = 0.12$', fontsize=12, ha='center', color=PM_DARK,
             fontweight='bold')
     ax.text(10.75, 6.0, 'Cycle separation', fontsize=9, ha='center', color='#666666')
-    ax.text(10.75, 5.7, 'TCS gluing', fontsize=8, ha='center', color='#888888')
+    ax.text(10.75, 5.7, 'TCS gluing (off-path)', fontsize=8, ha='center', color='#888888')
 
     # Arrow from b3 to d/R
     ax.annotate('', xy=(10.0, 6.8), xytext=(8.5, 7.8),
@@ -136,7 +160,8 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.text(1.55, 4.35, r'$n_{gen} = 3$', fontsize=13, ha='center', color=PM_DARK,
             fontweight='bold')
     ax.text(1.55, 3.9, 'Fermion families', fontsize=9, ha='center', color='#444444')
-    ax.text(1.55, 3.5, r'$= \chi_{eff}/48$', fontsize=9, ha='center', color='#666666')
+    ax.text(1.55, 3.5, r'$= b_2/4 = \chi_{eff}/48$ on $Y_7$', fontsize=9, ha='center',
+            color='#666666')
 
     # Arrow from chi_eff to generations
     ax.annotate('', xy=(1.8, 4.7), xytext=(2.5, 5.5),
@@ -202,9 +227,10 @@ def generate_parameter_space_diagram(output_path: str) -> None:
     ax.text(0.6, 0.75, '  - 4 CKM parameters', fontsize=9, color='#888888')
     ax.text(0.6, 0.45, '  - Higgs params, etc.', fontsize=9, color='#888888')
 
-    ax.text(3.3, 1.65, 'PM free parameters:', fontsize=10, color='#666666')
+    ax.text(3.3, 1.65, 'PM, as formerly claimed:', fontsize=10, color='#666666')
     ax.text(5.3, 1.65, '1', fontsize=14, color=PM_GOLD, fontweight='bold')
-    ax.text(3.3, 1.2, r'Just $b_3 = 24$!', fontsize=11, color=PM_GOLD, fontweight='bold')
+    ax.text(3.3, 1.2, r'$b_3 = 24$ (retired; fits remain)', fontsize=11, color=PM_GOLD,
+            fontweight='bold')
 
     # ===========================================================================
     # Derivation Chain Legend (bottom right)
@@ -214,13 +240,13 @@ def generate_parameter_space_diagram(output_path: str) -> None:
                                 facecolor=PM_LIGHT, edgecolor=PM_PURPLE, linewidth=2, alpha=0.5)
     ax.add_patch(chain_box)
 
-    ax.text(9.75, 2.55, 'The Derivation Chain', fontsize=11, fontweight='bold',
+    ax.text(9.75, 2.55, 'The Retired Derivation Chain', fontsize=11, fontweight='bold',
             ha='center', color=PM_DARK)
 
     chain_items = [
-        (r'$b_3 = 24$', 'Topological input', PM_GOLD),
+        (r'$b_3 = 24$', 'off-path seed', PM_GOLD),
         (r'$\rightarrow$', '', PM_DARK),
-        ('Geometry', '(TCS G2)', PM_PURPLE),
+        ('Geometry', '(TCS, off-path)', PM_PURPLE),
         (r'$\rightarrow$', '', PM_DARK),
         ('Physics', '(testable)', PM_GREEN),
     ]
@@ -235,11 +261,13 @@ def generate_parameter_space_diagram(output_path: str) -> None:
             ax.text(x_pos, 1.6, desc, fontsize=8, color='#666666')
             x_pos += 2.0
 
-    # Key formula
-    ax.text(9.75, 0.9, 'Everything derives from topology:', fontsize=10,
+    # Formerly claimed vs the adopted geometry (rendered from the live seed)
+    ax.text(9.75, 0.9, 'Formerly: "everything derives from topology"', fontsize=10,
             ha='center', color=PM_DARK, style='italic')
-    ax.text(9.75, 0.5, r'No adjustable parameters beyond $b_3$', fontsize=10,
-            ha='center', color=PM_DARK, fontweight='bold')
+    ax.text(9.75, 0.5,
+            render(r'Adopted: {manifold}, {betti_pair}; fitted constants are CALIBRATED',
+                   'latex'),
+            fontsize=10, ha='center', color=PM_DARK, fontweight='bold')
 
     # ===========================================================================
     # Layer labels on right side
@@ -277,9 +305,15 @@ def generate_experimental_signatures_diagram(output_path: str) -> None:
     - Neutrino parameters (DUNE, JUNO)
     - Dark energy (DESI, Euclid)
 
+    The values were drawn at the off-path seed b3 = 24; the caveat box says
+    so. Dark energy and flavour are OPEN on the adopted Y_7 (CG.11, D-011).
+
     Args:
         output_path: Path to save the PNG file
     """
+    # Adopted-geometry phrases, rendered from the live seed rather than typed.
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+
     fig, ax = plt.subplots(figsize=(14, 11))
     ax.set_xlim(-0.5, 13.5)
     ax.set_ylim(-0.5, 10.5)
@@ -357,7 +391,7 @@ def generate_experimental_signatures_diagram(output_path: str) -> None:
             'color': PM_BLUE,
             'pos': (0.5, 4.5),
             'size': (4.0, 2.0),
-            'detail': 'Mashiach field quintessence',
+            'detail': 'Mashiach field quintessence; dark energy is OPEN (CG.11)',
             'icon': r'$\Lambda$'
         },
         {
@@ -369,7 +403,9 @@ def generate_experimental_signatures_diagram(output_path: str) -> None:
             'color': PM_GREEN,
             'pos': (4.9, 4.5),
             'size': (3.8, 2.0),
-            'detail': r'$= \chi_{eff}/48 = 144/48$',
+            # The ruled route b2/4; the K3 reading chi_eff/48 = n restates it.
+            'detail': (render(r'$= b_2/4 = {b2}/4$', 'latex')
+                       + r'; $\chi_{eff}/48 = 144/48$ restates it'),
             'icon': '3'
         },
     ]
@@ -438,16 +474,19 @@ def generate_experimental_signatures_diagram(output_path: str) -> None:
         ax.text(12.6, y, value, fontsize=12, ha='right', color=color, fontweight='bold')
 
     # ===========================================================================
-    # Key insight: b3=24 constrains all
+    # Caveat box: the values were drawn at the off-path seed b3 = 24
+    # (formerly "Key Insight: one input, no free parameters" -- withdrawn)
     # ===========================================================================
 
     insight_box = FancyBboxPatch((0.5, 2.2), 12.0, 1.5, boxstyle="round,pad=0.1",
                                   facecolor=PM_GOLD, edgecolor=PM_DARK, linewidth=2, alpha=0.2)
     ax.add_patch(insight_box)
 
-    ax.text(6.5, 3.3, 'Key Insight: One Input, Five Predictions', fontsize=13,
+    ax.text(6.5, 3.3, 'Caveat: Drawn at the Off-Path Seed', fontsize=13,
             fontweight='bold', ha='center', color=PM_DARK)
-    ax.text(6.5, 2.8, r'All predictions derive geometrically from $b_3 = 24$ — no tuning, no free parameters',
+    ax.text(6.5, 2.8,
+            render(r'OFF-PATH: most values were computed at the retired seed $b_3 = 24$; on {manifold} dark energy and flavour are OPEN',
+                   'latex'),
             fontsize=11, ha='center', color=PM_DARK)
     ax.text(6.5, 2.45, 'If any prediction fails experimental test, the entire framework is falsified',
             fontsize=10, ha='center', color='#666666', style='italic')

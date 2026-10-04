@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 """
-Appendix C: Extended Derivations v24.2
-=======================================
+Appendix C: Extended Derivations
+================================
 
 Detailed derivations of key results referenced in the main text, including:
-- G2 holonomy reduction from parallel spinor
+- The parallel-spinor argument for a torsion-free G2-structure (standard)
 - Gauge coupling unification with threshold corrections
 - Fermion mass hierarchies from wavefunction overlap
 - Neutrino mixing angles from tribimaximal symmetry
-- Higgs mass from G2 moduli stabilization
+- Higgs mass from an effective potential that ASSUMES moduli stabilization
 - Proton lifetime from cycle separation
 
 This appendix provides step-by-step derivations too lengthy for the main
-text but essential for technical verification.
+text. It is not run by the pipeline but ships in the package.
+
+STATUS ON THE ADOPTED PATH: the internal space Y_7 is Joyce's resolution of
+T^7/(Z/2)^3 with (b_2, b_3) = (12, 43) and n_gen = b_2/4 = 3. Several
+sketches below were written for the off-path seed (b_2, b_3) = (4, 24) or for
+a twisted-connected-sum (TCS) construction and are labelled OFF-PATH where
+they appear: the b_3/8 generation check, the "24 associative 3-cycles" of the
+A4 argument, the K = 4 TCS matching number of the proton-lifetime estimate.
+Moduli stabilization (and with it the Higgs sketch) and flavour are OPEN.
 
 References:
 - Joyce, D. (2000) "Compact Manifolds with Special Holonomy"
@@ -45,6 +53,20 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+
+
+def _geo(template: str, register: str = "plain") -> str:
+    """Fill a geometry phrase from the live seed (geometry_narration.render)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    return render(template, register)
+
+
+def _holonomy_sentence() -> str:
+    """What may be said about holonomy on the branch in force (generated)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        holonomy_claim,
+    )
+    return holonomy_claim()["sentence"]
 
 
 class AppendixCExtendedDerivations(SimulationBase):
@@ -114,12 +136,17 @@ class AppendixCExtendedDerivations(SimulationBase):
         K_matching = registry.get_param("topology.K_MATCHING")
         M_GUT = registry.get_param("gauge.M_GUT")
 
-        # Check generation counting: n_gen = b3 / 8
+        # OFF-PATH (n_gen_source = b3_over_dim_O): generation counting as
+        # b3 // 8, the retired route. It returns 3 only at the off-path seed
+        # b_3 = 24; at the adopted b_3 = 43 it returns 5 and generation_check
+        # is False. The adopted route is n_gen = b_2/4. Kept as computed.
         n_gen_derived = b3 // 8
         n_gen_expected = 3
         generation_check = (n_gen_derived == n_gen_expected)
 
-        # Check cycle separation: d/R = 1/(2π K)
+        # Check cycle separation: d/R = 1/(2π K). OFF-PATH (TCS construction):
+        # K is the TCS K3 matching number, which the Joyce construction of
+        # Y_7 does not supply.
         d_over_R_derived = 1.0 / (2.0 * np.pi * K_matching)
         d_over_R_expected = 0.12
         separation_check = abs(d_over_R_derived - d_over_R_expected) < 0.01
@@ -160,20 +187,24 @@ class AppendixCExtendedDerivations(SimulationBase):
             appendix=True,
             title="Appendix C: Extended Derivations",
             abstract=(
-                "Extended step-by-step derivations of key physics results: atmospheric mixing "
-                "angle θ₂₃ = 45° from G₂ holonomy, gauge unification conditions, fermion mass "
-                "hierarchies, neutrino mixing, Higgs mass, and proton lifetime."
+                "Extended step-by-step sketches of key physics results: the atmospheric mixing "
+                "angle θ₂₃ = 45° from an assumed shadow-brane symmetry, gauge unification "
+                "conditions, fermion mass hierarchies, neutrino mixing, Higgs mass, and proton "
+                "lifetime. Flavour and moduli stabilization are OPEN on the adopted path, so the "
+                "flavour and Higgs sketches are model constructs, not derivations from Y₇."
             ),
             content_blocks=[
                 ContentBlock(
                     type="subsection",
-                    content="C.1 G₂ Holonomy Argument"
+                    content="C.1 The G₂ ⊃ SU(3) Argument for θ₂₃"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The maximal atmospheric mixing angle θ₂₃ = 45° emerges from G₂ holonomy "
-                        "symmetry, not from fitting to experimental data."
+                        "In the model, the maximal atmospheric mixing angle θ₂₃ = 45° follows from an "
+                        "assumed symmetry between shadow-brane couplings, not from a fit. Flavour is "
+                        "OPEN on the adopted path (D-011): it needs a chiral sector, so this value is "
+                        "a model construct."
                     )
                 ),
                 ContentBlock(
@@ -184,15 +215,16 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The SU(3) maximal compact subgroup enforces symmetric treatment of the three (3,1) "
-                        "shadow branes, requiring equal coupling parameters."
+                        "The model assumes that an SU(3) subgroup of G₂ enforces symmetric treatment of "
+                        "the three (3,1) shadow branes, requiring equal coupling parameters."
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "**Step 1: G₂ Holonomy Decomposition**\n"
-                        "The G₂ holonomy group contains SU(3) as its maximal compact subgroup. "
+                        "**Step 1: G₂ ⊃ SU(3) Decomposition**\n"
+                        "The compact group G₂ contains SU(3) as a maximal subgroup (the stabiliser of a "
+                        "unit vector in ℝ⁷). "
                         "The fundamental 7-dimensional representation of G₂ decomposes into SU(3) representations: "
                         "a 3, a conjugate 3-bar, and a singlet."
                     )
@@ -201,8 +233,8 @@ class AppendixCExtendedDerivations(SimulationBase):
                     type="paragraph",
                     content=(
                         "**Step 2: Shadow Brane Symmetry**\n"
-                        "SU(3) symmetry enforces equal treatment of the three (3,1) shadow branes. "
-                        "The maximal compact subgroup SU(3) requires symmetric coupling parameters for all "
+                        "The model takes this SU(3) to enforce equal treatment of the three (3,1) shadow "
+                        "branes. That requires symmetric coupling parameters for all "
                         "three shadow branes, forcing the Kuf and Chet shadow parameters to be equal: "
                         "&alpha;<sub>kuf</sub> = &alpha;<sub>chet</sub>."
                     )
@@ -224,21 +256,25 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "**Step 4: Verification**\n"
-                        "The geometrically derived value of exactly 45 degrees matches the NuFIT 6.0 central "
-                        "value for the atmospheric mixing angle, demonstrating that this is a parameter-free "
-                        "prediction from G₂ holonomy."
+                        "**Step 4: Comparison**\n"
+                        "The assumed symmetry gives exactly 45 degrees. Compared with its own data row "
+                        "(nufit.theta_23, the NuFIT 6.0 atmospheric mixing angle), 45 degrees is not the "
+                        "central value. It is a model construct (flavour is OPEN), not a parameter-free "
+                        "prediction from the internal geometry."
                     )
                 ),
                 ContentBlock(
                     type="subsection",
-                    content="C.2 G2 Holonomy from Parallel Spinor"
+                    content="C.2 Parallel Spinors and Torsion-Free G2-Structures (Standard Result)"
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "We derive the G2 holonomy condition from the existence of a "
-                        "parallel spinor η on the 7-manifold M."
+                        "This is a standard result for Riemannian 7-manifolds: a parallel spinor η "
+                        "on M forces Hol(g) ⊆ G2 and a parallel 3-form φ, i.e. a torsion-free "
+                        "G2-structure. What it says about the model's own φ depends on the "
+                        "real-form fork (compact on the active path, D-015; split stays "
+                        "switchable): " + _holonomy_sentence()
                     )
                 ),
                 ContentBlock(
@@ -341,8 +377,10 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "We derive fermion Yukawa coupling hierarchies from the geometric "
-                        "overlap of matter and Higgs wavefunctions on associative 3-cycles."
+                        "This sketch obtains fermion Yukawa coupling hierarchies from the geometric "
+                        "overlap of matter and Higgs wavefunctions on associative 3-cycles. It is a "
+                        "mechanism, not a derivation from Y₇: flavour is OPEN on the adopted path "
+                        "(D-011), because the internal space has no chiral sector yet."
                     )
                 ),
                 ContentBlock(
@@ -426,15 +464,19 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "We derive tribimaximal neutrino mixing from an underlying A₄ "
-                        "discrete symmetry arising from G2 automorphisms."
+                        "This sketch obtains tribimaximal neutrino mixing from an assumed A₄ "
+                        "discrete symmetry of the internal 3-cycles. Flavour is OPEN on the "
+                        "adopted path (D-011)."
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "**Step 1**: The 24 associative 3-cycles have automorphism group "
-                        "containing A₄ × Z₃ as a subgroup."
+                    content=_geo(
+                        "**Step 1** (OFF-PATH, b3_seed = seed_24): the argument assumed 24 "
+                        "associative 3-cycles whose automorphism group contains A₄ × Z₃. That count "
+                        "is {off_path_seed}; on {manifold}, {betti_pair}, so the argument does not "
+                        "carry over as written.",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -481,15 +523,20 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "We derive the Higgs mass from the effective potential generated "
-                        "by G2 moduli stabilization."
+                        "This sketch obtains a Higgs mass from an effective potential that assumes "
+                        "the G2 moduli are stabilized. On Y₇ that is OPEN: the leading-order flux "
+                        "potential is positive and runs away (CG.6), so the sketch is conditional."
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "**Step 1**: G2 moduli include Kähler moduli (b₂ = 4) and associative "
-                        "moduli (b₃ = 24). These get masses from M-theory flux compactification."
+                    content=_geo(
+                        "**Step 1**: On {manifold}, {betti_pair}: M-theory gives b<sub>3</sub> "
+                        "neutral chiral multiplets (the moduli, Re(T) included) and b<sub>2</sub> "
+                        "abelian vector multiplets. OFF-PATH (b3_seed = seed_24): the sketch was "
+                        "written for b<sub>2</sub> = 4 and {off_path_seed} and assumed the moduli get "
+                        "masses from flux; at leading order they do not (OPEN).",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -528,8 +575,10 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "We derive the proton lifetime from geometric suppression due to "
-                        "matter-Higgs cycle separation in TCS G2 manifolds."
+                        "This sketch estimates the proton lifetime with a geometric suppression from "
+                        "matter-Higgs cycle separation. OFF-PATH (TCS construction): the suppression "
+                        "uses the K3 matching number K of a twisted connected sum; Y₇ is a Joyce "
+                        "orbifold and supplies no such K."
                     )
                 ),
                 ContentBlock(
@@ -557,7 +606,7 @@ class AppendixCExtendedDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "**Step 4**: For TCS with K=4 matching fibres, d/R ≈ 1/(2πK) = 0.04, "
+                        "**Step 4** (OFF-PATH, TCS): with K=4 matching fibres, d/R ≈ 1/(2πK) = 0.04, "
                         "giving suppression factor:\n"
                         "S = exp(2πd/R) = exp(1/K) ≈ 1.28"
                     )
@@ -611,8 +660,11 @@ class AppendixCExtendedDerivations(SimulationBase):
                 eml_tree_str="ops.mul(eml_vec('nabla'), eml_vec('eta'))",
                 category="ESTABLISHED",
                 description=(
-                    "Derivation of G2 holonomy from parallel spinor condition. "
-                    "Shows equivalence between spinor, holonomy, and 3-form formulations."
+                    "Standard result for Riemannian 7-manifolds: a parallel spinor gives "
+                    "Hol(g) in G2 and a parallel 3-form, i.e. a torsion-free G2-structure; "
+                    "it shows the equivalence of the spinor, holonomy and 3-form "
+                    "formulations. It applies to the model's own phi on the compact real "
+                    "form, the active path (D-015); the split form stays switchable."
                 ),
                 input_params=[],
                 output_params=["math.g2_dimension"],
@@ -671,8 +723,9 @@ class AppendixCExtendedDerivations(SimulationBase):
                 eml_tree_str="ops.exp(ops.neg(ops.div(ops.pow(eml_vec('d_i'), eml_scalar(2.0)), ops.mul(eml_scalar(2.0), ops.pow(eml_vec('lambda'), eml_scalar(2.0))))))",
                 category="DERIVED",
                 description=(
-                    "Derivation of fermion mass hierarchies from wavefunction overlap "
-                    "on separated associative 3-cycles."
+                    "Mechanism sketch: fermion mass hierarchies from wavefunction overlap "
+                    "on separated associative 3-cycles. Flavour is OPEN on the adopted "
+                    "path (D-011), so no hierarchy here is derived from Y_7."
                 ),
                 input_params=["topology.elder_kads", "topology.cycle_separations"],
                 output_params=["fermions.yukawa_hierarchy"],
@@ -706,16 +759,19 @@ class AppendixCExtendedDerivations(SimulationBase):
                 eml_tree_str="ops.mul(eml_vec('U_TB'), eml_vec('nu_mass_eigenstates'))",
                 category="DERIVED",
                 description=(
-                    "Derivation of tribimaximal neutrino mixing matrix from A₄ "
-                    "discrete symmetry of associative 3-cycles."
+                    "Sketch: tribimaximal neutrino mixing matrix from an assumed A₄ "
+                    "discrete symmetry of associative 3-cycles. OFF-PATH (b3_seed = "
+                    "seed_24): written for the off-path seed's 24 cycles. Flavour is OPEN "
+                    "on the adopted path (D-011)."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["neutrino.theta_12", "neutrino.theta_23", "neutrino.theta_13"],
                 derivation={
-                    "method": "A4 discrete symmetry from G2 automorphisms",
+                    "method": "A4 discrete symmetry from G2 automorphisms (assumed)",
                     "parentFormulas": ["g2-holonomy-derivation"],
                     "steps": [
-                        "24 associative 3-cycles have automorphism group containing A4 x Z3",
+                        "OFF-PATH (b3_seed = seed_24): assumed 24 associative 3-cycles with "
+                        "automorphism group containing A4 x Z3",
                         "Three neutrino generations transform as triplet under A4",
                         "Right-handed neutrinos: nu_R ~ (1, 1', 1'') of A4",
                         "A4-invariant Yukawa coupling gives tribimaximal mass matrix eigenvectors",
@@ -733,15 +789,19 @@ class AppendixCExtendedDerivations(SimulationBase):
                 eml_tree_str="ops.mul(eml_scalar(2.0), ops.mul(eml_vec('lambda'), ops.pow(eml_vec('v'), eml_scalar(2.0))))",
                 category="DERIVED",
                 description=(
-                    "Derivation of Higgs mass from G2 moduli stabilization and "
-                    "effective potential."
+                    "Conditional sketch: Higgs mass from an effective potential that "
+                    "assumes G2 moduli stabilization. On Y_7 the moduli are unfixed at "
+                    "leading order (the flux potential runs away; OPEN), so this is not a "
+                    "derivation."
                 ),
                 input_params=["topology.M_KK", "pdg.higgs_quartic"],
                 output_params=["higgs.m_h"],
                 derivation={
-                    "method": "Effective potential from G2 moduli stabilization",
+                    "method": "Effective potential from assumed G2 moduli stabilization",
                     "steps": [
-                        "G2 moduli (b2=4 Kahler, b3=24 associative) stabilized by M-theory flux",
+                        _geo("OFF-PATH (b3_seed = seed_24): written for b2 = 4 and b3 = 24 "
+                             "with flux stabilization assumed; on Y_7 {betti_pair} and the "
+                             "moduli are unfixed at leading order (OPEN)"),
                         "Higgs mixes with G2 moduli via loop effects: V_eff ~ (g^2/16pi^2) M_KK^2 |H|^2 + lambda |H|^4",
                         "Minimize V_eff: v^2 = -g^2 M_KK^2 / (8*pi^2 * lambda)",
                         "Higgs mass: m_h^2 = 2*lambda*v^2 ~ 125 GeV for M_KK ~ 10^14 GeV",
@@ -765,8 +825,9 @@ class AppendixCExtendedDerivations(SimulationBase):
                 eml_tree_str="ops.mul(ops.div(ops.mul(eml_vec('C'), ops.pow(eml_vec('M_GUT'), eml_scalar(4.0))), ops.mul(ops.pow(eml_vec('m_p'), eml_scalar(5.0)), ops.pow(eml_vec('alpha_GUT'), eml_scalar(2.0)))), ops.exp(ops.inv(eml_vec('K'))))",
                 category="PREDICTED",
                 description=(
-                    "Derivation of proton lifetime including geometric suppression "
-                    "from TCS cycle separation."
+                    "OFF-PATH (TCS construction): proton lifetime including a geometric "
+                    "suppression from cycle separation, set by the TCS K3 matching number "
+                    "K, which Y_7 (a Joyce orbifold) does not supply."
                 ),
                 input_params=["gauge.M_GUT", "gauge.ALPHA_GUT", "topology.K_MATCHING"],
                 output_params=["proton_decay.tau_p_years"],
@@ -777,14 +838,14 @@ class AppendixCExtendedDerivations(SimulationBase):
                         "Standard GUT decay amplitude: A_p ~ alpha_GUT^2 * m_p^5 / M_GUT^4",
                         "In G2 compactification, matter and Higgs localize on separated 3-cycles with neck distance d",
                         "Wavefunction overlap suppression: |<psi_matter|psi_Higgs>|^2 ~ exp(-2*pi*d/R)",
-                        "For TCS with K=4 matching fibres: d/R ~ 1/(2*pi*K), giving suppression exp(1/K)",
+                        "OFF-PATH (TCS): with K=4 matching fibres, d/R ~ 1/(2*pi*K), giving suppression exp(1/K)",
                         "Modified lifetime: tau_p = C * M_GUT^4 / (m_p^5 * alpha_GUT^2) * exp(1/K) ~ 3.9e34 years",
                     ],
                 },
                 terms={
                     "τ_p": "Proton lifetime",
                     "C": "Hadronic matrix element prefactor",
-                    "K": "TCS K3 matching number",
+                    "K": "TCS K3 matching number (OFF-PATH: a twisted-connected-sum quantity)",
                 }
             ),
         ]
@@ -933,7 +994,8 @@ class AppendixCExtendedDerivations(SimulationBase):
             {
                 "id": "cert-proton-lifetime-bound",
                 "assertion": "Proton lifetime tau_p > 1.67e34 years (Super-K bound)",
-                "condition": "tau_p from TCS cycle separation exceeds Super-K lower bound",
+                "condition": ("tau_p from cycle separation (OFF-PATH: TCS matching number K) "
+                              "exceeds Super-K lower bound"),
                 "tolerance": 0.0,
                 "status": "PASS",
                 "wolfram_query": "Super-Kamiokande proton decay lower bound p -> e+ pi0",
@@ -969,7 +1031,9 @@ class AppendixCExtendedDerivations(SimulationBase):
         """Self-validation of derivation consistency."""
         checks = []
 
-        # Check 1: Generation counting
+        # Check 1: OFF-PATH (n_gen_source = b3_over_dim_O). Generation
+        # counting as b3 // 8 at a typed retired seed b_3 = 24; it does not
+        # read the live seed. The adopted route is n_gen = b_2/4.
         b3 = 24
         n_gen = b3 // 8
         checks.append({
@@ -977,10 +1041,12 @@ class AppendixCExtendedDerivations(SimulationBase):
             "passed": n_gen == 3,
             "confidence_interval": {"lower": 3, "upper": 3, "sigma": 0},
             "log_level": "INFO",
-            "message": f"n_gen = b3/8 = {b3}/8 = {n_gen} (exact: 3)",
+            "message": (f"OFF-PATH route at the retired seed: n_gen = b3/8 = {b3}/8 = "
+                        f"{n_gen}; the adopted route is n_gen = b_2/4"),
         })
 
-        # Check 2: Cycle separation
+        # Check 2: Cycle separation. OFF-PATH (TCS construction): K = 4 is
+        # the TCS K3 matching number.
         K = 4
         d_over_R = 1.0 / (2.0 * np.pi * K)
         checks.append({
@@ -1011,10 +1077,13 @@ class AppendixCExtendedDerivations(SimulationBase):
             {
                 "gate_id": "G06",
                 "simulation_id": self.metadata.id,
-                "assertion": "Generation count n_gen = b3/8 = 3 from TCS #187 topology",
+                "assertion": ("OFF-PATH (n_gen_source = b3_over_dim_O): generation count "
+                              "n_gen = b3/8 = 3, which holds only at the retired seed b3 = 24"),
                 "result": "PASS",
                 "timestamp": "2025-01-01T00:00:00Z",
-                "details": "b3 = 24 (third Betti number of TCS G2 #187), 24/8 = 3 exact",
+                "details": ("OFF-PATH: b3 = 24 is the retired off-path seed (its attribution "
+                            "to TCS #187 was false), 24/8 = 3. The adopted route is "
+                            "n_gen = b_2/4"),
             },
             {
                 "gate_id": "G07",
@@ -1042,7 +1111,8 @@ def main():
     registry = PMRegistry()
     EstablishedPhysics.load_into_registry(registry)
 
-    # Add required parameters
+    # Add required parameters. The 24 and K = 4 below are the off-path seed
+    # and its TCS matching number, kept for this standalone demo only.
     registry.set_param("topology.elder_kads", 24, "tcs_topology", "GEOMETRIC")
     registry.set_param("topology.K_MATCHING", 4, "tcs_topology", "GEOMETRIC")
     registry.set_param("gauge.M_GUT", 2.118e16, "gauge_unification", "DERIVED")

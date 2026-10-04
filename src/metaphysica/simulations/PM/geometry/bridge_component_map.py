@@ -27,9 +27,18 @@ the unique line missing all four. On K4 over that arc, every perfect
 matching contains exactly one side of the triangle -- a matching pairs one
 triangle edge with one edge to the missed point -- and the triangle's sides
 lie on the three singular lines. So blocks <-> singular involutions is a
-canonical bijection, and the 4 bridges of a block <-> the 4 components of its
-involution is a bijection of (Z/2)^2-torsors, canonical up to a Klein-four
-relabelling inside each block.
+canonical bijection, and the 4 bridges of a block can be matched with the 4
+components of its involution -- both are (Z/2)^2-torsors.
+
+That inner matching is NOT canonical (corrected after the blind check of
+D-008, 2026-10-01): all 24 bijections of a block are torsor maps, so the
+torsor structure narrows nothing (6 Klein-four classes per block, 216 per
+class); on 112 of the 280 all-plain classes no choice is invariant under the
+orbifold's phi-preserving symmetries, and on none is the choice unique. The
+SELECTION needs only that a 3 x 4-respecting matching exists, which holds on
+all 280. Physically the four U(1)s of one block share a gauge-kinetic function
+(Lukas-Morris: it depends on the blow-up type only), so the freedom sits
+exactly where they are indistinguishable.
 
 Where it fails, and why that selects: on Joyce's Example-4 classes one
 involution carries 8 components (T^3/Z_2 families; D-006), so no
@@ -185,8 +194,9 @@ def correspondence(point: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         n_bridges=sum(bridges_per_block.values()),
         n_components=sum(comps.values()),
         bijection=matched,
-        canonical_up_to=("a Klein-four relabelling inside each block: both "
-                         "sides are (Z/2)^2-torsors"),
+        canonical=("blocks <-> involutions only; the 4 <-> 4 matching "
+                   "inside a block is a free choice among 24 torsor maps "
+                   "(D-008 blind check, 2026-10-01)"),
     )
     return out
 

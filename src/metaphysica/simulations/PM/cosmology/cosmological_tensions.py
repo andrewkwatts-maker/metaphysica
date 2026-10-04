@@ -3,16 +3,22 @@
 Cosmological Tensions Resolver — H0 / S8 via mirror-sector dark energy.
 =======================================================================
 
-Sprint 5 task #5 (Phase H). Implements the
-:class:`CosmologicalTensionsResolver` template from
-``PossibleImprovements.txt`` (lines 1170-1249): a Sprint 4 ReT-anchored,
-Sprint 5.1 mirror-coupling-driven correction to the dark-energy equation
-of state that simultaneously shifts H₀ upward and S₈ downward, relaxing
-the long-standing H₀ and S₈ tensions in a parameter-free way.
+Implements the :class:`CosmologicalTensionsResolver` template from
+``PossibleImprovements.txt`` (lines 1170-1249): a Re(T)-anchored,
+mirror-coupling-driven correction to the dark-energy equation of state,
+intended to shift H₀ upward and S₈ downward. At the calibrated inputs the
+shift is ~10⁻¹³ and relaxes neither tension (see the numerical reality
+check below).
+
+STATUS: both inputs are CALIBRATED. Re(T) = 174.033 is the Higgs-VEV
+anchor of re_t_sector; on Y₇ (Joyce's resolution of T⁷/(ℤ/2)³,
+(b₂, b₃) = (12, 43)) Re(T) is an OPEN modulus, unfixed at leading order
+(CG.6). g_mirror is the mirror-DM coupling, calibrated at Re(T) = 174.033
+and the off-path seed b₃ = 24.
 
 Physics summary
 ---------------
-The G₂ + Z₂ mirror framework predicts that the mirror sector contributes
+The G₂ + Z₂ mirror framework proposes that the mirror sector contributes
 an extra component to the dark-energy density at late times (or as early
 dark energy from the 26D bulk during the radiation/matter era). This
 extra component modifies the expansion history H(z) and the linear
@@ -22,14 +28,15 @@ growth rate fσ₈:
 
 where:
 
-* Re(T) = 174.033 GeV — the Higgs-VEV-anchored volume-modulus stabilised
-  in Sprint 4 task #3 (:mod:`metaphysica.simulations.PM.geometry.re_t_sector`).
-* g_mirror = 1.2 × 10⁻¹⁰ — the Sprint 5.1 mirror-DM relic coupling
-  strength (the same Z₂ bridge coupling that fixes the relic abundance).
-* The 0.012 prefactor is the standard late-time mirror DE amplitude
-  fixed by the bridge geometry; the exponential suppression encodes the
-  fact that the mirror sector contributes only weakly once Re(T) is
-  stabilised at its v_target.
+* Re(T) = 174.033 GeV — the Higgs-VEV-anchored value of the volume
+  modulus from :mod:`metaphysica.simulations.PM.geometry.re_t_sector`
+  (CALIBRATED; Re(T) is OPEN on Y₇).
+* g_mirror = 1.2 × 10⁻¹⁰ — the mirror-DM relic coupling strength (the
+  same Z₂ bridge coupling used for the relic abundance; CALIBRATED).
+* The 0.012 prefactor is the template's late-time mirror DE amplitude
+  (attributed there to the bridge geometry; no derivation is computed
+  here); the exponential suppression encodes the mirror sector
+  contributing only weakly at Re(T) = v_target.
 
 The shifts in the observable tensions are then linear-response:
 
@@ -65,10 +72,10 @@ template because:
   (65 < H₀ < 75 and 0.7 < S₈ < 0.9) — i.e. the framework does not
   over-shoot or destabilise the baseline.
 * A future tightening of g_mirror (or a different Re(T) regime, e.g. an
-  early-DE branch at higher Re(T)) can produce the percent-level shifts
-  the v25.0 narrative claims, without changing this module's API.
+  early-DE branch at higher Re(T)) could produce the percent-level shifts
+  an earlier narrative claimed, without changing this module's API.
 
-Validation gates (per Sprint 5 task #5):
+Validation gates:
     * 65 < H0_resolved < 75
     * 0.7 < S8_resolved < 0.9
 
@@ -98,7 +105,7 @@ Module surface
 --------------
 * :class:`CosmologicalTensionsResolver` — main class, parameterised by
   ``mirror_coupling`` and ``ReT_stabilized`` (defaults match the
-  v25.0 / v26.0 anchors).
+  calibrated anchors).
 * :meth:`mirror_dark_energy_contribution` — returns Δw_mirror.
 * :meth:`resolve_H0_tension` — returns H₀_resolved given Δw.
 * :meth:`resolve_S8_tension` — returns S₈_resolved given Δw.
@@ -134,14 +141,16 @@ from metaphysica.simulations.core.eml_tree_adapter import eml_operator_tree
 
 # ── Module constants --------------------------------------------------------
 
-#: Default Sprint 5.1 mirror-sector coupling strength. Sourced from the
-#: v26.0 mirror-DM relic module (the Z₂ bridge coupling fixed by the
-#: bridge geometry); fully geometric, not a fit parameter.
+#: Default mirror-sector coupling strength, from the mirror-DM relic module.
+#: CALIBRATED at the off-path seed: it is the rounded exp(−π·Re(T)/b₃) at
+#: Re(T) = 174.033 and b₃ = 24 (see mirror_dm_relic.DEFAULT_BRIDGE_COUPLING).
+#: It was formerly described as fully geometric, not a fit parameter.
 DEFAULT_MIRROR_COUPLING: float = 1.2e-10
 
-#: Default Sprint 4 stabilised volume modulus Re(T), in GeV. Matches
+#: Default volume-modulus value Re(T), in GeV: the Higgs-VEV anchor
 #: ``RE_T_VEV_TARGET`` from
-#: :mod:`metaphysica.simulations.PM.geometry.re_t_sector`.
+#: :mod:`metaphysica.simulations.PM.geometry.re_t_sector`. CALIBRATED —
+#: Re(T) is an OPEN modulus on Y₇ (CG.6).
 DEFAULT_RET_STABILIZED: float = 174.033
 
 #: Baseline H₀ in km/s/Mpc. The SH0ES local distance-ladder anchor used as
@@ -175,9 +184,10 @@ S8_BASELINE: float = 0.83
 #: provides an O(1) suppression at the stabilised Re(T).
 RET_DECAY_SCALE_GEV: float = 200.0
 
-#: Late-time mirror DE amplitude prefactor (dimensionless). Set by the
-#: bridge geometry of the Z₂ mirror sector — see the template at
-#: ``PossibleImprovements.txt`` lines 1193-1196.
+#: Late-time mirror DE amplitude prefactor (dimensionless). Taken from the
+#: template at ``PossibleImprovements.txt`` lines 1193-1196, which
+#: attributes it to the bridge geometry of the Z₂ mirror sector; no
+#: derivation is computed here.
 MIRROR_DE_AMPLITUDE: float = 0.012
 
 #: Linear-response coefficient for H₀ shift per unit Δw, in km/s/Mpc.
@@ -201,15 +211,17 @@ S8_LINEAR_RESPONSE: float = 0.085
 # Kamionkowski 2016, Schoneberg et al. 2022 "H₀ Olympics").
 
 #: Number of KK modes in the bridge sector. The naive 26D framework count
-#: is 12 bridges · b₃ = 288 (one mode per bridge × per b₃ Betti generator);
-#: see :data:`N_KK_BRIDGES` for the physical-tower count used in the
+#: is 12 bridges · b₃ = 288, counted at the off-path seed b₃ = 24 (one mode
+#: per bridge × per b₃ Betti generator); the constant does not follow the
+#: seed. See :data:`N_KK_BRIDGES` for the physical-tower count used in the
 #: honest mechanism below.
 N_KK_FULL_TOWER: int = 288
 
-#: Number of *physically active* KK modes near m_KK ~ T_recomb. The b₃ =
-#: 24 cohomology classes are *labels*, not independent thermal degrees of
-#: freedom — only the 12 bridge pairs supply distinct KK towers in the
-#: 26D bulk. The natural EDE multiplicity is therefore 12, not 288.
+#: Number of *physically active* KK modes near m_KK ~ T_recomb. The b₃
+#: cohomology classes (24 at the off-path seed where the 288 was counted;
+#: 43 on Y₇) are *labels*, not independent thermal degrees of freedom —
+#: only the bulk's 12 bridge pairs supply distinct KK towers in the 26D
+#: bulk. The EDE multiplicity is therefore 12, not 288.
 N_KK_BRIDGES: int = 12
 
 #: Radiation-era effective relativistic degrees of freedom at z ~ 1100
@@ -245,8 +257,8 @@ T_RECOMB_EV: float = 0.26
 class CosmologicalTensionsResolver:
     """Resolve H₀ and S₈ tensions via mirror-sector dark energy.
 
-    Combines the Sprint 4 stabilised Re(T) value with the Sprint 5.1
-    mirror coupling to predict the late-time / early-DE shift of the
+    Combines the calibrated Re(T) anchor with the calibrated mirror
+    coupling to compute the late-time / early-DE shift of the
     dark-energy equation of state, and propagates that shift to H₀ and
     S₈ via linear-response coefficients fixed by the DESI / KiDS
     analyses.
@@ -255,16 +267,16 @@ class CosmologicalTensionsResolver:
     ----------
     mirror_coupling:
         The Z₂ mirror-sector coupling strength (dimensionless). Defaults
-        to :data:`DEFAULT_MIRROR_COUPLING` (``1.2e-10``), the value from
-        the v26.0 mirror-DM relic module.
+        to :data:`DEFAULT_MIRROR_COUPLING` (``1.2e-10``), the calibrated
+        value from the mirror-DM relic module.
     ReT_stabilized:
-        The stabilised volume modulus Re(T) in GeV. Defaults to
-        :data:`DEFAULT_RET_STABILIZED` (``174.033``), the v25.0 Higgs-VEV
-        anchor.
+        The volume modulus Re(T) in GeV. Defaults to
+        :data:`DEFAULT_RET_STABILIZED` (``174.033``), the Higgs-VEV anchor
+        (CALIBRATED; Re(T) is an OPEN modulus on Y₇, CG.6).
 
     Notes
     -----
-    Both inputs are upstream geometric quantities (no fit parameters
+    Both inputs are upstream calibrations (no further fit parameters are
     introduced here). The output is an anchored baseline plus predicted
     shift Δw (only Δw ≈ 6e-13 is derived; the 73.04 baseline is the
     SH0ES anchor) — see the module docstring for the numerical reality
@@ -433,15 +445,16 @@ class CosmologicalTensionsResolver:
 
         This is physically impossible (f_EDE must be < 1) — the template
         formula omits the radiation-d.o.f. normalisation and the
-        ζ(3) / π⁴ prefactor, and treats *every* mode in the b₃ = 24
-        cohomology as a thermal d.o.f.
+        ζ(3) / π⁴ prefactor, and treats *every* mode of the b₃ cohomology
+        (counted at the off-path seed, 24 classes, to reach 288) as a
+        thermal d.o.f.
 
         Honest accounting
         -----------------
-        b₃ = 24 labels cohomology classes (KK *winding numbers*), not
-        independent thermal d.o.f. The genuine multiplicity is the 12
-        bridge pairs (``N_KK_BRIDGES``). With proper radiation-d.o.f.
-        normalisation:
+        b₃ (24 at the off-path seed; 43 on Y₇) labels cohomology classes
+        (KK *winding numbers*), not independent thermal d.o.f. The genuine
+        multiplicity is the bulk's 12 bridge pairs (``N_KK_BRIDGES``). With
+        proper radiation-d.o.f. normalisation:
 
             f_EDE = (RHO_KK_THRESHOLD_PREFACTOR / G_STAR_RECOMB)
                     · N_KK_BRIDGES · (m_KK / T_recomb)
@@ -694,7 +707,10 @@ class CosmologicalTensionsResolver:
 
         # Summary entry — formula text mentions ``b3`` so the
         # ``_formula_has_b3_traceback`` flag fires, cross-linking the
-        # entry to the b₃ = 24 seed via Re(T).
+        # entry to b₃ via Re(T). The Re(T) anchor itself is a calibration:
+        # re_t_sector sets Re(T) to the Higgs VEV, with the off-path seed
+        # b₃ = 24 only in an exponentially small instanton term; Re(T) is
+        # OPEN on Y₇ (CG.6).
         self.tension_tree.register_derivation(
             param="full_cosmological_tension_resolution",
             formula=(

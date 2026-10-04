@@ -90,6 +90,8 @@ STANDALONE_STEPS = {
     "Report executable forks",
     "Evaluate topological cross-shadow coupling",
     "Copy bundled website templates",
+    # Reads the provenance registry and computes the certificate live.
+    "Render the theory overview",
     "Build named per-category certificates",
     # Reads the generated seed family and live code, never the simulation
     # output, so it is valid on a wheel-only tree.
@@ -146,6 +148,15 @@ STEPS: List[Tuple[str, List[str], bool]] = [
 
     # ── Stage 0: copy bundled website templates so the JS loaders have a home ──
     ("Copy bundled website templates", ["__copy_static__"], False),
+
+    # The main page's "theory at a glance" section and theory_overview.json,
+    # generated from the provenance registry and the closed-geometry
+    # certificate (one source with the paper abstract). Runs after the copy so
+    # it fills the markers in the copied index.html.
+    ("Render the theory overview",
+     [sys.executable, "-m",
+      "metaphysica.simulations.PM.geometry.closed_geometry.overview"],
+     False),
 
     # ── Free-variable ledger ─────────────────────────────────────────────────
     # Must run BEFORE the sims: abstract.py publishes

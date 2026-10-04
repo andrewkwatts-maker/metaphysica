@@ -1,0 +1,19 @@
+# FIXTURE for known answer (v): an active selection that a rival genuinely
+# beats on consistency. matching=tree breaks the Ward identity; the
+# configuration with matching=one_loop is equal on validity and closure and
+# better on consistency, so the verdict must be RECOMMEND_CHANGE.
+# Never the toy's real active path (that is ../active.yaml).
+theory: toy
+name: toy-fixture-tree-matching
+selection:
+  coupling_route: geometric
+  cutoff: planck
+  extra_param: none
+  mass_rule: seesaw
+  matching: tree
+  render_policy: plain
+decided_by:
+  matching: [D-003]
+digest: 9d99055a32ca19e5
+data_tiebreak_dof: 0
+previous: []

@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v24.2 - Thermal Time Hypothesis
-======================================================
+PRINCIPIA METAPHYSICA - Thermal Time Hypothesis
+===============================================
 
 GEMINI DEBATE RESULTS (Phase G Sprint 1, 2026-03-21):
 ------------------------------------------------------
 CLASSIFICATION SEPARATION:
-    alpha_T_base = 2*pi/b3 = 0.2618 — DERIVED from KMS periodicity on b3
-    associative 3-cycles. The modular flow has period 2*pi (KMS condition),
-    and b3 = 24 cycles give the base coupling. This is standard Connes-Rovelli
-    thermal time applied to G2 topology.
+    alpha_T_base = 2*pi/b3 — the KMS period 2*pi divided among the b3
+    associative 3-cycle classes. The modular flow has period 2*pi (KMS
+    condition, standard Connes-Rovelli thermal time); dividing it among the
+    b3 classes is the model's step. Its value follows the seed in force
+    (b3 = 43 on the adopted Y_7); the 0.2618 = 2*pi/24 quoted in this file is
+    the off-path seed b3 = 24.
 
-    gamma_correction = 26*24/(20*pi) = 9.93127... — DERIVED.
-    gamma = D_total*b3/(2*D_string*pi), which simplifies to
+    gamma_correction = D_total*b3/(2*D_string*pi) (= 26*24/(20*pi) = 9.93127...
+    at the off-path seed) is constructed so that, for any b3,
     alpha_T = D_total/D_string = 26/10 = 2.6 (b3 and pi cancel completely).
 
-    The factor 2 in 2*D_string is D_time = 2: two timelike directions
-    fiber T^1 in M^{26}(24,2): the single timelike dimension contributes
-    a real-vs-complex normalization factor of 2 to the modular automorphism
-    (equivalently, from the Sp(2,R) gauge symmetry of the two-time sector).
+    The factor 2 in 2*D_string is D_time = 2: the two timelike directions of
+    M^{26}(24,2), one per 13D (12,1) shadow. An older reading -- a single
+    timelike fibre T^1 contributing a real-vs-complex factor of 2, or
+    "equivalently" the Sp(2,R) gauge symmetry of the two-time sector -- is
+    RETIRED (signature ruling 2026-08-31): the shared single time is retired,
+    and Bars' Sp(2,R) ghost-freedom theorem is not inherited, because gauging
+    (24,2) gives one (23,1) shadow rather than two (12,1) shadows.
 
     Full alpha_T = D_total/D_string = 26/10 = 2.6 — STRUCTURAL. The
     gamma correction is constructed so that b3 and pi cancel exactly,
     leaving the postulated dimensional ratio; nothing independent fixes
-    gamma, so this is a target-first identity, not a free-parameter-free
-    parameters: D_total=26 from architecture, D_string=10 from M-theory target).
+    gamma, so this is a target-first identity, not a derivation (inputs:
+    D_total = 26 from the architecture, D_string = 10 from the M-theory target).
 
 CONSCIOUSNESS CONNECTION (SPECULATIVE):
     The 12 bridge pairs provide 12 I/O channels through which the entropy
@@ -41,7 +46,10 @@ The breathing mechanism uses 12 paired (2,0) bridges:
 - Metric: ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)
 - Per-pair: rho_i = |T_normal_i - R_perp_i T_mirror_i|
 - Aggregated: rho_breath = (1/12) sum_{i=1}^{12} rho_i
-- WHY 12 PAIRS: b3 = 24 -> 24/2 = 12 normal/mirror pairs
+- WHY 12 PAIRS: the bulk's 24 space directions form 12 bridge pairs
+  (signature (24,2) = 12 x (2,0) + 2 times). The older reading
+  "b3 = 24 -> 24/2 = 12 pairs" is retired: b3 = 43 on the adopted Y_7, and
+  the pairs count the bulk, not H^3.
 - Aggregation reduces variance: sigma_eff = sigma_single/sqrt(12)
 - Consciousness connection: 12 I/O channels (SPECULATIVE interpretation)
 
@@ -62,8 +70,8 @@ This simulation computes:
 
 THEORETICAL FOUNDATION:
     The thermal time hypothesis (Connes-Rovelli 1994) posits that time emerges
-    from the thermodynamic properties of quantum systems. In PM v24.2, we extend
-    this to a two-time framework where:
+    from the thermodynamic properties of quantum systems. Principia
+    Metaphysica extends this to a two-time framework where:
 
     - t_therm: Observable thermal time from modular flow (two-time structure)
     - 12x(2,0) Euclidean bridges: (y1_i, y2_i) coordinates for timeless substrate
@@ -89,7 +97,8 @@ FORMULAS:
 REFERENCES:
     - Connes, Rovelli (1994) arXiv:gr-qc/9406019
     - Tomita-Takesaki modular theory
-    - PM framework: Two-time physics with Sp(2,R) gauge symmetry
+    - PM framework: two-time physics, one time per 13D shadow (Bars' Sp(2,R)
+      ghost-freedom theorem is not inherited; signature ruling 2026-08-31)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -146,7 +155,7 @@ from metaphysica.simulations.core.eml_integration import (
 
 class ThermalTimeV16(SimulationBase):
     """
-    Thermal Time Hypothesis simulation (v22.0).
+    Thermal Time Hypothesis simulation.
 
     Computes thermal time parameters from Pneuma field thermodynamics
     and validates the two-time framework with 12×(2,0) Euclidean bridge
@@ -155,7 +164,8 @@ class ThermalTimeV16(SimulationBase):
     v22 KEY CHANGE - 12-Pair Breathing Aggregation:
     - Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
     - Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²)
-    - WHY 12 PAIRS: b₃ = 24 → 24/2 = 12 normal/mirror pairs
+    - WHY 12 PAIRS: the bulk's 24 space directions form 12 bridge pairs
+      (the older reading b₃ = 24 → 24/2 is retired; b₃ = 43 on Y₇)
     - Aggregation reduces variance: σ_eff = σ_single/√12
     - Consciousness connection: 12 I/O channels
     """
@@ -178,9 +188,10 @@ class ThermalTimeV16(SimulationBase):
             domain="thermal",
             title="Thermal Time Hypothesis with 12-Pair Breathing Aggregation",
             description=(
-                "Compute thermal time coupling alpha_T and validate emergent time from thermodynamics. "
-                "v22 uses 12×(2,0) Euclidean bridge pairs: ds² = -dt² + ∑_{i=1}^{12}(dy_{1i}² + dy_{2i}²). "
-                "12 pairs from b₃ = 24/2 = 12. Aggregation reduces variance by √12."
+                "Compute thermal time coupling alpha_T and validate emergent time from thermodynamics, "
+                "using the 12×(2,0) Euclidean bridge pairs: ds² = -dt² + ∑_{i=1}^{12}(dy_{1i}² + dy_{2i}²). "
+                "The 12 pairs are the bulk's 24 space directions taken in pairs (formerly read as "
+                "b₃/2 at the off-path seed b₃ = 24). Aggregation reduces variance by √12."
             ),
             section_id="thermal-time",
             subsection_id=None
@@ -239,7 +250,7 @@ class ThermalTimeV16(SimulationBase):
         if registry.has_param("pneuma.vev"):
             pneuma_vev = registry.get_param("pneuma.vev")
         else:
-            pneuma_vev = 1.833  # Default from racetrack
+            pneuma_vev = 1.833  # Fallback default: CALIBRATED on the racetrack at the off-path seed (no racetrack on Y_7)
 
         if registry.has_param("pneuma.mass_scale"):
             pneuma_mass_scale = registry.get_param("pneuma.mass_scale")
@@ -247,30 +258,30 @@ class ThermalTimeV16(SimulationBase):
             pneuma_mass_scale = M_PLANCK / np.sqrt(144)  # ~ 2e17 GeV
 
         # Get G2 topology parameter
-        b3 = registry.get_param("topology.elder_kads")  # = 24 for TCS G2 manifold
+        b3 = registry.get_param("topology.elder_kads")  # the b3 in force (43 on Y_7; 24 was the off-path TCS-era seed)
 
         # Compute modular temperature from Pneuma VEV
         # T_mod ~ m_P / <Psi_P>
         modular_temperature = pneuma_mass_scale / pneuma_vev
 
         # ─── Step 1 (DERIVED): Base thermal coupling from KMS periodicity ───
-        # The modular flow has period 2*pi (KMS condition). On a G2 manifold
-        # with b3 associative 3-cycles, the base coupling is:
+        # The modular flow has period 2*pi (KMS condition). The model divides
+        # it among the b3 associative 3-cycle classes:
         #   alpha_T_base = 2*pi / b3
-        # This is a direct consequence of the Connes-Rovelli thermal time
-        # hypothesis applied to the G2 topology. No free parameters.
-        n_pairs = b3 // 2  # = 12 pairs
-        alpha_T_base = 2.0 * np.pi / b3  # = 0.2618 (DERIVED)
+        # Connes-Rovelli supplies the period; the division by b3 is the
+        # model's step. No free parameters.
+        n_pairs = b3 // 2  # 12 only at the off-path seed b3 = 24; unused -- the 12 bridge pairs are the bulk's
+        alpha_T_base = 2.0 * np.pi / b3  # 2*pi/b3 (0.2618 at the off-path seed b3 = 24)
 
         # ─── Step 2 (DERIVED): Full coupling with gamma correction ───
         # gamma_correction = D_total * b3 / (2 * D_string * pi)
-        #                  = 26 * 24 / (20 * pi) = 9.9312684489...
+        #                  (= 26 * 24 / (20 * pi) = 9.9312684489... at b3 = 24)
         #
         # Where:
         #   D_total  = 26 : PM spacetime dimension M^{26}(24,2)
         #   D_string = 10 : Type IIA/IIB superstring dimension (M-theory target)
         #   2        : D_time — two timelike directions, one per 13D shadow
-        #              (the Sp(2,R) doublet of times; a literal dimension count)
+        #              (a literal dimension count)
         #
         # Substituting into alpha_T:
         #   alpha_T = (2*pi/b3) * (D*b3)/(2*D_string*pi) = D_total/D_string = 26/10 = 2.6
@@ -279,7 +290,7 @@ class ThermalTimeV16(SimulationBase):
         # See Appendix U for full derivation and analysis.
         D_TOTAL = 26   # PM spacetime dimension M^{26}(24,2), two-time (24,2)
         D_STRING = 10  # Type IIA/IIB superstring dimension
-        gamma_correction = D_TOTAL * b3 / (2.0 * D_STRING * np.pi)  # = 9.93127... (DERIVED)
+        gamma_correction = D_TOTAL * b3 / (2.0 * D_STRING * np.pi)  # built so b3 cancels (9.93127... at the off-path seed)
         alpha_T = alpha_T_base * gamma_correction  # = D_TOTAL/D_STRING = 2.6 (DERIVED)
 
         # ─── Step 3 (DERIVED): Entropy gradient (arrow of time) ───
@@ -363,17 +374,21 @@ class ThermalTimeV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In Principia Metaphysica v24.2, we extend this to a dual-shadow two-time framework with "
-                    "M<sup>26</sup>(24,2) structure and 12&times;(2,0) Euclidean bridge pairs plus the S<sup>(2,0)</sup> shadow-time directions. "
+                    "Principia Metaphysica extends this to a dual-shadow two-time framework: a 26D bulk "
+                    "M<sup>26</sup> of signature (24,2), whose 24 space directions form 12&times;(2,0) Euclidean "
+                    "bridge pairs and whose 2 times are one per 13D (12,1) shadow. "
                     "The observable thermal time t<sub>therm</sub> emerges "
-                    "from the Pneuma field's modular flow, while 12 bridge pair coordinates (y<sub>1i</sub>, y<sub>2i</sub>) plus "
-                    "shadow-time directions coordinates (s<sub>1</sub>, s<sub>2</sub>) provide a Euclidean substrate via OR reduction "
-                    "through R<sub>&perp;</sub> operators. The 12 pairs arise from b&#8323; = 24/2 = 12, coupling normal &harr; mirror sectors. "
+                    "from the Pneuma field's modular flow, while the 12 bridge pair coordinates (y<sub>1i</sub>, y<sub>2i</sub>) "
+                    "provide a Euclidean substrate via OR reduction through R<sub>&perp;</sub> operators. "
+                    "(An older decomposition with a single shared time and two Euclidean S<sup>(2,0)</sup> "
+                    "directions is retired by the signature ruling of 2026-08-31.) "
+                    "The 12 pairs are the bulk's space directions taken in pairs, coupling normal &harr; mirror "
+                    "sectors; they were formerly read as b&#8323;/2 at the off-path seed b&#8323; = 24. "
                     "Aggregation reduces variance by &radic;12. "
                     "The base coupling &alpha;<sub>T,base</sub> = 2&pi;/b&#8323; follows from the modular periodicity "
                     "of the KMS state on b&#8323; associative 3-cycles (DERIVED). The full coupling "
                     "&alpha;<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 26/10 = 2.6 where &gamma; = D&middot;b&#8323;/(2D<sub>s</sub>&pi;) "
-                    "is DERIVED (b&#8323; and &pi; cancel algebraically; factor 2 from T&sup1; signature). "
+                    "is STRUCTURAL (&gamma; is built so that b&#8323; and &pi; cancel; the factor 2 counts the two times, one per shadow). "
                     "The 12 bridge pairs provide 12 I/O channels through which "
                     "the entropy gradient dS/dt &ge; 0 establishes a thermodynamic arrow of time. "
                     "<Speculation>In the speculative Orch-OR interpretation, this gradient is experienced as the subjective "
@@ -393,8 +408,9 @@ class ThermalTimeV16(SimulationBase):
                     "<Normal>"
                     "The algebraic cancellation in α_T is exact: "
                     "α_T = (2π/b₃) × (D·b₃ / (2·D_s·π)) = D/D_s = 26/10. "
-                    "The b₃=24 and π factors appear in both numerator and denominator "
-                    "and cancel completely — this is an algebraic identity, not a numerical coincidence."
+                    "The b₃ and π factors appear in both numerator and denominator "
+                    "and cancel completely for any b₃ — an algebraic identity built into γ, "
+                    "not a numerical coincidence."
                     "</Normal>"
                     "<EML>"
                     "EML symbolic proof of the cancellation:\n"
@@ -457,6 +473,11 @@ class ThermalTimeV16(SimulationBase):
         Returns:
             List of Formula instances
         """
+        # Prose only: live Betti numbers for the formula text.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render as _render,
+        )
+
         return [
             # CLASSIFIED(non-b3): kind=a, algebraic_identity
             # The modular Hamiltonian K = -log(rho) - log(Z) is the Tomita-
@@ -631,14 +652,16 @@ class ThermalTimeV16(SimulationBase):
             Formula(
                 id="alpha-t-base",
                 label="(TT.4a)",
-                latex=r"\alpha_{T,\text{base}} = \frac{2\pi}{b_3} = \frac{2\pi}{24} \approx 0.2618",
-                plain_text="alpha_T_base = 2*pi / b3 = 2*pi / 24 = 0.2618",
+                latex=r"\alpha_{T,\text{base}} = \frac{2\pi}{b_3} = \frac{2\pi}{24} \approx 0.2618\ \ (\text{off-path seed})",
+                plain_text="alpha_T_base = 2*pi / b3 = 2*pi / 24 = 0.2618 (off-path seed b3 = 24)",
                 category="DERIVED",
-                description=(
-                    "Base thermal time coupling from KMS periodicity on G2 topology. "
-                    "The modular flow has period 2*pi (KMS condition), and the G2 manifold "
-                    "has b3 = 24 associative 3-cycles. This gives the base coupling "
-                    "alpha_T_base = 2*pi/b3, which is parameter-free and purely topological."
+                description=_render(
+                    "Base thermal time coupling alpha_T_base = 2*pi/b3. The modular flow "
+                    "has period 2*pi (KMS condition), divided among the associative "
+                    "3-cycle classes (b_3 = {b3} for {manifold}). The recorded value "
+                    "2*pi/24 = 0.2618 is at the off-path seed b_3 = 24, where this formula "
+                    "was written; thermal.alpha_T_base follows the seed in force. "
+                    "No free parameter."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["thermal.alpha_T_base"],
@@ -648,25 +671,35 @@ class ThermalTimeV16(SimulationBase):
                 eml_tree_str="ops.div(ops.mul(eml_scalar(2.0), eml_pi()), b3_leaf())",
                 eml_description=(
                     "EML operator tree: ops.div(ops.mul(eml_scalar(2), eml_pi()), eml_scalar(b3)). "
-                    "The b₃=24 and 2π are both EML leaves — no free parameters."
+                    "The b₃ leaf (the seed in force; 24 at the off-path seed) and 2π are both "
+                    "EML leaves — no free parameters."
                 ),
                 derivation={
                     "method": "topological_derivation",
                     "parentFormulas": ["modular-hamiltonian", "thermal-flow"],
                     "steps": [
-                        "Start with G2 third Betti number: b3 = 24 associative 3-cycles from TCS construction",
+                        _render(
+                            "Start with the third Betti number of {manifold}, "
+                            "{construction}: b_3 = {b3} associative 3-cycle classes "
+                            "(first written at {off_path_seed}, a TCS reading now retired)"
+                        ),
                         "The KMS condition requires modular flow periodicity of 2*pi in imaginary time",
-                        "On b3 cycles, the base coupling is alpha_T_base = 2*pi / b3 = pi/12 = 0.2618",
-                        "This is a direct consequence of Connes-Rovelli applied to G2 topology (no free parameters)"
+                        "On b3 cycles, the base coupling is alpha_T_base = 2*pi / b3 (pi/12 = 0.2618 at the off-path seed b3 = 24)",
+                        "Connes-Rovelli supplies the 2*pi period; dividing it among the b3 classes is the model's step (no free parameters)"
                     ],
                     "references": [
                         "Connes, Rovelli (1994) arXiv:gr-qc/9406019",
-                        "G2 topology from TCS construction (Corti-Haskins-Nordstrom-Pacini)"
+                        "Joyce, D. D. (1996) 'Compact Riemannian 7-manifolds with holonomy G2. I', "
+                        "J. Differential Geom. 43 291-328 (the construction of Y_7; the earlier "
+                        "TCS attribution is off-path)"
                     ]
                 },
                 terms={
                     "alpha_T_base": "Base thermal time coupling (DERIVED)",
-                    "b3": "Third Betti number (24 for TCS G2 manifold)",
+                    "b3": _render(
+                        "Third Betti number of {manifold} (b_3 = {b3} in force; "
+                        "24 was the off-path TCS-era seed)"
+                    ),
                     "2*pi": "KMS periodicity factor"
                 },
                 arithma=_arithma_num(2.0 * np.pi / 24.0),
@@ -681,10 +714,13 @@ class ThermalTimeV16(SimulationBase):
                 plain_text="alpha_T = D_total/D_string = 26/10 = 2.6",
                 category="DERIVED",  # gamma = D*b3/(2*D_string*pi), alpha_T = D/D_string = 26/10
                 description=(
-                    "Full thermal time coupling from dimensional ratio. "
-                    "gamma = D_total*b3/(2*D_string*pi) where 2 arises from T^1 timelike "
-                    "fiber signature. alpha_T = D_total/D_string = 26/10 = 2.6 exactly "
-                    "(b3 and pi cancel — algebraic identity, not numerical fit). DERIVED."
+                    "Full thermal time coupling from a dimensional ratio. "
+                    "gamma = D_total*b3/(2*D_string*pi), where the 2 counts the two times, "
+                    "one per 13D shadow (formerly attributed to a single T^1 timelike fibre, "
+                    "retired by the signature ruling 2026-08-31). alpha_T = D_total/D_string "
+                    "= 26/10 = 2.6 for any b3: gamma is built so that b3 and pi cancel, "
+                    "leaving the ratio of the postulated dimensions (a target-first identity, "
+                    "not a numerical fit)."
                 ),
                 inputParams=["topology.elder_kads", "thermal.alpha_T_base"],
                 outputParams=["thermal.alpha_T"],
@@ -718,11 +754,11 @@ class ThermalTimeV16(SimulationBase):
                     "method": "dimensional_ratio",
                     "parentFormulas": ["alpha-t-base"],
                     "steps": [
-                        "Base coupling: alpha_T_base = 2*pi/b3 = 0.2618 (DERIVED from KMS periodicity)",
-                        "gamma = D_total*b3/(2*D_string*pi); factor 2 from T^1 timelike fiber signature",
+                        "Base coupling: alpha_T_base = 2*pi/b3 from KMS periodicity (0.2618 at the off-path seed b3 = 24)",
+                        "gamma = D_total*b3/(2*D_string*pi); the factor 2 is D_time, the two times (one per shadow)",
                         "alpha_T = (2*pi/b3)*(D*b3)/(2*D_string*pi) = D_total/D_string (b3 and pi cancel exactly)",
                         "EML tree: ops.mul(ops.div(2π,b3), ops.div(D·b3, 2·D_s·π)) = ops.div(D, D_s)",
-                        "Result: alpha_T = 26/10 = 2.6 (DERIVED — ratio of PM and string dimensions; b3 and pi cancel)"
+                        "Result: alpha_T = 26/10 = 2.6 (STRUCTURAL — the ratio of the PM and string dimensions; b3 and pi cancel)"
                     ],
                     "references": [
                         "PM framework: Thermal time calibration",
@@ -732,7 +768,7 @@ class ThermalTimeV16(SimulationBase):
                 terms={
                     "alpha_T": "Full thermal time coupling = D_total/D_string = 26/10 = 2.6 (DERIVED)",
                     "alpha_T_base": "Base coupling from KMS periodicity = 2*pi/b3 (DERIVED)",
-                    "gamma_correction": "= D*b3/(2*D_string*pi) = 9.93127... (DERIVED, 2 = D_time: one time per shadow)"
+                    "gamma_correction": "= D*b3/(2*D_string*pi) (9.93127... at the off-path seed b3 = 24; 2 = D_time: one time per shadow)"
                 },
                 arithma=_arithma_num(26.0 / 10.0),
                 eml=_eml_div(_eml_scalar(26.0), _eml_scalar(10.0)),
@@ -748,23 +784,29 @@ class ThermalTimeV16(SimulationBase):
         Returns:
             List of Parameter instances
         """
+        # Prose only: live Betti numbers for the parameter text.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render as _render,
+        )
+
         return [
             Parameter(
                 path="thermal.alpha_T_base",
                 name="Base Thermal Time Coupling (KMS)",
                 units="dimensionless",
                 status="DERIVED",
-                description=(
-                    "Base thermal time coupling from KMS periodicity on G2 topology: "
-                    "alpha_T_base = 2*pi/b3 = 2*pi/24 = 0.2618. DERIVED from the "
-                    "modular flow period (2*pi) and the number of associative 3-cycles (b3=24). "
-                    "No free parameters."
+                description=_render(
+                    "Base thermal time coupling alpha_T_base = 2*pi/b_3, from the "
+                    "modular flow period (2*pi) and the number b_3 of associative "
+                    "3-cycle classes; the registered value follows the seed in force "
+                    "(b_3 = {b3} for {manifold}). Written at the off-path seed as "
+                    "2*pi/24 = 0.2618. No free parameters."
                 ),
                 derivation_formula="alpha-t-base",
                 no_experimental_value=True,
                 eml_description=(
                     "EML: ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(24.0)) "
-                    "— KMS period 2π divided by b₃=24 associative 3-cycles"
+                    "— KMS period 2π divided by b₃ = 24 associative 3-cycles at the off-path seed"
                 ),
             ),
             Parameter(
@@ -774,8 +816,9 @@ class ThermalTimeV16(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Full thermal time coupling: alpha_T = D_total/D_string = 26/10 = 2.6. "
-                    "DERIVED: gamma = D*b3/(2*D_string*pi) where factor 2 from T^1 timelike "
-                    "fiber signature. b3 and pi cancel algebraically (exact identity)."
+                    "gamma = D*b3/(2*D_string*pi) is built so that b3 and pi cancel "
+                    "algebraically (exact identity), leaving the ratio of the postulated "
+                    "dimensions; the factor 2 counts the two times, one per shadow."
                 ),
                 derivation_formula="alpha-t-derivation",
                 no_experimental_value=True,
@@ -826,10 +869,14 @@ class ThermalTimeV16(SimulationBase):
                 name="Metric Signature with 12×(2,0) Euclidean Bridge Pairs",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description=(
-                    "v24.2 M²⁶(24,2): 24 physics core from 12×(2,0) bridge pairs + 1 two-time structure + 2 S⁽²˒⁰⁾ shadow-time directions. "
-                    "Dimensional structure: T¹ ×_fiber (⊕ᵢ₌₁¹² Bᵢ⁽²˒⁰⁾ ⊕ S⁽²˒⁰⁾). 12 pairs from b₃ = 24/2. "
-                    "Metric: ds² = -dt² + ∑ᵢ₌₁¹²(dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂²."
+                description=_render(
+                    "M²⁶ of signature (24,2) = (12,1) + (12,1): 24 space directions, which form "
+                    "the 12 (2,0) Euclidean bridge pairs, and 2 times, one per 13D (12,1) shadow. "
+                    "RETIRED: the reading '12 pairs from b₃ = 24/2' (b₃ = {b3} on {manifold}, and the "
+                    "pairs count the bulk), and, by the signature ruling 2026-08-31, the older "
+                    "decomposition T¹ ×_fiber (⊕ᵢ₌₁¹² Bᵢ⁽²˒⁰⁾ ⊕ S⁽²˒⁰⁾) with one shared time and "
+                    "two Euclidean S⁽²˒⁰⁾ directions (metric ds² = -dt² + ∑ᵢ₌₁¹²(dy₁ᵢ² + dy₂ᵢ²) "
+                    "+ ds₁² + ds₂²)."
                 ),
                 eml_description="EML: ops.add(ops.mul(eml_scalar(12.0), eml_scalar(2.0)), ops.add(eml_scalar(1.0), eml_scalar(2.0))) — M²⁶ = 12×2 + 1 + 2 = 26D metric signature (24,2)",
                 no_experimental_value=True,
@@ -938,7 +985,7 @@ class ThermalTimeV16(SimulationBase):
         return [
             {
                 "id": "CERT_THERMAL_ALPHA_T_VALUE",
-                "assertion": "Thermal time coupling alpha_T = (2*pi/24) * gamma_correction is consistent with G2 topology b3 = 24",
+                "assertion": "Thermal time coupling alpha_T = (2*pi/b3) * gamma_correction = D_total/D_string = 2.6 for any b3 (checked at the off-path seed b3 = 24)",
                 "condition": "abs(thermal.alpha_T - 2.6) < 0.1",
                 "tolerance": 0.1,
                 "status": "PASS",
@@ -1026,7 +1073,8 @@ class ThermalTimeV16(SimulationBase):
                 "validation_hint": (
                     "Verify that the entropy gradient dS/dt >= 0 provides the arrow of "
                     "time, and that the thermal time coupling alpha_T connects to the "
-                    "G2 topology through b3 = 24 associative 3-cycles."
+                    "G2 topology through the b3 associative 3-cycle classes (b3 cancels "
+                    "in alpha_T; 24 was the off-path seed)."
                 ),
             },
         ]
@@ -1043,11 +1091,12 @@ class ThermalTimeV16(SimulationBase):
         - alpha_T numerical value consistency
         - Entropy gradient non-negativity
         - Modular temperature positivity given typical Pneuma inputs
-        - 12-pair breathing aggregation from b3 = 24
+        - the retired 12-pair reading b3/2, at the off-path seed b3 = 24
         """
         checks = []
 
-        # Check 1: alpha_T value consistency
+        # Check 1: alpha_T value consistency. Evaluated at the off-path seed
+        # b3 = 24: alpha_T = 2.6 holds for any b3, and b3/2 = 12 only here.
         b3 = 24
         gamma_correction = 26.0 * b3 / (20.0 * np.pi)  # two-time: 26*24/(20*pi)
         expected_alpha_T = (2.0 * np.pi / b3) * gamma_correction
@@ -1085,11 +1134,13 @@ class ThermalTimeV16(SimulationBase):
             "message": f"T_mod = {T_mod:.3e} GeV" if T_mod_ok else f"T_mod = {T_mod} is non-positive or non-finite",
         })
 
-        # Check 4: 12-pair count from b3
+        # Check 4: 12-pair count as b3/2 -- the retired reading, true only at
+        # the off-path seed; the 12 bridge pairs are the bulk's 24 space
+        # directions taken in pairs.
         n_pairs = b3 // 2
         pairs_ok = n_pairs == 12
         checks.append({
-            "name": "12 bridge pairs from b3 = 24",
+            "name": "12 bridge pairs as b3/2 at the off-path seed b3 = 24 (retired reading; the pairs are the bulk's)",
             "passed": pairs_ok,
             "log_level": "INFO" if pairs_ok else "ERROR",
             "message": f"b3/2 = {n_pairs} pairs" + (" (correct)" if pairs_ok else " (expected 12)"),
@@ -1128,7 +1179,7 @@ class ThermalTimeV16(SimulationBase):
             {
                 "gate_id": "G_THERMAL_ALPHA_T_TOPOLOGY",
                 "simulation_id": self.metadata.id,
-                "assertion": "alpha_T = 2.6 is derived from G2 topology b3 = 24 and gamma_correction = 26*24/(20*pi) = 9.931",
+                "assertion": "alpha_T = 2.6 = D_total/D_string: gamma_correction is built so b3 and pi cancel (shown at the off-path seed b3 = 24, where gamma_correction = 26*24/(20*pi) = 9.931)",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -1157,7 +1208,8 @@ def main():
     registry = PMRegistry()
     EstablishedPhysics.load_into_registry(registry)
 
-    # Add topology parameter (would normally come from g2_geometry_v16_0)
+    # Add topology parameter (would normally come from g2_geometry_v16_0, which
+    # emits the seed in force; this standalone demo uses the off-path seed 24)
     registry.set_param(
         path="topology.elder_kads",
         value=24,

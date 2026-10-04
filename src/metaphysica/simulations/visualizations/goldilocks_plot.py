@@ -1,17 +1,27 @@
 #!/usr/bin/env python3
 """
-Goldilocks Plot: Visual Proof that b3=24 is Unique
-===================================================
+Goldilocks Plot: three deviations against b3, marked at the off-path seed
+=========================================================================
 
-THE KILLER FIGURE - Shows that only b3=24 produces the observed
-values of alpha^-1, G, and H0 simultaneously.
+OFF-PATH (b3_seed = seed_24): this figure plots the sigma deviations of
+alpha^-1, G and H0 against b3 and marks b3 = 24. That value is the off-path
+seed: retired, and unreachable by Joyce's construction from Gamma
+(certificate CG.7). The adopted internal space is Y_7, Joyce's resolution of
+T^7/(Z/2)^3, with (b2, b3) = (12, 43); b3 = 43 is outside the plotted range
+(1-30).
 
-This visualization demonstrates the "Goldilocks" property of b3=24:
-- For b3 < 24: sigma deviations are large (parameters too small/large)
-- For b3 > 24: sigma deviations are large (parameters too small/large)
-- At b3 = 24: ALL THREE sigma deviations converge to near zero
+The figure was formerly captioned a proof that b3 = 24 is unique. It is not
+one, because the curves are normalised at 24:
+- The G and H0 curves are scaled to their values at b3 = 24, so they vanish
+  there by construction.
+- The alpha^-1 curve uses the k_gimel layer (k_gimel = b3/2 + 1/pi), whose
+  constants were fitted at the off-path seed (CALIBRATED, D-007). Even at
+  b3 = 24 it gives 137.046, far outside CODATA's quoted uncertainty, so the
+  curve sits at the display cap (100 sigma) at every b3.
+The minimum at 24 restates where the curves were normalised; it does not
+select b3.
 
-Output file: ../../images/goldilocks-b3-uniqueness.png
+Output file: ../../images/goldilocks-b3-uniqueness.png (file name kept)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -106,13 +116,15 @@ def compute_pm_parameters(b3: int):
 
     # Gravitational coupling - scales with manifold volume
     # G ~ 1 / (k_gimel * b3^2) in Planck units
-    # Normalize so that b3=24 gives correct G
+    # Normalised at the off-path seed b3 = 24, so G is "correct" there by
+    # construction (a calibration, not a derivation)
     g_factor = 1 / (k_gimel * b3**2)
-    g_factor_24 = 1 / ((24/2 + 1/np.pi) * 24**2)  # Reference at b3=24
+    g_factor_24 = 1 / ((24/2 + 1/np.pi) * 24**2)  # reference at the off-path seed
     g_ratio = g_factor / g_factor_24
 
     # For sigma calculation, assume larger b3 deviation means larger G deviation
-    # Using a simple scaling model where deviation goes as |b3 - 24|
+    # Using a simple scaling model where deviation goes as |b3 - 24|: an assumed
+    # scaling centred on the off-path seed, with no physics behind it
     g_sigma = abs(b3 - 24) * 2.0  # Approximate sigma scaling
 
     # Hubble parameter - from Ricci flow dynamics
@@ -142,11 +154,13 @@ def compute_pm_parameters(b3: int):
 
 def generate_goldilocks_plot():
     """
-    Generate the Goldilocks plot showing b3=24 uniqueness.
+    Generate the Goldilocks plot, marked at the off-path seed b3 = 24.
 
     X-axis: b3 from 1 to 30 (excluding singularity at 9)
     Y-axis: Sigma deviation for (alpha, G, H0)
-    Shows convergence to zero ONLY at b3=24
+    The G and H0 curves vanish at b3 = 24 because they are normalised there;
+    the alpha^-1 curve sits at the display cap everywhere. The marked point is
+    a calibration at the off-path seed (retired), not a uniqueness result.
     """
     setup_publication_style()
 
@@ -188,11 +202,11 @@ def generate_goldilocks_plot():
     ax.semilogy(b3_arr, h0_arr + 0.01, '^-', color=PM_COLORS['blue'],
                 linewidth=2.5, markersize=8, label=r'$H_0$ deviation')
 
-    # Mark the optimal point at b3=24
+    # Mark the off-path seed b3 = 24 (where the curves were normalised)
     idx_24 = list(b3_values).index(24)
     ax.axvline(x=24, color=PM_COLORS['gold'], linestyle='--', linewidth=2, alpha=0.8)
 
-    # Highlight b3=24 with marker
+    # Highlight the off-path seed with markers
     ax.plot(24, alpha_arr[idx_24] + 0.01, 'o', color=PM_COLORS['purple'],
             markersize=15, markeredgecolor='white', markeredgewidth=2, zorder=10)
     ax.plot(24, g_arr[idx_24] + 0.01, 's', color=PM_COLORS['orange'],
@@ -212,7 +226,7 @@ def generate_goldilocks_plot():
 
     # Annotations
     ax.annotate(
-        r'$b_3 = 24$: ALL parameters match experiment',
+        r'Off-path seed $b_3 = 24$: $G$ and $H_0$ normalised here',
         xy=(24, 0.5), xytext=(17, 0.15),
         fontsize=11, fontweight='bold', color=PM_COLORS['gold'],
         arrowprops=dict(arrowstyle='->', color=PM_COLORS['gold'], lw=2),
@@ -239,7 +253,7 @@ def generate_goldilocks_plot():
     ax.set_xlabel(r'Third Betti Number $b_3$', fontsize=13)
     ax.set_ylabel(r'Deviation from Experiment ($\sigma$)', fontsize=13)
     ax.set_title(
-        r'The Goldilocks Value: Only $b_3 = 24$ Matches All Observations',
+        r'OFF-PATH seed $b_3 = 24$: a calibration point, not a selection',
         fontsize=15, fontweight='bold', pad=15
     )
 
@@ -249,9 +263,9 @@ def generate_goldilocks_plot():
     # Add legend
     ax.legend(loc='upper left', framealpha=0.95, edgecolor='gray')
 
-    # Add theory box
+    # Add theory box (the k_gimel layer: fits made at the retired seed, D-007)
     textbox = (
-        r"$\mathbf{PM\ Theory}$" + "\n"
+        r"$\mathbf{PM\ formulas}$ (CALIBRATED, D-007)" + "\n"
         r"$\alpha^{-1} = \frac{C_{kaf} \cdot b_3^2}{k_\gimel \cdot \pi \cdot S_3}$" + "\n\n"
         r"$k_\gimel = \frac{b_3}{2} + \frac{1}{\pi}$" + "\n\n"
         r"$C_{kaf} = \frac{b_3(b_3-7)}{b_3-9}$"
@@ -261,12 +275,14 @@ def generate_goldilocks_plot():
     ax.text(0.98, 0.98, textbox, transform=ax.transAxes, fontsize=10,
            verticalalignment='top', horizontalalignment='right', bbox=props)
 
-    # Add implications box at bottom
+    # Add reading box at bottom. The adopted pair is rendered from the live
+    # seed rather than typed, so it follows the seed in force.
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
     implications = (
-        "Implications:\n"
-        r"$\bullet$ The Joyce-Karigiannis TCS G$_2$ manifold has $b_3 = 24$" + "\n"
-        r"$\bullet$ This is the ONLY value consistent with $\alpha$, $G$, and $H_0$" + "\n"
-        r"$\bullet$ No fine-tuning: topology uniquely determines physics"
+        "Reading:\n"
+        r"$\bullet$ OFF-PATH: $b_3 = 24$ is the retired seed; Joyce's construction never reaches it (CG.7)" + "\n"
+        + render(r"$\bullet$ Adopted: {manifold}, {construction}, {betti_pair}", "latex") + "\n"
+        r"$\bullet$ $G$ and $H_0$ are normalised to vanish at 24; $\alpha^{-1}$ stays at the cap"
     )
     props2 = dict(boxstyle='round,pad=0.5', facecolor='#fffef0',
                  edgecolor=PM_COLORS['gold'], alpha=0.95)
@@ -288,7 +304,7 @@ def generate_goldilocks_plot():
 def main():
     """Generate the Goldilocks plot."""
     print("=" * 60)
-    print("Generating Goldilocks Plot: b3=24 Uniqueness")
+    print("Generating Goldilocks Plot (off-path seed b3 = 24, labelled)")
     print("=" * 60)
 
     output_path = generate_goldilocks_plot()

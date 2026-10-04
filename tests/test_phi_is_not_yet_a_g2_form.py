@@ -1,48 +1,31 @@
-"""RECORDED DEFECT: the framework's phi is not a G2 3-form.
+"""phi's real form: the defect that was recorded, and the ruling that fixed it.
 
-This file documents a measured defect rather than hiding it, in the same style
-as test_racetrack_is_an_ansatz_not_a_vacuum.py. Every test here is GREEN while
-the defect stands, and the file fails the moment phi is changed -- which is the
-point, because changing phi is a physics ruling and must not happen silently.
+HISTORY
+=======
+Measured 2026-09-13: the framework's phi -- all +1 on the 7 Fano triples -- is
+not a G2 3-form. g2 is the subalgebra of so(7) annihilating phi and has
+dimension 14; the all-(+1) form has a 6-dimensional annihilator. dim ann is a
+GL(7) similarity invariant, so no change of basis or sign convention rescues
+it. The form the framework's own octonion product implies differs in one sign,
+on (1,3,5), and is a genuine G2 form. This file used to be GREEN while the
+defect stood, and was written to fail the moment phi changed, so the change
+could not happen silently.
 
-THE MEASUREMENT
-===============
-g2 is by definition the subalgebra of so(7) annihilating phi, and it has
-dimension 14. Building the linear map A -> A.phi on so(7) and taking its kernel:
-
-    framework phi (all +1 on the 7 Fano triples)  ->  dim ann = 6
-    Bryant phi    (+,+,+,+,-,-,-, same triples)   ->  dim ann = 14
-
-The dimension of the annihilator is a GL(7) similarity invariant, so 6 != 14
-proves the two forms lie in DIFFERENT GL(7) orbits. The framework's phi is not
-a G2 3-form under any change of basis, and no relabelling or sign convention
-can make it one. Exactly 16 of the 128 sign assignments on those 7 triples give
-a genuine G2 form; all-(+1) is not among them.
+RULED 2026-10-01 by the author (D-015): the compact form (`octonion_derived`)
+is the active path; the split form (`all_plus_one`) stays a switchable path.
+So the file now checks BOTH paths: on the active path phi is a G2 form; on the
+split switch the recorded defect is still exactly what was measured.
 
 WHY IT WAS NOT CAUGHT
 =====================
-The obvious sanity check does not discriminate. The naive metric
-g_ij = phi_imn phi_jmn comes out 6 * I for BOTH forms, so "the induced metric is
-positive definite and isotropic" passes either way.
+The naive metric g_ij = phi_imn phi_jmn is 6 * I for BOTH forms.
 
-THE BLAST RADIUS, MEASURED NOT ASSUMED
-======================================
-SAFE -- these depend only on WHICH 7 triples carry phi, not on their signs, and
-are verified below to be identical for both forms:
-  * R1 the diagonal stabiliser is (Z/2)^3, order 8
-  * R2 each involution moves an arc and fixes a line
-  * R3 the invariant 3-forms are exactly phi's 7 triples
-  * R4 the Fano plane on Gamma
-  * the arc flag identity 24 = 12 x 2
-
-BROKEN -- these need phi to be a G2 form and it is not:
-  * Lambda^2 = 7 + 14 with the 14 identified as g2
-  * Lambda^3 = 1 + 7 + 27 as G2 irreps
-  * the torsion classes computed by projection onto those subspaces
-
-NOT FIXED HERE. Substituting a signed phi changes the framework's own convention
-and may move published numbers, so it is a ruling for the author, staged as a
-fork rather than applied. Evidence is prepared; the decision is not taken.
+THE BLAST RADIUS (unchanged)
+============================
+R1-R4 and the arc flag identity depend only on WHICH triples carry phi, not
+their signs, and are identical on both paths. What the split form breaks --
+Lambda^2 = 7 + 14 with the 14 as g2, Lambda^3 = 1 + 7 + 27 as G2 irreps, the
+torsion classes -- holds on the active path.
 """
 
 from __future__ import annotations
@@ -55,6 +38,7 @@ import pytest
 _TRIPLES = [(0, 1, 2), (0, 3, 4), (0, 5, 6), (1, 3, 5),
             (1, 4, 6), (2, 3, 6), (2, 4, 5)]
 _PAIRS = list(itertools.combinations(range(7), 2))
+_ENV = "METAPHYSICA_VARIANT_G2_FORM_CONVENTION"
 
 
 def _build(signs):
@@ -99,11 +83,23 @@ def _framework_phi():
     return np.asarray(G2DifferentialGeometry().phi, dtype=float)
 
 
+@pytest.fixture
+def split(monkeypatch):
+    """The split-form switch path (all_plus_one)."""
+    monkeypatch.setenv(_ENV, "all_plus_one")
+
+
+@pytest.fixture
+def adopted(monkeypatch):
+    """The active path, with no override in the environment."""
+    monkeypatch.delenv(_ENV, raising=False)
+
+
 # --------------------------------------------------------- the method is sound
 
 
 def test_the_annihilator_test_recognises_a_known_g2_form():
-    """Calibration. If this fails, the measurement below means nothing."""
+    """Calibration. If this fails, the measurements below mean nothing."""
     assert _annihilator_dim(_build([1, 1, 1, 1, -1, -1, -1])) == 14
 
 
@@ -112,39 +108,49 @@ def test_the_annihilator_test_can_return_something_other_than_14():
     assert _annihilator_dim(_build([1] * 7)) != 14
 
 
-# ------------------------------------------------------------- the defect
+# ------------------------------------------------- the two paths, measured
 
 
-def test_the_frameworks_phi_is_the_all_plus_one_form():
+def test_the_frameworks_phi_is_the_all_plus_one_form(split):
+    """On the split switch phi is still the recorded all-(+1) form."""
     phi = _framework_phi()
     support = [t for t in itertools.combinations(range(7), 3)
                if abs(phi[t]) > 1e-12]
     assert sorted(support) == sorted(_TRIPLES)
-    assert all(phi[t] == pytest.approx(1.0) for t in _TRIPLES), (
-        "this file documents the all-(+1) form; phi has changed and the "
-        "recorded defect must be re-measured and the register updated"
-    )
+    assert all(phi[t] == pytest.approx(1.0) for t in _TRIPLES)
 
 
-def test_the_frameworks_phi_has_a_six_dimensional_annihilator_not_fourteen():
-    """THE DEFECT. Green while it stands; fails when phi is corrected."""
-    dim = _annihilator_dim(_framework_phi())
-    assert dim == 6, "measured dim ann(phi) = %d, expected the recorded 6" % dim
-    assert dim != 14, "phi now looks like a G2 form -- update the register"
+def test_the_adopted_phi_carries_the_octonion_signs(adopted):
+    """Same support, one sign different: -1 on (1,3,5)."""
+    phi = _framework_phi()
+    support = [t for t in itertools.combinations(range(7), 3)
+               if abs(phi[t]) > 1e-12]
+    assert sorted(support) == sorted(_TRIPLES)
+    assert phi[(1, 3, 5)] == pytest.approx(-1.0)
+    assert all(phi[t] == pytest.approx(1.0)
+               for t in _TRIPLES if t != (1, 3, 5))
 
 
-def test_no_change_of_basis_can_rescue_it():
+def test_the_frameworks_phi_has_a_six_dimensional_annihilator_not_fourteen(
+        split):
+    """THE RECORDED DEFECT, still measurable on the split switch."""
+    assert _annihilator_dim(_framework_phi()) == 6
+
+
+def test_the_adopted_phi_is_a_g2_form(adopted):
+    """The ruling's point: on the active path phi is a genuine G2 form."""
+    assert _annihilator_dim(_framework_phi()) == 14
+
+
+def test_no_change_of_basis_can_rescue_it(split):
     """dim ann is a GL(7) invariant, so 6 != 14 settles orbit membership."""
     fw = _annihilator_dim(_framework_phi())
     bryant = _annihilator_dim(_build([1, 1, 1, 1, -1, -1, -1]))
-    assert fw != bryant, (
-        "the annihilator dimension is invariant under GL(7); differing values "
-        "prove the forms lie in different orbits, so no relabelling helps"
-    )
+    assert fw != bryant
 
 
-def test_no_sign_flip_relates_the_two_forms():
-    """Explicitly: it is not a coordinate convention."""
+def test_no_sign_flip_relates_the_two_forms(split):
+    """Explicitly: the split form is not a coordinate convention."""
     fw = _framework_phi()
     bry = _build([1, 1, 1, 1, -1, -1, -1])
     for eps in itertools.product((1, -1), repeat=7):
@@ -154,10 +160,7 @@ def test_no_sign_flip_relates_the_two_forms():
                 t[a, :, :] *= -1
                 t[:, a, :] *= -1
                 t[:, :, a] *= -1
-        assert not (np.allclose(t, bry) or np.allclose(t, -bry)), (
-            "a sign flip maps the framework form to a G2 form, which would "
-            "contradict the differing annihilator dimensions"
-        )
+        assert not (np.allclose(t, bry) or np.allclose(t, -bry))
 
 
 def test_a_correct_choice_exists_and_is_not_unique():
@@ -168,25 +171,17 @@ def test_a_correct_choice_exists_and_is_not_unique():
 
 
 def test_the_naive_metric_check_does_not_discriminate():
-    """Why this went unnoticed: the obvious check passes for both forms."""
-    for phi in (_framework_phi(), _build([1, 1, 1, 1, -1, -1, -1])):
+    """Why the defect went unnoticed: the obvious check passes for both."""
+    for phi in (_build([1] * 7), _build([1, 1, 1, 1, -1, -1, -1])):
         g = np.einsum("imn,jmn->ij", phi, phi)
-        w = np.linalg.eigvalsh(g)
-        assert np.allclose(w, 6.0), (
-            "g_ij = phi.phi is 6*I for both forms, so it cannot be used to "
-            "detect the defect"
-        )
+        assert np.allclose(np.linalg.eigvalsh(g), 6.0)
 
 
 # --------------------------------------------------- the blast radius, measured
 
 
 def test_the_combinatorial_results_survive_a_correct_g2_form():
-    """R1-R4 and the flag identity depend on the triples, not the signs.
-
-    This is what bounds the damage. If it ever fails, the defect reaches the
-    derived 7-layer results too and the register must say so.
-    """
+    """R1-R4 and the flag identity depend on the triples, not the signs."""
     from metaphysica.simulations.PM.geometry.arc_flag_structure import (
         arc_flag_report,
     )
@@ -212,20 +207,28 @@ def test_the_combinatorial_results_survive_a_correct_g2_form():
         assert r["identity_holds"] is True
 
 
-def test_the_lambda2_split_is_not_g2_and_the_d4_calibration_says_so():
-    """The A6 calibration gate must report uncalibrated, not quietly pass."""
+def test_the_lambda2_split_is_not_g2_and_the_d4_calibration_says_so(split):
+    """On the split switch the A6 gate reports uncalibrated, not a quiet pass."""
     from metaphysica.simulations.PM.geometry.d4_root_shell import (
         g2_branching_calibration,
     )
 
     calib = g2_branching_calibration()
-    assert calib["lambda2_is_7_plus_14"] is True, "the dimensions are still 7+14"
-    assert calib["v14_annihilates_phi"] is False, (
-        "V14 now annihilates phi -- the defect may be fixed; re-measure"
-    )
+    assert calib["lambda2_is_7_plus_14"] is True
+    assert calib["v14_annihilates_phi"] is False
     assert calib["calibrated"] is False
     assert calib["why_not_calibrated"]
-    assert "not a G2 3-form" in calib["why_not_calibrated"]
+
+
+def test_the_d4_calibration_passes_on_the_adopted_path(adopted):
+    from metaphysica.simulations.PM.geometry.d4_root_shell import (
+        g2_branching_calibration,
+    )
+
+    calib = g2_branching_calibration()
+    assert calib["lambda2_is_7_plus_14"] is True
+    assert calib["v14_annihilates_phi"] is True
+    assert calib["calibrated"] is True
 
 
 # ------------------------------------------------------- the root cause, located
@@ -238,12 +241,7 @@ def _octonions():
 
 
 def test_the_octonion_product_is_genuinely_octonionic():
-    """The algebra is NOT at fault, and this establishes it.
-
-    A composition algebra satisfies |xy| = |x||y| and the octonions are
-    alternative. Both hold to machine precision, so whatever is wrong is not
-    the multiplication.
-    """
+    """The algebra was never at fault: norm-multiplicative and alternative."""
     o = _octonions()
     rng = np.random.default_rng(0)
     worst_norm = 0.0
@@ -271,12 +269,10 @@ def test_the_form_implied_by_the_product_is_a_genuine_g2_form():
     assert _annihilator_dim(phi_from_octonion_product()) == 14
 
 
-def test_the_extraction_disagrees_with_the_product_it_claims_to_come_from():
-    """THE ROOT CAUSE.
-
-    g2_structure_as_3form() returns a separate all-(+1) tensor rather than the
-    3-form its own multiplication implies.
-    """
+def test_the_extraction_disagrees_with_the_product_it_claims_to_come_from(
+        split):
+    """THE ROOT CAUSE, on the split switch: the all-(+1) tensor is returned
+    rather than the 3-form the multiplication implies."""
     from metaphysica.simulations.PM.geometry.g2_differential import (
         phi_from_octonion_product,
     )
@@ -288,7 +284,17 @@ def test_the_extraction_disagrees_with_the_product_it_claims_to_come_from():
     assert _annihilator_dim(implied) == 14
 
 
-def test_they_differ_in_exactly_one_triple():
+def test_the_extraction_agrees_with_the_product_on_the_adopted_path(adopted):
+    from metaphysica.simulations.PM.geometry.g2_differential import (
+        phi_from_octonion_product,
+    )
+
+    extracted = np.asarray(_octonions().g2_structure_as_3form(), dtype=float)
+    assert np.allclose(extracted, phi_from_octonion_product())
+    assert np.allclose(extracted, _framework_phi())
+
+
+def test_they_differ_in_exactly_one_triple(split):
     """One sign, on (1,3,5). The correct form was already in the codebase."""
     from metaphysica.simulations.PM.geometry.g2_differential import (
         phi_from_octonion_product,
@@ -298,19 +304,18 @@ def test_they_differ_in_exactly_one_triple():
     implied = phi_from_octonion_product()
     differing = [t for t in itertools.combinations(range(7), 3)
                  if not np.isclose(extracted[t], implied[t])]
-    assert differing == [(1, 3, 5)], "expected one differing triple, got %s" % differing
+    assert differing == [(1, 3, 5)]
     assert np.isclose(extracted[(1, 3, 5)], -implied[(1, 3, 5)])
 
 
-def test_the_correction_is_staged_as_a_fork_and_not_adopted():
-    """It must be switchable and it must not have been switched."""
+def test_the_correction_is_adopted_and_the_split_form_stays_switchable():
+    """D-015: the compact form is active; the split form is one switch away."""
     from metaphysica.simulations.core.variants import FORKS
 
     fork = FORKS["g2_form_convention"]
-    assert fork.status == "OPEN"
+    assert fork.status == "RULED"
     assert fork.option_ids() == ["all_plus_one", "octonion_derived"]
-    assert fork.default() == "all_plus_one", (
-        "the correction has been adopted; that is a physics ruling and the "
-        "register must record it"
-    )
+    assert fork.default() == "octonion_derived"
     assert fork.read_adopted() == fork.default(), "fork has drifted from source"
+    assert fork.option("all_plus_one").status == "considered", (
+        "the split form must stay runnable for comparison")

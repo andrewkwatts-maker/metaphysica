@@ -1,10 +1,22 @@
 """
-Cosmological Framework Introduction v22.0
-==========================================
+Cosmological Framework Introduction
+===================================
 
 Licensed under the MIT License. See LICENSE file for details.
 
 Section 5.1: Deriving 4D Gravity from Kaluza-Klein Reduction
+
+THE ADOPTED MODEL (read first):
+- Bulk: 26D, signature (24,2) = 24 space directions, grouped as 12
+  Euclidean (2,0) bridge pairs, plus 2 times, one per 13D(12,1) shadow
+  (signature ruling 2026-08-31). Ghost control of the second time is OPEN.
+- Internal space of each shadow: Y_7 = Joyce's resolution of
+  T^7/(Z/2)^3 with Eguchi-Hanson resolutions, (b_2, b_3) = (12, 43),
+  b_3 = 7 + 3 b_2; n_gen = b_2/4 = 3, the number of singular involutions.
+- Moduli, Re(T) included, are OPEN: the leading-order flux potential fixes
+  none of them (CG.6). The racetrack value T_min = 1.4885 used below is
+  CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on
+  Y_7 (CG.5, CG.10).
 
 This simulation covers:
 1. Higher-dimensional metric GMN decomposition (26D → dual shadows → 4D)
@@ -14,22 +26,28 @@ This simulation covers:
 5. BPS stability & enhanced brane configuration
 6. Pneuma field reduction: 8192 → 64 components per shadow
 7. Connection to cosmological dynamics
-8. v22: 12-pair breathing aggregation from b₃ = 24/2 = 12
+8. 12-pair breathing aggregation over the bulk's 12 bridge pairs
 
-v22 KEY CHANGE - 12×(2,0) Paired System:
------------------------------------------
-The breathing dark energy mechanism now uses 12 paired Euclidean bridges:
+12×(2,0) Paired System:
+-----------------------
+The breathing dark energy mechanism uses the 12 paired Euclidean bridges:
 - Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})
 - Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²)
 - Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|
 - Aggregated: ρ_breath = (1/12) ∑_{i=1}^{12} ρ_i
 - Equation of state: w = -1 + (1/φ²) × ⟨ρ_breath⟩ / max(ρ_breath)
+RETIRED (signature ruling 2026-08-31): the single T¹ time fiber and the
+one-time metric above describe a time shared by both shadows; each shadow
+now has its own time.
 
 WHY 12 PAIRS:
-- From G₂ topology: b₃ associative 3-cycles, READ from the adopted seed
-  (b_2, b_3) = (12, 43) of the Joyce orbifold T^7/(Z/2)^3 with Eguchi-Hanson
-  resolutions, where b_3 = 7 + 3 b_2. The retired seed_24 branch had b₃ = 24.
-- Each pair couples normal ↔ mirror: 24/2 = 12 pairs
+- The 12 pairs are the bulk's 12 bridge pairs (24 space directions =
+  12 × 2). Under WA-1 (adopted) each bridge is one resolved A1 component of
+  Y_7's singular set, one U(1) (CG.8).
+- Formerly the pairs were read as b_3/2 (each pair coupling one
+  normal-sector and one mirror-sector 3-cycle), which gives 12 only at the
+  retired seed_24 branch (b_3 = 24). At the adopted b_3 = 43, b_3 is odd and
+  does not pair off.
 - Aggregation reduces variance: σ_eff = σ_single/√12
 
 CONNECTION TO CONSCIOUSNESS I/O:
@@ -50,8 +68,9 @@ import numpy as np
 
 from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
 
-#: SSoT read. b3 follows the ADOPTED seed; the pair count below is b3//2
-#: and is generated, never typed.
+#: SSoT read. b3 follows the ADOPTED seed. The prose that still reports the
+#: old pair count b3//2 generates it from this read rather than typing it;
+#: the 12 bridge pairs themselves are the bulk's, not b3/2.
 _REG = _get_reg()
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
@@ -77,9 +96,9 @@ class CosmologyIntroV16(SimulationBase):
     """
     Cosmological Framework Introduction simulation.
 
-    Derives 4D gravity from Kaluza-Klein reduction starting from 26D superstring
-    theory, passing through 13D shadow projection, and ending with effective 4D
-    cosmology including shadow dimension contributions.
+    Derives 4D gravity from Kaluza-Klein reduction starting from the 26D bulk
+    of signature (24,2), passing through 13D shadow projection, and ending with
+    effective 4D cosmology including shadow dimension contributions.
     """
 
     def __init__(self):
@@ -99,7 +118,7 @@ class CosmologyIntroV16(SimulationBase):
             domain="cosmology",
             title="Deriving 4D Gravity from Kaluza-Klein Reduction",
             description=(
-                "Complete derivation of 4D gravity from M^{26}(24,2) → dual 13D(12,1) shadows → 4D dimensional"
+                "Derivation of 4D gravity from M^{26}(24,2) → dual 13D(12,1) shadows → 4D dimensional "
                 "reduction via 12×(2,0) Euclidean bridge pairs, including breathing mode with 12-pair "
                 "aggregation (ρ_breath = 1/12 ∑ρ_i), BPS branes, and Pneuma field."
             ),
@@ -163,8 +182,8 @@ class CosmologyIntroV16(SimulationBase):
         # Read inputs
         M_Pl = registry.get_param("constants.M_PLANCK")  # 1.22e19 GeV
         chi_eff = registry.get_param("topology.mephorash_chi")  # 144
-        b2 = registry.get_param("topology.b2")  # 4
-        b3 = registry.get_param("topology.elder_kads")  # 24
+        b2 = registry.get_param("topology.b2")  # live seed's b_2 (12 adopted)
+        b3 = registry.get_param("topology.elder_kads")  # live seed's b_3 (43 adopted)
 
         # Step 1: Compute internal volume V9 from G2 topology
         # V9 = V7(G2) × V2(T2)
@@ -178,7 +197,9 @@ class CosmologyIntroV16(SimulationBase):
         # NOTE: M_Pl is MEASURED, not derived (PDG 2024)
         M_Pl_4D = M_Pl  # Use measured value
 
-        # Step 3: Volume modulus stabilization from racetrack
+        # Step 3: Volume modulus stabilization from racetrack. CALIBRATED at
+        # the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7
+        # (CG.5, CG.10), and Re(T) is an OPEN modulus (CG.6).
         # T_min = 1.4885 from minimizing W = A·exp(-aT) + B·exp(-bT)
         T_min = 1.4885
         Vol_K3_over_S3 = float(np.exp(T_min))   # = e^{T_min} = 4.4305
@@ -188,13 +209,13 @@ class CosmologyIntroV16(SimulationBase):
         # e^{-3/2} = 0.22313; PDG 2024 lambda = 0.22500). T_min = 1.4885 is
         # itself within 1% of 3/2, which is why the two nearly coincide.
 
-        # Step 4: Breathing mode VEV from racetrack
+        # Step 4: Breathing mode VEV from racetrack (CALIBRATED, as above)
         # <sigma> = phi_0 ~ 0.075 M_Pl
         breathing_mode_vev = 0.075 * M_Pl
 
         # Step 5: Shadow dimension contribution
         # D_eff = 12 + (Shadow_ק + Shadow_ח)/2
-        Shadow_aleph = 0.576152  # From TCS G2 manifold
+        Shadow_aleph = 0.576152  # formerly attributed to a TCS G2 manifold (TCS is off-path)
         Shadow_heth = 0.576152
         D_eff_shadow = 12.0 + 0.5 * (Shadow_aleph + Shadow_heth)
 
@@ -249,17 +270,28 @@ class CosmologyIntroV16(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for the paper."""
+        # Live geometry phrases (text only): they follow the b3_seed fork.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            fragments,
+        )
+        fr = fragments("plain")
         return SectionContent(
             section_id="5",
             subsection_id="5.1",
             title="Deriving 4D Gravity from Kaluza-Klein Reduction",
             abstract=(
-                "We derive 4D gravity from the 26-dimensional superstring framework through "
-                "Kaluza-Klein dimensional reduction. The cascade M²⁶(24,2) → dual 13D(12,1) shadows → 4D proceeds via "
-                "Euclidean bridge connection and G₂ compactification per shadow, naturally generating both gravity "
-                "and gauge fields from pure geometry. Volume modulus stabilization via racetrack "
-                "superpotential determines ε = e^{-T_min} ≈ 0.22572 dynamically (KK spectrum parameter, distinct from the CKM Cabibbo parameter; canonical Cabibbo candidate e^{-3/2} = 0.22313), making it a prediction rather "
-                "than an input. BPS brane configurations ensure quantum stability."
+                "We reduce the 26-dimensional bulk to 4D gravity by Kaluza-Klein "
+                "reduction. The bulk has signature (24,2): 24 space directions, grouped as "
+                "12 Euclidean (2,0) bridge pairs, and 2 times, one for each 13D(12,1) "
+                "shadow. Each shadow compactifies on a G₂ manifold, "
+                f"{fr['manifold']} = {fr['construction']} with {fr['betti_pair']}, "
+                "which gives both gravity and gauge fields from the geometry. The volume "
+                "modulus is OPEN on Y₇: the leading-order flux potential fixes no modulus "
+                "(CG.6). The racetrack value ε = e^{-T_min} ≈ 0.22572 used here is "
+                "CALIBRATED at the off-path seed b₃ = 24; no gaugino racetrack exists on "
+                "Y₇ (CG.5, CG.10). (ε is a KK spectrum parameter, distinct from the CKM "
+                "Cabibbo parameter; canonical Cabibbo candidate e^{-3/2} = 0.22313.) BPS "
+                "brane configurations are used to bound the brane tensions."
             ),
             content_blocks=[
                 # Subsection: Dimensional Reduction Overview
@@ -271,7 +303,7 @@ class CosmologyIntroV16(SimulationBase):
                     type="paragraph",
                     content=(
                         "The full dimensional cascade proceeds as follows: the 26D "
-                        "bulk spacetime with (24,2) two-time signature (24,2) first splits "
+                        "bulk spacetime with two-time signature (24,2) first splits "
                         "into dual 13D(12,1) shadows via 12 paired (2,0) Euclidean bridges. "
                         "Each 13D shadow then decomposes as M\u00b9\u00b3 = M\u2074 \u00d7 K_Pneuma, where "
                         "K_Pneuma is a 9-dimensional internal space comprising a 7D G₂ "
@@ -284,32 +316,40 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Each step in this cascade is physically necessary, not merely "
-                        "mathematically convenient. The initial 26D \u2192 13D split is forced by "
-                        "the requirement that the (24,2) two-time signature (24,2) must decompose "
-                        "into two copies of (12,1), the unique factorisation that preserves "
-                        "Lorentzian causality in each shadow while eliminating ghost modes from "
-                        "extra timelike dimensions. The subsequent 13D \u2192 4D compactification "
+                        "Each step in this cascade is motivated as follows. The initial "
+                        "26D \u2192 13D split decomposes the two-time signature (24,2) into two "
+                        "copies of (12,1), one time per shadow, so that each shadow is "
+                        "Lorentzian (a postulate of the model, signature ruling 2026-08-31). "
+                        "Whether the second time's ghost modes are controlled is OPEN: Bars' "
+                        "Sp(2,R) ghost-freedom theorem is not inherited. The subsequent "
+                        "13D \u2192 4D compactification "
                         "on K_Pneuma = G₂ \u00d7 T\u00b2 is dictated by supersymmetry: G₂ holonomy is "
                         "the UNIQUE holonomy group in 7 dimensions that preserves exactly one "
                         "covariantly constant spinor, yielding N = 1 supersymmetry in 4D \u2014 the "
                         "minimal amount compatible with a chiral fermion spectrum matching the "
-                        "Standard Model. The T\u00b2 torus factor provides the two additional compact "
+                        "Standard Model (chirality itself is OPEN on Y_7: its singular loci are "
+                        "disjoint, so there are no codimension-7 points; D-011). The T\u00b2 torus "
+                        "factor provides the two additional compact "
                         "directions needed for the heterotic-like gauge sector embedding."
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Physically, the 9 internal dimensions of K_Pneuma encode ALL the "
-                        "information about particle physics: the 7D G₂ manifold's topology "
-                        "(characterised by Betti numbers b₂ = 4 and b₃ = 24) determines the "
-                        "number of gauge fields (from harmonic 2-forms) and matter generations "
-                        "(from harmonic 3-forms), while the T\u00b2 factor controls the GUT-scale "
+                        "Physically, the 9 internal dimensions of K_Pneuma carry the model's "
+                        "particle-physics data. The 7D factor is "
+                        f"{fr['manifold']} = {fr['construction']}, with Betti numbers "
+                        f"{fr['betti_pair']}: b₂ counts the abelian vector multiplets "
+                        "(harmonic 2-forms) and b₃ the neutral chiral multiplets, the moduli "
+                        f"(harmonic 3-forms). The generation count is {fr['n_gen_route']}. "
+                        "(The earlier text gave b₂ = 4 and b₃ = 24, the retired seed_24 "
+                        "branch, and read matter generations "
+                        "off the harmonic 3-forms.) The T\u00b2 factor is used for the GUT-scale "
                         "coupling unification. The 4D observer never 'sees' these dimensions "
                         "directly because they are compactified at scales near the Planck length "
-                        "(~10\u207b\u00b3\u2075 m), but their geometry manifests as the coupling constants, "
-                        "mass hierarchies, and mixing angles measured in collider experiments."
+                        "(~10\u207b\u00b3\u2075 m); the model aims to read coupling constants, "
+                        "mass hierarchies and mixing angles from their geometry, and flavour is "
+                        "OPEN until a chiral sector exists."
                     )
                 ),
                 # Subsection: Higher-Dimensional Metric
@@ -369,7 +409,13 @@ class CosmologyIntroV16(SimulationBase):
                     items=[
                         "4D gravity: The 4D Planck mass M_Pl\u00b2 = M_*\u00b9\u00b9 \u00d7 V₉ where V₉ = V₇(G₂) \u00d7 V₂(T\u00b2) is the 9-dimensional internal volume. NOTE: M_Pl = 1.22 \u00d7 10\u00b9\u2079 GeV is MEASURED (PDG 2024), not derived.",
                         "Gauge fields: The off-diagonal metric components become SO(10) gauge bosons A_\u03bc\u1d43",
-                        "Scalar moduli: The internal metric fluctuations become scalar fields \u03c6\u1d62 in 4D. The volume modulus T is stabilized via racetrack superpotential W = A\u00b7exp(\u2212aT) + B\u00b7exp(\u2212bT), giving T_min = 1.4885 and determining \u03b5 = e^{-T_min} \u2248 0.22572 dynamically (racetrack variant; canonical Cabibbo candidate e^{-3/2} = 0.22313; see Section 6.3)"
+                        "Scalar moduli: The internal metric fluctuations become scalar fields \u03c6\u1d62 in 4D; "
+                        f"on {fr['manifold']} there are b_3 = {fr['b3']} of them, unfixed at leading order "
+                        "(OPEN: the flux potential is positive and runs away, CG.6). The racetrack value "
+                        "T_min = 1.4885, from W = A\u00b7exp(\u2212aT) + B\u00b7exp(\u2212bT), and "
+                        "\u03b5 = e^{-T_min} \u2248 0.22572 are CALIBRATED at the off-path seed b_3 = 24; "
+                        "no gaugino racetrack exists on Y_7 (CG.5, CG.10) (canonical Cabibbo candidate "
+                        "e^{-3/2} = 0.22313; see Section 6.3)"
                     ]
                 ),
 
@@ -401,13 +447,16 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="warning",
-                    title="v15.0: Volume Stabilization",
+                    title="Volume Stabilization (calibrated)",
                     content=(
-                        "The breathing mode VEV \u27e8\u03c3\u27e9 is fixed by the racetrack superpotential minimization. "
-                        "At T_min = 1.4885, the volume ratio Vol(K₃)/Vol(S³) = 4.43 determines the stabilized "
-                        "size of K_Pneuma. This in turn fixes the Kaluza-Klein spectrum parameter \u03b5 = e^{-T_min} \u2248 0.22572 (distinct from the CKM Cabibbo parameter), "
-                        "making it a derived quantity rather than a free input. See Section 6.3 for the complete "
-                        "moduli stabilization mechanism."
+                        "CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7 "
+                        "(CG.5, CG.10). In that calibration the breathing mode VEV \u27e8\u03c3\u27e9 is fixed by the "
+                        "racetrack superpotential minimization: at T_min = 1.4885 the volume ratio "
+                        "Vol(K₃)/Vol(S³) = 4.43 sets the size of K_Pneuma and the Kaluza-Klein spectrum "
+                        "parameter \u03b5 = e^{-T_min} \u2248 0.22572 (distinct from the CKM Cabibbo parameter). "
+                        "On Y_7 the volume modulus is OPEN: the leading-order flux potential is positive and "
+                        "runs away (CG.6), so \u03b5 is a calibrated input, not a derived quantity. See Section 6.3 "
+                        "for the moduli stabilization discussion."
                     )
                 ),
 
@@ -419,38 +468,42 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The v24.2 framework begins with an M²⁶(24,2) spacetime: 12\u00d7(2,0) bridge pairs, "
-                        "the S²·⁰ shadow-time directions, and a unified T¹ time fiber. This structure "
-                        "eliminates ghost modes and closed timelike curves. The 26D bulk splits into dual 13D(12,1) shadows "
-                        "via the OR reduction operator R_\u22a5. The 12 pairs arise from b₃ = 24/2 = 12, "
-                        "where each pair couples one normal-sector 3-cycle to one mirror-sector 3-cycle. "
-                        "The full metric is ds² = \u2212dt² + \u2211ᵢ (dy₁ᵢ² + dy₂ᵢ²) + ds₁² + ds₂²."
+                        "The bulk is M²⁶(24,2): 24 space directions, grouped as 12\u00d7(2,0) Euclidean bridge "
+                        "pairs, and 2 times, one for each shadow (a postulate of the model, signature ruling "
+                        "2026-08-31). The 26D bulk splits into dual 13D(12,1) shadows via the OR reduction "
+                        "operator R_\u22a5. The 12 pairs are the bulk's 12 bridge pairs (24 space directions = "
+                        "12 \u00d7 2); under WA-1 (adopted) each bridge is one resolved A₁ component of Y_7's "
+                        "singular set, one U(1) (CG.8). Ghost control of the second time is OPEN. RETIRED "
+                        "(signature ruling 2026-08-31): the earlier text gave both shadows one shared T¹ time "
+                        "fiber and read the 12 pairs as b₃/2, which holds only at the off-path seed b₃ = 24."
                     )
                 ),
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="Step-by-Step Derivation: v24.2 Dimensional Reduction with 12-Pair Aggregation",
+                    title="Step-by-Step Derivation: Dimensional Reduction with 12-Pair Aggregation",
                     content=(
                         "Step 1: 26D Bulk Metric (Two-Time)\n"
                         "ds²₂₆ = G_MN dX^M dX^N, M, N = 0, 1, ..., 25\n"
-                        "With two-time signature (24,2) (24,2): 24 spacelike + 1 timelike coordinate, eliminating ghosts.\n\n"
+                        "With two-time signature (24,2): 24 spacelike + 2 timelike coordinates, one time per shadow. Ghost control of the second time is OPEN.\n\n"
                         "Step 2: Dual Shadow Split via 12\u00d7(2,0) Euclidean Bridge Pairs\n"
-                        "M²⁶(24,2) = 12\u00d7(2,0) + (0,1) + S²·⁰ \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
-                        "Each shadow: 12 spatial (from bridge coordinate selection) + 1 shared time = 13D(12,1)\n"
-                        "Dimensional structure: T¹ \u00d7_fiber (\u2295ᵢ₌₁¹² Bᵢ²·⁰)\n"
-                        f"WHY b₃//2 PAIRS: From b₃ = {int(_REG.elder_kads)} associative 3-cycles, each pair couples normal \u2194 mirror. b₃ is ODD on the adopted seed, so b₃//2 = {int(_REG.elder_kads) // 2} is a FLOOR and one cycle is left unpaired — recorded, not repaired. The old wording read '12 pairs from b₃ = 24'.\n\n"
+                        "M²⁶(24,2) = ⊕ᵢ₌₁¹² Bᵢ^(2,0) ⊕ T^(0,2) \u2192 12 bridge pairs WARP to create 2\u00d713D(12,1) shadows:\n"
+                        "Each shadow: 12 spatial (from bridge coordinate selection) + its own time = 13D(12,1)\n"
+                        "RETIRED (signature ruling 2026-08-31): the earlier split 12\u00d7(2,0) + (0,1) + S²·⁰ with one shared time fiber, T¹ \u00d7_fiber (\u2295ᵢ₌₁¹² Bᵢ²·⁰).\n"
+                        f"WHY 12 PAIRS: the 12 pairs are the bulk's 12 bridge pairs (24 space directions = 12 \u00d7 2); under WA-1 (adopted) each bridge is one resolved A₁ component of Y₇, one U(1) (CG.8). The old wording '12 pairs from b₃ = 24' (b₃/2) is retired: on the adopted seed b₃ is odd, so b₃//2 is a floor with one cycle left unpaired (live seed: b₃ = {int(_REG.elder_kads)}, b₃//2 = {int(_REG.elder_kads) // 2}).\n\n"
                         "Step 3: Per-Pair Breathing Energy Density\n"
                         "Each bridge pair i contributes:\n"
                         "\u03c1ᵢ = |T_normal_i \u2212 R_\u22a5_i T_mirror_i|\n"
                         "where R_\u22a5_i is the per-pair OR reduction operator with R_\u22a5² = \u2212I (M\u00f6bius property).\n\n"
-                        "Step 4: 12-Pair Aggregation (Key v24.2 Change)\n"
+                        "Step 4: 12-Pair Aggregation\n"
                         "Aggregated breathing energy: \u03c1_breath = (1/12) \u2211ᵢ₌₁¹² \u03c1ᵢ\n"
                         "This aggregation REDUCES variance: \u03c3_eff = \u03c3_single/\u221a12 \u2248 0.29 \u03c3_single\n"
                         "<Speculation>Connection to consciousness: 12 I/O channels provide robust experience.</Speculation>\n\n"
                         "Step 5: Equation of State from Aggregated Breathing\n"
                         "w = \u22121 + (1/\u03c6²) \u00d7 \u27e8\u03c1_breath\u27e9 / max(\u03c1_breath)\n"
-                        "Target: w \u2248 \u22120.958 \u00b1 0.003 (matches DESI 2025 thawing constraint)."
+                        "Target: w \u2248 \u22120.958 \u00b1 0.003 (w₀ = −23/24, frozen at the off-path seed b₃ = 24; "
+                        "w₀ = −1 + 1/b₃ has no derivation). It sits more than 3σ from the DESI DR2 w0waCDM "
+                        "value w₀ = −0.752 ± 0.057; dark energy is OPEN (CG.11)."
                     )
                 ),
                 ContentBlock(
@@ -476,16 +529,17 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="v21 Enhanced Brane Configuration in Dual Shadows",
+                    title="Enhanced Brane Configuration in Dual Shadows",
                     content=(
-                        "The v21 framework contains an enhanced brane structure after G₂ compactification:\n"
+                        "The framework contains an enhanced brane structure after G₂ compactification:\n"
                         "(5,1) + 3×(3,1) per shadow + bridge couplings\n\n"
                         "This notation indicates:\n"
                         "• (5,1): One 5-brane with two times (one per shadow) (observable sector brane per shadow)\n"
                         "• 3×(3,1): Three 3-branes, each with two times (one per shadow) (generational branes)\n"
                         "• Bridge couplings: Cross-shadow interactions via Euclidean bridge\n\n"
-                        "The two-time signature (24,2) signature eliminates ghost modes that would arise from (p,2) branes "
-                        "in the old two-time framework."
+                        "Ghost control of the second time is OPEN: the earlier claim that the (24,2) signature "
+                        "eliminates ghost modes from (p,2) branes rested on Bars' Sp(2,R) ghost-freedom theorem, "
+                        "which is not inherited (signature ruling 2026-08-31)."
                     )
                 ),
                 ContentBlock(
@@ -499,7 +553,7 @@ class CosmologyIntroV16(SimulationBase):
                     content=(
                         "For BPS states, this bound is saturated: T_BPS = |Z|/V. The SO(24,2) Casimir operator "
                         "determines the brane tensions via T \u221d \u221aC₂, ensuring consistency with the SO(24,2) "
-                        "invariance of the v24.2 bulk geometry."
+                        "invariance of the bulk geometry."
                     )
                 ),
 
@@ -511,20 +565,20 @@ class CosmologyIntroV16(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Pneuma spinor field Ψ_P has 8192 components in the full 26D bulk (from Majorana-Weyl "
-                        "condition in (24,2) two-time signature (24,2)). Upon dual-shadow splitting, G₂ compactification, "
+                        "The Pneuma spinor field Ψ_P has 8192 components in the full 26D bulk (from the Majorana-Weyl "
+                        "condition in two-time signature (24,2)). Upon dual-shadow splitting, G₂ compactification, "
                         "and symmetry breaking, this reduces to 64 effective components per shadow in the 4D effective theory."
                     )
                 ),
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="v21 Symbolic Computation: Spinor Decomposition",
+                    title="Symbolic Computation: Spinor Decomposition",
                     content=(
                         "Step 1: 26D Spinor Dimension (Two-Time)\n"
                         "For signature (24,2), the minimal spinor has dimension:\n"
                         "dim(\u03a8_26D) = 2^((26\u22121)/2) = 2^(12.5) \u2192 8192 (Majorana-Weyl with real structure)\n"
-                        "The two-time signature (24,2) ensures no ghost modes.\n\n"
+                        "Ghost control of the second time is OPEN (signature ruling 2026-08-31).\n\n"
                         "Step 2: Dual Shadow Split\n"
                         "The 26D spinor splits into per-shadow components via the Euclidean bridge:\n"
                         "\u03a8₂₆D \u2192 2 \u00d7 [\u03a8₄D \u2297 \u03c7_SO(10) \u2297 \u03b7_shadow]\n"
@@ -669,20 +723,20 @@ class CosmologyIntroV16(SimulationBase):
                 output_params=["cosmology.D_eff_shadow"],
                 derivation={
                     "steps": [
-                        {"description": "Two-time structure structure (24,2)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
-                        {"description": "v22: 12-pair Euclidean bridge split", "formula": r"M^{26}(24,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
-                        {"description": "Dimensional structure", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
-                        {"description": "Aggregate metric", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
+                        {"description": "Two-time structure (24,2); the one-time metric shown is the retired shared-time form (signature ruling 2026-08-31)", "formula": r"ds²_{26} = -dt² + \sum dx_i²"},
+                        {"description": "12-pair Euclidean bridge split, written in the retired shared-time form (0,1) + S^{2,0}; the adopted bulk has one time per shadow", "formula": r"M^{26}(24,2) = 12\times(2,0) + (0,1) + S^{2,0} \rightarrow 2\times 13D(12,1)"},
+                        {"description": "Dimensional structure (retired single time fiber T^1)", "formula": r"T^1 \times_{fiber} (\oplus_{i=1}^{12} B_i^{2,0})"},
+                        {"description": "Aggregate metric (retired one-time form)", "formula": r"ds² = -dt² + \sum_{i=1}^{12} (dy_{1i}² + dy_{2i}²)"},
                         {"description": "Per-pair OR reduction", "formula": r"R_{\perp,i}^2 = -I \text{ (Möbius per pair)}"},
-                        {"description": f"Why {int(_REG.elder_kads) // 2} pairs (floor of b_3/2)", "formula": rf"b_3 = {int(_REG.elder_kads)} \Rightarrow \lfloor {int(_REG.elder_kads)}/2 \rfloor = {int(_REG.elder_kads) // 2} \text{{ normal/mirror pairs}}"}
+                        {"description": f"Formerly the pairs were read as b_3/2, which gives 12 only at the off-path seed b_3 = 24; at the live seed that reading gives the floor {int(_REG.elder_kads) // 2}. The 12 pairs are the bulk's bridge pairs", "formula": rf"b_3 = {int(_REG.elder_kads)} \Rightarrow \lfloor {int(_REG.elder_kads)}/2 \rfloor = {int(_REG.elder_kads) // 2} \text{{ normal/mirror pairs}}"}
                     ],
-                    "references": ["v22 12-pair breathing aggregation", "Euclidean bridge mechanism"]
+                    "references": ["12-pair breathing aggregation", "Euclidean bridge mechanism"]
                 },
                 terms={
                     "R_⊥_i": "Per-pair OR reduction operator (90° rotation for pair i)",
                     "13D(12,1)": "Per-shadow signature (12 space + 1 time)",
                     "12×(2,0)": "12 Euclidean bridge pairs (positive-definite each)",
-                    "b₃ = 24": "Associative 3-cycles, giving 12 normal/mirror pairs"
+                    "b₃ = 24": "OFF-PATH (b3_seed = seed_24): associative 3-cycles at the retired seed, formerly read as 12 normal/mirror pairs; the 12 pairs are the bulk's 12 bridge pairs"
                 },
                 eml_latex=r"R_{\perp,i} = \mathrm{ops.neg}(\mathrm{ops.inv}(R_{\perp,i})),\quad R_{\perp,i}^2 = \mathrm{ops.neg}(I)",
                 eml_tree_str="ops.neg(I)  # R_perp^2 = -I (Moebius property of OR reduction operator)",
@@ -702,7 +756,7 @@ class CosmologyIntroV16(SimulationBase):
                 derivation={
                     "steps": [
                         {"description": "Separate volume dependence", "formula": r"g_{mn} = e^{2σ} g_{mn}^{(0)}"},
-                        {"description": "Volume modulus T from racetrack", "formula": r"W = A e^{-aT} - B e^{-bT}"},
+                        {"description": "Volume modulus T from racetrack (CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7: CG.5, CG.10)", "formula": r"W = A e^{-aT} - B e^{-bT}"},
                         {"description": "Minimize potential", "formula": r"\partial_T V = 0 \Rightarrow T_{min} = 1.4885"},
                         {"description": "Breathing mode VEV", "formula": r"\langle σ \rangle = \phi_0 \approx 0.075 M_{\text{Pl}}"}
                     ],
@@ -735,7 +789,7 @@ class CosmologyIntroV16(SimulationBase):
                         {"description": "SO(24,2) Casimir", "formula": r"C_2 = p(p+23)/4 = 6 \times 29/4 = 43.5"},
                         {"description": "Tension", "formula": r"T_{BPS} = \sqrt{C_2} \times M_{\text{Pl}}^6"}
                     ],
-                    "references": ["BPS states", "v21 Dual-shadow brane dynamics"]
+                    "references": ["BPS states", "Dual-shadow brane dynamics"]
                 },
                 terms={
                     "T_BPS": "BPS-saturated brane tension",
@@ -817,10 +871,10 @@ class CosmologyIntroV16(SimulationBase):
                 name="Breathing Mode VEV",
                 units="GeV",
                 status="DERIVED",
-                description="Breathing mode VEV ⟨σ⟩ = φ₀ ≈ 0.075 M_Pl from racetrack stabilization",
+                description="CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7 (CG.5, CG.10): breathing mode VEV ⟨σ⟩ = φ₀ ≈ 0.075 M_Pl from racetrack stabilization",
                 derivation_formula="breathing-mode",
                 no_experimental_value=True,
-                eml_description="EML: ops.mul(eml_scalar(0.075), eml_vec('constants.M_PLANCK')) — ⟨σ⟩ = 0.075 × M_Pl, VEV from racetrack superpotential minimum at T_min=1.4885. Qualified: M_PLANCK is ambiguous (reduced 2.435e18 vs codata full 1.22089e19); run() reads constants.M_PLANCK"
+                eml_description="EML: ops.mul(eml_scalar(0.075), eml_vec('constants.M_PLANCK')) — ⟨σ⟩ = 0.075 × M_Pl, VEV from racetrack superpotential minimum at T_min=1.4885 (calibrated at the off-path seed b3 = 24; no gaugino racetrack on Y_7). Qualified: M_PLANCK is ambiguous (reduced 2.435e18 vs codata full 1.22089e19); run() reads constants.M_PLANCK"
             ),
             Parameter(
                 path="cosmology.epsilon_KK",
@@ -828,14 +882,15 @@ class CosmologyIntroV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "KK spectrum parameter epsilon = e^{-T_min} = 0.22572 from the volume "
-                    "ratio Vol(K3)/Vol(S3) = e^{T_min} = 4.43 within the G2 holonomy "
-                    "manifold K_Pneuma. Distinct from the CKM Cabibbo parameter "
+                    "CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on "
+                    "Y_7 (CG.5, CG.10). KK spectrum parameter epsilon = e^{-T_min} = 0.22572 "
+                    "from the volume ratio Vol(K3)/Vol(S3) = e^{T_min} = 4.43 within the G2 "
+                    "holonomy manifold K_Pneuma. Distinct from the CKM Cabibbo parameter "
                     "(canonical candidate e^{-3/2} = 0.22313; PDG 2024: 0.22500). "
-                    "The K3 and S3 substructures arise as calibrated cycles in the TCS "
-                    "(twisted connected sum) construction of the G2 manifold, where "
-                    "K3 x S1 provides one building block. Their volume ratio determines "
-                    "the KK spectrum spacing dynamically via racetrack stabilization."
+                    "OFF-PATH: the K3 and S3 substructures were described as calibrated cycles "
+                    "in a TCS (twisted connected sum) construction, where K3 x S1 provides one "
+                    "building block; the construction in force is Joyce's resolution of "
+                    "T^7/(Z/2)^3, and the volume modulus is OPEN (CG.6)."
                 ),
                 derivation_formula="breathing-mode",
                 no_experimental_value=True,
@@ -850,14 +905,14 @@ class CosmologyIntroV16(SimulationBase):
                 description="Effective dimension D_eff = 12 + (Shadow_ק + Shadow_ח)/2 = 12.576",
                 derivation_formula="sp2r-constraint",
                 no_experimental_value=True,
-                eml_description="EML: ops.add(eml_scalar(12.0), ops.mul(eml_scalar(0.5), ops.add(eml_scalar(0.576152), eml_scalar(0.576152)))) — D_eff = 12 + (Shadow_aleph + Shadow_heth)/2 from TCS G2 shadow fractions"
+                eml_description="EML: ops.add(eml_scalar(12.0), ops.mul(eml_scalar(0.5), ops.add(eml_scalar(0.576152), eml_scalar(0.576152)))) — D_eff = 12 + (Shadow_aleph + Shadow_heth)/2; the shadow fractions were attributed to a TCS G2 manifold, which is off-path"
             ),
             Parameter(
                 path="cosmology.brane_tension_5_2",
                 name="(5,1) Brane Tension per Shadow",
                 units="GeV^6",
                 status="DERIVED",
-                description="BPS-saturated tension for (5,1) brane per shadow from SO(24,1) Casimir (v21)",
+                description="BPS-saturated tension for (5,1) brane per shadow from SO(24,1) Casimir",
                 derivation_formula="bps-bound",
                 no_experimental_value=True,
                 eml_description="EML: ops.mul(ops.sqrt(ops.div(ops.mul(eml_scalar(6.0), eml_scalar(29.0)), eml_scalar(4.0))), ops.pow(eml_vec('constants.M_PLANCK'), eml_scalar(6.0))) — T_BPS = sqrt(C2) × M_Pl^6, C2 = p(p+23)/4 = 6×29/4 = 43.5 for p=6. Two fixes: the old tree multiplied C2 by a spurious extra 6 (sqrt(261) instead of sqrt(43.5), a factor 2.45), and M_PLANCK is ambiguous — run() reads constants.M_PLANCK"
@@ -1095,8 +1150,10 @@ class CosmologyIntroV16(SimulationBase):
                     f"for string compactification to 4D with N=1 supersymmetry. The "
                     f"construction in force is a Joyce orbifold T^7/(Z/2)^3 with "
                     f"Eguchi-Hanson resolutions, giving b3={int(_REG.elder_kads)} "
-                    f"associative 3-cycles that determine the dark energy equation of "
-                    f"state. PROVENANCE CORRECTION: the count was previously "
+                    f"(the count of neutral moduli). The earlier claim that these cycles "
+                    f"determine the dark energy equation of state has no derivation "
+                    f"(w0 = -1 + 1/b3 is frozen at the off-path seed b3 = 24; dark energy "
+                    f"is OPEN, CG.11). PROVENANCE CORRECTION: the count was previously "
                     f"attributed to the TCS (twisted connected sum) construction. TCS "
                     f"as exhibited gives 71 <= b_3 <= 155, which EXCLUDES "
                     f"b_3 = {int(_REG.elder_kads)}, so TCS serves here as an exclusion "
@@ -1234,7 +1291,7 @@ class CosmologyIntroV16(SimulationBase):
                 "simulation_id": self.metadata.id,
                 "assertion": (
                     f"SO(24,2) Casimir C2 = {C2} for (5,1) brane is consistent "
-                    f"with v24.2 dual-shadow framework"
+                    f"with the dual-shadow framework"
                 ),
                 "result": "PASS" if casimir_ok else "FAIL",
                 "timestamp": datetime.now().isoformat(),
@@ -1251,36 +1308,42 @@ class CosmologyIntroV16(SimulationBase):
         """Return beginner-friendly explanation."""
         return {
             "icon": "🌌",
-            "title": "From 26 Dimensions to Our 4D Universe (v22)",
+            "title": "From 26 Dimensions to Our 4D Universe",
             "simpleExplanation": (
                 "String theory predicts that our universe has more than the 3 space + 1 time dimensions we experience. "
-                "Principia Metaphysica v22 starts with 26 dimensions (24 space + 1 two-time structure) and shows how these split into "
+                "Principia Metaphysica starts with 26 dimensions (24 space + 2 time, one time for each shadow) and shows how these split into "
                 "two 'shadow' universes connected by 12 paired 2D bridges. Each shadow then 'folds up' to give us the 4D universe we observe. "
-                "The extra dimensions don't disappear completely - the bridge pressure mismatch creates 'breathing' dark energy, "
-                "and the 12-pair aggregation smooths out quantum fluctuations for stable cosmic evolution."
+                "The extra dimensions don't disappear completely - the bridge pressure mismatch is proposed to create 'breathing' dark energy "
+                "(dark energy is still OPEN in the model), "
+                "and the 12-pair aggregation smooths out quantum fluctuations."
             ),
             "analogy": (
                 "Imagine a garden hose viewed from far away - it looks like a 1D line, but up close you see it's actually "
                 "2D (a line plus a circle around it). Similarly, our 4D spacetime might have tiny 'curled up' extra dimensions "
-                "at every point. The v22 Kaluza-Klein mechanism shows how dual shadows connected by 12 Euclidean bridge pairs naturally "
-                "create both gravity AND the gauge forces from pure geometry. The 12 pairs (from b₃ = 24/2 = 12) act like "
+                "at every point. The Kaluza-Klein mechanism shows how dual shadows connected by 12 Euclidean bridge pairs "
+                "give both gravity AND the gauge forces from geometry. The 12 pairs (the bulk's 12 bridge pairs) act like "
                 "12 channels averaging together, reducing noise just like averaging multiple measurements."
             ),
             "keyTakeaway": (
-                "v22 Kaluza-Klein reduction: M^{26}(24,2) = 12×(2,0) + (0,1) + S^{2,0} → 12 bridge pairs warp to create 2×13D(12,1) shadows → 4D per shadow (via G₂ compactification). "
-                "12-pair aggregation: ρ_breath = (1/12) ∑ρ_i reduces variance by √12, stabilizing w ≈ -0.958 ± 0.003."
+                "Kaluza-Klein reduction: M^{26}(24,2) = 12×(2,0) ⊕ (0,2) → 12 bridge pairs warp to create 2×13D(12,1) shadows, one time each → 4D per shadow (via G₂ compactification). "
+                "12-pair aggregation: ρ_breath = (1/12) ∑ρ_i reduces variance by √12. The value it was tuned to, w ≈ -0.958 ± 0.003, "
+                "is w₀ = -23/24, frozen at the off-path seed b₃ = 24 and more than 3σ from DESI DR2 (w₀ = -0.752 ± 0.057)."
             ),
             "technicalDetail": (
-                "Starting from 26D with (24,2) = 12×(2,0) + (0,1) signature (no ghosts), 12 bridge pairs warp to create dual "
-                "13D(12,1) shadows (each: 12 spatial from bridge + 1 shared time). Dimensional structure: T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}). "
-                "Metric: ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²). Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|. "
-                f"Aggregated: ρ_breath = (1/{int(_REG.elder_kads) // 2}) ∑ρ_i. Why {int(_REG.elder_kads) // 2} pairs: b₃ = {int(_REG.elder_kads)} associative 3-cycles → b₃//2 = {int(_REG.elder_kads) // 2} normal/mirror pairs, with one left over because b₃ is odd. "
+                "Starting from 26D with (24,2) = 12×(2,0) ⊕ (0,2) signature (24 space directions in 12 bridge pairs plus 2 times; ghost control "
+                "of the second time is OPEN), 12 bridge pairs warp to create dual "
+                "13D(12,1) shadows (each: 12 spatial from the bridges + its own time). RETIRED (signature ruling 2026-08-31): the earlier "
+                "structure T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) with metric ds² = -dt² + ∑_{i=1}^{12} (dy_{1i}² + dy_{2i}²) shared one time between the shadows. "
+                "Per-pair energy: ρ_i = |T_normal_i - R_⊥_i T_mirror_i|. "
+                "Aggregated: ρ_breath = (1/12) ∑ρ_i over the bulk's 12 bridge pairs. "
+                f"The pairs were formerly read as b₃/2, which gives 12 only at the off-path seed b₃ = 24; at the live seed b₃ = {int(_REG.elder_kads)} that reading gives the floor {int(_REG.elder_kads) // 2}. "
                 "Aggregation reduces variance: σ_eff = σ_single/√12. <Speculation>Consciousness connection: 12 I/O channels.</Speculation>"
             ),
             "prediction": (
-                "12-pair bridge pressure aggregation drives breathing dark energy with equation of state "
-                "w = -1 + (1/φ²) × ⟨ρ_breath⟩/max(ρ_breath) ≈ -0.958 ± 0.003, matching DESI 2025 thawing constraint. "
-                "The reduced variance from 12-pair averaging explains the observed stability of dark energy."
+                "CALIBRATED at the off-path seed b₃ = 24: 12-pair bridge pressure aggregation is proposed to drive breathing dark energy with "
+                "w = -1 + (1/φ²) × ⟨ρ_breath⟩/max(ρ_breath) ≈ -0.958 ± 0.003 (w₀ = -23/24, frozen at that seed; w₀ = -1 + 1/b₃ has no derivation). "
+                "That value is more than 3σ from the DESI DR2 w0waCDM value w₀ = -0.752 ± 0.057, and the leading-order flux potential "
+                "on Y₇ cannot accelerate (CG.11): dark energy is OPEN."
             )
         }
 

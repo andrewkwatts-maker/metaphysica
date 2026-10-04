@@ -207,5 +207,8 @@ def test_the_status_population_is_pinned_in_both_directions():
     for fork in FORKS.values():
         for option in fork.options:
             measured[option.status] += 1
-    assert measured == {ACTIVE: 18, CONSIDERED: 30, DISABLED: 3}, measured
-    assert len(FORKS) == 18
+    # D-015 (2026-10-01): +1 fork (seed_selection: 1 active, 1 considered),
+    # +1 option (chi_eff_route.k3_reading, active; `unruled` -> considered),
+    # chi_eff_route.seed_dependent and re_t_adoption.computed_vacuum -> DISABLED.
+    assert measured == {ACTIVE: 19, CONSIDERED: 30, DISABLED: 5}, measured
+    assert len(FORKS) == 19

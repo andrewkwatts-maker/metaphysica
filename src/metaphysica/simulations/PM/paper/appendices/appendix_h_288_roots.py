@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v24.2 - Appendix H: The 288-Root Basis
-==============================================================
+PRINCIPIA METAPHYSICA - Appendix H: The 288-Root Basis
+======================================================
 
 DOI: 10.5281/zenodo.18079602
 
-v24.2 STERILE MODEL: The 288 Ancestral Roots and 24 Shadow Torsion.
+STERILE MODEL: The 288 Ancestral Roots and 24 Shadow Torsion.
 
-This appendix provides the mathematical foundation proving that the 125
-observable residues are derived from a 288-generator symmetry in the 26D bulk.
+This appendix argues that the 125 observable residues are drawn from a
+288-generator symmetry in the 26D bulk.
 
 The 288 Ancestral Roots = SO(24) Generators (276) + Shadow Torsion (24) - Manifold Cost (12)
+
+The 24 in SO(24) is the bulk's 24 space directions (signature (24,2): 24
+space + 2 times, one per shadow); it is not b_3 (D-007, root SP13: BULK).
+The computation still reads n from topology.elder_kads -- the re-wire to the
+bulk's 24 is held until D-012's re-verification passes -- so on the adopted
+path (b_3 = 43) it emits SO(43) and a budget of 915, and the generated branch
+note says so. The pressure divisor b_3^2/4 = 144 (H.7) is OFF-PATH: it holds
+only at the off-path seed b_3 = 24.
 
 APPENDIX: H (The 288-Root Basis - Ancestral Symmetry Architecture)
 
@@ -35,6 +43,12 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+
+
+def _geo(template: str, register: str = "plain") -> str:
+    """Fill a geometry phrase from the live seed (geometry_narration.render)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    return render(template, register)
 
 
 # ---------------------------------------------------------------------------
@@ -117,13 +131,13 @@ def root_budget(n_transverse: int) -> Dict[str, Any]:
     ``2 x 12``     torsion pins, 12 per shadow brane over two branes.
     ``-12``        symmetry directions spent projecting onto the manifold.
 
-    Whether ``n`` is b_3 or the BULK's 24 spacelike core dimensions is OPEN
-    and is not decided here. The module reads elder_kads, so on the adopted
-    path the budget is 915; the register carries that as a measured cost of
-    the ruling. If the reading is later settled as "the bulk's 24", this
-    function takes 24 and the budget returns to 288 -- which is why the
-    source of ``n`` is the caller's business and the labelling is this
-    function's.
+    The object is classified (D-007, root SP13: BULK): SO(n) acts on the
+    bulk's 24 space directions, not on b_3. The re-wire that would pass 24
+    here is held until D-012's re-verification passes, so the module still
+    reads elder_kads and on the adopted path the budget is 915; the register
+    carries that as a measured cost. Once the re-wire runs, this function
+    takes 24 and the budget returns to 288 -- which is why the source of
+    ``n`` is the caller's business and the labelling is this function's.
     """
     so_generators = (n_transverse * (n_transverse - 1)) // 2
     shadow_torsion = TORSION_PER_SHADOW * 2
@@ -140,15 +154,17 @@ def root_budget(n_transverse: int) -> Dict[str, Any]:
             so_generators, shadow_torsion, MANIFOLD_PROJECTION_COST, total),
         "so24_reading_holds": bool(holds),
         "reading_note": (
-            "n = 24, so the SO(24) reading and the 276 + 24 - 12 = 288 budget "
-            "both hold on this branch."
+            "n = 24, equal to the bulk's 24 space directions, so the SO(24) "
+            "reading and the 276 + 24 - 12 = 288 budget both hold on this "
+            "branch."
             if holds else
-            "n = %d, NOT 24: the 'SO(24) generators' label and the "
-            "276 + 24 - 12 = 288 budget are FALSE on this branch. The group "
-            "is SO(%d) with %d generators and the budget is %d. Whether n "
-            "should be b_3 (which this module reads) or the bulk's 24 "
-            "spacelike dimensions is an open reading, recorded on the "
-            "register as a measured cost of the b3_seed ruling."
+            "n = %d is read from b_3 (topology.elder_kads), so the "
+            "computation emits SO(%d) with %d generators and a budget of %d. "
+            "SO(24) acts on the bulk's 24 space directions (D-007, root SP13: "
+            "BULK), where it has 276 generators and the budget is "
+            "276 + 24 - 12 = 288; b_3 coincided with 24 only at the off-path "
+            "seed. The re-wire to the bulk's 24 is held until D-012's "
+            "re-verification passes."
             % (n_transverse, n_transverse, so_generators, total)
         ),
     }
@@ -158,11 +174,12 @@ class AppendixH288Roots(SimulationBase):
     """
     Appendix H: The 288-Root Basis.
 
-    Proves that the 125 residues are the observable subset of a 288-generator
-    symmetry originating from the SO(24) transverse group of the 26D bulk.
+    Argues that the 125 residues are the observable subset of a 288-generator
+    symmetry originating from SO(24), the rotations of the 26D bulk's 24
+    space directions.
 
     Key Components:
-    - 276: SO(24) generators from 24 transverse dimensions
+    - 276: SO(24) generators on the bulk's 24 space directions
     - 24: Shadow torsion (12 per 13D shadow brane)
     - 12: Manifold projection cost (consumed for 4D bridge)
     - 288: Total ancestral roots
@@ -199,9 +216,10 @@ class AppendixH288Roots(SimulationBase):
             domain="appendices",
             title="Appendix H: The 288-Root Basis (Ancestral Symmetry Architecture)",
             description=(
-                "Derives the 288 ancestral roots from SO(24) transverse symmetry (276 generators) "
-                "and dual-shadow torsion (24 pins), minus the manifold projection cost (12). "
-                "Proves the 125 observable residues are the sterile-filtered subset at theta ~ 25.72 deg."
+                "Derives the 288 ancestral roots from SO(24) on the bulk's 24 space directions "
+                "(276 generators) and dual-shadow torsion (24 pins), minus the manifold projection "
+                "cost (12). Argues that the 125 observable residues are the sterile-filtered subset "
+                "at theta ~ 25.72 deg."
             ),
             section_id="H",
             subsection_id=None,
@@ -318,7 +336,8 @@ class AppendixH288Roots(SimulationBase):
                     "Appendix H establishes the mathematical foundation proving that the 125 "
                     "observable residues are not arbitrary but are the <strong>Observable Subset</strong> "
                     "of a 288-generator symmetry in the 26D ancestral bulk. This section introduces "
-                    "the SO(24) transverse group and the 12-per-shadow torsion mechanism."
+                    "SO(24), the rotation group of the bulk's 24 space directions, and the "
+                    "12-per-shadow torsion mechanism."
                 )
             ),
 
@@ -340,15 +359,18 @@ class AppendixH288Roots(SimulationBase):
             # H.1 The Symmetry Group Origin
             ContentBlock(
                 type="heading",
-                content="H.1 The SO(24) Transverse Symmetry",
+                content="H.1 SO(24): Rotations of the Bulk's 24 Space Directions",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "In 26D Bosonic String Theory, there are 24 transverse dimensions. The symmetry "
-                    "group governing these is SO(24). The number of generators (the dimension) for "
-                    "SO(n) is calculated as n(n-1)/2:"
+                content=_geo(
+                    "The bulk is {bulk}. The rotation group of its 24 space directions is SO(24). "
+                    "(Earlier text took the 24 from the bosonic string's light-cone count, 26 - 2; "
+                    "the claim that 26 is the critical dimension is withdrawn, since the two-time "
+                    "critical dimension is 27-28.) The number of generators (the dimension) of "
+                    "SO(n) is n(n-1)/2:",
+                    "html",
                 )
             ),
             ContentBlock(
@@ -528,15 +550,17 @@ class AppendixH288Roots(SimulationBase):
             # H.7 Pressure Divisor and Generation Counting
             ContentBlock(
                 type="heading",
-                content="H.7 The Pressure Divisor Formula (b₃²/4 = 144)",
+                content="H.7 The Pressure Divisor Formula (Off-Path: b₃²/4 = 144 at b₃ = 24)",
                 level=3
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The effective Euler characteristic χ<sub>eff</sub> = 144 arises from the <strong>geometric pressure</strong> "
-                    "of the G2 manifold's topology. This 144 appears throughout the framework as the dual-shadow "
-                    "total (72 × 2), and is derived from the third Betti number b₃ = 24 through the pressure divisor formula:"
+                    "OFF-PATH (b3_seed = seed_24): this formula derived χ<sub>eff</sub> = 144 from "
+                    "b₃ = 24 as b₃²/4, a <strong>geometric pressure</strong>. On the adopted path "
+                    "χ<sub>eff</sub> = 2 × Σ χ(K3) = 48n (the K3 reading, D-015): 72 per shadow, "
+                    "144 in total at n = 3. b₃²/4 is not an integer at any odd b₃, so the pressure "
+                    "divisor holds only at the off-path seed. The retired formula was:"
                 )
             ),
             ContentBlock(
@@ -548,9 +572,11 @@ class AppendixH288Roots(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The factor of 4 reflects the quaternionic polarization structure inherent to G2 holonomy. "
-                    "This 144 directly determines the generation count via the index theorem: n<sub>gen</sub> = χ<sub>eff</sub> / (2·b₃) = 144/48 = 3, "
-                    "providing a geometric derivation of the three fermion families with zero free parameters."
+                    "The factor of 4 was read as a quaternionic polarization factor. The generation count "
+                    "it fed, n<sub>gen</sub> = χ<sub>eff</sub> / (2·b₃) = 144/48 = 3, is also OFF-PATH: "
+                    "2·b₃ = 48 only at b₃ = 24. On the adopted path n<sub>gen</sub> = b₂/4 = 3, the "
+                    "number of singular involutions, and χ<sub>eff</sub>/48 = n restates it through the "
+                    "K3 reading. Chirality is OPEN (D-011)."
                 )
             ),
 
@@ -614,16 +640,18 @@ class AppendixH288Roots(SimulationBase):
                 eml_tree_str="ops.mul(eml_vec('b3'), ops.sub(eml_vec('b3'), eml_scalar(1.0)))",
                 category="GEOMETRIC",
                 description=(
-                    "Number of independent generators of SO(24), the transverse rotation group "
-                    "in 26D bosonic string theory. Computed via the standard Lie algebra dimension "
-                    "formula dim(SO(n)) = n(n-1)/2 with n = 24 transverse directions."
+                    "Number of independent generators of SO(24), the rotation group of the bulk's "
+                    "24 space directions (signature (24,2); D-007 root SP13: BULK). Computed via "
+                    "dim(SO(n)) = n(n-1)/2 with n = 24. The declared input topology.elder_kads "
+                    "(b_3) and the EML tree still read n from b_3, which equals 24 only at the "
+                    "off-path seed; the re-wire to the bulk's 24 is held under D-012."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["topology.so24_generators"],
                 derivation={
                     "method": "Lie algebra dimension formula for SO(n)",
                     "steps": [
-                        "Identify the transverse symmetry group: bosonic string in 26D has 24 transverse directions (26 - 2 light-cone)",
+                        "Identify the symmetry group: the 26D bulk has signature (24,2), i.e. 24 space directions and 2 times (earlier text: 26 - 2 light-cone directions of the bosonic string; '26 = critical dimension' is withdrawn)",
                         "The rotation symmetry of these 24 directions is SO(24), the special orthogonal group",
                         "Apply the standard Lie algebra dimension formula: dim(SO(n)) = n(n-1)/2",
                         "Compute dim(SO(24)) = 24 * 23 / 2 = 276 independent generators",
@@ -631,10 +659,10 @@ class AppendixH288Roots(SimulationBase):
                     "parentFormulas": ["26d-bosonic-string-transverse"],
                 },
                 terms={
-                    "SO(24)": "Special orthogonal group in 24 dimensions (transverse rotation symmetry)",
-                    "n": "Number of transverse dimensions (n = 24)",
+                    "SO(24)": "Special orthogonal group of the bulk's 24 space directions",
+                    "n": "Number of bulk space directions (n = 24)",
                     "276": "Number of independent generators (antisymmetric rank-2 tensors)",
-                    "26D": "Bosonic string critical dimension (26 total, 24 transverse)",
+                    "26D": "The bulk: 26 dimensions, signature (24,2) (the 'critical dimension' reading is withdrawn; the two-time critical dimension is 27-28)",
                 },
             ),
             Formula(
@@ -642,7 +670,9 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.2)",
                 latex=r"\tau_{\text{total}} = \tau_A + \tau_B = 12 + 12 = 24",
                 plain_text="tau_total = 12 + 12 = 24",
-                # T4 (b): shadow torsion total = b3 (24 = 12+12 = b3) — route through b3_leaf
+                # T4 (b): OFF-PATH (b3_seed = seed_24): this tree writes the 24 torsion pins as b3/2 + b3/2,
+                # true only at the retired seed b3 = 24. The pins are 12 per shadow brane, a bulk
+                # count, not b3. The tree is unchanged in this wording pass.
                 eml_tree_str="ops.add(ops.div(b3_leaf(), eml_scalar(2.0)), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="GEOMETRIC",
                 description=(
@@ -676,15 +706,18 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.3)",
                 latex=r"R_{\text{ancestral}} = 276 + 24 - 12 = 288",
                 plain_text="R_ancestral = 276 + 24 - 12 = 288",
-                # T4 (b): expose b3 root — 276 = b3(b3-1)/2, 24 = b3, 12 = b3/2 → all in terms of b3_leaf
+                # T4 (b): OFF-PATH (b3_seed = seed_24): this tree writes 276 = b3(b3-1)/2, 24 = b3 and
+                # 12 = b3/2, true only at the retired seed b3 = 24. The objects are the bulk's 24 space
+                # directions (SO(24)), the 24 torsion pins and the 12 bridge pairs, not b3. The tree is
+                # unchanged in this wording pass.
                 eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.div(b3_leaf(), eml_scalar(2.0)))",
                 category="DERIVED",
                 description=(
                     "Total ancestral root count from the 26D bulk symmetry budget. Each root "
                     "represents one independent degree of freedom in the ancestral symmetry: "
-                    "the 276 SO(24) generators encode rotational symmetries of the 24 transverse "
-                    "dimensions (each generator corresponding to a plane of rotation between "
-                    "two transverse directions), the 24 torsion pins provide the anchoring "
+                    "the 276 SO(24) generators encode rotational symmetries of the bulk's 24 space "
+                    "directions (each generator corresponding to a plane of rotation between "
+                    "two of them), the 24 torsion pins provide the anchoring "
                     "degrees of freedom for the dual 13D shadow branes (analogous to how a "
                     "rigid body in 3D needs 6 constraints to be fully fixed), and the 12 "
                     "manifold cost represents degrees consumed in constructing the 4D Euclidean "
@@ -697,10 +730,10 @@ class AppendixH288Roots(SimulationBase):
                 derivation={
                     "method": "Symmetry budget accounting for 26D to 4D projection",
                     "steps": [
-                        "Identify the transverse symmetry: in 26D bosonic string theory, fixing the 2 light-cone directions leaves 24 transverse dimensions with SO(24) rotation symmetry",
-                        "Count SO(24) generators: each pair of transverse directions defines one independent rotation plane, giving dim(SO(24)) = 24*23/2 = 276 generators (antisymmetric rank-2 tensors)",
+                        "Identify the symmetry: the 26D bulk has signature (24,2), and its 24 space directions carry SO(24) rotation symmetry",
+                        "Count SO(24) generators: each pair of space directions defines one independent rotation plane, giving dim(SO(24)) = 24*23/2 = 276 generators (antisymmetric rank-2 tensors)",
                         "Add 24 shadow torsion pins: the dual 13D branes each require 12 independent pinning vectors (26 - 13 - 1 = 12 constraints per brane) to maintain topological stability in the 26D bulk, totalling 2*12 = 24",
-                        "Subtract 12 manifold projection cost: the 4D Euclidean bridge connecting the two shadows consumes 12 degrees of freedom (one per bridge pair, matching b3/2 = 12 from G2 topology)",
+                        "Subtract 12 manifold projection cost: the 4D Euclidean bridge connecting the two shadows consumes 12 degrees of freedom (one per bridge pair: the bulk's 12 bridge pairs; the earlier 'b3/2 = 12' held only at the off-path seed)",
                         "Net ancestral roots: 276 + 24 - 12 = 288, which also decomposes as E8 roots (240) + 48 shadow-torsion roots",
                     ],
                     "parentFormulas": ["so24-generators", "shadow-torsion-sum"],
@@ -751,7 +784,9 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.5)",
                 latex=r"N_{\text{hidden}} = 288 - 125 = 163",
                 plain_text="N_hidden = 288 - 125 = 163",
-                # T4 (b): 288 ancestral roots = 12·b3, so route via b3_leaf
+                # T4 (b): OFF-PATH (b3_seed = seed_24): this tree writes 288 = 12·b3, true only at the
+                # retired seed b3 = 24. D-007 finds no object for the 12 x b3 reading of 288 (FR08).
+                # The tree is unchanged in this wording pass.
                 eml_tree_str="ops.sub(ops.mul(eml_scalar(12.0), b3_leaf()), eml_vec('node_count'))",
                 category="DERIVED",
                 description=(
@@ -783,7 +818,9 @@ class AppendixH288Roots(SimulationBase):
                 label="(H.6)",
                 latex=r"R_{\text{ancestral}} = |E_8| + |\tilde{E}_8| = 240 + 48 = 288",
                 plain_text="R_ancestral = |E8| + |E8_tilde| = 240 + 48 = 288",
-                # T4 (b): 288 = 12·b3 — keep E8 root counts as composition of b3-multiples (240 = 10·b3, 48 = 2·b3)
+                # T4 (b): OFF-PATH (b3_seed = seed_24): this tree writes 240 = 10·b3 and 48 = 2·b3, true
+                # only at the retired seed b3 = 24. 240 is the E8 root count (a theorem), not a multiple
+                # of b3. The tree is unchanged in this wording pass.
                 eml_tree_str="ops.add(ops.mul(eml_scalar(10.0), b3_leaf()), ops.mul(eml_scalar(2.0), b3_leaf()))",
                 category="GEOMETRIC",
                 description=(
@@ -826,12 +863,13 @@ class AppendixH288Roots(SimulationBase):
                 eml_tree_str="ops.div(ops.pow(eml_vec('b3'), eml_scalar(2.0)), eml_scalar(4.0))",
                 category="GEOMETRIC",
                 description=(
-                    "Pressure divisor formula relating the Betti number b₃ to the effective Euler "
-                    "characteristic χ_eff through geometric pressure. The factor of 4 arises from "
-                    "the quaternionic structure of the G2 holonomy manifold (4 real polarizations "
-                    "per complex plane). This 144 represents the dual-shadow total Euler characteristic "
-                    "(72 per shadow x 2 shadows), and also appears as the mephorash_chi parameter "
-                    "governing fermion generation count: n_gen = χ_eff / (4 b₃) = 144/48 = 3."
+                    "OFF-PATH (b3_seed = seed_24): the pressure divisor b₃²/4 = 576/4 = 144 holds "
+                    "only at the retired seed; b₃²/4 is not an integer at any odd b₃. The factor "
+                    "of 4 was read as 4 real polarizations per complex plane. On the adopted path "
+                    "χ_eff = 2 x Σ χ(K3) = 48 n (the K3 reading, D-015): 72 per shadow, 144 in "
+                    "total at n = 3, the mephorash_chi parameter. The generation count "
+                    "n_gen = χ_eff / (2 b₃) = 144/48 = 3 used here is also off-path; the adopted "
+                    "count is n_gen = b_2/4 = 3."
                 ),
                 input_params=["topology.elder_kads"],
                 # b3^2/4 = 144 is chi_eff, which the registry already holds as
@@ -840,23 +878,23 @@ class AppendixH288Roots(SimulationBase):
                 # declared under a second name that no registry held.
                 output_params=["topology.mephorash_chi"],
                 derivation={
-                    "method": "Geometric pressure from Betti number squaring",
+                    "method": "OFF-PATH: geometric pressure from Betti number squaring (retired seed)",
                     "steps": [
-                        "Start with the third Betti number: b3 = 24 (number of independent 3-cycles in G2 manifold)",
+                        "OFF-PATH: start from the retired seed b3 = 24 (Y_7 has b3 = 43)",
                         "The geometric pressure arises from the intersection product of 3-cycles: b3 ⊗ b3 gives b3^2 intersection modes",
                         "Quaternionic reduction: divide by 4 to account for 4 real polarizations per complex structure",
-                        "Compute: χ_pressure = 24^2 / 4 = 576 / 4 = 144",
-                        "This 144 equals the total Euler characteristic across both shadow branes (72 × 2)",
-                        "The pressure divisor governs generation counting: n_gen = 144 / (4 × 24) = 144/48 = 3",
+                        "At the retired seed: χ_pressure = 24^2 / 4 = 576 / 4 = 144",
+                        "On the adopted path 144 = 48 n at n = 3 is the K3 reading (72 per shadow), not an Euler characteristic",
+                        "OFF-PATH: n_gen = 144/48 = 3 with 48 read as 2 b3 at b3 = 24; the adopted count is n_gen = b_2/4 = 3",
                     ],
                     "parentFormulas": ["g2-holonomy-metric"],
                 },
                 terms={
                     r"\chi_{\text{pressure}}": "Pressure divisor (144)",
-                    "b_3": "Third Betti number (24 independent 3-cycles)",
-                    "576": "Betti number squared (24^2)",
+                    "b_3": "Third Betti number (24 only at the retired off-path seed; 43 on Y_7)",
+                    "576": "24^2 at the retired off-path seed",
                     "4": "Quaternionic polarization factor",
-                    "144": "Effective Euler characteristic (mephorash_chi)",
+                    "144": "chi_eff = 48 n (mephorash_chi; the K3 reading, not an Euler characteristic)",
                 },
             ),
         ]
@@ -947,9 +985,12 @@ class AppendixH288Roots(SimulationBase):
                 name="SO(24) Generators",
                 units="count",
                 status="FOUNDATIONAL",
-                description=(
-                    "Number of independent generators of SO(24), the transverse rotation group "
-                    "in 26D bosonic string theory. Computed as dim(SO(n)) = n(n-1)/2 = 24*23/2 = 276."
+                description=_geo(
+                    "Generators of SO(n), dim = n(n-1)/2. SO(24), the rotation group of the "
+                    "bulk's 24 space directions (D-007 root SP13: BULK), has 24*23/2 = 276. The "
+                    "computation still reads n from b_3 (topology.elder_kads), so on the "
+                    "adopted path this parameter is the count for SO({b3}) until the re-wire "
+                    "held under D-012 runs."
                 ),
                 no_experimental_value=True,
                 eml_description="EML: ops.div(ops.mul(eml_scalar(24.0), ops.sub(eml_scalar(24.0), eml_scalar(1.0))), eml_scalar(2.0)) — SO(24) generators = 24×23/2 = 276",

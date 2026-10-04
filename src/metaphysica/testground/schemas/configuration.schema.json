@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "metaphysica.configuration/1",
+  "title": "A configuration: one option per fork",
+  "type": "object",
+  "required": ["theory", "selection", "digest"],
+  "properties": {
+    "theory": {"type": "string"},
+    "name": {"type": ["string", "null"]},
+    "selection": {"type": "object", "additionalProperties": {"type": "string"}},
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+    "lifecycle": {"enum": ["ACTIVE", "CONSIDERED", "RETIRED_REASSESSABLE", "RETIRED_CERTAIN", "INVALID"]},
+    "not_runnable": {"type": "boolean"},
+    "decided_by": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "engine_fingerprint": {"type": "string"},
+    "env": {"type": "object", "additionalProperties": {"type": "string"}}
+  }
+}

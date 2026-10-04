@@ -136,9 +136,17 @@ def _load(name: str):
 # same content change (the flavour sector's trees now resolve through
 # flavour_b3_leaf, and the ruled-divergence rows register with a labelled
 # status rather than vanishing mid-registration).
-_ARITHMA_BASELINE_WITH_BACKEND = {"total": 569, "b3_rooted_min": 380,
+#
+# RE-MEASURED 2026-10-02 after the dependency-walker fix (live seed, a
+# published root_seed, producer_of sorted by id so a chain's verdict no
+# longer depends on registration order). Two concurrent runs of both walkers
+# on the same formulas.json gave byte-identical artifacts, and both artifact
+# roots agree: total 569 -> 581 (the twelve formulas registered since
+# 2026-09-22, the last being y7-selection, CG.12), b3_rooted 380 -> 392
+# (TIGHTENED), non_b3 181, ambiguous 8, degraded 51 -> 45 (TIGHTENED).
+_ARITHMA_BASELINE_WITH_BACKEND = {"total": 581, "b3_rooted_min": 392,
                                   "non_b3_max": 181, "ambiguous_max": 8,
-                                  "degraded_max": 51}
+                                  "degraded_max": 45}
 #: Measured 2026-09-14 on a build with the PyPI stub arithma. b3_rooted is
 #: HIGHER here and that is not better coverage: with no tree to walk the
 #: walker falls back to scanning human-written latex, where prose mentioning
@@ -161,7 +169,10 @@ _ARITHMA_BASELINE_WITH_BACKEND = {"total": 569, "b3_rooted_min": 380,
 #: WITH_BACKEND note describes: `b3-generations`, rewired from n_gen = b_3/8
 #: to the RULED n_gen = b_2/4, no longer mentions b_3 in the prose this
 #: walker scans. The ratchet still bites in both directions from here.
-_ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 397,
+#: 2026-10-02: total 569 -> 581 only, because the total does not depend on
+#: the backend (pinned by the test below); the other four numbers need a
+#: stub-backend build to re-measure and are left as they were.
+_ARITHMA_BASELINE_NO_BACKEND = {"total": 581, "b3_rooted_min": 397,
                                 "non_b3_max": 161, "ambiguous_max": 11,
                                 "degraded_max": 66}
 #: UNSTABLE, and that instability is the finding. Measured three times on
@@ -188,8 +199,15 @@ _ARITHMA_BASELINE_NO_BACKEND = {"total": 569, "b3_rooted_min": 397,
 #: bridge-component-correspondence, k3-reading-generations,
 #: confinement-exclusion, flux-no-acceleration -- upstream of the seed or
 #: seed-independent by construction (the latter two are family-level).
-_EML_BASELINE = {"total": 580, "b3_rooted_min": 101,
-                 "non_b3_max": 467, "ambiguous_max": 9}
+#: 2026-10-02: THE INSTABILITY ABOVE IS FIXED, and the floor moves to the
+#: measurement. The walker now reads the live seed, publishes root_seed, and
+#: sorts producer_of by id; two concurrent runs gave byte-identical output
+#: (sha256 equal) and both artifact roots agree: total 581 (+1, y7-selection,
+#: CG.12 -- it SELECTS the seed, so it is upstream of b_3 and counts as
+#: non-rooted), b3_rooted 101 -> 193, non_b3 467 -> 387, ambiguous 9 -> 1.
+#: Ambiguous is its own bucket; it is NOT folded into rooted.
+_EML_BASELINE = {"total": 581, "b3_rooted_min": 193,
+                 "non_b3_max": 387, "ambiguous_max": 1}
 
 
 def _arithma_baseline(d):

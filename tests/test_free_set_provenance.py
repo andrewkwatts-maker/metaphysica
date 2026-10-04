@@ -135,7 +135,7 @@ def test_a_seedless_artifact_declines_the_removal_rather_than_crashing(bundled):
 
 
 def test_the_free_parameter_counts_are_pinned_in_both_directions(bundled):
-    """67 ledger rows, and what a reseeded probe can and cannot establish.
+    """68 ledger rows, and what a reseeded probe can and cannot establish.
 
     IMPORTANT, and the reason this test does not pin an "adopted-path free
     parameter count": `_seeded` sets `particle.b3` on a snapshot whose OTHER
@@ -153,19 +153,23 @@ def test_the_free_parameter_counts_are_pinned_in_both_directions(bundled):
     adopted = build_free_set(params=_seeded(bundled, 43))
     off_path = build_free_set(params=_seeded(bundled, 24))
 
-    assert seedless["ledger_rows"] == 67
-    assert seedless["free_set_size"] == 39, (
+    # 67 -> 68 on 2026-10-01: cosmology.eta_baryon_geometric is labelled
+    # CALIBRATED under D-015 (it rests on the calibrated Re(T)), so the
+    # ledger now counts it as the fit it always was.
+    assert seedless["ledger_rows"] == 68
+    assert seedless["free_set_size"] == 40, (
         "the seedless reduction moved; this is the number a bare process "
         "reports, and it is NOT the adopted path's count"
     )
 
     # The reseeded probes: the retired-wa removal lands in both, so the
     # dead-code fix is what these numbers demonstrate.
-    assert (adopted["free_set_size"], adopted["removed_count"]) == (38, 29)
-    assert off_path["free_set_size"] == 37
+    # Each +1 on 2026-10-01: eta_baryon_geometric counted as CALIBRATED (D-015).
+    assert (adopted["free_set_size"], adopted["removed_count"]) == (39, 29)
+    assert off_path["free_set_size"] == 38
 
     # And the probe's own inconsistency is asserted rather than hidden, so
-    # nobody reads 38 as a verified adopted-path count.
+    # nobody reads 39 as a verified adopted-path count.
     assert "algebra.freudenthal_quartic" in adopted["unverified_claims"], (
         "the reseeded probe stopped being internally inconsistent -- if the "
         "bundled snapshot is now built at the adopted seed, this test and the "

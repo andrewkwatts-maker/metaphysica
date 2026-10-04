@@ -1,32 +1,44 @@
 #!/usr/bin/env python3
 """
-Baryon Asymmetry Geometric Derivation v24.2
-===========================================
+Baryon Asymmetry Geometric Derivation
+=====================================
 
-Derives baryon-to-photon ratio eta_b from G2 cycle asymmetry + Jarlskog invariant.
-v24.2: FULLY DERIVED - k_bary comes from Jarlskog invariant; chi_eff = 72 (per-sector).
+Models the baryon-to-photon ratio eta_b with G2 cycle asymmetry + Jarlskog
+invariant.
+
+STATUS: CALIBRATED. Re(T) = 7.086 was chosen to match the BBN baryon
+asymmetry; the racetrack it is attributed to is CALIBRATED at the off-path
+seed b_3 = 24, and no gaugino racetrack exists on Y_7 (CG.5, CG.10). The
+worked numbers below (N_eff = 10 or 20, eta_b ~ 6.05e-10, 1.6 sigma) are the
+arithmetic at the off-path seed b_3 = 24. The code reads b_3 from the live
+seed (43 on the adopted path, Y_7 = Joyce's resolution of T^7/(Z/2)^3), where
+N_eff = 2(b_3 - 14) is no longer 20 and the agreement does not hold.
+chi_eff = 72 is the per-shadow effective index (the K3 reading: chi(K3)
+summed over the n = 3 singular involutions; 144 for both shadows), not the
+Euler characteristic of Y_7, which is 0.
 
 DERIVATION:
-    The baryon asymmetry emerges from an imbalance in the 3-cycle structure
+    The baryon asymmetry is modelled as an imbalance in the 3-cycle structure
     of the G2 manifold during baryogenesis. The CP violation is quantified
     by the Jarlskog invariant J, which has geometric origin in CKM angles.
 
     eta_b = (delta_b3) * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T)) * k_bary
 
     Where:
-    - delta_b3 = 0.12 * b3 is the cycle asymmetry (flux mismatch)
+    - delta_b3 = 0.12 * b3 is the cycle asymmetry (flux mismatch; 0.12 asserted)
     - sin(delta_CP) = sin(pi/6) = 0.5 from G2 triality
-    - Re(T) = 7.086 is the moduli stabilization parameter
-    - k_bary = J / N_eff is DERIVED from Jarlskog invariant
+    - Re(T) = 7.086 is the moduli parameter (CALIBRATED to eta_b)
+    - k_bary = J / N_eff is built from the Jarlskog invariant
 
-    v19.0 Key insight: k_bary = J / (b3 - 14) = J / 10
+    Key step (written at the off-path seed b_3 = 24): k_bary = J / (b3 - 14) = J / 10
     - J ~ 3.08e-5 is the Jarlskog invariant (CKM CP violation)
-    - N_eff = b3 - 2*7 = 24 - 14 = 10 (effective baryogenesis cycles)
+    - N_eff = b3 - 2*7 = 24 - 14 = 10 (effective baryogenesis cycles at that seed)
     - The factor 2*7 = 14 accounts for gauge/matter sector absorption
 
 SCIENTIFIC HONESTY:
-    v19.0: k_bary is now DERIVED from the Jarlskog invariant J.
-    The formula k_bary = J/10 gives sub-2 sigma agreement.
+    k_bary = J/N_eff is built from the Jarlskog invariant J. At the off-path
+    seed the formula gave sub-2 sigma agreement, but Re(T) = 7.086 was tuned
+    to the same observable, so the agreement is a calibration, not a test.
 
     Target: (6.12 +/- 0.04) * 10^{-10} (BBN/Planck 2018)
 
@@ -40,24 +52,26 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES
 # Output: cosmology.eta_baryon_geometric
-# Deviation: 1.63 sigma from experimental (BBN/Planck 2018: 6.12 +/- 0.04 x 10^-10)
+# Deviation at the off-path seed b3 = 24: 1.63 sigma from experimental
+# (BBN/Planck 2018: 6.12 +/- 0.04 x 10^-10). CALIBRATED: Re(T) = 7.086 was
+# tuned to eta_b; at the live seed the deviation is large.
 #
-# Classification: PRECISION FRONTIER (approaching sub-sigma agreement)
+# Classification: CALIBRATED (formerly "PRECISION FRONTIER")
 #
 # Explanation:
 #   The baryon-to-photon ratio eta_b is derived from G2 cycle asymmetry
 #   combined with the Jarlskog invariant for CP violation:
 #     eta_b = delta_b3 * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T)) * k_bary
 #
-#   Key advancement in v19.0: k_bary is now FULLY DERIVED as:
+#   Key step (at the off-path seed b3 = 24): k_bary is built as:
 #     k_bary = J / N_eff = J / (b3 - 14) = J / 10
 #   where J ~ 3.08e-5 is the Jarlskog invariant from the CKM sector.
 #
-#   The predicted eta_b ~ 6.05 x 10^-10 vs experimental 6.12 x 10^-10
-#   gives a 1.63 sigma deviation. This is a STRONG result given that:
-#   - eta_b spans 9 orders of magnitude (10^-10)
-#   - The derivation connects CKM CP violation to baryogenesis
-#   - No free parameters remain after v19.0 (k_bary is derived)
+#   At that seed eta_b ~ 6.05 x 10^-10 vs experimental 6.12 x 10^-10
+#   gave a 1.63 sigma deviation. It is NOT a zero-parameter result:
+#   - Re(T) = 7.086 was chosen to match eta_b (CALIBRATED)
+#   - delta_b3 = 0.12 is asserted, not computed (CALIBRATED)
+#   - the worked N_eff assumes b3 = 24 at the off-path seed; the code reads the live seed
 #
 # Why 1.63 sigma:
 #   - The cycle asymmetry parameter delta_b3 = 0.12 * b3 is approximate
@@ -77,11 +91,10 @@ Dedicated To:
 #   4. Incorporate finite-temperature corrections to the moduli potential
 #   5. Cross-validate with deuterium abundance constraints (D/H)
 #
-# Note: Deriving the baryon asymmetry to within 1.63 sigma with zero free
-# parameters is a significant achievement. Most GUT baryogenesis models
-# have uncertainties of 1-3 orders of magnitude.
+# Note: the 1.63 sigma figure is at the off-path seed with a calibrated
+# Re(T); it is not a zero-parameter derivation.
 #
-# Status: STRONG PREDICTION - approaching sub-sigma with refinements
+# Status: CALIBRATED
 # ============================================================================
 
 from typing import Dict, Any, List, Optional
@@ -173,17 +186,19 @@ class BaryonAsymmetryV18(SimulationBase):
             domain="cosmology",
             title="Baryon Asymmetry from G2 Cycles + Jarlskog",
             description=(
-                "Derives baryon-to-photon ratio eta_b from G2 cycle flux "
+                "CALIBRATED: baryon-to-photon ratio eta_b from G2 cycle flux "
                 "mismatch (B-L violation), Z3 triality CP phase (sin(pi/6)), "
-                "and Jarlskog normalization k_bary = J/N_eff. Zero free "
-                "parameters; predicts eta_b ~ 6.05e-10 vs observed 6.12e-10."
+                "Jarlskog normalization k_bary = J/N_eff, and moduli damping "
+                "with Re(T) = 7.086 tuned to the observed eta_b. At the off-path "
+                "seed b3 = 24 it gave eta_b ~ 6.05e-10 vs observed 6.12e-10; the "
+                "code reads b3 from the live seed."
             ),
             section_id="6",
             subsection_id="6.2.1"
         )
 
         # Topology constants from SSoT registry
-        self.elder_kads = _REG.elder_kads  # = 24 (Third Betti number)
+        self.elder_kads = _REG.elder_kads  # live seed's b_3 (43 adopted; the worked numbers below used 24)
         # v22 UPDATE: chi_eff_sector = 72 (per-shadow interpretation)
         # Baryon asymmetry occurs at single 4-brane, so use per-sector chi_eff
         self.mephorash_chi = _REG.mephorash_chi  # = 72 (per-sector chi_eff)
@@ -225,18 +240,19 @@ class BaryonAsymmetryV18(SimulationBase):
         # This has geometric origin in Yukawa textures from G2
         self.J_quark = 3.08e-5
 
-        # v19.0: Effective baryogenesis cycles
-        # N_eff = b3 - 2*compact_dims = 24 - 14 = 10
+        # Effective baryogenesis cycles
+        # N_eff = b3 - 2*compact_dims (= 24 - 14 = 10 at the off-path seed)
         # The factor 2*7 accounts for gauge + matter sector mode absorption
         #
-        # v22 UPDATE: With chi_eff = 72 (doubled suppression factor b3/chi_eff),
-        # we need to adjust N_eff to maintain agreement with eta_B observation.
-        # v21: chi_eff = 144, N_eff = 10 -> b3/chi_eff = 1/6
-        # v22: chi_eff = 72, N_eff = 20 -> b3/chi_eff = 1/3 (doubled), k_bary halved
-        # Net effect: (1/3) * (J/20) = (1/6) * (J/10) - maintains same eta_B
-        self.N_eff = 2 * (self.elder_kads - 2 * self.compact_dims)  # = 20 for v22
+        # Per-shadow framing: with chi_eff = 72 per shadow (doubled suppression
+        # factor b3/chi_eff), N_eff was doubled to keep the eta_B agreement
+        # obtained at the off-path seed b3 = 24:
+        #   chi_eff = 144, N_eff = 10 -> b3/chi_eff = 1/6
+        #   chi_eff = 72,  N_eff = 20 -> b3/chi_eff = 1/3 (doubled), k_bary halved
+        # Net effect: (1/3) * (J/20) = (1/6) * (J/10) - same eta_B at that seed.
+        self.N_eff = 2 * (self.elder_kads - 2 * self.compact_dims)  # = 20 at the off-path seed b3 = 24
 
-        # v19.0: DERIVED normalization (replaces calibration)
+        # Normalization built from the Jarlskog invariant
         # k_bary = J / N_eff
         self.k_bary_derived = self.J_quark / self.N_eff
 
@@ -262,19 +278,20 @@ class BaryonAsymmetryV18(SimulationBase):
 
     def compute_baryon_asymmetry(self) -> BaryonAsymmetryResult:
         """
-        Compute baryon asymmetry from geometric derivation.
+        Compute baryon asymmetry from the geometric model.
 
-        v22.0 Derivation (updated chi_eff and N_eff):
+        Steps (numbers at the off-path seed b3 = 24; the code reads the
+        live seed's b3):
         1. Cycle asymmetry: delta_b3 = 0.12 * b3 (flux mismatch)
-        2. Suppression: b3/chi_eff = 24/72 = 1/3 (v22: chi_eff = 72)
+        2. Suppression: b3/chi_eff (24/72 = 1/3 at the off-path seed)
         3. CP violation: sin(delta_CP) = sin(pi/6) = 0.5
-        4. Moduli damping: exp(-Re(T)) ~ exp(-7.086)
-        5. k_bary = J / N_eff = 3.08e-5 / 20 (v22: N_eff = 20)
+        4. Moduli damping: exp(-Re(T)) ~ exp(-7.086) (Re(T) CALIBRATED)
+        5. k_bary = J / N_eff (3.08e-5 / 20 at the off-path seed)
         6. eta_b = delta_b3 * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T)) * k_bary
 
-        Version history:
-        - v21: chi_eff = 144, N_eff = 10, b3/chi_eff = 1/6
-        - v22: chi_eff = 72, N_eff = 20, b3/chi_eff = 1/3
+        Framing history (at the off-path seed):
+        - chi_eff = 144, N_eff = 10, b3/chi_eff = 1/6
+        - chi_eff = 72 per shadow, N_eff = 20, b3/chi_eff = 1/3
         Net product (1/3)*(J/20) = (1/6)*(J/10) unchanged.
 
         Returns:
@@ -284,7 +301,7 @@ class BaryonAsymmetryV18(SimulationBase):
         delta_b3 = self.delta_b3_ratio * self.elder_kads
 
         # Step 2: Suppression factor from chi_eff
-        suppression = self.elder_kads / self.mephorash_chi  # = 1/6
+        suppression = self.elder_kads / self.mephorash_chi  # = b3/72 (1/3 at the off-path seed)
 
         # Step 3: CP violation from sterile phase
         cp_factor = np.sin(self.cp_phase)  # = 0.5
@@ -295,12 +312,12 @@ class BaryonAsymmetryV18(SimulationBase):
         # Step 5: Raw asymmetry (before k_bary)
         eta_raw = delta_b3 * suppression * cp_factor * moduli_damping
 
-        # Step 6: v19.0 - DERIVED normalization from Jarlskog!
-        # k_bary = J / N_eff = J / (b3 - 2*compact_dims) = J / 10
-        # Physical: J is the CKM CP violation, N_eff = 10 effective cycles
+        # Step 6: normalization built from the Jarlskog invariant
+        # k_bary = J / N_eff = J / (2*(b3 - 2*compact_dims)) (J/20 at the off-path seed)
+        # Physical: J is the CKM CP violation, N_eff the effective cycles
         k_bary = self.k_bary_derived
 
-        # Final asymmetry (FULLY DERIVED!)
+        # Final asymmetry (CALIBRATED: Re(T) was tuned to eta_b)
         eta_b = eta_raw * k_bary
 
         # Sigma deviation - NOW A REAL TEST since k_bary is derived!
@@ -381,8 +398,8 @@ class BaryonAsymmetryV18(SimulationBase):
             source=self._metadata.id,
             status="DERIVED",
             metadata={
-                "derivation": "k_bary = J / N_eff = J / (b3 - 14) = J / 10",
-                "note": "v19.0: FULLY DERIVED from Jarlskog invariant and effective cycle count",
+                "derivation": "k_bary = J / N_eff, N_eff = 2(b3 - 14) (J/20 at the off-path seed b3 = 24)",
+                "note": "Built from the Jarlskog invariant and the effective cycle count; the eta_b agreement rests on the calibrated Re(T) = 7.086",
                 "type": "geometric_derived",
                 "units": "dimensionless",
                 "J_quark": self.J_quark,
@@ -422,16 +439,19 @@ class BaryonAsymmetryV18(SimulationBase):
                 plain_text="eta_b = (J/N_eff) * delta_b3 * (b3/chi_eff) * sin(delta_CP) * exp(-Re(T))",
                 category="DERIVED",
                 description=(
-                    "Baryon asymmetry eta_b from G2 cycle imbalance with Jarlskog "
-                    "CP violation. Five factors with distinct physical origins: "
-                    "(i) delta_b3 = 0.12*b3 from torsion-induced flux mismatch "
-                    "between associative/coassociative 4-cycles (B-L violation); "
-                    "(ii) b3/chi_eff = 24/72 = 1/3 topological suppression; "
+                    "CALIBRATED (Re(T) = 7.086 is tuned to the observed eta_b; the "
+                    "worked numbers are at the off-path seed b3 = 24): baryon asymmetry "
+                    "eta_b from G2 cycle imbalance with Jarlskog CP violation. Five "
+                    "factors: (i) delta_b3 = 0.12*b3 from a torsion-induced flux "
+                    "mismatch between associative 3-cycles and coassociative 4-cycles "
+                    "(B-L violation; 0.12 asserted); (ii) b3/chi_eff topological "
+                    "suppression (24/72 = 1/3 at the off-path seed); "
                     "(iii) sin(delta_CP) = sin(pi/6) = 0.5 from Z3 triality of "
                     "the G2 root system acting on fermion generations; "
                     "(iv) exp(-Re(T)) = exp(-7.086) moduli damping (Sakharov "
-                    "condition 3); (v) k_bary = J/N_eff = J/20 from the CKM "
-                    "Jarlskog invariant. v24.2: χ<sub>eff</sub> = 72 (per-sector), N<sub>eff</sub> = 20."
+                    "condition 3); (v) k_bary = J/N_eff from the CKM Jarlskog "
+                    "invariant (J/20 at the off-path seed). χ<sub>eff</sub> = 72 is "
+                    "the per-shadow effective index (the K3 reading)."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["cosmology.eta_baryon_geometric"],
@@ -444,7 +464,7 @@ class BaryonAsymmetryV18(SimulationBase):
                             "formula": r"\Delta b_3 = 0.12 \times b_3"
                         },
                         {
-                            "description": "Topological suppression factor",
+                            "description": "Topological suppression factor (written at the off-path seed b3 = 24)",
                             "formula": r"\frac{b_3}{\chi_{\rm eff}} = \frac{24}{72} = \frac{1}{3}"
                         },
                         {
@@ -465,11 +485,11 @@ class BaryonAsymmetryV18(SimulationBase):
                 },
                 terms={
                     "J": "Jarlskog invariant (3.08e-5 from CKM)",
-                    "N_eff": "Effective cycles = 2*(b3 - 14) = 20 (per-sector, v24.2)",
+                    "N_eff": "Effective cycles = 2*(b3 - 14) (20 at the off-path seed b3 = 24, per shadow)",
                     "delta_b3": "Cycle asymmetry = 0.12 * b3",
-                    "chi_eff": "Effective Euler characteristic = 72 (per-sector in v24.2 dual-shadow architecture)",
+                    "chi_eff": "Effective index chi_eff per shadow = 72 (the K3 reading: chi(K3) summed over the n = 3 singular involutions; 144 for both shadows). Not the Euler characteristic of Y_7, which is 0",
                     "delta_CP": "CP phase pi/6 from Z3 triality of G2 root system (leading-order; measured CKM delta_CP ~ 1.36 rad is larger)",
-                    "Re(T)": "Moduli parameter (7.086)"
+                    "Re(T)": "Moduli parameter (7.086, CALIBRATED to the observed eta_b)"
                 },
                 eml_tree_str=(
                     "ops.mul(ops.div(J_jarlskog, N_eff), "
@@ -491,13 +511,14 @@ class BaryonAsymmetryV18(SimulationBase):
                 plain_text="k_bary = J / N_eff = J / (2*(b3 - 14)) = 3.08e-5 / 20",
                 category="GEOMETRIC",
                 description=(
-                    "Baryogenesis normalization derived from the CKM Jarlskog "
+                    "Baryogenesis normalization built from the CKM Jarlskog "
                     "invariant J ~ 3.08e-5 divided by the effective baryogenesis "
-                    "cycle count N_eff = 2*(b3 - 14) = 20. The factor 14 = 2*7 "
+                    "cycle count N_eff = 2*(b3 - 14), 20 at the off-path seed b3 = 24 "
+                    "(the run reads the live seed's b3). The factor 14 = 2*7 "
                     "accounts for 7 gauge-sector and 7 matter-sector modes "
-                    "absorbed during G₂ compactification. In v24.2, N<sub>eff</sub> = 20 and "
-                    "chi_eff = 72 (per-sector), leaving the product "
-                    "(b3/chi_eff)*(J/N_eff) invariant across framings."
+                    "absorbed during G₂ compactification. At the off-path seed, "
+                    "N<sub>eff</sub> = 20 with chi_eff = 72 per shadow leaves the product "
+                    "(b3/chi_eff)*(J/N_eff) equal to the earlier framing (chi_eff = 144, N_eff = 10)."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=["cosmology.k_bary_normalization"],
@@ -510,7 +531,7 @@ class BaryonAsymmetryV18(SimulationBase):
                             "formula": r"J = c_1 c_2 c_3^2 s_1 s_2 s_3 \sin\delta \approx 3.08 \times 10^{-5}"
                         },
                         {
-                            "description": "Effective cycles excluding gauge/matter absorption",
+                            "description": "Effective cycles excluding gauge/matter absorption (worked at the off-path seed b3 = 24)",
                             "formula": r"N_{\rm eff} = 2(b_3 - 2 \times 7) = 2 \times 10 = 20"
                         },
                         {
@@ -527,7 +548,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 },
                 terms={
                     "J": "Jarlskog invariant ~ 3.08×10⁻⁵ (CKM CP violation)",
-                    "N_eff": "2*(b₃ - 14) = 2*10 = 20 (v24.2)",
+                    "N_eff": "2*(b₃ - 14) = 2*10 = 20 at the off-path seed b₃ = 24",
                     "2*7": "14 modes absorbed into gauge + matter sectors"
                 },
                 eml_tree_str="ops.div(J_jarlskog, ops.mul(eml_scalar(2.0), ops.sub(b3, eml_scalar(14.0))))",
@@ -543,10 +564,13 @@ class BaryonAsymmetryV18(SimulationBase):
                 plain_text="f_damp = exp(-Re(T)) = exp(-7.086) ~ 8.38e-4",
                 category="DERIVED",
                 description=(
-                    "Moduli damping factor from KKLT-type volume stabilization. "
-                    "Re(T) = 7.086 arises from the racetrack superpotential minimum "
-                    "at T_min = 1.4885. This provides the out-of-equilibrium "
-                    "condition required by Sakharov's third condition."
+                    "CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack "
+                    "exists on Y_7 (CG.5, CG.10). Moduli damping factor attributed to "
+                    "KKLT-type volume stabilization. Re(T) = 7.086 was chosen to match "
+                    "the BBN baryon asymmetry; it is not a stationary point of the "
+                    "racetrack superpotential (T_min = 1.4885 in the original text). "
+                    "This provides the out-of-equilibrium condition required by "
+                    "Sakharov's third condition."
                 ),
                 # T2.3 fix: declare topology.elder_kads as an explicit input —
                 # the EML tree carries the b3_leaf root via the identity factor
@@ -566,7 +590,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Racetrack superpotential for moduli stabilization",
+                            "description": "Racetrack superpotential (CALIBRATED at the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7: CG.5, CG.10)",
                             "formula": r"W = A e^{-aT} - B e^{-bT}"
                         },
                         {
@@ -574,7 +598,7 @@ class BaryonAsymmetryV18(SimulationBase):
                             "formula": r"\partial_T V = 0 \Rightarrow T_{\min} = 1.4885"
                         },
                         {
-                            "description": "Real part of modulus at stabilization point",
+                            "description": "Re(T) = 7.086, chosen to match the BBN baryon asymmetry (not a stationary point of the racetrack equations)",
                             "formula": r"\text{Re}(T) = 7.086"
                         },
                         {
@@ -592,7 +616,7 @@ class BaryonAsymmetryV18(SimulationBase):
                 terms={
                     "T": "Volume modulus of the G2 compactification",
                     "W": "Racetrack superpotential with two exponentials",
-                    "Re(T)": "Real part of stabilized modulus = 7.086",
+                    "Re(T)": "Real part of the modulus, 7.086 (CALIBRATED to eta_b; Re(T) is OPEN on Y_7)",
                     "f_damp": "Exponential suppression ~ 8.38e-4"
                 },
                 # Re(T) in the KKLT racetrack is set by the inverse exponent
@@ -640,10 +664,14 @@ class BaryonAsymmetryV18(SimulationBase):
                 path="cosmology.eta_baryon_geometric",
                 name="Baryon-to-Photon Ratio (Geometric)",
                 units="dimensionless",
-                status="DERIVED",
+                # CALIBRATED under D-015 (2026-10-01): Re(T) is an open
+                # modulus, and this value rests on Re(T) = 7.086 tuned to eta_b.
+                status="CALIBRATED",
                 description=(
-                    "Baryon asymmetry from G2 cycle structure + CP violation. "
-                    "v24.2: Fully derived via leptogenesis at 4-brane intersections."
+                    "CALIBRATED: baryon asymmetry from G2 cycle structure + CP violation via "
+                    "leptogenesis at 4-brane intersections, with Re(T) = 7.086 tuned to the "
+                    "observed eta_b; the worked agreement (6.05e-10, 1.6 sigma) was at the "
+                    "off-path seed b3 = 24."
                 ),
                 experimental_bound=6.12e-10,
                 bound_type="measured",
@@ -667,11 +695,11 @@ class BaryonAsymmetryV18(SimulationBase):
                 name="Baryogenesis Normalization",
                 units="dimensionless",
                 status="DERIVED",
-                description="k_bary = J/N_eff = J/(2*(b3-14)) = 3.08×10⁻⁵/20. v24.2: χ_eff = 72 per-sector, N_eff = 20.",
+                description="k_bary = J/N_eff = J/(2*(b3-14)); 3.08×10⁻⁵/20 at the off-path seed b3 = 24 (N_eff = 20, χ_eff = 72 per shadow). The run reads the live seed's b3.",
                 no_experimental_value=True,
                 eml_description=(
                     "EML: ops.div(eml_scalar(3.08e-5), ops.mul(eml_scalar(2.0), ops.sub(eml_vec('topology.elder_kads'), "
-                    "eml_scalar(14.0)))) — k_bary = J / N_eff with N_eff = 2(b3 - 14) = 20. J is the module's own literal "
+                    "eml_scalar(14.0)))) — k_bary = J / N_eff with N_eff = 2(b3 - 14) (20 at the off-path seed b3 = 24). J is the module's own literal "
                     "3.08e-5 (PDG 2024); it is NOT pdg.J_ckm (3.12e-5) nor the framework's computed "
                     "ckm.jarlskog_invariant (2.915e-5), and the three do not agree. The former string named bare "
                     "J_jarlskog, which is not a registry path."
@@ -709,24 +737,29 @@ class BaryonAsymmetryV18(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for paper."""
+        # Live values for the prose (text only; compute is side-effect free).
+        _live = self.compute_baryon_asymmetry()
+        _b3 = int(self.elder_kads)
         return SectionContent(
             section_id="6",
             subsection_id="6.2.1",
             title="Baryon Asymmetry from G₂ Cycles + Jarlskog",
             abstract=(
-                "The observed matter-antimatter asymmetry \u03b7_b \u2248 6 \u00d7 10\u207b\u00b9\u2070 is "
-                "derived from a flux mismatch between associative and "
+                "CALIBRATED: the observed matter-antimatter asymmetry \u03b7_b \u2248 6 \u00d7 10\u207b\u00b9\u2070 is "
+                "modelled by a flux mismatch between associative 3-cycles and "
                 "coassociative 4-cycles in the G₂ manifold (Joyce orbifold "
                 "T^7/(Z/2)^3; the TCS attribution is withdrawn, TCS exhibiting "
                 "71 <= b_3 <= 155), coupled with "
                 "CP violation quantified by the Jarlskog invariant J \u2248 3.08 \u00d7 10\u207b\u2075. "
-                "The cycle imbalance (\u0394b₃ = 0.12 \u00d7 b₃) provides the B\u2212L "
-                "violation; the CP-violating phase \u03b4_CP = \u03c0/6 arises from "
+                "The cycle imbalance (\u0394b₃ = 0.12 \u00d7 b₃, with 0.12 asserted) provides the B\u2212L "
+                "violation; the CP-violating phase \u03b4_CP = \u03c0/6 is attributed to "
                 "the Z₃ triality symmetry of the G₂ root system acting on the "
-                "Yukawa sector; and moduli damping exp(\u2212Re(T)) ensures departure "
-                "from equilibrium (Sakharov condition 3). The normalization "
-                "k_bary = J/N_eff replaces all calibration constants, predicting "
-                "\u03b7_b in sub-2\u03c3 agreement with Planck+BBN."
+                "Yukawa sector; and moduli damping exp(\u2212Re(T)) supplies the departure "
+                "from equilibrium (Sakharov condition 3), with Re(T) = 7.086 chosen to "
+                "match the observed \u03b7_b. At the off-path seed b₃ = 24 the product gave "
+                "\u03b7_b \u2248 6.05 \u00d7 10\u207b\u00b9\u2070, 1.6\u03c3 from Planck+BBN; "
+                f"at the live seed (b₃ = {_b3}) it gives \u03b7_b = {_live.eta_b:.2e}, "
+                f"{_live.sigma_deviation:.1f}\u03c3 from it."
             ),
             content_blocks=[
                 ContentBlock(
@@ -736,23 +769,24 @@ class BaryonAsymmetryV18(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Baryogenesis in the PM framework occurs via leptogenesis "
+                        "Baryogenesis in the PM framework is modelled as leptogenesis "
                         "at 4-brane intersections in the G₂ compactification. The "
-                        "three Sakharov conditions are satisfied by distinct geometric "
-                        "mechanisms: (1) B\u2212L violation arises from the cycle asymmetry "
+                        "three Sakharov conditions are assigned to distinct geometric "
+                        "mechanisms: (1) B\u2212L violation from the cycle asymmetry "
                         f"\u0394b₃ = 0.12 \u00d7 b₃, a flux mismatch between the {int(_REG.elder_kads)} associative "
-                        f"and coassociative 4-cycles of the G₂ manifold (Joyce orbifold; the TCS attribution is withdrawn) \u2014 the "
-                        "torsion in the neck region of the twisted connected sum "
-                        "breaks the symmetry between cycle types, generating a net "
-                        "baryon-number-violating current; (2) CP violation enters "
+                        "3-cycles and the coassociative 4-cycles of the G₂ manifold (Joyce orbifold). "
+                        "OFF-PATH: the earlier text located the mechanism in torsion in the neck "
+                        "region of a twisted connected sum; Joyce's orbifold resolution has no such "
+                        "neck, and the 0.12 is asserted, not computed; (2) CP violation enters "
                         "through the Jarlskog invariant J \u2248 3.08 \u00d7 10\u207b\u2075, with the "
                         "leading-order CP phase \u03b4_CP = \u03c0/6 determined by the "
                         "Z₃ triality symmetry of G₂ (the three roots of the G₂ "
                         "Dynkin diagram permute the three fermion generations, "
                         "imposing a 2\u03c0/6 = \u03c0/3 phase rotation whose sine gives "
                         "sin(\u03c0/6) = 0.5); (3) departure from thermal equilibrium "
-                        "via moduli damping exp(\u2212Re(T)) from KKLT-type stabilization "
-                        "of the volume modulus."
+                        "via moduli damping exp(\u2212Re(T)), attributed to KKLT-type "
+                        "stabilization of the volume modulus (CALIBRATED; Re(T) is OPEN "
+                        "on Y₇, CG.6)."
                     )
                 ),
                 ContentBlock(
@@ -763,7 +797,7 @@ class BaryonAsymmetryV18(SimulationBase):
                     type="paragraph",
                     content=(
                         "The baryon asymmetry \u03b7_b is computed as a product of "
-                        "five factors, each with clear geometric or physical origin: "
+                        "five factors, each attributed to a geometric or physical origin: "
                         "the cycle asymmetry (\u0394b₃), the topological suppression "
                         "(b₃/\u03c7_eff), the CP violation (sin(\u03b4_CP)), the moduli "
                         "damping (exp(\u2212Re(T))), and the Jarlskog normalization "
@@ -777,13 +811,15 @@ class BaryonAsymmetryV18(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The normalization constant k_bary is derived from the "
+                        "The normalization constant k_bary is built from the "
                         "Jarlskog invariant J divided by the number of effective "
-                        "baryogenesis cycles N_eff = 2 \u00d7 (b₃ \u2212 14) = 20. The factor "
-                        "2 \u00d7 7 = 14 accounts for mode absorption into the gauge and "
+                        "baryogenesis cycles N_eff = 2 \u00d7 (b₃ \u2212 14) "
+                        f"(20 at the off-path seed b₃ = 24; {self.N_eff} at the live seed). "
+                        "The factor 2 \u00d7 7 = 14 accounts for mode absorption into the gauge and "
                         "matter sectors during compactification. This replaces the "
-                        "earlier phenomenological calibration constant with a fully "
-                        "derived quantity:"
+                        "earlier phenomenological calibration constant with a quantity "
+                        "built from J and b₃; the overall agreement still rests on the "
+                        "calibrated Re(T):"
                     )
                 ),
                 ContentBlock(
@@ -797,12 +833,14 @@ class BaryonAsymmetryV18(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The exponential suppression exp(\u2212Re(T)) arises from the "
-                        "stabilization of the volume modulus T via a racetrack "
+                        "CALIBRATED at the off-path seed b₃ = 24; no gaugino racetrack exists on "
+                        "Y₇ (CG.5, CG.10). The exponential suppression exp(\u2212Re(T)) is attributed "
+                        "to stabilization of the volume modulus T via a racetrack "
                         "superpotential W = A\u00b7exp(\u2212aT) + B\u00b7exp(\u2212bT). At the minimum "
-                        "T_min = 1.4885, the moduli mass m_T is heavy enough to "
-                        "suppress late-time baryogenesis, but Re(T) = 7.086 provides "
-                        "the correct suppression to match the observed \u03b7_b. This "
+                        "T_min = 1.4885 the moduli mass m_T is heavy enough to "
+                        "suppress late-time baryogenesis; Re(T) = 7.086 was chosen to give "
+                        "the observed \u03b7_b and is not a stationary point of the racetrack "
+                        "equations. On Y₇ Re(T) is an OPEN modulus (CG.6). This "
                         "exponential factor represents the departure from thermal "
                         "equilibrium required by Sakharov's third condition."
                     )
@@ -814,15 +852,17 @@ class BaryonAsymmetryV18(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="success",
-                    title="Zero Free Parameters",
+                    title="A Calibration, Not a Zero-Parameter Prediction",
                     content=(
-                        "This derivation is FULLY GEOMETRIC. The normalization "
+                        "Re(T) = 7.086 was chosen to match the observed \u03b7_b, so this is a "
+                        "CALIBRATION. The normalization "
                         "k_bary = J/N_eff uses the Jarlskog invariant (J \u2248 3.08 \u00d7 10\u207b\u2075 from CKM) "
-                        "and N_eff = 2 \u00d7 (b₃ \u2212 14) = 20 effective baryogenesis cycles. "
-                        "No calibration constants are required. The prediction "
-                        "\u03b7_b \u2248 6.05 \u00d7 10\u207b\u00b9\u2070 agrees with the Planck+BBN measurement "
-                        "(6.12 \u00b1 0.04) \u00d7 10\u207b\u00b9\u2070 at 1.6\u03c3, a strong result "
-                        "given that most GUT baryogenesis models carry 1\u20133 order-of-magnitude uncertainties."
+                        "and N_eff = 2 \u00d7 (b₃ \u2212 14) effective baryogenesis cycles "
+                        "(20 at the off-path seed b₃ = 24). At that seed the product gave "
+                        "\u03b7_b \u2248 6.05 \u00d7 10\u207b\u00b9\u2070, 1.6\u03c3 from the Planck+BBN measurement "
+                        "(6.12 \u00b1 0.04) \u00d7 10\u207b\u00b9\u2070; "
+                        f"at the live seed (b₃ = {_b3}) it gives {_live.eta_b:.2e}, "
+                        f"{_live.sigma_deviation:.1f}\u03c3 away."
                     )
                 ),
                 ContentBlock(
@@ -832,14 +872,13 @@ class BaryonAsymmetryV18(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The predicted baryon-to-photon ratio \u03b7_b is compared "
-                        "against the Planck 2018 + BBN combined measurement. The "
-                        "agreement at the sub-2\u03c3 level demonstrates that the "
-                        "G₂ cycle structure, combined with CKM CP violation, provides "
-                        "a viable mechanism for baryogenesis without introducing "
-                        "any adjustable parameters beyond the established Standard "
-                        "Model Jarlskog invariant and the topological data of the "
-                        "G₂ manifold (b₃ = 24, \u03c7_eff = 72)."
+                        "The baryon-to-photon ratio \u03b7_b is compared "
+                        "against the Planck 2018 + BBN combined measurement. At the "
+                        "off-path seed b₃ = 24 (\u03c7_eff = 72 per shadow) the agreement was at "
+                        "the sub-2\u03c3 level, but one input, Re(T) = 7.086, was tuned to this "
+                        "observable, so the agreement does not test the mechanism. "
+                        f"At the live seed (b₃ = {_b3}) the product is "
+                        f"{_live.sigma_deviation:.1f}\u03c3 from the measurement."
                     )
                 ),
             ],
@@ -947,8 +986,9 @@ class BaryonAsymmetryV18(SimulationBase):
                 "url": "https://en.wikipedia.org/wiki/Baryon_asymmetry",
                 "relevance": (
                     "The matter-antimatter asymmetry (eta ~ 6e-10) is one of the "
-                    "great unsolved problems in physics. This simulation derives it "
-                    "from G2 cycle asymmetry and Jarlskog CP violation."
+                    "great unsolved problems in physics. This simulation models it "
+                    "with G2 cycle asymmetry and Jarlskog CP violation, with one "
+                    "calibrated input (Re(T) = 7.086)."
                 ),
                 "validation_hint": (
                     "Verify Planck+BBN constraint: eta = (6.143 +/- 0.019) x 10^-10. "
@@ -1079,21 +1119,22 @@ class BaryonAsymmetryV18(SimulationBase):
 
 
 def get_eta_baryon_geometric() -> float:
-    """Convenience entry point: return the v18/v24.2 geometric eta_b value.
+    """Convenience entry point: return the geometric eta_b value.
 
-    This is the canonical baryon-to-photon ratio derived from G2 cycle
-    asymmetry + Jarlskog invariant (see :class:`BaryonAsymmetryV18`).
+    This is the canonical baryon-to-photon ratio from the G2 cycle
+    asymmetry + Jarlskog model (see :class:`BaryonAsymmetryV18`). It is
+    CALIBRATED: Re(T) = 7.086 was tuned to the observed eta_b.
 
-    With the default inputs (b3 from the adopted seed, chi_eff = 72 which is
-    an UNRULED quantity, J = 3.08e-5,
-    Re(T) = 7.086, delta_CP = pi/6, delta_b3 = 0.12*b3, N_eff = 20), this
-    returns eta_b ~ 6.185e-10, which sits at 1.6 sigma from the Planck+BBN
-    measurement (6.12 +/- 0.04) x 10^-10 -- within ~3 % of observation.
+    With the default inputs (b3 from the live seed, chi_eff = 72 per
+    shadow -- the K3 reading, J = 3.08e-5, Re(T) = 7.086, delta_CP = pi/6,
+    delta_b3 = 0.12*b3, N_eff = 2(b3 - 14)) it returned eta_b ~ 6.185e-10
+    at the off-path seed b3 = 24 (N_eff = 20), 1.6 sigma from the
+    Planck+BBN measurement (6.12 +/- 0.04) x 10^-10. At the adopted seed
+    N_eff changes and that agreement does not hold.
 
     Used by :func:`metaphysica.simulations.PM.cosmology.baryogenesis.\
-get_baryogenesis` as the canonical source for eta_B (the Sprint 6.2
-    moduli-decay + topological-dilution derivation is retained as a
-    secondary estimate).
+get_baryogenesis` as the canonical source for eta_B (the moduli-decay +
+    topological-dilution derivation is retained as a secondary estimate).
     """
     sim = BaryonAsymmetryV18()
     result = sim.compute_baryon_asymmetry()

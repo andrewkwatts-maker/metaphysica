@@ -253,13 +253,18 @@ def test_the_gate_needs_both_the_fork_and_a_table(monkeypatch):
 # ------------------------------------------------------- the new forks
 
 
-@pytest.mark.parametrize("fork_id", ["re_t_adoption", "b3_origin",
-                                     "joyce_contribution_table"])
-def test_each_new_fork_is_declared_and_open(fork_id):
+@pytest.mark.parametrize("fork_id,status", [
+    # re_t_adoption RULED 2026-10-01 (D-015): Re(T) is an open modulus, the
+    # calibrated value is labelled, computed_vacuum is demoted but runnable.
+    ("re_t_adoption", "RULED"),
+    ("b3_origin", "OPEN"),
+    ("joyce_contribution_table", "OPEN"),
+])
+def test_each_new_fork_is_declared_with_its_status(fork_id, status):
     from metaphysica.simulations.core.variants import FORKS
 
     fork = FORKS[fork_id]
-    assert fork.status == "OPEN"
+    assert fork.status == status
     assert len(fork.options) >= 2
     assert sum(1 for o in fork.options if o.adopted) == 1
     for option in fork.options:

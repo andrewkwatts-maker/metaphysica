@@ -1,0 +1,25 @@
+# Named configurations of the toy theory: selections worth referring to by
+# name (METAPHYSICA_CONFIG=<name|digest>, `accept <name>`). `accept` adds the
+# replaced active path here as `previous-active-<date>`; nothing is deleted.
+theory: toy
+configurations:
+  fitted-coupling:
+    selection:
+      coupling_route: fitted
+      cutoff: planck
+      extra_param: none
+      mass_rule: seesaw
+      matching: one_loop
+      render_policy: plain
+    digest: abe8b8f31ad1b732
+    note: fits the data better; one fitted input (loses on closure)
+  string-scale-cutoff:
+    selection:
+      coupling_route: geometric
+      cutoff: string_scale
+      extra_param: none
+      mass_rule: seesaw
+      matching: one_loop
+      render_policy: plain
+    digest: 9bb361a6dee8e068
+    note: ties the active path on every criterion

@@ -392,23 +392,26 @@ def _twisted_norm_convention_adopted() -> str:
 def _chi_eff_route_adopted() -> str:
     """Whether the framework is still refusing to name a chi_eff derivation.
 
-    A behavioural read of the narration rather than a literal: `chi_eff_claim`
-    returns `may_claim_a_derivation = False` exactly while the ruling is open.
-    If a route is ever adopted there, this moves with it and the drift guard
-    fires against a declaration that still says `unruled`.
+    RULED 2026-10-01 (D-015): the source is `CHI_EFF_READING` in the
+    narration, and the narration's claim on that branch must agree with it --
+    a derivation is claimable exactly on `k3_reading`. A disagreement means the
+    declaration and the narration have diverged, and one of them is wrong.
     """
     from metaphysica.simulations.PM.geometry.geometry_narration import (
+        CHI_EFF_READING,
         chi_eff_claim,
     )
 
-    claim = chi_eff_claim()
-    if claim["may_claim_a_derivation"]:
+    claim = chi_eff_claim(CHI_EFF_READING)
+    if claim["may_claim_a_derivation"] != (CHI_EFF_READING == "k3_reading"):
         raise RuntimeError(
-            "chi_eff_claim now permits a derivation but this fork still "
-            "declares `unruled`; the declaration and the narration have "
+            "chi_eff_claim on %r %s a derivation, which the fork's declared "
+            "reading contradicts; the declaration and the narration have "
             "diverged and one of them is wrong"
+            % (CHI_EFF_READING, "permits" if claim["may_claim_a_derivation"]
+               else "refuses")
         )
-    return "unruled"
+    return CHI_EFF_READING
 
 
 def _bulk_signature_adopted() -> str:
@@ -541,6 +544,15 @@ def _face_genericity_adopted() -> str:
     return "generic" if status == "CRITERION_STATED_NOT_DERIVED" else "all"
 
 
+def _seed_selection_adopted() -> str:
+    """The selection route's source constant, checked against the options."""
+    from metaphysica.simulations.PM.geometry.closed_geometry.selection import (
+        SELECTION_ROUTE,
+    )
+
+    return SELECTION_ROUTE
+
+
 #: The forks that are executable today. Documented-but-not-runnable
 #: decisions (Path A/B, the person-within-a-face reading) are deliberately
 #: absent: Path A is blocked on an underived C_3, and the reading changes
@@ -551,9 +563,18 @@ FORKS: Dict[str, Fork] = {
         id="re_t_adoption",
         question="Which Re(T) does the baryogenesis sector use?",
         source="simulations.PM.cosmology.baryon_asymmetry.RE_T_CALIBRATED",
-        status="OPEN",
+        status="RULED",
         read_adopted=_re_t_adoption_adopted,
         notes=(
+            "RULED 2026-10-01 by the author (D-015): Re(T) is an OPEN modulus. "
+            "Y_7 fixes no Re(T) at leading order -- the G4 flux potential is "
+            "positive and runs away (certificate CG.6) -- and Y_7 carries no "
+            "gaugino racetrack: its singular loci hold N = 4 super Yang-Mills "
+            "(CG.5) and full holonomy excludes a confining sector in phi's "
+            "Joyce family (CG.10). So the value consumers use is a "
+            "CALIBRATION, labelled as such, and computed_vacuum -- the "
+            "stationary point of a racetrack this geometry does not have -- "
+            "is demoted but kept runnable for comparison.\n\n"
             "Opened 2026-09-14. racetrack_vacuum solves the framework's own "
             "declared equations completely -- W = A e^{-aT} + B e^{-bT} with "
             "a = 2 pi / topology.elder_kads and b = 2 pi / dimensions.D_bulk, "
@@ -570,7 +591,8 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="calibrated",
-                summary="the BBN-calibrated value the sector currently ships",
+                summary=("the BBN-calibrated value: a calibration, since "
+                         "Re(T) is an open modulus of Y_7"),
                 consequence=(
                     "BUYS: the baryon asymmetry match that the sector was "
                     "tuned for, and no published number moves.\n"
@@ -596,8 +618,12 @@ FORKS: Dict[str, Fork] = {
                     "e^{-31}, so the eta_b match this sector was calibrated "
                     "for is destroyed. That is the honest price of the true "
                     "vacuum under the present baryogenesis model, and seeing "
-                    "it is the reason this branch exists."
+                    "it is the reason this branch exists.\n"
+                    "DEMOTED 2026-10-01 (D-015): the declared racetrack is "
+                    "not a potential Y_7 has (CG.5, CG.10), so its vacuum is "
+                    "not this geometry's Re(T). Runnable for comparison."
                 ),
+                status=DISABLED,
             ),
         ],
     ),
@@ -915,9 +941,17 @@ FORKS: Dict[str, Fork] = {
         id="g2_form_convention",
         question="Which signs does the associative 3-form carry on its 7 triples?",
         source="simulations.PM.geometry.g2_differential.G2_TRIPLES",
-        status="OPEN",
+        status="RULED",
         read_adopted=_g2_form_adopted,
         notes=(
+            "RULED 2026-10-01 by the author (D-015): adopt the sensible path, "
+            "keep the alternative switchable. The compact form "
+            "(octonion_derived) is the active path -- it is a genuine G2 form "
+            "and the only one on which Joyce's Eguchi-Hanson resolution, and "
+            "so the derivation of (b_2, b_3) = (12, 43), applies (D-003 "
+            "addendum: on the split form 6 of the 7 involutions have a "
+            "neutral (2,2) transverse space). all_plus_one stays runnable "
+            "for comparison.\n\n"
             "Opened 2026-09-13 by measurement, not by preference. g2 is the "
             "subalgebra of so(7) annihilating phi and has dimension 14. "
             "Building the map A -> A.phi and taking its kernel gives dim 6 for "
@@ -947,7 +981,8 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="all_plus_one",
-                summary="all (+1) on the seven Fano triples -- the status quo",
+                summary=("all (+1) on the seven Fano triples -- the split "
+                         "form G2*, kept switchable"),
                 consequence=(
                     "BUYS: every currently published number is unchanged, and "
                     "the combinatorial results are untouched. R1 to R4 and the "
@@ -961,7 +996,7 @@ FORKS: Dict[str, Fork] = {
                     "split; and the torsion classes are projections onto "
                     "subspaces that are not the ones they are named after."
                 ),
-                adopted=True,
+                priority=0,
             ),
             VariantOption(
                 id="octonion_derived",
@@ -1001,6 +1036,7 @@ FORKS: Dict[str, Fork] = {
                     "Consistent with R1-R4 and the arc flag identity, which "
                     "were verified identical under both branches."
                 ),
+                adopted=True,
             ),
         ],
     ),
@@ -1134,11 +1170,19 @@ FORKS: Dict[str, Fork] = {
             "Is chi_eff a CONSTANT independent of the seed, or SEED-DEPENDENT? "
             "The framework currently wants both."
         ),
-        source=("simulations.PM.geometry.geometry_narration.chi_eff_claim "
-                "-- which returns the dichotomy and no value"),
-        status="OPEN",
+        source="simulations.PM.geometry.geometry_narration.CHI_EFF_READING",
+        status="RULED",
         read_adopted=_chi_eff_route_adopted,
         notes=(
+            "RULED 2026-10-01 by the author (D-015): the K3 reading of D-009 "
+            "is adopted. chi_eff = 2 x sum over the singular involutions of "
+            "chi(K3) = 48 n -- the Kummer K3 surfaces transverse to the "
+            "singular loci, once per shadow -- which is 144 at n = 3, tracks "
+            "n on all 15,963 classes of phi's Joyce family, and keeps chi_eff "
+            "an Euler characteristic of real objects. n_gen = chi_eff/48 = n "
+            "then restates the ruled route b_2/4. The other routes stay "
+            "switchable; seed_dependent is demoted (D-009 refuted both of its "
+            "sub-routes on the family).\n\n"
             "Opened 2026-09-22 so the two branches can be RUN rather than "
             "argued. chi_eff = 144 is load-bearing -- n_gen is taken as "
             "chi_eff/48, alpha_leak as 1/sqrt(chi_eff/b_3), reid_invariant as "
@@ -1165,6 +1209,25 @@ FORKS: Dict[str, Fork] = {
         ),
         options=[
             VariantOption(
+                id="k3_reading",
+                summary=("chi_eff = 2 x sum chi(K3) over the singular "
+                         "involutions = 48 n (D-009)"),
+                consequence=(
+                    "BUYS: chi_eff is an Euler characteristic of real objects "
+                    "on Y_7 -- one Kummer K3 per singular involution, with "
+                    "16 fixed points resolved to chi = 24 -- doubled for the "
+                    "two shadows. It follows the geometry (48 n tracks n on "
+                    "every class of phi's Joyce family) and equals 144 on the "
+                    "adopted point, so the consumers of 144 keep their value "
+                    "with a derivation behind it.\n"
+                    "COSTS: n_gen = chi_eff/48 is then the SAME statement as "
+                    "n_gen = n (= b_2/4 on the all-plain members), not an "
+                    "independent route, and it says nothing about chirality, "
+                    "which stays open."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
                 id="unruled",
                 summary="no route adopted; chi_eff_claim returns the dichotomy",
                 consequence=(
@@ -1177,7 +1240,6 @@ FORKS: Dict[str, Fork] = {
                     "this ruling -- and every downstream consumer keeps reading "
                     "a literal 144 whose provenance is open."
                 ),
-                adopted=True,
             ),
             VariantOption(
                 id="constant_144",
@@ -1210,6 +1272,7 @@ FORKS: Dict[str, Fork] = {
                     "also disagree with each other everywhere except b_3 = 24, "
                     "so this branch is not one option but two."
                 ),
+                status=DISABLED,
             ),
         ],
     ),
@@ -1844,6 +1907,59 @@ FORKS: Dict[str, Fork] = {
         ],
         notes="See docs/BRIDGE_CHANNEL_ASSIGNMENT.md. Adopting 'generic' is "
               "a criterion, not a result; the orbit split 28/7 is the fact.",
+    ),
+    "seed_selection": Fork(
+        id="seed_selection",
+        question=("What selects (b_2, b_3) = (12, 43) on the n = 3 line of "
+                  "phi's Joyce family?"),
+        source="simulations.PM.geometry.closed_geometry.selection."
+               "SELECTION_ROUTE",
+        status="RULED",
+        read_adopted=_seed_selection_adopted,
+        notes=(
+            "RULED 2026-10-01 by the author (D-015): adopt WA-1. pi_1 is "
+            "finite exactly on the n = 3 line (CG.4; holonomy exactly G2 "
+            "there on the compact form), and on that line the 12 bridges "
+            "match the 12 resolved A1 components as one 3 x 4 structure only "
+            "on the all-plain classes (CG.8: 280 yes, 84 Example-4 no). "
+            "Reading one bridge as one component turns that match into the "
+            "selection. Consumer: certificate theorem CG.12 (y7-selection) "
+            "and the overview's selection layer. WA-1's own test, stated "
+            "when it was proposed: the 12 U(1) gauge-kinetic functions come "
+            "in 3 quartets (Lukas-Morris eq. 1.3); a class breaking that "
+            "would kill it."
+        ),
+        options=[
+            VariantOption(
+                id="wa1_correspondence",
+                summary=("WA-1: one bridge = one resolved A1 component; the "
+                         "3 x 4 match selects (12, 43)"),
+                consequence=(
+                    "BUYS: (12, 43) is selected by geometry with no data and "
+                    "no free choice: the reachable family, pi_1 on the n = 3 "
+                    "line, and the bridge <-> component match compose into "
+                    "one chain (CG.12).\n"
+                    "COSTS: WA-1 is an identification, not a theorem -- the "
+                    "combinatorics are proved, the physical reading is "
+                    "assumed. Its kill condition is the quartet structure of "
+                    "the U(1) couplings."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="ruling_only",
+                summary=("(12, 43) by the 2026-09-22 ruling; the bridge match "
+                         "is a finding, not a selection"),
+                consequence=(
+                    "BUYS: no identification of bridges with components is "
+                    "assumed.\n"
+                    "COSTS: the n = 3 line has 9 Joyce-reachable pairs and "
+                    "nothing in the geometry picks (12, 43) among them -- "
+                    "the choice is an input."
+                ),
+                priority=0,
+            ),
+        ],
     ),
 }
 

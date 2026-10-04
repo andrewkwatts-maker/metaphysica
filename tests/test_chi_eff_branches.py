@@ -130,53 +130,61 @@ def test_the_consumers_are_traced_not_recalled():
 
 # ------------------------------------------------------------- nothing adopted
 
-def test_the_fork_defaults_to_unruled():
+def test_the_fork_defaults_to_the_ruled_k3_reading(monkeypatch):
+    """D-015 (2026-10-01): the author adopted the K3 reading; the old routes
+    stay switchable, the refuted seed_dependent route demoted."""
     from metaphysica.simulations.core.variants import FORKS, resolve
 
-    assert resolve("chi_eff_route") == "unruled", (
-        "a chi_eff route has been adopted. That is an author act; if it was "
-        "made deliberately this test should be updated with the ruling, and if "
-        "not, the default has drifted."
-    )
+    monkeypatch.delenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", raising=False)
+    assert resolve("chi_eff_route") == "k3_reading"
     fork = FORKS["chi_eff_route"]
-    assert fork.status == "OPEN"
-    assert set(fork.option_ids()) == {"unruled", "constant_144",
-                                      "seed_dependent"}
+    assert fork.status == "RULED"
+    assert set(fork.option_ids()) == {"k3_reading", "unruled",
+                                      "constant_144", "seed_dependent"}
+    assert fork.option("seed_dependent").refuted
+    assert not fork.option("unruled").refuted
 
 
-def test_the_narration_still_returns_the_dichotomy():
+def test_the_narration_still_returns_the_dichotomy_when_switched_back(
+        monkeypatch):
     from metaphysica.simulations.PM.geometry.geometry_narration import (
         chi_eff_claim,
     )
 
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "unruled")
     claim = chi_eff_claim()
     assert claim["may_claim_a_derivation"] is False
     assert claim["ruling_required"] is True
     assert claim["branch"] == "UNRULED"
 
 
-def test_the_report_adopts_nothing_and_says_so():
+def test_the_report_states_the_live_ruling(monkeypatch):
+    monkeypatch.delenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", raising=False)
     report = cb.branches_report()
-    assert report["ruling"].startswith("OPEN")
-    assert "chi_eff" in report["still_the_authors"]
+    assert report["ruling"].startswith("RULED 2026-10-01")
+    assert "chi_eff" not in report["still_the_authors"]
     assert "n_gen_source" in report["still_the_authors"]
+    assert report["the_k3_resolution"]
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "unruled")
+    assert cb.branches_report()["ruling"].startswith("OPEN")
     assert report["the_coupled_cost"], (
         "the coupling between chi_eff and n_gen_source must be stated, or the "
         "author rules one fork believing the other is independent"
     )
 
 
-def test_the_fork_drift_guard_fires_if_the_narration_adopts_a_route():
-    """The guard must be capable of failing, or it is decoration."""
+def test_the_fork_drift_guard_fires_if_the_narration_disagrees():
+    """The guard must be capable of failing, or it is decoration: a narration
+    that refuses a derivation on the ruled K3 branch contradicts the fork."""
     from metaphysica.simulations.core import variants
     from metaphysica.simulations.PM.geometry import geometry_narration
 
     original = geometry_narration.chi_eff_claim
     try:
-        geometry_narration.chi_eff_claim = lambda: {
-            "may_claim_a_derivation": True, "branch": "constant_144"}
+        geometry_narration.chi_eff_claim = lambda branch=None: {
+            "may_claim_a_derivation": False, "branch": "k3_reading"}
         with pytest.raises(RuntimeError, match="diverged"):
             variants._chi_eff_route_adopted()
     finally:
         geometry_narration.chi_eff_claim = original
-    assert variants._chi_eff_route_adopted() == "unruled"
+    assert variants._chi_eff_route_adopted() == "k3_reading"

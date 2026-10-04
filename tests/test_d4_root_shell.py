@@ -102,14 +102,25 @@ def test_a_non_regular_vector_is_rejected_rather_than_silently_split():
 # --------------------------------------------------------------- the A6 gate
 
 
-def test_the_calibration_is_run_and_is_honest_about_failing():
-    """A6: an uncalibrated pipeline must say so rather than quote its output."""
+def test_the_calibration_is_run_and_is_honest_about_failing(monkeypatch):
+    """A6: an uncalibrated pipeline must say so rather than quote its output.
+
+    D-015 (2026-10-01) made the compact form the active path, where phi IS a
+    G2 form and the calibration passes; the split form stays a switch path,
+    where it must still fail and say why. Both branches are asserted.
+    """
+    monkeypatch.setenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", "all_plus_one")
     calib = g2_branching_calibration()
     assert calib["branching_dimensions_consistent"] is True   # 28 = 14 + 7 + 7
     assert calib["lambda2_is_7_plus_14"] is True
-    # but the 14 is not g2, because phi is not a G2 form -- recorded separately
+    # on the split form the 14 is not g2, because phi is not a G2 form
     assert calib["calibrated"] is False
     assert calib["why_not_calibrated"]
+
+    monkeypatch.delenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION")
+    adopted = g2_branching_calibration()
+    assert adopted["calibrated"] is True
+    assert adopted["v14_annihilates_phi"] is True
 
 
 def test_the_calibration_could_succeed_in_principle():

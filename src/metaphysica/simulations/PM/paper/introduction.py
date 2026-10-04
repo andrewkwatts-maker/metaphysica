@@ -1,24 +1,46 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v24.2 - Introduction
-===========================================
+PRINCIPIA METAPHYSICA - Introduction
+====================================
 
 DOI: 10.5281/zenodo.18079602
 
 Licensed under the MIT License. See LICENSE file for details.
 
-v24.2: M^{26}(24,2) structure with two shadow-time directions.
-       4096-component Pneuma spinor field from Cl(24,2).
-       Dual 13D(12,1) shadows via OR reduction on 12 bridge pairs.
-
 Provides section content for the Introduction (Section 1).
 
-This simulation does not compute physics parameters, but instead generates
-the narrative content and cross-references for the paper's introduction.
+This simulation does not compute physics parameters. It generates the
+narrative of the paper's introduction: the history of unification, then the
+model told TOP DOWN, in the order the provenance registry
+(`PM/geometry/closed_geometry/provenance.py`) and the certificate of Section
+2.4 use:
+
+    1.3.1  the standard physics the model uses, cited
+    1.3.2  how the internal geometry is selected, and why
+    1.3.3  the model's postulates
+    1.3.4  what its computations establish (CG.1-CG.11)
+    1.3.5  what was corrected
+    1.3.6  what is open
+
+HOW THE TEXT STAYS TRUE
+=======================
+* Numbers that follow the seed ((b_2, b_3), n_gen, the Betti sequence) are
+  rendered by `geometry_narration.render`, never typed, so flipping the seed
+  rewrites the sentences instead of leaving them contradicting the values.
+* The six lists (standard, postulate, ruling, finding, correction, open) are
+  generated from `PROVENANCE`, the registry Section 2.4 renders in full, so
+  the introduction summarises that table without duplicating or drifting
+  from it.
+* Sentences that depend on the real form of phi branch on
+  `geometry_narration.holonomy_claim()`.
+
+The adopted model (author's rulings through D-015, 2026-10-01): bulk 26D of
+signature (24,2), one time per 13D(12,1) shadow, 12 bridge pairs; internal
+space Y_7 = Joyce's resolution of T^7/(Z/2)^3 with (b_2, b_3) = (12, 43),
+pi_1 = 1, chi = 0; n_gen = b_2/4 = 3; chi_eff = 48 n (the K3 reading);
+chirality, moduli (Re(T) included), dark energy and flavour OPEN.
 
 SECTION: 1 (Introduction)
-
-v24.2 TOPOLOGICALLY ANCHORED: 125 constants from EDOF=3 seeds (116:1 compression).
 
 OUTPUTS:
     - None (narrative content only)
@@ -85,15 +107,142 @@ def _arithma_div(a, b):
 def _arithma_inv(a):
     return None if a is None else 1.0 / a
 import math as _math
+import html as _html_lib
+import re as _re
+
+from metaphysica.simulations.PM.geometry.geometry_narration import (
+    fragments as _fragments,
+    holonomy_claim as _holonomy_claim,
+    render as _render,
+)
+from metaphysica.simulations.PM.geometry.closed_geometry.provenance import (
+    PROVENANCE,
+    by_kind,
+)
+from metaphysica.simulations.PM.geometry.closed_geometry.references import (
+    REFERENCES as _REFERENCES,
+)
+
+
+# ---------------------------------------------------------------------------
+# Wording helpers. Seed numbers come from `render`, lists from `PROVENANCE`,
+# holonomy from `holonomy_claim()`; nothing the registry already states is
+# typed a second time here.
+# ---------------------------------------------------------------------------
+
+def _r(template: str) -> str:
+    """Fill `template` from the live geometry fragments, HTML register."""
+    return _render(template, "html")
+
+
+#: Typesetting for the registry's ASCII technical register. Applied in order
+#: after HTML-escaping. Replacements are Unicode characters, never named
+#: entities, so a later ASCII pattern (``\bpi\b``) cannot match inside an
+#: earlier replacement. A pattern that matches nothing changes nothing, so a
+#: new registry row is shown as written rather than mangled.
+_TYPESET = (
+    (r"\(Z/2\)\^3", "(ℤ/2)<sup>3</sup>"),
+    (r"\bT\^7/Gamma\b", "T<sup>7</sup>/Γ"),
+    (r"\bT\^(\d)", r"T<sup>\1</sup>"),
+    (r"\bpi_1\b", "π<sub>1</sub>"),
+    (r"\b([bh])_(\d)\b", r"\1<sub>\2</sub>"),
+    (r"\bY_7\b", "Y<sub>7</sub>"),
+    (r"\bchi_eff\b", "χ<sub>eff</sub>"),
+    (r"\bk_gimel\b", "k<sub>ℷ</sub>"),
+    (r"\bn_gen\b", "n<sub>gen</sub>"),
+    (r"\bchi(?=\(| =)", "χ"),
+    (r"\bG4\b", "G₄"),
+    (r"\bG2\b", "G₂"),
+    (r"\bE8\b", "E₈"),
+    (r"\bK4\b", "K₄"),
+    (r"\bA1\b", "A₁"),
+    (r"\bphi\b", "φ"),
+    (r"\bGamma\b", "Γ"),
+    (r"\bSp\(2,R\)", "Sp(2,ℝ)"),
+    (r"\bsqrt\(", "√("),
+    (r"\bpi\b", "π"),
+)
+
+
+def _typeset(text: str) -> str:
+    """A provenance row's technical text, typeset as HTML."""
+    out = text.replace(">=", "≥").replace("<=", "≤")
+    out = _html_lib.escape(out, quote=False)
+    for pattern, repl in _TYPESET:
+        out = _re.sub(pattern, repl, out)
+    return out
+
+
+def _short_cite(key: str) -> str:
+    """'Surname(s) year, arXiv-or-venue' for a verified registry reference."""
+    ref = _REFERENCES[key]
+    parts = [s.strip() for s in ref["authors"].split(",")]
+    names = [s for s in parts if s and "." not in s]
+    if len(names) > 2:
+        who = ", ".join(names[:-1]) + " &amp; " + names[-1]
+    else:
+        who = " &amp; ".join(names)
+    text = "%s %s" % (who, ref["year"])
+    if ref.get("arxiv"):
+        text += ", " + ref["arxiv"]
+    elif ref.get("journal"):
+        venue = " ".join(p for p in (ref["journal"], ref.get("volume")) if p)
+        text += ", " + venue
+        if ref.get("pages"):
+            text += ", " + ref["pages"]
+    elif ref.get("publisher"):
+        text += ", " + ref["publisher"]
+    return text
+
+
+def _provenance_items(kind: str) -> List[str]:
+    """One HTML list item per provenance row of `kind`.
+
+    STANDARD rows carry their verified sources (an unverified row says so,
+    as the full table in Section 2.4 does); FINDING, CORRECTION, OPEN and
+    RULING rows carry their evidence (a certificate id, a test or a decision
+    entry); POSTULATE rows are assumptions and carry nothing.
+    """
+    items = []
+    for p in by_kind(kind):
+        text = _typeset(p.technical)
+        if kind == "STANDARD":
+            if not p.verified:
+                source = "source to be verified"
+            elif p.references:
+                source = "; ".join(_short_cite(k) for k in p.references)
+            else:
+                source = ""
+        elif kind == "POSTULATE":
+            source = ""
+        else:
+            source = _html_lib.escape(p.evidence, quote=False)
+        items.append("%s <em>[%s]</em>" % (text, source) if source else text)
+    return items
+
+
+def _n_singular() -> int:
+    """The number of singular involutions on the live seed (= b_2/4)."""
+    return int(round(float(_fragments("plain")["n_gen"])))
+
+
+def _w0_live() -> str:
+    """-(b_3 - 1)/b_3 on the live seed: what w_0 = -1 + 1/b_3 gives there."""
+    from metaphysica.simulations.PM.geometry.b3_path import seed_values
+
+    b3, _b2 = seed_values()
+    return "&minus;%d/%d" % (b3 - 1, b3)
 
 
 class IntroductionV16(SimulationBase):
     """
-    Introduction section generator (v16.0).
+    Introduction section generator.
 
-    Provides narrative content for the introduction section,
-    including historical context, framework overview, and
-    key predictions summary.
+    Provides the narrative of Section 1: the history of unification, then the
+    model told top down -- standard physics, the selection of the internal
+    geometry, postulates, findings, corrections and open problems -- with
+    seed numbers rendered live and the six lists generated from the
+    provenance registry.
     """
 
     @property
@@ -104,7 +253,12 @@ class IntroductionV16(SimulationBase):
             version="24.2",
             domain="introduction",
             title="Introduction to Principia Metaphysica",
-            description="Narrative introduction to the PM v24.2 (24,2) Dual-Shadow framework - Topologically Anchored with EDOF=3 (1 geometric + 2 calibrations)",
+            description=(
+                "Narrative introduction: the history of unification, then the "
+                "model top down -- standard physics, how the internal geometry "
+                "is selected, postulates, findings, corrections and open "
+                "problems"
+            ),
             section_id="1",
             subsection_id=None
         )
@@ -156,17 +310,39 @@ class IntroductionV16(SimulationBase):
         Returns:
             Dictionary with title and explanation suitable for non-experts
         """
+        frag = _fragments("plain")
         return {
             "title": "What is Principia Metaphysica?",
             "summary": (
-                "Principia Metaphysica is a theory that attempts to explain fundamental physics "
-                "by starting from a simple idea: what if spacetime itself emerges from a more "
-                "fundamental quantum field?"
+                "Principia Metaphysica is a speculative model of fundamental "
+                "physics. It starts from established physics -- M-theory, "
+                "with seven extra dimensions curled into a special shape -- "
+                "and adds assumptions of its own about a larger space with "
+                "two time directions."
             ),
             "explanation": (
-                "Principia Metaphysica is a theory that attempts to explain fundamental physics "
-                "by starting from a simple idea: what if spacetime itself emerges from a more "
-                "fundamental quantum field?"
+                "The model tells its story from the top down. Established "
+                "physics comes first: seven extra dimensions curled into a "
+                "special shape leave a four-dimensional world whose forces "
+                "and fields are counted by the shape's holes. Next comes how "
+                "the shape is chosen. A symmetry of the model's basic 3-form "
+                "fixes how a seven-dimensional doughnut is folded, and "
+                "Joyce's recipe for smoothing the folds gives a family of "
+                "possible shapes. Only some of them have no loops that cannot "
+                "be shrunk away, and among those only one lets the model's "
+                "twelve links match the twelve smoothed creases one to one "
+                "(the model identifies each link with one crease, an "
+                "assumption it states openly). That shape has %s "
+                "two-dimensional holes and %s three-dimensional holes, and "
+                "counting the folds that leave creases gives %s generations "
+                "of particles. The model's own assumptions -- "
+                "a 26-dimensional space with two time directions, split into "
+                "two mirror halves joined by twelve links -- are labelled as "
+                "assumptions. Four problems remain open: why matter tells "
+                "left from right, what fixes the size of the extra "
+                "dimensions, what drives dark energy, and why particles have "
+                "the masses they do."
+                % (frag["b2"], frag["b3"], frag["n_gen"])
             ),
             "key_concepts": [
                 {
@@ -174,39 +350,55 @@ class IntroductionV16(SimulationBase):
                     "explanation": (
                         "Just as a 3D object casts a 2D shadow, our 4D spacetime "
                         "(3 space + 1 time) might be a 'shadow' of a higher-dimensional reality. "
-                        "PM proposes 26 dimensions that reduce down to the 4 we observe."
+                        "PM proposes 26 dimensions -- 24 of space and 2 of time, one time for "
+                        "each of two 13-dimensional 'shadows' -- that reduce down to the 4 we "
+                        "observe. This is the model's assumption, not established physics."
                     )
                 },
                 {
-                    "name": "Dual Shadows with Euclidean Bridge",
+                    "name": "Two Shadows Joined by Bridges",
                     "explanation": (
-                        "The theory uses a single two-time structure with a 2D Euclidean bridge "
-                        "connecting dual 'shadow' universes. This structure eliminates ghost "
-                        "modes and explains dark energy through 'breathing' pressure mismatch."
+                        "The two shadows are mirror halves of the 26-dimensional space, joined "
+                        "by twelve bridges; each shadow has its own time direction. Whether a "
+                        "second time direction is harmless -- free of the unphysical 'ghost' "
+                        "states it could bring -- has not been shown and is an open problem. "
+                        "The model does not yet explain dark energy."
                     )
                 },
                 {
                     "name": "Geometry to Physics",
                     "explanation": (
-                        "Instead of putting particles and forces into spacetime, PM derives "
-                        "spacetime geometry from a fundamental fermionic field (the 'Pneuma'). "
-                        "The shape of this geometry determines particle properties."
+                        "Instead of putting particles and forces into spacetime by hand, PM "
+                        "proposes that geometry comes from a fundamental field (the 'Pneuma') "
+                        "and that the shape of the seven hidden dimensions sets the particle "
+                        "content. The shape it uses is built by Joyce's method: a "
+                        "seven-dimensional doughnut folded by three mirror symmetries, with "
+                        "the creases smoothed out. Its hole counts are %s, and the number of "
+                        "folds that leave creases gives %s generations."
+                        % (frag["betti_pair"], frag["n_gen"])
                     )
                 },
                 {
                     "name": "Testable Predictions",
                     "explanation": (
-                        "Unlike some theories, PM makes specific predictions that can be tested: "
-                        "dark energy equation of state w₀ = -23/24 (consistent with DESI 2025 thawing constraints), "
-                        "neutrino mass sum (0.082 eV, within cosmological bounds), proton decay "
-                        "lifetime (future tests), and Kaluza-Klein modes at ~5 TeV (LHC searches)."
+                        "Some numbers are genuine tests and some are not. Several headline "
+                        "constants were tuned to data rather than predicted, and are labelled "
+                        "as calibrations. The dark-energy value w0 = -23/24 was fixed with an "
+                        "older, retired version of the shape, and it sits more than three "
+                        "standard deviations from the latest DESI result (w0 = -0.752 +/- "
+                        "0.057). Section 6 lists every comparison with its status; the "
+                        "predictions that remain genuinely untested, such as the proton decay "
+                        "rate and new particles at colliders, are listed there with their "
+                        "caveats."
                     )
                 }
             ],
             "why_it_matters": (
-                "The power of this approach is that it derives many measured values (like the "
-                "Yukawa hierarchy parameter ε ≈ 0.223, which matches the Cabibbo angle V<sub>us</sub> ≈ 0.2250 "
-                "to within 1%) from pure geometry, rather than treating them as arbitrary input parameters."
+                "The aim is to replace arbitrary input parameters with geometry. The "
+                "internal shape is now fixed by stated rules rather than by fitting, and "
+                "every claim is labelled -- established physics, the model's own "
+                "assumption, a computed finding, a correction, or an open problem -- so a "
+                "reader can see what is claimed and what is not."
             )
         }
 
@@ -217,57 +409,88 @@ class IntroductionV16(SimulationBase):
         Returns:
             Dictionary mapping principle names to descriptions
         """
+        n = _n_singular()
         foundations = {
             "metric_emergence": (
-                "Spacetime geometry emerges dynamically from fermionic spinor bilinears "
-                "within the Pneuma field. The Pneuma-Vielbein bridge construction establishes "
-                "a direct link between fundamental fermionic degrees of freedom and the emergent "
-                "metric, consistently yielding Lorentzian signature (-,+,+,+) in 4D without "
-                "requiring ad hoc assumptions about the background spacetime structure. This "
-                "avoids the traditional circular dependence on a pre-existing metric."
+                "POSTULATE: spacetime geometry is proposed to emerge from spinor "
+                "bilinears of a fundamental fermionic field, the Pneuma. The "
+                "Pneuma&ndash;vielbein construction is meant to give a Lorentzian "
+                "(&minus;,+,+,+) metric in 4D without assuming a background metric, "
+                "which would remove the usual circular dependence on a pre-existing "
+                "one. It is the model's assumption, not a result of standard physics."
             ),
-            "dimensional_hierarchy": (
-                "26D spacetime with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions warps into dual "
-                "13D(12,1) shadows via coordinate selection. Each shadow "
-                "compactifies on G₂ manifolds to 4D, preserving gauge symmetries "
-                "and generating observable physics."
+            "dimensional_hierarchy": _r(
+                "POSTULATE: the bulk is 26-dimensional with signature (24,2) = "
+                "(12,1) + (12,1) &mdash; 24 space directions and two times, one per "
+                "13D(12,1) shadow. The space directions pair into 12 bridges, and "
+                "each shadow takes one direction from every bridge plus its own "
+                "time. Each shadow reduces to 4D on the internal space {manifold}, "
+                "{structure} built as {construction}, with {betti_pair}. Ghost "
+                "control of the second time is an open problem."
             ),
-            "moduli_stabilization": (
-                "Racetrack superpotential with h<sup>1,1</sup>=4 Kähler moduli dynamically "
-                "fixes geometric parameters, deriving ε ≈ 0.2257 (racetrack variant of the Cabibbo angle; canonical e^{-3/2} = 0.22313) "
-                "without free parameters."
+            "moduli_stabilization": _r(
+                "OPEN: the moduli of {manifold}, Re(T) included, are not fixed at "
+                "leading order. The G<sub>4</sub>-flux potential is positive and runs "
+                "away (CG.6); the singular loci carry N = 4 super Yang&ndash;Mills, "
+                "so there is no gaugino condensate and no racetrack on {manifold} "
+                "(CG.5), and no member of the n = 3 line has a confining sector "
+                "(CG.10). Re(T) is an open modulus (author's ruling D-015). The "
+                "racetrack values used by earlier versions (&epsilon; &asymp; 0.2257, "
+                "Re(T) = 7.086) are {calibrated_at_24}."
             ),
             "thermal_time": (
-                "Physical time emerges from the modular flow associated with the KMS "
-                "(Kubo-Martin-Schwinger) thermal equilibrium state of the Pneuma field. "
-                "This identification resolves the 'frozen formalism' problem inherent in "
-                "canonical quantum gravity, where time is absent at the fundamental level. "
-                "By grounding temporal evolution in the thermodynamic properties of the "
-                "Pneuma field, the framework provides a natural link between quantum gravity "
-                "and the arrow of time, suggesting that time is an emergent property of the "
-                "system's thermal state rather than a fundamental background parameter."
+                "POSTULATE (the thermal-time hypothesis of Connes and Rovelli): "
+                "physical time is identified with the modular flow of the KMS "
+                "(Kubo&ndash;Martin&ndash;Schwinger) equilibrium state of the Pneuma "
+                "field. The model adopts this as its answer to the 'frozen "
+                "formalism' problem of canonical quantum gravity, where time is "
+                "absent at the fundamental level, and as a link between quantum "
+                "gravity and the arrow of time. It is a hypothesis about what time "
+                "is, not a derivation."
             ),
-            "gauge_unification": (
-                "SU(3) × SU(2) × U(1) gauge couplings unify at M<sub>GUT</sub> ~ 2×10¹⁶ GeV "
-                "via geometric running, with α<sub>GUT</sub>⁻¹ ≈ 42.7 determined by G₂ topology."
+            "gauge_unification": _r(
+                "SU(3) &times; SU(2) &times; U(1) couplings are run with the standard "
+                "renormalisation group toward a unification scale of order "
+                "10<sup>16</sup> GeV, where that running gives "
+                "&alpha;<sub>GUT</sub><sup>&minus;1</sup> &asymp; 42.7. This is standard "
+                "physics with a calibrated &alpha;<sub>GUT</sub> coefficient; it is "
+                "not an output of the topology of {manifold}."
             ),
-            "topological_generations": (
-                "Three generations: n<sub>gen</sub> = b<sub>2</sub>/4 = 3 counts the singular "
-                "involutions of the folding group Γ = (ℤ/2)³ (the ruled route), with no free "
-                "parameter. χ<sub>eff</sub> = 144 is an effective index, not the Euler "
-                "characteristic of Y₇ (which is 0); reading the count as χ<sub>eff</sub>/48 is "
-                "the unruled K3 reading of the same number. How the generations become "
-                "chiral is an open problem."
+            "topological_generations": _r(
+                "Three generations: {n_gen_route} of the folding group "
+                "&Gamma; = (&#8484;/2)<sup>3</sup> (the ruled route), with no free "
+                "parameter. The effective index is the K3 reading, "
+                "&chi;<sub>eff</sub> = 2 &Sigma; &chi;(K3) = 48n, one Kummer K3 per "
+                "singular involution counted once per shadow, so "
+                "&chi;<sub>eff</sub> = " + str(48 * n) + " at n = " + str(n)
+                + " (author's ruling D-015). It is not the Euler characteristic of "
+                "{manifold} ({chi_y7}), and n<sub>gen</sub> = &chi;<sub>eff</sub>/48 = n "
+                "restates b<sub>2</sub>/4 rather than deriving it again. How the "
+                "generations become chiral is an open problem."
             ),
-            "yukawa_hierarchy": (
-                "Fermion mass hierarchy emerges from exponential wavefunction overlap "
-                "suppression on G₂ cycles, explaining m<sub>t</sub>/m<sub>e</sub> ~ 10⁵ naturally."
+            "yukawa_hierarchy": _r(
+                "OPEN: flavour needs a chiral sector, which {manifold} does not "
+                "provide &mdash; its singular loci are disjoint, so it has no "
+                "codimension-7 points. The model's Yukawa textures (exponential "
+                "wavefunction-overlap suppression, with &epsilon; = e<sup>&minus;&lambda;</sup> "
+                "and &lambda; = 1.5 an ansatz following Froggatt&ndash;Nielsen) are "
+                "model constructs or fits, not derivations of the fermion mass "
+                "hierarchy."
             ),
-            "cosmological_framework": (
-                "Dark energy EoS w₀ = -1 + 1/b₃ = -23/24 from dimensional reduction, dark matter "
-                "from mirror sector with Ω<sub>DM</sub>/Ω<sub>b</sub> ~ 5.4, both matching observations "
-                "without fine-tuning."
-            )
+            "cosmological_framework": _r(
+                "OPEN: dark energy is not explained. The leading-order flux "
+                "potential cannot accelerate the universe, since "
+                "|&nabla;V|/V &ge; 5&radic;(2/7) &asymp; 2.673 &gt; &radic;2 (CG.11). "
+                "The value w<sub>0</sub> = &minus;23/24 is frozen at {off_path_seed}, "
+                "and w<sub>0</sub> = &minus;1 + 1/b<sub>3</sub> has no derivation; both "
+                "&minus;23/24 and the adopted-seed value "
+            ) + _w0_live() + _r(
+                " lie more than 3&sigma; from the DESI DR2 headline "
+                "w<sub>0</sub> = &minus;0.752 &plusmn; 0.057. The mirror-sector ratio "
+                "&Omega;<sub>DM</sub>/&Omega;<sub>b</sub> &asymp; 5.4 rests on a mirror "
+                "temperature ratio calibrated to the Planck abundance, so it is a "
+                "calibration, not a prediction."
+            ),
         }
 
         assert all(v.strip() for v in foundations.values()), "All foundations must be non-empty"
@@ -278,6 +501,13 @@ class IntroductionV16(SimulationBase):
     def get_section_content(self) -> Optional[SectionContent]:
         """
         Return section content for Section 1: Introduction.
+
+        The history of unification (1.1, 1.2), then the model top down
+        (1.3.1-1.3.6, in the provenance registry's order), then the two
+        postulates that need room (1.4, 1.5), then related work and the
+        outline (1.6). Seed numbers are rendered live; the six lists are
+        generated from PROVENANCE; holonomy sentences follow the real-form
+        fork.
 
         Returns:
             SectionContent instance with introduction narrative
@@ -290,41 +520,72 @@ class IntroductionV16(SimulationBase):
         assert foundations, "get_foundations() returned empty content"
         assert len(foundations) >= 6, "get_foundations() must return at least 6 principles"
 
+        n = _n_singular()
+        chi_eff_total = 48 * n
+        compact = bool(_holonomy_claim()["may_claim_g2_holonomy"])
+
+        if compact:
+            holonomy_reading = (
+                "For a compact torsion-free G₂-structure, a finite "
+                "fundamental group is equivalent to holonomy exactly G₂ "
+                "(Joyce, Prop. 1.1.1). With the compact real form of &phi; in "
+                "force, the n = 3 line is therefore the top of the holonomy "
+                "ladder &mdash; restricted holonomy trivial, SU(2), SU(3) and "
+                "G₂ for n = 0, 1, 2, 3 &mdash; and its members are the only "
+                "ones in the family with holonomy exactly G₂."
+            )
+        else:
+            holonomy_reading = (
+                "For a compact torsion-free G₂-structure, a finite "
+                "fundamental group is equivalent to holonomy exactly G₂ "
+                "(Joyce, Prop. 1.1.1), which makes the n = 3 line the top of "
+                "the holonomy ladder on the compact real form. The real-form "
+                "branch the code currently runs is the split form G₂*, "
+                "whose induced metric has signature (4,3) and supports no "
+                "holonomy statement; until the compact form is switched in, "
+                "only the topological half &mdash; &pi;<sub>1</sub> finite "
+                "exactly at n = 3 &mdash; is claimed here, and the selection "
+                "below uses only that half."
+            )
+
         content_blocks = [
-            # Lead paragraph (abstract) - v24.2 Dual-Shadow Model
+            # ================================================================
+            # Lead paragraph
+            # ================================================================
             ContentBlock(
                 type="paragraph",
-                content=(
-                    'This paper presents <strong>Principia Metaphysica <span class="pm-value" data-pm-value="framework.version_label">v24.2</span></strong>, a <strong>Topologically Anchored Framework</strong> '
-                    "in which 125 fundamental physical constants emerge as spectral residues of a single compact <strong>G₂ manifold (TCS #187)</strong> "
-                    "under Ricci flow from <strong>EDOF=3</strong> (EDOF=3: 1 geometric seed b₃ + 2 calibrations), achieving <strong>116:1 compression ratio</strong>. "
-                    "The bulk manifold <strong>M<sup>26</sup>(24,2)</strong> decomposes as: "
-                    "<em>24</em> G₂ physics dimensions (12×(2,0) bridge pairs creating dual 13D shadows), "
-                    "<em>1</em> two-time structurelike fiber T¹, and "
-                    "<em>2</em> <strong>shadow-time directions</strong> S<sup>(2,0)</sup> (an architecturally separate Euclidean sector "
-                    "providing global cross-shadow objective reduction averaging). "
-                    "The framework splits into <strong>dual 13D(12,1) shadows</strong> connected by <strong>12×(2,0) Euclidean "
-                    "bridges</strong>, with each shadow compactifying via G₂ holonomy through "
-                    "11D → 7D → 4D descent. The internal <strong>V₇ manifold</strong> with <strong>b₃ = "
-                    '<span class="pm-value" data-pm-value="topology.elder_kads">24</span></strong> and '
-                    '<strong>χ = <span class="pm-value" data-pm-value="topology.mephorash_chi">144</span></strong> '
-                    "provides all structure: fermion generations (χ<sub>eff</sub>/48 = 3), "
-                    "mixing angles, mass hierarchies, and cosmological parameters. The framework "
-                    "does <strong>not</strong> fit the data globally: over the 65 scoring rows of the "
-                    "validation registry the computed statistic is <strong>χ² = 126,748.86 "
-                    "(reduced 1,950), p = 0, POOR_FIT</strong>, and χ² = 5,790.62 over the 60 rows "
-                    "left after excluding five FALSIFIED candidates. An earlier &lsquo;0.48σ global "
-                    "alignment&rsquo; headline was a hand-carried literal and is withdrawn. Individual "
-                    "residues do land well — dark energy <strong>w₀ = -23/24</strong> "
-                    'consistent with DESI 2025 thawing dark energy constraints and <strong>H₀ = '
-                    '<span class="pm-value" data-pm-value="cosmology.H0_local">71.55</span> km/s/Mpc</strong> within '
-                    "1.4σ of SH0ES 2022. New results: thermal time coupling "
-                    "<strong>α<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 26/10</strong> "
-                    "(DERIVED, zero free parameters), CSS <strong>[[24,12,8]]</strong> quantum code "
-                    "from self-dual Golay (protects ≤3 moduli errors), and breathing dark energy "
-                    "ρ<sub>breath</sub> from 12-pair OR aggregation. All derivation chains are recorded in "
-                    '<span class="pm-value" data-pm-value="statistics.certificates_total">72</span>+ '
-                    "reproducibility certificates."
+                content=_r(
+                    "This paper presents <strong>Principia Metaphysica</strong>, a "
+                    "speculative model built on established physics &mdash; "
+                    "M-theory compactified on a compact seven-dimensional internal "
+                    "space &mdash; together with postulates of its own: a "
+                    "26-dimensional bulk of signature (24,2), whose 24 space "
+                    "directions pair into twelve bridges and whose two times belong "
+                    "one to each of two 13-dimensional shadows of signature (12,1). "
+                    "The internal space is {manifold}, {construction}: {structure}. "
+                    "Its Betti numbers are {betti_pair}; its fundamental group is "
+                    "trivial and {chi_y7}. It is selected, not fitted. The "
+                    "model&rsquo;s 3-form &phi; fixes the folding group &Gamma; = "
+                    "(&#8484;/2)<sup>3</sup>; Joyce&rsquo;s construction from &Gamma; "
+                    "reaches a family of 28 Betti pairs; a finite fundamental group "
+                    "occurs only on the line where all three folds are singular; and "
+                    "on that line the match between the 12 bridges and the {b2} "
+                    "resolved singular components picks out {manifold} without "
+                    "reference to data "
+                    "(&sect;1.3.2). Three generations then follow as {n_gen_route} "
+                    "&mdash; a count that the observed three generations test rather "
+                    "than choose. The introduction tells this story top down: the "
+                    "standard physics the model uses, how the geometry is selected, "
+                    "the model&rsquo;s postulates, what its computations establish "
+                    "(the certificate CG.1&ndash;CG.11 of Section 2.4), what has been "
+                    "corrected, and what remains open. Four physics problems are "
+                    "open, and the geometry avoids none of them: chirality, moduli "
+                    "stabilisation (Re(T) included), dark energy and flavour. The "
+                    "model does <strong>not</strong> fit the data globally: the "
+                    "validation registry&rsquo;s computed verdict is "
+                    "<strong>POOR_FIT</strong>, earlier global-alignment headlines "
+                    "are withdrawn, and each comparison with experiment is reported "
+                    "in its own row."
                 ),
                 label="lead"
             ),
@@ -332,28 +593,45 @@ class IntroductionV16(SimulationBase):
             # Status & Caveats note
             ContentBlock(
                 type="note",
-                content=(
+                content=_r(
                     "<h4>Status &amp; Caveats</h4>"
-                    "<p>Principia Metaphysica is a <strong>speculative theoretical framework</strong> "
-                    "in early development. While it produces geometric expressions for many physical "
-                    "constants, several important caveats apply:</p>"
+                    "<p>Principia Metaphysica is a <strong>speculative theoretical "
+                    "framework</strong> in early development. Its claims carry "
+                    "labels, and the labels matter:</p>"
                     "<ul>"
-                    "<li><strong>No peer review:</strong> This work has not yet been reviewed by "
-                    "the broader physics community.</li>"
-                    "<li><strong>EDOF=3 (Minimal calibration inputs):</strong> Three quantities (VEV coefficient, "
-                    "\u03b1<sub>GUT</sub> coefficient, Re(T) from Higgs mass) provide scale anchoring. "
-                    "Two PMNS parameters (\u03b8\u2081\u2083, \u03b4<sub>CP</sub>) are fitted to NuFIT 6.0 pending explicit Yukawa calculation.</li>"
-                    "<li><strong>Predictions vs. postdictions:</strong> Many &lsquo;predictions&rsquo; "
-                    "are comparisons with already-measured values (postdictions). Genuine predictions "
-                    "(proton decay rate, KK graviton mass, axion properties) remain untested.</li>"
-                    "<li><strong>Consciousness appendix:</strong> The Orch-OR/consciousness "
-                    "appendix is an interpretive speculation, not a core claim of the framework.</li>"
+                    "<li><strong>No peer review:</strong> this work has not been "
+                    "reviewed by the broader physics community.</li>"
+                    "<li><strong>Standard physics versus the model:</strong> results "
+                    "labelled STANDARD are established physics with cited sources; "
+                    "POSTULATES are the model&rsquo;s own assumptions; FINDINGS are "
+                    "the model&rsquo;s computations, each with a test (Section "
+                    "2.4).</li>"
+                    "<li><strong>Calibrations:</strong> the constants built on "
+                    "k<sub>&#8503;</sub> = b<sub>3</sub>/2 + 1/&pi; (&alpha;<sup>&minus;1</sup>, "
+                    "the Higgs vev, sin<sup>2</sup>&theta;<sub>W</sub>, "
+                    "T<sub>CMB</sub>, &mu;) are fits made at {off_path_seed}; they are "
+                    "labelled CALIBRATED and their values are unchanged. The "
+                    "racetrack values (&epsilon; &asymp; 0.2257, Re(T) = 7.086) are "
+                    "{calibrated_at_24}; no racetrack exists on {manifold}. The VEV "
+                    "and &alpha;<sub>GUT</sub> coefficients are calibration inputs, "
+                    "and two PMNS parameters (&theta;<sub>13</sub>, "
+                    "&delta;<sub>CP</sub>) are fitted to NuFIT 6.0 pending an explicit "
+                    "Yukawa calculation.</li>"
+                    "<li><strong>Predictions versus postdictions:</strong> most "
+                    "comparisons are with values measured before the formula was "
+                    "written. Genuine predictions (proton decay rate, KK graviton "
+                    "mass, axion properties) remain untested.</li>"
+                    "<li><strong>Consciousness appendix:</strong> the "
+                    "Orch-OR/consciousness appendix is an interpretive speculation, "
+                    "not a core claim of the framework.</li>"
                     "</ul>"
                 ),
                 label="status-caveats"
             ),
 
+            # ================================================================
             # 1.1 The Quest for Unification
+            # ================================================================
             ContentBlock(
                 type="heading",
                 content="The Quest for Unification",
@@ -431,7 +709,9 @@ class IntroductionV16(SimulationBase):
                 label="gut-models"
             ),
 
+            # ================================================================
             # 1.2 Geometrization of Forces
+            # ================================================================
             ContentBlock(
                 type="heading",
                 content="Geometrization of Forces",
@@ -495,18 +775,329 @@ class IntroductionV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "Modern realizations of this program include supergravity compactifications, "
-                    "heterotic string theory on Calabi-Yau manifolds, and M-theory on G₂ holonomy "
+                    "heterotic string theory on Calabi-Yau manifolds, and M-theory on G₂ "
                     "manifolds. Each approach provides a rich structure connecting extra-dimensional "
-                    "geometry to four-dimensional particle physics."
+                    "geometry to four-dimensional particle physics. In M-theory on a compact G₂ "
+                    "manifold the mechanism differs from the classical one: a compact Ricci-flat "
+                    "manifold whose holonomy is all of G₂ has no continuous isometries, so the "
+                    "abelian gauge fields come from its harmonic 2-forms (b<sub>2</sub> of them) "
+                    "and non-abelian ones from its singularities. That is the setting this model "
+                    "starts from."
                 )
             ),
 
-            # 1.3 A Fermionic Foundation for Geometry
+            # ================================================================
+            # 1.3 The Model, Top Down
+            # ================================================================
             ContentBlock(
                 type="heading",
-                content="A Fermionic Foundation for Geometry",
+                content="The Model, Top Down",
                 level=2,
                 label="1.3"
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "This section is the paper&rsquo;s map. It tells the model&rsquo;s story "
+                    "from the top down and labels every claim by its kind: "
+                    "<strong>STANDARD</strong> (established physics, cited to its source), "
+                    "<strong>POSTULATE</strong> (an assumption the model makes), "
+                    "<strong>FINDING</strong> (a result of the model&rsquo;s own computation, "
+                    "with its test), <strong>CORRECTION</strong> (an earlier claim that was "
+                    "wrong, and what replaced it), <strong>OPEN</strong> (a problem not yet "
+                    "solved) and <strong>RULING</strong> (a decision that is the "
+                    "author&rsquo;s). The lists below are generated from the same provenance "
+                    "registry that Section 2.4 renders in full, with every source and test, so "
+                    "the two cannot drift apart."
+                ),
+                label="top-down-map"
+            ),
+
+            # 1.3.1 Standard physics
+            ContentBlock(
+                type="heading",
+                content="1.3.1 Standard Physics the Model Uses",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The internal geometry rests on established mathematics and physics, which "
+                    "the model uses without modification. None of the following is a claim of "
+                    "the model:"
+                )
+            ),
+            ContentBlock(
+                type="list",
+                items=_provenance_items("STANDARD"),
+                label="provenance-standard"
+            ),
+
+            # 1.3.2 Selection
+            ContentBlock(
+                type="heading",
+                content="1.3.2 How the Geometry Is Selected, and Why",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "The selection runs downward from the model&rsquo;s 3-form, and each "
+                    "step names its evidence in Section 2.4. The 3-form &phi; on "
+                    "&#8477;<sup>7</sup> is read from the octonion product, and the "
+                    "diagonal sign changes that preserve it &mdash; the same on either "
+                    "real form of &phi; &mdash; form the group &Gamma; = "
+                    "(&#8484;/2)<sup>3</sup>, generated by three involutions. Joyce&rsquo;s "
+                    "construction divides the flat torus T<sup>7</sup> by &Gamma; and "
+                    "replaces each singular three-torus with an Eguchi&ndash;Hanson space. "
+                    "With pairwise-disjoint singular sets, resolved in every admissible "
+                    "way, it reaches 28 literature-checked Betti pairs "
+                    "(b<sub>2</sub>, b<sub>3</sub>), on the lines b<sub>2</sub> + "
+                    "b<sub>3</sub> = 7 + 16n, where n = 0, 1, 2, 3 counts the singular "
+                    "involutions (CG.7). Earlier versions of the model used "
+                    "{off_path_seed}; it is not among them, so Joyce&rsquo;s construction "
+                    "from &Gamma; cannot produce it."
+                )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The fundamental group then divides the family. By Armstrong&rsquo;s "
+                    "theorem, &pi;<sub>1</sub> of the quotient is the orbifold group modulo "
+                    "the subgroup generated by elements with fixed points. It is finite "
+                    "exactly when all three generating involutions are singular &mdash; the "
+                    "n = 3 line b<sub>2</sub> + b<sub>3</sub> = 55 &mdash; and trivial there "
+                    "(CG.4). " + holonomy_reading
+                )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "On that line the model&rsquo;s own structure singles out one member. "
+                    "Its twelve bridges are the directed edges of K<sub>4</sub> on a Fano "
+                    "arc of four faces, grouped into three E<sub>8</sub> blocks. The three "
+                    "singular involutions fix such an arc, and each E<sub>8</sub> block "
+                    "contains exactly one side of their triangle, so blocks and involutions "
+                    "match one to one, and the twelve bridges match the twelve resolved "
+                    "components as a single 3 &times; 4 structure. That structure exists "
+                    "only on the all-plain members of the family, and on the n = 3 line the "
+                    "all-plain member is (b<sub>2</sub>, b<sub>3</sub>) = (12, 43) (CG.8). "
+                    "Working assumption WA-1 identifies each bridge with one resolved "
+                    "A<sub>1</sub> component, carrying one U(1); the author adopted it "
+                    "(ruling D-015), so the correspondence selects the member without "
+                    "data. Its consequence to test: the {b2} U(1) gauge couplings come in "
+                    "three quartets, one per E<sub>8</sub> block."
+                )
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "The internal space is that member: {manifold} = {construction}, "
+                    "{structure}, with {betti_pair}, Betti sequence {betti_sequence} and "
+                    "{b3_split}, &pi;<sub>1</sub> = 1 and {chi_y7} (CG.1&ndash;CG.4). Its "
+                    "singular set is {b2} disjoint flat three-tori, each with "
+                    "b<sub>1</sub> = 3; on the smooth manifold they carry "
+                    "U(1)<sup>{b2}</sup> (SU(2)<sup>{b2}</sup> at the orbifold point), with "
+                    "the local content of N = 4 super Yang&ndash;Mills (CG.3, CG.5). Three "
+                    "generations follow from the selection rather than choosing it: "
+                    "{n_gen_route}. Each singular involution fixes one &Gamma;-orbit of "
+                    "four three-tori, so b<sub>2</sub>/4 counts the singular involutions "
+                    "(CG.3). Earlier versions picked the seed by requiring three "
+                    "generations, which is selection by data; with WA-1 adopted, the seed "
+                    "is selected without data and three generations become an output "
+                    "tested against the three observed."
+                )
+            ),
+            ContentBlock(
+                type="equation",
+                content=_r(
+                    "&phi; &rarr; &Gamma; = (&#8484;/2)<sup>3</sup> &rarr; Joyce&rsquo;s "
+                    "family (28 pairs) &rarr; n = 3: b<sub>2</sub> + b<sub>3</sub> = 55 "
+                    "(&pi;<sub>1</sub> finite) &rarr; WA-1: {betti_pair} &rarr; "
+                    "n<sub>gen</sub> = b<sub>2</sub>/4 = {n_gen}"
+                ),
+                label="selection-chain"
+            ),
+            ContentBlock(
+                type="note",
+                content=(
+                    "<h4>The author&rsquo;s rulings behind the selection</h4>"
+                    "<p>The author&rsquo;s rulings of 2026-10-01 (D-015) settle the choices "
+                    "the selection depends on. &phi; takes the compact real form, the one "
+                    "the framework&rsquo;s own octonion product gives; the split form stays a "
+                    "switchable path, and no published number depends on the choice (D-003). "
+                    "WA-1 is adopted. &chi;<sub>eff</sub> is the K3 reading, and Re(T) is an "
+                    "open modulus. Rulings recorded in the provenance registry:</p>"
+                    "<ul>"
+                    + "".join("<li>%s</li>" % item for item in _provenance_items("RULING"))
+                    + "</ul>"
+                ),
+                label="selection-rulings"
+            ),
+
+            # 1.3.3 Postulates
+            ContentBlock(
+                type="heading",
+                content="1.3.3 The Model's Postulates",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "Beyond standard physics, the model assumes the following. Each is "
+                    "labelled a postulate wherever it is stated:"
+                )
+            ),
+            ContentBlock(
+                type="list",
+                items=_provenance_items("POSTULATE"),
+                label="provenance-postulates"
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "Two further proposals are developed in &sect;1.4 and &sect;1.5 and "
+                    "labelled there: that geometry emerges from a fundamental spinor field, "
+                    "the Pneuma, and that the normed division algebras motivate thirteen "
+                    "dimensions per shadow. Whether the second time direction is free of "
+                    "ghosts is an open problem (&sect;1.3.6); the appeals to Bars&rsquo; "
+                    "Sp(2,&#8477;) theorem and to 26 as the bosonic critical dimension were "
+                    "withdrawn in the signature ruling of 2026-08-31."
+                )
+            ),
+
+            # 1.3.4 Findings
+            ContentBlock(
+                type="heading",
+                content="1.3.4 What the Model's Computations Establish",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "Section 2.4 publishes the closed geometry as a certificate of theorems "
+                    "CG.1&ndash;CG.11, each rendered from a live computation and paired with "
+                    "the test that fails if it is false and the observation that would "
+                    "refute it. In order: the Betti sequence {betti_sequence} of {manifold} "
+                    "(CG.1); {chi_y7} (CG.2); a singular set of {b2} disjoint flat "
+                    "three-tori, each with b<sub>1</sub> = 3 (CG.3); &pi;<sub>1</sub> = 1, "
+                    "with &pi;<sub>1</sub> finite only when all three generating involutions "
+                    "are singular (CG.4); the gauge content &mdash; U(1)<sup>{b2}</sup> on "
+                    "the resolved manifold and local N = 4 super Yang&ndash;Mills at the "
+                    "orbifold point, which neither confines nor forms a gaugino condensate "
+                    "(CG.5); a leading-order G<sub>4</sub>-flux potential that runs away and "
+                    "fixes no modulus (CG.6); the reachable set of Joyce&rsquo;s construction "
+                    "(CG.7); the bridge&ndash;component correspondence (CG.8); one Kummer K3 "
+                    "surface per singular involution (CG.9); the absence of any confining "
+                    "sector on the n = 3 line (CG.10); and a flux potential too steep to "
+                    "accelerate the universe (CG.11). The registry records the findings as "
+                    "follows:"
+                )
+            ),
+            ContentBlock(
+                type="list",
+                items=_provenance_items("FINDING"),
+                label="provenance-findings"
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "Read through CG.9, the effective index is the K3 reading, adopted by "
+                    "the author&rsquo;s ruling D-015: &chi;<sub>eff</sub> = 2 &Sigma; "
+                    "&chi;(K3) = 48n, the Kummer K3 surfaces transverse to the n singular "
+                    "involutions, counted once per shadow, so &chi;<sub>eff</sub> = "
+                    + str(chi_eff_total) + " at n = " + str(n) + ". It is not the Euler "
+                    "characteristic of {manifold}, which is 0. And n<sub>gen</sub> = "
+                    "&chi;<sub>eff</sub>/48 = n restates b<sub>2</sub>/4: it is neither a "
+                    "second derivation of the generation count nor an index theorem for "
+                    "chirality."
+                )
+            ),
+
+            # 1.3.5 Corrections
+            ContentBlock(
+                type="heading",
+                content="1.3.5 What Was Corrected",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "Several earlier claims of the model were wrong. Each is corrected "
+                    "below; the earlier wording survives only as labelled history, and the "
+                    "dead ends stay runnable as switchable paths:"
+                )
+            ),
+            ContentBlock(
+                type="list",
+                items=_provenance_items("CORRECTION"),
+                label="provenance-corrections"
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The real-form correction is adopted by the author&rsquo;s ruling of "
+                    "2026-10-01 (D-015), with the split form kept as a switchable path. The "
+                    "combinatorial results of &sect;1.3.2 &mdash; &Gamma;, the family, the "
+                    "Betti numbers, &pi;<sub>1</sub> and &chi; &mdash; come out the same on "
+                    "both forms. What the compact form supplies is the geometry behind "
+                    "them: the Eguchi&ndash;Hanson resolution that realises the Betti "
+                    "numbers needs a Riemannian transverse space, and holonomy and "
+                    "Joyce&rsquo;s existence theorem are statements about the compact form "
+                    "(D-003)."
+                )
+            ),
+
+            # 1.3.6 Open problems
+            ContentBlock(
+                type="heading",
+                content="1.3.6 What Is Open",
+                level=3
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The geometry avoids none of the four physics problems &mdash; "
+                    "chirality, moduli, dark energy and flavour (D-011) &mdash; and two of "
+                    "them are now no-go statements inside the construction. Each open "
+                    "problem is stated with its status:"
+                )
+            ),
+            ContentBlock(
+                type="list",
+                items=_provenance_items("OPEN"),
+                label="provenance-open"
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=_r(
+                    "What earlier versions presented as solutions is labelled accordingly. "
+                    "No racetrack exists on {manifold}: its singular loci carry N = 4 super "
+                    "Yang&ndash;Mills, and no member of the n = 3 line has a confining "
+                    "sector (CG.5, CG.10). The racetrack values &epsilon; &asymp; 0.2257 "
+                    "and Re(T) = 7.086 are {calibrated_at_24}, values computed with the "
+                    "calibrated Re(T) are CALIBRATED, and Re(T) itself is an open modulus "
+                    "(D-015). The leading-order flux potential has |&nabla;V|/V &ge; "
+                    "5&radic;(2/7) &asymp; 2.673 &gt; &radic;2, so it cannot drive "
+                    "accelerated expansion (CG.11). The dark-energy value w<sub>0</sub> = "
+                    "&minus;23/24 is frozen at {off_path_seed}, and w<sub>0</sub> = "
+                    "&minus;1 + 1/b<sub>3</sub> has no derivation; both &minus;23/24 and "
+                    "the adopted-seed value "
+                ) + _w0_live() + (
+                    " lie more than 3&sigma; from the DESI DR2 headline w<sub>0</sub> = "
+                    "&minus;0.752 &plusmn; 0.057 (arXiv:2503.14738)."
+                ),
+                label="open-status"
+            ),
+
+            # ================================================================
+            # 1.4 The Pneuma Field and the Two Shadows (postulates)
+            # ================================================================
+            ContentBlock(
+                type="heading",
+                content="The Pneuma Field and the Two Shadows",
+                level=2,
+                label="1.4"
             ),
             ContentBlock(
                 type="note",
@@ -525,48 +1116,54 @@ class IntroductionV16(SimulationBase):
                     "<li><strong>The Origin Problem:</strong> Why should the internal manifold K exist "
                     "at all? What physical principle selects its topology and geometry?</li>"
                     "</ul>"
-                    "<p>The <strong>Pneuma approach</strong> addresses all three problems simultaneously "
-                    "by proposing that the internal geometry is not a static background but emerges "
-                    "dynamically from a fundamental fermionic field. The condensate structure of this "
-                    "field naturally generates chirality, stabilizes moduli, and determines the geometry "
-                    "from first principles.</p>"
+                    "<p>The <strong>Pneuma postulate</strong> is the model&rsquo;s proposed answer to "
+                    "the third: the internal geometry is meant to emerge from condensates of a "
+                    "fundamental fermionic field rather than sit as a fixed background. That emergence "
+                    "is assumed, not computed; the internal space actually used is the one selected in "
+                    "&sect;1.3.2. The first two obstacles are open problems of the adopted geometry "
+                    "(&sect;1.3.6).</p>"
                 ),
                 label="why-pneuma"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This framework introduces a conceptual innovation: rather than postulating the "
-                    "internal geometry as a fundamental given, we propose that it emerges from the "
-                    "dynamics of a fundamental fermionic field, the <strong>Pneuma field</strong> "
-                    "Ψ<sub>P</sub>."
+                    "The model postulates that the internal geometry is not a fundamental given "
+                    "but emerges from the dynamics of a fundamental fermionic field, the "
+                    "<strong>Pneuma field</strong> Ψ<sub>P</sub>."
                 )
             ),
             ContentBlock(
                 type="note",
-                content=(
-                    "<h4>The Pneuma Postulate (v24.2 Dual-Shadow Framework)</h4>"
-                    "<p>In the full 26D theory with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions, the Pneuma field Ψ<sub>P</sub> "
-                    "is a <strong>4096-component spinor</strong> of Cl(24,2). Bridge pairs WARP to create "
-                    "<strong>dual 13D(12,1) shadows</strong> via coordinate selection (each: 12 spatial + 1 time (its own)), "
-                    "with positive-definite metric ds² = dy₁² + dy₂². Each shadow contains an effective "
-                    "64-component spinor. The internal manifold is a <strong>7D TCS (Twisted Connected "
-                    "Sum) G₂ manifold</strong> K<sub>Pneuma</sub> with <strong>h<sup>1,1</sup>=4 Kähler "
-                    "moduli sectors</strong>—not a static background but a dynamic geometric structure "
-                    "formed from Pneuma condensates. Racetrack moduli stabilization across these four "
-                    "sectors dynamically determines the vacuum structure and derives ε ≈ 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313).</p>"
+                content=_r(
+                    "<h4>The Pneuma Postulate</h4>"
+                    "<p>In the 26D bulk of signature (24,2) = (12,1) + (12,1) &mdash; 24 "
+                    "space directions and two times, one per shadow &mdash; the Pneuma field "
+                    "&Psi;<sub>P</sub> is a <strong>4096-component Weyl spinor</strong> of "
+                    "Cl(24,2). The 24 space directions pair into twelve bridges, and each "
+                    "<strong>13D(12,1) shadow</strong> takes one direction from every bridge "
+                    "plus its own time (12 space + 1 time), carrying an effective "
+                    "64-component spinor. The internal space of each shadow is {manifold}, "
+                    "{construction}; that it is formed from Pneuma condensates is the "
+                    "postulate. Earlier versions described a twisted-connected-sum manifold "
+                    "with four K&auml;hler-moduli sectors and a racetrack that fixed "
+                    "&epsilon; &asymp; 0.2257; that construction is off-path, no racetrack "
+                    "exists on {manifold}, and the racetrack values are "
+                    "{calibrated_at_24}.</p>"
                 ),
                 label="pneuma-postulate"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In the v24.2 framework, the full 26D bulk has signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions, eliminating "
-                    "ghost modes and closed timelike curves. The Pneuma field Ψ<sub>P</sub> transforms under "
-                    "Spin(24,2). The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection, each "
-                    "bridge with OR reduction operator R<sub>⊥</sub> providing Möbius double-cover (R<sub>⊥</sub>² = −I). "
-                    "Each shadow has Spin(12,1) symmetry with a 64-component spinor representation. Bilinear "
-                    "condensates of this field generate the geometric tensors that define the internal manifold structure."
+                    "The Pneuma field Ψ<sub>P</sub> transforms under Spin(24,2). On each of the "
+                    "twelve bridge pairs the OR reduction operator R<sub>⊥</sub> acts as a "
+                    "Möbius double cover (R<sub>⊥</sub>² = −I), and each shadow has Spin(12,1) "
+                    "symmetry with a 64-component spinor representation. Bilinear condensates of "
+                    "the field are proposed to generate the geometric tensors that define the "
+                    "internal manifold. Whether the second time direction is free of ghost modes "
+                    "and closed timelike curves has not been shown; it is an open problem "
+                    "(&sect;1.3.6)."
                 )
             ),
             ContentBlock(
@@ -581,9 +1178,9 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This approach addresses a fundamental problem in higher-dimensional theories: the "
-                    "<strong>chirality problem</strong>. In standard Kaluza-Klein compactifications, "
-                    "fermions in higher dimensions are necessarily non-chiral (vector-like), yet the "
+                    "Any higher-dimensional theory must also face the <strong>chirality "
+                    "problem</strong>. In standard Kaluza-Klein compactifications, fermions in "
+                    "higher dimensions are necessarily non-chiral (vector-like), yet the "
                     "Standard Model fermions are manifestly chiral."
                 )
             ),
@@ -617,18 +1214,23 @@ class IntroductionV16(SimulationBase):
                     "<strong>Orbifold projections:</strong> Discrete identifications removing half the degrees of freedom",
                     "<strong>Magnetic flux backgrounds:</strong> Index theorems yield chiral zero modes",
                     "<strong>Domain wall localization:</strong> Chiral modes bound to topological defects",
-                    "<strong>Wilson line breaking:</strong> Gauge holonomy generates chiral spectrum"
+                    "<strong>Wilson line breaking:</strong> Gauge holonomy generates chiral spectrum",
+                    "<strong>Conical singularities:</strong> In M-theory on G₂ manifolds, chiral fermions "
+                    "live at codimension-7 conical points (Acharya and Witten, 2001)"
                 ],
                 label="chirality-mechanisms"
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
-                    "The Pneuma mechanism provides a novel solution: the fundamental Ψ<sub>P</sub> is "
-                    "non-chiral in 13D, but its condensate structure spontaneously selects a preferred "
-                    "orientation in the internal space, generating effective chirality in the 4D reduction. "
-                    "The mathematical framework for this involves the representation theory of Spin(12,1) "
-                    "and its decomposition under the 4D Lorentz group times the internal symmetry group."
+                content=_r(
+                    "The Pneuma proposal is that &Psi;<sub>P</sub> is non-chiral in 13D but "
+                    "that its condensate selects an orientation in the internal space, giving "
+                    "effective chirality in the 4D reduction. That is a proposal, not a "
+                    "result. {manifold} has no chiral matter of its own: its singular loci are "
+                    "disjoint three-tori, so it has none of the codimension-7 points where "
+                    "chiral fermions would live, and &pi;<sub>1</sub> = 1 leaves no Wilson "
+                    "lines (D-011). The representation theory involved is that of Spin(12,1) "
+                    "decomposed under the 4D Lorentz group times the internal symmetry group."
                 )
             ),
             ContentBlock(
@@ -645,43 +1247,51 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The chirality selection mechanism is intimately connected to the topology of the "
-                    "condensate configuration. Different condensate patterns correspond to different "
-                    "effective theories in 4D, with the physically realized configuration determined by "
-                    "energetic considerations and symmetry requirements."
+                    "If such a mechanism exists, different condensate patterns would give "
+                    "different 4D effective theories, and no computation yet selects one. Two "
+                    "routes to chiral matter outside the internal space are recorded as "
+                    "research directions (D-011), each to be pre-registered with a kill "
+                    "condition before it is computed: a heterotic dual through the Kummer K3 "
+                    "fibrations, and the two shadows acting as boundary walls that carry "
+                    "chiral multiplets."
                 )
             ),
             ContentBlock(
                 type="note",
                 content=(
-                    "<h4>Dual-Shadow Chirality</h4>"
-                    "<p>In the v24.2 26D unified-time framework, the dual 13D(12,1) shadows are created when "
-                    "12×(2,0) bridge pairs WARP via coordinate selection. The per-pair OR reduction operator R<sub>⊥</sub> "
-                    "provides spinor double-cover: R<sub>⊥</sub>² = -I per pair. "
-                    "The mirror shadow contains fermions with "
-                    "opposite chirality assignments, ensuring overall CPT conservation while allowing "
-                    "maximal parity violation in each 13D(12,1) shadow sector.</p>"
+                    "<h4>Dual-Shadow Chirality (a proposal)</h4>"
+                    "<p>The dual 13D(12,1) shadows are formed from the twelve bridge pairs, and "
+                    "the per-pair OR reduction operator R<sub>⊥</sub> gives a spinor double "
+                    "cover, R<sub>⊥</sub>² = &minus;I per pair. The proposal is that the mirror "
+                    "shadow carries fermions with opposite chirality assignments, keeping CPT "
+                    "overall while each 13D(12,1) shadow violates parity maximally. It is not "
+                    "derived: whether the shadow structure can host chiral matter at all is "
+                    "open (&sect;1.3.6).</p>"
                 ),
                 label="dual-shadow-chirality"
             ),
 
-            # 1.4 The Division Algebra Origin of D = 13
+            # ================================================================
+            # 1.5 The Division-Algebra Motivation for D = 13 per Shadow
+            # ================================================================
             ContentBlock(
                 type="heading",
-                content="The Division Algebra Origin of D = 13 (Observable Shadow of 26D)",
+                content="The Division-Algebra Motivation for D = 13 per Shadow",
                 level=2,
-                label="1.4"
+                label="1.5"
             ),
             ContentBlock(
                 type="note",
                 content=(
                     "<h4>Framework: 26D → Dual 13D(12,1) Shadows</h4>"
-                    "<p>In the v24.2 Principia Metaphysica framework, the fundamental theory lives in "
-                    "<strong>26D with signature (24,2) = (12,1) + (12,1), one timelike direction per shadow shadow-time directions</strong>. "
-                    "The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection "
-                    "(each: 12 spatial from bridge + 1 shared time). Each shadow compactifies on G₂ "
-                    "with the OR reduction operator R<sub>⊥</sub> providing cross-shadow coherence. This section explains why "
-                    "D = 13 = 1 + 4 + 8 is the unique division-algebra-consistent dimension for the observable sector.</p>"
+                    "<p>The model&rsquo;s bulk is 26-dimensional with signature (24,2) = "
+                    "(12,1) + (12,1). Twelve bridge pairs supply the 24 space directions, and "
+                    "each 13D(12,1) shadow takes one direction from every pair plus its own "
+                    "time. Each shadow compactifies on the internal 7-manifold, with the OR "
+                    "reduction operator R<sub>⊥</sub> providing cross-shadow coherence. This "
+                    "subsection explains why D = 13 = 1 + 4 + 8 is the division-algebra "
+                    "choice for each shadow under the assumptions stated below. It is a "
+                    "motivation, not a derivation.</p>"
                 ),
                 label="framework-26d-dual-shadows"
             ),
@@ -690,10 +1300,14 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "A central question for any higher-dimensional theory is: why this particular dimension? "
                     "For string theory, D = 10 emerges from worldsheet conformal anomaly cancellation. For "
-                    "M-theory, D = 11 is the maximum dimension admitting supergravity. For Principia "
-                    "Metaphysica, <strong>the full theory requires D = 26 (bosonic string critical "
-                    "dimension)</strong>, but the <strong>observable shadow D = 13 emerges uniquely from "
-                    "the mathematics of normed division algebras</strong>."
+                    "M-theory, D = 11 is the maximum dimension admitting supergravity. Principia "
+                    "Metaphysica takes <strong>D = 26 = 24 + 2</strong> &mdash; the bulk&rsquo;s 24 "
+                    "space directions and one time per shadow &mdash; as its own dimensional identity. "
+                    "It is <strong>not</strong> the bosonic-string critical dimension: that claim was "
+                    "withdrawn in the 2026-08-31 signature ruling, because 26 is the one-time critical "
+                    "dimension and the two-time critical dimension is 27&ndash;28. The "
+                    "<strong>observable shadow dimension D = 13</strong> is motivated by the mathematics "
+                    "of normed division algebras."
                 )
             ),
             ContentBlock(
@@ -716,7 +1330,7 @@ class IntroductionV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "The total dimension D = 13 admits a <em>unique</em> decomposition into division "
-                    "algebra dimensions that satisfies the physical requirements of the theory:"
+                    "algebra dimensions that satisfies the physical requirements this model imposes:"
                 )
             ),
             ContentBlock(
@@ -730,10 +1344,13 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Each component has a precise physical interpretation: <strong>R</strong> (dimension 1) "
-                    "corresponds to emergent thermal time, <strong>H</strong> (dimension 4) to Lorentzian "
-                    "spacetime with Spin(3,1) ≅ SL(2,C), and <strong>O</strong> (dimension 8) to the "
-                    "internal manifold K<sub>Pneuma</sub> with Aut(O) = G₂ and E₈ lattice structure."
+                    "The model gives each component a physical interpretation: <strong>R</strong> "
+                    "(dimension 1) corresponds to emergent thermal time, <strong>H</strong> "
+                    "(dimension 4) to Lorentzian spacetime with Spin(3,1) ≅ SL(2,C), and "
+                    "<strong>O</strong> (dimension 8) to the internal geometry: G₂ = Aut(O) acts on "
+                    "the imaginary octonions Im(O) ≅ R<sup>7</sup>, the model space for the "
+                    "tangent spaces of the internal 7-manifold. This is an interpretation that "
+                    "motivates D = 13, not a derivation of it."
                 )
             ),
             ContentBlock(
@@ -756,12 +1373,12 @@ class IntroductionV16(SimulationBase):
                     "interpretations with crucial differences. D = 10 = 2 + 8 = <strong>C</strong> + "
                     "<strong>O</strong> (worldsheet coordinates + transverse directions, requires "
                     "supersymmetry). D = 11 = 1 + 2 + 8 = <strong>R</strong> + <strong>C</strong> + "
-                    "<strong>O</strong> (mixed structure, requires supersymmetry, 7D G₂ holonomy). "
-                    "D = 13 = 1 + 4 + 8 = <strong>R</strong> + <strong>H</strong> + <strong>O</strong> "
-                    "(emergent thermal time, quaternionic spacetime, full 8D octonionic geometry, "
-                    "<strong>no supersymmetry required</strong>). D = 26 with (24,2) = (12,1) + (12,1): "
-                    "12 bridge pairs warp to create 2×13D(12,1) shadows, predicting w₀ = -1 + 1/b₃ = -23/24 "
-                    "from bridge pressure mismatch."
+                    "<strong>O</strong> (mixed structure, requires supersymmetry, compactified on 7D G₂ "
+                    "manifolds). D = 13 = 1 + 4 + 8 = <strong>R</strong> + <strong>H</strong> + "
+                    "<strong>O</strong> (emergent thermal time, quaternionic spacetime, octonionic "
+                    "internal structure, <strong>no supersymmetry assumed</strong>). D = 26 with "
+                    "(24,2) = (12,1) + (12,1): twelve bridge pairs split the bulk into two 13D(12,1) "
+                    "shadows, each with its own time."
                 )
             ),
             ContentBlock(
@@ -769,14 +1386,14 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "A key distinction is that D = 13 = <strong>R</strong> + <strong>H</strong> + "
                     "<strong>O</strong> excludes the complex numbers <strong>C</strong>, whereas D = 10 "
-                    "and D = 11 include it. This exclusion is physically meaningful: (1) No worldsheet—the "
-                    "complex structure <strong>C</strong> in string theory represents the 2D worldsheet, "
-                    "but Principia Metaphysica has no fundamental strings. (2) Emergent time—time emerges "
-                    "thermodynamically from <strong>R</strong> (real-valued entropy), not geometrically "
-                    "from <strong>C</strong>. (3) Quaternionic spacetime—the 4D spacetime structure arises "
-                    "directly from <strong>H</strong>, preserving the natural quaternionic structure of the "
-                    "Lorentz group. (4) Full octonionic geometry—the internal 8D manifold has full octonionic "
-                    "structure, not the reduced 7D G₂ geometry of M-theory."
+                    "and D = 11 include it. The model reads this exclusion physically: (1) No "
+                    "worldsheet—the complex structure <strong>C</strong> in string theory represents the "
+                    "2D worldsheet, but Principia Metaphysica has no fundamental strings. (2) Emergent "
+                    "time—time is taken to emerge thermodynamically from <strong>R</strong> (real-valued "
+                    "entropy), not geometrically from <strong>C</strong>. (3) Quaternionic spacetime—the "
+                    "4D spacetime structure is read from <strong>H</strong>, matching the quaternionic "
+                    "structure of the Lorentz group. (4) Octonionic internal structure—G₂ = Aut(O) is "
+                    "the structure group of the internal 3-form on the 7-manifold."
                 )
             ),
             ContentBlock(
@@ -807,169 +1424,65 @@ class IntroductionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The dimension D = 13 appears throughout exceptional mathematics, confirming its deep "
-                    "structural significance: dim(F₄) = 52 = 4 × 13 (automorphisms of J₃(O)), "
-                    "dim(E₆) = 78 = 6 × 13 (collineations of OP²), dim(J₃(O)) - dim(G₂) = 27 - 14 = 13 "
-                    "(Jordan algebra mod automorphisms), Ω₁₃^Spin = Ω₁₃^String = 0 (both cobordism groups "
-                    "vanish—rare coincidence ensuring anomaly cancellation)."
+                    "The number 13 also appears in exceptional mathematics: dim(F₄) = 52 = 4 × 13 "
+                    "(automorphisms of J₃(O)), dim(E₆) = 78 = 6 × 13 (collineations of OP²), and "
+                    "dim(J₃(O)) - dim(G₂) = 27 - 14 = 13 (Jordan algebra mod automorphisms). These "
+                    "coincidences motivate the choice; they do not derive it."
                 )
             ),
 
-            # 1.5 Outline of the Paper
+            # ================================================================
+            # 1.6 Related Work and Outline of the Paper
+            # ================================================================
             ContentBlock(
                 type="heading",
-                content="Outline of the Paper (v24.2 Dual-Shadow Framework)",
-                level=2,
-                label="1.5"
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The remainder of this paper develops the <strong>Principia Metaphysica</strong> "
-                    "theoretical framework systematically and derives its physical consequences. The central "
-                    "insight is the M<sup>26</sup>(24,2) = 12×(2,0) bridge pairs + 2 shadow times + S<sup>(2,0)</sup> shadow-time directions → dual 13D(12,1) shadows → 4D dimensional hierarchy, where the "
-                    "Euclidean bridge structure enables the derivation of key cosmological parameters. The structure is as follows:"
-                )
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "<strong>Section 2 (Spectral Decomposition)</strong>: Complete spectral decomposition of the G\u2082 manifold; 26D bulk with (24,2) structure; "
-                    "dual 13D(12,1) shadow emergence via OR reduction; racetrack moduli "
-                    "stabilization. <strong>Section 3 (Cosmological Results)</strong>: Hubble tension, S<sub>8</sub> suppression; "
-                    "Planck 2018 and DESI 2025 alignment. <strong>Section 4 "
-                    "(CKM/PMNS from G\u2082 Triality)</strong>: Unified CKM and PMNS matrices from G\u2082 triality; "
-                    "Yukawa hierarchies (racetrack variant \u03b5 = 0.2257; canonical e^{-3/2} = 0.22313); mixing angle derivations. "
-                    "<strong>Section 5 (Dark Energy Attractor)</strong>: w\u2080 = -1 + 1/b\u2083 = -23/24, w\u2090 \u2248 -0.204 derived; "
-                    "breathing dark energy potential. "
-                    "<strong>Section 6 (Baryon Asymmetry)</strong>: Baryon asymmetry from G\u2082 cycles and Jarlskog invariant. "
-                    "<strong>Section 7 (ALP Portal Physics)</strong>: Axion-like particle portal physics from Face 3 K\u00e4hler moduli; "
-                    "dark matter portal coupling. "
-                    "Appendices provide spectral registry (A), algebraic foundations (B\u2013C), statistical logs (D), and validation certificates (F\u2013G)."
-                )
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "This hierarchical structure moves from the foundational 26D geometric framework "
-                    "through the particle physics phenomenology to cosmological implications and "
-                    "experimental tests. Each section builds upon the preceding material, developing a "
-                    "coherent picture of unified physics from 26D origins through dual 13D(12,1) shadows to observable "
-                    "4D consequences."
-                )
-            ),
-            ContentBlock(
-                type="note",
-                content=(
-                    "<h4>Key Feature: Derived Modulus</h4>"
-                    "<p>A significant advancement was achieved by inverting the Higgs mass formula to "
-                    "constrain Re(T) from the measured Higgs mass (125.20 GeV, PDG 2024), rather than choosing "
-                    "it arbitrarily. (Open problem: Higgs inversion yields Re(T) ≈ 9.865; the BBN-calibrated value 7.086 "
-                    "and geometric value 1.833 remain in tension.) This ensures swampland compliance and completes "
-                    "the geometric unification where both λ₀ (from SO(10) matching) and Re(T) (from "
-                    "experimental data) are now fully determined.</p>"
-                    "<p><strong>EDOF=3 Statistical Framework:</strong> The model proposes a <strong>~116:1 compression ratio</strong> "
-                    "(model-internal artifact, not an independently validated result) "
-                    "with three calibration seeds: VEV factor 1.5859 (calibrated; base ratio ln(M<sub>Pl</sub>/v<sub>EW</sub>)/b₃ ≈ 1.534, 3.4% gap open), "
-                    "α<sub>GUT</sub> coefficient 0.032177, and Re(T) constrained from Higgs mass (9.865 via inversion; 7.086 calibrated for BBN)—all documented. "
-                    "With the proposed derivations of KK scale (M<sub>KK</sub> ≈ 4.5 TeV from k<sub>eff</sub> = b₃/(2+ε)), "
-                    "Yukawa textures (ε = exp(-λ) with λ=1.5, an ansatz following Froggatt-Nielsen 1979), and CP phase (δ<sub>CP</sub> = π/2 from topological orientations), "
-                    "this leaves <strong>~58 Standard Model + compactification parameters as candidate topology-first predictions</strong>. "
-                    "Racetrack moduli stabilization proposes a racetrack variant ε = 0.2257 of the Cabibbo angle from flux competition (canonical: e^{-3/2} = 0.22313) "
-                    "(minimal phenomenological input). Yukawa overlap magnitudes are cross-checked via 7D Monte Carlo on explicit G₂ associative cycles.</p>"
-                ),
-                label="derived-modulus"
-            ),
-            ContentBlock(
-                type="table",
-                content=(
-                    "<h4>Seed Hierarchy (EDOF = 3)</h4>"
-                    "<table style='width:100%; border-collapse:collapse; margin:1rem 0;'>"
-                    "<tr style='border-bottom:2px solid #555;'>"
-                    "<th style='text-align:left; padding:0.5rem;'>Seed</th>"
-                    "<th style='text-align:left; padding:0.5rem;'>Value</th>"
-                    "<th style='text-align:left; padding:0.5rem;'>Status</th>"
-                    "<th style='text-align:left; padding:0.5rem;'>Role</th></tr>"
-                    "<tr style='border-bottom:1px solid #333;'>"
-                    "<td style='padding:0.5rem;'>b₃</td>"
-                    "<td style='padding:0.5rem;'>24</td>"
-                    "<td style='padding:0.5rem;'><strong>GEOMETRIC</strong></td>"
-                    "<td style='padding:0.5rem;'>G₂ Betti number — topological invariant</td></tr>"
-                    "<tr style='border-bottom:1px solid #333;'>"
-                    "<td style='padding:0.5rem;'>VEV coefficient</td>"
-                    "<td style='padding:0.5rem;'>1.5859</td>"
-                    "<td style='padding:0.5rem;'>CALIBRATED</td>"
-                    "<td style='padding:0.5rem;'>Scale anchor (3.4% gap from ln(M<sub>Pl</sub>/v)/b₃ — open)</td></tr>"
-                    "<tr style='border-bottom:1px solid #333;'>"
-                    "<td style='padding:0.5rem;'>Re(T)</td>"
-                    "<td style='padding:0.5rem;'>9.865 / 7.086</td>"
-                    "<td style='padding:0.5rem;'>CONSTRAINED</td>"
-                    "<td style='padding:0.5rem;'>Kähler modulus — Higgs inversion (9.865) vs BBN calibrated (7.086)</td></tr>"
-                    "</table>"
-                    "<p><strong>Honest compression:</strong> 125 SM constants from 1 geometric integer + 2 calibrations → 116:1 ratio. "
-                    "True geometric prediction: b₃ = 24 only. The other two seeds are phenomenological anchors.</p>"
-                ),
-                label="seed-hierarchy-table"
-            ),
-            ContentBlock(
-                type="note",
-                content=(
-                    "<h4>Central proposal: topologically anchored candidate model (EDOF=3)</h4>"
-                    "<p>The central proposal is that a <strong>26D spacetime with structure (24,2) = 12×(2,0) + S<sup>(2,0)</sup> + (0,1)</strong>, "
-                    "with 12 bridge pairs warping to create dual 13D(12,1) shadows, is a <strong>ghost-free candidate framework</strong> containing a 1 + 3 brane hierarchy. "
-                    "The dual-shadow structure, with geometry proposed to emerge from the 4096-component Pneuma field, proposes a <strong>~116:1 compression ratio</strong> "
-                    "(model-internal artifact) from <strong>EDOF=3</strong> (1 geometric seed b₃ + 2 calibrations), aiming to jointly account for: "
-                    "(1) the origin of gauge forces from 26D isometries, "
-                    "(2) chiral structure via a proposed dual-shadow Möbius mechanism, "
-                    "(3) emergence of time from modular flow, "
-                    "(4) <strong>candidate values w₀ = -1 + 1/b₃ = -23/24, wₐ ≈ -0.204, M<sub>KK</sub> ≈ 4.5 TeV, "
-                    "Yukawa textures (ε<sup>Q</sup> hierarchy with ε = 0.2257 (racetrack variant; canonical e^{-3/2}) from racetrack moduli stabilization; Yukawa φ-scaling is an ansatz following Froggatt-Nielsen 1979), "
-                    "δ<sub>CP</sub> = π/2 as candidate topology-first predictions</strong> from topology (b₃=24, λ=1.5 with minimal phenomenological input), "
-                    "and <Speculation>(5) may address aspects of the quantum measurement problem through geometric correlations in the mirror shadow.</Speculation></p>"
-                ),
-                label="central-thesis"
-            ),
-
-            # 1.6 Theoretical Context & Related Work
-            ContentBlock(
-                type="heading",
-                content="Theoretical Context & Related Work",
+                content="Related Work and Outline of the Paper",
                 level=2,
                 label="1.6"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Principia Metaphysica derives observable 4D physics—including Yukawa textures, mixing "
-                    "angles, and mirror dark matter abundance—from wavefunction overlaps and racetrack-moduli "
-                    "stabilization on a higher-dimensional G₂ manifold. This projection-based approach, where "
-                    "effective low-energy physics emerges from geometric features of a compact internal space, "
-                    "builds upon and extends several foundational programs in theoretical physics."
+                    "Principia Metaphysica relates observable 4D physics to the geometry of a compact "
+                    "internal space and to its own postulated bulk. This projection-based approach, "
+                    "where effective low-energy physics is read from geometric features of a compact "
+                    "internal space, builds upon several foundational programs in theoretical physics."
                 )
             ),
             ContentBlock(
                 type="note",
-                content=(
+                content=_r(
                     "<h4>Kaluza-Klein Theory (1920s)</h4>"
-                    "<p>The original insight that extra compact dimensions can yield gauge interactions from "
-                    "pure geometry remains the conceptual ancestor of all modern unification programs. PM "
-                    "inherits this philosophy while extending to 26D with signature (24,2) — one timelike "
-                    "direction per 13D(12,1) shadow — and employing G₂ "
-                    "holonomy for chirality in each of the dual shadows.</p>"
+                    "<p>The original insight that extra compact dimensions can yield gauge "
+                    "interactions from pure geometry remains the conceptual ancestor of all "
+                    "modern unification programs. PM inherits this philosophy while extending "
+                    "to 26D with signature (24,2) &mdash; one timelike direction per 13D(12,1) "
+                    "shadow &mdash; and compactifying each shadow on the internal 7-manifold "
+                    "{manifold}. Unlike classical Kaluza-Klein reduction, an M-theory "
+                    "compactification on a G₂ manifold draws its gauge fields from "
+                    "harmonic 2-forms and singularities rather than from isometries.</p>"
                 ),
                 label="kk-context"
             ),
             ContentBlock(
                 type="note",
-                content=(
-                    "<h4>M-Theory on G₂ Manifolds (Acharya, Witten, et al. ~2000s–present)</h4>"
-                    "<p>Compactification on G₂ holonomy manifolds naturally produces chiral fermions, "
-                    "mirror/shadow sectors, and dark matter candidates via singularities and fluxes. PM draws "
-                    "heavily on this literature, particularly the work of <strong>Acharya & Witten (2001)</strong> "
-                    "on chirality from G₂, <strong>Corti-Haskins-Nordström-Pacini (2015)</strong> on TCS "
-                    "constructions, and <strong>Halverson & Morrison (2020)</strong> on the G₂ landscape. The "
-                    "racetrack stabilization mechanism for moduli also follows established string phenomenology "
-                    "(KKLT 2003, Blanco-Pillado et al. 2004).</p>"
+                content=_r(
+                    "<h4>M-Theory on G₂ Manifolds (Acharya, Witten, et al. ~2000s&ndash;present)</h4>"
+                    "<p>M-theory on a compact G₂ manifold gives four-dimensional N = 1 "
+                    "physics; non-abelian gauge fields live on codimension-4 singularities and "
+                    "chiral fermions at codimension-7 conical points (<strong>Acharya &amp; "
+                    "Witten 2001</strong>). PM draws on this literature &mdash; Joyce&rsquo;s "
+                    "construction of compact G₂ manifolds, Acharya&rsquo;s local super "
+                    "Yang&ndash;Mills on Joyce orbifolds (1999), the Lukas&ndash;Morris moduli "
+                    "K&auml;hler potential (2004) and the flux analysis of Acharya, Denef and "
+                    "Valandro (2005) &mdash; and on <strong>Halverson &amp; Morrison "
+                    "(2020)</strong> for the wider G₂ landscape. Earlier versions also used "
+                    "the twisted-connected-sum construction of "
+                    "<strong>Corti-Haskins-Nordstr&ouml;m-Pacini (2015)</strong> and a KKLT-style "
+                    "racetrack (KKLT 2003, Blanco-Pillado et al. 2004). Both are off-path: "
+                    "{manifold} is a Joyce orbifold resolution, b<sub>3</sub> = {b3} lies "
+                    "outside every published TCS range, and no racetrack exists on it "
+                    "(&sect;1.3.5).</p>"
                 ),
                 label="g2-context"
             ),
@@ -988,25 +1501,25 @@ class IntroductionV16(SimulationBase):
                     "yields ONE 24D shadow of signature (23,1), not two 13D(12,1) shadows, and "
                     "Bars&rsquo; shadows are alternative gauge-fixings of the same bulk rather than "
                     "a partition of it into halves. Ghost control of the second time is an OPEN "
-                    "problem here with no computed backing. The Sp(2,ℝ) constraint is likewise a "
-                    "STRUCTURAL assumption (invoked, not derived from b₃ = 24). "
+                    "problem here with no computed backing. The Sp(2,ℝ) constraint, where the "
+                    "framework invokes it, is a STRUCTURAL assumption, not a derivation. "
                     "Recent work by <strong>Pettini (2026, arXiv:2606.12457)</strong> argues that an extra "
                     "<em>timelike</em> dimension lets spatially separated branes correlate causally through the "
                     "second time — where an extra spacelike dimension would instead permit superluminal "
                     "shortcuts — which is the mechanism PM invokes for inter-shadow correlation. This yields a "
                     "falsifiable signature: Bell-type correlations between cross-shadow pairs (SPECULATIVE; "
-                    "see the falsification program). No <em>third</em> bulk time is needed for a shared clock: "
-                    "the Sp(2,ℝ)-invariant combination t₊ = (t₁+t₂)/√2 survives gauge fixing as the common "
-                    "time along which the OR reduction balances the 12 bridge pairs, while the relative time "
-                    "t₋ = (t₁−t₂)/√2 is pure gauge. A literal third timelike direction would give "
-                    "D = 27, an odd dimension, destroying the Weyl chirality the framework relies on "
-                    "(odd-dimensional Clifford algebras admit no chiral spinors), and would fall "
-                    "outside the Sp(2,ℝ) two-time construction, which singles out exactly two "
-                    "times. Note that the argument here is chirality, not criticality: the claim "
+                    "see the falsification program). An earlier version also argued that the "
+                    "Sp(2,ℝ)-invariant combination t₊ = (t₁+t₂)/√2 acts as a common clock while the "
+                    "relative time t₋ = (t₁−t₂)/√2 is pure gauge; that argument needs the Sp(2,ℝ) "
+                    "gauging the model does not inherit, and it is withdrawn: each shadow keeps its own "
+                    "time. A literal third timelike direction would give D = 27, an odd dimension, "
+                    "whose Clifford algebra admits no chiral (Weyl) spinors. The argument against it is "
+                    "chirality, not criticality: the claim "
                     "&lsquo;D = 27 ≠ D<sub>crit</sub> = 26&rsquo; is <strong>withdrawn</strong>, "
                     "because 26 is the ONE-time critical dimension at (25,1) and the two-time "
                     "bosonic critical dimension is 27–28 (Bars &amp; Kounnas hep-th/9705205). "
-                    "26 = b₃ + 2 is retained as the framework&rsquo;s own dimensional identity "
+                    "26 = 24 + 2 &mdash; the bulk&rsquo;s 24 space directions and one time per "
+                    "shadow &mdash; is retained as the framework&rsquo;s own dimensional identity "
                     "and not as a criticality result.</p>"
                 ),
                 label="historical-two-time-context"
@@ -1016,137 +1529,119 @@ class IntroductionV16(SimulationBase):
                 content=(
                     "The general strategy of projecting or embedding 4D observer physics within a larger "
                     "geometric structure also shares broad conceptual parallels with other speculative "
-                    "unification frameworks: String Theory Landscape & Flux Compactifications (discretuum of "
-                    "vacua, PM's landscape scanner identifying 49 valid TCS topologies), F-Theory GUTs (Vafa "
-                    "et al., elliptically fibered geometries yielding grand unification with geometric origins "
-                    "for Yukawas), Braneworld Scenarios (Randall-Sundrum warped extra dimensions), and Geometric "
-                    "Unity (Weinstein 2021, observerse construction with 14D manifold)."
+                    "unification frameworks: String Theory Landscape &amp; Flux Compactifications "
+                    "(discretuum of vacua), F-Theory GUTs (Vafa et al., elliptically fibered geometries "
+                    "yielding grand unification with geometric origins for Yukawas), Braneworld Scenarios "
+                    "(Randall-Sundrum warped extra dimensions), and Geometric Unity (Weinstein 2021, "
+                    "observerse construction with 14D manifold)."
                 )
             ),
             ContentBlock(
                 type="note",
-                content=(
-                    "<h4>PM's Independent Contributions</h4>"
-                    "<p>While acknowledging these intellectual debts and parallels, PM's <em>specific "
-                    "mechanisms</em> represent independent developments:</p>"
+                content=_r(
+                    "<h4>PM&rsquo;s Own Contributions</h4>"
+                    "<p>Beside these debts, the model&rsquo;s own results are computations with "
+                    "tests, and its own assumptions are labelled as such:</p>"
                     "<ul>"
-                    "<li><strong>G₂ triple overlap integrals</strong> for Yukawa textures from explicit 7D Monte Carlo</li>"
-                    "<li><strong>Racetrack-blended sector sampling</strong> for cosmological ratios (DM/baryon ~5.8 predicted)</li>"
-                    "<li><strong>χ<sub>eff</sub> = 144 flux quantization</strong> determining n<sub>gen</sub> = 3 parameter-free</li>"
-                    "<li><Speculation><strong>Pneuma-microtubule coupling</strong> inspired by Orch-OR quantum biology (speculative appendix)</Speculation></li>"
-                    "<li><strong>Thermal time hypothesis</strong> for emergent time from modular flow on G₂</li>"
+                    "<li><strong>The closed-geometry certificate</strong> CG.1&ndash;CG.11 "
+                    "(Section 2.4): the topology and gauge content of {manifold} and two "
+                    "leading-order no-go results, for moduli and for dark energy</li>"
+                    "<li><strong>The reachable set</strong> of Joyce&rsquo;s construction from "
+                    "&phi;&rsquo;s (&#8484;/2)<sup>3</sup>, and the ladder of fundamental groups "
+                    "across the family</li>"
+                    "<li><strong>The bridge&ndash;component correspondence</strong> that, with "
+                    "WA-1, selects {betti_pair} without data</li>"
+                    "<li><strong>The K3 reading</strong> of &chi;<sub>eff</sub> (48n)</li>"
+                    "<li><strong>Thermal time</strong>: the thermal-time hypothesis applied to the "
+                    "Pneuma field (a postulate)</li>"
+                    "<li><Speculation><strong>Pneuma-microtubule coupling</strong> inspired by "
+                    "Orch-OR quantum biology (speculative appendix)</Speculation></li>"
                     "</ul>"
-                    "<p>The framework is rooted in M-theory-inspired phenomenology, building on established "
-                    "literature while proposing novel mechanisms that yield 55+ testable predictions from pure "
-                    "geometry.</p>"
+                    "<p>Flavour textures, mixing angles and cosmological ratios computed elsewhere "
+                    "in the paper are model constructs or fits until a chiral sector exists; each "
+                    "is labelled where it appears.</p>"
                 ),
                 label="pm-contributions"
             ),
-
-            # ================================================================
-            # 1.7 v25.0+v26.0 Closures (Sprint 6 — proof-completeness update)
-            # ================================================================
-            ContentBlock(
-                type="heading",
-                content="v25.0+v26.0 Closures",
-                level=2,
-                label="1.7"
-            ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The v25.0 and v26.0 development sprints converted "
-                    "<strong><span class=\"pm-value\" data-pm-value=\"abstract.v25_v26_closures\">13</span> "
-                    "previously open items</strong> in the proof-completeness ledger from "
-                    "<em>numerical-agreement</em> or <em>fitted</em> status to fully <strong>DERIVED</strong>. "
-                    "These closures lift the topological compression ratio from "
-                    "<strong>116:1</strong> to <strong>131:1</strong> (per S5.10) and bring the ledger to "
-                    "<span class=\"pm-value\" data-pm-value=\"abstract.ledger_derived\">571</span>/"
-                    "<span class=\"pm-value\" data-pm-value=\"abstract.ledger_total\">620</span> "
-                    "(<span class=\"pm-value\" data-pm-value=\"abstract.ledger_derived_pct\">92.1</span>%) DERIVED."
+                    "<strong>Outline.</strong> The subsection that follows, "
+                    "<em>Foundations of Dimensional Descent</em>, sets out the bulk, the "
+                    "bridges and the shadows. "
+                    "<strong>Section 2 (Geometric Framework)</strong> develops the master action and "
+                    "the spectral decomposition, publishes the closed-geometry certificate in "
+                    "&sect;2.4 together with the full table of standard results, postulates, "
+                    "findings, corrections and open problems, and states the methodology in "
+                    "&sect;2.6. <strong>Section 3</strong> treats the gauge sector and the "
+                    "cosmological comparisons (&sect;3.7). <strong>Section 4</strong> covers "
+                    "chirality, generations, flavour and the Higgs sector &mdash; where chirality "
+                    "and flavour are open and many values are fits &mdash; and the integrity checks "
+                    "of the validation layer. <strong>Section 5</strong> treats cosmology and dark "
+                    "energy, which is open. <strong>Section 6</strong> lists the falsifiable "
+                    "predictions with their status, and <strong>Section 7</strong> discusses the "
+                    "results. The appendices provide the spectral registry, the algebraic "
+                    "foundations, the statistical logs and the validation certificates."
                 ),
-                label="closures-summary"
+                label="outline"
             ),
             ContentBlock(
-                type="note",
-                content=(
-                    "<h4>The 13 v25.0+v26.0 Closures</h4>"
-                    "<ol class=\"concept-list\">"
-                    "<li>CKM Cabibbo angle: closed-form exponent ε = exp(-λ) with λ=1.5 from racetrack flux competition</li>"
-                    "<li>CKM V<sub>cb</sub> hierarchy power ε²</li>"
-                    "<li>CKM V<sub>ub</sub> hierarchy power ε³</li>"
-                    "<li>Jarlskog invariant J<sub>CP</sub> from G₂ triality phase</li>"
-                    "<li>Dark-matter relic abundance Ω<sub>DM</sub> normalization from the mirror-shadow OR aggregate</li>"
-                    "<li>S<sub>8</sub> suppression amplitude from breathing-bridge back-reaction</li>"
-                    "<li>Hubble-tension residual ΔH₀ from 12-pair OR aggregation timing</li>"
-                    "<li>Neutrino mass-sum Σm<sub>ν</sub> ≈ 0.082 eV from G₂ overlap-integral normalization</li>"
-                    "<li>Proton lifetime τ<sub>p</sub> coefficient from the [[24,12,8]] code distance</li>"
-                    "<li>KK-graviton scale M<sub>KK</sub> ≈ 4.5 TeV from k<sub>eff</sub> = b₃/(2+ε)</li>"
-                    "<li>CP phase δ<sub>CP</sub> = π/2 from topological-orientation parity of G₂ associative cycles</li>"
-                    "<li>Higgs self-coupling λ<sub>H</sub> from Re(T)-locked SO(10) matching</li>"
-                    "<li>Thermal-time coupling α<sub>T</sub> = D<sub>total</sub>/D<sub>string</sub> = 26/10</li>"
-                    "</ol>"
-                    "<p>Each closure is verified by both Arithma symbolic and EML-Math tree representations "
-                    "(see Section 2: Triple-Track Validation) and is wired into the triple_assert build gate.</p>"
+                type="table",
+                content=_r(
+                    "<h4>Inputs and Their Status</h4>"
+                    "<table style='width:100%; border-collapse:collapse; margin:1rem 0;'>"
+                    "<tr style='border-bottom:2px solid #555;'>"
+                    "<th style='text-align:left; padding:0.5rem;'>Input</th>"
+                    "<th style='text-align:left; padding:0.5rem;'>Value</th>"
+                    "<th style='text-align:left; padding:0.5rem;'>Status</th>"
+                    "<th style='text-align:left; padding:0.5rem;'>Role</th></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>(b<sub>2</sub>, b<sub>3</sub>)</td>"
+                    "<td style='padding:0.5rem;'>({b2}, {b3})</td>"
+                    "<td style='padding:0.5rem;'><strong>DERIVED</strong></td>"
+                    "<td style='padding:0.5rem;'>Betti numbers of {manifold} from Joyce&rsquo;s "
+                    "construction (CG.1); the member selected by &pi;<sub>1</sub> and WA-1 "
+                    "(&sect;1.3.2)</td></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>n<sub>gen</sub></td>"
+                    "<td style='padding:0.5rem;'>{n_gen}</td>"
+                    "<td style='padding:0.5rem;'><strong>DERIVED</strong></td>"
+                    "<td style='padding:0.5rem;'>b<sub>2</sub>/4, the number of singular "
+                    "involutions; tested against the observed generations</td></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>&chi;<sub>eff</sub></td>"
+                    "<td style='padding:0.5rem;'>" + str(chi_eff_total) + "</td>"
+                    "<td style='padding:0.5rem;'><strong>DERIVED</strong> (K3 reading, D-015)</td>"
+                    "<td style='padding:0.5rem;'>48n, an effective index; not &chi;(Y<sub>7</sub>) "
+                    "= 0</td></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>VEV coefficient</td>"
+                    "<td style='padding:0.5rem;'><span class=\"pm-value\" "
+                    "data-pm-value=\"abstract.vev_coefficient\">1.5859</span></td>"
+                    "<td style='padding:0.5rem;'>CALIBRATED</td>"
+                    "<td style='padding:0.5rem;'>Electroweak scale anchor</td></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>&alpha;<sub>GUT</sub> coefficient</td>"
+                    "<td style='padding:0.5rem;'><span class=\"pm-value\" "
+                    "data-pm-value=\"abstract.alpha_gut_coefficient\">0.031831</span></td>"
+                    "<td style='padding:0.5rem;'>CALIBRATED</td>"
+                    "<td style='padding:0.5rem;'>Unification scale anchor</td></tr>"
+                    "<tr style='border-bottom:1px solid #333;'>"
+                    "<td style='padding:0.5rem;'>Re(T)</td>"
+                    "<td style='padding:0.5rem;'>not fixed</td>"
+                    "<td style='padding:0.5rem;'><strong>OPEN</strong> (D-015)</td>"
+                    "<td style='padding:0.5rem;'>K&auml;hler modulus; no leading-order mechanism on "
+                    "{manifold} fixes it (CG.6). The values used elsewhere &mdash; "
+                    "<span class=\"pm-value\" data-pm-value=\"moduli.re_t_phenomenological\">9.865</span> "
+                    "from the Higgs-mass inversion and "
+                    "<span class=\"pm-value\" data-pm-value=\"cosmology.racetrack_Re_T\">7.086</span>, "
+                    "{calibrated_at_24} &mdash; are calibrations, and results computed with them "
+                    "are CALIBRATED</td></tr>"
+                    "</table>"
+                    "<p>The compression ratios quoted by earlier versions counted fitted constants "
+                    "as derived and are not used here.</p>"
                 ),
-                label="closures-list"
-            ),
-            ContentBlock(
-                type="note",
-                content=(
-                    "<h4>Three Remaining Documented Divergences</h4>"
-                    "<ul>"
-                    "<li><strong>PMNS Majorana phase η:</strong> No closed-form derivation; current value taken from "
-                    "NuFIT 6.0 best-fit pending an explicit Yukawa computation on G₂ associative cycles.</li>"
-                    "<li><strong>Baryogenesis normalization Δn<sub>B</sub>/s:</strong> The G₂-cycle CP-violation "
-                    "mechanism reproduces the observed sign and order of magnitude but the dimensionless prefactor "
-                    "remains a documented numerical-agreement entry (not closed-form).</li>"
-                    "<li><strong>Soft SUSY scale m<sub>soft</sub>:</strong> The racetrack stabilisation fixes the "
-                    "Kähler modulus Re(T) but the soft-breaking scale derived from gravity-mediation has a residual "
-                    "factor that is tracked as an open tension rather than a DERIVED quantity.</li>"
-                    "</ul>"
-                    "<p>These three items, together with four further numerical-agreement entries, populate the "
-                    "<span class=\"pm-value\" data-pm-value=\"abstract.ledger_open\">7</span> open tensions in the "
-                    "proof-completeness ledger.</p>"
-                ),
-                label="open-divergences"
-            ),
-            ContentBlock(
-                type="heading",
-                content="1.7.1 b₃ = 24 as the Universal Root",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Every derivation in Principia Metaphysica chains back to the single topological invariant "
-                    "<strong>b₃ = 24</strong>, the third Betti number of the TCS G₂ manifold V₇. The dependency-walker "
-                    "report (run nightly against the formula registry) confirms this empirically: of "
-                    "<strong>419 derived formulas</strong>, "
-                    "<strong>277 (≈66%) are b₃-rooted via the Arithma symbolic path</strong> and "
-                    "<strong>141 (≈34%) are b₃-rooted via the EML-Math tree path</strong> "
-                    "(the remaining handful are intermediate or seed quantities that feed into both paths). "
-                    "No formula in the registry derives from a free numerical literal — every numeric leaf either "
-                    "traces back to b₃ = 24, to k<sub>ℷ</sub> = b₃/2 + 1/π ≈ 12.318, or to φ = (1+√5)/2, the three "
-                    "Ten Pillar Seeds. This is the structural backbone of the 131:1 compression claim."
-                )
-            ),
-            ContentBlock(
-                type="note",
-                content=(
-                    "<h4>The b₃ Lineage</h4>"
-                    "<p>Reading the dependency walker output downward from b₃ = 24:</p>"
-                    "<ul>"
-                    "<li>b₃ → χ<sub>eff</sub> = 6·b₃ = 144 → n<sub>gen</sub> = χ<sub>eff</sub>/(2·b₃) = 3</li>"
-                    "<li>b₃ → k<sub>ℷ</sub> = b₃/2 + 1/π ≈ 12.318 → α<sub>GUT</sub>⁻¹, α<sub>EM</sub>⁻¹</li>"
-                    "<li>b₃ → w₀ = -1 + 1/b₃ = -23/24 → dark-energy thawing prediction</li>"
-                    "<li>b₃ → [[24,12,8]] CSS code → proton-decay channel structure</li>"
-                    "<li>b₃ → 12 bridge pairs → dual-shadow OR reduction → cross-shadow leakage α<sub>leak</sub> = 1/√6</li>"
-                    "</ul>"
-                    "<p>Every Standard-Model parameter ultimately reduces to one of these chains. The b₃ = 24 hook is "
-                    "therefore not a stylistic choice but the load-bearing topological invariant of the entire framework.</p>"
-                ),
-                label="b3-lineage"
+                label="seed-hierarchy-table"
             ),
         ]
 
@@ -1154,19 +1649,17 @@ class IntroductionV16(SimulationBase):
             section_id="1",
             subsection_id=None,
             title="Introduction",
-            abstract=(
-                "The pursuit of a unified description of all fundamental forces represents one of the "
-                "most profound intellectual endeavors in theoretical physics. This section traces the "
-                "historical arc from Maxwell's unification of electricity and magnetism to modern attempts "
-                "at Grand Unified Theories, while introducing the novel approach of proposing that geometry emerges from "
-                "a fundamental fermionic field. Principia Metaphysica v24.2 posits a 26D spacetime with unified "
-                "structure (24,2) = 12\u00d7(2,0) + S<sup>(2,0)</sup> + (0,1)\u2014with 12 bridge pairs warping to create dual 13D(12,1) shadows\u2014"
-                "eliminating ghost modes while preserving phenomenological richness. Compactification occurs "
-                "on a TCS (Twisted Connected Sum) G\u2082 manifold with h<sup>1,1</sup>=4 K\u00e4hler moduli sectors, enabling "
-                "racetrack moduli stabilization that dynamically derives \u03b5 \u2248 0.2257 (racetrack variant of the Cabibbo angle; canonical e^{-3/2} = 0.22313) without "
-                "tuning. The Primordial Spinor Field-Vielbein bridge validates metric emergence from spinor bilinears with "
-                "Lorentzian signature (-,+,+,+). Key predictions include w\u2080 = -1 + 1/b\u2083 = -23/24 and w\u2090 \u2248 -0.204, "
-                "consistent with DESI 2025 thawing observations."
+            abstract=_r(
+                "The pursuit of a unified description of the fundamental forces runs from "
+                "Maxwell&rsquo;s unification of electricity and magnetism through grand "
+                "unification to Kaluza-Klein theory and M-theory on G₂ manifolds. This "
+                "section follows that arc and then tells the model&rsquo;s own story top down: "
+                "the standard physics it uses; how its internal space {manifold} &mdash; "
+                "{construction}, with {betti_pair} &mdash; is selected without fitting; its "
+                "postulates (a 26D bulk of signature (24,2) with one time per 13D(12,1) shadow, "
+                "and twelve bridges); what its computations establish (CG.1&ndash;CG.11); what "
+                "was corrected; and what remains open &mdash; chirality, moduli stabilisation, "
+                "dark energy and flavour."
             ),
             content_blocks=content_blocks,
             formula_refs=[],
@@ -1197,14 +1690,16 @@ class IntroductionV16(SimulationBase):
                 category="DERIVED",
                 description=(
                     "The shadow dimension D=13 admits a unique decomposition into normed division "
-                    "algebra components, as classified by the Hurwitz theorem (1898): real R (dim 1, "
-                    "encoding emergent thermal time from KMS modular flow), quaternionic H (dim 4, "
-                    "encoding Lorentz spacetime with Spin(3,1) isomorphic to SL(2,H)), and octonionic "
-                    "O (dim 8, encoding the internal G2 manifold whose automorphism group Aut(O) = G2 "
-                    "governs gauge symmetry and particle content). The decomposition 13 = 1 + 4 + 8 is "
-                    "the unique partition of 13 into Hurwitz dimensions that assigns exactly one factor "
-                    "to each physical role, with the exclusion of dim 2 (complex numbers) reflecting the "
-                    "absence of a fundamental worldsheet degree of freedom in the observable sector."
+                    "algebra components, as classified by the Hurwitz theorem (1898), once the model's "
+                    "physical roles are assigned: real R (dim 1, read as emergent thermal time from KMS "
+                    "modular flow), quaternionic H (dim 4, read as Lorentz spacetime with Spin(3,1) "
+                    "isomorphic to SL(2,C)), and octonionic O (dim 8, read as the internal structure: "
+                    "Aut(O) = G2 acts on Im(O) = R^7, the model space of the internal 7-manifold). The "
+                    "decomposition 13 = 1 + 4 + 8 is the unique partition of 13 into Hurwitz dimensions "
+                    "that assigns exactly one factor to each of these roles, with the exclusion of dim 2 "
+                    "(complex numbers) reflecting the absence of a fundamental worldsheet degree of "
+                    "freedom in the observable sector. The roles are the model's postulates; the "
+                    "arithmetic is the theorem."
                 ),
                 eml_tree_str="ops.add(eml_scalar(1.0), ops.add(eml_scalar(4.0), eml_scalar(8.0)))",
                 eml_latex=r"D = \mathrm{ops.add}(\mathrm{eml\_scalar}(1),\; \mathrm{ops.add}(\mathrm{eml\_scalar}(4),\; \mathrm{eml\_scalar}(8)))",
@@ -1357,20 +1852,20 @@ class IntroductionV16(SimulationBase):
             {
                 "topic": "Kaluza-Klein theory",
                 "url": "https://en.wikipedia.org/wiki/Kaluza%E2%80%93Klein_theory",
-                "relevance": "Section 1.2 describes geometrization of forces via extra dimensions; PM extends this to 26D with G2 compactification",
-                "validation_hint": "5D KK yields gravity + U(1); PM requires 26D for full Standard Model gauge group"
+                "relevance": "Section 1.2 describes geometrization of forces via extra dimensions; PM extends this to a 26D bulk whose two 13D shadows each compactify on a 7-manifold",
+                "validation_hint": "5D KK yields gravity + U(1); in M-theory on a compact G2 manifold the abelian gauge fields come from harmonic 2-forms rather than isometries"
             },
             {
                 "topic": "Normed division algebras and the Hurwitz theorem",
                 "url": "https://en.wikipedia.org/wiki/Hurwitz%27s_theorem_(composition_algebras)",
-                "relevance": "Section 1.4 derives D=13 uniqueness from division algebra dimensions 1+4+8 (R+H+O)",
+                "relevance": "Section 1.5 motivates D=13 per shadow from division algebra dimensions 1+4+8 (R+H+O), unique under the roles the model assigns",
                 "validation_hint": "Only 4 normed division algebras exist: R(1), C(2), H(4), O(8) by Hurwitz 1898"
             },
             {
-                "topic": "G2 holonomy and M-theory compactification",
+                "topic": "G2 manifolds and M-theory compactification",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "Introduction establishes G2 holonomy as the compactification mechanism yielding chiral fermions and 3 generations",
-                "validation_hint": "G2 holonomy on 7-manifolds preserves N=1 SUSY in 4D; chirality from singular fibers"
+                "relevance": "Section 1.3 starts from M-theory on a compact 7-manifold with a torsion-free G2-structure; the internal space Y_7 is Joyce's resolution of T^7/(Z/2)^3",
+                "validation_hint": "A smooth G2 compactification gives 4D N=1 with b_2 vector and b_3 chiral multiplets; chiral fermions need codimension-7 conical points, which Y_7 lacks (chirality is open)"
             },
         ]
 

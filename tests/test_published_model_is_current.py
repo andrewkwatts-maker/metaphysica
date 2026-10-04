@@ -18,8 +18,11 @@ b3_is_24      the adopted seed is 43; 24 is the labelled off-path branch
 b3_over_8     n_gen = b_3/8 is ABANDONED: 8 divides no Joyce-reachable
               b_3 (7, 19, 31, 43 are all odd), so it is an integer NOWHERE
               on the family. The count relocated to b_2/4 = rank(Gamma).
-chi_over_48   chi_eff/48 = 3 is the UNRULED route; the dichotomy is open,
-              so prose may DISCUSS it but must not assert it as live.
+chi_from_6b3  chi_eff = 6 b_3 = 144 derives 144 from b_3 = 24. Under the
+              K3 reading the author ruled (D-015, 2026-10-01) chi_eff =
+              2 sum chi(K3) = 48 n = 144 is live, so the VALUE stands; the
+              6 b_3 attribution does not (6 x 43 = 258 on the active seed).
+              It replaces chi_over_48, retired below.
 tcs_187       the construction is a Joyce orbifold T^7/(Z/2)^3; b_3 = 43
               lies outside the exhibited TCS range 71-155, which the
               register uses as an EXCLUSION.
@@ -47,9 +50,23 @@ _ARTIFACTS = ("sections.json", "formulas.json", "theory_output.json")
 _CLAIMS = {
     "b3_is_24": r"b_?3\s*=\s*24|b₃\s*=\s*24",
     "b3_over_8": r"b_?3\s*/\s*8|24\s*/\s*8|b₃/8",
-    "chi_over_48": r"144\s*/\s*48|chi_eff\s*/\s*48",
+    "chi_from_6b3": (r"6\s*[×x*·]?\s*(?:b_?3|b₃)\s*=\s*144"
+                     r"|6\s*[×x*·]\s*24\s*=\s*144"),
     "tcs_187": r"TCS #?187",
     "cycles_24": r"24 (associative |independent )?3-cycles|24 three-cycles",
+}
+
+#: Claims that STOPPED being stale, with the decision that made them live.
+#: Kept on file so the history of the ratchet is readable; not audited.
+_RETIRED_CLAIMS = {
+    "chi_over_48": {
+        "pattern": r"144\s*/\s*48|chi_eff\s*/\s*48",
+        "retired": "2026-10-02",
+        "why": ("D-015 (2026-10-01) adopted the K3 reading, chi_eff = "
+                "2 sum chi(K3) = 48 n, so n_gen = chi_eff/48 = 3 is the "
+                "ruled, live route and prose may assert it. Last measured "
+                "ceiling 136; 48 asserting occurrences at retirement."),
+    },
 }
 
 #: MEASURED 2026-09-23 on a fresh build. Ceilings; each may fall, none rise.
@@ -61,11 +78,16 @@ _CEILINGS = {
     # share of the raw hits were prose naming a stale claim in order to
     # refute or relocate it. The raw count grew whenever the corpus got
     # MORE correct, which made it useless as a ratchet.
-    "b3_is_24": 562,
-    "b3_over_8": 55,
-    "chi_over_48": 136,
-    "tcs_187": 61,
-    "cycles_24": 40,
+    #
+    # RE-MEASURED 2026-10-02 on fresh builds of both roots, after the
+    # 2026-10-01 wording lanes: b3_is_24 562 -> 251, b3_over_8 55 -> 15,
+    # tcs_187 61 -> 28, cycles_24 40 -> 11. chi_from_6b3 is new (7, first
+    # measurement), replacing the retired chi_over_48.
+    "b3_is_24": 251,
+    "b3_over_8": 15,
+    "chi_from_6b3": 7,
+    "tcs_187": 28,
+    "cycles_24": 11,
 }
 
 #: The two artifact roots disagreed when this was written -- the repo-local
@@ -207,3 +229,15 @@ def test_the_ceilings_are_documented_as_a_debt_not_a_target():
     assert __doc__ is not None
     assert "may only fall" in __doc__
     assert "label it" in __doc__ or "LABEL it" in __doc__
+
+
+def test_a_retired_claim_names_the_decision_that_made_it_live():
+    """Retiring a pattern must not be a quiet way to lower the bar."""
+    for name, entry in _RETIRED_CLAIMS.items():
+        assert name not in _CLAIMS, "%s is both retired and audited" % name
+        assert re.search(r"D-\d{3}", entry["why"]), (
+            "retired claim %r cites no decision" % name)
+
+
+def test_every_audited_claim_has_a_ceiling():
+    assert set(_CLAIMS) == set(_CEILINGS)

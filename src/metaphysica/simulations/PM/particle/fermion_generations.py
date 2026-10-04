@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Fermion Generations v16.0 - Three Generations from G2 Topology
-================================================================
+Fermion Generations - Three Generations from G2 Topology
+========================================================
 
 Licensed under the MIT License. See LICENSE file for details.
 
@@ -28,36 +28,42 @@ interchangeable, and the 2026-09-22 seed adoption separated them:
       merely a wrong value at one point. It is abandoned, not adjusted.
       Kept here on the books because the assessment below is about it.
 
-  (c) UNRULED, and what THIS MODULE actually computes:
-          n_gen = N_flux / spinor_DOF = (chi_eff / 6) / 8 = chi_eff / 48
-      chi_eff = 144 has three claimed derivations -- 2(h11-h21+h31),
-      b_3^2/4 and 6 b_3 -- which agree only at b_3 = 24. So chi_eff is
-      either seed-independent, in which case chi_eff/48 carries no
-      topological content; or seed-dependent, in which case it is not 144
-      on the adopted path. The framework has NOT ruled. This module
-      therefore reports what it computes and does NOT present chi_eff/48 = 3
-      as a live derivation. The ruling is awaited; nothing here decides it.
+  (c) THE K3 READING (adopted, D-015), and what THIS MODULE evaluates:
+          n_gen = chi_eff / 48,   chi_eff = 2 x sum_sigma chi(K3_sigma) = 48 n
+      chi_eff = 144 is an effective index: twice the Euler characteristics
+      of the Kummer K3 surfaces transverse to the n singular involutions,
+      counted once per shadow. It is not the Euler characteristic of Y_7,
+      which is 0. So chi_eff / 48 = n RESTATES route (a) rather than adding
+      a second derivation, and it is not an index theorem for chirality,
+      which is OPEN (Y_7's singular loci are disjoint, so it has no
+      codimension-7 points). The code reaches the 48 through a historical
+      flux reading, N_flux = chi_eff / 6 and n_gen = N_flux / 8; that
+      reading's three claimed derivations of chi_eff -- 2(h11-h21+h31),
+      b_3^2/4 and 6 b_3 -- agreed only at the off-path seed b_3 = 24 and are
+      retired.
 
 MECHANISM:
 1. Generation count: see the three routes above. The code path below is
-   route (c), which is UNRULED.
+   route (c), the K3 reading, which restates route (a).
 
-2. Yukawa hierarchy from geometric wave-function overlaps:
+2. Yukawa hierarchy from geometric wave-function overlaps (a model
+   construct; flavour is OPEN because Y_7 supplies no chiral sector):
    Y_f = A_f * epsilon^Q_f
    where epsilon = exp(-lambda_curvature) and Q_f is topological distance
 
-3. Pneuma chiral filter from axial torsion coupling:
+3. Pneuma chiral filter from axial torsion coupling (a proposal; chirality
+   is OPEN on the adopted model):
    D_eff = gamma^mu (d_mu + igA_mu + gamma^5 T_mu)
 
 KEY RESULTS:
-- Exactly 3 generations (parameter-free)
-- Yukawa texture from FN mechanism (epsilon ~ 0.223)
-- Chiral filter strength: 7/8 from spinor stabilization
+- Three generations: n_gen = b_2/4 = 3 (route (a)); chi_eff/48 = n restates it
+- Yukawa texture from FN mechanism (epsilon ~ 0.223), a model construct
+- Chiral filter strength: 7/8 from spinor stabilization, a model construct
 
-DERIVATION CHAIN (route (c), UNRULED):
+DERIVATION CHAIN (route (c), the K3 reading, via the flux arithmetic):
 topology.mephorash_chi = chi_eff
   -> N_flux = chi_eff / 6
-  -> n_gen = N_flux / 8 = chi_eff / 48
+  -> n_gen = N_flux / 8 = chi_eff / 48 = n
 
 PROVENANCE CORRECTION: chi_eff was previously attributed to "TCS G2 manifold
 #187". Twisted Connected Sum is OFF-PATH for this framework: the exhibited
@@ -84,11 +90,14 @@ Evidence and reasoning:
    generations arise from ADE-type singularities along 3-manifolds inside the G2
    space, not from dividing Betti numbers by spinor dimensions.
 
-2. INCONSISTENT DERIVATION CHAIN. The assertion states n_gen = b3/(2*h11) = 24/8
-   but the code actually computes n_gen = (chi_eff/6) / spinor_DOF = 144/48 = 3.
-   Since chi_eff = 6*b3 by framework definition, chi_eff/6 merely recovers b3,
-   making the "flux quantization" step circular. The variable h11=4 from the
-   assertion does not appear in the code at all.
+2. INCONSISTENT DERIVATION CHAIN. The assertion (route (b), since abandoned)
+   states n_gen = b3/(2*h11) = 24/8 but the code actually computes
+   n_gen = (chi_eff/6) / spinor_DOF = 144/48 = 3 [since D-015 the 6*b3
+   definition is retired; chi_eff is read as 2 x sum chi(K3) = 48n, so
+   144/48 = n restates b_2/4]. Since chi_eff = 6*b3 by framework definition,
+   chi_eff/6 merely recovers b3, making the "flux quantization" step
+   circular. The variable h11=4 from the assertion does not appear in the
+   code at all.
 
 3. SPINOR_DOF=8 MISAPPLIED. The 8 real spinor components of Spin(7) relate to
    N=1 SUSY preservation (G2 holonomy preserves 1 of 8 spinors), not to how many
@@ -99,6 +108,9 @@ Evidence and reasoning:
    Euler characteristic zero. The "effective Euler characteristic" chi_eff=144 is
    a quantity defined within this framework (as 6*b3 = B3^2/4), not a standard
    topological invariant of G2 manifolds.
+   [Settled by D-015: chi_eff is an effective index read as 2 x sum chi(K3)
+   = 48n; the 6*b3 and B3^2/4 forms agreed only at the off-path seed and
+   are retired.]
 
 5. EXTENSIVE HIDDEN FITTING. The Yukawa sector contains 18 effectively fitted
    parameters (9 geometric_coeffs + 9 fn_charges) presented as "derived from
@@ -110,20 +122,23 @@ Evidence and reasoning:
    to give 3 by choosing divisors" and "the divisor 8 is chosen without a
    rigorous physical or mathematical derivation relevant to fermion generations."
 
-Classification: NUMEROLOGY - The arithmetic 24/8=3 is correct, and the
-ingredients (b3, Spin(7) dimension) are real mathematical objects from G2
-geometry. However, the specific combination b3/spinor_DOF has no derivation
-from the established physics. The formula appears reverse-engineered to yield the
-known answer of 3 generations by selecting an appropriate divisor for b3=24.
+Classification (of route (b), since abandoned): NUMEROLOGY - The arithmetic
+24/8=3 is correct, and the ingredients (b3, Spin(7) dimension) are real
+mathematical objects from G2 geometry. However, the specific combination
+b3/spinor_DOF has no derivation from the established physics. The formula
+appears reverse-engineered to yield the known answer of 3 generations by
+selecting an appropriate divisor for b3=24.
 
-STATUS UPDATE (2026-09-22 seed adoption): route (b) above is now ABANDONED
-outright, which settles point 1 of this assessment in the assessment's favour
--- b3/8 is not merely non-standard, it is non-integral everywhere on the
-Joyce-reachable family. Point 4 (chi_eff is framework-defined, not standard)
-is now an OPEN RULING carried explicitly: chi_eff and the n_gen = chi_eff/48
-route are neither asserted nor deleted here. The ruled replacement is
-n_gen = b_2/4 = rank(Gamma) = 3, route (a), which this module does not
-compute.
+STATUS UPDATE (2026-09-22 seed adoption; 2026-10-01 rulings, D-015): route
+(b) above is ABANDONED outright, which settles point 1 of this assessment in
+the assessment's favour -- b3/8 is not merely non-standard, it is
+non-integral everywhere on the Joyce-reachable family. Point 4 is settled by
+the K3 reading (adopted): chi_eff = 2 x sum chi(K3) = 48n is an effective
+index that follows the seed through n, not the Euler characteristic of Y_7.
+So n_gen = chi_eff/48 = n restates route (a), n_gen = b_2/4 = rank(Gamma) =
+3; it is not a second derivation and not an index theorem for chirality,
+which stays OPEN. This module evaluates the chi_eff/48 arithmetic; it does
+not compute route (a).
 ================================================================================
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -180,14 +195,18 @@ class FermionGenerationsV16(SimulationBase):
     """
     Fermion generation count and Yukawa texture from G2 topology.
 
-    This simulation implements the complete fermion sector derivation:
-    1. Generation number from spinor saturation (n_gen = 3)
-    2. Yukawa hierarchy from geometric Froggatt-Nielsen mechanism
-    3. Pneuma chiral filter mechanism
+    This simulation implements the fermion sector:
+    1. Generation number as chi_eff/48 = n, the K3 reading, which restates
+       the ruled count n_gen = b_2/4 = 3
+    2. Yukawa hierarchy from geometric Froggatt-Nielsen mechanism (a model
+       construct; flavour is OPEN)
+    3. Pneuma chiral filter mechanism (a proposal; chirality is OPEN)
 
     Inputs:
-        - topology.mephorash_chi: Effective Euler characteristic (144)
-        - topology.elder_kads: Third Betti number (24)
+        - topology.mephorash_chi: effective index chi_eff (144 = 48n, the K3
+          reading; not the Euler characteristic of Y_7)
+        - topology.elder_kads: Third Betti number b_3 (follows the seed; 43
+          on the adopted seed)
 
     Outputs:
         - fermion.n_generations: Number of generations (3)
@@ -252,16 +271,23 @@ class FermionGenerationsV16(SimulationBase):
     @property
     def metadata(self) -> SimulationMetadata:
         """Return simulation metadata."""
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render,
+        )
+
         return SimulationMetadata(
             id="fermion_generations_v16_0",
             version="16.0",
             domain="fermion",
             title="Fermion Generations from G2 Topology",
-            description=(
-                "Derives the number of fermion generations (3) and Yukawa texture "
-                "from G2 manifold topology via the Pneuma Mechanism. Generation count "
-                "follows from spinor saturation: n_gen = N_flux / spinor_DOF = 24 / 8 = 3. "
-                "Yukawa hierarchy from geometric Froggatt-Nielsen with epsilon ~ 0.223."
+            description=render(
+                "Fermion generation count and Yukawa texture on the G2 manifold "
+                "via the Pneuma Mechanism. The count is {n_gen_route} (the ruled "
+                "route); this module's chi_eff/48 arithmetic restates it through "
+                "the K3 reading chi_eff = 48n. The earlier spinor-saturation reading, "
+                "24/8 = 3, held only at {off_path_seed} and is abandoned. The Yukawa "
+                "hierarchy is a geometric Froggatt-Nielsen model construct with "
+                "epsilon ~ 0.223; flavour and chirality are OPEN."
             ),
             section_id="4",
             subsection_id="4.2"
@@ -312,17 +338,17 @@ class FermionGenerationsV16(SimulationBase):
         # Compute flux quanta
         n_flux = chi_eff / 6.0  # Standard flux quantization
 
-        # Compute generation number from spinor saturation.
-        # THIS IS THE UNRULED ROUTE (chi_eff/48). The RULED route for the
-        # generation count is n_gen = b_2/4 = rank(Gamma) = 3, which lives in
-        # the geometry layer (b3_path.n_gen_report). Nothing here decides the
-        # chi_eff ruling; this line reports what the flux route gives.
+        # Compute generation number as chi_eff/48 -- the K3 reading (adopted,
+        # D-015): chi_eff = 2 x sum chi(K3) = 48n, so this returns n and
+        # restates the RULED route n_gen = b_2/4 = rank(Gamma), which lives in
+        # the geometry layer (b3_path.n_gen_report). It is not a second
+        # derivation and not an index theorem for chirality (OPEN).
         # Spinor saturation determines generation COUNT but not mass hierarchy.
         # The mass hierarchy arises from the GEOMETRIC Froggatt-Nielsen mechanism:
         # fermion wavefunctions localize at different positions on the associative
         # 3-cycle network, and their Yukawa couplings are exponentially suppressed
         # by the geodesic distance to the Higgs localization site.
-        n_gen = n_flux / self.spinor_dof  # = chi_eff/48 (UNRULED route)
+        n_gen = n_flux / self.spinor_dof  # = chi_eff/48 = n (the K3 reading; restates b_2/4)
 
         # Compute Froggatt-Nielsen parameter from G2 curvature
         # lambda_curvature = 1.5 derives from the ratio of the G2 manifold's
@@ -488,34 +514,38 @@ class FermionGenerationsV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    f"WHAT THIS SECTION COMPUTES, AND WHY IT IS NOT YET A DERIVATION. "
-                    f"The flux route below takes an effective Euler characteristic "
-                    f"chi_eff = {chi_eff}, quantizes flux into "
-                    f"N_flux = chi_eff / 6 = {n_flux_val:.0f} units, and saturates each "
-                    f"generation with the 8 real components of a 7D spinor (Spin(7) "
-                    f"representation), giving n_gen = chi_eff / 48 = {n_gen_flux:.0f}. "
-                    f"chi_eff is an OPEN RULING: its three claimed derivations -- "
-                    f"2(h11 - h21 + h31), b_3^2/4 and 6 b_3 -- agree only at b_3 = 24, "
-                    f"and a Joyce orbifold has no h21 or h31 at all. So chi_eff is "
-                    f"either independent of the seed, in which case chi_eff/48 carries "
-                    f"no topological content, or it depends on the seed, in which case "
-                    f"it is not {chi_eff} on the adopted path. This section therefore "
-                    f"REPORTS the flux route and does not present it as a live "
-                    f"derivation of three generations. The ruling is awaited."
+                    f"WHAT THIS SECTION COMPUTES. The code evaluates "
+                    f"n_gen = chi_eff / 48 = {n_gen_flux:.0f} (chi_eff = {chi_eff}), which "
+                    f"restates the ruled count n_gen = b_2/4 = {n_gen_ruled} rather than "
+                    f"deriving it a second time. On the adopted K3 reading (D-015), "
+                    f"chi_eff = 2 x sum chi(K3) = 48 n is twice the Euler characteristics "
+                    f"of the Kummer K3 surfaces transverse to the n singular involutions, "
+                    f"counted once per shadow -- an effective index, not the Euler "
+                    f"characteristic of Y_7, which is 0 -- so chi_eff / 48 = n restates "
+                    f"b_2/4. It is not an index theorem for chirality, which is OPEN. The code "
+                    f"reaches the 48 through a historical flux reading -- "
+                    f"N_flux = chi_eff / 6 = {n_flux_val:.0f} units, each generation "
+                    f"saturating the 8 real components of a 7D spinor (Spin(7) "
+                    f"representation) -- whose three claimed derivations of chi_eff, "
+                    f"2(h11 - h21 + h31), b_3^2/4 and 6 b_3, agreed only at the "
+                    f"off-path seed b_3 = 24 and are retired; a Joyce orbifold has no "
+                    f"h21 or h31 at all."
                 )
             ),
             ContentBlock(
                 type="formula",
-                content=rf"n_{{\text{{gen}}}} = \frac{{b_2}}{{4}} = \frac{{{b2}}}{{4}} = {n_gen_ruled} \quad (\text{{ruled}}); \qquad \frac{{N_{{\text{{flux}}}}}}{{\text{{spinor DOF}}}} = \frac{{{n_flux_val:.0f}}}{{8}} = {n_gen_flux:.0f} \quad (\text{{unruled}})",
+                content=rf"n_{{\text{{gen}}}} = \frac{{b_2}}{{4}} = \frac{{{b2}}}{{4}} = {n_gen_ruled} \quad (\text{{ruled}}); \qquad \frac{{N_{{\text{{flux}}}}}}{{\text{{spinor DOF}}}} = \frac{{{n_flux_val:.0f}}}{{8}} = {n_gen_flux:.0f} \quad (\text{{K3 reading; restates }} b_2/4)",
                 formula_id="generation-number",
                 label="(4.2.1)"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The Yukawa hierarchy arises from geometric wave-function overlaps in "
-                    "the internal space. Fermions localize on different associative 3-cycles "
-                    "at topological distances Q_f from the Higgs VEV. The Yukawa couplings "
+                    "Flavour is OPEN on the adopted model: it needs a chiral sector, which "
+                    "Y_7 does not supply. The texture below is a model construct. In it, the "
+                    "Yukawa hierarchy arises from geometric wave-function overlaps in "
+                    "the internal space: fermions localize on different associative 3-cycles "
+                    "at topological distances Q_f from the Higgs VEV, and the Yukawa couplings "
                     "follow a Froggatt-Nielsen texture:"
                 )
             ),
@@ -530,9 +560,10 @@ class FermionGenerationsV16(SimulationBase):
                 content=(
                     "where lambda = 1.5 is the G2 curvature scale, Q_f is the topological "
                     "distance (graph hops in the cycle network), and A_f are O(1) geometric "
-                    "coefficients encoding angular overlaps. The value epsilon ~ 0.223 agrees "
-                    "with the Cabibbo angle V_us = 0.22500 (PDG 2024), providing a geometric origin for "
-                    "the flavor hierarchy m_t >> m_c >> m_u. "
+                    "coefficients encoding angular overlaps (tuned, with the Q_f, to the "
+                    "observed masses). The value epsilon ~ 0.223 is close to the Cabibbo "
+                    "angle V_us = 0.22500 (PDG 2024); it is a fit-level match, not a derived "
+                    "origin of the flavor hierarchy m_t >> m_c >> m_u. "
                     "<Speculation>The numerical coincidence between epsilon = exp(-3/2) and the "
                     "Cabibbo angle may reflect a deeper connection between G2 compactification "
                     "geometry and quark flavor mixing, or may be an artifact of the specific "
@@ -542,9 +573,12 @@ class FermionGenerationsV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Chirality selection operates via the Pneuma Mechanism. The Pneuma "
-                    "condensate gradient nabla<Psi_P> induces axial torsion T_mu that "
-                    "couples to fermions through a gamma^5 term in the effective Dirac operator:"
+                    "Chirality is OPEN on the adopted model: Y_7's singular loci are "
+                    "disjoint, so it has no codimension-7 points, and a smooth G2 "
+                    "compactification gives no chiral fermions. The Pneuma Mechanism is "
+                    "a proposed filter, not a derivation: the Pneuma condensate gradient "
+                    "nabla<Psi_P> would induce axial torsion T_mu that couples to fermions "
+                    "through a gamma^5 term in the effective Dirac operator:"
                 )
             ),
             ContentBlock(
@@ -556,12 +590,13 @@ class FermionGenerationsV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This gamma^5 coupling creates chirality-dependent potentials that trap "
-                    "left-handed zero modes on the observable brane while expelling right-handed "
-                    "modes to the UV bulk. The chiral filter strength is 7/8, determined by "
-                    "the fraction of Spin(7) components that couple to torsion (7 active out "
-                    "of 8 total). This mechanism is dynamical and smooth, avoiding the "
-                    "singularities of intersecting D-branes while achieving the same phenomenology."
+                    "This gamma^5 coupling would create chirality-dependent potentials that "
+                    "trap left-handed zero modes on the observable brane while expelling "
+                    "right-handed modes to the UV bulk. The chiral filter strength 7/8 is the "
+                    "fraction of Spin(7) components taken to couple to torsion (7 active out "
+                    "of 8 total). Whether such a smooth, dynamical filter can reproduce the "
+                    "chiral spectrum that intersecting branes or conical singularities supply "
+                    "is OPEN."
                 )
             ),
         ]
@@ -571,9 +606,10 @@ class FermionGenerationsV16(SimulationBase):
             subsection_id="4.2",
             title="Fermion Generations and Yukawa Texture",
             abstract=(
-                "Derivation of three fermion generations from G2 topology via spinor "
-                "saturation, and the Yukawa hierarchy from geometric Froggatt-Nielsen "
-                "mechanism with the Pneuma chiral filter."
+                "Three fermion generations from the ruled route n_gen = b_2/4 (the K3 "
+                "reading chi_eff/48 = n restates it), with a geometric Froggatt-Nielsen "
+                "Yukawa texture and the Pneuma chiral filter as model constructs: flavour "
+                "and chirality are OPEN on the adopted model."
             ),
             content_blocks=blocks,
             formula_refs=["generation-number", "yukawa-texture", "pneuma-chiral-filter"],
@@ -598,12 +634,20 @@ class FermionGenerationsV16(SimulationBase):
                 id="generation-number",
                 label="(4.2.1)",
                 latex=rf"n_{{\text{{gen}}}} = \frac{{N_{{\text{{flux}}}}}}{{\text{{spinor DOF}}}} = \frac{{\chi_{{\text{{eff}}}}/6}}{{8}} = \frac{{{int(_REG.chi_eff_total)}}}{{48}}",
-                plain_text=f"n_gen = N_flux / spinor_DOF = (chi_eff/6) / 8 = {int(_REG.chi_eff_total)} / 48 (UNRULED route; the ruled route is b_2/4)",
+                plain_text=f"n_gen = N_flux / spinor_DOF = (chi_eff/6) / 8 = {int(_REG.chi_eff_total)} / 48 (the K3 reading; restates the ruled route b_2/4)",
                 eml_tree_str="ops.div(ops.div(chi_eff, eml_scalar(6.0)), eml_scalar(8.0))",
                 eml_latex=r"n_{\text{gen}} = \mathrm{ops.div}(\mathrm{ops.div}(\chi_{\text{eff}},\; \mathrm{eml\_scalar}(6)),\; \mathrm{eml\_scalar}(8))",
                 eml_description="EML: ops.div(ops.div(eml_scalar(144.0), eml_scalar(6.0)), eml_scalar(8.0)) = eml_scalar(3.0) — flux quantization then spinor saturation",
                 category="DERIVED",
-                description="Number of fermion generations from spinor saturation on the G2 manifold. UNRULED: chi_eff has three competing derivations agreeing only at b_3 = 24, so this is reported, not certified. The RULED route is n_gen = b_2/4 = rank(Gamma) = 3.",
+                description=(
+                    "Number of fermion generations as chi_eff/48 = n, the K3 reading "
+                    "(adopted, D-015): chi_eff = 2 x sum chi(K3) = 48n over the n "
+                    "singular involutions. It restates the ruled route n_gen = b_2/4 = "
+                    "rank(Gamma) rather than adding a second derivation, and it is not "
+                    "an index theorem for chirality (OPEN). The code reaches the 48 "
+                    "through the historical flux arithmetic (chi_eff/6)/8, whose "
+                    "derivations of chi_eff agreed only at the off-path seed b_3 = 24."
+                ),
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["fermion.n_generations", "fermion.n_flux"],
                 input_params=["topology.mephorash_chi", "topology.elder_kads"],
@@ -612,14 +656,14 @@ class FermionGenerationsV16(SimulationBase):
                     "method": "Spinor saturation via flux quantization on G2 manifold associative 3-cycles",
                     "parentFormulas": [],
                     "steps": [
-                        f"Start from the adopted Joyce orbifold T^7/(Z/2)^3 with chi_eff = {int(_REG.chi_eff_total)} (UNRULED quantity; the earlier 'TCS G2 manifold #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
+                        f"Start from the adopted Joyce orbifold T^7/(Z/2)^3 with chi_eff = {int(_REG.chi_eff_total)}, read as 2 x sum chi(K3) = 48n (the K3 reading, adopted; the earlier 'TCS G2 manifold #187' provenance is withdrawn, TCS exhibiting 71 <= b_3 <= 155)",
                         f"Apply flux quantization: N_flux = chi_eff / 6 = {int(_REG.chi_eff_total) / 6.0:.0f}",
                         "Count spinor DOF in 7D: spinor_DOF = 8 (Spin(7) representation)",
                         "Compute generation saturation: n_gen = N_flux / spinor_DOF",
-                        f"Result: n_gen = chi_eff/48 = {int(_REG.chi_eff_total) / 48.0:.0f}. NOT presented as a live derivation: chi_eff is an OPEN RULING. The RULED generation count is n_gen = b_2/4 = rank(Gamma) = 3."
+                        f"Result: n_gen = chi_eff/48 = {int(_REG.chi_eff_total) / 48.0:.0f} = n, which restates the ruled count n_gen = b_2/4 = rank(Gamma); it is not a second derivation"
                     ],
                     "assumptions": [
-                        f"chi_eff = {int(_REG.chi_eff_total)} -- UNRULED, three competing derivations agreeing only at b_3 = 24",
+                        f"chi_eff = {int(_REG.chi_eff_total)} = 48n, the K3 reading (its earlier derivations agreed only at the off-path seed b_3 = 24 and are retired)",
                         "Standard flux quantization on 3-cycles",
                         "Complete spinor saturation (no partial filling)"
                     ],
@@ -641,8 +685,8 @@ class FermionGenerationsV16(SimulationBase):
                         "value": "24"
                     },
                     "chi_eff": {
-                        "name": "Effective Euler characteristic",
-                        "description": "Topological invariant of G2 manifold",
+                        "name": "Effective index (the K3 reading)",
+                        "description": "chi_eff = 2 x sum chi(K3) = 48n over the n singular involutions; not the Euler characteristic of Y_7, which is 0",
                         "units": "dimensionless",
                         "value": "144"
                     },
@@ -667,7 +711,7 @@ class FermionGenerationsV16(SimulationBase):
                 eml_latex=r"Y_f = \mathrm{ops.mul}(A_f,\; \mathrm{ops.pow}(\mathrm{ops.exp}(\mathrm{ops.neg}(\lambda)),\; Q_f))",
                 eml_description="EML: Y_f = ops.mul(A_f, ops.pow(ops.exp(ops.neg(eml_scalar(1.5))), eml_scalar(Q_f))); epsilon = ops.exp(ops.neg(eml_scalar(1.5)))",
                 category="DERIVED",
-                description="Yukawa coupling texture from geometric Froggatt-Nielsen mechanism",
+                description="Yukawa coupling texture from a geometric Froggatt-Nielsen mechanism: a model construct with tuned charges and coefficients, since flavour is OPEN on the adopted model (Y_7 supplies no chiral sector)",
                 # T2.1.B (b) fix: λ_curvature = 1.5 = 36/24 = 36/b₃, and the upstream
                 # chi_eff = 6·b₃ saturation that produces ε. Add b₃ as an explicit
                 # input so the Arithma dependency walker can terminate at b3_leaf().
@@ -741,7 +785,7 @@ class FermionGenerationsV16(SimulationBase):
                 eml_latex=r"D_{\text{eff}} = \mathrm{ops.mul}(\gamma^\mu,\; \mathrm{ops.add}(\partial_\mu,\; igA_\mu,\; \gamma^5 T_\mu))",
                 eml_description="EML: D_eff = ops.mul(gamma_mu, ops.add(partial_mu, ops.mul(i_g, A_mu), ops.mul(gamma_5, T_mu))); chiral filter = ops.div(eml_scalar(7.0), eml_scalar(8.0))",
                 category="DERIVED",
-                description="Modified Dirac operator with Pneuma-induced axial torsion coupling",
+                description="Modified Dirac operator with Pneuma-induced axial torsion coupling: a proposed chiral filter, not a derivation. Chirality is OPEN on the adopted model (Y_7's singular loci are disjoint, so it has no codimension-7 points)",
                 # T2.1.B (b) fix: chiral filter strength 7/8 = (b₃-17)/8 = (b₃ active
                 # spinor components)/Spin(7) dimension; the underlying generation
                 # saturation that fixes the 7-out-of-8 spinor split traces to b₃.
@@ -837,8 +881,9 @@ class FermionGenerationsV16(SimulationBase):
                     f"{int(_REG.elder_kads)} it gives {int(_REG.elder_kads) / 8.0:.3f}, "
                     f"and b_3 is odd everywhere on the Joyce-reachable family so 8 "
                     f"divides none of it. The RULED generation count is "
-                    f"n_gen = b_2/4 = rank(Gamma) = 3. The value this parameter still "
-                    f"carries comes from the UNRULED chi_eff/48 route. See the module "
+                    f"n_gen = b_2/4 = rank(Gamma) = 3. The value this parameter "
+                    f"carries comes from the chi_eff/48 = n arithmetic, which on the "
+                    f"adopted K3 reading (chi_eff = 48n) restates b_2/4. See the module "
                     f"docstring for the full assessment."
                 ),
                 eml_description="EML: ops.div(ops.div(eml_scalar(144.0), eml_scalar(6.0)), eml_scalar(8.0)) — chi_eff flux then spinor saturation",
@@ -869,10 +914,10 @@ class FermionGenerationsV16(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Strength of the Pneuma chiral filter mechanism that traps left-handed "
-                    "fermions on the brane. Computed as 7/8 from the fraction of Spin(7) "
-                    "components that couple to axial torsion. "
-                    "Theoretical geometric parameter, no experimental measurement."
+                    "Strength of the proposed Pneuma chiral filter, meant to trap left-handed "
+                    "fermions on the brane (chirality is OPEN on the adopted model). Computed "
+                    "as 7/8 from the fraction of Spin(7) components taken to couple to axial "
+                    "torsion. Theoretical parameter, no experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(7.0), eml_scalar(8.0)) — Spin(7) active/total spinor component ratio",
                 derivation_formula="pneuma-chiral-filter",
@@ -885,9 +930,10 @@ class FermionGenerationsV16(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Number of quantized flux units on associative 3-cycles. Computed as "
-                    "N_flux = chi_eff / 6 = 24 from the effective Euler characteristic. "
-                    "Topological derivation parameter, no experimental measurement."
+                    "Number of quantized flux units on associative 3-cycles in the historical "
+                    "flux reading: N_flux = chi_eff / 6 = 24, with chi_eff the effective index "
+                    "(the K3 reading, chi_eff = 48n, so N_flux = 8n). Bookkeeping parameter, "
+                    "no experimental measurement."
                 ),
                 eml_description="EML: ops.div(eml_scalar(144.0), eml_scalar(6.0)) — flux quantization from chi_eff",
                 derivation_formula="generation-number",
@@ -917,8 +963,8 @@ class FermionGenerationsV16(SimulationBase):
         return [
             {
                 "id": "CERT_NGEN_3",
-                "assertion": "Exactly 3 fermion generations from G2 spinor saturation",
-                "condition": "n_gen = chi_eff / (6 * spinor_DOF) = 144 / 48 = 3",
+                "assertion": "Three fermion generations: chi_eff/48 = n (the K3 reading) restates the ruled count n_gen = b_2/4",
+                "condition": "n_gen = chi_eff / (6 * spinor_DOF) = chi_eff / 48 = n, equal to b_2/4 on the adopted seed",
                 "tolerance": 0.0,
                 "status": "PASS",
                 "wolfram_query": "144 / 48",
@@ -959,7 +1005,7 @@ class FermionGenerationsV16(SimulationBase):
             {
                 "topic": "G2 Manifold",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "G2 holonomy manifolds are the compactification spaces that determine generation count via Euler characteristic",
+                "relevance": "G2 manifolds are M-theory's compactification spaces. Here the generation count is n_gen = b_2/4, the number of singular involutions of Y_7; chi_eff = 48n is an effective index (the K3 reading), not an Euler characteristic, which vanishes on every closed 7-manifold",
                 "validation_hint": "Verify chi_eff=144 is used consistently and that spinor DOF=8 matches Spin(7) representation"
             },
             {
@@ -974,8 +1020,9 @@ class FermionGenerationsV16(SimulationBase):
         """Run self-validation checks on fermion generation outputs."""
         checks = []
 
-        # Check 1: Generation count is exactly 3
-        # DERIVED: 144 = pressure_divisor = B3^2/4
+        # Check 1: Generation count is 3
+        # chi_eff = 144 = 48n (the K3 reading); the B3^2/4 form held only at
+        # the off-path seed and is retired. 144/48 = n restates b_2/4.
         n_gen = 144.0 / (6.0 * 8.0)
         gen_passed = abs(n_gen - 3.0) < 1e-10
         checks.append({
@@ -1022,7 +1069,7 @@ class FermionGenerationsV16(SimulationBase):
             {
                 "gate_id": "G17_generation_triality",
                 "simulation_id": self.metadata.id,
-                "assertion": "Three fermion generations from G2 topological spinor saturation",
+                "assertion": "Three fermion generations: chi_eff/48 = n (the K3 reading) restates the ruled count n_gen = b_2/4",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -1116,45 +1163,52 @@ class FermionGenerationsV16(SimulationBase):
         Returns:
             Dictionary with beginner explanation fields
         """
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render,
+        )
+
         return {
             "icon": "🔄",
             "title": "Why 3 Generations of Particles",
             "simpleExplanation": (
-                "All matter in the universe is made from quarks and leptons. But weirdly, nature made three "
+                "All matter in the universe is made from quarks and leptons. But nature made three "
                 "nearly identical 'copies' of these particles at different masses: up/charm/top quarks, "
-                "down/strange/bottom quarks, electron/muon/tau leptons. Why exactly three copies and not two "
-                "or five? In this theory, it comes from pure geometry: the hidden dimensions have 24 special "
-                "loops where particles can 'live', and since each generation needs 8 spots (like apartment "
-                "buildings with 8 units), you get exactly 24 ÷ 8 = 3 generations. No adjustable parameters, "
-                "just geometry."
+                "down/strange/bottom quarks, electron/muon/tau leptons. Why three copies and not two "
+                "or five? In this model the count comes from the shape of the hidden dimensions. That "
+                "shape is made by folding a seven-dimensional doughnut with three independent mirror "
+                "folds, and each fold that pinches the space leaves its own family of creases. Three "
+                "folds, three families: three generations. (An older story divided 24 loops into groups "
+                "of 8; it only worked for a shape the model no longer uses.)"
             ),
             "analogy": (
-                "Imagine a parking garage with 24 parking spaces, and each car needs exactly 8 adjacent spaces "
-                "to park. How many cars can you fit? Exactly 3. The 'parking spaces' are associative 3-cycles "
-                "in the G2 manifold, and the '8 spaces per car' comes from the real degrees of freedom in a "
-                "7D spinor. This isn't a coincidence - it's topology forcing the answer. The mass hierarchy "
-                "(why the top quark is 100,000× heavier than the up quark) comes from how far apart these "
-                "'parking spots' are in the extra dimensions: particles on far-apart cycles have exponentially "
-                "suppressed couplings, like ε^Q where ε ≈ 0.22 and Q is the topological distance."
+                "Fold a sheet of paper three times, each fold in a new direction. Every fold leaves its "
+                "own set of creases, so counting the sets of creases tells you how many folds were made. "
+                "The hidden shape works the same way: three independent folds leave three families of "
+                "creases (four creases each, twelve in all), and the families are the generations. Why "
+                "the top quark is 100,000× heavier than the up quark is a separate question that the "
+                "model does not yet answer: its texture, with couplings suppressed like ε^Q where "
+                "ε ≈ 0.22, uses inputs tuned to the observed masses."
             ),
-            "keyTakeaway": (
-                "The number 3 (three particle generations) and the mass hierarchy (top >> bottom >> down) "
-                "both emerge from the same geometry with zero free parameters."
+            "keyTakeaway": render(
+                "The number of generations is the number of independent folds of the hidden shape: "
+                "{n_gen_route}. The mass hierarchy is not yet derived: flavour needs a chiral sector, "
+                "which this shape does not supply."
             ),
-            "technicalDetail": (
-                "Flux quantization gives N_flux = χ_eff/6 = 144/6 = 24 units on associative 3-cycles. "
-                "Spinor saturation in Spin(7) representation requires 8 real DOF per generation. Therefore "
-                "n_gen = N_flux/8 = 3 exactly. The Yukawa hierarchy follows from Froggatt-Nielsen mechanism "
-                "with geometric suppression ε = exp(-λ) where λ = 1.5 is the G2 curvature scale, giving "
-                "ε ≈ 0.223 (matching V_us Cabibbo angle). Topological charges Q_f count graph hops in the "
-                "cycle network: Q_top=0, Q_charm=2, Q_up=4, yielding Y_f = A_f · ε^Q_f with O(1) coefficients "
-                "A_f from angular overlaps."
+            "technicalDetail": render(
+                "On the adopted {manifold}, {construction} with {betti_pair}, {n_gen_route}: the rank "
+                "of the diagonal stabiliser of phi. The effective index chi_eff = 2 x sum chi(K3) = 48n "
+                "(the K3 reading) gives chi_eff/48 = n, a restatement rather than a second derivation; "
+                "the historical flux reading, N_flux = chi_eff/6 units saturating 8 real spinor DOF per "
+                "generation, reaches the same number. The Yukawa texture follows a Froggatt-Nielsen form "
+                "with ε = exp(-λ), λ = 1.5, giving ε ≈ 0.223, close to the Cabibbo angle V_us; the "
+                "charges Q_f (Q_top=0, Q_charm=2, Q_up=4) and the O(1) coefficients A_f are tuned. "
+                "Chirality and flavour are OPEN."
             ),
             "prediction": (
-                "The value ε ≈ 0.223 is not adjustable - it's the exponential of the G2 curvature. This "
-                "predicts that the Cabibbo angle V_us ≈ 0.22500 (PDG 2024; mixing between first two generations) "
-                "should equal ε, which it does to within 1%! This connection between quark mixing and "
-                "extra-dimensional geometry has never been explained in the Standard Model."
+                "The texture sets ε = exp(-1.5) ≈ 0.223, within about 1% of the Cabibbo angle "
+                "V_us ≈ 0.22500 (PDG 2024; mixing between the first two generations). Because λ = 1.5 "
+                "was chosen with post-hoc justification, this is a numerical coincidence to test, not "
+                "a prediction."
             )
         }
 
@@ -1180,7 +1234,7 @@ def run_fermion_generations(verbose: bool = True) -> Dict[str, Any]:
     registry.set_param(
         "topology.mephorash_chi",
         value=int(_REG.chi_eff_total),
-        source="FormulasRegistry:chi_eff_total (UNRULED quantity)",
+        source="FormulasRegistry:chi_eff_total (effective index, the K3 reading)",
         status="GEOMETRIC"
     )
     registry.set_param(
@@ -1196,7 +1250,7 @@ def run_fermion_generations(verbose: bool = True) -> Dict[str, Any]:
 
     if verbose:
         print("\n" + "=" * 70)
-        print(" FERMION GENERATIONS v16.0 - RESULTS")
+        print(" FERMION GENERATIONS - RESULTS")
         print("=" * 70)
         print(f"\nGeneration Count: {results['fermion.n_generations']}")
         print(f"Exact match: {results['_matches_observed']}")

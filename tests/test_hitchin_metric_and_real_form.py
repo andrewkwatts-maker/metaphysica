@@ -44,6 +44,7 @@ import numpy as np
 import pytest
 
 from metaphysica.simulations.PM.geometry.g2_differential import (
+    ALL_PLUS_TRIPLES,
     G2_TRIPLES,
     G2DifferentialGeometry,
     phi_from_octonion_product,
@@ -51,9 +52,11 @@ from metaphysica.simulations.PM.geometry.g2_differential import (
 
 
 def _all_plus_phi() -> np.ndarray:
-    """The framework's tabulated all-(+1) phi, built independently here."""
+    """The split-form (all-(+1)) phi -- the `all_plus_one` switch path --
+    built independently here. Since D-015 (2026-10-01) G2_TRIPLES carries the
+    adopted compact signs, so the split table is ALL_PLUS_TRIPLES."""
     phi = np.zeros((7, 7, 7))
-    for (i, j, k, s) in G2_TRIPLES:
+    for (i, j, k, s) in ALL_PLUS_TRIPLES:
         for perm, sgn in (((i, j, k), s), ((j, k, i), s), ((k, i, j), s),
                           ((j, i, k), -s), ((i, k, j), -s), ((k, j, i), -s)):
             phi[perm] = sgn
@@ -386,3 +389,14 @@ def test_the_forks_drift_guard_reads_live_behaviour(monkeypatch):
 def test_an_unknown_construction_fails_loudly():
     with pytest.raises(ValueError, match="unknown metric construction"):
         G2DifferentialGeometry(_SPLIT).metric_by_convention("something_else")
+
+
+def test_the_adopted_triples_are_the_compact_form():
+    """D-015: the fork's source G2_TRIPLES now builds the compact phi."""
+    phi = np.zeros((7, 7, 7))
+    for (i, j, k, s) in G2_TRIPLES:
+        for perm, sgn in (((i, j, k), s), ((j, k, i), s), ((k, i, j), s),
+                          ((j, i, k), -s), ((i, k, j), -s), ((k, j, i), -s)):
+            phi[perm] = sgn
+    assert np.allclose(phi, _COMPACT)
+    assert G2DifferentialGeometry(phi).real_form_report()["real_form"] ==         "COMPACT_G2"

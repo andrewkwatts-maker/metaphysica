@@ -1,0 +1,22 @@
+# The toy theory's ADOPTED selection -- the active path, drawn gold.
+# Written only by an explicit `accept` (atomic temp file + os.replace); an
+# assessment reads it and never writes it. `digest` is verified on load.
+theory: toy
+name: toy-active
+selection:
+  coupling_route: geometric
+  cutoff: planck
+  extra_param: none
+  mass_rule: seesaw
+  matching: one_loop
+  render_policy: plain
+decided_by:
+  coupling_route: [D-001]
+  cutoff: [D-002]
+  extra_param: [D-001]
+  mass_rule: [D-001]
+  matching: [D-002]
+  render_policy: [D-001]
+digest: 71d86f33416642ab
+data_tiebreak_dof: 0
+previous: []

@@ -61,7 +61,6 @@ _NOT_A_CONSUMER = {
 #: Wiring one up is the fix; editing this set is part of that fix.
 _INERT = {
     "b3_origin",          # OPEN, 5 options
-    "chi_eff_route",      # OPEN, 3 options -- unruled by standing instruction
     "g2_construction",    # OPEN, 2 options
     "moduli_indexing",    # OPEN, 3 options
     "bulk_signature",     # RULED, 3 options
@@ -130,7 +129,10 @@ def test_how_many_options_are_inert_is_recorded():
     """The number that says how much of the decision space is decoration."""
     inert_options = sum(len(FORKS[fid].options) for fid in _INERT)
     total_options = sum(len(f.options) for f in FORKS.values())
-    assert (inert_options, total_options) == (25, 51), (
+    # 2026-10-01 (D-015): chi_eff_route became wired (the narration resolves
+    # it on every read: 25 -> 22 inert options), and k3_reading plus the new
+    # seed_selection fork's two options took the total from 51 to 54.
+    assert (inert_options, total_options) == (22, 54), (
         "inert/total option counts moved: %s of %s"
         % (inert_options, total_options)
     )

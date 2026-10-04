@@ -1,0 +1,40 @@
+# The toy theory's pre-registered assessment configuration (its D-019 annex,
+# pre-registered as the toy's D-003). The sha256 of THIS FILE'S BYTES is
+# recorded in every path_assessment.json; an assessment against a different
+# sha256 is void (kill condition K5). Unknown fields are refused.
+theory: toy
+decision: D-003
+description: >-
+  Decision rule validity > closure > consistency > elegance > data (tie-break
+  only). Standing failures are excluded and disclosed; a complete tie keeps
+  the active path.
+# Validity: facts every configuration must reproduce.
+target_facts:
+  - id: n_light_states
+    signal: validity.n_light_states
+    field: value
+    expected: 3
+    source: toy D-001
+# Held at their active option in every comparison (never swept for a score).
+policy_forks: [render_policy]
+# The definitional constraints this assessment relies on (describe() strings).
+constraints:
+  - "extra_param=scalar_singlet requires matching in {one_loop}"
+  - "coupling_route=numerology excludes matching=one_loop"
+# Which signals sum into which key position. Consistency is left to its default
+# (one position, the sum of every measured consistency signal), so a full run's
+# K2 replay signal joins it without amending this file.
+key_layout:
+  closure:
+    - [closure.fitted_inputs, discrete_inputs]
+  elegance:
+    - [elegance.unrooted_formulas]
+    - [elegance.literal_leaves]
+  data:
+    - [data.n_fail]
+    - [data.n_tension]
+    - [data.chi2_milli]
+budget:
+  max_configurations: 1000
+  screen_timeout_s: 10
+  full_timeout_s: 60

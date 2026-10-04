@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v19.0 - Appendix Q: Index Theorem Applications
-=====================================================================
+PRINCIPIA METAPHYSICA - Appendix Q: Index Theorem Applications
+==============================================================
 
-This appendix develops the Atiyah-Singer index theorem and its applications
-to deriving Standard Model physics from the 26D master action via G2 holonomy.
+This appendix reviews the Atiyah-Singer index theorem and what it can and
+cannot yet say about the internal space Y_7: Joyce's resolution of
+T^7/(Z/2)^3, a compact 7-manifold with a torsion-free G2-structure and
+(b_2, b_3) = (12, 43).
 
-The index theorem provides the rigorous mathematical bridge between:
+The index theorem is the standard bridge between:
 - Topology of the internal manifold (chi_eff, b3, flux)
 - Particle physics observables (fermion generations, chiral anomalies)
 
@@ -14,15 +16,20 @@ PEDAGOGY NOTE (eigenchris style):
 We build up the index theorem step-by-step, starting with intuition and
 progressing to the full machinery. Each step is motivated physically.
 
-KEY RESULTS:
-- Dirac operator index counts chiral zero modes: ind(D) = n+ - n-
-- A-roof genus and Chern character encode topological information
-- G2 specialization: index from 3-form flux on associative cycles
-- Fermion generations: N_gen = |chi_eff / 48| = |144 / 48| = 3
-
-DERIVATION CHAIN:
-Atiyah-Singer (general) -> G2 holonomy specialization -> fermion counting
--> chi_eff = 144 -> N_gen = 3 (exact, parameter-free)
+STATUS ON THE ADOPTED PATH:
+- Generations: n_gen = b_2/4 = 3, the number of singular involutions (the
+  ruled route). The index theorem does not supply this count.
+- chi_eff = 2 x sum of chi(K3) = 48 n (the K3 reading, adopted D-015): the
+  Kummer K3 surfaces transverse to the n singular involutions, counted once
+  per shadow; 144 at n = 3. It is not the Euler characteristic of Y_7, which
+  is 0. n_gen = chi_eff/48 = n restates n_gen = b_2/4; it is not a second
+  derivation and not an index theorem for chirality.
+- Chirality is OPEN (D-011): the singular loci of Y_7 are disjoint, so Y_7
+  has no codimension-7 points, and no chiral zero modes are derived here.
+- chi_eff = 6 b_3 (Q.11) and N_gen = b_3/8 (Q.12) hold only at the off-path
+  seed b_3 = 24 and are labelled OFF-PATH; index.family_index is still
+  evaluated as b_3/8 and is labelled OFF-PATH (n_gen_source =
+  b3_over_dim_O).
 
 References:
 - Atiyah, M.F. & Singer, I.M. (1963) "The Index of Elliptic Operators" I-V
@@ -83,6 +90,12 @@ def _arithma_mul(a, b):
 def _arithma_div(a, b):
     return None if a is None or b is None else a / b
 
+
+def _geo(template: str, register: str = "plain") -> str:
+    """Fill a geometry phrase from the live seed (geometry_narration.render)."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import render
+    return render(template, register)
+
 # Import FormulasRegistry as Single Source of Truth
 try:
     from metaphysica.simulations.core.FormulasRegistry import get_registry
@@ -97,14 +110,15 @@ class AppendixQIndexTheorem(SimulationBase):
     """
     Appendix Q: Index Theorem Applications
 
-    Develops the Atiyah-Singer index theorem for deriving Standard Model
-    physics from G2 holonomy compactification of the 26D master action.
+    Reviews the Atiyah-Singer index theorem and its reading on the internal
+    G2 manifold Y_7 of the 26D master action.
 
-    The index theorem provides the rigorous mathematical foundation for:
+    The index theorem is the standard tool for:
     1. Counting chiral fermion zero modes (n+ - n-)
-    2. Relating topology to physics (chi_eff -> N_gen)
+    2. Relating topology to physics (chi_eff = 48 n -> N_gen, the K3 reading)
     3. Understanding chiral anomalies from geometry
-    4. Deriving exactly 3 fermion generations
+    4. Stating what is not yet derived: chirality on Y_7 is OPEN, and the
+       generation count comes from n_gen = b_2/4, not from an index
 
     Follows eigenchris pedagogical style:
     - Start with intuition before formalism
@@ -113,8 +127,8 @@ class AppendixQIndexTheorem(SimulationBase):
     """
 
     # Key topological constants (via FormulasRegistry SSoT)
-    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # effective index chi_eff (chi(V_7) itself is 0)
-    B3 = _REG.elder_kads if _REGISTRY_AVAILABLE else 24           # Third Betti number
+    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # chi_eff = 48 n, the K3 reading (chi(Y_7) itself is 0)
+    B3 = _REG.elder_kads if _REGISTRY_AVAILABLE else 24           # Third Betti number (live seed; the literal is the off-path fallback)
     SPINOR_DOF = 8          # Spinor DOF in 7D (Spin(7) representation)
     N_GEN_OBSERVED = 3      # Observed number of generations
 
@@ -126,10 +140,13 @@ class AppendixQIndexTheorem(SimulationBase):
             version="24.2",
             domain="appendices",
             title="Appendix Q: Index Theorem Applications",
-            description=(
-                "Develops the Atiyah-Singer index theorem for deriving Standard Model "
-                "physics from G2 holonomy compactification. Derives exactly 3 fermion "
-                "generations from topology: N_gen = |chi_eff / 48| = |144 / 48| = 3."
+            description=_geo(
+                "Reviews the Atiyah-Singer index theorem on the internal space "
+                "{manifold}, {construction}. The generation count is "
+                "{n_gen_route}. With chi_eff = 2 x sum chi(K3) = 48 n (the K3 "
+                "reading, D-015), N_gen = |chi_eff / 48| = n restates that count "
+                "rather than deriving it; it is not an index theorem for "
+                "chirality, which is OPEN (D-011)."
             ),
             section_id="Q",
             subsection_id=None,
@@ -187,31 +204,40 @@ class AppendixQIndexTheorem(SimulationBase):
         b3 = registry.get_param("topology.elder_kads")
 
         # =========================================================
-        # STEP 1: Compute the Dirac operator index
+        # STEP 1: chi_eff / 48 = n restates b_2/4 (the K3 reading, D-015)
         # =========================================================
-        # For G2 manifolds, the index theorem gives:
-        # ind(D) = integral of characteristic classes over M
+        # In general the index theorem gives
+        # ind(D) = integral of characteristic classes over M.
         #
-        # The key relationship is:
-        # ind(D) = (1/48) * chi_eff for G2 holonomy with standard embedding
+        # No index theorem on Y_7 produces a factor 1/48. chi_eff is the
+        # K3 reading, chi_eff = 2 * sum over singular involutions of
+        # chi(K3) = 48 n (144 at n = 3), not the Euler characteristic of
+        # Y_7 (which is 0). So chi_eff / 48 returns n, the number of
+        # singular involutions: it restates n_gen = b_2/4 rather than
+        # deriving it, and it is not an index theorem for chirality. The
+        # value is computed as before.
 
-        dirac_index = chi_eff / 48.0  # = 144/48 = 3
+        dirac_index = chi_eff / 48.0  # = 144/48 = 3 = n under the K3 reading
 
         # =========================================================
-        # STEP 2: Count chiral zero modes
+        # STEP 2: Chiral zero modes (chirality is OPEN, D-011)
         # =========================================================
         # ind(D) = n+ - n- (difference of positive/negative chirality zero modes)
-        # For G2 holonomy with 3-form flux, we have:
-        # - n+ = N_gen (left-handed fermions on brane)
-        # - n- = 0 (right-handed expelled to bulk by Pneuma filter)
+        # Y_7's singular loci are disjoint, so Y_7 has no codimension-7
+        # points and no chiral zero modes are derived on it. The split below
+        # is ASSIGNED, not computed:
+        # - n+ = |chi_eff / 48| = n (the K3 reading, restating b_2/4)
+        # - n- = 0 (set by hand: the Pneuma filter assumption)
 
-        n_plus = int(abs(dirac_index))  # Left-handed zero modes = 3
-        n_minus = 0                      # Right-handed zero modes = 0 (expelled)
+        n_plus = int(abs(dirac_index))  # Assigned from the K3 reading (3)
+        n_minus = 0                      # Assigned by hand (Pneuma filter)
 
         # =========================================================
-        # STEP 3: Compute number of generations
+        # STEP 3: Number of generations
         # =========================================================
-        # N_gen = |ind(D)| = |chi_eff / 48| = |144 / 48| = 3
+        # The ruled route is n_gen = b_2/4 = 3 (singular involutions). This
+        # line evaluates |chi_eff / 48| = n under the K3 reading, which
+        # restates it.
         n_generations = int(abs(chi_eff / 48.0))
 
         # Verify against observation
@@ -229,9 +255,12 @@ class AppendixQIndexTheorem(SimulationBase):
         # =========================================================
         # STEP 5: Family index for moduli variations
         # =========================================================
-        # The family index tracks how ind(D) varies over moduli space
-        # For G2, it's related to b3 (the third Betti number)
-        # family_index = b3 / 8 = 24 / 8 = 3
+        # OFF-PATH (n_gen_source = b3_over_dim_O): this evaluates b3 / 8,
+        # the retired generation route (24 / 8 = 3 at the off-path seed).
+        # 8 divides no reachable b_3 (all are odd), so at the adopted
+        # b_3 = 43 the value is 43 / 8 = 5.375, not a generation count. The
+        # computation is unchanged; the output is listed for the off-path
+        # register (D-013).
 
         family_index = b3 / 8.0
 
@@ -277,11 +306,16 @@ class AppendixQIndexTheorem(SimulationBase):
             subsection_id=None,
             appendix=True,
             title="Appendix Q: Index Theorem Applications",
-            abstract=(
-                "This appendix develops the Atiyah-Singer index theorem and its applications "
-                "to deriving Standard Model physics from the 26D master action via G2 holonomy. "
-                "The index theorem provides the rigorous mathematical bridge between topology "
-                "and particle physics, yielding exactly 3 fermion generations from geometry."
+            abstract=_geo(
+                "This appendix reviews the Atiyah-Singer index theorem and what it can and "
+                "cannot yet say about the internal space {manifold}, {construction}. On the "
+                "adopted path the generation count is {n_gen_route}. With "
+                "&chi;<sub>eff</sub> = 2 &times; &Sigma; &chi;(K3) = 48n (the K3 "
+                "reading, D-015), the index formula &chi;<sub>eff</sub>/48 = n restates that "
+                "count rather than deriving it, and it is not an index theorem for chirality. "
+                "Chirality is OPEN (D-011): the singular loci of {manifold} are disjoint, so "
+                "it has no codimension-7 points.",
+                "html",
             ),
             content_blocks=[
                 # =========================================================
@@ -303,19 +337,25 @@ class AppendixQIndexTheorem(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "In Principia Metaphysica, the index theorem tells us <em>exactly</em> how many "
-                        "fermion generations emerge from compactification. The answer is not arbitrary - "
-                        "it is fixed by the topology of the internal G2 manifold. This is the mathematical "
-                        "reason why we observe precisely 3 generations of quarks and leptons."
+                    content=_geo(
+                        "In Principia Metaphysica the generation count is fixed by the topology of "
+                        "the internal space {manifold}: {n_gen_route}. The index theorem does not "
+                        "supply that count. &chi;<sub>eff</sub> = 2 &times; &Sigma; &chi;(K3) "
+                        "= 48n (the K3 reading, D-015) counts the Kummer K3 surfaces transverse to "
+                        "the n singular involutions, once per shadow: 144 at n = {n_gen}. So "
+                        "&chi;<sub>eff</sub>/48 = n restates the same count. &chi;<sub>eff</sub> is "
+                        "not the Euler characteristic of {manifold}, which is 0.",
+                        "html",
                     )
                 ),
                 ContentBlock(
                     type="note",
-                    content=(
+                    content=_geo(
                         "<strong>Key Insight:</strong> The index theorem counts the difference between "
-                        "left-handed and right-handed fermion zero modes. For our G2 manifold, this "
-                        "difference equals exactly 3, matching the observed Standard Model."
+                        "left-handed and right-handed fermion zero modes. On {manifold} that difference "
+                        "is not yet computed: chirality is OPEN (D-011), because the singular loci are "
+                        "disjoint and leave no codimension-7 points.",
+                        "html",
                     ),
                     label="index-insight"
                 ),
@@ -361,9 +401,10 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This difference is topological - it doesn't change under smooth deformations "
-                        "of the manifold. This is profound: the number of chiral fermion generations "
-                        "is <em>protected by topology</em>."
+                        "This difference is topological: it does not change under smooth deformations "
+                        "of the manifold, so a net number of chiral zero modes, once computed, is "
+                        "<em>protected by topology</em>. On the internal space no chiral zero modes "
+                        "are derived yet (chirality is OPEN, D-011)."
                     )
                 ),
 
@@ -487,8 +528,9 @@ class AppendixQIndexTheorem(SimulationBase):
                     type="paragraph",
                     content=(
                         "Each zero mode corresponds to a massless fermion before symmetry breaking. "
-                        "The number of generations equals the number of such zero modes (divided by "
-                        "the spinor degrees of freedom)."
+                        "Counting generations this way needs a chiral sector, which the internal space "
+                        "does not yet supply (chirality is OPEN, D-011), so the generation count is "
+                        "not read from this formula."
                     )
                 ),
 
@@ -545,10 +587,15 @@ class AppendixQIndexTheorem(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "For G2 manifolds, the family index is related to the third Betti number b_3, "
-                        "which counts the independent associative 3-cycles. This is b_3 = 24 for our "
-                        "TCS manifold #187."
+                    content=_geo(
+                        "On {manifold}, {betti_pair}, with {b3_split}: b<sub>3</sub> counts the "
+                        "independent 3-cycles, 7 flat and the rest from the resolved singular loci. "
+                        "OFF-PATH (n_gen_source = b3_over_dim_O): this appendix still evaluates a "
+                        "&ldquo;family index&rdquo; as b<sub>3</sub>/8, the retired generation route. "
+                        "8 divides no reachable b<sub>3</sub> (all are odd), so the value is not a "
+                        "generation count. The earlier attribution of b<sub>3</sub> = 24 to a "
+                        "&ldquo;TCS manifold #187&rdquo; was false; 24 is {off_path_seed}.",
+                        "html",
                     )
                 ),
 
@@ -557,14 +604,17 @@ class AppendixQIndexTheorem(SimulationBase):
                 # =========================================================
                 ContentBlock(
                     type="heading",
-                    content="Q.9 G2 Holonomy Specialization",
+                    content="Q.9 The Factor 1/48: the K3 Reading",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "For G2 manifolds, the index theorem takes a particularly elegant form. "
-                        "The 3-form flux quantization on associative cycles gives:"
+                        "Earlier text presented the formula below as a G2 specialization of the index "
+                        "theorem obtained from 3-form flux quantization on associative cycles. No index "
+                        "theorem on the internal space produces the factor 1/48. The K3 reading "
+                        "(adopted, D-015) supplies it instead, so the formula is a restatement of the "
+                        "generation count, not a derivation of it:"
                     )
                 ),
                 ContentBlock(
@@ -576,9 +626,12 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "where &#966; is the G2 3-form and &#967;<sub>eff</sub> is the effective Euler characteristic. "
-                        "The factor 1/48 comes from the spinor structure of the G2 manifold (8 spinor "
-                        "degrees of freedom times 6 from flux quantization)."
+                        "where &#966; is the G2 3-form. &#967;<sub>eff</sub> is not an Euler "
+                        "characteristic of the internal space, which is 0. The old account of 48 as "
+                        "8 spinor degrees of freedom times 6 from flux quantization has no derivation. "
+                        "The K3 reading counts 48 = 2 &times; 24: one Kummer K3 surface (&#967; = 24) "
+                        "transverse to each singular involution, taken once per shadow, so "
+                        "&#967;<sub>eff</sub> = 48n (144 at n = 3) and &#967;<sub>eff</sub>/48 = n."
                     )
                 ),
 
@@ -593,7 +646,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Putting everything together, the number of fermion generations is:"
+                        "Under the K3 reading the index formula returns the number of singular "
+                        "involutions n:"
                     )
                 ),
                 ContentBlock(
@@ -605,9 +659,9 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This formula is <em>exact and parameter-free</em>. The number of generations "
-                        "is determined purely by the topology of the internal manifold, with no "
-                        "adjustable parameters."
+                        "This restates the ruled count, n<sub>gen</sub> = b<sub>2</sub>/4, the number "
+                        "of singular involutions; it is not a second derivation. Nor is it an index "
+                        "theorem for chirality: the formula carries no chirality, which is OPEN (D-011)."
                     )
                 ),
 
@@ -616,14 +670,17 @@ class AppendixQIndexTheorem(SimulationBase):
                 # =========================================================
                 ContentBlock(
                     type="heading",
-                    content="Q.11 The Principia Result: Exactly 3 Generations",
+                    content="Q.11 Three Generations on the Adopted Path",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "For the TCS G2 manifold #187 used in Principia Metaphysica, we have "
-                        "&#967;<sub>eff</sub> = 144. Applying the generation counting formula:"
+                    content=_geo(
+                        "The internal space is {construction}, not a twisted connected sum: the "
+                        "earlier attribution to a &ldquo;TCS G2 manifold #187&rdquo; was false. It "
+                        "has n = {n_gen} singular involutions, and the K3 reading gives "
+                        "&#967;<sub>eff</sub> = 48n = 144. Dividing by 48 returns n:",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -634,11 +691,13 @@ class AppendixQIndexTheorem(SimulationBase):
                 ),
                 ContentBlock(
                     type="note",
-                    content=(
-                        "<strong>This is exact.</strong> The number 3 emerges from pure topology -- "
-                        "the effective Euler characteristic &#967;<sub>eff</sub> = 144 divided by the topological "
-                        "factor 48. No fine-tuning, no free parameters. The observed 3 generations "
-                        "of quarks and leptons are a geometric necessity."
+                    content=_geo(
+                        "<strong>What is derived, and what is not.</strong> Derived: {n_gen_route}, "
+                        "the rank of the diagonal stabiliser &Gamma; = (&#8484;/2)<sup>3</sup>. "
+                        "&#967;<sub>eff</sub>/48 = 3 restates it through the K3 reading (D-015). Not "
+                        "derived: the chirality of the three generations (OPEN, D-011). "
+                        "&#967;<sub>eff</sub> is not the Euler characteristic: {chi_y7}.",
+                        "html",
                     ),
                     label="exact-3-gen"
                 ),
@@ -648,13 +707,18 @@ class AppendixQIndexTheorem(SimulationBase):
                 # =========================================================
                 ContentBlock(
                     type="heading",
-                    content="Q.12 Consistency Check: Euler and Betti Numbers",
+                    content="Q.12 Off-Path Relations: &#967;<sub>eff</sub> = 6b₃ and b₃/8",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "We can verify consistency using the relation between &#967;<sub>eff</sub> and b₃:"
+                    content=_geo(
+                        "OFF-PATH (b3_seed = seed_24): the two relations below were once offered as a "
+                        "consistency check. Both hold only at {off_path_seed}, which Joyce's "
+                        "construction from &Gamma; does not reach. On {manifold}, {betti_pair}, and "
+                        "6b<sub>3</sub> is not 144. The relation between &#967;<sub>eff</sub> and "
+                        "b<sub>3</sub> was:",
+                        "html",
                     )
                 ),
                 ContentBlock(
@@ -666,7 +730,8 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "And via spinor saturation:"
+                        "And the retired generation route via spinor saturation, OFF-PATH "
+                        "(n_gen_source = b3_over_dim_O):"
                     )
                 ),
                 ContentBlock(
@@ -678,9 +743,10 @@ class AppendixQIndexTheorem(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "Both approaches yield the same answer, confirming the internal consistency "
-                        "of the index theorem framework. The factors of 48 = 6 x 8 and 24 = 3 x 8 "
-                        "all trace back to spinor degrees of freedom and flux quantization."
+                        "The agreement was a property of the retired seed, not a consistency check: "
+                        "8 divides no reachable b₃ (every reachable b₃ is odd), so b₃/8 yields an "
+                        "integer nowhere on Joyce's family. Both relations are kept, labelled, for "
+                        "the off-path register; the adopted count is n<sub>gen</sub> = b₂/4."
                     )
                 ),
 
@@ -689,15 +755,14 @@ class AppendixQIndexTheorem(SimulationBase):
                 # =========================================================
                 ContentBlock(
                     type="heading",
-                    content="Q.13 Summary: Topology Constrains Physics",
+                    content="Q.13 Summary: What the Index Theorem Does and Does Not Give",
                     level=2
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The Atiyah-Singer index theorem provides the rigorous mathematical "
-                        "foundation for understanding why the Standard Model has exactly 3 "
-                        "generations of fermions. The key points are:"
+                        "The Atiyah-Singer index theorem is the standard tool for counting chiral "
+                        "zero modes. On the adopted path its status is:"
                     )
                 ),
                 ContentBlock(
@@ -705,17 +770,21 @@ class AppendixQIndexTheorem(SimulationBase):
                     content=[
                         "The index ind(D) = n+ - n- counts chiral fermion zero modes",
                         "The index is topological - protected against smooth deformations",
-                        "For G2 manifolds: ind(D) = chi_eff / 48",
-                        "For TCS #187: chi_eff = 144, so N_gen = |144/48| = 3",
-                        "This is exact and parameter-free - no fine-tuning required",
+                        "chi_eff / 48 = n is the K3 reading (chi_eff = 2 x sum chi(K3) = 48 n, "
+                        "D-015), not an index theorem on the internal space",
+                        _geo("Generations: {n_gen_route}; chi_eff / 48 = 3 restates it rather than "
+                             "deriving it (the earlier TCS #187 attribution was false and is retired)"),
+                        "Chirality is OPEN (D-011): the singular loci are disjoint, so there are "
+                        "no codimension-7 points",
                     ]
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The index theorem thus provides the deep mathematical reason why "
-                        "topology constrains physics: the internal geometry of the 26D master "
-                        "action uniquely determines the number of fermion generations we observe."
+                        "The generation count is topological on the adopted path, but it comes from "
+                        "the singular involutions of the internal space, not from an index "
+                        "computation. Turning the index theorem into a derivation needs a chiral "
+                        "sector, which is open."
                     )
                 ),
             ],
@@ -953,8 +1022,11 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="ind_family(D) = integral over moduli of ch(ker D - coker D)",
                 category="DERIVED",
                 description=(
-                    "The family index for Dirac operators parameterized by moduli. "
-                    "Tracks how the index varies over moduli space."
+                    "OFF-PATH (n_gen_source = b3_over_dim_O): the simulation evaluates "
+                    "this output as b_3 / 8, the retired generation route; 8 divides no "
+                    "reachable b_3, so at the adopted seed it is not an integer. The "
+                    "family index for Dirac operators parameterized by moduli tracks how "
+                    "the index varies over moduli space."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["index.family_index"],
@@ -965,7 +1037,7 @@ class AppendixQIndexTheorem(SimulationBase):
                         "Consider family of Dirac operators D_t parameterized by t in M",
                         "Kernel and cokernel form vector bundles over moduli space",
                         "Family index = Chern character of index bundle",
-                        "For G2: family_index ~ b_3 (third Betti number)",
+                        "OFF-PATH: the simulation sets family_index = b_3 / 8 (retired route)",
                     ]
                 },
                 terms={
@@ -983,28 +1055,33 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="ind(D)_G2 = chi_eff / 48",
                 category="DERIVED",
                 description=(
-                    "Specialization of the index theorem to G2 holonomy manifolds. "
-                    "The index is given by the effective Euler characteristic "
-                    "divided by 48 (= 6 x 8, flux quantization times spinor DOF)."
+                    "Restates n_gen = b_2/4 through the K3 reading (adopted, D-015): "
+                    "chi_eff = 2 x sum over singular involutions of chi(K3) = 48 n, 144 "
+                    "at n = 3, so chi_eff / 48 = n. Presented earlier as a "
+                    "specialization of the index theorem to G2 manifolds; no index "
+                    "theorem on Y_7 produces the factor 1/48. It is not an index theorem "
+                    "for chirality (OPEN, D-011), and chi_eff is not the Euler "
+                    "characteristic of Y_7 (which is 0)."
                 ),
                 input_params=["topology.mephorash_chi"],
                 output_params=["index.dirac_index"],
                 derivation={
                     "parentFormulas": ["as-index-theorem-v19"],
-                    "method": "G2 holonomy specialization",
+                    "method": "Earlier G2 specialization, now read through the K3 reading",
                     "steps": [
-                        "G2 holonomy: only parallel spinor survives",
-                        "Flux quantization on 3-cycles: N_flux = chi_eff / 6",
+                        "Earlier argument: the internal G2 manifold keeps one parallel spinor",
+                        "Earlier argument: flux quantization on 3-cycles, N_flux = chi_eff / 6 (no derivation)",
                         "Spinor DOF in 7D: 8 real components",
-                        "Combined: ind(D) = chi_eff / (6 * 8) = chi_eff / 48",
+                        "Earlier result: ind(D) = chi_eff / (6 * 8) = chi_eff / 48; the K3 "
+                        "reading reads 48 = 2 x chi(K3) instead",
                     ],
                     "references": [
                         "Acharya (2001): M-theory compactification on G2 manifolds",
                     ]
                 },
                 terms={
-                    "chi_eff": "Effective Euler characteristic (144 for TCS #187)",
-                }, 
+                    "chi_eff": "chi_eff = 2 x sum chi(K3) = 48 n, 144 at n = 3 (the K3 reading; not the Euler characteristic of Y_7, which is 0)",
+                },
             arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.9) Generation counting
@@ -1015,18 +1092,20 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="N_gen = |chi_eff / 48|",
                 category="DERIVED",
                 description=(
-                    "Number of fermion generations from the absolute value of the "
-                    "Dirac index. This is exact and parameter-free."
+                    "Restates the ruled route n_gen = b_2/4 through the K3 reading "
+                    "(D-015): chi_eff = 48 n, so |chi_eff / 48| = n, the number of "
+                    "singular involutions. A restatement, not a derivation, and not an "
+                    "index theorem for chirality, which is OPEN (D-011)."
                 ),
                 input_params=["topology.mephorash_chi"],
                 output_params=["index.n_generations"],
                 derivation={
                     "parentFormulas": ["g2-index-specialization-v19"],
-                    "method": "Generation counting from index",
+                    "method": "Generation counting through the K3 reading",
                     "steps": [
-                        "Each generation corresponds to one index unit",
+                        "Earlier assumption: each generation is one index unit",
                         "Take absolute value (generations are positive)",
-                        "N_gen = |ind(D)| = |chi_eff / 48|",
+                        "N_gen = |ind(D)| = |chi_eff / 48| = n under the K3 reading (restates b_2/4)",
                     ]
                 },
                 terms={
@@ -1042,28 +1121,33 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="N_gen = |144 / 48| = 3",
                 category="PREDICTED",
                 description=(
-                    "The Principia Metaphysica prediction: exactly 3 fermion "
-                    "generations from the TCS G2 manifold #187 with chi_eff = 144. "
-                    "This matches the observed Standard Model."
+                    "Restates the ruled route n_gen = b_2/4 = 3 through the K3 reading "
+                    "(D-015): chi_eff = 48 n = 144 at n = 3, so 144 / 48 = 3, the number "
+                    "of singular involutions of Y_7 (Joyce's resolution of T^7/(Z/2)^3). "
+                    "The earlier attribution to a 'TCS G2 manifold #187' was false and "
+                    "is retired. Three generations are observed."
                 ),
                 input_params=["topology.mephorash_chi"],
                 output_params=["index.n_generations"],
                 derivation={
                     "parentFormulas": ["generation-counting-index-v19"],
-                    "method": "Evaluation for TCS #187",
+                    "method": "Evaluation on Y_7 through the K3 reading",
                     "steps": [
-                        "TCS G2 manifold #187 has chi_eff = 144",
-                        "Apply generation formula: N_gen = |144 / 48|",
-                        "Result: N_gen = 3 exactly",
+                        _geo("Y_7 has n = {n_gen} singular involutions; the K3 reading gives "
+                             "chi_eff = 48 n = 144"),
+                        "Divide by 48: N_gen = |144 / 48|, which returns n (restates b_2/4)",
+                        "Result: 3, equal to the ruled count n_gen = b_2/4",
                         "Matches observed 3 generations (e, mu, tau families)",
                     ]
                 },
                 terms={
-                    "TCS #187": "Twisted Connected Sum G2 manifold number 187",
-                    "144": "Effective Euler characteristic",
-                    "48": "Topological factor (6 x 8)",
-                    "3": "Number of generations (exact)",
-                }, 
+                    "TCS #187": ("RETIRED: an earlier, false attribution of the internal "
+                                 "space; it is Joyce's resolution of T^7/(Z/2)^3, and "
+                                 "#187 appears in no published TCS enumeration"),
+                    "144": "chi_eff = 48 n at n = 3, the K3 reading (not the Euler characteristic of Y_7, which is 0)",
+                    "48": "48 = 2 x chi(K3): two shadows times chi(K3) = 24 (the K3 reading, D-015)",
+                    "3": "Number of generations",
+                },
             arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.11) Euler-index relation
@@ -1074,23 +1158,28 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="chi_eff = 6 * b_3 = 6 * 24 = 144",
                 category="DERIVED",
                 description=(
-                    "Relation between effective Euler characteristic and third "
-                    "Betti number for G2 manifolds. Provides consistency check."
+                    "OFF-PATH (b3_seed = seed_24): chi_eff = 6 b_3 holds only at the "
+                    "retired seed b_3 = 24; at the adopted seed 6 b_3 is not 144. Kept "
+                    "for the off-path register; it is not a consistency check on the "
+                    "adopted path, where chi_eff = 2 x sum chi(K3) = 48 n (the K3 "
+                    "reading, D-015)."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["topology.mephorash_chi"],
                 derivation={
-                    "method": "G2 topology relation",
+                    "method": "OFF-PATH relation (holds at the retired seed only)",
                     "steps": [
-                        "For G2 manifolds: chi_eff relates to Betti numbers",
-                        "Third Betti number b_3 counts associative 3-cycles",
-                        "Flux quantization factor: 6",
-                        "chi_eff = 6 * b_3 = 6 * 24 = 144",
+                        "Earlier claim: chi_eff relates to the Betti numbers",
+                        "b_3 counts independent 3-cycles (homology classes)",
+                        "Assumed flux quantization factor: 6",
+                        "OFF-PATH: chi_eff = 6 * b_3 = 6 * 24 = 144 at the retired seed only",
                     ]
                 },
                 terms={
-                    "b_3": "Third Betti number (24 for TCS #187)",
-                }, 
+                    "b_3": _geo("Third Betti number ({betti_pair} on Y_7); the 24 here is "
+                                "the retired off-path seed, and its attribution to TCS #187 "
+                                "was false"),
+                },
             arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
 
             # (Q.12) Topological constraint
@@ -1101,25 +1190,29 @@ class AppendixQIndexTheorem(SimulationBase):
                 plain_text="N_gen = b_3 / 8 = 24 / 8 = 3",
                 category="DERIVED",
                 description=(
-                    "Alternative derivation of generation count from third Betti "
-                    "number and spinor degrees of freedom. Confirms consistency."
+                    "OFF-PATH (n_gen_source = b3_over_dim_O): the retired generation "
+                    "route N_gen = b_3 / 8, which gives 3 only at the off-path seed "
+                    "b_3 = 24. 8 divides no reachable b_3 (all are odd), so it yields an "
+                    "integer nowhere on Joyce's family. The ruled route is n_gen = b_2/4. "
+                    "Kept for the off-path register; it confirms nothing on the adopted path."
                 ),
                 input_params=["topology.elder_kads"],
                 output_params=["index.n_generations"],
                 derivation={
                     "parentFormulas": ["generation-counting-index-v19", "euler-index-relation-v19"],
-                    "method": "Spinor saturation counting",
+                    "method": "OFF-PATH: spinor saturation counting (retired)",
                     "steps": [
-                        "b_3 = 24 associative 3-cycles support flux",
+                        "Retired premise: b_3 = 24 associative 3-cycles support flux (the off-path seed)",
                         "Each generation needs 8 spinor components",
-                        "N_gen = b_3 / 8 = 24 / 8 = 3",
-                        "Consistent with chi_eff / 48 = 144 / 48 = 3",
+                        "OFF-PATH: N_gen = b_3 / 8 = 24 / 8 = 3",
+                        "Agreed with chi_eff / 48 = 144 / 48 = 3 only because both were "
+                        "evaluated at the retired seed",
                     ]
                 },
                 terms={
                     "8": "Spinor DOF in 7D (Spin(7) representation)",
-                    "24": "Third Betti number b_3",
-                }, 
+                    "24": "The off-path seed b_3 = 24 (retired; unreachable by Joyce's construction from Gamma)",
+                },
             arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
         ]
 
@@ -1136,9 +1229,11 @@ class AppendixQIndexTheorem(SimulationBase):
                 name="Dirac Operator Index",
                 units="dimensionless",
                 status="DERIVED",
-                description=(
-                    "Index of the Dirac operator on the G2 manifold. Computed as "
-                    "ind(D) = chi_eff / 48 = 144 / 48 = 3."
+                description=_geo(
+                    "chi_eff / 48 under the K3 reading (D-015): chi_eff = 2 x sum chi(K3) "
+                    "= 48 n, so this returns n = {n_gen}, the number of singular "
+                    "involutions, and restates n_gen = b_2/4. It is not a Dirac index "
+                    "computed on {manifold}; chirality is OPEN (D-011)."
                 ),
                 derivation_formula="g2-index-specialization-v19",
                 no_experimental_value=True,  # Topological quantity
@@ -1149,8 +1244,11 @@ class AppendixQIndexTheorem(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Number of positive chirality (left-handed) fermion zero modes. "
-                    "These are the observable fermion generations on our brane."
+                    "Number of positive chirality (left-handed) fermion zero modes, "
+                    "ASSIGNED as |chi_eff / 48| = n (the K3 reading, restating b_2/4) "
+                    "rather than computed from a Dirac operator: chirality is OPEN "
+                    "(D-011), because the "
+                    "singular loci of Y_7 are disjoint and leave no codimension-7 points."
                 ),
                 derivation_formula="dirac-index-definition-v19",
                 experimental_bound=3,
@@ -1163,8 +1261,9 @@ class AppendixQIndexTheorem(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Number of negative chirality (right-handed) fermion zero modes. "
-                    "These are expelled to the UV bulk by the Pneuma chiral filter."
+                    "Number of negative chirality (right-handed) fermion zero modes, "
+                    "set to 0 by assumption (the Pneuma chiral filter), not computed: "
+                    "chirality is OPEN (D-011)."
                 ),
                 derivation_formula="dirac-index-definition-v19",
                 no_experimental_value=True,  # Bulk modes not directly observable
@@ -1174,9 +1273,11 @@ class AppendixQIndexTheorem(SimulationBase):
                 name="Number of Fermion Generations",
                 units="dimensionless",
                 status="PREDICTIONS",
-                description=(
-                    "Number of fermion generations derived from index theorem: "
-                    "N_gen = |chi_eff / 48| = |144 / 48| = 3. Exact and parameter-free."
+                description=_geo(
+                    "Number of fermion generations, evaluated here as |chi_eff / 48| "
+                    "through the K3 reading (chi_eff = 48 n, D-015). On the adopted path "
+                    "the ruled count is {n_gen_route}; this restates it rather than "
+                    "deriving it, and it carries no chirality (OPEN, D-011)."
                 ),
                 derivation_formula="principia-3-generations-v19",
                 experimental_bound=3,
@@ -1201,8 +1302,10 @@ class AppendixQIndexTheorem(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "Family index tracking variation of Dirac index over moduli space. "
-                    "For G2 manifolds: family_index = b_3 / 8 = 24 / 8 = 3."
+                    "OFF-PATH (n_gen_source = b3_over_dim_O): evaluated as b_3 / 8, the "
+                    "retired generation route (24 / 8 = 3 at the off-path seed only). "
+                    "8 divides no reachable b_3, so at the adopted seed this is not an "
+                    "integer and not a generation count. Kept for the off-path register."
                 ),
                 derivation_formula="family-index-v19",
                 no_experimental_value=True,  # Topological quantity
@@ -1216,12 +1319,17 @@ class AppendixQIndexTheorem(SimulationBase):
         return [
             {
                 "id": "cert-index-fermion-generations",
-                "assertion": "Dirac index on G2 manifold yields exactly 3 fermion generations",
-                "condition": "ind(D) = b_3 / 8 = 24 / 8 = 3",
+                "assertion": ("OFF-PATH (n_gen_source = b3_over_dim_O): generation count "
+                              "from b_3 / 8, which gives 3 only at the off-path seed b_3 = 24"),
+                "condition": ("OFF-PATH: ind(D) = b_3 / 8 = 24 / 8 = 3 at the retired seed "
+                              "only; the adopted route is n_gen = b_2/4"),
                 "tolerance": 0,
                 "status": "STRUCTURAL",
                 "wolfram_query": "Third Betti number of Joyce G2 manifold",
-                "wolfram_result": "b_3 = 24 for resolved orbifold constructions",
+                "wolfram_result": ("RETIRED: earlier text read 'b_3 = 24 for resolved orbifold "
+                                   "constructions', which is false. Joyce's T^7/(Z/2)^3 example "
+                                   "has (b_2, b_3) = (12, 43), and b_3 = 24 is not reachable "
+                                   "from Gamma (CG.7)"),
             },
             {
                 "id": "cert-index-anomaly-cancellation",
@@ -1234,7 +1342,8 @@ class AppendixQIndexTheorem(SimulationBase):
             },
             {
                 "id": "cert-family-index",
-                "assertion": "Family index = b_3/8 = 3 over moduli space",
+                "assertion": ("OFF-PATH (n_gen_source = b3_over_dim_O): family index "
+                              "evaluated as b_3/8, which is 3 only at the retired seed b_3 = 24"),
                 "condition": "family_index == 3",
                 "tolerance": 0,
                 "status": "STRUCTURAL",
@@ -1261,8 +1370,10 @@ class AppendixQIndexTheorem(SimulationBase):
             {
                 "topic": "G2 Manifolds and M-Theory Compactification",
                 "url": "https://ncatlab.org/nlab/show/G2+manifold",
-                "relevance": "G2 holonomy manifold provides the compact space for dimensional reduction",
-                "validation_hint": "b_3(G2) = 24 determines fermion count",
+                "relevance": ("A compact 7-manifold with a torsion-free G2-structure provides "
+                              "the compact space for dimensional reduction"),
+                "validation_hint": _geo("On Y_7, {betti_pair}; the generation count is "
+                                        "{n_gen_route} (b_3 = 24 is the retired off-path seed)"),
             },
             {
                 "topic": "Chiral Anomaly and Path Integrals",
@@ -1276,24 +1387,28 @@ class AppendixQIndexTheorem(SimulationBase):
         """Run internal consistency checks on index theorem simulation."""
         checks = []
 
-        # Check 1: b_3 = 24
+        # Check 1: OFF-PATH (b3_seed = seed_24). This re-checks the retired
+        # seed's own arithmetic with a typed 24; it does not read the live
+        # seed, whose b_3 is 43 on the adopted path.
         b3 = 24
         checks.append({
             "name": "betti_3_value",
             "passed": b3 == 24,
             "confidence_interval": {"lower": 24, "upper": 24, "sigma": 0.0},
             "log_level": "INFO",
-            "message": f"Third Betti number b_3 = {b3}",
+            "message": f"OFF-PATH seed arithmetic (retired, typed): b_3 = {b3}",
         })
 
-        # Check 2: Fermion generations = b_3 / 8
+        # Check 2: OFF-PATH (n_gen_source = b3_over_dim_O): b_3 / 8 at the
+        # typed retired seed. The adopted route is n_gen = b_2/4.
         n_gen = b3 // 8
         checks.append({
             "name": "fermion_generation_count",
             "passed": n_gen == 3,
             "confidence_interval": {"lower": 3, "upper": 3, "sigma": 0.0},
             "log_level": "INFO",
-            "message": f"Fermion generations = b_3/8 = {n_gen}",
+            "message": (f"OFF-PATH route b_3/8 at the retired seed = {n_gen}; "
+                        f"the adopted route is n_gen = b_2/4"),
         })
 
         # Check 3: References available
@@ -1327,7 +1442,8 @@ class AppendixQIndexTheorem(SimulationBase):
             {
                 "gate_id": "G17",
                 "simulation_id": self.metadata.id,
-                "assertion": "Generation triality: exactly 3 fermion generations from index theorem",
+                "assertion": ("Generation triality: 3 fermion generations (ruled route "
+                              "n_gen = b_2/4; chi_eff/48 = n restates it via the K3 reading)"),
                 "result": True,
                 "timestamp": ts,
             },
@@ -1441,9 +1557,10 @@ class AppendixQIndexTheorem(SimulationBase):
             },
             {
                 "id": "g2-holonomy",
-                "title": "G2 Holonomy",
+                "title": "G2 Structures",
                 "category": "differential_geometry",
-                "description": "Seven-dimensional Riemannian manifolds with exceptional holonomy",
+                "description": ("Seven-manifolds carrying a torsion-free G2-structure; for the "
+                                "compact real form the holonomy lies in G2"),
             },
         ]
 
@@ -1464,7 +1581,9 @@ def main():
     registry = PMRegistry()
     EstablishedPhysics.load_into_registry(registry)
 
-    # Add required topology parameters
+    # Add required topology parameters. The 24 below is the off-path seed
+    # (retired) kept for this standalone demo; the pipeline reads the live
+    # seed, b_3 = 43.
     registry.set_param("topology.mephorash_chi", 144, source="foundational")
     registry.set_param("topology.elder_kads", 24, source="foundational")
 

@@ -259,7 +259,14 @@ def consumers() -> Dict[str, Any]:
 
 
 def branches_report() -> Dict[str, Any]:
-    """Both branches, both seeds, the whole cost. Adopts nothing."""
+    """Both old branches, both seeds, the whole cost.
+
+    This module adopts nothing itself. The ruling was made elsewhere: on
+    2026-10-01 (D-015) the author adopted the K3 reading of D-009 -- a THIRD
+    route, seed-dependent through n and equal to 144 at n = 3 -- which escapes
+    both costs below. The report states the fork's live branch.
+    """
+    from metaphysica.simulations.core.variants import resolve
     table = branch_cost_table()
     identity = route_c_is_the_b3_over_8_route()
 
@@ -271,7 +278,13 @@ def branches_report() -> Dict[str, Any]:
     empty_profile = [r for r in constant if r["n_T3"] == 0]
 
     return {
-        "ruling": "OPEN -- this module adopts nothing",
+        "ruling": (
+            "RULED 2026-10-01 (D-015): chi_eff_route = k3_reading -- chi_eff "
+            "= 2 x sum chi(K3) = 48 n; the branches below are the routes it "
+            "replaced, kept runnable"
+            if resolve("chi_eff_route") == "k3_reading" else
+            "OPEN on this switch setting (chi_eff_route = %s) -- this module "
+            "adopts nothing" % resolve("chi_eff_route")),
         "branches": {k: {kk: vv for kk, vv in v.items() if kk != "fn"}
                      for k, v in BRANCHES.items()},
         "cost_table": table,
@@ -299,5 +312,11 @@ def branches_report() -> Dict[str, Any]:
             "not independent, which the dichotomy as previously stated did not "
             "say."
         ),
-        "still_the_authors": ["chi_eff", "n_gen_source", "b3_seed"],
+        "the_k3_resolution": (
+            "The K3 reading gives n_gen = chi_eff/48 = n on every member: an "
+            "integer, and 0 where there are no A_1 families. It is the same "
+            "statement as the ruled route n_gen = b_2/4 on the all-plain "
+            "members, so the coupling to n_gen_source becomes an identity "
+            "rather than a cost."),
+        "still_the_authors": ["n_gen_source", "b3_seed"],
     }

@@ -30,6 +30,7 @@ import pytest
 
 from metaphysica.simulations.core.fork_implications import (
     ARTIFACT_BOUND_OBSERVABLES,
+    _live_chi_eff,
     _run_under,
     build_matrix,
     implications_for,
@@ -60,9 +61,14 @@ def test_every_fork_and_every_option_is_enumerated():
         "matrix coverage and the fork registry disagree; missing=%s extra=%s"
         % (sorted(expected - seen), sorted(seen - expected))
     )
-    assert len(FORKS) == 18, (
+    # D-015 (2026-10-01) added seed_selection: 18 -> 19 forks, 51 -> 54 options.
+    assert len(FORKS) == 19, (
         "the fork count moved to %d; the register and switch_search both "
         "state it, so both need re-reading" % len(FORKS)
+    )
+    assert len(rows) == 54, (
+        "the option count moved to %d; re-read the ruling that moved it"
+        % len(rows)
     )
 
 
@@ -81,6 +87,36 @@ def test_exactly_one_adopted_option_per_fork():
 def test_the_ordering_is_deterministic_and_carries_no_preference():
     rows = one_fork_deviations()
     assert rows == sorted(rows, key=lambda r: (r[0], r[1]))
+
+
+# ── chi_eff follows the ruled route ─────────────────────────────────────────
+
+
+def test_the_identity_harness_reads_chi_eff_from_the_ruled_route(monkeypatch):
+    """D-015 (2026-10-01) adopted `k3_reading`; the harness used to return None
+    on it, so every chi_eff-dependent identity read NOT_EVALUABLE on the
+    adopted path. The value comes from the narration (48 n), so it must be 144
+    on the adopted point AND follow n when the seed is deviated -- and each
+    flipped-back route must still give its own value."""
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        chi_eff_claim,
+    )
+
+    monkeypatch.delenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", raising=False)
+    assert _live_chi_eff() == 144.0
+    assert _live_chi_eff() == float(chi_eff_claim()["value"])
+
+    # n follows the seed: seed_31_joyce has b_2 = 8, n = 2, so 48 n = 96.
+    monkeypatch.setenv("METAPHYSICA_VARIANT_B3_SEED", "seed_31_joyce")
+    assert _live_chi_eff() == 96.0
+    monkeypatch.delenv("METAPHYSICA_VARIANT_B3_SEED")
+
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "unruled")
+    assert _live_chi_eff() is None
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "constant_144")
+    assert _live_chi_eff() == 144.0
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "seed_dependent")
+    assert _live_chi_eff() == 6.0 * 43
 
 
 # ── the control ─────────────────────────────────────────────────────────────

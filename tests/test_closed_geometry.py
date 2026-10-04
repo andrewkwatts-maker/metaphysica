@@ -134,9 +134,11 @@ def test_chi_parameter_is_published_only_when_derived(monkeypatch):
     assert ClosedGeometrySimulation().run(None) == {}
 
 
-def test_the_holonomy_selection_is_held_back_until_the_real_form_ruling():
-    pending = holonomy_selection_pending()
-    assert pending["status"] == "PENDING_G3_REAL_FORM_RULING"
-    assert pending["selected"] == (12, 43)
+def test_the_holonomy_selection_is_published_after_the_ruling():
+    """It was held back until the real-form ruling; D-015 (2026-10-01) made
+    it, and the reading is published inside the selection theorem CG.12."""
+    record = holonomy_selection_pending()
+    assert record["status"] == "PUBLISHED_IN_CG12"
+    assert record["selected"] == (12, 43)
     published = {t.id for t in THEOREMS}
-    assert not any("holonomy" in pid for pid in published)
+    assert "y7-selection" in published

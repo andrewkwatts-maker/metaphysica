@@ -870,19 +870,22 @@ def test_tzimtzum_pressure_satisfies_its_declared_form_only_at_24(live_seed):
     )
 
 
-def test_chi_eff_is_reported_and_left_unruled():
-    """`chi_eff = 144` is forked as `chi_eff_route`, status OPEN/unruled.
+def test_chi_eff_is_reported_and_ruled_by_the_author():
+    """`chi_eff = 144` is forked as `chi_eff_route`.
 
-    It is measured here like everything else and MUST NOT be repaired by this
-    file or any successor. The assertion is that the fork is still unruled, so
-    a silent adoption fires this test.
+    It was OPEN/unruled and this test fired on any silent adoption. The author
+    RULED it on 2026-10-01 (D-015): the K3 reading (48 n) is adopted, so the
+    test now pins exactly that ruling -- any further change to the adopted
+    route fires it again -- and keeps the two historical literal routes
+    measured below, since they still disagree off b_3 = 24.
     """
     from metaphysica.simulations.core.variants import FORKS, resolve
 
     assert "chi_eff_route" in FORKS
-    assert resolve("chi_eff_route") == "unruled", (
-        "chi_eff_route has been selected; that is the author's ruling, and "
-        "this file must be re-read against it rather than updated to match"
+    assert FORKS["chi_eff_route"].status == "RULED"
+    assert resolve("chi_eff_route") == "k3_reading", (
+        "chi_eff_route moved off the D-015 ruling; that is the author's act, "
+        "and this file must be re-read against it rather than updated to match"
     )
 
     from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry

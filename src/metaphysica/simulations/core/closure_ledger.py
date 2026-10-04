@@ -131,8 +131,9 @@ _RULES = [
     ("METRIC_DEPENDENT",
      lambda name, row: bool(re.search(
          r"racetrack|Re_T|moduli|alpha_T|alpha_R|vev_coefficient|theta_i"
-         r"|alpha_shadow|delta_b3", name)),
-     "a modulus VEV or a quantity built from one"),
+         r"|alpha_shadow|delta_b3|eta_baryon", name)),
+     "a modulus VEV or a quantity built from one (eta_baryon rests on the "
+     "calibrated Re(T), labelled CALIBRATED under D-015, 2026-10-01)"),
 
     ("FLUX_DEPENDENT",
      lambda name, row: bool(re.search(

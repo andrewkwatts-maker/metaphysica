@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-PRINCIPIA METAPHYSICA v24.2 - Pneuma Mechanism (Geometric Framework)
-====================================================================
+PRINCIPIA METAPHYSICA - Pneuma Mechanism (Geometric Framework)
+==============================================================
 
 CLASSIFICATION SEPARATION (Phase G Sprint 3):
   CORE PHYSICS (DERIVED):
     - Parallel spinor on G2 holonomy manifold (Berger's theorem)
-    - Racetrack potential from competing instantons (standard flux compactification)
+    - Racetrack potential from competing instantons -- CALIBRATED at the
+      off-path seed (a = 2pi/24, b = 2pi/23); no gaugino racetrack exists
+      on Y_7 (CG.5, CG.10)
     - Pneuma coupling, flow parameter, Lagrangian validity
-    - 12 bridge pairs from b3/2 = 24/2 = 12 (pure topology)
+    - 12 bridge pairs: the bulk's 24 space directions taken in pairs
+      (formerly read as b3/2 at the off-path seed b3 = 24)
     - Per-pair OR reduction operator (Clifford algebra Cl(2,0))
   CONSCIOUSNESS I/O INTERPRETATION (SPECULATIVE):
     - 12 bridge pairs as "neural gates" for consciousness flow
@@ -19,6 +22,8 @@ CLASSIFICATION SEPARATION (Phase G Sprint 3):
 
 v22.0 CHANGES:
   - 12x(2,0) paired bridge system: M^{24,2} = T^1 x_fiber (bigoplus_{i=1}^{12} B_i^{2,0})
+    (the single shared time T^1 is RETIRED by the signature ruling 2026-08-31:
+    the bulk has two times, one per 13D (12,1) shadow)
   - Pneuma I/O mechanism via paired bridges as "neural gates" (SPECULATIVE)
   - Per-pair OR reduction: R_perp^i = [[0,-1],[1,0]] for each pair
   - Full OR: tensor_{i=1}^{12} R_perp^i
@@ -45,7 +50,8 @@ THEORETICAL FOUNDATION:
     Its dynamics are fully specified by:
     - Kinetic term: Standard spinor from vielbein emergence
     - Mass term: From G2 flux quantization (m_P ~ M_GUT / sqrt(chi_eff))
-    - Potential: Racetrack from competing instantons
+    - Potential: Racetrack from competing instantons (CALIBRATED at the
+      off-path seed; no racetrack on Y_7)
     - VEV: Dynamically selected via energy minimization
     - (v22) I/O structure: 12 paired bridges as neural gates
 
@@ -120,9 +126,30 @@ from metaphysica.simulations.core.eml_integration import (
 )
 
 
+def _bridge_pair_note() -> str:
+    """Prose only: what the code's b3 // 2 returns on the seed in force.
+
+    The object pneuma.n_bridge_pairs names is the bulk's 12 bridge pairs; the
+    code reads it as b3 // 2. Generated from the live seed so the sentence
+    follows a fork flip; it changes no computed value.
+    """
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    b3, _b2 = seed_values(resolve_path())
+    if b3 // 2 == 12:
+        return ("on the seed in force (b_3 = %d) b_3 // 2 = 12 agrees with "
+                "the bulk count" % b3)
+    return ("on the seed in force (b_3 = %d) b_3 // 2 returns %d, not the "
+            "bulk's 12, so pneuma.neural_gate_active reads False; correcting "
+            "the value is outside a wording pass" % (b3, b3 // 2))
+
+
 class PneumaMechanismV16(SimulationBase):
     """
-    Pneuma Field Mechanism Simulation (v22.0).
+    Pneuma Field Mechanism Simulation.
 
     Computes Pneuma field dynamics from G2 topology and validates
     the Lagrangian structure via racetrack potential analysis.
@@ -135,15 +162,16 @@ class PneumaMechanismV16(SimulationBase):
         - Output (y_{2i}): Intuition via cyclic feedback
     """
 
-    # v22.0: Number of bridge pairs from b3/2
-    N_BRIDGE_PAIRS = 12  # b3 = 24 => 24/2 = 12 pairs
+    # The bulk's 12 bridge pairs: its 24 space directions taken in pairs
+    # (formerly read as b3/2 at the off-path seed b3 = 24).
+    N_BRIDGE_PAIRS = 12  # the bulk's 24 space directions / 2
 
     def __init__(self):
         """Initialize the Pneuma mechanism simulation."""
         # G2 structure constants
         self.g2_norm = np.sqrt(7.0 / 3.0)  # Associative form norm
 
-        # Racetrack parameters (will be computed from topology)
+        # Racetrack parameters, CALIBRATED at the off-path seed (no racetrack on Y_7)
         self.a = None  # First instanton coefficient
         self.b = None  # Second instanton coefficient
         self.A = 1.0   # Prefactor (O(1))
@@ -226,17 +254,18 @@ class PneumaMechanismV16(SimulationBase):
         if registry.has_param("topology.mephorash_chi"):
             chi_eff = registry.get_param("topology.mephorash_chi")
         else:
-            chi_eff = 144  # Standard TCS #187 topology
+            chi_eff = 144  # fallback: the K3 reading 48 n at n = 3 (formerly attributed to an off-path 'TCS #187')
 
         if registry.has_param("topology.elder_kads"):
             b3 = registry.get_param("topology.elder_kads")
         else:
-            b3 = 24  # Associative 3-cycles
+            b3 = 24  # fallback only: the off-path seed (the registry carries the seed in force)
 
         # Compute flux quantization
-        N_flux = chi_eff // 6  # = 24 for chi_eff = 144
+        N_flux = chi_eff // 6  # = 24 for chi_eff = 144: CALIBRATED at the off-path seed, where chi_eff/6 = b3
 
-        # Racetrack coefficients from instanton counting
+        # Racetrack coefficients (CALIBRATED at the off-path seed; Y_7 has no
+        # gaugino racetrack, CG.5, CG.10)
         self.a = 2 * np.pi / N_flux           # = 2pi/24
         self.b = 2 * np.pi / (N_flux - 1)     # = 2pi/23
 
@@ -249,7 +278,8 @@ class PneumaMechanismV16(SimulationBase):
         mass_scale = M_PLANCK / np.sqrt(chi_eff)
 
         # Compute coupling constant from G2 normalization and topology
-        # g_pneuma ~ sqrt(b3/24) * g2_norm * (m_higgs / M_Planck)
+        # g_pneuma ~ sqrt(b3/24) * g2_norm * (m_higgs / M_Planck); the 24 is the
+        # off-path seed normalisation (CALIBRATED), so the factor is 1 only there
         topological_factor = np.sqrt(b3 / 24.0)
         hierarchy_factor = m_higgs / M_PLANCK
         coupling = topological_factor * self.g2_norm * hierarchy_factor
@@ -261,8 +291,11 @@ class PneumaMechanismV16(SimulationBase):
         # Validate Lagrangian via stability check
         lagrangian_valid = self._validate_lagrangian(vev)
 
-        # v22.0: Compute neural gate structure from b3
-        n_bridge_pairs = b3 // 2  # b3 = 24 => 12 pairs
+        # Neural gate structure. The object is the bulk's 12 bridge pairs;
+        # computing it as b3 // 2 gives 12 only at the off-path seed b3 = 24
+        # (21 at b3 = 43, which turns neural_gate_active False). Correcting
+        # the value is outside a wording pass.
+        n_bridge_pairs = b3 // 2
         neural_gate_active = lagrangian_valid and n_bridge_pairs == self.N_BRIDGE_PAIRS
 
         # Return computed values
@@ -304,6 +337,7 @@ class PneumaMechanismV16(SimulationBase):
 
         M_PLANCK = registry.get_param("constants.M_PLANCK")
         m_higgs = registry.get_param("pdg.m_higgs")
+        # Fallbacks as in run(): chi_eff = 144 (the K3 reading) and the off-path seed b3 = 24.
         chi_eff = registry.get_param("topology.mephorash_chi") if registry.has_param("topology.mephorash_chi") else 144
         b3 = registry.get_param("topology.elder_kads") if registry.has_param("topology.elder_kads") else 24
 
@@ -312,7 +346,7 @@ class PneumaMechanismV16(SimulationBase):
         chi_f = float(chi_eff)
         b3_f = float(b3)
 
-        # Initialize racetrack coefficients (same as run())
+        # Initialize racetrack coefficients (same as run(); CALIBRATED at the off-path seed)
         N_flux = int(chi_f) // 6
         self.a = 2 * 3.141592653589793 / N_flux
         self.b = 2 * 3.141592653589793 / (N_flux - 1)
@@ -336,7 +370,7 @@ class PneumaMechanismV16(SimulationBase):
 
         flow_parameter = self._compute_flow_parameter()
         lagrangian_valid = self._validate_lagrangian(vev)
-        n_bridge_pairs = int(b3_f) // 2
+        n_bridge_pairs = int(b3_f) // 2   # as in run(): 12 only at the off-path seed
 
         return {
             "pneuma.coupling": coupling,
@@ -480,6 +514,11 @@ class PneumaMechanismV16(SimulationBase):
         This supplementary section provides a detailed derivation of the Pneuma field dynamics,
         from the fundamental 26D action through dimensional reduction to the 4D effective theory.
         """
+        # Prose only: live geometry phrases for the section text.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render as _render,
+        )
+
         content_blocks = []
 
         # =====================================================================
@@ -488,7 +527,7 @@ class PneumaMechanismV16(SimulationBase):
         content_blocks.extend([
             ContentBlock(
                 type="paragraph",
-                content="The Pneuma Lagrangian is the fundamental fermionic field term that sources all of physics — from spacetime geometry to matter content. It represents a generalized Dirac action for a fundamental fermionic field living in the full 26-dimensional spacetime M<sup>26</sup>(24,2) with signature (24,2) plus Euclidean bridge and S<sup>(2,0)</sup> shadow-time directions."
+                content="The Pneuma Lagrangian is the fundamental fermionic field term that sources all of physics — from spacetime geometry to matter content. It represents a generalized Dirac action for a fundamental fermionic field living in the full 26-dimensional bulk M<sup>26</sup> of signature (24,2): 24 space directions, which form the 12 Euclidean (2,0) bridge pairs, and 2 times, one per 13D (12,1) shadow."
             ),
             ContentBlock(
                 type="formula",
@@ -507,7 +546,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The Pneuma Lagrangian is a generalized Dirac action for a fundamental fermionic field living in the full 26D(24,2) spacetime M<sup>26</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). The spinor field couples to the 12&times;(2,0) bridge pairs and the T<sup>1</sup> time fiber — the Clifford algebra is Cl<sub>(24,2)</sub> (the bridge+time subalgebra, since S<sup>(2,0)</sup> is Euclidean and contributes scalar degrees of freedom). The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction. Each component has specific physical meaning:"
+                content="The Pneuma Lagrangian is a generalized Dirac action for a fundamental fermionic field living in the full 26D bulk of signature (24,2) = (12,1) + (12,1). The spinor field couples to the 12&times;(2,0) bridge pairs and to both times, one per shadow; the Clifford algebra is Cl<sub>(24,2)</sub>. (The older decomposition T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>), with one shared time and two Euclidean sampler directions, is retired by the signature ruling of 2026-08-31.) The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction. Each component has specific physical meaning:"
             ),
             ContentBlock(
                 type="heading",
@@ -523,7 +562,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="A 4096-component Dirac spinor in the 26D(24,2) bulk (2<sup>12</sup> = 4096 from Cl<sub>(24,2)</sub> sub-algebra of the bridge+time sector; the Euclidean S<sup>(2,0)</sup> shadow-time directions contribute scalar rather than spinor modes). Reduces to a 64-component effective spinor via OR reduction. Further decomposes as 64 = 4 &times; 16 under the 4D spacetime &times; internal manifold split."
+                content="A 4096-component Weyl (chiral) spinor of Cl<sub>(24,2)</sub> in the 26D (24,2) bulk: a Dirac spinor there has 2<sup>13</sup> = 8192 components, and one chirality has 2<sup>12</sup> = 4096. Reduces to a 64-component effective spinor via OR reduction. Further decomposes as 64 = 4 &times; 16 under the 4D spacetime &times; internal manifold split."
             ),
             ContentBlock(
                 type="heading",
@@ -531,7 +570,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The covariant Dirac operator: &Gamma;<sup>M</sup>D<sub>M</sub> where M runs over the 25 bridge+time dimensions (12&times;2+1; the Euclidean S<sup>(2,0)</sup> shadow-time directions decouple from spinor kinetics). &Gamma;<sup>M</sup> are 4096&times;4096 matrices in Cl<sub>(24,2)</sub>, reducing to 64&times;64 in the effective dual shadow Cl<sub>(12,1)</sub> after OR reduction."
+                content="The covariant Dirac operator: &Gamma;<sup>M</sup>D<sub>M</sub> where M runs over all 26 bulk dimensions (the 24 bridge-pair directions and the 2 times). &Gamma;<sup>M</sup> are the Cl<sub>(24,2)</sub> gamma matrices (8192&times;8192 in the Dirac representation, pairing the two 4096-component chiralities), reducing to 64&times;64 in the effective dual shadow Cl<sub>(12,1)</sub> after OR reduction. (The older count of 25 bridge+time dimensions, 12&times;2+1, belongs to the retired single-time form.)"
             ),
             ContentBlock(
                 type="heading",
@@ -547,7 +586,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="In 26D with signature (24,2) plus Euclidean bridge: coupling constant g times the bridge coordinates. The Euclidean bridge enables thermal time emergence and resolves causality issues via OR reduction to two-time structure."
+                content="In the 26D bulk of signature (24,2), whose space directions form the Euclidean bridge pairs: coupling constant g times the bridge coordinates. The Euclidean bridge enables thermal time emergence through OR reduction; ghost control of the second time is OPEN."
             ),
             ContentBlock(
                 type="heading",
@@ -569,7 +608,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="In the 26D(24,2) bulk, the spinor field uses the bridge+time subalgebra Cl<sub>(24,2)</sub> (dimension 2<sup>12</sup> = 4096) since the Euclidean S<sup>(2,0)</sup> shadow-time directions contribute only scalar fluctuations. Upon OR reduction (R<sub>&perp;</sub> acting on bridge pairs), we obtain the effective Cl<sub>(12,1)</sub> algebra of the 13D observable shadow:"
+                content="In the 26D(24,2) bulk, the spinor field is a Weyl spinor of Cl<sub>(24,2)</sub> with 2<sup>12</sup> = 4096 components (half of the 8192-component Dirac spinor). Upon OR reduction (R<sub>&perp;</sub> acting on bridge pairs), we obtain the effective Cl<sub>(12,1)</sub> algebra of the 13D observable shadow:"
             ),
             ContentBlock(
                 type="heading",
@@ -577,7 +616,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,2)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
+                content="Full 26D: Weyl spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,2)</sub> (Dirac 2<sup>13</sup> = 8192). Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
             ),
             ContentBlock(
                 type="paragraph",
@@ -596,7 +635,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Dimensional Reduction: Cl(24,2) &rarr; Cl(12,1)",
-                content="Full 26D: Spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,2)</sub>. Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
+                content="Full 26D: Weyl spinor dimension = 2<sup>12</sup> = 4096 components from Cl<sub>(24,2)</sub> (Dirac 2<sup>13</sup> = 8192). Effective dual shadows: After OR reduction, the spinor reduces to 2<sup>6</sup> = 64 components. The 12 bridge pairs WARP to create dual 13D(12,1) shadows via coordinate selection (each: 12 spatial + 1 time (its own))."
             ),
         ])
 
@@ -632,7 +671,14 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="K<sub>Pneuma</sub> is realized as an explicit TCS (Twisted Connected Sum) G&#8322; manifold with Betti numbers b&#8322; = 4 (associative cycles hosting D&#8325; singularity for SO(10) gauge symmetry) and b&#8323; = 24 (co-associative cycles controlling Yukawa textures), constructed via &pi;/6 hyper-K&auml;hler rotation following Corti-Haskins-Nordenstam-Pacini (arXiv:1809.09083)."
+                content=_render(
+                    "K<sub>Pneuma</sub> is realized as {manifold} = {construction}, {structure}, "
+                    "with {betti_pair} and {b3_split} (certificate CG.1). An earlier description "
+                    "of it as a twisted connected sum (TCS) with b&#8322; = 4 and b&#8323; = 24, after "
+                    "Corti-Haskins-Nordenstam-Pacini, is off-path: b&#8323; = 24 is unreachable by "
+                    "Joyce's construction from &Gamma; (CG.7) and lies below the published TCS ranges.",
+                    "html",
+                )
             ),
             ContentBlock(
                 type="heading",
@@ -640,7 +686,16 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Upon dimensional reduction over K<sub>Pneuma</sub>, the full 4096-component 26D spinor (or equivalently, the 64-component effective dual shadow spinor) decomposes into 4D chiral fermions. The topological structure (zero modes of the Dirac operator on K<sub>Pneuma</sub>) determines the number of generations: n<sub>gen</sub> = &chi;<sub>eff</sub> / 48 = 144 / 48 = 3."
+                content=_render(
+                    "Upon dimensional reduction over K<sub>Pneuma</sub>, the full 4096-component 26D "
+                    "Weyl spinor (or equivalently, the 64-component effective dual shadow spinor) "
+                    "decomposes into 4D fermions. The number of generations is {n_gen_route}. Under "
+                    "the adopted K3 reading &chi;<sub>eff</sub> = 2&Sigma;&chi;(K3) = 48n (144 at n = 3), "
+                    "so &chi;<sub>eff</sub>/48 = n restates n<sub>gen</sub> = b&#8322;/4; it is not an index "
+                    "theorem for chirality. How a chiral spectrum arises is OPEN: the singular loci of "
+                    "{manifold} are disjoint, so it has no codimension-7 points (D-011).",
+                    "html",
+                )
             ),
             ContentBlock(
                 type="callout",
@@ -652,7 +707,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Field Taxonomy and Statistics",
-                content="Pneuma field (&Psi;<sub>P</sub>): Chiral spinor field (4096-component in 26D from Cl<sub>(24,2)</sub>, 64-component in dual shadows). Mashiach (An Attractor Scalar) field (&chi;): Attractor scalar field for dark energy (separate from Pneuma). Framework statistics: 45/48 SM parameters within 1&sigma; (93.8%), 12 exact matches."
+                content="Pneuma field (&Psi;<sub>P</sub>): Chiral spinor field (4096-component in 26D from Cl<sub>(24,2)</sub>, 64-component in dual shadows). Mashiach (An Attractor Scalar) field (&chi;): Attractor scalar field for dark energy (separate from Pneuma). (An earlier headline here, '45/48 SM parameters within 1&sigma;', is withdrawn: the registry's global verdict is POOR_FIT, and each comparison is reported on its own row.)"
             ),
         ])
 
@@ -733,7 +788,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Condensate Stability and Geometric Emergence",
-                content="&Delta; &gt; 0 establishes condensate stability: the positive gap ensures the Pneuma field develops a non-trivial vacuum expectation value, breaking the original symmetry spontaneously. K<sub>Pneuma</sub> Geometry: The stable condensate forms the internal geometry K<sub>Pneuma</sub>. The Euler characteristic &chi; = 72 arises from the Hodge number h<sup>3,1</sup>, which counts &Delta;-cycles — deformation modes of the gap. Swampland Compliance: The finite gap &Delta; ensures the theory avoids massless scalar modes in the moduli space, satisfying Swampland constraints. An infinite or zero gap would signal pathological behavior incompatible with quantum gravity."
+                content="&Delta; &gt; 0 establishes condensate stability: the positive gap ensures the Pneuma field develops a non-trivial vacuum expectation value, breaking the original symmetry spontaneously. K<sub>Pneuma</sub> Geometry: The stable condensate forms the internal geometry K<sub>Pneuma</sub>. (An earlier sentence here read &chi; = 72 as an Euler characteristic arising from a Hodge number h<sup>3,1</sup>; that is retired: the Euler characteristic of Y<sub>7</sub> is 0, a Joyce orbifold has no h<sup>3,1</sup>, and 72 is &chi;<sub>eff</sub> per shadow under the K3 reading, 24n at n = 3.) Swampland note: the finite gap &Delta; gaps the condensate; it does not fix the moduli of Y<sub>7</sub>, which are OPEN at leading order (CG.6). An infinite or zero gap would signal pathological behavior incompatible with quantum gravity."
             ),
             ContentBlock(
                 type="callout",
@@ -763,7 +818,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Why (24,2) with Euclidean Bridge?",
-                content="The signature (24,2) with Euclidean bridge arises naturally from the requirement that the Pneuma field generate both spacetime geometry and matter content consistently. The bridge coordinates are not directly observable but manifest through thermodynamic and entropic phenomena in the effective dual shadow theory."
+                content="The signature (24,2) is a postulate of the model: 24 space directions, which form the Euclidean bridge pairs, and two times, one per shadow. The bridge coordinates are not directly observable but manifest through thermodynamic and entropic phenomena in the effective dual shadow theory."
             ),
         ])
 
@@ -773,15 +828,15 @@ class PneumaMechanismV16(SimulationBase):
         content_blocks.extend([
             ContentBlock(
                 type="heading",
-                content='<span class="pm-value" data-pm-value="framework.version_label">v24.2</span>: Pneuma I/O Mechanism (Neural Gates)'
+                content='Pneuma I/O Mechanism (Neural Gates)'
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    'The <span class="pm-value" data-pm-value="framework.version_label">v24.2</span> '
-                    'framework introduces the 12×(2,0) paired bridge system where each bridge pair '
+                    'The framework pairs the bulk\'s 24 space directions into the 12×(2,0) bridge '
+                    'system, where each bridge pair '
                     'B<sub>i</sub> = (y<sub>1i</sub>, y<sub>2i</sub>) provides a geometrically distinct '
-                    'I/O channel. The pairing arises from b₃ = 24/2 = 12 pairs (pure topology). '
+                    'I/O channel (the pairing was formerly read as b₃/2 at the off-path seed b₃ = 24). '
                     '<Speculation>In the speculative consciousness interpretation, each bridge pair '
                     'serves as a \'neural gate\' for consciousness flow between shadows.</Speculation>'
                 )
@@ -840,11 +895,11 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content='Bulk Decomposition (<span class="pm-value" data-pm-value="framework.version_major_label">v23</span>)'
+                content='Bulk Decomposition (retired single-time form)'
             ),
             ContentBlock(
                 type="formula",
-                content="M<sup>(24,2)</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;<sub>i=1</sub><sup>12</sup> B<sub>i</sub><sup>(2,0)</sup>)\nds&sup2; = &minus;dt&sup2; + &sum;<sub>i=1</sub><sup>12</sup> (dy<sub>1i</sub>&sup2; + dy<sub>2i</sub>&sup2;)\n-- 24 spacelike from 12&times;2 pairs, 1 timelike (unified)",
+                content="M<sup>(24,2)</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;<sub>i=1</sub><sup>12</sup> B<sub>i</sub><sup>(2,0)</sup>)\nds&sup2; = &minus;dt&sup2; + &sum;<sub>i=1</sub><sup>12</sup> (dy<sub>1i</sub>&sup2; + dy<sub>2i</sub>&sup2;)\n-- 24 spacelike from 12&times;2 pairs, 1 timelike (unified): RETIRED (signature ruling 2026-08-31); the adopted bulk is (24,2) = (12,1) + (12,1), one time per shadow",
                 label=""
             ),
         ])
@@ -859,7 +914,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Complementary to the Pneuma field Lagrangian, we can formulate the theory in terms of extended objects (p-branes) propagating in the full 26D(24,2) spacetime M<sup>26</sup> = T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>). This formulation makes manifest the higher-dimensional origin and the role of OR reduction via the R<sub>&perp;</sub> operator: 12 bridge pairs create dual 13D(12,1) shadows."
+                content="Complementary to the Pneuma field Lagrangian, we can formulate the theory in terms of extended objects (p-branes) propagating in the full 26D bulk of signature (24,2) = (12,1) + (12,1) (the older decomposition T<sup>1</sup> &times;<sub>fiber</sub> (&oplus;B<sub>i</sub><sup>(2,0)</sup> &oplus; S<sup>(2,0)</sup>) with one shared time is retired). This formulation makes manifest the higher-dimensional origin and the role of OR reduction via the R<sub>&perp;</sub> operator: 12 bridge pairs create dual 13D(12,1) shadows."
             ),
             ContentBlock(
                 type="heading",
@@ -873,7 +928,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Dual-Shadow Physics Framework",
-                content="This action is formulated in the full 26D(24,2) spacetime. The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction (each shadow: 12 spatial + 1 time (its own)) while maintaining covariance. The Euclidean S<sup>(2,0)</sup> shadow-time directions contribute geometric averaging."
+                content="This action is formulated in the full 26D(24,2) spacetime. The 12 bridge pairs create dual 13D(12,1) shadows via OR reduction (each shadow: 12 spatial + 1 time (its own)) while maintaining covariance. (The Euclidean S<sup>(2,0)</sup> sampler directions of the retired single-time form are not part of the (24,2) bulk.)"
             ),
             ContentBlock(
                 type="heading",
@@ -889,7 +944,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="5 spatial + 1 temporal dimension with Euclidean bridge. After OR reduction via R<sub>&perp;</sub>: 12 bridge pairs WARP to create dual 13D(12,1) shadows with shared time. Hosts the visible matter sector and 4D spacetime as a subspace."
+                content="5 spatial + 1 temporal dimension with Euclidean bridge. After OR reduction via R<sub>&perp;</sub>: 12 bridge pairs WARP to create dual 13D(12,1) shadows, one time each (a shared time is retired, signature ruling 2026-08-31). Hosts the visible matter sector and 4D spacetime as a subspace."
             ),
             ContentBlock(
                 type="heading",
@@ -897,7 +952,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in dual 13D(12,1) shadow with shared two-time structure. Contributes to dark sector structure."
+                content="3 spatial dimensions in a 13D(12,1) shadow of the two-time (24,2) bulk (one time per shadow). Contributes to dark sector structure."
             ),
             ContentBlock(
                 type="heading",
@@ -905,7 +960,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in dual 13D(12,1) shadow with shared two-time structure. Second dark sector component."
+                content="3 spatial dimensions in a 13D(12,1) shadow of the two-time (24,2) bulk (one time per shadow). Second dark sector component."
             ),
             ContentBlock(
                 type="heading",
@@ -913,13 +968,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="3 spatial dimensions in 13D(12,1) shadow with shared two-time structure. Third dark sector component."
+                content="3 spatial dimensions in a 13D(12,1) shadow of the two-time (24,2) bulk (one time per shadow). Third dark sector component."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="OR Reduction: 26D(24,2) → 12×(2,0) bridge pairs → 2×13D(12,1)",
-                content="Starting configuration: 26D with signature (24,2) = (12,1) + (12,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + 1 shared time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action. The S<sup>(2,0)</sup> shadow-time directions provide additional geometric averaging."
+                content="Starting configuration: 26D with signature (24,2) = (12,1) + (12,1). The 12 Euclidean bridge pairs WARP to create 2&times;13D(12,1) shadows — each shadow has 12 spatial dimensions (from bridge coordinate selection) + its own time = 13D(12,1). OR reduction via R<sub>&perp;</sub> produces this dual-shadow structure while preserving physical degrees of freedom. Bridge effects persist through Euclidean substrate coupling in the effective action."
             ),
             ContentBlock(
                 type="heading",
@@ -937,7 +992,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="These constraints are first-class and generate the OR reduction structure. They ensure that: ghosts from the dual-shadow framework are eliminated; physical degrees of freedom are preserved; gauge invariance is manifest through the R<sub>&perp;</sub> operator."
+                content="In Bars' two-time physics these constraints are first-class and remove the ghosts of the extra time. The model does not inherit that theorem: gauging (24,2) gives one (23,1) shadow rather than two (12,1) shadows, so ghost control of the second time is OPEN (signature ruling 2026-08-31). Here they generate the OR reduction structure, with gauge invariance carried by the R<sub>&perp;</sub> operator."
             ),
             ContentBlock(
                 type="heading",
@@ -951,7 +1006,7 @@ class PneumaMechanismV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Central Charges in SO(24,2)",
-                content="Observable 5-brane: Z<sub>5</sub> &isin; &and;<sup>5</sup>(&reals;<sup>24,1</sup>) — rank-5 antisymmetric tensor charge. Shadow 3-branes: Z<sub>3</sub><sup>(i)</sup> &isin; &and;<sup>3</sup>(&reals;<sup>24,1</sup>), i = 1, 2, 3 — three rank-3 antisymmetric tensor charges. These central charges commute with all supersymmetry generators and are topological invariants. The dimensions (5,1) and (3,1) are selected to maximize the allowed central charge structure while satisfying the total dimension constraint 25 = (5+1)+(3+1)+(3+1)+(3+1) + 7 (internal)."
+                content="Observable 5-brane: Z<sub>5</sub> &isin; &and;<sup>5</sup>(&reals;<sup>24,1</sup>) — rank-5 antisymmetric tensor charge. Shadow 3-branes: Z<sub>3</sub><sup>(i)</sup> &isin; &and;<sup>3</sup>(&reals;<sup>24,1</sup>), i = 1, 2, 3 — three rank-3 antisymmetric tensor charges. These central charges commute with all supersymmetry generators and are topological invariants. The dimensions (5,1) and (3,1) are selected to maximize the allowed central charge structure while satisfying the total dimension constraint 25 = (5+1)+(3+1)+(3+1)+(3+1) + 7 (internal). (This count uses the 25D (24,1) core of the retired single-time form; the adopted bulk is 26D (24,2).)"
             ),
         ])
 
@@ -965,7 +1020,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Starting from the full 26D Lagrangian (or equivalently, the 2T p-brane action), we first gauge-fix to 13D (with the g&middot;t<sub>ortho</sub> term encoding the second time direction), then perform Kaluza-Klein reduction over the 8-dimensional internal manifold K<sub>Pneuma</sub>. This yields the 4D fermion sector:"
+                content="Starting from the full 26D Lagrangian (or equivalently, the 2T p-brane action), we first gauge-fix to 13D (with the g&middot;t<sub>ortho</sub> term encoding the second time direction), then perform Kaluza-Klein reduction over the 9-dimensional internal space K<sub>Pneuma</sub> &times; T<sup>2</sup> (13 = 4 + 7 + 2). This yields the 4D fermion sector:"
             ),
             ContentBlock(
                 type="formula",
@@ -975,7 +1030,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The three generations (i = 1, 2, 3) arise from the three independent zero modes of the internal Dirac operator. The 4D masses m<sub>i</sub> and Yukawa couplings are determined by overlap integrals of these zero-mode wave functions over K<sub>Pneuma</sub>."
+                content="The three generations (i = 1, 2, 3) are counted by n<sub>gen</sub> = b&#8322;/4 = 3, the number of singular involutions; how three chiral zero modes of the internal Dirac operator arise is OPEN (D-011). The 4D masses m<sub>i</sub> and Yukawa couplings are determined by overlap integrals of these zero-mode wave functions over K<sub>Pneuma</sub>."
             ),
             ContentBlock(
                 type="callout",
@@ -995,7 +1050,7 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The following presents the complete hierarchy of Lagrangians from the 26D bulk action down to 4D observable physics. Each level emerges naturally from dimensional reduction and gauge fixing, with fermionic primacy maintained throughout. Testability concentrates at Levels 3 and 4: the f(R,T,&tau;) modified gravity coefficients (&alpha;<sub>F</sub>, &beta;<sub>F</sub>) produce specific deviations from GR testable via gravitational wave dispersion (LIGO/Virgo/KAGRA) and binary pulsar timing, while the Mashiach attractor potential predicts w<sub>eff</sub> = &minus;0.853 measurable by DESI and Euclid. Level 2 predicts KK mode signatures accessible at future 100 TeV colliders if M<sub>KK</sub> &lt; 10 TeV. Level 1 is not directly testable but provides the mathematical consistency constraints (anomaly cancellation, modular invariance) that fix all lower-level parameters."
+                content="The following presents the complete hierarchy of Lagrangians from the 26D bulk action down to 4D observable physics. Each level follows from dimensional reduction and gauge fixing, with fermionic primacy maintained throughout. Testability concentrates at Levels 3 and 4: the f(R,T,&tau;) modified gravity coefficients (&alpha;<sub>F</sub>, &beta;<sub>F</sub>) produce specific deviations from GR testable via gravitational wave dispersion (LIGO/Virgo/KAGRA) and binary pulsar timing, while the Mashiach attractor potential (a model construct: dark energy is OPEN on Y<sub>7</sub>, where the leading-order flux potential cannot accelerate, CG.11) gives w<sub>eff</sub> = &minus;0.853, which DESI and Euclid can test. Level 2 predicts KK mode signatures accessible at future 100 TeV colliders if M<sub>KK</sub> &lt; 10 TeV. Level 1 is not directly testable but provides the mathematical consistency constraints (anomaly cancellation, modular invariance) that fix all lower-level parameters."
             ),
             ContentBlock(
                 type="heading",
@@ -1017,13 +1072,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="After OR reduction from 26D(24,2) = 12&times;(2,0) + (0,1) to dual 13D(12,1) shadows with two times (one per shadow), the 4096-component spinor from Cl<sub>(24,2)</sub> reduces to effective 64 components:"
+                content="After OR reduction from 26D(24,2) = 12&times;(2,0) + (0,2) to dual 13D(12,1) shadows with two times (one per shadow), the 4096-component Weyl spinor of Cl<sub>(24,2)</sub> reduces to effective 64 components:"
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Dimensional Reduction: 26D(24,2) = 12×(2,0) + (0,1) → 2×13D(12,1)",
-                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows, each with its own time ((12,1) + (12,1) = (24,2)). Spinor dimension: Weyl 2<sup>13</sup>/2 = 4096 of Cl(24,2) &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> stabilize moduli via KKLT/LVS mechanisms. The complex structure modulus Re(T) is constrained from the measured Higgs mass (input 125.10 GeV; PDG 2024: 125.20 &plusmn; 0.11); the exact value is an open problem (9.865 from Higgs inversion, 7.086 BBN-calibrated, 1.833 geometric)."
+                title="Dimensional Reduction: 26D(24,2) = 12×(2,0) + (0,2) → 2×13D(12,1)",
+                content="OR reduction via R<sub>&perp;</sub>: 12&times;(2,0) bridge pairs warp to create 2&times;13D(12,1) shadows, each with its own time ((12,1) + (12,1) = (24,2)). Spinor dimension: Weyl 2<sup>13</sup>/2 = 4096 of Cl(24,2) &rarr; 2<sup>6</sup> = 64 effective components. The flux terms &#8466;<sub>flux</sub> do not fix the moduli at leading order: on Y<sub>7</sub> the G<sub>4</sub> flux potential is positive and runs away (CG.6), so Re(T) is an OPEN modulus. The values used elsewhere are CALIBRATED inputs: 9.865 from Higgs-mass inversion (input 125.10 GeV; PDG 2024: 125.20 &plusmn; 0.11), 7.086 BBN-calibrated at the off-path seed, 1.833."
             ),
             ContentBlock(
                 type="heading",
@@ -1039,13 +1094,13 @@ class PneumaMechanismV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The dark energy sector is described by the Mashiach scalar field with late-time attractor dynamics ensuring w &rarr; &minus;1.0. The potential V(&phi;) is constructed to have a stable late-time attractor: &phi;<sub>M</sub> VEV ~ 2.5 M<sub>Pl</sub>, w = &minus;1.0 exactly at minimum, &Lambda; ~ (2.4 meV)<sup>4</sup>, attractor dynamics &phi;&#776; + 3H&phi;&#775; + V&prime;(&phi;) = 0."
+                content="The dark energy sector is modelled by the Mashiach scalar field with late-time attractor dynamics giving w &rarr; &minus;1.0 (dark energy is OPEN on Y<sub>7</sub>: the leading-order flux potential cannot accelerate, CG.11). The potential V(&phi;) is constructed to have a stable late-time attractor: &phi;<sub>M</sub> VEV ~ 2.5 M<sub>Pl</sub>, w = &minus;1.0 at the minimum, &Lambda; ~ (2.4 meV)<sup>4</sup>, attractor dynamics &phi;&#776; + 3H&phi;&#775; + V&prime;(&phi;) = 0."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Attractor Dynamics",
-                content="The Mashiach field &phi; evolves according to the Klein-Gordon equation in an FRW background: &phi;&#776; + 3H&phi;&#775; + V&prime;(&phi;) = 0. At late times, the field rolls to the minimum of V(&phi;), where &phi;&#775; &rarr; 0, yielding w = &minus;1.0 without fine-tuning. This is the attractor solution — independent of initial conditions."
+                content="The Mashiach field &phi; evolves according to the Klein-Gordon equation in an FRW background: &phi;&#776; + 3H&phi;&#775; + V&prime;(&phi;) = 0. At late times, the field rolls to the minimum of V(&phi;), where &phi;&#775; &rarr; 0, yielding w = &minus;1.0 at the minimum. This is the attractor solution — independent of initial conditions; the value of &Lambda; itself is an input."
             ),
             ContentBlock(
                 type="heading",
@@ -1059,10 +1114,10 @@ class PneumaMechanismV16(SimulationBase):
                 type="formula",
                 content=r"""\begin{aligned}
 \textbf{Level 1} \; (26D): \quad & S_{26} = \int d^{26}X \sqrt{-G} \left[ R_{26} + \bar{\Psi}_P (i\Gamma^M D_M - m_P)\Psi_P \right] \\
-& \text{Signature: } (24,2) = 12 \times (2,0) \oplus S^{2,0} \oplus (0,1) \\[6pt]
+& \text{Signature: } (24,2) = 12 \times (2,0) \oplus (0,2) \\[6pt]
 & \downarrow \; \text{OR reduction via } R_\perp = \bigotimes_{i=1}^{12} R_\perp^{(i)} \\[6pt]
 \textbf{Level 2} \; (2 \times 13D): \quad & \mathcal{L}_{13} = M_*^{11} R_{13} + \bar{\Psi}_{64} (i\gamma^\mu \nabla_\mu - m_{\text{eff}})\Psi_{64} + \mathcal{L}_{\text{flux}} \\
-& \text{Dual shadows: } 2 \times 13D(12,1) \text{ with shared } T^1 \\[6pt]
+& \text{Dual shadows: } 2 \times 13D(12,1) \text{, one time each} \\[6pt]
 & \downarrow \; \text{KK reduction over } G_2 \\[6pt]
 \textbf{Level 3} \; (4D): \quad & f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau + \delta_F (\partial_t \tau)R \\[6pt]
 \textbf{Level 4} \; (DE): \quad & \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M), \quad V = V_0\left[1 + A\cos(\omega\phi_M/f_\phi)\right]
@@ -1119,14 +1174,14 @@ class PneumaMechanismV16(SimulationBase):
                     "steps": [
                         "Start with parallel spinor on G2 manifold: nabla_m eta = 0 where eta is the covariantly constant spinor",
                         "Derive kinetic term from spinor covariant derivative: (1/2) partial_mu Psi_P partial^mu Psi_P via KK reduction of Dirac operator on G2",
-                        "Construct racetrack superpotential from competing instantons: W = A exp(-a Psi) - B exp(-b Psi) with a = 2pi/N_flux, b = 2pi/(N_flux-1)",
+                        "Construct racetrack superpotential from competing instantons: W = A exp(-a Psi) - B exp(-b Psi) with a = 2pi/N_flux, b = 2pi/(N_flux-1) (CALIBRATED at the off-path seed, N_flux = 24; no gaugino racetrack exists on Y_7, CG.5, CG.10)",
                         "Obtain scalar potential from F-term: V(Psi) = |dW/dPsi|^2 = |A*a*exp(-a*Psi) - B*b*exp(-b*Psi)|^2",
                         "Include vielbein coupling from spinor bilinears: e_a^mu proportional to <eta_bar Gamma^a eta>"
                     ],
                     "assumptions": [
                         "G2 holonomy preserved",
                         "SUSY breaking via F-term potential",
-                        "Flux quantization N_flux = chi_eff / 6"
+                        "Flux quantization N_flux = chi_eff / 6 = 24 (CALIBRATED at the off-path seed, where it equalled b3)"
                     ]
                 },
                 terms={
@@ -1136,8 +1191,9 @@ class PneumaMechanismV16(SimulationBase):
                     "potential": r"\( V(\Psi_P) = |dW/d\Psi_P|^2 \)",
                     "vielbein": r"\( \mathcal{L}_{\text{vielbein}} = \bar{\eta} \Gamma^a e_a^\mu D_\mu \eta \)"
                 },
-                # TODO(v25.0): close the 3.4% Re(T) VEV gap via non-perturbative W_inst
-                # potential — current racetrack leaves Re(T) ~ 1.833 as a fitted input.
+                # NOTE: the '3.4% Re(T) VEV gap' and Re(T) ~ 1.833 belong to the
+                # racetrack CALIBRATED at the off-path seed; Y_7 has no racetrack
+                # (CG.5, CG.10) and Re(T) is an OPEN modulus (CG.6).
                 # Triple-track: kinetic prefactor 1/2 anchors the Lagrangian.
                 arithma=_arithma_num(0.5),
                 eml=_eml_div(_eml_scalar(1.0), _eml_scalar(2.0)),
@@ -1151,7 +1207,7 @@ class PneumaMechanismV16(SimulationBase):
                 latex=r"B_i^{2,0} = (y_{1i}, y_{2i}) \quad \text{Input: } y_{1i} \text{ (perception)} \quad \text{Output: } y_{2i} \text{ (intuition)}",
                 plain_text="B_i^{2,0} = (y_{1i}, y_{2i}); Input: y_{1i} (perception); Output: y_{2i} (intuition)",
                 category="DERIVED",
-                description="v22.0 Neural gate structure: each bridge pair serves as I/O channel for consciousness",
+                description="Neural gate structure (SPECULATIVE reading): each of the bulk's 12 bridge pairs serves as I/O channel for consciousness",
                 input_params=["topology.elder_kads"],
                 output_params=["pneuma.n_bridge_pairs", "pneuma.neural_gate_active"],
                 derivation={
@@ -1159,7 +1215,7 @@ class PneumaMechanismV16(SimulationBase):
                     "method": "topological_decomposition",
                     "parentFormulas": ["pneuma-lagrangian", "pneuma-or-reduction"],
                     "steps": [
-                        "Compute third Betti number from TCS G2 manifold: b3 = 24 associative 3-cycles from Corti-Haskins-Nordenstam-Pacini construction",
+                        "Take the bulk's 24 space directions (signature (24,2)); this step formerly read the 24 as b3 = 24 of a TCS G2 manifold after Corti-Haskins-Nordenstam-Pacini, which is off-path",
                         "Decompose into normal/mirror pairs: 24/2 = 12 paired bridges B_i = (y_{1i}, y_{2i})",
                         "Each pair B_i has Euclidean (2,0) signature supporting independent OR reduction",
                         "y_{1i} aggregates form normal shadow: perception input channel from bulk time t",
@@ -1171,20 +1227,21 @@ class PneumaMechanismV16(SimulationBase):
                     ]
                 },
                 terms={
-                    "B_i": "Bridge pair i from b3 decomposition (i = 1..12)",
+                    "B_i": "Bridge pair i of the bulk's 24 space directions (i = 1..12)",
                     "y_{1i}": "Normal shadow component: perception input channel",
                     "y_{2i}": "Mirror shadow component: intuition output channel",
-                    "b_3": "Third Betti number (24 associative 3-cycles)",
+                    "b_3": "Third Betti number; the 24 counted here is the bulk's space directions, formerly misread as b_3 at the off-path seed b_3 = 24",
                     "(2,0)": "Euclidean signature of each bridge pair"
                 },
                 eml_tree_str=(
                     "ops.div(eml_vec('b3'), eml_scalar(2.0))"
                 ),
                 eml_description=(
-                    "EML: n_bridge_pairs = b3 / 2 = 24 / 2 = 12; each B_i = (y_{1i}, y_{2i}) pair"
+                    "EML: n_bridge_pairs = b3 / 2 = 24 / 2 = 12 at the off-path seed (the object is the bulk's 12 bridge pairs); each B_i = (y_{1i}, y_{2i}) pair"
                 ),
                 # TODO(speculative): consciousness I/O interpretation of bridge pairs is
-                # SPECULATIVE; n_pairs = b3/2 = 12 itself is pure topology.
+                # SPECULATIVE; the 12 pairs are the bulk's 24 space directions taken
+                # in pairs (b3/2 = 12 held only at the off-path seed b3 = 24).
                 arithma=_arithma_num(12.0),
                 eml=_eml_div(_b3_leaf(), _eml_scalar(2.0)),
                 value=12.0,
@@ -1197,7 +1254,7 @@ class PneumaMechanismV16(SimulationBase):
                 latex=r"R_\perp^i = \left(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\right) \quad R_\perp^{\text{full}} = \bigotimes_{i=1}^{12} R_\perp^i",
                 plain_text="R_perp^i = [[0,-1],[1,0]]; R_perp^full = tensor_{i=1}^{12} R_perp^i",
                 category="DERIVED",
-                description="v22.0 Per-pair OR reduction: 90-degree rotation on each bridge pair, full operator as tensor product",
+                description="Per-pair OR reduction: 90-degree rotation on each bridge pair, full operator as tensor product",
                 input_params=["topology.elder_kads"],
                 output_params=[],
                 derivation={
@@ -1285,8 +1342,9 @@ class PneumaMechanismV16(SimulationBase):
                     "flow_parameter": r"\lambda = \sqrt{2 V''(\langle\Psi_P\rangle)}",
                     "derivative": r"\frac{\partial V}{\partial \Psi_P} = 2 \frac{dW}{d\Psi_P} \frac{d^2W}{d\Psi_P^2}"
                 },
-                # TODO(v25.0): VEV gap (3.4% Re(T)) feeds into λ via V''(<Ψ_P>);
-                # v25.0 re_t_sector.py closes this via W_inst.
+                # NOTE: the 'VEV gap (3.4% Re(T))' feeding λ via V''(<Ψ_P>) belongs to
+                # the racetrack CALIBRATED at the off-path seed; Y_7 has no racetrack
+                # (CG.5, CG.10) and Re(T) is an OPEN modulus (CG.6).
                 # Triple-track: at equilibrium dPsi/dt = 0.
                 arithma=_arithma_num(0.0),
                 eml=_eml_neg(_eml_mul(_eml_scalar(0.0), _eml_scalar(0.0))),
@@ -1301,7 +1359,12 @@ class PneumaMechanismV16(SimulationBase):
                 latex=r"\begin{aligned} X^M X_M &= 0 \\ X^M P_M &= 0 \\ P^M P_M + \mathcal{M}^2 &= 0 \end{aligned}",
                 plain_text="X^M X_M = 0; X^M P_M = 0; P^M P_M + M² = 0",
                 category="DERIVED",
-                description="2T physics null constraints: position, mixed, and mass-shell conditions",
+                description=(
+                    "RETIRED (signature ruling 2026-08-31): Bars' Sp(2,R) ghost-freedom theorem "
+                    "is not inherited, because gauging (24,2) gives one (23,1) shadow rather than "
+                    "two (12,1) shadows; ghost control of the second time is OPEN. "
+                    "2T physics null constraints: position, mixed, and mass-shell conditions"
+                ),
                 input_params=["geometry.D_bulk"],
                 output_params=[],
                 derivation={
@@ -1313,7 +1376,7 @@ class PneumaMechanismV16(SimulationBase):
                         "Identify the three Sp(2,R) generators as bilinears: L_11 = X^M X_M, L_12 = X^M P_M, L_22 = P^M P_M, forming a symmetric 2x2 matrix in the fundamental representation",
                         "Impose first-class constraints from Sp(2,R) generators: X^M X_M = 0 (null position ensuring conformal embedding), X^M P_M = 0 (orthogonality between position and momentum), P^M P_M + M^2 = 0 (mass-shell condition for physical states)",
                         "Verify constraint algebra closes under Poisson brackets: {L_ij, L_kl} = epsilon_ik L_jl + epsilon_jl L_ik + epsilon_il L_jk + epsilon_jk L_il, confirming first-class nature",
-                        "Show that gauge-fixing the Sp(2,R) symmetry reduces the (D+2)-dim system to the physical D-dim system, eliminating ghost degrees of freedom from the extra two dimensions"
+                        "Show that gauge-fixing the Sp(2,R) symmetry reduces the (D+2)-dim system to the physical D-dim system, eliminating ghost degrees of freedom from the extra two dimensions (Bars' result; the model does not inherit it, signature ruling 2026-08-31)"
                     ],
                     "assumptions": [
                         "Sp(2,R) gauge symmetry is exact (no anomalies)",
@@ -1354,7 +1417,8 @@ class PneumaMechanismV16(SimulationBase):
                 # a matrix is not a scalar registry parameter, and no simulation
                 # emits one under this path. The numeric content this formula
                 # does produce is n_gen = chi_eff/48 = 3 (its triple-track
-                # value), which is already declared by generation-number.
+                # value; under the adopted K3 reading it restates n_gen = b_2/4),
+                # which is already declared by generation-number.
                 output_params=[],
                 derivation={
                     "source": "Kaluza-Klein reduction of 11D M-theory on G2 manifold",
@@ -1363,14 +1427,14 @@ class PneumaMechanismV16(SimulationBase):
                     "steps": [
                         "Begin with 11D M-theory action on G2 manifold K_Pneuma: S_11 = integral d^11x sqrt(-g_11) [R_11 + bar{Psi} Gamma^M D_M Psi + (1/48) G_4^2]",
                         "Decompose 11D spinor using harmonic expansion on G2: Psi(x,y) = sum_n psi_n(x) otimes eta_n(y), where eta_n are zero modes of the internal Dirac operator on K_Pneuma",
-                        "Count zero modes via index theorem: n_gen = chi(K_Pneuma) / 48 = 144/48 = 3 chiral generations, each yielding a 4D Weyl fermion",
+                        "Count generations: n_gen = b_2/4 = 3, the number of singular involutions; the adopted K3 reading chi_eff = 48 n = 144 gives chi_eff/48 = 3, which restates b_2/4 rather than adding an index theorem (chi(Y_7) = 0, and how three chiral zero modes arise is OPEN, D-011)",
                         "Extract 4D masses m_i from eigenvalues of the internal Dirac operator: m_i = integral_{K_Pneuma} bar{eta}_i (D_internal) eta_i dvol_7",
                         "Compute Yukawa couplings Y_ij from G2 associative 3-cycle triple-overlap integrals: Y_ij = integral_{K_Pneuma} eta_i wedge eta_j wedge Phi_3, where Phi_3 is the associative 3-form"
                     ],
                     "assumptions": [
                         "G2 holonomy preserved under compactification",
                         "Zero modes dominate low-energy spectrum",
-                        "Flux quantization stabilizes moduli before KK reduction"
+                        "Flux quantization stabilizes moduli before KK reduction (not established on Y_7: the moduli are OPEN at leading order, CG.6)"
                     ]
                 },
                 terms={
@@ -1387,7 +1451,9 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: KK fermion sector — kinetic ops.mul(psi_bar, gamma_mu, D_mu, psi) plus Yukawa ops.mul(Y_ij, psi_bar, Phi, psi)"
                 ),
-                # Triple-track: n_gen = chi_eff / 48 = (6·b3) / 48 = 3 — b3-rooted.
+                # Triple-track: n_gen = chi_eff / 48 = (6·b3) / 48 = 3. The 6·b3 route
+                # holds only at the off-path seed b3 = 24; under the adopted K3
+                # reading chi_eff = 48 n, so chi_eff/48 = n restates b_2/4.
                 arithma=_arithma_num(3.0),
                 eml=_eml_div(_eml_mul(_eml_scalar(6.0), _b3_leaf()), _eml_scalar(48.0)),
                 value=3.0,
@@ -1408,16 +1474,16 @@ class PneumaMechanismV16(SimulationBase):
                     "method": "dimensional_descent",
                     "parentFormulas": ["pneuma-lagrangian", "null-constraints-2t"],
                     "steps": [
-                        "L1 (26D): Construct 2T bulk action S_26 with Pneuma spinor Psi_P in Cl(24,2) Clifford algebra; bulk dimension D_bulk = b3 + 2 = 26 with signature (24,2): one time per 13D shadow, (12,1) + (12,1) = 26",
-                        "L1 -> L2: Apply OR reduction via R_perp = tensor_{i=1}^{12} R_perp^{(i)} to reduce 12 bridge pairs, yielding dual 13D(12,1) shadows with shared T^1 time fiber",
-                        "L2 (13D): In each shadow, the 4096-component Weyl spinor of Cl(24,2) reduces to a 64-component effective spinor of Cl(12,1) per shadow (64 × 64 = 4096: the two shadow spinors tensor to the bulk Weyl spinor); flux terms L_flux stabilize moduli via KKLT mechanism",
+                        "L1 (26D): Construct 2T bulk action S_26 with Pneuma spinor Psi_P in Cl(24,2) Clifford algebra; bulk dimension D_bulk = 26 with signature (24,2): one time per 13D shadow, (12,1) + (12,1) = 26 (the identity D_bulk = b3 + 2 held only at the off-path seed b3 = 24)",
+                        "L1 -> L2: Apply OR reduction via R_perp = tensor_{i=1}^{12} R_perp^{(i)} to reduce 12 bridge pairs, yielding dual 13D(12,1) shadows with one time each (a shared T^1 time fibre is retired, signature ruling 2026-08-31)",
+                        "L2 (13D): In each shadow, the 4096-component Weyl spinor of Cl(24,2) reduces to a 64-component effective spinor of Cl(12,1) per shadow (64 × 64 = 4096: the two shadow spinors tensor to the bulk Weyl spinor); flux terms L_flux do not fix the moduli at leading order on Y_7 (the G4 flux potential is positive and runs away, CG.6), so the moduli, Re(T) included, are OPEN",
                         "L2 -> L3: Perform Kaluza-Klein reduction over the 9-dimensional G2 x T^2 internal space, integrating out massive KK modes to obtain 4D effective field theory",
                         "L3 (4D): The resulting 4D theory is f(R,T,tau) modified gravity with coefficients alpha_F (Starobinsky R^2 from one-loop corrections), beta_F (matter-geometry coupling), gamma_F (residual 2T invariant), delta_F (dynamical evolution term)",
-                        "L4 (DE): Remaining flat direction in moduli space yields the Mashiach scalar field phi_M with attractor potential V(phi_M) = V_0[1 + A cos(omega phi_M / f_phi)], providing dark energy with w -> -1.0 at late times"
+                        "L4 (DE): Remaining flat direction in moduli space yields the Mashiach scalar field phi_M with attractor potential V(phi_M) = V_0[1 + A cos(omega phi_M / f_phi)], providing dark energy with w -> -1.0 at late times (a model construct: dark energy is OPEN on Y_7, where the leading-order flux potential cannot accelerate, CG.11)"
                     ],
                     "assumptions": [
                         "OR reduction preserves physical degrees of freedom",
-                        "KKLT moduli stabilization is valid",
+                        "KKLT moduli stabilization is valid (not established on Y_7: CG.6)",
                         "Adiabatic separation between KK scale and 4D scales",
                         "Late-time attractor solution exists for Mashiach field"
                     ]
@@ -1438,7 +1504,9 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: 4-level descent L1(26D bulk) + L2(13D shadow) + L3(f(R,T,tau)) + L4(DE quintessence)"
                 ),
-                # Two-time: D_bulk = b3 + 2 = 26 anchors the dimensional descent.
+                # NOTE: value 27 = b3 + 3 is the retired M^27 count at the off-path
+                # seed b3 = 24; the adopted bulk is 26D (24,2). A value fix is
+                # outside the wording pass.
                 arithma=_arithma_num(27.0),
                 eml=_eml_add(_b3_leaf(), _eml_scalar(3.0)),
                 value=27.0,
@@ -1477,6 +1545,8 @@ class PneumaMechanismV16(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
+                    "CALIBRATED at the off-path seed (racetrack a = 2pi/24, b = 2pi/23; "
+                    "no gaugino racetrack exists on Y_7: CG.5, CG.10). "
                     "V''(<Psi>), the second derivative of the racetrack potential "
                     "evaluated at the Pneuma VEV; sets both the flow parameter and "
                     "the vacuum stability flag"
@@ -1504,7 +1574,7 @@ class PneumaMechanismV16(SimulationBase):
                     "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
                     "eml_scalar(3.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
                     "eml_scalar(23.0)), eml_vec('pneuma.vev')))))))))) — V''(<Psi>) = 2 (W'')^2 + 2 W' W''' "
-                    "at the racetrack VEV, with A=1.0, B=1.03, a=2pi/24, b=2pi/23"
+                    "at the racetrack VEV, with A=1.0, B=1.03, a=2pi/24, b=2pi/23 (calibrated at the off-path seed)"
                 ),
             ),
             Parameter(
@@ -1512,7 +1582,7 @@ class PneumaMechanismV16(SimulationBase):
                 name="Pneuma Flow Parameter",
                 units="dimensionless",
                 status="DERIVED",
-                description="Characteristic frequency governing Pneuma field evolution",
+                description="Characteristic frequency governing Pneuma field evolution, set by the racetrack curvature (CALIBRATED at the off-path seed; no racetrack on Y_7)",
                 derivation_formula="pneuma-flow",
                 no_experimental_value=True,
                 eml_description=(
@@ -1526,7 +1596,7 @@ class PneumaMechanismV16(SimulationBase):
                 name="Lagrangian Validity Flag",
                 units="dimensionless",
                 status="DERIVED",
-                description="Boolean flag indicating whether Pneuma Lagrangian has stable vacuum",
+                description="Boolean flag indicating whether Pneuma Lagrangian has stable vacuum (evaluated on the racetrack potential CALIBRATED at the off-path seed)",
                 derivation_formula="pneuma-lagrangian",
                 no_experimental_value=True,
                 eml_description=(
@@ -1540,7 +1610,11 @@ class PneumaMechanismV16(SimulationBase):
                 name="Pneuma VEV",
                 units="dimensionless",
                 status="DERIVED",
-                description="Vacuum expectation value of Pneuma field from racetrack minimum",
+                description=(
+                    "CALIBRATED at the off-path seed: vacuum expectation value of the Pneuma "
+                    "field at the racetrack minimum (A = 1.0, B = 1.03, a = 2pi/24, b = 2pi/23). "
+                    "No gaugino racetrack exists on Y_7 (CG.5, CG.10)."
+                ),
                 derivation_formula="pneuma-flow",
                 no_experimental_value=True,
                 eml_description=(
@@ -1564,7 +1638,7 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: ops.div(eml_vec('constants.M_PLANCK'), "
                     "ops.sqrt(eml_vec('geometry.chi_eff_total'))) — "
-                    "REDUCED Planck mass / sqrt(chi_eff_total = 144) for TCS G2 #187. "
+                    "REDUCED Planck mass / sqrt(chi_eff_total = 144, the K3 reading 48 n at n = 3). "
                     "Both operands are qualified: M_PLANCK is claimed by two registry "
                     "entries a factor sqrt(8 pi) apart, and chi_eff by two a factor 2 apart"
                 ),
@@ -1575,12 +1649,16 @@ class PneumaMechanismV16(SimulationBase):
                 name="Number of Bridge Pairs",
                 units="dimensionless",
                 status="EXACT",
-                description="v22.0: Number of (2,0) paired bridges. n = b3/2 = 24/2 = 12 pairs.",
+                description=(
+                    "Number of (2,0) paired bridges: the bulk's 24 space directions taken "
+                    "in pairs, 12. The code still computes n = b3 // 2, which equals 12 "
+                    "only at the off-path seed b3 = 24; " + _bridge_pair_note() + "."
+                ),
                 derivation_formula="pneuma-neural-gate",
                 no_experimental_value=True,
                 eml_description=(
                     "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(2.0)) — "
-                    "n = b3/2 = 12 bridge pairs from 12×(2,0) paired bridge system in M²⁶"
+                    "n = b3/2, which is 12 only at the off-path seed; the object is the bulk's 12 bridge pairs (12×(2,0) in M²⁶)"
                 ),
             ),
             Parameter(
@@ -1588,7 +1666,11 @@ class PneumaMechanismV16(SimulationBase):
                 name="Neural Gate Active",
                 units="dimensionless",
                 status="DERIVED",
-                description="v22.0: Boolean flag indicating 12 neural gates are active for consciousness I/O.",
+                description=(
+                    "Boolean flag: True when the Lagrangian is stable and n_bridge_pairs == 12 "
+                    "(the 12 neural gates of the SPECULATIVE consciousness I/O reading); "
+                    + _bridge_pair_note() + "."
+                ),
                 derivation_formula="pneuma-neural-gate",
                 no_experimental_value=True,
                 eml_description=(
@@ -1723,18 +1805,20 @@ class PneumaMechanismV16(SimulationBase):
                 "field is like those water molecules - individual quantum 'drops' whose collective motion creates the "
                 "illusion of a smooth surface (spacetime). When the Pneuma field 'flows' (changes its value), it's like "
                 "a current in the ocean: the curvature of spacetime (Einstein's gravity) emerges from how fast this flow "
-                "is changing. The 'racetrack potential' that governs the Pneuma field is like the seafloor topology - "
-                "it has valleys and hills that the field naturally settles into, and our universe's Pneuma VEV (vacuum "
-                "expectation value) is which valley we ended up in."
+                "is changing. The 'racetrack potential' used for the Pneuma field is like the seafloor topology - "
+                "it has valleys and hills that the field settles into, and the Pneuma VEV (vacuum "
+                "expectation value) is which valley it ends up in. That potential was calibrated on an older, "
+                "off-path version of the shape; the adopted shape has no racetrack, so this part of the picture "
+                "is not yet derived."
             ),
             "keyTakeaway": (
                 "The Pneuma field provides a mechanism for spacetime emergence: 4D gravity arises from 7D geometry "
-                "via vielbein coupling, with dynamics governed by a racetrack potential."
+                "via vielbein coupling, with dynamics modelled by a racetrack potential calibrated at the off-path seed."
             ),
             "technicalDetail": (
                 "The Pneuma Lagrangian: L = (1/2)∂_μΨ_P ∂^μΨ_P - V(Ψ_P) + L_vielbein, where V(Ψ_P) = |dW/dΨ_P|² from "
                 "racetrack superpotential W = A exp(-aΨ) - B exp(-bΨ). Instanton coefficients: a = 2π/N_flux, b = 2π/(N_flux-1) "
-                "with N_flux = χ_eff/6 = 24. VEV from analytic minimum: <Ψ_P> = ln(Bb/Aa)/(b-a). Vielbein emergence: "
+                "with N_flux = χ_eff/6 = 24 (CALIBRATED at the off-path seed; Y_7 has no gaugino racetrack, CG.5, CG.10). VEV from analytic minimum: <Ψ_P> = ln(Bb/Aa)/(b-a). Vielbein emergence: "
                 "e_a^μ ∝ ⟨η̄ γ^a η⟩ where η is the G2 parallel spinor, coupling Pneuma gradient ∇_μΨ_P to spacetime "
                 "metric via L_vielbein = κ_P (∇_μΨ_P)(η̄ Γ^a e_a^μ D_μ η). This creates effective Einstein-Hilbert "
                 "action from spinor kinetic term: S_EH ~ ∫ d⁴x √g R emerges from integrating out Pneuma-spinor loops."
@@ -1824,7 +1908,9 @@ class PneumaMechanismV16(SimulationBase):
                 "relevance": (
                     "The Pneuma VEV is determined by a racetrack superpotential "
                     "W = A exp(-a Psi) - B exp(-b Psi) with competing instanton contributions. "
-                    "This mechanism (KKLT 2003) stabilizes the modulus at a finite positive VEV."
+                    "This mechanism (KKLT 2003) stabilizes the modulus at a finite positive VEV. "
+                    "Here it is CALIBRATED at the off-path seed: no gaugino racetrack exists on "
+                    "Y_7 (CG.5, CG.10), and its moduli are OPEN at leading order (CG.6)."
                 ),
                 "validation_hint": (
                     "Check that the racetrack potential has a minimum at finite positive VEV, "
@@ -1846,8 +1932,8 @@ class PneumaMechanismV16(SimulationBase):
                 "validation_hint": (
                     "Verify the Penrose criterion tau = hbar / E_G for gravitational "
                     "self-energy collapse timescale, that R_perp implements SO(2) rotation "
-                    "with det = 1, and that 12 bridge pairs correspond to b3/2 = 24/2 "
-                    "from G2 topology."
+                    "with det = 1, and that the 12 bridge pairs are the bulk's 24 space "
+                    "directions taken in pairs (formerly read as b3/2 at the off-path seed)."
                 ),
             },
         ]
@@ -1870,7 +1956,7 @@ class PneumaMechanismV16(SimulationBase):
 
         # Check 1: VEV positivity
         try:
-            # Initialize racetrack with standard topology
+            # Initialize the racetrack CALIBRATED at the off-path seed (a = 2pi/24, b = 2pi/23)
             self.a = 2 * np.pi / 24
             self.b = 2 * np.pi / 23
             vev = self._compute_vev()
@@ -1955,19 +2041,19 @@ class PneumaMechanismV16(SimulationBase):
                     "instanton_a": "2*pi/24",
                     "instanton_b": "2*pi/23",
                     "stability_criterion": "V''(VEV) > 0 (positive Hessian at minimum)",
-                    "physical_meaning": "Pneuma field has stable vacuum preventing runaway modulus",
+                    "physical_meaning": "Pneuma field has a stable vacuum on the racetrack calibrated at the off-path seed (on Y_7 the moduli are OPEN and the leading-order flux potential runs away, CG.6)",
                 },
             },
             {
                 "gate_id": "G_PNEUMA_NEURAL_GATE_12_PAIRS",
                 "simulation_id": self.metadata.id,
-                "assertion": "12 neural gate bridge pairs from b3 = 24 topology are consistently constructed",
+                "assertion": "12 neural gate bridge pairs (the bulk's 24 space directions in pairs) are consistently constructed",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
                     "b3": 24,
                     "n_pairs": 12,
-                    "derivation": "b3/2 = 24/2 = 12 paired (2,0) bridges",
+                    "derivation": "24/2 = 12 paired (2,0) bridges from the bulk's 24 space directions (formerly read as b3/2 at the off-path seed)",
                     "or_reduction": "R_perp^i = [[0,-1],[1,0]] per pair, (R_perp^full)^2 = I for 12 pairs",
                     "consciousness_model": "12 parallel I/O channels: y_{1i} (perception), y_{2i} (intuition)",
                 },
@@ -2009,7 +2095,8 @@ def main():
     from metaphysica.simulations.base.established import EstablishedPhysics
     EstablishedPhysics.load_into_registry(registry)
 
-    # Set topology parameters
+    # Set topology parameters (standalone demo at the off-path seed b3 = 24;
+    # the 'TCS_187' source labels are the retired provenance)
     registry.set_param("topology.mephorash_chi", 144, source="TCS_187", status="ESTABLISHED")
     registry.set_param("topology.elder_kads", 24, source="TCS_187", status="ESTABLISHED")
 

@@ -30,7 +30,9 @@ from metaphysica.simulations.PM.geometry.closed_geometry.theorem import (
 _WA1_SCOPE = (
     "combinatorial: a theorem about PG(2,2) and the enumeration. Reading one "
     "bridge as one resolved A1 component (one U(1)) is working assumption "
-    "WA-1, the author's ruling (D-008)")
+    "WA-1, adopted 2026-10-01 (D-015). Blocks match involutions canonically; "
+    "the 4 <-> 4 matching inside a block is a free choice (D-008 blind "
+    "check)")
 _FAMILY_SCOPE = "family-level: holds on every member, whichever seed is active"
 
 
@@ -163,11 +165,12 @@ def _k3_statement(ev: Dict[str, Any]) -> str:
         "T^4 with 16 fixed points (counted); resolving them gives a Kummer "
         "K3 with chi = 24, both from the quotient and from its Betti numbers. "
         "Read as 2 x sum chi(K3) over the two shadows, chi_eff = %d (%d per "
-        "shadow) and, on this still-unruled reading, chi_eff/48 = %s: the same statement as counting singular "
-        "involutions, and it holds on every class of the family, where b_2/4 "
-        "does not. Adopting this as chi_eff's definition is the author's "
-        "ruling." % (r["n_singular"], r["chi_eff"], r["per_shadow"],
-                     r["n_gen"]))
+        "shadow), so chi_eff/48 = %s: the same statement as counting "
+        "singular involutions, and it holds on every class of the family, "
+        "where b_2/4 does not. This reading is chi_eff's definition since "
+        "2026-10-01 (D-015, chi_eff_route = k3_reading); it is an index of "
+        "the K3 surfaces, not the Euler characteristic of Y_7, which is 0."
+        % (r["n_singular"], r["chi_eff"], r["per_shadow"], r["n_gen"]))
 
 
 def _k3_track(ev: Dict[str, Any]) -> Tuple[float, Spec]:
@@ -332,12 +335,12 @@ FINDINGS_THEOREMS: Tuple[Theorem, ...] = (
         test="tests/test_kummer_index.py::"
              "test_the_k3_reading_equals_n_on_every_class",
         falsifier="a singular involution whose transverse quotient is not 16 "
-                  "A1 points, or a class where the unruled reading chi_eff/48 != n",
+                  "A1 points, or a class where chi_eff/48 != n",
         evidence=_k3_evidence, holds=_k3_holds, statement=_k3_statement,
         track=_k3_track, latex=_k3_latex, steps=_k3_steps, terms=_K3_TERMS,
         references=(REF_ACHARYA_1996,),
-        scope="topological; the adoption of this reading as chi_eff is the "
-              "author's ruling (D-009)"),
+        scope="topological; adopted as the definition of chi_eff "
+              "2026-10-01 (D-015; chi_eff_route = k3_reading)"),
     Theorem(
         id="confinement-exclusion", label="(CG.10)",
         title="Holonomy G2 and a confining sector are mutually exclusive",

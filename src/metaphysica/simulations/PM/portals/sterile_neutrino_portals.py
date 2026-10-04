@@ -1,9 +1,21 @@
 #!/usr/bin/env python3
 """
-Sterile Neutrino Portal Physics v23.0
-======================================
+Sterile Neutrino Portal Physics
+===============================
 
 Derives sterile neutrino properties from dual-shadow G2 geometry.
+
+STATUS ON THE ADOPTED PATH:
+    The worked numbers in this module's text (b3 = 24, alpha_leak ~ 0.57,
+    24/72 = 1/3, 23/24, n_sterile ~ 1.71 per face and 5.13 in total) were
+    written at the off-path seed b3 = 24. The code reads b3 and k_gimel from
+    the registry, which carries the live seed (b3 = 43 on the adopted Y_7,
+    Joyce's resolution of T^7/(Z/2)^3), so the registered values follow the
+    seed in force and differ from the worked numbers.
+    The four-face structure was formerly described as a TCS G2 manifold; the
+    TCS construction is off-path (CG.7). The hidden-face moduli are OPEN on
+    Y_7: the leading-order flux potential runs away (CG.6), and T_i is set
+    from the target M_s, so M_s is an assumed scale.
 
 PHYSICS (Part 3, Topic 08):
     Sterile neutrinos emerge geometrically from the dual-shadow architecture.
@@ -27,17 +39,22 @@ PHYSICS (Part 3, Topic 08):
     Mixing angle:
         sin^2(2*theta) ~ 4 * m_nu_eff / M_s ~ 8e-7  (below current limits)
 
-    Sterile count per face:
+    Sterile count per face (a model ansatz, not an index theorem):
         n_sterile_per_face = chi_eff / 48 * alpha_leak ~ 1.71
+    where chi_eff/48 = n restates the ruled route n_gen = b_2/4 (the K3
+    reading: chi_eff = 2 x sum chi(K3) = 48 n, the Kummer K3 surfaces
+    transverse to the n singular involutions, counted once per shadow;
+    144 at n = 3). chi_eff is not the Euler characteristic of Y_7, which
+    is 0.
 
     Total from 3 hidden faces:
-        n_sterile_eff ~ 5.13
+        n_sterile_eff ~ 5.13   (worked at the off-path seed b3 = 24)
 
     Delta N_eff:
         Depends on thermalization vs decoupling; suppressed by mixing angle.
 
 PREDICTIONS:
-    - M_s ~ 10^4 GeV (from hidden-face moduli VEV)
+    - M_s ~ 10^4 GeV (assumed scale; T_i is set from this target)
     - sin^2(2*theta) ~ 8e-7 (below current direct-search limits)
     - Delta N_eff < 0.5 (consistent with Planck CMB constraint)
 
@@ -136,9 +153,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
     SU(2)_L quantum numbers.  Bridge mixing between the shadows generates
     a Dirac Yukawa coupling y_as ~ alpha_leak ~ 0.57.  Hidden-face moduli
     generate a Majorana mass M_s through exponential suppression of the
-    Planck scale.  The resulting type-I seesaw mechanism yields light
-    neutrino masses at the atmospheric scale (~2e-3 eV) with mixing
-    angles safely below current experimental limits.
+    Planck scale (an assumed scale: the moduli are OPEN on Y_7, CG.6).
+    With these inputs the type-I seesaw gives ~2 GeV, not the atmospheric
+    scale (~2e-3 eV needs M_s ~ 10^16 GeV); the mixing angles lie below
+    current experimental limits.
     """
 
     def __init__(self):
@@ -164,9 +182,9 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         )
 
         # Fundamental constants from registry (SSoT)
-        self.k_gimel = float(_REG.demiurgic_coupling)    # b3/2 + 1/pi = 12.318...
-        self.chi_eff = int(_REG.mephorash_chi)            # 72 (per-shadow)
-        self.elder_kads = int(_REG.elder_kads)            # 24 (b3, Third Betti number)
+        self.k_gimel = float(_REG.demiurgic_coupling)    # b3/2 + 1/pi (12.318 at the off-path seed b3 = 24)
+        self.chi_eff = int(_REG.mephorash_chi)            # 72 (per shadow; 144 = 48 n in total, K3 reading)
+        self.elder_kads = int(_REG.elder_kads)            # b3, the live seed (43 adopted; 24 off-path)
 
         # Physics constants
         self.M_Planck = 1.22e19     # GeV (Planck mass)
@@ -177,13 +195,15 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         # Reference: master_action.py dark-matter-portal-lagrangian
         self.alpha_leak = self._compute_alpha_leak()
 
-        # Number of hidden faces in the 4-face TCS G2 structure
-        # (1 visible + 3 hidden faces)
+        # Number of hidden faces in the four-face structure (1 visible +
+        # 3 hidden faces); formerly described as a TCS G2 manifold, a
+        # construction that is off-path (CG.7)
         self.n_hidden_faces = 3
 
         # Hidden-face modulus T_i controls Majorana mass
         # M_s ~ M_Pl * exp(-T_i / 2)
-        # For T_i ~ 69 (set by moduli stabilization): M_s ~ 10^4 GeV
+        # T_i ~ 69 is set from the target M_s ~ 10^4 GeV, not by moduli
+        # stabilisation (the moduli are OPEN on Y_7, CG.6)
         self.T_modulus = self._compute_hidden_face_modulus()
 
         # Experimental constraints
@@ -193,6 +213,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
     def _compute_alpha_leak(self) -> float:
         """
         Compute the inter-face leakage coupling alpha_leak.
+
+        The worked numbers below are at the off-path seed b3 = 24; the code
+        reads b3 from the registry (the live seed), so at the adopted
+        b3 = 43 each factor differs.
 
         The portal coupling arises from the G2 volume ratio.  The base
         factor 1/sqrt(chi_eff / b3) = 1/sqrt(72/24) = 1/sqrt(3) receives
@@ -240,17 +264,21 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         For M_s ~ 10^4 GeV:
             T_i = 2 * ln(M_Pl / M_s) = 2 * ln(1.22e19 / 1e4) ~ 69.4
 
-        The modulus is stabilized by flux quantization on the hidden face:
+        An earlier estimate took the modulus as fixed by flux quantization on
+        the hidden face (the moduli are OPEN on Y_7: the leading-order flux
+        potential runs away, CG.6):
             T_i ~ 2 * ln(k_gimel^6) = 12 * ln(k_gimel) ~ 30
 
         However, the product of ALL hidden-face moduli matters:
             T_eff = sum_i T_i / n_hidden = product constraint
             For 3 hidden faces: T_eff ~ 3 * 12 * ln(k_gimel) / (scaling)
 
-        We parameterize via the target M_s ~ 10^4 GeV consistent with
-        atmospheric neutrino mass scale.
+        We parameterize via the target M_s ~ 10^4 GeV, so M_s is an assumed
+        scale. (It is not consistent with the atmospheric neutrino mass
+        scale: the seesaw with y_as ~ 0.57 gives ~2 GeV; 2e-3 eV needs
+        M_s ~ 10^16 GeV.)
         """
-        # Target Majorana mass ~ 10^4 GeV for atmospheric neutrino mass
+        # Target Majorana mass ~ 10^4 GeV (an assumed scale; see the docstring)
         # T_i = 2 * ln(M_Pl / M_s)
         M_s_target = 1.0e4  # GeV
         T_i = 2.0 * math.log(self.M_Planck / M_s_target)
@@ -283,10 +311,12 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 
         Derivation:
             1. Majorana mass: M_s = M_Pl * exp(-T_i / 2) from hidden-face moduli
+               (T_i set from the target M_s; the moduli are OPEN on Y_7)
             2. Dirac Yukawa: y_as = alpha_leak ~ 0.57 from bridge mixing
             3. Seesaw: m_nu_eff = y_as^2 * v^2 / M_s
             4. Mixing: sin^2(2*theta) ~ 4 * m_nu_eff / M_s
-            5. Sterile count: n_per_face = chi_eff/48 * alpha_leak
+            5. Sterile count: n_per_face = chi_eff/48 * alpha_leak, where
+               chi_eff/48 = n (K3 reading; restates the ruled route b_2/4)
             6. Delta N_eff: from thermalization suppression
 
         Returns:
@@ -296,14 +326,16 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         # STEP 1: MAJORANA MASS FROM HIDDEN-FACE MODULI
         # ================================================================
         #
-        # In the 4-face TCS G2 manifold, 1 face is visible and 3 are hidden.
-        # The hidden faces host right-handed neutrinos whose Majorana mass
-        # is generated by the moduli VEV:
+        # In the four-face structure (formerly described as a TCS G2
+        # manifold; that construction is off-path), 1 face is visible and 3
+        # are hidden. The hidden faces host right-handed neutrinos whose
+        # Majorana mass is generated by the moduli VEV:
         #
         #     M_s = M_Pl * exp(-T_i / 2)
         #
-        # where T_i is the hidden-face Kahler modulus, stabilized by G2 flux.
-        # For T_i ~ 69.4: M_s ~ 10^4 GeV.
+        # where T_i is the hidden-face modulus. The moduli are OPEN on Y_7
+        # (the leading-order flux potential runs away, CG.6); T_i ~ 69.4 is
+        # set from the target M_s ~ 10^4 GeV.
 
         M_s = self.M_Planck * math.exp(-self.T_modulus / 2.0)
         # ~ 10^4 GeV
@@ -342,7 +374,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 
         m_nu_eff_gev = (y_as ** 2) * (self.v_higgs ** 2) / M_s
         m_nu_eff_ev = m_nu_eff_gev * 1e9  # Convert GeV to eV
-        # ~ 2e-3 eV
+        # ~ 10^9 eV (the GeV scale), not the 2e-3 eV atmospheric scale
 
         # ================================================================
         # STEP 4: ACTIVE-STERILE MIXING ANGLE
@@ -364,9 +396,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         #
         # This is the tree-level result.  Including the chi_eff/b3 volume
         # suppression from the hidden-face wave function normalization:
-        #     sin^2(2*theta) *= (b3 / chi_eff)  [= 24/72 = 1/3]
+        #     sin^2(2*theta) *= (b3 / chi_eff)  [= 24/72 = 1/3 at the
+        #                                         off-path seed b3 = 24]
         #
-        # Giving sin^2(2*theta) ~ 2.6e-4.
+        # Giving sin^2(2*theta) ~ 2.6e-4 (worked at the off-path seed).
         #
         # Further suppression from the Kaluza-Klein tower integral
         # over the hidden-face geometry reduces by another factor:
@@ -377,7 +410,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         sin2_2theta_tree = 4.0 * (y_as ** 2) * (self.v_higgs ** 2) / (M_s ** 2)
 
         # Volume suppression from hidden-face normalization
-        volume_suppression = self.elder_kads / self.chi_eff  # b3/chi_eff = 24/72 = 1/3
+        volume_suppression = self.elder_kads / self.chi_eff  # b3/chi_eff: 24/72 off-path, 43/72 adopted
 
         # KK tower integral suppression over the hidden-face geometry
         kk_suppression = math.exp(-math.pi * self.alpha_leak)
@@ -389,19 +422,23 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         # STEP 5: STERILE NEUTRINO COUNT PER FACE
         # ================================================================
         #
-        # Each hidden face of the G2 manifold supports sterile states.
-        # The number per face is determined by the index theorem:
+        # Each hidden face is assigned sterile states by a model ansatz. It
+        # is not an index theorem: chirality is OPEN on Y_7 (D-011).
         #
         #     n_sterile_per_face = (chi_eff / 48) * alpha_leak
         #
-        # chi_eff / 48 = 72 / 48 = 1.5 (half the generation count per sector)
-        # Multiplied by alpha_leak ~ 0.57: n_per_face ~ 0.855
+        # Over both shadows chi_eff/48 = n restates the ruled route
+        # n_gen = b_2/4: chi_eff is the K3 reading, 2 x sum chi(K3) = 48 n,
+        # the Kummer K3 surfaces transverse to the n singular involutions,
+        # counted once per shadow. Per shadow, 72 / 48 = 1.5 = n/2;
+        # multiplied by alpha_leak ~ 0.57: n_per_face ~ 0.855.
         #
-        # However, the chi_eff_total/48 form uses the full manifold:
+        # The form used takes both shadows (alpha_leak as worked at the
+        # off-path seed b3 = 24):
         #     n_per_face = (chi_eff_total / 48) * alpha_leak
         #                = (144 / 48) * 0.57 = 3 * 0.57 = 1.71
 
-        chi_eff_total = 2 * self.chi_eff  # 144 (full manifold)
+        chi_eff_total = 2 * self.chi_eff  # 144 = 48 n over both shadows (K3 reading)
         n_sterile_per_face = (chi_eff_total / 48.0) * self.alpha_leak
         # ~ 1.71
 
@@ -432,7 +469,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
         # This keeps Delta N_eff well below the Planck bound of 0.5.
 
         F_DW = self.chi_eff / (4.0 * math.pi * self.elder_kads)
-        # = 72 / (4 * pi * 24) ~ 0.239
+        # = 72 / (4 * pi * 24) ~ 0.239 at the off-path seed b3 = 24
 
         delta_n_eff = n_sterile_eff * sin2_2theta * F_DW
         # ~ 5.13 * few*10^-5 * 0.239 ~ few*10^-5
@@ -554,8 +591,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "Active-sterile neutrino mixing angle from bridge-mediated "
                     "type-I seesaw in the dual-shadow architecture. The tree-level "
                     "mixing sin^2(2*theta) = 4 * y_as^2 * v^2 / M_s^2 is "
-                    "suppressed by the hidden-face volume factor b3/chi_eff = 1/3 "
-                    "and the Kaluza-Klein tower integral exp(-pi * alpha_leak). "
+                    "suppressed by the hidden-face volume factor b3/chi_eff (1/3 as "
+                    "worked at the off-path seed b3 = 24; the module reads b3 from "
+                    "the live seed) and the Kaluza-Klein tower integral "
+                    "exp(-pi * alpha_leak). "
                     "The Dirac Yukawa y_as ~ alpha_leak ~ 0.57 comes from bridge "
                     "overlap integrals, while M_s ~ 10^4 GeV from hidden-face "
                     "moduli.  The predicted value sin^2(2*theta) ~ few * 10^-5 is "
@@ -589,7 +628,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                             "formula": r"\sin^2(2\theta)_{\rm tree} = 4\,y_{\rm as}^2\,\frac{v^2}{M_s^2}"
                         },
                         {
-                            "description": "Volume suppression from hidden-face wave function normalization",
+                            "description": "Volume suppression from hidden-face wave function normalization (worked at the off-path seed b3 = 24)",
                             "formula": r"\text{vol.\\ supp.} = \frac{b_3}{\chi_{\rm eff}} = \frac{24}{72} = \frac{1}{3}"
                         },
                         {
@@ -630,8 +669,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "y_as": "Dirac Yukawa coupling from bridge mixing ~ alpha_leak ~ 0.57",
                     "v": "Higgs VEV = 246 GeV",
                     "M_s": "Majorana mass from hidden-face moduli ~ 10^4 GeV",
-                    "b3": "Third Betti number = 24",
-                    "chi_eff": "Effective Euler characteristic = 72 (per shadow)",
+                    "b3": (f"Third Betti number b3 = {self.elder_kads} (the live seed; "
+                           "the worked numbers use the off-path seed b3 = 24)"),
+                    "chi_eff": ("Effective index per shadow = sum chi(K3) = 72 (K3 reading; "
+                                "144 = 48 n over both shadows)"),
                     "alpha_leak": "Portal coupling ~ 0.57",
                 },
                 # Triple-track: sin²(2θ) from bridge-seesaw with b3/chi_eff suppression.
@@ -650,12 +691,14 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 plain_text="M_s = M_Pl * exp(-T_i / 2), T_i = 2 * ln(M_Pl / M_s)",
                 category="PREDICTED",
                 description=(
-                    "Sterile neutrino Majorana mass from hidden-face Kahler moduli. "
-                    "In the 4-face TCS G2 manifold, 3 hidden faces host right-handed "
-                    "neutrinos.  The Majorana mass is generated by the modulus VEV "
-                    "T_i through exponential suppression of the Planck scale. "
-                    "Flux quantization on the hidden face stabilizes T_i, yielding "
-                    "M_s ~ 10^4 GeV. CAVEAT: at y_as = 0.57 this seesaw gives ~2 GeV, 12 orders above the atmospheric "
+                    "Sterile neutrino Majorana mass from hidden-face moduli. "
+                    "In the four-face structure (formerly described as a TCS G2 "
+                    "manifold; that construction is off-path), 3 hidden faces host "
+                    "right-handed neutrinos.  The Majorana mass is generated by the "
+                    "modulus VEV T_i through exponential suppression of the Planck "
+                    "scale. The moduli are OPEN on Y_7 (the leading-order flux "
+                    "potential runs away, CG.6); T_i is set from the target "
+                    "M_s ~ 10^4 GeV, an assumed scale. CAVEAT: at y_as = 0.57 this seesaw gives ~2 GeV, 12 orders above the atmospheric "
                     "neutrino mass via the type-I seesaw: "
                     "m_nu ~ y_as^2 v^2 / M_s; the 2e-3 eV target needs M_s ~ 10^16 GeV."
                 ),
@@ -666,7 +709,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Hidden-face Kahler modulus stabilized by G2 flux",
+                            "description": "Hidden-face modulus, set from the target M_s (OPEN on Y_7: no leading-order stabilisation, CG.6)",
                             "formula": r"T_i \sim 2\ln(M_{\rm Pl}/M_s) \approx 69"
                         },
                         {
@@ -674,7 +717,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                             "formula": r"M_s = M_{\rm Pl}\,e^{-T_i/2} \sim 10^4\,\text{GeV}"
                         },
                         {
-                            "description": "Consistency: seesaw gives atmospheric neutrino mass",
+                            "description": "Check: with these inputs the seesaw misses the atmospheric neutrino mass",
                             "formula": (
                                 r"m_\nu = \frac{y_{\rm as}^2\,v^2}{M_s}"
                                 r"= \frac{0.57^2 \times 246^2}{10^4}"
@@ -705,7 +748,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 ),
                 terms={
                     "M_Pl": "Planck mass = 1.22e19 GeV",
-                    "T_i": "Hidden-face Kahler modulus ~ 69",
+                    "T_i": "Hidden-face modulus ~ 69 (set from the target M_s; OPEN on Y_7)",
                     "M_s": "Majorana mass ~ 10^4 GeV",
                 },
                 # Triple-track: M_s = M_Pl · exp(-T_i / 2) — hidden-face moduli VEV.
@@ -736,10 +779,13 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "the small mixing angle sin^2(2*theta), yielding Delta N_eff "
                     "well below the Planck CMB constraint of 0.5.  The geometric "
                     "thermalization factor F_DW = chi_eff / (4*pi*b3) encodes the "
-                    "ratio of the chiral index to the cycle volume, controlling "
+                    "ratio of the effective index chi_eff (the K3 reading, "
+                    "2 x sum chi(K3) = 48 n; not a chiral index, since chirality "
+                    "is OPEN) to b3, controlling "
                     "how efficiently sterile states exchange energy with the "
                     "thermal plasma.  With n_sterile_eff ~ 5.13 total sterile "
-                    "states from 3 hidden faces, the predicted Delta N_eff is "
+                    "states from 3 hidden faces (worked at the off-path seed "
+                    "b3 = 24), the predicted Delta N_eff is "
                     "negligible -- consistent with precision cosmology."
                 ),
                 inputParams=[
@@ -757,7 +803,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Sterile count per hidden face from index theorem",
+                            "description": "Sterile count per hidden face (model ansatz, not an index theorem; chi_eff_total/48 = n restates the ruled route b_2/4)",
                             "formula": (
                                 r"n_{\rm sterile/face} = \frac{\chi_{\rm eff,total}}{48}"
                                 r"\times \alpha_{\rm leak}"
@@ -772,7 +818,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                             )
                         },
                         {
-                            "description": "Geometric thermalization factor (Dodelson-Widrow)",
+                            "description": "Geometric thermalization factor (Dodelson-Widrow), worked at the off-path seed b3 = 24",
                             "formula": (
                                 r"F_{\rm DW} = \frac{\chi_{\rm eff}}{4\pi\,b_3}"
                                 r"= \frac{72}{4\pi \times 24} \approx 0.24"
@@ -806,8 +852,9 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "n_sterile_eff": "Total sterile neutrino count from 3 hidden faces ~ 5.13",
                     "sin^2(2*theta)": "Active-sterile mixing angle",
                     "F_DW": "Geometric thermalization factor = chi_eff / (4*pi*b3)",
-                    "chi_eff": "Effective Euler characteristic = 72",
-                    "b3": "Third Betti number = 24",
+                    "chi_eff": "Effective index per shadow = sum chi(K3) = 72 (K3 reading)",
+                    "b3": (f"Third Betti number b3 = {self.elder_kads} (the live seed; "
+                           "the worked numbers use the off-path seed b3 = 24)"),
                 },
                 # Triple-track: Delta N_eff = n_sterile_eff · sin²(2θ) · F_DW; F_DW =
                 # chi_eff / (4π·b3) is b3-rooted via b3_leaf().
@@ -872,7 +919,8 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     "ops.sub(eml_vec('geometry.chi_eff_sector'), eml_vec('topology.elder_kads'))))), "
                     "ops.inv(ops.sqrt(eml_scalar(6.0))))) — y_as = sqrt( (1/sqrt(χ_eff/b₃)) · "
                     "((b₃−1)/b₃) · sqrt(χ_eff/(χ_eff−b₃)) · 1/sqrt(6) ) with χ_eff = 72 "
-                    "per-shadow and b₃ = 24"
+                    "per shadow (K3 reading), written at the off-path seed b₃ = 24; "
+                    "the module reads b₃ from the live seed"
                 ),
             ),
             Parameter(
@@ -882,9 +930,11 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 status="PREDICTED",
                 description=(
                     "Majorana mass scale for sterile neutrinos from hidden-face "
-                    "moduli VEV: M_s ~ M_Pl * exp(-T_i/2) ~ 10^4 GeV.  This "
-                    "scale produces atmospheric-scale light neutrino masses "
-                    "via the type-I seesaw mechanism."
+                    "moduli VEV: M_s ~ M_Pl * exp(-T_i/2) ~ 10^4 GeV.  T_i is "
+                    "set from this target (the moduli are OPEN on Y_7, CG.6), so "
+                    "the scale is assumed. With y_as ~ 0.57 the type-I seesaw at "
+                    "this scale gives ~2 GeV, not the atmospheric scale (that "
+                    "needs M_s ~ 10^16 GeV)."
                 ),
                 derivation_formula="portal-sterile-mass-v23",
                 no_experimental_value=True,
@@ -918,8 +968,10 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     # The 0.027 prefactor appears nowhere in compute_sterile_portals().
                     # The module computes delta_N_eff = n_sterile_eff * sin2_2theta * F_DW
                     # with n_sterile_eff = n_hidden_faces * (2*chi_eff/48) * alpha_leak
+                    # (2*chi_eff/48 = n, the K3 reading; it restates the ruled route b_2/4)
                     # and F_DW = chi_eff/(4*pi*b3); alpha_leak here is this module's local
-                    # sqrt(sqrt(0.5)*(23/24)/sqrt(6)) = 0.5260, NOT geometry.alpha_leak.
+                    # sqrt(sqrt(0.5)*(23/24)/sqrt(6)) = 0.5260, NOT geometry.alpha_leak
+                    # (that figure is at the off-path seed b3 = 24; the module reads b3 live).
                     "EML: ops.mul(ops.mul(eml_scalar(3.0), ops.mul("
                     "ops.div(eml_scalar(144.0), eml_scalar(48.0)), "
                     "ops.sqrt(ops.div(ops.mul(ops.sqrt(eml_scalar(0.5)), "
@@ -934,30 +986,37 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for paper."""
+        # The bulk sentence is rendered from the live geometry, not typed.
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
         return SectionContent(
             section_id="7",
             subsection_id="7.4",
             title="Sterile Neutrino Portals from Dual-Shadow Architecture",
             abstract=(
-                "Sterile neutrinos emerge naturally from the dual-shadow G₂ "
+                "Sterile neutrinos are modelled in the dual-shadow G₂ "
                 "architecture. Shadow 1 hosts left-handed SU(2)<sub>L</sub> doublets; "
                 "Shadow 2 hosts right-handed doublets that are sterile under "
                 "the Standard Model gauge group. The bridge OR operator "
                 "generates a Dirac Yukawa y<sub>as</sub> ~ α<sub>sample</sub> ~ 0.57 (ANSATZ) through "
-                "cross-shadow wave-function overlap. Hidden-face Kähler moduli "
-                "generate a Majorana mass M<sub>s</sub> ~ 10⁴ GeV via exponential "
-                "suppression of the Planck scale. The type-I seesaw then "
-                "predicts light neutrino masses m<sub>ν</sub> ~ 2 × 10<sup>−3</sup> eV at the "
-                "atmospheric scale, with mixing angles sin²(2θ) safely "
+                "cross-shadow wave-function overlap. A Majorana mass M<sub>s</sub> ~ 10⁴ GeV "
+                "is assumed for the hidden-face moduli, which are OPEN on Y<sub>7</sub> "
+                "(the leading-order flux potential runs away, CG.6). With these inputs "
+                "the type-I seesaw gives m<sub>ν</sub> ~ 2 GeV, about 12 orders of magnitude "
+                "above the atmospheric scale (reaching it needs M<sub>s</sub> ~ 10<sup>16</sup> GeV); "
+                "the mixing angles sin²(2θ) lie "
                 "below current experimental bounds. Sterile contributions to "
-                "N<sub>eff</sub> are negligible, consistent with Planck CMB data."
+                "N<sub>eff</sub> are negligible, consistent with Planck CMB data. "
+                "The worked numbers were written at the off-path seed b<sub>3</sub> = 24; "
+                "the registered values follow the live seed."
             ),
             content_blocks=[
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "In the dual-shadow architecture, the G₂ manifold supports two "
-                        "13-dimensional shadow sectors connected by 12 bridge pairs. Shadow 1 "
+                        render("In the dual-shadow architecture, {bulk}; the two "
+                               "13-dimensional shadows are connected by 12 bridge pairs. ",
+                               "html") +
+                        "Shadow 1 "
                         "hosts left-handed fermion doublets charged under SU(2)<sub>L</sub>, while "
                         "Shadow 2 hosts right-handed doublets. Crucially, the right-handed "
                         "neutrinos in Shadow 2 carry no SU(2)<sub>L</sub> charge — they are naturally "
@@ -994,12 +1053,15 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The 4-face TCS G₂ manifold has one visible face (our universe) and "
-                        "three hidden faces. The Kähler moduli T<sub>i</sub> of the hidden faces are "
-                        "stabilized by flux quantization. The moduli VEV generates a Majorana "
-                        "mass M<sub>s</sub> = M<sub>Pl</sub> · exp(−T<sub>i</sub>/2) for the right-handed sterile neutrinos. "
-                        "For T<sub>i</sub> ~ 69: M<sub>s</sub> ~ 10⁴ GeV, which feeds into the type-I seesaw to "
-                        "produce light neutrino masses at the atmospheric scale."
+                        "The four-face structure (formerly described as a TCS G₂ manifold; that "
+                        "construction is off-path) has one visible face (our universe) and "
+                        "three hidden faces. The moduli T<sub>i</sub> of the hidden faces are "
+                        "OPEN on Y<sub>7</sub>: the leading-order flux potential runs away (CG.6). "
+                        "A moduli VEV would generate a Majorana "
+                        "mass M<sub>s</sub> = M<sub>Pl</sub> · exp(−T<sub>i</sub>/2) for the right-handed sterile neutrinos; "
+                        "here T<sub>i</sub> ~ 69 is set from the target M<sub>s</sub> ~ 10⁴ GeV. Fed into the "
+                        "type-I seesaw with y<sub>as</sub> ~ 0.57, that scale gives ~2 GeV, not the "
+                        "atmospheric scale."
                     )
                 ),
                 ContentBlock(
@@ -1012,10 +1074,12 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                     title="Sterile Neutrino Portal Predictions",
                     content=(
                         "PM predicts from dual-shadow G₂ geometry:\n"
-                        "- Majorana mass: M<sub>s</sub> ~ 10⁴ GeV (hidden-face moduli)\n"
-                        "- Light neutrino mass: m<sub>ν</sub> ~ 2 × 10<sup>−3</sup> eV (atmospheric scale)\n"
+                        "- Majorana mass: M<sub>s</sub> ~ 10⁴ GeV (assumed; the hidden-face moduli are OPEN)\n"
+                        "- Light neutrino mass: the seesaw with these inputs gives ~2 GeV, not "
+                        "2 × 10<sup>−3</sup> eV (that needs M<sub>s</sub> ~ 10<sup>16</sup> GeV)\n"
                         "- Mixing angle: sin²(2θ) ~ few × 10<sup>−5</sup> (below current limits)\n"
-                        "- Sterile count: n<sub>sterile</sub> ~ 5.13 from 3 hidden faces\n"
+                        "- Sterile count: n<sub>sterile</sub> ~ 5.13 from 3 hidden faces "
+                        "(worked at the off-path seed b<sub>3</sub> = 24)\n"
                         "- ΔN<sub>eff</sub> ≪ 0.5 (consistent with Planck CMB)\n"
                         "Testable by: next-generation short-baseline experiments, CMB-S4"
                     )
@@ -1148,8 +1212,9 @@ class SterileNeutrinoPortalsV23(SimulationBase):
                 "relevance": (
                     "The type-I seesaw mechanism explains why neutrinos are so "
                     "light. In PM, the Dirac Yukawa y_as ~ 0.57 comes from "
-                    "bridge mixing and the Majorana mass M_s ~ 10^4 GeV from "
-                    "hidden-face moduli, yielding m_nu ~ 2e-3 eV."
+                    "bridge mixing and the Majorana mass M_s ~ 10^4 GeV is an "
+                    "assumed hidden-face scale; with these inputs the seesaw "
+                    "gives ~2 GeV, not 2e-3 eV (that needs M_s ~ 10^16 GeV)."
                 ),
                 "validation_hint": (
                     "Verify m_nu = y^2 * v^2 / M for given inputs. "
@@ -1213,9 +1278,9 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 
         # Check 3: Seesaw mass in atmospheric range (0.01 - 0.1 eV)
         # The atmospheric mass scale is sqrt(Delta m^2_atm) ~ 0.05 eV.
-        # Our m_nu_eff ~ 2e-3 eV is the single-generation contribution;
-        # consistent because multiple generations contribute to the
-        # observed oscillation parameters.
+        # With this module's inputs m_nu_eff is ~ 10^9 eV (the GeV scale),
+        # not ~ 2e-3 eV, so this check reports a WARNING: reaching the
+        # atmospheric scale needs M_s ~ 10^16 GeV.
         mass_ok = 1e-4 < result.m_nu_eff < 0.1
         checks.append({
             "name": "Seesaw neutrino mass in physical range (0.1 meV - 100 meV)",
@@ -1314,7 +1379,7 @@ class SterileNeutrinoPortalsV23(SimulationBase):
 def run_sterile_portal_demo():
     """Standalone demonstration."""
     print("=" * 75)
-    print("Sterile Neutrino Portals from Dual-Shadow Architecture v23.0")
+    print("Sterile Neutrino Portals from Dual-Shadow Architecture")
     print("=" * 75)
 
     sim = SterileNeutrinoPortalsV23()

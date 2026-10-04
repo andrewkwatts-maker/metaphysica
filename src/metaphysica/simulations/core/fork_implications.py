@@ -2,7 +2,7 @@
 
 WHY THIS EXISTS
 ===============
-Eighteen forks are declared and each is runnable, but "runnable" has been
+Every declared fork is runnable, but "runnable" has been
 cheaper than "costed": the campaign repeatedly discovered the consequences of
 a fork only when something hard-failed under it. The b3_seed adoption moved
 182 registered rows, broke twelve integer identities and deleted a vacuum, and
@@ -135,12 +135,16 @@ def _live_seed_values() -> Tuple[Optional[int], Optional[int]]:
 
 
 def _live_chi_eff() -> Optional[float]:
-    """chi_eff in the live state, or None while the route stays UNRULED.
+    """chi_eff in the live state, or None on a branch that names no value.
 
-    The chi_eff_route fork's adopted option is `unruled`, and a deviation to
-    `constant_144` or `seed_dependent` is exactly the kind of consequence this
-    matrix exists to show -- so the value is read from the fork rather than
-    assumed.
+    RULED 2026-10-01 (D-015): the adopted option is `k3_reading`, whose value
+    (48 n, 144 at n = 3) is owned by the narration, `chi_eff_claim()`. It is
+    READ from there rather than restated here, so the matrix and the prose
+    cannot disagree about the number and a seed deviation moves it through n.
+    `unruled` names no value and stays None. The two tested historical routes
+    `constant_144` and `seed_dependent` are deviations whose values are the
+    route definitions themselves, so they are computed here -- a deviation to
+    either is exactly the kind of consequence this matrix exists to show.
     """
     try:
         from metaphysica.simulations.core.variants import resolve
@@ -153,7 +157,12 @@ def _live_chi_eff() -> Optional[float]:
     if route == "seed_dependent":
         b3, _ = _live_seed_values()
         return None if b3 is None else 6.0 * b3
-    return None
+    from metaphysica.simulations.PM.geometry.geometry_narration import (
+        chi_eff_claim,
+    )
+
+    value = chi_eff_claim(route).get("value")
+    return None if value is None else float(value)
 
 
 def _identity_statuses() -> Dict[str, str]:

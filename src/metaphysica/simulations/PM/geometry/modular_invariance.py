@@ -1,18 +1,32 @@
 """
-Modular Invariance and b₃=24 Uniqueness v16.2
-==============================================
+Modular Invariance of the Eta Partition Function
+================================================
 
-Proves that anomaly cancellation requires exactly b₃ = 24.
+What the modular argument fixes: the exponent n of Z(q) = η(τ)^(-n).
 
-MATHEMATICAL BASIS:
-- The partition function Z(q) = η(τ)^(-b₃) must be modular invariant
-- Anomaly cancellation requires the leading q-exponent to be integer
-- This happens ONLY when b₃ = 24
+MATHEMATICAL BASIS (standard):
+- η(τ + 1) = e^(iπ/12) η(τ), so Z(q) = η(τ)^(-n) is single-valued under
+  τ → τ + 1 only when n ≡ 0 (mod 24).
+- The minimal positive solution is n = 24, the exponent of
+  η²⁴ = Δ/(2π)¹², the modular discriminant.
 
-RELATION TO PHYSICS:
-- Bosonic string theory: critical dimension D = 26, transverse = 24
-- Vacuum energy: E₀ = -b₃/24 = -1 only for b₃ = 24
-- Ghost cancellation in (24,2) signature
+RELATION TO PHYSICS (standard):
+- The one-time bosonic string at signature (25,1) has D − 2 = 24 transverse
+  oscillators, vacuum energy E₀ = −24/24 = −1 and critical dimension 26.
+
+WHAT THE 24 COUNTS IN THIS MODULE:
+The run compares n with the bulk's 24 space directions (D_space_24). It is
+not the third Betti number: b₃ counts the 3-cycles of Y₇, 43 on the adopted
+path, and no Joyce-reachable b₃ is a multiple of 24 (every one is odd).
+
+LABELLED, KEPT RUNNABLE:
+- "Anomaly cancellation requires b₃ = 24" is OFF-PATH (b3_seed = seed_24):
+  it read n as b₃, and b₃ ≡ 0 (mod 24) holds only at the retired seed.
+- "D = b₃ + 2 = 26 is the critical dimension" is RETIRED (signature ruling
+  2026-08-31): the two-time critical dimension is 27–28, and 26 is the
+  one-time value at (25,1).
+- Ghost control of the second time in the (24,2) bulk is OPEN; the ruling
+  also records that no even self-dual lattice exists at (24,2).
 
 REFERENCES:
 - Green, Schwarz, Witten (1987) "Superstring Theory Vol. 1"
@@ -96,14 +110,17 @@ def _arithma_pow(a, b):
 
 class ModularInvarianceV16(SimulationBase):
     """
-    Proves b₃ = 24 from modular invariance of the partition function.
+    Modular invariance of Z(q) = η(τ)^(-n) fixes n ≡ 0 (mod 24).
 
     The Dedekind eta function η(τ) transforms under modular group SL(2,Z):
         η(τ + 1) = e^(iπ/12) η(τ)
         η(-1/τ) = √(-iτ) η(τ)
 
-    For Z(q) = η(τ)^(-b₃) to be modular invariant (weight 0):
-        b₃ must cancel the phase factor → b₃ = 24
+    For Z(q) = η(τ)^(-n) to be single-valued under τ → τ + 1, n must
+    cancel the phase factor, so n ≡ 0 (mod 24) and the minimal n is 24.
+    The run compares n with the bulk's 24 space directions (D_space_24).
+    Reading n as b₃ was the OFF-PATH seed_24 identification; b₃ counts the
+    3-cycles of Y₇.
     """
 
     def __init__(self, precision: int = 100):
@@ -128,11 +145,15 @@ class ModularInvarianceV16(SimulationBase):
             id="modular_invariance_v16_2",
             version="16.2",
             domain="geometric",
-            title="Modular Invariance and b3=24 Uniqueness",
+            title="Modular Invariance of the Eta Partition Function",
             description=(
-                "Proves that modular invariance of the partition function "
-                "requires exactly b3 = 24. This is the mathematical origin "
-                "of the critical dimension."
+                "Shows that modular invariance of Z(q) = eta(tau)^(-n) fixes "
+                "n = 0 (mod 24), with minimal n = 24, the exponent of eta^24. "
+                "The run compares n with the bulk's 24 space directions. Two "
+                "former claims are labelled rather than derived: that this "
+                "fixes b3 = 24 (OFF-PATH, b3_seed = seed_24) and that 26 is "
+                "the bulk's critical dimension (RETIRED, signature ruling "
+                "2026-08-31)."
             ),
             section_id="3",
             subsection_id="3.6"  # v19.0: Unique subsection (Modular Invariance)
@@ -149,10 +170,10 @@ class ModularInvarianceV16(SimulationBase):
     def output_params(self) -> List[str]:
         """Return output parameter paths."""
         return [
-            "topology.b3_modular",        # Required b₃ from modular invariance
-            "topology.vacuum_energy",     # E₀ = -b₃/24
+            "topology.b3_modular",        # minimal eta exponent n = 24 (path name is historical)
+            "topology.vacuum_energy",     # E₀ = -n/24
             "topology.anomaly_free",      # Boolean: is anomaly cancelled?
-            "topology.critical_dim",      # D = b₃ + 2 = 26
+            "topology.critical_dim",      # D = n + 2 = 26 (one-time value; RETIRED as the bulk's)
             "topology.modular_weight",    # Weight of partition function
             "topology.dedekind_eta_phase",  # pi/12 from eta(tau+1)
             "topology.b3_modular_identification",  # per-branch status of the old b3<->24 conflation
@@ -175,7 +196,8 @@ class ModularInvarianceV16(SimulationBase):
 
     def run(self, registry: PMRegistry) -> Dict[str, Any]:
         """
-        Prove b₃ = 24 from modular invariance.
+        Fix the eta exponent n from modular invariance and check it against
+        the bulk's 24 space directions.
         """
         self.validate_inputs(registry)
 
@@ -210,8 +232,10 @@ class ModularInvarianceV16(SimulationBase):
         # Step 3: Check anomaly cancellation
         anomaly_free = self._check_anomaly_cancellation(self.b3_required)
 
-        # Step 4: Compute critical dimension
-        critical_dim = self.b3_required + 2  # D = 24 + 2 = 26
+        # Step 4: D = n + 2 = 26, the one-time (25,1) critical dimension.
+        # As the (24,2) bulk's critical dimension it is RETIRED (signature
+        # ruling 2026-08-31); kept as a runnable output.
+        critical_dim = self.b3_required + 2
 
         # Step 5: Modular weight
         modular_weight = -self.b3_required / 2  # η^(-24) has weight -12
@@ -246,29 +270,32 @@ class ModularInvarianceV16(SimulationBase):
 
     def _compute_modular_constraint(self) -> int:
         """
-        Compute required b₃ from modular transformation properties.
+        Compute the minimal eta exponent n from modular transformation
+        properties.
 
         Under τ → τ + 1:
             η(τ + 1) = e^(iπ/12) η(τ)
-            η(τ)^(-b₃) → e^(-iπb₃/12) η(τ)^(-b₃)
+            η(τ)^(-n) → e^(-iπn/12) η(τ)^(-n)
 
-        For single-valuedness: b₃/12 must be even integer
-        Minimal solution: b₃ = 24
+        For single-valuedness: n/12 must be an even integer.
+        Minimal solution: n = 24, the exponent of η²⁴. (This method used to
+        call n "b₃"; that was the off-path seed_24 identification.)
         """
-        # The transformation phase is e^(2πi × b₃/24)
-        # For modular invariance: b₃/24 must be integer
-        # Minimal non-trivial solution: b₃ = 24
+        # The transformation phase is e^(-2πi × n/24)
+        # For modular invariance: n/24 must be an integer
+        # Minimal non-trivial solution: n = 24
 
-        # Mathematically: solve b₃ mod 24 = 0 with minimal positive b₃
+        # Mathematically: solve n mod 24 = 0 with minimal positive n
         return 24
 
     def _compute_vacuum_energy(self, b3: int) -> float:
         """
         Compute vacuum energy from zero-point oscillations.
 
-        E₀ = -b₃/24 × (ℏω/2 sum)
+        E₀ = -n/24 for n transverse oscillators (the argument is named b3
+        for history; it is the oscillator count n, not a Betti number).
 
-        In bosonic string theory:
+        In the one-time bosonic string:
             E₀ = (D-2)/24 × (-1) = -(D-2)/24
 
         For D = 26: E₀ = -24/24 = -1
@@ -317,7 +344,8 @@ class ModularInvarianceV16(SimulationBase):
 
     def analyze_alternative_b3(self) -> Dict[int, Dict]:
         """
-        Analyze what happens for different b₃ values.
+        Scan the eta exponent n (keyed b3 for history): which n are modular
+        invariant, and which give E₀ = -1.
         """
         results = {}
         for b3 in [12, 16, 20, 24, 28, 32, 48]:
@@ -372,22 +400,23 @@ class ModularInvarianceV16(SimulationBase):
         return SectionContent(
             section_id="3",
             subsection_id="3.6",  # v19.0: Unique subsection (Modular Invariance)
-            title="Modular Invariance and Critical Dimension",
+            title="Modular Invariance of the Eta Partition Function",
             abstract=(
-                "Modular invariance of the partition function requires the "
-                "OSCILLATOR COUNT in Z(q) = η(τ)^{-n} to satisfy n ≡ 0 "
-                "(mod 24), whose minimal positive solution is n = %d. That "
-                "count is the bulk's transverse spacelike core (D_space_24), "
-                "and the critical dimension is D = %d + 2 = 26. This "
-                "abstract previously read \"requires exactly b₃ = 24, the "
-                "third Betti number of the G₂ manifold counting independent "
-                "associative 3-cycles\". The two quantities were conflated "
-                "while both read 24; the identification BROKE with the "
-                "b3_seed adoption (2026-09-22), and on the live seed "
-                "b₃ = %d, which is %s 0 (mod 24). The modular argument is "
-                "unaffected — it never needed b₃ — and the claim that it "
-                "fixes b₃ is withdrawn rather than deleted."
-                % (n_osc, n_osc, b3, "" if b3 % 24 == 0 else "NOT")
+                "Modular invariance of the partition function "
+                "Z(q) = η(τ)^{-n} requires the oscillator count to satisfy "
+                "n ≡ 0 (mod 24); the minimal positive solution is n = %d, "
+                "the exponent of η²⁴, the modular discriminant. The engine "
+                "counts these oscillators with the bulk's 24 space "
+                "directions. For the one-time bosonic string at signature "
+                "(25,1), D = %d + 2 = 26 is the critical dimension; the "
+                "claim that the (24,2) bulk sits at its critical dimension "
+                "is RETIRED (signature ruling 2026-08-31), since with two "
+                "times the critical dimension is 27–28. The condition does "
+                "not fix the internal topology: b₃ counts the 3-cycles of "
+                "Y₇, b₃ = %d on the live seed, which is %s0 (mod 24). "
+                "Reading n as b₃ was the off-path seed_24 identification and "
+                "is withdrawn."
+                % (n_osc, n_osc, b3, "" if b3 % 24 == 0 else "not ")
             ),
             content_blocks=[
                 ContentBlock(
@@ -395,19 +424,18 @@ class ModularInvarianceV16(SimulationBase):
                     content=(
                         "The partition function of the theory must be "
                         "invariant under modular transformations "
-                        "τ → (aτ+b)/(cτ+d) with ad - bc = 1. Modular "
-                        "invariance of Z(q) = η(τ)^{-n} constrains the "
-                        "OSCILLATOR COUNT n, and the count that enters is "
-                        "the %d transverse bosonic oscillators of the (24,2) "
-                        "bulk. This paragraph previously identified n with "
-                        "b₃, \"the independent associative 3-cycles in "
-                        "H₃(V₇, Z)\", each supporting a harmonic 3-form "
-                        "contributing one oscillator, and read the "
-                        "constraint as linking the internal topology to "
-                        "anomaly cancellation. That identification is "
+                        "τ → (aτ+b)/(cτ+d) with ad - bc = 1. For "
+                        "Z(q) = η(τ)^{-n} this constrains the oscillator "
+                        "count n; the engine counts the %d oscillators with "
+                        "the bulk's 24 space directions. The signature "
+                        "ruling of 2026-08-31 records that no even "
+                        "self-dual lattice exists at (24,2), so a "
+                        "modular-invariance claim about the bulk needs its "
+                        "own footing. An earlier version identified n with "
+                        "b₃, one oscillator per associative 3-cycle of the "
+                        "internal manifold. That identification is "
                         "withdrawn: b₃ = %d on the live seed, so n = b₃ "
-                        "fails here, and the modular constraint bears on "
-                        "the bulk's transverse core rather than on the "
+                        "fails, and the constraint does not bear on the "
                         "internal manifold's third Betti number."
                         % (n_osc, b3)
                     )
@@ -474,15 +502,18 @@ class ModularInvarianceV16(SimulationBase):
                 ContentBlock(
                     type="callout",
                     callout_type="info",
-                    title="Critical Dimension",
+                    title="Critical Dimension of the One-Time String",
                     content=(
-                        "The critical dimension D = n + 2 = %d + 2 = 26 "
-                        "follows from the oscillator count, not from b₃. "
-                        "This callout previously read \"D = b₃ + 2 = 24 + 2 "
-                        "= 26\"; on the live seed b₃ = %d, so b₃ + 2 = %d "
-                        "and the +2 identity D_bulk − b₃ = 2 BREAKS — "
-                        "recorded, not dropped. What modular invariance "
-                        "forces is the oscillator count." % (n_osc, b3, b3 + 2)
+                        "D = n + 2 = %d + 2 = 26 is the critical dimension "
+                        "of the one-time bosonic string at signature "
+                        "(25,1), where the +2 is a lightcone pair. It is "
+                        "not the critical dimension of the adopted (24,2) "
+                        "bulk: that claim is RETIRED (signature ruling "
+                        "2026-08-31), since with two times the critical "
+                        "dimension is 27–28. Nor does 26 follow from b₃: "
+                        "on the live seed b₃ = %d, so b₃ + 2 = %d and the "
+                        "identity D_bulk − b₃ = 2 is broken (recorded, not "
+                        "dropped)." % (n_osc, b3, b3 + 2)
                     )
                 ),
                 ContentBlock(
@@ -520,7 +551,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"\eta(\tau) = q^{1/24} \prod_{n=1}^{\infty} (1 - q^n)",
                 plain_text="eta(tau) = q^(1/24) * prod(1 - q^n)",
                 category="DERIVED",
-                description="Dedekind eta function, a weight-1/2 modular form whose 24th power yields the modular discriminant Delta(tau). Its transformation law under SL(2,Z) encodes the phase factor that constrains b3.",
+                description="Dedekind eta function, a weight-1/2 modular form whose 24th power yields the modular discriminant Delta(tau). Its transformation law under SL(2,Z) encodes the phase exp(i*pi/12) that constrains the exponent n of eta^(-n) to n = 0 mod 24. It constrains b3 only under the OFF-PATH seed_24 reading n = b3.",
                 inputParams=["topology.elder_kads"],
                 outputParams=["topology.dedekind_eta_phase"],
                 input_params=["topology.elder_kads"],
@@ -542,7 +573,7 @@ class ModularInvarianceV16(SimulationBase):
                 },
                 eml_latex=r"\eta(\tau) = \mathrm{ops.mul}(\mathrm{ops.exp}(\mathrm{ops.div}(\mathrm{ops.mul}(2\pi i, \tau), \mathrm{eml\_scalar}(24))), \mathrm{prod}_{n}(1 - q^n))",
                 eml_tree_str="ops.mul(ops.exp(ops.div(ops.mul(eml_scalar(2.0), eml_pi(), tau), b3_leaf())), infinite_product_1_minus_q_n)",
-                eml_description="EML: Dedekind eta prefactor = ops.exp(ops.div(ops.mul(2*pi*i, tau), b3_leaf())) — the /24 in the exponent is what forces b3=24 in the modular constraint",
+                eml_description="EML: Dedekind eta prefactor = ops.exp(ops.div(ops.mul(2*pi*i, tau), b3_leaf())) — the /24 in the exponent is the eta^24 periodicity behind n = 0 mod 24; the tree's b3_leaf() for that 24 is the OFF-PATH seed_24 reading (the 24 is a named constant, not b3)",
                 # TODO(triple-track-complex): Dedekind eta is a transcendental modular form depending on complex τ;
                 # no closed-form real EML/Arithma tree without choosing a specific τ.
             ),
@@ -552,7 +583,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"Z(q) = \eta(\tau)^{-b_3}",
                 plain_text="Z(q) = eta(tau)^(-b3)",
                 category="DERIVED",
-                description="Partition function for b3 bosonic oscillators from the G2 manifold's associative 3-cycles. Each independent 3-cycle in H3(V7, Z) contributes one inverse-eta factor, so the total partition function is eta^(-b3). Modular invariance of Z constrains b3 mod 24 = 0.",
+                description="OFF-PATH (b3_seed = seed_24): partition function Z = eta^(-n) with the oscillator count n read as b3, one inverse-eta factor per independent associative 3-cycle in H3(V7, Z). Modular invariance constrains n mod 24 = 0, which a third Betti number satisfies only at the retired seed b3 = 24; no Joyce-reachable b3 is a multiple of 24 (every one is odd). The modular argument itself concerns the oscillator count n.",
                 inputParams=["topology.elder_kads"],
                 outputParams=[],
                 input_params=["topology.elder_kads"],
@@ -561,20 +592,20 @@ class ModularInvarianceV16(SimulationBase):
                     "method": "path_integral_reduction",
                     "parentFormulas": ["dedekind-eta-definition"],
                     "steps": [
-                        {"description": "Each associative 3-cycle contributes one bosonic oscillator", "formula": r"\text{b}_3 \text{ oscillators from } H_3(M, \mathbb{Z})"},
+                        {"description": "Off-path seed_24 reading: each associative 3-cycle contributes one bosonic oscillator", "formula": r"\text{b}_3 \text{ oscillators from } H_3(M, \mathbb{Z})"},
                         {"description": "Each oscillator's partition function is inverse eta", "formula": r"Z_i = \eta(\tau)^{-1}"},
-                        {"description": "Total partition function is product over all 3-cycles", "formula": r"Z = \prod_{i=1}^{b_3} \eta^{-1} = \eta(\tau)^{-b_3}"},
+                        {"description": "Total partition function is the product over the oscillators (over the 3-cycles in the off-path reading)", "formula": r"Z = \prod_{i=1}^{b_3} \eta^{-1} = \eta(\tau)^{-b_3}"},
                     ],
                     "references": ["PM Section 3.2", "Polchinski Vol. 1"]
                 },
                 terms={
                     "Z": "Partition function of the compactified theory",
-                    "b_3": "Third Betti number (24)",
+                    "b_3": "Third Betti number; read as the oscillator count only under the off-path seed b3 = 24 (it counts the 3-cycles of Y7 and follows the live seed)",
                     "H_3": "Third homology group"
                 },
                 eml_latex=r"Z(q) = \mathrm{ops.pow}(\eta(\tau),\, \mathrm{ops.neg}(b_3))",
                 eml_tree_str="ops.pow(eta_tau, ops.neg(b3_leaf()))",
-                eml_description="EML: partition function Z = ops.pow(eta_tau, ops.neg(b3)) = eta^(-24) — exponent is negative b3",
+                eml_description="EML: partition function Z = ops.pow(eta_tau, ops.neg(b3)) — exponent is negative b3, which is -24 only at the off-path seed b3 = 24",
                 # TODO(triple-track-complex): Z(q) = η(τ)^(-b3) is a transcendental modular form; symbolic only.
             ),
             Formula(
@@ -583,7 +614,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"E_0 = -\frac{b_3}{24} = -1",
                 plain_text="E0 = -b3/24 = -1",
                 category="DERIVED",
-                description="Vacuum energy from the zeta-regularized zero-point sum over the D-2 = 24 TRANSVERSE bosonic oscillators of the (24,2) bulk. E0 = -24/24 = -1 exactly, satisfying the Virasoro on-shell condition L0|phys> = 0. The oscillator count is the bulk's spacelike core (D_space_24), NOT the third Betti number -- the two were conflated while both read 24; the identification broke with the b3_seed adoption (2026-09-22).",
+                description="Vacuum energy from the zeta-regularized zero-point sum over 24 transverse bosonic oscillators, as in the one-time bosonic string (D - 2 = 24): E0 = -24/24 = -1, the value the Virasoro on-shell condition L0|phys> = 0 needs. The engine counts the 24 with the bulk's 24 space directions (D_space_24), not with the third Betti number; the two were conflated while both read 24, and the identification broke with the b3_seed adoption (2026-09-22).",
                 inputParams=["topology.elder_kads"],
                 outputParams=["topology.vacuum_energy"],
                 input_params=["topology.elder_kads"],
@@ -593,15 +624,15 @@ class ModularInvarianceV16(SimulationBase):
                     "parentFormulas": ["partition-function-eta", "modular-anomaly-condition"],
                     "steps": [
                         {"description": "Casimir energy from zeta regularization of oscillator sum", "formula": r"E_0 = -\frac{D-2}{24} = -\frac{b_3}{24}"},
-                        {"description": "Substitute b3 = 24 from modular invariance", "formula": r"E_0 = -\frac{24}{24}"},
+                        {"description": "Substitute the oscillator count n = 24 fixed by modular invariance (formerly written as b3, the off-path seed_24 reading)", "formula": r"E_0 = -\frac{24}{24}"},
                         {"description": "Vacuum energy equals -1 (required for on-shell condition)", "formula": r"E_0 = -1"},
                     ],
                     "references": ["GSW Vol. 1, Chapter 2", "Polchinski Vol. 1, Chapter 1"]
                 },
                 terms={
                     "E_0": "Vacuum energy (zero-point energy of string oscillators)",
-                    "D": "Spacetime dimension (26 for bosonic string)",
-                    "D-2": "The 24 transverse dimensions of the (24,2) bulk (D_space_24) -- formerly conflated with b_3, decoupled by the b3_seed adoption"
+                    "D": "Spacetime dimension of the one-time bosonic string (26, signature (25,1)); as the (24,2) bulk's critical dimension it is retired (signature ruling 2026-08-31)",
+                    "D-2": "The 24 transverse oscillators, counted in the engine with the bulk's 24 space directions (D_space_24) -- formerly conflated with b_3, decoupled by the b3_seed adoption"
                 },
                 eml_latex=r"E_0 = \mathrm{ops.neg}(\mathrm{ops.div}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(24)))",
                 eml_tree_str="ops.neg(ops.div(eml_scalar(24.0), eml_scalar(24.0)))  # D_space_24 transverse oscillators, not b3",
@@ -617,7 +648,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"b_3 \equiv 0 \mod 24",
                 plain_text="b3 mod 24 = 0",
                 category="DERIVED",
-                description="Modular anomaly cancellation condition: under T-transformation tau -> tau+1, the partition function Z = eta^(-b3) picks up phase exp(-i*pi*b3/12). Single-valuedness requires b3/12 to be an even integer, forcing b3 = 0 mod 24. The G2 manifold's third Betti number b3 = 24 is the unique minimal physical solution.",
+                description="OFF-PATH (b3_seed = seed_24): the modular condition read as a condition on b3. Under the T-transformation tau -> tau+1, Z = eta^(-n) picks up the phase exp(-i*pi*n/12); single-valuedness requires n/12 to be an even integer, so n = 0 mod 24, with minimal n = 24 (the exponent of eta^24). Identifying n with the third Betti number made b3 = 24 'the unique minimal solution'; that identification is retired. b3 counts the 3-cycles of Y7, and b3 = 0 mod 24 holds at no Joyce-reachable seed (every reachable b3 is odd).",
                 inputParams=["topology.elder_kads", "topology.dedekind_eta_phase"],
                 outputParams=["topology.b3_modular"],
                 input_params=["topology.elder_kads", "topology.dedekind_eta_phase"],
@@ -633,13 +664,13 @@ class ModularInvarianceV16(SimulationBase):
                     "references": ["Polchinski Vol. 1, Chapter 7"]
                 },
                 terms={
-                    "b_3": "Third Betti number",
+                    "b_3": "Third Betti number; stands for the eta exponent n only under the off-path seed_24 reading",
                     "SL(2,Z)": "Modular group generated by T: tau->tau+1 and S: tau->-1/tau",
-                    "24": "Modular periodicity from eta phase factor"
+                    "24": "Modular periodicity: the exponent of eta^24, the modular discriminant"
                 },
                 eml_latex=r"b_3 \equiv \mathrm{ops.mod}(b_3,\, \mathrm{eml\_scalar}(24)) = 0",
                 eml_tree_str="ops.sub(b3_leaf(), eml_scalar(24.0))  # = 0 when modular condition holds (b3=24)",
-                eml_description="EML: modular constraint residue = ops.sub(b3_leaf(), eml_scalar(24)); value 0 confirms b3 mod 24 = 0",
+                eml_description="EML: OFF-PATH (b3_seed = seed_24) residue ops.sub(b3_leaf(), eml_scalar(24)); it is 0 only at the retired seed, where b3 was read as the eta exponent n",
                 arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
                 eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
                 value=0.0,
@@ -651,7 +682,7 @@ class ModularInvarianceV16(SimulationBase):
                 latex=r"D_{crit} = b_3 + 2 = 26",
                 plain_text="D_crit = b3 + 2 = 26",
                 category="PREDICTED",
-                description="Critical spacetime dimension D = b3 + 2 = 26, where b3 = 24 transverse (physical) dimensions correspond to the G2 manifold's associative 3-cycles and the +2 accounts for lightcone directions (time + longitudinal). This is uniquely forced by modular invariance.",
+                description="RETIRED (signature ruling 2026-08-31): D = b3 + 2 = 26 read as the bulk's critical dimension, with b3 = 24 transverse dimensions identified with the associative 3-cycles and the +2 as a lightcone pair (time + longitudinal). Both readings are withdrawn: 26 is the critical dimension of the one-time bosonic string at (25,1); the two-time critical dimension is 27-28; and b3 counts the 3-cycles of Y7, which no longer number 24. Kept runnable as the identity D_bulk = b3 + 2, which is broken on the adopted path.",
                 inputParams=["topology.elder_kads"],
                 outputParams=["topology.critical_dim"],
                 input_params=["topology.elder_kads"],
@@ -660,20 +691,20 @@ class ModularInvarianceV16(SimulationBase):
                     "method": "lightcone_counting",
                     "parentFormulas": ["modular-anomaly-condition"],
                     "steps": [
-                        {"description": "b3 = 24 transverse (physical) dimensions from modular invariance", "formula": r"b_3 = 24"},
-                        {"description": "Add 2 lightcone dimensions (time + longitudinal)", "formula": r"D = b_3 + 2 = 24 + 2"},
-                        {"description": "Critical dimension of bosonic string is 26", "formula": r"D_{crit} = 26"},
+                        {"description": "Retired reading: b3 = 24 transverse (physical) dimensions from modular invariance", "formula": r"b_3 = 24"},
+                        {"description": "Add 2 lightcone dimensions (time + longitudinal), the one-time reading of the +2", "formula": r"D = b_3 + 2 = 24 + 2"},
+                        {"description": "Critical dimension of the one-time bosonic string is 26 (not that of the (24,2) bulk)", "formula": r"D_{crit} = 26"},
                     ],
                     "references": ["GSW Vol. 1", "Polchinski Vol. 1"]
                 },
                 terms={
-                    "D_crit": "Critical spacetime dimension (26)",
-                    "b_3": "Transverse dimensions (24)",
-                    "2": "Lightcone directions (time + longitudinal)"
+                    "D_crit": "Critical dimension of the one-time bosonic string (26); withdrawn as a claim about the (24,2) bulk",
+                    "b_3": "Formerly read as the 24 transverse dimensions (retired; b3 counts the 3-cycles of Y7)",
+                    "2": "Lightcone directions (time + longitudinal): the one-time reading of the +2, retired for the (24,2) bulk"
                 },
                 eml_latex=r"D_{crit} = \mathrm{ops.add}(\mathrm{b3\_leaf}(),\, \mathrm{eml\_scalar}(2)) = 26",
                 eml_tree_str="ops.add(b3_leaf(), eml_scalar(2.0))",
-                eml_description="EML: critical dimension = ops.add(b3_leaf(), eml_scalar(2)) = 24 + 2 = 26 — lightcone +2 appended to b3 transverse dimensions",
+                eml_description="EML: RETIRED critical-dimension reading: ops.add(b3_leaf(), eml_scalar(2)) gives 26 only at the off-path seed b3 = 24",
                 arithma=_arithma_add(_arithma_const("b3"), _arithma_num(2.0)),
                 eml=_eml_add(_b3_leaf(), _eml_scalar(2.0)),
                 value=26.0,
@@ -693,9 +724,10 @@ class ModularInvarianceV16(SimulationBase):
                     "Phase acquired by the Dedekind eta function under the "
                     "T-transformation tau -> tau + 1: eta(tau+1) = "
                     "exp(i*pi/12) * eta(tau), so the phase is pi/12 = "
-                    "0.261799 rad. Exact, and the whole b3 = 0 mod 24 argument "
-                    "turns on it -- Z = eta^(-b3) picks up exp(-i*pi*b3/12), "
-                    "and single-valuedness forces b3/12 to be even. It was "
+                    "0.261799 rad. Exact, and the whole n = 0 mod 24 argument "
+                    "turns on it -- Z = eta^(-n) picks up exp(-i*pi*n/12), "
+                    "and single-valuedness forces n/12 to be even (n was "
+                    "written b3 under the off-path seed_24 reading). It was "
                     "declared twice under two names, as the OUTPUT of "
                     "dedekind-eta-definition (topology.modular_phase) and as "
                     "an INPUT to modular-anomaly-condition "
@@ -709,11 +741,11 @@ class ModularInvarianceV16(SimulationBase):
             ),
             Parameter(
                 path="topology.b3_modular",
-                name="b₃ from Modular Invariance",
+                name="Eta Exponent from Modular Invariance",
                 units="dimensionless",
                 status="DERIVED",
-                description="Required b₃ for anomaly cancellation: 24",
-                eml_description="EML: eml_scalar(24.0) — b3=24 is the unique minimal solution to ops.eq(ops.mod(b3, 24), 0)",
+                description="The minimal exponent n of Z = eta^(-n) allowed by modular invariance: n = 24, the exponent of eta^24. The path name says b3 for history: reading n as b3 was the OFF-PATH seed_24 identification; b3 counts the 3-cycles of Y7.",
+                eml_description="EML: eml_scalar(24.0) — n = 24 is the minimal solution of n = 0 (mod 24); it equalled b3 only at the off-path seed",
                 derivation_formula="modular-anomaly-condition",
                 no_experimental_value=True
             ),
@@ -722,7 +754,7 @@ class ModularInvarianceV16(SimulationBase):
                 name="Vacuum Energy",
                 units="dimensionless",
                 status="DERIVED",
-                description="E₀ = -b₃/24 = -1",
+                description="E₀ = -n/24 = -1 for the n = 24 transverse oscillators (written -b₃/24 under the off-path seed_24 reading)",
                 eml_description="EML: ops.neg(ops.div(eml_scalar(24.0), eml_scalar(24.0))) — zeta-regularized vacuum energy",
                 derivation_formula="vacuum-energy-formula",
                 no_experimental_value=True
@@ -732,16 +764,16 @@ class ModularInvarianceV16(SimulationBase):
                 name="Anomaly-Free Status",
                 units="boolean",
                 status="DERIVED",
-                description="Whether all anomalies cancel (True for b₃=24)",
-                eml_description="EML: ops.mul(ops.eq(ops.mod(eml_vec('b3'), eml_scalar(24.0)), eml_scalar(0.0)), ops.eq(eml_vec('vacuum_energy'), ops.neg(eml_scalar(1.0)))) — anomaly cancellation: b3 mod 24 = 0 AND E0 = -1",
+                description="Whether the eta exponent passes both checks, n = 0 (mod 24) and E₀ = -1 (true for n = 24). As a statement about b₃ it held only at the off-path seed b₃ = 24.",
+                eml_description="EML: ops.mul(ops.eq(ops.mod(eml_vec('b3'), eml_scalar(24.0)), eml_scalar(0.0)), ops.eq(eml_vec('vacuum_energy'), ops.neg(eml_scalar(1.0)))) — anomaly cancellation: n mod 24 = 0 AND E0 = -1 (the 'b3' leaf is the eta exponent n)",
                 no_experimental_value=True
             ),
             Parameter(
                 path="topology.critical_dim",
-                name="Critical Dimension",
+                name="Critical Dimension (One-Time String)",
                 units="dimensionless",
                 status="DERIVED",
-                description="D = b₃ + 2 = 26",
+                description="RETIRED (signature ruling 2026-08-31): D = b₃ + 2 = 26 as the bulk's critical dimension. 26 is the one-time value at (25,1); the two-time critical dimension is 27–28. The output reports D = n + 2 for the eta exponent n = 24.",
                 eml_description="EML: ops.add(eml_vec('topology.elder_kads'), eml_scalar(2.0)) — D_crit = b₃+2 = 24+2 = 26; note D_crit=26 withdrawn under the (24,2) ruling (see OUTSTANDING_ISSUES §1.12)",
                 derivation_formula="critical-dimension",
                 no_experimental_value=True
@@ -751,8 +783,8 @@ class ModularInvarianceV16(SimulationBase):
                 name="Modular Weight",
                 units="dimensionless",
                 status="DERIVED",
-                description="Weight of η^(-b₃) under modular transformations: -12",
-                eml_description="EML: ops.neg(ops.div(eml_scalar(24.0), eml_scalar(2.0))) — modular weight of η^(−b3)",
+                description="Weight of η^(-n), n = 24, under modular transformations: -12 (η has weight 1/2)",
+                eml_description="EML: ops.neg(ops.div(eml_scalar(24.0), eml_scalar(2.0))) — modular weight of η^(−n) for n = 24",
                 no_experimental_value=True
             ),
         ]
@@ -800,8 +832,8 @@ class ModularInvarianceV16(SimulationBase):
         return [
             {
                 "id": "modular_b3_24_uniqueness",
-                "assertion": "b3 = 24 is the unique minimal value satisfying modular invariance",
-                "condition": "b3 mod 24 == 0 and E0 = -b3/24 = -1",
+                "assertion": "n = 24 is the minimal eta exponent satisfying modular invariance (OFF-PATH as a statement about b3: it held only at the retired seed b3 = 24)",
+                "condition": "n mod 24 == 0 and E0 = -n/24 = -1",
                 "tolerance": 0,
                 "status": "PASS",
                 "wolfram_query": "Mod[24, 24] == 0 && -24/24 == -1",
@@ -810,7 +842,7 @@ class ModularInvarianceV16(SimulationBase):
             },
             {
                 "id": "modular_vacuum_energy",
-                "assertion": "Vacuum energy E0 = -b3/24 = -1.0 for b3 = 24",
+                "assertion": "Vacuum energy E0 = -n/24 = -1.0 for the n = 24 transverse oscillators",
                 "condition": "E0 equals -1 exactly",
                 "tolerance": 1e-15,
                 "status": "PASS",
@@ -820,8 +852,8 @@ class ModularInvarianceV16(SimulationBase):
             },
             {
                 "id": "modular_critical_dimension",
-                "assertion": "Critical dimension D = b3 + 2 = 26",
-                "condition": "D_crit = 26 for bosonic string consistency",
+                "assertion": "D = n + 2 = 26, the one-time (25,1) critical dimension; RETIRED as the bulk's critical dimension (signature ruling 2026-08-31)",
+                "condition": "D_crit = 26 for the one-time bosonic string; the two-time critical dimension is 27-28",
                 "tolerance": 0,
                 "status": "PASS",
                 "wolfram_query": "24 + 2 == 26",
@@ -848,7 +880,7 @@ class ModularInvarianceV16(SimulationBase):
             {
                 "topic": "Bosonic string theory",
                 "url": "https://en.wikipedia.org/wiki/Bosonic_string_theory",
-                "relevance": "String theory requiring D=26 critical dimension from modular invariance",
+                "relevance": "The one-time bosonic string, whose critical dimension is D = 26 at signature (25,1); the model's (24,2) bulk does not inherit it (signature ruling 2026-08-31)",
                 "validation_hint": "Confirm D=26 from Lorentz covariance of quantized string"
             },
             {
@@ -863,14 +895,14 @@ class ModularInvarianceV16(SimulationBase):
         """Validate internal consistency of the modular invariance proof."""
         checks = []
 
-        # Check 1: Modular constraint gives b3=24
+        # Check 1: modular constraint gives the eta exponent n = 24
         b3_required = self._compute_modular_constraint()
         checks.append({
             "name": "modular_constraint_b3",
             "passed": b3_required == 24,
             "confidence_interval": {"lower": 24.0, "upper": 24.0, "sigma": 0},
             "log_level": "INFO",
-            "message": f"Modular constraint requires b3={b3_required}"
+            "message": f"Modular constraint requires the eta exponent n = {b3_required}"
         })
 
         # Check 2: Vacuum energy is -1
@@ -893,7 +925,7 @@ class ModularInvarianceV16(SimulationBase):
             "message": f"Anomaly-free: {anomaly_free}"
         })
 
-        # Check 4: Critical dimension = 26
+        # Check 4: D = n + 2 = 26 (one-time value; retired as the bulk's)
         D_crit = 24 + 2
         checks.append({
             "name": "critical_dimension",
@@ -912,7 +944,7 @@ class ModularInvarianceV16(SimulationBase):
             {
                 "gate_id": "G02_holonomy_closure",
                 "simulation_id": self.metadata.id,
-                "assertion": "Modular invariance requires b3 = 24 (unique minimal solution)",
+                "assertion": "Modular invariance requires the eta exponent n = 0 (mod 24), minimal n = 24; OFF-PATH as a statement about b3 (b3_seed = seed_24)",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -925,7 +957,7 @@ class ModularInvarianceV16(SimulationBase):
             {
                 "gate_id": "G23_proton_stability_floor",
                 "simulation_id": self.metadata.id,
-                "assertion": "All b3 < 24 produce tachyonic instability (E0 > -1)",
+                "assertion": "Every eta exponent n < 24 gives E0 > -1 (tachyonic ground state); written as b3 < 24 under the off-path seed_24 reading",
                 "result": "PASS",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -938,61 +970,78 @@ class ModularInvarianceV16(SimulationBase):
 
     def get_beginner_explanation(self) -> Dict[str, Any]:
         """Return beginner explanation."""
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
+
         return {
             "icon": "24",
             "title": "Why Does String Theory Need 26 Dimensions?",
             "simpleExplanation": (
-                "String theory only works mathematically in 26 dimensions (or 10 for "
-                "superstrings). This isn't arbitrary—it's the only dimension where the "
-                "theory doesn't produce infinite or imaginary energies. The number 24 "
-                "appears because the vacuum energy E₀ = -24/24 = -1 is the exact value "
-                "needed for consistency."
+                "The simplest string theory, the bosonic string with one time "
+                "direction, is consistent only in 26 dimensions (10 for "
+                "superstrings). The number 24 appears because its 24 transverse "
+                "vibrations give a vacuum energy E₀ = -24/24 = -1, the value "
+                "consistency needs, and because the eta function's phase repeats "
+                "every 24 steps."
             ),
             "analogy": (
                 "Imagine tuning a guitar. Most string tensions produce horrible sounds. "
-                "Only at specific tensions do you get pure notes. Similarly, the universe "
-                "only 'sounds right' in 26 dimensions—any other choice creates mathematical "
-                "discord (anomalies)."
+                "Only at specific tensions do you get pure notes. Similarly, a one-time "
+                "string only 'sounds right' in 26 dimensions—any other choice creates "
+                "mathematical discord (anomalies)."
             ),
-            "keyTakeaway": "26 = 24 + 2, where 24 is forced by modular invariance.",
+            "keyTakeaway": (
+                "For the one-time string, 26 = 24 + 2: 24 vibrating directions plus "
+                "a lightcone pair."
+            ),
             "technicalDetail": (
-                "The partition function Z(q) = η(τ)^(-b₃) must be single-valued under "
-                "τ → τ+1. Since η picks up e^(iπ/12), we need b₃/12 to be even integer. "
-                "Minimal solution: b₃ = 24. Then D = b₃ + 2 = 26."
+                "The partition function Z(q) = η(τ)^(-n) must be single-valued under "
+                "τ → τ+1. Since η picks up e^(iπ/12), n/12 must be an even integer. "
+                "Minimal solution: n = 24. Then D = n + 2 = 26 for the one-time string."
             ),
-            "prediction": (
-                "This explains why PM uses b₃=24: it's the unique value where the "
-                "theory is mathematically consistent."
+            "prediction": render(
+                "This does not fix the shape of the extra dimensions. The model "
+                "once read n as the Betti number b_3 and so took b_3 = 24; that "
+                "reading is retired. b_3 counts the 3-cycles of {manifold} "
+                "(b_3 = {b3} on the live seed), and the model's bulk has two "
+                "times, whose critical dimension is 27-28 rather than 26 "
+                "(signature ruling 2026-08-31)."
             )
         }
 
 
 # =============================================================================
-# EXTENDED PROOF: b₃=24 Uniqueness
+# EXTENDED PROOF: the minimal eta exponent n = 24
+# (b₃ = 24 "uniqueness" was the off-path seed_24 reading of this result)
 # =============================================================================
 
 class ModularInvarianceUniquenessProof:
     """
-    EXTENDED PROOF: b₃=24 is the UNIQUE solution for modular invariance.
+    EXTENDED PROOF: n = 24 is the unique eta exponent passing modular
+    invariance and E₀ = -1.
 
-    THEOREM: For partition function Z(q) = η(τ)^(-b₃) to be modular
-    invariant under SL(2,Z), we require b₃ = 24 (uniquely).
+    THEOREM: For the partition function Z(q) = η(τ)^(-n) to be single-valued
+    under SL(2,Z) with E₀ = -n/24 = -1, n = 24.
 
     PROOF:
     1. Under τ → τ + 1: η → exp(iπ/12) * η
-    2. For Z = η^(-b₃): Z → exp(-iπb₃/12) * Z
-    3. Single-valuedness requires b₃/12 ∈ 2Z (even integers)
-    4. Minimal positive solution: b₃ = 24
-    5. For b₃ < 24: tachyonic states (E₀ > -1)
-    6. For b₃ > 24 and b₃ mod 24 = 0: non-minimal
-    7. Therefore b₃ = 24 is UNIQUE for physical consistency
+    2. For Z = η^(-n): Z → exp(-iπn/12) * Z
+    3. Single-valuedness requires n/12 ∈ 2Z (even integers)
+    4. Minimal positive solution: n = 24
+    5. For n < 24: tachyonic states (E₀ > -1)
+    6. For n > 24 and n mod 24 = 0: non-minimal
+    7. Therefore n = 24 is the unique exponent passing both checks
+
+    STATUS OF THE OLD READING: the code names n "b3", and this class used to
+    state its theorem as "b₃ = 24 is unique". That reading is OFF-PATH
+    (b3_seed = seed_24): b₃ counts the 3-cycles of Y₇, and no Joyce-reachable
+    b₃ is a multiple of 24.
 
     ADDITIONAL MATHEMATICAL IDENTITIES:
     - η-transformation-T: η(τ+1) = e^(iπ/12)η(τ)
     - η-transformation-S: η(-1/τ) = √(-iτ)η(τ)
-    - modular-phase-condition: e^(-iπb₃/12) = 1 ⟹ b₃ ≡ 0 (mod 24)
-    - vacuum-energy-constraint: E₀ = -b₃/24 = -1 (required)
-    - tachyon-exclusion: b₃ < 24 ⟹ E₀ > -1 ⟹ tachyon
+    - modular-phase-condition: e^(-iπn/12) = 1 ⟹ n ≡ 0 (mod 24)
+    - vacuum-energy-constraint: E₀ = -n/24 = -1 (required)
+    - tachyon-exclusion: n < 24 ⟹ E₀ > -1 ⟹ tachyon
     - jacobi-theta-identity: θ₃⁴ = θ₂⁴ + θ₄⁴
     - eta-ramanujan: η(τ)^24 = Δ(τ)/(2π)^12 (modular form weight 12)
     """
@@ -1016,42 +1065,42 @@ class ModularInvarianceUniquenessProof:
             {
                 "step": 2,
                 "title": "Partition Function Phase",
-                "content": "For Z = η^(-b₃): Z → exp(-iπb₃/12) × Z",
+                "content": "For Z = η^(-n): Z → exp(-iπn/12) × Z (n was written b₃ under the off-path seed_24 reading)",
                 "formula_id": "partition-phase",
                 "latex": r"Z(\tau + 1) = e^{-i\pi b_3/12} Z(\tau)"
             },
             {
                 "step": 3,
                 "title": "Single-Valuedness Condition",
-                "content": "For Z to be single-valued: b₃/12 must be an even integer",
+                "content": "For Z to be single-valued: n/12 must be an even integer",
                 "formula_id": "modular-phase-condition",
                 "latex": r"e^{-i\pi b_3/12} = 1 \implies b_3/12 \in 2\mathbb{Z}"
             },
             {
                 "step": 4,
                 "title": "Minimal Positive Solution",
-                "content": "The smallest positive b₃ satisfying b₃/12 ∈ 2Z is b₃ = 24",
+                "content": "The smallest positive n satisfying n/12 ∈ 2Z is n = 24",
                 "formula_id": "minimal-b3",
                 "latex": r"b_3^{min} = 24"
             },
             {
                 "step": 5,
                 "title": "Vacuum Energy Constraint",
-                "content": "For physical spectrum: E₀ = -b₃/24 = -1 (tachyon ground state)",
+                "content": "For physical spectrum: E₀ = -n/24 = -1 (tachyon ground state)",
                 "formula_id": "vacuum-energy-constraint",
                 "latex": r"E_0 = -\frac{b_3}{24} = -1 \quad \text{(required)}"
             },
             {
                 "step": 6,
                 "title": "Tachyon Exclusion",
-                "content": "For b₃ < 24: E₀ > -1, violating the mass-shell condition",
+                "content": "For n < 24: E₀ > -1, violating the mass-shell condition",
                 "formula_id": "tachyon-exclusion",
                 "latex": r"b_3 < 24 \implies E_0 > -1 \implies \text{tachyonic instability}"
             },
             {
                 "step": 7,
                 "title": "Uniqueness Conclusion",
-                "content": "b₃ = 24 is the UNIQUE solution satisfying both modular invariance AND physical consistency",
+                "content": "n = 24 is the unique eta exponent satisfying both modular invariance and E₀ = -1. As a claim about b₃ (b₃ = 24) it is OFF-PATH (b3_seed = seed_24): b₃ counts the 3-cycles of Y₇",
                 "formula_id": "b3-uniqueness",
                 "latex": r"b_3 = 24 \quad \text{(unique)}"
             },
@@ -1140,13 +1189,14 @@ class ModularInvarianceUniquenessProof:
 
     def verify_modular_phase_condition(self, b3_values: List[int] = None) -> Dict[int, Dict]:
         """
-        Verify that only b₃ ≡ 0 (mod 24) satisfies the phase condition.
+        Verify that only n ≡ 0 (mod 24) satisfies the phase condition.
 
         Formula: modular-phase-condition
-        e^(-iπb₃/12) = 1 ⟹ b₃ ≡ 0 (mod 24)
+        e^(-iπn/12) = 1 ⟹ n ≡ 0 (mod 24)
 
         Returns:
-            Dictionary mapping b₃ values to their phase properties
+            Dictionary mapping exponents n (keyed b3 for history) to their
+            phase properties
         """
         if b3_values is None:
             b3_values = list(range(1, 50))
@@ -1168,12 +1218,12 @@ class ModularInvarianceUniquenessProof:
 
     def verify_vacuum_energy_constraint(self) -> Dict[int, Dict]:
         """
-        Verify the vacuum energy constraint: E₀ = -b₃/24 = -1.
+        Verify the vacuum energy constraint: E₀ = -n/24 = -1.
 
         Formula: vacuum-energy-constraint
 
         Returns:
-            Dictionary showing why only b₃=24 works
+            Dictionary showing why only n = 24 passes
         """
         results = {}
         for b3 in [12, 18, 20, 22, 24, 26, 28, 36, 48]:
@@ -1203,10 +1253,10 @@ class ModularInvarianceUniquenessProof:
         Verify the tachyon exclusion principle.
 
         Formula: tachyon-exclusion
-        b₃ < 24 ⟹ E₀ > -1 ⟹ tachyon
+        n < 24 ⟹ E₀ > -1 ⟹ tachyon
 
         Returns:
-            Proof that b₃ < 24 leads to tachyonic instability
+            Proof that every eta exponent n < 24 leads to tachyonic instability
         """
         tachyonic_cases = []
         for b3 in range(1, 24):
@@ -1221,10 +1271,10 @@ class ModularInvarianceUniquenessProof:
             })
 
         return {
-            "theorem": "b₃ < 24 ⟹ E₀ > -1 ⟹ tachyon",
+            "theorem": "n < 24 ⟹ E₀ > -1 ⟹ tachyon",
             "cases": tachyonic_cases,
             "all_tachyonic": all(case["is_tachyonic"] for case in tachyonic_cases),
-            "conclusion": "All b₃ < 24 produce tachyonic ground states"
+            "conclusion": "Every eta exponent n < 24 produces a tachyonic ground state"
         }
 
     def verify_jacobi_theta_identity(self, q: complex) -> Dict[str, Any]:
@@ -1373,20 +1423,20 @@ class ModularInvarianceUniquenessProof:
                 latex=r"e^{-i\pi b_3/12} = 1 \implies b_3 \equiv 0 \pmod{24}",
                 plain_text="exp(-i*pi*b3/12) = 1 => b3 mod 24 = 0",
                 category="DERIVED",
-                description="Modular phase condition for single-valuedness",
+                description="Modular phase condition for single-valuedness of Z = eta^(-n): n = 0 mod 24. OFF-PATH (b3_seed = seed_24) where the exponent is read as b3: b3 = 0 mod 24 holds only at the retired seed b3 = 24.",
                 inputParams=["topology.elder_kads"],
                 outputParams=[],
                 input_params=["topology.elder_kads"],
                 output_params=[],
                 derivation={
                     "steps": [
-                        {"description": "Phase from Z = η^(-b₃)", "formula": r"Z \to e^{-i\pi b_3/12} Z"},
+                        {"description": "Phase from Z = η^(-n), with n written as b₃ (off-path seed_24 reading)", "formula": r"Z \to e^{-i\pi b_3/12} Z"},
                         {"description": "Single-valued", "formula": r"-\pi b_3/12 = 2\pi k"},
                         {"description": "Solve", "formula": r"b_3 = 24k, k \in \mathbb{Z}^+"}
                     ],
                     "references": ["PM Section 3.5"]
                 },
-                terms={"b₃": "Third Betti number", "24": "Modular periodicity"},
+                terms={"b₃": "Stands for the eta exponent n (off-path seed_24 reading); b₃ itself counts the 3-cycles of Y₇", "24": "Modular periodicity: the exponent of η²⁴"},
                 arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
                 eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
                 value=0.0,
@@ -1398,7 +1448,7 @@ class ModularInvarianceUniquenessProof:
                 latex=r"E_0 = -\frac{b_3}{24} = -1 \quad \text{(required for physical spectrum)}",
                 plain_text="E0 = -b3/24 = -1 (required)",
                 category="DERIVED",
-                description="Vacuum energy must equal -1 for Virasoro constraint",
+                description="Vacuum energy E0 = -n/24 must equal -1 for the Virasoro constraint, so n = 24. OFF-PATH (b3_seed = seed_24): the tree reads n as b3, which gives -1 only at the retired seed b3 = 24.",
                 inputParams=["topology.elder_kads"],
                 outputParams=["topology.vacuum_energy"],
                 input_params=["topology.elder_kads"],
@@ -1423,7 +1473,7 @@ class ModularInvarianceUniquenessProof:
                 latex=r"b_3 < 24 \implies E_0 > -1 \implies m^2 < -\frac{1}{\alpha'} \quad \text{(tachyon)}",
                 plain_text="b3 < 24 => E0 > -1 => tachyonic instability",
                 category="DERIVED",
-                description="Values b₃ < 24 lead to tachyonic ground states",
+                description="Eta exponents n < 24 lead to tachyonic ground states (E0 > -1). OFF-PATH (b3_seed = seed_24): the residue tree reads n as b3 and vanishes only at the retired seed b3 = 24.",
                 inputParams=["topology.elder_kads"],
                 outputParams=[],
                 input_params=["topology.elder_kads"],
@@ -1437,7 +1487,8 @@ class ModularInvarianceUniquenessProof:
                     "references": ["GSW Vol. 1"]
                 },
                 terms={"α'": "String tension", "m²": "Mass squared"},
-                # The exclusion condition: at b3=24, the residue (b3 - 24) = 0 ⇒ no tachyon.
+                # The residue (b3 - 24) vanishes only at the off-path seed b3 = 24,
+                # where b3 was read as the eta exponent n (n = 24 => no tachyon).
                 arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
                 eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),
                 value=0.0,
@@ -1488,13 +1539,15 @@ class ModularInvarianceUniquenessProof:
         ]
 
     def generate_certificate(self) -> Dict[str, Any]:
-        """Generate a verification certificate for the b₃=24 uniqueness proof."""
+        """Generate a verification certificate for the minimal-exponent proof
+        (n = 24; b₃ = 24 was its off-path seed_24 reading)."""
         import hashlib
         from datetime import datetime
 
         # Wolfram Language code for verification
         wl_code = """
-(* Modular Invariance Uniqueness Proof for b3 = 24 *)
+(* Minimal eta exponent n under modular invariance; the variable is named b3
+   for history -- b3 = 24 was the off-path seed_24 reading of n *)
 
 (* Step 1: Verify T-transformation *)
 etaT[tau_] := Exp[I Pi/12] * DedekindEta[tau];
@@ -1520,14 +1573,14 @@ uniqueB3 == {24}
 
         return {
             "proof_id": "modular_b3_24",
-            "label": "Modular Invariance b3=24 Uniqueness",
-            "theorem": "b3 = 24 is the UNIQUE solution for modular invariance and physical consistency",
+            "label": "Modular Invariance: Minimal Eta Exponent n = 24",
+            "theorem": "n = 24 is the unique eta exponent passing modular invariance and E0 = -1 (OFF-PATH as a claim about b3: the retired seed_24 reading)",
             "proof_steps": [
                 "T-transformation: eta(tau+1) = exp(i*pi/12) * eta(tau)",
-                "Phase condition: exp(-i*pi*b3/12) = 1 requires b3 mod 24 = 0",
-                "Vacuum energy: E0 = -b3/24 = -1 requires b3 = 24",
-                "Tachyon exclusion: b3 < 24 leads to E0 > -1 (tachyonic)",
-                "Minimality: b3 = 24 is the smallest positive solution"
+                "Phase condition: exp(-i*pi*n/12) = 1 requires n mod 24 = 0",
+                "Vacuum energy: E0 = -n/24 = -1 requires n = 24",
+                "Tachyon exclusion: n < 24 leads to E0 > -1 (tachyonic)",
+                "Minimality: n = 24 is the smallest positive solution"
             ],
             "formulas": [
                 "eta-transformation-T",
@@ -1539,7 +1592,7 @@ uniqueB3 == {24}
                 "eta-ramanujan"
             ],
             "wl_code": wl_code,
-            "result": "b3 = 24 (UNIQUE)",
+            "result": "n = 24 (unique); b3 = 24 only under the off-path seed_24 reading",
             "hash": hash_val,
             "timestamp": datetime.now().isoformat(),
             "verified": True,
@@ -1554,7 +1607,7 @@ uniqueB3 == {24}
     def run_full_verification(self) -> Dict[str, Any]:
         """Run complete verification of the uniqueness proof."""
         results = {
-            "theorem": "b₃ = 24 is the UNIQUE solution",
+            "theorem": "n = 24 is the unique eta exponent (b₃ = 24 only under the off-path seed_24 reading)",
             "checks": {}
         }
 
@@ -1602,7 +1655,7 @@ assert np.isclose(_val._compute_vacuum_energy(24), -1.0)
 _uniqueness = ModularInvarianceUniquenessProof()
 _verification = _uniqueness.run_full_verification()
 assert _verification["proof_complete"], "Uniqueness proof verification failed!"
-assert _verification["unique_solution"] == [24], "Unique solution is not b3=24!"
+assert _verification["unique_solution"] == [24], "Unique eta exponent is not n = 24!"
 
 
 # =============================================================================
@@ -1614,7 +1667,7 @@ if __name__ == "__main__":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
     print("\n" + "=" * 70)
-    print(" MODULAR INVARIANCE v16.2")
+    print(" MODULAR INVARIANCE OF THE ETA PARTITION FUNCTION")
     print("=" * 70)
 
     from metaphysica.simulations.base import PMRegistry
@@ -1633,10 +1686,11 @@ if __name__ == "__main__":
     for k, v in results.items():
         print(f"  {k}: {v}")
 
-    print("\n--- ALTERNATIVE b₃ ANALYSIS ---")
+    print("\n--- ETA EXPONENT SCAN ---")
     for b3, data in sim.analyze_alternative_b3().items():
-        print(f"  b₃={b3}: E₀={data['vacuum_energy']:.3f}, {data['status']}")
+        print(f"  n={b3}: E₀={data['vacuum_energy']:.3f}, {data['status']}")
 
     print("\n" + "=" * 70)
-    print(" THEOREM: b₃ = 24 IS UNIQUE FOR ANOMALY CANCELLATION")
+    print(" RESULT: n = 24 IS THE MINIMAL MODULAR-INVARIANT ETA EXPONENT\n"
+          " (b₃ = 24 was the retired off-path seed_24 reading of n)")
     print("=" * 70)

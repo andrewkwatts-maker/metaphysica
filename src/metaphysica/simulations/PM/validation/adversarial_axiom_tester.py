@@ -46,7 +46,9 @@ class AdversarialAxiomTester:
     """
     Attempts to falsify the 'Unity Identity' (α⁻¹ ≈ 137.036 from G₂ topology)
     by searching for 26D manifold configurations that satisfy topological
-    constraints but produce different physics constants.
+    constraints but produce different physics constants. α⁻¹ is CALIBRATED
+    (k_gimel layer, D-007); here it comes from an ansatz tuned to 137 (see
+    SCAFFOLD STATUS above).
 
     The test PASSES if no violations are found under extensive random perturbation.
     """
@@ -64,14 +66,16 @@ class AdversarialAxiomTester:
 
         # Load actual PM framework values
         self.registry = FormulasRegistry()
-        self.b3 = 24  # Third Betti number of G₂ manifold
-        self.chi_eff = 144  # Total: 2 × χ_eff_sector = 2 × 72
+        # OFF-PATH (b3_seed = seed_24): fixed at the off-path seed b_3 = 24
+        # (the adopted b_3 is 43); it normalises the bridge energies below.
+        self.b3 = 24
+        self.chi_eff = 144  # Total: 2 × χ_eff_sector = 2 × 72 (the K3 reading, 48 n at n = 3)
 
         # Load 125-residue registry from theory
         self.residue_registry = self._load_registry()
 
         logger.info(f"Initialized with target α⁻¹ = {self.target_alpha_inv}")
-        logger.info(f"PM Framework: b₃ = {self.b3}, χ_eff = {self.chi_eff}")
+        logger.info(f"PM Framework: b₃ = {self.b3} (off-path seed), χ_eff = {self.chi_eff}")
 
     def _load_registry(self) -> np.ndarray:
         """
@@ -163,7 +167,8 @@ class AdversarialAxiomTester:
         bridge_norms = np.sum(bridge_params**2, axis=1)  # 12 values
         total_energy = np.sum(bridge_norms)
 
-        # Constraint: total energy should equal b₃ = 24 (one per bridge pair)
+        # Constraint: total energy should equal self.b3 (24, the off-path
+        # seed value; 2.0 per bridge pair)
         energy_deviation = abs(total_energy - self.b3)
 
         # Additional constraint: bridges should be approximately balanced
@@ -253,7 +258,7 @@ class AdversarialAxiomTester:
         Generate a stable G₂ configuration as baseline.
 
         This creates a 26D configuration that exactly satisfies holonomy constraints:
-        - Σ|bridge|² = b₃ = 24
+        - Σ|bridge|² = self.b3 = 24 (the off-path seed value; see __init__)
         - Bridges are balanced (equal energy distribution)
 
         Returns:
@@ -472,7 +477,7 @@ class AdversarialAxiomTester:
         stability_analysis = self.analyze_topological_stability(results, total_valid)
 
         report = {
-            "framework": "Principia Metaphysica v24.1",
+            "framework": "Principia Metaphysica",
             "test_name": "Unity Identity Adversarial Stress-Test",
             "test_date": "2026-02-22",
             "target_value": {
@@ -507,10 +512,12 @@ class AdversarialAxiomTester:
                     f"The Unity Identity was subjected to {total} adversarial perturbations "
                     f"in 26D configuration space. Status: {stability_analysis['status']} "
                     f"(failure rate: {stability_analysis['failure_rate_percent']:.2f}%). "
-                    "This demonstrates the identity emerges from global topological constraints, "
-                    "not from parameter tuning or circular reasoning."
+                    "Per scaffold_note, this rate reflects the search design (the constraints "
+                    "keep configurations near the target and k_geometric_base is tuned to 137); "
+                    "it is not an independent test of topological stability."
                 ),
                 "mathematical_significance": (
+                    "Illustrative only (see scaffold_note): "
                     "A low failure rate indicates alpha_inv ~= 137.036 is a fixed point "
                     "of the G2 descent dynamics, providing evidence for emergent "
                     "physical constants from pure topology."
@@ -542,10 +549,10 @@ class AdversarialAxiomTester:
 def main():
     """Run adversarial axiom testing."""
     print("=" * 70)
-    print(" ADVERSARIAL AXIOM TESTER - v24.1")
+    print(" ADVERSARIAL AXIOM TESTER")
     print("=" * 70)
     print(" Objective: Falsify Unity Identity through adversarial search")
-    print(" Target: alpha_inv = 137.035999177 (CODATA 2018)")
+    print(" Target: alpha_inv = 137.035999177 (CODATA 2022)")
     print("=" * 70)
 
     tester = AdversarialAxiomTester()

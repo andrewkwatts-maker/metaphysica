@@ -115,3 +115,6 @@ Cargo.lock
 # references), but the latex generator still expects this file LOCALLY.
 *adminsdk*.json
 principia-metaphysica-firebase-*.json
+
+# Test-ground run cache and per-configuration scratch roots (metaphysica.testground.runner)
+/.runs/

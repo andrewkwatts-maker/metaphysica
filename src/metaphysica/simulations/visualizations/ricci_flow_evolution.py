@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
 """
-Ricci Flow Hubble Evolution: Visual Hubble Tension Resolution
-===============================================================
+Ricci Flow Hubble Evolution: an interpolation across the Hubble tension
+=======================================================================
 
 Shows how H(z) evolves from z=1100 (CMB) to z=0 (local) through
 G2 manifold Ricci flow dynamics.
 
-This visualization demonstrates the PM resolution of the Hubble tension:
+This visualization draws the PM interpolation across the Hubble tension:
 - Early universe (CMB, z~1100): H0 = 67.4 km/s/Mpc (Planck)
 - Late universe (local, z=0): H0 = 73.04 km/s/Mpc (SH0ES)
-- PM prediction: Smooth interpolation via Ricci flow
+- PM curve: smooth interpolation via Ricci flow
 
-The G2 manifold's Ricci flow creates a time-dependent effective
-curvature that modifies the Hubble expansion rate. The "tension"
-is not a contradiction but a natural consequence of manifold evolution.
+The G2 manifold's Ricci flow is modelled as a time-dependent effective
+curvature that modifies the Hubble expansion rate. Both H0 values are
+measured INPUTS to the interpolation, so the curve parameterises the
+tension; it does not derive either value. The transition redshift
+z* = b3/k_gimel uses the k_gimel layer (CALIBRATED, D-007) and reads b3 from
+the live seed. The w(z) correction uses w0 = -23/24 and wa = -1/sqrt(24),
+frozen at the off-path seed b3 = 24; dark energy is OPEN on the adopted Y_7
+(the leading-order flux potential cannot accelerate, CG.11).
 
 Output file: ../../images/ricci-flow-hubble-evolution.png
 
@@ -61,10 +66,10 @@ OMEGA_M = 0.311  # Matter density
 OMEGA_DE = 0.689  # Dark energy density
 
 # PM parameters (from SSoT)
-B3 = _REG.elder_kads  # 24
-K_GIMEL = _REG.demiurgic_coupling  # ~12.318
-TAU = K_GIMEL / B3  # ~0.513 (Ricci flow timescale)
-Z_STAR = 1 / TAU  # ~1.95 (transition redshift)
+B3 = _REG.elder_kads  # b3, the live seed (43 adopted; 24 at the off-path seed)
+K_GIMEL = _REG.demiurgic_coupling  # b3/2 + 1/pi, CALIBRATED (12.318 at the off-path seed)
+TAU = K_GIMEL / B3  # ~0.513 at the off-path seed (Ricci flow timescale)
+Z_STAR = 1 / TAU  # ~1.95 at the off-path seed (transition redshift)
 
 
 def setup_publication_style():
@@ -122,14 +127,16 @@ def compute_pm_w_correction_H(z, H0_local=H0_SHOES, H0_early=H0_PLANCK, z_star=Z
     """
     Compute H(z) with PM w(z) dark energy correction.
 
-    In PM v16.2, dark energy has w0 = -23/24 (thawing quintessence from b₃=24)
-    and evolves with redshift via wₐ = -1/√24 ≈ -0.204.
+    OFF-PATH (b3_seed = seed_24): w0 = -23/24 and wₐ = -1/√24 ≈ -0.204 are
+    frozen at the off-path seed b₃ = 24 (a thawing-quintessence reading).
+    w0 = -1 + 1/b₃ has no derivation, and dark energy is OPEN on the adopted
+    Y_7: the leading-order flux potential cannot accelerate (CG.11).
     """
-    # w0 from G2 thawing quintessence (v16.2)
-    w0 = -23 / 24  # ~-0.9583 (from b₃=24 associative 3-cycles)
+    # w0 frozen at the off-path seed (no derivation; dark energy is OPEN)
+    w0 = -23 / 24  # ~-0.9583, frozen at the off-path seed b3 = 24
 
     # w(z) evolution (CPL-like parametrization)
-    wa = -1 / np.sqrt(24)  # ~-0.204 (v16.2 thawing)
+    wa = -1 / np.sqrt(24)  # ~-0.204, frozen at the off-path seed
 
     # Dark energy density evolution
     def rho_de(z_val):
@@ -187,7 +194,7 @@ def generate_ricci_flow_evolution():
     ax1.loglog(z_full, H_pm, '-', color=PM_COLORS['purple'], linewidth=3,
                label='PM: Ricci Flow')
     ax1.loglog(z_full, H_pm_wz, '-', color=PM_COLORS['pink'], linewidth=2,
-               label=r'PM: + $w(z)$ correction')
+               label=r'PM: + $w(z)$, $w_0 = -23/24$ (off-path seed)')
 
     # Mark key epochs
     # CMB (z ~ 1089)
@@ -259,9 +266,9 @@ def generate_ricci_flow_evolution():
     ax2.text(0.15, (H0_SHOES + H0_PLANCK) / 2, r'$5\sigma$ Tension!',
              fontsize=10, color=PM_COLORS['red'], fontweight='bold', va='center')
 
-    # Annotate PM resolution
+    # Annotate the PM interpolation (both H0 values are measured inputs)
     ax2.annotate(
-        'PM Resolution:\nSmooth evolution\nvia Ricci flow',
+        'PM interpolation:\nboth $H_0$ values\nare inputs',
         xy=(1.5, 70), xytext=(2.0, 68),
         fontsize=9, color=PM_COLORS['purple'],
         arrowprops=dict(arrowstyle='->', color=PM_COLORS['purple'], lw=1.5),
@@ -282,17 +289,20 @@ def generate_ricci_flow_evolution():
 
     ax2.set_xlabel('Redshift $z$', fontsize=12)
     ax2.set_ylabel('Effective $H_0(z)$ [km/s/Mpc]', fontsize=12)
-    ax2.set_title('Hubble Tension Resolution: $H_0$ Evolution', fontsize=13, fontweight='bold')
+    ax2.set_title('Hubble Tension: PM Interpolation of $H_0$', fontsize=13, fontweight='bold')
     ax2.legend(loc='lower left', fontsize=9, framealpha=0.95)
     ax2.set_xlim(0, 3)
     ax2.set_ylim(64, 76)
 
-    # Add equation box
+    # Add equation box. z_* is printed from the same live values the curves
+    # use (it was typed as 24/12.318 at the off-path seed b3 = 24).
     eqn_box = (
         r"$\mathbf{PM\ Ricci\ Flow\ Model}$" + "\n\n"
         r"$f(z) = \frac{1}{1 + (z/z_*)^2}$" + "\n\n"
         r"$H_0^{eff}(z) = H_0^{local} f(z) + H_0^{early}(1-f(z))$" + "\n\n"
-        r"$z_* = \frac{b_3}{k_\gimel} = \frac{24}{12.318} \approx 1.95$"
+        + (r"$z_* = \frac{b_3}{k_\gimel} = \frac{%d}{%.3f} \approx %.2f$"
+           % (B3, K_GIMEL, Z_STAR)) + "\n"
+        r"($k_\gimel$ layer: CALIBRATED)"
     )
     props = dict(boxstyle='round,pad=0.5', facecolor='white',
                 edgecolor=PM_COLORS['purple'], alpha=0.95)

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "metaphysica.path_assessment/1",
+  "title": "Path assessment under the D-019 decision rule",
+  "type": "object",
+  "required": ["schema", "theory", "mode", "criteria_order", "configurations", "verdict"],
+  "properties": {
+    "schema": {"const": "metaphysica.path_assessment/1"},
+    "theory": {"type": "string"},
+    "mode": {"enum": ["assess", "reassess", "archaeology", "single"]},
+    "criteria_order": {"const": ["validity", "closure", "consistency", "elegance", "data"]},
+    "pre_registration": {"type": "object"},
+    "enumeration": {"type": "object"},
+    "controls": {"type": "object"},
+    "standing_failures": {"type": "array", "items": {"type": "string"}},
+    "configurations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["digest", "selection", "lifecycle", "verdict", "scores"],
+        "properties": {
+          "digest": {"type": "string"},
+          "name": {"type": ["string", "null"]},
+          "selection": {"type": "object"},
+          "lifecycle": {"type": "string"},
+          "verdict": {"enum": ["ADOPTABLE", "REJECTED", "UNDECIDED", "NOT_RUNNABLE"]},
+          "stage_reached": {"enum": ["screen", "full"]},
+          "group": {"type": ["integer", "null"]},
+          "scores": {"type": "object"},
+          "reasons": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "ranking": {"type": "object"},
+    "active": {"type": "object"},
+    "recommendation": {"type": ["object", "null"]},
+    "verdict": {"enum": ["ACTIVE_CONFIRMED", "RECOMMEND_CHANGE", "DATA_TIEBREAK_SUGGESTS", "NO_ADOPTABLE_CONFIGURATION", "UNDECIDED"]}
+  }
+}

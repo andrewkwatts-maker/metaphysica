@@ -7,12 +7,17 @@ Explains why quarks (CKM) have small mixing angles while leptons (PMNS)
 have large mixing angles through octonionic triality and G2 geometry.
 
 Key insight: G2 ~ Aut(O) is the automorphism group of the octonions
-- The 24-cycle (from b3=24) partitions into 3 x 8-fold cells (24/8=3 generations)
+- ABANDONED: the 24-cycle (from the off-path seed b3 = 24) was partitioned
+  into 3 x 8-fold cells (24/8 = 3 generations). 8 divides no reachable b3
+  (every b3 on Joyce's family is odd); the ruled route is n_gen = b2/4 = 3,
+  the number of singular involutions. The drawing keeps the 24-cycle and
+  labels it.
 - Quarks are confined to the 7D G2 submanifold (small mixing)
 - Leptons sample the full 24-cycle via associator non-commutativity (large mixing)
 
-This explains one of the deepest mysteries in particle physics:
-why the CKM matrix is nearly diagonal while PMNS has large off-diagonal elements.
+This is offered as an explanation of why the CKM matrix is nearly diagonal
+while PMNS has large off-diagonal elements. Flavour is OPEN on the adopted
+Y_7 (it needs a chiral sector, D-011), so the picture is a model construct.
 
 Output file: ../../images/octonionic-triality-ckm-pmns.png
 
@@ -236,7 +241,9 @@ def draw_mixing_matrix(ax, matrix, center, size, title, is_ckm=True):
 
 def draw_generation_cycles(ax, center, title):
     """
-    Draw the 24-cycle partitioned into 3 x 8-fold cells (generations).
+    Draw the 24-cycle partitioned into 3 x 8-fold cells (generations): the
+    abandoned route n_gen = b3/8 at the off-path seed b3 = 24, labelled in
+    the drawing.
 
     Args:
         ax: matplotlib axis
@@ -268,9 +275,9 @@ def draw_generation_cycles(ax, center, title):
         ax.add_patch(wedge)
 
     # Central annotation
-    ax.text(cx, cy, r'$b_3=24$', fontsize=12, ha='center', va='center',
+    ax.text(cx, cy, r'off-path $b_3=24$', fontsize=12, ha='center', va='center',
             fontweight='bold', color=PM_COLORS['gold'])
-    ax.text(cx, cy - 0.25, r'$=3\times 8$', fontsize=10, ha='center', va='center',
+    ax.text(cx, cy - 0.25, r'$=3\times 8$ (abandoned)', fontsize=10, ha='center', va='center',
             color='gray')
 
     # Title
@@ -284,7 +291,8 @@ def generate_octonionic_triality():
 
     Left panel: Quarks confined to 7D G2 (small mixing)
     Right panel: Leptons sample full 24-cycle (large mixing)
-    Center: 24-cycle generation structure
+    Center: 24-cycle generation structure (the abandoned b3/8 picture at the
+    off-path seed b3 = 24, labelled)
     """
     setup_publication_style()
 
@@ -334,7 +342,7 @@ def generate_octonionic_triality():
     # Right panel: Leptons (PMNS) - full 8D sampling
     # =========================================================================
 
-    ax2.set_title(r'Leptons: Full Octonionic 24-cycle', fontsize=14,
+    ax2.set_title(r'Leptons: Full Octonionic 24-cycle (off-path picture)', fontsize=14,
                   fontweight='bold', color=PM_COLORS['lepton'], pad=20)
 
     # Draw octonionic structure (full 8D)
@@ -379,13 +387,13 @@ def generate_octonionic_triality():
 
     # Add subtitle
     fig.text(0.5, 0.93,
-             r'G$_2 \sim$ Aut($\mathbb{O}$): Automorphisms of the Octonions explain mixing pattern difference',
+             r'G$_2 \sim$ Aut($\mathbb{O}$): offered as the source of the mixing pattern difference (flavour is OPEN)',
              ha='center', fontsize=11, color='gray', style='italic')
 
     # Add key insight box between panels
     insight_text = (
         r"$\mathbf{Key\ Insight:}$ " +
-        r"24-cycle $\rightarrow 3 \times 8$ generations" + "\n"
+        r"24-cycle $\rightarrow 3 \times 8$ generations (abandoned route)" + "\n"
         r"Quarks: G$_2$ constraint $\rightarrow$ small angles" + "\n"
         r"Leptons: full octonions $\rightarrow$ large angles"
     )

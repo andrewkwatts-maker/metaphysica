@@ -1,5 +1,5 @@
-"""The certificate: every theorem evaluated on the active seed, and the
-holonomy selection held back until the real-form ruling.
+"""The certificate: every theorem evaluated on the active seed, ending in the
+selection theorem CG.12 (published since the 2026-10-01 rulings, D-015).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -14,6 +14,9 @@ from metaphysica.simulations.PM.geometry.closed_geometry.findings import (
 from metaphysica.simulations.PM.geometry.closed_geometry.physics import (
     PHYSICS_THEOREMS,
 )
+from metaphysica.simulations.PM.geometry.closed_geometry.selection import (
+    SELECTION_THEOREMS,
+)
 from metaphysica.simulations.PM.geometry.closed_geometry.theorem import (
     Theorem,
 )
@@ -22,7 +25,7 @@ from metaphysica.simulations.PM.geometry.closed_geometry.topology import (
 )
 
 THEOREMS: Tuple[Theorem, ...] = (TOPOLOGY_THEOREMS + PHYSICS_THEOREMS
-                                 + FINDINGS_THEOREMS)
+                                 + FINDINGS_THEOREMS + SELECTION_THEOREMS)
 
 
 def certificate() -> List[Dict[str, Any]]:
@@ -49,16 +52,19 @@ def certificate() -> List[Dict[str, Any]]:
 
 
 def holonomy_selection_pending() -> Dict[str, Any]:
-    """The D-002 holonomy reading, held back from publication until G3."""
+    """The D-002 holonomy reading -- no longer held back.
+
+    It waited for the real-form ruling. RULED 2026-10-01 (D-015): the compact
+    form is the active path, and the reading is published as part of the
+    selection theorem CG.12 (`y7-selection`), whose statement follows the
+    real-form switch. Kept so earlier callers get the record, not a KeyError.
+    """
     from metaphysica.simulations.PM.geometry.family_topology import (
         holonomy_selection,
     )
 
     sel = holonomy_selection()
-    sel["status"] = "PENDING_G3_REAL_FORM_RULING"
-    sel["why_not_published"] = (
-        "holonomy is Riemannian; the adopted form convention is the split "
-        "form G2*, where only the topological half (pi_1 finite exactly at "
-        "(12, 43)) is established -- and that half is published as "
-        "y7-fundamental-group")
+    sel["status"] = "PUBLISHED_IN_CG12"
+    sel["published_as"] = "y7-selection"
+    sel["ruling"] = "D-015 (2026-10-01): compact form active; WA-1 adopted"
     return sel

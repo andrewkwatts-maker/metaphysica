@@ -1,10 +1,29 @@
 #!/usr/bin/env python3
 """
-ALP (Axion-Like Particle) Portal Physics v23.0
-================================================
+ALP (Axion-Like Particle) Portal Physics
+========================================
 
 Derives ALP mass, couplings, and fifth-force range from Face 3 moduli
 misalignment in the G2 four-face structure.
+
+STATUS ON THE ADOPTED PATH:
+    CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack exists on
+    Y_7 (CG.5, CG.10). The Face 3 VEV T_3 = b3 * k_gimel / (3 * pi) is a
+    racetrack-type modulus value, and the moduli, Re(T) included, are OPEN
+    on Y_7 (the leading-order flux potential runs away, CG.6). So T_3 and
+    everything computed from it (f_a, m_ALP, both couplings, the fifth-force
+    range) are calibrations, not derivations.
+    The worked numbers in this text are the off-path seed's (b3 = 24,
+    k_gimel = 12.318, T_3 = 31.37, alpha_leak = 1/sqrt(6), m_ALP ~ meV,
+    g ~ 1e-11 GeV^-1, sub-mm range). The code reads b3 and k_gimel from the
+    registry, which carries the live seed (b3 = 43 on the adopted Y_7), so
+    the registered values follow the seed in force: a run on 2026-10-01 gave
+    f_a ~ 4e5 GeV, m_ALP ~ 1e2 eV and g_a_gamma_gamma ~ 1e-6 GeV^-1, which
+    fails the stellar-cooling bound.
+    The four-face structure was formerly modelled as a twisted connected
+    sum (TCS); that construction is off-path (CG.7). chi_eff is the
+    effective index (the K3 reading: 2 x sum chi(K3) = 48 n, 72 per shadow),
+    not an Euler characteristic of Y_7, which is 0.
 
 PHYSICS (Part 3, Topic 09):
     ALPs emerge from moduli misalignment on hidden faces of the G2 manifold.
@@ -14,15 +33,18 @@ PHYSICS (Part 3, Topic 09):
     Face 3 moduli stabilization gives:
         f_a^{ALP} = M_Pl / T_3^2
 
-    where T_3 = b3 * k_gimel / (3 * pi) is the racetrack-stabilized VEV
-    for Face 3. This yields f_a ~ 10^{9}-10^{10} GeV, distinct from the
-    QCD axion scale of ~10^{12} GeV.
+    where T_3 = b3 * k_gimel / (3 * pi) is the racetrack VEV for Face 3
+    (CALIBRATED; see STATUS). At the off-path seed this yields
+    f_a ~ 10^{9}-10^{10} GeV, distinct from the QCD axion scale of
+    ~10^{12} GeV.
 
     ALP mass from Lambda_QCD^2 / f_a (moduli stabilization):
         m_ALP ~ Lambda_QCD^2 / f_a ~ 10^{-3}-10^{-2} eV
 
     ALP-photon coupling (Primakoff process):
         g_{a gamma gamma} = alpha_leak * chi_eff / (24 * pi * f_a)
+    (the 24 in 24 * pi is a literal, not read from b3; calibrated at the
+    off-path seed b3 = 24)
 
     ALP-nucleon coupling:
         g_{aN} = alpha_leak / f_a
@@ -35,7 +57,7 @@ DISTINCTION FROM QCD AXION:
     - ALP (Face 3): f_a ~ 10^{9-10} GeV, m_ALP ~ 10^{-3}-10^{-2} eV
     - Different face, different mass scale, different detection strategy
 
-PREDICTIONS:
+PREDICTIONS (values at the off-path seed b3 = 24; see STATUS):
     - m_ALP ~ few meV (testable via ALPS-II, IAXO, CAST)
     - g_{a gamma gamma} ~ 10^{-12} GeV^{-1} (below stellar cooling bound)
     - Fifth force range ~ 0.02-0.2 mm (short-range gravity experiments)
@@ -127,9 +149,10 @@ class ALPPortalsV23(SimulationBase):
 
     Physics: Axion-Like Particles emerge from hidden faces of the G2
     manifold that are distinct from the QCD axion face. Face 3 has a
-    different racetrack-stabilized modulus T_3, yielding a HIGHER decay
-    constant suppression (lower f_a) and correspondingly HEAVIER mass
-    scale compared to the QCD axion.
+    different racetrack modulus T_3 (CALIBRATED at the off-path seed
+    b3 = 24; no gaugino racetrack exists on Y_7, CG.5, CG.10), yielding a
+    HIGHER decay constant suppression (lower f_a) and correspondingly
+    HEAVIER mass scale compared to the QCD axion.
 
     Key distinction: QCD axion (Face 1, f_a ~ 10^12 GeV) vs
     ALP (Face 3, f_a ~ 10^9-10^10 GeV).
@@ -149,7 +172,10 @@ class ALPPortalsV23(SimulationBase):
                 "f_a^{ALP} = M_Pl / T_3^2, where T_3 is the Face 3 racetrack VEV, "
                 "yields f_a ~ 10^9-10^10 GeV -- distinct from the QCD axion. "
                 "Predicts m_ALP ~ meV scale, g_{a gamma gamma} ~ 10^{-12} GeV^{-1}, "
-                "and fifth-force range ~ 0.02-0.2 mm."
+                "and fifth-force range ~ 0.02-0.2 mm. CALIBRATED at the off-path "
+                "seed b3 = 24; no gaugino racetrack exists on Y_7 (CG.5, CG.10). "
+                "These figures are that seed's; the module reads b3 from the "
+                "live seed, so its registered values differ."
             ),
             section_id="7",
             subsection_id="7.5"
@@ -162,12 +188,13 @@ class ALPPortalsV23(SimulationBase):
         self.alpha_em = 1.0 / 137.036  # alpha inverse (CODATA)
 
         # Geometric constants from registry
-        self.k_gimel = float(_REG.demiurgic_coupling)   # b3/2 + 1/pi = 12.318...
-        self.elder_kads = _REG.elder_kads                # b3 = 24
-        self.chi_eff = _REG.mephorash_chi                # 72 (per-sector)
+        self.k_gimel = float(_REG.demiurgic_coupling)   # b3/2 + 1/pi (12.318 at the off-path seed)
+        self.elder_kads = _REG.elder_kads                # b3, the live seed (43 adopted; 24 off-path)
+        self.chi_eff = _REG.mephorash_chi                # 72 per shadow (K3 reading)
 
-        # alpha_leak = 1/sqrt(chi_eff_total/b3) = 1/sqrt(144/24) = 1/sqrt(6)
-        chi_eff_total = _REG.chi_eff_total               # 144
+        # alpha_leak = 1/sqrt(chi_eff_total/b3); = 1/sqrt(144/24) = 1/sqrt(6)
+        # at the off-path seed b3 = 24, and follows the live seed otherwise
+        chi_eff_total = _REG.chi_eff_total               # 144 = 48 n (K3 reading)
         self.alpha_leak = 1.0 / math.sqrt(chi_eff_total / self.elder_kads)
 
     @property
@@ -195,7 +222,8 @@ class ALPPortalsV23(SimulationBase):
         """
         Compute ALP properties from Face 3 moduli misalignment.
 
-        Derivation:
+        Derivation (CALIBRATED at the off-path seed b3 = 24; no gaugino
+        racetrack exists on Y_7, CG.5, CG.10):
             1. T_3 = b3 * k_gimel / (3 * pi)  (Face 3 racetrack VEV)
             2. f_a^{ALP} = M_Pl / T_3^2  (decay constant from Face 3)
             3. m_ALP = Lambda_QCD^2 / f_a  (mass from moduli stabilization)
@@ -206,13 +234,17 @@ class ALPPortalsV23(SimulationBase):
         Returns:
             ALPResult with computed values
         """
-        b3 = self.elder_kads        # 24
-        k_gimel = self.k_gimel      # 12.318...
+        b3 = self.elder_kads        # live seed; 24 in the worked numbers below
+        k_gimel = self.k_gimel      # 12.318... at the off-path seed
         chi_eff = self.chi_eff      # 72
 
         # ================================================================
         # FACE 3 RACETRACK-STABILIZED MODULUS
         # ================================================================
+        #
+        # CALIBRATED at the off-path seed b3 = 24: no gaugino racetrack
+        # exists on Y_7 (CG.5, CG.10) and the moduli are OPEN (CG.6). The
+        # worked numbers in this method are at that seed.
         #
         # In the four-face G2 structure, each face i has a racetrack VEV:
         #   T_i = b3 * k_gimel / (i * pi)
@@ -265,7 +297,8 @@ class ALPPortalsV23(SimulationBase):
         # GEOMETRIC DERIVATION:
         # The key insight is that Face 3 has a TRIPLE suppression:
         # 1. T_3^{-1} from the modulus itself
-        # 2. chi_eff^{-1} from the Euler characteristic projection
+        # 2. chi_eff^{-1} from the effective-index projection (chi_eff is the
+        #    K3 reading, not an Euler characteristic of Y_7)
         # 3. exp(-2*pi*T_3/b3) from non-perturbative stabilization
         #
         #   f_a^{ALP} = M_Pl / (chi_eff * T_3) * exp(-2*pi*T_3/b3)
@@ -284,9 +317,11 @@ class ALPPortalsV23(SimulationBase):
         # The second exponential comes from the competing instanton:
         #   W = A*exp(-a*T_3) - B*exp(-b*T_3)
         # with a = 2*pi/b3, b = 2*pi/(b3-chi_eff/b3) giving an
-        # additional factor of exp(-2*pi*T_3*(1/b3 + 1/(b3-3))):
+        # additional factor of exp(-2*pi*T_3*(1/b3 + 1/(b3-3))).
+        # a = 2*pi/b3 reads a Betti number as a gauge-group rank; Y_7 has no
+        # gaugino racetrack (CG.5, CG.10), so this is a calibration.
         additional_suppression = math.exp(-2.0 * math.pi * T_3 / (b3 - chi_eff / b3))
-        # b3 - chi_eff/b3 = 24 - 72/24 = 24 - 3 = 21
+        # at the off-path seed: b3 - chi_eff/b3 = 24 - 72/24 = 24 - 3 = 21
         # exp(-2*pi*31.37/21) = exp(-9.384) ~ 8.42e-5
 
         f_a_alp = self.M_Planck * npert_factor * additional_suppression / (chi_eff * T_3)
@@ -327,11 +362,12 @@ class ALPPortalsV23(SimulationBase):
         # process (a -> gamma gamma in an external field).
         #
         # In the PM framework, the coupling is enhanced by the inter-face
-        # leakage and the Euler characteristic:
+        # leakage and the effective index chi_eff (K3 reading):
         #
         #   g_{a gamma gamma} = alpha_leak * chi_eff / (24 * pi * f_a)
         #
-        # For alpha_leak ~ 0.408, chi_eff = 72, f_a ~ 10^10 GeV:
+        # (the 24 is a literal, calibrated at the off-path seed b3 = 24)
+        # At the off-path seed, alpha_leak ~ 0.408, chi_eff = 72, f_a ~ 10^10 GeV:
         #   g_{a gamma gamma} = 0.408 * 72 / (24 * pi * 10^10)
         #                     = 29.38 / (7.54e11)
         #                     ~ 3.9e-11 GeV^{-1}
@@ -402,7 +438,11 @@ class ALPPortalsV23(SimulationBase):
             metadata={
                 "derivation": "Lambda_QCD^2 / f_a^{ALP} (Face 3 moduli)",
                 "units": "eV",
-                "note": "ALP mass from Face 3 moduli stabilization, distinct from QCD axion"
+                "note": (
+                    "ALP mass from the Face 3 modulus, distinct from QCD axion. "
+                    "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
+                    "exists on Y_7 (CG.5, CG.10)"
+                )
             }
         )
 
@@ -448,7 +488,10 @@ class ALPPortalsV23(SimulationBase):
             source=self._metadata.id,
             status="PREDICTED",
             metadata={
-                "derivation": "sqrt(f_a_single * f_a_double) from Face 3 racetrack",
+                "derivation": (
+                    "sqrt(f_a_single * f_a_double) from Face 3 racetrack "
+                    "(CALIBRATED at the off-path seed b3 = 24)"
+                ),
                 "units": "GeV",
                 "note": (
                     "Published because all three ALP observables are defined as "
@@ -503,10 +546,14 @@ class ALPPortalsV23(SimulationBase):
                 ),
                 eml_description=(
                     "EML: m_ALP = ops.div(ops.pow(Lambda_QCD, eml_scalar(2.0)), f_a_ALP) "
-                    "— ALP mass from Face 3 moduli stabilization"
+                    "— ALP mass from the Face 3 modulus (CALIBRATED at the off-path "
+                    "seed b3 = 24)"
                 ),
                 category="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
+                    "exists on Y_7 (CG.5, CG.10). The meV figure below is that "
+                    "seed's; the registered value follows the live seed. "
                     "ALP mass from Face 3 moduli stabilization. Unlike the QCD axion "
                     "whose mass is fixed by instanton effects, the ALP mass arises "
                     "from the moduli potential on Face 3 of the G2 manifold. The "
@@ -522,11 +569,11 @@ class ALPPortalsV23(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Face 3 racetrack VEV from four-face structure",
+                            "description": "Face 3 racetrack VEV from four-face structure (CALIBRATED at the off-path seed b3 = 24)",
                             "formula": r"T_3 = \frac{b_3 \cdot k_\gimel}{3\pi}"
                         },
                         {
-                            "description": "Non-perturbative suppression from racetrack stabilization",
+                            "description": "Non-perturbative suppression from racetrack stabilization (no gaugino racetrack exists on Y_7: CG.5, CG.10)",
                             "formula": r"f_{\rm np} = e^{-2\pi T_3 / b_3}"
                         },
                         {
@@ -548,7 +595,7 @@ class ALPPortalsV23(SimulationBase):
                 terms={
                     "Lambda_QCD": "QCD confinement scale = 0.217 GeV",
                     "f_a^ALP": "ALP decay constant from Face 3",
-                    "T_3": "Face 3 racetrack-stabilized VEV"
+                    "T_3": "Face 3 racetrack VEV (CALIBRATED at the off-path seed b3 = 24)"
                 },
                 # Triple-track: m_ALP = Lambda_QCD^2 / f_a^ALP (eV) — Face 3 moduli.
                 arithma=_arithma_num(result.m_alp),
@@ -587,12 +634,17 @@ class ALPPortalsV23(SimulationBase):
                 ),
                 category="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of f_a^ALP; no gaugino racetrack exists on Y_7 "
+                    "(CG.5, CG.10). "
                     "ALP-photon coupling from Primakoff process enhanced by inter-face "
                     "leakage. The alpha_leak * chi_eff numerator reflects the G2 "
                     "topological enhancement of the portal coupling, while the "
-                    "24*pi*f_a denominator provides the standard suppression. The "
+                    "24*pi*f_a denominator provides the standard suppression (the 24 "
+                    "is a literal, not read from b3). At the off-path seed the "
                     "resulting coupling is below the stellar cooling bound of "
-                    "10^{-10} GeV^{-1} from globular cluster observations."
+                    "10^{-10} GeV^{-1} from globular cluster observations; the "
+                    "registered value follows the live seed."
                 ),
                 inputParams=["geometry.alpha_leak", "topology.mephorash_chi", "axion.f_a"],
                 outputParams=["portals.alp_photon_coupling_gev_inv"],
@@ -601,7 +653,7 @@ class ALPPortalsV23(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Inter-face leakage coupling from chi_eff_total / b3 ratio",
+                            "description": "Inter-face leakage coupling from chi_eff_total / b3 ratio (1/sqrt(6) at the off-path seed b3 = 24)",
                             "formula": r"\alpha_{\rm leak} = \frac{1}{\sqrt{\chi_{\rm eff,total}/b_3}} = \frac{1}{\sqrt{6}}"
                         },
                         {
@@ -609,7 +661,7 @@ class ALPPortalsV23(SimulationBase):
                             "formula": r"g_{a\gamma\gamma} = \frac{\alpha_{\rm leak} \cdot \chi_{\rm eff}}{24\pi \, f_a^{\rm ALP}}"
                         },
                         {
-                            "description": "Evaluate numerically using alpha_leak = 1/sqrt(6), chi_eff = 72, and f_a from Face 3 moduli stabilization to obtain g_{a gamma gamma} below the stellar cooling bound of 10^{-10} GeV^{-1}",
+                            "description": "Evaluate numerically at the off-path seed b3 = 24, using alpha_leak = 1/sqrt(6), chi_eff = 72, and the calibrated Face 3 f_a, to obtain g_{a gamma gamma} below the stellar cooling bound of 10^{-10} GeV^{-1}",
                             "formula": r"g_{a\gamma\gamma} \approx \frac{0.408 \times 72}{24\pi \, f_a^{\rm ALP}} < 10^{-10}\,\text{GeV}^{-1}"
                         }
                     ],
@@ -621,15 +673,18 @@ class ALPPortalsV23(SimulationBase):
                     "parentFormulas": ["portal-alp-mass-v23"]
                 },
                 terms={
-                    "alpha_leak": "Inter-face leakage = 1/sqrt(6) ~ 0.408",
-                    "chi_eff": "Per-sector Euler characteristic = 72",
+                    "alpha_leak": "Inter-face leakage = 1/sqrt(6) ~ 0.408 at the off-path seed b3 = 24",
+                    "chi_eff": "Effective index per shadow = sum chi(K3) = 72 (K3 reading)",
                     "f_a^ALP": "ALP decay constant from Face 3"
                 },
                 # ─────────────────────────────────────────────────────────────────
                 # Triple-track: g_aγγ = α_leak · χ_eff / (24π · f_a^ALP).
-                # CANONICAL VALUE: g_aγγ ≈ 2.9032525449371696e-11 GeV⁻¹ — the
-                # BabyIAXO 2028 / IAXO 2030 falsification target. χ_eff = 3·b3 = 72
-                # is b3-rooted via b3_leaf().
+                # VALUE AT THE OFF-PATH SEED b3 = 24: g_aγγ ≈ 2.9032525449371696e-11
+                # GeV⁻¹, formerly called the canonical BabyIAXO 2028 / IAXO 2030
+                # falsification target. χ_eff = 3·b3 = 72 holds only at that seed:
+                # the EML track roots χ_eff in 3·b3 via b3_leaf(), so on the
+                # adopted seed it diverges from the value track (72 per shadow,
+                # K3 reading) -- a recorded divergence in core/ruled_divergences.py.
                 # ─────────────────────────────────────────────────────────────────
                 arithma=_arithma_num(result.g_a_gamma_gamma),
                 eml=_eml_div(
@@ -664,6 +719,9 @@ class ALPPortalsV23(SimulationBase):
                 ),
                 category="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of f_a^ALP (no gaugino racetrack exists on Y_7: "
+                    "CG.5, CG.10). "
                     "ALP-nucleon coupling from inter-face leakage. This coupling "
                     "generates a spin-dependent interaction between the ALP and "
                     "nucleons, detectable in spin-precession experiments. The "
@@ -684,7 +742,7 @@ class ALPPortalsV23(SimulationBase):
                             "formula": r"\mathcal{L} \supset g_{aN} \, \bar{N} \gamma^5 N \, a"
                         },
                         {
-                            "description": "Evaluate using alpha_leak = 1/sqrt(6) and f_a from Face 3 moduli to obtain g_aN in the testable range for spin-precession experiments (CASPEr, ARIADNE)",
+                            "description": "Evaluate at the off-path seed b3 = 24, using alpha_leak = 1/sqrt(6) and the calibrated Face 3 f_a, to obtain g_aN in the testable range for spin-precession experiments (CASPEr, ARIADNE)",
                             "formula": r"g_{aN} = \frac{1/\sqrt{6}}{f_a^{\rm ALP}} \sim 10^{-11}\,\text{GeV}^{-1}"
                         }
                     ],
@@ -696,7 +754,7 @@ class ALPPortalsV23(SimulationBase):
                     "parentFormulas": ["portal-alp-mass-v23"]
                 },
                 terms={
-                    "alpha_leak": "Inter-face leakage = 1/sqrt(6)",
+                    "alpha_leak": "Inter-face leakage = 1/sqrt(6) at the off-path seed b3 = 24",
                     "g_aN": "ALP-nucleon coupling",
                     "N": "Nucleon field"
                 },
@@ -727,9 +785,13 @@ class ALPPortalsV23(SimulationBase):
                 ),
                 category="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of m_ALP (no gaugino racetrack exists on Y_7: "
+                    "CG.5, CG.10). "
                     "Fifth force range from ALP exchange. The ALP mediates a "
                     "Yukawa-type modification to gravity at range lambda = hbar*c / m_ALP. "
-                    "For m_ALP ~ meV, lambda ~ sub-millimeter, placing it in the "
+                    "For m_ALP ~ meV (the off-path seed's value), lambda ~ sub-millimeter, "
+                    "placing it in the "
                     "range of torsion balance experiments (Eotvos, IUPUI) and "
                     "Casimir force measurements."
                 ),
@@ -781,6 +843,8 @@ class ALPPortalsV23(SimulationBase):
                 units="GeV",
                 status="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
+                    "exists on Y_7 (CG.5, CG.10). "
                     "Face 3 ALP decay constant f_a^{ALP}, the geometric mean of the "
                     "single- and double-suppression branches of the Face 3 racetrack. "
                     "Sets the mass and both couplings of the ALP."
@@ -805,7 +869,8 @@ class ALPPortalsV23(SimulationBase):
                     "ops.div(ops.mul(eml_vec('topology.elder_kads'), eml_vec('geometry.k_gimel')), "
                     "ops.mul(eml_scalar(3.0), eml_pi())))))) — f_a^ALP = sqrt(f_a_single * f_a_double), the "
                     "geometric mean of the single- and double-exponential Face 3 racetrack branches, with "
-                    "T_3 = b3 k_gimel/(3 pi) and M_Pl = 1.22e19 GeV"
+                    "T_3 = b3 k_gimel/(3 pi) and M_Pl = 1.22e19 GeV (CALIBRATED at the off-path "
+                    "seed b3 = 24)"
                 ),
             ),
             Parameter(
@@ -814,6 +879,8 @@ class ALPPortalsV23(SimulationBase):
                 units="eV",
                 status="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
+                    "exists on Y_7 (CG.5, CG.10), and the meV figure is that seed's. "
                     "ALP mass from Face 3 moduli stabilization via double exponential "
                     "racetrack mechanism: m_ALP = Lambda_QCD^2 / f_a^{ALP}, where "
                     "f_a^{ALP} is the Face 3 decay constant. Distinct from the QCD axion "
@@ -834,10 +901,15 @@ class ALPPortalsV23(SimulationBase):
                 units="GeV^{-1}",
                 status="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of f_a^ALP (no gaugino racetrack exists on Y_7: "
+                    "CG.5, CG.10). "
                     "ALP-photon coupling g_{a gamma gamma} from Primakoff process "
-                    "enhanced by inter-face leakage. Predicted value ~2.9e-11 GeV^{-1} "
+                    "enhanced by inter-face leakage. The value at that seed, "
+                    "~2.9e-11 GeV^{-1}, "
                     "is below both the stellar cooling bound (1e-10 GeV^{-1}) and "
-                    "the CAST 2017 experimental upper limit (6.6e-11 GeV^{-1})."
+                    "the CAST 2017 experimental upper limit (6.6e-11 GeV^{-1}); the "
+                    "registered value follows the live seed."
                 ),
                 experimental_bound=6.6e-11,
                 bound_type="upper",
@@ -848,7 +920,8 @@ class ALPPortalsV23(SimulationBase):
                     "eml_vec('geometry.chi_eff_sector')), ops.mul(ops.mul(eml_scalar(24.0), "
                     "eml_pi()), eml_vec('portals.alp_decay_constant_gev'))) "
                     "— g_agammagamma = alpha_leak * chi_eff_sector / (24 pi f_a^ALP); "
-                    "the per-sector 72, not the two-shadow 144"
+                    "the per-sector 72, not the two-shadow 144 (K3 reading); the 24 "
+                    "is a literal, calibrated at the off-path seed b3 = 24"
                 )
             ),
             Parameter(
@@ -857,6 +930,8 @@ class ALPPortalsV23(SimulationBase):
                 units="GeV^{-1}",
                 status="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of f_a^ALP. "
                     "ALP-nucleon coupling g_{aN} = alpha_leak / f_a from minimal "
                     "inter-face leakage through the G2 bridge structure. Generates "
                     "a spin-dependent Yukawa interaction between nucleons, detectable "
@@ -876,8 +951,10 @@ class ALPPortalsV23(SimulationBase):
                 units="meters",
                 status="PREDICTED",
                 description=(
+                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
+                    "racetrack value of m_ALP. "
                     "Yukawa range lambda = hbar*c / m_ALP for the ALP-mediated "
-                    "fifth force. Sub-millimeter scale (predicted ~ 0.06 mm), placing "
+                    "fifth force. Sub-millimeter scale (~ 0.06 mm at that seed), placing "
                     "it in the sensitivity range of short-range gravity experiments "
                     "including Eotvos-type torsion balances, Casimir force measurements, "
                     "and neutron scattering experiments."
@@ -889,11 +966,15 @@ class ALPPortalsV23(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for paper."""
+        # The construction is rendered from the live geometry, not typed.
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
         return SectionContent(
             section_id="7",
             subsection_id="7.5",
             title="ALP Portal Physics from Face 3 Moduli",
             abstract=(
+                "CALIBRATED at the off-path seed b₃ = 24; no gaugino racetrack exists "
+                "on Y₇ (CG.5, CG.10), so the figures below are that seed's values. "
                 "Axion-Like Particles emerge from moduli misalignment on Face 3 "
                 "of the G₂ four-face structure, distinct from the QCD axion on "
                 "Face 1. The ALP decay constant f<sub>a</sub><sup>ALP</sup> = "
@@ -915,17 +996,20 @@ class ALPPortalsV23(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The PM G₂ manifold is modelled as a Twisted Connected Sum (TCS) "
-                        "with four topological faces, each hosting distinct pseudo-scalar "
+                        "The four-face structure was formerly modelled as a Twisted Connected "
+                        "Sum (TCS); that construction is off-path (CG.7), and the internal space is "
+                        + render("{manifold}, {construction}. ", "html") +
+                        "The model assigns it four topological faces, each hosting distinct pseudo-scalar "
                         "zero-modes from three-form flux compactification. The faces differ "
-                        "in their racetrack superpotential parameters, setting face-dependent "
+                        "in their racetrack superpotential parameters (CALIBRATED at the off-path "
+                        "seed b₃ = 24; Y₇ has no gaugino racetrack, CG.5, CG.10), setting face-dependent "
                         "moduli VEVs T<sub>i</sub> and consequently face-dependent axion decay constants. "
                         "Face 1 hosts the QCD axion (Section 7.1) with f<sub>a</sub><sup>QCD</sup> ~ "
                         "3.5 × 10<sup>12</sup> GeV, near the string unification scale. Face 3 hosts "
                         "a qualitatively different pseudo-scalar: an Axion-Like Particle (ALP) with a "
                         "significantly lower decay constant f<sub>a</sub><sup>ALP</sup> ~ 10<sup>10</sup> GeV, "
                         "arising from the double-exponential racetrack suppression "
-                        "T₃ = b₃ · k<sub>ℷ</sub> / (3π) ~ 31.2 on the hidden face. "
+                        "T₃ = b₃ · k<sub>ℷ</sub> / (3π) ~ 31.2 on the hidden face at the off-path seed. "
                         "The factor-of-200 suppression in f<sub>a</sub> shifts the ALP mass from "
                         "micro-eV (QCD axion) to the meV scale."
                     )
@@ -939,7 +1023,8 @@ class ALPPortalsV23(SimulationBase):
                     type="paragraph",
                     content=(
                         "The ALP mass is set by the non-perturbative potential generated "
-                        "when the Face 3 modulus T₃ is stabilized. The misalignment "
+                        "when the Face 3 modulus T₃ is stabilized (the moduli are OPEN on "
+                        "Y₇, CG.6; T₃ here is CALIBRATED). The misalignment "
                         "mechanism gives m<sub>ALP</sub> ~ Λ<sub>QCD</sub>² / f<sub>a</sub><sup>ALP</sup>, "
                         "where the QCD scale Λ<sub>QCD</sub> ~ 0.2 GeV enters because the ALP inherits "
                         "a small QCD anomaly coefficient through the inter-face leakage "
@@ -964,8 +1049,9 @@ class ALPPortalsV23(SimulationBase):
                         "the inter-face topological leakage. The G₂ portal mechanism "
                         "transfers axion flux between faces through the "
                         "χ<sub>eff</sub>-weighted channel, with amplitude set by α<sub>leak</sub> = 1/√6. "
-                        "The topological enhancement factor χ<sub>eff</sub> = 72 (the per-sector "
-                        "Euler characteristic) increases the effective coupling relative "
+                        "The topological enhancement factor χ<sub>eff</sub> = 72 per shadow (the K3 "
+                        "reading: Σχ(K3) over the three singular involutions; not an Euler "
+                        "characteristic of Y₇, which is 0) increases the effective coupling relative "
                         "to a simple f<sub>a</sub><sup>−1</sup> suppression. The resulting ALP-photon "
                         "coupling g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup> falls below "
                         "current stellar-cooling bounds (HB stars: &lt; 6.6 × 10<sup>−11</sup> GeV<sup>−1</sup>) "
@@ -1008,7 +1094,8 @@ class ALPPortalsV23(SimulationBase):
                     callout_type="testable",
                     title="ALP Portal Predictions",
                     content=(
-                        "From Face 3 moduli misalignment, PM predicts:\n"
+                        "From Face 3 moduli misalignment, CALIBRATED at the off-path seed "
+                        "b₃ = 24 (no gaugino racetrack exists on Y₇), PM gives:\n"
                         "- ALP mass: m<sub>ALP</sub> ~ meV (Compton wavelength λ ~ 0.1 mm)\n"
                         "- ALP-photon coupling: g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup> (below HB-star bound)\n"
                         "- ALP-nucleon coupling: g<sub>aNN</sub> ~ 10<sup>−12</sup>\n"
@@ -1294,7 +1381,7 @@ class ALPPortalsV23(SimulationBase):
 def run_alp_demo():
     """Standalone demonstration."""
     print("=" * 75)
-    print("ALP Portal Physics from Face 3 Moduli v23.0")
+    print("ALP Portal Physics from Face 3 Moduli")
     print("=" * 75)
 
     sim = ALPPortalsV23()

@@ -3,18 +3,21 @@ Neutrino PMNS Angles from G₂ × E₇ Topology (Algebraic Derivation)
 ====================================================================
 
 The PMNS reactor angle θ₁₃ and CP-violation phase δ_CP are estimated
-from pure G₂ topology, with NO free parameters. These are ALGEBRAIC
-APPROXIMATIONS — within ~20% of NuFIT 6.0 — not fitted results. The
-key advancement is that the topology determines the correct ORDER OF
-MAGNITUDE from first principles.
+from G₂ topology and E₇ branching with no free parameters. Both estimates
+miss: θ₁₃ is FALSIFIED, and δ_CP scored MARGINAL at the off-path seed
+b₃ = 24, where its construction was written (see Status).
 
 θ₁₃ DERIVATION (E₇ ⊃ E₆ × U(1) branching + SU(2)_L correction):
     α_leak = 1/√6  (E₇ ⊃ E₆×U(1) Clebsch-Gordan coefficient, DERIVED)
     SU(2)_L sees n_gen=3 generations → √(2n_gen) suppression
     sin(θ₁₃) = α_leak / √(2 n_gen) = (1/√6) / √6 = 1/6 ≈ 0.1667
-    θ₁₃ ≈ 9.59°   (NuFIT 6.0: 8.57°, 12% high — DERIVED, not fitted)
+    θ₁₃ ≈ 9.59°   (NuFIT 6.0 IO: 8.63°, 12% high — FALSIFIED, ~9σ)
 
-δ_CP DERIVATION (G₂ associative 3-form holonomy angle):
+δ_CP CONSTRUCTION (G₂ associative 3-form holonomy angle). It splits b₃
+evenly among the generations; at the adopted b₃ = 43 the split 43/3 is not
+an integer, so the construction does not carry over, and run() (which reads
+topology.elder_kads) registers values that follow the seed in force. As
+written at the off-path seed:
     b₃ = 24, n_gen = 3  →  cycles_per_gen = b₃/n_gen = 8
     φ_assoc = 2π / cycles_per_gen = 2π/8 = π/4   (elementary holonomy angle)
     The CP phase from parallel transport around an associative 3-cycle,
@@ -22,11 +25,13 @@ MAGNITUDE from first principles.
         δ_CP = −φ_assoc × χ_eff/(b₃ × n_gen)
              = −(π/4) × 144/(24×3)
              = −(π/4) × 2 = −π/2 = −90°
-    NuFIT 6.0 (NO): −107° best fit, range −180° to 0°.
-    Derived −90° lies squarely inside the 1σ favoured region.
+    NuFIT 6.0 (NO) best fit ≈ 197° (−163°); the −107° once quoted here was a
+    T2K-only fit. At the off-path seed −90° scores 1.825σ (MARGINAL); the
+    earlier "inside the 1σ favoured region" claim is withdrawn.
 
-Key: all integer inputs (b₃=24, χ_eff=144, n_gen=3) and α_leak=1/√6 are
-topological invariants — ZERO free parameters.
+Inputs as written: b₃ = 24 (the off-path seed), χ_eff = 144 (the K3 reading,
+χ_eff = 2 Σ χ(K3) = 48n at n = 3), n_gen = 3 = b₂/4, and α_leak = 1/√6 —
+no free parameters.
 
 Status:
     neutrino.theta13_derived  — FALSIFIED (R1 ruling 2026-08-25: ~9σ from
@@ -34,8 +39,9 @@ Status:
         zero-parameter asin(1/6) candidate died honestly, which is the
         gate system demonstrating it has teeth. Working headline is
         particle.theta_13_deg = 8.669°.)
-    neutrino.delta_CP_derived — DERIVED  (NO framing, -pi/2 = 270 deg;
-        ~1.8 sigma from the NuFIT 6.0 NO best fit ~197 deg. NOTE: two
+    neutrino.delta_CP_derived — DERIVED  (NO framing, -pi/2 = 270 deg at
+        the off-path seed b3 = 24; ~1.8 sigma from the NuFIT 6.0 NO best
+        fit ~197 deg; the registered value follows the seed in force. NOTE: two
         sibling modules export different delta_CP values in different
         orderings - particle/neutrino_mixing 278.4 deg (IO, includes a
         FITTED 45.9 deg offset) and particle/yukawa_derivation 277.3
@@ -69,13 +75,14 @@ from metaphysica.simulations.base import (
 
 # ---------------------------------------------------------------------------
 # Pre-computed reference constants (for get_formulas / get_section_content
-# which run without a live registry)
+# which run without a live registry). They are written at the off-path seed
+# b3 = 24; run() reads the seed in force from topology.elder_kads.
 # ---------------------------------------------------------------------------
 _ALPHA_LEAK = 1.0 / math.sqrt(6.0)      # E₇ ⊃ E₆×U(1) Clebsch-Gordan
-_B3 = 24
-_CHI_EFF = 144
+_B3 = 24                                # the off-path seed (Y_7 has b3 = 43)
+_CHI_EFF = 144                          # the K3 reading, chi_eff = 48 n at n = 3
 _N_GEN = 3
-_CYCLES_PER_GEN = _B3 / _N_GEN          # = 8
+_CYCLES_PER_GEN = _B3 / _N_GEN          # = 8 at the off-path seed only
 _PHI_ASSOC = 2.0 * math.pi / _CYCLES_PER_GEN     # = π/4
 _SIN_THETA13 = _ALPHA_LEAK / math.sqrt(2.0 * _N_GEN)  # = 1/6 ≈ 0.1667
 _THETA13_DEG = math.degrees(math.asin(min(1.0, _SIN_THETA13)))  # ≈ 9.59°
@@ -83,8 +90,9 @@ _DELTA_CP_RAD = -_PHI_ASSOC * (_CHI_EFF / (_B3 * _N_GEN))       # = -π/2
 _DELTA_CP_DEG = math.degrees(_DELTA_CP_RAD)                      # = -90°
 
 # NuFIT 6.0 reference values (Normal Ordering)
-# ORDERING CONSISTENCY (2026-08-20): the framework predicts INVERTED
-# ordering from b3=24 even parity (see neutrino_mixing), and the sibling
+# ORDERING CONSISTENCY (2026-08-20): the framework predicted INVERTED
+# ordering from the even parity of the off-path seed b3 = 24 (see
+# neutrino_mixing for the ordering on the seed in force), and the sibling
 # module scores against IO. This module had been anchored to NORMAL
 # ordering, so the same prediction was being graded on two different
 # rulers. Anchored to IO for consistency; the candidate is falsified
@@ -95,6 +103,25 @@ _DELTA_CP_NUFIT = 197.0 - 360.0  # degrees: NuFIT 6.0 NO best fit ~197 deg mappe
 _DELTA_CP_1SIGMA = 40.0      # degrees, approximate 1σ (range ≈ -180° to 0°)
 
 
+def _seed_split_note() -> str:
+    """Prose only: does the delta_CP split b3/n_gen work on the seed in force?
+
+    Generated from the live seed so the sentence follows a fork flip; it
+    changes no computed value.
+    """
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path,
+        seed_values,
+    )
+
+    b3, _b2 = seed_values(resolve_path())
+    if b3 % _N_GEN == 0:
+        return ("b_3 = %d, so b_3/n_gen = %d whole 3-cycles per generation"
+                % (b3, b3 // _N_GEN))
+    return ("b_3 = %d, and %d/%d is not an integer, so no whole number of "
+            "3-cycles is assigned to a generation" % (b3, b3, _N_GEN))
+
+
 class NeutrinoAlgebraicSimulation(SimulationBase):
     """
     Derives PMNS θ₁₃ and δ_CP from G₂ × E₇ topology.
@@ -103,8 +130,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     the G₂ associative 3-form holonomy structure to estimate the two
     currently-CALIBRATED PMNS parameters.  No free parameters.
 
-    Results are ALGEBRAIC APPROXIMATIONS (~10-20% accuracy) — the point
-    is that topology sets the right order of magnitude without any fitting.
+    Both candidates miss: θ₁₃ is FALSIFIED, and δ_CP scored MARGINAL at
+    the off-path seed b₃ = 24, whose even split b₃/n_gen = 8 does not carry
+    over to the adopted b₃ = 43.
     """
 
     @property
@@ -115,11 +143,13 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             domain="algebra",
             title="Neutrino PMNS Angles from G2 x E7 Topology",
             description=(
-                "Algebraic derivation of PMNS reactor angle theta_13 and CP phase delta_CP "
-                "from G2 topology (b3=24, chi_eff=144, n_gen=3) and E7 branching (alpha_leak=1/sqrt(6)). "
+                "Algebraic estimates of PMNS reactor angle theta_13 and CP phase delta_CP "
+                "from G2 topology, written at the off-path seed (b3 = 24; chi_eff = 144, the "
+                "K3 reading; n_gen = 3), and E7 branching (alpha_leak = 1/sqrt(6)). "
                 "Zero free parameters, and both candidates miss: neutrino.theta13_derived "
-                "is FALSIFIED (8.8 sigma vs NuFIT 6.0) and neutrino.delta_CP_derived scores "
-                "1.825 sigma MARGINAL. The 'promotes theta_13 and delta_CP from CALIBRATED "
+                "is FALSIFIED (8.8 sigma vs NuFIT 6.0) and neutrino.delta_CP_derived scored "
+                "1.825 sigma MARGINAL at the off-path seed; run() reads the seed in force. "
+                "The 'promotes theta_13 and delta_CP from CALIBRATED "
                 "toward DERIVED' claim is withdrawn. The working theta_13 headline is the "
                 "independent particle.theta_13_deg = 8.6686 deg, 0.805 sigma PASS."
             ),
@@ -180,13 +210,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
         theta13_deg_derived = math.degrees(theta13_rad_derived)
 
         # --- δ_CP from G₂ associative 3-form holonomy angle ---
-        # Each of n_gen generations accesses b3/n_gen associative 3-cycles.
+        # Each of n_gen generations accesses b3/n_gen associative 3-cycles
+        # (a whole number only at the off-path seed b3 = 24; 43/3 is not).
         # The elementary holonomy angle around each cycle: φ = 2π/(b3/n_gen).
         # The CP phase is modulated by the full-manifold factor chi_eff/(b3 n_gen).
-        cycles_per_gen = b3 / n_gen                     # = 8 at default values
-        phi_assoc = 2.0 * math.pi / cycles_per_gen      # = π/4
-        delta_CP_rad_derived = -phi_assoc * (chi_eff / (b3 * n_gen))   # = -π/2
-        delta_CP_deg_derived = math.degrees(delta_CP_rad_derived)       # = -90°
+        cycles_per_gen = b3 / n_gen                     # = 8 at the off-path seed (14.33 at b3 = 43)
+        phi_assoc = 2.0 * math.pi / cycles_per_gen      # = π/4 at the off-path seed
+        delta_CP_rad_derived = -phi_assoc * (chi_eff / (b3 * n_gen))   # = -π/2 at the off-path seed
+        delta_CP_deg_derived = math.degrees(delta_CP_rad_derived)       # = -90° at the off-path seed
 
         # --- sigma deviations from NuFIT 6.0 ---
         sigma_theta13 = (theta13_deg_derived - _THETA13_NUFIT) / _THETA13_1SIGMA
@@ -265,6 +296,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_formulas(self) -> List[Formula]:
+        # Prose only: live Betti numbers for the formula text.
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render as _render,
+        )
+
         return [
             Formula(
                 id="pmns-theta13-derived",
@@ -288,8 +324,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"α_leak = 1/√6 is the Clebsch-Gordan coefficient for the U(1) "
                     f"factor. Leptons are colour singlets, giving an additional "
                     f"1/√(2n_gen) suppression. Result: θ₁₃ ≈ {_THETA13_DEG:.2f}°; "
-                    f"NuFIT 6.0 gives {_THETA13_NUFIT}°. "
-                    f"Agreement within ~12% (DERIVED approximation, not fitted)."
+                    f"NuFIT 6.0 (IO) gives {_THETA13_NUFIT}°. "
+                    f"FALSIFIED (R1 ruling 2026-08-25): ~12% high, about 9σ at the "
+                    f"NuFIT 1σ of {_THETA13_1SIGMA}°."
                 ),
                 inputParams=["geometry.alpha_leak", "topology.n_gen"],
                 outputParams=["neutrino.theta13_derived", "neutrino.sin_theta13_derived"],
@@ -306,7 +343,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "θ₁₃ via EML: ops.asin(ops.div(alpha_leak, "
                     "ops.sqrt(ops.mul(2, n_gen)))). "
                     "alpha_leak = 1/sqrt(6) from E₇ ⊃ E₆×U(1) algebraic branching. "
-                    "n_gen = 3 from G₂ index theorem. Zero free parameters."
+                    "n_gen = 3 = b₂/4, the number of singular involutions. Zero free parameters."
                 ),
                 derivation={
                     "method": (
@@ -330,7 +367,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     r"\alpha_{\rm leak}": (
                         "E₇ ⊃ E₆×U(1) branching coefficient = 1/√6 (DERIVED)"
                     ),
-                    r"n_{\rm gen}": "Number of lepton generations = 3 (from G₂ index theorem)",
+                    r"n_{\rm gen}": "Number of lepton generations = 3 (n_gen = b₂/4, the number of singular involutions)",
                     r"\theta_{13}": f"PMNS reactor angle ≈ {_THETA13_DEG:.2f}° (NuFIT 6.0: {_THETA13_NUFIT}°)",
                 },
             ),
@@ -343,21 +380,26 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     r"= -\frac{\pi}{4}\cdot\frac{144}{72}"
                     r"= -\frac{\pi}{2} \approx "
                     + f"{_DELTA_CP_DEG:.1f}°"
+                    + r"\ \ (\text{off-path seed } b_3 = 24)"
                 ),
                 plain_text=(
                     f"delta_CP = -phi_assoc * chi_eff/(b3*n_gen)"
                     f" = -(pi/4) * (144/72) = -pi/2 = {_DELTA_CP_DEG:.1f} deg"
+                    f" at the off-path seed b3 = 24"
                     f" (NuFIT 6.0 NO: {_DELTA_CP_NUFIT} deg)"
                 ),
                 category="DERIVED",
                 description=(
-                    f"PMNS CP phase δ_CP derived from G₂ associative 3-form holonomy. "
-                    f"Each lepton generation corresponds to b₃/n_gen = 8 associative "
-                    f"3-cycles. The elementary holonomy angle φ_assoc = 2π/8 = π/4. "
-                    f"The full-manifold modulation factor is χ_eff/(b₃ n_gen) = 144/72 = 2. "
-                    f"Result: δ_CP = −(π/4)×2 = −π/2 = {_DELTA_CP_DEG:.1f}°. "
-                    f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°. "
-                    f"Derived value lies within the 1σ favoured region."
+                    f"PMNS CP phase δ_CP from G₂ associative 3-form holonomy, written at "
+                    f"the off-path seed b₃ = 24. There each lepton generation corresponds "
+                    f"to b₃/n_gen = 8 associative 3-cycles, the elementary holonomy angle "
+                    f"is φ_assoc = 2π/8 = π/4, and the full-manifold modulation factor is "
+                    f"χ_eff/(b₃ n_gen) = 144/72 = 2 (χ_eff = 144 is the K3 reading, 48n at "
+                    f"n = 3). Result: δ_CP = −(π/4)×2 = −π/2 = {_DELTA_CP_DEG:.1f}°. "
+                    f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°; "
+                    f"scored 1.825σ (MARGINAL) — the earlier 'within the 1σ favoured "
+                    f"region' claim is withdrawn. The construction is −2π χ_eff/b₃²; "
+                    f"on the seed in force {_seed_split_note()}."
                 ),
                 inputParams=[
                     "topology.elder_kads",
@@ -381,18 +423,21 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "δ_CP via EML: ops.neg(ops.mul(phi_assoc, "
                     "ops.div(chi_eff, ops.mul(b3, n_gen)))). "
                     "phi_assoc = 2π/(b3/n_gen). "
-                    "chi_eff=144, b3=24, n_gen=3 are all topological integers."
+                    "Written at the off-path seed: chi_eff = 144 (the K3 reading), b3 = 24, n_gen = 3."
                 ),
                 derivation={
                     "method": "G₂ associative 3-form holonomy angle modulated by χ_eff",
                     "steps": [
-                        "G₂ manifold has b₃=24 associative 3-cycles (topological invariant)",
-                        "With n_gen=3 generations: cycles_per_gen = 24/3 = 8",
+                        _render(
+                            "At the off-path seed b_3 = 24 the G₂ manifold has 24 associative "
+                            "3-cycle classes ({manifold} has b_3 = {b3})"
+                        ),
+                        "With n_gen=3 generations: cycles_per_gen = 24/3 = 8 (on the seed in force " + _seed_split_note() + ")",
                         "Elementary holonomy angle: φ_assoc = 2π/8 = π/4",
                         "Full-manifold modulation: χ_eff/(b₃ n_gen) = 144/(24×3) = 144/72 = 2",
                         "CP phase from parallel transport: δ_CP = −φ_assoc × (χ_eff/(b₃ n_gen))",
                         f"= −(π/4) × 2 = −π/2 = {_DELTA_CP_DEG:.1f}°",
-                        f"NuFIT 6.0 (NO): {_DELTA_CP_NUFIT}°. Derived value is within 1σ.",
+                        f"NuFIT 6.0 (NO): {_DELTA_CP_NUFIT}°. At the off-path seed this scores 1.825σ (MARGINAL); the earlier 'within 1σ' reading is withdrawn.",
                     ],
                     "references": [
                         "Joyce, D. (2000) Compact Manifolds with Special Holonomy. OUP.",
@@ -400,9 +445,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     ],
                 },
                 terms={
-                    r"\varphi_{\rm assoc}": "Elementary holonomy angle = 2π/(b₃/n_gen) = π/4",
-                    r"\chi_{\rm eff}": "Effective index chi_eff = 144 (not the Euler characteristic of Y_7, which is 0)",
-                    r"b_3": "G₂ Betti number = 24 (topological invariant)",
+                    r"\varphi_{\rm assoc}": "Elementary holonomy angle = 2π/(b₃/n_gen) = π/4 at the off-path seed b₃ = 24",
+                    r"\chi_{\rm eff}": "Effective index chi_eff = 2 x sum chi(K3) = 48 n = 144 at n = 3 (the K3 reading; not the Euler characteristic of Y_7, which is 0)",
+                    r"b_3": _render("Third Betti number: b_3 = {b3} for {manifold}; this formula's 24 is the off-path seed"),
                     r"n_{\rm gen}": "Number of generations = 3",
                     r"\delta_{\rm CP}": (
                         f"PMNS CP-violation phase ≈ {_DELTA_CP_DEG:.1f}° "
@@ -417,6 +462,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_output_param_definitions(self) -> List[Parameter]:
+        split_note = _seed_split_note()      # prose only
         return [
             Parameter(
                 path="neutrino.theta13_derived",
@@ -458,13 +504,15 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 units="degrees",
                 status="DERIVED",
                 description=(
-                    f"PMNS CP-violation phase from G₂ associative 3-form holonomy. "
-                    f"δ_CP = −(2π/(b₃/n_gen)) × χ_eff/(b₃ n_gen) = −π/2. "
-                    f"Derived: {_DELTA_CP_DEG:.1f}°. "
+                    f"PMNS CP-violation phase from G₂ associative 3-form holonomy, "
+                    f"δ_CP = −(2π/(b₃/n_gen)) × χ_eff/(b₃ n_gen) = −2π χ_eff/b₃². "
+                    f"Written at the off-path seed b₃ = 24, where it is −π/2 = "
+                    f"{_DELTA_CP_DEG:.1f}°. "
                     f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°. "
-                    f"Scored 1.825σ, verdict MARGINAL — not the '~0.4σ from best fit, "
+                    f"Scored 1.825σ there, verdict MARGINAL — not the '~0.4σ from best fit, "
                     f"within the 1σ favoured region' previously claimed here, which is "
-                    f"withdrawn. DERIVED approximation, zero free parameters."
+                    f"withdrawn. The registered value follows the seed in force (run() "
+                    f"reads topology.elder_kads), where {split_note}. Zero free parameters."
                 ),
                 eml_description=(
                     # Was ops.div(eml_pi(), eml_scalar(6.0)): a pi/K ansatz this module
@@ -474,7 +522,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "EML: ops.neg(ops.mul("
                     "ops.div(eml_scalar(360.0), ops.div(eml_vec('topology.elder_kads'), eml_vec('topology.n_gen'))), "
                     "ops.div(eml_vec('topology.mephorash_chi'), ops.mul(eml_vec('topology.elder_kads'), eml_vec('topology.n_gen'))))) "
-                    "— δ_CP = −(2π/(b₃/n_gen)) × χ/(b₃·n_gen) = −π/2 = −90°"
+                    "— δ_CP = −(2π/(b₃/n_gen)) × χ/(b₃·n_gen) = −π/2 = −90° at the off-path seed b₃ = 24"
                 ),
                 derivation_formula="pmns-delta-CP-derived",
                 experimental_bound=_DELTA_CP_NUFIT,
@@ -511,13 +559,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description=(
-                    "b₃/n_gen = 24/3 = 8. Number of associative 3-cycles assigned "
-                    "to each lepton generation in the G₂ manifold. "
-                    "Purely topological: b₃=24 and n_gen=3."
+                    "b₃/n_gen: the number of associative 3-cycles assigned to each "
+                    "lepton generation in the G₂ manifold. Written at the off-path "
+                    "seed b₃ = 24, where it is 24/3 = 8. The registered value follows "
+                    f"the seed in force, where {split_note}."
                 ),
                 eml_description=(
                     "EML: ops.div(eml_scalar(24.0), eml_scalar(3.0)) — "
-                    "8 associative 3-cycles per generation (b₃=24 / 3 generations)"
+                    "8 associative 3-cycles per generation at the off-path seed (b₃ = 24 / 3 generations)"
                 ),
                 no_experimental_value=True,
             ),
@@ -527,12 +576,13 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 units="radians",
                 status="DERIVED",
                 description=(
-                    "Elementary holonomy angle φ_assoc = 2π/(b₃/n_gen) = 2π/8 = π/4. "
-                    "Sets the CP phase scale in the lepton sector."
+                    "Elementary holonomy angle φ_assoc = 2π/(b₃/n_gen); 2π/8 = π/4 at "
+                    "the off-path seed b₃ = 24. Sets the CP phase scale in the lepton "
+                    "sector. The registered value follows the seed in force."
                 ),
                 eml_description=(
                     "EML: ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(8.0)) — "
-                    "φ_assoc = 2π / (b₃/n_gen) = 2π/8 = π/4 elementary holonomy angle"
+                    "φ_assoc = 2π / (b₃/n_gen) = 2π/8 = π/4 elementary holonomy angle at the off-path seed"
                 ),
                 no_experimental_value=True,
             ),
@@ -562,8 +612,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 status="VALIDATION",
                 description=(
                     f"(δ_CP_derived − δ_CP_NuFIT) / {_DELTA_CP_1SIGMA}°. "
-                    f"Derived: {_DELTA_CP_DEG:.1f}°, NuFIT: {_DELTA_CP_NUFIT}°. "
-                    f"Expected ≈ {(_DELTA_CP_DEG - _DELTA_CP_NUFIT)/_DELTA_CP_1SIGMA:.2f}σ."
+                    f"At the off-path seed b₃ = 24: derived {_DELTA_CP_DEG:.1f}°, NuFIT {_DELTA_CP_NUFIT}°, "
+                    f"≈ {(_DELTA_CP_DEG - _DELTA_CP_NUFIT)/_DELTA_CP_1SIGMA:.2f}σ. "
+                    f"The registered value follows the seed in force."
                 ),
                 eml_description=(
                     # -107 was the T2K-only fit; run() uses
@@ -584,6 +635,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     def get_section_content(self) -> Optional[SectionContent]:
         sigma_theta13 = (_THETA13_DEG - _THETA13_NUFIT) / _THETA13_1SIGMA
         sigma_dcp = (_DELTA_CP_DEG - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
+        split_note = _seed_split_note()      # prose only
 
         blocks = [
             ContentBlock(
@@ -598,13 +650,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "the quark sector. In the standard PM framework, the reactor angle θ₁₃ "
                     f"(≈ {_THETA13_NUFIT}°, NuFIT 6.0) and the CP phase δ_CP (≈ {_DELTA_CP_NUFIT}°, "
                     "NuFIT 6.0) are currently fitted (CALIBRATED) to experimental data. "
-                    "This section presents an algebraic derivation of both quantities "
-                    "from the same G₂ topological integers (b₃=24, χ_eff=144, n_gen=3) "
-                    "and E₇ branching coefficient (α_leak=1/√6) that underlie the rest "
-                    "of the PM framework. "
-                    "<em>These are approximate derivations — within ~10–20% of NuFIT — "
-                    "not exact fitted results. The key result is that the topology alone "
-                    "determines the correct order of magnitude with zero free parameters.</em>"
+                    "This section records an algebraic estimate of both quantities from "
+                    "the integers b₃ = 24 (the off-path seed, where it was written), "
+                    "χ_eff = 144 (the K3 reading, 48n at n = 3) and n_gen = 3, and the E₇ "
+                    "branching coefficient α_leak = 1/√6. "
+                    "<em>Both estimates miss: θ₁₃ is FALSIFIED (R1 ruling 2026-08-25, "
+                    "about 9σ), and δ_CP scored 1.825σ (MARGINAL) at the off-path seed. "
+                    "The δ_CP construction splits b₃ evenly among the generations, which "
+                    f"works only at the off-path seed: on the seed in force {split_note}.</em>"
                 ),
             ),
 
@@ -630,7 +683,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "</Normal>"
                     "<EML>"
                     "ops.asin(ops.div(alpha_leak, ops.sqrt(ops.mul(2, n_gen)))). "
-                    "alpha_leak from E₇ algebraic branching; n_gen=3 from G₂ index theorem."
+                    "alpha_leak from E₇ algebraic branching; n_gen = 3 = b₂/4, the number of singular involutions."
                     "</EML>"
                 ),
             ),
@@ -646,12 +699,12 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="success",
-                title=f"θ₁₃ Algebraic Result (Zero Free Parameters)",
+                title=f"θ₁₃ Algebraic Result — FALSIFIED (R1 ruling)",
                 content=(
                     f"sin(θ₁₃) = α_leak / √(2 n_gen) = (1/√6) / √6 = 1/6 ≈ {_SIN_THETA13:.4f}\n"
                     f"θ₁₃_derived ≈ {_THETA13_DEG:.4f}°\n"
-                    f"NuFIT 6.0 (NO): {_THETA13_NUFIT}° ± {_THETA13_1SIGMA}°\n"
-                    f"Sigma deviation: {sigma_theta13:+.2f}σ  (~12% high — DERIVED approximation)"
+                    f"NuFIT 6.0 (IO): {_THETA13_NUFIT}° ± {_THETA13_1SIGMA}°\n"
+                    f"Sigma deviation: {sigma_theta13:+.2f}σ  (~12% high — FALSIFIED)"
                 ),
             ),
 
@@ -667,17 +720,19 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "<Normal>"
                     "The CP-violation phase δ_CP arises from the phase acquired during "
                     "parallel transport of a spinor around a closed loop in the G₂ manifold. "
-                    "The relevant loops are the b₃ = 24 associative 3-cycles. "
+                    "As written at the off-path seed b₃ = 24, the relevant loops are the 24 "
+                    "associative 3-cycles. "
                     "With n_gen = 3 generations, each generation corresponds to "
                     "b₃/n_gen = 8 cycles. "
                     "The elementary holonomy angle for one generation is "
                     "φ_assoc = 2π/8 = π/4. "
                     "The CP phase in the lepton sector is modulated by the full-manifold "
-                    "factor χ_eff/(b₃ n_gen) = 144/72 = 2:"
+                    "factor χ_eff/(b₃ n_gen) = 144/72 = 2 "
+                    f"(on the seed in force the split fails: {split_note}):"
                     "</Normal>"
                     "<EML>"
                     "ops.neg(ops.mul(phi_assoc, ops.div(chi_eff, ops.mul(b3, n_gen)))). "
-                    "chi_eff=144, b3=24, n_gen=3 are topological integers. No free parameters."
+                    "Inputs at the off-path seed: chi_eff = 144 (the K3 reading), b3 = 24, n_gen = 3. No free parameters."
                     "</EML>"
                 ),
             ),
@@ -687,7 +742,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     r"\delta_{\rm CP} = -\varphi_{\rm assoc}"
                     r"\cdot \frac{\chi_{\rm eff}}{b_3\,n_{\rm gen}}"
                     r"= -\frac{\pi}{4}\cdot\frac{144}{72}"
-                    r"= -\frac{\pi}{2}"
+                    r"= -\frac{\pi}{2}\ \ (\text{off-path seed } b_3 = 24)"
                 ),
                 formula_id="pmns-delta-CP-derived",
                 label="(A5.2)",
@@ -695,13 +750,13 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="success",
-                title=f"δ_CP Algebraic Result (Zero Free Parameters)",
+                title=f"δ_CP Algebraic Result at the Off-Path Seed (MARGINAL)",
                 content=(
                     f"φ_assoc = 2π/(b₃/n_gen) = 2π/8 = π/4\n"
                     f"Modulation = χ_eff/(b₃ n_gen) = 144/(24×3) = 2\n"
                     f"δ_CP_derived = −(π/4) × 2 = −π/2 = {_DELTA_CP_DEG:.1f}°\n"
                     f"NuFIT 6.0 (NO): {_DELTA_CP_NUFIT}° (range: −180° to 0°)\n"
-                    f"Sigma deviation: {sigma_dcp:+.2f}σ  (within 1σ favoured region)"
+                    f"Sigma deviation: {sigma_dcp:+.2f}σ  (MARGINAL; the earlier 'within 1σ' claim is withdrawn)"
                 ),
             ),
 
@@ -715,30 +770,28 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 type="paragraph",
                 content=(
                     f"The algebraic estimates give theta_13 = {_THETA13_DEG:.2f} deg "
-                    f"(NuFIT 6.0: {_THETA13_NUFIT} deg, +12%, {sigma_theta13:+.1f}sigma "
-                    "given the tight 1sigma~0.25 deg) and "
+                    f"(NuFIT 6.0 IO: {_THETA13_NUFIT} deg, +12%, {sigma_theta13:+.1f}sigma "
+                    f"at 1sigma = {_THETA13_1SIGMA} deg) and, at the off-path seed b3 = 24, "
                     f"delta_CP = {_DELTA_CP_DEG:.0f} deg "
                     f"(NuFIT 6.0 NO: {_DELTA_CP_NUFIT} deg, {sigma_dcp:+.2f}sigma). "
-                    "Neither value is fitted; both arise from the same topological "
-                    "integers b3=24, chi_eff=144, n_gen=3 and the algebraic coefficient "
-                    "alpha_leak=1/sqrt(6) that appear throughout the PM framework. "
-                    "The theta_13 derivation is an over-estimate by ~12%, which is "
-                    "expected for a tree-level Clebsch-Gordan coefficient calculation: "
-                    "the precise SU(2)_L embedding requires loop corrections and "
-                    "higher-order E7 branching contributions. "
-                    "The delta_CP derivation is within 0.4sigma of the NuFIT best fit "
-                    "and correctly predicts the sign (negative, confirming the NuFIT "
-                    "preferred range of -180 to 0 degrees). "
-                    "These results are order-of-magnitude, parameter-free predictions "
-                    "of the lepton mixing structure from G2 holonomy — "
-                    "a qualitative step toward deriving PMNS angles from topology."
+                    "Neither value is fitted; both were written from the integers "
+                    "b3 = 24 (the off-path seed), chi_eff = 144 (the K3 reading) and "
+                    "n_gen = 3, and the algebraic coefficient alpha_leak = 1/sqrt(6). "
+                    "theta_13 is FALSIFIED (R1 ruling 2026-08-25); attributing the ~12% "
+                    "overshoot to loop corrections or higher-order E7 branching is "
+                    "untested. delta_CP scored MARGINAL with the right sign (inside the "
+                    "NuFIT preferred range -180 to 0 degrees); the earlier '0.4sigma' "
+                    "claim is withdrawn. "
+                    f"The delta_CP construction does not carry over to Y_7: {split_note}."
                 ),
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
                     "<Speculation>"
-                    "The natural emergence of δ_CP ≈ −90° from the π/4 holonomy angle "
+                    "(This speculation rests on the off-path seed b₃ = 24; the same "
+                    "construction does not give π/4 or −90° on Y₇.) "
+                    "The emergence of δ_CP ≈ −90° from the π/4 holonomy angle "
                     "of the G₂ associative 3-form may hint at a deeper geometric principle: "
                     "maximal CP violation (|δ_CP| = π/2) as a topological fixed point "
                     "of the G₂ holonomy group. "
@@ -760,12 +813,13 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             subsection_id=None,
             title="Neutrino PMNS Angles from G₂ Topology (Algebraic Derivation)",
             abstract=(
-                f"Algebraic derivation of PMNS θ₁₃ ≈ {_THETA13_DEG:.1f}° "
-                f"(NuFIT: {_THETA13_NUFIT}°, {sigma_theta13:+.1f}σ) and "
-                f"δ_CP ≈ {_DELTA_CP_DEG:.0f}° "
-                f"(NuFIT: {_DELTA_CP_NUFIT}°, {sigma_dcp:+.2f}σ) "
-                "from G₂ × E₇ topology alone. "
-                "Zero free parameters: b₃=24, χ_eff=144, n_gen=3, α_leak=1/√6."
+                f"Algebraic estimates, written at the off-path seed b₃ = 24, of PMNS "
+                f"θ₁₃ ≈ {_THETA13_DEG:.1f}° (NuFIT: {_THETA13_NUFIT}°, {sigma_theta13:+.1f}σ, "
+                f"FALSIFIED) and δ_CP ≈ {_DELTA_CP_DEG:.0f}° "
+                f"(NuFIT: {_DELTA_CP_NUFIT}°, {sigma_dcp:+.2f}σ, MARGINAL) "
+                "from G₂ × E₇ inputs with no free parameters: b₃ = 24 (the off-path "
+                "seed), χ_eff = 144 (the K3 reading), n_gen = 3, α_leak = 1/√6. "
+                f"The δ_CP construction does not carry over to Y₇: {split_note}."
             ),
             content_blocks=blocks,
             formula_refs=["pmns-theta13-derived", "pmns-delta-CP-derived"],
@@ -796,23 +850,24 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 "condition": f"abs({sigma_theta13:.4f}) <= 5.0",
                 "status": "PASS" if theta13_within_5sigma else "FAIL",
                 "detail": (
-                    f"Sigma deviation: {sigma_theta13:+.2f}sigma (1sigma_NuFIT ~ 0.25 deg). "
-                    "The 12% overshoot reflects the tree-level Clebsch-Gordan approximation; "
-                    "loop corrections are needed for precision. "
+                    f"Sigma deviation: {sigma_theta13:+.2f}sigma (1sigma_NuFIT = {_THETA13_1SIGMA} deg). "
+                    "FALSIFIED (R1 ruling 2026-08-25); attributing the 12% overshoot to "
+                    "the tree-level Clebsch-Gordan approximation is untested. "
                     "Derived from E7 branching, zero free parameters."
                 ),
             },
             {
                 "id": "CERT_NEUTRINO_DELTA_CP_WITHIN_2SIGMA",
                 "assertion": (
-                    f"delta_CP_derived = {_DELTA_CP_DEG:.1f}° is within 2σ of "
-                    f"NuFIT 6.0 NO best fit {_DELTA_CP_NUFIT}°"
+                    f"delta_CP_derived = {_DELTA_CP_DEG:.1f}° (at the off-path seed b₃ = 24) "
+                    f"is within 2σ of NuFIT 6.0 NO best fit {_DELTA_CP_NUFIT}°"
                 ),
                 "condition": f"abs({sigma_dcp:.4f}) <= 2.0",
                 "status": "PASS" if dcp_within_2sigma else "FAIL",
                 "detail": (
                     f"Sigma deviation: {sigma_dcp:+.2f}σ. "
-                    "Derived from G₂ associative 3-form holonomy, zero free parameters."
+                    "Evaluated at the off-path seed b₃ = 24; the registered value "
+                    "follows the seed in force."
                 ),
             },
             {
@@ -824,8 +879,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 "condition": f"-180.0 <= {_DELTA_CP_DEG:.1f} <= 0.0",
                 "status": "PASS" if dcp_in_preferred_range else "FAIL",
                 "detail": (
-                    "The sign of δ_CP (negative) is correctly predicted by the G₂ "
-                    "holonomy derivation without any fitting."
+                    "At the off-path seed the construction gives a negative δ_CP, "
+                    "inside NuFIT's preferred range, without any fitting."
                 ),
             },
         ]
@@ -864,7 +919,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "log_level": "INFO",
                     "message": (
                         f"δ_CP = −π/2 = {_DELTA_CP_DEG:.6f}° "
-                        "(exact from π/4 holonomy × 2 modulation)"
+                        "(π/4 holonomy × 2 modulation, at the off-path seed b₃ = 24)"
                     ),
                 },
                 {
@@ -945,9 +1000,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 "topic": "G₂ Holonomy and Associative 3-Cycles",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
                 "relevance": (
-                    "The associative 3-cycles in the G₂ manifold provide the "
-                    "topological integers b₃=24 and the holonomy angle φ_assoc=π/4 "
-                    "used in the δ_CP derivation."
+                    "The associative 3-cycles in the G₂ manifold provide the integer "
+                    "b₃ used in the δ_CP construction (24 at the off-path seed, where "
+                    "the holonomy angle is φ_assoc = π/4)."
                 ),
             },
             {

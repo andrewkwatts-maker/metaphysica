@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "metaphysica.path_graph/1",
+  "title": "The switch/path graph rendered by the website Paths tab and the app",
+  "type": "object",
+  "required": ["schema", "theory", "nodes", "edges", "layout"],
+  "properties": {
+    "schema": {"const": "metaphysica.path_graph/1"},
+    "theory": {
+      "type": "object",
+      "required": ["id", "title", "active"],
+      "properties": {
+        "id": {"type": "string"},
+        "title": {"type": "string"},
+        "active": {"type": "object", "required": ["digest"]}
+      }
+    },
+    "provenance": {"type": "object"},
+    "legend": {"type": "object"},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "label"],
+        "properties": {
+          "id": {"type": "string"},
+          "type": {"enum": ["theory", "fork", "option", "decision", "narrative"]},
+          "label": {"type": "string"},
+          "status": {"type": ["string", "null"]},
+          "class": {"type": ["string", "null"]},
+          "attrs": {"type": "object"},
+          "rationale": {"type": "object"},
+          "stats": {"type": "object"}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "source", "target"],
+        "properties": {
+          "type": {"enum": ["has_option", "requires", "excludes", "decided_by", "path_step"]},
+          "source": {"type": "string"},
+          "target": {"type": "string"},
+          "class": {"type": ["string", "null"]},
+          "rationale": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "configurations": {"type": "array"},
+    "layout": {
+      "type": "object",
+      "required": ["bbox", "positions"],
+      "properties": {
+        "version": {"type": "integer"},
+        "bbox": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4},
+        "positions": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4}}
+      }
+    },
+    "decisions": {"type": "array"}
+  }
+}

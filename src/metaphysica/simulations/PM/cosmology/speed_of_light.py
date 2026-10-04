@@ -1,25 +1,33 @@
 """
-Speed of Light from G₂ Manifold Geometry v17.2
-================================================
+Speed of Light from G₂ Manifold Geometry
+========================================
 
-Derives the speed of light from the topological invariants of the G₂ holonomy
-manifold via Kaluza-Klein reduction from 26 dimensions.
+STATUS: CALIBRATED at the off-path seed b₃ = 24. The chain below was fitted
+at b₃ = 24, where it gives c = 299,792,423 m/s. The registry evaluates it at
+the live seed's b₃ (43 on the adopted path, Y₇ = Joyce's resolution of
+T⁷/(ℤ/2)³ with (b₂, b₃) = (12, 43)), where it does not reproduce c. The
+independent assessment below classifies the construction as numerological
+and reverse-engineered.
+
+Proposes a speed of light built from integers attached to the G₂ manifold
+and a Kaluza-Klein reduction from 26 dimensions.
 
 This simulation computes:
-1. Harmonic cycle fraction from b₃ = 24 (G₂ Betti number)
+1. Harmonic cycle fraction 18/b₃ (3/4 at the off-path seed b₃ = 24)
 2. Ricci flow stretching from KK residual dimensions
 3. Bulk metric ratio from E₈×E₈ root lattice structure
 4. Weyl rescaling from G₂ to Einstein frame
 5. KK spatial projection correction for 3D propagation
 6. Validation against CODATA 2022 exact value
 
-Key prediction: c = 299,792,423 m/s (34.84 m/s = 0.12 ppm below the exact defined CODATA value; c is exact — no σ exists)
+Value at the off-path seed: c = 299,792,423 m/s (34.84 m/s = 0.12 ppm below the exact defined CODATA value; c is exact — no σ exists)
 
-DERIVATION CHAIN:
+DERIVATION CHAIN (as written at the off-path seed b₃ = 24):
 -----------------
 c = C_geo × S_f × B_v × χ_gc × 10⁷ × P_3D
 
-Where (all from G₂ topology, zero free parameters):
+Where (the original text said "all from G₂ topology, zero free parameters";
+the assessment below found the integers fitted):
 - C_geo = Δ_eff/b₃ = 18/24 = 3/4  (harmonic cycle fraction)
 - S_f   = Z₆·b₃ + 1/Z₆ = 12.4     (Ricci flow stretching, Z₆ = d_res/b₃ = 10/24)
 - B_v   = (N_root/N_bdy)·(N_shadow/N_vis) = (288/163)·(153/135) ≈ 2.0025
@@ -29,8 +37,9 @@ Where (all from G₂ topology, zero free parameters):
 - P_3D  = 1 + 1/(N_root·d_res²) = 1 + 1/28800 ≈ 1.0000347
          (KK spatial projection onto 3D)
 
-Result: c = 299,792,423 m/s — 99.99999% of CODATA exact value.
-Residual ~35 m/s attributed to Ricci flow relaxation on the G₂ fiber.
+Result at the off-path seed: c = 299,792,423 m/s — 99.99999% of the CODATA
+exact value. The residual ~35 m/s was attributed to Ricci flow relaxation
+on the G₂ fiber.
 
 INDEPENDENT ASSESSMENT (LLM (Opus) + Gemini 2.5 Flash, 2026-03-16):
 =========================================================================
@@ -148,11 +157,13 @@ class SpeedOfLightV17(SimulationBase):
             domain="cosmology",
             title="Speed of Light from G2 Manifold Geometry",
             description=(
-                "Derives the speed of light c from the topological invariants of the "
-                "G₂ holonomy manifold via Kaluza-Klein reduction. The harmonic cycle "
-                "fraction (b₃=24), Ricci flow stretching, bulk metric ratio (E₈×E₈ root "
-                "lattice), and Weyl rescaling combine to yield c with no free parameters. "
-                "Achieves 99.99999% accuracy (34.84 m/s variance from CODATA)."
+                "CALIBRATED at the off-path seed b₃ = 24: a chain of factors from "
+                "the G₂ manifold and a Kaluza-Klein reduction (harmonic cycle "
+                "fraction, Ricci flow stretching, a bulk metric ratio built from "
+                "fitted integers, Weyl rescaling), fitted to give c = 299,792,423 "
+                "m/s at that seed, 34.84 m/s below the defined CODATA value. The "
+                "registry evaluates the chain at the live seed's b₃; at any other "
+                "b₃ it does not reproduce c."
             ),
             section_id="5",
             subsection_id="5.8"
@@ -166,7 +177,7 @@ class SpeedOfLightV17(SimulationBase):
         so it only requires topology.elder_kads as a marker that geometric anchors are loaded.
         """
         return [
-            "topology.elder_kads",           # Pleroma (24) - ensures anchors are loaded
+            "topology.elder_kads",           # live seed's b_3 (formerly the 'Pleroma (24)' anchor) - ensures anchors are loaded
         ]
 
     @property
@@ -258,36 +269,44 @@ class SpeedOfLightV17(SimulationBase):
         gnostic_conv = _REG.gnostic_conversion
         spatial_proj = _REG.spatial_projection
 
+        # Live-seed b_3 for the prose (text only; the values above already
+        # follow the seed through the registry).
+        from metaphysica.simulations.PM.geometry.geometry_narration import (
+            render,
+        )
+        b3_live = render("{b3}")
+
         return SectionContent(
             section_id="5",
             subsection_id="5.8",
             title="Speed of Light from G₂ Manifold Geometry",
             abstract=(
-                f"We derive the speed of light c = {c_derived:,.2f} m/s from the "
-                f"topological invariants of the G₂ holonomy manifold. The derivation "
-                f"requires no free parameters — every factor traces to the Betti number "
-                f"b₃ = 24 and the root lattice structure of the compactification. "
-                f"The result achieves {accuracy:.5f}% accuracy "
-                f"({variance:.2f} m/s variance from CODATA 2022)."
+                f"CALIBRATED at the off-path seed b₃ = 24: a chain of five factors "
+                f"built from b₃ and the integers 288, 163, 153, 135 and 10 was "
+                f"fitted so that, at b₃ = 24, it gives c = 299,792,423 m/s. The "
+                f"chain reads b₃ from the live seed (b₃ = {b3_live}), where it "
+                f"gives c = {c_derived:,.2f} m/s, {accuracy:.5f}% of the CODATA "
+                f"2022 value ({variance:.2f} m/s from it). The integers are a "
+                f"fitted decomposition, not a derivation from topology."
             ),
             content_blocks=[
                 ContentBlock(
                     type="heading",
-                    content="Geometric Origin of the Speed of Light",
+                    content="Proposed Geometric Origin of the Speed of Light",
                     level=3
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "In the Principia Metaphysica framework, light propagates through "
-                        "an effective 4D spacetime that emerges from Kaluza-Klein reduction "
-                        "of a 26-dimensional manifold with G₂ holonomy on the compact fiber. "
-                        "The speed of light is not a free parameter but a derived quantity "
-                        "determined by the geometry of the internal space. Specifically, "
+                        "The chain treats light as propagating through an effective 4D "
+                        "spacetime obtained by Kaluza-Klein reduction of the 26-dimensional "
+                        "bulk, with a G₂ manifold as the compact fiber, and proposes that "
                         "c is fixed by three geometric properties: (1) the fraction of "
                         "harmonic 3-cycles available for photon propagation, (2) the metric "
                         "stretching induced by the Ricci flow on the G₂ fiber, and (3) the "
-                        "volume ratio between the compact and non-compact sectors."
+                        "volume ratio between the compact and non-compact sectors. Each "
+                        "factor was fitted at the off-path seed b₃ = 24; none is derived "
+                        "on the adopted path."
                     )
                 ),
                 ContentBlock(
@@ -298,9 +317,9 @@ class SpeedOfLightV17(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The effective 4D propagation speed is determined by a chain of "
-                        "geometric factors, each arising from the topology of the G₂ manifold "
-                        "and its embedding in the 26D bulk:"
+                        "The chain writes the effective 4D propagation speed as a product of "
+                        "factors attached to the G₂ manifold and its embedding in the 26D bulk "
+                        "(each fitted at the off-path seed b₃ = 24):"
                     )
                 ),
                 ContentBlock(
@@ -317,10 +336,13 @@ class SpeedOfLightV17(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        f"The G₂ manifold has b₃ = 24 independent harmonic 3-cycles. Of these, "
-                        f"6 are locked into the G₂ structure group (dim G₂ = 14, with 6 generators "
-                        f"acting on the fiber rather than the base). The remaining Δ_eff = b₃ - 6 = 18 "
-                        f"cycles are available for signal propagation through the effective 4D spacetime. "
+                        f"CALIBRATED at the off-path seed b₃ = 24: the factor was written for "
+                        f"a G₂ manifold with 24 harmonic 3-cycles, of which 6 were taken as "
+                        f"locked into the G₂ structure group (dim G₂ = 14, with 6 generators "
+                        f"acting on the fiber rather than the base), leaving Δ_eff = 18 for "
+                        f"signal propagation through the effective 4D spacetime. The code keeps "
+                        f"Δ_eff = 18 (= 153 − 135) and divides it by the live seed's "
+                        f"b₃ = {b3_live}, so on the adopted path Δ_eff is no longer b₃ − 6. "
                         f"The geometric ratio is:"
                     )
                 ),
@@ -333,9 +355,10 @@ class SpeedOfLightV17(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This 3/4 factor has a direct geometric interpretation: only three-quarters "
-                        "of the topological degrees of freedom in the harmonic sector contribute to "
-                        "photon propagation. The remaining quarter is frozen into the holonomy structure."
+                        f"At the off-path seed this factor is 3/4, read as three-quarters of the "
+                        f"degrees of freedom in the harmonic sector contributing to photon "
+                        f"propagation and one quarter frozen into the structure group. At the "
+                        f"live seed it is 18/b₃ = {geo_ratio:.4f}."
                     )
                 ),
                 ContentBlock(
@@ -346,9 +369,10 @@ class SpeedOfLightV17(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        f"The metric on the G₂ fiber evolves under Ricci flow, stretching the "
-                        f"effective wavelength of propagating modes. The stretching factor is governed "
-                        f"by Z₆ = d_residual / b₃ = 10/24, the ratio of the KK residual dimension "
+                        f"The metric on the G₂ fiber is taken to evolve under Ricci flow, stretching "
+                        f"the effective wavelength of propagating modes. The stretching factor is "
+                        f"governed by Z₆ = d_residual / b₃ (10/24 at the off-path seed b₃ = 24, "
+                        f"where the chain was fitted), the ratio of the KK residual dimension "
                         f"count (the 10 dimensions remaining after subtracting the 4D spacetime and "
                         f"the 12 compact angular degrees of freedom from 26D) to the Betti number:"
                     )
@@ -364,7 +388,8 @@ class SpeedOfLightV17(SimulationBase):
                     content=(
                         f"The stretching functional S_f encodes how the Ricci flow on the G₂ "
                         f"fiber amplifies the propagation scale. It takes the self-dual form "
-                        f"S_f = Z₆·b₃ + 1/Z₆ = 10 + 2.4 = {stretch_factor:.4f}, where the first "
+                        f"S_f = Z₆·b₃ + 1/Z₆ = 10 + b₃/10 (10 + 2.4 = 12.4 at the off-path "
+                        f"seed; {stretch_factor:.4f} at the live seed), where the first "
                         f"term is the KK tower contribution and the second is the inverse tension "
                         f"from the compact sector."
                     )
@@ -411,10 +436,11 @@ class SpeedOfLightV17(SimulationBase):
                     type="paragraph",
                     content=(
                         f"Converting from the internal G₂ metric to the Einstein-frame 4D metric "
-                        f"requires a Weyl rescaling factor determined by the non-topological root "
-                        f"count (N_root - b₃ = 264, the roots not captured by harmonic 3-forms) "
-                        f"divided by the extended boundary (N_bdy + 1 = 164, with the +1 from "
-                        f"the overall volume modulus of the compactification):"
+                        f"is taken to require a Weyl rescaling factor set by the non-topological root "
+                        f"count (N_root - b₃, 264 at the off-path seed b₃ = 24, read as the roots "
+                        f"not captured by harmonic 3-forms) divided by the extended boundary "
+                        f"(N_bdy + 1 = 164, with the +1 from the overall volume modulus of the "
+                        f"compactification):"
                     )
                 ),
                 ContentBlock(
@@ -469,24 +495,25 @@ class SpeedOfLightV17(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        f"The residual variance of {variance:.2f} m/s from the CODATA exact value "
-                        f"({CODATA_C:,} m/s) corresponds to a {sigma_equiv:.2f}σ equivalent deviation. "
-                        f"This offset is consistent with Ricci flow relaxation effects in the G₂ "
-                        f"fiber (see Section 9), where the manifold has not fully settled to its "
-                        f"Ricci-flat attractor. As the Ricci flow converges, the remaining "
-                        f"~35 m/s variance is expected to vanish, recovering the exact CODATA value."
+                        f"At the live seed the residual from the CODATA exact value "
+                        f"({CODATA_C:,} m/s) is {variance:.2f} m/s, a {sigma_equiv:.2f}σ "
+                        f"equivalent deviation. At the off-path seed b₃ = 24, where the chain "
+                        f"was fitted, the residual was ~35 m/s and was attributed to Ricci flow "
+                        f"relaxation in the G₂ fiber (see Section 9); that attribution does not "
+                        f"carry over, because the chain itself was fitted at that seed."
                     )
                 ),
                 ContentBlock(
                     type="callout",
                     callout_type="success",
-                    title="Validation Result",
+                    title="Comparison with CODATA",
                     content=(
-                        f"**Derived c:** {c_derived:,.2f} m/s\n\n"
+                        f"**Chain value at the live seed:** {c_derived:,.2f} m/s\n\n"
                         f"**CODATA 2022:** {CODATA_C:,} m/s (exact by definition)\n\n"
                         f"**Variance:** {variance:.2f} m/s ({sigma_equiv:.2f}σ equivalent)\n\n"
                         f"**Accuracy:** {accuracy:.5f}%\n\n"
-                        f"**Geometric inputs:** b₃=24, N_root=288, N_bdy=163, N_shadow=153, "
+                        f"**Inputs:** b₃ = {b3_live} (the chain was fitted at the off-path "
+                        f"seed b₃ = 24), N_root=288, N_bdy=163, N_shadow=153, "
                         f"N_vis=135, d_residual=10 — the 288 = 135 + 153 split is a fitted "
                         f"integer decomposition (see FormulasRegistry SSoT note)."
                     )
@@ -532,10 +559,11 @@ class SpeedOfLightV17(SimulationBase):
                 plain_text="c = (Δ_eff/b₃) · S(Z₆) · (N_root/N_bdy)(N_shadow/N_vis) · (N_root-b₃)/(N_bdy+1) · 10⁷ · P_3D",
                 category="FITTED",
                 description=(
-                    f"Speed of light derived from G₂ manifold topology: the harmonic "
-                    f"cycle fraction, Ricci flow stretching, bulk metric ratio, and "
-                    f"Weyl rescaling combine to yield c = {c_derived:,.2f} m/s "
-                    f"({accuracy:.5f}% of CODATA exact value)."
+                    f"CALIBRATED at the off-path seed b₃ = 24 (where the chain gives "
+                    f"299,792,423 m/s): the harmonic cycle fraction, Ricci flow "
+                    f"stretching, bulk metric ratio, and Weyl rescaling, evaluated at "
+                    f"the live seed, combine to c = {c_derived:,.2f} m/s "
+                    f"({accuracy:.5f}% of the CODATA exact value)."
                 ),
                 eml_latex=(
                     r"c = \mathrm{ops.mul}(C_{\text{geo}},\; \mathrm{ops.mul}(S_f,\; \mathrm{ops.mul}(B_v,\; "
@@ -571,11 +599,11 @@ class SpeedOfLightV17(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Harmonic cycle fraction: of b₃=24 harmonic 3-cycles, 6 are locked by the G₂ structure group, leaving 18 effective propagation channels",
+                            "description": "Harmonic cycle fraction, CALIBRATED at the off-path seed b₃ = 24: of 24 harmonic 3-cycles, 6 were taken as locked by the G₂ structure group, leaving 18 propagation channels (the code keeps 18 and divides by the live seed's b₃)",
                             "formula": rf"C_{{\text{{geo}}}} = \frac{{\Delta_{{\text{{eff}}}}}}{{b_3}} = \frac{{b_3 - \dim(\text{{fiber stabilizer}})}}{{b_3}} = \frac{{24 - 6}}{{24}} = \frac{{3}}{{4}} = {geo_ratio:.4f}"
                         },
                         {
-                            "description": "Ricci flow stretching: Z₆ = d_residual/b₃ = 10/24 governs the KK tower contribution plus inverse compact tension",
+                            "description": "Ricci flow stretching: Z₆ = d_residual/b₃ (10/24 at the off-path seed b₃ = 24, where the chain was fitted) governs the KK tower contribution plus inverse compact tension",
                             "formula": rf"\mathcal{{S}}(Z_6) = Z_6 \cdot b_3 + \frac{{1}}{{Z_6}} = \frac{{10}}{{24}} \cdot 24 + \frac{{24}}{{10}} = 10 + 2.4 = {stretch_factor:.1f}"
                         },
                         {
@@ -601,7 +629,7 @@ class SpeedOfLightV17(SimulationBase):
                     ],
                     "references": [
                         f"CODATA 2022: c = 299,792,458 m/s (exact by SI definition since 2019)",
-                        f"PM prediction: c = {c_derived:,.2f} m/s (residual {variance:.2f} m/s attributed to Ricci flow relaxation)"
+                        f"PM chain at the live seed: c = {c_derived:,.2f} m/s (residual {variance:.2f} m/s; the chain was fitted at the off-path seed b₃ = 24)"
                     ],
                     "method": "G2_holonomy_KK_reduction",
                     "parentFormulas": ["pneuma-tensioner-z6", "decad3-projection"]
@@ -613,9 +641,9 @@ class SpeedOfLightV17(SimulationBase):
                     "B_v": f"Bulk metric ratio: (N_root/N_bdy)·(N_shadow/N_vis) = {bulk_visc:.6f}",
                     r"\chi_{gc}": f"Weyl rescaling: (N_root - b₃)/(N_bdy + 1) = {gnostic_conv:.6f}",
                     "P_3D": f"KK spatial projection: 1 + 1/(N_root·d²) = {spatial_proj:.10f}",
-                    r"b_3": {"description": "Third Betti number of G₂ manifold", "value": 24},
+                    r"b_3": {"description": "Third Betti number at the off-path seed b₃ = 24, where the chain was fitted (the run reads the live seed's b₃)", "value": 24},
                     "N_root": {"description": "Extended E₈×E₈ root count", "value": 288},
-                    "Z_6": "Residual dimension ratio: d_res/b₃ = 10/24",
+                    "Z_6": "Residual dimension ratio d_res/b₃ (10/24 at the off-path seed b₃ = 24)",
                 }
             ),
             Formula(
@@ -627,13 +655,16 @@ class SpeedOfLightV17(SimulationBase):
                     "ops.div(eml_scalar(18.0), eml_vec('topology.elder_kads'))"
                 ),
                 eml_description=(
-                    "EML: ops.div(eml_scalar(18.0), eml_vec('topology.elder_kads')) — C_geo = Delta_eff/b3 = 18/24 = 3/4"
+                    "EML: ops.div(eml_scalar(18.0), eml_vec('topology.elder_kads')) — C_geo = Delta_eff/b3; 18/24 = 3/4 at the off-path seed b3 = 24"
                 ),
                 category="GEOMETRIC",
                 description=(
-                    "Harmonic cycle fraction: of the b₃ = 24 harmonic 3-cycles, "
-                    "6 are locked by the G₂ structure group, leaving 18 effective "
-                    "propagation channels — C_geo = 3/4."
+                    "CALIBRATED at the off-path seed b₃ = 24: harmonic cycle "
+                    "fraction. Of 24 harmonic 3-cycles, 6 were taken as locked by "
+                    "the G₂ structure group, leaving 18 propagation channels, so "
+                    "C_geo = 18/24 = 3/4. The code divides the fixed 18 "
+                    "(= 153 − 135) by the live seed's b₃, so on the adopted path "
+                    "C_geo is not 3/4."
                 ),
                 inputParams=["topology.elder_kads"],
                 outputParams=[],
@@ -641,9 +672,9 @@ class SpeedOfLightV17(SimulationBase):
                 output_params=[],
                 derivation={
                     "steps": [
-                        {"description": "G₂ manifold carries b₃ = 24 independent harmonic 3-cycles",
+                        {"description": "b₃ of the live seed (the factor was written for the off-path seed b₃ = 24)",
                          "formula": rf"b_3 = {int(_REG.elder_kads)}"},
-                        {"description": "6 cycles are locked by the G₂ structure group (fiber stabilizer generators)",
+                        {"description": "At the off-path seed, 6 cycles were taken as locked by the G₂ structure group (fiber stabilizer generators), leaving 18; the code keeps 18 at every seed",
                          "formula": r"\Delta_{\text{eff}} = b_3 - 6 = 18"},
                         {"description": "Fraction of cycles available for propagation",
                          "formula": r"C_{\text{geo}} = \Delta_{\text{eff}}/b_3 = 18/24 = 3/4"},
@@ -651,8 +682,8 @@ class SpeedOfLightV17(SimulationBase):
                     "method": "G2_holonomy_cycle_counting",
                 },
                 terms={
-                    "C_geo": "Harmonic cycle fraction = 3/4",
-                    "b_3": {"description": "Third Betti number of G₂ manifold", "value": 24},
+                    "C_geo": "Harmonic cycle fraction (3/4 at the off-path seed b₃ = 24)",
+                    "b_3": {"description": "Third Betti number at the off-path seed b₃ = 24, where the factor was fitted (the run reads the live seed's b₃)", "value": 24},
                 },
             ),
             Formula(
@@ -738,7 +769,12 @@ class SpeedOfLightV17(SimulationBase):
                 latex=r"Z_6 = \frac{D_{10}}{b_3} = \frac{10}{24} = 0.41\overline{6}",
                 plain_text="Z₆ = D₁₀/b₃ = 10/24 = 0.4166...",
                 category="DERIVED",
-                description="The Z₆ Pneuma Tensioner - the 'Safety Valve' controlling brane tension",
+                description=(
+                    "The Z₆ ratio D₁₀/b₃ (the 'Pneuma Tensioner', described as the "
+                    "'safety valve' controlling brane tension) of the speed-of-light "
+                    "chain: 10/24 at the off-path seed b₃ = 24, where the chain was "
+                    "fitted, and D₁₀ over the live seed's b₃ in a run."
+                ),
                 inputParams=["topology.elder_kads"],
                 outputParams=[],
                 input_params=["topology.elder_kads"],
@@ -754,7 +790,7 @@ class SpeedOfLightV17(SimulationBase):
                             "formula": rf"b_3 = {int(_REG.elder_kads)}"
                         },
                         {
-                            "description": "Pneuma Tensioner ratio",
+                            "description": "Pneuma Tensioner ratio, as written at the off-path seed b₃ = 24",
                             "formula": r"Z_6 = \frac{10}{24} = 0.41\overline{6}"
                         }
                     ],
@@ -762,9 +798,9 @@ class SpeedOfLightV17(SimulationBase):
                     "parentFormulas": []
                 },
                 terms={
-                    "Z_6": "Pneuma Tensioner (10/24)",
+                    "Z_6": "Pneuma Tensioner (10/24 at the off-path seed b₃ = 24)",
                     "D_10": "Residual Pressure Key (10)",
-                    "b_3": "Betti-3 dimension (24)",
+                    "b_3": "Third Betti number (24 at the off-path seed, where the chain was fitted; the run reads the live seed)",
                 },
                 eml_tree_str=(
                     "ops.div(eml_scalar(10.0), eml_vec('b3'))"
@@ -781,8 +817,9 @@ class SpeedOfLightV17(SimulationBase):
                 category="DERIVED",
                 description=(
                     "D₁₀³ spatial projection factor for 3D propagation constants. "
-                    "Adjusts the derived speed of light, reducing an initial deviation "
-                    "of ~10,444 m/s to a final deviation of ~35 m/s from the CODATA value."
+                    "At the off-path seed b₃ = 24, where the chain was fitted, it "
+                    "reduces the chain's deviation from ~10,444 m/s to ~35 m/s from "
+                    "the CODATA value."
                 ),
                 inputParams=["topology.ancestral_roots"],
                 outputParams=["cosmology.spatial_projection"],
@@ -844,7 +881,7 @@ class SpeedOfLightV17(SimulationBase):
                 derivation={
                     "steps": [
                         {
-                            "description": "Geometric ratio from G2 topology: b3/b2 = 24/12 = 2.0",
+                            "description": "Geometric ratio C_geo = 18/b₃ (3/4 at the off-path seed b₃ = 24, where the chain was fitted); the former label 'b3/b2 = 24/12 = 2.0' did not match the value computed",
                             "formula": rf"r_{{geo}} = \frac{{b_3}}{{b_2}} = {geo_ratio:.2f}"
                         },
                         {
@@ -858,7 +895,7 @@ class SpeedOfLightV17(SimulationBase):
                     ],
                     "references": [
                         "PM Section 5.6 - Speed of light derivation",
-                        "PM v17.2 - Pneuma tensioner framework"
+                        "PM - Pneuma tensioner framework"
                     ],
                     "method": "geometric_chain_product",
                     "parentFormulas": ["speed-of-light-derivation", "pneuma-tensioner-z6", "decad3-projection"]
@@ -897,7 +934,9 @@ class SpeedOfLightV17(SimulationBase):
                 units="m/s",
                 status="PREDICTED",
                 description=(
-                    f"Speed of light derived from Sovereign Gnostic Constants: "
+                    f"CALIBRATED at the off-path seed b₃ = 24 (where the chain gives "
+                    f"299,792,423 m/s): speed of light from the 'Sovereign Gnostic "
+                    f"Constants' chain, evaluated at the live seed: "
                     f"c = {c_derived:,.2f} m/s. CODATA 2022: 299,792,458 m/s (exact). "
                     f"Variance: {variance:.2f} m/s ({sigma_equiv:.2f}σ equivalent). "
                     f"Accuracy: {accuracy:.5f}%."
@@ -907,7 +946,7 @@ class SpeedOfLightV17(SimulationBase):
                 bound_type="central_value",
                 bound_source="CODATA2022",
                 uncertainty=float(CODATA_C_SIGMA_EQUIVALENT),  # ~1ppm equivalent
-                eml_description="EML: ops.mul(eml_vec('C_geo'), ops.mul(eml_vec('S_f'), ops.mul(eml_vec('B_v'), ops.mul(eml_vec('chi_gc'), ops.mul(eml_scalar(1e7), eml_vec('P_3D')))))) — c = C_geo × S_f × B_v × chi_gc × 10⁷ × P_3D from G₂ KK reduction; yields 299,792,423 m/s (99.99999% of CODATA)"
+                eml_description="EML: ops.mul(eml_vec('C_geo'), ops.mul(eml_vec('S_f'), ops.mul(eml_vec('B_v'), ops.mul(eml_vec('chi_gc'), ops.mul(eml_scalar(1e7), eml_vec('P_3D')))))) — c = C_geo × S_f × B_v × chi_gc × 10⁷ × P_3D from G₂ KK reduction; yields 299,792,423 m/s (99.99999% of CODATA) only at the off-path seed b₃ = 24, where it was fitted"
             ),
             Parameter(
                 path="cosmology.c_variance_ms",
@@ -940,7 +979,7 @@ class SpeedOfLightV17(SimulationBase):
                 status="VALIDATION",
                 description=(
                     f"Sigma-equivalent deviation from CODATA (framework-specific calibration: ~300 m/s ≈ 1ppm as 1σ): "
-                    f"{sigma_equiv:.2f}σ. {'Excellent' if sigma_equiv < 1 else 'Good'} agreement."
+                    f"{sigma_equiv:.2f}σ, {'within' if sigma_equiv < 1 else 'outside'} the 1σ-equivalent band."
                 ),
                 no_experimental_value=True,
                 eml_description="EML: ops.div(eml_vec('cosmology.c_variance_ms'), eml_scalar(300.0)) — |Δc| / (300 m/s), where 300 m/s ≈ 1 ppm of c used as 1σ equivalent for this defined constant"
@@ -953,8 +992,8 @@ class SpeedOfLightV17(SimulationBase):
                 description=(
                     f"Decad³ projection factor for 3D propagation: "
                     f"P_3D = 1 + 1/(288×100) = {spatial_proj:.10f}. "
-                    f"Adjusts the derived speed of light, reducing an initial "
-                    f"deviation of ~10,444 m/s to a final deviation of ~35 m/s "
+                    f"At the off-path seed b₃ = 24, where the chain was fitted, it "
+                    f"reduces the chain's deviation from ~10,444 m/s to ~35 m/s "
                     f"from the CODATA value."
                 ),
                 derivation_formula="decad3-projection",
@@ -1110,8 +1149,9 @@ class SpeedOfLightV17(SimulationBase):
                 "url": "https://en.wikipedia.org/wiki/Speed_of_light",
                 "relevance": (
                     "The speed of light c = 299,792,458 m/s is exact by SI definition "
-                    "since 2019. This simulation derives c from Sovereign Gnostic Constants "
-                    "to within 35 m/s of the exact value."
+                    "since 2019. This simulation's chain of Sovereign Gnostic Constants "
+                    "was fitted at the off-path seed b₃ = 24, where it lands within "
+                    "35 m/s of the exact value; at other values of b₃ it does not."
                 ),
                 "validation_hint": (
                     "Verify CODATA 2022 value is exact. Since c is defined, comparison "
@@ -1123,7 +1163,8 @@ class SpeedOfLightV17(SimulationBase):
                 "url": "https://en.wikipedia.org/wiki/2019_redefinition_of_the_SI_base_units",
                 "relevance": (
                     "The 2019 SI redefinition made c an exact defined constant, along "
-                    "with h, e, k_B, and N_A. The derivation achieves 0.0000116% error."
+                    "with h, e, k_B, and N_A. At the off-path seed b₃ = 24 the fitted "
+                    "chain is off by 0.0000116%."
                 ),
                 "validation_hint": (
                     "Check that since 2019, the metre is defined via c and the second. "

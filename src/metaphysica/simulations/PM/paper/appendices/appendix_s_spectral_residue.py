@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Appendix S: Spectral Residue Methodology v19.0
-===============================================
+Appendix S: Spectral Residue Methodology
+========================================
 
-Principia Metaphysica v19.0 - Spectral Residue Methods for Parameter Extraction
+Principia Metaphysica - Spectral Residue Methods for Parameter Extraction
 
 This appendix documents the spectral methodology that maps eigenvalues of the
 V_7 manifold Laplacian to physical constants of the Standard Model.
 
-The core insight is that the 125 eigenvalues of the G2 holonomy manifold's
-Laplacian operator encode all fundamental parameters through:
+The framework's postulate is that 125 eigenvalues of the internal G2
+manifold's Laplacian encode the fundamental parameters through:
 1. The spectral zeta function and its residues
 2. The Selberg trace formula connecting geometry to spectrum
 3. Spectral determinant regularization techniques
@@ -30,7 +30,12 @@ PHYSICAL INTERPRETATION:
 KEY RESULT:
     Res(zeta_V, s=7/2) ~ Vol(V_7) ~ M_Planck^7
     Res(zeta_V, s=5/2) ~ integral(R) ~ gauge couplings
-    Res(zeta_V, s=3/2) ~ chi(V_7) ~ generations
+    Res(zeta_V, s=3/2) ~ chi_eff ~ generations (restated, not derived)
+
+    chi_eff = 2 x sum chi(K3) = 48 n (the K3 reading, D-015), 144 at n = 3;
+    chi(V_7) itself is 0. chi_eff/48 = n restates n_gen = b_2/4. k_gimel =
+    b_3/2 + 1/pi is CALIBRATED at the off-path seed b_3 = 24 (D-007), where
+    it is 12 + 1/pi; topology.k_gimel follows the live seed.
 
 References:
 - Minakshisundaram, S. & Pleijel, A. (1949) "Some properties of eigenfunctions"
@@ -123,10 +128,10 @@ class AppendixSSpectralResidueV19(SimulationBase):
     # Key spectral constants (via FormulasRegistry SSoT)
     N_EIGENVALUES = 125          # Number of physically relevant eigenvalues
     DIM_V7 = 7                   # Dimension of internal manifold
-    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # Effective Euler characteristic
-    B3 = _REG.elder_kads if _REGISTRY_AVAILABLE else 24  # Third Betti number
+    CHI_EFF = _REG.qedem_chi_sum if _REGISTRY_AVAILABLE else 144  # chi_eff = 48 n, the K3 reading (chi(V_7) is 0)
+    B3 = _REG.elder_kads if _REGISTRY_AVAILABLE else 24  # Third Betti number (live seed; the literal is the off-path fallback)
     M_PLANCK = 2.435e18          # Reduced Planck mass (GeV)
-    K_GIMEL = 12 + 1/np.pi       # Fundamental scale (~12.318)
+    K_GIMEL = 12 + 1/np.pi       # k_gimel = b_3/2 + 1/pi at the off-path seed b_3 = 24 (~12.318): CALIBRATED there (D-007)
 
     @property
     def metadata(self) -> SimulationMetadata:
@@ -236,8 +241,10 @@ class AppendixSSpectralResidueV19(SimulationBase):
         # =========================================================
         # STEP 5: Euler residue at s = 3/2
         # =========================================================
-        # Res(zeta_V, 3/2) ~ chi(V_7) / (4*pi)^(3/2) / Gamma(3/2)
-        # This encodes topological information including generation count
+        # Res(zeta_V, 3/2) is normalised here to chi_eff / (4*pi)^(3/2) / Gamma(3/2),
+        # with chi_eff = 48 n the K3 reading (D-015), 144 at n = 3 -- not
+        # chi(V_7), which is 0. Reading a generation count from it restates
+        # n_gen = b_2/4 (chi_eff/48 = n); it is not a derivation.
         gamma_3_2 = np.sqrt(np.pi) / 2  # Gamma(3/2) = sqrt(pi)/2
         euler_residue = chi_eff / ((4 * np.pi)**(3/2) * gamma_3_2)
 
@@ -245,7 +252,9 @@ class AppendixSSpectralResidueV19(SimulationBase):
         # STEP 6: Regularization scale
         # =========================================================
         # The spectral determinant requires regularization at mu
-        # We choose mu = k_gimel * M_Planck for consistency
+        # We choose mu = k_gimel * M_Planck for consistency. k_gimel =
+        # b_3/2 + 1/pi is CALIBRATED at the off-path seed b_3 = 24 (D-007);
+        # it is read live here and follows the adopted seed.
         regularization_scale = k_gimel
 
         return {
@@ -514,10 +523,12 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "This residue is proportional to the effective Euler characteristic, "
-                        "which determines the number of fermion generations via &chi;<sub>eff</sub>/48 = 3. "
-                        "The factor 48 = 6 &times; 8 arises from flux quantization (6) times "
-                        "spinor degrees of freedom (8)."
+                        "This residue is normalised to &chi;<sub>eff</sub> = 2 &times; &Sigma; &chi;(K3) "
+                        "= 48n (the K3 reading, D-015), 144 at n = 3; &chi;<sub>eff</sub> is not an "
+                        "Euler characteristic of V<sub>7</sub>, which is 0. &chi;<sub>eff</sub>/48 = n "
+                        "restates the generation count n<sub>gen</sub> = b<sub>2</sub>/4 rather than "
+                        "deriving it, and 48 = 2 &times; &chi;(K3) (two shadows), not the 6 &times; 8 "
+                        "of flux quantization times spinor degrees of freedom that earlier text gave."
                     )
                 ),
 
@@ -768,13 +779,13 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.1)",
                 latex=r"-\Delta_{V_7} \psi_n = \lambda_n \psi_n",
                 plain_text="-Delta_V7 psi_n = lambda_n psi_n",
-                # T4 (b): Laplacian on V_7 (G2 manifold with b3=24 cycles) → expose b3_leaf via the manifold radius
+                # T4 (b): Laplacian on V_7 (Y_7, b3 = 43 on the adopted path; the earlier '24' was the off-path seed) → expose b3_leaf via the identity factor b3/b3 in the manifold radius
                 eml_tree_str="ops.mul(ops.pow(eml_vec('n'), eml_scalar(2.0)), ops.inv(ops.pow(ops.mul(eml_vec('R_G2'), ops.div(b3_leaf(), b3_leaf())), eml_scalar(2.0))))",
                 category="ESTABLISHED",
                 description=(
                     "The eigenvalue equation for the Laplace-Beltrami operator on the "
-                    "G2 manifold V_7. The discrete spectrum {lambda_n} encodes all "
-                    "physical masses and parameters."
+                    "G2 manifold V_7. The framework postulates that the discrete "
+                    "spectrum {lambda_n} encodes the physical masses and parameters."
                 ),
                 input_params=["topology.mephorash_chi"],
                 output_params=["spectral.n_eigenvalues"],
@@ -801,7 +812,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.2)",
                 latex=r"\zeta_{V_7}(s) = \sum_{n=1}^{\infty} \lambda_n^{-s} = \text{Tr}(\Delta^{-s})",
                 plain_text="zeta_V7(s) = sum_{n=1}^{inf} lambda_n^{-s} = Tr(Delta^{-s})",
-                # T4 (b): zeta-function of V_7 spectrum — V_7 carries b3=24 cycles; expose b3_leaf
+                # T4 (b): zeta-function of V_7 spectrum (b3 = 43 on the adopted path; the earlier '24' was the off-path seed); expose b3_leaf via the identity factor b3/b3
                 eml_tree_str="ops.mul(ops.inv(ops.pow(eml_vec('lambda_n'), eml_vec('s'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="ESTABLISHED",
                 description=(
@@ -870,7 +881,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.4)",
                 latex=r"\text{Res}(\zeta_{V_7}, 7/2) = \frac{\text{Vol}(V_7)}{(4\pi)^{7/2} \, \Gamma(7/2)}",
                 plain_text="Res(zeta_V7, 7/2) = Vol(V_7) / ((4*pi)^{7/2} * Gamma(7/2))",
-                # T4 (b): Vol(V_7) determined by b3=24 cycles via Joyce TCS construction; expose b3_leaf
+                # T4 (b): Vol(V_7) of Y_7 = Joyce's resolution of T^7/(Z/2)^3 (the earlier 'b3 = 24 ... TCS' wording was the off-path seed); expose b3_leaf via the identity factor b3/b3
                 eml_tree_str="ops.div(ops.mul(eml_vec('Vol_V7'), ops.div(b3_leaf(), b3_leaf())), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(7.0), eml_scalar(2.0))), eml_vec('Gamma_7_2')))",
                 category="DERIVED",
                 description=(
@@ -934,13 +945,18 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.6)",
                 latex=r"\text{Res}(\zeta_{V_7}, 3/2) \propto \chi_{\text{eff}}(V_7) = 144",
                 plain_text="Res(zeta_V7, 3/2) ~ chi_eff(V_7) = 144",
-                # T4 (b): chi_eff = 144 = 6·b3 → expose b3_leaf directly in the residue numerator
+                # T4 (b): OFF-PATH (b3_seed = seed_24): this tree encodes chi_eff = 6·b3, which is 144 only at the
+                # retired seed b3 = 24 (258 at b3 = 43). On the adopted path chi_eff = 48 n (the K3 reading).
+                # The tree is unchanged in this wording pass; the formula's value below is 144.
                 eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), ops.div(ops.sqrt(eml_pi()), eml_scalar(2.0))))",
                 category="DERIVED",
                 description=(
-                    "The residue at s = 3/2 is proportional to the effective Euler "
-                    "characteristic chi_eff = 144, which determines the number of "
-                    "fermion generations as chi_eff/48 = 3."
+                    "Restates n_gen = b_2/4 through chi_eff: the residue at s = 3/2 is "
+                    "taken proportional to chi_eff = 2 x sum chi(K3) = 48 n (the K3 "
+                    "reading, D-015), 144 at n = 3, and chi_eff/48 = n. chi_eff is not "
+                    "the Euler characteristic of V_7, which is 0. OFF-PATH (b3_seed = "
+                    "seed_24): the EML tree still encodes chi_eff as 6 b_3, which is 144 "
+                    "only at b_3 = 24."
                 ),
                 input_params=["topology.mephorash_chi"],
                 output_params=["spectral.euler_residue"],
@@ -949,14 +965,14 @@ class AppendixSSpectralResidueV19(SimulationBase):
                     "method": "Heat kernel coefficient a_4 and Gauss-Bonnet",
                     "steps": [
                         "a_4 involves Euler integrand (Pfaffian of curvature)",
-                        "Generalized Gauss-Bonnet: integral = chi(M)",
-                        "For G2: effective index chi_eff = 144 (chi(Y_7) = 0)",
+                        "Generalized Gauss-Bonnet (even dimensions): integral = chi(M); chi(V_7) = 0",
+                        "chi_eff = 2 x sum chi(K3) = 48 n = 144 at n = 3 (the K3 reading, D-015)",
                         "This encodes topological information",
-                        "Generation count: N_gen = chi_eff/48 = 3",
+                        "Generation count: N_gen = chi_eff/48 = n, which restates n_gen = b_2/4",
                     ]
                 },
                 terms={
-                    "chi_eff": "Effective Euler characteristic (= 144)",
+                    "chi_eff": "chi_eff = 48 n = 144 (the K3 reading; not an Euler characteristic of V_7)",
                     "N_gen": "Number of fermion generations (= 3)",
                 }, 
             arithma=_arithma_num(144.0), eml=_eml_scalar(144.0), value=144.0),
@@ -1006,7 +1022,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.8)",
                 latex=r"\det(\Delta_{V_7}) = \exp\left(-\zeta'_{V_7}(0)\right)",
                 plain_text="det(Delta_V7) = exp(-zeta'_V7(0))",
-                # T4 (b): functional determinant defined on V_7 (b3=24); expose b3_leaf via identity factor
+                # T4 (b): functional determinant defined on V_7 (b3 = 43 on the adopted path; the earlier '24' was the off-path seed); expose b3_leaf via identity factor
                 eml_tree_str="ops.mul(ops.exp(ops.neg(eml_vec('zeta_prime_0'))), ops.div(b3_leaf(), b3_leaf()))",
                 category="DERIVED",
                 description=(
@@ -1074,7 +1090,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 label="(S.10)",
                 latex=r"m_n^2 = \frac{\lambda_n}{L^2}",
                 plain_text="m_n^2 = lambda_n / L^2",
-                # T4 (b): L_compact set by Vol(V_7)^{1/7} which depends on b3=24; expose b3_leaf
+                # T4 (b): L_compact set by Vol(V_7)^{1/7} (the earlier 'depends on b3 = 24' was the off-path seed); expose b3_leaf via the identity factor b3/b3
                 eml_tree_str="ops.div(eml_vec('lambda_n'), ops.pow(ops.mul(eml_vec('L_compact'), ops.div(b3_leaf(), b3_leaf())), eml_scalar(2.0)))",
                 category="DERIVED",
                 description=(
@@ -1167,8 +1183,9 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 status="DERIVED",
                 eml_description="EML: ops.div(eml_vec('topology.mephorash_chi'), ops.mul(ops.pow(ops.mul(eml_scalar(4.0), eml_pi()), ops.div(eml_scalar(3.0), eml_scalar(2.0))), ops.div(ops.sqrt(eml_pi()), eml_scalar(2.0))))",
                 description=(
-                    "Residue at s = 3/2, proportional to effective Euler characteristic "
-                    "chi_eff = 144, determining N_gen = 3."
+                    "Residue at s = 3/2, normalised to chi_eff = 48 n = 144 (the K3 "
+                    "reading, D-015; not an Euler characteristic). chi_eff/48 = n "
+                    "restates n_gen = b_2/4 = 3."
                 ),
                 derivation_formula="spectral-euler-residue-v19",
                 no_experimental_value=True,
@@ -1180,8 +1197,10 @@ class AppendixSSpectralResidueV19(SimulationBase):
                 status="FOUNDATIONAL",
                 eml_description="EML: ops.add(eml_scalar(12.0), ops.inv(eml_pi()))",
                 description=(
-                    "Scale for zeta regularization: k_gimel = 12 + 1/pi, "
-                    "consistent with holonomy warp factor."
+                    "Scale for zeta regularization: k_gimel = b_3/2 + 1/pi, read from "
+                    "topology.k_gimel, so it follows the live seed. CALIBRATED (D-007): "
+                    "the k_gimel layer was fitted at the off-path seed b_3 = 24, where it "
+                    "is 12 + 1/pi."
                 ),
                 no_experimental_value=True,
             ),
@@ -1212,7 +1231,9 @@ class AppendixSSpectralResidueV19(SimulationBase):
             },
             {
                 "id": "cert-k-gimel-scale",
-                "assertion": "Zeta regularization scale k_gimel = 12 + 1/pi is consistent with holonomy",
+                "assertion": ("CALIBRATED at the off-path seed b_3 = 24 (D-007): k_gimel = 12 + 1/pi "
+                              "is the retired seed's value of b_3/2 + 1/pi; topology.k_gimel follows "
+                              "the adopted seed"),
                 "condition": "abs(k_gimel - (12 + 1/pi)) < 1e-10",
                 "tolerance": 1e-10,
                 "status": "PASS",
@@ -1255,7 +1276,8 @@ class AppendixSSpectralResidueV19(SimulationBase):
         import math
         checks = []
 
-        # Check 1: k_gimel value
+        # Check 1: k_gimel at the off-path seed b_3 = 24 (CALIBRATED, D-007):
+        # a typed 12 + 1/pi, not the live topology.k_gimel.
         k_gimel = 12 + 1 / math.pi
         expected = 12.318309886183791
         checks.append({
@@ -1263,7 +1285,7 @@ class AppendixSSpectralResidueV19(SimulationBase):
             "passed": abs(k_gimel - expected) < 1e-10,
             "confidence_interval": {"lower": 12.318, "upper": 12.319, "sigma": 1e-10},
             "log_level": "INFO",
-            "message": f"k_gimel = {k_gimel:.15f}",
+            "message": f"k_gimel at the off-path seed b_3 = 24 (CALIBRATED, D-007) = {k_gimel:.15f}",
         })
 
         # Check 2: References populated

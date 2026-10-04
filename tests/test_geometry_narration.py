@@ -30,8 +30,9 @@ from metaphysica.simulations.PM.geometry.geometry_narration import (
 
 # ------------------------------------------------- the adopted branch
 
-def test_the_adopted_branch_may_not_claim_g2_holonomy(monkeypatch):
-    monkeypatch.delenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", raising=False)
+def test_the_split_branch_may_not_claim_g2_holonomy(monkeypatch):
+    """The split form is a switch path since D-015; it still may not claim."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", "all_plus_one")
     claim = holonomy_claim()
     assert claim["branch"] == "all_plus_one"
     assert claim["real_form"].startswith("split")
@@ -113,8 +114,21 @@ def test_the_b3_route_narrates_that_it_is_empty_on_the_family():
 
 # ------------------------------------------------- the unruled one
 
-def test_chi_eff_is_not_narrated_as_derived():
-    """Inventing a default here would be making the ruling."""
+def test_chi_eff_is_narrated_as_derived_on_the_k3_branch(monkeypatch):
+    """D-015 (2026-10-01): the K3 reading is adopted, so it is derived."""
+    monkeypatch.delenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", raising=False)
+    claim = chi_eff_claim()
+    assert claim["branch"] == "k3_reading"
+    assert claim["may_claim_a_derivation"] is True
+    assert claim["ruling_required"] is False
+    assert claim["value"] == 144
+    assert "not the Euler characteristic" in claim["sentence"].replace(
+        "NOT", "not")
+
+
+def test_the_unruled_branch_still_narrates_the_dichotomy(monkeypatch):
+    """The pre-ruling state stays one switch away, and says what it is."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "unruled")
     claim = chi_eff_claim()
     assert claim["may_claim_a_derivation"] is False
     assert claim["ruling_required"] is True
@@ -123,24 +137,27 @@ def test_chi_eff_is_not_narrated_as_derived():
     assert "SEED-DEPENDENT" in claim["dichotomy"]
 
 
-def test_chi_eff_stays_forbidden_on_every_branch(monkeypatch):
-    """Unlike holonomy, no fork setting makes this claim sayable.
+def test_chi_eff_is_forbidden_exactly_off_the_k3_branch(monkeypatch):
+    """The forbidden phrase follows the chi_eff switch, not the real form.
 
-    An earlier version of this test ended `... or True`, which made it
-    unfalsifiable -- the exact defect this suite exists to catch, written into
-    the file that checks the wording. It now actually switches the branch.
+    An earlier version ended `... or True` and could not fail; this one
+    switches both forks and checks each combination.
     """
     for convention in ("all_plus_one", "octonion_derived"):
         monkeypatch.setenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", convention)
-        assert "chi_eff is derived" in forbidden_phrases(), convention
-        assert chi_eff_claim()["may_claim_a_derivation"] is False
+        for route, forbidden in (("k3_reading", False), ("unruled", True),
+                                 ("constant_144", True)):
+            monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", route)
+            assert ("chi_eff is derived" in forbidden_phrases()) is forbidden, (
+                convention, route)
 
 
 # ------------------------------------------------- the forbidden list
 
 def test_the_forbidden_list_is_generated_not_maintained(monkeypatch):
     """It must shrink when the branch makes the claim true."""
-    monkeypatch.delenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", raising=False)
+    monkeypatch.setenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", "unruled")
+    monkeypatch.setenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", "all_plus_one")
     on_split = forbidden_phrases()
     assert "G2 holonomy" in on_split
 
@@ -225,9 +242,11 @@ def test_fragments_never_claim_holonomy():
         assert "holonomy" not in text, register
 
 
-def test_the_chi_eff_candidate_is_reported_not_adopted():
+def test_the_k3_reading_is_reported_as_adopted(monkeypatch):
+    """D-015: the K3 reading is the active branch, with its D-009 record."""
+    monkeypatch.delenv("METAPHYSICA_VARIANT_CHI_EFF_ROUTE", raising=False)
     claim = chi_eff_claim()
     assert claim["candidate"]["reading"] == "K3"
     assert "48 n" in claim["candidate"]["formula"]
-    assert claim["may_claim_a_derivation"] is False
-    assert "not the Euler" in claim["sentence"]
+    assert claim["may_claim_a_derivation"] is True
+    assert "not the euler" in claim["sentence"].lower()

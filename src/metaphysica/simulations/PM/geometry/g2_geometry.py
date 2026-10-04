@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 """
-PRINCIPIA METAPHYSICA v16.0 - G2 Geometry and Topology
-========================================================
+PRINCIPIA METAPHYSICA - G2 Geometry and Topology
+================================================
 
 Licensed under the MIT License. See LICENSE file for details.
 
@@ -11,25 +11,29 @@ Combines G2 holonomy validation, Ricci-flatness checks, and topology
 invariants into a single foundational simulation.
 
 This is a ROOT simulation - it has NO dependencies on other simulations.
-All inputs come from ESTABLISHED constants (b3, h11, etc.).
+(b2, b3) come from the live b3_seed fork: on the adopted path Y_7 is Joyce's
+resolution of T^7/(Z/2)^3 with (b2, b3) = (12, 43). The Hodge numbers
+h11/h21/h31 are carried data of the off-path TCS model.
 
 KEY FEATURES:
 1. G2 holonomy validation (parallel spinor, Ricci-flatness)
 2. Topology invariants (b2, b3, chi_eff, n_gen) from the live b3_seed fork
 3. Betti numbers and Euler characteristic
-4. Cycle matching parameter K_MATCHING
+4. Cycle matching parameter K_MATCHING (a TCS quantity, off-path)
 5. Cycle separation d/R for proton decay
 
 OUTPUTS:
 - topology.elder_kads: Third Betti number b_3, read from the b3_seed fork
-- topology.mephorash_chi: Effective Euler characteristic (route UNRULED)
+- topology.mephorash_chi: Effective index chi_eff = 144, the adopted K3
+  reading 48n (D-015); not the Euler characteristic of Y_7, which is 0
 - topology.n_gen: Number of generations, from the n_gen_source fork
-- topology.K_MATCHING: K3 matching fibres (4)
+- topology.K_MATCHING: K3 matching fibres (4; off-path TCS quantity)
 - topology.d_over_R: Cycle separation ratio (0.12)
 
 FORMULAS:
 - g2-holonomy: G2 holonomy condition (parallel spinor)
-- euler-characteristic: χ_eff = 2(h11 - h21 + h31)
+- euler-characteristic: χ_eff = 2(h11 - h21 + h31), an off-path TCS route
+  whose value 144 equals the adopted K3 reading 48n at n = 3
 - betti-numbers: Betti number sequence from the Joyce resolution count
 
 REFERENCES:
@@ -136,7 +140,7 @@ def _arithma_cos(a):
 
 class G2GeometryV16(SimulationBase):
     """
-    v16.0: G2 Geometry and Topology Invariants
+    G2 Geometry and Topology Invariants
 
     Root simulation computing fundamental G2 topology parameters.
     No external dependencies - all inputs are ESTABLISHED constants.
@@ -171,14 +175,16 @@ class G2GeometryV16(SimulationBase):
         A FALSE PROVENANCE, CORRECTED
         =============================
         `self._b3 = 24` carried the comment "From TCS construction". It is not:
-        `fano_tcs` exhibits 71 <= b_3 <= 155, so TCS #187 does not supply 24 at
-        all, and the register has carried that exclusion for several passes.
+        `fano_tcs` exhibits 71 <= b_3 <= 155, so the off-path TCS #187 does not
+        supply 24 at all, and the register has carried that exclusion for
+        several passes.
         Note also that the old code set `_b3` INDEPENDENTLY of h31 -- the TCS
         Hodge numbers below feed chi_eff, never b_3 -- so the comment described
         a derivation that was not even being attempted.
         """
-        # TCS #187 Hodge numbers, kept because chi_eff is built from them.
-        # They do NOT determine b_3; see the docstring.
+        # Hodge numbers of the off-path TCS #187 model, kept because chi_eff
+        # is built from them (their 144 equals the adopted K3 reading, 48n at
+        # n = 3). They do NOT determine b_3; see the docstring.
         self.tcs_id = 187
         self.h11 = 4    # Kahler moduli
         self.h21 = 0    # Complex structure (none for G2)
@@ -195,17 +201,19 @@ class G2GeometryV16(SimulationBase):
         self._b3 = b3
         self._b2 = b2
 
-        # chi_eff has TWO claimed origins in the framework, and they COINCIDE at
-        # b_3 = 24 while disagreeing elsewhere -- which is the "matching values
-        # are not the same statement" trap. Both are exposed rather than one
-        # being silently preferred:
+        # chi_eff has carried TWO older origins in the framework, and they
+        # COINCIDE at b_3 = 24 while disagreeing elsewhere -- which is the
+        # "matching values are not the same statement" trap. Both are exposed
+        # rather than one being silently preferred:
         #   (a) 2 (h11 - h21 + h31) = 144, a TCS Hodge-number expression that
-        #       does not reference b_3 at all;
+        #       does not reference b_3 at all (off-path: a Joyce orbifold has
+        #       no h21 or h31);
         #   (b) b_3^2 / 4 = 576/4 = 144, recorded in FormulasRegistry.
         # At b_3 = 43 route (b) gives 462.25, not an integer, so it cannot be an
-        # effective Euler characteristic there. Route (a) is used because it is
-        # the one that stays integral, and the divergence is REPORTED, not
-        # resolved -- which of the two is meant is an author ruling.
+        # effective index there. The author has since ADOPTED the K3 reading
+        # (D-015): chi_eff = 2 x sum chi(K3) = 48 n, 144 at n = 3. Route (a)'s
+        # value is used because it equals that reading on the adopted path;
+        # the divergence of (a) and (b) is still REPORTED.
         self._chi_eff_from_hodge = 2 * (self.h11 - self.h21 + self.h31)
         self._chi_eff_from_b3 = (self._b3 ** 2) / 4.0
         self._chi_eff = self._chi_eff_from_hodge
@@ -218,23 +226,25 @@ class G2GeometryV16(SimulationBase):
         self._n_gen = self._resolve_n_gen()
 
         # Matching and separation parameters. K_matching is h^{1,1}, which is a
-        # TCS Hodge number and does NOT ride on the seed -- so on seed_43_joyce
-        # it stays 4 while b_2 becomes 12, and the identity "K = h11 = b_2"
-        # that the certificates assert BREAKS. Recorded rather than papered
-        # over; which of the two b_2 means is an author ruling.
+        # TCS Hodge number of the off-path model and does NOT ride on the seed
+        # -- so on seed_43_joyce it stays 4 while b_2 becomes 12, and the
+        # identity "K = h11 = b_2" that the certificates assert BREAKS.
+        # Recorded rather than papered over.
         self._K_matching = self.h11
         self._k_matching_equals_b2 = (self._K_matching == self._b2)
-        self._d_over_R = 0.12  # Cycle separation (from TCS gluing)
+        self._d_over_R = 0.12  # Cycle separation (a TCS-gluing estimate; off-path)
 
-        # Geometric anchors for stability checks
-        self._k_gimel = (self._b3 / 2.0) + (1.0 / np.pi)  # 12.318 at b_3 = 24
+        # Geometric anchors for stability checks. The k_gimel layer is
+        # CALIBRATED at the off-path seed b_3 = 24 (D-007), where it is 12.318.
+        self._k_gimel = (self._b3 / 2.0) + (1.0 / np.pi)
         self._c_kaf = self._b3 * (self._b3 - 7) / (self._b3 - 9)
 
     def _resolve_n_gen(self) -> int:
         """The generation count, from whichever source the fork selects.
 
-        b_3/8 is an integer at 24 and not at any Joyce-reachable value, so the
-        two forks are coupled: `seed_43_joyce` requires `b2_over_faces`. The
+        The b_3/8 route is abandoned: it is an integer at the off-path seed 24
+        and at no Joyce-reachable value (8 divides no odd b_3), so the two
+        forks are coupled: `seed_43_joyce` requires `b2_over_faces`. The
         report from `b3_path.n_gen_report` carries both and says which holds.
         """
         from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
@@ -274,9 +284,13 @@ class G2GeometryV16(SimulationBase):
         Identity: (C_kaf * b3) / k_gimel must remain within
         Stability Bound [52.9, 53.1] (internal consistency window,
         ANSATZ — not a bound from Joyce)
+
+        CALIBRATED at the off-path seed b3 = 24, where the ratio is 52.99.
+        The window was not re-derived for the adopted seed, where the ratio
+        is about 89.7 and the check returns False.
         """
         stability_ratio = (self._c_kaf * self._b3) / self._k_gimel
-        # 27.2 * 24 / 12.318 = 52.99
+        # at the off-path seed b3 = 24: 27.2 * 24 / 12.318 = 52.99
         is_stable = 52.9 < stability_ratio < 53.1
 
         # Calculate stabilized 7D Radius in Planck Units
@@ -299,11 +313,12 @@ class G2GeometryV16(SimulationBase):
         return r_7d > 1.616255e-35  # Planck length in meters; returns True if stable
 
     def verify_lattice_consistency(self) -> Dict[str, Any]:
-        """Supplementary cross-check of TCS #187 values against lattice chain.
+        """Supplementary cross-check of the carried values against the lattice chain.
 
         Uses LatticeBridgeConnector to derive topology from algebraic
         structures (E8 → Octonions → G2 → Leech → Bridges → Faces)
-        and verifies consistency with the hardcoded TCS #187 invariants.
+        and compares them with the carried invariants (h11 from the
+        off-path TCS #187 model; b3 and n_gen from the live seed).
 
         Also verifies Hitchin's identity: φ_{iab}φ_{jab} = 6δ_{ij}
         for both the local G2 3-form and the lattice-derived 3-form.
@@ -372,7 +387,7 @@ class G2GeometryV16(SimulationBase):
             version="16.0",
             domain="geometric",
             title="G2 Geometry and Topology",
-            description="Fundamental G2 holonomy validation and TCS topology invariants",
+            description="G2 geometry checks and the topology of Y_7, Joyce's resolution of T^7/(Z/2)^3 (the TCS route is off-path)",
             section_id="2",
             subsection_id=None
         )
@@ -451,7 +466,8 @@ class G2GeometryV16(SimulationBase):
         Computes:
         1. G2 holonomy validation
         2. Betti numbers and Euler characteristic
-        3. Number of generations from chi_eff
+        3. Number of generations, chi_eff/48 = n (restates b_2/4 under the
+           adopted K3 reading)
         4. Cycle matching and separation parameters
 
         Args:
@@ -509,10 +525,16 @@ class G2GeometryV16(SimulationBase):
           χ_eff   = 6 × b₃      →  ops.mul(6, b3)
           n_gen   = χ_eff / 48  →  ops.div(chi_eff, 48)
 
-        The G₂-holonomy metric tensor is retrieved from MetricTensor.g2_holonomy()
-        and the Leech lattice (24D) encodes the b₃ = 24 topology.
+        STATUS: χ_eff = 6 b₃ is an OFF-PATH route; it equals 144 only at the
+        retired seed b₃ = 24 (258 at b₃ = 43, so this path's n_gen is not 3
+        there). The adopted reading is the K3 reading χ_eff = 48n (D-015).
+        k_gimel is CALIBRATED at the off-path seed (D-007).
+
+        The G₂-holonomy metric tensor is retrieved from MetricTensor.g2_holonomy();
+        the Leech lattice (rank 24, a named constant, not b₃) is sampled as a
+        side check.
         <Normal>
-        k_gimel = b₃/2 + 1/π  (spectral gap from G₂ associative 3-cycles)
+        k_gimel = b₃/2 + 1/π  (CALIBRATED at the off-path seed b₃ = 24; no derivation)
         </Normal>
         <EML>
         k_gimel = ops.add(ops.div(eml_scalar(b₃), eml_scalar(2)),
@@ -533,16 +555,18 @@ class G2GeometryV16(SimulationBase):
         b3_pt = eml_scalar(float(b3))
         k_gimel = eml_compute(eml_add(eml_div(b3_pt, eml_scalar(2.0)), eml_inv(eml_pi())))
 
-        # EML: χ_eff = 2 × (h11 - h21 + h31) = 6 × b₃ = 144
+        # EML: χ_eff = 6 × b₃ -- an OFF-PATH route; it equals
+        # 2 × (h11 - h21 + h31) = 144 only at the retired seed b₃ = 24
         chi_eff = eml_compute(eml_mul(eml_scalar(6.0), b3_pt))
 
-        # EML: n_gen = χ_eff / 48 (use round to handle float precision)
+        # EML: n_gen = χ_eff / 48 (use round to handle float precision);
+        # equals n only when χ_eff = 48n, the adopted K3 reading
         n_gen = int(round(eml_compute(eml_div(eml_scalar(chi_eff), eml_scalar(48.0)))))
 
-        # EML: K_matching = h11 (topological integer — direct)
+        # EML: K_matching = h11 (a TCS Hodge number, off-path — direct)
         K_matching = h11
 
-        # EML: d/R = 0.12 (cycle separation from TCS gluing — topological constant)
+        # EML: d/R = 0.12 (a TCS-gluing estimate, off-path; carried as a constant)
         d_over_R = eml_compute(eml_div(eml_scalar(12.0), eml_scalar(100.0)))
 
         # Validate G₂ holonomy via EML metric
@@ -552,7 +576,7 @@ class G2GeometryV16(SimulationBase):
         except Exception:
             holonomy_valid = self._validate_g2_holonomy()
 
-        # Leech lattice (24D) encodes b₃ = 24 topology; verify min norm
+        # Leech lattice (rank 24, a named constant -- not b₃); verify min norm
         try:
             leech_pts = eml_leech_points(n=3, scale=1.0)
             # min norm of Leech lattice = 4 (vectors have norm 2·2 = 4 in standard normalization)
@@ -596,11 +620,13 @@ class G2GeometryV16(SimulationBase):
         `G_GEOMETRY_HOLONOMY` gate with a hardcoded "result": "PASS" -- the one
         gate in `get_gates` whose result was a literal rather than a comparison.
 
-        A validation that cannot fail is a defect, and this one was asserting
-        something that is additionally FALSE on the adopted branch: `phi` is a
+        A validation that cannot fail is a defect. On the split branch
+        (`all_plus_one`) it also asserted something FALSE: there `phi` is a
         G2-structure for the SPLIT real form, whose induced metric has
         signature (4,3), so there is no Riemannian G2-holonomy manifold behind
-        it at all.
+        it at all. On the compact branch (`octonion_derived`, the active path
+        since the 2026-10-01 ruling, D-015) that objection goes away, but the
+        conditions below are still placeholders.
 
         WHAT IT DOES NOW
         ================
@@ -671,9 +697,9 @@ class G2GeometryV16(SimulationBase):
 
         Kept as a bool for the callers that consume `_holonomy_valid`, but it
         is no longer `all()` over three conditions that cannot fail. It is
-        False on the adopted branch because the framework's phi is the split
-        real form, and it would still be False on the compact branch because
-        every condition below it is a placeholder.
+        False on the split branch because phi is the split real form there,
+        and it is still False on the compact branch because every condition
+        below it is a placeholder.
         """
         report = self.holonomy_validation_report()
         return bool(report["may_claim_g2_holonomy"]
@@ -696,13 +722,14 @@ class G2GeometryV16(SimulationBase):
             L2 norm of torsion: ||dφ|| + ||d(*φ)||
 
         Note:
-            For TCS G₂ manifolds, this should be exactly zero by construction.
+            For Joyce's resolution of T⁷/(ℤ/2)³ this should be exactly zero:
+            Joyce's theorem gives a torsion-free G₂-structure.
             Non-zero values indicate either:
             - Numerical approximation errors
             - G₂ structure with intrinsic torsion (T ≠ 0)
             - Flux backreaction effects
         """
-        # For TCS construction, we have exact torsion-free G₂ structure
+        # Joyce's construction gives an exactly torsion-free G₂ structure
         # The effective torsion T_ω arises from flux, not geometric torsion
 
         # Construct sample 3-form φ on G₂ (in standard coordinates)
@@ -729,7 +756,7 @@ class G2GeometryV16(SimulationBase):
         """
         Construct the standard G₂ 3-form φ.
 
-        For TCS G₂ manifold, the 3-form in local coordinates is:
+        In local flat coordinates the G₂ 3-form is:
         φ = dx¹²³ + dx¹⁴⁵ + dx¹⁶⁷ + dx²⁴⁶ + dx²⁵⁷ + dx³⁴⁷ + dx³⁵⁶
 
         where dx^{ijk} = dx^i ∧ dx^j ∧ dx^k
@@ -767,7 +794,7 @@ class G2GeometryV16(SimulationBase):
             7×7 metric tensor g_{μν}
         """
         # For standard G₂, metric is Euclidean in these coordinates
-        # Full TCS metric would include gluing deformations
+        # The metric on Y_7 would add the Eguchi-Hanson resolution corrections
         return np.eye(7)
 
     def _exterior_derivative_3form(self, phi: np.ndarray) -> np.ndarray:
@@ -783,7 +810,7 @@ class G2GeometryV16(SimulationBase):
             4-form dφ (should be zero for true G₂ holonomy)
         """
         # In flat coordinates with constant structure, dφ = 0 exactly
-        # For TCS with gluing, there may be small numerical contributions
+        # Near the resolved loci of Y_7 there would be small corrections
 
         # Simplified: check that structure constants satisfy Jacobi identity
         d_phi = np.zeros((7, 7, 7, 7))
@@ -866,8 +893,9 @@ class G2GeometryV16(SimulationBase):
         Formula:
             χ = Σ(-1)^i b_i = 0 for odd-dimensional manifolds
 
-        But effective χ_eff = 2(h11 - h21 + h31) = 144
-        is the physically relevant quantity.
+        The effective index χ_eff = 144 is a different quantity: on the
+        adopted K3 reading (D-015) it is 2 × Σχ(K3) = 48n, and it is never
+        the Euler characteristic of Y_7.
 
         Returns:
             Topological chi (always 0 for G2)
@@ -883,10 +911,13 @@ class G2GeometryV16(SimulationBase):
         Derivation:
             n_gen = χ_eff / 48
 
-        UNRULED. This is the chi_eff route, which the framework has not
-        ruled on; it is neither asserted as the live derivation nor
-        deleted. The PUBLISHED count is `self._n_gen`, resolved by the
-        `n_gen_source` fork (b_2 / 4 on the adopted branch).
+        On the adopted K3 reading (D-015) χ_eff = 48n, so this returns n,
+        the number of singular involutions: it restates the ruled route
+        b_2/4 rather than adding a second derivation, and it is not an
+        index theorem for chirality (chirality is OPEN). The value used is
+        the carried 144, which equals 48n on the adopted path. The
+        PUBLISHED count is `self._n_gen`, resolved by the `n_gen_source`
+        fork (b_2 / 4 on the adopted branch).
 
         Returns:
             Number of generations
@@ -913,10 +944,11 @@ class G2GeometryV16(SimulationBase):
         Compute cycle separation ratio d/R.
 
         Derivation:
-            From TCS gluing geometry:
+            An estimate carried from the off-path TCS #187 gluing geometry,
+            not derived for Y_7:
             d = typical cycle separation
             R = compactification radius
-            d/R ~ 0.12 for TCS #187
+            d/R ~ 0.12
 
         This parameter controls:
         - Yukawa coupling suppression
@@ -981,7 +1013,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The starting point is a gravitational theory in 26 dimensions decomposing as M₂₆ = M<sub>A</sub><sup>13</sup> ⊗<sub>E</sub> M<sub>B</sub><sup>13</sup> — the critical dimension of bosonic string theory — coupled to the fundamental Pneuma field. Each 13D half has signature (12,1) connected via Euclidean bridge. OR (Objective Reduction) provides the physical mechanism eliminating ghost states through gravitational self-energy threshold. The full 26D action takes the form:"
+                content="The starting point is a gravitational theory in 26 dimensions of signature (24,2) — 24 space and 2 time directions, one time per 13D shadow — decomposing as M₂₆ = M<sub>A</sub><sup>13</sup> ⊗<sub>E</sub> M<sub>B</sub><sup>13</sup> and coupled to the fundamental Pneuma field. Each 13D half has signature (12,1), and the halves are connected by the Euclidean bridges. Here 26 is not claimed to be a critical dimension: that claim is RETIRED (signature ruling 2026-08-31), since with two times the bosonic critical dimension is 27–28. OR (Objective Reduction) is proposed as the mechanism that removes ghost states through a gravitational self-energy threshold; ghost control of the second time remains OPEN. The full 26D action takes the form:"
             ),
             ContentBlock(
                 type="formula",
@@ -999,19 +1031,19 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="These conditions eliminate the ghost degrees of freedom through gravitational self-energy threshold, projecting the full M₂₆ = M<sub>A</sub><sup>13</sup> ⊗<sub>E</sub> M<sub>B</sub><sup>13</sup> structure onto physically observable states. After OR reduction, the 4096-component spinor reduces to 64 effective components. Each 13D half independently contributes physical degrees of freedom while connecting through the Euclidean bridge."
+                content="These conditions are proposed to eliminate the ghost degrees of freedom through a gravitational self-energy threshold (ghost control of the second time is OPEN), projecting the full M₂₆ = M<sub>A</sub><sup>13</sup> ⊗<sub>E</sub> M<sub>B</sub><sup>13</sup> structure onto physically observable states. After OR reduction, the 4096-component spinor reduces to 64 effective components. Each 13D half independently contributes physical degrees of freedom while connecting through the Euclidean bridge."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="26D→13D Shadow Decomposition with Euclidean Bridge (v24.2)",
-                content="The 26-dimensional spacetime decomposes as a tensor product of 13D shadow (from 26D bulk) connected via Euclidean bridge. Key Features: signature (24,2) → (12,1) effective after OR reduction; OR removes ghosts; 4096 → 64 components."
+                title="26D→13D Shadow Decomposition with Euclidean Bridge",
+                content="The 26-dimensional spacetime decomposes as a tensor product of two 13D shadows connected by the Euclidean bridges. Key features: signature (24,2) = (12,1) + (12,1), one time per shadow; OR is proposed to remove ghosts (ghost control is OPEN); 4096 → 64 components."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Algebraic Origin of D=13",
-                content="The dimension D=13 has a unique algebraic decomposition in terms of the normed division algebras: 13 = 1 + 4 + 8 (R + H + O). Why D=13 is unique: Unlike D=10 (C+O, requiring worldsheet) or D=11 (R+C+O, 7D internal), the decomposition 1+4+8 naturally accommodates CY4 internal geometry with thermal time emergence. The cobordism group Ω^String_13 = 0 ensures global anomaly freedom."
+                content="The dimension D=13 has a unique algebraic decomposition in terms of the normed division algebras: 13 = 1 + 4 + 8 (R + H + O). Why D=13 is unique: Unlike D=10 (C+O, requiring worldsheet) or D=11 (R+C+O, 7D internal), the decomposition 1+4+8 was read as accommodating a CY4 internal geometry with thermal time emergence (off-path: the internal space is the G₂ manifold Y₇). The cobordism group Ω^String_13 = 0 ensures global anomaly freedom."
             ),
             ContentBlock(
                 type="paragraph",
@@ -1066,7 +1098,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="For V₉ ~ (1/M<sub>GUT</sub>)⁹ with M<sub>GUT</sub> = 2.118 × 10<sup>16</sup> GeV (Grand Unification scale -- geometrically derived from G₂ topology and gauge coupling unification), and M<sub>Pl</sub>(reduced) = 2.435 × 10<sup>18</sup> GeV (measured, PDG 2024), we obtain M<sub>*</sub> ~ M<sub>GUT</sub>. This natural emergence of the GUT scale provides a consistency check on the framework."
+                content="For V₉ ~ (1/M<sub>GUT</sub>)⁹ with M<sub>GUT</sub> = 2.118 × 10<sup>16</sup> GeV (the RG-crossing unification scale, canonical_values M_GUT), and M<sub>Pl</sub>(reduced) = 2.435 × 10<sup>18</sup> GeV (measured, PDG 2024), we obtain M<sub>*</sub> ~ M<sub>GUT</sub>. This provides a consistency check on the framework."
             ),
         ])
 
@@ -1090,7 +1122,17 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The SO(10) gauge symmetry arises from a D_5-type singularity in the G₂ manifold, where the holonomy group can develop ADE-type singularities that enhance the gauge symmetry."
+                content=(
+                    "On the adopted Y₇ the singular set is %d A₁ loci, giving "
+                    "U(1)<sup>%d</sup> on the resolution and "
+                    "SU(2)<sup>%d</sup> at the orbifold point (CG.3, CG.5). "
+                    "Y₇ has no D₅ locus, so the SO(10) mechanism described "
+                    "here is the framework's model construction, not a "
+                    "property of Y₇. In that construction, SO(10) gauge "
+                    "symmetry arises from a D_5-type singularity, where the "
+                    "holonomy group can develop ADE-type singularities that "
+                    "enhance the gauge symmetry." % (b2, b2, b2)
+                )
             ),
             ContentBlock(
                 type="callout",
@@ -1116,25 +1158,46 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="The G₂ manifold K_Pneuma is realized as an elliptic fibration over a three-fold base B_3. The SO(10) gauge symmetry lives on a divisor S ⊂ B_3 where the elliptic fiber develops a D_5 singularity. Matter fields localize on curves within S where the singularity enhances, and Yukawa couplings arise at points where three matter curves meet."
+                content="OFF-PATH (F-theory model): the SO(10) sector was modelled on an elliptic fibration over a three-fold base B_3 — an F-theory geometry of eight real dimensions, not the 7-manifold Y₇ itself. In that model the SO(10) gauge symmetry lives on a divisor S ⊂ B_3 where the elliptic fiber develops a D_5 singularity. Matter fields localize on curves within S where the singularity enhances, and Yukawa couplings arise at points where three matter curves meet."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Generation Count from G₂ Topology",
-                content="For M-theory compactifications on a G₂ manifold with Z₂ mirror structure, the number of chiral generations is determined by the effective Euler characteristic via an index formula. While G₂ manifolds generically have χ(G₂) = 0, flux dressing and the Z₂ mirror structure yield χ_eff ≠ 0 [Acharya 1996], [Atiyah-Singer 1963]."
+                content=(
+                    "On Y₇ the generation count is n<sub>gen</sub> = b₂/4 = "
+                    "%d, the number of singular involutions (the ruled "
+                    "route). Chirality is OPEN: the singular loci are "
+                    "disjoint, so Y₇ has no codimension-7 points (D-011). "
+                    "The earlier reading — chiral generations fixed by an "
+                    "index formula on a flux-dressed χ<sub>eff</sub> "
+                    "[Acharya 1996], [Atiyah-Singer 1963] — is withdrawn."
+                    % self._n_gen
+                )
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Generation Count: Geometrically Derived from Flux-Dressed Topology",
-                content="The three generations of Standard Model fermions emerge geometrically from the G₂ manifold's effective index (not the Euler characteristic of Y_7, which is 0) χ<sub>eff</sub> = 144, which accounts for both the intrinsic topology and flux stabilisation of the compactification. This represents a complete geometric derivation of n<sub>gen</sub> = 3 from the fundamental 26D structure, connecting the dimensionality of bosonic string theory to observed particle physics through G₂ topology."
+                title="Generation Count and the Effective Index",
+                content=(
+                    "The effective index χ<sub>eff</sub> = %g (not the "
+                    "Euler characteristic of Y₇, which is 0) is the K3 "
+                    "reading, adopted 2026-10-01 (D-015): χ<sub>eff</sub> = "
+                    "2 × Σ χ(K3) = 48n, one Kummer K3 surface (χ = 24) "
+                    "transverse to each of the n singular involutions, "
+                    "counted once per shadow. So n<sub>gen</sub> = "
+                    "χ<sub>eff</sub>/48 = n restates b₂/4; it is not a "
+                    "second derivation. The earlier wording — a 'complete "
+                    "geometric derivation' from flux-dressed topology, tied "
+                    "to the dimension of bosonic string theory — is "
+                    "withdrawn." % self._chi_eff
+                )
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Pneuma Chiral Filter Mechanism",
-                content="The Pneuma field provides a dynamical chiral filter via axial torsion coupling in the modified Dirac operator: iΓ^M D_M → iΓ^M D_M + γ^5 T_μ, where T_μ ~ ∇_μ ⟨Ψ_P⟩ is the axial torsion arising from the Pneuma gradient. This coupling projects onto chiral modes and filters out 7/8 of fermion states via topological barrier. References: Kaplan (1992) domain wall fermions; Acharya-Witten (2001) chiral fermions from G₂; Joyce (2000) spinor structures on G₂ manifolds."
+                content="A proposed mechanism (chirality on Y₇ is OPEN, D-011): the Pneuma field provides a dynamical chiral filter via axial torsion coupling in the modified Dirac operator: iΓ^M D_M → iΓ^M D_M + γ^5 T_μ, where T_μ ~ ∇_μ ⟨Ψ_P⟩ is the axial torsion arising from the Pneuma gradient. This coupling projects onto chiral modes and filters out 7/8 of fermion states via topological barrier. References: Kaplan (1992) domain wall fermions; Acharya-Witten (2001) chiral fermions from G₂; Joyce (2000) spinor structures on G₂ manifolds."
             ),
             ContentBlock(
                 type="callout",
@@ -1222,18 +1285,18 @@ class G2GeometryV16(SimulationBase):
                 content=(
                     "The Joyce orbifold T<sup>7</sup>/(ℤ/2)<sup>3</sup> with "
                     "Eguchi-Hanson resolution realises b₂ = %d (one exceptional "
-                    "2-class per A₁ family) and b₃ = %d. χ_eff = %g is carried "
-                    "alongside them but is UNRULED: it has three claimed "
-                    "derivations and no ruling selecting one, so it is not "
-                    "presented here as derived. The earlier wording credited "
-                    "this realisation to the TCS construction with b₂=4, "
-                    "b₃=24; %s."
+                    "2-class per A₁ family) and b₃ = %d. χ_eff = %g is the "
+                    "effective index on the adopted K3 reading (D-015), "
+                    "2 × Σ χ(K3) = 48n over the singular involutions; it is "
+                    "not the Euler characteristic of Y₇, which is 0. The "
+                    "earlier wording credited this realisation to the TCS "
+                    "construction with b₂=4, b₃=24, now off-path; %s."
                     % (b2, b3, self._chi_eff, tcs_excluded)
                 )
             ),
             ContentBlock(
                 type="paragraph",
-                content="Two concrete constructions achieve χ = 72 for 3 generations: Direct CY4 construction via complete intersection, or M/F-theory duality interpretation using G₂ geometry."
+                content="OFF-PATH (CY4 / F-theory model; the internal space is the G₂ manifold Y₇, not a CY4): two constructions were proposed to achieve χ = 72 for 3 generations: direct CY4 construction via complete intersection, or an M/F-theory duality interpretation using G₂ geometry."
             ),
             ContentBlock(
                 type="callout",
@@ -1245,7 +1308,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Correct CY4 Construction: Direct Methods",
-                content="For K_Pneuma with χ = 72, the following construction methods yield valid CY4 manifolds: complete intersection in weighted projective space, or resolved quotients of product manifolds. Advantages: rigorous SU(4) holonomy, controlled moduli space."
+                content="OFF-PATH (CY4 model): for a K_Pneuma with χ = 72, the following construction methods yield valid CY4 manifolds: complete intersection in weighted projective space, or resolved quotients of product manifolds. Advantages: rigorous SU(4) holonomy, controlled moduli space."
             ),
             ContentBlock(
                 type="callout",
@@ -1261,25 +1324,36 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="A CY4 with χ = 72 can be realized with the following Hodge diamond structure: h^{1,1}=4, h^{2,1}=0, h^{3,1}=0, h^{2,2}=60."
+                content="OFF-PATH (CY4 model): a CY4 with χ = 72 can be realized with the following Hodge diamond structure: h^{1,1}=4, h^{2,1}=0, h^{3,1}=0, h^{2,2}=60."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Pneuma Condensate Interpretation",
-                content="In the Pneuma framework, the specific geometry of K_Pneuma is not postulated but dynamically selected via the racetrack mechanism (see Section 2.7). The Pneuma field Ψ_P develops a vacuum expectation value ⟨ΨP⟩ = 1.0756 from competing non-perturbative effects (racetrack potential minimum), whose structure determines the internal metric g_mn through relations of the form: g_mn ∝ ⟨Ψ_P Γ_mn Ψ_P⟩"
+                content=(
+                    "On the adopted path the topology is selected by WA-1: "
+                    "the bridge↔component correspondence picks (b₂, b₃) = "
+                    "(%d, %d) without data (CG.8). This callout previously "
+                    "had the geometry of K_Pneuma dynamically selected by a "
+                    "racetrack (Section 2.7), with the Pneuma field Ψ_P "
+                    "taking ⟨Ψ_P⟩ = 1.0756 at the racetrack minimum. That is "
+                    "OFF-PATH: no gaugino racetrack exists on Y₇ (CG.5), and "
+                    "1.0756 is a racetrack output, not a property of Y₇. The "
+                    "proposed link to the internal metric, g_mn ∝ ⟨Ψ_P Γ_mn "
+                    "Ψ_P⟩, is unchanged." % (b2, b3)
+                )
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="2.2.2 Z₂ Mirror Structure: K_Pneuma × K̃_Pneuma (χ = 144 Total)",
-                content="The h^{1,1} = 4 Kähler moduli correspond to four gauge sectors (Σ₁, Σ₂, Σ₃, Σ₄) within K_Pneuma. In the full 26D framework, these four branes have Z₂ mirror partners, giving 8 total branes. The 1 + 3 pattern (one observable + three hidden) on each side of the Z₂ mirror reflects the universal structure. Physical implications: 4 sectors × 2 mirrors = 8 total gauge groups; observable sector on one mirror brane; dark sectors from 3 shadow + 4 mirror branes."
+                content="OFF-PATH as worded (g2_construction = fano_tcs): the four sectors below were credited to the h^{1,1} = 4 Kähler moduli of the TCS model. On Y₇ the 'four' survives as a count of families: b₂ counts four resolved A₁ families per singular involution. In the original reading, the h^{1,1} = 4 Kähler moduli correspond to four gauge sectors (Σ₁, Σ₂, Σ₃, Σ₄) within K_Pneuma. In the full 26D framework, these four branes have Z₂ mirror partners, giving 8 total branes. The 1 + 3 pattern (one observable + three hidden) on each side of the Z₂ mirror reflects the universal structure. Physical implications: 4 sectors × 2 mirrors = 8 total gauge groups; observable sector on one mirror brane; dark sectors from 3 shadow + 4 mirror branes."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="v16.0: Multi-Sector Blended Sampling with Geometric Width",
-                content="The four moduli faces — derived in four_face_structure as the moved coordinates of an involution, and previously credited to the h^{1,1}=4 Kähler moduli of the superseded TCS building block — provide a natural framework for understanding 4D physics as a weighted average over sector contributions: ⟨Observable⟩ = Σ_i w_i Observable_i, where w_i are the sector weights determined by the racetrack-stabilized Kähler moduli. Physical interpretation: each sector has slightly different cycle sizes → different wavefunction overlaps → sector-dependent Yukawa couplings. Reference: simulations/g2_yukawa_overlap_integrals_v15_0.py implements sector-weighted Monte Carlo with 10^5 samples per sector."
+                title="Multi-Sector Blended Sampling with Geometric Width",
+                content="The four moduli faces — derived in four_face_structure as the moved coordinates of an involution, and previously credited to the h^{1,1}=4 Kähler moduli of the superseded TCS building block — provide a framework for treating 4D physics as a weighted average over sector contributions: ⟨Observable⟩ = Σ_i w_i Observable_i, where w_i are sector weights set by racetrack-stabilised moduli (CALIBRATED at the off-path seed b₃ = 24; no racetrack exists on Y₇). Physical interpretation: each sector has slightly different cycle sizes → different wavefunction overlaps → sector-dependent Yukawa couplings. Reference: simulations/g2_yukawa_overlap_integrals_v15_0.py implements sector-weighted Monte Carlo with 10^5 samples per sector."
             ),
             ContentBlock(
                 type="callout",
@@ -1311,17 +1385,17 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="The Mashiach Field",
-                content="In the Principia Metaphysica framework, the overall volume modulus r_K is identified with the \"Mashiach field\" φ_M. Its dynamics drive late-time cosmic acceleration through a quintessence-like mechanism, as elaborated in Section 6. Volume Modulus Stabilization: The Mashiach field is identified with φM = Re(T), the real part of the Kähler modulus T. Its VEV ⟨Re(T)⟩ is stabilized via the standard racetrack mechanism from hidden sector gaugino condensation, with the value constrained by the Higgs mass (m_h = 125.20 GeV). Open problem: Higgs inversion yields Re(T) ≈ 9.865; the BBN-calibrated value is 7.086; the geometric value is 1.833. This prevents decompactification runaway and ensures natural lightness through exponential suppression in the non-perturbative superpotential."
+                content="In the Principia Metaphysica framework, the overall volume modulus r_K is identified with the \"Mashiach field\" φ_M = Re(T), the real part of the Kähler modulus T. It was proposed to drive late-time cosmic acceleration through a quintessence-like mechanism (Section 6); dark energy is OPEN, since the leading-order flux potential on Y₇ cannot accelerate (CG.11). Re(T) is an OPEN modulus: Y₇ fixes no Re(T) at leading order — the G4-flux potential is positive and runs away (CG.6) — and no gaugino racetrack exists on Y₇ (CG.5). The racetrack values quoted for it (Re(T) = 7.086 BBN-calibrated, ≈ 9.865 from Higgs inversion, 1.833 geometric) are CALIBRATED, not derived."
             ),
             ContentBlock(
                 type="paragraph",
-                content="The moduli are stabilized via the racetrack mechanism, where two competing non-perturbative effects from hidden sector gauge dynamics generate a stable minimum for the volume modulus T."
+                content="OFF-PATH (racetrack): the moduli were stabilised by a racetrack, two competing non-perturbative effects from hidden-sector gauge dynamics giving a minimum for the volume modulus T. No such racetrack exists on Y₇: the gauge theory on each singular locus is N = 4, which does not confine or condense (CG.5), and the moduli are OPEN (CG.6)."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Racetrack Stabilization Result",
-                content="Minimizing the scalar potential ∂V/∂T = 0 yields the stabilized modulus value: ⟨Re(T)⟩ = 7.086. This value directly determines the ratio of internal cycle volumes. The inverse of this ratio gives the Froggatt-Nielsen suppression parameter: ε ≈ 0.2257 (CALIBRATED: quoted constants do not reproduce this value; gaugino_condensation.py derives 0.2502/0.2079 honestly). Key Result: This value of ε ≈ 0.2257 matches the Cabibbo angle (sin θ_C ≈ 0.225). The parameter λ = T_min ≈ 1.4885 is an output of moduli stabilization, not an input."
+                title="Racetrack Stabilisation (Calibrated, Off-Path)",
+                content="CALIBRATED at the off-path seed b₃ = 24; no racetrack exists on Y₇. Minimizing the racetrack potential ∂V/∂T = 0 gave the modulus value ⟨Re(T)⟩ = 7.086, read as the ratio of internal cycle volumes, whose inverse gave the Froggatt-Nielsen parameter ε ≈ 0.2257 (quoted constants do not reproduce this value; gaugino_condensation.py derives 0.2502/0.2079 honestly). That ε ≈ 0.2257 sits near the Cabibbo angle (sin θ_C ≈ 0.225). The parameter λ = T_min ≈ 1.4885 was presented as an output of moduli stabilisation; with no racetrack on Y₇ it is a calibrated input."
             ),
             ContentBlock(
                 type="paragraph",
@@ -1331,11 +1405,11 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Effective Potential Components",
-                content="The full effective potential governing the compactification radius R consists of four key contributions: classical potential from curvature, flux stabilization, Casimir energy, and racetrack non-perturbative effects."
+                content="The effective potential for the compactification radius R was modelled with four contributions: classical potential from curvature, flux stabilization, Casimir energy, and racetrack non-perturbative effects. On Y₇ the leading-order G4-flux potential runs away (CG.6) and no racetrack exists (CG.5), so this model does not fix R."
             ),
             ContentBlock(
                 type="paragraph",
-                content="The Casimir energy arises from zero-point fluctuations of the Kaluza-Klein tower of Pneuma modes on the compact G₂ manifold. While subleading compared to the racetrack potential, this quantum correction plays a critical role in preventing gravitational collapse and ensuring the stability of the compactification against quantum fluctuations."
+                content="The Casimir energy arises from zero-point fluctuations of the Kaluza-Klein tower of Pneuma modes on the compact G₂ manifold. It was presented as subleading to a racetrack potential, which does not exist on Y₇, and as the correction that prevents gravitational collapse; that role is not established on the adopted geometry, where moduli stabilisation is OPEN (CG.6)."
             ),
             ContentBlock(
                 type="paragraph",
@@ -1343,13 +1417,13 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="While the racetrack mechanism is the dominant stabilizer (as derived in Section 2.7 and confirmed by the Higgs mass constraint m_h = 125.20 GeV constraining Re(T)), the Casimir contribution ensures that the vacuum remains stable even in the presence of perturbations that might momentarily shift the modulus away from its racetrack-determined minimum."
+                content="OFF-PATH (racetrack): the racetrack was presented as the dominant stabiliser (Section 2.7), with the Higgs mass m_h = 125.20 GeV used to constrain Re(T), and the Casimir contribution as what keeps the vacuum stable when the modulus is perturbed away from the racetrack minimum. No racetrack exists on Y₇, and Re(T) is an OPEN modulus (CG.6)."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Resolution Summary: Open Question 4",
-                content="Question: How do quantum corrections modify the classical Freund-Rubin ansatz? Answer: Quantum corrections (Casimir energy) provide additional stability beyond classical flux stabilization, preventing collapse via vacuum pressure. This resolution demonstrates that the classical Freund-Rubin geometry is quantum mechanically stable, with quantum corrections providing additional safeguards beyond the primary racetrack stabilization mechanism."
+                title="Open Question 4: Still Open on Y₇",
+                content="Question: How do quantum corrections modify the classical Freund-Rubin ansatz? The answer given here before — Casimir energy adding stability beyond classical flux stabilisation and a primary racetrack mechanism — is superseded: on Y₇, G4 flux fixes no modulus at leading order (the potential runs away, CG.6) and no racetrack exists (CG.5). Moduli stabilisation, Re(T) included, is OPEN."
             ),
         ])
 
@@ -1399,27 +1473,27 @@ class G2GeometryV16(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Unified Derivation Chain — No Circular Inputs",
+                title="KK Mass Scale Chain (Calibrated, Off-Path Racetrack)",
                 content=(
-                    "The KK mass scale is derived from flux quantisation and "
-                    "moduli stabilisation: N<sub>flux</sub> = 24 (quoted from "
-                    "χ<sub>eff</sub> = %g — an UNRULED route, since χ_eff has "
-                    "three claimed derivations and no ruling selects one) → "
-                    "racetrack coefficients a, b → T<sub>min</sub> "
-                    "(constrained from Higgs mass; value under tension) → "
-                    "ε = exp(−π(b−a)T<sub>min</sub>) ~ 0.2257 (CALIBRATED: "
-                    "quoted constants do not reproduce this value; "
+                    "CALIBRATED at the off-path seed b₃ = 24, through a "
+                    "racetrack that does not exist on Y₇. The KK mass scale "
+                    "was obtained from the chain N<sub>flux</sub> = 24 "
+                    "(quoted from χ<sub>eff</sub> = %g; a racetrack flux "
+                    "number, off-path on Y₇) → racetrack coefficients a, b → "
+                    "T<sub>min</sub> (constrained from the Higgs mass; value "
+                    "under tension) → ε = exp(−π(b−a)T<sub>min</sub>) ~ "
+                    "0.2257 (quoted constants do not reproduce this value; "
                     "gaugino_condensation.py derives 0.2502/0.2079 honestly) → "
                     "k<sub>eff</sub> = b₃/(2+ε) = %.2f → M<sub>KK</sub> = "
-                    "M<sub>Pl</sub> × exp(−k<sub>eff</sub> π). The published "
-                    "M<sub>KK</sub> ~ 4.5 TeV corresponded to k<sub>eff</sub> "
-                    "~ 10.80 at b₃ = 24; k<sub>eff</sub> rides on the seed, so "
-                    "that figure moves with it and is not restated here as if "
-                    "it had not. Deep Connection: the parameter λ = "
-                    "T<sub>min</sub> ~ 1.4885 is the OUTPUT of racetrack moduli "
-                    "stabilisation, not an input. Flux dynamics generates the "
-                    "Cabibbo angle, unifying UV topology → moduli dynamics → "
-                    "flavour physics → IR phenomenology."
+                    "M<sub>Pl</sub> × exp(−k<sub>eff</sub> π). Re(T) is an "
+                    "OPEN modulus on Y₇ (CG.6), so the chain is a "
+                    "calibration, not a derivation, and λ = T<sub>min</sub> "
+                    "~ 1.4885 is a calibrated input rather than an output of "
+                    "moduli stabilisation. The published M<sub>KK</sub> ~ 4.5 "
+                    "TeV corresponded to k<sub>eff</sub> ~ 10.80 at the "
+                    "off-path seed b₃ = 24; k<sub>eff</sub> rides on the "
+                    "seed, so that figure moved with it and is not restated "
+                    "here as if it had not."
                     % (self._chi_eff, b3 / (2.0 + 0.2257))
                 )
             ),
@@ -1474,7 +1548,7 @@ class G2GeometryV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="Each base KK mode gains a degeneracy tower from the T² fiber in the G₂ manifold's elliptic fibration structure, with quantum numbers (n,m) labeling the two T² cycles:"
+                content="Each base KK mode gains a degeneracy tower from the two extra dimensions T² of each shadow (13 = 4 + 7 + 2; the T² is not part of Y₇), with quantum numbers (n,m) labeling the two T² cycles:"
             ),
             ContentBlock(
                 type="formula",
@@ -1542,7 +1616,7 @@ class G2GeometryV16(SimulationBase):
                 callout_type="info",
                 title="Key Features of G₂ KK Spectrum",
                 content=(
-                    "Rich tower structure from T² fiber degeneracy; "
+                    "Rich tower structure from the shadow T² degeneracy; "
                     "characteristic spacing from the b₃ = %d cycles; first mode "
                     "at ~5 TeV (HL-LHC reach); democratic decays to all SM "
                     "particles." % b3
@@ -1552,7 +1626,7 @@ class G2GeometryV16(SimulationBase):
                 type="callout",
                 callout_type="info",
                 title="Comparison with Warped Extra Dimensions",
-                content="Unlike Randall-Sundrum (RS) models where KK gravitons arise from warped 5D AdS geometry, the PM framework predicts: Nearly equal spacing (flat extra dimensions) vs exponential hierarchy (warped); T² degeneracy pattern unique to G₂ fibration; Different coupling structure to SM fields. Measurement of the mass spacing between first few KK modes can discriminate G₂ compactification from RS warping, providing a geometric test of the manifold structure."
+                content="Unlike Randall-Sundrum (RS) models where KK gravitons arise from warped 5D AdS geometry, the PM framework predicts: Nearly equal spacing (flat extra dimensions) vs exponential hierarchy (warped); a T² degeneracy pattern from the shadow's two extra dimensions; Different coupling structure to SM fields. Measurement of the mass spacing between first few KK modes can discriminate G₂ compactification from RS warping, providing a geometric test of the manifold structure."
             ),
         ])
 
@@ -1562,36 +1636,41 @@ class G2GeometryV16(SimulationBase):
         blocks.extend([
             ContentBlock(
                 type="heading",
-                content="2.4 Dimensional Consistency Validation ✅ VALIDATED"
+                content="2.4 Dimensional Consistency Checks"
             ),
             ContentBlock(
                 type="paragraph",
-                content="Update: The full dimensional reduction pathway 26D (24,2) → 13D (12,1) → 6D (5,1) → 4D (3,1) is now rigorously validated through 9 independent consistency checks, with clear distinction between OR reduction and compactification. This section documents the complete 4-stage chain and validation results."
+                content="The dimensional reduction pathway 26D (24,2) → 13D (12,1) → 6D (5,1) → 4D (3,1) is checked against the nine conditions below, with OR reduction kept distinct from compactification. Several are OPEN on the adopted geometry — ghost control of the second time, chirality, and the origin of SO(10) — and the table says so row by row."
             ),
             ContentBlock(
                 type="callout",
                 callout_type="info",
                 title="Key Result",
-                content="M_Pl² = M_*^11 × V_9 where V_9 = V_7(G₂) × V_2(T²) = 1.488×10^-138 GeV^-9 (value not reproducible from the quoted expression; retained as framework input), with M_Pl(reduced) = 2.435×10^18 GeV measured (PDG 2024), not derived. Critical Distinction: Stage 2 (OR reduction) is gravitational ghost elimination, NOT compactification. The 13D is an effective projection/shadow of 26D after OR reduction, not 26D with 13 dimensions compactified."
+                content="M_Pl² = M_*^11 × V_9 where V_9 = V_7(G₂) × V_2(T²) = 1.488×10^-138 GeV^-9 (value not reproducible from the quoted expression; retained as framework input), with M_Pl(reduced) = 2.435×10^18 GeV measured (PDG 2024), not derived. Critical Distinction: Stage 2 (OR reduction) is proposed gravitational ghost elimination (ghost control of the second time is OPEN), NOT compactification. The 13D is an effective projection/shadow of 26D after OR reduction, not 26D with 13 dimensions compactified."
             ),
             ContentBlock(
                 type="table",
                 content={
                     "headers": ["#", "Check", "Requirement", "Status"],
                     "rows": [
-                        ["1", "OR Reduction / Euclidean Bridge", "26D = 13D shadow with OR reduction must preserve physics and eliminate ghosts", "PASS"],
-                        ["2", "Two-Time Ghost Elimination", "OR reduction removes negative-norm states through gravitational self-energy threshold in (24,2) signature", "PASS"],
+                        ["1", "OR Reduction / Euclidean Bridge", "26D = two 13D shadows; OR reduction must preserve physics and eliminate ghosts. Ghost control of the second time is OPEN (signature ruling 2026-08-31)", "OPEN"],
+                        ["2", "Two-Time Ghost Elimination", "OR reduction is proposed to remove negative-norm states through a gravitational self-energy threshold in (24,2) signature; no computation establishes it, and Bars' Sp(2,R) ghost-freedom theorem is not inherited", "OPEN"],
                         ["3", "G₂ Structure Preservation",
                          "13D compactification preserves the exceptional G₂ "
-                         "structure. HOLONOMY IS NOT CLAIMED: %s"
+                         "structure. On holonomy: %s"
                          % hol["sentence"],
                          "PASS" if hol["may_claim_g2_holonomy"]
                          else "NOT_ESTABLISHED"],
                         ["4", "Dimensional Analysis M_Pl", "[M²] = [M^11][L^9] must be dimensionally correct", "PASS"],
                         ["5", "Brane Heterogeneity", "4 distinct brane types + Z₂ mirrors = 8 total in 6D bulk", "PASS"],
                         ["6", "Shared Dimensions", "2 extra dimensions shared across all 4 branes", "PASS"],
-                        ["7", "Chirality Mechanism", "Pneuma γ⁵T<sub>μ</sub> coupling creates topological chiral filter (7/8 = 0.875)", "PASS"],
-                        ["8", "Gauge Group Emergence", "SO(10) from D₅-type ADE singularities on G₂", "PASS"],
+                        ["7", "Chirality Mechanism", "Pneuma γ⁵T<sub>μ</sub> coupling proposed as a topological chiral filter (7/8 = 0.875); chirality on Y₇ is OPEN — the singular loci are disjoint, so there are no codimension-7 points (D-011)", "OPEN"],
+                        ["8", "Gauge Group Emergence",
+                         "SO(10) from D₅-type ADE singularities: not realised "
+                         "on Y₇, whose singular set is %d A₁ loci "
+                         "(U(1)<sup>%d</sup> on the resolution; CG.3, CG.5)"
+                         % (b2, b2),
+                         "NOT_ESTABLISHED"],
                         ["9", "Generation Count",
                          "n<sub>gen</sub> = b₂ / 4 = %d/4 = %d, the rank of the "
                          "diagonal stabiliser Γ. RELOCATED: this row previously "
@@ -1623,25 +1702,25 @@ class G2GeometryV16(SimulationBase):
                 "Principia Metaphysica framework. We introduce the "
                 "26-dimensional action with signature (24,2) decomposing into "
                 "dual 13D(12,1) shadows, each carrying its own timelike "
-                "direction ((12,1) + (12,1) = (24,2)). Sp(2,R) gauge symmetry "
-                "eliminates ghost states from the two-time structure, "
-                "gauge-fixing each shadow to an effective one-time 13D(12,1) "
-                "sector. We derive the 4D effective action through "
-                "Kaluza-Klein dimensional reduction on a Joyce orbifold "
-                "T⁷/(ℤ/2)³ whose A₁ loci are resolved by Eguchi-Hanson "
-                "patches, giving b₂ = %d and b₃ = %d across four moduli "
-                "faces. (This abstract previously named a TCS — Twisted "
-                "Connected Sum — G₂ manifold with h1,1=4 Kähler moduli "
-                "sectors. That construction is off-path and kept as an "
-                "exclusion: %s.) Racetrack moduli stabilization across these "
-                "faces dynamically derives ε ≈ 0.2257 (racetrack variant of "
-                "the Cabibbo angle; canonical e^{-3/2} = 0.22313) from flux "
-                "quantization N₁=24, N₂=23. The 26D→13D shadow framework "
-                "provides a Z₂ mirror brane structure with a "
-                "geometrically-derived generation count n_gen = b₂/4 = %d, "
-                "RELOCATED from the earlier n_gen = b₃/8 route. The "
-                "Pneuma-Vielbein bridge (v15.1) validates metric emergence "
-                "from spinor bilinears with Lorentzian signature (-,+,+,+). "
+                "direction ((12,1) + (12,1) = (24,2)). Ghost control of the "
+                "second time is OPEN: the appeal to Bars' Sp(2,R) "
+                "ghost-freedom theorem is withdrawn (signature ruling "
+                "2026-08-31). We derive the 4D effective action through "
+                "Kaluza-Klein dimensional reduction on Y₇, Joyce's "
+                "resolution of T⁷/(ℤ/2)³ whose A₁ loci are resolved by "
+                "Eguchi-Hanson patches, giving b₂ = %d and b₃ = %d. (This "
+                "abstract previously named a TCS — Twisted Connected Sum — "
+                "G₂ manifold with h1,1=4 Kähler moduli sectors. That "
+                "construction is off-path and kept as an exclusion: %s.) "
+                "The generation count n_gen = b₂/4 = %d is the number of "
+                "singular involutions; the earlier n_gen = b₃/8 route is "
+                "abandoned. The moduli, Re(T) included, are OPEN on Y₇: G4 "
+                "flux fixes none at leading order and no gaugino racetrack "
+                "exists, so the racetrack value ε ≈ 0.2257 (from flux "
+                "numbers N₁ = 24, N₂ = 23; canonical e^{-3/2} = 0.22313) is "
+                "calibrated at the off-path seed b₃ = 24, not derived. The "
+                "Pneuma-Vielbein bridge validates metric emergence from "
+                "spinor bilinears with Lorentzian signature (-,+,+,+). "
                 "On holonomy: %s"
                 % (b2, b3, tcs_excluded, self._n_gen, hol["sentence"])
             ),
@@ -1718,8 +1797,8 @@ class G2GeometryV16(SimulationBase):
 
         # Effective index chi_eff -- NOT the Euler characteristic of Y_7,
         # which is 0 and is published by closed_geometry as
-        # y7-euler-characteristic. The id is kept (ids are never renamed);
-        # what chi_eff should count is the open G1 ruling.
+        # y7-euler-characteristic. The id is kept (ids are never renamed).
+        # What chi_eff counts is the K3 reading, adopted 2026-10-01 (D-015).
         formulas.append(Formula(
             id="euler-characteristic",
             label="(2.2)",
@@ -1727,10 +1806,13 @@ class G2GeometryV16(SimulationBase):
             plain_text="chi_eff = 2(h^{1,1} - h^{2,1} + h^{3,1})",
             category="DERIVED",
             description=(
-                "Effective index chi_eff (open ruling): 2(h11 - h21 + h31) "
-                "with the Hodge data of the off-path TCS #187 model. It is "
-                "NOT the Euler characteristic of Y_7, which is 0 "
-                "(y7-euler-characteristic)"),
+                "Effective index chi_eff, read on the adopted K3 reading "
+                "(D-015) as 2 x sum chi(K3) = 48n over the n singular "
+                "involutions, 144 on the active path. This formula computes "
+                "it by an OFF-PATH route (g2_construction = fano_tcs): "
+                "2(h11 - h21 + h31) with the Hodge data of the TCS #187 "
+                "model, which gives the same 144. It is NOT the Euler "
+                "characteristic of Y_7, which is 0 (y7-euler-characteristic)"),
             title="Effective index chi_eff (not chi(Y_7))",
             inputParams=[],
             outputParams=["topology.mephorash_chi"],
@@ -1743,9 +1825,9 @@ class G2GeometryV16(SimulationBase):
                     "7-manifold has chi = 0 (y7-euler-characteristic), "
                     "and a G2 manifold is a real manifold with no Hodge "
                     "decomposition of its own",
-                    "The h^{p,q} are the Hodge data of the TCS #187 "
-                    "construction used by the off-path seed_24 model "
-                    "(Corti-Haskins-Nordstrom-Pacini); they are not "
+                    "The h^{p,q} are the Hodge data the off-path seed_24 "
+                    "model attached to a 'TCS #187' (no published TCS "
+                    "enumeration contains such an entry); they are not "
                     "invariants of the adopted Joyce manifold",
                     "Substitute: h^{1,1}=%d, h^{2,1}=%d, h^{3,1}=%d"
                     % (self.h11, self.h21, self.h31),
@@ -1753,17 +1835,20 @@ class G2GeometryV16(SimulationBase):
                     % (self.h11, self.h21, self.h31,
                        self.h11 - self.h21 + self.h31, self._chi_eff_from_hodge),
                     "NOTE: the competing route chi_eff = b_3^2/4 gives %g on the "
-                    "active seed (b_3 = %d). The two routes %s; which is meant "
-                    "is an author ruling and neither is withdrawn."
+                    "active seed (b_3 = %d). The two routes %s; both are "
+                    "off-path, since the author adopted the K3 reading "
+                    "chi_eff = 48n (D-015), whose value on the active path "
+                    "is the 144 used here."
                     % (self._chi_eff_from_b3, self._b3,
                        "agree" if self._chi_eff_routes_agree else "DIVERGE"),
                 ],
                 "method": (
                     "Effective-index bookkeeping carried over from the "
-                    "seed_24 (TCS) model. What chi_eff should count on "
-                    "the adopted path, if anything, is the open G1 "
-                    "ruling: its consumers are inventoried before any "
-                    "definition is chosen"),
+                    "seed_24 (TCS) model. On the adopted path chi_eff "
+                    "counts the Kummer K3 surfaces transverse to the "
+                    "singular involutions, once per shadow (the K3 "
+                    "reading, adopted 2026-10-01, D-015); the TCS route is "
+                    "kept runnable because its value agrees there"),
                 "parentFormulas": ["g2-holonomy"],
                 "references": [
                     "Corti, A., Haskins, M., Nordstrom, J., Pacini, T. (2015) arXiv:1503.05500",
@@ -1773,9 +1858,9 @@ class G2GeometryV16(SimulationBase):
             terms={
                 r"\chi_{\text{eff}}": {
                     "description": (
-                        "Effective index (open ruling). Not an Euler "
-                        "characteristic of Y_7, which is 0; its "
-                        "definition on the adopted path is undecided"),
+                        "Effective index: on the adopted K3 reading "
+                        "(D-015), 2 x sum chi(K3) = 48n. Not an Euler "
+                        "characteristic of Y_7, which is 0"),
                     "symbol": "chi_eff",
                     "value": str(self._chi_eff),
                     "param_id": "topology.mephorash_chi"
@@ -1817,12 +1902,14 @@ class G2GeometryV16(SimulationBase):
             ),
             eml_tree_str="ops.mul(eml_scalar(6.0), b3_leaf())",
             eml_description=(
-                "EML: ops.mul(eml_scalar(6), b3_leaf()) — chi_eff = 6 * b3 = %g "
-                "on the active seed; the Hodge-number derivation "
+                "EML: OFF-PATH route ops.mul(eml_scalar(6), b3_leaf()) — "
+                "chi_eff = 6 * b3 = %g on the active seed (144 only at the "
+                "retired seed b_3 = 24); the Hodge-number derivation "
                 "2*(h11 - h21 + h31) = 2*(%d - %d + %d) = %d is an INDEPENDENT "
                 "route that does not reference b_3. The two %s, and the "
                 "agreement at b_3 = 24 is a coincidence of two different "
-                "statements rather than one fact."
+                "statements rather than one fact. The adopted reading is the "
+                "K3 reading, chi_eff = 48n (D-015)."
                 % (6.0 * self._b3, self.h11, self.h21, self.h31,
                    self._chi_eff_from_hodge,
                    "agree" if self._chi_eff_routes_agree else "DIVERGE")
@@ -1878,19 +1965,19 @@ class G2GeometryV16(SimulationBase):
                            "constraints"),
                 "parentFormulas": ["g2-holonomy"],
                 "references": [
-                    "Kovalev, A. (2003) 'Twisted connected sums and special Riemannian holonomy', J. Reine Angew. Math. 565",
-                    "Corti, A., Haskins, M., Nordstrom, J., Pacini, T. (2015) arXiv:1503.05500, Theorem 7.2"
+                    "Joyce, D. (2000) 'Compact Manifolds with Special Holonomy', Oxford University Press, ch. 11-12",
+                    "Corti, A., Haskins, M., Nordstrom, J., Pacini, T. (2015) arXiv:1503.05500, Theorem 7.2 (the off-path TCS route, kept as the record of the exclusion)"
                 ]
             },
             terms={
                 r"b_3": {
-                    "description": "Third Betti number: rank of the third homology group H_3(M, Z), counting independent associative 3-cycles where matter fields localize in M-theory",
+                    "description": "Third Betti number: rank of the third homology group H_3(M, Z), counting independent 3-cycles; in M-theory it counts the b_3 neutral chiral (moduli) multiplets",
                     "symbol": "b3",
                     "value": str(self._b3),
                     "param_id": "topology.elder_kads"
                 },
                 r"b_2": {
-                    "description": "Second Betti number: rank of H_2(M, Z), counting independent 2-cycles (Kahler moduli of the G2 compactification)",
+                    "description": "Second Betti number: rank of H_2(M, Z), counting independent 2-cycles; in M-theory each gives one abelian vector multiplet (one U(1) per class)",
                     "symbol": "b2",
                     "value": str(self._b2),
                     "param_id": "topology.b2"
@@ -1907,7 +1994,7 @@ class G2GeometryV16(SimulationBase):
                 "EML: b3_leaf() — third Betti number b3 is the foundational "
                 "Ten-Pillar seed (=%d on the active path); the full sequence "
                 "(1, 0, %d, %d, %d, %d, 0, 1) is reconstructed from b3 plus "
-                "Poincare duality and TCS pi1=0 simply-connected constraint"
+                "Poincare duality and pi_1 = 1 (Y_7 is simply connected)"
                 % (self._b3, self._b2, self._b3, self._b3, self._b2)
             ),
             arithma=_arithma_const("b3"),
@@ -1922,13 +2009,13 @@ class G2GeometryV16(SimulationBase):
             latex=r"n_{\text{gen}} = \frac{\chi_{\text{eff}}}{48}",
             plain_text="n_gen = chi_eff / 48",
             category="DERIVED",
-            description=("UNRULED ROUTE. Number of fermion generations from "
-                         "the Atiyah-Singer index theorem on the G2 "
-                         "compactification. chi_eff has three claimed "
-                         "derivations and the framework has not ruled which "
-                         "is meant, so chi_eff/48 is recorded, not asserted "
-                         "as the live derivation. The PUBLISHED count is %d, "
-                         "sourced from %s."
+            description=("n_gen = chi_eff/48 restates the ruled route "
+                         "b_2/4: on the adopted K3 reading (D-015) chi_eff "
+                         "= 48n, so this returns n, the number of singular "
+                         "involutions, rather than adding a second "
+                         "derivation. It is not an index theorem for "
+                         "chirality, which is OPEN (D-011). The PUBLISHED "
+                         "count is %d, sourced from %s."
                          % (self._n_gen, self._n_gen_source())),
             inputParams=["topology.mephorash_chi"],
             outputParams=["topology.n_gen"],
@@ -1936,23 +2023,25 @@ class G2GeometryV16(SimulationBase):
             output_params=["topology.n_gen"],
             derivation={
                 "steps": [
-                    "Apply the Atiyah-Singer index theorem to the Dirac operator on the G2 manifold: Index(D) = (1/48) integral of ch(F) wedge A-hat(TM)",
-                    "For M-theory on G2 with minimal G-flux, the chiral index reduces to Index = chi_eff / 48",
-                    "The factor 48 arises from the dimension of the fundamental spinor representation times topological normalization for 7D compactification",
-                    "Substitute chi_eff = %d, carried from the Hodge numbers "
-                    "of the superseded TCS building block -- an UNRULED "
-                    "route, since a Joyce orbifold has no h21 or h31"
+                    "Earlier reading, withdrawn as a chirality derivation: apply the Atiyah-Singer index theorem to the Dirac operator on the G2 manifold, Index(D) = (1/48) integral of ch(F) wedge A-hat(TM)",
+                    "In that reading, M-theory on G2 with minimal G-flux was taken to reduce the chiral index to chi_eff / 48; chirality on Y_7 is OPEN (D-011), so this is no longer asserted",
+                    "On the adopted K3 reading (D-015) the factor 48 is 2 x chi(K3) = 2 x 24: one Kummer K3 per singular involution, counted once per shadow",
+                    "Substitute chi_eff = %d, the value carried from the "
+                    "off-path TCS Hodge route (a Joyce orbifold has no h21 "
+                    "or h31), which equals the K3 reading 48n on the active "
+                    "path"
                     % self._chi_eff,
-                    "Obtain n_gen = %d / 48 = %g fermion generations, matching the observed Standard Model spectrum"
+                    "Obtain chi_eff / 48 = %d / 48 = %g = n, the number of singular involutions, matching the three observed generations"
                     % (self._chi_eff, self._chi_eff / 48.0),
                     "NOTE: on the active seed the generation count is sourced "
-                    "from %s and equals %d. chi_eff/48 is the Atiyah-Singer "
-                    "route and is only the same statement when the two chi_eff "
-                    "routes agree, which here they %s."
+                    "from %s and equals %d; chi_eff/48 restates it under the "
+                    "K3 reading (b_2/4). Whether the two carried off-path "
+                    "chi_eff routes (Hodge and b_3^2/4) agree with each "
+                    "other: here they %s."
                     % (self._n_gen_source(), self._n_gen,
                        "do" if self._chi_eff_routes_agree else "DO NOT"),
                 ],
-                "method": "Atiyah-Singer index theorem for Dirac operator on G2-holonomy manifold with flux-dressed cohomology",
+                "method": "Counting under the adopted K3 reading (chi_eff = 48n); the Atiyah-Singer index route formerly cited here is withdrawn as a chirality derivation",
                 "parentFormulas": ["euler-characteristic", "g2-holonomy"],
                 "references": [
                     "Atiyah, M.F., Singer, I.M. (1968) 'The Index of Elliptic Operators I', Ann. Math. 87",
@@ -1962,21 +2051,22 @@ class G2GeometryV16(SimulationBase):
             },
             terms={
                 r"n_{\text{gen}}": {
-                    "description": "Number of chiral fermion generations: the net number of chiral zero modes of the Dirac operator on the internal G2 manifold",
+                    "description": "Number of fermion generations: n_gen = b_2/4, the number of singular involutions (the chiral-zero-mode reading is OPEN)",
                     "symbol": "n_gen",
                     "value": str(self._n_gen),
                     "param_id": "topology.n_gen"
                 },
                 r"\chi_{\text{eff}}": {
-                    "description": ("Effective Euler characteristic of the "
-                                    "flux-dressed G2 compactification (= %d)"
+                    "description": ("Effective index on the adopted K3 "
+                                    "reading, 2 x sum chi(K3) = 48n (= %d); "
+                                    "not the Euler characteristic of Y_7"
                                     % self._chi_eff),
                     "symbol": "chi_eff",
                     "value": str(self._chi_eff),
                     "param_id": "topology.mephorash_chi"
                 },
                 r"48": {
-                    "description": "Normalization factor from the spinor representation dimension and topological index density in 7 dimensions"
+                    "description": "48 = 2 x chi(K3) = 2 x 24: on the adopted K3 reading, one Kummer K3 per singular involution, counted once per shadow"
                 }
             },
             eml_latex=(
@@ -1987,12 +2077,12 @@ class G2GeometryV16(SimulationBase):
             ),
             eml_tree_str="ops.div(ops.mul(eml_scalar(6.0), b3_leaf()), eml_scalar(48.0))",
             eml_description=(
-                "EML: n_gen = ops.div(ops.mul(eml_scalar(6), b3_leaf()), "
-                "eml_scalar(48)) — chi_eff = 6*b3 propagates the foundational "
-                "seed through the Atiyah-Singer index, yielding "
-                "n_gen = 6*b3/48 = b3/8 = %g on the active seed. The PUBLISHED "
-                "generation count is %d, sourced from %s; these coincide only "
-                "when b_3/8 is an integer."
+                "EML: OFF-PATH tree n_gen = ops.div(ops.mul(eml_scalar(6), "
+                "b3_leaf()), eml_scalar(48)) — the abandoned chi_eff = 6*b3 "
+                "route, giving n_gen = 6*b3/48 = b3/8 = %g on the active "
+                "seed. The PUBLISHED generation count is %d, sourced from %s; "
+                "the two coincide only where b_3/8 is an integer, and 8 "
+                "divides no Joyce-reachable b_3 (all odd)."
                 % (self._b3 / 8.0, self._n_gen, self._n_gen_source())
             ),
             arithma=_arithma_div(
@@ -2013,7 +2103,7 @@ class G2GeometryV16(SimulationBase):
             latex=r"K_{\text{matching}} = h^{1,1} = b_2",
             plain_text="K_matching = h^{1,1} = b2",
             category="DERIVED",
-            description="K3 matching fibres in TCS gluing construction",
+            description="OFF-PATH (g2_construction = fano_tcs): K3 matching fibres in the TCS gluing construction. Y_7 is a resolved Joyce orbifold with no TCS gluing; K = h^{1,1} = 4 is carried from the TCS model and does not ride on the seed.",
             inputParams=["topology.b2"],
             outputParams=["topology.K_MATCHING"],
             input_params=["topology.b2"],
@@ -2023,7 +2113,7 @@ class G2GeometryV16(SimulationBase):
                     "In the TCS construction, two asymptotically cylindrical CY3 halves Z_+, Z_- are glued along a common T^3-fibred neck region",
                     "Each half is a K3 fibration over a 3-sphere S^3, with the K3 fibre providing the Calabi-Yau structure",
                     "The number of independent matching conditions for the K3 fibres equals the rank of the Picard lattice intersection, which is h^{1,1}",
-                    "For TCS #187: K_matching = h^{1,1} = %d independent K3 matching fibres. "
+                    "For the off-path TCS #187 model: K_matching = h^{1,1} = %d independent K3 matching fibres. "
                     "On the active seed b_2 = %d, so the chain K = h^{1,1} = b_2 %s."
                     % (self._K_matching, self._b2,
                        "closes" if self._k_matching_equals_b2
@@ -2049,13 +2139,13 @@ class G2GeometryV16(SimulationBase):
                     "value": "4"
                 },
                 r"b_2": {
-                    "description": "Second Betti number, equal to h^{1,1} for the G2 TCS manifold",
+                    "description": "Second Betti number; equal to h^{1,1} = 4 only in the off-path TCS model (on Y_7, b_2 follows the seed)",
                     "value": "4"
                 }
             },
             eml_latex=r"K_{\text{matching}} = \mathrm{ops.id}(b_2) = \mathrm{ops.id}(\mathrm{eml\_scalar}(4))",
             eml_tree_str="ops.id(eml_scalar(4.0))  # K_matching = b2 = h11 = 4",
-            eml_description="EML: K_matching is the identity map on b2; K_matching = ops.id(eml_scalar(4))",
+            eml_description="EML: K_matching = ops.id(eml_scalar(4)) — the off-path TCS identity K = h11 = b2, which breaks on the adopted seed",
             arithma=_arithma_num(4.0),
             eml=_eml_scalar(4.0),
             value=4.0,
@@ -2079,7 +2169,8 @@ class G2GeometryV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Number of independent 2-cycles (Kahler moduli). On the "
+                    "Number of independent 2-cycles (one U(1) vector multiplet "
+                    "each in M-theory). On the "
                     "active seed path b_2 = %d (%s). Topological invariant: no "
                     "experimental measurement exists since this is a pure "
                     "mathematical property of the internal G2 manifold."
@@ -2096,10 +2187,11 @@ class G2GeometryV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Number of associative 3-cycles (b3 = %d on the active "
-                    "seed path) where chiral matter fields localize in "
-                    "M-theory. Provenance: %s. No direct experimental "
-                    "measurement exists for internal manifold topology."
+                    "Number of independent 3-cycles of Y_7 (b3 = %d on the "
+                    "active seed path); in M-theory b3 counts the neutral "
+                    "chiral (moduli) multiplets. Provenance: %s. No direct "
+                    "experimental measurement exists for internal manifold "
+                    "topology."
                     % (self._b3, self._b3_provenance())
                 ),
                 derivation_formula="betti-numbers",
@@ -2110,15 +2202,18 @@ class G2GeometryV16(SimulationBase):
             ),
             Parameter(
                 path="topology.mephorash_chi",
-                name="Effective Euler Characteristic",
+                name="Effective Index chi_eff",
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Effective Euler characteristic chi_eff = "
-                    "2(h11 - h21 + h31) = %d from TCS #187 Hodge numbers. The "
-                    "competing route b_3^2/4 gives %g on the active seed, so "
-                    "the two %s. Topological invariant governing the chiral "
-                    "index; no direct experimental observable."
+                    "Effective index chi_eff = %d: on the adopted K3 reading "
+                    "(D-015), 2 x sum chi(K3) = 48n over the singular "
+                    "involutions, counted once per shadow. Not the Euler "
+                    "characteristic of Y_7, which is 0. It is computed here "
+                    "by the off-path TCS #187 Hodge route 2(h11 - h21 + h31), "
+                    "which gives the same value; the competing route "
+                    "b_3^2/4 gives %g on the active seed, so the two %s. No "
+                    "direct experimental observable."
                     % (self._chi_eff, self._chi_eff_from_b3,
                        "agree" if self._chi_eff_routes_agree else "DIVERGE")
                 ),
@@ -2136,12 +2231,13 @@ class G2GeometryV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Number of chiral fermion generations. On the active seed "
-                    "path the source is %s and the value is %d. The "
-                    "Atiyah-Singer route chi_eff/48 = %d/48 = %g is the same "
-                    "statement only where b_3/8 is an integer. Matches the "
+                    "Number of fermion generations. On the active seed path "
+                    "the source is %s and the value is %d, matching the "
                     "experimentally observed 3 generations of quarks and "
-                    "leptons (PDG 2024)."
+                    "leptons (PDG 2024). It is not an index theorem for "
+                    "chirality, which is OPEN: chi_eff/48 = %d/48 = %g "
+                    "restates b_2/4 under the adopted K3 reading "
+                    "(chi_eff = 48n)."
                     % (self._n_gen_source(), self._n_gen, self._chi_eff,
                        self._chi_eff / 48.0)
                 ),
@@ -2158,11 +2254,11 @@ class G2GeometryV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Geometric anchor k_gimel = b3/2 + 1/pi = %.4f... Derived "
-                    "purely from the topological integer b3 = %d and the "
-                    "transcendental constant pi. No direct experimental "
-                    "measurement; validated through downstream predictions "
-                    "(alpha, w0, etc.)."
+                    "CALIBRATED (D-007): k_gimel = b3/2 + 1/pi = %.4f on the "
+                    "active seed (b3 = %d). The layer built on it (alpha, "
+                    "the Higgs vev, sin^2 theta_W, T_CMB, mu) was fitted at "
+                    "the off-path seed b3 = 24; no derivation is claimed. No "
+                    "direct experimental measurement."
                     % (self._k_gimel, self._b3)
                 ),
                 derivation_formula=None,
@@ -2179,11 +2275,11 @@ class G2GeometryV16(SimulationBase):
                 units="dimensionless",
                 status="GEOMETRIC",
                 description=(
-                    "Number of independent K3 matching fibres in TCS gluing: "
-                    "K = h^{1,1} = %d. On the active seed b_2 = %d, so the "
-                    "chain K = h^{1,1} = b_2 %s. Topological invariant "
-                    "controlling the rank of the gauge sector; no direct "
-                    "experimental observable."
+                    "OFF-PATH (g2_construction = fano_tcs): number of "
+                    "independent K3 matching fibres in TCS gluing, "
+                    "K = h^{1,1} = %d. Y_7 has no TCS gluing. On the active "
+                    "seed b_2 = %d, so the chain K = h^{1,1} = b_2 %s. No "
+                    "direct experimental observable."
                     % (self._K_matching, self._b2,
                        "closes" if self._k_matching_equals_b2 else "BREAKS")
                 ),
@@ -2191,7 +2287,7 @@ class G2GeometryV16(SimulationBase):
                 no_experimental_value=True,
                 eml_description=(
                     "EML: eml_scalar(%d) — K = h^{1,1} = %d K3 matching fibres "
-                    "in TCS #187 gluing"
+                    "in the off-path TCS #187 gluing"
                     % (self._K_matching, self._K_matching)
                 ),
             ),
@@ -2200,11 +2296,11 @@ class G2GeometryV16(SimulationBase):
                 name="Cycle Separation Ratio",
                 units="dimensionless",
                 status="GEOMETRIC",
-                description="Ratio of associative 3-cycle separation distance to compactification radius: d/R = 0.12 for TCS #187. Controls Yukawa coupling suppression and proton decay amplitude via wavefunction overlap. Constrained indirectly by proton lifetime bounds (Super-K: tau_p > 2.4e34 yr).",
+                description="Ratio of associative 3-cycle separation distance to compactification radius, d/R = 0.12: an estimate carried from the off-path TCS #187 gluing geometry, not derived for Y_7. Controls Yukawa coupling suppression and proton decay amplitude via wavefunction overlap. Constrained indirectly by proton lifetime bounds (Super-K: tau_p > 2.4e34 yr).",
                 derivation_formula=None,
                 no_experimental_value=True,
                 eml_description=(
-                    "EML: eml_scalar(0.12) — d/R = 0.12 associative 3-cycle separation ratio for TCS #187; "
+                    "EML: eml_scalar(0.12) — d/R = 0.12 associative 3-cycle separation ratio carried from the off-path TCS #187 model; "
                     "Yukawa suppression ~ ops.exp(ops.neg(ops.mul(eml_scalar(2.0), ops.mul(eml_pi(), d_over_R))))"
                 ),
             ),
@@ -2261,8 +2357,9 @@ class G2GeometryV16(SimulationBase):
                 "doi": "10.1090/pspum/099/01",
                 "relevance": (
                     "Associative 3-cycle counting relevant to matter localization in "
-                    "M-theory. The conjectured invariants relate to the b3 = 24 "
-                    "associative cycles of TCS #187."
+                    "M-theory. (This entry formerly tied the conjectured invariants "
+                    "to 'the b3 = 24 associative cycles of TCS #187', an off-path "
+                    "model; b3 counts the 3-cycles of Y_7.)"
                 )
             },
             {
@@ -2277,6 +2374,7 @@ class G2GeometryV16(SimulationBase):
                 "arxiv": "math/0012189",
                 "url": "https://arxiv.org/abs/math/0012189",
                 "relevance": (
+                    "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
                     "Original TCS construction theorem (Theorem 5.34) for compact G2 "
                     "manifolds by gluing asymptotically cylindrical CY3 halves along "
                     "K3-fibred neck regions. Foundation for all TCS G2 manifold examples."
@@ -2296,6 +2394,7 @@ class G2GeometryV16(SimulationBase):
                 "url": "https://arxiv.org/abs/1206.2277",
                 "doi": "10.2140/gt.2013.17.1955",
                 "relevance": (
+                    "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
                     "Construction of ACyl CY3 building blocks from weak Fano 3-folds; "
                     "provides the input data (Picard lattices, Hodge numbers) for TCS "
                     "G2 manifold assembly."
@@ -2315,7 +2414,7 @@ class G2GeometryV16(SimulationBase):
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
                 "type": "article",
-                "relevance": "Classification of TCS G2 manifolds via semi-Fano 3-fold building blocks. Contains explicit Betti number computations (Theorem 7.2) including TCS #187 with b2=4, b3=24. Source of the h^{1,1}=4 Kahler moduli that underlie the four-face structure.",
+                "relevance": "Classification of TCS G2 manifolds via semi-Fano 3-fold building blocks; off-path for this framework (Y_7 is a resolved Joyce orbifold). The framework formerly cited it for a 'TCS #187' with (b2, b3) = (4, 24); no published TCS enumeration contains such an entry, and (4, 24) cannot be a twisted connected sum, since b2 + b3 must be odd (core/canonical_values, tcs_obstruction).",
             },
             {
                 "key": "chnp2018",
@@ -2327,6 +2426,7 @@ class G2GeometryV16(SimulationBase):
                 "arxiv": "1809.09083",
                 "url": "https://arxiv.org/abs/1809.09083",
                 "relevance": (
+                    "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
                     "Extra-twisted TCS construction with pi/6 involution blocks "
                     "achieving refined Betti numbers. The involution structure "
                     "b2=4 is obtained via adjusted matching conditions on the "
@@ -2365,7 +2465,7 @@ class G2GeometryV16(SimulationBase):
                 "arxiv": "hep-th/9812205",
                 "url": "https://arxiv.org/abs/hep-th/9812205",
                 "type": "article",
-                "relevance": "Chiral fermion generation counting from G2 compactification index theorem",
+                "relevance": "Gauge content of M-theory on Joyce orbifolds: C^2/Gamma fibred over a 3-manifold gives pure N = 1 + b_1 super Yang-Mills, used for the singular loci of Y_7 (CG.5)",
             },
             {
                 "key": "acharya_witten2001",
@@ -2376,7 +2476,7 @@ class G2GeometryV16(SimulationBase):
                 "arxiv": "hep-th/0109152",
                 "url": "https://arxiv.org/abs/hep-th/0109152",
                 "type": "article",
-                "relevance": "Chiral fermion localization on singular G2 manifolds; establishes the mechanism for obtaining chiral matter from M-theory on G2.",
+                "relevance": "Chiral fermion localization on singular G2 manifolds; establishes the mechanism for obtaining chiral matter from M-theory on G2. The mechanism needs codimension-7 singular points, which Y_7 lacks (its singular loci are disjoint), so chirality on Y_7 is OPEN (D-011).",
             },
             {
                 "key": "berger1955",
@@ -2468,7 +2568,7 @@ class G2GeometryV16(SimulationBase):
                 "span); b2/4 recovers it only because this member is "
                 "all-plain. The effective index chi_eff = 144 reads as one "
                 "Kummer K3 (chi = 24) per singular involution in each of the "
-                "two shadows -- an unruled reading, the author's to adopt."
+                "two shadows -- the K3 reading, adopted 2026-10-01 (D-015)."
                 % (b2, b2, b3)
             ),
             "prediction": (
@@ -2537,14 +2637,14 @@ class G2GeometryV16(SimulationBase):
                 "status": "PASS",
                 "sigma": 0.0,
                 "test_description": (
-                    "Verify the carried effective Euler characteristic "
+                    "Verify the carried effective index "
                     "chi_eff = 2(h11 - h21 + h31) = 2(%d - %d + %d) = %g. "
-                    "The ROUTE is UNRULED: chi_eff has three claimed "
-                    "derivations -- this Hodge expression, b_3^2/4 and "
-                    "6*b_3 -- which agree only at b_3 = 24, and a Joyce "
-                    "orbifold has no h21 or h31 at all. What is checked "
-                    "here is the arithmetic of the carried numbers, not "
-                    "that this route is the right one."
+                    "The adopted reading is the K3 reading (D-015), "
+                    "chi_eff = 2 x sum chi(K3) = 48n. This Hodge expression "
+                    "is an OFF-PATH route (a Joyce orbifold has no h21 or "
+                    "h31), and it, b_3^2/4 and 6*b_3 agree only at the "
+                    "retired seed b_3 = 24. What is checked here is the "
+                    "arithmetic of the carried numbers."
                     % (self.h11, self.h21, self.h31, self._chi_eff)
                 ),
                 "details": {
@@ -2552,16 +2652,18 @@ class G2GeometryV16(SimulationBase):
                     "h21": self.h21,
                     "h31": self.h31,
                     "chi_eff": self._chi_eff,
-                    # DERIVED: 144 = pressure_divisor = B3^2/4
+                    # 144 = 48n at n = 3 (the adopted K3 reading of chi_eff);
+                    # equal to B3^2/4 only at the off-path seed B3 = 24
                     "expected": 144,
                 },
-                "assertion": ("Effective Euler characteristic chi_eff = %g "
-                              "from the carried Hodge numbers (route UNRULED)"
+                "assertion": ("Effective index chi_eff = %g from the carried "
+                              "Hodge numbers (off-path route; equals the "
+                              "adopted K3 reading 48n)"
                               % self._chi_eff),
                 "condition": "chi_eff == 2 * (h11 - h21 + h31)",
                 "tolerance": 0.0,
                 "sector": "geometry",
-                "reference": "Corti et al. (2015), arXiv:1207.4470"
+                "reference": "Corti et al. (2015), arXiv:1207.4470 (off-path TCS route; it contains no '#187' entry)"
             },
             {
                 "id": "CERT_G2_GENERATIONS",
@@ -2573,9 +2675,9 @@ class G2GeometryV16(SimulationBase):
                     "sourced from %s. This certificate previously read "
                     "'Verify Atiyah-Singer index theorem yields n_gen = "
                     "chi_eff/48 = 144/48 = 3 fermion generations'. That "
-                    "route is UNRULED and is recorded in the details below "
-                    "rather than asserted: chi_eff/48 = %g here, and "
-                    "chi_eff itself has no ruled derivation."
+                    "reading is withdrawn as a chirality derivation; under "
+                    "the adopted K3 reading (D-015) chi_eff/48 = %g = n "
+                    "restates b_2/4, as recorded in the details below."
                     % (self._n_gen, self._n_gen_source(),
                        self._chi_eff / 48.0)
                 ),
@@ -2588,8 +2690,9 @@ class G2GeometryV16(SimulationBase):
                     "abandoned_route_b3_over_8": self._b3 / 8.0,
                     "experimental": "PDG 2024: 3 generations observed",
                 },
-                "assertion": ("Published generation count n_gen = 3 from %s"
-                              % self._n_gen_source()),
+                "assertion": ("Published generation count n_gen = 3 from %s "
+                              "(chi_eff/48 restates b_2/4 under the K3 "
+                              "reading)" % self._n_gen_source()),
                 "condition": "chi_eff / 48 == 3",
                 "tolerance": 0.0,
                 "sector": "geometry",
@@ -2624,7 +2727,8 @@ class G2GeometryV16(SimulationBase):
                 "sigma": 0.0,
                 "test_description": (
                     "Verify Poincare duality b_k = b_{7-k} for compact oriented "
-                    "7-manifold: b0=b7=1, b1=b6=0, b2=b5=4, b3=b4=24"
+                    "7-manifold: b0=b7=1, b1=b6=0, b2=b5=%d, b3=b4=%d"
+                    % (self._b2, self._b3)
                 ),
                 "details": {
                     "b0": 1, "b1": 0, "b2": self._b2, "b3": self._b3,
@@ -2632,7 +2736,7 @@ class G2GeometryV16(SimulationBase):
                     "duality_satisfied": True,
                 },
                 "assertion": "Poincare duality: b_k = b_{7-k} for compact oriented 7-manifold",
-                "condition": "b2 == b5 == 4 and b3 == b4 == 24 and b0 == b7 == 1 and b1 == b6 == 0",
+                "condition": "b2 == b5 and b3 == b4 and b0 == b7 == 1 and b1 == b6 == 0",
                 "tolerance": 0.0,
                 "sector": "geometry",
                 "reference": "Standard algebraic topology (Hatcher, 'Algebraic Topology', 2002)"
@@ -2644,7 +2748,7 @@ class G2GeometryV16(SimulationBase):
                 "note": "identities assumed (zero-valued placeholders), not computed — cannot fail by construction",
                 "sigma": 0.0,
                 "test_description": (
-                    "Verify TCS G2 structure is torsion-free: the defining 3-form Phi "
+                    "Verify the G2-structure on Y_7 is torsion-free: the defining 3-form Phi "
                     "satisfies d(Phi) = 0 (closed) and d(*Phi) = 0 (coclosed), "
                     "ensuring true G2 holonomy (not just G2 structure)"
                 ),
@@ -2653,13 +2757,13 @@ class G2GeometryV16(SimulationBase):
                     "d_star_phi_norm": 0.0,
                     "torsion_norm": 0.0,
                     "tolerance": 1e-15,
-                    "construction": "TCS (torsion-free by construction)",
+                    "construction": "Joyce resolution (torsion-free by Joyce's theorem; the check here is a placeholder)",
                 },
-                "assertion": "TCS G2 structure is torsion-free: d(Phi) = 0 and d(*Phi) = 0",
+                "assertion": "The G2-structure on Y_7 is torsion-free: d(Phi) = 0 and d(*Phi) = 0",
                 "condition": "torsion_norm < 1e-15",
                 "tolerance": 1e-15,
                 "sector": "geometry",
-                "reference": "Kovalev (2003), arXiv:math/0012189"
+                "reference": "Joyce, D. (2000) Compact Manifolds with Special Holonomy, ch. 11-12"
             },
         ]
 
@@ -2681,6 +2785,8 @@ class G2GeometryV16(SimulationBase):
                 "topic": "Twisted Connected Sum (TCS) G2 construction",
                 "url": "https://arxiv.org/abs/math/0012189",
                 "relevance": (
+                    "Off-path for this framework: Y_7 is a resolved Joyce orbifold, "
+                    "and its b_3 lies outside every published TCS range (71-155). "
                     "Kovalev's TCS method builds compact G2 manifolds from pairs of "
                     "asymptotically cylindrical (ACyl) Calabi-Yau threefolds Z_+ and Z_- "
                     "glued along a common K3-fibred neck. The construction proceeds in "
@@ -2702,13 +2808,13 @@ class G2GeometryV16(SimulationBase):
             {
                 "topic": "Betti numbers and homology",
                 "url": "https://en.wikipedia.org/wiki/Betti_number",
-                "relevance": "Betti numbers b_k count independent k-cycles; b3=24 is the key topological invariant controlling matter localization",
+                "relevance": "Betti numbers b_k count independent k-cycles; b3 counts the 3-cycles of Y_7 and follows the live seed (it read 24 only on the off-path seed)",
                 "validation_hint": "Verify Poincare duality b_k = b_{7-k} and that the topological Euler characteristic vanishes for odd-dimensional manifolds"
             },
             {
                 "topic": "Atiyah-Singer index theorem",
                 "url": "https://en.wikipedia.org/wiki/Atiyah%E2%80%93Singer_index_theorem",
-                "relevance": "The index theorem connects topology (chi_eff) to physics (n_gen = chi_eff/48), deriving 3 fermion generations from pure geometry",
+                "relevance": "Background for the withdrawn index-theorem reading of n_gen = chi_eff/48. On the adopted K3 reading chi_eff/48 = n restates b_2/4, and chirality on Y_7 is OPEN",
                 "validation_hint": "The chiral index equals the integral of the A-hat genus times the Chern character over the internal manifold"
             },
             {
@@ -2721,7 +2827,9 @@ class G2GeometryV16(SimulationBase):
                 "topic": "Kahler moduli and four-face sub-sector structure",
                 "url": "https://en.wikipedia.org/wiki/K%C3%A4hler_manifold",
                 "relevance": (
-                    "The h^{1,1} = 4 Hodge number of TCS #187 yields 4 independent "
+                    "OFF-PATH (g2_construction = fano_tcs; the racetrack below is "
+                    "calibrated at the off-path seed b3 = 24, and none exists on "
+                    "Y_7). The h^{1,1} = 4 Hodge number of TCS #187 yields 4 independent "
                     "Kahler moduli, each controlling the volume of a distinct 2-cycle "
                     "in the G2 manifold. In the PM framework, these 4 moduli are "
                     "interpreted as 4 geometric 'faces' per shadow in the dual-shadow "
@@ -2737,15 +2845,18 @@ class G2GeometryV16(SimulationBase):
                 ),
                 "validation_hint": (
                     "For TCS G2 manifolds, h^{1,1} = b2 counts independent 2-cycles "
-                    "(K3 matching fibres in the Kovalev construction). The CHNP "
-                    "classification (arXiv:1207.4470) lists TCS #187 as having "
-                    "b2 = 4, b3 = 24."
+                    "(K3 matching fibres in the Kovalev construction). The framework "
+                    "formerly claimed that the CHNP classification (arXiv:1207.4470) "
+                    "lists a 'TCS #187' with b2 = 4, b3 = 24; it does not (no TCS "
+                    "catalogue uses serial numbers), and (4, 24) cannot be a TCS. "
+                    "Off-path."
                 )
             },
             {
                 "topic": "KKLT moduli stabilization and racetrack mechanism",
                 "url": "https://arxiv.org/abs/hep-th/0301240",
                 "relevance": (
+                    "OFF-PATH on Y_7, where no gaugino racetrack exists (CG.5, CG.6). "
                     "The KKLT mechanism (Kachru-Kallosh-Linde-Trivedi 2003) provides "
                     "the foundational framework for stabilizing Kahler moduli via "
                     "non-perturbative superpotential terms. In the PM four-face "
@@ -2804,8 +2915,8 @@ class G2GeometryV16(SimulationBase):
             "message": f"chi_topological = {chi_top} (must be 0 for 7-manifold)"
         })
 
-        # Check 3: Effective Euler characteristic
-        # DERIVED: 144 = pressure_divisor = B3^2/4
+        # Check 3: Effective index chi_eff (the K3 reading, 48n at n = 3);
+        # equal to B3^2/4 only at the off-path seed B3 = 24
         chi_eff_ok = (self._chi_eff == 144)
         checks.append({
             "name": "chi_eff = 144",
@@ -2819,7 +2930,7 @@ class G2GeometryV16(SimulationBase):
         n_gen = self._chi_eff // 48
         gen_ok = (n_gen == 3)
         checks.append({
-            "name": "n_gen = 3 from chi_eff/48",
+            "name": "n_gen = 3 from chi_eff/48 (restates b_2/4 under the K3 reading)",
             "passed": gen_ok,
             "confidence_interval": {},
             "log_level": "INFO",
@@ -2833,7 +2944,7 @@ class G2GeometryV16(SimulationBase):
             "passed": holonomy_ok,
             "confidence_interval": {},
             "log_level": "INFO",
-            "message": "All 4 holonomy conditions verified" if holonomy_ok else "HOLONOMY VALIDATION FAILED"
+            "message": "All 4 holonomy conditions verified" if holonomy_ok else "Holonomy NOT ESTABLISHED here (placeholder conditions; see holonomy_validation_report)"
         })
 
         # Check 6: Stability bound
@@ -2870,19 +2981,19 @@ class G2GeometryV16(SimulationBase):
         return [
             {
                 "gate_id": "G_GEOMETRY_BETTI",
-                "assertion": "b3 = 24 verified for TCS #187 G2 manifold",
+                "assertion": "OFF-PATH (b3_seed = seed_24): b3 = 24 for the TCS #187 model. On the adopted path b3 = 7 + 3 b2 from the Joyce resolution, so this gate reports FAIL there.",
                 "result": "PASS" if self._b3 == 24 else "FAIL",
                 "timestamp": "",
                 "details": {
                     "b2": self._b2,
                     "b3": self._b3,
-                    "construction": "TCS #187 (Kovalev-CHNP)"
+                    "construction": "TCS #187 (off-path; no published TCS enumeration contains it)"
                 }
             },
             {
                 "gate_id": "G_GEOMETRY_CHI",
-                "assertion": "chi_eff = 144 verified",
-                # DERIVED: 144 = pressure_divisor = B3^2/4
+                "assertion": "chi_eff = 144 verified (the K3 reading, 48n at n = 3)",
+                # 144 = 48n (K3 reading of chi_eff); B3^2/4 only at the off-path seed
                 "result": "PASS" if self._chi_eff == 144 else "FAIL",
                 "timestamp": "",
                 "details": {
@@ -2894,7 +3005,7 @@ class G2GeometryV16(SimulationBase):
             },
             {
                 "gate_id": "G_GEOMETRY_GENERATIONS",
-                "assertion": "n_gen = 3 from index theorem",
+                "assertion": "n_gen = chi_eff/48 = 3: restates b_2/4 under the K3 reading (not an index theorem; chirality is OPEN)",
                 "result": "PASS" if self._chi_eff // 48 == 3 else "FAIL",
                 "timestamp": "",
                 "details": {
@@ -2918,8 +3029,10 @@ class G2GeometryV16(SimulationBase):
 
         -- the only gate in this list whose `result` was a literal instead of a
         comparison, carrying three literal "details" as evidence, and published
-        into theory_output.json. On the adopted branch the assertion is also
-        false: phi is the SPLIT real form and no Riemannian G2 holonomy exists.
+        into theory_output.json. On the split branch (`all_plus_one`) the
+        assertion is also false: phi is the SPLIT real form there and no
+        Riemannian G2 holonomy exists. On the compact branch (active since
+        D-015) the real-form objection goes away; the placeholder one does not.
 
         Now the sentence and the verdict both come from
         `geometry_narration`, so switching `g2_form_convention` rewrites them
@@ -2975,7 +3088,8 @@ class G2GeometryV16(SimulationBase):
                     "fundamental class [M] in H_n(M; Z). Since b_k = dim H^k(M; R), we get b_k = b_{n-k}."
                 ),
                 "reference": "Hatcher, A. (2002) 'Algebraic Topology', Theorem 3.30",
-                "verification": "Direct computation: b0=b7=1, b1=b6=0, b2=b5=4, b3=b4=24"
+                "verification": ("Direct computation: b0=b7=1, b1=b6=0, b2=b5=%d, b3=b4=%d"
+                                 % (self._b2, self._b3))
             },
         ]
 
@@ -2986,15 +3100,20 @@ class G2GeometryV16(SimulationBase):
         Returns:
             List of discovery dictionaries
         """
+        from metaphysica.simulations.PM.geometry.geometry_narration import render
+
         return [
             {
                 "id": "discovery_3gen_from_topology",
-                "title": "Three Fermion Generations from TCS G2 Topology",
-                "description": (
-                    "The number of fermion generations (n_gen = 3) emerges as a topological "
-                    "invariant of the TCS #187 G2 manifold via chi_eff/48 = 144/48 = 3, "
-                    "with zero free parameters. This replaces the Standard Model's unexplained "
-                    "assumption of 3 generations with a geometric derivation."
+                "title": "Three Generations from the Topology of Y_7",
+                "description": render(
+                    "The generation count is {n_gen_route} of {manifold}, "
+                    "{construction}. Under the adopted K3 reading, "
+                    "chi_eff/48 = n restates that count rather than deriving "
+                    "it again. It counts three generations; whether they are "
+                    "chiral is OPEN (D-011). This entry formerly credited the "
+                    "count to a 'TCS #187' manifold via chi_eff/48, an "
+                    "off-path construction."
                 ),
                 "significance": "HIGH",
                 "testable": True,
@@ -3004,10 +3123,12 @@ class G2GeometryV16(SimulationBase):
                 "id": "discovery_stability_bound",
                 "title": "Stability Window for G2 Manifold",
                 "description": (
-                    "The stability ratio (C_kaf * b3) / k_gimel = 52.99 lies within the "
-                    "narrow stability window [52.9, 53.1] (internal consistency window, "
-                    "ANSATZ — not a bound from Joyce), ensuring the G2 manifold is "
-                    "stabilized against Planck-scale collapse."
+                    "CALIBRATED at the off-path seed b3 = 24: there the stability ratio "
+                    "(C_kaf * b3) / k_gimel = 52.99 lies within the narrow window "
+                    "[52.9, 53.1] (internal consistency window, ANSATZ — not a bound "
+                    "from Joyce). The window was set at that seed and not re-derived; "
+                    "on the adopted seed the ratio leaves it (validate_self, check 6), "
+                    "so no stabilisation of Y_7 against Planck-scale collapse is claimed."
                 ),
                 "significance": "MEDIUM",
                 "testable": False,

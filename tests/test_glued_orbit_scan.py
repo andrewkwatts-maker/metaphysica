@@ -51,6 +51,26 @@ def records():
                     n_families=1)
 
 
+@pytest.fixture(scope="module")
+def split_records():
+    """The same grid on the split-form switch path (all_plus_one), where the
+    2026-09-22 measurement was made. Module-scoped, so the env is set and
+    restored by hand rather than through monkeypatch."""
+    import os
+
+    key = "METAPHYSICA_VARIANT_G2_FORM_CONVENTION"
+    saved = os.environ.get(key)
+    os.environ[key] = "all_plus_one"
+    try:
+        return gos.scan(radii=_RADII, t_values=_T_VALUES, thetas=_THETAS,
+                        n_families=1)
+    finally:
+        if saved is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = saved
+
+
 # ------------------------------------------------------------------ the form
 
 def test_the_glued_form_is_antisymmetric_at_every_sampled_point():
@@ -154,16 +174,32 @@ def test_the_expected_signature_is_read_from_the_fork_not_hardcoded():
 
 # --------------------------------------------------------- the measured facts
 
-def test_the_form_never_leaves_the_home_orbit(records):
-    """The measured result: no crossover, on the unordered invariant."""
-    home = "COMPACT" if gos.expected_unordered_signature() == (7, 0) else "SPLIT"
-    labels = {r["orbit"] for r in records}
-    assert labels == {home}, (
-        "the glued form left the home orbit %s; labels seen were %s. Either the "
-        "orbit genuinely drifted -- in which case every holonomy sentence now "
-        "needs a DOMAIN -- or the classifier regressed to the ordered "
-        "signature." % (home, sorted(labels))
+def test_the_form_never_leaves_the_home_orbit(split_records):
+    """The 2026-09-22 measurement, on the split-form switch path: no crossover,
+    on the unordered invariant."""
+    labels = {r["orbit"] for r in split_records}
+    assert labels == {"SPLIT"}, (
+        "the glued form left the split orbit; labels seen were %s. Either the "
+        "orbit genuinely drifted or the classifier regressed to the ordered "
+        "signature." % sorted(labels)
     )
+
+
+def test_on_the_compact_path_the_form_stays_compact_at_small_amplitude(records):
+    """MEASURED 2026-10-02 after D-015 made the compact form the active path
+    (recorded as the D-003 addendum of that date). The leading-order glued
+    form stays in the COMPACT orbit at every sampled point with t <= 0.1 and
+    leaves it only at large amplitude (t >= 1), where the leading-order-in-t
+    ansatz is outside its domain -- Joyce's construction needs a small
+    resolution parameter and then corrects to a torsion-free form. If a small-t
+    point ever leaves the compact orbit, the holonomy sentences need a DOMAIN.
+    """
+    assert gos.expected_unordered_signature() == (7, 0)
+    small = [r for r in records if r["t"] <= 0.1]
+    assert small and {r["orbit"] for r in small} == {"COMPACT"}
+    left = [r for r in records if r["orbit"] not in ("COMPACT",)]
+    assert left, "the large-amplitude crossover disappeared; re-measure"
+    assert all(r["t"] >= 1.0 for r in left), sorted(r["t"] for r in left)
 
 
 def test_det_B_changes_sign_so_a_degenerate_wall_exists(records):
@@ -182,8 +218,19 @@ def test_det_B_changes_sign_so_a_degenerate_wall_exists(records):
     assert walls, "sign changes exist but the bracketing detector found none"
 
 
-def test_the_outcome_is_degenerate_and_not_crossover(records):
+def test_on_the_compact_path_the_crossover_is_pinned(records):
+    """The compact-path measurement, pinned in both directions on this grid:
+    9 of the 40 points sit in the split orbit and 4 are degenerate, all at
+    t >= 1 (D-003 addendum, 2026-10-02)."""
     outcome = gos.orbit_outcome(records)
+    assert outcome["home_orbit"] == "COMPACT"
+    assert outcome["n_in_other_open_orbit"] == 9
+    assert outcome["n_degenerate"] == 4
+
+
+def test_the_outcome_is_degenerate_and_not_crossover(split_records):
+    """The 2026-09-22 result, on the split-form switch path."""
+    outcome = gos.orbit_outcome(split_records, convention="all_plus_one")
     assert outcome["outcome"] == "DEGENERATE", (
         "the measured outcome was DEGENERATE on 2026-09-22; it is now %r. Each "
         "of the three outcomes means something different for the wording task, "

@@ -2,6 +2,14 @@
 GAUGE INVARIANCE TEST SUITE - SUMMARY
 ================================================================================
 
+HISTORICAL RECORD (labelled 2026-10-01). This summary describes the suite as
+it stood when b₃ = 24 was the seed; the test file it summarises is no longer
+in the repository. On the adopted path b₃ = 24 is the OFF-PATH seed (retired,
+and unreachable by Joyce's construction from Γ, certificate CG.7), and the TCS
+description is off-path: the internal space is Y₇, Joyce's resolution of
+T⁷/(ℤ/2)³, with (b₂, b₃) = (12, 43). The lines below that depend on b₃ = 24
+or on TCS are labelled, not rewritten.
+
 File: simulations/tests/test_gauge_invariance.py
 Lines of Code: 820
 Total Tests: 18
@@ -14,7 +22,8 @@ TEST COVERAGE
 
 1. TestGaugeGroupStructure (4 tests)
    ✓ test_gauge_coupling_unification_at_gut_scale
-     → Verifies α_GUT ≈ 1/24 from G2 topology (b₃=24)
+     → Verifies α_GUT ≈ 1/24 from G2 topology (b₃=24; calibrated at the
+       off-path seed)
      → Validates M_GUT ≈ 2×10^16 GeV
 
    ✓ test_gauge_group_dimension_consistency
@@ -24,7 +33,8 @@ TEST COVERAGE
 
    ✓ test_g2_holonomy_to_su3_embedding
      → G2 (dim=14, rank=2) ⊃ SU(3) (dim=8, rank=2)
-     → TCS G2 manifold: b₃ = 24
+     → TCS G2 manifold: b₃ = 24 (OFF-PATH: TCS is not the construction;
+       the adopted Y₇ has b₃ = 43)
 
    ✓ test_so10_fermion_representation
      → 16-spinor = one complete generation
@@ -92,7 +102,8 @@ TEST COVERAGE
    ✓ test_gauge_coupling_threshold_corrections
      → KK tower at M_* ≈ 5 TeV
      → Δ(1/α_i) = (k_i h^{1,1})/(2π) log(M_GUT/M_*)
-     → h^{1,1} = 24 from TCS G2 topology
+     → h^{1,1} = 24 from TCS G2 topology (OFF-PATH: a TCS-era value, not
+       a Y₇ quantity)
 
 ================================================================================
 KEY PHYSICS VALIDATIONS
@@ -100,10 +111,11 @@ KEY PHYSICS VALIDATIONS
 
 ✓ G2 Holonomy → SO(10) → Standard Model
   - Gauge group emerges naturally from G2 structure
-  - b₃ = 24 determines α_GUT ≈ 1/24
+  - b₃ = 24 determines α_GUT ≈ 1/24 (calibrated at the off-path seed)
 
 ✓ Grand Unification at M_GUT ≈ 2×10^16 GeV
-  - From G2 torsion and moduli stabilization
+  - From G2 torsion and moduli stabilization (the moduli are OPEN on Y₇:
+    the leading-order flux potential runs away, CG.6)
   - Consistent with proton decay bounds
 
 ✓ Anomaly-Free Theory
@@ -117,7 +129,7 @@ KEY PHYSICS VALIDATIONS
   - Explains neutrino masses via seesaw mechanism
 
 ✓ Threshold Corrections from KK Tower
-  - h^{1,1} = 24 Hodge number from G2 manifold
+  - h^{1,1} = 24 Hodge number from G2 manifold (OFF-PATH: TCS-era value)
   - Corrections modify gauge running above M_* ≈ 5 TeV
   - Consistent with dimensional reduction
 
@@ -167,7 +179,10 @@ REFERENCES
 [3] Joyce (2007): "Riemannian Holonomy Groups and Calibrated Geometry"
     Oxford Mathematical Monographs
 
-[4] TCS G2 Manifold: Third Betti number b₃ = 24 (manifold #187)
+[4] OFF-PATH: "TCS G2 Manifold: Third Betti number b₃ = 24 (manifold #187)".
+    No published TCS enumeration has such an entry, and b₃ = 24 is outside
+    every published TCS range. The construction is Joyce's resolution of
+    T⁷/(ℤ/2)³, which gives b₃ = 43.
 
 ================================================================================
 Author: Andrew Keith Watts
