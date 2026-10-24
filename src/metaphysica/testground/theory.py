@@ -149,6 +149,8 @@ class Theory:
     invalidate_caches: Callable[[], None] = lambda: None
     #: Narrative (non-executable) decisions drawn in the graph.
     narrative: Tuple[Dict[str, Any], ...] = field(default_factory=tuple)
+    #: Lineage catalogue (YAML, `metaphysica.lineage/1`); None = no lineage.
+    lineage: Optional[Path] = None
 
     def fork_ids(self) -> List[str]:
         return list(self.switches.forks())

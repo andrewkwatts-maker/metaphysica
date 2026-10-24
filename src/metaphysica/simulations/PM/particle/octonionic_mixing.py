@@ -1768,6 +1768,12 @@ assert abs(np.degrees(_validation_instance.THETA_G) - 31.72) < 0.1, \
 # Test key CKM calculation (with known inputs)
 # PMNS uses chi_eff_total = 144 (both shadows) - neutrino oscillations involve both shadows
 # READ from the adopted seed rather than pinned to the retired 4 / 24.
+# Refuse an incoherent seed / n_gen_source pairing here, with its reason,
+# rather than dividing by a b_2 of zero in the CKM self-check below.
+from metaphysica.simulations.PM.geometry.b3_path import (
+    require_three_generations as _require_three_generations,
+)
+_require_three_generations()
 _validation_instance._b2 = _b2_adopted()
 _validation_instance._b3 = int(_REG.elder_kads)
 _validation_instance._chi_eff = 144  # chi_eff_total = 144 for PMNS

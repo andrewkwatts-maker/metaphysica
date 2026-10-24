@@ -116,6 +116,8 @@ def make_theory(configs_dir: Optional[Path] = None,
         assessment_config=root / "assessment.yaml",
         invalidate_caches=model.clear_cache,
         narrative=NARRATIVE,
+        lineage=root / "lineage.yaml" if (root / "lineage.yaml").is_file()
+        else None,
     )
 
 

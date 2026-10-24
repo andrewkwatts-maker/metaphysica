@@ -249,6 +249,24 @@ def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
     }
 
 
+def require_three_generations(path: Optional[str] = None) -> int:
+    """The generation count of the active path, or a ``ValueError`` refusal.
+
+    The one guard every consumer of n_gen and b_2 routes through, so an
+    incoherent seed/n_gen_source pairing is refused early with its reason
+    rather than crashing as a division by zero downstream.
+    """
+    report = n_gen_report(path)
+    if not report["equals_three"]:
+        raise ValueError(
+            "seed path %r gives n_gen = %s via %s, which is not three. "
+            "The n_gen_source fork must move with b3_seed; a generation "
+            "count is a number of things."
+            % (report["path"], report["n_gen"], report["declared_source"])
+        )
+    return int(round(report["n_gen"]))
+
+
 def downstream(path: Optional[str] = None) -> Dict[str, Any]:
     """Every registered relation that consumes the seed, on this path."""
     key = path or resolve_path()

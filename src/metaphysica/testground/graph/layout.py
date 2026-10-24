@@ -118,7 +118,8 @@ def option_row_key(node: Mapping[str, Any]) -> Tuple[int, int, int]:
 
 def _by_type(graph: Mapping[str, Any]) -> Dict[str, List[Mapping[str, Any]]]:
     out: Dict[str, List[Mapping[str, Any]]] = {
-        "theory": [], "fork": [], "option": [], "decision": [], "narrative": []}
+        "theory": [], "fork": [], "option": [], "decision": [], "narrative": [],
+        "version": []}   # versions are placed by lineage.layout
     for node in graph.get("nodes", ()):
         if node["type"] not in out:
             raise ValueError("node %r has unknown type %r"

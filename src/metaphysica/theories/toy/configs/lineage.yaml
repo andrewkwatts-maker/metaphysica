@@ -1,0 +1,35 @@
+schema: metaphysica.lineage/1
+versions:
+- id: seed_only
+  label: Seed only
+  era: 2026-01
+  parent: null
+  status: trunk
+  superseded_by: fitted_coupling
+  framing: The toy started with one seed and a fitted coupling.
+  why: Superseded because the coupling was a free input.
+  worked: [The seed reproduces the light mass.]
+  failed: [The coupling had to be fitted.]
+  maps_to: []
+- id: fitted_coupling
+  label: Fitted coupling
+  era: 2026-02
+  parent: seed_only
+  status: dead_end
+  superseded_by: geometric_coupling
+  framing: Keep the fitted coupling and add a cutoff.
+  why: Fits the data better but loses on closure.
+  worked: [Lower chi-squared.]
+  failed: [One more fitted input.]
+  maps_to: [coupling_route.fitted]
+- id: geometric_coupling
+  label: Geometric coupling
+  era: 2026-03
+  parent: seed_only
+  status: active
+  superseded_by: null
+  framing: The coupling follows from the geometry.
+  why: Closes with no fitted input.
+  worked: [No free coupling.]
+  failed: []
+  maps_to: [coupling_route.geometric]

@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "metaphysica.path_graph/1",
+  "$id": "metaphysica.path_graph/2",
   "title": "The switch/path graph rendered by the website Paths tab and the app",
   "type": "object",
   "required": ["schema", "theory", "nodes", "edges", "layout"],
   "properties": {
-    "schema": {"const": "metaphysica.path_graph/1"},
+    "schema": {"const": "metaphysica.path_graph/2"},
     "theory": {
       "type": "object",
       "required": ["id", "title", "active"],
@@ -24,7 +24,7 @@
         "required": ["id", "type", "label"],
         "properties": {
           "id": {"type": "string"},
-          "type": {"enum": ["theory", "fork", "option", "decision", "narrative"]},
+          "type": {"enum": ["theory", "fork", "option", "decision", "narrative", "version"]},
           "label": {"type": "string"},
           "status": {"type": ["string", "null"]},
           "class": {"type": ["string", "null"]},
@@ -40,7 +40,7 @@
         "type": "object",
         "required": ["type", "source", "target"],
         "properties": {
-          "type": {"enum": ["has_option", "requires", "excludes", "decided_by", "path_step"]},
+          "type": {"enum": ["has_option", "requires", "excludes", "decided_by", "path_step", "evolves_to", "superseded_by", "maps_to"]},
           "source": {"type": "string"},
           "target": {"type": "string"},
           "class": {"type": ["string", "null"]},
@@ -55,9 +55,20 @@
       "properties": {
         "version": {"type": "integer"},
         "bbox": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4},
-        "positions": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4}}
+        "positions": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4}},
+        "lineage": {
+          "type": "object",
+          "required": ["bbox", "eras", "lanes", "positions"],
+          "properties": {
+            "bbox": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4},
+            "eras": {"type": "array"},
+            "lanes": {"type": "array"},
+            "positions": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4}}
+          }
+        }
       }
     },
-    "decisions": {"type": "array"}
+    "decisions": {"type": "array"},
+    "views": {"type": "array", "items": {"enum": ["lineage", "switches"]}}
   }
 }

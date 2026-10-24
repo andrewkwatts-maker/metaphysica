@@ -247,18 +247,11 @@ class G2GeometryV16(SimulationBase):
         forks are coupled: `seed_43_joyce` requires `b2_over_faces`. The
         report from `b3_path.n_gen_report` carries both and says which holds.
         """
-        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            require_three_generations,
+        )
 
-        report = n_gen_report(self._b3_seed_path)
-        if not report["equals_three"]:
-            raise ValueError(
-                "seed path %r gives n_gen = %s via %s, which is not three. "
-                "The n_gen_source fork must move with b3_seed; a generation "
-                "count is a number of things."
-                % (self._b3_seed_path, report["n_gen"],
-                   report["declared_source"])
-            )
-        return int(round(report["n_gen"]))
+        return require_three_generations(self._b3_seed_path)
 
     def _seed_spec(self) -> Dict[str, Any]:
         """The active path's own row, read live rather than restated."""

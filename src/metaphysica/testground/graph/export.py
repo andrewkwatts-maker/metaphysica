@@ -125,7 +125,9 @@ def reference_errors(graph: Mapping[str, Any]) -> List[str]:
             if edge.get(end) not in known:
                 errors.append("edges/%d: %s %r is not a node"
                               % (i, end, edge.get(end)))
-    positions = graph.get("layout", {}).get("positions", {})
+    layout = graph.get("layout", {})
+    positions = dict(layout.get("positions", {}))
+    positions.update(layout.get("lineage", {}).get("positions", {}))
     errors += ["layout: %r has no position" % i for i in sorted(
         known - set(positions))]
     errors += ["layout: position for unknown node %r" % i for i in sorted(

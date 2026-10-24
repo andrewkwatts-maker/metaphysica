@@ -748,11 +748,9 @@ def _act_text(data: Mapping[str, Any]) -> str:
                                      if data.get("certainty") else ""))
     lines += ["pending edit: %s" % e for e in data.get("pending_edits") or ()]
     lines += ["stale: %s" % r for r in data.get("stale_reasons") or ()]
-    lines.append("decision log %s:
-%s" % (data.get("log_path"),
+    lines.append("decision log %s:\n%s" % (data.get("log_path"),
                                            data.get("entry_text", "")))
-    return "
-".join(lines)
+    return "\n".join(lines)
 
 
 def _act(args: argparse.Namespace, fn: Callable[..., Any], *pos: Any,
@@ -994,11 +992,16 @@ def cmd_run(args: argparse.Namespace, theory: Any) -> int:
     return OK
 
 
+def _cmd_paths_publish(args: argparse.Namespace, theory: Any) -> int:
+    from .results.publish import cmd_paths_publish
+    return cmd_paths_publish(args, theory)
+
+
 HANDLERS: Dict[str, Callable[[argparse.Namespace, Any], int]] = {
     "list": cmd_list, "validate": cmd_validate, "assess": cmd_assess,
     "explain": cmd_explain, "accept": cmd_accept, "retire": cmd_retire,
     "reinstate": cmd_reinstate, "export-graph": cmd_export_graph,
-    "run": cmd_run,
+    "run": cmd_run, "paths-publish": _cmd_paths_publish,
 }
 
 
@@ -1126,6 +1129,17 @@ def build_parser() -> argparse.ArgumentParser:
                                              "(default: the one in force)")
     _common(p)
     _run_options(p)
+    p = sub.add_parser("paths-publish", help="write per-path patches, "
+                                             "summaries and the path manifest")
+    p.add_argument("--theory", default="pm", help="theory name (default: pm)")
+    for flag, text in (("main-run", "the main build root"),
+                       ("volatile-run", "one or more twin builds of main "
+                                        "(keys differing from main are volatile)"),
+                       ("runs", "directory of <fork>--<option> builds"),
+                       ("published", "the published site root"),
+                       ("out", "directory to write index.json and paths to")):
+        p.add_argument("--" + flag, required=True, help=text,
+                       nargs="+" if flag == "volatile-run" else None)
     return parser
 
 
@@ -1140,8 +1154,8 @@ def main(argv: Optional[Sequence[str]] = None, theory: Any = None) -> int:
         if args.command is None:
             parser.print_help()
             return USAGE
-        needs_theory = not (args.command == "list"
-                            and args.what == "theories")
+        needs_theory = not (args.command == "paths-publish" or (
+            args.command == "list" and args.what == "theories"))
         if theory is None and needs_theory:
             theory = load_theory(args.theory)
         return HANDLERS[args.command](args, theory)

@@ -1,7 +1,7 @@
 """Build the path graph of a theory: forks, options, constraints, decisions.
 
 `build_graph(theory, assessment=None)` returns one JSON-ready dict (schema
-``metaphysica.path_graph/1``) that the website Paths tab and the app both draw:
+``metaphysica.path_graph/2``) that the website Paths tab and the app both draw:
 
 - nodes: the theory, every fork (kind, stage, binding, status, consumers,
   wired), every option (status, class, rationale sections, decision refs,
@@ -39,8 +39,13 @@ from metaphysica.testground.decisions.log import DecisionLog, is_decision_id
 from metaphysica.testground.graph.layout import (column_key,
                                                  constraint_depths,
                                                  layout_graph)
+from metaphysica.testground.graph.lineage_graph import (add_lineage,
+                                                        merge_declared)
 from metaphysica.testground.graph.rationale import (decision_refs,
                                                     rationale_sections)
+from metaphysica.testground.lineage.layout import layout_lineage
+from metaphysica.testground.lineage.load import load_lineage
+from metaphysica.testground.lineage.model import Lineage
 from metaphysica.testground.switches.model import ACTIVE, DISABLED, Fork
 
 __all__ = [
@@ -58,7 +63,7 @@ __all__ = [
     "build_graph",
 ]
 
-SCHEMA_ID = "metaphysica.path_graph/1"
+SCHEMA_ID = "metaphysica.path_graph/2"
 
 ACTIVE_CLASS = "active"
 RECOMMENDED_CLASS = "recommended"
@@ -89,6 +94,12 @@ LEGEND: Dict[str, Dict[str, str]] = {
                             "color": "#b388ff"},
     "rejected": {"label": "assessed and rejected by a validity check",
                  "color": "#ff5c5c"},
+    "trunk": {"label": "trunk: the line the theory followed",
+              "color": "#e0c060"},
+    "branch": {"label": "branch: explored alongside the trunk",
+               "color": "#4fc3f7"},
+    "dead_end": {"label": "dead end: abandoned, kept on record",
+                 "color": "#ff8a65"},
 }
 
 
@@ -247,6 +258,8 @@ def _active_option(fork: Fork, selection: Mapping[str, str]) -> Tuple[str, str]:
     declared = _declared_active(fork)
     if declared is not None:
         return declared, "declaration"
+    if not any(o.implemented for o in fork.options):
+        return "", "undeclared"      # a declared-only fork has no path option
     return fork.options[0].id, "unresolved"
 
 
@@ -548,6 +561,13 @@ def _configurations(view: Optional[AssessmentView], order: List[str],
     return out
 
 
+def _load_lineage(theory: Any) -> Optional[Lineage]:
+    path = getattr(theory, "lineage", None)
+    if path is None:
+        return None
+    return load_lineage(path, theory.switches.forks())
+
+
 def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
                 decision_log: Union[None, DecisionLog, str, Path] = None
                 ) -> Dict[str, Any]:
@@ -556,7 +576,8 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
     ``decision_log`` defaults to the theory's own log (its
     DecisionLogProvider); decisions not found there are drawn as NOT IN LOG.
     """
-    forks: Mapping[str, Fork] = theory.switches.forks()
+    lineage = _load_lineage(theory)
+    forks = merge_declared(theory.switches.forks(), lineage)
     constraints = list(theory.switches.constraints())
     cfg = theory.selections.active()
     log = _resolve_log(theory, decision_log)
@@ -564,12 +585,15 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
     order = fork_column_order(forks, constraints)
     depths = constraint_depths(list(forks), constraints)
     active = {f: _active_option(forks[f], cfg.mapping) for f in forks}
-    active_sel = {f: o for f, (o, _) in active.items()}
+    active_sel = {f: o for f, (o, _) in active.items() if o}
     rec_block, rec_sel = _recommended_block(view, cfg.digest, active_sel)
     if rec_block is not None and rec_block["is_active"]:
         rec_sel = {}
 
     b = _Builder()
+    if log is None and getattr(theory, "decisions", None) is not None:
+        b.warnings.append("decision log not found: decisions are drawn as "
+                          "NOT IN LOG")
     b.node({"id": theory_node_id(theory.id), "type": "theory",
             "label": theory.title, "status": "ACTIVE", "class": "theory",
             "attrs": {"theory": theory.id, "env_prefix": theory.env_prefix,
@@ -579,6 +603,8 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
     _add_forks(b, forks, order, depths, active, rec_sel, view)
     _add_constraints(b, forks, constraints)
     _narrative_nodes(b, theory.narrative)
+    if lineage is not None:
+        add_lineage(b, lineage)
     for fork_id, ids in cfg.decided_by:
         if fork_id in active:
             b.cite(option_node_id(fork_id, active[fork_id][0]), ids,
@@ -616,4 +642,7 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
     }
     graph = _json_copy(graph)
     graph["layout"] = layout_graph(graph)
+    if lineage is not None:
+        graph["layout"]["lineage"] = layout_lineage(lineage)
+    graph["views"] = ["lineage", "switches"] if lineage else ["switches"]
     return graph
