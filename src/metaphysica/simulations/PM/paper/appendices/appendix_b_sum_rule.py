@@ -537,7 +537,7 @@ class AppendixBSumRule(SimulationBase):
                     "the direction of the inference: the volume is read OFF "
                     "the coupling, so this is a translation of alpha_GUT into "
                     "geometry, not an independent prediction of it. The "
-                    "SU(2) and U(1) reductions declared a coassociative "
+                    "SU(2) and U(1) reductions declared (retired reading) a coassociative "
                     "4-cycle and a residual abelian cycle instead; in the "
                     "standard construction all three gauge factors descend "
                     "from the same 3-cycle at unification, which is why only "

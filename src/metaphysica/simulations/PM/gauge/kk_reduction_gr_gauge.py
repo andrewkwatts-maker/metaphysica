@@ -486,8 +486,8 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                 "url": "https://en.wikipedia.org/wiki/Compactification_(physics)",
                 "relevance": (
                     "The 5D circle model is a toy for the full PM 26D -> 4D cascade. "
-                    "In the PM framework, the compact manifold is a TCS G2 manifold "
-                    "with h^{1,1} = 24 Kahler moduli, yielding non-Abelian gauge groups."
+                    "In the PM framework, the compact manifold is a G2 manifold (Joyce Y7; TCS is REFUSED in fork g2_construction) "
+                    "with h^{1,1} = 24 Kahler moduli, yielding non-Abelian gauge groups (generic rule; OPEN on the active smooth Y7 (D-011); SU(2) only at the unresolved orbifold point (A1 loci))."
                 ),
                 "validation_hint": (
                     "Check that non-Abelian gauge groups arise from non-Abelian isometries "
@@ -802,7 +802,7 @@ class KKReductionGRGaugeSimulation(SimulationBase):
                         "a cascade of compactifications to 4D spacetime. The 24 spatial "
                         "dimensions organize into 12 pairs of 2D Euclidean bridges, each "
                         "acting as a consciousness channel with distributed OR reduction. "
-                        "Non-Abelian gauge groups arise from ADE singularities on the G2 "
+                        "Non-Abelian gauge groups arise, in the generic rule, from ADE singularities on the G2 "
                         "manifold rather than simple circle isometries."
                     ),
                 ),

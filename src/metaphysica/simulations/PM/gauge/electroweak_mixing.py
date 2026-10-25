@@ -227,7 +227,7 @@ class ElectroweakMixing:
         DERIVATION:
         In M-theory on G2 manifolds, gauge couplings are determined by the volumes
         of associative 3-cycles wrapped by the corresponding gauge fields. For the
-        Standard Model embedded via a D5 singularity on TCS G2 #187:
+        Standard Model embedded via a D5 singularity on the retired TCS #187 seed (REFUSED in fork g2_construction):
 
         1. The SU(2)_L gauge coupling g_2 is inversely proportional to the volume
            of the weak 3-cycle C_W: 1/g_2^2 = Vol(C_W) / (4pi l_P^3)
@@ -260,7 +260,7 @@ class ElectroweakMixing:
             'spectral_ratio': (
                 'The spectral ratio is the eigenvalue ratio of the Laplacian on '
                 'co-associative 4-forms dual to C_W and C_Y. This ratio equals '
-                'Vol(C_W)/Vol(C_Y) and is a topological invariant of TCS G2 #187.'
+                'Vol(C_W)/Vol(C_Y) and is a topological invariant of the retired TCS #187 seed (REFUSED in fork g2_construction).'
             ),
             'residue_locking': (
                 'sin^2(theta_W) = 0.23122 is the PDG 2024 MS-bar input (ANSATZ here: '
@@ -759,7 +759,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "steps": [
                         "Define the Weinberg angle via tan(theta_W) = g' / g_2, the ratio of U(1)_Y to SU(2)_L couplings.",
                         "In M-theory on G2 manifolds, gauge couplings are set by associative 3-cycle volumes: 1/g_2^2 = Vol(C_W)/(4pi l_P^3), 1/g'^2 = Vol(C_Y)/(4pi l_P^3). Therefore tan^2(theta_W) = Vol(C_W)/Vol(C_Y) = r_W/r_Y.",
-                        "The cycle volumes r_W and r_Y are computed from the spectral decomposition of the Laplacian on co-associative 4-forms of TCS G2 #187. The eigenvalue ratio is a topological invariant encoding the full RG evolution from M_GUT to M_Z, including KK threshold corrections.",
+                        "The cycle volumes r_W and r_Y are computed from the spectral decomposition of the Laplacian on co-associative 4-forms (legacy reading, OPEN on the active smooth Y7 (D-011); SU(2) only at the unresolved orbifold point (A1 loci)) of the retired TCS #187 seed (REFUSED in fork g2_construction). The eigenvalue ratio is a topological invariant encoding the full RG evolution from M_GUT to M_Z, including KK threshold corrections.",
                         "At the GUT scale, SU(5) normalization gives sin^2(theta_W) = 3/8 = 0.375. The G2 geometry encodes the running to low energy: the cycle volume ratio directly gives the MS-bar value at M_Z.",
                         "Result: sin^2(theta_W) = g'^2 / (g_2^2 + g'^2) = 0.23122 (MS-bar at M_Z, PDG 2024).",
                     ],
@@ -776,8 +776,8 @@ class ElectroweakMixingSimulation(SimulationBase):
                     "g'": "U(1)_Y hypercharge coupling, determined by Vol(C_Y)",
                     "r_W": "Weak 3-cycle volume Vol(C_W) (G2 spectral residue from Laplacian eigenvalue)",
                     "r_Y": "Hypercharge 3-cycle volume Vol(C_Y) (G2 spectral residue from Laplacian eigenvalue)",
-                    "C_W": "Associative 3-cycle wrapped by SU(2)_L gauge field in TCS G2 #187",
-                    "C_Y": "Associative 3-cycle wrapped by U(1)_Y gauge field in TCS G2 #187",
+                    "C_W": "Associative 3-cycle wrapped by SU(2)_L gauge field in the retired TCS #187 seed (REFUSED in fork g2_construction)",
+                    "C_Y": "Associative 3-cycle wrapped by U(1)_Y gauge field in the retired TCS #187 seed (REFUSED in fork g2_construction)",
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
