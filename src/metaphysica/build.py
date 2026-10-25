@@ -369,6 +369,34 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Refresh validation statistics from this build's rigor report",
      [sys.executable, "-m", "metaphysica.generators.generate_statistics"],
      False),
+    # Sections 7-9 and the chi^2 formula are rendered during "Run all
+    # simulations", before the rigor report above exists, so a fresh build
+    # published NOT AVAILABLE for them. Re-render just those ids now.
+    ("Refresh paper conclusions from this build's rigor report",
+     [sys.executable, "-m", "metaphysica.generators.refresh_paper_conclusions",
+      "--core-text"],
+     False),
+    # The refresh drops the stale html of the formulas it re-renders; this
+    # pass only fills formulas that have none, so it touches just those.
+    ("Re-render html for the refreshed conclusion formulas",
+     [sys.executable, "-m", "metaphysica.generators.generate_interactive_html"],
+     False),
+    # D-025: the geometry-to-physics walkthrough reads parameters, formulas
+    # and the validation report, so it runs after the refresh above.
+    ("Build the geometry-to-physics walkthrough",
+     [sys.executable, "-m", "metaphysica.generators.generate_geometry_to_physics"],
+     False),
+    ("Re-render html after the geometry-to-physics walkthrough",
+     [sys.executable, "-m", "metaphysica.generators.generate_interactive_html"],
+     False),
+    # D-025: the core-paper manifest reads sections.json (word counts), so it
+    # runs after the refresh above; the html pass fills the new section html.
+    ("Build the core-paper manifest",
+     [sys.executable, "-m", "metaphysica.generators.generate_core_paper"],
+     False),
+    ("Re-render html after the core-paper manifest",
+     [sys.executable, "-m", "metaphysica.generators.generate_interactive_html"],
+     False),
 
     # ── v2.2.0 honesty polish: textbook consistency beacons ─────────────────
     # Seven cross-checks against standard-physics references (KM unitarity,
