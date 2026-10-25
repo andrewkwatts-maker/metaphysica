@@ -60,6 +60,8 @@ class KKGravitonParameters:
         """v12.7 FIXED: KK mass from geometric compactification"""
         return n * KKGravitonParameters.R_C_INV_TEV * 1e3  # GeV
 
+    # CALIBRATED, not derived: the flat T7/Gamma spectrum goes as sqrt(q) and the
+    # scale is a modulus (C5, DECISION_LOG). Tower 5.02 / 10.04 / 15.06 TeV is a label.
     # Predicted values
     M_KK_1 = 5.02e3              # [GeV] = 5.02 TeV (first mode)
     M_KK_ERROR = 0.12e3          # [GeV] = 0.12 TeV (uncertainty)

@@ -946,6 +946,11 @@ class SpeedOfLightV17(SimulationBase):
                 bound_type="central_value",
                 bound_source="CODATA2022",
                 uncertainty=float(CODATA_C_SIGMA_EQUIVALENT),  # ~1ppm equivalent
+                scoring_exclusion="UNIT_CHECK",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: c is exact in SI (299,792,458 m/s by "
+                    "definition since 1983), so this row checks unit "
+                    "consistency and is not a prediction."),
                 eml_description="EML: ops.mul(eml_vec('C_geo'), ops.mul(eml_vec('S_f'), ops.mul(eml_vec('B_v'), ops.mul(eml_vec('chi_gc'), ops.mul(eml_scalar(1e7), eml_vec('P_3D')))))) — c = C_geo × S_f × B_v × chi_gc × 10⁷ × P_3D from G₂ KK reduction; yields 299,792,423 m/s (99.99999% of CODATA) only at the off-path seed b₃ = 24, where it was fitted"
             ),
             Parameter(

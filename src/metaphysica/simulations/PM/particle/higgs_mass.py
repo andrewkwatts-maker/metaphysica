@@ -971,6 +971,12 @@ class HiggsMassSimulation(SimulationBase):
                 bound_type="measured",
                 bound_source="PDG 2024 (ATLAS+CMS combined)",
                 uncertainty=0.11,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3 (already encodes it): higgs_mass.py:39-43 "
+                    "says Re(T) = 9.865 'was hand-inverted from this very "
+                    "formula to reproduce m_h = 125.10 GeV', so the scale "
+                    "input encodes the measured mass."),
                 theory_uncertainty=4.0,  # Missing 2-loop QCD: O(alpha_s * y_t^2) shifts m_h by 3-5 GeV
                 validation={
                     "experimental_value": 125.20,

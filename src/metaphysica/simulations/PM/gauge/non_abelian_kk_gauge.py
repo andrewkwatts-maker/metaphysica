@@ -6,7 +6,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 Explicit symbolic illustration of non-Abelian gauge kinetic term emergence
 via Kaluza-Klein reduction on SU(2) group manifold (toy for G2 singularity enhancement).
 
-In Principia Metaphysica: SU(3)xSU(2) from G2 singularities/cycles in TCS manifold.
+In Principia Metaphysica: SU(3)xSU(2) from G2 singularities is a LEAD only (D-028 found SU(3)xSU(2) loci on other flat orbifolds, not on Y7); on the active smooth Y7 (12, 43) the gauge group is U(1)^12 and SU(3)xSU(2)xU(1) is OPEN (D-011). TCS is refused in fork g2_construction.
 Validation: Matches standard results (e.g., reduction on S^3 gives SU(2) YM).
 """
 
@@ -78,8 +78,9 @@ class NonAbelianKKGauge:
     on manifolds with non-Abelian isometry groups or singularities.
 
     In Principia Metaphysica:
-    - SU(3)_C from associative 3-cycles with A2 singularities
-    - SU(2)_L from distinct cycles with A1 singularities
+    - OPEN (D-011): SU(3)_C, SU(2)_L and chirality are not derived on the active Y7.
+    - Y7 has only A1 loci: U(1)^12 on the smooth resolution, SU(2)^12 only at the
+      unresolved orbifold point. No A2 loci exist on Y7.
     - Couplings locked by spectral residues (cycle volumes)
     """
 
@@ -383,10 +384,10 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                 "relevance": (
                     "In G2 compactifications, non-Abelian gauge groups arise from ADE "
                     "singularities: A_n gives SU(n+1), D_n gives SO(2n), E_{6,7,8} gives "
-                    "exceptional groups. PM uses A1 for SU(2)_L and A2 for SU(3)_C."
+                    "exceptional groups. This is the generic ADE rule; Y7 has only A1 loci, so SU(3)_C is OPEN (D-011)."
                 ),
                 "validation_hint": (
-                    "Check that A1 singularity yields SU(2) and A2 yields SU(3). "
+                    "Check that A1 singularity yields SU(2) and A2 yields SU(3) (generic rule; Y7 has no A2). "
                     "Verify this matches the gauge group of the electroweak and strong sectors."
                 ),
             },
@@ -441,7 +442,7 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "details": {
                     "su2_group_manifold": "S^3 (isometry SU(2))",
-                    "su3_mechanism": "A2 ADE singularity on G2 manifold",
+                    "su3_mechanism": "OPEN (D-011): no A2 locus on Y7; generic ADE rule only",
                     "yang_mills_emerges": True,
                 },
             },
@@ -635,8 +636,8 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                 "We demonstrate how non-Abelian Yang-Mills gauge fields emerge from "
                 "Kaluza-Klein reduction on group manifolds with non-Abelian isometries. "
                 "The toy model uses S^3 (the group manifold of SU(2)); in Principia "
-                "Metaphysica the full SU(3)xSU(2)xU(1) gauge group arises from ADE "
-                "singularities on the 7-dimensional TCS G2 holonomy manifold."
+                "Metaphysica the SU(3)xSU(2)xU(1) gauge group is OPEN (D-011): the active smooth Y7 gives U(1)^12 and "
+                "SU(2)^12 only at the unresolved orbifold point (A1 loci)."
             ),
             content_blocks=[
                 ContentBlock(
@@ -649,10 +650,9 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                         "isometry group SO(4) ~ SU(2)_L x SU(2)_R -- yields three gauge "
                         "fields in the adjoint representation via left-invariant one-forms "
                         "sigma^a on S^3. In Principia Metaphysica, the physical mechanism "
-                        "differs: the full Standard Model gauge group SU(3)xSU(2)xU(1) "
-                        "arises from ADE singularities on the 7-dimensional TCS G2 holonomy "
-                        "manifold, where gauge enhancement occurs at orbifold loci rather "
-                        "than from smooth isometry groups."
+                        "differs: the Standard Model gauge group SU(3)xSU(2)xU(1) "
+                        "is OPEN (D-011): the active smooth Y7 gives U(1)^12, with SU(2)^12 "
+                        "only at the unresolved orbifold point (A1 loci), not from smooth isometry groups."
                     ),
                 ),
                 ContentBlock(
@@ -661,11 +661,10 @@ class NonAbelianKKGaugeSimulation(SimulationBase):
                         "The key distinction from the Abelian case is the appearance of "
                         "structure constants f^{abc} in the field strength tensor, leading "
                         "to gauge boson self-interactions (cubic and quartic vertices). "
-                        "In Principia Metaphysica, SU(3)_C arises from A2-type ADE "
-                        "singularities along associative 3-cycles within the G2 manifold, "
-                        "where the singular fiber degenerates to produce 8 massless gauge "
-                        "bosons (gluons). Similarly, SU(2)_L arises from A1 singularities "
-                        "on distinct cycles of smaller volume, yielding 3 weak gauge bosons. "
+                        "In Principia Metaphysica, SU(3)_C is OPEN (D-011): Y7 has only A1 loci "
+                        "and no A2 loci, so the generic A2 -> 8 gluons rule does not apply to it "
+                        "(D-028 found SU(3)xSU(2) loci on other flat orbifolds, a lead only). "
+                        "SU(2) appears only at the unresolved orbifold point (A1 loci), 3 gauge bosons per locus. "
                         "The cycle volume ratio Vol(Sigma_SU2)/Vol(Sigma_SU3) directly sets "
                         "the coupling hierarchy alpha_2/alpha_3 via spectral residues."
                     ),

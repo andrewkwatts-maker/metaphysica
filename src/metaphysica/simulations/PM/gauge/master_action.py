@@ -770,7 +770,7 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=["gauge.qcd_gluon_count", "gauge.qcd_alpha_s_mz"],
                 derivation={
                     "steps": [
-                        "Identify SU(3)_C gauge fields from harmonic 1-forms on associative 3-cycles in the G2 manifold",
+                        "Identify SU(3)_C gauge fields from harmonic 1-forms on associative 3-cycles in the G2 manifold (generic picture; OPEN on the active Y7, D-011)",
                         "Adjoint representation of SU(3) has dimension 8, yielding 8 gluon fields G^a_mu (a=1,...,8)",
                         "Dimensional reduction of the bulk Yang-Mills action produces the canonical -1/4 G^a_mn G^{a mn} kinetic term",
                         "Strong coupling g_s determined by the volume of the associative 3-cycle: alpha_s = g_s^2/(4*pi)",
@@ -803,7 +803,7 @@ class MasterActionSimulationV22(SimulationBase):
                 plain_text="L_weak = -1/4 W^a_mn W^a^mn + psi-bar_L i*gamma^mu*D_mu psi_L",
                 category="DERIVED",
                 description=(
-                    "SU(2)_L weak gauge Lagrangian from G2 co-associative 4-cycle. "
+                    "SU(2)_L weak gauge Lagrangian at the unresolved orbifold point (A1 loci; OPEN on the smooth Y7, D-011). "
                     "3 weak bosons (W+, W-, W^3) couple only to left-handed fermions."
                 ),
                 # gauge.g2_weak_coupling named no registry parameter, and the
@@ -826,10 +826,10 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=["gauge.weak_boson_count", "gauge.weak_coupling_g2"],
                 derivation={
                     "steps": [
-                        "Identify SU(2)_L gauge fields from harmonic 1-forms on co-associative 4-cycles in the G2 manifold",
+                        "Identify SU(2)_L gauge fields at A1 loci of the unresolved orbifold point (OPEN on the smooth Y7, D-011)",
                         "Adjoint representation of SU(2) has dimension 3, yielding W^1, W^2, W^3 gauge bosons",
-                        "Chiral structure (left-handed only coupling) emerges from the co-associative cycle orientation",
-                        "Weak coupling g_2 determined by the co-associative 4-cycle volume",
+                        "Chiral structure (left-handed only coupling) is OPEN (D-011), not derived from cycle orientation",
+                        "Weak coupling g_2 would be set by the A1-locus geometry (OPEN, D-011)",
                     ],
                     "method": "g2_coassociative_cycle_reduction",
                     "parentFormulas": ["kk-reduction-5d-v22"],
@@ -837,7 +837,7 @@ class MasterActionSimulationV22(SimulationBase):
                 terms={
                     "W^a_mn": "Weak field strength tensor, a = 1,2,3 (adjoint of SU(2))",
                     "psi_L": "Left-handed fermion doublets (left-chiral projection)",
-                    "g_2": "Weak isospin coupling (from co-associative 4-cycle volume)"
+                    "g_2": "Weak isospin coupling (OPEN, D-011)"
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
@@ -1099,7 +1099,7 @@ class MasterActionSimulationV22(SimulationBase):
                 # terms. The lineage to the mixing sector is already carried by
                 # parentFormulas -> electroweak-mixing-v22.
                 # Was "geometry.tcs_face_count", a path in no registry. The
-                # face count of the TCS manifold is geometry.n_faces = 4,
+                # face count of the retired TCS seed is geometry.n_faces = 4,
                 # which the registry already holds.
                 inputParams=["bridge.distributed_or_rank", "geometry.n_faces"],
                 outputParams=["gauge.chirality_reversal_probability"],
@@ -1107,7 +1107,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "steps": [
                         "The bridge OR operator R_perp^global creates the dual-shadow boundary, mapping normal to mirror sectors",
                         "Under bridge OR, the chiral projection operators P_L and P_R are exchanged: Shadow 1 inherits left-chiral fermions, Shadow 2 inherits right-chiral fermions",
-                        "The face OR operator R_face^(f) acts within each shadow to select the visible face from the 4 TCS faces",
+                        "The face OR operator R_face^(f) acts within each shadow to select the visible face from the 4 faces",
                         "The combined chirality reversal operator R_chirality = R_perp_global * P_LR * R_face^(f) composes all three operations",
                         "The cross-shadow chirality flip probability P_reverse ~ 3e-6 quantifies the suppressed but nonzero coupling between shadows that allows rare chirality violation"
                     ],
@@ -1152,7 +1152,7 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=["geometry.alpha_leak"],
                 derivation={
                     "steps": [
-                        "The 4-face TCS G2 structure has one visible face (selected by face OR) and three hidden faces",
+                        "The 4-face G2 structure has one visible face (selected by face OR) and three hidden faces",
                         "The hidden face fields phi_dark couple to the visible face fields phi_vis through the shared moduli phi_mod",
                         "The portal coupling alpha_leak is determined geometrically: the base factor is 1/sqrt(6) from the volume ratio of the visible face to the total internal volume",
                         "Torsion corrections from the G2 contorsion tensor modify the base coupling by a factor of order unity",
@@ -1217,7 +1217,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "left-handed fermions, Shadow 2 carries right-handed fermions. The Euler "
                     "characteristic chi_eff/48 = 3 fixes three generations per shadow. The face "
                     "potential V_face^(f) encodes the local OR that selects the visible face "
-                    "from the 4-face TCS G2 structure. The gravitational sector R_13 is the "
+                    "from the 4-face G2 structure. The gravitational sector R_13 is the "
                     "13D Ricci scalar from the induced metric g_13 on the shadow, and the "
                     "fermion kinetic term Psi-bar_P i*gamma^m D_m Psi_P describes the "
                     "propagation of the projected Pneuma spinor on the 13D shadow."
@@ -1234,7 +1234,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Each shadow inherits 12 spatial dims (one from each bridge pair) + 1 shared time = 13D(12,1)",
                         "Shadow 1 receives left-chiral projections P_L Psi_P, Shadow 2 receives right-chiral projections P_R Psi_P",
                         "Each shadow's G2 manifold carries the effective index chi_eff (its Euler characteristic is 0); on the unruled K3 reading chi_eff/48 = 3 counts the singular involutions, the three generations",
-                        "The face potential V_face^(f) implements local OR: among the 4 TCS faces, one is selected as the visible face, the other 3 become hidden (dark) faces",
+                        "The face potential V_face^(f) implements local OR: among the 4 faces, one is selected as the visible face, the other 3 become hidden (dark) faces",
                         "Integrate out the bridge degrees of freedom to obtain the effective 13D action S_13 on each shadow",
                     ],
                     "method": "dimensional_reduction_via_bridge_or",
@@ -1251,7 +1251,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"\Psi_P": {"description": "Projected Pneuma spinor on the shadow (chiral: L for Shadow 1, R for Shadow 2)"},
                     r"\gamma^m": {"description": "13D gamma matrices (m = 0, 1, ..., 12) from the shadow Clifford algebra"},
                     r"D_m": {"description": "Covariant derivative on the 13D shadow including spin connection and gauge fields"},
-                    r"V_{face}^{(f)}": {"description": "Face potential implementing local OR to select the visible face f from 4 TCS faces"},
+                    r"V_{face}^{(f)}": {"description": "Face potential implementing local OR to select the visible face f from 4 faces"},
                     r"\chi_{eff}/48 = 3": {"description": "Euler characteristic constraint fixing three fermion generations per shadow"},
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
@@ -1285,8 +1285,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "by M_Pl^2 = M_*^{9} * Vol(V_7), where M_* is the fundamental 11D Planck "
                     "mass and Vol(V_7) is the volume of the compact G2 7-manifold. The SM gauge "
                     "group SU(3)_C x SU(2)_L x U(1)_Y emerges from G2 flux on the 4-face "
-                    "structure: SU(3)_C from associative 3-cycles, SU(2)_L from co-associative "
-                    "4-cycles, and U(1)_Y from the residual Abelian cycle. The cosmological "
+                    "structure: the smooth Y7 gives U(1)^12 (U(1)^b2); SU(3)_C x SU(2)_L x U(1)_Y and chirality are OPEN (D-011), SU(2)^12 only at the unresolved orbifold point (A1 loci). The cosmological "
                     "constant Lambda = (int F wedge phi)^2 / Vol ~ 10^{-52} m^{-2} arises from "
                     "the flux-moduli balance. Portal terms L_portal = alpha_leak * (dark matter "
                     "+ sterile neutrino + ALP interactions) couple the visible face to hidden "
@@ -1841,8 +1840,7 @@ class MasterActionSimulationV22(SimulationBase):
                     type="paragraph",
                     content=(
                         "The full G₂ reduction yields non-Abelian gauge groups from cycles: "
-                        "SU(3)<sub>C</sub> from associative 3-cycles, SU(2)<sub>L</sub> from co-associative 4-cycles, "
-                        "and U(1)<sub>Y</sub> from residual Abelian structure."
+                        "the smooth Y7 gives U(1)^12 (U(1)^b2); SU(3)<sub>C</sub> x SU(2)<sub>L</sub> x U(1)<sub>Y</sub> and chirality are OPEN (D-011), SU(2)^12 only at the unresolved orbifold point (A1 loci)."
                     )
                 ),
                 ContentBlock(
@@ -1924,7 +1922,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "fermions, a chirality assignment that is locked by the global OR operator. "
                         "Within each shadow, the Euler characteristic constraint χ<sub>eff</sub>/48 = 3 "
                         "fixes exactly three fermion generations. The face potential V<sub>face</sub><sup>(f)</sup> "
-                        "implements the local OR that selects one of the 4 TCS faces as the "
+                        "implements the local OR that selects one of the 4 faces as the "
                         "visible face, with the remaining three faces forming the hidden (dark) sector."
                     )
                 ),
@@ -1946,8 +1944,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "is determined by M<sub>Pl</sub>² = M<sub>*</sub><sup>11</sup> · Vol(V<sub>7</sub>), tying the fundamental "
                         "scale to the G₂ volume. The Standard Model gauge group "
                         "SU(3)<sub>C</sub> × SU(2)<sub>L</sub> × U(1)<sub>Y</sub> emerges from G₂ flux on the 4-face "
-                        "structure: SU(3)<sub>C</sub> from associative 3-cycles, SU(2)<sub>L</sub> from co-associative "
-                        "4-cycles, and U(1)<sub>Y</sub> from the residual Abelian cycle. The cosmological "
+                        "structure: the smooth Y7 gives U(1)^12 (U(1)^b2); SU(3)<sub>C</sub> x SU(2)<sub>L</sub> x U(1)<sub>Y</sub> and chirality are OPEN (D-011), SU(2)^12 only at the unresolved orbifold point (A1 loci). The cosmological "
                         "constant Λ = (∫ F ∧ φ)² / Vol ~ 10<sup>−52</sup> m<sup>−2</sup> arises "
                         "naturally from the flux-moduli balance, without fine-tuning. Portal terms "
                         "couple the visible face to hidden faces through shared moduli."
@@ -2025,7 +2022,7 @@ class MasterActionSimulationV22(SimulationBase):
                     type="paragraph",
                     content=superseded(
                         "The dark matter portal coupling emerges from the hidden face geometry "
-                        "of the TCS G₂ manifold. Face OR (Layer 2) selects one face as visible, "
+                        "of the G₂ manifold (Joyce Y7; TCS is REFUSED in fork g2_construction). Face OR (Layer 2) selects one face as visible, "
                         "leaving three hidden faces. The hidden face fields couple to visible "
                         "fields through shared moduli, with a portal coupling α<sub>sample</sub> ~ 0.57 (ANSATZ; α<sub>leak</sub> = 1/√6 ≈ 0.408) "
                         "determined by the volume ratio 1/√6, torsion corrections from the "
@@ -2180,7 +2177,7 @@ class MasterActionSimulationV22(SimulationBase):
             },
             {
                 "id": "CERT_MASTER_ACTION_WEAK_BOSON_COUNT",
-                "assertion": "SU(2)_L weak sector from G2 co-associative 4-cycle yields exactly 3 bosons",
+                "assertion": "SU(2)_L weak sector at A1 loci (unresolved orbifold point) yields exactly 3 bosons",
                 "condition": "weak_boson_count == 3",
                 "tolerance": 0,
                 "status": "PASS",
@@ -2245,7 +2242,7 @@ class MasterActionSimulationV22(SimulationBase):
             {
                 "topic": "G2 holonomy manifolds",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "G2 manifolds provide the compactification geometry. Associative 3-cycles yield SU(3)_C, co-associative 4-cycles yield SU(2)_L. The G2 structure determines gauge couplings and mixing angles.",
+                "relevance": "G2 manifolds provide the compactification geometry. SU(3)_C and SU(2)_L are OPEN on the active Y7 (D-011); SU(2) only at the unresolved orbifold point (A1 loci). The G2 structure determines gauge couplings and mixing angles.",
                 "validation_hint": "Verify that G2 is the automorphism group of the octonions, acts on 7-dimensional spaces, and G2 holonomy manifolds are Ricci-flat (important for preserving N=1 SUSY in 4D).",
             },
             {
@@ -2294,7 +2291,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "sigma": 0.0,
                     },
                     "log_level": "INFO",
-                    "message": "3 weak bosons from G2 co-associative 4-cycle matches the adjoint dimension of SU(2): 2^2-1=3.",
+                    "message": "3 weak bosons per A1 locus match the adjoint dimension of SU(2): 2^2-1=3.",
                 },
                 {
                     "name": "sin^2(theta_W) consistent with PDG within tree-level theory uncertainty",

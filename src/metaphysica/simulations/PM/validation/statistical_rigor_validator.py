@@ -56,7 +56,8 @@ JACOBIAN_STUB_SEED = 20261025
 #: a mass -- contributing 3.4e38 on its own, and axion.omega_h2 added
 #: 1.6e5. Including a row the report calls UNBOUNDED is not conservative;
 #: it is a category error with a very loud number attached.
-NON_SCORING_VERDICTS = frozenset({"UNBOUNDED", "INPUT", "IDENTITY"})
+NON_SCORING_VERDICTS = frozenset({"UNBOUNDED", "INPUT", "IDENTITY",
+                                  "UNIT_CHECK", "CIRCULAR"})
 
 #: Verdicts that DO carry a two-sided comparison. A fit statistic must
 #: range over all of these -- excluding TENSION and FAIL is what made

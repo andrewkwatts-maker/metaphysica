@@ -362,7 +362,7 @@ class GaugeUnificationSimulation(SimulationBase):
 
         # Geometric M_GUT from torsion/moduli stabilization
         # This is the scale used for proton decay calculations
-        # Derived from: TCS G2 torsion T_omega = -0.875, Re(T) ~ 9.865, alpha_GUT = 1/23.54
+        # Derived from: retired-TCS-seed G2 torsion T_omega = -0.875, Re(T) ~ 9.865, alpha_GUT = 1/23.54
         M_GUT_GEOMETRIC = 2.1e16  # GeV
         M_GUT_GEOMETRIC_ERR = 0.09e16  # GeV (uncertainty)
 
@@ -655,8 +655,8 @@ class GaugeUnificationSimulation(SimulationBase):
                 category="DERIVED",
                 description="Kaluza-Klein threshold corrections from CY4 tower modes",
                 # T4.5 (b) fix: KK threshold magnitude is driven by h^{1,1} = 24 on
-                # the TCS G2 background. The Hodge number h11 of the matching CY3
-                # fibre coincides with the third Betti number b3 = 24 (the TCS
+                # the retired TCS-seed G2 background. The Hodge number h11 of the matching CY3
+                # fibre coincides with the third Betti number b3 = 24 (the retired TCS
                 # Doi-Lawson construction enforces h11 = b3), so the threshold
                 # correction chains via topology.h11 -> b3. Add topology.elder_kads
                 # so the dependency walker roots the chain at b3_leaf().
@@ -678,7 +678,7 @@ class GaugeUnificationSimulation(SimulationBase):
                 },
                 terms={
                     "k_i": "Group-dependent KK factor",
-                    "h^{1,1}": "Hodge number (24 for TCS G2)",
+                    "h^{1,1}": "Hodge number (24 for the retired TCS seed)",
                     "M_*": "KK threshold scale",
                 },
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{ops.div}(\mathrm{ops.mul}(k_i,\, h^{11}), \mathrm{ops.mul}(2, \mathrm{eml\_pi}())),\, \mathrm{ops.log}(\mathrm{ops.div}(M_{GUT}, M_*)))",
@@ -972,11 +972,11 @@ class GaugeUnificationSimulation(SimulationBase):
                     "is an inference, not a measurement of M_GUT."
                 ),
                 uncertainty=0.09e16,
-                eml_description="EML: ops.mul(eml_scalar(2.1e16), eml_scalar(1.0)) — geometric GUT scale from TCS G2 torsion T_omega=-0.875 and moduli Re(T)~9.865 (currently hardcoded; pending moduli derivation)",
+                eml_description="EML: ops.mul(eml_scalar(2.1e16), eml_scalar(1.0)) — geometric GUT scale from retired-TCS-seed G2 torsion T_omega=-0.875 and moduli Re(T)~9.865 (currently hardcoded; pending moduli derivation)",
                 validation={
                     "theoretical_range": {"min": 1.9e16, "max": 2.3e16},
                     "status": "PASS",
-                    "notes": "Derived from TCS G2 torsion class T_omega = -0.875, moduli Re(T) ~ 9.865, alpha_GUT = 1/23.54. Value: 2.1e16 +/- 0.09e16 GeV. Constrained indirectly by proton lifetime tau_p > 1.67e34 years (Super-Kamiokande). No direct measurement of M_GUT possible."
+                    "notes": "Derived from retired-TCS-seed G2 torsion class T_omega = -0.875, moduli Re(T) ~ 9.865, alpha_GUT = 1/23.54. Value: 2.1e16 +/- 0.09e16 GeV. Constrained indirectly by proton lifetime tau_p > 1.67e34 years (Super-Kamiokande). No direct measurement of M_GUT possible."
                 }
             ),
             Parameter(

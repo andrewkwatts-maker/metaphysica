@@ -790,6 +790,11 @@ class HiggsBranePartitionSimulation(SimulationBase):
                 uncertainty=self.M_HIGGS_UNCERTAINTY,
                 bound_type="measured",
                 bound_source="PDG2024",
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: m_local = m_bulk / 3.3111 with m_bulk = "
+                    "414.22 = 125.10 x 3.3111, i.e. the measured m_H "
+                    "multiplied in and divided back out (D-026 audit)."),
                 validation={
                     "experimental_value": self.M_HIGGS_EXPERIMENTAL,
                     "uncertainty": self.M_HIGGS_UNCERTAINTY,
