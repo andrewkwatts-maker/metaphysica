@@ -857,6 +857,10 @@ class CosmologicalConstantV16(SimulationBase):
                 bound_type="measured",
                 bound_source="DESI2025",
                 uncertainty=0.1e-52,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: Lambda = ... / R_H^2 with R_H = c/H0 "
+                    "takes the measured H0 as its scale input (D-026 audit)."),
                 eml_description=(
                     "EML: ops.div(ops.mul(ops.pow(ops.mul(eml_scalar(8.0), eml_pi()), eml_scalar(2.0)), "
                     "ops.pow(eml_vec('constants.k_gimel'), eml_scalar(2.0))), ops.mul(eml_scalar(3.0), "
@@ -884,6 +888,11 @@ class CosmologicalConstantV16(SimulationBase):
                 bound_type="measured",
                 bound_source="Planck2018",
                 uncertainty=0.3e-10,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: rho_vac = Lambda c^4 / (8 pi G) is a "
+                    "unit conversion of Lambda, which is circular through "
+                    "the measured H0 (D-026 audit)."),
                 eml_description=(
                     "EML: ops.div(ops.mul(eml_vec('cosmology.Lambda_derived'), ops.pow(eml_scalar(299792458.0), "
                     "eml_scalar(4.0))), ops.mul(eml_scalar(8.0), ops.mul(eml_pi(), eml_scalar(6.67430e-11)))) — rho_vac = "

@@ -527,6 +527,25 @@ class PMRegistry:
             if not entry.metadata.get('eml_description'):
                 entry.metadata['eml_description'] = eml_description
 
+    def patch_scoring_exclusion(self, path: str, kind: str, reason: str) -> None:
+        """Attach a declared D-027 scoring exclusion to a registered parameter.
+
+        Needed because a parameter registered by an earlier call site skips
+        the metadata build in ``inject_outputs``. Fails early on a missing
+        reason.
+        """
+        if not kind:
+            return
+        if not reason:
+            raise ValueError(f"{path}: scoring_exclusion {kind} has no reason")
+        entry = self._parameters.get(path)
+        if entry is None:
+            return
+        if entry.metadata is None:
+            entry.metadata = {}
+        entry.metadata['scoring_exclusion'] = kind
+        entry.metadata['scoring_exclusion_reason'] = reason
+
     def backfill_experimental_bound(
         self,
         path: str,
