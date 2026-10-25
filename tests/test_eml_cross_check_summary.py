@@ -14,3 +14,19 @@ def test_summary_names_errors(capsys):
     log_cross_check_summary(report)
     out = capsys.readouterr().out
     assert "1 ERRORS" in out and "ERROR sim_x: boom" in out
+
+
+def test_nothing_compared_is_not_agreement():
+    """geometric_anchors scored AGREE with 0 values checked: its re-run
+    returned {} because the registry already held every output."""
+    import pytest
+    from types import SimpleNamespace
+    from metaphysica.simulations.core import eml_cross_check as x
+    if not x.EML_AVAILABLE:
+        pytest.skip("eml-math not installed")
+    sim = SimpleNamespace(metadata=SimpleNamespace(id="sim_empty"),
+                          run_eml=lambda registry: {})
+    assert x.check_simulation(sim, None, {}).status == "SKIP"
+    assert x.check_simulation(sim, None, {"_meta": 1}).status == "SKIP"
+    sim.run_eml = lambda registry: {"a": 1.0}
+    assert x.check_simulation(sim, None, {"a": 1.0}).status == "AGREE"

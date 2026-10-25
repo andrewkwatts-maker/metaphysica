@@ -163,6 +163,16 @@ def check_simulation(
     numeric_checks = [c for c in param_checks if c.status not in ("SKIP",)]
     agreed_checks = [c for c in numeric_checks if c.status == "AGREE"]
 
+    # Nothing compared is not agreement. The re-run can return {} when the
+    # registry already holds every output (geometric_anchors skips those).
+    if not numeric_checks:
+        return SimulationCheck(
+            simulation_id=sim_id,
+            status="SKIP",
+            param_checks=param_checks,
+            note="no value compared: run() returned no comparable outputs",
+        )
+
     overall = "AGREE" if all_agreed else "FAIL"
 
     return SimulationCheck(
