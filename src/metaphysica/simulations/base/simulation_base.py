@@ -256,6 +256,13 @@ class Parameter:
     #: genuine admixture and still be a tautology -- widening that tolerance
     #: until it matched would be tuning a threshold to produce a verdict.
     passthrough_of: Optional[str] = None
+    #: D-027 ruling 3. "UNIT_CHECK" (a quantity exact by definition, so the row
+    #: only checks unit consistency) or "CIRCULAR" (the scale input is the
+    #: measured quantity itself, or already encodes it). Either way the value
+    #: is shown but the row is excluded from PASS/FAIL counts and chi-squared.
+    #: The reason is mandatory and is published beside the verdict.
+    scoring_exclusion: Optional[str] = None
+    scoring_exclusion_reason: Optional[str] = None
     validation: Optional[Dict[str, Any]] = None
     eml_description: str = ""  # EML/Mirror Phase Mathematics description of derivation path
 
@@ -422,6 +429,10 @@ class SimulationBase(ABC):
 
                 # Skip full registration if already registered (GeometricAnchors is source of truth)
                 if registry.has_param(param_path):
+                    if param_def and getattr(param_def, "scoring_exclusion", None):
+                        registry.patch_scoring_exclusion(
+                            param_path, param_def.scoring_exclusion,
+                            param_def.scoring_exclusion_reason)
                     # ...but still attach a declared experimental bound. Without
                     # this the earlier (bound-less) registration wins and the
                     # prediction never reaches the validation report.
@@ -476,6 +487,12 @@ class SimulationBase(ABC):
                 # number it was handed.
                 if param_def and getattr(param_def, "passthrough_of", None):
                     metadata['passthrough_of'] = param_def.passthrough_of
+
+                # D-027 ruling 3: a declared exclusion from scoring.
+                if param_def and getattr(param_def, "scoring_exclusion", None):
+                    metadata['scoring_exclusion'] = param_def.scoring_exclusion
+                    metadata['scoring_exclusion_reason'] = (
+                        param_def.scoring_exclusion_reason)
 
                 # Propagate eml_description from param_def to metadata
                 if param_def and param_def.eml_description:

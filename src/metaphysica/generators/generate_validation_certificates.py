@@ -76,6 +76,27 @@ def _is_declared_passthrough(meta) -> bool:
     return bool((meta or {}).get("passthrough_of"))
 
 
+#: D-027 ruling 3 verdicts: shown, never scored.
+SCORING_EXCLUSIONS = frozenset({"UNIT_CHECK", "CIRCULAR"})
+
+
+def _declared_exclusion(meta):
+    """Return (kind, reason) when the record declares a scoring exclusion.
+
+    Fails early: an unknown kind or a missing reason is a declaration error,
+    not something to score around.
+    """
+    kind = (meta or {}).get("scoring_exclusion")
+    if not kind:
+        return None, None
+    if kind not in SCORING_EXCLUSIONS:
+        raise ValueError(f"unknown scoring_exclusion {kind!r}")
+    reason = (meta or {}).get("scoring_exclusion_reason")
+    if not reason:
+        raise ValueError(f"scoring_exclusion {kind} declared without a reason")
+    return kind, reason
+
+
 #: Registry statuses that mean the value was tuned to data rather than
 #: predicted ahead of it. A row carrying one of these and scored against the
 #: same measurement is reporting the success of its own fit.
@@ -252,7 +273,10 @@ def build_report() -> Dict[str, Any]:
         unc = _num(rec.get("experimental_uncertainty"))
         status = rec.get("validation_status") or ""
         meta = rec.get("metadata") or {}
-        if _is_input_anchor(rec, value, exp) or _is_declared_passthrough(meta):
+        excl_kind, excl_reason = _declared_exclusion(meta)
+        if excl_kind:
+            verdict = excl_kind
+        elif _is_input_anchor(rec, value, exp) or _is_declared_passthrough(meta):
             verdict = "INPUT"
         elif _is_roundtrip_identity(value, exp):
             verdict = "IDENTITY"
@@ -284,7 +308,7 @@ def build_report() -> Dict[str, Any]:
         # bound has no two-sided sigma -- and manufacturing a verdict from
         # sigma_exp_only there would convert UNBOUNDED rows into PASS/FAIL
         # on a comparison the registry deliberately did not make.
-        if (verdict not in ("INPUT", "IDENTITY")
+        if (verdict not in ("INPUT", "IDENTITY") + tuple(SCORING_EXCLUSIONS)
                 and sigma is not None and sigma_exp_only is not None):
             v_exp_only = _registry_band(sigma_exp_only)
         cited = _theory_uncertainty_is_cited(meta)
@@ -328,6 +352,7 @@ def build_report() -> Dict[str, Any]:
             "registry_status": rec.get("status"),
             "units": meta.get("units"),
             "source_simulation": rec.get("source_simulation"),
+            "scoring_exclusion_reason": excl_reason,
             "bound_type": rec.get("bound_type"),
             "relative_margin": _num(rec.get("relative_margin")),
         })

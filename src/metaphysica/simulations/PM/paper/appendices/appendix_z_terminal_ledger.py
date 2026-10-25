@@ -239,6 +239,12 @@ class AppendixZTerminalLedger(SimulationBase):
                 bound_type="central_value",
                 bound_source="SH0ES 2022",
                 uncertainty=1.04,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: the km/s/Mpc scale (4040 = 400 x 10.1) "
+                    "is back-solved to the measured SH0ES H0 (D-026 audit, "
+                    "formula_audit_cosmo.json), so the scale input encodes "
+                    "the quantity being compared."),
                 eml_description="EML: ops.mul(ops.div(ops.div(eml_vec('registry.node_count'), eml_vec('topology.ancestral_roots')), eml_vec('topology.elder_kads')), eml_scalar(4040.0)) — (125/288)/24 × 4040; the 4040 is one unsourced constant written as 400 × 10.1",
             ),
             Parameter(
