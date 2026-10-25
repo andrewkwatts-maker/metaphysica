@@ -233,9 +233,13 @@ def verify_geometric_identities(params=None) -> Dict[str, Any]:
         _check("yukawa.lambda_eff", (1.0 + math.sqrt(5.0)) / 2.0,
                "the golden ratio, determined by the discrete choice "
                "yukawa.best_scaling = 'phi', which stays in the free set")
+    # eml_spectral's quartic is Tr(A)^2 |A|^2 / 4 with Tr = 3c, |A|^2 = 9c^2,
+    # c = b_3/27: (81/4) c^4. This check long read 16 c^2, which equals it
+    # only at c = 8/9 (b_3 = 24), so on the adopted seed the row failed to
+    # reproduce and sat in the free set as CLAIMED_UNVERIFIED (2026-10-26).
     if b3:
-        _check("algebra.freudenthal_quartic", 16.0 * (b3 / 27.0) ** 2,
-               "16 (b_3/27)^2 -- a function of b_3 alone, verified against "
+        _check("algebra.freudenthal_quartic", 81.0 / 4.0 * (b3 / 27.0) ** 4,
+               "(81/4) (b_3/27)^4 -- a function of b_3 alone, verified against "
                "the eml_spectral path's output. NOTE the module's ImportError "
                "fallback computes a DIFFERENT formula (27 c^4 / 4, exactly 3x "
                "smaller); that inconsistency is registered separately",

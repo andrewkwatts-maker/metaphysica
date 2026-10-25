@@ -228,19 +228,34 @@ def test_a_broken_identity_returns_to_the_free_set(monkeypatch):
 
 
 def test_the_quartic_is_a_function_of_b3_and_the_fallback_disagrees():
-    """freudenthal_quartic = 16 (b3/27)^2, verified -- and the module's
+    """freudenthal_quartic = (81/4) (b3/27)^4, verified -- and the module's
     ImportError fallback computes 27 c^4 / 4 instead, exactly 3x smaller.
     Recorded defect: if eml_spectral goes missing the export silently changes
-    by a factor of 3. This test pins the disagreement so a fix is visible."""
-    b3 = 24.0
-    c = b3 / 27.0
-    fts_path = 16.0 * c * c
-    fallback = 27.0 * c ** 4 / 4.0
-    assert abs(fts_path - 1024.0 / 81.0) < 1e-14
-    assert abs(fts_path / fallback - 3.0) < 1e-12, (
-        "the two code paths now agree; update the register entry and the "
-        "free-set removal note"
-    )
+    by a factor of 3. This test pins the disagreement so a fix is visible.
+
+    2026-10-26: this pinned 16 c^2, checked only at b3 = 24, the one point
+    where it equals (81/4) c^4. Both seeds are checked now."""
+    for b3 in (24.0, 43.0):
+        c = b3 / 27.0
+        fts_path = 81.0 / 4.0 * c ** 4
+        fallback = 27.0 * c ** 4 / 4.0
+        assert abs(fts_path / fallback - 3.0) < 1e-12, (
+            "the two code paths now agree; update the register entry and the "
+            "free-set removal note"
+        )
+    assert abs(81.0 / 4.0 * (24.0 / 27.0) ** 4 - 1024.0 / 81.0) < 1e-12
+
+
+def test_quartic_identity_matches_eml_spectral_at_both_seeds():
+    """The free-set identity must be the function eml_spectral computes."""
+    fts = pytest.importorskip("eml_spectral.exceptional.freudenthal")
+    from metaphysica.simulations.core.free_set import verify_geometric_identities
+    for b3 in (24, 43):
+        engine = fts.FreudenthalTripleSystem.from_pneuma_condensate(b3=float(b3)).quartic()
+        params = {"particle.b3": {"value": b3},
+                  "algebra.freudenthal_quartic": {"value": engine}}
+        rec = verify_geometric_identities(params)["algebra.freudenthal_quartic"]
+        assert rec["reproduced"], (b3, rec)
 
 
 def test_dissolved_discrete_choices_are_declared(report):

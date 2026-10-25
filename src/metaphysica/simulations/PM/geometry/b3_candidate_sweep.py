@@ -119,12 +119,12 @@ def arithma_formulas() -> Dict[str, Any]:
         ),
         "freudenthal_quartic": ArithmaFormula(
             name="freudenthal_quartic",
-            latex_hint=r"16 (b_3/27)^2",
+            latex_hint=r"	frac{81}{4} (b_3/27)^4",
             build=lambda E, v: E.mul(
-                E.number(16.0),
-                E.pow_(E.div(v("b3"), E.number(27.0)), E.number(2.0))),
+                E.number(81.0 / 4.0),
+                E.pow_(E.div(v("b3"), E.number(27.0)), E.number(4.0))),
             inputs={"b3": b3_path},
-            python=lambda b3: 16.0 * (b3 / 27.0) ** 2,
+            python=lambda b3: 81.0 / 4.0 * (b3 / 27.0) ** 4,
             notes="27 = dim J_3(O); verified exact against the registry row",
         ),
     }
@@ -184,8 +184,8 @@ def downstream_of(b3: int, params: Optional[Dict[str, Any]] = None
         "n_gen_is_integer": abs(b3 / 8.0 - round(b3 / 8.0)) < 1e-12,
         "wa_thawing": -4.0 / math.sqrt(b3),
         "wa_formula": "-4 / sqrt(b_3)  [formula RETIRED; shown for continuity]",
-        "freudenthal_quartic": 16.0 * (b3 / 27.0) ** 2,
-        "quartic_formula": "16 (b_3 / 27)^2",
+        "freudenthal_quartic": 81.0 / 4.0 * (b3 / 27.0) ** 4,
+        "quartic_formula": "(81/4) (b_3 / 27)^4",
         "racetrack_a": 2.0 * math.pi / b3,
         "racetrack_a_formula": "2 pi / b_3",
         "k_bary_cycles": b3 - 14,

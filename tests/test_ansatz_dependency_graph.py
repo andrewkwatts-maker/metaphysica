@@ -53,7 +53,7 @@ def test_the_layers_are_read_live_not_tabulated():
     )
 
 
-def test_the_continuous_count_is_twenty_two():
+def test_the_continuous_count_is_twenty_three():
     """HEALED 2026-09-27, exactly as the transient predicted: 23 -> 22.
 
     The 23 was a TRANSIENT of a half-built tree. cosmology.wa_thawing
@@ -68,11 +68,16 @@ def test_the_continuous_count_is_twenty_two():
     Both directions were recorded when the transient was first pinned, so
     this is the predicted return rather than a new measurement.
     """
+    # 2026-10-26, 22 -> 23: cosmology.eta_baryon_geometric became CALIBRATED
+    # under D-015 (2026-10-01) and is METRIC_DEPENDENT; this pin was not moved
+    # then. n_non_knobs 16 -> 17: +2 when gauge.qcd_cycle_type and gauge.weak_cycle_type became ANSATZ (C4),
+    # -1 when algebra.freudenthal_quartic verified under its true identity
+    # (81/4)(b_3/27)^4 and left the free set (free_set.py).
     report = adg.dependency_report()
-    assert report["continuous_count"] == 22
+    assert report["continuous_count"] == 23
     assert report["continuous_breakdown"] == {
-        "METRIC_DEPENDENT": 7, "FLAVOUR": 13, "FLUX_DEPENDENT": 2}
-    assert report["n_non_knobs"] == 16
+        "METRIC_DEPENDENT": 8, "FLAVOUR": 13, "FLUX_DEPENDENT": 2}
+    assert report["n_non_knobs"] == 17
 
 
 def test_row_names_are_matched_whole():
@@ -182,7 +187,9 @@ def test_every_edge_comes_from_an_anchor():
         "choice reaches a metric row and needs a reading"
         % [(e["source"], e["target"]) for e in ansatz]
     )
-    assert len(anchors) == 20
+    # 20 -> 23 on 2026-10-26: the three anchors H0_early, H0_local and
+    # theta_13 -> cosmology.eta_baryon_geometric, a METRIC row since D-015.
+    assert len(anchors) == 23
 
 
 def test_an_anchor_edge_is_not_counted_as_a_tightening():
