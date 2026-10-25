@@ -1,9 +1,9 @@
 {
  "engine": {
-  "commit": "8df2df4",
+  "commit": "069d186",
   "version": "2.3.1"
  },
- "generated": "2026-10-25T13:46:21Z",
+ "generated": "2026-10-25T16:37:01Z",
  "paths": {
   "b3_seed--seed_24": {
    "chi2": {
@@ -11,10 +11,10 @@
     "value": 1869.4372
    },
    "scoreboard": {
-    "FAIL": 20,
-    "MARGINAL": 13,
-    "PASS": 43,
-    "SKIP": 120,
+    "FAIL": 19,
+    "MARGINAL": 11,
+    "PASS": 40,
+    "SKIP": 126,
     "TENSION": 8
    }
   },
@@ -24,10 +24,10 @@
     "value": 3030.0985
    },
    "scoreboard": {
-    "FAIL": 32,
+    "FAIL": 26,
     "MARGINAL": 15,
     "PASS": 27,
-    "SKIP": 120,
+    "SKIP": 126,
     "TENSION": 10
    }
   }
