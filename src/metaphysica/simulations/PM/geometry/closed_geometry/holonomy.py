@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Tuple
 
 from metaphysica.simulations.PM.geometry.closed_geometry.references import (
-    REF_BONAN_1966,
+    REF_BRYANT_1987,
     REF_EGUCHI_HANSON_1978,
     REF_JOYCE_1996,
     REF_JOYCE_1996_II,
@@ -125,7 +125,7 @@ HOLONOMY_THEOREMS: Tuple[Theorem, ...] = (
         counts=("hypotheses of Joyce's existence theorem, each measured with a "
                 "failing control; N counts Gamma-invariant constant spinors"),
         proof=("Measure H1-H8 (g2_closure.closure_report); apply Joyce 2000 "
-               "Thm 11.6.1 for existence, Bonan for Ricci-flatness and Joyce "
+               "Thm 11.6.1 for existence, Bonan (proof in Bryant 1987) for Ricci-flatness and Joyce "
                "1996b Prop. 1.1.1 for Hol = G2. The Betti numbers are those of "
                "Joyce's first example (Joyce 1996a)."),
         test="tests/test_g2_closure.py::"
@@ -138,7 +138,7 @@ HOLONOMY_THEOREMS: Tuple[Theorem, ...] = (
         statement=_hol_statement, track=_hol_track, latex=_hol_latex,
         steps=_hol_steps, terms=_HOL_TERMS,
         references=(REF_JOYCE_2000, REF_JOYCE_1996, REF_JOYCE_1996_II,
-                    REF_BONAN_1966, REF_EGUCHI_HANSON_1978, REF_WANG_1989),
+                    REF_BRYANT_1987, REF_EGUCHI_HANSON_1978, REF_WANG_1989),
         scope=("existence by theorem on the compact real form (D-015), not an "
                "explicit metric; the split form and unreachable seeds report "
                "the failing hypothesis instead")),

@@ -302,7 +302,7 @@ class AbstractV17_2(SimulationBase):
             # theta_23 IO comparison
             "abstract.theta23_io_central":     theta23_io,                     # 49.3
             # ALP Principia Metric (falsifiability kill-switch — BabyIAXO 2028)
-            "alp.mass_meV":                    3.51,      # 3.51 meV ALP mass from M²⁶ → M⁴ vacuum residue
+            "alp.mass_meV":                    3.51,      # 3.51 meV: OPEN literal, not computed anywhere in the engine (alp_portals gives ~1.11e2 eV on the adopted path)
             "alp.coupling_GeV_inv":            "10⁻¹¹",  # g_aγγ ~ 10⁻¹¹ GeV⁻¹ from EIS-photon coupling
             "alp.coupling_GeV_inv_value":      "2.9×10⁻¹¹",  # Refined g_aγγ from EIS-photon coupling (BabyIAXO 2028 reachable)
             # v25.0+v26.0 closure ledger (Sprint 6 / S5.10)
@@ -492,6 +492,7 @@ class AbstractV17_2(SimulationBase):
                 plain_text=("M^26(24,2) -> 2 x 13D(12,1) -> 2 x 4D on Y_7 => "
                             "n_gen = b2/4 = %d/4 = %s" % (b2, n_txt)),
                 category="DERIVED",
+                references=['joyce2000', 'acharya_witten2001'],
                 description=(
                     "Framework overview. The bulk is 26-dimensional with signature "
                     "(24,2): 24 space directions, grouped as 12 bridge pairs "
@@ -1106,6 +1107,17 @@ class AbstractV17_2(SimulationBase):
     def get_references(self) -> List[Dict[str, Any]]:
         """Return bibliographic references relevant to the abstract."""
         return [
+            {
+                "id": "joyce2000",
+                "authors": "Joyce, D.D.",
+                "title": "Compact Manifolds with Special Holonomy",
+                "year": 2000,
+                "publisher": "Oxford University Press",
+                "doi": "10.1093/oso/9780198506010.001.0001",
+                "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
+                "type": "monograph",
+                "notes": "Existence of torsion-free G2 metrics on resolved orbifolds (Thm 11.6.1); no explicit metric is claimed.",
+            },
             {
                 "id": "acharya_witten2001",
                 "authors": "Acharya, B.S. and Witten, E.",

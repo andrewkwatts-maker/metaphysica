@@ -66,7 +66,7 @@ RULED_DIVERGENCES: Dict[str, str] = {
     "pneuma-neural-gate": _B3_CONSUMER,
     "microtubule-topological-pitch": _B3_CONSUMER,
     "desi-w0-validation-v23": _B3_CONSUMER,
-    "w0-derivation": _B3_CONSUMER,
+    # "w0-derivation" retired 2026-10-25: (3.1) now reads the adopted b3, tracks agree.
     "alpha-leak-coupling": _B3_CONSUMER,
     "yukawa-4face-correction": _B3_CONSUMER,
     "pmns-theta-13": _B3_CONSUMER,

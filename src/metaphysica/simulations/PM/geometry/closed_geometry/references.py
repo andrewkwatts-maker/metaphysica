@@ -29,7 +29,7 @@ __all__ = [
     "REF_LUKAS_MORRIS",
     "REF_ADV_2005",
     "REF_ACHARYA_1996",
-    "REF_BONAN_1966",
+    "REF_BRYANT_1987",
     "REF_EGUCHI_HANSON_1978",
     "REF_WANG_1989",
     "cite",
@@ -45,21 +45,24 @@ REF_ACHARYA_1999 = "acharya1999"
 REF_LUKAS_MORRIS = "lukas_morris2004"
 REF_ADV_2005 = "acharya_denef_valandro2005"
 REF_ACHARYA_1996 = "acharya1996"
-REF_BONAN_1966 = "bonan1966"
+REF_BRYANT_1987 = "bryant1987"
 REF_EGUCHI_HANSON_1978 = "eguchi_hanson1978"
 REF_WANG_1989 = "wang1989"
 
 REFERENCES: Dict[str, Dict[str, Any]] = {
-    REF_BONAN_1966: {
-        "authors": "Bonan, E.",
-        "title": ("Sur les varietes riemanniennes a groupe d'holonomie G2 ou "
-                  "Spin(7)"),
-        "journal": "C. R. Acad. Sci. Paris",
-        "volume": "262",
-        "pages": "127-129",
-        "year": 1966,
+    REF_BRYANT_1987: {
+        "authors": "Bryant, R. L.",
+        "title": "Metrics with exceptional holonomy",
+        "journal": "Ann. of Math. (2)",
+        "volume": "126",
+        "issue": "3",
+        "year": 1987,
+        "doi": "10.2307/1971360",
+        "url": "https://annals.math.princeton.edu/1987/126-3/p06",
         "type": "article",
-        "relevance": "a torsion-free G2 structure has a Ricci-flat metric",
+        "relevance": ("a torsion-free G2 structure has a Ricci-flat metric "
+                      "(first observed by Bonan, C. R. Acad. Sci. Paris 262, "
+                      "1966, which has no DOI or online copy)"),
     },
     REF_EGUCHI_HANSON_1978: {
         "authors": "Eguchi, T., Hanson, A. J.",

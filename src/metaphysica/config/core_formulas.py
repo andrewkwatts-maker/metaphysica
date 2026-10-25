@@ -766,7 +766,7 @@ class CoreFormulas:
         latex="m_{KK,1} = \\frac{1}{R_c} = 5.0\\,\\text{TeV}",
         plain_text="m_KK,1 = 1/R_c = 5.0 TeV",
         category=FormulaCategory.PREDICTIONS,
-        description="First KK graviton mode mass from compactification radius",
+        description="OPEN (value not computed on the adopted path): 5.0 TeV is a benchmark literal (geometric_anchors_core.m_KK_central); 4.5 TeV is the warped form exp(-k_eff*pi) evaluated at the retired seed b3 = 24. First KK graviton mode mass from compactification radius",
         section="8",
         status="HL-LHC TESTABLE",
         terms={

@@ -184,6 +184,8 @@ class Formula:
     arithma_latex: str = ""
     arithma_compact: Optional[Any] = None
     eml_tree_compact: Optional[Any] = None
+    # Reference ids (keys of the owning module's get_references()).
+    references: List[str] = field(default_factory=list)
 
     def __post_init__(self):
         """Generate title from description if not provided. Sync param field conventions."""

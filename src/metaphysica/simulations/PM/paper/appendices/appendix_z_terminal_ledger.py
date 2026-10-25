@@ -366,8 +366,9 @@ class AppendixZTerminalLedger(SimulationBase):
                 plain_text="C05-M: 276 + 24 - tau = 288, therefore tau = 12",
                 # T4 (b): 276 = b3(b3-1)/2, 24 = b3, 288 = 12·b3 → route via b3_leaf
                 eml_tree_str="ops.sub(ops.add(ops.div(ops.mul(b3_leaf(), ops.sub(b3_leaf(), eml_scalar(1.0))), eml_scalar(2.0)), b3_leaf()), ops.mul(eml_scalar(12.0), b3_leaf()))",
-                category="DERIVED",
-                description="Manifold Tax uniqueness proof: Only Tax=12 gives 288 net roots.",
+                category="GEOMETRIC",
+                references=['conway-sloane-1999'],
+                description="IDENTITY among integers (not a physical derivation; the 24 pins are the retired seed b3 = 24). Manifold Tax uniqueness proof: Only Tax=12 gives 288 net roots.",
                 input_params=["topology.so24_generators", "topology.shadow_torsion_total"],
                 output_params=["terminal.manifold_tax"],
                 derivation={
@@ -394,8 +395,9 @@ class AppendixZTerminalLedger(SimulationBase):
                 latex=r"\text{C30-S}: 1 + 12 + 112 = 125",
                 plain_text="C30-S: Shell 1 (1) + Shell 2 (12) + Shell 3 (112) = 125",
                 eml_tree_str="ops.add(ops.add(eml_scalar(1.0), eml_scalar(12.0)), eml_scalar(112.0))",
-                category="DERIVED",
-                description="Shell Saturation predicts 3 generations from geometric packing.",
+                category="GEOMETRIC",
+                references=['conway-sloane-1999'],
+                description="IDENTITY among integers (1+12+112=125; the shell sizes are inputs, not derived). Shell Saturation predicts 3 generations from geometric packing.",
                 input_params=["registry.node_count"],
                 output_params=["terminal.generation_count"],
                 derivation={
@@ -423,8 +425,9 @@ class AppendixZTerminalLedger(SimulationBase):
                 plain_text="C37-CP: theta_QCD = Var([6,6,6,6]) x (125/288) = 0",
                 # T4 (b): 288 ancestral roots = 12·b3 → route via b3_leaf
                 eml_tree_str="ops.mul(eml_vec('torsion_variance'), ops.div(eml_vec('node_count'), ops.mul(eml_scalar(12.0), b3_leaf())))",
-                category="DERIVED",
-                description="Strong CP conservation by [6,6,6,6] isotropy - Axion eliminated.",
+                category="GEOMETRIC",
+                references=['pdg2024'],
+                description="IDENTITY: the variance of four equal numbers is zero, so theta_QCD = 0 follows from the assumed [6,6,6,6] pattern, which is an input. Strong CP conservation by [6,6,6,6] isotropy - Axion eliminated.",
                 # Was "topology.torsion_pattern" -- the list [6,6,6,6], which
                 # is not a registry scalar and existed under no path. The
                 # scalar fact the lock needs is the 24-pin total distributing
@@ -458,8 +461,9 @@ class AppendixZTerminalLedger(SimulationBase):
                 latex=r"\text{C38-V7}: \Omega = \frac{125 + 163}{288} = 1.0",
                 plain_text="C38-V7: Omega = (125 + 163) / 288 = 1.0 (flat)",
                 eml_tree_str="ops.div(ops.add(eml_vec('node_count'), eml_vec('hidden_supports')), eml_vec('ancestral_roots'))",
-                category="DERIVED",
-                description="Universe flatness from 288-root saturation - no inflation needed.",
+                category="GEOMETRIC",
+                references=['joyce2000'],
+                description="IDENTITY: (125+163)/288 = 1 by construction (163 = 288-125). Universe flatness from 288-root saturation - no inflation needed.",
                 input_params=["registry.node_count", "topology.hidden_supports", "topology.ancestral_roots"],
                 output_params=["cosmology.omega_total"],
                 derivation={
@@ -487,8 +491,9 @@ class AppendixZTerminalLedger(SimulationBase):
                 plain_text=f"C42-G: G = (1/288) x sin({sterile_angle:.2f})^4 = {g_residue:.4e}",
                 # T4 (b): 288 = 12·b3 → route via b3_leaf for ancestral-root denominator
                 eml_tree_str="ops.mul(ops.inv(ops.mul(eml_scalar(12.0), b3_leaf())), ops.pow(ops.sin(eml_vec('theta_s')), eml_scalar(4.0)))",
-                category="DERIVED",
-                description="Gravitational constant as Zero-Point Residue of 288 roots.",
+                category="ANSATZ",
+                references=['nist-codata-2018'],
+                description="ANSATZ: arithmetic is correct (1/288 sin^4 of arcsin(125/288)) but no derivation links it to Newton's G. Gravitational constant as Zero-Point Residue of 288 roots.",
                 input_params=["topology.ancestral_roots", "topology.sterile_angle"],
                 output_params=["physics.g_residue"],
                 derivation={
@@ -512,11 +517,12 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="gauge-unification-sum",
                 label="(Z.6)",
                 latex=r"\alpha_s + \alpha_w + \alpha_e = \frac{8}{24} + \frac{3}{12} + \frac{1}{12} = \frac{2}{3}",
-                plain_text=f"alpha_s + alpha_w + alpha_e = {gauge_sum:.6f} = 2/3",
+                plain_text=f"alpha_s + alpha_w + alpha_e = 8/{self.PINS} + 3/12 + 1/12 = {gauge_sum:.6f} (equals 2/3 only at the retired b3 = 24)",
                 # T4 (b): 24 (alpha_s denom) = b3, 12 (alpha_w, alpha_e denom) = b3/2 → expose via b3_leaf
                 eml_tree_str="ops.add(ops.add(ops.div(eml_scalar(8.0), b3_leaf()), ops.div(eml_scalar(3.0), ops.div(b3_leaf(), eml_scalar(2.0)))), ops.div(eml_scalar(1.0), ops.div(b3_leaf(), eml_scalar(2.0))))",
-                category="DERIVED",
-                description="Gauge coupling unification from 24-pin ratios.",
+                category="FALSIFIED",
+                references=['pdg2024'],
+                description="FALSIFIED ON THE ADOPTED PATH: 8/b3 + 3/12 + 1/12 = 2/3 only at the retired seed b3 = 24; at the adopted b3 = 43 the engine computes 0.519380, not 2/3. Gauge coupling unification from 24-pin ratios.",
                 input_params=["topology.shadow_torsion_total"],
                 output_params=["physics.gauge_sum"],
                 derivation={
@@ -541,11 +547,12 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="hierarchy-ratio-squared",
                 label="(Z.7)",
                 latex=r"\text{Hierarchy} = \left(\frac{288}{24}\right)^2 = 144",
-                plain_text=f"Hierarchy = (288/24)^2 = {hierarchy:.0f}",
+                plain_text=f"Hierarchy = ({self.ROOTS}/{self.PINS})^2 = {hierarchy:.1f} (144 only at the retired b3 = 24)",
                 # T4 (b): hierarchy = (288/24)^2 = (12·b3 / b3)^2 = 144 → fully b3-rooted
                 eml_tree_str="ops.pow(ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf()), eml_scalar(2.0))",
-                category="DERIVED",
-                description="Mass hierarchy ratio from geometric constants.",
+                category="FALSIFIED",
+                references=['conway-sloane-1999'],
+                description="FALSIFIED ON THE ADOPTED PATH: (288/b3)^2 = 144 only at the retired seed b3 = 24; at b3 = 43 the engine computes about 44.9, so the identification with chi_eff = 144 fails. Mass hierarchy ratio from geometric constants.",
                 input_params=["topology.ancestral_roots", "topology.shadow_torsion_total"],
                 output_params=["physics.hierarchy_ratio"],
                 derivation={
@@ -568,11 +575,12 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="speed-of-light-geometric",
                 label="(Z.8)",
                 latex=r"c = \frac{288}{24} = 12",
-                plain_text=f"c = 288/24 = {c_geo} (geometric units)",
+                plain_text=f"c = {self.ROOTS}//{self.PINS} = {c_geo} (geometric units; 12 only at the retired b3 = 24)",
                 # T4 (b): c_geometric = 288/24 = 12·b3 / b3 = 12 → expose b3_leaf in both num/denom
                 eml_tree_str="ops.div(ops.mul(eml_scalar(12.0), b3_leaf()), b3_leaf())",
-                category="DERIVED",
-                description="Speed of light as geometric ratio.",
+                category="FALSIFIED",
+                references=['conway-sloane-1999'],
+                description="FALSIFIED ON THE ADOPTED PATH: 288/b3 = 12 only at the retired seed b3 = 24; at b3 = 43 the engine computes 288//43 = 6. A unit-free ratio, not a constant. Speed of light as geometric ratio.",
                 input_params=["topology.ancestral_roots", "topology.shadow_torsion_total"],
                 output_params=["physics.c_geometric"],
                 derivation={
@@ -596,10 +604,11 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="cabibbo-angle-geometric",
                 label="(Z.9)",
                 latex=r"\theta_C = \arcsin\left(\sqrt{\frac{1}{24}}\right)",
-                plain_text=f"theta_C = arcsin(sqrt(1/24)) = {theta_c:.2f} deg",
+                plain_text=f"theta_C = arcsin(sqrt(1/{self.PINS})) = {theta_c:.2f} deg (measured about 13.02 deg; FALSIFIED)",
                 eml_tree_str="ops.sqrt(ops.inv(eml_vec('b3')))",
-                category="DERIVED",
-                description="Cabibbo angle from torsion geometry.",
+                category="FALSIFIED",
+                references=['pdg2024'],
+                description="FALSIFIED: the angle arcsin(sqrt(1/b3)) is 11.78 deg at the retired b3 = 24 and 8.77 deg at b3 = 43, against measured about 13.02 deg; the racetrack route is FALSIFIED (A4.4). Cabibbo angle from torsion geometry.",
                 input_params=["topology.shadow_torsion_total"],
                 output_params=["physics.cabibbo_angle"],
                 derivation={
@@ -622,11 +631,12 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="terminal-closure-equation",
                 label="(Z.10)",
                 latex=r"276 + 24 - 12 = 288 = 125 + 163",
-                plain_text=f"SO(24) + Pins - Tax = {lhs} = {rhs} = Active + Hidden",
+                plain_text=f"SO(24) + Pins - Tax = {lhs}; Active + Hidden = {rhs}; closure " + ("holds" if lhs == rhs else "FAILS at the adopted b3 (holds only at the retired b3 = 24)"),
                 # T4 (b): closure verifies LHS = SO(24) + b3 - b3/2 = 288 = 12·b3. Inject b3_leaf.
                 eml_tree_str="ops.sub(ops.add(ops.add(eml_vec('node_count'), eml_vec('hidden_supports')), eml_scalar(0.0)), ops.mul(eml_scalar(12.0), b3_leaf()))",
-                category="DERIVED",
-                description="The Terminal Closure Equation - both sides equal 288.",
+                category="FALSIFIED",
+                references=['conway-sloane-1999'],
+                description="FALSIFIED ON THE ADOPTED PATH: 276 + b3 - 12 = 288 only at the retired seed b3 = 24; at b3 = 43 the engine computes 307, and 307 != 288. The Terminal Closure Equation - both sides equal 288.",
                 input_params=[
                     "topology.so24_generators", "topology.shadow_torsion_total",
                     "terminal.manifold_tax", "registry.node_count", "topology.hidden_supports"
@@ -655,12 +665,13 @@ class AppendixZTerminalLedger(SimulationBase):
                 id="h0-unwinding-scale",
                 label="(Z.11)",
                 latex=r"H_0^{\text{phys}} = H_0^{\text{geom}} \times \kappa = 7.24 \times 10.1 = 73.1\,\text{km/s/Mpc}",
-                plain_text="H0_physical = H0_geometric x 10.1 = 73.1 km/s/Mpc",
+                plain_text=f"H0_physical = H0_geometric x 10.1 = {(self.ACTIVE / self.ROOTS) / self.PINS * H0_GEOMETRIC_SCALE * H0_UNWINDING_SCALE:.1f} km/s/Mpc at b3 = {self.PINS} (73.1 only at the retired b3 = 24)",
                 # T4 (b): H0_geom = (125/288)/24 * 400 = (125/(12·b3))/b3 * 400; expose b3_leaf chain
                 eml_tree_str="ops.mul(ops.mul(ops.div(ops.div(eml_scalar(125.0), ops.mul(eml_scalar(12.0), b3_leaf())), b3_leaf()), eml_scalar(400.0)), eml_vec('OMEGA'))",
-                category="DERIVED",
+                category="FALSIFIED",
+                references=['riess_2022'],
                 description=(
-                    "The Unwinding Scale Factor (10.1) is the only temporal variable. "
+                    "FALSIFIED ON THE ADOPTED PATH AND CALIBRATED: the quoted 73.1 holds only at the retired seed b3 = 24 and needs the unsourced constants 400 and 10.1 (one fitted number); at b3 = 43 the engine computes about 40.8. It also conflicts with (3.2) 71.55, itself calibrated. H0 is OPEN. The Unwinding Scale Factor (10.1) is the only temporal variable. "
                     "It ties the geometric H0 = (125/288)/24 x 400 to physical units. "
                     "Remains locked to the 24-pin torsion cycle."
                 ),
@@ -985,6 +996,18 @@ class AppendixZTerminalLedger(SimulationBase):
                 "year": "1999",
                 "doi": "10.1007/978-1-4757-6568-7",
                 "type": "monograph",
+            },
+            {
+                "id": "riess_2022",
+                "authors": "Riess, A.G. et al. (SH0ES Team)",
+                "title": "A Comprehensive Measurement of the Local Value of the Hubble Constant with 1 km/s/Mpc Uncertainty from the Hubble Space Telescope and the SH0ES Team",
+                "year": 2022,
+                "journal": "Astrophys. J. Lett.",
+                "volume": "934",
+                "pages": "L7",
+                "doi": "10.3847/2041-8213/ac5c5b",
+                "url": "https://doi.org/10.3847/2041-8213/ac5c5b",
+                "type": "journal",
             },
         ]
 
