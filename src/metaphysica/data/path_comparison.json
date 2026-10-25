@@ -1,9 +1,9 @@
 {
  "engine": {
-  "commit": "c8d152d",
+  "commit": "aab876d",
   "version": "2.3.1"
  },
- "generated": "2026-10-25T16:50:02Z",
+ "generated": "2026-10-25T23:10:46Z",
  "paths": {
   "b3_seed--seed_24": {
    "chi2": {
@@ -13,8 +13,8 @@
    "scoreboard": {
     "FAIL": 19,
     "MARGINAL": 11,
-    "PASS": 40,
-    "SKIP": 126,
+    "PASS": 39,
+    "SKIP": 127,
     "TENSION": 8
    }
   },
@@ -26,8 +26,8 @@
    "scoreboard": {
     "FAIL": 26,
     "MARGINAL": 15,
-    "PASS": 27,
-    "SKIP": 126,
+    "PASS": 26,
+    "SKIP": 127,
     "TENSION": 10
    }
   }
