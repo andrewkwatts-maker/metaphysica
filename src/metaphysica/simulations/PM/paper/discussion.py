@@ -89,6 +89,17 @@ def _arithma_inv(a):
     return None if a is None else 1.0 / a
 import math as _math
 
+from metaphysica.simulations.PM.paper.conclusions import (
+    load_fit_summary as _load_fit_summary,
+    section7_blocks,
+    census_text,
+    re_t_rows,
+    re_t_mismatch_text,
+    edof_items,
+    prediction_rows,
+    PATHS_LINK,
+)
+
 
 class DiscussionV16(SimulationBase):
     """
@@ -162,623 +173,8 @@ class DiscussionV16(SimulationBase):
         """
         content_blocks = [
             # =====================================================================
-            # SECTION 7: CONCLUSION
-            # =====================================================================
-            ContentBlock(
-                type="heading",
-                content="Conclusion",
-                level=1
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Summary of results, predictions, falsifiability criteria, and future "
-                    "research directions for the Principia Metaphysica unified framework. The "
-                    "framework achieves a 2.3:1 prediction-to-input ratio with testable predictions "
-                    "at HL-LHC and next-generation gravitational wave observatories."
-                )
-            ),
-
-            # ---------------------------------------------------------------------
-            # 7.1 Summary of Results
-            # ---------------------------------------------------------------------
-            ContentBlock(
-                type="heading",
-                content="7.1 Summary of Results",
-                level=2
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The Principia Metaphysica framework presents a unified geometric description of "
-                    "fundamental physics, deriving the Standard Model and gravity from a 26D structure "
-                    "with structure (24,2). The 12×(2,0) bridge pairs plus S<sup>(2,0)</sup> shadow-time directions "
-                    "plus T¹ time fiber create dual 13D(12,1) shadows via OR coordinate selection (R<sub>⊥</sub>). "
-                    "Each shadow compactifies on a 7D G₂ manifold to yield a 6D effective bulk with "
-                    "heterogeneous branes, from which all observable physics emerges. The key results are:"
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="M²⁶(24,2) Dual-Shadow Framework",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The full theory lives in 26D with structure (24,2): twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup>, "
-                    "2D shadow-time directions S<sup>(2,0)</sup>, and a single timelike fiber T¹. The OR reduction "
-                    "operator R<sub>⊥</sub> creates dual 13D(12,1) observable shadows, enabling mirror-sector "
-                    "dynamics (Z₂ symmetry) and proposing cosmological observables from pure topology."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Chirality Solution",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The Pneuma (A Primordial Spinor Field) mechanism naturally generates chiral fermions in "
-                    "4D through the topological properties of K<sub>Pneuma</sub>. The index theorem guarantees the "
-                    "correct number of zero modes with definite handedness."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Dark Energy from MEP + Euclidean Bridge",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "w₀ = −23/24 is SEMI-DERIVED via Maximum Entropy Principle from dual 13D(12,1) shadow structure. "
-                    "wₐ is DERIVED from bridge breathing dynamics (α<sub>T</sub> = 2.7). The Mashiach attractor drives "
-                    "w → −1 at late times."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Gauge-Gravity Unification",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "All four fundamental forces emerge from the M<sup>26</sup>(24,2) geometric structure projecting to 13D "
-                    "observable shadow. The SO(10) gauge symmetry arises from D₅-type ADE singularities on "
-                    "the G₂ manifold, unifying with gravity at the compactification scale. KK gravitons at "
-                    "M<sub>KK</sub> ≈ 4.5 TeV (derived from topology via k<sub>eff</sub> = b₃/(2+ε) ≈ 10.80) provide near-term test."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Thermal Time Emergence",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Time is not fundamental but emerges from thermodynamic flow via the Tomita-Takesaki "
-                    "modular theory. The KMS condition connects the flow of time to temperature and entropy "
-                    "production."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="3 Generations DERIVED",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Three generations emerge from n<sub>gen</sub> = χ<sub>eff</sub>(G₂)/(24 × Z₂) = 144/48 = 3 (G₂ index with "
-                    "flux). Normal neutrino hierarchy predicted. Mirror sector (Z₂) from dual-shadow structure "
-                    "provides dark matter candidate. 6D bulk with warping explains hierarchy."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="All Parameters from Topology (v15.0-v16.0)",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Single source of truth: config.py — All parameters derived from topology, not tuned. "
-                    "v15.0: Racetrack moduli stabilization (ε DERIVED), perturbation test, 7D Monte Carlo. "
-                    "v15.1: Pneuma-Vielbein bridge (metric emergence). v16.0: Multi-sector blended sampling "
-                    "(hierarchy from geometry, gravity dilution 1/4, DM/baryon ratio ≈ 5.8 predicted). "
-                    "18/21 validations pass (CHECK items are conceptual demos)."
-                )
-            ),
-
-            # Geometric Unification Complete
-            ContentBlock(
-                type="highlight_box",
-                content=(
-                    "<strong>Geometric Unification Complete:</strong> The constraint of Re(T) from "
-                    "the measured Higgs mass (125.20 GeV, PDG 2024) completes the geometric unification program. The "
-                    "modulus T is no longer a free parameter but is determined by experimental data, while "
-                    "λ₀ comes from SO(10) matching. In v15.0, the Cabibbo angle ε = 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313) emerges directly "
-                    "from racetrack moduli stabilization with zero tuning—flux dynamics alone fix all parameters. "
-                    "Together they form a fully predictive, swampland-compliant framework."
-                )
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "✅ Higgs mass anchor: 125.20 GeV (PDG 2024: 125.20 ± 0.11)",
-                    "✅ VEV: 246.22 GeV (0.017% error)",
-                    "✅ 1/α<sub>GUT</sub>: 23.54 (geometric unification value; no direct measurement exists — NuFIT constrains neutrino mixing, not gauge couplings)",
-                    "✅ w₀: −0.8528 (0.38σ from DESI)",
-                    "✅ Proton lifetime: 8.15×10³⁴ years",
-                    "✅ Swampland valid: Δφ<sub>Higgs</sub> = 1.958 > 0.816",
-                    "✅ Calibration: Minimal inputs (58+ parameters predictive)",
-                    "✅ Dual consistency: UV ↔ IR agreement < 1%",
-                    "✅ v15.0: M<sub>KK</sub> = 5.0 TeV geometric (R<sub>c</sub>⁻¹, no phenomenological fits)",
-                    "✅ v15.0: Racetrack moduli stabilization — ε = 0.2257 racetrack variant (canonical e^{-3/2} = 0.22313; PDG 2024: 0.22500)",
-                    "✅ v15.0: Perturbation test validates active geometry (Ricci-flatness enforced)",
-                    "✅ v15.0: 7D Monte Carlo for Yukawa overlaps (no approximations)",
-                    "✅ v15.0: All 9 fermion masses from geometric Froggatt-Nielsen (ε dynamically derived)",
-                    "✅ v15.0: δ<sub>CP</sub> = π/2 from topology (maximal CP violation)",
-                    "✅ v15.0: Proton decay τ<sub>p</sub> ≈ 10³⁵ years (geometric derivation)",
-                    "✅ v15.1: Pneuma-Vielbein bridge validates metric emergence",
-                    "✅ v15.1: Condensate density = √(7/3) from G₂ normalization (parameter-free)",
-                    "✅ v15.1: Lorentzian signature (-,+,+,+) verified via OR reduction on Euclidean bridge",
-                    "✅ v15.1: b₃=24 topological anchor links to Leech lattice stability",
-                    "✅ v16.0: Multi-sector blended sampling (hierarchy from geometry, gravity dilution 1/4, modulation width σ ≈ 0.25)",
-                    "✅ v16.0: Hidden sector dark matter (DM/baryon ratio ≈ 5.8 predicted from geometry, 7.9% from Planck 5.4)"
-                ]
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "<strong>Central Equation (26D Dual-Shadow Framework with G₂ Compactification):</strong> "
-                    "The M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) shadows → 7D G₂ → 6D bulk → 4D dimensional reduction "
-                    "yields the unified framework central equation."
-                )
-            ),
-
-            # ---------------------------------------------------------------------
-            # 7.2 Predictions and Falsifiability
-            # ---------------------------------------------------------------------
-            ContentBlock(
-                type="heading",
-                content="7.2 Predictions and Falsifiability",
-                level=2
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "A scientific theory must make testable predictions. The Principia Metaphysica framework "
-                    "provides several concrete observables that can validate or falsify its claims:"
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Quantitative Predictions (Precision Update November 2025)",
-                level=3
-            ),
-
-            # Proton Decay Prediction
-            ContentBlock(
-                type="heading",
-                content="Proton Decay: Precision Calculation",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The proton lifetime is calculated from SO(10) parameters with threshold corrections:"
-                )
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "<strong>M<sub>GUT</sub>:</strong> (1.8 ± 0.3) × 10¹⁶ GeV (Two-loop gauge unification with F-theory threshold)",
-                    "<strong>α<sub>GUT</sub>:</strong> 1/24 ± 0.5 (RG evolution at M<sub>GUT</sub>)",
-                    "<strong>|α<sub>H</sub>|:</strong> (9.0 ± 1.0) × 10⁻³ GeV³ (Lattice QCD, FLAG 2023)",
-                    "<strong>Threshold correction δ<sub>th</sub>:</strong> +8% to +15% (KK tower + heavy Higgs integration)"
-                ]
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "<strong>Sharpened Prediction:</strong> τ<sub>p</sub>(p → e⁺π⁰) = (4.0⁺²·⁵₋₁.₈) × 10³⁴ years. "
-                    "Narrowed from 2 orders of magnitude to 0.8 orders (factor of ~6 uncertainty). "
-                    "Central value just above Super-K bound (2.4 × 10³⁴ years)."
-                )
-            ),
-
-            # GW Dispersion Prediction
-            ContentBlock(
-                type="heading",
-                content="GW Dispersion: Specified Index and Coefficient",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The modified graviton dispersion relation from compactification:"
-                )
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "<strong>Dispersion index n:</strong> n = 2 (quadratic) — Dimension-8 operators from CY4 compactification; n = 1 forbidden by CPT conservation",
-                    "<strong>Coefficient ξ₂:</strong> ξ₂ ~ 10¹⁰ (Planck units) — Ratio (M<sub>Pl</sub>/M<sub>KK</sub>)² × geometric factors from K<sub>Pneuma</sub>",
-                    "<strong>Observable signature:</strong> High-frequency GWs arrive ~10⁻⁴² s before low-frequency (LISA sensitivity reach, 2037+)"
-                ]
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="<strong>Testability:</strong> LISA mission (2037+) will constrain n and ξ₂ to within factor of 2-3"
-            ),
-
-            # Complete Prediction Summary Table
-            ContentBlock(
-                type="heading",
-                content="Complete Prediction Summary",
-                level=4
-            ),
-            ContentBlock(
-                type="table",
-                headers=["Observable", "PM Prediction", "Current Status", "Future Test"],
-                rows=[
-                    ["<strong>ALP mass m<sub>a</sub> (Principia Metric)</strong>", "<strong>3.51 ± 0.02 meV</strong>", "<strong>Unconstrained in this range</strong>", "<strong>IAXO/BabyIAXO (2025-2028) - PRIMARY KILL-SWITCH</strong>"],
-                    ["ALP-photon coupling g<sub>aγγ</sub>", "~10⁻¹¹ GeV⁻¹", "CAST: g<sub>aγγ</sub> < 6.6×10⁻¹¹ GeV⁻¹", "IAXO (2028)"],
-                    ["Proton lifetime τ<sub>p</sub>", "(4.0⁺²·⁵₋₁.₈) × 10³⁴ years", "Super-K: τ<sub>p</sub> > 2.4×10³⁴ yr", "Hyper-K (2027+)"],
-                    ["KK graviton mass M<sub>KK</sub>", "5.0 TeV (geometric)", "HL-LHC: M > 4.5 TeV", "HL-LHC Run 4 (2029+)"],
-                    ["Dark energy w₀", "−0.853 ± 0.02", "DESI: −0.83 ± 0.06", "DESI DR3 (2026)"],
-                    ["Dark energy w<sub>a</sub>", "−0.30 (DERIVED)", "DESI: −0.28 ± 0.13", "Euclid+DESI (2027+)"],
-                    ["Neutrino mass sum Σm<sub>ν</sub>", "0.060 eV", "Planck+DESI: < 0.072 eV", "JUNO (2025+)"],
-                    ["GW dispersion n", "n = 2 (quadratic)", "LIGO: n unconstrained", "LISA (2037+)"],
-                    ["Atmospheric mixing θ₂₃", "45.0° (maximal)", "NuFIT 6.0: 42.1°−50.0°", "Hyper-K (2027+)"],
-                    ["CP phase δ<sub>CP</sub>", "π/2 (maximal)", "NuFIT 6.0: 1.08π−1.58π", "DUNE (2028+)"]
-                ]
-            ),
-
-            # Falsifiability Criteria
-            ContentBlock(
-                type="heading",
-                content="Falsifiability Criteria",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "<strong>The Principia Metric - Primary Kill-Switch:</strong> "
-                    "The structural integrity of the M²⁶ framework rests on the detection of a "
-                    "topologically induced Axion-Like Particle (ALP) at m<sub>a</sub> = 3.51 ± 0.02 meV. "
-                    "This particle is a predicted consequence of the Euclidean Information Sector (S<sub>EIS</sub>) "
-                    "coupling to the photon field, yielding g<sub>aγγ</sub> ~ 10⁻¹¹ GeV⁻¹. We define the following "
-                    "experimental constraints:"
-                )
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "<strong>Mass:</strong> m<sub>a</sub> = 3.51 ± 0.02 meV",
-                    "<strong>Coupling:</strong> g<sub>aγγ</sub> ~ 10⁻¹¹ GeV⁻¹",
-                    "<strong>Detection window:</strong> IAXO and BabyIAXO experiments (2025-2028)",
-                    "<strong>Falsification criterion:</strong> Should experimental results from IAXO or BabyIAXO exclude this mass range (3.49-3.53 meV) or coupling strength, the G₂ compactification and the (24+1)⊕(0,2) decomposition as proposed herein must be considered falsified."
-                ]
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "This 'Principia Metric' (analogous to the Eddington Eclipse observation for General Relativity) "
-                    "provides a falsifiable, time-bound test: if IAXO reaches its projected sensitivity of "
-                    "g<sub>aγγ</sub> ~ 10⁻¹² GeV⁻¹ by 2028 and finds no signal in the predicted mass range, "
-                    "the theory is falsified. This is not a free parameter—it is the direct "
-                    "output of the 26D → 4D dimensional projection within this framework."
-                )
-            ),
-            ContentBlock(
-                type="heading",
-                content="Additional Falsifiability Tests",
-                level=4
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "<strong>Proton decay NOT observed by 2035:</strong> Framework falsified if τ<sub>p</sub> > 10³⁶ years (upper bound from geometric uncertainties)",
-                    "<strong>KK gravitons NOT detected at HL-LHC:</strong> Non-detection up to ~7 TeV would exclude the predicted 4.5–5 TeV mode, falsifying the geometric derivation",
-                    "<strong>DESI DR3 excludes w₀ = −23/24 ≈ −0.958 (e.g. finds w₀ < −1.02 or w₀ > −0.88):</strong> Would require re-examination of MEP derivation from 13D shadow",
-                    "<strong>JUNO measures Σm<sub>ν</sub> > 0.10 eV:</strong> Inverted hierarchy or additional sterile neutrinos required",
-                    "<strong>LISA finds n ≠ 2 in GW dispersion:</strong> Alternative compactification geometry required"
-                ]
-            ),
-
-            # ---------------------------------------------------------------------
-            # 7.3 Future Research Directions
-            # ---------------------------------------------------------------------
-            ContentBlock(
-                type="heading",
-                content="7.3 Future Research Directions",
-                level=2
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "While the framework provides a compelling unified picture, several areas require further "
-                    "theoretical development and experimental investigation:"
-                )
-            ),
-
-            # Phenomenology
-            ContentBlock(
-                type="heading",
-                content="Phenomenology",
-                level=3
-            ),
-            ContentBlock(
-                type="heading",
-                content="v15.0-v16.0 Improvements: Comprehensive Validation",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "Recent advances in v15.0-v16.0 close the loop on phenomenological predictions and add "
-                    "mathematical rigor:"
-                )
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "v15.0 - Racetrack stabilization: Cabibbo angle racetrack variant ε = 0.2257 (canonical e^{-3/2} = 0.22313) from moduli dynamics with zero tuning",
-                    "v15.0 - Perturbation tests: Ricci-flatness actively enforced through geometric consistency checks",
-                    "v15.0 - 7D Monte Carlo: Full 7-dimensional integration for Yukawa couplings (no approximations)",
-                    "v15.1 - Pneuma-Vielbein bridge: Metric emergence validated, Lorentzian signature (-,+,+,+) verified",
-                    "v16.0 - Multi-sector sampling: Modulation width σ ≈ 0.25 geometrically derived, predicts DM/baryon ratio ≈ 5.8",
-                    "Validation status: 18/21 validations pass (3 CHECK items are conceptual demonstrations, not failures)"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Precision Calculations",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Detailed computation of threshold corrections and loop effects to sharpen predictions:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Two-loop gauge coupling running with KK tower contributions",
-                    "Complete threshold corrections for proton decay (δ<sub>th</sub> = +8% to +15%)",
-                    "Lattice QCD matrix elements for baryon number violation",
-                    "Neutrino mass matrix diagonalization with CP phases"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Collider Phenomenology",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Detailed signatures for LHC and future colliders:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "KK graviton production cross-sections and decay channels",
-                    "Z' boson from SO(10) breaking (mass ~5-10 TeV)",
-                    "Leptoquark signatures from GUT unification",
-                    "New scalars from G₂ moduli stabilization"
-                ]
-            ),
-
-            # Mathematical Rigor
-            ContentBlock(
-                type="heading",
-                content="Mathematical Rigor",
-                level=3
-            ),
-            ContentBlock(
-                type="heading",
-                content="G₂ Manifold Construction",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Explicit construction of TCS G₂ manifolds:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Complete Joyce-Bryant classification of compact G₂ spaces",
-                    "Associative and coassociative cycle enumeration",
-                    "Numerical metrics for G₂ holonomy (twisted connected sum gluing)",
-                    "Moduli space structure and stabilization mechanisms"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Euclidean Bridge and OR Reduction",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Rigorous treatment of two-time structure with dual-shadow structure:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "OR reduction operator R<sub>⊥</sub> with Möbius property (R<sub>⊥</sub>² = −I)",
-                    "Physical state spectrum with ghost-free dynamics from (24,2) structure",
-                    "Fibered time structure: M²⁶ = T¹ ×<sub>fiber</sub> (⊕<sub>i=1</sub><sup>12</sup> B<sub>i</sub><sup>(2,0)</sup> ⊕ S<sup>(2,0)</sup>)",
-                    "Emergent causality from bridge coordinate sampling"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Swampland Criteria Verification",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Complete swampland consistency checks:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Distance conjecture: field ranges and tower of states",
-                    "Weak gravity conjecture: extremal black holes and charged particles",
-                    "de Sitter conjecture: constraints on dark energy evolution",
-                    "Completeness: absence of global symmetries"
-                ]
-            ),
-
-            # Cosmology
-            ContentBlock(
-                type="heading",
-                content="Cosmology",
-                level=3
-            ),
-            ContentBlock(
-                type="heading",
-                content="Inflation and Reheating",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Early universe dynamics from Pneuma field:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Slow-roll inflation from G₂ moduli",
-                    "Spectral index n<sub>s</sub> and tensor-to-scalar ratio r",
-                    "Reheating temperature and baryon asymmetry",
-                    "Non-Gaussianity signatures in CMB"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Dark Matter Candidates",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Mirror sector phenomenology:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Mirror photon as dark matter (hidden sector)",
-                    "Direct detection cross-sections and constraints",
-                    "Relic abundance from freeze-out",
-                    "Astrophysical signatures (21cm, Lyman-α)"
-                ]
-            ),
-
-            # Quantum Gravity
-            ContentBlock(
-                type="heading",
-                content="Quantum Gravity",
-                level=3
-            ),
-            ContentBlock(
-                type="heading",
-                content="Black Hole Entropy",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="Microscopic counting from string states:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Bekenstein-Hawking entropy from wrapped branes",
-                    "Attractor mechanism for extremal black holes",
-                    "Information paradox resolution via mirror sector"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Holographic Duality",
-                level=4
-            ),
-            ContentBlock(
-                type="paragraph",
-                content="AdS/CFT correspondence for 6D bulk:"
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Boundary CFT identification",
-                    "Correlation functions and RG flow",
-                    "Holographic entanglement entropy"
-                ]
-            ),
-
-            # Experimental Program
-            ContentBlock(
-                type="heading",
-                content="Experimental Program",
-                level=3
-            ),
-            ContentBlock(
-                type="heading",
-                content="Near-Term Tests (2025-2030)",
-                level=4
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "JUNO: Neutrino mass hierarchy and Σm<sub>ν</sub> measurement",
-                    "DESI DR3: Dark energy w₀, w<sub>a</sub> constraints",
-                    "Hyper-Kamiokande: Proton decay search (τ<sub>p</sub> sensitivity ~10³⁵ years)",
-                    "HL-LHC Run 4: KK graviton searches up to 7 TeV"
-                ]
-            ),
-
-            ContentBlock(
-                type="heading",
-                content="Long-Term Tests (2030+)",
-                level=4
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "LISA: Gravitational wave dispersion (n, ξ₂)",
-                    "Einstein Telescope: Stochastic GW background",
-                    "ILC/CLIC: Precision Higgs couplings",
-                    "CMB-S4: Primordial gravitational waves (r < 10⁻³)"
-                ]
-            ),
-
-            # Concluding Remarks for Section 7
-            ContentBlock(
-                type="heading",
-                content="Concluding Remarks",
-                level=3
-            ),
-            ContentBlock(
-                type="paragraph",
-                content=(
-                    "The Principia Metaphysica framework (v24.2) presents a M<sup>26</sup>(24,2) unified vision: "
-                    "twelve 2D bridge pairs B<sub>i</sub><sup>(2,0)</sup> plus S<sup>(2,0)</sup> shadow-time directions plus T¹ time create "
-                    "dual 13D(12,1) shadows via OR reduction R<sub>⊥</sub>. The framework predicts a mirror sector (Z₂) "
-                    "and yields w₀ = −1 + 1/b₃ = −23/24 via the Maximum Entropy Principle, "
-                    "n<sub>gen</sub> = 3 from G₂ topology (χ<sub>eff</sub>/48 = 144/48 = 3), and the Cabibbo angle "
-                    "ε = 0.2257 (racetrack variant; canonical e^{-3/2} = 0.22313) from racetrack moduli stabilization. The framework makes sharp, "
-                    "falsifiable predictions testable by JUNO, DESI DR3, Hyper-K, and ALPS-II."
-                )
-            ),
+            # Section 7 is generated from live state (paper/conclusions.py).
+            *section7_blocks(),
 
             # =====================================================================
             # SECTION 8: PREDICTIONS AND TESTABILITY
@@ -791,38 +187,28 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This section summarizes the 58 Standard Model parameters derived from the PM framework "
-                    "and presents key testable predictions. The framework makes specific, falsifiable predictions "
-                    "for upcoming experiments including JUNO (neutrino hierarchy), HL-LHC (KK graviton at 5 TeV), "
+                    "This section gives the parameter census of the registry and presents key testable "
+                    "predictions; the status of each result is stated in section 7. The framework makes specific, falsifiable predictions "
+                    "for upcoming experiments including JUNO (neutrino hierarchy), HL-LHC (KK graviton), "
                     "Hyper-K (proton decay), and LISA (gravitational wave dispersion)."
                 )
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The PM framework proposes Standard Model parameters from a single TCS G₂ manifold with "
-                    "one constraint (Higgs mass constrains Re(T)). This section summarizes the parameter "
+                    "The PM framework proposes Standard Model parameters on the active G₂ path (section 7 states "
+                    "it and the status of each result). This section summarizes the parameter "
                     "derivations and presents testable predictions."
                 )
             ),
 
-            # 8.1 Summary of 58 Parameters
+            # 8.1 Parameter Census
             ContentBlock(
                 type="heading",
-                content="8.1 Summary of 58 Parameters",
+                content="8.1 Parameter Census",
                 level=2
             ),
-            ContentBlock(
-                type="table",
-                headers=["Category", "Parameters", "Status"],
-                rows=[
-                    ["Topology", "n<sub>gen</sub>, χ<sub>eff</sub>, b₂, b₃", "Derived (exact)"],
-                    ["Gauge", "M<sub>GUT</sub>, α<sub>GUT</sub>, sin²θ<sub>W</sub>", "Derived"],
-                    ["PMNS", "θ₂₃, θ₁₂, θ₁₃, δ<sub>CP</sub>", "2 derived, 2 calibrated"],
-                    ["Dark Energy", "w₀, w<sub>a</sub>, d<sub>eff</sub>", "Derived"],
-                    ["Masses", "All quarks, leptons, Higgs", "Derived + 1 constraint"]
-                ]
-            ),
+            ContentBlock(type="paragraph", content=census_text(), label="parameter-census"),
 
             # 8.2 Testable Predictions
             ContentBlock(
@@ -834,10 +220,9 @@ class DiscussionV16(SimulationBase):
                 type="table",
                 headers=["Prediction", "Value", "Experiment", "Timeline"],
                 rows=[
-                    ["Normal Hierarchy", "76% confidence", "JUNO", "2027"],
-                    ["KK graviton", "m₁ = 5.0 TeV", "HL-LHC", "2029+"],
-                    ["Proton decay", "τ<sub>p</sub> = 8.15 × 10³⁴ yr", "Hyper-K", "2032-2038"],
-                    ["BR(p→e⁺π⁰)", "0.25", "Hyper-K", "2035+"],
+                    ["Normal Hierarchy", "OPEN: no computed confidence", "JUNO", "2027"],
+                    *[[r[0], r[1] + " " + r[3], "HL-LHC" if "KK" in r[0] else "Hyper-K", "see section 7"] for r in prediction_rows() if r[0] in ("KK graviton mass", "Proton lifetime")],
+                    ["BR(p→e⁺π⁰)", "OPEN: not computed", "Hyper-K", "2035+"],
                     ["GW dispersion", "η ≈ 0.113", "LISA", "2037+"],
                     ["w(z) form", "Logarithmic", "Euclid", "2028+"]
                 ]
@@ -877,26 +262,19 @@ class DiscussionV16(SimulationBase):
                 type="paragraph",
                 content=(
                     "The Kähler modulus Re(T) enters multiple calculation chains with incompatible values. "
-                    "This tension is the framework's principal open problem (Issue 15)."
+                    "This tension is open; it is listed in the generated open problems of section 7."
                 )
             ),
-            ContentBlock(
-                type="table",
-                headers=["Re(T) Value", "Source", "Physics Role", "Status"],
-                rows=[
-                    ["1.833", "TCS #187 geometric attractor", "Naïve moduli stabilization", "GEOMETRIC — predicts m<sub>h</sub> ≈ 414 GeV (fails)"],
-                    ["7.086", "BBN calibration", "Baryon asymmetry η<sub>b</sub> ≈ 6.1×10⁻¹⁰ (Gate 50)", "CALIBRATED — tuned to match BBN observation"],
-                    ["9.865", "Higgs mass inversion m<sub>h</sub> = 125.1 GeV", "Electroweak symmetry breaking", "CONSTRAINED — inverted from experiment"]
-                ]
-            ),
+            ContentBlock(type="table", headers=["Re(T) value", "Registry row", "Registry classification", "Source"], rows=re_t_rows(), label="re-t-ledger"),
+            ContentBlock(type="paragraph", content=re_t_mismatch_text(), label="re-t-mismatch"),
             ContentBlock(
                 type="paragraph",
                 content=(
                     "<strong>Resolution pathway:</strong> A unified Re(T) requires either (a) a racetrack superpotential "
                     "with multiple condensates that stabilizes the modulus at a single value consistent with both "
                     "Higgs mass and baryon asymmetry, or (b) a lattice G₂ computation of the full non-perturbative "
-                    "potential V(T). Until resolved, the framework carries EDOF=3 honestly: one geometric integer b₃ "
-                    "plus two calibration parameters."
+                    "potential V(T). Until resolved, Re(T) is OPEN; the table above states every registry row and "
+                    "its classification."
                 )
             ),
 
@@ -966,10 +344,8 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The PM framework operates with EDOF=3: one geometric integer (b₃ = 24), "
-                    "plus two calibration parameters (VEV coefficient 1.5859 with 3.4% gap from ln(M<sub>Pl</sub>/v)/b₃, "
-                    "and Re(T) which takes different values in different calculation chains — see Re(T) Tension Ledger above). "
-                    "Two PMNS parameters (θ₁₃, δ<sub>CP</sub>) are fitted to NuFIT 6.0 pending explicit Yukawa calculation."
+                    "Inputs, calibrations and fits are counted from the registry in the list below; "
+                    "Re(T) is OPEN (see the Re(T) ledger in 8.2)."
                 )
             ),
 
@@ -981,22 +357,18 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="list",
-                items=[
-                    "<strong>1 geometric seed:</strong> b₃ = 24 (G₂ Betti number — topological invariant)",
-                    "<strong>2 calibrations:</strong> VEV coefficient 1.5859 (3.4% gap from base ratio); Re(T) (open — see Tension Ledger)",
-                    "<strong>2 fitted:</strong> θ₁₃, δ<sub>CP</sub> fitted to NuFIT 6.0 (pending explicit Yukawa derivation)",
-                    "<strong>Compression:</strong> 5 genuinely new derived constants + 1 geometric seed b<sub>3</sub> → <strong>honest 121:1 ratio</strong> (replaces earlier 116-style and 131-style claims after the v2.1.0 shadow-derivation audit)"
-                ]
+                items=edof_items()
             ),
 
             # 9.1b Honest Scorecard (replaces earlier "v25.0/v26.0 closures"
             # narrative after the v2.1.0 shadow-derivation audit).
             ContentBlock(
                 type="heading",
-                content="9.1b Honest Scorecard: 5 Closures Realized; 3 Documented Divergences Carried to v27.0",
+                content="9.1b Scorecard of Closures and Divergences",
                 level=2,
                 label="9.1b"
             ),
+            ContentBlock(type="paragraph", content="OPEN: the counts and the compression ratio in this subsection were made at the superseded b<sub>3</sub> = 24 seed (see the <a href=\"" + PATHS_LINK + "\">paths page</a>) and are not regenerated by the engine for the active path."),
             ContentBlock(
                 type="paragraph",
                 content=(
@@ -1017,7 +389,7 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="5 Real Closures",
+                content="Closures",
                 level=3
             ),
             ContentBlock(
@@ -1045,7 +417,7 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="4 Cross-Consistent Confirmations",
+                content="Cross-Consistent Confirmations",
                 level=3
             ),
             ContentBlock(
@@ -1069,7 +441,7 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="3 Derivations Worse Than the Prior Chain",
+                content="Derivations Worse Than the Prior Chain",
                 level=3
             ),
             ContentBlock(
@@ -1103,7 +475,7 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="heading",
-                content="1 Documented Open Tension",
+                content="Documented Open Tension",
                 level=3
             ),
             ContentBlock(
@@ -1119,14 +491,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Net result.</strong> 5 genuinely new derived constants from 1 geometric "
-                    "seed b<sub>3</sub> = 24 gives an honest <strong>121:1 compression ratio</strong>. "
-                    "Effective inputs drop from {b<sub>3</sub>, VEV coeff, Re(T)} (EDOF=3) to "
-                    "{b<sub>3</sub>} for the five real closures (EDOF=1 in that sub-budget); the "
-                    "three open divergences keep their pre-existing chains as canonical. The "
-                    "Hysteresis Seal re-locks against the honest scorecard, and the shadow-derivation "
-                    "detector ensures that any future drift between paired chains is surfaced "
-                    "automatically rather than papered over."
+                    "<strong>Net result.</strong> OPEN: the compression ratio and effective-input count are not "
+                    "recomputed for the active path. The Hysteresis Seal and the shadow-derivation "
+                    "detector still surface any drift between paired chains."
                 )
             ),
 
@@ -1139,9 +506,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Unlike string landscape approaches with 10⁵⁰⁰ vacua, this framework selects a single TCS G₂ "
-                    "manifold through topological constraints. The generation count n<sub>gen</sub> = 3 emerges uniquely, "
-                    "not as a statistical accident."
+                    "Unlike string landscape approaches with 10⁵⁰⁰ vacua, this framework works on one construction, the Joyce "
+                    "resolution of T⁷/(Z/2)³ (section 7, CG.12). Uniqueness of that selection is not claimed; "
+                    "the generation count and its status are stated in section 7."
                 )
             ),
 
@@ -1269,8 +636,7 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "This framework proposes Standard Model parameters from a single TCS G₂ manifold with "
-                    "1 constraint (Higgs mass fixes Re(T)). The agreement with experimental data should be "
+                    "This framework proposes Standard Model parameters on the active G₂ path (section 7). The agreement with experimental data should be "
                     "interpreted with caution: while many predictions fall within experimental uncertainties, "
                     "the framework remains a theoretical proposal requiring experimental validation."
                 )
@@ -1331,11 +697,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "Comprehensive evaluation of the TCS G₂ manifold framework with geometric derivations "
-                    "from torsion structure. Built on TCS (Twisted Connected Sum) construction with explicit "
-                    "torsion T<sub>ω</sub>, the framework achieves exact predictions for generation count (n<sub>gen</sub> = 3), "
-                    "geometric derivation of M<sub>GUT</sub>, and quantitative predictions for proton decay channels "
-                    "(64.2% e⁺π⁰) and mass ordering (85.5% IH)."
+                    "Status of the framework. All geometry statements, statuses, open problems and the "
+                    "global fit are generated in section 7 from the engine's own certificate, registry and "
+                    "validation artifacts; this part carries no separate scoring."
                 )
             ),
 
@@ -1347,40 +711,17 @@ class DiscussionV16(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content="<strong>Issue Resolution Status: 15/15 Issues Resolved</strong>"
+                content="<strong>Issue status</strong>"
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "G₂ manifold framework has resolved all 15 outstanding issues. Generation count "
-                    "n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3. M<sub>GUT</sub> = 2.12×10¹⁶ GeV from torsion (GEOMETRIC). Proton "
-                    "decay channels: 64.2% e⁺π⁰ (DERIVED from Yukawas). Mass ordering: 85.5% IH preference "
-                    "(STRONG). KK spectrum at 5 TeV (LHC reach). Dark energy w₀ matches DESI."
+                    "No count of resolved issues is stated. Each result carries its status in section 7 "
+                    "(derived, calibrated, fitted, open or predicted), and what the engine marks open "
+                    "is listed under 7.2 Open problems."
                 )
             ),
 
-            # List of resolved issues
-            ContentBlock(
-                type="list",
-                items=[
-                    "<strong>Issue 1 - Generation Count:</strong> RESOLVED - χ<sub>eff</sub>/48 = 144/48 = 3 from G₂ topology",
-                    "<strong>Issue 2 - M<sub>GUT</sub> Scale:</strong> RESOLVED - GEOMETRIC: 2.12×10¹⁶ GeV from TCS torsion T<sub>ω</sub>",
-                    "<strong>Issue 3 - Proton Channels:</strong> RESOLVED - DERIVED: 64.2% e⁺π⁰ from Yukawa overlaps",
-                    "<strong>Issue 4 - Mass Ordering:</strong> RESOLVED - STRONG: 85.5% IH from index theorem with flux dressing",
-                    "<strong>Issue 5 - KK Spectrum:</strong> RESOLVED - TESTABLE: 5σ discovery at HL-LHC",
-                    "<strong>Issue 6 - Dark Energy w₀:</strong> RESOLVED - GEOMETRIC: from MEP with D<sub>eff</sub> (0.38σ from DESI)",
-                    "<strong>Issue 7 - PMNS Angles:</strong> RESOLVED - 45.0° from asymmetric coupling (α₄ − α₅)",
-                    "<strong>Issue 8 - Index Theorem:</strong> RESOLVED - PROVEN: Atiyah-Singer on G₂ associative 3-cycles (b₃ = 24)",
-                    "<strong>Issue 9 - Coset Construction:</strong> RESOLVED - G₂ holonomy (not coset), gauge from singularities",
-                    "<strong>Issue 10 - Thermal Time:</strong> RESOLVED - CLARIFIED: Semiclassical limit t<sub>thermal</sub> ≈ t<sub>cosmic</sub>",
-                    "<strong>Issue 11 - Fifth Force:</strong> RESOLVED - SCREENED: Chameleon β<sub>eff</sub> < 0.01 in dense regions",
-                    "<strong>Issue 12 - F(R,T) Origin:</strong> RESOLVED - EXPLAINED: Pneuma VEV couples to T<sub>μν</sub>",
-                    "<strong>Issue 13 - Moduli Stability:</strong> RESOLVED - QUANTIFIED: Torsion + fluxes + Casimir energy balance",
-                    "<strong>Issue 14 - Mirror Sector:</strong> RESOLVED - CONCRETE: KK parity from G₂ symmetry, m<sub>DM</sub> ~ 5 TeV",
-                    "<strong>Issue 15 - Higgs Mass Formula:</strong> OPEN - Re(T) constrained from m<sub>h</sub> = 125.1 GeV (tension: Higgs inversion gives 9.865, BBN calibration gives 7.086, geometry gives 1.833)",
-                    "<strong>Issue 16 - Neutrino Mass Ordering:</strong> OPEN - Hopf formula gives Σm<sub>ν</sub> = 0.0817 eV (compatible with NH only, below IO floor ~0.098 eV), but neutrino_mixing.py predicts IO with Σm<sub>ν</sub> ~ 0.10 eV. Internal inconsistency between two geometric derivation chains."
-                ]
-            ),
 
             # Experimental Validation
             ContentBlock(
@@ -1398,15 +739,10 @@ class DiscussionV16(SimulationBase):
                 type="table",
                 headers=["Observable", "Framework Prediction", "Current Data", "Status"],
                 rows=[
-                    ["Generation Count", "n<sub>gen</sub> = χ<sub>eff</sub>/48 = 3", "3 observed", "Agreement"],
-                    ["M<sub>GUT</sub> Scale", "2.12×10¹⁶ GeV (GEOMETRIC)", "2.0−3.0×10¹⁶ GeV (3-loop RG)", "GEOMETRIC"],
-                    ["Proton Decay e⁺π⁰", "64.2% (DERIVED)", "τ<sub>p</sub> > 1.67×10³⁴ years (Super-K)", "DERIVED"],
-                    ["Mass Ordering", "85.5% IH (STRONG)", "NH favored ~2.7σ (NuFIT 6.0)", "TESTABLE"],
-                    ["KK Graviton Mass", "5σ HL-LHC discovery", "m<sub>KK</sub> > 3.5 TeV (LHC Run 2)", "TESTABLE"],
-                    ["Dark Energy w₀", "GEOMETRIC via MEP", "DESI DR2", "Agreement"],
+                    *prediction_rows(),
                     ["θ₂₃ PMNS Angle", "45.0° (asymmetric coupling)", "42.1°−50.0° (NuFIT 6.0)", "Agreement"],
                     ["θ₁₃ PMNS Angle", "8.61° (cycle asymmetry)", "8.63° ± 0.11° (NuFIT 6.0 IO)", "Agreement"],
-                    ["Proton Lifetime", "τ<sub>p</sub> = 8.15×10³⁴ years", "> 1.67×10³⁴ years (Super-K)", "Above bound"],
+                    ["Proton Lifetime", [r[1] for r in prediction_rows() if r[0] == "Proton lifetime"][0], "> 1.67×10³⁴ years (Super-K)", "see section 7"],
                     ["GW Speed", "|c<sub>GW</sub>/c − 1| ~ M<sub>Pl</sub>⁻¹", "< 10⁻¹⁵ (GW170817)", "Consistent"]
                 ]
             ),
@@ -1456,9 +792,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>COMPLETE:</strong> Framework Achievement: Generation count, M<sub>GUT</sub> (GEOMETRIC), "
-                    "proton channels (64.2% e⁺π⁰), mass ordering (85.5% IH), KK spectrum (5 TeV), PMNS angles, "
-                    "dark energy. All 15 outstanding issues have been resolved."
+                    "<strong>Status:</strong> see section 7. Framework results: Generation count, M<sub>GUT</sub> (GEOMETRIC), "
+                    "proton channels and mass ordering (OPEN: not computed), KK spectrum, PMNS angles, "
+                    "dark energy; statuses are in section 7. No count of resolved issues is claimed."
                 )
             ),
 
@@ -1511,11 +847,8 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The framework demonstrates: (1) Internal consistency - all 15 major issues resolved, "
-                    "(2) Predictive power - 3 exact agreements with experiment, 7 strong agreements (<1σ), "
-                    "(3) Falsifiability - testable KK gravitons at 5 TeV, mass ordering at DUNE 2027, proton "
-                    "decay channels at Hyper-K, (4) Geometric foundation - TCS G₂ manifolds with explicit "
-                    "torsion structure. Remaining items are quantitative refinements, not fundamental problems."
+                    "Assessment is by the statuses and the computed fit in section 7; remaining open items "
+                    "are listed there, not summarised here."
                 )
             ),
 
@@ -1528,49 +861,11 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "<strong>Score: 97/100</strong><br><br>"
-                    "The G₂ manifold framework achieves (97/100) with all 15 outstanding issues resolved. "
-                    "Built on TCS (Twisted Connected Sum) G₂ holonomy manifolds with explicit torsion structure, "
-                    "the theory demonstrates consistency, predictive power, and falsifiability across multiple "
-                    "experimental domains."
+                    "<strong>No score is assigned.</strong> A single self-assigned score has no stated method; "
+                    "the evidence is the per-conclusion status and the computed fit in section 7."
                 )
             ),
-            ContentBlock(
-                type="heading",
-                content="Major Achievements",
-                level=3
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Generation Count: n<sub>gen</sub> = χ<sub>eff</sub>/48 = 144/48 = 3",
-                    "M<sub>GUT</sub> Scale: 2.12×10¹⁶ GeV from TCS torsion T<sub>ω</sub> (GEOMETRIC)",
-                    "Proton Decay Channels: 64.2% e⁺π⁰ from Yukawa overlaps (DERIVED)",
-                    "Mass Ordering: 85.5% IH preference from index theorem (STRONG)",
-                    "KK Spectrum: 5σ HL-LHC discovery (TESTABLE)",
-                    "Dark Energy: w₀ (GEOMETRIC), 0.38σ from DESI DR2",
-                    "PMNS Angles: θ₂₃ = 45.0°, θ₁₃ = 8.61° (exact agreements with experiment)",
-                    "Proton Lifetime: τ<sub>p</sub> = 8.15×10³⁴ years, 4.9× above Super-K bound"
-                ]
-            ),
 
-            # Assessment Criteria
-            ContentBlock(
-                type="heading",
-                content="Assessment Criteria",
-                level=3
-            ),
-            ContentBlock(
-                type="table",
-                headers=["Criterion", "Assessment", "Rating"],
-                rows=[
-                    ["Internal Mathematical Consistency", "TCS G₂ manifolds; χ<sub>eff</sub> = 144; index theorem proven; all 15 issues resolved", "Excellent"],
-                    ["External Consistency with Data", "3 exact agreements: n<sub>gen</sub>, θ₂₃, θ₁₃; 7 strong agreements <1σ", "Excellent"],
-                    ["Falsifiability", "KK at 5 TeV HL-LHC; mass ordering DUNE 2027; proton channels Hyper-K; all near-term", "Excellent"],
-                    ["Theoretical Parsimony", "Geometric derivations from TCS torsion; minimal free parameters; no ad hoc fitting", "Excellent"],
-                    ["Explanatory Power", "Unifies particle physics + cosmology; explains 3 gen, M<sub>GUT</sub>, channels, ordering, dark energy", "Excellent"]
-                ]
-            ),
 
             # Position Relative to Major Frameworks
             ContentBlock(
@@ -1582,27 +877,10 @@ class DiscussionV16(SimulationBase):
                 type="table",
                 headers=["Framework", "Dimensions", "Fundamental Object", "Testability"],
                 rows=[
-                    ["Principia Metaphysica", "M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) → 4D via G₂", "4096-spinor Pneuma + TCS G₂ manifold", "Near-term (2027-2030s)"],
+                    ["Principia Metaphysica", "M<sup>26</sup>(24,2) = 12×(2,0) + (0,1) + S<sup>(2,0)</sup> → 2×13D(12,1) → 4D via G₂", "4096-spinor Pneuma + G₂ manifold Y₇", "Near-term (2027-2030s)"],
                     ["Type IIA/IIB String", "10", "Strings (1D)", "Far-term (M<sub>Pl</sub> scale)"],
                     ["M-Theory", "11", "M2/M5 branes", "Far-term (M<sub>Pl</sub> scale)"],
                     ["Loop Quantum Gravity", "4", "Spin networks", "Far-term (Planck scale)"]
-                ]
-            ),
-            ContentBlock(
-                type="heading",
-                content="Unique Advantages",
-                level=3
-            ),
-            ContentBlock(
-                type="list",
-                items=[
-                    "Exact Generation Count: n<sub>gen</sub> = χ<sub>eff</sub>/48 = 3 from TCS topology (not 3 free compactifications)",
-                    "Geometric M<sub>GUT</sub>: 2.12×10¹⁶ GeV from torsion T<sub>ω</sub> (not fitted to data)",
-                    "Quantitative Proton Channels: 64.2% e⁺π⁰ from Yukawa overlaps (not order-of-magnitude estimate)",
-                    "Strong Mass Ordering: 85.5% IH from index theorem (not weak preference)",
-                    "Near-term Falsifiability: KK at 5 TeV HL-LHC 2027, ordering DUNE 2027, channels Hyper-K 2030s",
-                    "Multiple exact agreements: 3 exact predictions (n<sub>gen</sub>, θ₂₃, θ₁₃), 7 strong agreements <1σ",
-                    "No String Landscape: Unique TCS G₂ solution with b₃ = 24 co-associative cycles"
                 ]
             ),
 
@@ -1615,13 +893,9 @@ class DiscussionV16(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The Principia Metaphysica framework represents a comprehensive geometric approach to "
-                    "fundamental physics that successfully addresses the major outstanding questions in both "
-                    "particle physics and cosmology. With all 15 critical issues resolved, strong experimental "
-                    "agreement across multiple observables, and near-term falsifiability through HL-LHC, JUNO, "
-                    "DUNE, and Hyper-Kamiokande, the framework stands as a testable alternative to the string "
-                    "landscape and provides a geometrically unified description of nature from a single TCS G\u2082 "
-                    "manifold with explicit torsion structure."
+                    "The Principia Metaphysica framework is a geometric proposal whose status, by result, is "
+                    "stated in section 7. Near-term tests (HL-LHC, JUNO, DUNE, Hyper-Kamiokande) can falsify "
+                    "its predictions; the open problems listed there remain open."
                 )
             ),
 
@@ -1727,15 +1001,11 @@ class DiscussionV16(SimulationBase):
             subsection_id=None,
             title="Discussion, Conclusions, and Theory Analysis",
             abstract=(
-                "Comprehensive discussion covering: (1) Summary of results including the complete geometric "
-                "unification from 26D dual-shadow framework to 4D observables, (2) Predictions and falsifiability "
-                "criteria with precision calculations for proton decay and GW dispersion, (3) Future research "
-                "directions in phenomenology, mathematical rigor, cosmology, and quantum gravity, (4) Predictions "
-                "and testability including the 58 derived Standard Model parameters and hidden sector particles, "
-                "(5) Transparent discussion of inputs, comparison to other models, supersymmetry, inflation, and "
-                "black hole information, (6) Theory status analysis showing all 15 major issues resolved, "
-                "(7) Experimental validation with 3 exact and 7 strong agreements, and (8) Framework positioning "
-                "demonstrating near-term testability advantages over string theory and LQG."
+                "Conclusions generated from live engine state: geometry statements from the closed-geometry "
+                "certificate (CG.x), physics conclusions each tagged derived, calibrated, fitted, open or "
+                "predicted from the registry, the global fit read from the validation artifacts, and the "
+                "open problems the engine marks. Followed by predictions and testability, a discussion of "
+                "inputs and limitations, and a theory status part."
             ),
             content_blocks=content_blocks,
             formula_refs=[],
@@ -1743,28 +1013,40 @@ class DiscussionV16(SimulationBase):
         )
 
     def get_formulas(self) -> List[Formula]:
-        """Return summary validation formula for the discussion section."""
+        """Return the global chi^2 formula, computed from the fit artifacts."""
+        fit = _load_fit_summary()
+        chi2 = fit["chi2"] if fit["available"] else None
+        if chi2 is None:
+            shown = r"\text{NOT AVAILABLE}"
+            plain = "chi^2 = NOT AVAILABLE (" + fit["why"] + ")"
+            desc = ("Global goodness-of-fit. NOT AVAILABLE: " + fit["why"] +
+                    " No value is substituted.")
+        else:
+            shown = "{:,.2f}".format(chi2).replace(",", "{,}")
+            plain = ("chi^2 = sum_i ((x_i^PM - x_i^exp)/sigma_i^exp)^2 = "
+                     "%.2f over n = %d scoring rows" % (chi2, fit["n"]))
+            desc = (
+                "Global goodness-of-fit: the sum of squared pulls over every "
+                "scoring row of the validation registry, read from "
+                "statistical_rigor_report.json (chi_squared_from_rows). chi^2 = "
+                "%.2f over n = %d rows (reduced %.4g); excluding the %d rows "
+                "withdrawn as FALSIFIED, chi^2 = %.2f over n = %d. Both are "
+                "published so that neither the withdrawn candidates nor the "
+                "survivors alone set the headline. WITHDRAWN: this formula "
+                "previously read sigma_bar = 0.48, a mean pull never computed "
+                "from the registry." % (
+                    chi2, fit["n"], fit["reduced"], fit["n_withdrawn"],
+                    fit["chi2_live"], fit["n_live"]))
         return [
             Formula(
                 id="discussion-global-alignment",
                 label="(7.1)",
-                latex=r"\chi^2 = \sum_{i} \left(\frac{x_i^{\text{PM}} - x_i^{\text{exp}}}{\sigma_i^{\text{exp}}}\right)^{2} = 126{,}748.86 \ \ (n = 65,\ p = 0)",
-                plain_text="chi^2 = sum_i ((x_i^PM - x_i^exp)/sigma_i^exp)^2 = 126748.86 over n = 65 scoring rows, p = 0, POOR_FIT",
+                latex=(r"\chi^2 = \sum_{i} \left(\frac{x_i^{\text{PM}} - "
+                       r"x_i^{\text{exp}}}{\sigma_i^{\text{exp}}}\right)^{2} = "
+                       + shown),
+                plain_text=plain,
                 category="DERIVED",
-                description=(
-                    "Global goodness-of-fit: the sum of squared pulls over every scoring row of "
-                    "the validation registry, computed in statistical_rigor_report.json under "
-                    "chi_squared_from_rows. The result is chi^2 = 126748.86 over n = 65 rows "
-                    "(reduced 1950.0), p = 0, status POOR_FIT; excluding the five rows carried as "
-                    "FALSIFIED it is chi^2 = 5790.62 over n = 60 (reduced 96.5). Both are "
-                    "published so that neither the withdrawn candidates nor the survivors alone "
-                    "set the headline. WITHDRAWN: this formula previously read sigma_bar = "
-                    "(1/N_pred) * sum(pull_i) = 0.48 sigma, described as the global alignment "
-                    "across 26 parameters. That number was never computed from the registry, and "
-                    "a mean of absolute pulls is in any case not a goodness-of-fit test: it "
-                    "averages a few catastrophic misses away against many rows that are "
-                    "experimental inputs restated, whose pull is zero by construction."
-                ),
+                description=desc,
                 input_params=[
                     "topology.elder_kads",
                     "topology.mephorash_chi",
@@ -1777,28 +1059,28 @@ class DiscussionV16(SimulationBase):
                 output_params=[],
                 derivation={
                     "steps": [
-                        {"description": "Collect all N_pred PM predictions with experimental data. The observable set includes: 1/alpha_GUT (gauge), w_0 and w_a (dark energy), theta_12/theta_13/theta_23/delta_CP (PMNS angles), m_h (Higgs), Sigma m_nu (neutrino sum), and fermion mass ratios. Experimental sources: Planck 2018, DESI DR2 2025, NuFIT 6.0, PDG 2024.", "formula": r"\{x_i^{\text{PM}}, x_i^{\text{exp}}, \sigma_i^{\text{exp}}\}_{i=1}^{N_{\text{pred}}}"},
-                        {"description": "For each observable, compute the pull: the absolute deviation between PM prediction and experimental central value, normalised by the published 1-sigma experimental uncertainty. Observables with zero uncertainty (exact constants) are excluded from the average.", "formula": r"\text{pull}_i = \frac{|x_i^{\text{PM}} - x_i^{\text{exp}}|}{\sigma_i^{\text{exp}}}"},
-                        {"description": "Average over all N_pred observables to obtain the global alignment metric. The result sigma_bar = 0.48 means PM predictions fall, on average, within the inner half of the 1-sigma experimental band.", "formula": r"\bar{\sigma} = \frac{1}{N_{\text{pred}}} \sum_{i=1}^{N_{\text{pred}}} \text{pull}_i = 0.48"},
+                        {"description": "Collect every scoring row of the validation registry: PM value, experimental value and experimental uncertainty. Rows with zero uncertainty are excluded.", "formula": r"\{x_i^{\text{PM}}, x_i^{\text{exp}}, \sigma_i^{\text{exp}}\}_{i=1}^{n}"},
+                        {"description": "For each row compute the signed pull against the experimental uncertainty.", "formula": r"\text{pull}_i = \frac{x_i^{\text{PM}} - x_i^{\text{exp}}}{\sigma_i^{\text{exp}}}"},
+                        {"description": "Sum the squared pulls. The value is read from the build artifact, not typed here.", "formula": r"\chi^2 = \sum_{i=1}^{n} \text{pull}_i^{2}"},
                     ],
-                    "method": "statistical_alignment",
+                    "method": "chi_squared_from_rows",
                     "parentFormulas": []
                 },
                 terms={
-                    "sigma_bar": "Global mean alignment in units of sigma (0.48)",
-                    "N_pred": "Total number of validated predictions",
+                    "chi^2": "Sum of squared pulls over the scoring rows",
+                    "n": "Number of scoring rows",
                     "x_i^PM": "PM framework prediction for observable i",
                     "x_i^exp": "Experimental measurement for observable i",
                     "sigma_i^exp": "Experimental uncertainty for observable i",
-                    "pull_i": "Per-observable deviation in sigma units",
+                    "pull_i": "Per-row deviation in sigma units",
                 },
-                eml_tree_str=(
-                    "ops.div(eml_vec('sum_pulls'), eml_vec('N_pred'))"
-                ),
+                eml_tree_str="ops.sum(eml_vec('squared_pulls'))",
                 eml_description=(
-                    "EML: sigma_bar = (1/N_pred) * sum_i |x_i^PM - x_i^exp| / sigma_i^exp — mean pull over all validated PM predictions"
+                    "EML: chi^2 = sum_i ((x_i^PM - x_i^exp) / sigma_i^exp)^2, summed over the validation scoring rows"
                 ),
-            arithma=_arithma_num(0.48), eml=_eml_scalar(0.48), value=0.48, triple_rel=1e-3)
+                arithma=None if chi2 is None else _arithma_num(chi2),
+                eml=None if chi2 is None else _eml_scalar(chi2),
+                value=chi2, triple_rel=1e-3)
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:

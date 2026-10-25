@@ -1670,6 +1670,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 latex=r"N_{\text{predictions}} = \sum_{i} \mathbb{1}[\sigma_i \leq 3\sigma_{\text{exp}}]",
                 plain_text="N_predictions = count of predictions within 3σ of experimental values",
                 category="DERIVED",
+                references=['pdg2024', 'planck2018'],
                 description=(
                     "Total count of falsifiable predictions aggregated across all simulation sectors "
                     "(gauge, fermion, cosmology, proton-decay, neutrino). Each prediction is tested "
@@ -1708,6 +1709,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 latex=r"P_{\text{leak}} = \frac{1}{144} e^{-12} \approx 4.27 \times 10^{-8}",
                 plain_text="P_leak = (1/144) × exp(-12) ≈ 4.27 × 10⁻⁸",
                 category="PREDICTED",
+                references=['joyce2000'],
                 description=(
                     "Dark force leakage probability — testable prediction from two-layer OR structure. "
                     "EM and gravity leak at this rate; strong/weak forces are zero."
@@ -1747,6 +1749,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 latex=r"\delta\varphi = \alpha_{\text{leak}} \times \frac{L}{\lambda_{\text{dB}}}",
                 plain_text="δφ = α_leak × L / λ_dB",
                 category="PREDICTED",
+                references=['joyce2000'],
                 description=(
                     "Cross-shadow phase shift from two-layer OR bridge interference. "
                     "The leakage coupling α_leak = 1/√6 ≈ 0.408 induces a measurable "
@@ -1789,6 +1792,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 latex=r"P_{\text{noise}} = \frac{1}{144} e^{-12} \, P_{\text{thermal}}",
                 plain_text="P_noise = (1/144) × exp(-12) × P_thermal ≈ 4.27 × 10⁻⁸ × P_thermal",
                 category="PREDICTED",
+                references=['joyce2000'],
                 description=(
                     "Dark sector vacuum noise excess from two-layer OR bridge leakage. "
                     "The bridge probability P_leak = (1/144) × e⁻¹² ≈ 4.27 × 10⁻⁸ sets the "
@@ -1831,6 +1835,7 @@ class PredictionsAggregatorV16(SimulationBase):
                 latex=r"\frac{\delta h}{h} \sim T_\omega^2 = \frac{1}{6}",
                 plain_text="δh / h ≈ T_ω² = 1/6 ≈ 0.167",
                 category="PREDICTED",
+                references=['joyce2000'],
                 description=(
                     "Gravitational wave polarization anomaly from G2 torsion coupling. "
                     "The bare torsion parameter T_omega = 1/sqrt(6) gives T_omega^2 = 1/6, "
@@ -1883,6 +1888,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "then f_a > 10¹² GeV"
                 ),
                 category="PREDICTED",
+                references=['pdg2024'],
                 description=(
                     "ADMX Phase III/IV exclusion window for QCD axion at ~6 microeV. "
                     "If ADMX excludes the axion-photon coupling g_{a gamma gamma} below "
@@ -1931,6 +1937,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "ΔN_eff < 0.06 implies sterile neutrino sector constrained"
                 ),
                 category="PREDICTED",
+                references=['planck2018'],
                 description=(
                     "CMB-S4 sensitivity to sterile neutrino sector. The PM mirror "
                     "sector predicts Delta N_eff ~ 0.08-0.16 from mirror neutrinos "
@@ -1978,6 +1985,7 @@ class PredictionsAggregatorV16(SimulationBase):
                     "w₀ = -23/24 ≈ -0.958 (calibrated at the off-path seed b₃ = 24)"
                 ),
                 category="PREDICTED",
+                references=['desi-2024', 'planck2018'],
                 description=(
                     "CALIBRATED at the off-path seed b_3 = 24 (w_0 frozen at -23/24; "
                     "dark_energy_betti = b3_24): DESI dark energy equation of state test. "

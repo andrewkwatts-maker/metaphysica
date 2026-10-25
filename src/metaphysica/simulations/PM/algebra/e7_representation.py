@@ -226,8 +226,13 @@ class E7RepresentationSimulation(SimulationBase):
                 label="(A3.3)",
                 latex=r"m_a = \frac{\sqrt{|q_{E_7}|}}{M_{\text{Planck}}}",
                 plain_text="m_a = sqrt(|q_E7|) / M_Planck",
-                category="DERIVED",
+                category="ANSATZ",
+                references=["cremmer_julia1978"],
                 description=(
+                    "OPEN: the ALP mass is not computed to 3.51 meV anywhere in the engine. This "
+                    "expression evaluates to 1.6e-7 meV; the portal chain alp_portals.compute_alp "
+                    "gives about 1.11e2 eV on the adopted b3 = 43 (calibrated at the off-path seed, "
+                    "no racetrack on Y_7). The 3.51 meV literal is therefore not a derived kill switch. "
                     "ALP mass from the E₇ quartic invariant. "
                     "Replaces semi-fitted axion scale with derived E₇ invariant. "
                     "Predicts m_a ≈ 3.51 meV from the Pneuma condensate spectral structure "

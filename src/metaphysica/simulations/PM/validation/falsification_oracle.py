@@ -509,7 +509,7 @@ class FalsificationOracle:
                     f"This theory makes {len(kill_switches)} predictions testable within 5 years, "
                     f"with the ALP Principia Metric as the primary kill-switch. "
                     f"Specifically, if BabyIAXO/IAXO reach their projected sensitivities and find no "
-                    f"signal at 3.51 meV, the theory is immediately falsified. This satisfies Popper's "
+                    f"signal at 3.51 meV, the EIS-sector ansatz is constrained. The 3.51 meV value is OPEN: no engine code computes it (alp_portals gives about 1.11e2 eV on the adopted b3 = 43), so a null result cannot by itself falsify the framework. This is intended to satisfy Popper's "
                     "criterion for scientific falsifiability with a clear, time-bound experimental test."
                 ),
                 "key_experiments": [k["experiment"] for k in kill_switches],

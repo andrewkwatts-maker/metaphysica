@@ -77,6 +77,20 @@ def _arithma_inv(a):
 import math as _math
 
 
+def _adopted_b3() -> int:
+    """b3 on the active path (seed_43_joyce), read from the registry."""
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+    return int(get_registry().elder_kads)
+
+
+def _adopted_w0(b3: int) -> float:
+    """w0 on the active path: dark_energy_thawing.calculate_w_params_w0(b3)."""
+    from metaphysica.simulations.PM.cosmology.dark_energy_thawing import (
+        DarkEnergyEvolution,
+    )
+    return DarkEnergyEvolution().calculate_w_params_w0(b3)
+
+
 class ResultsV16_2(SimulationBase):
     """
     Section 3: Cosmological Results and Alignment (v24.2).
@@ -148,6 +162,16 @@ class ResultsV16_2(SimulationBase):
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for Section 3: Cosmological Results."""
         content_blocks = [
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "<strong>Seed notice.</strong> The numbers quoted in this section's prose "
+                    "(w<sub>0</sub> = &minus;23/24, b<sub>3</sub> = 24, chi = 144) belong to the superseded "
+                    "seed_24 path. On the adopted path (seed_43_joyce, (b<sub>2</sub>, b<sub>3</sub>) = (12, 43)) "
+                    "formula (3.1) computes w<sub>0</sub> = &minus;42/43; H<sub>0</sub> = 71.55 km/s/Mpc "
+                    "is a calibrated literal that no code computes on the adopted path (OPEN)."
+                ),
+            ),
             # ================================================================
             # 3.1 Hubble Tension
             # ================================================================
@@ -677,14 +701,22 @@ class ResultsV16_2(SimulationBase):
 
     def get_formulas(self) -> List[Formula]:
         """Return formula definitions for cosmological results including Sterile Proofs."""
+        b3 = _adopted_b3()
+        w0 = _adopted_w0(b3)
         return [
             Formula(
                 id="w0-derivation",
                 label="(3.1)",
-                latex=r"w_0 = -1 + \frac{1}{b_3} = -\frac{23}{24} \approx -0.9583",
-                plain_text="w0 = -1 + 1/b3 = -23/24 ≈ -0.9583",
+                latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -\frac{{{b3 - 1}}}{{{b3}}} \approx {w0:.4f}",
+                plain_text=f"w0 = -1 + 1/b3 = -{b3 - 1}/{b3} ≈ {w0:.4f} (adopted b3 = {b3}; -23/24 is the superseded seed_24 value)",
                 category="DERIVED",
-                description="Dark energy equation of state from b3 Betti cycles.",
+                references=["desi_2025_thawing", "planck2018"],
+                description=(
+                    "Dark energy equation of state w0 = -1 + 1/b3 evaluated on the adopted path "
+                    "(computed by dark_energy_thawing.calculate_w_params_w0 with b3 read from the "
+                    "registry). -23/24 is the superseded seed_24 value. The Maximum Entropy "
+                    "motivation is not derived anywhere in the engine."
+                ),
                 input_params=["topology.elder_kads"],
                 output_params=["cosmology.w0_derived"],
                 eml_latex=r"w_0 = \mathrm{ops.add}(\mathrm{ops.neg}(1),\; \mathrm{ops.inv}(b_3)) = \mathrm{ops.div}(-23,\; 24)",
@@ -702,24 +734,27 @@ class ResultsV16_2(SimulationBase):
                     "steps": [
                         "Apply Maximum Entropy Principle to G2 compactification vacuum energy",
                         "Thawing deviation from Lambda: w0 = -1 + 1/b3",
-                        "Evaluate: w0 = -23/24 (exact topological fraction)"
+                        "Evaluate on the adopted seed: w0 = -(b3-1)/b3 = -42/43 (the superseded seed_24 value is -23/24)"
                     ],
                     "parentFormulas": ["b3-generations"]
                 },
                 terms={
                     "w_0": "Dark energy equation of state parameter at z=0",
-                    r"b_3": {"description": "Third Betti number of G2 manifold", "value": 24},
+                    r"b_3": {"description": "Third Betti number of G2 manifold (adopted seed)", "value": b3},
                     r"-1": "Cosmological constant limit (Λ-CDM)",
                     r"1/b_3": "Thawing deviation from MEP on G2 topology"
                 },
-            arithma=_arithma_add(_arithma_num(-1.0), _arithma_div(_arithma_num(1.0), _arithma_num(24.0))), eml=_eml_add(_eml_neg(_eml_scalar(1.0)), _eml_inv(_b3_leaf())), value=-23.0 / 24.0),
+            arithma=_arithma_add(_arithma_num(-1.0), _arithma_div(_arithma_num(1.0), _arithma_num(float(b3)))), eml=_eml_add(_eml_neg(_eml_scalar(1.0)), _eml_inv(_b3_leaf())), value=w0),
             Formula(
                 id="h0-alignment",
                 label="(3.2)",
                 latex=r"H_0^{\rm PM} = H_0^{\rm CMB} \cdot \left(1 + \frac{\sin^2\theta_{\rm mix}}{2}\right) \approx 71.55~\mathrm{km\,s^{-1}\,Mpc^{-1}}",
                 plain_text="H0_PM = H0_CMB * (1 + sin^2(theta_mix)/2) ≈ 71.55 km/s/Mpc",
-                category="DERIVED",
+                category="FITTED",
+                references=["planck2018", "riess_2022"],
                 description=(
+                    "CALIBRATED, NOT COMPUTED, and OPEN: 71.55 is a literal fixed at the off-path seed b3 = 24; "
+                    "nothing in the engine computes it on the adopted path. Z.11 (73.1) is a different, also off-path, route. "
                     "PM geometric Hubble prediction from O'Dowd formula: CMB value modulated "
                     "by mixing angle theta_mix from G2 holonomy. Yields H0 = 71.55 km/s/Mpc, "
                     "between Planck (67.4) and SH0ES (73.04). Comparison: 1.4σ below SH0ES."
@@ -754,8 +789,11 @@ class ResultsV16_2(SimulationBase):
                 label="(3.2b)",
                 latex=r"H_0^{\rm PM} = c \cdot \sqrt{\frac{\chi}{b_3 \cdot \text{Vol}(V_7)}} \approx 71.55~\mathrm{km\,s^{-1}\,Mpc^{-1}}",
                 plain_text="H0_PM = c * sqrt(chi / (b3 * Vol(V7))) ≈ 71.55 km/s/Mpc",
-                category="DERIVED",
+                category="FITTED",
+                references=["planck2018", "riess_2022"],
                 description=(
+                    "CALIBRATED, NOT COMPUTED, and OPEN: 71.55 is a literal fixed at the off-path seed b3 = 24; "
+                    "nothing in the engine computes it on the adopted path. Z.11 (73.1) is a different, also off-path, route. "
                     "Topological bridge formula: Hubble constant from G2 manifold geometry. "
                     "χ_eff and b₃ fixed by topology; Vol(V₇) set by compactification scale. "
                     "Gives PM geometric prediction H₀ = 71.55 km/s/Mpc (1.4σ below SH0ES 73.04). "
@@ -797,7 +835,8 @@ class ResultsV16_2(SimulationBase):
                 latex=r"\rho_{\text{vacuum}} = \rho_{\text{bulk}} \times e^{-b_3 \cdot \chi} \approx 10^{-50}",
                 plain_text="rho_vacuum = rho_bulk * exp(-b3*chi) ≈ 10^-50",
                 category="DERIVED",
-                description="Vacuum energy floor from brane-tension cancellation.",
+                references=["planck2018"],
+                description="OFF-PATH (b3 = 24, chi = 144 literals; adopted b3 = 43, chi_eff unruled): value shown is the retired-seed arithmetic. Vacuum energy floor from brane-tension cancellation.",
                 input_params=["topology.elder_kads", "topology.mephorash_chi"],
                 output_params=["cosmology.rho_vacuum"],
                 eml_latex=r"\rho_{vac} = \mathrm{ops.mul}(\rho_{bulk},\; \mathrm{ops.exp}(\mathrm{ops.neg}(\mathrm{ops.mul}(b_3,\; \chi))))",
@@ -835,6 +874,7 @@ class ResultsV16_2(SimulationBase):
                 latex=r"\chi^2_{\text{align}} = \sum_i \frac{(P_i - O_i)^2}{\sigma_i^2}",
                 plain_text="chi2_align = sum_i (P_i - O_i)^2 / sigma_i^2",
                 category="DERIVED",
+                references=["planck2018", "riess_2022", "desi_2025_thawing"],
                 description=(
                     "Global chi-squared alignment of PM predictions vs observations. "
                     "Sum over all compared observables; PM achieves 0.48σ mean deviation "
@@ -883,7 +923,8 @@ class ResultsV16_2(SimulationBase):
                 latex=r"\text{Vol}(V_7) = \frac{\chi}{b_3} \cdot \left(\frac{c}{H_0}\right)^7",
                 plain_text="Vol(V7) = (chi/b3) * (c/H0)^7",
                 category="DERIVED",
-                description="Holonomy Volume Constraint: V7 volume locked by topology and H0.",
+                references=["planck2018", "riess_2022"],
+                description="OFF-PATH (b3 = 24, chi = 144 literals; adopted b3 = 43, chi_eff unruled): value shown is the retired-seed arithmetic. Holonomy Volume Constraint: V7 volume locked by topology and H0.",
                 input_params=["topology.mephorash_chi", "topology.elder_kads", "cosmology.H0_local"],
                 output_params=["topology.vol_v7"],
                 eml_tree_str="ops.mul(ops.div(chi, b3), ops.pow(ops.div(c, H0), eml_scalar(7.0)))",

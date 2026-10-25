@@ -225,19 +225,7 @@ class ClosedGeometrySimulation(SimulationBase):
                 "statements hold for either real form of phi; the physics "
                 "statements carry their regime."))]
         for entry in cert:
-            blocks.append(ContentBlock(type="heading", level=3,
-                                       content="%s %s" % (entry["label"],
-                                                          entry["title"])))
-            blocks.append(ContentBlock(type="paragraph",
-                                       content=entry["statement"]))
-            if entry["derived"]:
-                blocks.append(ContentBlock(type="formula",
-                                           formula_id=entry["id"],
-                                           label=entry["label"]))
-            blocks.append(ContentBlock(
-                type="callout", callout_type="info", title="How it could fail",
-                content="%s. Scope: %s." % (entry["falsifier"],
-                                            entry["scope"])))
+            blocks.extend(self._theorem_blocks(entry))
         blocks.extend(self._provenance_blocks())
         return SectionContent(
             section_id="2",
@@ -252,6 +240,29 @@ class ClosedGeometrySimulation(SimulationBase):
             formula_refs=[e["id"] for e in cert if e["derived"]],
             param_refs=["topology.chi_y7"],
         )
+
+    @staticmethod
+    def _theorem_blocks(entry: Dict[str, Any]) -> List[ContentBlock]:
+        """Statement, proof steps, sources and falsifier for one theorem."""
+        blocks = [
+            ContentBlock(type="heading", level=3, content="%s %s" % (
+                entry["label"], entry["title"])),
+            ContentBlock(type="paragraph", content=entry["statement"])]
+        if entry["derived"]:
+            blocks.append(ContentBlock(type="formula", formula_id=entry["id"],
+                                       label=entry["label"]))
+        blocks.append(ContentBlock(type="paragraph", content=(
+            "Proof. %s" % entry["proof"])))
+        if entry["steps"]:
+            blocks.append(ContentBlock(type="list", items=entry["steps"]))
+        sources = "; ".join(cite(k) for k in entry["references"])
+        blocks.append(ContentBlock(type="paragraph", content=(
+            "Sources: %s. Checked by %s." % (sources or "computed here",
+                                             entry["test"]))))
+        blocks.append(ContentBlock(
+            type="callout", callout_type="info", title="How it could fail",
+            content="%s. Scope: %s." % (entry["falsifier"], entry["scope"])))
+        return blocks
 
     @staticmethod
     def _provenance_blocks() -> List[ContentBlock]:
@@ -295,8 +306,17 @@ class ClosedGeometrySimulation(SimulationBase):
         def plain(kind: str) -> str:
             return " ".join(p.plain for p in by_kind(kind))
 
+        from metaphysica.simulations.PM.geometry.figures import (
+            figure_data,
+            proof_figures,
+            proof_steps,
+        )
+
         held = sum(1 for e in self._certificate() if e["holds"])
+        data = figure_data()
         return {
+            "figures": proof_figures(data),
+            "steps": proof_steps(data),
             "icon": "🧭",
             "title": "The Closed Geometry: What Is Standard, What Is Ours, "
                      "What Is Open",

@@ -5,7 +5,8 @@ the arXiv texts of Lukas-Morris, Acharya-Denef-Valandro and Acharya were read
 and the equations used are quoted in the site repo's docs/DECISION_LOG.md
 (D-005); the Armstrong citation was confirmed against its indexed record
 (MR0221488, DOI 10.1017/S0305004100042845); the two Joyce records reuse the fields already carried by
-g2_geometry. No DOI or URL is given unless it was verified.
+g2_geometry. Bonan, Eguchi-Hanson and Wang were checked against their indexed
+records on 2026-10-25 (Bonan has no DOI). No DOI or URL is given unless it was verified.
 
 A formula's `derivation.references` and the simulation's get_references()
 both render from here, so a citation cannot be corrected in one place and
@@ -28,6 +29,9 @@ __all__ = [
     "REF_LUKAS_MORRIS",
     "REF_ADV_2005",
     "REF_ACHARYA_1996",
+    "REF_BRYANT_1987",
+    "REF_EGUCHI_HANSON_1978",
+    "REF_WANG_1989",
     "cite",
     "short_cite",
     "reference_records",
@@ -41,8 +45,52 @@ REF_ACHARYA_1999 = "acharya1999"
 REF_LUKAS_MORRIS = "lukas_morris2004"
 REF_ADV_2005 = "acharya_denef_valandro2005"
 REF_ACHARYA_1996 = "acharya1996"
+REF_BRYANT_1987 = "bryant1987"
+REF_EGUCHI_HANSON_1978 = "eguchi_hanson1978"
+REF_WANG_1989 = "wang1989"
 
 REFERENCES: Dict[str, Dict[str, Any]] = {
+    REF_BRYANT_1987: {
+        "authors": "Bryant, R. L.",
+        "title": "Metrics with exceptional holonomy",
+        "journal": "Ann. of Math. (2)",
+        "volume": "126",
+        "issue": "3",
+        "year": 1987,
+        "doi": "10.2307/1971360",
+        "url": "https://annals.math.princeton.edu/1987/126-3/p06",
+        "type": "article",
+        "relevance": ("a torsion-free G2 structure has a Ricci-flat metric "
+                      "(first observed by Bonan, C. R. Acad. Sci. Paris 262, "
+                      "1966, which has no DOI or online copy)"),
+    },
+    REF_EGUCHI_HANSON_1978: {
+        "authors": "Eguchi, T., Hanson, A. J.",
+        "title": "Asymptotically flat self-dual solutions to Euclidean gravity",
+        "journal": "Phys. Lett. B",
+        "volume": "74",
+        "pages": "249-251",
+        "year": 1978,
+        "type": "article",
+        "doi": "10.1016/0370-2693(78)90566-X",
+        "url": "https://doi.org/10.1016/0370-2693(78)90566-X",
+        "relevance": (
+            "the hyperkahler ALE metric that resolves each C^2/Z2 singularity"),
+    },
+    REF_WANG_1989: {
+        "authors": "Wang, M. Y.",
+        "title": "Parallel spinors and parallel forms",
+        "journal": "Ann. Global Anal. Geom.",
+        "volume": "7",
+        "pages": "59-68",
+        "year": 1989,
+        "type": "article",
+        "doi": "10.1007/BF00137402",
+        "url": "https://doi.org/10.1007/BF00137402",
+        "relevance": (
+            "a parallel spinor exists only for holonomy SU(m), Sp(m), G2 or "
+            "Spin(7); the count of invariant spinors (H7)"),
+    },
     REF_JOYCE_1996: {
         "authors": "Joyce, D. D.",
         "title": "Compact Riemannian 7-manifolds with holonomy G2. I",
@@ -81,7 +129,8 @@ REFERENCES: Dict[str, Dict[str, Any]] = {
         "url": "https://doi.org/10.1093/oso/9780198506010.001.0001",
         "relevance": (
             "Compact G2-manifolds from resolutions of T^7/Gamma, and the "
-            "cohomology of the resolution"),
+            "cohomology of the resolution; Theorem 11.6.1, the existence of a "
+            "torsion-free G2 structure near a closed one of small torsion"),
     },
     REF_ARMSTRONG: {
         "authors": "Armstrong, M. A.",

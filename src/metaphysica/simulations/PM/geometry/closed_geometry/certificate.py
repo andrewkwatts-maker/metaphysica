@@ -1,5 +1,6 @@
 """The certificate: every theorem evaluated on the active seed, ending in the
-selection theorem CG.12 (published since the 2026-10-01 rulings, D-015).
+selection theorem CG.12 (published since the 2026-10-01 rulings, D-015) and
+the holonomy-G2 existence theorem CG.13 (D-023).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -10,6 +11,9 @@ from typing import Any, Dict, List, Tuple
 
 from metaphysica.simulations.PM.geometry.closed_geometry.findings import (
     FINDINGS_THEOREMS,
+)
+from metaphysica.simulations.PM.geometry.closed_geometry.holonomy import (
+    HOLONOMY_THEOREMS,
 )
 from metaphysica.simulations.PM.geometry.closed_geometry.physics import (
     PHYSICS_THEOREMS,
@@ -25,7 +29,8 @@ from metaphysica.simulations.PM.geometry.closed_geometry.topology import (
 )
 
 THEOREMS: Tuple[Theorem, ...] = (TOPOLOGY_THEOREMS + PHYSICS_THEOREMS
-                                 + FINDINGS_THEOREMS + SELECTION_THEOREMS)
+                                 + FINDINGS_THEOREMS + SELECTION_THEOREMS
+                                 + HOLONOMY_THEOREMS)
 
 
 def certificate() -> List[Dict[str, Any]]:
@@ -42,6 +47,7 @@ def certificate() -> List[Dict[str, Any]]:
             "derived": ev["derived"],
             "counts": thm.counts,
             "proof": thm.proof,
+            "steps": list(thm.steps(ev)),
             "test": thm.test,
             "falsifier": thm.falsifier,
             "scope": thm.scope,
