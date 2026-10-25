@@ -188,7 +188,7 @@ def _flat_phi(convention: Optional[str] = None) -> np.ndarray:
     and this module never carries a second copy of phi.
     """
     from metaphysica.simulations.PM.geometry.g2_differential import (
-        G2DifferentialGeometry,
+        phi_all_plus_one,
         phi_from_octonion_product,
     )
 
@@ -207,7 +207,9 @@ def _flat_phi(convention: Optional[str] = None) -> np.ndarray:
     if convention == "octonion_derived":
         return phi_from_octonion_product()
     if convention == "all_plus_one":
-        return G2DifferentialGeometry()._standard_phi()
+        # Not _standard_phi(): that follows the live fork, which is the compact
+        # form since D-015, so an explicit split request got the compact phi.
+        return phi_all_plus_one()
     raise ValueError(
         "unknown g2_form_convention %r; expected 'all_plus_one' or "
         "'octonion_derived'" % convention

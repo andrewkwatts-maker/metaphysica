@@ -138,6 +138,39 @@ def _arithma_cos(a):
     return None if a is None else _ArithmaExpression.cos(a)
 
 
+def _closure_conditions(closure: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """The three holonomy conditions, each read from g2_closure (D-023).
+
+    They were literals (1, 0.0 and a zeros array). Each now names the measured
+    hypotheses it rests on, and holds only if all of those hold.
+    """
+    hyp = {h["id"]: h for h in closure["hypotheses"]}
+
+    def row(condition: str, ids: List[str], detail: str) -> Dict[str, Any]:
+        ok = all(hyp[i]["measured"] and hyp[i]["holds"] for i in ids)
+        return {"condition": condition, "status": "MEASURED" if ok else "FAILED",
+                "rests_on": ids, "holds": ok, "measured": True,
+                "closure_verdict": closure["verdict"], "detail": detail}
+
+    h7 = hyp["H7"]
+    return [
+        row("exactly one parallel spinor", ["H6", "H7"],
+            "%s Gamma-invariant constant spinor(s) on T^7, from Cl(7) built out "
+            "of phi, for every lift of Gamma; pi_1 finite on the resolution "
+            "(Joyce 1996 II, Prop 1.1.1)" % h7.get("count")),
+        row("Ricci-flatness R_munu = 0", _ALL_HYPOTHESES,
+            "Bonan: torsion-free implies Ricci-flat; Eguchi-Hanson is Ricci-flat "
+            "as an exact symbolic zero, and the local model is torsion-free"),
+        row("torsion-free: d(phi) = 0 and d(*phi) = 0", _ALL_HYPOTHESES,
+            "exact on the local model EH x T^3 (symbolic exterior_d); on the "
+            "compact resolution by Joyce 2000, Thm 11.6.1, whose hypotheses "
+            "H1-H8 are all measured"),
+    ]
+
+
+_ALL_HYPOTHESES = ["H1", "H2", "H3", "H4a", "H4b", "H4c", "H5", "H6", "H7", "H8"]
+
+
 class G2GeometryV16(SimulationBase):
     """
     G2 Geometry and Topology Invariants
@@ -196,6 +229,11 @@ class G2GeometryV16(SimulationBase):
             seed_values,
         )
 
+        from metaphysica.simulations.PM.geometry.g2_closure import (
+            require_buildable_construction,
+        )
+
+        require_buildable_construction()
         self._b3_seed_path = resolve_path()
         b3, b2 = seed_values(self._b3_seed_path)
         self._b3 = b3
@@ -635,37 +673,11 @@ class G2GeometryV16(SimulationBase):
 
         claim = holonomy_claim()
 
-        conditions = [
-            {
-                "condition": "exactly one parallel spinor",
-                "status": "PLACEHOLDER",
-                "detail": ("the count is assigned as a literal 1 and then "
-                           "compared against 1; no spinor bundle exists in "
-                           "this tree to count parallel sections of"),
-                "measured": False,
-            },
-            {
-                "condition": "Ricci-flatness R_munu = 0",
-                "status": "PLACEHOLDER",
-                "detail": ("the scalar is assigned as a literal 0.0 and then "
-                           "compared against a tolerance. eguchi_hanson DOES "
-                           "prove Ricci-flatness as an exact symbolic zero, "
-                           "but for the EH neck, not for this manifold"),
-                "measured": False,
-            },
-            {
-                "condition": "torsion-free: d(phi) = 0 and d(*phi) = 0",
-                "status": "PLACEHOLDER",
-                "detail": ("_exterior_derivative_3form returns a zero array, "
-                           "so the norm is zero whatever phi is. The symbolic "
-                           "exterior derivative that would make this real is "
-                           "exterior_algebra.exterior_d, which refuses float "
-                           "coefficients"),
-                "measured": False,
-            },
-        ]
-
+        closure = self._g2_closure()
+        conditions = _closure_conditions(closure)
         measured = [c for c in conditions if c["measured"]]
+        established = bool(claim["may_claim_g2_holonomy"]
+                           and closure["verdict"] == "CLOSED_BY_THEOREM")
         return {
             "conditions": conditions,
             "n_conditions": len(conditions),
@@ -676,14 +688,26 @@ class G2GeometryV16(SimulationBase):
             "real_form": claim["real_form"],
             "signature": claim["signature"],
             "may_claim_g2_holonomy": claim["may_claim_g2_holonomy"],
-            "verdict": "NOT_ESTABLISHED",
+            "closure_verdict": closure["verdict"],
+            "first_failure": closure["first_failure"],
+            "verdict": "ESTABLISHED_BY_THEOREM" if established else "NOT_ESTABLISHED",
             "why": (
-                "%s Independently of that, none of the three conditions this "
-                "method checks is measured: all three are literals, so the "
-                "check could not have returned False on any input."
-                % claim["sentence"]
+                "%s Joyce's hypotheses are measured (D-023, g2_closure): %s%s. "
+                "Existence of the torsion-free metric then follows from Joyce "
+                "2000, Thm 11.6.1, Ricci-flatness from Bonan, and Hol = G2 from "
+                "pi_1 finite (Joyce 1996 II, Prop 1.1.1). No explicit metric is "
+                "computed: none is known for any compact G2 manifold."
+                % (claim["sentence"], closure["verdict"],
+                   "" if not closure["first_failure"]
+                   else ", first failing " + closure["first_failure"])
             ),
         }
+
+    @staticmethod
+    def _g2_closure() -> Dict[str, Any]:
+        from metaphysica.simulations.PM.geometry.g2_closure import closure_report
+
+        return closure_report()
 
     def _validate_g2_holonomy(self) -> bool:
         """Whether G2 holonomy is ESTABLISHED here. See holonomy_validation_report.
@@ -695,8 +719,7 @@ class G2GeometryV16(SimulationBase):
         below it is a placeholder.
         """
         report = self.holonomy_validation_report()
-        return bool(report["may_claim_g2_holonomy"]
-                    and report["any_condition_can_fail"])
+        return report["verdict"] == "ESTABLISHED_BY_THEOREM"
 
     def _validate_torsion_free(self) -> float:
         """
@@ -2588,6 +2611,10 @@ class G2GeometryV16(SimulationBase):
         Returns:
             List of certificate dictionaries
         """
+        closure = self._g2_closure()
+        hyp = {h["id"]: h for h in closure["hypotheses"]}
+        closed_status = ("PASS" if closure["verdict"] == "CLOSED_BY_THEOREM"
+                         else "NOT_ESTABLISHED")
         return [
             {
                 "id": "CERT_G2_BETTI_B3",
@@ -2694,22 +2721,25 @@ class G2GeometryV16(SimulationBase):
             {
                 "id": "CERT_G2_HOLONOMY_RICCI",
                 "gate_id": "G_G2_GEOM_04",
-                "status": "STRUCTURAL",
-                "note": "identities assumed (zero-valued placeholders), not computed — cannot fail by construction",
+                "status": closed_status,
+                "note": ("D-023: rests on the measured hypotheses of g2_closure "
+                         "(verdict %s), not on literals" % closure["verdict"]),
                 "sigma": 0.0,
                 "test_description": (
                     "Verify G2 holonomy implies Ricci-flatness R_{mu nu} = 0 "
                     "via the Bonan-Berger theorem (Joyce 2000, Theorem 10.2.10)"
                 ),
                 "details": {
-                    "ricci_scalar": 0.0,
-                    "parallel_spinors": 1,
+                    "parallel_spinors": hyp["H7"].get("count"),
+                    "pi1_finite": hyp["H6"].get("pi1_finite"),
+                    "eh_ricci_exactly_zero": hyp["H5"].get("eh_ricci_exactly_zero"),
+                    "closure_verdict": closure["verdict"],
                     "theorem": "Joyce (2000), Theorem 10.2.10",
                     "mechanism": "Lichnerowicz-Weitzenbock formula with parallel spinor",
                 },
                 "assertion": "G2 holonomy implies Ricci-flatness R_{mu nu} = 0",
-                "condition": "ricci_scalar == 0.0",
-                "tolerance": 1e-10,
+                "condition": "every hypothesis H1-H8 of g2_closure holds",
+                "tolerance": 0.0,
                 "sector": "geometry",
                 "reference": "Joyce (2000), Theorem 10.2.10"
             },
@@ -2737,8 +2767,9 @@ class G2GeometryV16(SimulationBase):
             {
                 "id": "CERT_G2_TORSION_FREE",
                 "gate_id": "G_G2_GEOM_06",
-                "status": "STRUCTURAL",
-                "note": "identities assumed (zero-valued placeholders), not computed — cannot fail by construction",
+                "status": closed_status,
+                "note": ("D-023: exact on the local model, and by Joyce's theorem on "
+                         "the resolution (verdict %s)" % closure["verdict"]),
                 "sigma": 0.0,
                 "test_description": (
                     "Verify the G2-structure on Y_7 is torsion-free: the defining 3-form Phi "
@@ -2746,17 +2777,18 @@ class G2GeometryV16(SimulationBase):
                     "ensuring true G2 holonomy (not just G2 structure)"
                 ),
                 "details": {
-                    "d_phi_norm": 0.0,
-                    "d_star_phi_norm": 0.0,
-                    "torsion_norm": 0.0,
-                    "tolerance": 1e-15,
-                    "construction": "Joyce resolution (torsion-free by Joyce's theorem; the check here is a placeholder)",
+                    "local_model_planes": len(hyp["H4c"].get("planes", [])),
+                    "local_model_torsion_free": hyp["H4c"]["holds"],
+                    "hyperkahler_orientation": hyp["H4b"].get("hyperkahler_orientation"),
+                    "closure_verdict": closure["verdict"],
+                    "first_failure": closure["first_failure"],
+                    "construction": "Joyce resolution; existence by Joyce 2000, Thm 11.6.1",
                 },
                 "assertion": "The G2-structure on Y_7 is torsion-free: d(Phi) = 0 and d(*Phi) = 0",
-                "condition": "torsion_norm < 1e-15",
-                "tolerance": 1e-15,
+                "condition": "every hypothesis H1-H8 of g2_closure holds",
+                "tolerance": 0.0,
                 "sector": "geometry",
-                "reference": "Joyce, D. (2000) Compact Manifolds with Special Holonomy, ch. 11-12"
+                "reference": "Joyce, D. (2000) Compact Manifolds with Special Holonomy, Thm 11.6.1"
             },
         ]
 
@@ -2972,17 +3004,7 @@ class G2GeometryV16(SimulationBase):
             List of gate check dictionaries
         """
         return [
-            {
-                "gate_id": "G_GEOMETRY_BETTI",
-                "assertion": "OFF-PATH (b3_seed = seed_24): b3 = 24 for the TCS #187 model. On the adopted path b3 = 7 + 3 b2 from the Joyce resolution, so this gate reports FAIL there.",
-                "result": "PASS" if self._b3 == 24 else "FAIL",
-                "timestamp": "",
-                "details": {
-                    "b2": self._b2,
-                    "b3": self._b3,
-                    "construction": "TCS #187 (off-path; no published TCS enumeration contains it)"
-                }
-            },
+            self._betti_gate(),
             {
                 "gate_id": "G_GEOMETRY_CHI",
                 "assertion": "chi_eff = 144 verified (the K3 reading, 48n at n = 3)",
@@ -3010,6 +3032,37 @@ class G2GeometryV16(SimulationBase):
             self._holonomy_gate(),
         ]
 
+    def _betti_gate(self) -> Dict[str, Any]:
+        """b_2, b_3 in use against the COMPUTED Joyce resolution (D-023).
+
+        It was `"PASS" if self._b3 == 24`, a literal for the off-path TCS seed,
+        so it reported FAIL on the adopted path whatever the resolution gave.
+        """
+        try:
+            from metaphysica.simulations.PM.geometry.joyce_resolution import (
+                resolution_report,
+            )
+
+            res = resolution_report()
+        except Exception as exc:       # a seed the construction does not reach
+            res, why = None, "%s: %s" % (type(exc).__name__, exc)
+        ok = bool(res and res["b2"] == self._b2 and res["b3"] == self._b3
+                  and res["b3"] == 7 + 3 * res["b2"] and res["poincare_duality_holds"])
+        return {
+            "gate_id": "G_GEOMETRY_BETTI",
+            "assertion": ("(b2, b3) in use equals the computed resolution of "
+                          "T^7/Gamma, b3 = 7 + 3 b2 (Joyce 1996 I)"),
+            "result": "PASS" if ok else "FAIL",
+            "timestamp": "",
+            "details": {
+                "b2": self._b2, "b3": self._b3,
+                "computed_b2": res["b2"] if res else None,
+                "computed_b3": res["b3"] if res else None,
+                "construction": "Joyce resolution (joyce_resolution.resolution_report)",
+                "unavailable": None if res else why,
+            },
+        }
+
     def _holonomy_gate(self) -> Dict[str, Any]:
         """The holonomy gate, GENERATED from the live fork rather than asserted.
 
@@ -3035,8 +3088,8 @@ class G2GeometryV16(SimulationBase):
         return {
             "gate_id": "G_GEOMETRY_HOLONOMY",
             "assertion": report["why"],
-            "result": "PASS" if report["may_claim_g2_holonomy"]
-                      and report["any_condition_can_fail"] else "NOT_ESTABLISHED",
+            "result": "PASS" if report["verdict"] == "ESTABLISHED_BY_THEOREM"
+                      else "NOT_ESTABLISHED",
             "timestamp": "",
             "details": {
                 "branch": report["branch"],
@@ -3045,6 +3098,7 @@ class G2GeometryV16(SimulationBase):
                 "may_claim_g2_holonomy": report["may_claim_g2_holonomy"],
                 "conditions_measured": report["n_measured"],
                 "conditions_placeholder": report["n_placeholder"],
+                "closure_verdict": report["closure_verdict"],
                 "conditions": report["conditions"],
             },
         }

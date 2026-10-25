@@ -37,6 +37,10 @@ sentence changes to the compact form -- and the gate STILL refuses, because the
 three conditions are placeholders either way. Collapsing those two reasons into
 one verdict would hide whichever got fixed first.
 
+D-023 (2026-10-25): the placeholder reason is gone. Every Joyce hypothesis is
+measured (g2_closure), so the gate passes on the adopted path by theorem, and
+refuses on the split form (H2) and on seed 24 (H3), each named.
+
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
@@ -53,35 +57,51 @@ def geometry():
 
 
 # ------------------------------------------------- the check can now fail
+# D-023 (2026-10-25): the three conditions read g2_closure, which measures every
+# hypothesis of Joyce's existence theorem. The check now PASSES on the adopted
+# path and must FAIL on a deviation that breaks a hypothesis.
 
-def test_the_holonomy_check_is_false_on_the_adopted_branch(geometry):
-    assert geometry._validate_g2_holonomy() is False, (
-        "the holonomy check returned True. On the adopted branch phi is the "
-        "SPLIT real form and no Riemannian G2 holonomy exists, and every "
-        "condition below the check is a placeholder."
-    )
+SPLIT = ("METAPHYSICA_VARIANT_G2_FORM_CONVENTION", "all_plus_one")
+SEED_24 = ("METAPHYSICA_VARIANT_B3_SEED", "seed_24")
 
 
-def test_no_condition_is_measured_and_the_report_says_so(geometry):
+def test_the_holonomy_check_holds_on_the_adopted_path(geometry):
+    assert geometry._validate_g2_holonomy() is True
+    report = geometry.holonomy_validation_report()
+    assert report["closure_verdict"] == "CLOSED_BY_THEOREM"
+    assert report["verdict"] == "ESTABLISHED_BY_THEOREM"
+
+
+def test_every_condition_is_measured_and_names_its_hypotheses(geometry):
     report = geometry.holonomy_validation_report()
     assert report["n_conditions"] == 3
-    assert report["n_measured"] == 0
-    assert report["n_placeholder"] == 3
-    assert report["any_condition_can_fail"] is False, (
-        "a condition has become measurable. That is progress and this test "
-        "should be updated to say which -- but the count must never claim a "
-        "measurement that is not there."
-    )
+    assert report["n_measured"] == 3
+    assert report["n_placeholder"] == 0
+    assert report["any_condition_can_fail"] is True
     for condition in report["conditions"]:
-        assert condition["status"] == "PLACEHOLDER"
-        assert condition["detail"], "a placeholder must say why it is one"
+        assert condition["status"] == "MEASURED"
+        assert condition["rests_on"], "a condition must say what it rests on"
+        assert len(condition["rests_on"]) == len(set(condition["rests_on"]))
+        assert condition["detail"]
+
+
+@pytest.mark.parametrize("env, failure", [(SPLIT, "H2"), (SEED_24, "H3")])
+def test_the_check_fails_where_a_hypothesis_fails(monkeypatch, env, failure):
+    """The controls: the split form is not Riemannian; seed 24 is not T^7/(Z2)^3."""
+    monkeypatch.setenv(*env)
+    geometry = G2GeometryV16()
+    report = geometry.holonomy_validation_report()
+    assert report["closure_verdict"] == "OPEN"
+    assert report["first_failure"] == failure
+    assert geometry._holonomy_gate()["result"] == "NOT_ESTABLISHED"
+    assert geometry._validate_g2_holonomy() is False
 
 
 def test_the_underlying_torsion_check_is_still_identically_zero(geometry):
     """Pinned so that fixing it is visible rather than silent.
 
-    If `_exterior_derivative_3form` ever computes a real derivative this fails,
-    and the placeholder bookkeeping above has to be updated with it.
+    The legacy helper is no longer evidence: the torsion condition reads the
+    symbolic exterior_d in g2_closure (H4c). Pinned so nobody cites it again.
     """
     import numpy as np
 
@@ -92,25 +112,28 @@ def test_the_underlying_torsion_check_is_still_identically_zero(geometry):
 
 # ------------------------------------------------------ the published gate
 
-def test_the_gate_no_longer_publishes_a_literal_pass(geometry):
+def test_the_gate_passes_from_measurements_not_a_literal(geometry):
     gate = geometry._holonomy_gate()
     assert gate["gate_id"] == "G_GEOMETRY_HOLONOMY"
-    assert gate["result"] == "NOT_ESTABLISHED", (
-        "the published gate is claiming %r again" % gate["result"]
-    )
-
-
-def test_the_gate_details_carry_the_branch_not_three_literals(geometry):
-    # D-015 (2026-10-01): the compact form is the active path.
-    details = geometry._holonomy_gate()["details"]
+    assert gate["result"] == "PASS"
+    details = gate["details"]
     assert details["branch"] == "octonion_derived"
     assert details["induced_metric_signature"] == [7, 0]
-    assert details["may_claim_g2_holonomy"] is True
-    assert details["conditions_placeholder"] == 3
+    assert details["closure_verdict"] == "CLOSED_BY_THEOREM"
+    assert details["conditions_measured"] == 3
+    assert details["conditions_placeholder"] == 0
     for gone in ("parallel_spinors", "ricci_scalar", "torsion_free"):
         assert gone not in details, (
             "the literal %r is being published as evidence again" % gone
         )
+
+
+def test_the_betti_gate_reads_the_resolution(geometry, monkeypatch):
+    details = geometry._betti_gate()
+    assert details["result"] == "PASS"
+    assert (details["details"]["computed_b2"], details["details"]["computed_b3"]) == (12, 43)
+    monkeypatch.setenv(*SEED_24)
+    assert G2GeometryV16()._betti_gate()["result"] == "FAIL"
 
 
 def test_the_gate_is_in_the_published_list(geometry):
@@ -140,21 +163,6 @@ def test_the_sentence_is_generated_from_the_live_fork(monkeypatch):
     assert report["signature"] == (7, 0)
     assert report["may_claim_g2_holonomy"] is True
     assert "COMPACT" in report["why"]
-
-
-def test_the_gate_still_refuses_on_the_compact_branch(monkeypatch):
-    """The two reasons are independent and must not be collapsed.
-
-    On `octonion_derived` the real-form objection goes away. The placeholder
-    objection does not, so the gate must still refuse -- otherwise switching
-    the fork would silently restore a PASS built on three literals.
-    """
-    monkeypatch.setenv("METAPHYSICA_VARIANT_G2_FORM_CONVENTION",
-                       "octonion_derived")
-    geometry = G2GeometryV16()
-    assert geometry.holonomy_validation_report()["may_claim_g2_holonomy"] is True
-    assert geometry._holonomy_gate()["result"] == "NOT_ESTABLISHED"
-    assert geometry._validate_g2_holonomy() is False
 
 
 def test_the_assertion_is_not_a_hand_written_sentence(geometry):

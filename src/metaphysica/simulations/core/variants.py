@@ -803,7 +803,14 @@ FORKS: Dict[str, Fork] = {
             "pushes alternative VALUES through the downstream chain so the "
             "shape of the dependence is visible. Per the module's standing "
             "rule the sweep reports every outcome and never orders them by "
-            "agreement with anchors."
+            "agreement with anchors.\n\n"
+            "INAPPLICABLE ON THE ADOPTED SEED (D-023, 2026-10-25): input_24, "
+            "arc_flag_stabiliser, d4_root_shell and joyce_twisted_sector were "
+            "written for b_3 = 24. On seed_43_joyce the origin is answered by "
+            "derived_joyce_a1, and joyce_twisted_sector is what it became once "
+            "the contribution table existed. Selecting the others there changes "
+            "no output; input_24 is contract-bound to seed_24, and the other two "
+            "already fail b3_origin_clears_the_a4_bar."
         ),
         options=[
             VariantOption(
@@ -1119,7 +1126,13 @@ FORKS: Dict[str, Fork] = {
             "only on phi's SUPPORT, which both branches share exactly, so R1 "
             "to R4, the half-shift enumeration, the A1 census and "
             "b_3 = 7 + 3 n_T3 are fork-independent either way. The closure "
-            "rides on Fano incidence, not on the real form."
+            "rides on Fano incidence, not on the real form.\n\n"
+            "INERT ON THE ADOPTED PATH, BY DESIGN (D-023, 2026-10-25): on the "
+            "compact octonion_derived form both constructions return a "
+            "constant multiple of I_7 (measured: 1.0 and 3.017), so switching "
+            "changes no output there. The fork is a consistency check, not a "
+            "rival: it discriminates only on the split form, where the cubic "
+            "exhibits (4,3)."
         ),
         options=[
             VariantOption(
@@ -1422,7 +1435,12 @@ FORKS: Dict[str, Fork] = {
             "constructions place very different demands on that. Quotations "
             "below are from arXiv:1810.12659 (Kennon, 'G2-Manifolds and "
             "M-Theory Compactifications'), read from the paper rather than "
-            "its abstract."
+            "its abstract.\n\n"
+            "SUPERSEDED READING (D-023, 2026-10-25): the adopted seed is now "
+            "(b2, b3) = (12, 43), computed by joyce_resolution, and every "
+            "hypothesis of Joyce 2000 Thm 11.6.1 is measured (g2_closure). "
+            "fano_tcs is REFUSED by the engine "
+            "(g2_closure.require_buildable_construction) with its reason."
         ),
         options=[
             VariantOption(
@@ -1463,7 +1481,10 @@ FORKS: Dict[str, Fork] = {
                     "b3(V2) + 23, makes the parity depend on the building "
                     "blocks -- odd only when b3(V1) + b3(V2) is even. There "
                     "is no universal parity constraint, and the b2 = 7 "
-                    "proposal built on one is dropped."
+                    "proposal built on one is dropped.\n"
+                    "REFUSED (D-023): no cited building blocks are in the "
+                    "engine, so selecting this builds nothing; exhibited "
+                    "examples (71 <= b3 <= 155) also exclude b3 = 43."
                 ),
             ),
         ],

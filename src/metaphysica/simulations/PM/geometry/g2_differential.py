@@ -105,6 +105,24 @@ G2_TRIPLES = [
 #: `all_plus_one` branch of `g2_form_convention`; not the active path.
 ALL_PLUS_TRIPLES = [(i, j, k, +1) for (i, j, k, _s) in G2_TRIPLES]
 
+def phi_all_plus_one() -> np.ndarray:
+    """The split form (`all_plus_one`), whatever the fork currently resolves to.
+
+    Callers that name the split branch explicitly need this rather than
+    `_standard_phi()`, which follows the live fork and so has returned the
+    compact form since D-015.
+    """
+    phi = np.zeros((7, 7, 7), dtype=np.float64)
+    for (i, j, k, s) in ALL_PLUS_TRIPLES:
+        phi[i, j, k] = s
+        phi[j, k, i] = s
+        phi[k, i, j] = s
+        phi[i, k, j] = -s
+        phi[k, j, i] = -s
+        phi[j, i, k] = -s
+    return phi
+
+
 def phi_from_octonion_product() -> np.ndarray:
     """Derive phi from the framework's OWN octonion multiplication.
 
@@ -328,16 +346,7 @@ class G2DifferentialGeometry:
 
         if choice == "octonion_derived":
             return phi_from_octonion_product()
-
-        phi = np.zeros((7, 7, 7), dtype=np.float64)
-        for (i, j, k, s) in ALL_PLUS_TRIPLES:
-            phi[i, j, k] = s
-            phi[j, k, i] = s
-            phi[k, i, j] = s
-            phi[i, k, j] = -s
-            phi[k, j, i] = -s
-            phi[j, i, k] = -s
-        return phi
+        return phi_all_plus_one()
 
     @staticmethod
     def perturbed_phi(epsilon: float = 0.01, seed: int = 42) -> np.ndarray:
