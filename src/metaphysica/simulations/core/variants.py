@@ -271,6 +271,33 @@ def _re_t_adoption_adopted() -> str:
     return "calibrated"
 
 
+def _spectral_index_route_adopted() -> str:
+    """Which n_s route the inflation source takes: the module's own constant."""
+    from metaphysica.simulations.PM.cosmology.spectral_routes import (
+        ADOPTED_ROUTE,
+    )
+
+    return ADOPTED_ROUTE
+
+
+def _h0_route_adopted() -> str:
+    """Which H0 route the registry takes: the late-time routes module's constant."""
+    from metaphysica.simulations.PM.cosmology.late_time_routes import (
+        ADOPTED_H0_ROUTE,
+    )
+
+    return ADOPTED_H0_ROUTE
+
+
+def _dark_energy_mechanism_adopted() -> str:
+    """Which w0 mechanism the source takes: the late-time routes module's constant."""
+    from metaphysica.simulations.PM.cosmology.late_time_routes import (
+        ADOPTED_DE_MECHANISM,
+    )
+
+    return ADOPTED_DE_MECHANISM
+
+
 def _b3_seed_adopted() -> str:
     """ADOPTED seed_43_joyce by author ruling, 2026-09-22.
 
@@ -559,6 +586,154 @@ def _seed_selection_adopted() -> str:
 #: what a result MEANS rather than what the code computes. Declaring them
 #: here would imply a switch that does nothing.
 FORKS: Dict[str, Fork] = {
+    "spectral_index_route": Fork(
+        id="spectral_index_route",
+        question="Where does the spectral index n_s come from?",
+        source="simulations.PM.cosmology.spectral_routes.ADOPTED_ROUTE",
+        status="RULED",
+        read_adopted=_spectral_index_route_adopted,
+        notes=(
+            "Opened 2026-10-25 (D-022) from the lineage catalogue. Consumers: "
+            "G2Inflation.derive_observables (cosmology.n_s) and "
+            "GeometricAnchors.n_s (geometry.n_s), both through "
+            "PM/cosmology/spectral_routes.py. The adopted route is what the "
+            "source computes today: n_s = 1 - 2 phi^2/chi_eff, which the source "
+            "itself calls the golden-modulated e-fold count (N_eff = chi_eff/"
+            "phi^2). CAVEAT: the catalogue's golden_modulated entry cites "
+            "0b984a37:config.py, which is not in any local repository, so the "
+            "original 2026-01 form could not be diffed against the current one."
+        ),
+        options=[
+            VariantOption(
+                id="golden_modulated",
+                summary="n_s = 1 - 2 phi^2/chi_eff = 1 - 2/N_eff, N_eff = chi_eff/phi^2",
+                consequence=(
+                    "ADOPTED (read from inflation._infrared_closure_n_s and "
+                    "GeometricAnchors.n_s v18.0). Catalogue: golden-modulated "
+                    "e-folds, under 1 sigma; geometric justification phi^2 = phi + 1. "
+                    "restored_from: 0b984a37:config.py; source 0b984a37."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="one_minus_2_over_b3",
+                summary="n_s = 1 - 2/b3",
+                consequence=(
+                    "WIRED D-022. Catalogue: 11.48 sigma off; replaced 2026-01-10. "
+                    "GeometricAnchors.n_s docstring v16.0: 0.9167 at b3 = 24. "
+                    "restored_from: 2c246586:config.py (parent of 0b984a37); source "
+                    "0b984a37. Each consumer uses its own b3 (inflation B3_SEED = 24; "
+                    "GeometricAnchors.elder_kads)."
+                ),
+                status="disabled",
+            ),
+            VariantOption(
+                id="re_t_slow_roll",
+                summary="V ~ W_flux + W_inst; epsilon = 3/(2 Re(T)^2); n_s = 1 - 6 eps + 2 eta",
+                consequence=(
+                    "WIRED D-022. Catalogue: n_s = 0.9996, FALSIFIED at 8.3 sigma vs "
+                    "Planck 2018 (8.263 sigma FAIL); still rescored every build as "
+                    "cosmology.n_s_slow_roll; Re(T) inputs off-path. restored_from: "
+                    "main:src/metaphysica/simulations/PM/cosmology/inflation.py; "
+                    "source metaphysica/docs/DISCARDED_PATH_COVERAGE.md row 41."
+                ),
+                status="disabled",
+            ),
+        ],
+    ),
+    "h0_route": Fork(
+        id="h0_route",
+        question="Where does the displayed H0 (cosmology.H0_local) come from?",
+        source="simulations.PM.cosmology.late_time_routes.ADOPTED_H0_ROUTE",
+        status="RULED",
+        read_adopted=_h0_route_adopted,
+        notes=(
+            "Opened 2026-10-25 (D-022) from the lineage catalogue. Consumer: "
+            "FormulasRegistry.calculate_h0_local (-> cosmology.H0_local) via "
+            "PM/cosmology/late_time_routes.py. The adopted route is what the "
+            "source computes today: the O'Dowd composite 288/4 - 163/144 + "
+            "eta_S = 71.55, which canonical_values CANON['H0_km_s_Mpc'] rules a "
+            "DISPLAY value, not a topology-first prediction."
+        ),
+        options=[
+            VariantOption(
+                id="odowd_composite",
+                summary="H0 = 288/4 - 163/144 + eta_S (three fitted inputs)",
+                consequence=(
+                    "ADOPTED (FormulasRegistry.calculate_h0_local). Catalogue: "
+                    "canonical DISPLAY value; 1.43 sigma SH0ES, 8.3 Planck; H0 is "
+                    "NOT a topology-first prediction. restored_from: main:src/"
+                    "metaphysica/simulations/core/canonical_values.py."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="ricci_flow",
+                summary="H0 = H0_planck (1 + sin^2(31 deg)/2) via G2 Ricci flow",
+                consequence=(
+                    "WIRED D-022. Catalogue: 3.17 sigma from SH0ES (76.34); still "
+                    "published as cosmology.H0_ricci_variant; fitted angle "
+                    "THETA_MIXING_13D_26D_DEG = 31. restored_from: main:src/"
+                    "metaphysica/simulations/PM/cosmology/ricci_flow_h0.py; "
+                    "source engine 871a296, 2beca44."
+                ),
+                status="disabled",
+            ),
+            VariantOption(
+                id="kk_bridge",
+                summary="early-dark-energy-like KK modes shift H0 through the sound horizon",
+                consequence=(
+                    "WIRED D-022 with the steps of hubble_tension.HubbleTensionEDE."
+                    "run. Catalogue: REFUTED; lightest KK mass ~5e28 eV vs ~1e-28 eV "
+                    "needed, ~57 orders off; H0 stays at the Planck value to ~5e-7. "
+                    "restored_from: main:src/metaphysica/simulations/PM/cosmology/"
+                    "hubble_tension.py."
+                ),
+                status="disabled",
+            ),
+        ],
+    ),
+    "dark_energy_mechanism": Fork(
+        id="dark_energy_mechanism",
+        question="What sets the dark-energy equation of state w0 (the mechanism)?",
+        source="simulations.PM.cosmology.late_time_routes.ADOPTED_DE_MECHANISM",
+        status="RULED",
+        read_adopted=_dark_energy_mechanism_adopted,
+        notes=(
+            "Opened 2026-10-25 (D-022). Consumers: FormulasRegistry.calculate_w0 "
+            "(w0_dark_energy) and DarkEnergy._derive_dark_energy_eos "
+            "(cosmology.w0_derived). The adopted mechanism is what the source "
+            "does today: thawing quintessence, w0 = -1 + 1/b3 (the catalogue says "
+            "the 2025-12-31 v16.2 change replaced mep_11_13 with it). The "
+            "catalogue's other mechanisms (thermal_time, mashiach_quintessence, "
+            "pi_attractor, flux_attractor) stay declared: none has a w0 formula "
+            "in the current source that is not already this one."
+        ),
+        options=[
+            VariantOption(
+                id="thawing_quintessence",
+                summary="w0 = -1 + 1/b3 (thawing quintessence from the b3 3-cycles)",
+                consequence=(
+                    "ADOPTED (dark_energy.py v22; FormulasRegistry.calculate_w0 "
+                    "breathing form -sigma_T). Catalogue: replaced mep_11_13 on "
+                    "2025-12-31, 0.02 sigma vs DESI 2025 (commit text); the form was "
+                    "chosen after the data (dark_energy.py assessment)."
+                ),
+                adopted=True,
+            ),
+            VariantOption(
+                id="mep_11_13",
+                summary="w0 = -(D-1)/(D+1) = -11/13 at D = 12 (maximum entropy production)",
+                consequence=(
+                    "WIRED D-022. Catalogue: w0 = -0.846, 1.76 sigma vs DESI 2025; "
+                    "replaced 2025-12-31 by thawing quintessence. restored_from: "
+                    "5755a1e0:config.py (not in any local repository; the formula is "
+                    "the D_eff form quoted in dark_energy.py), source a40b0bfa."
+                ),
+                status="disabled",
+            ),
+        ],
+    ),
     "re_t_adoption": Fork(
         id="re_t_adoption",
         question="Which Re(T) does the baryogenesis sector use?",
@@ -779,6 +954,33 @@ FORKS: Dict[str, Fork] = {
                     "at every admissible assignment)."
                 ),
                 adopted=True,
+            ),
+            VariantOption(
+                id="chi_over_24",
+                summary="n_gen = chi_eff/24 (the per-sector chi_eff, 72/24 = 3)",
+                consequence=(
+                    "WIRED D-022: FormulasRegistry.n_gen reads chi_eff_sector/24. "
+                    "Catalogue: corrected from chi/2 to chi/24 for 8D manifolds on "
+                    "2025-11-22 (source 48ec267c); kept as the sector-level formula in "
+                    "v20.1 (FormulasRegistry v20.1 'Formula A'). restored_from: none "
+                    "(current source). Expected: 3, the same as the adopted route, "
+                    "because the source supplies chi_eff_sector = 72."
+                ),
+                status="disabled",
+            ),
+            VariantOption(
+                id="chi_eff_over_48",
+                summary="n_gen = chi_eff_total/48 (144/48 = 3), generations from the effective Euler characteristic",
+                consequence=(
+                    "WIRED D-022: FormulasRegistry.n_gen reads chi_eff_total/48. "
+                    "Catalogue (3ba5848): fails on the whole Joyce family on both "
+                    "chi_eff branches; 6 b3/48 = b3/8 identically, so not independent. "
+                    "Under D-009 it survives as n_gen = chi_eff/48 = n with the K3 "
+                    "reading. restored_from: main:src/metaphysica/simulations/PM/"
+                    "geometry/chi_eff_branches.py; source "
+                    "metaphysica/docs/DISCARDED_PATH_COVERAGE.md rows 22, 23. "
+                    "Expected: 3 on the registry's own chi_eff_total = 144."
+                ),
             ),
         ],
     ),

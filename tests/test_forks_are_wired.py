@@ -132,7 +132,7 @@ def test_how_many_options_are_inert_is_recorded():
     # 2026-10-01 (D-015): chi_eff_route became wired (the narration resolves
     # it on every read: 25 -> 22 inert options), and k3_reading plus the new
     # seed_selection fork's two options took the total from 51 to 54.
-    assert (inert_options, total_options) == (22, 54), (
+    assert (inert_options, total_options) == (22, 64), (
         "inert/total option counts moved: %s of %s"
         % (inert_options, total_options)
     )

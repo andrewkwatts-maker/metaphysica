@@ -185,6 +185,26 @@ def _registry(path: str):
     return parameter_value(path)
 
 
+def _n_gen_value(source: str, from_b3: float, from_b2: float) -> float:
+    """n_gen under one n_gen_source option. An unknown source is refused (D-022).
+
+    The chi routes read the registry's own chi_eff values lazily; the registry's
+    chi_eff properties are plain constants, so this cannot recurse into n_gen.
+    """
+    if source == "b3_over_dim_O":
+        return from_b3
+    if source == "b2_over_faces":
+        return from_b2
+    if source in ("chi_over_24", "chi_eff_over_48"):
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+        reg = get_registry()
+        if source == "chi_over_24":
+            return reg.chi_eff_sector / 24.0
+        return reg.chi_eff_total / 48.0
+    raise ValueError("unknown n_gen_source %r" % (source,))
+
+
 def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
     """Where three generations come from on this path, and whether it holds.
 
@@ -226,7 +246,7 @@ def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
         if os.environ.get(_ENV_PREFIX + "N_GEN_SOURCE"):
             declared = resolve("n_gen_source")
 
-    value = from_b3 if declared == "b3_over_dim_O" else from_b2
+    value = _n_gen_value(declared, from_b3, from_b2)
 
     def integral(x: float) -> bool:
         return abs(x - round(x)) < 1e-12
