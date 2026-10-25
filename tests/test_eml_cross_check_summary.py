@@ -30,3 +30,36 @@ def test_nothing_compared_is_not_agreement():
     assert x.check_simulation(sim, None, {"_meta": 1}).status == "SKIP"
     sim.run_eml = lambda registry: {"a": 1.0}
     assert x.check_simulation(sim, None, {"a": 1.0}).status == "AGREE"
+
+
+def test_delegating_run_eml_is_not_agreement():
+    """102 of 118 run_eml methods were `return self.run(registry)`; they
+    scored AGREE by comparing run() with itself."""
+    from metaphysica.simulations.core import eml_cross_check as x
+
+    class Meta:
+        id = "sim_delegating"
+
+    class Delegating:
+        metadata = Meta()
+
+        def run(self, registry):
+            return {"a": 1.0}
+
+        def run_eml(self, registry):
+            """Docstrings do not count as a body."""
+            return self.run(registry)
+
+    class Independent(Delegating):
+        def run_eml(self, registry):
+            return {"a": 2.0 / 2.0}
+
+    assert x.delegates_to_run(Delegating())
+    assert not x.delegates_to_run(Independent())
+    if x.EML_AVAILABLE:
+        chk = x.check_simulation(Delegating(), None, {"a": 1.0})
+        assert chk.status == "DELEGATED"
+        assert x.check_simulation(Independent(), None, {"a": 1.0}).status == "AGREE"
+    report = x.generate_cross_check_report(
+        [x.SimulationCheck("s1", "DELEGATED"), x.SimulationCheck("s2", "AGREE")])
+    assert report["summary"]["delegated"] == 1 and report["summary"]["agreed"] == 1

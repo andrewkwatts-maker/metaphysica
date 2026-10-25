@@ -43,13 +43,38 @@ class ParamCheck:
 class SimulationCheck:
     """Agreement check result for one simulation."""
     simulation_id: str
-    status: str  # "AGREE" | "FAIL" | "NOT_IMPLEMENTED" | "ERROR" | "SKIP"
+    status: str  # "AGREE" | "FAIL" | "NOT_IMPLEMENTED" | "ERROR" | "SKIP" | "DELEGATED"
     params_checked: int = 0
     params_agreed: int = 0
     max_deviation: float = 0.0
     param_checks: List[ParamCheck] = field(default_factory=list)
     error: Optional[str] = None
     note: str = ""
+
+
+def delegates_to_run(simulation) -> bool:
+    """True when run_eml's whole body (docstring aside) is `return self.run(...)`.
+
+    Such a path compares run() with itself, so its agreement is not evidence.
+    102 of 118 run_eml methods had this form (2026-10-26).
+    """
+    import ast
+    import inspect
+    import textwrap
+
+    try:
+        src = textwrap.dedent(inspect.getsource(type(simulation).run_eml))
+        fn = ast.parse(src).body[0]
+    except (AttributeError, OSError, TypeError, SyntaxError, IndexError):
+        return False
+    body = [b for b in fn.body
+            if not (isinstance(b, ast.Expr) and isinstance(b.value, ast.Constant))]
+    if len(body) != 1 or not isinstance(body[0], ast.Return):
+        return False
+    call = body[0].value
+    return (isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute)
+            and call.func.attr == "run" and isinstance(call.func.value, ast.Name)
+            and call.func.value.id == "self")
 
 
 def check_simulation(
@@ -78,6 +103,15 @@ def check_simulation(
             simulation_id=sim_id,
             status="SKIP",
             note="eml-math + eml-spectral not installed (pip install eml-math eml-spectral)",
+        )
+
+    # A run_eml that is `return self.run(registry)` compares run() with
+    # itself; report it apart so it is not counted as agreement.
+    if delegates_to_run(simulation):
+        return SimulationCheck(
+            simulation_id=sim_id,
+            status="DELEGATED",
+            note="run_eml() returns self.run(); no independent EML path",
         )
 
     # Try to call run_eml
@@ -207,6 +241,7 @@ def generate_cross_check_report(
     not_impl = sum(1 for c in checks if c.status == "NOT_IMPLEMENTED")
     errors = sum(1 for c in checks if c.status == "ERROR")
     skipped = sum(1 for c in checks if c.status in ("SKIP",))
+    delegated = sum(1 for c in checks if c.status == "DELEGATED")
 
     all_deviations = [c.max_deviation for c in checks if not math.isnan(c.max_deviation)]
     global_max_dev = max(all_deviations) if all_deviations else 0.0
@@ -246,6 +281,7 @@ def generate_cross_check_report(
             "not_implemented": not_impl,
             "errors": errors,
             "skipped": skipped,
+            "delegated": delegated,
             "global_max_deviation": global_max_dev,
             "all_agree": (failed == 0 and errors == 0),
         },
@@ -280,11 +316,13 @@ def log_cross_check_summary(report: Dict[str, Any]) -> None:
     print(f"  AGREE             : {agreed}")
     print(f"  FAIL              : {failed}")
     print(f"  NOT_IMPLEMENTED   : {not_impl}")
+    print(f"  DELEGATED         : {s.get('delegated', 0)}")
     print(f"  ERRORS            : {errors}")
     print(f"  Max deviation     : {max_dev:.2e}")
 
     if s["all_agree"]:
-        print(f"\n  [OK] EML CROSS-CHECK: {agreed}/{total} simulations AGREE")
+        print(f"\n  [OK] EML CROSS-CHECK: {agreed}/{total} simulations AGREE "
+              f"on an independent EML path")
     else:
         print(f"\n  [FAIL] EML CROSS-CHECK: {failed} FAILURES, {errors} ERRORS detected")
         for sid, entry in report.get("simulations", {}).items():
