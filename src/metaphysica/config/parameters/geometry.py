@@ -106,7 +106,7 @@ class EFTValidityParameters:
 
     # Energy scales
     M_GUT = 2.118e16  # GeV (from GaugeUnificationParameters)
-    M_PLANCK = 1.221e19  # GeV (reduced Planck mass)
+    M_PLANCK = 1.221e19  # GeV (FULL Planck mass; reduced is 2.435e18)
 
     # Geometric suppression factor from G₂ topology
     B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)

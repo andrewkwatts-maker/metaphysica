@@ -553,12 +553,13 @@ class G2GeometryV16(SimulationBase):
 
         Key EML derivations:
           k_gimel = b₃/2 + 1/π  →  ops.add(ops.div(b3, 2), ops.inv(π))
-          χ_eff   = 6 × b₃      →  ops.mul(6, b3)
+          χ_eff   = 2(h11 - h21 + h31) →  ops.mul(2, ops.add(ops.sub(h11, h21), h31))
           n_gen   = χ_eff / 48  →  ops.div(chi_eff, 48)
 
-        STATUS: χ_eff = 6 b₃ is an OFF-PATH route; it equals 144 only at the
-        retired seed b₃ = 24 (258 at b₃ = 43, so this path's n_gen is not 3
-        there). The adopted reading is the K3 reading χ_eff = 48n (D-015).
+        STATUS: χ_eff = 6 b₃ was used here until 2026-10-26; it equals 144
+        only at the retired seed b₃ = 24 (258 at b₃ = 43, n_gen 5), so the
+        cross-check failed on the adopted path. Now the Hodge route, as in
+        run(); n_gen = χ_eff/48 is the K3 reading χ_eff = 48n (D-015).
         k_gimel is CALIBRATED at the off-path seed (D-007).
 
         The G₂-holonomy metric tensor is retrieved from MetricTensor.g2_holonomy();
@@ -574,7 +575,7 @@ class G2GeometryV16(SimulationBase):
         """
         from metaphysica.simulations.core.eml_integration import (
             eml_scalar, eml_compute, eml_pi, eml_add, eml_mul,
-            eml_div, eml_inv, eml_sqrt, eml_g2_metric, eml_leech_points,
+            eml_div, eml_inv, eml_sqrt, eml_sub, eml_g2_metric, eml_leech_points,
         )
 
         # Topology seeds — read from the live b3_seed fork, not fixed here
@@ -586,9 +587,12 @@ class G2GeometryV16(SimulationBase):
         b3_pt = eml_scalar(float(b3))
         k_gimel = eml_compute(eml_add(eml_div(b3_pt, eml_scalar(2.0)), eml_inv(eml_pi())))
 
-        # EML: χ_eff = 6 × b₃ -- an OFF-PATH route; it equals
-        # 2 × (h11 - h21 + h31) = 144 only at the retired seed b₃ = 24
-        chi_eff = eml_compute(eml_mul(eml_scalar(6.0), b3_pt))
+        # EML: χ_eff = 2 × (h11 - h21 + h31), the route run() publishes. The
+        # old 6 × b₃ route equals it only at the retired seed b₃ = 24 (258 at
+        # b₃ = 43), which made this cross-check FAIL on the adopted path.
+        hodge = eml_add(eml_sub(eml_scalar(float(h11)), eml_scalar(float(self.h21))),
+                        eml_scalar(float(self.h31)))
+        chi_eff = eml_compute(eml_mul(eml_scalar(2.0), hodge))
 
         # EML: n_gen = χ_eff / 48 (use round to handle float precision);
         # equals n only when χ_eff = 48n, the adopted K3 reading

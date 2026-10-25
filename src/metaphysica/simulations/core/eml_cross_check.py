@@ -276,7 +276,10 @@ def log_cross_check_summary(report: Dict[str, Any]) -> None:
     if s["all_agree"]:
         print(f"\n  [OK] EML CROSS-CHECK: {agreed}/{total} simulations AGREE")
     else:
-        print(f"\n  [FAIL] EML CROSS-CHECK: {failed} FAILURES detected")
+        print(f"\n  [FAIL] EML CROSS-CHECK: {failed} FAILURES, {errors} ERRORS detected")
+        for sid, entry in report.get("simulations", {}).items():
+            if entry.get("status") == "ERROR":
+                print(f"    ERROR {sid}: {str(entry.get('note'))[:120]}")
         fp = report.get("failed_params", {})
         for path, detail in list(fp.items())[:10]:
             print(f"    FAIL  {path}: normal={detail['normal_value']:.6g}  "

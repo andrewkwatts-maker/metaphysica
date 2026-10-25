@@ -61,3 +61,14 @@ def test_no_su2_from_coassociative_cycles():
 def test_engine_states_the_open_status():
     text = _text(PM / "gauge" / "non_abelian_kk_gauge.py")
     assert "OPEN (D-011)" in text and "U(1)^12" in text
+
+
+def test_cycle_type_labels_say_open():
+    """gauge.qcd/weak_cycle_type published the retired mechanisms as GEOMETRIC."""
+    from metaphysica.simulations.PM.derivations.gauge_sector_complete import (
+        GaugeSectorCompleteDerivations as G,
+    )
+    defs = {p.path: p for p in G().get_output_param_definitions()}
+    for path in ("gauge.qcd_cycle_type", "gauge.weak_cycle_type"):
+        assert defs[path].status == "ANSATZ", path
+        assert "OPEN" in defs[path].description, path

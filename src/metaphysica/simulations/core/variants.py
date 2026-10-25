@@ -518,6 +518,12 @@ def _dark_energy_betti_adopted() -> str:
 
     if w0 is None:
         raise SourceUnmeasurable("cosmology.w0_derived is None")
+    mechanism = resolve("dark_energy_mechanism")
+    if mechanism != "thawing_quintessence":
+        # w0 is not -(n-1)/n under another mechanism (mep_11_13 gives -11/13,
+        # which rounds to n = 6 and used to report chi_over_b3_6).
+        raise SourceUnmeasurable(
+            f"dark_energy_mechanism = {mechanism}: w0 does not encode n")
     w0 = float(w0)
     if w0 <= -1.0:
         raise SourceUnmeasurable(

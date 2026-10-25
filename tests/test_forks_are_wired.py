@@ -19,9 +19,9 @@ it here rather than to note it in a document. An inert fork still publishes
 into `variants.json` with its question, its options and its consequence
 prose, so a reader of the artifact -- or of the website built from it --
 cannot distinguish a decision the engine can actually execute either way
-from one that is only written down. `dark_energy_betti` is the sharpest case:
-status RULED, seven options with full sigma accounting, and nothing selects
-any of them.
+from one that is only written down. `dark_energy_betti` was the sharpest case:
+status RULED, seven options with full sigma accounting, and nothing selected
+any of them (wired 2026-10-26: late_time_routes.thawing_w0 sets geometry.w_zero).
 
 WHAT THIS TEST IS FOR
 =====================
@@ -64,7 +64,6 @@ _INERT = {
     "g2_construction",    # OPEN, 2 options
     "moduli_indexing",    # OPEN, 3 options
     "bulk_signature",     # RULED, 3 options
-    "dark_energy_betti",  # RULED, 7 options -- the sharpest case
     "face_genericity",    # RULED, 2 options
 }
 
@@ -132,7 +131,8 @@ def test_how_many_options_are_inert_is_recorded():
     # 2026-10-01 (D-015): chi_eff_route became wired (the narration resolves
     # it on every read: 25 -> 22 inert options), and k3_reading plus the new
     # seed_selection fork's two options took the total from 51 to 54.
-    assert (inert_options, total_options) == (22, 64), (
+    # 2026-10-26: dark_energy_betti wired (its 7 options: 22 -> 15 inert).
+    assert (inert_options, total_options) == (15, 64), (
         "inert/total option counts moved: %s of %s"
         % (inert_options, total_options)
     )

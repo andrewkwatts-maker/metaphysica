@@ -317,11 +317,12 @@ class GeometricAnchors:
 
         Note: Old DESI DR2 Lambda-CDM value was -0.728.
         Follows the dark_energy_mechanism fork (this value is aliased to
-        cosmology.w0_derived, so it must agree with the simulation).
+        cosmology.w0_derived, so it must agree with the simulation), and n
+        follows the dark_energy_betti fork (b3_24 on main: n = 24, frozen).
         """
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
         return ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=-1.0 + 1.0/self.elder_kads)
+            ltr.resolve_de_mechanism(), thawing=ltr.thawing_w0())
 
     @property
     def s8_viscosity_scale(self) -> float:
