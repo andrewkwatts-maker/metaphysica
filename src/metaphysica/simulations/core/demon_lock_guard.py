@@ -318,11 +318,15 @@ class DemonLockGuard:
 
     def verify_w0_seal(self) -> bool:
         """
-        Verify w0 is exactly -sigma_T = -23/24.
+        Verify w0 matches the active dark_energy_mechanism.
 
-        The dark energy equation of state IS the Tzimtzum Pressure.
+        Main (thawing_quintessence) seals w0 = -sigma_T = -23/24; another
+        mechanism (e.g. mep_11_13, -11/13) is a legitimate path, not a
+        violation, so the expected value follows the variant.
         """
-        expected_w0 = -23.0 / 24.0
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+        expected_w0 = ltr.w0_for_mechanism(
+            ltr.resolve_de_mechanism(), thawing=-23.0 / 24.0)
         tolerance = 1e-10
 
         # Check registry
@@ -477,7 +481,7 @@ class DemonLockGuard:
             ("Sterile Parity (eta_S+sigma_T=1.6403)", self.verify_sterile_parity),
             ("Watts Guard Rail (Omega_W=1.0)", self.verify_watts_guard_rail),
             ("Hubble Formula (H0=71.55)", self.verify_hubble_formula),
-            ("W0 Seal (w0=-23/24)", self.verify_w0_seal),
+            ("W0 Seal (active mechanism)", self.verify_w0_seal),
             ("SSoT Sync", self.verify_ssot_sync),
         ]
 

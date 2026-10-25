@@ -289,18 +289,21 @@ class DarkEnergyEvolution(SimulationBase):
         # wa is no longer free. It is a band, not a point, and the honest
         # reading is that the framework predicts a RANGE for wa.
         #
-        # The current wa = -1/sqrt(b3) = -0.2041 is OUTSIDE it, exceeding the
-        # upper limit by a factor of 1.63. The retired -4/sqrt(b3) = -0.8165
-        # is outside by 6.5x, and wa = 0 fails the lower limit. So the module
-        # named "thawing", which registers cosmology.wa_thawing, does not
-        # currently satisfy the definition of thawing.
+        # The code below returns wa = -4/sqrt(b3) = -0.8165 (registry status
+        # FITTED: the factor 4 = dim(Psi) has no derivation beyond the match
+        # at b3 = 24). It is OUTSIDE the band by 6.5x. The unscaled
+        # -1/sqrt(b3) = -0.2041 is outside by 1.63x, and wa = 0 fails the
+        # lower limit. So the module named "thawing", which registers
+        # cosmology.wa_thawing, does not currently satisfy the definition of
+        # thawing.
         #
-        # Reported, not repaired: replacing -1/sqrt(b3) with a point in the
+        # Reported, not repaired: replacing -4/sqrt(b3) with a point in the
         # band is a physics ruling, and every point in the band is FURTHER
         # from DESI DR2 (-0.86 +/- 0.22) than the present value -- 3.34 sigma
-        # at the band edge -3/b3 against 2.98 sigma now. Deriving wa properly
-        # makes the tension worse, which is exactly why it must not be chosen
-        # to make a number look good.
+        # at the band edge -3/b3 (2.98 sigma for -1/sqrt(b3), 0.2 sigma for
+        # the fitted -4/sqrt(b3)). Deriving wa properly makes the tension
+        # worse, which is exactly why it must not be chosen to make a number
+        # look good.
         # ------------------------------------------------------------------
         # ------------------------------------------------------------------
         # WHAT z_thaw = sqrt(b3) ACTUALLY SAYS: a field mass.

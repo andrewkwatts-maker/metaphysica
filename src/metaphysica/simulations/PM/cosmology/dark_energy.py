@@ -359,6 +359,7 @@ class DarkEnergyV16(SimulationBase):
             eml_scalar, eml_compute, eml_add, eml_sub, eml_mul,
             eml_div, eml_sqrt, eml_neg, eml_inv,
         )
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
 
         self.validate_inputs(registry)
 
@@ -369,7 +370,8 @@ class DarkEnergyV16(SimulationBase):
         b3_pt = eml_scalar(b3)
         neg1_pt = eml_scalar(-1.0)
         w0_pt = eml_add(neg1_pt, eml_inv(b3_pt))
-        w0_derived = eml_compute(w0_pt)
+        w0_derived = ltr.w0_for_mechanism(
+            ltr.resolve_de_mechanism(), thawing=eml_compute(w0_pt))
 
         # EML: wₐ = -1/√b₃
         if self.include_time_evolution:
