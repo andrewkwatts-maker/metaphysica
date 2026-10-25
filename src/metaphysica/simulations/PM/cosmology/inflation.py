@@ -121,6 +121,7 @@ import math
 from typing import Any, Dict, Tuple
 
 from metaphysica.simulations.core.FormulasRegistry import get_registry as _get_reg
+from metaphysica.simulations.PM.cosmology import spectral_routes as _spectral_routes
 
 #: SSoT read. b3 follows the ADOPTED seed, so the traceability notes below
 #: quote the live value instead of the retired literal 24.
@@ -439,7 +440,15 @@ class G2Inflation:
         #    Defensive fallback to the slow-roll value if the arithmetic
         #    raises (should never fire in production).
         n_s_canonical, canonical_available = _infrared_closure_n_s()
-        if canonical_available:
+        route = _spectral_routes.resolve_route()
+        if canonical_available and route != _spectral_routes.ADOPTED_ROUTE:
+            # A non-default spectral_index_route (D-022) replaces the closure.
+            n_s = _spectral_routes.n_s_for_route(
+                route, b3=B3_SEED, chi_eff=CHI_EFF_TOTAL, phi=PHI,
+                n_s_slow_roll=lambda: n_s_slow_roll)
+            n_s_canonical_source = (
+                "spectral_index_route=%s (non-default path; D-022)" % route)
+        elif canonical_available:
             n_s = n_s_canonical
             n_s_canonical_source = (
                 "infrared_closure: 1 - 2*phi^2/chi_eff = 1 - 2/55 "

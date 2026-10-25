@@ -105,6 +105,14 @@ MEASURED_ANCHORS = frozenset({
 })
 
 
+def _slow_roll_n_s() -> float:
+    """n_s of the Re(T) slow-roll route, from the inflation module (lazy: no cycle)."""
+    from metaphysica.simulations.PM.cosmology.inflation import G2Inflation
+
+    eps, eta = G2Inflation().slow_roll_parameters()
+    return 1.0 - 6.0 * eps + 2.0 * eta
+
+
 class GeometricAnchors:
     """
     Derives all PM parameters from the Betti number b₃=24.
@@ -1123,8 +1131,16 @@ class GeometricAnchors:
         Planck 2018: n_s = 0.9649 ± 0.0042
         """
         # N_eff = chi_eff / phi^2 = 144 / 2.618 ≈ 55
-        N_eff = self.mephorash_chi / (self.phi ** 2)
-        return 1 - 2 / N_eff  # ≈ 0.9636
+        from metaphysica.simulations.PM.cosmology import spectral_routes as sr
+
+        route = sr.resolve_route()
+        if route == sr.ADOPTED_ROUTE:
+            N_eff = self.mephorash_chi / (self.phi ** 2)
+            return 1 - 2 / N_eff  # ≈ 0.9636
+        # Non-default spectral_index_route (D-022): shared formulas.
+        return sr.n_s_for_route(
+            route, b3=self.elder_kads, chi_eff=self.mephorash_chi,
+            phi=self.phi, n_s_slow_roll=_slow_roll_n_s)
 
     @property
     def sum_m_nu(self) -> float:

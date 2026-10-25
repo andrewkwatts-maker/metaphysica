@@ -545,7 +545,9 @@ class DarkEnergyV16(SimulationBase):
 
         # Variance reduction: σ_eff = σ_single/√n_pairs
 
-        return w0
+        # D-022: dark_energy_mechanism. The adopted mechanism returns w0 unchanged.
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+        return ltr.w0_for_mechanism(ltr.resolve_de_mechanism(), thawing=w0)
 
     def _compute_time_evolution(self, reduction_data: Dict) -> float:
         """

@@ -1830,6 +1830,8 @@ class FormulasRegistry:
                 n_gen_report,
             )
 
+            # D-022: n_gen_report is the single source for every
+            # n_gen_source option, including the chi_eff routes.
             n = n_gen_report()["n_gen"]
             if n != int(n):
                 raise ValueError(
@@ -4244,7 +4246,14 @@ class FormulasRegistry:
         """
         base = self._roots_total / 4.0                                # 288/4 = 72
         bulk_correction = self.odowd_bulk_derived / self.pressure_divisor  # (7*24-5)/(24^2/4)
-        return base - bulk_correction + self._sophian_drag
+        odowd = base - bulk_correction + self._sophian_drag
+        # D-022: h0_route. The adopted route returns the O'Dowd value unchanged.
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+        route = ltr.resolve_h0_route()
+        if route == ltr.ADOPTED_H0_ROUTE:
+            return odowd
+        return ltr.h0_local_for_route(
+            route, odowd=odowd, h0_planck=self.h0_early, b3=self.elder_kads)
 
     @property
     def h0_local(self) -> float:
@@ -4277,7 +4286,10 @@ class FormulasRegistry:
         the dynamic size modulus of B^2 bridge.
         DESI 2025 BAO-only: w0 = -0.957 ± 0.067 (prediction within uncertainty)
         """
-        return -self._tzimtzum_pressure
+        # D-022: dark_energy_mechanism. The adopted mechanism returns -sigma_T unchanged.
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+        return ltr.w0_for_mechanism(
+            ltr.resolve_de_mechanism(), thawing=-self._tzimtzum_pressure)
 
     @property
     def w0_dark_energy(self) -> float:

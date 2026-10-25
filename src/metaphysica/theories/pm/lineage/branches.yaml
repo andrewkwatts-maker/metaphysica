@@ -1806,18 +1806,6 @@ versions:
       144 hit by ~8 of ...'
     source: metaphysica/docs/DISCARDED_PATH_COVERAGE.md row 24
 forks:
-- id: dark_energy_mechanism
-  question: What drives dark energy (the mechanism, not the integer n)?
-  source: archaeology
-  notes: 'declared only: no engine switch'
-- id: spectral_index_route
-  question: Where does the spectral index n_s come from?
-  source: archaeology
-  notes: 'declared only: no engine switch'
-- id: h0_route
-  question: Where does the displayed H0 come from?
-  source: archaeology
-  notes: 'declared only: no engine switch'
 - id: gauge_origin
   question: How does the SO(10) gauge group arise?
   source: archaeology
@@ -1955,26 +1943,6 @@ options:
   kill_condition: ''
   decision_refs: []
 - fork: n_gen_source
-  id: chi_over_24
-  summary: n_gen = chi_eff/24 (72/24 = 3); first stated for CY4 in Nov-22 as chi/24 not chi/2
-  consequence: Corrected from chi/2 to chi/24 for 8D manifolds on 2025-11-22; kept as sector-level formula
-    in v20.1.
-  status: disabled
-  restored_from: ''
-  source: 48ec267c
-  kill_condition: ''
-  decision_refs: []
-- fork: n_gen_source
-  id: chi_eff_over_48
-  summary: generations from the effective Euler characteristic
-  consequence: '3ba5848: fails on the whole Joyce family on both chi_eff branches; 6 b3/48 = b3/8 identically,
-    so not independent. Under D-009 it survives as n_gen = chi_eff/48 = n with the K3 reading.'
-  status: considered
-  restored_from: main:src/metaphysica/simulations/PM/geometry/chi_eff_branches.py
-  source: metaphysica/docs/DISCARDED_PATH_COVERAGE.md rows 22, 23
-  kill_condition: ''
-  decision_refs: []
-- fork: n_gen_source
   id: thermal_winding
   summary: index of modified Dirac operator D'_K = 16 x N_gen with N_gen = contour integral of omega_thermal
     ^ d Pi_U = 3
@@ -2017,16 +1985,6 @@ options:
   kill_condition: ''
   decision_refs: []
 - fork: dark_energy_mechanism
-  id: mep_11_13
-  summary: w0 = -11/13 = -0.846 from a maximum-entropy-production argument, d=12
-  consequence: Replaced 2025-12-31 by thawing quintessence; agreement with DESI 2025 improved from 1.76
-    sigma to 0.02 sigma (commit text).
-  status: disabled
-  restored_from: 5755a1e0:config.py (parent of d72731ef)
-  source: a40b0bfa
-  kill_condition: ''
-  decision_refs: []
-- fork: dark_energy_mechanism
   id: thermal_time
   summary: pre-DESI thermal-time dark-energy equation of state
   consequence: Retired pre-DESI; wa = +0.27 / +0.1 (thermal / attractor) failed the sign test against
@@ -2063,65 +2021,6 @@ options:
   status: rejected
   restored_from: main:src/metaphysica/simulations/PM/geometry/flux_vacuum.py
   source: PrincipiaMetaphysica/docs/DECISION_LOG.md D-010, D-016, D-017
-  kill_condition: ''
-  decision_refs: []
-- fork: spectral_index_route
-  id: one_minus_2_over_b3
-  summary: n_s = 1 - 2/b3
-  consequence: 11.48 sigma off; replaced 2026-01-10.
-  status: rejected
-  restored_from: 2c246586:config.py (parent of 0b984a37)
-  source: 0b984a37
-  kill_condition: ''
-  decision_refs: []
-- fork: spectral_index_route
-  id: golden_modulated
-  summary: golden-modulated e-folds
-  consequence: '< 1 sigma; ''geometric justification: phi^2 = phi + 1''.'
-  status: considered
-  restored_from: 0b984a37:config.py
-  source: 0b984a37
-  kill_condition: ''
-  decision_refs: []
-- fork: spectral_index_route
-  id: re_t_slow_roll
-  summary: V ~ W_flux + W_inst; epsilon = 3/(2 Re(T)^2); n_s = 0.9996
-  consequence: FALSIFIED at 8.3 sigma vs Planck 2018 (8.263 sigma FAIL), still rescored every build as
-    cosmology.n_s_slow_roll; Re(T) inputs off-path.
-  status: rejected
-  restored_from: main:src/metaphysica/simulations/PM/cosmology/inflation.py
-  source: metaphysica/docs/DISCARDED_PATH_COVERAGE.md row 41
-  kill_condition: ''
-  decision_refs: []
-- fork: h0_route
-  id: odowd_composite
-  summary: canonical DISPLAY value, three fitted inputs
-  consequence: 'Ruling: H0 is NOT a topology-first prediction; 1.43 sigma SH0ES, 8.3 Planck. All ''Hubble
-    tension resolved'' claims retired.'
-  status: considered
-  restored_from: main:src/metaphysica/simulations/core/canonical_values.py
-  source: metaphysica src/metaphysica/simulations/core/canonical_values.py CANON['H0_km_s_Mpc']
-  kill_condition: ''
-  decision_refs: []
-- fork: h0_route
-  id: ricci_flow
-  summary: H0_local = H0_planck (1 + sin^2(31 deg)/2) via G2 Ricci flow
-  consequence: 'Superseded: 3.17 sigma from SH0ES (76.34); sterile extraction 2.5 sigma SH0ES, 6.0 Planck.
-    Still published as cosmology.H0_ricci_variant. Declared a second H0 pass-through (2beca44) and ''the
-    geometric H0 in the alignment appendix was the SH0ES measurement'' (871a296).'
-  status: disabled
-  restored_from: main:src/metaphysica/simulations/PM/cosmology/ricci_flow_h0.py
-  source: engine 871a296, 2beca44
-  kill_condition: ''
-  decision_refs: []
-- fork: h0_route
-  id: kk_bridge
-  summary: early-dark-energy-like KK modes
-  consequence: 'hubble_tension.py verdict REFUTED: lightest KK mass ~5e28 eV vs ~1e-28 eV needed, ~57
-    orders off.'
-  status: rejected
-  restored_from: main:src/metaphysica/simulations/PM/cosmology/hubble_tension.py
-  source: metaphysica src/metaphysica/simulations/PM/cosmology/hubble_tension.py
   kill_condition: ''
   decision_refs: []
 - fork: gauge_origin

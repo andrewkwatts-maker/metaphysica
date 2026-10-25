@@ -30,9 +30,9 @@ N_GEN_TARGET = 3
 # compute: the step that runs every simulation. Others (audits, certificates)
 # only land in ``failed_steps``.
 REQUIRED_STEPS = ("run_all_simulations",)
-# Subtrees filled from an unseeded RNG, so they differ between any two builds even
-# when the twins happen to agree (statistical_rigor_validator.generate_jacobian_matrix
-# is a declared STUB of np.random entries). Publish treats them as volatile.
+# Subtrees that are still a STUB, not physics: generate_jacobian_matrix fills them with
+# placeholder entries from a generator seeded with JACOBIAN_STUB_SEED (D-022), so two
+# builds now agree, but the entries remain noise. Publish keeps masking them as volatile.
 STOCHASTIC = {"statistical_rigor_report.json": ("/jacobian_analysis",)}
 MAX_KEY_VALUES = 40
 HEADLINE = (

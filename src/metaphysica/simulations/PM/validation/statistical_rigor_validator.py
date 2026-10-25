@@ -42,6 +42,10 @@ sys.path.insert(0, str(REPO_ROOT))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("StatisticalRigor")
 
+#: Fixed seed for the STUB Jacobian (D-022). The entries are placeholder noise, not physics;
+#: seeding only makes the placeholder reproducible. 20261025 = the date it was fixed.
+JACOBIAN_STUB_SEED = 20261025
+
 
 #: Verdicts the validation report itself declines to score two-sidedly.
 #: These rows carry an experimental value and an uncertainty, so they
@@ -272,7 +276,8 @@ class StatisticalRigorValidator:
         Generate the 125×27 Jacobian matrix representing how each of the
         125 physical constants depends on the 27 ancestral dimensions.
 
-        STUB: Entries are drawn from np.random.uniform, not computed by
+        STUB: Entries are drawn from a LOCAL generator seeded with
+        JACOBIAN_STUB_SEED (so two calls agree), not computed by
         perturbing real PM manifold parameters.  SVD rank and correlation
         results derived from this matrix are therefore artefacts of the
         random seed, not properties of the physics.  In a real implementation
@@ -287,6 +292,7 @@ class StatisticalRigorValidator:
 
         # Initialize Jacobian
         J = np.zeros((self.n_residues, self.n_dimensions))
+        rng = np.random.default_rng(JACOBIAN_STUB_SEED)
 
         # Physical parameter categories (from PM v24.1 classification):
         # - 55 pure predictions (geometric)
@@ -299,31 +305,31 @@ class StatisticalRigorValidator:
         for i in range(55):
             # Each geometric residue couples to specific bridge pair
             bridge_pair = i % 12
-            J[i, bridge_pair*2] = np.random.uniform(0.8, 1.2)
-            J[i, bridge_pair*2 + 1] = np.random.uniform(0.8, 1.2)
+            J[i, bridge_pair*2] = rng.uniform(0.8, 1.2)
+            J[i, bridge_pair*2 + 1] = rng.uniform(0.8, 1.2)
 
             # Weak coupling to shadow-time directions
-            J[i, 24:26] = np.random.uniform(0.1, 0.3, 2)
+            J[i, 24:26] = rng.uniform(0.1, 0.3, 2)
 
         # Calibration inputs (55-57): Depend on shadow-time directions
         for i in range(55, 58):
-            J[i, 24:26] = np.random.uniform(0.9, 1.1, 2)
+            J[i, 24:26] = rng.uniform(0.9, 1.1, 2)
             # Weak coupling to column 26: a legacy column from the superseded
             # 27D count with one shared time (RETIRED, signature ruling
             # 2026-08-31); the (24,2) bulk's two times are columns 24-25.
-            J[i, 26] = np.random.uniform(0.1, 0.2)
+            J[i, 26] = rng.uniform(0.1, 0.2)
 
         # Fitted PMNS (58-59): Complex dependence
         for i in range(58, 60):
-            J[i, :24] = np.random.uniform(0.3, 0.7, 24)  # Distributed over bridges
-            J[i, 24:26] = np.random.uniform(0.5, 0.9, 2)
+            J[i, :24] = rng.uniform(0.3, 0.7, 24)  # Distributed over bridges
+            J[i, 24:26] = rng.uniform(0.5, 0.9, 2)
 
         # Established parameters (60-124): Mix of dependencies
         for i in range(60, 125):
             # Random sparse coupling (most residues don't depend on all dimensions)
-            n_coupled = np.random.randint(5, 15)  # 5-15 dimensions
-            coupled_dims = np.random.choice(27, n_coupled, replace=False)
-            J[i, coupled_dims] = np.random.uniform(0.5, 1.0, n_coupled)
+            n_coupled = int(rng.integers(5, 15))  # 5-15 dimensions
+            coupled_dims = rng.choice(27, n_coupled, replace=False)
+            J[i, coupled_dims] = rng.uniform(0.5, 1.0, n_coupled)
 
         logger.info("Jacobian matrix generated")
         return J
