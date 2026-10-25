@@ -68,6 +68,7 @@ from metaphysica.simulations.core.eml_integration import (
     eml_mul as _eml_mul,
     eml_div as _eml_div,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 def _arithma_add(a, b):
     return None if a is None or b is None else a + b
 def _arithma_sub(a, b):
@@ -297,7 +298,7 @@ class AppendixTQECBridge(SimulationBase):
                     type="callout",
                     callout_type="info",
                     title="PM-to-QEC Mapping Assessment",
-                    content=(
+                    content=superseded(
                         "The CSS construction is DERIVED (standard mathematics). "
                         "The identification b3=24 -> 24 qubits and 12 pairs -> 12 logical qubits "
                         "is a MOTIVATED_IDENTIFICATION sharing the Leech lattice root. "

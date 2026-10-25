@@ -150,6 +150,7 @@ from metaphysica.config import (
     TorsionClass,
     ModuliParameters,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 class HiggsMassSimulation(SimulationBase):
@@ -523,7 +524,7 @@ class HiggsMassSimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The modulus Re(T) is itself determined by the racetrack superpotential, "
                         "which stabilizes the Kahler moduli through a balance of competing "
                         "non-perturbative exponentials. In Kahler moduli stabilization, Re(T) "
@@ -556,7 +557,7 @@ class HiggsMassSimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "A key structural requirement of the Higgs sector is the doublet-triplet "
                         "splitting, which ensures proton stability. In the SO(10) GUT embedding, "
                         "the Higgs 5-plet decomposes into electroweak doublets (H_d, H_u) and "
@@ -572,7 +573,7 @@ class HiggsMassSimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The Z2 x Z2 orbifold projection on the TCS manifold localizes the "
                         "electroweak doublets at fixed points while projecting the color "
                         "triplets into the shadow sector, yielding a mass hierarchy "

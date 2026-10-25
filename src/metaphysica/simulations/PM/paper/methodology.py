@@ -75,6 +75,7 @@ def _arithma_div(a, b):
 def _arithma_inv(a):
     return None if a is None else 1.0 / a
 import math as _math
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 class MethodologyV16_2(SimulationBase):
@@ -578,8 +579,8 @@ class MethodologyV16_2(SimulationBase):
             ContentBlock(
                 type="list",
                 items=[
-                    "<strong>L(Theory):</strong> 2 topological invariants (b₃ = 24, k<sub>ℷ</sub> ≈ 12.318) "
-                    "+ 116 geometric constraints ≈ 32,640 bits",
+                    superseded("<strong>L(Theory):</strong> 2 topological invariants (b₃ = 24, k<sub>ℷ</sub> ≈ 12.318) "
+                    "+ 116 geometric constraints ≈ 32,640 bits"),
                     "<strong>L(Data|Theory):</strong> 0 bits (deterministic mapping from topology to constants)",
                     "<strong>Total:</strong> 32,640 bits"
                 ],
@@ -612,7 +613,7 @@ class MethodologyV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="note",
-                content=(
+                content=superseded(
                     "<h4>Why 288/24/4 is Not Arbitrary</h4>"
                     "<p>The key structural numbers emerge from pure topology:</p>"
                     "<ul>"
@@ -763,7 +764,7 @@ class MethodologyV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "This chain is computationally verified end-to-end by the LatticeBridgeConnector, "
                     "with 6 dedicated LATTICE certificates (LATT-050 through LATT-055) validating each "
                     "step. The derivation provides an algebraic cross-check of the topological inputs "

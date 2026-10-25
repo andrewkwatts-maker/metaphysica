@@ -82,6 +82,7 @@ except Exception:  # pragma: no cover
 from metaphysica.simulations.core.eml_integration import (
     eml_scalar as _eml_scalar,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 class MassRatioSolver:
     """
@@ -254,7 +255,7 @@ if SCHEMA_AVAILABLE:
                     ),
                     ContentBlock(
                         type="paragraph",
-                        content=(
+                        content=superseded(
                             "The derived value m_p/m_e = 1836.15 matches the CODATA 2022 "
                             "experimental value to within 0.001%. "
                             "<Speculation>The claim that the baryon-lepton mass hierarchy is a "

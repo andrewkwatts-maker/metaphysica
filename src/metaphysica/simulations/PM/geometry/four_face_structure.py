@@ -134,6 +134,7 @@ from metaphysica.simulations.core.eml_integration import (
     eml_pi as _eml_pi,
     b3_leaf as _b3_leaf,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 try:  # arithma's unary ops moved from instance to static
     from arithma import Expression as _ArithmaExpression
 except ImportError:  # pragma: no cover - arithma optional
@@ -2087,7 +2088,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The torsional leakage mechanism formalises how fields tunnel "
                         "between adjacent geometric faces via the G₂ torsion connection. "
                         "Although the TCS G₂ manifold is intrinsically torsion-free "

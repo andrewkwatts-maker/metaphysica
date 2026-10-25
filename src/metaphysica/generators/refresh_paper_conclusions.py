@@ -34,7 +34,28 @@ _CORE_TEXT = (("abstract", "AbstractV17_2"),
               ("introduction", "IntroductionExtendedV16"))
 
 
-def _simulations(with_core_text: bool = False) -> List[Any]:
+def _module_sims(modules: List[str]) -> List[Any]:
+    """One instance of every simulation class defined in each dotted module."""
+    import importlib
+    import inspect
+
+    from metaphysica.simulations.base import SimulationBase
+
+    sims: List[Any] = []
+    for name in modules:
+        mod = importlib.import_module(name)
+        found = [c for _, c in inspect.getmembers(mod, inspect.isclass)
+                 if issubclass(c, SimulationBase) and c is not SimulationBase
+                 and c.__module__ == mod.__name__]
+        if not found:
+            raise SystemExit("refresh_paper_conclusions: no simulation in "
+                             + name)
+        sims.extend(c() for c in found)
+    return sims
+
+
+def _simulations(with_core_text: bool = False,
+                 modules: List[str] = ()) -> List[Any]:
     """Instantiate the report-dependent paper simulations."""
     import importlib
 
@@ -46,15 +67,15 @@ def _simulations(with_core_text: bool = False) -> List[Any]:
             module = importlib.import_module(
                 "metaphysica.simulations.PM.paper." + mod)
             sims.append(getattr(module, name)())
-    return sims
+    return sims + _module_sims(list(modules))
 
 
-def _render(with_core_text: bool = False) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def _render(with_core_text: bool = False, modules: List[str] = ()) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Register the simulations into a fresh registry; return the exports."""
     from metaphysica.simulations.base.registry import PMRegistry
 
     registry = PMRegistry()
-    for sim in _simulations(with_core_text):
+    for sim in _simulations(with_core_text, modules):
         sim.inject_section(registry)
     return registry.export_sections(), registry.export_formulas()
 
@@ -82,13 +103,18 @@ def _write(path: Path, payload: Dict[str, Any]) -> None:
 _STALE_DERIVED = ("html",)
 
 
+def _is_blank(value: Any) -> bool:
+    """True for None, "" and an empty list; never ambiguous on arrays."""
+    return value is None or (isinstance(value, (str, list)) and not value)
+
+
 def _merge(old: Dict[str, Any], fresh: Dict[str, Any]) -> Dict[str, Any]:
     """Fresh entry, keeping keys (e.g. module references) the old one added."""
     merged = dict(fresh)
     for key, value in old.items():
         if key in _STALE_DERIVED:
             continue
-        if key not in merged or (merged[key] in ([], None, "") and value):
+        if key not in merged or (_is_blank(merged[key]) and bool(value)):
             merged[key] = value
     return merged
 
@@ -103,12 +129,13 @@ def _patch(wrapper: Dict[str, Any], field: str,
     return len(fresh)
 
 
-def refresh(with_core_text: bool = False) -> Tuple[int, int]:
+def refresh(with_core_text: bool = False,
+            modules: List[str] = ()) -> Tuple[int, int]:
     """Patch sections.json and formulas.json; return (sections, formulas)."""
     base = autogen_dir()
     sec_path, frm_path = base / "sections.json", base / "formulas.json"
     sections, formulas = _read(sec_path), _read(frm_path)
-    fresh_sections, fresh_formulas = _render(with_core_text)
+    fresh_sections, fresh_formulas = _render(with_core_text, modules)
     n_sec = _patch(sections, "sections", fresh_sections)
     n_frm = _patch(formulas, "formulas", fresh_formulas)
     _write(sec_path, sections)
@@ -118,7 +145,13 @@ def refresh(with_core_text: bool = False) -> Tuple[int, int]:
 
 def main(argv: List[str] = None) -> int:
     argv = sys.argv[1:] if argv is None else argv
-    n_sec, n_frm = refresh(with_core_text="--core-text" in argv)
+    mods: List[str] = []
+    if "--modules" in argv:
+        at = argv.index("--modules")
+        if at + 1 >= len(argv):
+            raise SystemExit("--modules needs a comma-separated module list")
+        mods = [m for m in argv[at + 1].split(",") if m]
+    n_sec, n_frm = refresh(with_core_text="--core-text" in argv, modules=mods)
     print("refresh_paper_conclusions: patched %d section(s), %d formula(s)"
           % (n_sec, n_frm))
     return 0

@@ -55,6 +55,7 @@ from metaphysica.simulations.base import (
     PMRegistry,
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 # Get registry SSoT
 _REG = get_registry()
@@ -630,7 +631,7 @@ class MultiSectorV16(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The total number of cosmological sectors equals the third Betti "
                         f"number b3 = {int(_REG.elder_kads)}, arising from three independent factors. First, the "
                         "dual-shadow architecture provides a factor of 2: one normal shadow "

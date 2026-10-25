@@ -75,6 +75,7 @@ def _arithma_div(a, b):
 def _arithma_inv(a):
     return None if a is None else 1.0 / a
 import math as _math
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 def _adopted_b3() -> int:
@@ -200,7 +201,7 @@ class ResultsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "In the v24.2 framework, H₀ is extracted as a spectral observable from the "
                     "V₇ Laplacian fundamental mode λ₁. The extraction uses the topological "
                     "bridge formula "
@@ -282,7 +283,7 @@ class ResultsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "In the M<sup>26</sup>(24,2) bulk, the 12×(2,0) bridge pairs carry residual flux after "
                     "OR reduction creates the dual 13D(12,1) shadows. This flux is localized "
                     "within the b₃ = 24 associative 3-cycles of the G₂ manifold — the same "
@@ -306,7 +307,7 @@ class ResultsV16_2(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "The PM geometric prediction "
                     "<Normal>w₀ = −23/24 ≈ −0.9583 (from the Topologically Anchored Framework with <strong>EDOF=3</strong>)</Normal>"
                     "<EML>w₀ = ops.div(ops.neg(23), 24) ≈ −0.9583 — from ops.add(ops.neg(1), ops.inv(eml_scalar(24)))</EML> "

@@ -157,6 +157,7 @@ from metaphysica.simulations.core.eml_integration import (
     eml_pow as _eml_pow,
     eml_exp as _eml_exp,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 def _arithma_mul(a, b):
     return None if a is None or b is None else a * b
 def _arithma_div(a, b):
@@ -355,7 +356,7 @@ class ProtonDecaySimulation(SimulationBase):
             section_id="4",
             subsection_id="4.6",
             title="Proton Decay Lifetime",
-            abstract=(
+            abstract=superseded(
                 f"We compute the proton lifetime from the TCS (twisted connected "
                 f"sum) G2 manifold, where the neck topology separating the two "
                 f"building blocks exponentially suppresses dimension-6 proton decay "
@@ -374,7 +375,7 @@ class ProtonDecaySimulation(SimulationBase):
                     type="callout",
                     callout_type="warning",
                     title="Off-path construction",
-                    content=(
+                    content=superseded(
                         f"The mechanism below is TCS-specific throughout: the "
                         f"S^1 x K3 neck, the matching number K = 4, and the "
                         f"'TCS G2 #187' label. The adopted construction is the "
@@ -387,7 +388,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "In TCS G2 manifolds, the twisted connected sum construction "
                         "glues two asymptotically cylindrical building blocks (each a "
                         "K3-fibered Calabi-Yau threefold cross S^1) along a common neck "
@@ -410,7 +411,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The separation distance d/R is determined by the K3 fibre "
                         "matching number K. For TCS G2 manifold #187 with K=4 matching "
                         "fibres, we find:"
@@ -441,7 +442,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "For K=4, this gives S = exp(1/4) ~ 1.284. To connect this "
                         "to the proton lifetime, we consider the dimension-6 operators "
                         "responsible for proton decay. In GUTs, integrating out the "
@@ -510,7 +511,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "Hyper-Kamiokande (HK), with its 187 kton fiducial water "
                         "Cherenkov volume (approximately 8x Super-K), will achieve "
                         "sensitivity to proton lifetimes up to ~10^35 years after "
@@ -542,7 +543,7 @@ class ProtonDecaySimulation(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         f"This geometric selection rule arises from the sum over "
                         f"orientations of the associative matter 3-cycles within the "
                         f"TCS G2 manifold. Of the 24 possible orientations of the "
