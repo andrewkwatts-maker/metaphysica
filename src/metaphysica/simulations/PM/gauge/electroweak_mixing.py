@@ -102,10 +102,12 @@ class ElectroweakMixing:
         self.sin_theta_W = self.sin2_theta_W.sqrt()
         self.cos_theta_W = self.cos2_theta_W.sqrt()
 
-        # Higgs vev from geometric prediction: v_geo = k_gimel × (b₃ - 4)
-        # k_gimel = 23.306 (Gimel constant), b₃ = 14.5714 (SU(3) beta coefficient)
-        # v_geo = 23.306 × (14.5714 - 4) = 23.306 × 10.5714 ≈ 246.37 GeV
-        self.v_higgs = Decimal('246.37')  # GeV - geometric VEV prediction
+        # Higgs vev: CALIBRATED at the retired seed, not a live prediction.
+        # v = k_gimel × (b₃ - 4) = 12.318 × 20 = 246.37 GeV held only at b₃ = 24;
+        # on the adopted b₃ = 43 the same rule gives 850.9 GeV (higgs.vev_geometric,
+        # FALSIFIED). The literal is kept so g_2 = 2 M_W / v and g' stay as scored
+        # (both FAIL); replacing it is an owner decision.
+        self.v_higgs = Decimal('246.37')  # GeV - retired-seed calibration
 
         # Radiative correction: Δρ from top quark loops
         # Δρ ≈ 3 × G_F × m_t² / (8π²√2) ≈ 0.0094
@@ -715,7 +717,7 @@ class ElectroweakMixingSimulation(SimulationBase):
                 derivation={
                     "steps": [
                         "Start from the SU(2)_L x U(1)_Y covariant derivative acting on the Higgs doublet: D_mu Phi = (partial_mu - i g_2 tau^a/2 W^a_mu - i g' Y/2 B_mu) Phi.",
-                        "Insert the Higgs VEV ⟨Phi⟩ = (0, v/sqrt(2))^T with v = 246.37 GeV (geometric prediction from k_gimel * (b3 - 4)).",
+                        "Insert the Higgs VEV ⟨Phi⟩ = (0, v/sqrt(2))^T with v = 246.37 GeV (calibrated: k_gimel * (b3 - 4) at the retired b3 = 24; the adopted b3 = 43 gives 850.9 GeV, FALSIFIED).",
                         "Expand |D_mu ⟨Phi⟩|^2 and collect bilinear gauge boson terms in the (W^3, B) basis to form the 2x2 mass matrix M^2 = (v^2/4) [[g2^2, -g2 g'], [-g2 g', g'^2]].",
                         "Verify det(M^2) = 0, ensuring one zero eigenvalue (massless photon).",
                         "Compute the nonzero eigenvalue: m_Z^2 = (v^2/4)(g_2^2 + g'^2).",
