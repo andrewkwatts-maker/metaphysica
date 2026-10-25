@@ -604,7 +604,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "constrains the gluing map and fixes the minimal cycle separation "
                     "distance d. The wavefunction overlap integral between matter and "
                     "Higgs zero modes decays exponentially across the neck: "
-                    "|<psi_matter|psi_Higgs>|^2 ~ exp(-2*pi*d/R), where R is the "
+                    "|⟨psi_matter|psi_Higgs⟩|^2 ~ exp(-2*pi*d/R), where R is the "
                     "characteristic radius of the G2 cross-section. For K = 4 matching "
                     "fibres, d/R = 1/(2*pi*K) = 1/(8*pi) gives S = exp(1/4) ~ 1.284, "
                     "a modest but physically significant suppression that lifts the "
@@ -627,7 +627,7 @@ class ProtonDecaySimulation(SimulationBase):
                         "Minimal cycle separation fixed by matching: d/R = 1/(2*pi*K)",
                         "Wavefunction overlap integral across neck: integral(psi_matter^dagger * psi_Higgs) dV",
                         "Harmonic forms on neck cylinder decay as exp(-lambda_n * d) with lambda_1 = 2*pi/R",
-                        "Leading overlap: |<psi_matter|psi_Higgs>|^2 ~ exp(-2*pi*d/R) = exp(-1/K)",
+                        "Leading overlap: |⟨psi_matter|psi_Higgs⟩|^2 ~ exp(-2*pi*d/R) = exp(-1/K)",
                         "Suppression factor on decay rate (inverse overlap): S = exp(2*pi*d/R) = exp(1/K)",
                         "For K=4 (TCS G2 #187): S = exp(1/4) = 1.284",
                     ]

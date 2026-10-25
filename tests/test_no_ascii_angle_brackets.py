@@ -5,15 +5,11 @@ from pathlib import Path
 
 SRC = Path(__file__).resolve().parents[1] / "src" / "metaphysica"
 RX = re.compile(r"<(Psi|Phi|psi_|x,|z,|g_i |W\()")
-# Held while branch c4b edits these files; fix and remove after its merge.
-PENDING = {"proton_decay.py", "appendix_c_derivations.py", "fermion_generations.py"}
 
 
 def test_no_ascii_angle_brackets_in_engine_prose():
     bad = []
     for path in SRC.rglob("*.py"):
-        if path.name in PENDING:
-            continue
         for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
             if RX.search(line):
                 bad.append("%s:%d" % (path.relative_to(SRC), n))
