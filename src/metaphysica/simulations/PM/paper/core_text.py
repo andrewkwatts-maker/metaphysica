@@ -42,18 +42,14 @@ def _fit_text() -> str:
 
 
 def _path_summary(name: str) -> Optional[Dict[str, Any]]:
-    from metaphysica.generators._common import autogen_dir
+    """Scoreboard and chi2 for ``name`` from the committed path snapshot.
 
-    path = autogen_dir() / "paths" / name / "summary.json"
-    if not path.is_file():
-        return None
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        data["scoreboard"]["PASS"], data["scoreboard"]["FAIL"]
-        data["chi2"]["value"], data["chi2"]["dof"]
-        return data
-    except (ValueError, KeyError, TypeError):
-        return None
+    Not ``autogen_dir()/paths``: a path run has none, so the prose would
+    differ from main in every run (see ``path_snapshot``).
+    """
+    from metaphysica.simulations.PM.paper.path_snapshot import load
+
+    return load(name)
 
 
 def _path_phrase(name: str) -> str:

@@ -1,0 +1,36 @@
+{
+ "engine": {
+  "commit": "52d5bdb",
+  "version": "2.3.1"
+ },
+ "generated": "2026-10-25T05:07:55Z",
+ "paths": {
+  "b3_seed--seed_24": {
+   "chi2": {
+    "dof": 4,
+    "value": 1869.4372
+   },
+   "scoreboard": {
+    "FAIL": 20,
+    "MARGINAL": 13,
+    "PASS": 43,
+    "SKIP": 120,
+    "TENSION": 8
+   }
+  },
+  "main": {
+   "chi2": {
+    "dof": 4,
+    "value": 3030.0985
+   },
+   "scoreboard": {
+    "FAIL": 32,
+    "MARGINAL": 15,
+    "PASS": 27,
+    "SKIP": 120,
+    "TENSION": 10
+   }
+  }
+ },
+ "schema": "metaphysica.path_comparison/1"
+}
