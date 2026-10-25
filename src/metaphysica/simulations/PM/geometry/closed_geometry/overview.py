@@ -190,8 +190,9 @@ def layers() -> List[Dict[str, Any]]:
               if wa1 else
               "On this switch setting the match is a finding, and the pair "
               "stands by the 2026-09-22 ruling.")),
-        r("{n_gen_route}: three generations is the rank of the folding "
-          "group, not a fitted number."),
+        r("{n_gen_route}: three is the rank of the folding group, a count "
+          "rather than a fit. That these are three chiral generations is open: "
+          "Y<sub>7</sub> carries no chiral matter (D-011)."),
     ]
 
     certificate_items = [
