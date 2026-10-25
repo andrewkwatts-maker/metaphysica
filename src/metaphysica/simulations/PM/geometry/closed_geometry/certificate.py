@@ -47,6 +47,7 @@ def certificate() -> List[Dict[str, Any]]:
             "derived": ev["derived"],
             "counts": thm.counts,
             "proof": thm.proof,
+            "steps": list(thm.steps(ev)),
             "test": thm.test,
             "falsifier": thm.falsifier,
             "scope": thm.scope,

@@ -64,7 +64,7 @@ manifold.  The same construction lives in
 so the inflation observable is computable without delegating to the
 geometry sector:
 
-    χ_eff   = 6 · b₃ = 6 · 24 = 144
+    χ_eff   = 2 · Σ_σ χ(K3_σ) = 48 n = 48 · 3 = 144   (D-009 K3 reading)
     N_eff   = χ_eff / φ² = 144 / 2.618 ≈ 55
     n_s     = 1 - 2 / N_eff = 1 - 2 φ² / χ_eff ≈ 0.9636
 
@@ -154,17 +154,21 @@ except ImportError:  # pragma: no cover - defensive
 #: leading-order slow-roll ε / η; r = 16 ε is a pure function of it.
 DEFAULT_RE_T_STABILIZED: float = 174.033
 
-#: G₂ manifold third Betti number — the SSoT seed from FormulasRegistry.
-#: Anchors both the Re(T) stabilization (Sprint 4) and the infrared-closure
-#: e-fold count χ_eff = 6 · b₃ used by the canonical n_s here.  Kept as a
-#: module-local constant so the inflation observable is computable
-#: without importing GeometricAnchors.
+#: b₃ of the retired seed_24 branch, NOT the adopted seed (43). It is the
+#: input of the recovered ``one_minus_2_over_b3`` spectral route only, which
+#: reproduces the v16.0 value 0.9167 (D-022). The canonical n_s does not read
+#: it: χ_eff below is the K3 reading, independent of b₃.
 B3_SEED: int = 24
 
+#: Singular involutions on the active Joyce point (D-006); each is resolved
+#: by a Kummer K3 with χ = 24 (``kummer_index.k3_reading``).
+N_SINGULAR: int = 3
+
 #: Effective index chi_eff (not the Euler characteristic of Y_7, which is 0) — the v25.0 cycle
-#: count entering the golden-modulated e-fold expansion.  Derived
-#: ``χ_eff = 6 · b₃ = 144`` (see GeometricAnchors.mephorash_chi).
-CHI_EFF_TOTAL: int = 6 * B3_SEED
+#: count entering the golden-modulated e-fold expansion.  D-009 K3
+#: reading: ``χ_eff = 2 Σ_σ χ(K3_σ) = 48 n = 144`` (two shadows). The older
+#: reading 6 · b₃ was refuted by D-009 (it gives 258 on the adopted b₃ = 43).
+CHI_EFF_TOTAL: int = 48 * N_SINGULAR
 
 #: Golden ratio φ = (1 + √5) / 2 — minimal-surface geometry seed.  Sets
 #: the suppression in the infrared-closure formula ``Δη² ~ -2 φ² / χ_eff``.
@@ -198,7 +202,7 @@ _STATUS_AGREES: str = (
 #: physics.
 _STATUS_DOCUMENTED_DIVERGENCE: str = (
     "documented_divergence: canonical n_s (infrared closure: "
-    "1 - 2*phi^2/chi_eff with chi_eff = 6*b3 = 144) agrees with Planck "
+    "1 - 2*phi^2/chi_eff with chi_eff = 48 n = 144, D-009) agrees with Planck "
     "2018/2026 at 0.271 sigma, but the leading-order slow-roll on the "
     "near-linear Re(T) potential gives n_s_slow_roll = 0.99960, which is "
     "8.263 sigma from Planck 2018 and scored FAIL (potential too flat to "
@@ -244,7 +248,7 @@ def _infrared_closure_n_s() -> Tuple[float, bool]:
     O(10^-4) and are absorbed into the closure; the dominant tilt is
     the topological term
 
-        n_s_IR = 1 - 2 φ² / χ_eff     with χ_eff = 6 · b₃ = 144
+        n_s_IR = 1 - 2 φ² / χ_eff     with χ_eff = 48 n = 144 (D-009)
 
     which evaluates to ``1 - 2/55 ≈ 0.9636`` (0.30σ from Planck 2018,
     0.9649 ± 0.0042).  This is the same value computed by
@@ -402,7 +406,7 @@ class G2Inflation:
 
         The canonical ``n_s`` is computed natively from the in-module
         infrared-closure formula ``n_s = 1 - 2 * phi^2 / chi_eff`` with
-        ``chi_eff = 6 * b3 = 144``, which sits 0.30σ from Planck 2018
+        ``chi_eff = 2 sum chi(K3_sigma) = 48 n = 144`` (D-009), which sits 0.30σ from Planck 2018
         (0.9649 ± 0.0042).  See :func:`_infrared_closure_n_s` and the
         module docstring "Canonical n_s — infrared closure" for the
         physics.  The leading-order slow-roll derivation on the Re(T)
@@ -435,8 +439,8 @@ class G2Inflation:
         r = 16.0 * epsilon
 
         # 2) Canonical n_s (Sprint T5 #2 Option (b): native infrared
-        #    closure ``n_s = 1 - 2*phi^2/chi_eff`` with chi_eff = 6*b3 =
-        #    144).  Self-contained — no GeometricAnchors delegation.
+        #    closure ``n_s = 1 - 2*phi^2/chi_eff`` with chi_eff = 48 n =
+        #    144, D-009).  Self-contained — no GeometricAnchors delegation.
         #    Defensive fallback to the slow-roll value if the arithmetic
         #    raises (should never fire in production).
         n_s_canonical, canonical_available = _infrared_closure_n_s()
@@ -452,7 +456,8 @@ class G2Inflation:
             n_s = n_s_canonical
             n_s_canonical_source = (
                 "infrared_closure: 1 - 2*phi^2/chi_eff = 1 - 2/55 "
-                "(chi_eff = 6*b3 = 144, phi = (1+sqrt(5))/2; native "
+                "(chi_eff = 2*sum chi(K3_sigma) = 48*n = 144, D-009; "
+                "phi = (1+sqrt(5))/2; native "
                 "derivation in metaphysica.simulations.PM.cosmology.inflation)"
             )
         else:
@@ -485,7 +490,7 @@ class G2Inflation:
             status = _STATUS_DOCUMENTED_DIVERGENCE
 
         # 4) Persist the v25.0 derivations.  The formula strings mention
-        #    ``b3`` (chi_eff = 6*b3 = 144 for canonical n_s; Re(T) ← b3
+        #    ``b3`` (chi_eff = 48 n = 144 for canonical n_s; Re(T) ← b3
         #    = 24 for slow-roll r) so the eml_operator_tree's
         #    b3_traceback flag is set on each registered entry.
         self._eml_tree.register_derivation(
@@ -493,7 +498,9 @@ class G2Inflation:
             formula=(
                 "Canonical (infrared closure, native): "
                 "1 - 2*phi^2/chi_eff = 1 - 2/55 where "
-                "chi_eff = 6*b3 = 144 and phi = (1+sqrt(5))/2. "
+                "chi_eff = 2*sum chi(K3_sigma) = 48*n = 144 (n = 3 singular "
+                "involutions, each resolved by a Kummer K3 with chi = 24; "
+                "D-009 k3_reading) and phi = (1+sqrt(5))/2. "
                 "Slow-roll diagnostic: 1 - 6*epsilon + 2*eta where "
                 "epsilon = 3 / (2*ReT^2), eta = -1.5 / ReT^2, ReT "
                 f"inherits from Sprint 4 Re(T) stabilization with b3 = {int(_REG.elder_kads)}."
@@ -565,6 +572,7 @@ def get_inflation_observables() -> Dict[str, Any]:
 __all__ = [
     "G2Inflation",
     "B3_SEED",
+    "N_SINGULAR",
     "CHI_EFF_TOTAL",
     "DEFAULT_RE_T_STABILIZED",
     "PHI",

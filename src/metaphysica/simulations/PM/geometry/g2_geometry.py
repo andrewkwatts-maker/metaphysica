@@ -2553,11 +2553,19 @@ class G2GeometryV16(SimulationBase):
             layperson_narration,
         )
 
+        from metaphysica.simulations.PM.geometry.figures import (
+            geometry_figures,
+        )
+
         plain = layperson_narration()
         story = plain["story"]
         b3, b2 = plain["b3"], plain["b2"]
+        step_keys = ("hole_counter", "the_base", "the_seams", "the_repairs",
+                     "the_total", "the_generations")
 
         return {
+            "figures": geometry_figures(),
+            "steps": [story[k] for k in step_keys],
             "icon": "🌀",
             "title": "Hidden Dimensions and the Folded 7D Shape",
             "simpleExplanation": (
