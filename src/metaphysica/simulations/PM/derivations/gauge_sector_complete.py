@@ -952,7 +952,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 r"\sigma \propto \frac{1}{\text{Vol}(\text{3-cycle})}"
             ),
             plain_text=(
-                "<W(C)> = exp(-sigma * Area(C)), sigma ~ 1/Vol(3-cycle)"
+                "⟨W(C)⟩ = exp(-sigma * Area(C)), sigma ~ 1/Vol(3-cycle)"
             ),
             category="DERIVED",
             description=(
@@ -967,7 +967,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             derivation={
                 "method": "wilson_loop",
                 "steps": [
-                    "Confinement is expressed by the Wilson loop obeying an area law, <W(C)> = exp(-sigma A(C))",
+                    "Confinement is expressed by the Wilson loop obeying an area law, ⟨W(C)⟩ = exp(-sigma A(C))",
                     "The coefficient sigma is the string tension of the flux tube",
                     "sigma is stated to scale inversely with the associative 3-cycle volume, sigma ~ 1/Vol(3-cycle)",
                 ],

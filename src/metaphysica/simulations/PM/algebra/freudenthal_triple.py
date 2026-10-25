@@ -199,7 +199,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 id="freudenthal-triple-product",
                 label="(A2.3)",
                 latex=r"\{x, y, z\}_i = \langle x, y \rangle_J z_i + \langle z, y \rangle_J x_i - \langle x, z \rangle_J y_i",
-                plain_text="{x,y,z}_i = <x,y>*z_i + <z,y>*x_i - <x,z>*y_i",
+                plain_text="{x,y,z}_i = ⟨x,y⟩*z_i + ⟨z,y⟩*x_i - ⟨x,z⟩*y_i",
                 category="DERIVED",
                 description="Freudenthal triple product — implements Pneuma field bilinears. "
                             "This is the linearized version via the Jordan bilinear form ⟨·,·⟩_J.",

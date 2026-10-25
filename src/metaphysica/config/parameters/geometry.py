@@ -52,7 +52,7 @@ class FermionChiralityParameters:
 
     # Modified Dirac operator components
     DIRAC_MODIFICATION = "gamma^5 T_mu (axial torsion coupling)"
-    TORSION_SOURCE = "T_mu ~ nabla_mu <Psi_P> (Pneuma gradient)"
+    TORSION_SOURCE = "T_mu ~ nabla_mu ⟨Psi_P⟩ (Pneuma gradient)"
 
     @staticmethod
     def get_fermion_chirality():

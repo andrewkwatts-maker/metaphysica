@@ -303,7 +303,7 @@ class PneumaMechanismV16(SimulationBase):
             "pneuma.coupling": float(coupling),
             "pneuma.flow_parameter": float(flow_parameter),
             # Published because pneuma.flow_parameter and
-            # pneuma.lagrangian_valid are both defined in terms of V''(<Psi>)
+            # pneuma.lagrangian_valid are both defined in terms of V''(⟨Psi⟩)
             # and it was in no registry, so neither eml_description could
             # resolve its own principal operand.
             "pneuma.potential_second_derivative_vev": float(
@@ -413,7 +413,7 @@ class PneumaMechanismV16(SimulationBase):
         """
         Compute Pneuma VEV from analytic minimum.
 
-        <Psi_P> = (1/(b-a)) * ln(B*b / (A*a))
+        ⟨Psi_P⟩ = (1/(b-a)) * ln(B*b / (A*a))
         """
         if self.a is None or self.b is None:
             raise ValueError("Racetrack coefficients not initialized")
@@ -424,7 +424,7 @@ class PneumaMechanismV16(SimulationBase):
         """
         Compute flow parameter governing field dynamics.
 
-        Lambda = sqrt(2 * V''(<Psi>)) (characteristic frequency)
+        Lambda = sqrt(2 * V''(⟨Psi⟩)) (characteristic frequency)
         """
         vev = self._compute_vev()
         d2V = self._potential_second_derivative(vev)
@@ -439,7 +439,7 @@ class PneumaMechanismV16(SimulationBase):
         Validate Lagrangian via stability check.
 
         Lagrangian is valid if:
-        1. V''(<Psi>) > 0 (stable minimum)
+        1. V''(⟨Psi⟩) > 0 (stable minimum)
         2. VEV is finite and positive
         """
         if not np.isfinite(vev) or vev <= 0:
@@ -1330,7 +1330,7 @@ class PneumaMechanismV16(SimulationBase):
                         "Write Euler-Lagrange equation from Pneuma Lagrangian: d^2 Psi/dt^2 + 3H dPsi/dt + dV/dPsi = 0",
                         "Apply slow-roll approximation: drop d^2 Psi/dt^2 to get 3H dPsi/dt approx -dV/dPsi",
                         "Rewrite as gradient flow: dPsi/dt = -lambda * dV/dPsi with effective damping lambda",
-                        "Compute flow parameter from curvature at VEV: lambda = sqrt(2 * V''(<Psi_P>)) characterizing oscillation frequency"
+                        "Compute flow parameter from curvature at VEV: lambda = sqrt(2 * V''(⟨Psi_P⟩)) characterizing oscillation frequency"
                     ],
                     "assumptions": [
                         "Overdamped regime (slow-roll)",
@@ -1547,7 +1547,7 @@ class PneumaMechanismV16(SimulationBase):
                 description=(
                     "CALIBRATED at the off-path seed (racetrack a = 2pi/24, b = 2pi/23; "
                     "no gaugino racetrack exists on Y_7: CG.5, CG.10). "
-                    "V''(<Psi>), the second derivative of the racetrack potential "
+                    "V''(⟨Psi⟩), the second derivative of the racetrack potential "
                     "evaluated at the Pneuma VEV; sets both the flow parameter and "
                     "the vacuum stability flag"
                 ),
@@ -1573,7 +1573,7 @@ class PneumaMechanismV16(SimulationBase):
                     "eml_scalar(24.0)), eml_vec('pneuma.vev'))))))), ops.mul(eml_scalar(1.03), "
                     "ops.mul(ops.pow(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_scalar(23.0)), "
                     "eml_scalar(3.0)), ops.exp(ops.neg(ops.mul(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), "
-                    "eml_scalar(23.0)), eml_vec('pneuma.vev')))))))))) — V''(<Psi>) = 2 (W'')^2 + 2 W' W''' "
+                    "eml_scalar(23.0)), eml_vec('pneuma.vev')))))))))) — V''(⟨Psi⟩) = 2 (W'')^2 + 2 W' W''' "
                     "at the racetrack VEV, with A=1.0, B=1.03, a=2pi/24, b=2pi/23 (calibrated at the off-path seed)"
                 ),
             ),
@@ -1588,7 +1588,7 @@ class PneumaMechanismV16(SimulationBase):
                 eml_description=(
                     "EML: ops.sqrt(ops.mul(eml_scalar(2.0), "
                     "eml_vec('pneuma.potential_second_derivative_vev'))) — "
-                    "sqrt(2 V''(<Psi>)) from curvature at racetrack minimum"
+                    "sqrt(2 V''(⟨Psi⟩)) from curvature at racetrack minimum"
                 ),
             ),
             Parameter(

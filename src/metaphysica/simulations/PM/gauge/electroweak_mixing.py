@@ -138,7 +138,7 @@ class ElectroweakMixing:
         return {
             'higgs_doublet': 'Phi = (phi^+, phi^0)^T with Y = +1/2',
             'covariant_D': 'D_mu Phi = (partial_mu - i g_2 tau^a/2 W^a_mu - i g\' Y/2 B_mu) Phi',
-            'vev': f'<Phi> = (0, v/sqrt(2))^T with v = {self.v_higgs} GeV',
+            'vev': f'⟨Phi⟩ = (0, v/sqrt(2))^T with v = {self.v_higgs} GeV',
             'symmetry_breaking': 'SU(2)_L x U(1)_Y -> U(1)_EM'
         }
 
@@ -715,8 +715,8 @@ class ElectroweakMixingSimulation(SimulationBase):
                 derivation={
                     "steps": [
                         "Start from the SU(2)_L x U(1)_Y covariant derivative acting on the Higgs doublet: D_mu Phi = (partial_mu - i g_2 tau^a/2 W^a_mu - i g' Y/2 B_mu) Phi.",
-                        "Insert the Higgs VEV <Phi> = (0, v/sqrt(2))^T with v = 246.37 GeV (geometric prediction from k_gimel * (b3 - 4)).",
-                        "Expand |D_mu <Phi>|^2 and collect bilinear gauge boson terms in the (W^3, B) basis to form the 2x2 mass matrix M^2 = (v^2/4) [[g2^2, -g2 g'], [-g2 g', g'^2]].",
+                        "Insert the Higgs VEV ⟨Phi⟩ = (0, v/sqrt(2))^T with v = 246.37 GeV (geometric prediction from k_gimel * (b3 - 4)).",
+                        "Expand |D_mu ⟨Phi⟩|^2 and collect bilinear gauge boson terms in the (W^3, B) basis to form the 2x2 mass matrix M^2 = (v^2/4) [[g2^2, -g2 g'], [-g2 g', g'^2]].",
                         "Verify det(M^2) = 0, ensuring one zero eigenvalue (massless photon).",
                         "Compute the nonzero eigenvalue: m_Z^2 = (v^2/4)(g_2^2 + g'^2).",
                     ],

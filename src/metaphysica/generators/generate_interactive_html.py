@@ -80,7 +80,7 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
         return None
 
     # Use plain_text as base, or convert LaTeX. Plain text is text: escape it,
-    # or '<W(C)>' and '<x, y>' are parsed as tags and vanish from the page.
+    # or angle-bracket pairs (a Wilson loop, a pairing) parse as tags and vanish.
     base_html = escape_html(plain_text) if plain_text else latex_to_html(latex)
 
     # Map of symbols to their HTML wrappers

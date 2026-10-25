@@ -196,7 +196,7 @@ class E7RepresentationSimulation(SimulationBase):
                 id="e7-quartic-invariant",
                 label="(A3.2)",
                 latex=r"q(x,y) = \langle x,y \rangle_J^2 - 4\,N(x)\,N(y)",
-                plain_text="q(x,y) = <x,y>_J^2 - 4*N(x)*N(y)",
+                plain_text="q(x,y) = ⟨x,y⟩_J^2 - 4*N(x)*N(y)",
                 category="DERIVED",
                 description=(
                     "E₇ quartic invariant on the 56D representation. "

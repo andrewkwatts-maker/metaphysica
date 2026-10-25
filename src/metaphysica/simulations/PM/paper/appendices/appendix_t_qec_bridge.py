@@ -317,7 +317,7 @@ class AppendixTQECBridge(SimulationBase):
                 id="syndrome-extraction-formula",
                 label="(T.1)",
                 latex=r"s_i = \langle g_i | e \rangle = H_{ij}",
-                plain_text="s_i = <g_i | e> = H[i,j] for X-error on qubit j",
+                plain_text="s_i = ⟨g_i | e⟩ = H[i,j] for X-error on qubit j",
                 category="DERIVED",
                 description=(
                     "Syndrome extraction for CSS code. The syndrome of a single-qubit "
