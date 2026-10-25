@@ -84,6 +84,7 @@ from metaphysica.simulations.core.eml_integration import (
     eml_sqrt as _eml_sqrt,
     b3_leaf as _b3_leaf,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 @dataclass
@@ -926,7 +927,7 @@ class DarkMatterPortalsV23(SimulationBase):
             content_blocks=[
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The TCS G₂ manifold #187 admits four geometric faces per shadow, "
                         "with Face 1 hosting the visible (Standard Model) sector and Faces "
                         "2, 3, 4 hosting distinct shadow sectors. The inter-face coupling "

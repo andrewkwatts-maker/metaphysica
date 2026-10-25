@@ -322,8 +322,8 @@ except ImportError:
 
 # Import v16 simulations
 # Phase 0 - Abstract and Introduction (narrative only, no dependencies)
-from metaphysica.simulations.PM.paper.introduction import IntroductionV16
-from metaphysica.simulations.PM.paper.abstract import AbstractV17_2
+from metaphysica.simulations.PM.paper.introduction import IntroductionV16, IntroductionExtendedV16
+from metaphysica.simulations.PM.paper.abstract import AbstractV17_2, AbstractExtendedV17_2
 
 # Phase 1 - Root simulations (no dependencies)
 from metaphysica.simulations.PM.geometry.g2_geometry import G2GeometryV16
@@ -1278,7 +1278,9 @@ class SimulationRunner:
         self.phases = {
             0: [
                 AbstractV17_2(),  # Section 0: Abstract
+                AbstractExtendedV17_2(),  # D-025: old layered abstract, supplementary
                 IntroductionV16(),
+                IntroductionExtendedV16(),  # D-025: old introduction, supplementary
             ],
             1: [
                 # v16.2: GeometricAnchors FIRST - provides fundamental constants for all other simulations

@@ -56,6 +56,7 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 class SterileConstantRegistry:
@@ -589,7 +590,7 @@ class AppendixKSterileConstants(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "The dark energy equation of state is derived directly from the Betti number b₃ = 24 "
                     "of the G₂ manifold. This explains why dark energy shows 'thawing' behavior."
                 )

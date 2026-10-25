@@ -285,7 +285,12 @@ def generate_statistics() -> Dict[str, Any]:
         all_sigma_deviations.extend(param_sigmas)
         print(f"  - Fallback: {len(param_sigmas)} sigma deviations from parameters.json")
 
-    # Compute main validation statistics
+    # Compute main validation statistics. No sigma set means an upstream
+    # step (simulations, parameters.json) failed: say so, not KeyError.
+    if not all_sigma_deviations:
+        raise RuntimeError(
+            "no sigma deviations found (parameters.json or gate certificates "
+            "missing or empty); an earlier build step failed")
     validation_stats = compute_statistics(all_sigma_deviations)
 
     # Count gate statuses

@@ -59,6 +59,7 @@ from metaphysica.simulations.base.simulation_base import (
     Formula,
     Parameter,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 # ------------------------------------------------------------------
 # SSOT: read the vetted PDG/CODATA JSONs through the shared loader;
@@ -1574,7 +1575,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "Specifically, the Laplace-Beltrami operator Δ<sub>V₇</sub> on the G₂ "
                         "holonomy manifold V₇ (TCS #187, b₃ = 24, χ = 144) has a discrete "
                         "spectrum of non-negative eigenvalues λ₁ ≤ λ₂ ≤ λ₃ ≤ ··· determined "
@@ -1587,7 +1588,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "This is not merely an analogy. The mathematical framework is precise: "
                         "the eigenvalue equation on the compact Riemannian manifold V₇ with the "
                         "G₂-holonomy metric g<sub>ab</sub> is an elliptic self-adjoint operator, "

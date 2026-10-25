@@ -172,3 +172,16 @@ def test_theory_uncertainty_policy_is_still_open():
     """A fork with no derivation behind it must not drift to RULED."""
     fork = variants.FORKS["theory_uncertainty_policy"]
     assert fork.status == "OPEN"
+
+
+def test_a_path_run_is_not_reported_as_drift(monkeypatch):
+    """FOUND 2026-10-25: on a path run the overridden source disagreed with
+    the declared default, so 'Report executable forks' exited 1 and halted
+    7 path builds. An override run marks sources not_checked instead."""
+    monkeypatch.setenv(variants._ENV_PREFIX + "METRIC_CONSTRUCTION",
+                       "hitchin_cubic")
+    forks = variants.describe()["forks"]
+    assert all(e["drift"] is None for e in forks.values())
+    entry = forks["metric_construction"]
+    assert entry["selected"] == "hitchin_cubic"
+    assert entry["source_read"].startswith("not_checked")

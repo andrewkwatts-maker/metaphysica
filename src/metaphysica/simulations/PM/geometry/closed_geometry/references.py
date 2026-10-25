@@ -45,7 +45,7 @@ REF_ACHARYA_1999 = "acharya1999"
 REF_LUKAS_MORRIS = "lukas_morris2004"
 REF_ADV_2005 = "acharya_denef_valandro2005"
 REF_ACHARYA_1996 = "acharya1996"
-REF_BRYANT_1987 = "bryant1987"
+REF_BRYANT_1987 = "bryant-1987"  # the id the appendices already use
 REF_EGUCHI_HANSON_1978 = "eguchi_hanson1978"
 REF_WANG_1989 = "wang1989"
 

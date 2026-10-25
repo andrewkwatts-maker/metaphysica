@@ -72,3 +72,12 @@ class TestJsonLoading:
     def test_data_empty_before_load(self, guard):
         """Data dict is empty before any JSON is loaded."""
         assert guard.data == {}
+
+
+def test_w0_seal_follows_the_dark_energy_mechanism(monkeypatch):
+    """FOUND 2026-10-25: the seal hard-coded -23/24, so the mep_11_13 path
+    (w0 = -11/13) was blocked as 'non-sterile' and never computed."""
+    monkeypatch.setenv("METAPHYSICA_VARIANT_DARK_ENERGY_MECHANISM", "mep_11_13")
+    g = DemonLockGuard(registry=get_registry())
+    assert abs(g.registry.w0_dark_energy - (-11.0 / 13.0)) < 1e-12
+    assert g.verify_w0_seal(), g.violations

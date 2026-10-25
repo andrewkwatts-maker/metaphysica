@@ -2271,13 +2271,21 @@ def describe() -> Dict[str, Any]:
         "env_prefix": _ENV_PREFIX,
         "forks": {},
     }
+    # A path run overrides a fork, and the sources follow it (and any fork
+    # coupled to it), so source != declaration there is the path, not drift.
+    # FOUND 2026-10-25: that halted 7 path builds. Drift is checked on a run
+    # with no overrides only.
+    overridden = sorted(f for f in FORKS
+                        if os.environ.get(_ENV_PREFIX + f.upper()))
     for fid, fork in FORKS.items():
         drift = None
         # "could not measure" is NOT "no drift", and it is not drift either.
         # Kept as its own field so a reader of the artifact can tell a fork
         # that was checked from one that could not be.
         source_read = "not_checkable" if fork.read_adopted is None else "live"
-        if fork.read_adopted is not None:
+        if fork.read_adopted is not None and overridden:
+            source_read = "not_checked: path run overrides %s" % overridden
+        elif fork.read_adopted is not None:
             try:
                 live = fork.read_adopted()
                 if live != fork.default():

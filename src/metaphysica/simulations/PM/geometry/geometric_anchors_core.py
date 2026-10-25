@@ -316,8 +316,12 @@ class GeometricAnchors:
         DESI 2025 BAO-only: -0.957 ± 0.067 (consistent)
 
         Note: Old DESI DR2 Lambda-CDM value was -0.728.
+        Follows the dark_energy_mechanism fork (this value is aliased to
+        cosmology.w0_derived, so it must agree with the simulation).
         """
-        return -1.0 + 1.0/self.elder_kads  # -23/24 ≈ -0.9583
+        from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+        return ltr.w0_for_mechanism(
+            ltr.resolve_de_mechanism(), thawing=-1.0 + 1.0/self.elder_kads)
 
     @property
     def s8_viscosity_scale(self) -> float:

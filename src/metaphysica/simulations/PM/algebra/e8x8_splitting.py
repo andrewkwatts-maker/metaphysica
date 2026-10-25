@@ -35,6 +35,7 @@ from metaphysica.simulations.base import (
     ContentBlock,
     SectionContent,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 _ALPHA_LEAK = 1.0 / math.sqrt(6.0)
 
@@ -312,7 +313,7 @@ class E8xE8SplittingSimulation(SimulationBase):
             ContentBlock(type="heading", content="Heterotic E₈ × E₈: Visible and Hidden Sector Splitting", level=2),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "The heterotic string gauge group E₈ × E₈ splits into a visible sector "
                     "(Standard Model fields) and a hidden sector (dark matter portal and gaugino condensation). "
                     f"With b₃ = {int(b3)} associative 3-cycles, the embedding produces two E₈ factors "
@@ -330,7 +331,7 @@ class E8xE8SplittingSimulation(SimulationBase):
             ),
             ContentBlock(
                 type="paragraph",
-                content=(
+                content=superseded(
                     "<Normal>"
                     "The visible E₈ acts on the 26D Pneuma condensate Ψ₂₇ via its 240 root generators, "
                     "producing the SM gauge boson spectrum and Yukawa texture hierarchy. "

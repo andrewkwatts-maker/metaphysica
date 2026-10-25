@@ -210,5 +210,9 @@ def test_the_status_population_is_pinned_in_both_directions():
     # D-015 (2026-10-01): +1 fork (seed_selection: 1 active, 1 considered),
     # +1 option (chi_eff_route.k3_reading, active; `unruled` -> considered),
     # chi_eff_route.seed_dependent and re_t_adoption.computed_vacuum -> DISABLED.
-    assert measured == {ACTIVE: 19, CONSIDERED: 30, DISABLED: 5}, measured
-    assert len(FORKS) == 19
+    # D-022 (2026-10-25): recovered formula options made runnable, refuted
+    # ones DISABLED (spectral_index x2, h0 x2, mep_11_13, chi_over_24).
+    # D-023 (2026-10-25): +3 forks (g2_construction, metric_construction,
+    # joyce_contribution_table); seeds 7/19/31 DISABLED (n_gen != 3).
+    assert measured == {ACTIVE: 22, CONSIDERED: 31, DISABLED: 11}, measured
+    assert len(FORKS) == 22

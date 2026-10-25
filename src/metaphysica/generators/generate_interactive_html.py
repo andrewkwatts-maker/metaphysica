@@ -88,6 +88,7 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
 
     result_html = base_html
     replaced = set()
+    spans: Dict[str, str] = {}
 
     for symbol, term_data in sorted_terms:
         if symbol in replaced:
@@ -111,18 +112,33 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
 
         # Replace symbol in the formula (careful with boundaries)
         # Use word boundaries where possible
-        pattern = re.escape(symbol)
-        if re.search(pattern, result_html):
-            # Only replace first occurrence to avoid over-replacing
-            # Use a function replacement to avoid backslash issues
-            result_html = result_html.replace(symbol, interactive_span, 1)
+        # Only the first occurrence, only in text outside tags, and via a
+        # placeholder: substituting spans directly let a later symbol match
+        # inside markup an earlier one inserted ('n' in 'span').
+        token = chr(0xE000 + len(spans))
+        updated = _replace_first_in_text(result_html, symbol, token)
+        if updated is not None:
+            result_html = updated
+            spans[token] = interactive_span
             replaced.add(symbol)
 
     # If no replacements were made, return None
     if not replaced:
         return None
 
+    for token, span in spans.items():
+        result_html = result_html.replace(token, span)
     return result_html
+
+
+def _replace_first_in_text(html: str, symbol: str, token: str) -> Optional[str]:
+    """``html`` with the first ``symbol`` outside any tag replaced, or None."""
+    parts = re.split(r'(<[^>]*>)', html)
+    for i, part in enumerate(parts):
+        if not part.startswith('<') and symbol in part:
+            parts[i] = part.replace(symbol, token, 1)
+            return ''.join(parts)
+    return None
 
 
 def generate_master_action_html() -> str:

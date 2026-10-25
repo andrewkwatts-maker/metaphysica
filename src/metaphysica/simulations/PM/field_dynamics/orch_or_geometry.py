@@ -78,6 +78,7 @@ import numpy as np
 import sys
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
@@ -643,7 +644,7 @@ if SCHEMA_AVAILABLE:
                     ),
                     ContentBlock(
                         type="paragraph",
-                        content=(
+                        content=superseded(
                             "The bridge from abstract G2 topology to concrete biology operates through "
                             "three quantitative links. First, the G2 manifold's third Betti number "
                             "b3 = 24 sets the topological winding number of the compactified space, "

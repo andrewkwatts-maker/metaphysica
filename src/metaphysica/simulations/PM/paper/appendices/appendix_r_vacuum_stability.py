@@ -59,6 +59,7 @@ from metaphysica.simulations.base import (
     ReferenceEntry,
     FoundationEntry,
 )
+from metaphysica.simulations.PM.paper.superseded import superseded
 try:  # pragma: no cover - optional during early migration
     # Probed, not merely imported: a stub arithma imports cleanly and
     # binds Expression to None, which `except ImportError` cannot see.
@@ -666,7 +667,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 ContentBlock(
                     type="list",
                     items=[
-                        "<strong>G<sub>2</sub> portal coupling:</strong> The TCS G<sub>2</sub> manifold (#187) with b<sub>3</sub> = 24 provides moduli that couple to SM fields",
+                        superseded("<strong>G<sub>2</sub> portal coupling:</strong> The TCS G<sub>2</sub> manifold (#187) with b<sub>3</sub> = 24 provides moduli that couple to SM fields"),
                         "<strong>Threshold correction:</strong> At M<sub>GC</sub>, these moduli contribute +&Delta;&lambda; ~ 0.001 to the quartic coupling",
                         "<strong>High-scale stabilization:</strong> The corrected RG running keeps &lambda; &gt; 0 for all &mu; &lt; M<sub>P</sub>",
                         "<strong>Racetrack potential:</strong> The moduli themselves are stabilized by the racetrack superpotential",

@@ -104,6 +104,7 @@ from .su3_qcd_gauge import SU3QCDGauge
 from .su2_weak_gauge import SU2WeakGauge
 from .u1_hypercharge import U1Hypercharge
 from .electroweak_mixing import ElectroweakMixing
+from metaphysica.simulations.PM.paper.superseded import superseded
 
 
 # =============================================================================
@@ -1915,7 +1916,7 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The distributed OR reduction (bridge/global OR) splits the 26D(24,2) "
                         "bulk into two 13D(12,1) shadow domains. Each shadow inherits 12 spatial "
                         "dimensions (one from each bridge pair) plus 1 shared time dimension. "
@@ -2022,7 +2023,7 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
+                    content=superseded(
                         "The dark matter portal coupling emerges from the hidden face geometry "
                         "of the TCS G₂ manifold. Face OR (Layer 2) selects one face as visible, "
                         "leaving three hidden faces. The hidden face fields couple to visible "

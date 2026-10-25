@@ -499,8 +499,40 @@ class IntroductionV16(SimulationBase):
         return foundations
 
     def get_section_content(self) -> Optional[SectionContent]:
+        """Section 1 (D-025): the core introduction, 900 words or fewer.
+
+        Built from live state by `core_text`; the previous introduction is
+        `get_extended_section_content`, published as a supplementary section.
         """
-        Return section content for Section 1: Introduction.
+        from metaphysica.simulations.PM.paper.core_text import (
+            intro_blocks_html,
+        )
+
+        blocks = []
+        for n, (kind, body) in enumerate(intro_blocks_html()):
+            if kind == "list":
+                blocks.append(ContentBlock(
+                    type="list", content="", items=list(body),
+                    label="intro-core-%d" % n))
+            else:
+                blocks.append(ContentBlock(
+                    type="paragraph", content=body,
+                    label="intro-core-%d" % n))
+        return SectionContent(
+            section_id="1", subsection_id=None, title="Introduction",
+            abstract=_r(
+                "The problem, the one idea ({manifold}, {betti_pair}), the "
+                "chain of the argument, what is proved, calibrated and "
+                "failing, and how to read the paper."),
+            content_blocks=blocks, formula_refs=[],
+            param_refs=["D_bulk", "D_shadow", "D_bridge", "D_observable",
+                        "D_G2", "D_spin8", "wa_PM_effective", "w0_PM",
+                        "alpha_GUT_inv", "higgs_mass.m_h_GeV",
+                        "proton_lifetime.tau_p_years", "vev_pneuma.v_EW"])
+
+    def get_extended_section_content(self) -> Optional[SectionContent]:
+        """
+        Return the previous Section 1 content, unchanged (D-025).
 
         The history of unification (1.1, 1.2), then the model top down
         (1.3.1-1.3.6, in the provenance registry's order), then the two
@@ -1929,15 +1961,17 @@ class IntroductionV16(SimulationBase):
         section = self.get_section_content()
         blocks = section.content_blocks if section else []
         paragraph_blocks = [b for b in blocks if b.type == "paragraph"]
-        total_text = " ".join(b.content for b in paragraph_blocks)
+        blocks_text = " ".join(
+            b.content + " ".join(b.items or []) for b in blocks)
+        total_text = _re.sub(r"<[^>]+>", " ", blocks_text)
         word_count = len(total_text.split())
-        passed = word_count >= 500
+        passed = 150 <= word_count <= 900
 
         return [
             {
                 "gate_id": "G_INTRO_CONTENT_INTEGRITY",
                 "simulation_id": self.metadata.id,
-                "assertion": "Introduction section provides comprehensive framework overview with historical context (>=500 words)",
+                "assertion": "Introduction section provides comprehensive framework overview with historical context (150 to 900 words)",
                 "result": "PASS" if passed else "FAIL",
                 "timestamp": datetime.now().isoformat(),
                 "details": {
@@ -1949,6 +1983,50 @@ class IntroductionV16(SimulationBase):
                 }
             },
         ]
+
+
+class IntroductionExtendedV16(IntroductionV16):
+    """Extended introduction (supplementary): the pre-D-025 Section 1, kept.
+
+    Same text as before D-025, under its own id. It registers no formulas,
+    references, certificates or gates of its own; `IntroductionV16` does.
+    """
+
+    EXTENDED_ID = "extended-introduction"
+
+    @property
+    def metadata(self) -> SimulationMetadata:
+        base = super().metadata
+        return SimulationMetadata(
+            id="introduction_extended_v16_0", version=base.version,
+            domain="introduction",
+            title="Extended introduction (supplementary)",
+            description="The introduction as it stood before D-025, kept "
+                        "unchanged as a supplementary section",
+            section_id=self.EXTENDED_ID, subsection_id=None)
+
+    def get_section_content(self) -> Optional[SectionContent]:
+        import dataclasses
+
+        old = self.get_extended_section_content()
+        return dataclasses.replace(
+            old, section_id=self.EXTENDED_ID, subsection_id=None,
+            title="Extended introduction (supplementary)")
+
+    def get_formulas(self) -> List[Formula]:
+        return []
+
+    def get_references(self) -> List[Dict[str, str]]:
+        return []
+
+    def get_certificates(self) -> List[Dict[str, Any]]:
+        return []
+
+    def get_learning_materials(self) -> List[Dict[str, Any]]:
+        return []
+
+    def get_gate_checks(self) -> List[Dict[str, Any]]:
+        return []
 
 
 def main():
