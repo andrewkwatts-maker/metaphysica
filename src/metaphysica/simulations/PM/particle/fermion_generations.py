@@ -19,6 +19,9 @@ interchangeable, and the 2026-09-22 seed adoption separated them:
       T^7/(Z/2)^3 with Eguchi-Hanson resolutions, b_3 = 7 + 3 b_2. The 4 is
       the faces, derived as the moved coordinates of an involution. Three
       generations is the RANK of the diagonal stabiliser of phi.
+      STATUS: this is a counting rule (FORMULA), not an index. It awaits a
+      conical-point count (Acharya-Witten hep-th/0109152); it is not a
+      mechanism, and chirality on the active path is OPEN (D-011).
 
   (b) ABANDONED:
           n_gen = b_3 / dim(O) = b_3 / 8 = 24 / 8 = 3

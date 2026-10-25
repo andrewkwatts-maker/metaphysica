@@ -22,7 +22,7 @@ G2 Holonomy Structure:
 - Associative 3-form phi in Lambda^3(M_7)
 - Co-associative 4-form *phi in Lambda^4(M_7)
 - SU(3) singlet from associative cycles
-- SU(2) from co-associative cycles
+- SU(2) only at the unresolved orbifold point (A1 loci; OPEN on the smooth Y7, D-011)
 - U(1) from residual Abelian structure
 
 Gate System References:
@@ -87,7 +87,7 @@ _REG = get_registry()
 # PHYSICAL CONSTANTS AND GEOMETRIC PARAMETERS
 # =============================================================================
 
-# G2 Topology Constants (TCS #187) - from FormulasRegistry SSoT
+# G2 Topology Constants (retired TCS #187 seed, REFUSED in fork g2_construction) - from FormulasRegistry SSoT
 # b_3 and b_2 are READ from the live b3_seed fork. B2_G2 was the
 # literal 4 while the registry had already moved to the Joyce profile,
 # which is the stale-number defect this campaign closes.
@@ -211,7 +211,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
     This class implements comprehensive derivations for all SM gauge sectors
     emerging from G2 holonomy geometry:
 
-    A. SU(3)_C QCD from Associative 3-Cycles (A2 singularities)
+    A. SU(3)_C QCD from Associative 3-Cycles (A2 singularities (generic ADE rule only; Y7 has no A2 loci, OPEN D-011))
     B. SU(2)_L Weak from Co-associative 4-Cycles (A1 singularities)
     C. U(1)_Y Hypercharge from Residual Abelian Structure
     D. Electroweak Mixing via Weinberg Angle (shadow tilt)
@@ -234,7 +234,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         # Cycle volumes (normalized)
         self.vol_color_cycle = Decimal('1.0')     # SU(3) associative
-        self.vol_weak_cycle = Decimal('0.5')      # SU(2) co-associative
+        self.vol_weak_cycle = Decimal('0.5')      # SU(2) A1 loci (OPEN on smooth Y7, D-011)
         self.vol_hypercharge_cycle = Decimal('0.25')  # U(1) residual
 
     @property
@@ -248,7 +248,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             description=(
                 "Comprehensive derivations for SM gauge sectors (SU(3)_C, SU(2)_L, U(1)_Y) "
                 "and electroweak mixing from the internal G2-structure geometry. Shows how gauge "
-                "Lagrangians emerge from associative/co-associative cycle structure "
+                "Lagrangians emerge from cycle structure (generic picture; OPEN on the active Y7, D-011) "
                 "following Carroll's spin connection formalism."
             ),
             section_id="3",
@@ -327,9 +327,9 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         Mathematical Foundation:
         -----------------------
         G2 holonomy gives associative 3-form phi in Lambda^3(M_7).
-        The 3-cycles calibrated by phi host A2 (SU(3)) singularities.
+        The 3-cycles calibrated by phi host A2 (SU(3)) singularities (generic ADE rule only; Y7 has no A2 loci, OPEN D-011).
 
-        From A2 singularity resolution:
+        From A2 singularity resolution (generic ADE rule only; Y7 has no A2 loci, OPEN D-011):
         - SU(3) gauge symmetry emerges from M-theory membranes on 3-cycles
         - 8 gluons = dim(SU(3)) adjoint representation
         - Color charge = flux through 3-cycle
@@ -400,7 +400,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
     def derive_su2_weak_from_coassociative_cycles(self) -> SU2WeakDerivation:
         """
-        Derive SU(2)_L weak gauge Lagrangian from G2 co-associative 4-cycles.
+        Derive SU(2)_L weak gauge Lagrangian at A1 loci of the unresolved orbifold point (OPEN on the smooth Y7, D-011).
 
         Mathematical Foundation:
         -----------------------
@@ -773,11 +773,11 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         print("=" * 70)
 
         print("\n  SU(3)_C QCD:")
-        print(f"    - 8 gluons from A2 singularities on associative 3-cycles")
+        print(f"    - 8 gluons from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)")
         print(f"    - Confinement from b3 = 24 flux tube topology")
 
         print("\n  SU(2)_L Weak:")
-        print(f"    - 3 weak bosons from A1 singularities on co-associative 4-cycles")
+        print(f"    - 3 weak bosons from A1 singularities at the unresolved orbifold point (OPEN on the smooth Y7, D-011)")
         print(f"    - Left-handed chirality from CY3 Hodge structure")
 
         print("\n  U(1)_Y Hypercharge:")
@@ -838,7 +838,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             category="DERIVED",
             description=(
                 "SU(3)_C QCD Lagrangian derived from G2 associative 3-cycles. "
-                "8 gluons emerge from A2 singularity resolution; quarks in color triplet."
+                "8 gluons emerge from A2 singularity resolution (generic ADE rule only; Y7 has no A2 loci, OPEN D-011); quarks in color triplet."
             ),
             inputParams=["topology.elder_kads"],
             outputParams=["gauge.qcd_gluon_count", "gauge.qcd_alpha_s_mz"],
@@ -848,7 +848,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             derivation={
                 "method": "dimensional_reduction",
                 "steps": [
-                    "An A2 singularity resolved along an associative 3-cycle of the G2 manifold yields SU(3)_C gauge fields",
+                    "In the generic ADE rule an A2 singularity (absent on Y7; OPEN D-011) yields SU(3)_C gauge fields",
                     "The adjoint of SU(3) has 8 components, so 8 gluon fields G^a_mu appear",
                     "Reducing the bulk Yang-Mills action gives the canonical -1/4 G^a_mn G^{a mn} kinetic term",
                     "Quarks enter in the colour triplet, contributing sum_f qbar_f (i gamma^mu D_mu - m_f) q_f with D_mu the colour covariant derivative",
@@ -907,7 +907,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             category="DERIVED",
             description=(
                 "Number of gluons equals dimension of SU(3) adjoint representation. "
-                "Emerges from A2 singularity resolution on associative 3-cycles."
+                "Emerges from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)."
             ),
             inputParams=[],
             outputParams=["gauge.qcd_gluon_count"],
@@ -980,7 +980,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             ),
             category="DERIVED",
             description=(
-                "SU(2)_L weak gauge Lagrangian from G2 co-associative 4-cycles. "
+                "SU(2)_L weak gauge Lagrangian at A1 loci of the unresolved orbifold point (OPEN on the smooth Y7, D-011). "
                 "3 weak bosons emerge from A1 singularities; couples only to left-handed fermions."
             ),
             inputParams=[],
@@ -991,7 +991,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             derivation={
                 "method": "dimensional_reduction",
                 "steps": [
-                    "An A1 singularity on a co-associative 4-cycle yields SU(2)_L gauge fields",
+                    "An A1 locus of the unresolved orbifold point yields (OPEN on the smooth Y7, D-011) SU(2)_L gauge fields",
                     "The adjoint of SU(2) has 3 components, giving W^a_mu with a = 1, 2, 3",
                     "Reduction produces the -1/4 W^a_mn W^{a mn} kinetic term",
                     "The fermion term couples only the left-handed doublets psi_L, which is where parity violation enters",
@@ -1343,7 +1343,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="count",
             status="DERIVED",
             description="8 gluons from SU(3) adjoint: dim = 3^2 - 1 = 8",
-            eml_description="Gluon count N_gluon = 3^2 - 1 = 8 from dimension of SU(3) adjoint representation; derived from A2 singularity resolution on G2 associative 3-cycles",
+            eml_description="Gluon count N_gluon = 3^2 - 1 = 8 from dimension of SU(3) adjoint representation; derived from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)",
             derivation_formula="su3-gluon-count-v19",
             experimental_bound=8,
             bound_type="measured",
@@ -1373,7 +1373,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="string",
             status="GEOMETRIC",
             description="Associative 3-cycle with A2 singularity",
-            eml_description="Categorical label identifying QCD as emerging from A2 singularity resolution on G2 associative 3-cycles",
+            eml_description="Categorical label identifying QCD as emerging from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)",
             no_experimental_value=True
         ))
 
@@ -1384,7 +1384,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="count",
             status="DERIVED",
             description="3 weak bosons from SU(2) adjoint: dim = 2^2 - 1 = 3",
-            eml_description="Weak gauge boson count N_W = 2^2 - 1 = 3 (W+, W-, Z) from A1 singularity resolution on G2 co-associative 4-cycles",
+            eml_description="Weak gauge boson count N_W = 2^2 - 1 = 3 (W+, W-, Z) from A1 singularity resolution at the unresolved orbifold point (OPEN on the smooth Y7, D-011) 4-cycles",
             derivation_formula="su2-weak-lagrangian-g2-v19",
             experimental_bound=3,
             bound_type="measured",
@@ -1396,7 +1396,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             name="Weak Coupling g_2",
             units="dimensionless",
             status="DERIVED",
-            description="SU(2)_L coupling from co-associative 4-cycle volume",
+            description="SU(2)_L coupling from A1-locus geometry (OPEN on the smooth Y7, D-011)",
             # EML WITHHELD: g_2 = 0.6524 is a DECLARED constant, not a derived one:
             # electroweak_mixing.py sets it from 2*M_W/v and its own comment records
             # the mixed provenance -- M_W is PDG 2024 while v is this framework's
@@ -1416,7 +1416,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             units="string",
             status="GEOMETRIC",
             description="Co-associative 4-cycle with A1 singularity",
-            eml_description="Categorical label identifying SU(2)_L weak force as arising from A1 singularity resolution on G2 co-associative 4-cycles",
+            eml_description="Categorical label identifying SU(2)_L weak force as arising from A1 singularity resolution at the unresolved orbifold point (OPEN on the smooth Y7, D-011) 4-cycles",
             no_experimental_value=True
         ))
 
@@ -1517,8 +1517,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             title="Complete Gauge Sector Lagrangian Derivations from G2 Holonomy",
             abstract=(
                 "Comprehensive derivation of Standard Model gauge Lagrangians from "
-                "the internal G2-structure geometry. Shows how SU(3)_C emerges from associative 3-cycles, "
-                "SU(2)_L from co-associative 4-cycles, U(1)_Y from residual Abelian structure, "
+                "the internal G2-structure geometry. Shows how the smooth Y7 gives U(1)^12; SU(3)_C, SU(2)_L and chirality are OPEN (D-011), SU(2)^12 only at the unresolved orbifold point (A1 loci), "
                 "and electroweak mixing from shadow tilt."
             ),
             content_blocks=[
@@ -1548,7 +1547,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The strong force gauge group SU(3)_C arises from A2 singularities "
+                        "The strong force gauge group SU(3)_C arises, in the generic ADE rule, from A2 singularities (absent on Y7; OPEN D-011) "
                         "located on associative 3-cycles of the G2 manifold. The associative "
                         "3-form phi calibrates these cycles, and their resolution yields "
                         "precisely 8 massless gauge bosons - the gluons."
@@ -1583,7 +1582,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                     type="paragraph",
                     content=(
                         "The weak isospin gauge group SU(2)_L emerges from A1 singularities "
-                        "on co-associative 4-cycles calibrated by the Hodge dual *phi. "
+                        "at the unresolved orbifold point (OPEN on the smooth Y7, D-011) calibrated by the Hodge dual *phi. "
                         "The left-handed chirality of weak interactions is enforced by the "
                         "CY3 Hodge structure within the G2 decomposition."
                     )
@@ -1782,7 +1781,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                     content=(
                         "All Standard Model gauge structure emerges from the "
                         "internal G2-structure geometry:\n"
-                        "- SU(3)_C: 8 gluons from A2 singularities on 3-cycles\n"
+                        "- SU(3)_C: 8 gluons from A2 singularities on 3-cycles (generic ADE rule; OPEN on Y7, D-011)\n"
                         "- SU(2)_L: 3 weak bosons from A1 singularities on 4-cycles\n"
                         "- U(1)_Y: Y = 125/144 from visible/total ratio\n"
                         "- sin^2(theta_W) = 0.2312 from 12/24 shadow tilt\n"
@@ -1828,7 +1827,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         return [
             {
                 "id": "CERT_SU3_GLUON_COUNT",
-                "assertion": "SU(3)_C adjoint representation yields exactly 8 gluons from A2 singularities on G2 associative 3-cycles",
+                "assertion": "SU(3)_C adjoint representation yields exactly 8 gluons from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)",
                 "condition": "N_gluon == 8",
                 "tolerance": 0,
                 "status": "PASS",
@@ -1837,7 +1836,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             },
             {
                 "id": "CERT_SU2_WEAK_BOSONS",
-                "assertion": "SU(2)_L weak sector yields exactly 3 gauge bosons from A1 singularities on co-associative 4-cycles",
+                "assertion": "SU(2)_L weak sector yields exactly 3 gauge bosons from A1 singularities at the unresolved orbifold point (OPEN on the smooth Y7, D-011)",
                 "condition": "N_weak == 3",
                 "tolerance": 0,
                 "status": "PASS",
@@ -2074,14 +2073,14 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             {
                 "gate_id": "G11",
                 "simulation_id": self.metadata.id,
-                "assertion": "SU(3)_C color gauge emerges from A2 singularities on associative 3-cycles",
+                "assertion": "SU(3)_C color gauge emerges from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)",
                 "result": "PASS",
                 "timestamp": ts
             },
             {
                 "gate_id": "G12",
                 "simulation_id": self.metadata.id,
-                "assertion": "SU(2)_L weak isospin gauge emerges from A1 singularities on co-associative 4-cycles",
+                "assertion": "SU(2)_L weak isospin gauge emerges from A1 singularities at the unresolved orbifold point (OPEN on the smooth Y7, D-011)",
                 "result": "PASS",
                 "timestamp": ts
             },

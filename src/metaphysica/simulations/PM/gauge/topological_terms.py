@@ -436,7 +436,7 @@ def block_labelling_analysis(n_blocks: int = 3, g2=None) -> Dict[str, Any]:
 
     Two things previously taken as given therefore follow from the geometry:
 
-      n_faces = 4    was read off h^{1,1} = 4 of the TCS #187 building block,
+      n_faces = 4    was read off h^{1,1} = 4 of the retired TCS #187 building block,
                      which this repository already labels FITTED and
                      dependent on having picked that manifold. Four is now
                      the largest number of faces admitting a consistent block
@@ -528,7 +528,7 @@ def block_labelling_analysis(n_blocks: int = 3, g2=None) -> Dict[str, Any]:
             "If any set of 5 or more Fano points is simultaneously rainbow "
             "under a single global line-to-block labelling, then 4 is not "
             "forced and n_faces = 4 loses this support, falling back on "
-            "h^{1,1} = 4 of TCS #187 -- which the framework itself labels "
+            "h^{1,1} = 4 of the retired TCS #187 seed (REFUSED, fork g2_construction) -- which the framework itself labels "
             "FITTED. Equally, if any of the 28 line-containing 4-point sets "
             "admits a labelling, genericity returns to being a stated "
             "criterion rather than a consequence. Both are decided by "

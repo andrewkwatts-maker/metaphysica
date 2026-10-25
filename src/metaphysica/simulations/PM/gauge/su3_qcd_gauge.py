@@ -6,7 +6,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 Explicit derivation of SU(3)_C QCD gauge kinetic term from higher-D reduction
 over color cycle (G2 associative 3-cycle enhancement).
 
-In Principia Metaphysica: SU(3)_C from A2 singularities/associative cycles in TCS G2.
+In Principia Metaphysica: SU(3)_C is OPEN (D-011): Y7 has only A1 loci (no A2); the A2 picture below is a generic ADE illustration and a lead (D-028), not an active-path result. TCS is refused in fork g2_construction.
 Validation: Matches standard QCD gluon Lagrangian.
 """
 
@@ -98,7 +98,7 @@ class SU3QCDGauge:
     SU(3)_C QCD from G2 associative 3-cycle reduction.
 
     In Principia Metaphysica:
-    - SU(3)_C arises from associative 3-cycles with A2 (SU(3)) singularities
+    - OPEN (D-011): generic ADE rule only, A2 (SU(3)) loci are absent on Y7 (A1 loci only)
     - Gauge nodes 19-45 host color intersections
     - Strong coupling g_s locked by cycle volume spectral residue
     - alpha_s(M_Z) ~ 0.117 without tuning
@@ -190,7 +190,7 @@ class SU3QCDGauge:
             color_cycle_volume=self.color_cycle_volume,
             strong_coupling_source='G2 associative 3-cycle volume (spectral residue)',
             status='VALIDATED',
-            scientific_note='SU(3)_C QCD from G2 A2-singularity cycles; alpha_s ~ 0.117 locked'
+            scientific_note='SU(3)_C QCD from G2 A2-singularity cycles (generic ADE rule; Y7 has no A2, OPEN D-011); alpha_s ~ 0.117 locked'
         )
 
     def run_demonstration(self) -> Dict[str, Any]:
@@ -267,7 +267,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
             title="SU(3)_C QCD from G2 Geometry",
             description=(
                 "Derives SU(3)_C QCD gluon kinetic term and quark coupling from "
-                "G2 A2-singularity associative 3-cycles. Produces 8 gluon fields "
+                "G2 A2-singularity associative 3-cycles (generic ADE rule; Y7 has no A2, OPEN D-011). Produces 8 gluon fields "
                 "with alpha_s(M_Z) ~ 0.117 locked by cycle volume spectral residue."
             ),
             section_id="3",
@@ -585,7 +585,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
                 output_params=["gauge.su3_color_cycle_volume"],
                 derivation={
                     "steps": [
-                        "Perform KK reduction of higher-D Einstein-Hilbert over the associative 3-cycle with A2 singularity.",
+                        "Perform KK reduction of higher-D Einstein-Hilbert over the associative 3-cycle with A2 singularity (generic ADE rule; Y7 has no A2, OPEN D-011).",
                         "The internal cycle volume r_C is the largest gauge cycle, explaining the strongest coupling.",
                         "Extract kinetic term: L = -(r_C/4) Tr(G_mn G^mn) with canonical normalization for r_C = 1.",
                     ],
@@ -629,7 +629,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
                 output_params=["gauge.su3_alpha_s_predicted"],
                 derivation={
                     "steps": [
-                        "Quarks are fermion zero modes on the G2 manifold localized at A2 singularity loci.",
+                        "Quarks are fermion zero modes on the G2 manifold localized at A2 singularity loci (generic ADE rule; absent on Y7, OPEN D-011).",
                         "They carry color charge in the fundamental 3 representation of SU(3)_C.",
                         "The covariant derivative D_mu = d_mu - i g_s t^a G^a_mu couples quarks to gluons via Gell-Mann generators t^a = lambda^a/2.",
                     ],
@@ -711,7 +711,7 @@ class SU3QCDGaugeSimulation(SimulationBase):
             title="SU(3)_C QCD from G2 Associative 3-Cycle Geometry",
             abstract=(
                 "We derive the SU(3)_C QCD gluon kinetic term and quark-gluon coupling "
-                "from Kaluza-Klein reduction over A2-singularity associative 3-cycles on "
+                "from Kaluza-Klein reduction over A2-singularity associative 3-cycles (generic ADE rule; OPEN on Y7, D-011) on "
                 "the G2 manifold, with the strong coupling alpha_s locked by cycle volume."
             ),
             content_blocks=[
@@ -729,8 +729,8 @@ class SU3QCDGaugeSimulation(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "In the Principia Metaphysica framework, SU(3)_C arises from A2 "
-                        "singularities on associative 3-cycles of the G2 manifold. The color "
+                        "In the Principia Metaphysica framework, SU(3)_C is OPEN (D-011); in the generic ADE picture it would arise from A2 "
+                        "singularities, which Y7 does not have (A1 loci only). The color "
                         "cycle volume r_C is the largest among the gauge cycles, explaining why "
                         "the strong coupling g_s is the strongest Standard Model gauge coupling. "
                         "The predicted alpha_s(M_Z) ~ 0.1179 is locked by the spectral residue "

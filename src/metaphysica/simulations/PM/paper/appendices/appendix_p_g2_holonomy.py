@@ -620,7 +620,7 @@ class AppendixPG2Holonomy(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"SU(2)_L \leftarrow \text{coassociative 4-cycles with } \chi(\Sigma^4) = 2",
+                    content=r"SU(2)_L \leftarrow \text{coassociative 4-cycles with } \chi(\Sigma^4) = 2 \text{ (generic picture; OPEN on Y7, D-011)}",
                     formula_id="su2-from-4cycles-v19",
                     label="(P.14)"
                 ),
@@ -1074,8 +1074,8 @@ class AppendixPG2Holonomy(SimulationBase):
             Formula(
                 id="su2-from-4cycles-v19",
                 label="(P.14)",
-                latex=r"SU(2)_L \leftarrow \text{M5-branes wrapped on coassociative 4-cycles}",
-                plain_text="SU(2) weak from M5-branes on coassociative cycles",
+                latex=r"SU(2)_L \leftarrow \text{M5-branes wrapped on coassociative 4-cycles (generic picture; OPEN on Y7, D-011)}",
+                plain_text="generic M-theory picture of SU(2) weak from M5-branes on coassociative cycles; OPEN on the active Y7 (D-011)",
                 eml_tree_str="eml_vec('SU2_from_4cycles')",
                 category="DERIVED",
                 description="Origin of SU(2) weak from wrapped M5-branes",
