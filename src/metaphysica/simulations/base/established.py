@@ -566,7 +566,7 @@ class EstablishedPhysics:
                 units="dimensionless",
                 source="ESTABLISHED:G2_TORSION",
                 description="Torsion class parameter (calibrated at the retired TCS seed; not re-derived on Y7)",
-                eml_description="EML: eml_scalar(0.12) — torsion class parameter T_Ω from TCS G₂ construction (geometric input)"
+                eml_description="EML: eml_scalar(0.12) — torsion class parameter T_Ω (calibrated at the retired TCS seed; off-path, not re-derived on Y7)"
             ),
             EstablishedParameter(
                 path="topology.orientation_sum",

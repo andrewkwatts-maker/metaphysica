@@ -186,7 +186,7 @@ def generate_euler_characteristic_html() -> str:
 <span class="formula-op"> = </span>
 <span class="formula-var" data-term="2">2<span class="var-tooltip"><span class="var-name">2 - Prefactor</span><span class="var-description">Doubling from Poincare duality on 7-manifold</span></span></span>
 <span class="formula-op">(</span>
-<span class="formula-var" data-term="h11">h<sup>1,1</sup><span class="var-tooltip"><span class="var-name">h<sup>1,1</sup> - Kahler Moduli</span><span class="var-description">Kahler moduli count = 4 for TCS #187</span></span></span>
+<span class="formula-var" data-term="h11">h<sup>1,1</sup><span class="var-tooltip"><span class="var-name">h<sup>1,1</sup> - Kahler Moduli</span><span class="var-description">Kahler moduli count = 4 (retired TCS #187 seed; off-path, no published TCS list has this #187)</span></span></span>
 <span class="formula-op"> - </span>
 <span class="formula-var" data-term="h21">h<sup>2,1</sup><span class="var-tooltip"><span class="var-name">h<sup>2,1</sup> - Complex Structure</span><span class="var-description">Complex structure moduli = 0 (no complex structure on G2)</span></span></span>
 <span class="formula-op"> + </span>

@@ -2402,7 +2402,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "The TCS G2 manifold has h^{1,1} = 4 independent Kahler moduli T_1,...,T_4 (one per face of the twisted connected sum)",
+                    "On the off-path TCS reading (retired; Y7 is a Joyce orbifold resolution, (b2, b3) = (12, 43)), the TCS G2 manifold has h^{1,1} = 4 independent Kahler moduli T_1,...,T_4 (one per face of the twisted connected sum)",
                     "Non-perturbative effects from wrapped M2-branes on associative 3-cycles generate exponential superpotential contributions W_i = Lambda_i exp(-a_i T_i)",
                     "The racetrack stabilisation scale is a_i = b_3/i = 24/i, encoding the geometric scaling of wrapping numbers from the third Betti number",
                     "The N=1 supergravity F-term scalar potential V = e^K (sum_i |D_{T_i} W|^2 - 3|W|^2) with Kahler potential K = -2 ln(Vol_7) yields the racetrack form",
@@ -2852,7 +2852,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "The TCS G2 manifold has 4 independent Kahler moduli "
+                    "On the off-path TCS reading (retired; Y7 is a Joyce orbifold resolution, (b2, b3) = (12, 43)), the TCS G2 manifold has 4 independent Kahler moduli "
                     "T_1,...,T_4, one per face of the twisted connected sum, "
                     "controlling the volumes of the 4 independent 2-cycles",
                     "Non-perturbative M2-brane instantons wrapping associative "

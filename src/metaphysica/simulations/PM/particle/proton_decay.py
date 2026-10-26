@@ -590,7 +590,7 @@ class ProtonDecaySimulation(SimulationBase):
                 eml_tree_str="ops.exp(ops.inv(K_matching))",
                 eml_description="EML: S = exp(1/K) — TCS (retired reading) cycle separation suppression as ops.exp(ops.inv(K_matching))",
                 description=(
-                    "Geometric suppression factor from TCS neck topology. In the "
+                    "Geometric suppression factor from the retired TCS neck topology (off-path reading; Y7 is a Joyce orbifold resolution). In the "
                     "twisted connected sum G2 construction, two asymptotically "
                     "cylindrical Calabi-Yau threefolds (each fibered by K3 surfaces) "
                     "are glued along a common neck region S^1 x K3. Matter fields "
@@ -620,7 +620,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "parentFormulas": ["tcs-matching-condition"],
                     "method": "Wavefunction overlap integral across TCS (retired reading) neck",
                     "steps": [
-                        "TCS G2 construction glues two ACyl CY3 blocks along S^1 x K3 neck",
+                        "On the off-path TCS reading (retired; Y7 is a Joyce orbifold resolution), the TCS G2 construction glues two ACyl CY3 blocks along S^1 x K3 neck",
                         "Matter fields (quarks, leptons) localize on associative 3-cycles in block A via chiral zero modes of Dirac operator",
                         "Higgs doublet localizes on coassociative 4-cycles in block B, topologically distinct from matter sector",
                         "K3 fibre matching condition with K fibres constrains the neck gluing map",
@@ -636,7 +636,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "S": "Geometric suppression factor (ratio of suppressed to unsuppressed decay rate)",
                     "d": "Cycle separation distance across the TCS (retired reading) neck region",
                     "R": "Characteristic radius of the G2 manifold cross-section",
-                    "K": "K3 fibre matching number (K=4 for TCS G2 #187)",
+                    "K": "K3 fibre matching number (K=4 at the retired TCS seed; off-path, not re-derived on Y7)",
                     "psi_matter": "Zero-mode wavefunction localized on associative matter 3-cycle",
                     "psi_Higgs": "Zero-mode wavefunction localized on coassociative Higgs 4-cycle",
                 },
