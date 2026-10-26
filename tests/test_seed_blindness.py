@@ -26,7 +26,15 @@ from metaphysica.simulations.core.seed_blindness import (
 #: MEASURED 2026-09-22: 786 rows compared, 135 FROZEN_CLAIM. A ceiling, not
 #: a target -- many FROZEN_CLAIMs are correct (geometry.D_bulk and the other
 #: disentangled bulk-24s are SUPPOSED to stay put). It may fall, never rise.
-_FROZEN_CEILING = 135
+#:
+#: MOVED 2026-10-26 to 137, every change read. In: ckm.delta_cp,
+#: algebra.gaugino_cabibbo_refined, cosmology.breathing_mode_vev,
+#: cosmology.epsilon_KK -- constants whose descriptions now SAY they were
+#: calibrated at the off-path seed b_3 = 24 or that TCS excludes the adopted
+#: b_3 (C4 labelling, 0b429d4 and later). Naming the seed is what the token
+#: match counts; the values are rightly frozen. Out: topology.modular_weight,
+#: yukawa.n_generations.
+_FROZEN_CEILING = 137
 
 
 def test_the_classifier_separates_the_three_cases():
