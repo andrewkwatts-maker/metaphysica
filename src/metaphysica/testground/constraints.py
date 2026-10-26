@@ -13,15 +13,17 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import FrozenSet, List, Mapping, Sequence, Tuple, Union
+from typing import Dict, FrozenSet, List, Mapping, Sequence, Tuple, Union
 
-__all__ = ["Requires", "Excludes", "Constraint", "violations", "is_valid"]
+__all__ = ["Requires", "Excludes", "Constraint", "violations", "is_valid",
+           "constraints_from_options"]
 
 
 @dataclass(frozen=True)
 class Requires:
     """Choosing ``(fork, option)`` requires ``needs_fork`` to be one of
-    ``needs_options``."""
+    ``needs_options``. Judged only when ``needs_fork`` is in the selection, so
+    a partial selection is never refused for what it does not say."""
 
     fork: str
     option: str
@@ -32,7 +34,8 @@ class Requires:
 
     def violated_by(self, selection: Mapping[str, str]) -> bool:
         return (selection.get(self.fork) == self.option
-                and selection.get(self.needs_fork) not in self.needs_options)
+                and self.needs_fork in selection
+                and selection[self.needs_fork] not in self.needs_options)
 
     def describe(self) -> str:
         return "%s=%s requires %s in {%s}" % (
@@ -73,3 +76,29 @@ def violations(selection: Mapping[str, str],
 def is_valid(selection: Mapping[str, str],
              constraints: Sequence[Constraint]) -> bool:
     return not any(c.violated_by(selection) for c in constraints)
+
+
+def constraints_from_options(forks) -> List[Constraint]:
+    """The constraints that options declare on themselves (``requires`` and
+    ``excludes``), as ``Requires`` and ``Excludes`` in declaration order.
+
+    ``requires`` entries naming the same fork are one ``Requires`` (the listed
+    options are OR'd); every ``excludes`` entry is one ``Excludes``. *forks* is
+    a mapping of fork id to ``Fork`` or an iterable of ``Fork``.
+    """
+    items = forks.values() if isinstance(forks, Mapping) else forks
+    out: List[Constraint] = []
+    for fork in items:
+        for opt in fork.options:
+            rationale = "declared on %s.%s" % (fork.id, opt.id)
+            needs: Dict[str, List[str]] = {}
+            for need_fork, need_opt in opt.requires:
+                needs.setdefault(need_fork, []).append(need_opt)
+            for need_fork, need_opts in needs.items():
+                out.append(Requires(fork.id, opt.id, need_fork,
+                                    frozenset(need_opts), rationale,
+                                    fork.source))
+            for other_fork, other_opt in opt.excludes:
+                out.append(Excludes(fork.id, opt.id, other_fork, other_opt,
+                                    rationale, fork.source))
+    return out

@@ -22,7 +22,8 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from metaphysica.simulations.core import variants
 from metaphysica.testground.configurations.model import ACTIVE, Configuration
-from metaphysica.testground.constraints import Constraint
+from metaphysica.testground.constraints import (Constraint,
+                                                constraints_from_options)
 from metaphysica.testground.graph.lineage_graph import merge_declared
 from metaphysica.testground.lineage.load import load_lineage
 from metaphysica.testground.signals.model import (ARTIFACT, FULL,
@@ -40,33 +41,9 @@ ENV_DECISION_LOG = "METAPHYSICA_DECISION_LOG"
 _REPORT = "validation_report.json"
 
 
-def _convert_option(o: Any) -> sw.VariantOption:
-    return sw.VariantOption(
-        id=o.id, summary=o.summary, consequence=o.consequence,
-        adopted=o.adopted, priority=o.priority, status=o.status,
-        certainty=getattr(o, "certainty", None),
-        implemented=True,
-        adds_discrete_input=getattr(o, "adds_discrete_input", False),
-        restored_from=getattr(o, "restored_from", "") or "",
-        kill_condition=getattr(o, "kill_condition", "") or "",
-        decision_refs=tuple(getattr(o, "decision_refs", ()) or ()))
-
-
-def _convert_fork(f: Any) -> sw.Fork:
-    kwargs: Dict[str, Any] = {}
-    for name in ("kind", "stage", "binding", "legacy_option"):
-        if getattr(f, name, None) is not None:
-            kwargs[name] = getattr(f, name)
-    kwargs["consumers"] = tuple(getattr(f, "consumers", ()) or ())
-    return sw.Fork(id=f.id, question=f.question, source=f.source,
-                   options=[_convert_option(o) for o in f.options],
-                   status=f.status, read_adopted=f.read_adopted,
-                   notes=f.notes, **kwargs)
-
-
 def pm_forks(lineage_path: Path = LINEAGE_PATH) -> Dict[str, sw.Fork]:
     """Engine forks (implemented) plus the catalogue's declared-only ones."""
-    engine = {fid: _convert_fork(f) for fid, f in variants.FORKS.items()}
+    engine = dict(variants.FORKS)
     lineage = load_lineage(lineage_path, engine)
     return merge_declared(engine, lineage)
 
@@ -81,7 +58,7 @@ class PmSwitches:
         return self._forks
 
     def constraints(self) -> Sequence[Constraint]:
-        return ()
+        return constraints_from_options(self._forks)
 
 
 class PmSelections:

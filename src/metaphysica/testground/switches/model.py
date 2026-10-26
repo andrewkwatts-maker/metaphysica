@@ -1,7 +1,7 @@
 """Switches: forks and their options -- the theory-agnostic model.
 
-Moved here from `simulations/core/variants.py` (which re-exports these names, so
-no import anywhere changes). The status vocabulary and the reconciliation
+The only `VariantOption`/`Fork` in the codebase: `simulations/core/variants`
+re-exports these names, so no import anywhere changes. The status vocabulary and the reconciliation
 rules are unchanged; the new fields at the end of each class are optional and
 default to the behaviour the registry already had, so every existing
 declaration stays valid.
@@ -103,6 +103,13 @@ class VariantOption:
     kill_condition: str = ""
     #: Decision ids that ruled on this option, e.g. ("D-015",).
     decision_refs: Tuple[str, ...] = ()
+    #: Declared compatibility, each a tuple of (fork, option).
+    #: ``requires``: for every fork named, the selection must pick one of the
+    #: listed options. ``excludes``: it must pick none of them. Only
+    #: constraints the code or docs already state; each cites its source.
+    #: `constraints.constraints_from_options` turns them into Constraints.
+    requires: Tuple[Tuple[str, str], ...] = ()
+    excludes: Tuple[Tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         """Derive the unset fields, then refuse an inconsistent declaration."""

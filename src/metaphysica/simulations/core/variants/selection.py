@@ -14,6 +14,13 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from metaphysica.testground.constraints import (
+    Constraint,
+    Excludes,
+    Requires,
+    constraints_from_options,
+)
+
 from .catalogue import FORKS
 from .model import DISABLED, _ENV_PREFIX, _SELECTION_ENV, Fork
 
@@ -39,25 +46,42 @@ def validate_constraints(forks: Dict[str, Fork]) -> None:
 
 
 
+def _declared_constraints(forks: Dict[str, Fork]) -> Dict[Any, List[Constraint]]:
+    """The options' own requires/excludes as testground Constraints, keyed by
+    the (fork, option) that declares them, in declaration order."""
+    by_option: Dict[Any, List[Constraint]] = {}
+    for c in constraints_from_options(forks):
+        by_option.setdefault((c.fork, c.option) if isinstance(c, Requires)
+                             else (c.fork_a, c.option_a), []).append(c)
+    return by_option
+
+
+_CONSTRAINTS = _declared_constraints(FORKS)
+
+
+def _describe_violation(c: Constraint, sel: Dict[str, str]) -> str:
+    """The long-standing wording: declaration order of the listed options."""
+    if isinstance(c, Excludes):
+        return f"{c.fork_a}={c.option_a} excludes {c.fork_b}={c.option_b}"
+    opt = FORKS[c.fork].option(c.option)
+    ros = [ro for rf, ro in opt.requires if rf == c.needs_fork]
+    return (f"{c.fork}={c.option} requires {c.needs_fork} in {ros}, "
+            f"got {sel[c.needs_fork]}")
+
+
 def violations(sel: Dict[str, str]) -> List[str]:
     """Declared constraints *sel* breaks, as readable strings.
 
     *sel* may be partial: a constraint is judged only when the fork it names
     is also in *sel*, so a partial selection is never refused for what it
-    does not say.
+    does not say. The judging is `testground.constraints`'.
     """
     out: List[str] = []
     for fid, oid in sel.items():
-        opt = FORKS[fid].option(oid)
-        req: Dict[str, List[str]] = {}
-        for rf, ro in opt.requires:
-            req.setdefault(rf, []).append(ro)
-        for rf, ros in req.items():
-            if rf in sel and sel[rf] not in ros:
-                out.append(f"{fid}={oid} requires {rf} in {ros}, got {sel[rf]}")
-        for rf, ro in opt.excludes:
-            if sel.get(rf) == ro:
-                out.append(f"{fid}={oid} excludes {rf}={ro}")
+        FORKS[fid].option(oid)
+        out += [_describe_violation(c, sel)
+                for c in _CONSTRAINTS.get((fid, oid), ())
+                if c.violated_by(sel)]
     return out
 
 
