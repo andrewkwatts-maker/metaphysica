@@ -5,7 +5,7 @@ Four-Face G2 Sub-Sector Structure v23.7 - SimulationBase Wrapper
 =================================================================
 
 This module implements the Four-Face G2 Sub-Sector Structure simulation,
-interpreting h^{1,1} = 4 of the TCS (retired reading) #187 BUILDING BLOCK as four independent
+interpreting h^{1,1} = 4 of the TCS #187 (retired reading) BUILDING BLOCK as four independent
 Kahler moduli ("geometric faces") per shadow in the dual-shadow architecture.
 
 CATEGORY-ERROR CORRECTION (2026-08-20 literature review). A G2-holonomy
@@ -34,19 +34,19 @@ Assertion Assessment (Sprint 2, WP 2.3)
   is one of 576, NOT unique by cross-E8 alone.
 - Gemini Verdict: "The standard grouping is one of many [576]. The cross-E8
   property alone does not select the standard grouping." On n_gen=3: "It
-  absolutely depends on selecting a manifold (TCS (retired reading) #187) that happens to yield
+  absolutely depends on selecting a manifold (TCS #187 (retired reading)) that happens to yield
   chi_eff=144 and h^{1,1}=4." On classification: "This construction should be
   unequivocally labeled DERIVED (framework-specific construction)." Gemini
-  confirmed h^{1,1}=4 is correct for TCS (retired reading) #187 but noted n_faces=h^{1,1} is
+  confirmed h^{1,1}=4 is correct for TCS #187 (retired reading) but noted n_faces=h^{1,1} is
   "not standard in the general G2 literature."
 - Classification: FITTED, but see the three amendments below (2026-09-02).
   The counts are now computed rather than asserted -- see
   enumerate_face_groupings / cross_e8_valid_groupings, which reproduce
   15400 = 12!/((3!)^4 4!) and 576 = (4!)^2 by enumeration.
-- Evidence: h^{1,1}=4 is a real Hodge number of the TCS (retired reading) #187 BUILDING BLOCK
+- Evidence: h^{1,1}=4 is a real Hodge number of the TCS #187 (retired reading) BUILDING BLOCK
   (not of the G2 manifold, which has none - see the correction above), but the face
   grouping {i,i+4,i+8} is one of 576 cross-E8-valid options (not unique).
-  The derivation n_gen=3=12/4 depends on selecting TCS (retired reading) #187 specifically
+  The derivation n_gen=3=12/4 depends on selecting TCS #187 (retired reading) specifically
   because it yields the desired generation count. The stride-4 convention
   is a labeling choice, not a mathematical necessity.
 
@@ -393,7 +393,7 @@ def grouping_orbit_report(n_bridges: int = 12,
     convention and nothing measurable depends on which is taken.
 
     This does NOT rescue the rest of the FITTED classification. h^{1,1} = 4
-    still comes from having selected TCS (retired reading) #187, and the cross-E8 property is
+    still comes from having selected TCS #187 (retired reading), and the cross-E8 property is
     still imposed rather than derived. What changes is only the "one of 576"
     part of the argument.
     """
@@ -429,7 +429,7 @@ def grouping_orbit_report(n_bridges: int = 12,
             "bridge's name is not an observable."
         ),
         "does_not_affect": (
-            "h^{1,1} = 4 still comes from selecting TCS (retired reading) #187, and the "
+            "h^{1,1} = 4 still comes from selecting TCS #187 (retired reading), and the "
             "cross-E8 property is still imposed rather than derived. Only "
             "the 'one of 576' step of the FITTED argument is answered."
         ),
@@ -515,7 +515,7 @@ class FourFaceG2Structure(SimulationBase):
             domain="geometric",
             title="Four-Face G2 Sub-Sector Structure",
             description=(
-                "Interprets the Hodge number h^{1,1} = 4 of TCS (retired reading) #187 as four "
+                "Interprets the Hodge number h^{1,1} = 4 of TCS #187 (retired reading) as four "
                 "independent Kahler moduli (geometric faces) per shadow. Derives "
                 "inter-face leakage coupling, racetrack-stabilized moduli VEVs, "
                 "and shadow asymmetry from pure G2 topology."
@@ -770,7 +770,7 @@ class FourFaceG2Structure(SimulationBase):
         were computed and discarded, and the return value depended only on
         len(bridge_moduli).
 
-        For the standard TCS (retired reading) #187 architecture with b3=24, chi_eff=144:
+        For the standard TCS #187 (retired reading) architecture with b3=24, chi_eff=144:
             alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6) ~ 0.4082
 
         The ratio chi_eff/b3 = 6 corresponds to the number of aligned
@@ -881,7 +881,7 @@ class FourFaceG2Structure(SimulationBase):
                 derivation={
                     "steps": [
                         "Start with effective Euler characteristic chi_eff = 144 and "
-                        "third Betti number b3 = 24 from TCS (retired reading) #187 G2 manifold topology",
+                        "third Betti number b3 = 24 from TCS #187 (retired reading) G2 manifold topology",
                         "The ratio chi_eff/b3 = 144/24 = 6 counts the average number "
                         "of associative cycles per Kahler modulus sector",
                         "Bridge pair decomposition: n_pairs = chi_eff/12 = 144/12 = 12 "
@@ -980,7 +980,7 @@ class FourFaceG2Structure(SimulationBase):
                         "The leading-order solution at the racetrack minimum yields "
                         "T_i = b3 * k_gimel / (i * pi), where k_gimel encodes the "
                         "G2 holonomy projection factor",
-                        "For TCS (retired reading) #187 with b3 = 24 and k_gimel = 12.31831: "
+                        "For TCS #187 (retired reading) with b3 = 24 and k_gimel = 12.31831: "
                         "T_1 = 94.1050, T_2 = 47.0525, T_3 = 31.3683, "
                         "T_4 = 23.5262. (This step previously read T_1 = 94.07, "
                         "which the stated formula does not give -- "
@@ -1726,7 +1726,7 @@ class FourFaceG2Structure(SimulationBase):
                 ),
                 derivation_formula=None,
                 no_experimental_value=True,
-                eml_description="EML: eml_scalar(4.0) — four Kähler moduli faces from TCS (retired reading) #187 h^{1,1}=4 construction",
+                eml_description="EML: eml_scalar(4.0) — four Kähler moduli faces from TCS #187 (retired reading) h^{1,1}=4 construction",
             ),
             Parameter(
                 path="geometry.alpha_leak",
@@ -2530,7 +2530,7 @@ class FourFaceG2Structure(SimulationBase):
                 "sigma": 0.0,
                 "test_description": (
                     "Verify that the number of geometric faces n_faces = h^{1,1} = 4 "
-                    "matches the TCS (retired reading) #187 Hodge number, ensuring topological consistency "
+                    "matches the TCS #187 (retired reading) Hodge number, ensuring topological consistency "
                     "of the four-face interpretation"
                 ),
                 "details": {
@@ -2557,7 +2557,7 @@ class FourFaceG2Structure(SimulationBase):
                 "topic": "G2 holonomy and Kahler moduli",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
                 "relevance": (
-                    "The h^{1,1} = 4 Hodge number of TCS (retired reading) #187 yields 4 independent "
+                    "The h^{1,1} = 4 Hodge number of TCS #187 (retired reading) yields 4 independent "
                     "Kahler moduli, interpreted as 4 geometric faces per shadow in "
                     "the PM dual-shadow architecture"
                 ),
@@ -2740,12 +2740,12 @@ class FourFaceG2Structure(SimulationBase):
                 "id": "proof_alpha_leak_derivation",
                 "theorem": "Inter-face leakage coupling from topological ratio",
                 "statement": (
-                    "For TCS (retired reading) #187 G2 manifold with chi_eff = 144, b3 = 24, and "
+                    "For TCS #187 (retired reading) G2 manifold with chi_eff = 144, b3 = 24, and "
                     "h^{1,1} = 4 Kahler moduli (faces), the inter-face leakage "
                     "coupling is alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(6)."
                 ),
                 "proof_sketch": (
-                    "Step 1: The h^{1,1} = 4 independent 2-cycles of TCS (retired reading) #187 define "
+                    "Step 1: The h^{1,1} = 4 independent 2-cycles of TCS #187 (retired reading) define "
                     "four Kahler moduli sectors (faces). Each face controls a distinct "
                     "K3 matching fibre in the Kovalev TCS construction.\n"
                     "Step 2: The effective Euler characteristic chi_eff = 2(h11 - h21 + h31) "
@@ -2863,7 +2863,7 @@ class FourFaceG2Structure(SimulationBase):
                     "Four-Face G2 Sub-Sector Structure from h^{1,1} = 4"
                 ),
                 "description": (
-                    "The Hodge number h^{1,1} = 4 of TCS (retired reading) #187 is reinterpreted as "
+                    "The Hodge number h^{1,1} = 4 of TCS #187 (retired reading) is reinterpreted as "
                     "four geometric 'faces' per shadow in the dual-shadow architecture. "
                     "Each face controls a distinct sub-sector of the compactified "
                     "geometry: the dominant face (T_1) governs the observable sector "
@@ -2894,7 +2894,7 @@ class FourFaceG2Structure(SimulationBase):
                     "is a new geometric prediction arising from the four-face "
                     "interpretation of h^{1,1} = 4 Kahler moduli. This parameter "
                     "has no free parameters and is entirely determined by the "
-                    "topological invariants chi_eff = 144 and b3 = 24 of TCS (retired reading) #187. "
+                    "topological invariants chi_eff = 144 and b3 = 24 of TCS #187 (retired reading). "
                     "It predicts the strength of cross-sector gauge coupling mixing "
                     "between observable and shadow matter sectors."
                 ),

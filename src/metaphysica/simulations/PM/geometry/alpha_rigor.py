@@ -622,7 +622,7 @@ if SCHEMA_AVAILABLE:
                         "steps": [
                             "Start with the fitted anchor %d. SUPERSEDED "
                             "WORDING, retained: 'Start with the topological "
-                            "integer b3 = 24 from the TCS (retired reading) #187 G2 manifold "
+                            "integer b3 = 24 from the TCS #187 (retired reading) G2 manifold "
                             "(Kovalev 2003, Corti et al. 2015)'. Two things "
                             "are wrong with it -- TCS exhibits 71 <= b_3 <= "
                             "155 and so never supplied 24, and %s"
@@ -657,7 +657,7 @@ if SCHEMA_AVAILABLE:
                         r"b_3": {
                             "description": ("The formula's single integer "
                                             "input. Published as 'the third "
-                                            "Betti number of the TCS (retired reading) #187 G2 "
+                                            "Betti number of the TCS #187 (retired reading) G2 "
                                             "manifold'; %s"
                                             % anchor_provenance_note()),
                             "value": ALPHA_FIT_ANCHOR

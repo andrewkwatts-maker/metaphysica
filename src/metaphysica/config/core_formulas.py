@@ -1435,7 +1435,7 @@ class CoreFormulas:
     TCS_TOPOLOGY = Formula(
         id="tcs-topology",
         output_params=['topology.B2', 'topology.B3'],
-        label="(4.1) TCS (retired reading) #187 Topology",
+        label="(4.1) TCS #187 (retired reading) Topology",
         html="b<sub>2</sub> = 4, b<sub>3</sub> = 24, χ<sub>eff</sub> = 144, ν = 24",
         latex="b_2 = 4, \\quad b_3 = 24, \\quad \\chi_{\\text{eff}} = 144, \\quad \\nu = 24",
         plain_text="b₂ = 4, b₃ = 24, χ_eff = 144, ν = 24",

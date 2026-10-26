@@ -88,7 +88,9 @@ def test_append_keeps_existing_bytes_and_adds_one_separator(tmp_path):
 
 def test_append_after_a_trailing_separator_and_to_new_files(tmp_path):
     path = tmp_path / "log.md"
-    path.write_text("## D-001 · 2026-01-01 · G0 · OPEN\n\nx\n\n---", "utf-8")
+    # newline="\n": on Windows write_text made this a CRLF log, which
+    # append_entry rightly preserves, so the LF assertion failed there.
+    path.write_text("## D-001 · 2026-01-01 · G0 · OPEN\n\nx\n\n---", "utf-8", newline="\n")
     text = append_entry(path, "## D-002 · 2026-01-02 · G0 · OPEN\n")
     assert text.count("---") == 1 and text.endswith("OPEN\n")
     fresh = tmp_path / "new.md"

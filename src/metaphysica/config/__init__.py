@@ -249,7 +249,7 @@ CORRECTLY HARDCODED (phenomenological inputs):
 - Gauge couplings at M_Z    → Measured (runs to M_GUT)
 - PMNS angles               → Measured (NuFIT 6.0)
 - Neutrino masses           → Set to match NuFIT 6.0 Δm² values
-- Topological invariants    → Fixed by manifold choice (TCS (retired reading) #187)
+- Topological invariants    → Fixed by manifold choice (TCS #187 (retired reading))
 
 Note: This is a living document. Update as new simulations are added.
 """

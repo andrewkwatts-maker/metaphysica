@@ -102,7 +102,7 @@ _OUTPUT_PARAMS = [
     "geometry.mephorash_chi",
     "geometry.n_generations",
     "geometry.phi",
-    # Hodge numbers (TCS (retired reading) #187)
+    # Hodge numbers (TCS #187 (retired reading))
     "geometry.h11",
     "geometry.h21",
     "geometry.h31",
@@ -295,7 +295,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 description="Gimel constant derived from third Betti number b3=24; the fundamental geometric anchor encoding the warping between 26D string frame and 4D Einstein frame",
                 derivation={
                     "steps": [
-                        "Start with the third Betti number b3 = 24 from TCS (retired reading) #187 G2 manifold (Corti et al. 2015)",
+                        "Start with the third Betti number b3 = 24 from TCS #187 (retired reading) G2 manifold (Corti et al. 2015)",
                         "The half-Betti contribution b3/2 = 12 counts the independent associative-coassociative cycle pairs",
                         "The transcendental correction 1/pi arises from the G2 holonomy projection onto the 4D Lorentz group",
                         "Combine: k_gimel = b3/2 + 1/pi = 12 + 0.31831... = 12.31831..."
@@ -604,7 +604,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 derivation={
                     "steps": [
-                        "Start from G2 manifold with third Betti number b3 = 24 (TCS (retired reading) #187, Corti et al. 2015)",
+                        "Start from G2 manifold with third Betti number b3 = 24 (TCS #187 (retired reading), Corti et al. 2015)",
                         "Compute effective Euler characteristic: chi_eff = b3^2 / 4 = 576 / 4 = 144",
                         "Torsion amplitude from topological imbalance: T_omega = sqrt(b3 / chi_eff) = sqrt(24 / 144) = sqrt(1/6)",
                         "Result: T_omega = 1/sqrt(6) ≈ 0.4082 (exact algebraic value from topology alone)"
@@ -1016,7 +1016,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Hodge numbers
                 "h11": (
                     "EML: eml_scalar(4.0) — Hodge number h^{1,1}=4 Kähler moduli"
-                    " from 4 K3 fibres in TCS (retired reading) #187"
+                    " from 4 K3 fibres in TCS #187 (retired reading)"
                 ),
                 "h21": (
                     "EML: eml_scalar(0.0) — Hodge number h^{2,1}=0 (no complex structure"
@@ -1024,7 +1024,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "h31": (
                     "EML: eml_scalar(68.0) — Hodge number h^{3,1}=68 associative 3-cycle"
-                    " moduli in TCS (retired reading) #187"
+                    " moduli in TCS #187 (retired reading)"
                 ),
                 # Geometric constants
                 "k_gimel": (

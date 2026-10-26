@@ -229,7 +229,7 @@ class GeometricAnchors:
         return self.nitzotzin_roots // 2  # 288/2 = 144
 
     # =========================================================================
-    # Hodge Numbers for TCS (retired reading) #187 (Selected Topology)
+    # Hodge Numbers for TCS #187 (retired reading) (Selected Topology)
     # =========================================================================
     # These determine the number of moduli and the Euler characteristic.
     # Formula: chi_eff = 2(h11 - h21 + h31) = 2(4 - 0 + 68) = 144
@@ -1339,7 +1339,7 @@ class GeometricAnchors:
             "n_generations": self.n_generations,
             "phi": self.phi,
 
-            # Hodge numbers (TCS (retired reading) #187)
+            # Hodge numbers (TCS #187 (retired reading))
             "h11": self.h11,
             "h21": self.h21,
             "h31": self.h31,
