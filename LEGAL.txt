@@ -19,3 +19,9 @@ Optional extras (not required at runtime; see pyproject.toml):
   xhtml2pdf, matplotlib, pandas: extras pdf / plots / full; not checked here.
 
 No non-permissive licence found among the runtime dependencies.
+
+Dev-only tools (not shipped):
+
+  tools/texcheck  mathjax-full 3.2.2 (Apache-2.0), with mhchemparser, mj-context-menu and
+                  speech-rule-engine (Apache-2.0); commander, esm, wicked-good-xpath and
+                  @xmldom/xmldom (MIT). Installed with `npm ci`; node_modules is not committed.

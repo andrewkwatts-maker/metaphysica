@@ -399,6 +399,10 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Re-render html after the core-paper manifest",
      [sys.executable, "-m", "metaphysica.generators.generate_interactive_html"],
      False),
+    # Every published math string must parse under the site's MathJax (Track F1).
+    ("Check every formula renders",
+     [sys.executable, "-m", "metaphysica.generators.tex_render_gate"],
+     False),
 
     # ── v2.2.0 honesty polish: textbook consistency beacons ─────────────────
     # Seven cross-checks against standard-physics references (KM unitarity,
