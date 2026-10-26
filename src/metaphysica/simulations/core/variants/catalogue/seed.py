@@ -52,7 +52,7 @@ FORKS: Dict[str, Fork] = {
                     "BUYS: every published number unchanged, and w_0 = "
                     "-23/24 at 0.017 sigma against the DESI anchor -- the "
                     "closest agreement any candidate reaches.\n"
-                    "COSTS: b_3 = 24 (Superseded path) is an INPUT with no geometric home left. "
+                    "COSTS: b_3 = 24 is an INPUT with no geometric home left. "
                     "It is unreachable by the Joyce construction and far below "
                     "the TCS range, so nothing declared derives it, and b_2 = "
                     "4 traces to a previously FITTED h^{1,1}. The "
@@ -128,7 +128,7 @@ FORKS: Dict[str, Fork] = {
             "and that is a structural constraint referencing no measurement, "
             "which makes it the decisive discriminator where w_0 is not (w_0 "
             "moves only 0.0017 per unit b_3).\n\n"
-            "b_3/8 gives 3 at b_3 = 24 (Superseded path) and 5.375 at b_3 = 43, so it fails on "
+            "b_3/8 gives 3 at b_3 = 24 and 5.375 at b_3 = 43, so it fails on "
             "the derived-seed path. b_2/4 gives 3 at b_2 = 12 and 1 at "
             "b_2 = 4, so it fails on the status-quo path. Exactly one works per "
             "seed, which is why this fork is not independent of b3_seed and "
@@ -140,7 +140,7 @@ FORKS: Dict[str, Fork] = {
                 summary="n_gen = b_3 / 8, the 8 being dim O",
                 consequence=(
                     "BUYS: the current derivation, giving exactly 3 at "
-                    "b_3 = 24 (Superseded path), with the 8 carrying octonionic meaning.\n"
+                    "b_3 = 24, with the 8 carrying octonionic meaning.\n"
                     "COSTS: it requires 8 to divide b_3, so it is incompatible "
                     "with every Joyce-reachable value -- 7, 19, 31 and 43 are "
                     "all odd. Adopting the derived seed forces this to be "
@@ -215,9 +215,9 @@ FORKS: Dict[str, Fork] = {
         status="OPEN",
         read_adopted=_b3_origin_adopted,
         notes=(
-            "Opened 2026-09-14 with the ruling that removed b_3 = 24 (Superseded path)'s "
+            "Opened 2026-09-14 with the ruling that removed b_3 = 24's "
             "DERIVED/GEOMETRIC status. Nothing on the books derives it: the "
-            "TCS route places b_3 = 24 (Superseded path) far below its exhibited range, the "
+            "TCS route places b_3 = 24 far below its exhibited range, the "
             "Joyce (Z/2)^3 route is UNDETERMINED pending the contribution "
             "table (see joyce_contribution_table), and the candidate "
             "structures below all reproduce the integer without exhibiting 24 "
@@ -232,7 +232,7 @@ FORKS: Dict[str, Fork] = {
             "agreement with anchors.\n\n"
             "INAPPLICABLE ON THE ADOPTED SEED (D-023, 2026-10-25): input_24, "
             "arc_flag_stabiliser, d4_root_shell and joyce_twisted_sector were "
-            "written for b_3 = 24 (Superseded path). On seed_43_joyce the origin is answered by "
+            "written for b_3 = 24. On seed_43_joyce the origin is answered by "
             "derived_joyce_a1, and joyce_twisted_sector is what it became once "
             "the contribution table existed. Selecting the others there changes "
             "no output; input_24 is contract-bound to seed_24, and the other two "
@@ -255,7 +255,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="input_24",
-                summary="b_3 = 24 (Superseded path) as a stated input, origin open (off-family)",
+                summary="b_3 = 24 as a stated input, origin open (off-family)",
                 consequence=(
                     "BUYS: honesty. The seed is registered INPUT, the "
                     "free-variable ledger counts it, and no derivation is "

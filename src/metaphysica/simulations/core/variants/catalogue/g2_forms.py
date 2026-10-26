@@ -32,7 +32,7 @@ FORKS: Dict[str, Fork] = {
             "statement stays conditional and no reachability verdict is "
             "published. When a table is supplied, the survey becomes a finite "
             "decision procedure for whether ANY admissible assignment yields "
-            "b_3 = 24 (Superseded path), settling the b3_origin joyce branch and the (4,24) and "
+            "b_3 = 24, settling the b3_origin joyce branch and the (4,24) and "
             "(7,24) questions together."
         ),
         options=[
@@ -46,7 +46,7 @@ FORKS: Dict[str, Fork] = {
                     "still applies: no A1 family contributes more than "
                     "dim H^1(T^3) = 3, so twisted = 17 needs at least six "
                     "families.\n"
-                    "COSTS: b_3 = 24 (Superseded path) stays UNDETERMINED for this "
+                    "COSTS: b_3 = 24 stays UNDETERMINED for this "
                     "construction, so the geometry cannot be closed and the "
                     "b3_origin fork cannot be settled."
                 ),
@@ -58,7 +58,7 @@ FORKS: Dict[str, Fork] = {
                 consequence=(
                     "BUYS: the survey turns into a decision procedure. Every "
                     "admissible assignment's family profile is mapped to "
-                    "(b_2, b_3), so whether b_3 = 24 (Superseded path) is reachable becomes a "
+                    "(b_2, b_3), so whether b_3 = 24 is reachable becomes a "
                     "finite check rather than an open question, and the "
                     "answer settles (4,24) and (7,24) at once.\n"
                     "COSTS: the verdict is only as good as the table, so the "
@@ -195,7 +195,7 @@ FORKS: Dict[str, Fork] = {
                 id="joyce_orbifold",
                 summary="Resolution of a T^7/Gamma orbifold (Joyce)",
                 consequence=(
-                    "BUYS: b3 = 24 (Superseded path) is inside the realised range. The source "
+                    "BUYS: b3 = 24 is inside the realised range. The source "
                     "states there are '252 sets of second and third Betti "
                     "numbers corresponding to simply-connected Joyce "
                     "manifolds', with 'b2(M) ranges between 0 and 28 and "
@@ -258,7 +258,7 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="b3_clusters",
-                summary="4 symmetric clusters of the b3 = 24 (Superseded path) 3-cycles, 6 each",
+                summary="4 symmetric clusters of the b3 = 24 3-cycles, 6 each",
                 consequence=(
                     "BUYS: the racetrack stays valid, because T_i then track "
                     "3-cycle volumes. Nothing in the architecture changes -- "
@@ -368,7 +368,7 @@ FORKS: Dict[str, Fork] = {
               "characteristic of a Spin(7) coboundary, it equals 24 for EVERY "
               "twisted connected sum, and it says nothing about the parity of "
               "b2 + b3. The real exclusion is sharper: TCS manifolds built "
-              "from pairs of Fano 3-folds satisfy 71 <= b3 <= 155, so b3 = 24 (Superseded path) "
+              "from pairs of Fano 3-folds satisfy 71 <= b3 <= 155, so b3 = 24 "
               "is far below the floor and cannot come from that construction "
               "at all. The escape is Joyce's orbifold resolutions of T^7/Gamma, "
               "which span b2 in [0,28] and b3 in [4,215] over 252 distinct "
