@@ -163,6 +163,12 @@ pub const PHYSICA_V_HIGGS_MEV: f64 = PHYSICA_V_HIGGS_GEV * 1000.0;
 /// Hubble constant H₀ central derivation target (km/s/Mpc) — geometric
 /// mean of Planck (67.4) and SH0ES (73.0) brackets.
 pub const PHYSICA_H0_CENTRAL: f64 = 70.0;
+/// Matter density parameter Ω_m, Planck 2018 results VI (A&A 641, A6),
+/// Table 2, TT,TE,EE+lowE+lensing.
+pub const PHYSICA_OMEGA_M: f64 = 0.3153;
+/// Dark-energy density parameter Ω_Λ, Planck 2018 results VI (A&A 641, A6),
+/// Table 2, TT,TE,EE+lowE+lensing (flat: Ω_m + Ω_Λ = 1).
+pub const PHYSICA_OMEGA_LAMBDA: f64 = 0.6847;
 /// Dark-energy equation-of-state w₀ central value (≡ ΛCDM).
 pub const PHYSICA_W0_CENTRAL: f64 = -1.0;
 /// Speed of light c in m/s (CODATA exact).
