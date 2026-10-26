@@ -1730,7 +1730,7 @@ class MasterActionSimulationV22(SimulationBase):
         return SectionContent(
             section_id="3",
             subsection_id="3.2",  # v19.0: Unique
-            title='Standard Model Gauge Sectors from Master Action (<span class="pm-value" data-pm-value="framework.version_major_label">v23</span> 12-Pair Bridge)',
+            title='Standard Model Gauge Sectors from Master Action (12-Pair Bridge)',
             abstract=(
                 '<span class="pm-value" data-pm-value="framework.version_label">v24.2</span>: Derivation of Standard Model gauge structure from higher-dimensional '
                 "master action via Kaluza-Klein reduction over G₂ manifolds. "

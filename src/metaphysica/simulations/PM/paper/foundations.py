@@ -421,7 +421,7 @@ class FoundationsV16_2(SimulationBase):
                     "Two counts in this construction are "
                     "also now enumerated rather than asserted: 15400 = 12!/((3!)<sup>4</sup>4!) "
                     "groupings of 12 bridges into 4 unordered triples, of which 576 = (4!)<sup>2</sup> "
-                    "are cross-E<sub>8</sub>-valid. Note that the stride-4 triples {i, i+4, i+8} "
+                    "are cross-E<sub>8</sub>-valid. The stride-4 triples {i, i+4, i+8} "
                     "and contiguous triples are different objects — the contiguous first face "
                     "lies entirely inside one E<sub>8</sub> block and is therefore not "
                     "cross-E<sub>8</sub>-valid at all."

@@ -573,7 +573,7 @@ class AppendixLOmegaUnwinding(SimulationBase):
             ContentBlock(
                 type="note",
                 content=(
-                    "<h4>Declaration of Terminal Predictability (v24.2)</h4>"
+                    "<h4>Declaration of Terminal Predictability</h4>"
                     "<Speculation>"
                     "<p><em>\"The universe is mapped as a closed V₇ manifold. Its past, present, "
                     "and eventual unwinding into the Three Final States are mathematically "

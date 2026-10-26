@@ -1226,7 +1226,7 @@ class IntroductionV16(SimulationBase):
                     "ψ<sub>L,R</sub> = (1/2)(1 ∓ γ⁵)ψ.</p>"
                     "<p>The Standard Model is <em>maximally chiral</em>: the weak force (SU(2)<sub>L</sub>) "
                     "couples <strong>only to left-handed fermions</strong>. This is not a small effect—it "
-                    "is the very structure of the weak interaction. For example:</p>"
+                    "is the structure of the weak interaction. For example:</p>"
                     "<ul>"
                     "<li>Left-handed electrons (e<sub>L</sub>) form doublets with neutrinos and couple to W bosons</li>"
                     "<li>Right-handed electrons (e<sub>R</sub>) are singlets and do <em>not</em> couple to W bosons</li>"

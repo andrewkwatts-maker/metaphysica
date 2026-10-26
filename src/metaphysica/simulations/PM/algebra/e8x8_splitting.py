@@ -185,7 +185,7 @@ class E8xE8SplittingSimulation(SimulationBase):
             Formula(
                 id="e8x8-hidden-condensate",
                 label="(A5.2)",
-                latex=r"W_{\text{np}}^{\text{hid}} = A\,e^{-2\pi T/N_1},\quad N_1 = b_3 = 24",
+                latex=r"W_{\text{np}}^{\text{hid}} = A\,e^{-2\pi T/N_1},\quad N_1 = b_3",
                 plain_text="W_np_hidden = A*exp(-2π T/N1), N1=b3=24 (retired seed_24 value)",
                 category="DERIVED",
                 description=(

@@ -775,11 +775,11 @@ class AppendixZTerminalLedger(SimulationBase):
         return self.run(registry)
 
     def get_section_content(self) -> Optional[SectionContent]:
-        """Return section content for Appendix Z (v24.2)."""
+        """Return section content for Appendix Z."""
         content_blocks = [
             ContentBlock(
                 type="heading",
-                content="Terminal Constant Ledger (v24.2)",
+                content="Terminal Constant Ledger",
                 level=2,
                 label="Z"
             ),
@@ -862,14 +862,14 @@ class AppendixZTerminalLedger(SimulationBase):
                 type="callout",
                 content="<strong>Free parameters: 0</strong>",
                 callout_type="success",
-                title="Sterile Model Status (v24.2)"
+                title="Sterile Model Status"
             ),
         ]
 
         return SectionContent(
             section_id="Z",
             subsection_id=None,
-            title="Appendix Z: Terminal Constant Ledger (v24.2)",
+            title="Appendix Z: Terminal Constant Ledger",
             abstract=(
                 "The Terminal Constant Ledger containing all geometrically derived constants "
                 "with complete derivation chains. Proves the sterile model has zero free parameters "

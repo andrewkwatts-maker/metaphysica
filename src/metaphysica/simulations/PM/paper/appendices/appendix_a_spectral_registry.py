@@ -385,7 +385,7 @@ class AppendixASpectralRegistry(SimulationBase):
                     "method": "exponential_depth_mapping",
                     "parentFormulas": ["spectral-eigenvalue-extraction", "g2-holonomy-metric"],
                     "steps": [
-                        "Start from the G2 holonomy metric with Betti number b3 = 24",
+                        "Start from the G2 holonomy metric with Betti number b3",
                         "Define the spacing coefficient kappa = 1/b3 from the torsion pin density",
                         "Map each eigenvalue lambda_n to a radial depth r(n) = exp(-kappa * lambda_n)",
                     ],

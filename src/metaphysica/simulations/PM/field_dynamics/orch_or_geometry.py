@@ -603,7 +603,7 @@ if SCHEMA_AVAILABLE:
             return SectionContent(
                 section_id="7",
                 subsection_id="7.2",
-                title="Orch-OR Quantum Consciousness Validation (v24.2)",
+                title="Orch-OR Quantum Consciousness Validation",
                 abstract=(
                     "SPECULATIVE EXTENSION: The microtubule lattice structure is linked to G2 "
                     "manifold topology via the topological pitch (DERIVED from b3 and k_gimel). "
@@ -874,7 +874,7 @@ if SCHEMA_AVAILABLE:
                     description=(
                         "Topological pitch of the microtubule helical structure derived from G2 "
                         "manifold geometry. The pitch emerges from the ratio of the third Betti "
-                        "number b3 = 24 (counting associative 3-cycles of the compactified G2 space) "
+                        "number b3 (counting associative 3-cycles of the compactified G2 space) "
                         "to the angular frequency k_gimel/pi of the demiurgic coupling. Within the "
                         "Penrose-Hameroff Orch-OR framework, the topological pitch modulates the "
                         "resonant frequencies and topological shielding of quantum coherence in "
@@ -895,7 +895,7 @@ if SCHEMA_AVAILABLE:
                         "method": "topological_geometry",
                         "parent_formulas": ["k-gimel-definition"],
                         "steps": [
-                            "The G2 holonomy manifold has third Betti number b3 = 24, counting "
+                            "The G2 holonomy manifold has third Betti number b3, counting "
                             "the associative 3-cycles of the 7D compactified space",
                             "The demiurgic coupling k_gimel = b3/2 + 1/pi ~ 12.318 encodes the "
                             "effective angular frequency of the G2 winding",
@@ -933,7 +933,7 @@ if SCHEMA_AVAILABLE:
                         "ops.div(b3_leaf(), ops.div(eml_vec('constants.k_gimel'), eml_pi()))"
                     ),
                     eml_description=(
-                        "Microtubule topological pitch: b3=24 divided by (k_gimel / pi)."
+                        "Microtubule topological pitch: b3 divided by (k_gimel / pi)."
                     ),
                     # Triple-track: p_G2 = b3 / (k_gimel/pi) = b3*pi/k_gimel — b3-rooted.
                     arithma=_arithma_num(24.0 * 3.141592653589793 / (12.0 + 1.0 / 3.141592653589793)),

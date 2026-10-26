@@ -109,7 +109,7 @@ V_G2_LITERAL = Decimal("0.1667")
 
 class AppendixOKKReduction(SimulationBase):
     """
-    Appendix O: Kaluza-Klein Reduction Steps (v24.2).
+    Appendix O: Kaluza-Klein Reduction Steps.
 
     Provides pedagogical derivations of dimensional reduction using an intuitive,
     step-by-step approach -- building from simple examples before generalizing
@@ -165,7 +165,7 @@ class AppendixOKKReduction(SimulationBase):
             id="appendix_o_kk_reduction_v24_2",
             version="24.2",
             domain="appendices",
-            title="Appendix O: Kaluza-Klein Reduction Steps (v24.2)",
+            title="Appendix O: Kaluza-Klein Reduction Steps",
             description=(
                 "Pedagogical derivation of v24.2 dimensional reduction from 26D string theory "
                 "to 4D spacetime via 12 paired (2,0) bridges and G₂ holonomy compactification"
@@ -194,7 +194,7 @@ class AppendixOKKReduction(SimulationBase):
         return self.FORMULA_REFS
 
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
-        """Execute KK reduction computations (v24.2)."""
+        """Execute KK reduction computations."""
         # Get geometric inputs with defaults
         b3 = registry.get("topology.elder_kads")
         V_G2 = V_G2_LITERAL
@@ -237,12 +237,12 @@ class AppendixOKKReduction(SimulationBase):
         return self.run(registry)
 
     def get_section_content(self) -> Optional[SectionContent]:
-        """Return section content for Appendix O: Kaluza-Klein Reduction Steps (v24.2)."""
+        """Return section content for Appendix O: Kaluza-Klein Reduction Steps."""
         content_blocks = [
             # Main heading
             ContentBlock(
                 type="heading",
-                content="Kaluza-Klein Reduction Steps (v24.2)",
+                content="Kaluza-Klein Reduction Steps",
                 level=2,
                 label="O"
             ),
@@ -265,7 +265,7 @@ class AppendixOKKReduction(SimulationBase):
                     "consciousness channels, with distributed OR Reduction."
                 ),
                 callout_type="info",
-                title="The Big Picture (v24.2)"
+                title="The Big Picture"
             ),
 
             # O.1 The Metric Ansatz
@@ -638,10 +638,10 @@ class AppendixOKKReduction(SimulationBase):
                 label="consistency-conditions"
             ),
 
-            # O.10b Aggregate Breathing Dark Energy (v24.2)
+            # O.10b Aggregate Breathing Dark Energy
             ContentBlock(
                 type="heading",
-                content="O.10b Aggregate Breathing Dark Energy (v24.2)",
+                content="O.10b Aggregate Breathing Dark Energy",
                 level=3
             ),
             ContentBlock(
@@ -662,7 +662,7 @@ class AppendixOKKReduction(SimulationBase):
             # Summary
             ContentBlock(
                 type="heading",
-                content="O.11 Summary: From Geometry to Gauge (v24.2)",
+                content="O.11 Summary: From Geometry to Gauge",
                 level=3
             ),
             ContentBlock(
@@ -678,14 +678,14 @@ class AppendixOKKReduction(SimulationBase):
                     "&rho; = &Sigma;<sub>i</sub> &rho;<sub>i</sub> yields w<sub>0</sub> = &minus;23/24 (consistent with DESI 2025 BAO data). No free parameters!"
                 ),
                 callout_type="success",
-                title="The Geometric Origin of Gauge Symmetry (v24.2)"
+                title="The Geometric Origin of Gauge Symmetry"
             ),
         ]
 
         return SectionContent(
             section_id="O",
             subsection_id=None,
-            title="Appendix O: Kaluza-Klein Reduction Steps (v24.2)",
+            title="Appendix O: Kaluza-Klein Reduction Steps",
             abstract=(
                 "Pedagogical derivation of how extra dimensions give rise to gauge fields "
                 "and scalars, from the simplest 5D circle example to the full Principia "
@@ -698,7 +698,7 @@ class AppendixOKKReduction(SimulationBase):
         )
 
     def get_formulas(self) -> List[Formula]:
-        """Return formula definitions for Appendix O (v24.2)."""
+        """Return formula definitions for Appendix O."""
         return [
             Formula(
                 id="kk-metric-ansatz",

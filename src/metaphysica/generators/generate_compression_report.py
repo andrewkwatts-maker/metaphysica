@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 # The Ten Pillar Seeds: only b3=24 is the canonical topological seed; the
 # others are derived from it or fixed by pure math (phi, pi, etc.).
@@ -90,7 +90,7 @@ def main() -> int:
         "test_name": "Topological Compression via Algorithmic Symmetry (MDL Analysis)",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "seed_provenance": {
-            "primary_seed": "b3 = 24 (third Betti number of G2 manifold)",
+            "primary_seed": "%s (third Betti number of the G2 manifold)" % seed_label(),
             "pillar_seeds": PILLAR_SEEDS,
             "note": "All other constants derive from b3 through G2 holonomy; "
                     "non-b3 'seeds' are either pure math (phi, pi) or "
@@ -107,7 +107,7 @@ def main() -> int:
             "base_ratio": {
                 "formula": "visible_sector / seeds = 125 / 1",
                 "value": round(base_ratio, 4),
-                "interpretation": "1 seed (b3=24) -> 125 active constants per sector",
+                "interpretation": "1 seed (%s) -> 125 active constants per sector" % seed_label(),
             },
             "expanded_ratio": {
                 "formula": "(n_params + n_formulas) / seeds",

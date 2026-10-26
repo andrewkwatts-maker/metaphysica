@@ -18,13 +18,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 CANONICAL = {
     "manifold": "M^{26}(24,2)",
     "signature": "(24,2)",
     "decomposition": "24 (G2 core, = b3) + 2 (times, one per 13D shadow)",
-    "seed": "b3 = 24",
 }
 
 # Context markers that exempt a string from the deprecated-pattern scan:
@@ -44,7 +43,7 @@ DEPRECATED_PATTERNS = [
     (r"\b27D\b", "Two-time ruling: the bulk is 26D (24,2), not 27D"),
     (r"\bunified time\b", "Two-time ruling: one timelike direction per shadow"),
     (r"Consciousness Field", "Use S_EIS (Euclidean Information Sector)"),
-    (r"\bn_gen\s*=\s*chi_eff\s*/\s*\(4\*b3\)", "Verify chi_eff=144, b3=24 -> 3"),
+    (r"\bn_gen\s*=\s*chi_eff\s*/\s*\(4\*b3\)", "Verify the chi_eff and b3 in force give n_gen = 3"),
 ]
 
 CANONICAL_KEYWORDS = [
@@ -131,13 +130,13 @@ def main() -> int:
         "files_scanned": files_scanned,
         "total_flags": len(all_flags),
         "status": status,
-        "canonical_terminology": CANONICAL,
+        "canonical_terminology": dict(CANONICAL, seed=seed_label()),
         "deprecated_patterns": [
             {"pattern": p, "suggestion": s} for p, s in DEPRECATED_PATTERNS
         ],
         "canonical_keyword_hits": keyword_hits,
         "flagged_entries": all_flags,
-        "seed_provenance": "All terminology terms trace back to seed b3 = 24 (G2 manifold third Betti number).",
+        "seed_provenance": "All terminology terms trace back to seed %s (G2 manifold third Betti number)." % seed_label(),
     }
 
     out = ag / "terminology_audit.json"
