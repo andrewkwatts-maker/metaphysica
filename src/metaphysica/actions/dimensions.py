@@ -20,7 +20,7 @@ def canonical_dim(kind: str, D: int) -> Fraction:
     if kind == "metric":
         return Fraction(0)
     if kind.startswith("form:"):
-        return Fraction(D - 2, 2) + 0  # gauge potential A_p, canonical normalisation
+        return Fraction(D - 2, 2)  # gauge potential A_p, canonical normalisation
     raise ValueError("no canonical dimension for kind %r" % kind)
 
 
