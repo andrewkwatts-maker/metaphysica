@@ -7,6 +7,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 from __future__ import annotations
 
+import atexit
 import hashlib
 import json
 import os
@@ -21,8 +22,18 @@ from metaphysica.testground.constraints import (
     constraints_from_options,
 )
 
+from metaphysica.testground.switches.gates import (
+    canonical,
+    gate_open,
+    gate_reads,
+    validate_gates,
+)
+
 from .catalogue import FORKS
 from .model import DISABLED, _ENV_PREFIX, _SELECTION_ENV, Fork
+
+#: Env var naming the directory each process writes its fork reads to.
+READS_DIR_ENV = "METAPHYSICA_FORK_READS_DIR"
 
 def validate_constraints(forks: Dict[str, Fork]) -> None:
     """Refuse a requires/excludes naming a fork or option that is not declared."""
@@ -44,6 +55,9 @@ def validate_constraints(forks: Dict[str, Fork]) -> None:
                             f"fork {rf!r}; available: {forks[rf].option_ids()}")
 
 
+
+
+validate_gates(FORKS)
 
 
 def _declared_constraints(forks: Dict[str, Fork]) -> Dict[Any, List[Constraint]]:
@@ -102,9 +116,14 @@ def departures(sel: Dict[str, str]) -> Dict[str, str]:
     return out
 
 
+def canonical_departures(sel: Dict[str, str]) -> Dict[str, str]:
+    """`departures` without the forks whose gate is closed under *sel*."""
+    return canonical(FORKS, departures(sel))
+
+
 def selection_id(sel: Dict[str, str]) -> str:
     """Canonical id: 12 hex of sha256 over the sorted JSON of the departures."""
-    dep = departures(sel)
+    dep = canonical_departures(sel)
     if not dep:
         return "active"
     blob = json.dumps(dep, sort_keys=True, separators=(",", ":"))
@@ -178,7 +197,79 @@ def is_explicit(fork_id: str) -> bool:
                 or os.environ.get(_ENV_PREFIX + fork_id.upper()))
 
 
+#: Reads per fork since the last `reset_reads`; kept apart from _FORCED.
+_READS: Dict[str, int] = {}
+#: Reads of a fork whose gate was closed under the current resolution.
+_CLOSED_GATE_READS: Dict[str, int] = {}
+
+
+def reads() -> Dict[str, int]:
+    """Fork id -> reads by `resolve` while its gate was open."""
+    return dict(_READS)
+
+
+def closed_gate_reads() -> Dict[str, int]:
+    """Fork id -> reads by `resolve` while its gate was closed."""
+    return dict(_CLOSED_GATE_READS)
+
+
+def reset_reads() -> None:
+    _READS.clear()
+    _CLOSED_GATE_READS.clear()
+
+
+def _count_read(fork_id: str) -> None:
+    """Record one consumer read of *fork_id*, in the open or closed counter."""
+    fork = FORKS[fork_id]
+    closed = bool(fork.applies_when) and not gate_open(
+        FORKS, fork_id,
+        {g: _resolve(g) for g in gate_reads(FORKS, fork_id)})
+    counter = _CLOSED_GATE_READS if closed else _READS
+    counter[fork_id] = counter.get(fork_id, 0) + 1
+
+
+@contextmanager
+def untracked():
+    """Resolve inside the block without counting reads (diagnostics only)."""
+    saved = (dict(_READS), dict(_CLOSED_GATE_READS))
+    try:
+        yield
+    finally:
+        _READS.clear()
+        _READS.update(saved[0])
+        _CLOSED_GATE_READS.clear()
+        _CLOSED_GATE_READS.update(saved[1])
+
+
+def write_reads(directory: Any) -> Path:
+    """Write this process's counters to <directory>/<pid>.json."""
+    out = Path(directory)
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / ("%d.json" % os.getpid())
+    path.write_text(json.dumps({"reads": reads(),
+                                "closed_gate_reads": closed_gate_reads()},
+                               sort_keys=True), encoding="utf-8")
+    return path
+
+
+def _register_reads_hook() -> None:
+    """With METAPHYSICA_FORK_READS_DIR set, write the counters at exit."""
+    directory = os.environ.get(READS_DIR_ENV)
+    if directory:
+        atexit.register(write_reads, directory)
+
+
 def resolve(fork_id: str, override: Optional[str] = None) -> str:
+    """Selected option for *fork_id*, counted as a read (see `reads`).
+
+    Internal callers that only inspect the selection use `_resolve`.
+    """
+    chosen = _resolve(fork_id, override)
+    _count_read(fork_id)
+    return chosen
+
+
+def _resolve(fork_id: str, override: Optional[str] = None) -> str:
     """Selected option for *fork_id*.
 
     Precedence: explicit *override*, then ``forced`` (in-process), then the
@@ -216,7 +307,7 @@ def selected_status(fork_id: str, override: Optional[str] = None) -> str:
     a refuted option instead of publishing the numbers unlabelled.
     """
     fork = FORKS[fork_id]
-    return fork.option(resolve(fork_id, override)).status
+    return fork.option(_resolve(fork_id, override)).status
 
 
 def off_table_selections() -> Dict[str, str]:
@@ -230,7 +321,7 @@ def off_table_selections() -> Dict[str, str]:
     """
     out: Dict[str, str] = {}
     for fid in FORKS:
-        chosen = resolve(fid)
+        chosen = _resolve(fid)
         if FORKS[fid].option(chosen).status == DISABLED:
             out[fid] = chosen
     return out
@@ -238,4 +329,7 @@ def off_table_selections() -> Dict[str, str]:
 
 def active_selection() -> Dict[str, str]:
     """Every fork's currently selected option, including env overrides."""
-    return {fid: resolve(fid) for fid in FORKS}
+    return {fid: _resolve(fid) for fid in FORKS}
+
+
+_register_reads_hook()

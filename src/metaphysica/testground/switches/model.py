@@ -187,6 +187,11 @@ class Fork:
     legacy_option: Optional[str] = None
     #: Module paths that read this fork (empty = inert).
     consumers: Tuple[str, ...] = field(default_factory=tuple)
+    #: Gate: the fork acts only when, for every fork named here, the selection
+    #: picks one of the listed options (options of one fork OR'd, different
+    #: forks AND'd -- the grouping of ``requires``). Closed = inert, not
+    #: forbidden: `switches.gates.canonical` drops it.
+    applies_when: Tuple[Tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         if self.kind not in FORK_KINDS:

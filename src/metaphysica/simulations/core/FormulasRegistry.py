@@ -4289,7 +4289,7 @@ class FormulasRegistry:
         # D-022: dark_energy_mechanism. The adopted mechanism returns -sigma_T unchanged.
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
         return ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=-self._tzimtzum_pressure)
+            ltr.resolve_de_mechanism(), thawing=lambda: -self._tzimtzum_pressure)
 
     @property
     def w0_dark_energy(self) -> float:

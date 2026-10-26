@@ -10,10 +10,15 @@ from typing import Any, Dict
 
 from .catalogue import FORKS
 from .model import ACTIVE, CONSIDERED, DISABLED, OPTION_STATUSES, _ENV_PREFIX, SourceUnmeasurable
-from .selection import off_table_selections, resolve, is_explicit
+from .selection import off_table_selections, resolve, is_explicit, _resolve, untracked
 
 def describe() -> Dict[str, Any]:
-    """Machine-readable summary for the build artifact."""
+    """Machine-readable summary for the build artifact (reads not counted)."""
+    with untracked():
+        return _describe()
+
+
+def _describe() -> Dict[str, Any]:
     out: Dict[str, Any] = {
         # 2: every option now carries a status (active / considered /
         # disabled) and its sweep priority, and each fork carries its
@@ -63,7 +68,7 @@ def describe() -> Dict[str, Any]:
             "question": fork.question,
             "source": fork.source,
             "status": fork.status,
-            "selected": resolve(fid),
+            "selected": _resolve(fid),
             "default": fork.default(),
             "options": [
                 {
@@ -85,6 +90,7 @@ def describe() -> Dict[str, Any]:
                 s: len(fork.options_by_status(s)) for s in OPTION_STATUSES
             },
             "sweepable": fork.sweepable_ids(),
+            "applies_when": [list(p) for p in fork.applies_when],
             "notes": fork.notes,
             "drift": drift,
             "source_read": source_read,

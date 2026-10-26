@@ -326,7 +326,7 @@ class DemonLockGuard:
         """
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
         expected_w0 = ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=-23.0 / 24.0)
+            ltr.resolve_de_mechanism(), thawing=lambda: -23.0 / 24.0)
         tolerance = 1e-10
 
         # Check registry

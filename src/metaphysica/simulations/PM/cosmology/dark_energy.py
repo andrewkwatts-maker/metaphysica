@@ -371,7 +371,7 @@ class DarkEnergyV16(SimulationBase):
         neg1_pt = eml_scalar(-1.0)
         w0_pt = eml_add(neg1_pt, eml_inv(b3_pt))
         w0_derived = ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=eml_compute(w0_pt))
+            ltr.resolve_de_mechanism(), thawing=lambda: eml_compute(w0_pt))
 
         # EML: wₐ = -1/√b₃
         if self.include_time_evolution:
@@ -549,7 +549,7 @@ class DarkEnergyV16(SimulationBase):
 
         # D-022: dark_energy_mechanism. The adopted mechanism returns w0 unchanged.
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
-        return ltr.w0_for_mechanism(ltr.resolve_de_mechanism(), thawing=w0)
+        return ltr.w0_for_mechanism(ltr.resolve_de_mechanism(), thawing=lambda: w0)
 
     def _compute_time_evolution(self, reduction_data: Dict) -> float:
         """

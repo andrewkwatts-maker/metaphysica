@@ -20,6 +20,7 @@ Provenance (``theories/pm/lineage/branches.yaml``):
 from __future__ import annotations
 
 import math
+from typing import Callable
 
 ADOPTED_H0_ROUTE: str = "odowd_composite"
 ADOPTED_DE_MECHANISM: str = "thawing_quintessence"
@@ -108,10 +109,14 @@ def h0_local_for_route(route: str, *, odowd: float, h0_planck: float, b3: float)
     raise ValueError("unknown h0_route %r" % route)
 
 
-def w0_for_mechanism(mechanism: str, *, thawing: float) -> float:
-    """w0 under *mechanism*; ``thawing`` is the consumer's own -1 + 1/b3 / -sigma_T."""
+def w0_for_mechanism(mechanism: str, *, thawing: Callable[[], float]) -> float:
+    """w0 under *mechanism*; ``thawing`` is the consumer's own -1 + 1/b3 / -sigma_T.
+
+    A zero-argument callable, called only under ``thawing_quintessence``, so a
+    fork it reads (dark_energy_betti) is not read under any other mechanism.
+    """
     if mechanism == "thawing_quintessence":
-        return thawing
+        return thawing()
     if mechanism == "mep_11_13":
         return -(MEP_D - 1.0) / (MEP_D + 1.0)
     raise ValueError("unknown dark_energy_mechanism %r" % mechanism)
