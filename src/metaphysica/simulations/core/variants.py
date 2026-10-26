@@ -51,6 +51,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+from contextlib import contextmanager
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple
@@ -75,6 +76,8 @@ __all__ = [
     "compatible",
     "violations",
     "validate_constraints",
+    "forced",
+    "is_explicit",
 ]
 
 #: Environment prefix: METAPHYSICA_VARIANT_<FORK_ID_UPPER>=<option id>
@@ -2321,10 +2324,48 @@ def _env_selection() -> Dict[str, str]:
     return _SELECTION_CACHE[key]
 
 
+#: In-process forced choices (see ``forced``); outranks the selection file.
+_FORCED: Dict[str, str] = {}
+
+
+@contextmanager
+def forced(selection: Dict[str, str]):
+    """Resolve *selection* in this process for the duration of the block.
+
+    Ranks above the selection file and the per-fork env vars, which is what a
+    comparison of two switch states needs. The env vars are set as well so a
+    subprocess started inside the block sees the same choice (unless a
+    selection file is also set, which outranks them there).
+    """
+    saved_forced = dict(_FORCED)
+    saved_env = {k: os.environ.get(k)
+                 for k in (_ENV_PREFIX + f.upper() for f in selection)}
+    _FORCED.update(selection)
+    for fid, oid in selection.items():
+        os.environ[_ENV_PREFIX + fid.upper()] = oid
+    try:
+        yield
+    finally:
+        _FORCED.clear()
+        _FORCED.update(saved_forced)
+        for key, old in saved_env.items():
+            if old is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = old
+
+
+def is_explicit(fork_id: str) -> bool:
+    """True when something other than the default chose *fork_id*'s option."""
+    return bool(fork_id in _FORCED or fork_id in _env_selection()
+                or os.environ.get(_ENV_PREFIX + fork_id.upper()))
+
+
 def resolve(fork_id: str, override: Optional[str] = None) -> str:
     """Selected option for *fork_id*.
 
-    Precedence: explicit *override*, then the ``METAPHYSICA_SELECTION`` file,
+    Precedence: explicit *override*, then ``forced`` (in-process), then the
+    ``METAPHYSICA_SELECTION`` file,
     then ``METAPHYSICA_VARIANT_<ID>``, then
     the adopted default -- the same order build() uses for its output root,
     so callers do not have to remember a second convention.
@@ -2334,7 +2375,7 @@ def resolve(fork_id: str, override: Optional[str] = None) -> str:
         raise KeyError(
             f"unknown fork {fork_id!r}; declared: {sorted(FORKS)}"
         )
-    chosen = (override or _env_selection().get(fork_id)
+    chosen = (override or _FORCED.get(fork_id) or _env_selection().get(fork_id)
               or os.environ.get(_ENV_PREFIX + fork_id.upper()))
     if chosen is None:
         return fork.default()
@@ -2411,8 +2452,7 @@ def describe() -> Dict[str, Any]:
     # coupled to it), so source != declaration there is the path, not drift.
     # FOUND 2026-10-25: that halted 7 path builds. Drift is checked on a run
     # with no overrides only.
-    overridden = sorted(f for f in FORKS
-                        if os.environ.get(_ENV_PREFIX + f.upper()))
+    overridden = sorted(f for f in FORKS if is_explicit(f))
     for fid, fork in FORKS.items():
         drift = None
         # "could not measure" is NOT "no drift", and it is not drift either.

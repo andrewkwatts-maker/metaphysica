@@ -521,23 +521,14 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
     """Run the consistency checks under one switch combination."""
     from metaphysica.simulations.core.arithma_formula import reset_cache
     from metaphysica.simulations.core.preferred_path import digest_of
-    from metaphysica.simulations.core.variants import _ENV_PREFIX
+    from metaphysica.simulations.core.variants import forced
 
-    saved: Dict[str, Optional[str]] = {}
     try:
-        for fid, opt in selection.items():
-            key = _ENV_PREFIX + fid.upper()
-            saved[key] = os.environ.get(key)
-            os.environ[key] = opt
-        reset_cache()
-        checks = consistency_checks()
-        free_set_size = _free_set_load_bearing()
+        with forced(selection):
+            reset_cache()
+            checks = consistency_checks()
+            free_set_size = _free_set_load_bearing()
     finally:
-        for key, old in saved.items():
-            if old is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = old
         reset_cache()
 
     problems = [c for c in checks if not c["ok"]]

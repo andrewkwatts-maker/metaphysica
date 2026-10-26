@@ -92,3 +92,35 @@ def test_flavour_b3_follows_selection_over_env(tmp_path, monkeypatch):
     monkeypatch.setenv("METAPHYSICA_SELECTION", str(p))
     monkeypatch.setenv("METAPHYSICA_VARIANT_FLAVOUR_SEED_COUPLING", "follow_seed")
     assert y.resolve_flavour_b3() == y.DEFAULT_B3
+
+
+def test_forced_outranks_a_selection_file(tmp_path, monkeypatch):
+    """In-process comparisons forced forks through env vars, which a
+    selection file outranks, so they silently measured the file's option."""
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps({"h0_route": "kk_bridge"}))
+    monkeypatch.setenv("METAPHYSICA_SELECTION", str(p))
+    with v.forced({"h0_route": "ricci_flow"}):
+        assert v.resolve("h0_route") == "ricci_flow"
+        assert v.is_explicit("h0_route")
+    assert v.resolve("h0_route") == "kk_bridge"
+
+
+def test_describe_treats_a_selection_file_as_a_path_run(tmp_path, monkeypatch):
+    """describe() only skipped the drift check for env-var runs; a selection
+    run was drift-checked, which halted path builds on 2026-10-25."""
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps({"h0_route": "kk_bridge"}))
+    monkeypatch.setenv("METAPHYSICA_SELECTION", str(p))
+    entry = v.describe()["forks"]["h0_route"]
+    assert entry["selected"] == "kk_bridge"
+    if v.FORKS["h0_route"].read_adopted is not None:
+        assert entry["source_read"].startswith("not_checked")
+
+
+def test_no_module_forces_forks_by_hand():
+    """One mechanism (variants.forced) instead of three env-var copies."""
+    import pathlib
+    core = pathlib.Path(v.__file__).parent
+    for name in ("fork_implications.py", "preferred_path.py", "switch_search.py"):
+        assert "os.environ[key] = " not in (core / name).read_text(encoding="utf-8"), name
