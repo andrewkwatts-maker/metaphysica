@@ -547,7 +547,7 @@ class AppendixPG2Holonomy(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    content=r"b_1 = 0 \quad \text{(finite fundamental group; b_2 is unconstrained)}",
+                    content=r"b_1 = 0 \quad \text{(finite fundamental group; }b_2\text{ is unconstrained)}",
                     formula_id="betti-number-relation-v19",
                     label="(P.11)"
                 ),

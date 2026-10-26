@@ -1113,7 +1113,7 @@ class PneumaMechanismV16(SimulationBase):
             ContentBlock(
                 type="formula",
                 content=r"""\begin{aligned}
-\textbf{Level 1} \; (26D): \quad & S_{26} = \int d^{26}X \sqrt{-G} \left[ R_{26} + \bar{\Psi}_P (i\Gamma^M D_M - m_P)\Psi_P \right] \\
+\textbf{Level 1} \; (26D): \quad & S_{26} = \int d^{26}X \sqrt{|G|} \left[ R_{26} + \bar{\Psi}_P (i\Gamma^M D_M - m_P)\Psi_P \right] \\
 & \text{Signature: } (24,2) = 12 \times (2,0) \oplus (0,2) \\[6pt]
 & \downarrow \; \text{OR reduction via } R_\perp = \bigotimes_{i=1}^{12} R_\perp^{(i)} \\[6pt]
 \textbf{Level 2} \; (2 \times 13D): \quad & \mathcal{L}_{13} = M_*^{11} R_{13} + \bar{\Psi}_{64} (i\gamma^\mu \nabla_\mu - m_{\text{eff}})\Psi_{64} + \mathcal{L}_{\text{flux}} \\
@@ -1463,7 +1463,7 @@ class PneumaMechanismV16(SimulationBase):
             Formula(
                 id="lagrangian-hierarchy-complete",
                 label="(3.10)",
-                latex=r"\begin{aligned} \textbf{L1}\;(26D): & \; S_{26} = \int d^{26}X \sqrt{-G} [R_{26} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = M_*^{11}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
+                latex=r"\begin{aligned} \textbf{L1}\;(26D): & \; S_{26} = \int d^{26}X \sqrt{|G|} [R_{26} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = M_*^{11}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
                 plain_text="L1(26D): S_26 bulk action; L2(13D): dual shadow effective; L3(4D): f(R,T,τ) gravity; L4(DE): quintessence",
                 category="DERIVED",
                 description="Complete dimensional descent: 26D → 13D x 2 -> 4D -> dark energy sector",

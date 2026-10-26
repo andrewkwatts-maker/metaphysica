@@ -267,7 +267,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 id="gaugino-racetrack-superpotential",
                 label="(A4.1)",
                 latex=(
-                    r"W_{\text{np}} = A\,e^{-2\pi T/N_1} + A\,e^{-2\pi T/N_2},\quad"
+                    r"W_{\text{np}} = A\,e^{-2\pi T/N_1} + A\,e^{-2\pi T/N_2},\quad "
                     r"N_1 = b_3 = 24,\; N_2 = b_3 - 1 = 23\ \ (\text{off-path seed})"
                 ),
                 plain_text="W_np = A*exp(-2π T/24) + A*exp(-2π T/23), N1=24, N2=23",
