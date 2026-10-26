@@ -279,7 +279,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 status="DERIVED",
                 description="Condensate scale = b₃/27 for the symmetric Pneuma element in J₃(𝕆).",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (b₃=24 gives s≈0.888…)",
+                eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (retired seed_24 value b₃=24 gives s≈0.888…)",
             ),
         ]
 

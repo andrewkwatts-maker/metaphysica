@@ -1105,7 +1105,7 @@ class AppendixOKKReduction(SimulationBase):
                 description=(
                     "Order-of-magnitude gauge coupling from KK geometry: "
                     "alpha = 1/(4*pi*R^2*b_3), where R is the compact radius "
-                    "and b_3 = 24 is the third Betti number. This provides the "
+                    "and b_3 = 24 is the third Betti number at the retired seed_24 path. This provides the "
                     "geometric baseline for SM gauge coupling derivations."
                 ),
                 no_experimental_value=True,

@@ -186,7 +186,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 id="e8x8-hidden-condensate",
                 label="(A5.2)",
                 latex=r"W_{\text{np}}^{\text{hid}} = A\,e^{-2\pi T/N_1},\quad N_1 = b_3 = 24",
-                plain_text="W_np_hidden = A*exp(-2π T/N1), N1=b3=24",
+                plain_text="W_np_hidden = A*exp(-2π T/N1), N1=b3=24 (retired seed_24 value)",
                 category="DERIVED",
                 description=(
                     "Hidden E₈' non-perturbative superpotential from gaugino condensation. "
@@ -203,7 +203,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                         "The hidden E₈' factor is geometrically separated from the visible sector in the compactification",
                         "Strong-coupling dynamics at scale Λ_hidden lead to gaugino condensation ⟨λλ⟩ ≠ 0",
                         "The non-perturbative superpotential is W_np = A·exp(−2π T/N) where N counts associative 3-cycles",
-                        "With b₃ = 24, N₁ = 24 and the racetrack minimum stabilizes T at T_min",
+                        "With the retired seed_24 value b₃ = 24, N₁ = 24 and the racetrack minimum stabilizes T at T_min",
                     ],
                     "references": ["Dine, M., Rohm, R., Seiberg, N., & Witten, E. (1985) 'Gluino condensation in superstring models'"],
                 },
@@ -269,7 +269,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                 description="Hidden sector non-perturbative superpotential W_np(N₁=24) from gaugino condensation.",
                 derivation_formula="e8x8-hidden-condensate",
                 no_experimental_value=True,
-                eml_description="EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate with b₃=24",
+                eml_description="EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate at the retired seed_24 value b₃=24",
             ),
             Parameter(
                 path="algebra.e8_portal_coupling",

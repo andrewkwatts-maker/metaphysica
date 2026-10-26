@@ -7218,7 +7218,7 @@
       "metadata": {
         "units": "dimensionless",
         "description": "Condensate scale = b₃/27 for the symmetric Pneuma element in J₃(𝕆).",
-        "eml_description": "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (b₃=24 gives s≈0.888…)"
+        "eml_description": "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (retired seed_24 value b₃=24 gives s≈0.888…)"
       },
       "experimental_value": null,
       "experimental_uncertainty": null,
@@ -7226,7 +7226,7 @@
       "bound_type": null,
       "sigma_deviation": null,
       "validation_status": "NO_DATA",
-      "eml_description": "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (b₃=24 gives s≈0.888…)",
+      "eml_description": "EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (retired seed_24 value b₃=24 gives s≈0.888…)",
       "source_simulation": "freudenthal_triple_v1_0",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"
@@ -7526,7 +7526,7 @@
       "metadata": {
         "units": "dimensionless",
         "description": "Hidden sector non-perturbative superpotential W_np(N₁=24) from gaugino condensation.",
-        "eml_description": "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate with b₃=24"
+        "eml_description": "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate at the retired seed_24 value b₃=24"
       },
       "experimental_value": null,
       "experimental_uncertainty": null,
@@ -7534,7 +7534,7 @@
       "bound_type": null,
       "sigma_deviation": null,
       "validation_status": "NO_DATA",
-      "eml_description": "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate with b₃=24",
+      "eml_description": "EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate at the retired seed_24 value b₃=24",
       "source_simulation": "e8x8_splitting_v1_0",
       "derivation_chain": [],
       "git_commit": "363a68990e9cb2884eddfded5099f7aa8a6daf41"

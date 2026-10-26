@@ -701,7 +701,7 @@ class GaugeUnificationSimulation(SimulationBase):
                     "steps": [
                         "Near Planck scale, gravitational coupling enters non-perturbative regime",
                         "Functional renormalization group analysis reveals UV fixed point (Reuter 1998)",
-                        "Fixed point value α* = 1/b₃ = 1/24 determined by G2 topology (b₃ = 24)",
+                        "Fixed point value α* = 1/b₃ = 1/24 determined by G2 topology (retired seed_24 value b₃ = 24)",
                         "Weight factor ω ≈ 0.15 represents 15% pull toward fixed point",
                     ],
                     "method": "asymptotic_safety_fixed_point",

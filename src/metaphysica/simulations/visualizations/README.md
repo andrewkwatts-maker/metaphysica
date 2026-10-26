@@ -39,32 +39,19 @@ structure and must show 26D (24,2) with the (12,1) + (12,1) split:
 
 | File | Description |
 |------|-------------|
-| `descent_chain.py` | dimensional descent chain |
 | `figure1_m27_decomposition.py` | bulk decomposition. **Content is correct** (`M^26(24,2) = Λ₂₄ ⊕ T¹ ⊕ S_EIS`); only the filename and its two output names still carry the pre-ruling `m27` string |
-| `microtubule_12pair.py` | the twelve bridge pairs |
-| `dimension_intro_diagrams.py` | introductory dimension explanations |
-| `compactification_diagrams.py` | compactification schemes |
 | `brane_diagrams.py` | brane structure — see the known defect below |
-| `brane_gauge_diagrams.py` | brane-world gauge structure |
 
 Signature-agnostic — unaffected by the ruling either way:
 
 | File | Description |
 |------|-------------|
-| `algebra_diagrams.py` | algebraic structure |
 | `certificate_dashboard.py` | validation certificate dashboard |
-| `cosmology_diagrams.py` | cosmological predictions |
-| `entropy_basin_terminal_map.py` | entropy basin mapping |
-| `falsifiability_dashboard.py` | experimental predictions dashboard |
 | `figure2_convergence_scatter.py` | convergence scatter |
 | `figure3_alp_discovery_window.py` | ALP (m_a, g_aγγ) discovery window |
 | `figure4_pvalue_distribution.py` | p-value distribution |
 | `four_pattern_orthogonality.py` · `four_pattern_stability.py` | four-pattern structure |
-| `gauge_theory_diagrams.py` | gauge groups and breaking |
-| `gnosis_progression.py` | gnosis progression (SPECULATIVE sector) |
 | `goldilocks_plot.py` | parameter-space "Goldilocks zone" |
-| `octonionic_triality.py` | octonionic triality |
-| `particle_diagrams.py` | Standard Model particle representations |
 | `plot_wz_evolution.py` | w(z) evolution |
 | `primary_gates.py` | primary gate summary |
 | `ricci_flow_evolution.py` | Ricci flow evolution |
