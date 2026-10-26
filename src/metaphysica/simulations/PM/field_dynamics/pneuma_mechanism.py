@@ -1150,7 +1150,7 @@ class PneumaMechanismV16(SimulationBase):
                 latex=r"\mathcal{L}_{\text{pneuma}} = \frac{1}{2} \partial_\mu \Psi_P \partial^\mu \Psi_P - V(\Psi_P) + \mathcal{L}_{\text{vielbein}}",
                 plain_text="L_pneuma = (1/2) d_mu Psi_P d^mu Psi_P - V(Psi_P) + L_vielbein",
                 category="DERIVED",
-                description="Full Pneuma Lagrangian with kinetic, potential, and vielbein terms",
+                description="Not derived from the master action. " + "Full Pneuma Lagrangian with kinetic, potential, and vielbein terms",
                 inputParams=["topology.mephorash_chi", "topology.elder_kads"],
                 outputParams=["pneuma.coupling"],
                 input_params=["topology.mephorash_chi", "topology.elder_kads"],
@@ -1463,7 +1463,7 @@ class PneumaMechanismV16(SimulationBase):
             Formula(
                 id="lagrangian-hierarchy-complete",
                 label="(3.10)",
-                latex=r"\begin{aligned} \textbf{L1}\;(26D): & \; S_{26} = \int d^{26}X \sqrt{|G|} [R_{26} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = M_*^{11}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
+                latex=r"\begin{aligned} \textbf{L1}\;(26D): & \; S_{26} = \int d^{26}X \sqrt{|G|} [\frac{M_*^{24}}{2}R_{26} + \bar{\Psi}_P(i\Gamma^M D_M - m_P)\Psi_P] \\ \textbf{L2}\;(13D): & \; \mathcal{L}_{13} = \frac{M_{13}^{11}}{2}R_{13} + \bar{\Psi}_{64}(i\gamma^\mu\nabla_\mu - m_{\text{eff}})\Psi_{64} \\ \textbf{L3}\;(4D): & \; f(R,T,\tau) = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau \\ \textbf{L4}\;(DE): & \; \mathcal{L}_\phi = -\tfrac{1}{2}(\partial\phi)^2 - V(\phi_M) \end{aligned}",
                 plain_text="L1(26D): S_26 bulk action; L2(13D): dual shadow effective; L3(4D): f(R,T,τ) gravity; L4(DE): quintessence",
                 category="DERIVED",
                 description="Complete dimensional descent: 26D → 13D x 2 -> 4D -> dark energy sector",

@@ -469,7 +469,7 @@ class FRTTauGravityV18(SimulationBase):
                 latex=r"\mathcal{L}_{\rm grav} = R + \alpha_F R^2 + \beta_F T + \gamma_F R\tau + \delta_F (\partial\tau)R",
                 plain_text="L_grav = R + alpha_F*R^2 + beta_F*T + gamma_F*R*tau + delta_F*(d_tau)*R",
                 category="DERIVED",
-                description=(
+                description="Not derived from the master action. " + (
                     "f(R,T,tau) modified gravity Lagrangian from G2 compactification. "
                     f"Coefficients derived from b3={int(_REG.elder_kads)} associative cycles and chi_eff={int(_REG.chi_eff_total)} flux quanta (chi_eff UNRULED)."
                 ),

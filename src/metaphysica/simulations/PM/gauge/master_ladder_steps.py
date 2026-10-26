@@ -44,9 +44,35 @@ UNDEFINED_SYMBOLS: Dict[str, str] = {
 }
 
 
+# "<action id>:<term id>" -> display form of the summand (the term carries the sign).
+TERM_LATEX: Dict[str, str] = {
+    "A26:R": r"\frac{M_*^{24}}{2}R",
+    "A26:psi_kin": r"\bar\Psi_P\, i\Gamma^M D_M \Psi_P",
+    "A26:psi_mass": r"m\,\bar\Psi_P \Psi_P",
+    "A26:psi_quartic": r"\lambda\,(\bar\Psi_P \Psi_P)^2",
+    "A26:ym": r"\frac{1}{4g^2}\mathrm{Tr}\,F_{MN}F^{MN}",
+    "A26:kT": r"K_{T\bar T}\,|\partial T|^2",
+    "A26:V": r"V(T,\phi)",
+    "A26:xi_R_phi2": r"\xi R\,\phi^2",
+    "A26:L_bridge": r"\sum_{i=1}^{12}\mathcal{L}^{i}_{\mathrm{bridge}}",
+    "A26:L_C": r"\mathcal{L}_{C}",
+    "A13:R": r"\frac{M_{13}^{11}}{2}R_{13}",
+    "A13:psi_kin": r"\bar\Psi_P\, i\gamma^m D_m \Psi_P",
+    "A13:V_face": r"V_{\mathrm{face}}^{(f)}",
+    "A6:R": r"\frac{M_{6}^{4}}{2}R_{6}",
+    "A6:psi_kin": r"\bar\Psi_P\, i\gamma^a D_a \Psi_P",
+    "A4:R": r"\frac{M_{\mathrm{Pl}}^{2}}{2}R",
+    "A4:psi_kin": r"\bar\Psi_P\, i\gamma^\mu D_\mu \Psi_P",
+    "A4:L_SM": r"\mathcal{L}_{\mathrm{SM}}",
+    "A4:L_portal": r"\mathcal{L}_{\mathrm{portal}}",
+    "A4:L_DM": r"\mathcal{L}_{\mathrm{DM}}",
+}
+
+
 def _term(aid, tid, sym, dim, source, provider, factors=(), sign=1, derivs=0):
     coef = Coefficient(sym, Fr(dim), source, provider)
-    return Term(tid, coef, tuple(factors), derivs, sign, source == OPEN)
+    return Term(tid, coef, tuple(factors), derivs, sign, source == OPEN,
+                TERM_LATEX["%s:%s" % (aid, tid)])
 
 
 def _open(aid, tid, dim, factors=(), sign=1):
@@ -83,7 +109,7 @@ def action_26(spinor: str, exponent: int, convention: str) -> Action:
         _open(a, "L_C", 26),
     ]
     if not weyl:  # a Weyl field has no mass or quartic term
-        terms[2:2] = [_open(a, "psi_mass", 1, ("Psi", "Psi")),
+        terms[2:2] = [_open(a, "psi_mass", 1, ("Psi", "Psi"), -1),
                       _open(a, "psi_quartic", -24, ("Psi",) * 4)]
     return Action(a, 26, (24, 2), fields, tuple(terms), convention)
 

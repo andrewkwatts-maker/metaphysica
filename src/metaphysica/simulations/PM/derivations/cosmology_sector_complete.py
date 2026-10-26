@@ -69,6 +69,7 @@ import os
 # Add parent directories to path for imports
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
+from metaphysica.simulations.PM.gauge.master_ladder_render import formula_latex
 
 from metaphysica.simulations.base import (
     SimulationBase,
@@ -769,10 +770,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
         formulas.append(Formula(
             id="dm-lagrangian-mirror-v19",
             label="(5.4.1)",
-            latex=(
-                r"\mathcal{L}_{\rm DM} = \bar{\chi}(i\gamma^\mu D_\mu - m_\chi)\chi "
-                r"+ \frac{\epsilon}{2}F_{\mu\nu}F'^{\mu\nu}"
-            ),
+            latex=formula_latex("dm-lagrangian-mirror-v19"),
             plain_text=(
                 "L_DM = chi-bar (i gamma^mu D_mu - m_chi) chi + epsilon/2 F_mn F'^mn"
             ),
@@ -987,7 +985,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
             ),
             plain_text="L_grav = R + R^2/b3^2 + T/chi_eff + R*tau/(b3*sqrt(chi_eff))",
             category="DERIVED",
-            description=(
+            description="Not derived from the master action. " + (
                 "f(R,T,tau) modified gravity Lagrangian from G2 compactification. "
                 "All coefficients determined by topology: alpha_F = 1/576, beta_F = 1/144."
             ),
