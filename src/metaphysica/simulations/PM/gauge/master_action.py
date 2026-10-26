@@ -454,9 +454,9 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="pneuma-master-action-v23",
                 label="(1.1)",
-                latex=r"S = \int d^{26}X \sqrt{-G} \left[ R + \bar{\Psi}_P (i \Gamma^M D_M - m) \Psi_P + \lambda (\bar{\Psi}_P \Psi_P)^2 + \sum_{i=1}^{12} \mathcal{L}_{\text{bridge}}^i + \mathcal{L}_{C} \right]",
-                plain_text="S = integral d^26X sqrt(-G) [ R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
-                category="DERIVED",
+                latex=r"S = \int d^{26}X \sqrt{|G|} \left[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P (i \Gamma^M D_M - m) \Psi_P + \lambda (\bar{\Psi}_P \Psi_P)^2 + \sum_{i=1}^{12} \mathcal{L}_{\text{bridge}}^i + \mathcal{L}_{C} \right]",
+                plain_text="S = integral d^26X sqrt|G| [ (M_*^24/2) R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
+                category="ANSATZ",
                 description=(
                     "v24.2: 26D(24,2) Pneuma master action with 12-pair (2,0) bridge system + two shadow-time directions. "
                     "12×(2,0) + S^{2,0} + (0,1) WARP to create 2×13D(12,1) shadows via distributed OR. "
@@ -482,19 +482,20 @@ class MasterActionSimulationV22(SimulationBase):
                         "Pneuma spinor Psi_P (4096 = 2^13/2 Weyl components of Cl(24,2)) carries all matter content",
                         "Quartic self-interaction lambda*(Psi-bar Psi)^2 drives condensation and symmetry breaking",
                         "12 bridge Lagrangians L_bridge^i implement distributed OR reduction across (2,0) pairs",
-                        "Sampler data fields L_C completes the 26D = 24 (bridge) + 2 (sampler) + 1 (time) decomposition",
+                        "Dimension count: 26 = 24 space (12 bridge pairs) + 2 times, signature (24,2); the measure is sqrt|G| because det G > 0 with two times. The sampler term L_C has no place in this count (S^{2,0} would add two more space directions) and is carried undefined (OPEN)",
                     ],
                     "method": "higher_dimensional_action_principle",
                     "parentFormulas": [],
                 },
                 terms={
-                    "R": "26D Einstein-Hilbert scalar curvature",
+                    "R": "26D Einstein-Hilbert scalar curvature, coefficient M_*^{24}/2 = 1/(2 kappa^2), kappa^2 = 8 pi G_26 = M_*^{-24} (input scale, no value derived)",
                     "Psi_P": "4096-component Pneuma spinor from Cl(24,2)",
                     "Gamma^M": "26D gamma matrices (4096x4096)",
                     "D_M": "Covariant derivative with spin connection",
-                    "lambda": "Quartic self-interaction for condensation",
+                    "lambda": "Quartic self-interaction for condensation. OPEN: no value or derivation in the code (dimension -24 in 26D); the attached value 0.408 = 1/sqrt(6) is not shown to be this coupling",
+                    "m": "Pneuma mass. OPEN: for a single Weyl spinor in even D the bilinear Psi-bar Psi vanishes identically (it pairs opposite chiralities), so this mass term and the quartic need a Dirac (8192) or other doubled field; the code uses a 4096 Weyl spinor",
                     "L_bridge^i": "Bridge Lagrangian for pair i (12 total)",
-                    "L_C": "Sampler data fields Lagrangian S^{2,0}"
+                    "L_C": "Sampler data fields Lagrangian S^{2,0}. OPEN: undefined in the code; the (24,2) count leaves no room for S^{2,0}"
                 },
                 # The Lagrangian itself has no scalar value; its coupling does.
                 # Carrying 0.0 here made the triple-track scanner compare the
@@ -507,8 +508,8 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="bridge-12-pair-metric-v22",
                 label="(1.2)",
-                latex=r"ds^2 = -dt^2 + \sum_{i=1}^{12} \left( dy_{1i}^2 + dy_{2i}^2 \right)",
-                plain_text="ds^2 = -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)",
+                latex=r"ds^2 = -dt_1^2 - dt_2^2 + \sum_{i=1}^{12} \left( dy_{1i}^2 + dy_{2i}^2 \right)",
+                plain_text="ds^2 = -dt_1^2 - dt_2^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2)",
                 category="DERIVED",
                 description=(
                     "v24.2: 26D metric with 12 (2,0) bridge pairs + two shadow-time directions. "
@@ -523,22 +524,22 @@ class MasterActionSimulationV22(SimulationBase):
                     ")"
                 ),
                 eml_description=(
-                    "26D metric: -dt^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2); "
+                    "26D metric: -dt_1^2 - dt_2^2 + sum_{i=1}^{12} (dy_{1i}^2 + dy_{2i}^2); "
                     "signature (24,2) with 12 Euclidean bridge pairs."
                 ),
                 inputParams=["geometry.D_bulk", "bridge.n_pairs", "topology.elder_kads"],
                 outputParams=["bridge.n_pairs"],
                 derivation={
                     "steps": [
-                        "Decompose 26D spacetime as: 1 (time) + 12x2 (bridge pairs) + 2 (shadow-time directions)",
+                        "Decompose 26D spacetime as: 2 times (one per 13D shadow) + 12x2 (bridge pairs) = 26",
                         "Each bridge pair (y_{1i}, y_{2i}) is a 2D Euclidean plane with signature (+,+)",
-                        "Total spatial dimensions: 24 (bridge) + 2 (sampler) = 26, plus 1 time = 26D(24,2)",
+                        "Total: 24 space (bridge) + 2 times = 26D(24,2); there is no further sampler direction",
                     ],
                     "method": "metric_decomposition",
                     "parentFormulas": ["pneuma-master-action-v23"],
                 },
                 terms={
-                    "t": "Timelike coordinate (signature -1)",
+                    "t_1, t_2": "The two timelike coordinates, one per 13D shadow (signature -1 each)",
                     "y_{1i}, y_{2i}": "Bridge pair i coordinates (Euclidean, signature +1 each)",
                     "i": "Bridge pair index, i = 1, 2, ..., 12"
                 },
@@ -949,7 +950,7 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 plain_text=(
                     "delta S_26 / delta g^{mu nu} = 0  =>  "
-                    "G_{mu nu} + Lambda_eff g_{mu nu} = (8 pi G_27 / c^4) "
+                    "G_{mu nu} + Lambda_eff g_{mu nu} = (8 pi G_26 / c^4) "
                     "(T^YM_{mu nu} + T^Dirac_{mu nu} + T^bridge_{mu nu} + T^Pneuma_{mu nu})"
                 ),
                 category="DERIVED",
@@ -961,7 +962,7 @@ class MasterActionSimulationV22(SimulationBase):
                 ),
                 eml_description=(
                     "26D Einstein field equations: G_{mu nu} + Lambda_eff g_{mu nu} = "
-                    "(8 pi G_27 / c^4)(T^YM + T^Dirac + T^bridge + T^Pneuma)."
+                    "(8 pi G_26 / c^4)(T^YM + T^Dirac + T^bridge + T^Pneuma)."
                 ),
                 description=(
                     "Einstein field equations from metric variation of the full 26D master "
@@ -1007,7 +1008,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"T_{\mu\nu}^{\text{bridge}}": {"description": "Bridge sector stress-energy from the 12-pair (2,0) system kinetic terms"},
                     r"T_{\mu\nu}^{\text{Pneuma}}": {"description": "Moduli/scalar stress-energy including Kahler moduli and dilaton contributions"},
                     r"\Lambda_{\text{eff}}": {"description": "Effective cosmological constant from vacuum energy (moduli stabilisation)"},
-                    r"G_{26}": {"description": "26D gravitational coupling constant, related to M_*^{25} via 8 pi G_27 = M_*^{-25}"}
+                    r"G_{26}": {"description": "26D gravitational coupling constant, related to M_*^{24} via 8 pi G_26 = M_*^{-24} (dimension 2 - D = -24)"}
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
@@ -1199,7 +1200,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "S_13 = integral d^{13}x sqrt(-g_13) "
                     "[ R_13 + Psi-bar_P i*gamma^m D_m Psi_P + V_face^(f) ]"
                 ),
-                category="DERIVED",
+                category="ANSATZ",
                 eml_tree_str=(
                     "ops.mul(eml_vec('sqrt_neg_g_13'), "
                     "ops.add(eml_vec('R_13'), "
@@ -1229,7 +1230,7 @@ class MasterActionSimulationV22(SimulationBase):
                 outputParams=[],
                 derivation={
                     "steps": [
-                        "Start from the 26D master action S = int d^{26}X sqrt(-G) [R + ...]",
+                        "Start from the 26D master action S = int d^{26}X sqrt|G| [(M_*^24/2) R + ...]",
                         "Apply bridge/global OR: the distributed OR operator R_perp = tensor_{i=1}^{12} R_perp_i splits the 26D bulk into two 13D shadow domains",
                         "Each shadow inherits 12 spatial dims (one from each bridge pair) + 1 shared time = 13D(12,1)",
                         "Shadow 1 receives left-chiral projections P_L Psi_P, Shadow 2 receives right-chiral projections P_R Psi_P",
@@ -1268,7 +1269,7 @@ class MasterActionSimulationV22(SimulationBase):
                     "S_4 = integral d^4x sqrt(-g) "
                     "[ -(M_Pl^2 / 2) R + L_SM + L_portal + L_DM ]"
                 ),
-                category="DERIVED",
+                category="ANSATZ",
                 eml_tree_str=(
                     "ops.mul(eml_vec('sqrt_neg_g'), "
                     "ops.add("
@@ -1282,8 +1283,7 @@ class MasterActionSimulationV22(SimulationBase):
                 description=(
                     "4D effective action after face/local OR and compactification of the "
                     "internal 9 dimensions of the 13D shadow. The 4D Planck mass is determined "
-                    "by M_Pl^2 = M_*^{9} * Vol(V_7), where M_* is the fundamental 11D Planck "
-                    "mass and Vol(V_7) is the volume of the compact G2 7-manifold. The SM gauge "
+                    "by M_Pl^2 = M_{11}^{9} * Vol(V_7), where M_{11}^9 = M_*^{11} * A_2 is an effective 11D scale (A_2: area of the 2 residual bridge dimensions) and Vol(V_7) is the volume of the compact G2 7-manifold. The SM gauge "
                     "group SU(3)_C x SU(2)_L x U(1)_Y emerges from G2 flux on the 4-face "
                     "structure: the smooth Y7 gives U(1)^12 (U(1)^b2); SU(3)_C x SU(2)_L x U(1)_Y and chirality are OPEN (D-011), SU(2)^12 only at the unresolved orbifold point (A1 loci). The cosmological "
                     "constant Lambda = (int F wedge phi)^2 / Vol ~ 10^{-52} m^{-2} arises from "
@@ -1308,7 +1308,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Decompose 13D = 4D spacetime + 9D internal: ds_13^2 = g_{mu nu} dx^mu dx^nu + g_{mn}^{int} dy^m dy^n",
                         "The 9 internal dimensions include the 7D G2 manifold (V_7) plus 2 residual bridge dimensions",
                         "Integrate over the internal 9D volume to obtain the 4D effective action",
-                        "The 4D Planck mass emerges as M_Pl^2 = M_*^{9} * Vol(V_7) from the dimensional reduction of the Einstein-Hilbert term",
+                        "The 4D Planck mass emerges as M_Pl^2 = M_*^{11} * Vol_9 = M_{11}^{9} * Vol(V_7) from the dimensional reduction of the Einstein-Hilbert term (Vol_9 = A_2 * Vol(V_7), the 2 residual bridge dimensions frozen)",
                         "SM gauge group SU(3)_C x SU(2)_L x U(1)_Y emerges from harmonic forms on G2 cycles: 3-cycles -> SU(3)_C, 4-cycles -> SU(2)_L, residual -> U(1)_Y",
                         "The cosmological constant Lambda = (int F wedge phi)^2 / Vol(V_7) ~ 10^{-52} m^{-2} is set by the flux-moduli balance on the G2 manifold",
                         "Portal Lagrangian L_portal = alpha_leak * (phi_vis phi_dark phi_mod + sterile nu mixing + ALP coupling) connects visible and hidden faces",
@@ -1323,7 +1323,7 @@ class MasterActionSimulationV22(SimulationBase):
                     ],
                 },
                 terms={
-                    r"M_{Pl}^2": {"description": "4D Planck mass squared: M_Pl^2 = M_*^{9} * Vol(V_7), where M_* is the fundamental scale and V_7 is the G2 volume"},
+                    r"M_{Pl}^2": {"description": "4D Planck mass squared: M_Pl^2 = M_{11}^{9} * Vol(V_7) = M_*^{11} * Vol_9 (13D shadow, 9 internal dimensions); M_{11}^9 = M_*^{11} * A_2 is an effective scale; V_7 is the G2 volume"},
                     r"R": {"description": "4D Ricci scalar from the spacetime metric g_{mu nu}"},
                     r"\mathcal{L}_{SM}": {"description": "Standard Model Lagrangian: SU(3)_C x SU(2)_L x U(1)_Y gauge + fermion + Higgs sectors from G2 flux"},
                     r"\mathcal{L}_{portal}": {"description": "Portal Lagrangian: alpha_leak * (dark matter + sterile nu + ALP interactions) coupling visible to hidden faces"},
@@ -1400,7 +1400,7 @@ class MasterActionSimulationV22(SimulationBase):
                     r"\Lambda": {"description": "Cosmological constant from flux-moduli balance: Lambda ~ 10^{-52} m^{-2}"},
                     r"T_{\mu\nu}^{SM}": {"description": "Standard Model stress-energy: gauge (YM) + fermion (Dirac) + Higgs contributions"},
                     r"T_{\mu\nu}^{portal}": {"description": "Portal stress-energy from hidden face coupling: dark matter + sterile neutrino + ALP backreaction, suppressed by alpha_leak^2"},
-                    r"M_{Pl}^2": {"description": "4D Planck mass squared from dimensional reduction: M_Pl^2 = M_*^{9} * Vol(V_7)"},
+                    r"M_{Pl}^2": {"description": "4D Planck mass squared from dimensional reduction: M_Pl^2 = M_*^{11} * Vol_9 = M_{11}^{9} * Vol(V_7)"},
                 },
                 arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0,
             ),
