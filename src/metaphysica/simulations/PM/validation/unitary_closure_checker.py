@@ -51,14 +51,16 @@ class UnitaryClosureChecker:
     4. BRST cohomology is trivial (no gauge anomalies)
     """
 
-    def __init__(self, n_dimensions=26, n_test_states=100):
+    def __init__(self, n_dimensions=26, n_test_states=100, seed=0):
         """
         Initialize unitary closure checker.
 
         Args:
             n_dimensions: Dimensionality of spacetime manifold
             n_test_states: Number of test states for Hilbert space sampling
+            seed: RNG seed; unseeded, unitary_report.json changed every build
         """
+        self.rng = np.random.default_rng(seed)
         self.n_dimensions = n_dimensions
         self.n_test_states = n_test_states
 
@@ -277,7 +279,7 @@ class UnitaryClosureChecker:
 
         for i in range(n_samples):
             # Generate random complex state
-            psi = np.random.randn(self.n_dimensions) + 1j * np.random.randn(self.n_dimensions)
+            psi = self.rng.standard_normal(self.n_dimensions) + 1j * self.rng.standard_normal(self.n_dimensions)
 
             # Two-time ghost control (STRUCTURAL): the unconstrained (24,2)
             # metric has negative-norm directions by construction. The
