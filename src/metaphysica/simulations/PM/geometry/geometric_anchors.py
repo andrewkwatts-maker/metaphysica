@@ -857,7 +857,7 @@ class GeometricAnchorsSimulation(SimulationBase):
         """
         Execute the geometric anchors simulation.
 
-        Registers all fundamental constants derived from b3=24 into the registry.
+        Registers the anchors, computed at ANCHOR_FIT = 24 (provenance OPEN), into the registry.
         This is the foundation for all other simulations.
 
         Args:
@@ -868,7 +868,7 @@ class GeometricAnchorsSimulation(SimulationBase):
             Dictionary of computed parameters
         """
         if verbose:
-            print(f"\n[{self._metadata.id}] Computing geometric anchors from b3=24...")
+            print(f"\n[{self._metadata.id}] Computing geometric anchors at ANCHOR_FIT = 24...")
 
         results = {}
 
@@ -1547,7 +1547,8 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "Experimental/observational input, NOT derived from "
                         "b3=24 (see the property docstring for the source)"
                         if is_measured else
-                        "Derived from b3=24 topological invariant"
+                        "Computed at the fitted anchor ANCHOR_FIT = 24, "
+                        "not the live b3; topological provenance OPEN"
                     ),
                     "fundamental": not is_measured,
                     "eml_description": PARAM_EML_DESCRIPTIONS.get(
@@ -1575,6 +1576,14 @@ class GeometricAnchorsSimulation(SimulationBase):
 
             registry.set_param(**reg_kwargs)
             results[param_path] = value
+
+        # These rows bypass inject_outputs, so apply declared D-027
+        # exclusions here (geometry.m_planck_4d had stayed a PASS).
+        for param_def in self.get_output_param_definitions():
+            if getattr(param_def, "scoring_exclusion", None):
+                registry.patch_scoring_exclusion(
+                    param_def.path, param_def.scoring_exclusion,
+                    param_def.scoring_exclusion_reason)
 
         # Also register under common alias paths for compatibility
         alias_mapping = {
@@ -1771,7 +1780,11 @@ class GeometricAnchorsSimulation(SimulationBase):
                 experimental_bound=1.220890e19,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                uncertainty=1.9e15
+                uncertainty=1.9e15,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: reduced Planck mass times sqrt(8 pi) "
+                    "returns the CODATA full mass it is scored against."),
             ),
             # Proton-to-electron mass ratio
             Parameter(

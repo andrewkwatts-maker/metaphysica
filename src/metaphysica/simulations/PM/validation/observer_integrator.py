@@ -53,13 +53,17 @@ class ObserverIntegrator:
     4. 26D→4D projection is not disturbed by measurement
     """
 
-    def __init__(self, n_measurements=1000):
+    def __init__(self, n_measurements=1000, seed=0):
         """
         Initialize observer integrator.
 
         Args:
             n_measurements: Number of measurement events to simulate
+            seed: RNG seed. Unseeded, the published report changed on every
+                build (mass_variation 0.684 then 0.661), so path runs
+                reported it as a changed value.
         """
+        self.rng = np.random.default_rng(seed)
         # PM framework structure
         self.n_dimensions = 26
         self.signature = (24, 2)
@@ -88,7 +92,7 @@ class ObserverIntegrator:
         # For G₂ manifold, this is the state of minimal holonomy
 
         # Start with Gaussian-distributed vacuum fluctuations
-        psi_vacuum = np.random.randn(self.n_dimensions) + 1j * np.random.randn(self.n_dimensions)
+        psi_vacuum = self.rng.standard_normal(self.n_dimensions) + 1j * self.rng.standard_normal(self.n_dimensions)
 
         # Normalize
         psi_vacuum = psi_vacuum / norm(psi_vacuum)
@@ -113,14 +117,14 @@ class ObserverIntegrator:
 
         elif observable == "momentum":
             # Momentum operator: -i ∂/∂x
-            M = np.random.randn(self.n_dimensions, self.n_dimensions)
+            M = self.rng.standard_normal((self.n_dimensions, self.n_dimensions))
             M = (M - M.T) * 1j  # Anti-Hermitian → Hermitian via i× factor
 
         elif observable == "energy":
             # Energy (Hamiltonian) in 26D
             # H = -∇² + V(x) where V is the G₂ potential
             # Typical measurements happen at EWSB scale or lower (~10⁻¹⁶ E_Planck)
-            H = np.diag(np.random.uniform(0, self.E_ewsb, self.n_dimensions))
+            H = np.diag(self.rng.uniform(0, self.E_ewsb, self.n_dimensions))
 
             M = H
 
@@ -253,7 +257,7 @@ class ObserverIntegrator:
 
         for i in range(self.n_measurements):
             # Generate random measurement operator
-            observable_type = np.random.choice(["position", "momentum", "energy"])
+            observable_type = self.rng.choice(["position", "momentum", "energy"])
             M = self.generate_measurement_operator(observable_type)
 
             # Perform measurement

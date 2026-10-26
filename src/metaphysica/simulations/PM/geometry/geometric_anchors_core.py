@@ -1523,7 +1523,8 @@ class GeometricAnchors:
                         source="geometric_anchors_v16_1",
                         status="GEOMETRIC",
                         metadata={
-                            "derivation": "Derived from b3=24 topological invariant",
+                            "derivation": ("Computed at the fitted anchor ANCHOR_FIT = 24, "
+                                           "not the live b3; topological provenance OPEN"),
                             "fundamental": True,
                             "tuning_free": True
                         }

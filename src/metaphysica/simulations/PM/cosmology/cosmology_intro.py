@@ -858,7 +858,11 @@ class CosmologyIntroV16(SimulationBase):
                 experimental_bound=1.220890e19,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                uncertainty=1.9e15
+                uncertainty=1.9e15,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: run() returns registry codata.M_PLANCK, "
+                    "the CODATA value this row is scored against."),
             ),
             Parameter(
                 path="cosmology.V_9_internal",

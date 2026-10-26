@@ -971,7 +971,7 @@ def _derived_from_free_variables() -> List[Dict[str, Any]]:
 
     Not ledger rows -- they are consequences, not free variables. Recorded
     because ``register_anchors`` stamps every non-MEASURED anchor with
-    ``"derivation": "Derived from b3=24 topological invariant"`` and
+    ``"derivation"`` (once "Derived from b3=24 topological invariant") and
     ``"tuning_free": True``, and for these the b3 input does no work at all:
     they are arithmetic on experimental numbers.
     """
