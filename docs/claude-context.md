@@ -1,37 +1,6 @@
-General engineering standards: ~/.claude/docs/standards.md.
+# metaphysica: working context
 
-## Commit / push policy
-- **The commit AUTHOR and COMMITTER must be the repository owner.** This is a
-  separate rule from the trailer rule above, and it is the one that actually
-  leaked: on 2026-08-22 thirteen commits on `origin/main` were found authored
-  *and* committed by `Claude <noreply@anthropic.com>`, which put an `@claude`
-  entry in the GitHub Contributors list even though no commit message ever
-  carried a trailer. Never pass `--author`, never set `user.name`/`user.email`
-  to an assistant identity, and never let `GIT_AUTHOR_*` / `GIT_COMMITTER_*`
-  be inherited from an agent environment. Verify with:
-
-      git log --format='%an <%ae> | %cn <%ce>' -5
-
-  Every line must show the owner on both sides before pushing.
-
-# CLAUDE.md — `metaphysica` package
-
-Guidance for Claude Code working inside the `metaphysica` PyPI package
-source tree.
-
-## What this is
-
-The `metaphysica` package is the **engine + generators + website
-templates** behind the Principia Metaphysica framework. It's published
-to PyPI and consumed by:
-
-- [`PrincipiaMetaphysica`](https://github.com/andrewkwatts-maker/PrincipiaMetaphysica)
-  — thin static-site host. Calls `metaphysica.build()` to render the site.
-- [`metaphysica-app`](https://github.com/andrewkwatts-maker/metaphysica-app)
-  — interactive PC + APK GUI on top of the same engine.
-- (future) `periodica` — materials-science layer; will call
-  `metaphysica.Get('Up')` to source quark/constant data instead of
-  shipping its own static JSONs.
+Detail behind CLAUDE.md. Read the section you need.
 
 ## Layout
 
@@ -159,3 +128,10 @@ When bumping the package version, **all four locations must be updated together*
 After committing and tagging, create a **GitHub Release** from the tag to trigger the PyPI publish workflow (`release: published` event). The workflow does **not** fire on a tag push alone.
 
 > **Important:** `pyproject.toml version` is what PyPI indexes — not the git tag. Pre-release suffixes like `2.0.0a0` are **not** matched by `>=2.0.0` in pip. Always use clean `X.Y.Z` for stable releases.
+
+## Owner standards for Python repos
+
+- A GUI uses KivyMD; the headless library (PyPI) and the GUI live in separate repos.
+- Configuration is YAML.
+- `build.bat` plus a shell equivalent; lint (ruff), type-check (mypy or pyright) and test in the build.
+- Up-to-date How-To docs in `docs/`.
