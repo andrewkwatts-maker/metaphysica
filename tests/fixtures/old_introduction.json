@@ -1,5 +1,5 @@
 {
- "sha256": "8da6e0b1b0af4a316435d96d56e0247c06996ed16ee082f448c4f765544220aa",
+ "sha256": "35b3c5f1111cf3a05b30d07ad01c1e27eda4bd0c939ef6301ca5fd741d8210da",
  "n_blocks": 81,
- "note": "content_blocks of the pre-D-025 introduction (section 1), json sort_keys, ensure_ascii False"
+ "note": "content_blocks of the pre-D-025 introduction (section 1), json sort_keys, ensure_ascii False; re-pinned after W1 dropped the filler word \"very\" (one word, block count unchanged)"
 }
