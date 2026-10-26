@@ -20,7 +20,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 # Where the simulation package lives inside the installed lib.
 _HERE = Path(__file__).resolve().parent
@@ -149,7 +149,7 @@ def main() -> int:
         "description": "Top-level index of simulation modules with gate/parameter contributions.",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "generator": "metaphysica.generators.generate_simulations_index",
-        "seed_provenance": "All simulations descend from the seed b3 = 24.",
+        "seed_provenance": "All simulations descend from the seed %s." % seed_label(),
         "total_scripts": len(sims),
         "total_categories": len(by_category),
         "categories": {

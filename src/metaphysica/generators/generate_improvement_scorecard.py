@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 
 def _load(p: Path) -> Dict[str, Any]:
@@ -122,7 +122,7 @@ def main() -> int:
         "framework": "Principia Metaphysica",
         "scorecard_type": "Gate LOCKED vs OPEN tally + completion percentage",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-        "seed_provenance": "All 72 gates trace back to seed b3 = 24 (G2 manifold).",
+        "seed_provenance": "All 72 gates trace back to seed %s (G2 manifold)." % seed_label(),
         "totals": {
             "total_gates": total,
             "locked": n_locked,

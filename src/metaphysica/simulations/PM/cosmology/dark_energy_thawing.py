@@ -1189,7 +1189,7 @@ class DarkEnergyEvolution(SimulationBase):
                 terms={
                     "epsilon_T": f"Torsional leakage coefficient ({(b3 / float(chi_eff_total)) * (1.0 - 1.0 / (b3 ** 0.5)):.3f})",
                     "b3": f"Third Betti number ({b3}, read from the adopted seed)",
-                    "chi_eff": f"Effective Euler characteristic ({chi_eff_total}; UNRULED -- three competing derivations agreeing only at b_3 = 24)"
+                    "chi_eff": f"Effective Euler characteristic ({chi_eff_total}; UNRULED -- three competing derivations agreeing only at the adopted b_3)"
                 },
                 eml_latex=r"\mathrm{ops.mul}(\mathrm{ops.div}(\mathrm{eml\_scalar}(b_3), \chi_{\mathrm{eff}}),\, \mathrm{ops.sub}(\mathrm{eml\_scalar}(1),\, \mathrm{ops.inv}(\mathrm{ops.sqrt}(\mathrm{eml\_scalar}(24)))))",
                 eml_tree_str="ops.mul(ops.div(b3_leaf(), chi_eff), ops.sub(eml_scalar(1.0), ops.inv(ops.sqrt(b3_leaf()))))",
@@ -1287,7 +1287,7 @@ class DarkEnergyEvolution(SimulationBase):
                     r"n_{\text{pairs}}": {"description": f"Number of bridge pairs = b3//2 = {n_pairs}"},
                     r"n_{\text{faces}}": {"description": "Number of faces per shadow = 4, derived as the moved coordinates of an involution"},
                     r"n_{\text{gen}}": {"description": f"Number of fermion generations = b_2/4 = rank(Gamma) = {int(_REG.n_gen)} (the RULED route). The alternative n_gen = chi_eff/48 is UNRULED and is neither asserted nor deleted here."},
-                    r"\chi_{\text{eff}}": {"description": f"Effective Euler characteristic = {chi_eff_total} (UNRULED: three competing derivations that agree only at b_3 = 24)"}
+                    r"\chi_{\text{eff}}": {"description": f"Effective Euler characteristic = {chi_eff_total} (UNRULED: three competing derivations that agree only at the adopted b_3)"}
                 },
                 eml_latex=rf"\mathrm{{ops.div}}(\sigma_{{\mathrm{{single}}}},\, \mathrm{{ops.sqrt}}(\mathrm{{ops.mul}}(\mathrm{{eml\_scalar}}({n_pairs}),\, \mathrm{{eml\_scalar}}(4))))",
                 eml_tree_str=f"ops.div(sigma_single, ops.sqrt(ops.mul(eml_scalar({float(n_pairs)}), eml_scalar(4.0))))",

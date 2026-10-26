@@ -34,7 +34,7 @@ import math
 import sys
 from typing import Any, Dict, List, Optional
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 # Historical renames: config output_params path -> registry canonical path.
 # Only add entries here when the rename is documented; unknown paths are
@@ -184,7 +184,7 @@ def audit() -> Dict[str, Any]:
             "literal disagrees with registry; ORPHAN = no registry source "
             "exists for the literal. Roadmap: replace config literals with "
             "registry lookups so every displayed number traces to the "
-            "b3=24 derivation chain or a cited experimental dataset."
+            "%s derivation chain or a cited experimental dataset." % seed_label()
         ),
         "summary": {
             "checked": n_match + n_drift + n_orphan,

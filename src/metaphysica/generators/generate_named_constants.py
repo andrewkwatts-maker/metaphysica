@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
 
-from metaphysica.generators._common import autogen_dir
+from metaphysica.generators._common import autogen_dir, seed_label
 
 # Canonical "named" constants: the published Ten Named + key derived/established.
 # If a parameter ID ends with one of these short names it is included.
@@ -69,7 +69,7 @@ def main() -> int:
             "experimental_uncertainty": pdata.get("experimental_uncertainty"),
             "sigma_deviation": pdata.get("sigma_deviation"),
             "validation_status": pdata.get("validation_status"),
-            "seed_provenance": "b3 = 24",
+            "seed_provenance": seed_label(),
         }
         # Prefer the first encounter; do not clobber if same short name appears.
         if short not in constants:
@@ -82,7 +82,7 @@ def main() -> int:
                        "keyed by canonical short name.",
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "generator": "metaphysica.generators.generate_named_constants",
-        "seed_provenance": "All constants derive from or calibrate against the seed b3 = 24.",
+        "seed_provenance": "All constants derive from or calibrate against the seed %s." % seed_label(),
         "total": len(constants),
         "constants": constants,
     }

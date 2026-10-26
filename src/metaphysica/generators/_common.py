@@ -35,6 +35,12 @@ def autogen_dir() -> Path:
 TIMESTAMP_KEYS = ("timestamp", "generated_at", "generated", "build_time")
 
 
+def seed_label() -> str:
+    """The seed in force as ``b3 = N``, read from the b3_seed fork (fails if unreadable)."""
+    from metaphysica.simulations.PM.geometry.geometric_anchors import live_b3
+    return "b3 = %d" % live_b3()
+
+
 def _strip_timestamps(value, keys=TIMESTAMP_KEYS):
     """A deep copy with every timestamp key removed, for comparison only."""
     if isinstance(value, dict):

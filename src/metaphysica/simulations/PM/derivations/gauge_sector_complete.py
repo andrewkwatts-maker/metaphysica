@@ -1227,7 +1227,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "method": "generator_counting_with_running",
                 "steps": [
                     "Count visible gauge generators: 1 for U(1) plus 3 for SU(2) plus 8 for SU(3) = 12",
-                    "Divide by b3 = 24 to get the shadow tilt 12/24 = 0.5",
+                    "Divide by b3 to get the shadow tilt",
                     "Apply the RG running factor from the GUT scale down to the electroweak scale, f_RG ~ 0.924",
                     "sin^2(theta_W) = 0.5 * 0.924 = 0.2312",
                 ],

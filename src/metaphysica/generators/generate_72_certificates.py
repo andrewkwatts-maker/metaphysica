@@ -88,7 +88,7 @@ VERIFIABLE_GATES = {
         "proof_id": "w0_equation_of_state",
         "wl_code": "w0 = -(b3-1)/b3 = -23/24",
         "result": "-0.9583",
-        "note": "Dark energy EoS from b3 topology: w0 = -1 + 1/b3 = -23/24 = -0.9583. DESI 2025: w0 = -0.957 +/- 0.067 (0.02sigma agreement). Core prediction derived from b3 = 24 (thawing quintessence)"
+        "note": "Dark energy EoS from b3 topology: w0 = -1 + 1/b3 = -23/24 = -0.9583. DESI 2025: w0 = -0.957 +/- 0.067 (0.02sigma agreement). Core prediction derived from b3 (thawing quintessence)"
     },
 
     # Block F: Moduli (G59)
@@ -187,7 +187,7 @@ NOT_TESTABLE_GATES = {
     55: {"reason": "Decoherence threshold is QM axiom (Copenhagen/decoherence interpretation boundary). The quantum-to-classical transition is foundational to QM, not a PM-specific prediction. PM uses standard decoherence theory as input. quantum_decoherence_solver.py calculates coherence times for Orch-OR but does not verify G55."},
 
     # Block F: Extra-dimensional topology axioms
-    57: {"reason": "Calabi-Yau parity h^{2,1}=3 is a structural assumption about extra dimensions. Hodge numbers of compactified dimensions cannot be experimentally measured. PM derives 3 generations from b3=24, but the CY topology itself is a framework input. No experiment can measure the Hodge diamond of hidden dimensions."},
+    57: {"reason": "Calabi-Yau parity h^{2,1}=3 is a structural assumption about extra dimensions. Hodge numbers of compactified dimensions cannot be experimentally measured. PM derives 3 generations from the seed's b3, but the CY topology itself is a framework input. No experiment can measure the Hodge diamond of hidden dimensions."},
     58: {"reason": "Brane-world boundary (matter confined to 4D brane) is a Randall-Sundrum-type assumption. While brane-world models have testable consequences (KK gravitons at G56), the confinement axiom itself is an input, not a PM derivation. brane_diagrams.py is a visualization, not a derivation."},
 
     # Block F: Information/Closure axioms

@@ -653,7 +653,7 @@ class EvolutionEngineV16(SimulationBase):
         return SectionContent(
             section_id="5",
             subsection_id="5.7",
-            title="Unified Hubble Evolution Engine (v16.2)",
+            title="Unified Hubble Evolution Engine",
             abstract=(
                 "We present a unified evolution engine that merges v14.2 log-scaling "
                 "numerical success with v16.1 Ricci flow theoretical rigor. The key "

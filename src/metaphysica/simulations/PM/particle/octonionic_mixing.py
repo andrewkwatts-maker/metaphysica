@@ -813,7 +813,7 @@ class OctonionicMixing(SimulationBase):
                     "(ii) the golden angle theta_g = arctan(1/phi) is the correct "
                     "octonionic mixing angle (Furey 2018 provides a precursor argument); "
                     "(iii) flux corrections xi are computed from G2 torsion, not fitted. "
-                    "Note that theta_13 and delta_CP are calibrated inputs from NuFIT 6.0, "
+                    "Theta_13 and delta_CP are calibrated inputs from NuFIT 6.0, "
                     "not parameter-free predictions."
                 )
             ),

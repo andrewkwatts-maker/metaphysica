@@ -208,7 +208,7 @@ class NeutrinoSectorRefinement:
             param="sigma_m_base_eV",
             formula=(
                 "m1 + m2 + m3 (inverted) from geometric Yukawas + G2 cycles "
-                "[b3 = 24]"
+                "[b3 of the live seed]"
             ),
             value=float(sigma_m),
         )
@@ -295,7 +295,7 @@ class NeutrinoSectorRefinement:
             param="refined_neutrino_sum_mass",
             formula=(
                 "geometric PMNS sum + Z2 mirror correction from G2 bridge "
-                "[b3 = 24]"
+                "[b3 of the live seed]"
             ),
             value=float(sigma_m_refined),
         )

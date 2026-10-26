@@ -825,7 +825,7 @@ class MethodologyV16_2(SimulationBase):
             ContentBlock(
                 type="note",
                 content=(
-                    "<h4>How <code>triple_assert</code> Caught the v24.1 n<sub>gen</sub> Bug</h4>"
+                    "<h4>How <code>triple_assert</code> Caught the n<sub>gen</sub> Bug</h4>"
                     "<p>In v24.1, the abstract's displayed LaTeX read "
                     "<code>n<sub>gen</sub> = χ<sub>eff</sub>/(2·b₃) = 144/48 = 3</code> — but the Arithma and "
                     "EML trees both evaluated <code>χ<sub>eff</sub>/(2·b₃) = 144/48 = 3</code>. The Python float "

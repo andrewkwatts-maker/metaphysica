@@ -1116,7 +1116,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                         "At M_GC, integrate out heavy moduli",
                         "Generate effective operator: delta L ~ (g^2/M_GC^2) |phi|^4",
                         "This shifts lambda by Delta_lambda ~ g^2 / (16*pi^2 * b_3)",
-                        "The b_3 = 24 factor comes from moduli space volume",
+                        "The b_3 factor comes from moduli space volume",
                     ]
                 },
                 terms={

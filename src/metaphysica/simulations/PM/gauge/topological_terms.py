@@ -1074,7 +1074,7 @@ def write_report(out_path=None):
         "not_established": (
             "Topological content. Flat R^7 has trivial holonomy and no "
             "non-trivial 7-cycles, so this integral is coefficient x volume. "
-            "Harmonic representatives on a compact G2 manifold with b3 = 24 "
+            "Harmonic representatives on a compact G2 manifold "
             "are required, and that is deferred DEC work. The assignment of "
             "the twelve physical bridges to coordinate channels is also a "
             "modelling input, not derived."

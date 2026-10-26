@@ -295,7 +295,7 @@ def evaluate_all_candidates() -> List[CandidateVerdict]:
     # 12. Axion-mass b3 link / BabyIAXO window: already in the codebase
     out.append(CandidateVerdict(
         candidate_id="axion-babyiaxo-link",
-        expression="m_a(b3=24) ~ 3.51 meV in the BabyIAXO window",
+        expression="m_a ~ 3.51 meV in the BabyIAXO window",
         computed=None, claimed=3.51e-3, anchor=None,
         anchor_source="BabyIAXO 2028 sensitivity window",
         verdict="ALREADY_INTEGRATED",

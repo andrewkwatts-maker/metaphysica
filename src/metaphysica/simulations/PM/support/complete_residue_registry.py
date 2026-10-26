@@ -1959,7 +1959,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 "topic": "G2 Manifold and Holonomy",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
                 "relevance": "The 125 spectral residues arise from the Laplacian eigenvalue spectrum on a compact G2 holonomy manifold.",
-                "validation_hint": "Check that b3 = 24 is consistent with the number of harmonic 3-forms on a Joyce G2 manifold."
+                "validation_hint": "Check that b3 is consistent with the number of harmonic 3-forms on a Joyce G2 manifold."
             },
             {
                 "topic": "Kaluza-Klein Theory",

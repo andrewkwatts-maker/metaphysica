@@ -309,7 +309,7 @@ class AppendixGOmegaSeal(SimulationBase):
     Provides the cryptographic anchoring ensuring the 125 residues
     are locked to the 288 Ancestral Roots via geometric necessity.
 
-    THE GEOMETRIC SEAL ARCHITECTURE (v24.2):
+    THE GEOMETRIC SEAL ARCHITECTURE:
     1. Symmetry Lock: 288 roots from SO(24) + shadow torsion
     2. Torsion Lock: 24 pins from 12-per-shadow mechanism
     3. 4-Fold Lock: Isotropic distribution (4 x 6 matrix)
@@ -545,7 +545,7 @@ class AppendixGOmegaSeal(SimulationBase):
             ContentBlock(
                 type="note",
                 content=(
-                    "<h4>The Symmetry Lock (v24.2 with 12-PAIR-BRIDGE)</h4>"
+                    "<h4>The Symmetry Lock</h4>"
                     "<table style='width:100%'>"
                     "<tr><th>Component</th><th>Value</th><th>Role</th></tr>"
                     "<tr><td>SO(24) Generators</td><td>276</td><td>Transverse symmetry base</td></tr>"
@@ -669,7 +669,7 @@ class AppendixGOmegaSeal(SimulationBase):
             ContentBlock(
                 type="note",
                 content=(
-                    "<h4>Declaration of Sterile Terminal State (v24.2 - 12-PAIR-BRIDGE)</h4>"
+                    "<h4>Declaration of Sterile Terminal State</h4>"
                     "<p><em>\"We hereby anchor the 125 residues of the Spectral Registry to the 288 "
                     "Ancestral Roots of the 26D Bulk. By defining the 12-pin torsion for each of the "
                     "two 13D shadow branes and validating the 12 x (2,0) paired bridge structure, "
