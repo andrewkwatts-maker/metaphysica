@@ -274,7 +274,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             sigma_theta13 = (theta13_deg_derived - _THETA13_NUFIT) / _THETA13_1SIGMA
             sigma_delta_CP = (delta_CP_deg_derived - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
 
-        except (ImportError, Exception):
+        except ImportError:
+            # Only a missing library falls back. Any other error must surface:
+            # falling back to run() scored a broken EML path as agreement.
             return self.run(registry)
 
         return {
