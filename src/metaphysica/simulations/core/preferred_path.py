@@ -208,27 +208,18 @@ def compare_states(state_a: Optional[Dict[str, str]] = None,
     evaluation and restoring them afterwards, so no module needs to know it is
     being compared. Reports the delta; never orders by agreement with data.
     """
-    from metaphysica.simulations.core.variants import _ENV_PREFIX
+    from metaphysica.simulations.core.variants import forced
 
     state_a = state_a or preferred_selection()
     state_b = state_b or preferred_selection()
     observables = observables or _default_observables()
 
     def run_under(selection: Dict[str, str]) -> Dict[str, Any]:
-        saved: Dict[str, Optional[str]] = {}
         try:
-            for fid, opt in selection.items():
-                key = _ENV_PREFIX + fid.upper()
-                saved[key] = os.environ.get(key)
-                os.environ[key] = opt
-            _invalidate_caches()
-            return _evaluate(observables)
+            with forced(selection):
+                _invalidate_caches()
+                return _evaluate(observables)
         finally:
-            for key, old in saved.items():
-                if old is None:
-                    os.environ.pop(key, None)
-                else:
-                    os.environ[key] = old
             _invalidate_caches()
 
     col_a = run_under(state_a)
