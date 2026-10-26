@@ -121,6 +121,6 @@ def test_describe_treats_a_selection_file_as_a_path_run(tmp_path, monkeypatch):
 def test_no_module_forces_forks_by_hand():
     """One mechanism (variants.forced) instead of three env-var copies."""
     import pathlib
-    core = pathlib.Path(v.__file__).parent
+    core = pathlib.Path(v.__file__).parent.parent  # the package sits in core/
     for name in ("fork_implications.py", "preferred_path.py", "switch_search.py"):
         assert "os.environ[key] = " not in (core / name).read_text(encoding="utf-8"), name
