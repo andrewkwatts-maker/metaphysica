@@ -9,6 +9,7 @@ from fractions import Fraction
 from typing import List
 
 from metaphysica.actions.model import OPEN, Action, Check
+from metaphysica.actions.spinors import check_spinor_terms
 
 
 def canonical_dim(kind: str, D: int) -> Fraction:
@@ -40,4 +41,4 @@ def check_action(action: Action) -> List[Check]:
         out.append(Check("open:%s:%s" % (action.id, t.id), t.coefficient.source, ok,
                          True, src, "OPEN coefficient on a term not marked open" if not ok
                          else "ok"))
-    return out
+    return out + check_spinor_terms(action)

@@ -34,8 +34,11 @@ class Field:
     kind: str
     components: int
     mass_dim: Fraction
+    chirality: Optional[str] = None  # "weyl" for a chiral spinor; None otherwise
 
     def __post_init__(self):
+        if self.chirality not in (None, "weyl"):
+            raise ModelError("field %s: unknown chirality %r" % (self.name, self.chirality))
         if self.kind not in KINDS and not _is_form(self.kind):
             raise ModelError("field %s: unknown kind %r" % (self.name, self.kind))
         if self.name in (CURVATURE, DERIVATIVE):
