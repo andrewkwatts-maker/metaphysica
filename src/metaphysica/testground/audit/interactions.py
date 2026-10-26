@@ -38,7 +38,8 @@ def interaction_sets(fp: Mapping[Option, FrozenSet[str]], *, k_max: int = 3,
 
     Sorted tuples, ordered by size then lexicographically. Raises ValueError past *limit*.
     """
-    assert 2 <= k_max <= 4, "k_max must be 2..4"
+    if not 2 <= k_max <= 4:
+        raise ValueError(f"k_max must be 2..4, got {k_max}")
     opts = sorted(fp)
     level: List[OptionSet] = [(o,) for o in opts]
     out: List[OptionSet] = []

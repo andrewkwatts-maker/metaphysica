@@ -82,5 +82,5 @@ def test_limit_and_k_max_errors():
     with pytest.raises(ValueError, match="exceed limit 3"):
         interaction_sets(fp, limit=3)
     for k in (1, 5):
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError, match="k_max"):
             interaction_sets(fp, k_max=k)
