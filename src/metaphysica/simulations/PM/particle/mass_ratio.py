@@ -291,7 +291,7 @@ if SCHEMA_AVAILABLE:
                         "method": "G2 cycle volume ratio via Laplacian eigenvalues on associative and co-associative cycles",
                         "parentFormulas": ["k-gimel-definition", "c-kaf-definition"],
                         "steps": [
-                            "Start with b3 = 24 from Joyce-Karigiannis TCS manifold",
+                            "Start with b3 = 24 from Joyce-Karigiannis TCS (retired reading) manifold",
                             "Compute k_gimel = b3/2 + 1/pi = 12.318310",
                             "Compute C_kaf = b3*(b3-7)/(b3-9) = 27.2",
                             "Compute base ratio: (C_kaf^2 * k_gimel/pi) = 2900.94",

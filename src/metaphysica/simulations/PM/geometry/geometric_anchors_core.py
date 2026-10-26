@@ -153,7 +153,7 @@ class GeometricAnchors:
     @property
     def mephorash_chi(self) -> int:
         """
-        Effective Euler characteristic from TCS construction.
+        Effective Euler characteristic from TCS (retired reading) construction.
 
         v20.6 NOTE: This returns chi_eff_total = 144 for backward compatibility.
         Per SSOT dual structure:
@@ -229,7 +229,7 @@ class GeometricAnchors:
         return self.nitzotzin_roots // 2  # 288/2 = 144
 
     # =========================================================================
-    # Hodge Numbers for TCS #187 (Selected Topology)
+    # Hodge Numbers for TCS (retired reading) #187 (Selected Topology)
     # =========================================================================
     # These determine the number of moduli and the Euler characteristic.
     # Formula: chi_eff = 2(h11 - h21 + h31) = 2(4 - 0 + 68) = 144
@@ -294,7 +294,7 @@ class GeometricAnchors:
 
     @property
     def k_matching(self) -> int:
-        """TCS matching number"""
+        """TCS (retired reading) matching number"""
         return self.elder_kads // 6  # = 4
 
     @property
@@ -1339,7 +1339,7 @@ class GeometricAnchors:
             "n_generations": self.n_generations,
             "phi": self.phi,
 
-            # Hodge numbers (TCS #187)
+            # Hodge numbers (TCS (retired reading) #187)
             "h11": self.h11,
             "h21": self.h21,
             "h31": self.h31,

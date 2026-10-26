@@ -14,7 +14,7 @@ class HiggsMassParameters:
     The Higgs mass formula m_h² = 8π² v² (λ₀ - κ Re(T) y_t²) connects
     the Higgs mass to the Kähler modulus Re(T). Three values exist:
 
-    1. RE_T_ATTRACTOR = 1.833  (GEOMETRIC — from TCS #187 attractor mechanism)
+    1. RE_T_ATTRACTOR = 1.833  (GEOMETRIC — calibrated at the retired TCS seed; not re-derived on Y7)
        → Gives m_h ≈ 414 GeV (FAILS experiment)
     2. RE_T_PHENOMENOLOGICAL = 9.865  (CONSTRAINED — inverted from m_h = 125.10 GeV)
        → Circular: m_h is INPUT, Re(T) is OUTPUT
@@ -48,8 +48,8 @@ class HiggsMassParameters:
 
     # G₂ complex structure modulus - TWO VALUES (GEOMETRIC vs PHENOMENOLOGICAL)
     #
-    # GEOMETRIC VALUE (from TCS attractor mechanism):
-    RE_T_ATTRACTOR = 1.833       # [GEOMETRIC] From flux + membrane instantons on TCS #187
+    # GEOMETRIC VALUE (from TCS (retired reading) attractor mechanism):
+    RE_T_ATTRACTOR = 1.833       # [GEOMETRIC] From flux + membrane instantons (calibrated at the retired TCS seed; not re-derived on Y7)
     #                              Formula: Re(T) = √(χ_eff/b₃) × f(T_ω)
     #                                      = √(144/24) × 0.748 = 1.833
     #                              This is the TRUE geometric prediction.
@@ -98,7 +98,7 @@ class HiggsMassParameters:
         """
         Calculate m_h using GEOMETRIC Re(T) = 1.833
 
-        This is the TRUE prediction from TCS G₂ attractor mechanism.
+        This is the TRUE prediction from TCS (retired reading) G₂ attractor mechanism.
         Result: m_h ≈ 414 GeV (FAILS to match experiment!)
 
         Returns:

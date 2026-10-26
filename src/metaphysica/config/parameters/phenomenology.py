@@ -23,7 +23,7 @@ class PhenomenologyParameters:
     M_STAR = 7.4604e+15  # 13D fundamental scale [GeV] (LOW string scale!)
     M_STAR_OLD = 1e19                # Old value (inconsistent with V_9, DO NOT USE)
 
-    # Proton Decay (v14.1 Canonical - TCS Geometric Suppression)
+    # Proton Decay (v14.1 Canonical - TCS (retired reading) Geometric Suppression)
     # NOTE: Uses GeometricProtonDecayParameters values (v13.0+)
     TAU_PROTON = 8.15e34  # Derived: TCS geometric suppression formula (v13.0)
     TAU_PROTON_LOWER_68 = 6.84e34  # Derived: 68% CI lower bound from Monte Carlo
@@ -34,7 +34,7 @@ class PhenomenologyParameters:
 
     # Dark Energy (v16.2 STERILE - DESI 2025 Aligned)
     W0_NUMERATOR = -23       # Derived: -(b3 - 1) = -(24 - 1) = -23
-    W0_DENOMINATOR = 24      # Derived: b3 = 24 (CHNP 2015 TCS construction)
+    W0_DENOMINATOR = 24      # Derived: b3 = 24 (CHNP 2015 TCS (retired reading) construction)
     # w_0 = -23/24 = -0.958333... (pure geometry from G2 manifold)
     W0_GEOMETRIC = -23/24    # v16.2 STERILE: Pure geometric derivation
     W0_DESI_2025 = -0.957  # Framework-adopted thawing anchor (attribution unverified; DESI DR2 w0waCDM headline: -0.752 ± 0.057)

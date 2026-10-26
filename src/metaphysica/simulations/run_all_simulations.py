@@ -1696,7 +1696,7 @@ class SimulationRunner:
             # statement. Which is meant is an author ruling; see g2_geometry.
             if not self.registry.has_param("topology.mephorash_chi"):
                 self.registry.set_param("topology.mephorash_chi", 144,
-                                         source="GEOMETRIC:TCS_G2_manifold", status="GEOMETRIC",
+                                         source="GEOMETRIC:TCS_G2_manifold (calibrated at the retired TCS seed; not re-derived on Y7)", status="GEOMETRIC",
                                          metadata={"eml_description": "EML: ops.mul(eml_scalar(2), eml_scalar(72))",
                                                    "not_seed_derived": "2(h11-h21+h31); the b_3^2/4 route diverges off b_3 = 24"})
 

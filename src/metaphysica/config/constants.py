@@ -69,7 +69,7 @@ class FundamentalConstants:
     SPATIAL_DIMS = 3          # Source: Observable spatial dimensions (empirical)
     TIME_DIMS = 1             # Source: Observable time dimension (empirical)
 
-    # TCS G₂ Manifold #187 Topology (Corti et al. 2015)
+    # TCS (retired reading) G₂ Manifold #187 Topology (Corti et al. 2015)
     # χ_eff = 2(h¹¹ - h²¹ + h³¹) = 2(4 - 0 + 68) = 144
     # Also: χ_eff = 6 × b₃ = 6 × 24 = 144 (flux quantization)
     HODGE_H11 = 4  # Source: CHNP 2015 h^{1,1} = 4 Kahler moduli (= b2)
@@ -96,7 +96,7 @@ class FundamentalConstants:
     # Derived Topological Invariants
     @staticmethod
     def euler_characteristic():
-        """χ_eff = 2(h¹¹ - h²¹ + h³¹) for TCS G₂ manifold"""
+        """χ_eff = 2(h¹¹ - h²¹ + h³¹) for TCS (retired reading) G₂ manifold"""
         chi_eff = 2 * (FundamentalConstants.HODGE_H11
                       - FundamentalConstants.HODGE_H21
                       + FundamentalConstants.HODGE_H31)
@@ -224,7 +224,7 @@ class SMParameterRegistry:
         're_t': {'name': 'Complex structure modulus Re(T)', 'status': 'INPUT', 'category': 'moduli', 'sigma': 0.0},
         'im_t': {'name': 'Complex structure modulus Im(T)', 'status': 'DERIVED', 'category': 'moduli', 'sigma': 0.5},
         'vev_coefficient': {'name': 'VEV coefficient', 'status': 'CALIBRATED', 'category': 'moduli', 'sigma': 0.1},
-        'tcs_volume': {'name': 'TCS manifold volume', 'status': 'DERIVED', 'category': 'moduli', 'sigma': 0.3},
+        'tcs_volume': {'name': 'TCS (retired reading) manifold volume', 'status': 'DERIVED', 'category': 'moduli', 'sigma': 0.3},
 
         # === COSMOLOGICAL (4) ===
         'hubble_constant': {'name': 'Hubble constant H₀', 'status': 'DERIVED', 'category': 'cosmology', 'sigma': 1.5},

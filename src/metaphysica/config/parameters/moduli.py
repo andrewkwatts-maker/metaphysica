@@ -108,7 +108,7 @@ class PneumaRacetrackParameters:
     - Acharya et al. (2010): G₂ moduli stabilization
     """
 
-    # Topological input (from TCS G₂ manifold #187)
+    # Topological input (from TCS (retired reading) G₂ manifold #187)
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
     B3 = 24  # Source: TCS construction b₃ = b₂(X₁) + b₂(X₂) + K + 1 (CHNP 2015)
     N_FLUX = CHI_EFF / 6  # Derived: χ_eff/6 = 144/6 = 24

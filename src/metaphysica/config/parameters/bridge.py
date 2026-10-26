@@ -142,10 +142,10 @@ class V21BridgeParameters:
     #
     # IDENTIFICATION (2026-08-20 literature review): this matrix is the
     # modular S element of SL(2,Z), and it is EXACTLY the gluing map of a
-    # twisted connected sum G2 manifold. Kovalev's TCS construction glues
+    # twisted connected sum (retired reading) G2 manifold. Kovalev's TCS construction glues
     # two asymptotically-cylindrical halves across a neck that is
     # asymptotically K3 x T^2 x R; the matching map exchanges the two
-    # circle factors of that T^2. Globally the TCS G2 manifold is a
+    # circle factors of that T^2. Globally the TCS (retired reading) G2 manifold is a
     # coassociative K3 fibration over an S^3 assembled from two solid tori
     # glued along their common T^2 - the genus-1 Heegaard splitting of
     # S^3 - and the gluing element of that splitting is S = [[0,-1],[1,0]].
@@ -153,7 +153,7 @@ class V21BridgeParameters:
     # SL(2,Z) -> PSL(2,Z), which makes the framework's "Mobius double
     # cover" language rigorous rather than analogical.
     #
-    # So R_perp is not merely LIKE the TCS gluing; it IS the TCS gluing
+    # So R_perp is not merely LIKE the TCS (retired reading) gluing; it IS the TCS gluing
     # element. This was written down independently in this framework before
     # the identification was noticed.
     # Refs: Kovalev math/0012189; Corti-Haskins-Nordstrom-Pacini 1207.4470;

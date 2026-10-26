@@ -84,9 +84,9 @@ try:
     from metaphysica.simulations.core.FormulasRegistry import get_registry
     _REG = get_registry()
 
-    # G2 Topology (TCS #187) - from SSOT
+    # G2 Topology (retired TCS #187 seed; not re-derived on Y7) - from SSOT
     B3_G2 = _REG.elder_kads             # Third Betti number, from the seed
-    B2_G2 = 4                           # Second Betti number (TCS #187)
+    B2_G2 = 4                           # Second Betti number (retired TCS #187 seed)
     CHI_EFF = _REG.qedem_chi_sum        # effective index chi_eff = 144 (chi(Y_7) = 0)
 
     # v21 Dimensional Chain - from SSOT
@@ -626,7 +626,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # In PM, the relation is:
         # M_Pl^2 ~ M_*^24 * Vol(G2)^{-22/7} * chi_eff^{-1} * f(b3)
         #
-        # For TCS #187:
+        # For the retired TCS #187 seed:
         # chi_eff = 144, b3 = 24
 
         chi_factor = float(self.mephorash_chi)       # 144

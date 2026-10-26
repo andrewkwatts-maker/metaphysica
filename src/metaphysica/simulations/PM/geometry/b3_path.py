@@ -128,7 +128,7 @@ PATHS: Dict[str, Dict[str, Any]] = {
         "b3": 24,
         "b2": 4,
         "b3_provenance": "INPUT, origin open (2026-09-14 ruling)",
-        "b2_provenance": "h^{1,1} of TCS #187, previously FITTED",
+        "b2_provenance": "h^{1,1} of TCS (retired reading) #187, previously FITTED",
         "n_gen_source": "b3_over_dim_O",
         "reachable_by_joyce": False,
     },

@@ -25,7 +25,7 @@ exclusion rather than as a source: it cannot supply the adopted seed.
 This module is NOT deleted, and its numbers are NOT re-derived on the Joyce
 construction -- there is no Joyce analogue of the K3 neck to substitute, and
 inventing one would be manufacturing a mechanism. The claims stay on the
-books, labelled: the proton lifetime computed here is the TCS-geometry
+books, labelled: the proton lifetime computed here is the TCS (retired reading)-geometry
 prediction, and it is off the adopted path.
 
 Key Physics:
@@ -35,7 +35,7 @@ Key Physics:
 - Branching ratio BR(p -> e+pi0) = 0.25 from geometric orientation sum
 
 Physical Picture:
-- In TCS G2 manifolds, matter fields localize on associative 3-cycles (supporting
+- In TCS (retired reading) G2 manifolds, matter fields localize on associative 3-cycles (supporting
   chiral zero modes) and Higgs fields on coassociative 4-cycles in opposite blocks
 - The TCS neck region (S^1 x K3) acts as a topological barrier between sectors
 - Separation distance determined by K3 fibre matching number K=4
@@ -47,7 +47,7 @@ Physical Picture:
 References:
 - Witten (1985): Proton decay in GUTs
 - Acharya et al. (2008): Proton decay in M-theory on G2 manifolds
-- Corti-Haskins-Nordstrom-Pacini (2015): TCS G2 construction
+- Corti-Haskins-Nordstrom-Pacini (2015): TCS (retired reading) G2 construction
 - Friedmann-Witten (2002): Brane models and proton stability
 
 Independent Assessment (LLM (Opus) vs Gemini 2.5 Flash, 2026-03-16):
@@ -74,7 +74,7 @@ BR = (12/24)^2 = 0.25:
 
 S = exp(1/K) ~ 1.284 (K=4):
   - Classification: PLAUSIBLE but ad hoc in its specific form.
-  - The general idea of wavefunction overlap suppression across a TCS neck
+  - The general idea of wavefunction overlap suppression across a TCS (retired reading) neck
     has qualitative support from Acharya et al. (2008), who studied proton
     decay in M-theory on G2 manifolds.
   - However, the specific formula d/R = 1/(2*pi*K) and the choice K=4
@@ -92,7 +92,7 @@ Formula structure:
 Consensus (both models agree):
   - C_PREFACTOR is a fitted constant, not derivable from PM topology.
   - The simulation should be classified as PHENOMENOLOGICAL, not DERIVED.
-  - The elaborate TCS narrative added in git history polishes the
+  - The elaborate TCS (retired reading) narrative added in git history polishes the
     presentation but does not change the underlying calculation, which
     remains standard SU(5) with a small geometric correction factor.
 
@@ -168,7 +168,7 @@ def _arithma_pow(a, b):
 
 class ProtonDecaySimulation(SimulationBase):
     """
-    Proton decay lifetime calculation using TCS geometric suppression.
+    Proton decay lifetime calculation using TCS (retired reading) geometric suppression.
 
     This simulation implements the complete proton decay calculation chain:
     1. Extract input parameters from registry (M_GUT, alpha_GUT, K_matching, etc.)
@@ -248,7 +248,7 @@ class ProtonDecaySimulation(SimulationBase):
         tau_proton_bound = registry.get_param("bounds.tau_proton_lower")
 
         # Compute cycle separation from K3 matching
-        # d/R ~ 1/(2*pi*K) for TCS G2 with K matching fibres
+        # d/R ~ 1/(2*pi*K) for TCS (retired reading) G2 with K matching fibres
         d_over_R = 1.0 / (2.0 * np.pi * K_MATCHING)
 
         # Geometric suppression factor
@@ -368,7 +368,7 @@ class ProtonDecaySimulation(SimulationBase):
                 f"gives 71 <= b_3 <= 155, which EXCLUDES b_3 = "
                 f"{int(_REG.elder_kads)}, so TCS serves here as an exclusion, not "
                 f"as a source. This section is retained and labelled rather than "
-                f"deleted, and its lifetime is the TCS-geometry prediction."
+                f"deleted, and its lifetime is the TCS (retired reading)-geometry prediction."
             ),
             content_blocks=[
                 ContentBlock(
@@ -453,7 +453,7 @@ class ProtonDecaySimulation(SimulationBase):
                         "(u_R^c d_R)(u_L e_L) for p -> e+pi0). The decay rate "
                         "Gamma ~ |C_6|^2 * m_p^5 scales as alpha_GUT^2 * m_p^5 / "
                         "M_GUT^4, reflecting the dimension-6 nature of the operator. "
-                        "In the TCS framework, the Wilson coefficient C_6 acquires an "
+                        "In the TCS (retired reading) framework, the Wilson coefficient C_6 acquires an "
                         "additional factor of exp(-pi*d/R) from the suppressed "
                         "wavefunction overlap, so the lifetime (tau_p = 1/Gamma) is "
                         "enhanced by S. The full formula reads:"
@@ -522,7 +522,7 @@ class ProtonDecaySimulation(SimulationBase):
                         "gammas from pi0 decay). If HK observes proton decay at "
                         "this lifetime with the predicted branching ratio BR ~ 0.25, "
                         "it would constitute direct evidence for both grand "
-                        "unification and the TCS geometric suppression mechanism. "
+                        "unification and the TCS (retired reading) geometric suppression mechanism. "
                         "Conversely, a null result pushing the bound above ~6 x 10^34 "
                         "years would require either a larger K matching number "
                         "(increasing the suppression) or a higher M_GUT, constraining "
@@ -588,7 +588,7 @@ class ProtonDecaySimulation(SimulationBase):
                 plain_text="S = exp(2*pi*d/R) = exp(1/K)",
                 category="DERIVED",
                 eml_tree_str="ops.exp(ops.inv(K_matching))",
-                eml_description="EML: S = exp(1/K) — TCS cycle separation suppression as ops.exp(ops.inv(K_matching))",
+                eml_description="EML: S = exp(1/K) — TCS (retired reading) cycle separation suppression as ops.exp(ops.inv(K_matching))",
                 description=(
                     "Geometric suppression factor from TCS neck topology. In the "
                     "twisted connected sum G2 construction, two asymptotically "
@@ -600,7 +600,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "4-cycles in the opposite building block, whose topology supports "
                     "the scalar doublet required for electroweak symmetry breaking. "
                     "The neck physically separates these two sectors because the K3 "
-                    "fibre matching condition (K = 4 matching fibres for TCS G2 #187) "
+                    "fibre matching condition (K = 4 matching fibres for TCS (retired reading) G2 #187) "
                     "constrains the gluing map and fixes the minimal cycle separation "
                     "distance d. The wavefunction overlap integral between matter and "
                     "Higgs zero modes decays exponentially across the neck: "
@@ -611,14 +611,14 @@ class ProtonDecaySimulation(SimulationBase):
                     "predicted proton lifetime above the Super-K bound."
                 ),
                 # T2.1.B (b) fix: K_MATCHING derives from b₂ which is paired with b₃
-                # in the betti-numbers producer (TCS Wirthmüller invariants for
+                # in the betti-numbers producer (TCS (retired reading) Wirthmüller invariants for
                 # G2 #187). Add b₃ as explicit input so the dependency walker
                 # roots the chain at b3_leaf().
                 inputParams=["topology.K_MATCHING", "topology.elder_kads"],
                 outputParams=["proton_decay.suppression_factor", "topology.d_over_R"],
                 derivation={
                     "parentFormulas": ["tcs-matching-condition"],
-                    "method": "Wavefunction overlap integral across TCS neck",
+                    "method": "Wavefunction overlap integral across TCS (retired reading) neck",
                     "steps": [
                         "TCS G2 construction glues two ACyl CY3 blocks along S^1 x K3 neck",
                         "Matter fields (quarks, leptons) localize on associative 3-cycles in block A via chiral zero modes of Dirac operator",
@@ -629,12 +629,12 @@ class ProtonDecaySimulation(SimulationBase):
                         "Harmonic forms on neck cylinder decay as exp(-lambda_n * d) with lambda_1 = 2*pi/R",
                         "Leading overlap: |<psi_matter|psi_Higgs>|^2 ~ exp(-2*pi*d/R) = exp(-1/K)",
                         "Suppression factor on decay rate (inverse overlap): S = exp(2*pi*d/R) = exp(1/K)",
-                        "For K=4 (TCS G2 #187): S = exp(1/4) = 1.284",
+                        "For K=4 (TCS (retired reading) G2 #187): S = exp(1/4) = 1.284",
                     ]
                 },
                 terms={
                     "S": "Geometric suppression factor (ratio of suppressed to unsuppressed decay rate)",
-                    "d": "Cycle separation distance across the TCS neck region",
+                    "d": "Cycle separation distance across the TCS (retired reading) neck region",
                     "R": "Characteristic radius of the G2 manifold cross-section",
                     "K": "K3 fibre matching number (K=4 for TCS G2 #187)",
                     "psi_matter": "Zero-mode wavefunction localized on associative matter 3-cycle",
@@ -657,7 +657,7 @@ class ProtonDecaySimulation(SimulationBase):
                 eml_tree_str="ops.mul(C_prefactor, ops.mul(ops.pow(ops.div(M_GUT, eml_scalar(1e16)), eml_scalar(4.0)), ops.mul(ops.pow(ops.div(eml_scalar(0.03), alpha_GUT), eml_scalar(2.0)), S)))",
                 eml_description="EML: τ_p = C·(M_GUT/10¹⁶)⁴·(0.03/α_GUT)²·S — proton lifetime as ops.mul chain with ops.pow(M_ratio, 4) and ops.pow(alpha_ratio, 2)",
                 description=(
-                    "Proton lifetime including TCS geometric suppression from "
+                    "Proton lifetime including TCS (retired reading) geometric suppression from "
                     "dimension-6 operator analysis. In GUTs, integrating out heavy "
                     "X and Y gauge bosons at the unification scale M_GUT generates "
                     "effective dimension-6 operators of the form "
@@ -667,7 +667,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "The decay rate scales as Gamma ~ |C_6|^2 * m_p^5, where the "
                     "Wilson coefficient C_6 ~ alpha_GUT / M_GUT^2 carries the "
                     "M_GUT^{-4} suppression characteristic of dimension-6 operators. "
-                    "In the TCS G2 framework, the coefficient is further suppressed "
+                    "In the TCS (retired reading) G2 framework, the coefficient is further suppressed "
                     "by the wavefunction overlap factor exp(-pi*d/R) between matter "
                     "and Higgs zero modes on separated cycles, giving "
                     "Gamma -> Gamma_base / S where S = exp(1/K). This geometric "
@@ -694,7 +694,7 @@ class ProtonDecaySimulation(SimulationBase):
                         "cycle-separation-suppression",
                         "gauge-unification"
                     ],
-                    "method": "Dimension-6 operator decay rate with TCS geometric suppression",
+                    "method": "Dimension-6 operator decay rate with TCS (retired reading) geometric suppression",
                     "steps": [
                         "Step 1 - Dimension-6 operators: Integrate out X, Y gauge bosons at M_GUT to generate effective operators O_6 ~ (g_GUT^2/M_GUT^2)(qqql)",
                         "Step 2 - Specific operator structure: Leading terms are (u_R^c d_R)(u_L e_L)/M_GUT^2 and (u_R^c d_R)(d_L nu_L)/M_GUT^2 (SU(5) decomposition)",
@@ -702,11 +702,11 @@ class ProtonDecaySimulation(SimulationBase):
                         "Step 4 - Hadronic matrix elements: Lattice QCD gives <pi0|(ud)_R u_L|p> = alpha_H with alpha_H ~ 0.015 GeV^3 (proton-to-vacuum amplitude)",
                         "Step 5 - Full unsuppressed rate: Gamma_base = (alpha_GUT^2 * alpha_H^2 * m_p) / (4*pi * f_pi^2 * M_GUT^4) including phase space and RG running",
                         "Step 6 - Absorb lattice QCD, phase space, and RG factors into prefactor: tau_base = C * (M_GUT/10^16)^4 * (0.03/alpha_GUT)^2 with C = 3.82e33 years",
-                        "Step 7 - TCS geometric suppression: Wavefunction overlap across neck suppresses the dim-6 Wilson coefficient by exp(-pi*d/R)",
+                        "Step 7 - TCS (retired reading) geometric suppression: Wavefunction overlap across neck suppresses the dim-6 Wilson coefficient by exp(-pi*d/R)",
                         "Step 8 - Suppressed lifetime: tau_p = tau_base * S where S = exp(2*pi*d/R) = exp(1/K) from cycle separation",
                         "Step 9 - Input values: M_GUT_geometric = 2.1e16 GeV from torsion/moduli stabilization (NOT M_GUT_RG = 6.3e15 GeV from 3-loop running)",
                         "Step 10 - Input values: alpha_GUT^{-1} = 23.54 from geometric coupling at G2 unification (NOT 42.7 from MSSM RG)",
-                        "Step 11 - Suppression: S = exp(1/4) = 1.284 from K=4 matching fibres (TCS G2 manifold #187)",
+                        "Step 11 - Suppression: S = exp(1/4) = 1.284 from K=4 matching fibres (TCS (retired reading) G2 manifold #187)",
                         "Step 12 - Final result: tau_p = 3.9e34 years, ratio to Super-K bound = 1.6 (PASS)",
                     ]
                 },
@@ -715,7 +715,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "C": "Prefactor absorbing hadronic matrix elements, phase space, and RG running (3.82e33 years)",
                     "M_GUT": "GUT unification scale mass (GeV), from geometric/torsion stabilization",
                     "alpha_GUT": "GUT coupling constant at unification, alpha_GUT = g_GUT^2/(4*pi)",
-                    "S": "Geometric suppression factor from TCS cycle separation, S = exp(1/K)",
+                    "S": "Geometric suppression factor from TCS (retired reading) cycle separation, S = exp(1/K)",
                     "C_6": "Wilson coefficient of dimension-6 operator, C_6 ~ alpha_GUT/M_GUT^2",
                     "alpha_H": "Hadronic matrix element from lattice QCD (~0.015 GeV^3)",
                     "O_6": "Dimension-6 baryon-number-violating operator (qqql structure)",
@@ -762,7 +762,7 @@ class ProtonDecaySimulation(SimulationBase):
                 units="years",
                 status="PREDICTED",
                 description=(
-                    "Predicted proton lifetime from TCS geometric suppression. "
+                    "Predicted proton lifetime from TCS (retired reading) geometric suppression. "
                     "Includes cycle separation selection rule and GUT unification scale."
                 ),
                 eml_description=(
@@ -797,7 +797,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "matter and Higgs fields on separated 3-cycles. S = exp(1/K) "
                     "for K=4 matching fibres gives S ~ 1.28. Theoretical geometric factor, no direct experimental measurement."
                 ),
-                eml_description="EML: ops.exp(ops.inv(eml_vec('topology.K_MATCHING'))) — S = exp(1/K) TCS neck wavefunction overlap suppression from K3 fibre matching number",
+                eml_description="EML: ops.exp(ops.inv(eml_vec('topology.K_MATCHING'))) — S = exp(1/K) TCS (retired reading) neck wavefunction overlap suppression from K3 fibre matching number",
                 derivation_formula="cycle-separation-suppression",
                 no_experimental_value=True,
                 validation={
@@ -884,7 +884,7 @@ class ProtonDecaySimulation(SimulationBase):
                     "bound_type": None,
                     "status": "GEOMETRIC",
                     "source": "TCS_topology",
-                    "notes": "Geometric parameter from TCS G2 cycle separation topology. No direct measurement possible."
+                    "notes": "Geometric parameter from TCS (retired reading) G2 cycle separation topology. No direct measurement possible."
                 }
             ),
             Parameter(
@@ -968,7 +968,7 @@ class ProtonDecaySimulation(SimulationBase):
                 "doi": "10.1215/00127094-3120743",
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
-                "notes": "TCS G2 construction used for cycle separation geometry.",
+                "notes": "TCS G2 construction used for the cycle separation geometry (retired reading; not re-derived on Y7).",
             },
             {
                 "id": "superk2020",
@@ -1046,7 +1046,7 @@ class ProtonDecaySimulation(SimulationBase):
                 "validation_hint": "Check that M_GUT = 2.1e16 GeV (geometric) gives a lifetime above the experimental bound."
             },
             {
-                "topic": "G2 Manifold and TCS Construction",
+                "topic": "G2 Manifold and TCS (retired reading) Construction",
                 "url": "https://ncatlab.org/nlab/show/G2-manifold",
                 "relevance": "The TCS (twisted connected sum) G2 construction creates the cycle separation geometry that suppresses proton decay.",
                 "validation_hint": "Verify d/R = 1/(2*pi*K) with K=4 matching fibres gives S = exp(1/4) ~ 1.28."
@@ -1188,7 +1188,7 @@ class ProtonDecaySimulation(SimulationBase):
                 "That's how rare proton decay is. The 'unfairness' of this coin (how rarely it comes up heads) "
                 "is determined by two things: (1) how heavy the particles are that mediate the decay (set by "
                 "the GUT scale M_GUT ~ 10^16 GeV), and (2) how far apart in the extra dimensions the proton's "
-                "quarks are from the decay-mediating Higgs field. In a TCS G2 manifold, this separation is "
+                "quarks are from the decay-mediating Higgs field. In a TCS (retired reading) G2 manifold, this separation is "
                 "controlled by K=4 matching fibres, giving an exponential suppression factor of about 2. "
                 "It's like the coin having to tunnel through a wall to flip - the thicker the wall (larger "
                 "separation), the longer it takes."
