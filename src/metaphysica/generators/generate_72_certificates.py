@@ -564,6 +564,37 @@ def evaluate_gate(gate_id, verif, registry):
             "note": "no executable form; certificate is a declared statement"}
 
 
+_PROSE_NUM = _re.compile(r"[-+]?\d+\.\d+(?:[eE][-+]?\d+)?|[-+]?\d+[eE][-+]?\d+")
+
+
+def _printed_tolerance(text):
+    """Half a unit in the last printed digit of a number as written."""
+    mant, _, exp = text.lower().partition("e")
+    decimals = len(mant.split(".")[1]) if "." in mant else 0
+    return 0.5 * 10 ** (-decimals) * (10 ** int(exp) if exp else 1)
+
+
+def result_unmatched_numbers(result, evaluation):
+    """Decimal numbers in the declared `result` text that match none of the
+    executed check values, expected anchors or sigmas (to printed precision).
+
+    The declared text is a hand-written claim; the evaluation is what ran. A
+    number that only the prose carries (G12 claimed 0.68 sigma, the check
+    computed 17.1) is returned so the certificate can say so, not hidden.
+    """
+    checks = (evaluation or {}).get("checks") or []
+    known = [v for c in checks for k in ("value", "expected", "sigma")
+             for v in [c.get(k)] if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    if not checks:
+        return []
+    out = []
+    for text in _PROSE_NUM.findall(str(result)):
+        tol = _printed_tolerance(text)
+        if not any(abs(float(text) - v) <= tol * 1.0001 for v in known):
+            out.append(text)
+    return out
+
+
 def create_certificate(gate, existing_certs):
     """Create a certificate for a gate."""
     gate_id = gate['id']
@@ -595,6 +626,8 @@ def create_certificate(gate, existing_certs):
             "verification_status": "VERIFIED",
             "evaluation_status": evaluation["status"],
             "evaluation": evaluation,
+            "result_unmatched_numbers": result_unmatched_numbers(
+                verif.get('result', 'N/A'), evaluation),
             "derivation_status": get_derivation_status(gate_id),
             "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
             "timestamp": timestamp,
