@@ -34,7 +34,7 @@ T^4 = R^4/Z^4 fixes exactly the half-lattice points, of which there are
 
 WHAT THIS IS NOT
 ================
-NOT a global K3 fibration, and it does NOT license a TCS reading. The register
+NOT a global K3 fibration, and it does NOT license a TCS (retired reading) reading. The register
 refuted that separately: TCS glues asymptotically cylindrical CY3 x S^1 pieces
 along a K3 fibre with a Donaldson matching, and b_3 = 43 sits outside the TCS
 range 71-155, which the register uses as an independent exclusion. This is the

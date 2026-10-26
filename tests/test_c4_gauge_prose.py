@@ -21,7 +21,10 @@ SOURCES = (
 JOIN = re.compile(r'"\s*\n\s*(?:f|r)?"')
 QUALIFIER = re.compile(
     r"retired|REFUSED|refused|RETIRED|OFF-PATH|off-path|false|superseded|Superseded"
-    r"|legacy|generic|OPEN|NOT the TCS|lead|no A2|absent|not a TCS|abandoned|ABANDONED|toy",
+    r"|legacy|generic|OPEN|NOT the TCS|lead|no A2|absent|not a TCS|abandoned|ABANDONED|toy|withdrawn|Withdrawn|WITHDRAWN|formerly|Formerly"
+    # Stating TCS's published range or the exclusion it implies is the
+    # correct use of TCS, not a claim that it is the active manifold.
+    r"|exclu|EXCLU|outside every|outside the TCS|71 <= b_3|71-155|71 ≤ b|TCS range|TCS exhibited range",
 )
 WINDOW = 220
 
@@ -72,3 +75,42 @@ def test_cycle_type_labels_say_open():
     for path in ("gauge.qcd_cycle_type", "gauge.weak_cycle_type"):
         assert defs[path].status == "ANSATZ", path
         assert "OPEN" in defs[path].description, path
+
+
+ENGINE = PM.parents[1]
+ACTIVE_DIRS = (
+    ENGINE / "config",
+    PM / "particle",
+    PM / "cosmology",
+    PM / "geometry",
+)
+
+
+def _raw_line(raw: str, joined_pos: int) -> int:
+    """File line of a position in JOIN.sub("", raw)."""
+    shift = 0
+    for j in JOIN.finditer(raw):
+        if j.start() - shift > joined_pos:
+            break
+        shift += j.end() - j.start()
+    return raw.count("\n", 0, joined_pos + shift) + 1
+
+
+def _unqualified_in_dirs(pattern: str) -> list[str]:
+    rx = re.compile(pattern)
+    bad = []
+    for d in ACTIVE_DIRS:
+        for path in sorted(d.rglob("*.py")):
+            raw = path.read_text(encoding="utf-8")
+            text = JOIN.sub("", raw)
+            for m in rx.finditer(text):
+                lo, hi = max(0, m.start() - WINDOW), m.end() + WINDOW
+                if not QUALIFIER.search(text[lo:hi]):
+                    line = _raw_line(raw, m.start())
+                    bad.append("%s:%d" % (path.relative_to(ENGINE), line))
+    return bad
+
+
+def test_no_tcs_as_active_manifold_in_engine_sources():
+    bad = _unqualified_in_dirs(r"(?<!\w)TCS(?![\w'\"])|[Tt]wisted connected sum(?!s and)")
+    assert not bad, bad

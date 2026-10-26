@@ -551,7 +551,7 @@ class AttractorPotentialV18(SimulationBase):
                     "w_0": "Dark energy equation of state at z=0",
                     "epsilon_eff": "Effective slow-roll parameter ~ epsilon/chi_eff",
                     "delta_Ricci": "Ricci flow correction ~ 0.016",
-                    "b_3": "Third Betti number (24 for TCS G2)"
+                    "b_3": "Third Betti number (24 for TCS (retired reading) G2)"
                 },
                 eml_latex=r"\mathrm{ops.add}(\mathrm{ops.neg}(\mathrm{eml\_scalar}(1)),\, \mathrm{ops.inv}(\mathrm{eml\_scalar}(24)))",
                 eml_tree_str="ops.add(ops.neg(eml_scalar(1.0)), ops.inv(eml_scalar(24.0)))",

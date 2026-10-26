@@ -90,7 +90,7 @@ class SharedDimensionsParameters:
 
     # Shared dimension influence parameters (100% geometry-derived)
     # ==============================================================
-    # Derived from Twisted Connected Sum (TCS) G2 manifold construction
+    # Derived from Twisted Connected Sum (TCS (retired reading)) G2 manifold construction
     # Reference: arXiv:1809.09083 (CHNP extra-twisted TCS)
     #
     # Derivation formulas:

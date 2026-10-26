@@ -283,7 +283,7 @@ class FormulasRegistry:
     #
     #   chi_eff_shadow = b3^2/8 = 576/8 = 72
     #
-    # From Hodge numbers (TCS #187): chi_eff = h^{1,1} - h^{2,1} + h^{3,1} = 4-0+68 = 72
+    # From Hodge numbers (retired TCS #187 seed; not re-derived on Y7): chi_eff = h^{1,1} - h^{2,1} + h^{3,1} = 4-0+68 = 72
     #
     # CROSS-SHADOW TOTAL:
     # When physics involves BOTH shadows (via bridge coupling):

@@ -1,4 +1,4 @@
-"""Fermion chirality, EFT validity, G2 spinor geometry and TCS topology parameters.
+"""Fermion chirality, EFT validity, G2 spinor geometry and TCS (retired reading) topology parameters.
 
 Extracted verbatim from the former single-file ``config.py``; no values,
 formulas or strings were changed by the move.
@@ -35,7 +35,7 @@ class FermionChiralityParameters:
     - Joyce (2000): Spinor structures on G2 manifolds
     """
 
-    # Topological input (from TCS G₂ manifold #187)
+    # Topological input (from TCS (retired reading) G₂ manifold #187)
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
     N_FLUX = CHI_EFF / 6  # Derived: χ_eff/6 = 144/6 = 24 (flux quantization)
 
@@ -109,7 +109,7 @@ class EFTValidityParameters:
     M_PLANCK = 1.221e19  # GeV (FULL Planck mass; reduced is 2.435e18)
 
     # Geometric suppression factor from G₂ topology
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
 
     # Asymptotic Safety parameters
     G_FIXED_POINT = 0.27  # Source: Reuter-Saueressig (2012) asymptotic safety fixed point
@@ -186,7 +186,7 @@ class G2SpinorGeometryParameters:
 
     # Topological parameters (from TopologicalDerivations)
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
 
     # Spinor representation theory
     SPINOR_DOF_7D = 8  # Source: dim(8_s) = 8 real spinor components (Spin(7) -> G2)
@@ -246,7 +246,7 @@ class G2SpinorGeometryParameters:
 
 
 # ==============================================================================
-# TCS G₂ MANIFOLD TOPOLOGY PARAMETERS (v13.0)
+# TCS (retired reading) G₂ MANIFOLD TOPOLOGY PARAMETERS (v13.0)
 # ==============================================================================
 
 class TCSTopologyParameters:
@@ -267,9 +267,9 @@ class TCSTopologyParameters:
 
     # Primary topology
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B2 = 4  # Source: TCS construction h^{1,1} = 4 (CHNP 2015)
+    B2 = 4  # Source: TCS (retired reading) construction h^{1,1} = 4 (CHNP 2015)
     B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
-    K_MATCHING = 4  # Source: CHNP 2015 - four matching K3 fibres
+    K_MATCHING = 4  # Source: CHNP 2015 - four matching K3 fibres (calibrated at the retired TCS seed; not re-derived on Y7)
 
     # Hodge numbers
     HODGE_H11 = 4  # Source: CHNP 2015 h^{1,1} = 4 Kahler moduli
@@ -298,5 +298,5 @@ class TCSTopologyParameters:
             'manifold_id': '#187 (CHNP 2015)',
             'construction': 'Twisted Connected Sum of K3-fibred CY3s',
             'literature': 'Corti-Haskins-Nordström-Pacini, Duke Math. J. 164(10) 2015',
-            'status': 'EXPLICIT - Complete topological data from TCS construction'
+            'status': 'EXPLICIT - Complete topological data from TCS (retired reading) construction'
         }

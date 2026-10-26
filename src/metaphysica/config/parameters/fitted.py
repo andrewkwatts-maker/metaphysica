@@ -1,4 +1,4 @@
-"""Fitted-vs-derived transparency parameters and TCS torsion class derivations.
+"""Fitted-vs-derived transparency parameters and TCS (retired reading) torsion class derivations.
 
 Extracted verbatim from the former single-file ``config.py``; no values,
 formulas or strings were changed by the move.
@@ -101,7 +101,7 @@ class FittedParameters:
 
 
 # ==============================================================================
-# v12.8 GEOMETRIC DERIVATIONS - TCS G₂ TORSION CLASS (SPINOR FRACTION)
+# v12.8 GEOMETRIC DERIVATIONS - TCS (retired reading) G₂ TORSION CLASS (SPINOR FRACTION)
 # ==============================================================================
 
 class TorsionClass:
@@ -122,7 +122,7 @@ class TorsionClass:
     References:
     - Joyce (2000): Compact Manifolds with Special Holonomy
     - Acharya & Witten (2001): G₂ moduli and spinor bundles
-    - Corti-Haskins-Nordstrom-Pacini (2015): TCS G₂ constructions
+    - Corti-Haskins-Nordstrom-Pacini (2015): TCS (retired reading) G₂ constructions
     - CHNP arXiv:1207.4470, 1809.09083: TCS construction #187
 
     This is the GEOMETRIC SOURCE of Shadow_ק, Shadow_ח, M_GUT, and w₀.
@@ -130,7 +130,7 @@ class TorsionClass:
 
     # Geometric constants for T_ω derivation
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
     D_INTERNAL = 7  # Source: Joyce (2000) G2 holonomy manifold dimension
 
     # Spinor fraction from Spin(7) structure
@@ -186,7 +186,7 @@ class FluxQuantization:
     G₃ flux quanta reduce raw Euler characteristic via quantization constraints.
     """
 
-    # TCS G₂ topological data
+    # TCS (retired reading) G₂ topological data
     B2 = 4  # Source: CHNP 2015 TCS construction h^2 = 4
     B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
     B5 = 4  # Derived: Poincare duality b5 = b2 = 4

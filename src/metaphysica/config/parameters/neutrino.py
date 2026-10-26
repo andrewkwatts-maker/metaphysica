@@ -211,7 +211,7 @@ class NeutrinoMassMatrix:
     v12.7 UPDATE: Added alternative Omega matrix for exact delta matching.
     """
 
-    # Triple intersection numbers Ω(Σ_i ∩ Σ_j ∩ Σ_k) from TCS G₂ #187
+    # Triple intersection numbers Ω(Σ_i ∩ Σ_j ∩ Σ_k) from TCS (retired reading) G₂ #187
     OMEGA_INTERSECTIONS = np.array([
         [  0,  11,   4],
         [ 11,   0,  16],

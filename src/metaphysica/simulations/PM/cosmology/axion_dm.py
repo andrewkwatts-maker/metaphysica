@@ -846,7 +846,7 @@ class AxionDMV18(SimulationBase):
                 f"f_a ~ {1.22e19 / (_k_gimel ** 6):.2e} GeV, tested against the "
                 f"anthropic window for 100% dark matter with natural initial "
                 f"misalignment angle theta_i ~ O(1). The manifold is the Joyce "
-                f"orbifold T^7/(Z/2)^3, not a Twisted Connected Sum: TCS "
+                f"orbifold T^7/(Z/2)^3, not a Twisted Connected Sum: TCS (retired reading) "
                 f"exhibits 71 <= b_3 <= 155 and so excludes "
                 f"b_3 = {int(_REG.elder_kads)}."
             ),

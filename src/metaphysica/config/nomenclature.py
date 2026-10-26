@@ -315,7 +315,7 @@ class G2DirectionNomenclature:
     """
     7-Direction Hebrew Letter Naming Scheme for G₂ Manifold.
 
-    The 7D G₂ holonomy manifold (TCS construction) has 7 internal directions:
+    The 7D G₂ holonomy manifold (TCS (retired reading) construction) has 7 internal directions:
 
     - Gח - Primary volume
     - Gג - Structural form
@@ -426,11 +426,11 @@ class G2DirectionNomenclature:
         return {
             "version": "12.9",
             "description": "7-Direction Hebrew Letter Naming for G₂ Manifold",
-            "reference": "TCS G₂ holonomy construction",
+            "reference": "G₂ holonomy (Joyce orbifold resolution Y7; the TCS reading is retired)",
             "structure": {
                 "total_directions": 7,
                 "holonomy_group": "G₂",
-                "manifold_type": "TCS (Twisted Connected Sum)"
+                "manifold_type": "Joyce orbifold resolution of T^7/(Z/2)^3 (formerly TCS)"
             },
             "directions": {
                 cls.VARIABLE_NAMES[i]: {

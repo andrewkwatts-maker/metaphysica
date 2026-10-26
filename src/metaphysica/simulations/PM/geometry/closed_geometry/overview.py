@@ -7,7 +7,7 @@ page and the beginner guide present the theory in ONE order: what the model
 postulates, the standard physics it uses (cited), how the geometry is selected
 and why, the closed geometry (the certificate), what the model found, what it
 corrected, what is open, and where it stands against data. Written by hand on
-each surface that story drifts -- the main page still claimed b_3 = 24, a TCS
+each surface that story drifts -- the main page still claimed b_3 = 24, a TCS (retired reading)
 construction and "resolved" problems long after the engine moved on. Here it
 is generated from the provenance registry, the certificate and the live seed,
 and every surface renders the same layers.

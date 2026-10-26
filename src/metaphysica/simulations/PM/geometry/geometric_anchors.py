@@ -102,7 +102,7 @@ _OUTPUT_PARAMS = [
     "geometry.mephorash_chi",
     "geometry.n_generations",
     "geometry.phi",
-    # Hodge numbers (TCS #187)
+    # Hodge numbers (TCS (retired reading) #187)
     "geometry.h11",
     "geometry.h21",
     "geometry.h31",
@@ -178,7 +178,7 @@ _OUTPUT_FORMULAS = [
 # THE ANCHOR, AND WHY IT IS NOT CALLED b_3 ANY MORE
 #
 # Every constant in this module is built from the integer 24. That integer
-# was published as the third Betti number of a TCS G2 manifold. Both halves
+# was published as the third Betti number of a TCS (retired reading) G2 manifold. Both halves
 # of that provenance have since failed: TCS exhibits 71 <= b_3 <= 155 and
 # so never supplied 24, and the adopted Joyce construction gives b_3 = 43.
 # The number stays; the claim about where it comes from does not.
@@ -295,7 +295,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 description="Gimel constant derived from third Betti number b3=24; the fundamental geometric anchor encoding the warping between 26D string frame and 4D Einstein frame",
                 derivation={
                     "steps": [
-                        "Start with the third Betti number b3 = 24 from TCS #187 G2 manifold (Corti et al. 2015)",
+                        "Start with the third Betti number b3 = 24 from TCS (retired reading) #187 G2 manifold (Corti et al. 2015)",
                         "The half-Betti contribution b3/2 = 12 counts the independent associative-coassociative cycle pairs",
                         "The transcendental correction 1/pi arises from the G2 holonomy projection onto the 4D Lorentz group",
                         "Combine: k_gimel = b3/2 + 1/pi = 12 + 0.31831... = 12.31831..."
@@ -309,7 +309,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "value": k_gimel
                     },
                     r"b_3": {
-                        "description": "Third Betti number of the TCS G2 manifold: topological invariant counting independent associative 3-cycles",
+                        "description": "Third Betti number of the TCS (retired reading) G2 manifold: topological invariant counting independent associative 3-cycles",
                         "value": 24
                     },
                     r"\pi": {
@@ -447,7 +447,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "The Tzimtzum fraction represents the fractional contraction of the 7D bulk volume during G2 compactification: one associative 3-cycle out of b3 = 24 total cycles contributes to the leakage of vacuum energy from the bulk into the 4D observable sector, a consequence of the non-trivial topology of the compact G2 manifold",
                         "Result: w0 = -1 + 1/24 = -23/24 = -0.95833..., a thawing quintessence equation of state"
                     ],
-                    "method": "Topological vacuum energy fraction from associative 3-cycle count on TCS G2 manifold",
+                    "method": "Topological vacuum energy fraction from associative 3-cycle count on TCS (retired reading) G2 manifold",
                     "parentFormulas": ["k-gimel-anchor"]
                 },
                 terms={
@@ -604,7 +604,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 derivation={
                     "steps": [
-                        "Start from G2 manifold with third Betti number b3 = 24 (TCS #187, Corti et al. 2015)",
+                        "Start from G2 manifold with third Betti number b3 = 24 (TCS (retired reading) #187, Corti et al. 2015)",
                         "Compute effective Euler characteristic: chi_eff = b3^2 / 4 = 576 / 4 = 144",
                         "Torsion amplitude from topological imbalance: T_omega = sqrt(b3 / chi_eff) = sqrt(24 / 144) = sqrt(1/6)",
                         "Result: T_omega = 1/sqrt(6) ≈ 0.4082 (exact algebraic value from topology alone)"
@@ -618,7 +618,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "value": 1.0 / np.sqrt(6.0)
                     },
                     r"b_3": {
-                        "description": "Third Betti number of TCS G2 manifold (= 24): counts independent associative 3-cycles (transverse modes)",
+                        "description": "Third Betti number of TCS (retired reading) G2 manifold (= 24): counts independent associative 3-cycles (transverse modes)",
                         "value": 24
                     },
                     r"\chi_{\text{eff}}": {
@@ -660,7 +660,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "The Principia Metaphysica framework builds all Standard "
                         "Model parameters in this section from the single integer "
                         "anchor %d. This paragraph previously read \"from the "
-                        "third Betti number b3=24 of the TCS G2 manifold\" -- a "
+                        "third Betti number b3=24 of the TCS (retired reading) G2 manifold\" -- a "
                         "provenance that has failed twice over: the twisted "
                         "connected sum exhibits 71 <= b_3 <= 155 and so never "
                         "supplied 24, and the adopted construction is a Joyce "
@@ -771,7 +771,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                         "the adopted construction is a Joyce orbifold "
                         "T<sup>7</sup>/(ℤ/2)<sup>3</sup>, where b₂ = %d counts "
                         "resolved A₁ families, not K3 fibres, and the identity "
-                        "h<sup>1,1</sup> = b₂ therefore BREAKS. The TCS reading "
+                        "h<sup>1,1</sup> = b₂ therefore BREAKS. The TCS (retired reading) reading "
                         "is recorded, not deleted, because the exclusion it "
                         "carries (71 ≤ b₃ ≤ 155 versus b₃ = %d) is what rules "
                         "it out."
@@ -988,7 +988,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Core topology
                 "elder_kads": (
                     "EML: eml_scalar(%.1f) — the integer anchor, formerly "
-                    "labelled 'Betti number b₃=24 from G₂ TCS topology'. "
+                    "labelled 'Betti number b₃=24 from G₂ TCS (retired reading) topology'. "
                     "%s" % (float(ANCHOR_FIT), anchor_note())
                 ),
                 "mephorash_chi": (
@@ -1016,7 +1016,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 # Hodge numbers
                 "h11": (
                     "EML: eml_scalar(4.0) — Hodge number h^{1,1}=4 Kähler moduli"
-                    " from 4 K3 fibres in TCS #187"
+                    " from 4 K3 fibres in TCS (retired reading) #187"
                 ),
                 "h21": (
                     "EML: eml_scalar(0.0) — Hodge number h^{2,1}=0 (no complex structure"
@@ -1024,7 +1024,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 ),
                 "h31": (
                     "EML: eml_scalar(68.0) — Hodge number h^{3,1}=68 associative 3-cycle"
-                    " moduli in TCS #187"
+                    " moduli in TCS (retired reading) #187"
                 ),
                 # Geometric constants
                 "k_gimel": (
@@ -1552,7 +1552,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                     "fundamental": not is_measured,
                     "eml_description": PARAM_EML_DESCRIPTIONS.get(
                         name,
-                        f"EML: eml_vec('{name}') — geometric anchor from G₂ TCS topology"
+                        f"EML: eml_vec('{name}') — geometric anchor from G₂ TCS (retired reading) topology"
                     )
                 }
             }
@@ -1654,7 +1654,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 status="GEOMETRIC",
                 description=("The integer anchor %d, emitted under the name "
                              "'Third Betti Number'. It was described as "
-                             "'b3 = 24 of TCS G2 manifold #187 ... counting "
+                             "'b3 = 24 of TCS (retired reading) G2 manifold #187 ... counting "
                              "independent associative 3-cycles'. Both halves "
                              "have failed: TCS exhibits 71 <= b_3 <= 155 and "
                              "never supplied 24, and the adopted Joyce "
@@ -1883,7 +1883,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "arxiv": "1207.4470",
                 "url": "https://arxiv.org/abs/1207.4470",
                 "type": "article",
-                "relevance": "Classification of TCS G2 manifolds; source of TCS #187 with b2=4, b3=24. The h^{1,1} = b2 = 4 Kahler moduli yield the four-face sub-sector structure (see four_face_g2_structure simulation, Section 2.7)",
+                "relevance": "Classification of TCS (retired reading) G2 manifolds; source of TCS #187 with b2=4, b3=24. The h^{1,1} = b2 = 4 Kahler moduli yield the four-face sub-sector structure (see four_face_g2_structure simulation, Section 2.7)",
             },
             {
                 "key": "planck2018",
@@ -2025,7 +2025,7 @@ class GeometricAnchorsSimulation(SimulationBase):
                 "topic": "G2 manifold topology and Betti numbers",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
                 "relevance": "The third Betti number b3=24 is the single topological input from which all geometric anchors are derived",
-                "validation_hint": "Verify that compact G2 manifolds constructed via TCS have specific Betti number sequences determined by the input CY3 building blocks"
+                "validation_hint": "Verify that compact G2 manifolds constructed via TCS (retired reading) have specific Betti number sequences determined by the input CY3 building blocks"
             },
             {
                 "topic": "Fine structure constant",

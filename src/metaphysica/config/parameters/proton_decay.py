@@ -72,7 +72,7 @@ class ProtonLifetimeParameters:
 
 class GeometricProtonDecayParameters:
     """
-    v13.0: Proton decay with TCS cycle separation suppression.
+    v13.0: Proton decay with TCS (retired reading) cycle separation suppression.
 
     Resolution to "Proton Decay Rate Uncertainty":
     - Geometric selection rule from TCS cycle separation
@@ -81,13 +81,13 @@ class GeometricProtonDecayParameters:
 
     References:
     - Acharya et al. (2008): Proton decay in M-theory on G₂ manifolds
-    - Corti-Haskins-Nordström-Pacini (2015): TCS G₂ construction
+    - Corti-Haskins-Nordström-Pacini (2015): TCS (retired reading) G₂ construction
     - Friedmann-Witten (2002): Brane models and proton stability
     """
 
     # TCS cycle separation from K=4 matching fibres
-    K_MATCHING = 4              # Source: CHNP 2015 - four matching K3 fibres
-    D_OVER_R = 0.12             # Source: TCS neck geometry (CHNP 2015)
+    K_MATCHING = 4              # Source: CHNP 2015 - four matching K3 fibres (calibrated at the retired TCS seed; not re-derived on Y7)
+    D_OVER_R = 0.12             # Source: TCS (retired reading) neck geometry (CHNP 2015)
 
     # Geometric suppression factor S = exp(2π d/R)
     @staticmethod
@@ -148,7 +148,7 @@ class GeometricProtonDecayParameters:
             'k_matching': GeometricProtonDecayParameters.K_MATCHING,
             'br_e_pi0': GeometricProtonDecayParameters.BR_E_PI0,
             'super_k_ratio': GeometricProtonDecayParameters.ratio_to_super_k(),
-            'mechanism': 'TCS cycle separation (K=4 neck topology)',
+            'mechanism': 'TCS (retired reading) cycle separation (K=4 neck topology)',
             'selection_rule': 'exp(-2π d/R) wavefunction overlap',
             'status': 'RESOLVED - Geometric selection rule from TCS'
         }
@@ -156,7 +156,7 @@ class GeometricProtonDecayParameters:
 
 class DoubletTripletSplittingParameters:
     """
-    v14.1: Doublet-Triplet Splitting via Native TCS Topological Filter.
+    v14.1: Doublet-Triplet Splitting via Native TCS (retired reading) Topological Filter.
 
     Resolution: The splitting is achieved intrinsically within the TCS G₂ manifold
     using a TOPOLOGICAL FILTER under the Z₂×Z₂ quotient action. This is cleaner
@@ -179,12 +179,12 @@ class DoubletTripletSplittingParameters:
 
     References:
     - Witten (2001): Discrete torsion in G₂ compactifications
-    - Corti-Haskins-Nordström-Pacini (2015): TCS G₂ construction
+    - Corti-Haskins-Nordström-Pacini (2015): TCS (retired reading) G₂ construction
     """
 
     # TCS topology parameters (from TCSTopologyParameters)
     B2 = 4  # Source: TCS construction h^{1,1} = 4 (CHNP 2015)
-    K_MATCHING = 4              # Source: CHNP 2015 - four matching K3 fibres
+    K_MATCHING = 4              # Source: CHNP 2015 - four matching K3 fibres (calibrated at the retired TCS seed; not re-derived on Y7)
     CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
 
     # Gauge group structure
@@ -253,7 +253,7 @@ class DoubletTripletSplittingParameters:
             'triplet_suppression': DoubletTripletSplittingParameters.TRIPLET_SUPPRESSION,
             'doublet_preservation': DoubletTripletSplittingParameters.DOUBLET_PRESERVATION,
             'z2_action': 'Z2 x Z2 (real structure + free involution + shadow projection)',
-            'mechanism': 'Native TCS Topological Filter (triplets to shadow sector)',
+            'mechanism': 'Native TCS (retired reading) Topological Filter (triplets to shadow sector)',
             'index_formula': 'N_doublets - N_triplets = integral A-hat(M) wedge ch(L_Y) mod Z2',
             'status': 'RESOLVED - Native G2 topological filter, no Wilson lines'
         }
@@ -268,7 +268,7 @@ class BreakingChainParameters:
 
     Derivation:
     1. Bulk: SO(24,2) contains maximal subgroup including SO(10)
-    2. Per-shadow G₂ Projection: TCS construction (K=4) favors maximal subgroup
+    2. Per-shadow G₂ Projection: TCS (retired reading) construction (K=4) favors maximal subgroup
     3. Intermediate: SO(10) → SU(4)_C × SU(2)_L × SU(2)_R (Pati-Salam)
     4. Enforced by: Pneuma condensate (54_H) alignment with 7D curvature
 
@@ -304,7 +304,7 @@ class BreakingChainParameters:
 
     # Geometric selection factors
     PNEUMA_ALIGNMENT = True     # 54_H aligns with 7D curvature
-    G2_MAXIMAL_SUBGROUP = True  # TCS K=4 favors maximal at first stage
+    G2_MAXIMAL_SUBGROUP = True  # TCS (retired reading) K=4 favors maximal at first stage
 
     # Beta function coefficients (1-loop)
     # SM running: MZ to M_PS
@@ -339,5 +339,5 @@ class BreakingChainParameters:
             'chain': BreakingChainParameters.chain_description(),
             'is_geometric': BreakingChainParameters.is_chain_geometric(),
             'mechanism': 'Pneuma condensate (54_H) alignment with G2 curvature',
-            'status': 'RESOLVED - Pati-Salam geometrically preferred by TCS K=4'
+            'status': 'RESOLVED - Pati-Salam geometrically preferred by TCS (retired reading) K=4'
         }
