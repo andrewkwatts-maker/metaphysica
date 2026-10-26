@@ -24,6 +24,7 @@ from metaphysica.actions.spinors import (
     product_spinor_dim, weyl_dim,
 )
 from metaphysica.simulations.PM.gauge import master_ladder_steps as S
+from metaphysica.simulations.PM.gauge import master_ladder_zero as Z
 
 ITEM6_REF = "master_action_audit.md s5.8, s7 item 6"
 
@@ -113,12 +114,14 @@ def build_ladder(opts: Mapping[int, Any]) -> Ladder:
     a13, a6, a4 = S.action_13(conv), S.action_6(conv), S.action_4(conv)
     bridge, g2, kk = _internals()
     r13 = Reduction(a26, a13, bridge, {"M13_11": "M_star_24*Vol_13"}, signature_change=True)
-    r6 = Reduction(a13, a6, g2, {"M6_4": "M13_11*Vol_7"})
+    r6 = Reduction(a13, a6, g2, {"M6_4": "M13_11*Vol_7"},
+                   zero_mode_rule=Z.zero_mode_rule_for(a13, a6))
     r4 = Reduction(a6, a4, kk, {"M_Pl_2": "M6_4*Vol_2"})
     return Ladder((
         Step("26D", a26),
         Step("13D", a13, r13, (_product_check("26D", a26, 13, 13), _item6_gate())),
-        Step("6D", a6, r6, (_product_check("13D", a13, 6, 7),)),
+        Step("6D", a6, r6, (_product_check("13D", a13, 6, 7),
+                            Z.nonabelian_gauge_source(a6, a4, g2.betti[2]))),
         Step("4D", a4, r4, (_product_check("6D", a6, 4, 2), _leaf_check(a4))),
     ))
 

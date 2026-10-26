@@ -12,7 +12,7 @@ from metaphysica.simulations.PM.gauge import master_ladder_steps as S
 
 # Ratchet: these only go down. Recorded 2026-10-27 under the recommended options.
 MAX_OPEN_TERMS = 15
-MAX_FAILING_CHECKS = 1
+MAX_FAILING_CHECKS = 3  # owner_item_6 plus the two L3a geometry checks
 
 
 def _dump(rep):
@@ -98,7 +98,8 @@ def test_item_11_product_rule():
 def test_item_6_gate_is_the_first_failure():
     rep = ML.report()
     assert rep["ladder"]["verdict"] == "owner_item_6"
-    assert rep["failing_checks"] == ["owner_item_6"]
+    assert rep["failing_checks"] == ["nonabelian_gauge_source", "owner_item_6",
+                                      "zero_modes:scalar"]
     assert rep["owner_items_used"] == {"2": "weyl", "4": 24, "5": "mostly_plus_mtw",
                                        "11": "computed"}
 
@@ -137,3 +138,13 @@ def test_map_fails_on_an_unmapped_formula():
     from metaphysica.simulations.PM.gauge import master_ladder_map as M
     with pytest.raises(KeyError):
         M.build_rows(["brand-new-action"])
+
+
+def test_g2_zero_modes_and_gauge_source_are_reported_not_patched():
+    steps = {s["step"]: {c["id"]: c for c in s["checks"]} for s in ML.report()["ladder"]["steps"]}
+    six = steps["6D"]
+    assert six["zero_modes:G"]["holds"] and six["zero_modes:Psi"]["holds"]
+    assert not six["zero_modes:scalar"]["holds"]
+    assert "expected 43 components, child has None" in six["zero_modes:scalar"]["detail"]
+    gs = six["nonabelian_gauge_source"]
+    assert not gs["holds"] and "SU(2)^12" in gs["detail"] and "A4:L_SM" in gs["detail"]
