@@ -23,7 +23,7 @@ ANCHORS = (ROOT / "src/metaphysica/simulations/PM/geometry/"
 
 #: Findings permitted on the published formulas. Only goes down.
 #: superseded: labelled "off-path seed / retired b3 = 24" statements (lane W1).
-CEILINGS = {"measure": 0, "planck_exponent": 0, "superseded": 13}
+CEILINGS = {"measure": 0, "planck_exponent": 0, "superseded": 0}
 
 
 # --- measure ----------------------------------------------------------------

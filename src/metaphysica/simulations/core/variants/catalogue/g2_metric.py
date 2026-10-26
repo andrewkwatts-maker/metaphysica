@@ -126,7 +126,7 @@ FORKS: Dict[str, Fork] = {
             "chi_eff/48, alpha_leak as 1/sqrt(chi_eff/b_3), reid_invariant as "
             "1/chi_eff -- and 112 modules mention it under one of its names "
             "(measured). Three derivations are claimed and all three return 144 "
-            "at b_3 = 24, which is precisely where the two b_3-dependent ones "
+            "at b_3 = 24 (Superseded path), which is precisely where the two b_3-dependent ones "
             "CROSS, uniquely.\n\n"
             "The default is `unruled` because adopting either branch is an "
             "author act and neither has been made. `unruled` is not a "
@@ -196,7 +196,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="seed_dependent",
-                summary="chi_eff = f(b_3), so it is not 144 off b_3 = 24",
+                summary="chi_eff = f(b_3), so it is not 144 off b_3 = 24 (Superseded path)",
                 consequence=(
                     "BUYS: chi_eff becomes a genuine function of the topology "
                     "rather than a constant, so it can carry topological "
@@ -207,7 +207,7 @@ FORKS: Dict[str, Fork] = {
                     "chi_eff/48 is then NON-INTEGER at every Joyce-reachable "
                     "profile on both sub-routes, so adopting this also forces "
                     "a ruling on n_gen_source. The two b_3-dependent routes "
-                    "also disagree with each other everywhere except b_3 = 24, "
+                    "also disagree with each other everywhere except b_3 = 24 (Superseded path), "
                     "so this branch is not one option but two."
                 ),
                 status=DISABLED,

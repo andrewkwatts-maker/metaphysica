@@ -689,7 +689,7 @@ class AbstractV17_2(SimulationBase):
                              "experimental input. Twenty entries in the geometry.* namespace carry "
                              "status MEASURED -- the three NuFIT mixing angles, SH0ES H0, Planck "
                              "Omega_m, DESI w0/wa, PDG Wolfenstein A and Jarlskog among them -- and "
-                             "are raw experimental input, not consequences of b3 = 24."),
+                             "are raw experimental input, not consequences of the geometry."),
                 status="PREDICTED",
                 eml_description="EML: eml_scalar(55) — count of zero-free-parameter predictions derived from G₂ topology alone"
             ),

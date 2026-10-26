@@ -63,7 +63,7 @@ FORKS: Dict[str, Fork] = {
                     "carries the Fano plane on its seven imaginary units and "
                     "G2 = Aut(O) acts -- which is what would make the 24 -> 7 "
                     "join structural rather than chosen. n_gen = 24/8 = 3 and "
-                    "b3 = 24 both survive unchanged. Verified: det(Gram) = 1, "
+                    "b3 = 24 (Superseded path) both survive unchanged. Verified: det(Gram) = 1, "
                     "even, and 720 = 3 x 240 roots, each checked to lie in the "
                     "lattice (112 of shape (+-1,+-1,0^6) and 128 of "
                     "(+-1/2)^8).\n"

@@ -1095,8 +1095,8 @@ class FourFaceG2Structure(SimulationBase):
                         "Key identity: chi_eff/b3 = 144/24 = 6 = n_aligned = n_pairs/2 "
                         "= 12/2. This is NOT a coincidence: the ratio chi_eff/b3 "
                         "counts precisely the number of aligned bridge pairs, because "
-                        "b3 = 24 = 2 * n_pairs encodes the total bridge pair count "
-                        "via the associative 3-cycle pairing",
+                        "b3 = 24 = 2 * n_pairs (the retired-seed count) encodes the total bridge pair "
+                        "count via the associative 3-cycle pairing",
                         "Therefore alpha_leak = 1/sqrt(chi_eff/b3) = 1/sqrt(n_aligned) "
                         "= 1/sqrt(6), where the 6 is the geometrically meaningful "
                         "count of aligned bridge pairs under OR rotation",
@@ -2751,7 +2751,7 @@ class FourFaceG2Structure(SimulationBase):
                     "Step 2: The effective Euler characteristic chi_eff = 2(h11 - h21 + h31) "
                     "= 2(4 - 0 + 68) = 144 counts the total topological degrees of freedom "
                     "available for flux threading and matter localization.\n"
-                    "Step 3: The third Betti number b3 = 24 counts the independent "
+                    "Step 3: The third Betti number b3 (24 on the retired seed, 43 on seed_43_joyce) counts the independent "
                     "associative 3-cycles where chiral matter fields localize in "
                     "M-theory compactification.\n"
                     "Step 4: The ratio chi_eff/b3 = 144/24 = 6 gives the average number "

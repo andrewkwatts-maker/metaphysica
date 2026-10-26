@@ -24,11 +24,11 @@ FORKS: Dict[str, Fork] = {
             "Opened 2026-09-22 with the b3_seed adoption. The v25 flavour "
             "formulas CLAIM b_3 in their text (theta_13 = arcsin(sqrt(2/3) "
             "* sqrt(2) * sin(pi/b3))) but were CALIBRATED at 24 and "
-            "registered particle.b3 = 24 regardless of the seed -- the last "
+            "registered particle.b3 = 24 (Superseded path) regardless of the seed -- the last "
             "seed-blind writer. A formula claiming a topological origin must "
             "consume the topology; one that will not follow the seed is a "
             "calibrated constant wearing b_3's name and must say so. "
-            "MEASURED at the flip: theta_13 = 8.6686 deg at b_3 = 24 "
+            "MEASURED at the flip: theta_13 = 8.6686 deg at b_3 = 24 (Superseded path) "
             "(0.8 sigma vs NuFIT), 4.8351 deg at b_3 = 43."
         ),
         options=[

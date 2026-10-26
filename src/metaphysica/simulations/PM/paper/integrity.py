@@ -563,7 +563,7 @@ class IntegrityV16_2(SimulationBase):
                 latex=r"\text{Valid} = \prod_{n=1}^{42} C_n \quad \text{(All must pass)}",
                 plain_text="Valid = Product(C_n) for n=1..42 (All must pass)",
                 category="DERIVED",
-                description="42 certificates of integrity validation logic: short-circuit binary enforcement requiring all geometric, algebraic, and observational checks to pass. Every certificate validates a quantity derived from the b3=24 G2 seed, so the overall validity flag is a meta-summary rooted at b3.",
+                description="42 certificates of integrity validation logic: short-circuit binary enforcement requiring all geometric, algebraic, and observational checks to pass. Every certificate validates a quantity derived from the active G2 seed (seed_43_joyce), so the overall validity flag is a meta-summary rooted at that seed.",
                 input_params=["topology.elder_kads"],
                 output_params=[],
                 derivation={

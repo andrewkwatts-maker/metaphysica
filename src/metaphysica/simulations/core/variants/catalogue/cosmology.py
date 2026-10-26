@@ -365,7 +365,7 @@ FORKS: Dict[str, Fork] = {
               "above the b3 H0 = 3.5e-32 eV a rolling field needs, so the "
               "quintessence direction cannot be one of them. It must be "
               "shift-symmetry protected, which is what an axion is and what "
-              "a saxion is not. b3 = 24 survives on structure. "
+              "a saxion is not. b3 = 24 (Superseded path) survives on structure. "
               "This also independently settles the S8 friction onset by the "
               "same argument, and it is COMPUTED "
               "(geometry.kahler_over_quintessence_mass) rather than asserted "
@@ -383,7 +383,7 @@ FORKS: Dict[str, Fork] = {
               "dark energy sector is thawing at all. "
               "WHAT THE b3_seed RULING MOVED HERE, recorded 2026-09-26 and "
               "NOT resolved. This fork and every sigma figure in its options "
-              "were computed at b_3 = 24. The 2026-09-22 ruling adopted "
+              "were computed at b_3 = 24 (Superseded path). The 2026-09-22 ruling adopted "
               "(b_2, b_3) = (12, 43), and three things follow that the option "
               "set does not yet reflect. (1) The adopted option's 24 is now a "
               "FROZEN integer, not b_3; its summary said 'n = b3 = 24' and "
@@ -395,10 +395,10 @@ FORKS: Dict[str, Fork] = {
               "the adopted seed, n = b_2 is 12, so the b2_4 option's integer "
               "and the bridges_12 option's integer COINCIDE, and the "
               "mass-scale argument that settled the 2026-09-06 ruling was "
-              "computed against b_2 = 4 and b_3 = 24 throughout. Whether "
+              "computed against b_2 = 4 and b_3 = 24 (Superseded path) throughout. Whether "
               "that argument survives the reseeding is the AUTHOR'S ruling. "
               "Nothing here adopts anything or changes a published number; "
-              "the sigma figures stay as measured at b_3 = 24 and are "
+              "the sigma figures stay as measured at b_3 = 24 (Superseded path) and are "
               "labelled as such rather than silently reinterpreted.",
     ),
 }

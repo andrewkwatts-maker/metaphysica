@@ -980,8 +980,8 @@ class AppendixOKKReduction(SimulationBase):
                     "breathing energy density is the sum of stress-energy tensor mismatches "
                     "between normal and mirror shadows across all 12 pairs, where each "
                     "R_perp_i rotates the mirror contribution. The resulting equation of "
-                    "state is w0 = -1 + 1/b₃ = -23/24 ≈ -0.9583, derived from the third "
-                    "Betti number b₃ = 24 (consistent with DESI 2025 thawing data)."
+                    "state is w0 = -1 + 1/b₃ = -23/24 ≈ -0.9583, with n = 24 taken from the dark_energy_betti option "
+                    "(default b3_24; consistent with DESI 2025 thawing data)."
                 ),
                 terms={
                     "rho_breath": "Total breathing energy density",
