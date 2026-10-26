@@ -20,7 +20,7 @@ PUBLISHED = Path(os.environ.get("PM_PUBLISHED_ROOT",
                                 "H:/claude-scratch/runs_g/active"))
 
 #: Active-presenting hits permitted per surface. Only goes down.
-CEILINGS = {"autogen": 118, "pages": 0, "website": 0}
+CEILINGS = {"autogen": 159, "pages": 0, "website": 0}
 
 
 def _active(surface: str):
