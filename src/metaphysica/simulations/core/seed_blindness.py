@@ -114,10 +114,14 @@ def rows_under_seed(seed: str) -> Dict[str, Any]:
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
         target = fh.name
     scratch = tempfile.mkdtemp(prefix="seed_blindness_")
+    # An inherited METAPHYSICA_OUT outranks cwd, so the run overwrote the
+    # caller's artifacts (the test suite's staged sections.json) all the same.
+    env["METAPHYSICA_OUT"] = scratch
     try:
         proc = subprocess.run(
             [sys.executable, "-c", _HARVEST, target], cwd=scratch,
-            env=env, capture_output=True, text=True, timeout=900)
+            env=env, capture_output=True, text=True, timeout=900,
+            encoding="utf-8", errors="replace")  # cp1252 killed the reader
         if proc.returncode != 0:
             return {"error": (proc.stderr or "")[-400:]}
         with open(target, encoding="utf-8") as fh:

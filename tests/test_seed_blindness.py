@@ -158,11 +158,18 @@ def test_the_harvest_does_not_write_into_the_callers_cwd(monkeypatch):
 
     def fake_run(cmd, cwd=None, env=None, **kw):
         seen["cwd"], seen["pythonpath"] = cwd, env["PYTHONPATH"]
+        seen["out"] = env.get("METAPHYSICA_OUT")
+        seen["encoding"] = kw.get("encoding")
         return subprocess.CompletedProcess(cmd, 1, "", "stub")
 
     monkeypatch.setattr(sb.subprocess, "run", fake_run)
+    monkeypatch.setenv("METAPHYSICA_OUT", os.getcwd())
     sb.rows_under_seed("24")
     assert seen["cwd"] and os.path.abspath(seen["cwd"]) != os.getcwd()
+    # The inherited METAPHYSICA_OUT outranks cwd; it must point at scratch too.
+    assert seen["out"] == seen["cwd"]
+    # Windows' default cp1252 cannot decode the run's UTF-8 output.
+    assert seen["encoding"] == "utf-8"
     assert not os.path.exists(seen["cwd"]), "scratch dir not cleaned up"
     for entry in seen["pythonpath"].split(os.pathsep):
         assert os.path.isabs(entry), entry
