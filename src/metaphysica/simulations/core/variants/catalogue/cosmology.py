@@ -240,6 +240,9 @@ FORKS: Dict[str, Fork] = {
         source="simulations.PM.cosmology.dark_energy_thawing",
         status="RULED",
         read_adopted=_dark_energy_betti_adopted,
+        # Its only consumer is late_time_routes.thawing_w0, which
+        # w0_for_mechanism calls only under thawing_quintessence.
+        applies_when=(("dark_energy_mechanism", "thawing_quintessence"),),
         options=[
             VariantOption(
                 id="b3_24",

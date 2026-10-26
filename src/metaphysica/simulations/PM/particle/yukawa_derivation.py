@@ -907,16 +907,10 @@ def get_geometric_pmns() -> Dict[str, Any]:
 
 def resolve_flavour_b3() -> int:
     """Which b_3 the flavour sector consumes, per the flavour_seed_coupling fork."""
-    import os
+    from metaphysica.simulations.core.variants import resolve
 
-    try:
-        from metaphysica.simulations.core.variants import resolve
-
-        # resolve() owns precedence (override, selection file, env var).
-        branch = resolve("flavour_seed_coupling")
-    except ImportError:                    # import cycle only
-        branch = os.environ.get("METAPHYSICA_VARIANT_FLAVOUR_SEED_COUPLING",
-                                "follow_seed")
+    # resolve() owns precedence (override, selection file, env var).
+    branch = resolve("flavour_seed_coupling")
     if branch == "calibrated_24":
         return DEFAULT_B3
     from metaphysica.simulations.PM.geometry.b3_path import (

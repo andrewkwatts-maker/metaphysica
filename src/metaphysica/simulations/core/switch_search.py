@@ -170,9 +170,17 @@ def _iter_compatible(ids, option_lists):
     options chosen so far break a declared requires/excludes (Track G3)."""
     compatible = _variants().compatible
 
+    forks = _variants().FORKS
+    canonical = _variants().canonical_departures
+    seen = set()
+
     def walk(depth, chosen):
         if depth == len(ids):
-            yield dict(chosen)
+            # A gated-off difference is one path: keep the first (adopted-first).
+            key = tuple(sorted(canonical(chosen).items()))
+            if key not in seen:
+                seen.add(key)
+                yield dict(chosen)
             return
         for oid in option_lists[depth]:
             chosen[ids[depth]] = oid
@@ -204,6 +212,9 @@ def count_compatible(fork_ids: Iterable[str],
             for rf, _ro in opt.requires + opt.excludes:
                 if rf in parent:
                     parent[find(fid)] = find(rf)
+        for gf, _go in forks[fid].applies_when:
+            if gf in parent:
+                parent[find(fid)] = find(gf)
     total = 1
     for root in {find(f) for f in ids}:
         idx = [k for k, f in enumerate(ids) if find(f) == root]

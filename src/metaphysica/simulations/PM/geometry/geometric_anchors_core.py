@@ -322,7 +322,7 @@ class GeometricAnchors:
         """
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
         return ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=ltr.thawing_w0())
+            ltr.resolve_de_mechanism(), thawing=ltr.thawing_w0)
 
     @property
     def s8_viscosity_scale(self) -> float:

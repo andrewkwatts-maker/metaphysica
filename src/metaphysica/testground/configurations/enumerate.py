@@ -48,6 +48,7 @@ from metaphysica.testground.configurations.model import Configuration
 from metaphysica.testground.configurations.modes import SINGLE, spec, sweeps
 from metaphysica.testground.constraints import Constraint, violations
 from metaphysica.testground.switches.model import Fork
+from metaphysica.testground.switches.gates import gate_open, gate_reads
 from metaphysica.testground.switches.resolve import resolve_selection
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
@@ -225,8 +226,31 @@ def plan_enumeration(theory: "Theory", mode: str,
 # ------------------------------------------------------------------- walking
 
 
+class GatePin:
+    """A gated fork must sit at its default while its gate is closed, so a
+    gated-off difference is one configuration. Judged like a constraint."""
+
+    def __init__(self, forks: Mapping[str, Fork], fork_id: str,
+                 base: Mapping[str, str]) -> None:
+        self.forks, self.fork_id, self.base = forks, fork_id, dict(base)
+        self.reads = (fork_id,) + gate_reads(forks, fork_id)
+
+    def violated_by(self, selection: Mapping[str, str]) -> bool:
+        full = {**self.base, **selection}
+        return (full[self.fork_id] != self.forks[self.fork_id].default()
+                and not gate_open(self.forks, self.fork_id, full))
+
+
+def _gate_pins(plan: "EnumerationPlan",
+               classifier: Classifier) -> List[GatePin]:
+    return [GatePin(classifier.forks, f, classifier.active)
+            for f in plan.forks if classifier.forks[f].applies_when]
+
+
 def _constraint_forks(constraint: Constraint) -> Optional[Tuple[str, ...]]:
     """Forks a constraint reads; None for an unrecognised constraint type."""
+    if hasattr(constraint, "reads"):
+        return constraint.reads
     if hasattr(constraint, "needs_fork"):
         return (constraint.fork, constraint.needs_fork)
     if hasattr(constraint, "fork_b"):
@@ -295,8 +319,9 @@ def _generate(plan: EnumerationPlan, classifier: Classifier,
         return
     reasons = plan.notes if plan.mode == SINGLE else ()
     produced = 0
-    for sel in _walk(plan.forks, plan.domains,
-                     constraints if plan.prunes else ()):
+    checks = (list(constraints) if plan.prunes else []) + _gate_pins(
+        plan, classifier)
+    for sel in _walk(plan.forks, plan.domains, checks):
         yield classifier.configuration(sel, extra_reasons=reasons)
         produced += 1
         if cap is not None and produced >= cap:
@@ -405,12 +430,18 @@ def count_configurations(theory: "Theory", mode: str,
     classifier = Classifier(theory)
     plan = _plan(theory, mode, forks, classifier)
     constraints = classifier.constraints
+    pins = _gate_pins(plan, classifier)
+    constraints = list(constraints) + pins
     valid, exact = _count(plan.forks, plan.domains, constraints, limit)
     runnable_domains = _runnable_domains(plan, classifier)
     if plan.prunes:
         total = valid
         runnable, runnable_exact = _count(plan.forks, runnable_domains,
                                           constraints, limit)
+    elif pins:
+        total = valid
+        runnable, runnable_exact = _count(plan.forks, runnable_domains,
+                                          pins, limit)
     else:
         total = plan.raw
         runnable = math.prod(len(d) for d in runnable_domains)
