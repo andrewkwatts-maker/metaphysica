@@ -261,7 +261,7 @@ class ThermalTimeV16(SimulationBase):
         b3 = registry.get_param("topology.elder_kads")  # the b3 in force (43 on Y_7; 24 was the off-path TCS-era seed)
 
         # Compute modular temperature from Pneuma VEV
-        # T_mod ~ m_P / <Psi_P>
+        # T_mod ~ m_P / ⟨Psi_P⟩
         modular_temperature = pneuma_mass_scale / pneuma_vev
 
         # ─── Step 1 (DERIVED): Base thermal coupling from KMS periodicity ───
@@ -835,7 +835,7 @@ class ThermalTimeV16(SimulationBase):
                 status="DERIVED",
                 description=(
                     "Effective temperature associated with the modular Hamiltonian. "
-                    "Computed as T_mod = m_P / <Psi_P> where m_P is the Pneuma mass scale."
+                    "Computed as T_mod = m_P / ⟨Psi_P⟩ where m_P is the Pneuma mass scale."
                 ),
                 derivation_formula="modular-hamiltonian",
                 no_experimental_value=True,
@@ -1005,7 +1005,7 @@ class ThermalTimeV16(SimulationBase):
             },
             {
                 "id": "CERT_THERMAL_MODULAR_TEMPERATURE_POSITIVE",
-                "assertion": "Modular temperature T_mod = m_P / <Psi_P> is positive and finite",
+                "assertion": "Modular temperature T_mod = m_P / ⟨Psi_P⟩ is positive and finite",
                 "condition": "thermal.modular_temperature > 0 and isfinite(thermal.modular_temperature)",
                 "tolerance": 0.0,
                 "status": "PASS",

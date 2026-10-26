@@ -156,8 +156,10 @@ def test_the_free_parameter_counts_are_pinned_in_both_directions(bundled):
     # 67 -> 68 on 2026-10-01: cosmology.eta_baryon_geometric is labelled
     # CALIBRATED under D-015 (it rests on the calibrated Re(T)), so the
     # ledger now counts it as the fit it always was.
-    assert seedless["ledger_rows"] == 68
-    assert seedless["free_set_size"] == 40, (
+    # 68 -> 70 and each free size +2 on 2026-10-26: gauge.qcd_cycle_type and gauge.weak_cycle_type became ANSATZ (C4),
+    # discrete rows nothing removes. The removed counts are unchanged.
+    assert seedless["ledger_rows"] == 70
+    assert seedless["free_set_size"] == 42, (
         "the seedless reduction moved; this is the number a bare process "
         "reports, and it is NOT the adopted path's count"
     )
@@ -165,8 +167,8 @@ def test_the_free_parameter_counts_are_pinned_in_both_directions(bundled):
     # The reseeded probes: the retired-wa removal lands in both, so the
     # dead-code fix is what these numbers demonstrate.
     # Each +1 on 2026-10-01: eta_baryon_geometric counted as CALIBRATED (D-015).
-    assert (adopted["free_set_size"], adopted["removed_count"]) == (39, 29)
-    assert off_path["free_set_size"] == 38
+    assert (adopted["free_set_size"], adopted["removed_count"]) == (41, 29)
+    assert off_path["free_set_size"] == 40
 
     # And the probe's own inconsistency is asserted rather than hidden, so
     # nobody reads 39 as a verified adopted-path count.

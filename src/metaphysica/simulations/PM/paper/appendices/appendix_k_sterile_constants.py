@@ -782,7 +782,7 @@ class AppendixKSterileConstants(SimulationBase):
                 derivation={
                     "method": "Dark energy equation of state from b3 Betti number",
                     "steps": [
-                        "The third Betti number of TCS #187 is b3 = 24",
+                        "The third Betti number of the off-path TCS #187 reading (retired) is b3 = 24; TCS gives 71 <= b3 <= 155, so this is not a TCS value",
                         "The dark energy EoS receives a geometric correction: w0 = -1 + 1/b3",
                         "This gives w0 = -1 + 1/24 = -23/24 ~ -0.9583, predicting phantom-free quintessence",
                     ],

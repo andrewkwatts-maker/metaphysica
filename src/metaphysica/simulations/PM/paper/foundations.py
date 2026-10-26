@@ -1056,8 +1056,8 @@ class FoundationsV16_2(SimulationBase):
             Formula(
                 id="b3-generations",
                 label="(1.3b)",
-                latex=r"N_{\text{gen}} = \frac{b_3}{8} = \frac{24}{8} = 3",
-                plain_text="N_gen = b3/8 = 24/8 = 3",
+                latex=r"N_{\text{gen}} = \frac{b_2}{4} = \frac{12}{4} = 3",
+                plain_text="N_gen = b_2/4 = 12/4 = 3",
                 category="DERIVED",
                 description=(
                     "RELOCATED (n_gen_source): three fermion generations, computed as "

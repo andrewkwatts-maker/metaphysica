@@ -43,11 +43,11 @@ class CoreFormulas:
             ),
             "χ_eff": FormulaTerm(
                 name="Effective Euler Characteristic",
-                description="Topological invariant from TCS G₂ manifold construction",
+                description="Topological invariant from TCS (retired reading) G₂ manifold construction",
                 symbol="χ_eff",
                 value="144",
                 units="dimensionless",
-                contribution="Geometric input from TCS construction",
+                contribution="Geometric input (calibrated at the retired TCS seed; not re-derived on Y7)",
                 link="foundations/g2-manifold.html"
             ),
             "48": FormulaTerm(
@@ -61,11 +61,11 @@ class CoreFormulas:
             ),
         },
         info_title="Three Generations from Topology",
-        info_meaning="This formula demonstrates that the number of fermion generations emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS construction, the G₂ index theorem yields exactly three generations—matching the observed particle spectrum without any free parameters.",
+        info_meaning="This formula demonstrates that the number of fermion generations emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS (retired reading) construction, the G₂ index theorem yields exactly three generations—matching the observed particle spectrum without any free parameters.",
         info_grid=[
             FormulaInfoItem(
                 title="Topology Source",
-                content="TCS G₂ Manifold #187",
+                content="TCS (retired reading) G₂ Manifold #187",
                 link="foundations/g2-manifold.html"
             ),
             FormulaInfoItem(
@@ -89,7 +89,7 @@ class CoreFormulas:
             FormulaSubComponent(
                 symbol="χ_eff",
                 name="Effective Euler Characteristic",
-                description="From TCS G₂ manifold construction",
+                description="From TCS (retired reading) G₂ manifold construction",
                 badge="DERIVED",
                 badge_type="theory"
             ),
@@ -110,7 +110,7 @@ class CoreFormulas:
         ],
         derivation_chain=[
             FormulaDerivationStep(
-                title="TCS G₂ Manifold Construction",
+                title="TCS (retired reading) G₂ Manifold Construction",
                 link="foundations/tcs.html",
                 badge="MATHEMATICS",
                 badge_type="mathematics"
@@ -128,7 +128,7 @@ class CoreFormulas:
                 badge_type="established"
             ),
         ],
-        discussion="The generation number emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS construction (Corti et al. 2015), the G₂ index theorem—which generalizes the F-theory result n_gen = χ/24—yields exactly three generations via the divisor 48. This is a parameter-free geometric prediction that matches observation exactly.",
+        discussion="The generation number emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS (retired reading) construction (Corti et al. 2015), the G₂ index theorem—which generalizes the F-theory result n_gen = χ/24—yields exactly three generations via the divisor 48. This is a parameter-free geometric prediction that matches observation exactly.",
         derivation=FormulaDerivation(
             parent_formulas=["tcs-euler-characteristic"],
             established_physics=["f-theory-index"],
@@ -191,7 +191,7 @@ class CoreFormulas:
                 title="G₂-manifolds and associative submanifolds via semi-Fano 3-folds",
                 authors="Corti, A., Haskins, M., Nordström, J., Pacini, T.",
                 year=2015,
-                description="TCS construction: b₂=4, b₃=24, χ_eff=144"
+                description="TCS (retired reading) construction: b₂=4, b₃=24, χ_eff=144"
             )
         ]
     )
@@ -234,7 +234,7 @@ class CoreFormulas:
                 description="Compactification volume of G₂ manifold in Planck units",
                 symbol="V_G₂",
                 units="dimensionless",
-                contribution="Geometric modulus from TCS topology",
+                contribution="Geometric modulus from TCS (retired reading) topology",
                 link="foundations/g2-manifold.html"
             ),
         },
@@ -306,14 +306,14 @@ class CoreFormulas:
                 badge_type="theory"
             ),
         ],
-        discussion="The GUT scale emerges from the geometry of the G₂ compactification. Via dimensional reduction, the effective 4D Planck scale is related to the 26D fundamental scale by M_GUT = M_Pl · V_G₂^(-1/7), where the -1/7 power comes from compactifying 7 dimensions. The TCS topology and moduli stabilization fix V_G₂, yielding M_GUT = 2.118×10¹⁶ GeV—remarkably close to the phenomenologically required unification scale of ~2×10¹⁶ GeV.",
+        discussion="The GUT scale emerges from the geometry of the G₂ compactification. Via dimensional reduction, the effective 4D Planck scale is related to the 26D fundamental scale by M_GUT = M_Pl · V_G₂^(-1/7), where the -1/7 power comes from compactifying 7 dimensions. The TCS (retired reading) topology and moduli stabilization fix V_G₂, yielding M_GUT = 2.118×10¹⁶ GeV—remarkably close to the phenomenologically required unification scale of ~2×10¹⁶ GeV.",
         derivation=FormulaDerivation(
             parent_formulas=["g2-compactification"],
             established_physics=["kaluza-klein"],
             steps=[
                 "G₂ manifold volume V_G2 determines effective 4D Planck scale",
                 "Dimensional reduction: M_GUT = M_Pl · V_G2^(-1/7)",
-                "From TCS topology: V_G2 yields M_GUT = 2.118×10¹⁶ GeV"
+                "From TCS (retired reading) topology: V_G2 yields M_GUT = 2.118×10¹⁶ GeV"
             ],
             verification_page="sections.html#gauge-unification"
         ),
@@ -391,7 +391,7 @@ class CoreFormulas:
                 symbol="b₃",
                 value="24",
                 units="dimensionless",
-                contribution="Fixed by G₂ holonomy - TCS manifold with 24 associative cycles"
+                contribution="Fixed by G₂ holonomy - TCS (retired reading) manifold with 24 associative cycles"
             ),
         },
         info_title="Dark Energy from G₂ Topology (STERILE)",
@@ -484,7 +484,7 @@ class CoreFormulas:
         latex="\\tau_p = \\frac{M_{GUT}^4}{\\alpha_{GUT}^2 m_p^5} \\times S^2 = 8.15 \\times 10^{34}\\,\\text{years}",
         plain_text="τ_p = M_GUT⁴/(α_GUT² m_p⁵) × S² = 8.15 × 10³⁴ years",
         category=FormulaCategory.PREDICTIONS,
-        description="Proton lifetime from GUT scale with TCS suppression",
+        description="Proton lifetime from GUT scale with TCS (retired reading) suppression",
         section="5",
         status="TESTABLE (Hyper-K ~2030s)",
         terms={
@@ -519,7 +519,7 @@ class CoreFormulas:
             ),
             "S": FormulaTerm(
                 name="Geometric Suppression Factor",
-                description="Additional suppression from TCS cycle separation",
+                description="Additional suppression from TCS (retired reading) cycle separation",
                 symbol="S",
                 value="~2.1",
                 units="dimensionless",
@@ -528,7 +528,7 @@ class CoreFormulas:
             ),
         },
         info_title="Proton Decay from GUT Scale",
-        info_meaning="Proton decay is a key prediction of grand unified theories. The lifetime scales as τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵) from dimension-6 baryon-number-violating operators. The TCS geometry provides an additional suppression factor S² ≈ 4.4 from cycle separation, pushing the predicted lifetime to 8.15×10³⁴ years—just above the Super-Kamiokande bound and within reach of Hyper-Kamiokande.",
+        info_meaning="Proton decay is a key prediction of grand unified theories. The lifetime scales as τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵) from dimension-6 baryon-number-violating operators. The TCS (retired reading) geometry provides an additional suppression factor S² ≈ 4.4 from cycle separation, pushing the predicted lifetime to 8.15×10³⁴ years—just above the Super-Kamiokande bound and within reach of Hyper-Kamiokande.",
         info_grid=[
             FormulaInfoItem(
                 title="GUT Scale",
@@ -541,7 +541,7 @@ class CoreFormulas:
                 link="sections.html#gauge-unification"
             ),
             FormulaInfoItem(
-                title="TCS Suppression",
+                title="TCS (retired reading) Suppression",
                 content="S² ≈ 4.4",
                 link="foundations/tcs.html"
             ),
@@ -576,7 +576,7 @@ class CoreFormulas:
             ),
             FormulaSubComponent(
                 symbol="S²",
-                name="TCS Geometric Factor",
+                name="TCS (retired reading) Geometric Factor",
                 description="Cycle separation enhancement ≈ 4.4",
                 badge="GEOMETRIC",
                 badge_type="mathematics"
@@ -596,19 +596,19 @@ class CoreFormulas:
                 badge_type="theory"
             ),
             FormulaDerivationStep(
-                title="TCS Geometric Suppression",
+                title="TCS (retired reading) Geometric Suppression",
                 link="foundations/tcs.html",
                 badge="MATHEMATICS",
                 badge_type="mathematics"
             ),
         ],
-        discussion="The proton lifetime is calculated from the standard GUT formula τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵), using the geometrically determined values M_GUT = 2.118×10¹⁶ GeV and α_GUT = 1/23.54. The TCS manifold geometry provides an additional suppression factor S ≈ 2.1 from the separation between associative 3-cycles, enhancing the lifetime by S² ≈ 4.4. This yields τ_p = 8.15×10³⁴ years, safely above the Super-Kamiokande bound of 2.4×10³⁴ years and testable at Hyper-Kamiokande in the 2030s.",
+        discussion="The proton lifetime is calculated from the standard GUT formula τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵), using the geometrically determined values M_GUT = 2.118×10¹⁶ GeV and α_GUT = 1/23.54. The TCS (retired reading) manifold geometry provides an additional suppression factor S ≈ 2.1 from the separation between associative 3-cycles, enhancing the lifetime by S² ≈ 4.4. This yields τ_p = 8.15×10³⁴ years, safely above the Super-Kamiokande bound of 2.4×10³⁴ years and testable at Hyper-Kamiokande in the 2030s.",
         derivation=FormulaDerivation(
             parent_formulas=["gut-scale", "tcs-suppression"],
             established_physics=["yang-mills"],
             steps=[
                 "Standard dimension-6 decay: τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵)",
-                "TCS geometry provides additional suppression S = 2.1 from cycle separation",
+                "TCS (retired reading) geometry provides additional suppression S = 2.1 from cycle separation",
                 "Result: τ_p = 8.15×10³⁴ years (4.9× Super-K bound)"
             ],
             verification_page="sections.html#gauge-unification"
@@ -843,16 +843,16 @@ class CoreFormulas:
         id="master-action-27d",  # Updated ID for v23.1
         output_params=['dimensions.D_BULK'],
         label="(2.1) Master Action",
-        html="S<sub>26</sub> = ∫ d<sup>26</sup>x √|G| [M<sub>*</sub><sup>24</sup>R<sub>26</sub> + Ψ̄<sub>P</sub>(iΓ<sup>M</sup>D<sub>M</sub> - m)Ψ<sub>P</sub> + ℒ<sub>bridge</sub>]",
-        latex="S_{26} = \\int d^{26}x \\sqrt{|G_{(24,2)}|} \\left[ M_*^{25} R_{26} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
-        plain_text="S_26 = ∫ d²⁶X √|G| [M*²⁴R₂₆ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
+        html="S<sub>26</sub> = ∫ d<sup>26</sup>x √|G| [(M<sub>*</sub><sup>24</sup>/2)R<sub>26</sub> + Ψ̄<sub>P</sub>(iΓ<sup>M</sup>D<sub>M</sub> - m)Ψ<sub>P</sub> + ℒ<sub>bridge</sub>]",
+        latex="S_{26} = \\int d^{26}x \\sqrt{|G_{(24,2)}|} \\left[ \\frac{M_*^{24}}{2} R_{26} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
+        plain_text="S_26 = ∫ d²⁶X √|G| [(M*²⁴/2)R₂₆ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
         category=FormulaCategory.THEORY,
         description="v23.1 Master action for 26D(24,2) bulk with Pneuma field and shadow-time directions sector",
         section="2",
         status="FOUNDATIONAL",
         terms={
             "S_26": FormulaTerm("26D Action", "Full action in the 26D(24,2) two-time bulk", "sections.html#2"),
-            "M_*": FormulaTerm("Fundamental Scale", "26D Planck scale ~10¹⁶ GeV"),
+            "M_*": FormulaTerm("Fundamental Scale", "26D Planck scale, M_*^24 = 1/kappa^2 = 1/(8 pi G_26). Input scale: ~10¹⁶ GeV is a stated size, not derived by any simulation"),
             "R_26": FormulaTerm("Ricci Scalar", "26D curvature scalar"),
             "Ψ_P": FormulaTerm("Pneuma Field", "4096-component Weyl spinor of Cl(24,2)"),
             "ℒ_bridge": FormulaTerm("Bridge Lagrangian", "v23.1: 12×(2,0) bridge pairs + two shadow-time directions"),
@@ -1395,12 +1395,12 @@ class CoreFormulas:
         latex="\\text{Hol}(g_X) = G_2 \\implies b_3(X) = 24, \\quad n_{\\text{gen}} = \\frac{b_3}{8} = 3",
         plain_text="Hol(g_X) = G2 implies b3(X) = 24, n_gen = b3/8 = 3",
         category=FormulaCategory.THEORY,
-        description="G2 holonomy constraint that freezes b3=24, producing exactly 3 fermion generations",
+        description="RETIRED (off-path TCS seed, withdrawn): the displayed Hol = G2 => b3 = 24, n_gen = b3/8 route does not hold on Y7, which has (b2, b3) = (12, 43); the adopted count is n_gen = b2/4 = 3. Displayed form kept for history.",
         section="2.2",
-        status="EXACT MATCH",
+        status="RETIRED (off-path seed; superseded by n_gen = b2/4 = 3)",
         terms={
             "Hol(g)": FormulaTerm("Holonomy Group", "G2 subset of SO(7)"),
-            "b_3": FormulaTerm("Third Betti Number", "= 24 for TCS manifold"),
+            "b_3": FormulaTerm("Third Betti Number", "= 24 for TCS (retired reading) manifold"),
             "n_gen": FormulaTerm("Generation Count", "= b3/8 = 3 exactly"),
         },
         computed_value=3,
@@ -1429,18 +1429,18 @@ class CoreFormulas:
     )
 
     # =========================================================================
-    # SECTION 4: TCS G₂ COMPACTIFICATION
+    # SECTION 4: TCS (retired reading) G₂ COMPACTIFICATION
     # =========================================================================
 
     TCS_TOPOLOGY = Formula(
         id="tcs-topology",
         output_params=['topology.B2', 'topology.B3'],
-        label="(4.1) TCS #187 Topology",
+        label="(4.1) TCS #187 (retired reading) Topology",
         html="b<sub>2</sub> = 4, b<sub>3</sub> = 24, χ<sub>eff</sub> = 144, ν = 24",
         latex="b_2 = 4, \\quad b_3 = 24, \\quad \\chi_{\\text{eff}} = 144, \\quad \\nu = 24",
         plain_text="b₂ = 4, b₃ = 24, χ_eff = 144, ν = 24",
         category=FormulaCategory.THEORY,
-        description="TCS G₂ manifold #187 topological parameters",
+        description="TCS G₂ manifold #187 topological parameters (retired reading; Y7 has b2 = 12, b3 = 43)",
         section="4",
         status="GEOMETRIC INPUT",
         terms={
@@ -1458,7 +1458,7 @@ class CoreFormulas:
                 title="G₂-manifolds and associative submanifolds via semi-Fano 3-folds",
                 authors="Corti, A., Haskins, M., Nordström, J., Pacini, T.",
                 year=2015,
-                description="Systematic TCS construction of compact G₂ manifolds with b₂=4, b₃=24"
+                description="Systematic TCS (retired reading) construction of compact G₂ manifolds with b₂=4, b₃=24"
             ),
             FormulaReference(
                 id="joyce2000",
@@ -1512,7 +1512,7 @@ class CoreFormulas:
                 title="G₂-manifolds and associative submanifolds via semi-Fano 3-folds",
                 authors="Corti, A., et al.",
                 year=2015,
-                description="Explicit computation of Hodge numbers for TCS manifolds"
+                description="Explicit computation of Hodge numbers for TCS (retired reading) manifolds"
             ),
             FormulaReference(
                 id="atiyah1963",
@@ -1567,7 +1567,7 @@ class CoreFormulas:
         status="EXACT MATCH",
         terms={
             "T_ω,eff": FormulaTerm("Effective Torsion", "Normalized torsion class"),
-            "b₃": FormulaTerm("Third Betti Number", "= 24 for TCS"),
+            "b₃": FormulaTerm("Third Betti Number", "= 24 for TCS (retired reading; Y7 has b3 = 43)"),
             "N_flux": FormulaTerm("Flux Quantum", "= 24"),
         },
         computed_value=-1.0,
@@ -1834,7 +1834,7 @@ class CoreFormulas:
                 symbol="Σorient_i",
                 value="12 (out of 24)",
                 units="dimensionless",
-                contribution="Net signed sum from TCS geometry"
+                contribution="Net signed sum from TCS (retired reading) geometry"
             ),
             "b₃": FormulaTerm(
                 name="Third Betti Number",
@@ -1842,7 +1842,7 @@ class CoreFormulas:
                 symbol="b₃",
                 value="24",
                 units="dimensionless",
-                contribution="Topological invariant from TCS construction"
+                contribution="Topological invariant from TCS (retired reading) construction"
             ),
         },
         info_title="CP Phase from G₂ Topology",
@@ -1860,7 +1860,7 @@ class CoreFormulas:
             FormulaSubComponent(symbol="π/2", name="Maximal Phase", description="90° = maximal CP violation", badge="PREDICTION", badge_type="theory"),
         ],
         derivation_chain=[
-            FormulaDerivationStep(title="TCS G₂ Topology", badge="MATHEMATICS", badge_type="mathematics"),
+            FormulaDerivationStep(title="TCS G₂ Topology (retired reading)", badge="MATHEMATICS", badge_type="mathematics"),
             FormulaDerivationStep(title="Associative 3-Cycles", badge="GEOMETRIC", badge_type="mathematics"),
             FormulaDerivationStep(title="Orientation Counting", badge="TOPOLOGY", badge_type="mathematics"),
         ],

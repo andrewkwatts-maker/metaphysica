@@ -7,7 +7,7 @@ page and the beginner guide present the theory in ONE order: what the model
 postulates, the standard physics it uses (cited), how the geometry is selected
 and why, the closed geometry (the certificate), what the model found, what it
 corrected, what is open, and where it stands against data. Written by hand on
-each surface that story drifts -- the main page still claimed b_3 = 24, a TCS
+each surface that story drifts -- the main page still claimed b_3 = 24, a TCS (retired reading)
 construction and "resolved" problems long after the engine moved on. Here it
 is generated from the provenance registry, the certificate and the live seed,
 and every surface renders the same layers.
@@ -190,8 +190,9 @@ def layers() -> List[Dict[str, Any]]:
               if wa1 else
               "On this switch setting the match is a finding, and the pair "
               "stands by the 2026-09-22 ruling.")),
-        r("{n_gen_route}: three generations is the rank of the folding "
-          "group, not a fitted number."),
+        r("{n_gen_route}: three is the rank of the folding group, a count "
+          "rather than a fit. That these are three chiral generations is open: "
+          "Y<sub>7</sub> carries no chiral matter (D-011)."),
     ]
 
     certificate_items = [

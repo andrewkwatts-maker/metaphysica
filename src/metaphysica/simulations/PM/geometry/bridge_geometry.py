@@ -235,7 +235,7 @@ class BridgeSystem:
     # ------------------------------------------------------------------
 
     # Racetrack parameters derived from G2 geometry
-    # Two condensing gauge groups: SU(N_a) x SU(N_b) on the TCS G2 manifold
+    # Two condensing gauge groups: SU(N_a) x SU(N_b) on the TCS (retired reading) G2 manifold
     # N_a = b3 = 24 (from Leech lattice / third Betti number)
     # N_b = 26 (spacelike dimensions of M^26(24,2), giving a - b > 0 for a SUSY minimum)
     RACETRACK_A = 1.0       # Prefactor from first instanton sector

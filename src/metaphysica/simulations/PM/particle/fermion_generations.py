@@ -580,7 +580,7 @@ class FermionGenerationsV16(SimulationBase):
                     "disjoint, so it has no codimension-7 points, and a smooth G2 "
                     "compactification gives no chiral fermions. The Pneuma Mechanism is "
                     "a proposed filter, not a derivation: the Pneuma condensate gradient "
-                    "nabla<Psi_P> would induce axial torsion T_mu that couples to fermions "
+                    "nabla⟨Psi_P⟩ would induce axial torsion T_mu that couples to fermions "
                     "through a gamma^5 term in the effective Dirac operator:"
                 )
             ),
@@ -795,7 +795,7 @@ class FermionGenerationsV16(SimulationBase):
                 # Add b₃ as an explicit input so the dependency walker can root the
                 # chain at b3_leaf().
                 # fermion.pneuma_condensate_gradient and gauge.g_coupling named
-                # no registry parameter. nabla<Psi_P> is a gradient (a vector
+                # no registry parameter. nabla⟨Psi_P⟩ is a gradient (a vector
                 # field, not a scalar) and no simulation produces it; g is the
                 # generic coupling of the G2 holonomy connection A_mu, with no
                 # registered path and no appearance in the output -- the filter
@@ -809,8 +809,8 @@ class FermionGenerationsV16(SimulationBase):
                     "method": "Axial torsion coupling from Pneuma condensate gradient in G2 holonomy",
                     "parentFormulas": ["generation-number"],
                     "steps": [
-                        "Pneuma condensate creates gradient: nabla<Psi_P>",
-                        "Gradient induces axial torsion: T_mu ~ nabla_mu<Psi_P>",
+                        "Pneuma condensate creates gradient: nabla⟨Psi_P⟩",
+                        "Gradient induces axial torsion: T_mu ~ nabla_mu⟨Psi_P⟩",
                         "Torsion couples to spinors via gamma^5 T_mu term",
                         "Modified Dirac: D_eff = gamma^mu (d_mu + igA_mu + gamma^5 T_mu)",
                         "gamma^5 creates chirality-dependent mass potentials",

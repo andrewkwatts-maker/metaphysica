@@ -59,6 +59,7 @@ pub mod e8;
 pub mod g2_manifold;
 pub mod gates;
 pub mod hodge;
+pub mod orbifold;
 pub mod quarks;
 pub mod rg_running;
 pub mod simulations;

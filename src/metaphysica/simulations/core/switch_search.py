@@ -131,9 +131,19 @@ def combinations_for(fork_ids: Iterable[str],
     live rivals; then the omission is the caller's explicit choice and shows
     up in the signature rather than in the results.
     """
+    ids, option_lists = _option_lists(fork_ids, include_refuted)
+    out: List[Dict[str, str]] = []
+    for combo in _iter_compatible(ids, option_lists):
+        out.append(combo)
+        if cap is not None and len(out) >= cap:
+            break
+    return out
+
+
+def _option_lists(fork_ids: Iterable[str], include_refuted: bool):
+    """(ids, per-fork option ids ordered adopted-first, then priority)."""
     forks = _variants().FORKS
     ids = [f for f in fork_ids if f in forks]
-
     option_lists = []
     for fid in ids:
         fork = forks[fid]
@@ -141,37 +151,66 @@ def combinations_for(fork_ids: Iterable[str],
             adopted = fork.default()
         except Exception:                  # a fork with no resolvable default
             adopted = None
-
         if include_refuted:
             candidates = list(enumerate(fork.options))
         else:
             sweepable = set(fork.sweepable_ids())
-            candidates = [
-                (idx, opt) for idx, opt in enumerate(fork.options)
-                if opt.id in sweepable
-            ]
-
-        # Order: adopted first, then by DECLARED priority (0 = live
-        # alternative worth costing early, 2 = retained-for-completeness),
-        # then declaration order as the stable tie-break. A capped sweep
-        # then spends its budget on combinations someone might adopt
-        # instead of on candidates already refuted.
-        ordered = sorted(
-            candidates,
-            key=lambda pair: (
-                pair[1].id != adopted,
-                getattr(pair[1], "priority", 1),
-                pair[0],
-            ),
-        )
+            candidates = [(idx, opt) for idx, opt in enumerate(fork.options)
+                          if opt.id in sweepable]
+        # Adopted first, then DECLARED priority, then declaration order, so a
+        # capped sweep spends its budget on combinations someone might adopt.
+        ordered = sorted(candidates, key=lambda pair: (
+            pair[1].id != adopted, getattr(pair[1], "priority", 1), pair[0]))
         option_lists.append([opt.id for _idx, opt in ordered])
+    return ids, option_lists
 
-    out: List[Dict[str, str]] = []
-    for choice in itertools.product(*option_lists):
-        out.append(dict(zip(ids, choice)))
-        if cap is not None and len(out) >= cap:
-            break
-    return out
+
+def _iter_compatible(ids, option_lists):
+    """Product in itertools.product order, pruning a branch the moment the
+    options chosen so far break a declared requires/excludes (Track G3)."""
+    compatible = _variants().compatible
+
+    def walk(depth, chosen):
+        if depth == len(ids):
+            yield dict(chosen)
+            return
+        for oid in option_lists[depth]:
+            chosen[ids[depth]] = oid
+            if compatible(chosen):
+                yield from walk(depth + 1, chosen)
+            del chosen[ids[depth]]
+
+    yield from walk(0, {})
+
+
+def count_compatible(fork_ids: Iterable[str],
+                     include_refuted: bool = True) -> int:
+    """Size of the compatible product without expanding it.
+
+    Forks linked by a declared constraint form a component; components are
+    independent, so the count is the product of per-component enumerations.
+    """
+    ids, lists = _option_lists(fork_ids, include_refuted)
+    forks = _variants().FORKS
+    parent = {f: f for f in ids}
+
+    def find(x):
+        while parent[x] != x:
+            x = parent[x]
+        return x
+
+    for fid in ids:
+        for opt in forks[fid].options:
+            for rf, _ro in opt.requires + opt.excludes:
+                if rf in parent:
+                    parent[find(fid)] = find(rf)
+    total = 1
+    for root in {find(f) for f in ids}:
+        idx = [k for k, f in enumerate(ids) if find(f) == root]
+        sub = sum(1 for _ in _iter_compatible(
+            [ids[k] for k in idx], [lists[k] for k in idx]))
+        total *= sub
+    return total
 
 
 # ----------------------------------------------------------- the checks
@@ -482,23 +521,14 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
     """Run the consistency checks under one switch combination."""
     from metaphysica.simulations.core.arithma_formula import reset_cache
     from metaphysica.simulations.core.preferred_path import digest_of
-    from metaphysica.simulations.core.variants import _ENV_PREFIX
+    from metaphysica.simulations.core.variants import forced
 
-    saved: Dict[str, Optional[str]] = {}
     try:
-        for fid, opt in selection.items():
-            key = _ENV_PREFIX + fid.upper()
-            saved[key] = os.environ.get(key)
-            os.environ[key] = opt
-        reset_cache()
-        checks = consistency_checks()
-        free_set_size = _free_set_load_bearing()
+        with forced(selection):
+            reset_cache()
+            checks = consistency_checks()
+            free_set_size = _free_set_load_bearing()
     finally:
-        for key, old in saved.items():
-            if old is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = old
         reset_cache()
 
     problems = [c for c in checks if not c["ok"]]

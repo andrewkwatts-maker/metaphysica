@@ -79,8 +79,9 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
     if not plain_text and not latex:
         return None
 
-    # Use plain_text as base, or convert LaTeX
-    base_html = plain_text if plain_text else latex_to_html(latex)
+    # Use plain_text as base, or convert LaTeX. Plain text is text: escape it,
+    # or angle-bracket pairs (a Wilson loop, a pairing) parse as tags and vanish.
+    base_html = escape_html(plain_text) if plain_text else latex_to_html(latex)
 
     # Map of symbols to their HTML wrappers
     # Sort by length descending to avoid partial replacements
@@ -116,7 +117,7 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
         # placeholder: substituting spans directly let a later symbol match
         # inside markup an earlier one inserted ('n' in 'span').
         token = chr(0xE000 + len(spans))
-        updated = _replace_first_in_text(result_html, symbol, token)
+        updated = _replace_first_in_text(result_html, escaped_symbol, token)
         if updated is not None:
             result_html = updated
             spans[token] = interactive_span
@@ -132,11 +133,18 @@ def generate_interactive_html(formula: Dict[str, Any]) -> Optional[str]:
 
 
 def _replace_first_in_text(html: str, symbol: str, token: str) -> Optional[str]:
-    """``html`` with the first ``symbol`` outside any tag replaced, or None."""
+    """``html`` with the first ``symbol`` outside any tag replaced, or None.
+
+    A symbol with a digit at an edge may not touch another digit or a point
+    there: the term '4' must not land inside '24' or '0.4'.
+    """
+    pre = r'(?<![0-9])(?<![0-9]\.)' if symbol[:1].isdigit() else ''
+    post = r'(?![0-9])(?!\.[0-9])' if symbol[-1:].isdigit() else ''
+    rx = re.compile(pre + re.escape(symbol) + post)
     parts = re.split(r'(<[^>]*>)', html)
     for i, part in enumerate(parts):
-        if not part.startswith('<') and symbol in part:
-            parts[i] = part.replace(symbol, token, 1)
+        if not part.startswith('<') and rx.search(part):
+            parts[i] = rx.sub(lambda _m: token, part, count=1)
             return ''.join(parts)
     return None
 
@@ -178,7 +186,7 @@ def generate_euler_characteristic_html() -> str:
 <span class="formula-op"> = </span>
 <span class="formula-var" data-term="2">2<span class="var-tooltip"><span class="var-name">2 - Prefactor</span><span class="var-description">Doubling from Poincare duality on 7-manifold</span></span></span>
 <span class="formula-op">(</span>
-<span class="formula-var" data-term="h11">h<sup>1,1</sup><span class="var-tooltip"><span class="var-name">h<sup>1,1</sup> - Kahler Moduli</span><span class="var-description">Kahler moduli count = 4 for TCS #187</span></span></span>
+<span class="formula-var" data-term="h11">h<sup>1,1</sup><span class="var-tooltip"><span class="var-name">h<sup>1,1</sup> - Kahler Moduli</span><span class="var-description">Kahler moduli count = 4 (retired TCS #187 seed; off-path, no published TCS list has this #187)</span></span></span>
 <span class="formula-op"> - </span>
 <span class="formula-var" data-term="h21">h<sup>2,1</sup><span class="var-tooltip"><span class="var-name">h<sup>2,1</sup> - Complex Structure</span><span class="var-description">Complex structure moduli = 0 (no complex structure on G2)</span></span></span>
 <span class="formula-op"> + </span>

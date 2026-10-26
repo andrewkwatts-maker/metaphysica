@@ -542,12 +542,12 @@ class EstablishedPhysics:
             # RE_T_PHENOMENOLOGICAL: Inverted from m_H = 125.10 GeV constraint
             EstablishedParameter(
                 path="moduli.re_t_attractor",
-                value=1.833,  # GEOMETRIC: from TCS #187 attractor mechanism
+                value=1.833,  # GEOMETRIC: calibrated at the retired TCS seed; not re-derived on Y7
                 uncertainty=0.05,
                 units="dimensionless",
                 source="ESTABLISHED:G2_GEOMETRY",
                 description="Attractor value for Re(T) from G2 flux instantons",
-                eml_description="EML: eml_scalar(1.833) — Re(T) attractor from TCS #187 G₂ flux instanton geometry (geometric input)"
+                eml_description="EML: eml_scalar(1.833) — Re(T) attractor calibrated at the retired TCS seed; not re-derived on Y7 (geometric input)"
             ),
             EstablishedParameter(
                 path="moduli.re_t_phenomenological",
@@ -565,8 +565,8 @@ class EstablishedPhysics:
                 uncertainty=0.02,
                 units="dimensionless",
                 source="ESTABLISHED:G2_TORSION",
-                description="Torsion class parameter from TCS construction",
-                eml_description="EML: eml_scalar(0.12) — torsion class parameter T_Ω from TCS G₂ construction (geometric input)"
+                description="Torsion class parameter (calibrated at the retired TCS seed; not re-derived on Y7)",
+                eml_description="EML: eml_scalar(0.12) — torsion class parameter T_Ω (calibrated at the retired TCS seed; off-path, not re-derived on Y7)"
             ),
             EstablishedParameter(
                 path="topology.orientation_sum",

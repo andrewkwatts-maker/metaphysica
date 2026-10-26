@@ -139,11 +139,10 @@ class GauginoCondensationSimulation(SimulationBase):
         ]
 
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
-        # topology.elder_kads carries the b_3 in force; the fallback below is
-        # the off-path seed b_3 = 24, used only when no seed is registered.
+        # topology.elder_kads carries the b_3 in force.
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
         N1 = int(b3)    # dominant flux quanta, read as b₃ (24 at the off-path seed)
         N2 = N1 - 1     # sub-dominant flux quanta (23 at the off-path seed)
 
@@ -195,11 +194,10 @@ class GauginoCondensationSimulation(SimulationBase):
 
     def run_eml(self, registry: "PMRegistry") -> Dict[str, Any]:
         """EML path — same racetrack via EML exponential operators."""
-        # Same read as run(): the b_3 in force, falling back to the off-path
-        # seed b_3 = 24 only when no seed is registered.
+        # Same read as run(): the b_3 in force.
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
         N1 = int(b3)
         N2 = N1 - 1
 

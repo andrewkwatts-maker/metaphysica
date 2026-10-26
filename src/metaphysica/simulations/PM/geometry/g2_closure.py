@@ -474,7 +474,7 @@ def _resolved(name: str, fallback: str) -> str:
 def require_buildable_construction() -> str:
     """The active g2_construction, or a ``ValueError`` refusal (D-023).
 
-    Only the Joyce orbifold is built here. A twisted connected sum needs a cited
+    Only the Joyce orbifold is built here. A twisted connected sum (retired reading) needs a cited
     pair of building blocks, and none is in the engine; Kovalev's exhibited range
     71 <= b3 <= 155 (arXiv:1810.12659) also excludes the adopted b3 = 43.
     """

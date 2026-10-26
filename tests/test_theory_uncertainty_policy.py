@@ -137,13 +137,28 @@ _LOAD_BEARING = {
     "geometry.G_F_matched",
     "geometry.T_CMB",
     "gauge.sin2_theta_w_geometric",
-    "higgs.m_higgs_pred",
     # added 2026-09-06, when the duplicated uncertainty slots were separated
     "electromagnetic.alpha_inv",
     "fermion.mass_ratio_proton_electron",
     "geometry.alpha_inverse",
     "geometry.mu_pe",
 }
+
+#: Rows that left _LOAD_BEARING because a ruling took them out of scoring, so
+#: no buffer can decide them. higgs.m_higgs_pred: D-027 ruling 3 scores it
+#: CIRCULAR (Re(T) was hand-inverted from m_h = 125.10 GeV); its 4 GeV buffer
+#: is still uncited and comes back into play if that ruling is reversed.
+_EXCLUDED_BY_RULING = {"higgs.m_higgs_pred": "D-027"}
+
+
+def test_rows_excluded_by_ruling_stay_unscored():
+    rows = {r["path"]: r for r in _report().get("validations", [])}
+    for path, ruling in _EXCLUDED_BY_RULING.items():
+        if path not in rows:
+            continue
+        row = rows[path]
+        assert row["verdict"] == "CIRCULAR", (path, row["verdict"])
+        assert ruling in (row.get("scoring_exclusion_reason") or ""), path
 
 
 def test_load_bearing_buffers_are_identified_and_none_is_cited():

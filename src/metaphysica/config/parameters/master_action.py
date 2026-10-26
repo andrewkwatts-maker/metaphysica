@@ -14,14 +14,16 @@ class MasterActionParameters:
     v21.0/v22.0: Master Action parameters for the 26D(24,2) theory.
     (Legacy variable names use "25D" for backward compatibility)
 
-    S_26D = ∫d²⁶X √G [M²⁵R + Ψ̄_P(iΓ·D - m)Ψ_P + L_bridge]
+    S_26D = ∫d²⁶X √|G| [(M_*²⁴/2) R + Ψ̄_P(iΓ·D - m)Ψ_P + L_bridge]
+    (√|G|: det G > 0 for two times; exponent D-2 = 24. A definite action is
+    NOT written down here: see PrincipiaMetaphysica docs/plan/geometry/master_action_audit.md)
 
     Two-time: The Pneuma field Ψ_P is a 26D Weyl spinor of Cl(24,2) (4096 = 2^13/2).
     Note: 4096 components (was 8192 from Cl(24,2) in v16-v20).
     """
 
     # Bulk Planck mass power
-    BULK_PLANCK_POWER = 23  # Derived: D_BULK - 2 = 25 - 2 = 23 (graviton dim reduction)
+    BULK_PLANCK_POWER = 23  # LEGACY 25D value (D-2 with D=25); for D=26 the exponent is 24. Unused; value kept for the owner.
 
     # v21/v22 Pneuma spinor dimension chain (26D → 12D per shadow → 4D)
     PNEUMA_25D = 4096       # Legacy name - 26D: Weyl 2^13/2 = 4096 of Cl(24,2)

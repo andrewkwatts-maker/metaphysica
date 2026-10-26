@@ -24,7 +24,7 @@ class MirrorSectorParameters:
     T_MIRROR_RATIO = 0.57                      # Derived: (b₂/b₃)^{1/4} = (4/24)^{1/4} = 0.57 (CHNP 2015)
     T_MIRROR_RATIO_DESCRIPTION = "Mirror sector temperature ratio from G₂ topology"
     T_MIRROR_RATIO_DERIVATION = "T'/T = (b₂/b₃)^{1/4} = (4/24)^{1/4} = 0.57"
-    T_MIRROR_RATIO_SOURCE = "TCS G₂ manifold #187 Betti numbers (CHNP 2015)"
+    T_MIRROR_RATIO_SOURCE = "TCS (retired reading) G₂ manifold #187 Betti numbers (CHNP 2015)"
 
     # Dark matter abundance prediction
     OMEGA_DM_BARYON_PREDICTED = 5.8            # Derived: (T/T')³ = (1/0.57)³ ≈ 5.8

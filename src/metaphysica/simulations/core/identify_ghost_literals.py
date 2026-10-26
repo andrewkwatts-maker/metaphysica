@@ -95,11 +95,6 @@ class GhostLiteralHunter(ast.NodeVisitor):
         self.filename = filename
         self.findings: List[Dict[str, Any]] = []
 
-    def visit_Num(self, node: ast.Num) -> None:
-        """Visit numeric literals (Python 3.7 and earlier)."""
-        self._check_literal(node.n, node.lineno, node.col_offset)
-        self.generic_visit(node)
-
     def visit_Constant(self, node: ast.Constant) -> None:
         """Visit constant literals (Python 3.8+)."""
         if isinstance(node.value, (int, float)):

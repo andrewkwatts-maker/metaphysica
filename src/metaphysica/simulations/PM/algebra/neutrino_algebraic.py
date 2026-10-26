@@ -188,9 +188,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
-        # --- fetch topology parameters (fallback to hardcoded if absent) ---
+        # --- fetch topology parameters (b3 required; chi_eff and n_gen fall back) ---
         b3_raw = registry.get_param("topology.elder_kads")
-        b3 = float(b3_raw) if b3_raw is not None else float(_B3)
+        if b3_raw is None:
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
+        b3 = float(b3_raw)
 
         chi_eff_raw = registry.get_param("topology.mephorash_chi")
         chi_eff = float(chi_eff_raw) if chi_eff_raw is not None else float(_CHI_EFF)
@@ -250,7 +252,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             )
 
             b3_raw = registry.get_param("topology.elder_kads")
-            b3 = float(b3_raw) if b3_raw is not None else float(_B3)
+            if b3_raw is None:
+                raise ValueError("topology.elder_kads is unset: no b3 in force")
+            b3 = float(b3_raw)
             chi_eff_raw = registry.get_param("topology.mephorash_chi")
             chi_eff = float(chi_eff_raw) if chi_eff_raw is not None else float(_CHI_EFF)
             n_gen_raw = registry.get_param("topology.n_gen")
@@ -274,7 +278,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             sigma_theta13 = (theta13_deg_derived - _THETA13_NUFIT) / _THETA13_1SIGMA
             sigma_delta_CP = (delta_CP_deg_derived - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
 
-        except (ImportError, Exception):
+        except ImportError:
+            # Only a missing library falls back. Any other error must surface:
+            # falling back to run() scored a broken EML path as agreement.
             return self.run(registry)
 
         return {

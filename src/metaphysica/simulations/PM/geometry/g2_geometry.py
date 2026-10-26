@@ -553,12 +553,13 @@ class G2GeometryV16(SimulationBase):
 
         Key EML derivations:
           k_gimel = b₃/2 + 1/π  →  ops.add(ops.div(b3, 2), ops.inv(π))
-          χ_eff   = 6 × b₃      →  ops.mul(6, b3)
+          χ_eff   = 2(h11 - h21 + h31) →  ops.mul(2, ops.add(ops.sub(h11, h21), h31))
           n_gen   = χ_eff / 48  →  ops.div(chi_eff, 48)
 
-        STATUS: χ_eff = 6 b₃ is an OFF-PATH route; it equals 144 only at the
-        retired seed b₃ = 24 (258 at b₃ = 43, so this path's n_gen is not 3
-        there). The adopted reading is the K3 reading χ_eff = 48n (D-015).
+        STATUS: χ_eff = 6 b₃ was used here until 2026-10-26; it equals 144
+        only at the retired seed b₃ = 24 (258 at b₃ = 43, n_gen 5), so the
+        cross-check failed on the adopted path. Now the Hodge route, as in
+        run(); n_gen = χ_eff/48 is the K3 reading χ_eff = 48n (D-015).
         k_gimel is CALIBRATED at the off-path seed (D-007).
 
         The G₂-holonomy metric tensor is retrieved from MetricTensor.g2_holonomy();
@@ -574,7 +575,7 @@ class G2GeometryV16(SimulationBase):
         """
         from metaphysica.simulations.core.eml_integration import (
             eml_scalar, eml_compute, eml_pi, eml_add, eml_mul,
-            eml_div, eml_inv, eml_sqrt, eml_g2_metric, eml_leech_points,
+            eml_div, eml_inv, eml_sqrt, eml_sub, eml_g2_metric, eml_leech_points,
         )
 
         # Topology seeds — read from the live b3_seed fork, not fixed here
@@ -586,9 +587,12 @@ class G2GeometryV16(SimulationBase):
         b3_pt = eml_scalar(float(b3))
         k_gimel = eml_compute(eml_add(eml_div(b3_pt, eml_scalar(2.0)), eml_inv(eml_pi())))
 
-        # EML: χ_eff = 6 × b₃ -- an OFF-PATH route; it equals
-        # 2 × (h11 - h21 + h31) = 144 only at the retired seed b₃ = 24
-        chi_eff = eml_compute(eml_mul(eml_scalar(6.0), b3_pt))
+        # EML: χ_eff = 2 × (h11 - h21 + h31), the route run() publishes. The
+        # old 6 × b₃ route equals it only at the retired seed b₃ = 24 (258 at
+        # b₃ = 43), which made this cross-check FAIL on the adopted path.
+        hodge = eml_add(eml_sub(eml_scalar(float(h11)), eml_scalar(float(self.h21))),
+                        eml_scalar(float(self.h31)))
+        chi_eff = eml_compute(eml_mul(eml_scalar(2.0), hodge))
 
         # EML: n_gen = χ_eff / 48 (use round to handle float precision);
         # equals n only when χ_eff = 48n, the adopted K3 reading
@@ -988,7 +992,7 @@ class G2GeometryV16(SimulationBase):
         # Every topological number in the prose below is READ from the
         # live seed, never retyped. A number typed into a section string
         # goes stale the instant a ruling moves the fork -- which is what
-        # happened here: this section narrated b_2 = 4, b_3 = 24 and a TCS
+        # happened here: this section narrated b_2 = 4, b_3 = 24 and a TCS (retired reading)
         # construction for several passes after the seed had moved.
         # ---------------------------------------------------------------
         from metaphysica.simulations.PM.geometry.geometry_narration import (
@@ -1014,7 +1018,7 @@ class G2GeometryV16(SimulationBase):
                 % (b3, seed, 7 + 3 * b2)
             )
         tcs_excluded = (
-            "the twisted connected sum exhibits 71 ≤ b₃ ≤ 155, and b₃ = %d "
+            "the twisted connected sum (retired reading) exhibits 71 ≤ b₃ ≤ 155, and b₃ = %d "
             "lies outside that range, so TCS is recorded as an EXCLUSION "
             "rather than as this framework's construction" % b3
         )
@@ -1271,7 +1275,7 @@ class G2GeometryV16(SimulationBase):
                     "= 0; adjusted for involution structure that route gave "
                     "b₂ = 4. The adopted value is b₂ = %d, DERIVED as one "
                     "exceptional 2-class per resolved A₁ family, not read off "
-                    "a TCS building block." % b2
+                    "a TCS (retired reading) building block." % b2
                 )
             ),
             ContentBlock(
@@ -1521,7 +1525,7 @@ class G2GeometryV16(SimulationBase):
                     "CRITICAL CLARIFICATION: the torsion parameter "
                     "T<sub>ω</sub> = −0.884 arises from G-flux backreaction, not "
                     "from geometric torsion. On the branch in force, %s So the "
-                    "earlier wording — “the TCS G₂ manifold is Ricci-flat with "
+                    "earlier wording — “the TCS (retired reading) G₂ manifold is Ricci-flat with "
                     "zero geometric torsion… the G₂ HOLONOMY is validated by 4 "
                     "conditions: parallel spinor existence (N = 1), Ricci "
                     "flatness (R = 0), 3-form closure, and b₃ = 24 matching TCS "
@@ -1860,10 +1864,10 @@ class G2GeometryV16(SimulationBase):
                 ],
                 "method": (
                     "Effective-index bookkeeping carried over from the "
-                    "seed_24 (TCS) model. On the adopted path chi_eff "
+                    "seed_24 (TCS (retired reading)) model. On the adopted path chi_eff "
                     "counts the Kummer K3 surfaces transverse to the "
                     "singular involutions, once per shadow (the K3 "
-                    "reading, adopted 2026-10-01, D-015); the TCS route is "
+                    "reading, adopted 2026-10-01, D-015); the TCS (retired reading) route is "
                     "kept runnable because its value agrees there"),
                 "parentFormulas": ["g2-holonomy"],
                 "references": [
@@ -2126,14 +2130,14 @@ class G2GeometryV16(SimulationBase):
             output_params=["topology.K_MATCHING"],
             derivation={
                 "steps": [
-                    "In the TCS construction, two asymptotically cylindrical CY3 halves Z_+, Z_- are glued along a common T^3-fibred neck region",
+                    "In the TCS (retired reading) construction, two asymptotically cylindrical CY3 halves Z_+, Z_- are glued along a common T^3-fibred neck region",
                     "Each half is a K3 fibration over a 3-sphere S^3, with the K3 fibre providing the Calabi-Yau structure",
                     "The number of independent matching conditions for the K3 fibres equals the rank of the Picard lattice intersection, which is h^{1,1}",
                     "For the off-path TCS #187 model: K_matching = h^{1,1} = %d independent K3 matching fibres. "
                     "On the active seed b_2 = %d, so the chain K = h^{1,1} = b_2 %s."
                     % (self._K_matching, self._b2,
                        "closes" if self._k_matching_equals_b2
-                       else "BREAKS at the last link -- K rides on the TCS "
+                       else "BREAKS at the last link -- K rides on the TCS (retired reading) "
                             "Hodge number, which the seed fork does not move")
                 ],
                 "method": "Kovalev TCS gluing theorem with K3 fibration structure analysis",
@@ -2145,7 +2149,7 @@ class G2GeometryV16(SimulationBase):
             },
             terms={
                 r"K_{\text{matching}}": {
-                    "description": "K3 matching parameter: the number of independent K3 fibre matching conditions in the TCS gluing, controlling gauge sector topology",
+                    "description": "K3 matching parameter: the number of independent K3 fibre matching conditions in the TCS (retired reading) gluing, controlling gauge sector topology",
                     "symbol": "K",
                     "value": "4",
                     "param_id": "topology.K_MATCHING"
@@ -2391,9 +2395,9 @@ class G2GeometryV16(SimulationBase):
                 "url": "https://arxiv.org/abs/math/0012189",
                 "relevance": (
                     "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
-                    "Original TCS construction theorem (Theorem 5.34) for compact G2 "
+                    "Original TCS (retired reading) construction theorem (Theorem 5.34) for compact G2 "
                     "manifolds by gluing asymptotically cylindrical CY3 halves along "
-                    "K3-fibred neck regions. Foundation for all TCS G2 manifold examples."
+                    "K3-fibred neck regions. Foundation for all TCS (retired reading) G2 manifold examples."
                 )
             },
             {
@@ -2412,7 +2416,7 @@ class G2GeometryV16(SimulationBase):
                 "relevance": (
                     "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
                     "Construction of ACyl CY3 building blocks from weak Fano 3-folds; "
-                    "provides the input data (Picard lattices, Hodge numbers) for TCS "
+                    "provides the input data (Picard lattices, Hodge numbers) for TCS (retired reading) "
                     "G2 manifold assembly."
                 )
             },
@@ -2436,14 +2440,14 @@ class G2GeometryV16(SimulationBase):
                 "key": "chnp2018",
                 "id": "chnp2018",
                 "authors": "Corti, A., Haskins, M., Nordstrom, J., Pacini, T.",
-                "title": "Extra-twisted connected sum G2-manifolds",
+                "title": "Extra-twisted connected sum (retired reading) G2-manifolds",
                 "year": 2018,
                 "type": "article",
                 "arxiv": "1809.09083",
                 "url": "https://arxiv.org/abs/1809.09083",
                 "relevance": (
                     "Off-path for this framework (Y_7 is a resolved Joyce orbifold). "
-                    "Extra-twisted TCS construction with pi/6 involution blocks "
+                    "Extra-twisted TCS (retired reading) construction with pi/6 involution blocks "
                     "achieving refined Betti numbers. The involution structure "
                     "b2=4 is obtained via adjusted matching conditions on the "
                     "Picard lattice intersection."
@@ -2815,7 +2819,7 @@ class G2GeometryV16(SimulationBase):
                 "validation_hint": "Check that G2 holonomy implies Ricci-flatness via the Bonan-Berger theorem"
             },
             {
-                "topic": "Twisted Connected Sum (TCS) G2 construction",
+                "topic": "Twisted Connected Sum (TCS (retired reading)) G2 construction",
                 "url": "https://arxiv.org/abs/math/0012189",
                 "relevance": (
                     "Off-path for this framework: Y_7 is a resolved Joyce orbifold, "
@@ -2832,7 +2836,7 @@ class G2GeometryV16(SimulationBase):
                     "determined by the Mayer-Vietoris spectral sequence."
                 ),
                 "validation_hint": (
-                    "Verify that TCS construction preserves G2 holonomy via Kovalev's "
+                    "Verify that TCS (retired reading) construction preserves G2 holonomy via Kovalev's "
                     "gluing theorem (2003, Theorem 5.34). The CHNP refinement "
                     "(arXiv:1207.4470) classifies all TCS manifolds from semi-Fano "
                     "3-fold building blocks."
@@ -2867,7 +2871,7 @@ class G2GeometryV16(SimulationBase):
                     "in the G2 manifold. In the PM framework, these 4 moduli are "
                     "interpreted as 4 geometric 'faces' per shadow in the dual-shadow "
                     "architecture. Each face corresponds to one of the K3 matching "
-                    "fibres from the TCS construction. The racetrack stabilization "
+                    "fibres from the TCS (retired reading) construction. The racetrack stabilization "
                     "mechanism (adapted from KKLT/LVS) fixes the moduli VEVs at "
                     "T_i = b3*k_gimel/(i*pi) with a 1/i hierarchy, giving the "
                     "dominant observable face (T_1) and progressively deeper shadow "
@@ -2877,7 +2881,7 @@ class G2GeometryV16(SimulationBase):
                     "See four_face_g2_structure simulation (Section 2.7) for full details."
                 ),
                 "validation_hint": (
-                    "For TCS G2 manifolds, h^{1,1} = b2 counts independent 2-cycles "
+                    "For TCS (retired reading) G2 manifolds, h^{1,1} = b2 counts independent 2-cycles "
                     "(K3 matching fibres in the Kovalev construction). The framework "
                     "formerly claimed that the CHNP classification (arXiv:1207.4470) "
                     "lists a 'TCS #187' with b2 = 4, b3 = 24; it does not (no TCS "

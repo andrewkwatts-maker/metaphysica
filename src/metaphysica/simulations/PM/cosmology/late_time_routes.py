@@ -40,6 +40,37 @@ def resolve_de_mechanism() -> str:
     return resolve("dark_energy_mechanism")
 
 
+#: n for each fixed dark_energy_betti option (w0 = -(n-1)/n); b3_live is
+#: read from the seed fork at call time.
+DE_BETTI_N: dict = {
+    "b3_24": 24, "b2_4": 4, "ngen_3": 3, "chi_over_b3_6": 6,
+    "bridges_12": 12, "octonion_8": 8,
+}
+
+
+def resolve_de_betti() -> str:
+    from metaphysica.simulations.core.variants import resolve
+
+    return resolve("dark_energy_betti")
+
+
+def de_betti_n(option: str) -> int:
+    """The integer n that *option* of the dark_energy_betti fork sets."""
+    if option == "b3_live":
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path, seed_values,
+        )
+        return int(seed_values(resolve_path())[0])
+    if option not in DE_BETTI_N:
+        raise ValueError("unknown dark_energy_betti option %r" % option)
+    return DE_BETTI_N[option]
+
+
+def thawing_w0() -> float:
+    """Thawing w0 = -1 + 1/n with n from the dark_energy_betti fork."""
+    return -1.0 + 1.0 / de_betti_n(resolve_de_betti())
+
+
 def _ricci_flow_h0(h0_planck: float) -> float:
     from metaphysica.simulations.PM.cosmology.ricci_flow_h0 import (
         THETA_MIXING_13D_26D_DEG,

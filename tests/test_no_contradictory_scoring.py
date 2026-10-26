@@ -52,15 +52,11 @@ _LEGITIMATE = {
     # anchor's attribution or withdraw its PASS) stays on the register,
     # because the healing was about the seed, not about the citation.
     #
-    # NEW 2026-09-23, same ruling, opposite direction: Lambda_derived /
-    # newton_constant_theory / dm_cross_section_cm2 now score one predicted
-    # value both ways. All three are b_3 consumers whose anchors did not
-    # move with them, so this is the adoption's cost surfacing in the
-    # scoring layer rather than a scoring defect. Recorded visibly, with
-    # the reading it needs named: which of the three anchors the prediction
-    # is actually being compared against.
-    ("cosmology.Lambda_derived", "gravity.newton_constant_theory",
-     "portals.dm_cross_section_cm2"),
+    # REMOVED 2026-10-26: Lambda_derived / newton_constant_theory /
+    # dm_cross_section_cm2 (6.7e-53, 6.7e-39, 1.0e-91) were never one value.
+    # The grouping used round(v, 10), which sends every |v| < 5e-11 to 0.0;
+    # it now keys on significant figures (_group_key). The b_3 reading
+    # recorded here explained a collision that did not exist.
 }
 
 _SCORED = {"PASS", "FAIL", "TENSION", "MARGINAL"}
@@ -106,11 +102,16 @@ def _rows():
     pytest.skip("no validation_report.json; run the build first")
 
 
+def _group_key(value) -> float:
+    """Ten significant figures, so small magnitudes do not all collapse to 0."""
+    return float("%.10g" % float(value))
+
+
 def _contradictions():
     groups = collections.defaultdict(list)
     for r in _rows():
         if r.get("verdict") in _SCORED and isinstance(r.get("value"), (int, float)):
-            groups[round(float(r["value"]), 10)].append(r)
+            groups[_group_key(r["value"])].append(r)
     out = []
     for _value, rs in groups.items():
         verdicts = {r["verdict"] for r in rs}
@@ -166,3 +167,10 @@ def test_the_recorded_groups_are_still_real():
         "longer contradict; remove them so the list cannot drift:\n  "
         + "\n  ".join(" / ".join(g) for g in stale)
     )
+
+
+def test_small_distinct_values_are_not_one_value():
+    """round(v, 10) grouped Lambda, G_N and sigma_DM as a single value."""
+    assert _group_key(6.690858620018627e-53) != _group_key(6.708832159377011e-39)
+    assert _group_key(1.0292886226609494e-91) != _group_key(6.690858620018627e-53)
+    assert _group_key(0.23190478152123015) == _group_key(0.2319047815212302)

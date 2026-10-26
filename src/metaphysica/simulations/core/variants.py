@@ -48,9 +48,13 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import os
+from contextlib import contextmanager
+from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 __all__ = [
     "VariantOption",
@@ -66,10 +70,20 @@ __all__ = [
     "SourceUnmeasurable",
     "selected_status",
     "off_table_selections",
+    "selection_id",
+    "load_selection",
+    "departures",
+    "compatible",
+    "violations",
+    "validate_constraints",
+    "forced",
+    "is_explicit",
 ]
 
 #: Environment prefix: METAPHYSICA_VARIANT_<FORK_ID_UPPER>=<option id>
 _ENV_PREFIX = "METAPHYSICA_VARIANT_"
+#: Path to a JSON {fork: option} map honoured by resolve() (Track G1).
+_SELECTION_ENV = "METAPHYSICA_SELECTION"
 
 # ---------------------------------------------------------------------------
 # OPTION STATUS VOCABULARY
@@ -151,6 +165,12 @@ class VariantOption:
     #: it is DERIVED from ``adopted``, which keeps every pre-existing
     #: declaration valid and means the only way to get DISABLED is to say so.
     status: Optional[str] = None
+    #: Declared compatibility (Track G3), each a tuple of (fork, option).
+    #: ``requires``: for every fork named, the selection must pick one of the
+    #: listed options. ``excludes``: it must pick none of them. Only
+    #: constraints the code or docs already state; each cites its source.
+    requires: Tuple[Tuple[str, str], ...] = ()
+    excludes: Tuple[Tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         """Derive the unset fields, then refuse an inconsistent declaration.
@@ -518,6 +538,12 @@ def _dark_energy_betti_adopted() -> str:
 
     if w0 is None:
         raise SourceUnmeasurable("cosmology.w0_derived is None")
+    mechanism = resolve("dark_energy_mechanism")
+    if mechanism != "thawing_quintessence":
+        # w0 is not -(n-1)/n under another mechanism (mep_11_13 gives -11/13,
+        # which rounds to n = 6 and used to report chi_over_b3_6).
+        raise SourceUnmeasurable(
+            f"dark_energy_mechanism = {mechanism}: w0 does not encode n")
     w0 = float(w0)
     if w0 <= -1.0:
         raise SourceUnmeasurable(
@@ -932,6 +958,11 @@ FORKS: Dict[str, Fork] = {
                     "all odd. Adopting the derived seed forces this to be "
                     "abandoned."
                 ),
+                # variants.py:936-939 (this consequence): "incompatible with
+                # every Joyce-reachable value -- 7, 19, 31 and 43"; notes above
+                # (b_3/8 "fails on the derived-seed path").
+                excludes=(("b3_seed", "seed_7_joyce"), ("b3_seed", "seed_19_joyce"),
+                      ("b3_seed", "seed_31_joyce"), ("b3_seed", "seed_43_joyce")),
             ),
             VariantOption(
                 id="b2_over_faces",
@@ -953,6 +984,11 @@ FORKS: Dict[str, Fork] = {
                     "which b_2/4 is the RECOVERY (n_families = 4 x n_singular "
                     "at every admissible assignment)."
                 ),
+                # variants.py:951-953 (this consequence): "gives 1 at the
+                # off-path b_2 = 4, so it is wrong on the seed_24 branch";
+                # notes above ("b_2/4 ... 1 at b_2 = 4, so it fails on the
+                # status-quo path").
+                excludes=(("b3_seed", "seed_24"),),
                 adopted=True,
             ),
             VariantOption(
@@ -2187,10 +2223,150 @@ FORKS: Dict[str, Fork] = {
 }
 
 
+def validate_constraints(forks: Dict[str, Fork]) -> None:
+    """Refuse a requires/excludes naming a fork or option that is not declared."""
+    for fid, fork in forks.items():
+        for opt in fork.options:
+            for kind in ("requires", "excludes"):
+                for ref in getattr(opt, kind):
+                    rf, ro = ref
+                    if rf == fid:
+                        raise ValueError(
+                            f"{fid}.{opt.id} {kind} {ref}: a fork cannot "
+                            f"constrain itself")
+                    if rf not in forks:
+                        raise ValueError(
+                            f"{fid}.{opt.id} {kind} unknown fork {rf!r}")
+                    if ro not in forks[rf].option_ids():
+                        raise ValueError(
+                            f"{fid}.{opt.id} {kind} unknown option {ro!r} of "
+                            f"fork {rf!r}; available: {forks[rf].option_ids()}")
+
+
+validate_constraints(FORKS)
+
+
+def violations(sel: Dict[str, str]) -> List[str]:
+    """Declared constraints *sel* breaks, as readable strings.
+
+    *sel* may be partial: a constraint is judged only when the fork it names
+    is also in *sel*, so a partial selection is never refused for what it
+    does not say.
+    """
+    out: List[str] = []
+    for fid, oid in sel.items():
+        opt = FORKS[fid].option(oid)
+        req: Dict[str, List[str]] = {}
+        for rf, ro in opt.requires:
+            req.setdefault(rf, []).append(ro)
+        for rf, ros in req.items():
+            if rf in sel and sel[rf] not in ros:
+                out.append(f"{fid}={oid} requires {rf} in {ros}, got {sel[rf]}")
+        for rf, ro in opt.excludes:
+            if sel.get(rf) == ro:
+                out.append(f"{fid}={oid} excludes {rf}={ro}")
+    return out
+
+
+def compatible(sel: Dict[str, str]) -> bool:
+    """True when *sel* breaks no declared requires/excludes."""
+    return not violations(sel)
+
+
+def departures(sel: Dict[str, str]) -> Dict[str, str]:
+    """Entries of *sel* that differ from the adopted default (missing = default)."""
+    out: Dict[str, str] = {}
+    for fid, oid in sel.items():
+        if fid not in FORKS:
+            raise ValueError(f"unknown fork {fid!r}; declared: {sorted(FORKS)}")
+        FORKS[fid].option(oid)
+        if oid != FORKS[fid].default():
+            out[fid] = oid
+    return out
+
+
+def selection_id(sel: Dict[str, str]) -> str:
+    """Canonical id: 12 hex of sha256 over the sorted JSON of the departures."""
+    dep = departures(sel)
+    if not dep:
+        return "active"
+    blob = json.dumps(dep, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()[:12]
+
+
+def load_selection(path: Any) -> Dict[str, str]:
+    """Read and validate a JSON {fork: option} file; unknown names fail early."""
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"selection {path}: expected a JSON object")
+    for fid, oid in data.items():
+        if fid not in FORKS:
+            raise ValueError(
+                f"selection {path}: unknown fork {fid!r}; declared: {sorted(FORKS)}")
+        if oid not in FORKS[fid].option_ids():
+            raise ValueError(
+                f"selection {path}: fork {fid!r} has no option {oid!r}; "
+                f"available: {FORKS[fid].option_ids()}")
+    return data
+
+
+_SELECTION_CACHE: Dict[Any, Dict[str, str]] = {}
+
+
+def _env_selection() -> Dict[str, str]:
+    """The METAPHYSICA_SELECTION map, cached per (path, mtime)."""
+    path = os.environ.get(_SELECTION_ENV)
+    if not path:
+        return {}
+    key = (path, os.stat(path).st_mtime_ns)
+    if key not in _SELECTION_CACHE:
+        _SELECTION_CACHE[key] = load_selection(path)
+    return _SELECTION_CACHE[key]
+
+
+#: In-process forced choices (see ``forced``); outranks the selection file.
+_FORCED: Dict[str, str] = {}
+
+
+@contextmanager
+def forced(selection: Dict[str, str]):
+    """Resolve *selection* in this process for the duration of the block.
+
+    Ranks above the selection file and the per-fork env vars, which is what a
+    comparison of two switch states needs. The env vars are set as well so a
+    subprocess started inside the block sees the same choice (unless a
+    selection file is also set, which outranks them there).
+    """
+    saved_forced = dict(_FORCED)
+    saved_env = {k: os.environ.get(k)
+                 for k in (_ENV_PREFIX + f.upper() for f in selection)}
+    _FORCED.update(selection)
+    for fid, oid in selection.items():
+        os.environ[_ENV_PREFIX + fid.upper()] = oid
+    try:
+        yield
+    finally:
+        _FORCED.clear()
+        _FORCED.update(saved_forced)
+        for key, old in saved_env.items():
+            if old is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = old
+
+
+def is_explicit(fork_id: str) -> bool:
+    """True when something other than the default chose *fork_id*'s option."""
+    return bool(fork_id in _FORCED or fork_id in _env_selection()
+                or os.environ.get(_ENV_PREFIX + fork_id.upper()))
+
+
 def resolve(fork_id: str, override: Optional[str] = None) -> str:
     """Selected option for *fork_id*.
 
-    Precedence: explicit *override*, then ``METAPHYSICA_VARIANT_<ID>``, then
+    Precedence: explicit *override*, then ``forced`` (in-process), then the
+    ``METAPHYSICA_SELECTION`` file,
+    then ``METAPHYSICA_VARIANT_<ID>``, then
     the adopted default -- the same order build() uses for its output root,
     so callers do not have to remember a second convention.
     """
@@ -2199,7 +2375,8 @@ def resolve(fork_id: str, override: Optional[str] = None) -> str:
         raise KeyError(
             f"unknown fork {fork_id!r}; declared: {sorted(FORKS)}"
         )
-    chosen = override or os.environ.get(_ENV_PREFIX + fork_id.upper())
+    chosen = (override or _FORCED.get(fork_id) or _env_selection().get(fork_id)
+              or os.environ.get(_ENV_PREFIX + fork_id.upper()))
     if chosen is None:
         return fork.default()
     if chosen not in fork.option_ids():
@@ -2275,8 +2452,7 @@ def describe() -> Dict[str, Any]:
     # coupled to it), so source != declaration there is the path, not drift.
     # FOUND 2026-10-25: that halted 7 path builds. Drift is checked on a run
     # with no overrides only.
-    overridden = sorted(f for f in FORKS
-                        if os.environ.get(_ENV_PREFIX + f.upper()))
+    overridden = sorted(f for f in FORKS if is_explicit(f))
     for fid, fork in FORKS.items():
         drift = None
         # "could not measure" is NOT "no drift", and it is not drift either.

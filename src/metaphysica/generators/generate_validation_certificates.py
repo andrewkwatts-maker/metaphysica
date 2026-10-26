@@ -49,6 +49,11 @@ def _is_input_anchor(rec, value, exp) -> bool:
     src = str(rec.get("source") or "")
     if src.upper().startswith("ESTABLISHED"):
         return True
+    # 2026-10-26: the STATUS counts too. higgs.vev is an ESTABLISHED input
+    # (246 GeV) published under its simulation's name, so the source test
+    # missed it and it scored PASS at 0.44 sigma against PDG 246.22.
+    if str(rec.get("status") or "").upper() == "ESTABLISHED":
+        return True
     if value is None or exp is None:
         return False
     try:

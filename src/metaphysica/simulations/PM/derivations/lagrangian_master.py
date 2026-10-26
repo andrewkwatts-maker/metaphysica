@@ -39,7 +39,7 @@ MATHEMATICAL FRAMEWORK:
    - Torsion-free + metric compatibility uniquely determine spin connection
 
 2. 26D Master Action (12 bridge pairs + one time per shadow):
-   - S_26 = integral d^26X sqrt(-g_26) [R_26 + L_matter + L_gauge + L_bridge + pneuma]
+   - S_26 = integral d^26X sqrt|g_26| [R_26 + L_matter + L_gauge + L_bridge + pneuma]
    - Signature (24,2). Sp(2,R) is invoked (STRUCTURAL), not derived; ghost
      control of the second time is OPEN
    - L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]
@@ -507,7 +507,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("""
         The gravitational sector in 26D:
 
-        S_EH = (M_*^24 / 2) integral d^26x sqrt(-g_26) R_26
+        S_EH = (M_*^24 / 2) integral d^26x sqrt|g_26| R_26
 
         In vielbein formalism:
         S_EH = (M_*^24 / 2) integral d^26x e R
@@ -543,7 +543,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("""
         The gauge sector with Yang-Mills fields:
 
-        S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN)
+        S_YM = -(1/4g^2) integral d^26x sqrt|g_26| Tr(F_MN F^MN)
 
         Field strength:
         F_MN = d_M A_N - d_N A_M + i[A_M, A_N]
@@ -581,7 +581,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("""
         The fermionic sector with Dirac spinors:
 
-        S_Dirac = integral d^26x sqrt(-g_26) Psi_bar Gamma^M D_M Psi
+        S_Dirac = integral d^26x sqrt|g_26| Psi_bar Gamma^M D_M Psi
 
         where:
         - Gamma^M = e^M_a Gamma^a (curved gamma matrices)
@@ -618,7 +618,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("""
         The scalar sector with Pneuma coupling:
 
-        S_scalar = integral d^26x sqrt(-g_26) [
+        S_scalar = integral d^26x sqrt|g_26| [
             -K_T bar{T} d_M T d^M bar{T}    (Kahler moduli kinetic)
             -|d_M phi|^2                    (dilaton kinetic)
             -V(T, phi)                      (moduli potential)
@@ -655,7 +655,7 @@ class LagrangianMasterDerivation(SimulationBase):
         print("""
         The full 26D master action:
 
-        S_26 = integral d^26x sqrt(-g_26) [
+        S_26 = integral d^26x sqrt|g_26| [
             (M_*^24 / 2) R_26                           (gravity)
             -(1/4g^2) Tr(F_MN F^MN)                     (gauge)
             +Psi_bar Gamma^M D_M Psi                    (fermion)
@@ -1175,7 +1175,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         Stage 3: 7D -> 4D (final KK reduction)
         --------------------------------------
-        ds^2_7 = e^{2C} ds^2_4 + r^2 d Omega^2_3
+        ds^2_6 = e^{2C} ds^2_4 + h_ij dw^i dw^j  (2 residual bridge dimensions)
 
         - 4D Minkowski spacetime
         - S^3 or more general lens space
@@ -1573,17 +1573,17 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="master-action-26d-full",
             label="(2.1.5)",
-            latex=r"S_{26} = \int d^{26}x\,\sqrt{-g_{26}}\left[\frac{M_*^{24}}{2}R_{26} - \frac{1}{4g^2}\text{Tr}(F^2) + \bar{\Psi}\Gamma^M D_M\Psi - K_{T\bar{T}}|\partial T|^2 - V(T)\right]",
-            plain_text="S_26 = integral d^26x sqrt(-g_26) [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
-            category="DERIVED",
+            latex=r"S_{26} = \int d^{26}x\,\sqrt{|g_{26}|}\left[\frac{M_*^{24}}{2}R_{26} - \frac{1}{4g^2}\text{Tr}(F^2) + \bar{\Psi}\Gamma^M D_M\Psi - K_{T\bar{T}}|\partial T|^2 - V(T)\right]",
+            plain_text="S_26 = integral d^26x sqrt|g_26| [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
+            category="ANSATZ",
             description="Complete 26D master action with gravity, gauge, fermion, and moduli sectors",
             inputParams=["geometry.M_star", "gauge.g_gut"],
             outputParams=["derivations.dof_26d_gravity"],
             derivation={
                 "steps": [
-                    "Construct the Einstein-Hilbert gravitational sector S_EH = (M_*^24/2) integral d^26x sqrt(-g_26) R_26 ensuring dimensionlessness via the 26D Planck scale",
-                    "Add the Yang-Mills gauge sector S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN) for E8 x E8 gauge group with 496 generators",
-                    "Include the Dirac fermion sector S_Dirac = integral d^26x sqrt(-g_26) Psi_bar Gamma^M D_M Psi with spinor covariant derivative D_M including spin connection",
+                    "Construct the Einstein-Hilbert gravitational sector S_EH = (M_*^24/2) integral d^26x sqrt|g_26| R_26 ensuring dimensionlessness via the 26D Planck scale",
+                    "Add the Yang-Mills gauge sector S_YM = -(1/4g^2) integral d^26x sqrt|g_26| Tr(F_MN F^MN) for E8 x E8 gauge group with 496 generators",
+                    "Include the Dirac fermion sector S_Dirac = integral d^26x sqrt|g_26| Psi_bar Gamma^M D_M Psi with spinor covariant derivative D_M including spin connection",
                     "Add the Pneuma scalar/moduli sector S_Pneuma with Kahler moduli kinetic terms, dilaton, moduli potential V(T,phi), and conformal coupling xi R phi^2",
                     "Combine all sectors into the master action S_26 = S_EH + S_YM + S_Dirac + S_Pneuma and verify diffeomorphism, local Lorentz SO(24,2), and E8 x E8 gauge invariance"
                 ],
@@ -1603,9 +1603,9 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="einstein-hilbert-26d",
             label="(2.1.6)",
-            latex=r"S_{EH} = \frac{M_*^{24}}{2}\int d^{26}x\,\sqrt{-g_{26}}\,R_{26} = \frac{M_*^{24}}{2}\int d^{26}x\,e\,e_a^\mu e_b^\nu R^{ab}_{\mu\nu}",
-            plain_text="S_EH = M*^24/2 integral d^26x sqrt(-g_26) R_26 = M*^24/2 integral d^26x e e_a^mu e_b^nu R^ab_munu",
-            category="DERIVED",
+            latex=r"S_{EH} = \frac{M_*^{24}}{2}\int d^{26}x\,\sqrt{|g_{26}|}\,R_{26} = \frac{M_*^{24}}{2}\int d^{26}x\,e\,e_a^\mu e_b^\nu R^{ab}_{\mu\nu}",
+            plain_text="S_EH = M*^24/2 integral d^26x sqrt|g_26| R_26 = M*^24/2 integral d^26x e e_a^mu e_b^nu R^ab_munu",
+            category="ANSATZ",
             description="Einstein-Hilbert action in 26D, written in vielbein formalism",
             inputParams=["geometry.M_star"],
             outputParams=[],
@@ -1628,9 +1628,9 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="yang-mills-26d",
             label="(2.1.7)",
-            latex=r"S_{YM} = -\frac{1}{4g^2}\int d^{26}x\,\sqrt{-g_{26}}\,\text{Tr}(F_{MN}F^{MN})",
-            plain_text="S_YM = -1/4g^2 integral d^26x sqrt(-g_26) Tr(F_MN F^MN)",
-            category="DERIVED",
+            latex=r"S_{YM} = -\frac{1}{4g^2}\int d^{26}x\,\sqrt{|g_{26}|}\,\text{Tr}(F_{MN}F^{MN})",
+            plain_text="S_YM = -1/4g^2 integral d^26x sqrt|g_26| Tr(F_MN F^MN)",
+            category="ANSATZ",
             description=(
                 "Yang-Mills action in 26D for the E8 x E8 gauge group (dim = 496). "
                 "The field strength F_MN = d_M A_N - d_N A_M + i[A_M, A_N] transforms "
@@ -1642,7 +1642,7 @@ class LagrangianMasterDerivation(SimulationBase):
             derivation={
                 "steps": [
                     "Construct the gauge-covariant field strength F_MN^a = d_M A_N^a - d_N A_M^a + f^a_bc A_M^b A_N^c for E8 x E8 with structure constants f^a_bc",
-                    "Form the gauge-invariant, diffeomorphism-invariant action S_YM = -(1/4g^2) integral d^26x sqrt(-g_26) Tr(F_MN F^MN) using the Killing form for the trace",
+                    "Form the gauge-invariant, diffeomorphism-invariant action S_YM = -(1/4g^2) integral d^26x sqrt|g_26| Tr(F_MN F^MN) using the Killing form for the trace",
                     "Varying S_YM with respect to A_M^a gives the 26D Yang-Mills equations of motion, which reduce to the Standard Model gauge sectors under the KK ansaetze"
                 ],
                 "method": "Gauge principle: local E8 x E8 invariance in curved 26D spacetime",
@@ -1650,7 +1650,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             terms={
                 "F_MN": "Non-abelian field strength tensor for E8 x E8",
-                "g": "GUT-scale gauge coupling constant",
+                "g": "Gauge coupling. Dimension check: in D=26 [g^2] = 4 - D = -22, so 1/g^2 carries mass^22; the 4D dimensionless g_GUT is the reduced coupling g_4^2 = g^2 / Vol_22, not this g. The code passes gauge.g_gut here (OPEN: bulk-to-4D coupling map not derived)",
                 "Tr": "Trace in the adjoint representation (Killing form)"
             }
         ))
@@ -1658,9 +1658,9 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="dirac-26d",
             label="(2.1.8)",
-            latex=r"S_{Dirac} = \int d^{26}x\,\sqrt{-g_{26}}\,\bar{\Psi}\Gamma^M D_M\Psi",
-            plain_text="S_Dirac = integral d^26x sqrt(-g_26) Psi_bar Gamma^M D_M Psi",
-            category="DERIVED",
+            latex=r"S_{Dirac} = \int d^{26}x\,\sqrt{|g_{26}|}\,\bar{\Psi}\Gamma^M D_M\Psi",
+            plain_text="S_Dirac = integral d^26x sqrt|g_26| Psi_bar Gamma^M D_M Psi",
+            category="ANSATZ",
             description=(
                 "Dirac action in 26D with spinor covariant derivative D_M = d_M + (1/4) omega_M^ab "
                 "Gamma_ab. The curved gamma matrices Gamma^M = e^M_a Gamma^a use the vielbein to "
@@ -1673,7 +1673,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "steps": [
                     "Define curved gamma matrices Gamma^M = e^M_a Gamma^a using the vielbein, satisfying {Gamma^M, Gamma^N} = 2 g^MN",
                     "Construct the spinor covariant derivative D_M = d_M + (1/4) omega_M^ab Gamma_ab where Gamma_ab = (1/2)[Gamma_a, Gamma_b] are Lorentz generators in the spinor representation",
-                    "Form the diffeomorphism-invariant and locally Lorentz-invariant Dirac action S_Dirac = integral d^26x sqrt(-g_26) Psi_bar Gamma^M D_M Psi"
+                    "Form the diffeomorphism-invariant and locally Lorentz-invariant Dirac action S_Dirac = integral d^26x sqrt|g_26| Psi_bar Gamma^M D_M Psi"
                 ],
                 "method": "Minimal coupling of spinors to gravity via vielbein and spin connection (Carroll Ch. 3.4)",
                 "parentFormulas": ["vielbein-metric-relation", "spin-connection-definition"]
@@ -1688,9 +1688,9 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="pneuma-coupling",
             label="(2.1.9)",
-            latex=r"S_{Pneuma} = \int d^{26}x\,\sqrt{-g_{26}}\left[-K_{T\bar{T}}|\partial_M T|^2 - V(T,\phi) + \xi R_{26}\phi^2\right]",
-            plain_text="S_Pneuma = integral d^26x sqrt(-g_26) [-K |dT|^2 - V(T,phi) + xi R_26 phi^2]",
-            category="DERIVED",
+            latex=r"S_{Pneuma} = \int d^{26}x\,\sqrt{|g_{26}|}\left[-K_{T\bar{T}}|\partial_M T|^2 - V(T,\phi) + \xi R_{26}\phi^2\right]",
+            plain_text="S_Pneuma = integral d^26x sqrt|g_26| [-K |dT|^2 - V(T,phi) + xi R_26 phi^2]",
+            category="ANSATZ",
             description=(
                 "Pneuma (moduli/scalar) sector with conformal coupling xi R phi^2 where "
                 "xi = (D-2)/(4(D-1)) = 6/25 in 26D. Contains Kahler moduli kinetic terms "
@@ -1712,7 +1712,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 "K_{T T_bar}": "Kahler metric on moduli space",
                 "T": "Kahler modulus (complex scalar parametrizing cycle volumes)",
-                "phi": "Dilaton field controlling string coupling g_s = e^phi",
+                "phi": "Dilaton field controlling string coupling g_s = e^phi. Dimension check: xi R phi^2 needs [phi] = (D-2)/2 = 12, but g_s = e^phi needs phi dimensionless; one of the two readings is OPEN",
                 "V(T,phi)": "Moduli potential from flux, instantons, and alpha' corrections",
                 "xi": "Conformal coupling constant = 6/25 in 26D"
             }
@@ -2268,12 +2268,12 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="kk-ansatz-7-4",
             label="(2.1.22)",
-            latex=r"ds^2_7 = e^{2C(w)}ds^2_4 + r^2 d\Omega^2_3",
-            plain_text="ds^2_7 = e^{2C(w)} ds^2_4 + r^2 d Omega^2_3",
+            latex=r"ds^2_6 = e^{2C(w)}ds^2_4 + h_{ij}(w)dw^i dw^j",
+            plain_text="ds^2_6 = e^{2C(w)} ds^2_4 + h_ij dw^i dw^j",
             category="DERIVED",
             description=(
-                "Final Kaluza-Klein ansatz from 7D to 4D spacetime. The remaining 3 compact "
-                "dimensions are reduced, yielding the 4D Einstein gravity with 2 graviton "
+                "Final Kaluza-Klein ansatz from the 6D external space of the 13D = 7 (Y_7) + 6 split to 4D spacetime. "
+                "The 2 residual bridge dimensions are reduced, yielding the 4D Einstein gravity with 2 graviton "
                 "polarizations (matching LIGO/Virgo observations). Gauge fields emerge from "
                 "the isometries of the compact space (3 derivation steps)."
             ),
@@ -2281,9 +2281,9 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=["derivations.dof_after_g2"],
             derivation={
                 "steps": [
-                    "Decompose the 7D metric as ds^2_7 = e^{2C(w)} ds^2_4 + r^2 d Omega^2_3 where d Omega^2_3 is the metric on the remaining compact 3-space",
+                    "Decompose the 6D metric as ds^2_6 = e^{2C(w)} ds^2_4 + h_ij(w) dw^i dw^j where h_ij is the metric on the 2 residual bridge dimensions (13 = 7 + 4 + 2)",
                     "In the 4D effective theory, the graviton has D(D-3)/2 = 4*1/2 = 2 physical polarizations, consistent with LIGO/Virgo observations of gravitational waves",
-                    "Integrating over the remaining three compact directions gives the 4D Einstein-Hilbert action"
+                    "Integrating over the 2 residual directions gives the 4D Einstein-Hilbert action"
                 ],
                 "method": "Final step of Kaluza-Klein reduction chain 26D -> 13D -> 7D -> 4D",
                 "parentFormulas": ["kk-ansatz-13-7"]
@@ -2291,7 +2291,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 "e^{2C(w)}": "Warp factor for the final 7D to 4D reduction",
                 "ds^2_4": "4D spacetime metric (Minkowski or FRW)",
-                "d Omega^2_3": "Metric on the compact 3-dimensional remainder",
+                "h_ij": "Metric on the 2 residual bridge dimensions",
                 "2 polarizations": "4D graviton DOF = D(D-3)/2 = 2 (observed by LIGO/Virgo)"
             }
         ))
@@ -2402,7 +2402,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "The TCS G2 manifold has h^{1,1} = 4 independent Kahler moduli T_1,...,T_4 (one per face of the twisted connected sum)",
+                    "On the off-path TCS reading (retired; Y7 is a Joyce orbifold resolution, (b2, b3) = (12, 43)), the TCS G2 manifold has h^{1,1} = 4 independent Kahler moduli T_1,...,T_4 (one per face of the twisted connected sum)",
                     "Non-perturbative effects from wrapped M2-branes on associative 3-cycles generate exponential superpotential contributions W_i = Lambda_i exp(-a_i T_i)",
                     "The racetrack stabilisation scale is a_i = b_3/i = 24/i, encoding the geometric scaling of wrapping numbers from the third Betti number",
                     "The N=1 supergravity F-term scalar potential V = e^K (sum_i |D_{T_i} W|^2 - 3|W|^2) with Kahler potential K = -2 ln(Vol_7) yields the racetrack form",
@@ -2413,7 +2413,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["master-action-26d-full", "pneuma-coupling"]
             },
             terms={
-                r"T_i": {"description": "Kahler modulus for face i (i=1..4), controlling the volume of the i-th 2-cycle in the TCS construction"},
+                r"T_i": {"description": "Kahler modulus for face i (i=1..4), controlling the volume of the i-th 2-cycle in the off-path TCS construction"},
                 r"\Lambda_i": {"description": "Non-perturbative scale for face i, from M2-brane instanton wrapping on associative 3-cycles"},
                 r"a_i": {"description": "Racetrack coefficient a_i = b_3/i = 24/i, calibrated at the off-path seed b_3 = 24 (OFF-PATH)"},
                 r"W_0": {"description": "Tree-level flux superpotential contribution from G-flux through the G2 manifold"},
@@ -2459,7 +2459,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             terms={
                 r"T^{abc}": {"description": "Contorsion tensor: antisymmetric part of the full connection minus the Levi-Civita connection"},
-                r"\kappa": {"description": "Gravitational coupling constant in 26D, kappa^2 = 8 pi G_27"},
+                r"\kappa": {"description": "Gravitational coupling constant in 26D, kappa^2 = 8 pi G_26 = M_*^{-24}"},
                 r"\varphi_{abc}": {"description": "G2 associative 3-form restricted to the internal 7-manifold"},
                 r"\lambda": {"description": "Dimensionless coupling between torsion and the G2 3-form (Fernandez-Gray tau_1 class)"},
                 r"\mathring{\Gamma}": {"description": "Torsion-free Levi-Civita connection (Christoffel symbols)"}
@@ -2520,8 +2520,8 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="master-action-two-layer-or",
             label="(2.1.G1)",
-            latex=r"S = \int \sqrt{-g} \Big[ R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
-            plain_text="S = integral sqrt(-g) [ R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
+            latex=r"S = \int d^{26}x \sqrt{|G|} \Big[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
+            plain_text="S = integral d^26x sqrt|G| [ (M_*^24/2) R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
             category="GEOMETRIC",
             description=(
                 "Full 26D master action with explicit two-layer OR warping potentials. "
@@ -2587,12 +2587,12 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="reduced-lagrangian-4d",
             label="(2.1.G3)",
-            latex=r"\mathscr{L}_{4D} = -\frac{M_{\text{Pl}}^2}{2} R_4 + \bar{\chi} i \slashed{D} \chi + |D_\mu \phi|^2 - V(\phi) + \frac{1}{4} F_{\mu\nu}^a F^{a\mu\nu} + y_f \bar{\psi} \phi \psi + \Lambda",
-            plain_text="L_4D = -(M_Pl^2/2) R_4 + chi_bar i D_slash chi + |D_mu phi|^2 - V(phi) + (1/4) F_munu^a F^a_munu + y_f psi_bar phi psi + Lambda",
+            latex=r"\mathscr{L}_{4D} = -\frac{M_{\text{Pl}}^2}{2} R_4 + \bar{\chi} i \slashed{D} \chi + |D_\mu \phi|^2 - V(\phi) - \frac{1}{4} F_{\mu\nu}^a F^{a\mu\nu} + y_f \bar{\psi} \phi \psi + \Lambda",
+            plain_text="L_4D = -(M_Pl^2/2) R_4 + chi_bar i D_slash chi + |D_mu phi|^2 - V(phi) - (1/4) F_munu^a F^a_munu + y_f psi_bar phi psi + Lambda",
             category="GEOMETRIC",
             description=(
                 "4D effective Lagrangian -- after face/local OR in dominant visible face. "
-                "M_Pl^2 = M_*^{9} Vol(V_7), Lambda = (integral F wedge phi)^2 / Vol."
+                "M_Pl^2 = M_{11}^{9} Vol(V_7) with M_{11}^9 = M_*^{11} A_2 an effective 11D scale (13D shadow, 9 internal dimensions: M_*^{11} Vol_9), Lambda = (integral F wedge phi)^2 / Vol."
             ),
             inputParams=["geometry.M_star"],
             outputParams=[],
@@ -2601,7 +2601,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Begin with the 13D per-shadow Lagrangian after bridge OR",
                     "Apply face OR (V_face^(f)(local OR)): this selects the dominant visible face from the 4 faces (formerly attributed to a TCS G2 manifold, which is off-path; the adopted Y_7 is a Joyce orbifold)",
                     "Perform G2 Kaluza-Klein reduction on the selected face: 13D -> 4D, compactifying the 7D G2 internal space V_7",
-                    "The 4D Planck mass emerges from the volume: M_Pl^2 = M_*^{9} Vol(V_7)",
+                    "The 4D Planck mass emerges from the volume: M_Pl^2 = M_*^{11} Vol_9 = M_{11}^{9} Vol(V_7), M_{11}^9 = M_*^{11} A_2 (A_2: area of the 2 residual bridge dimensions)",
                     "The cosmological constant arises from flux: Lambda = (integral F wedge phi)^2 / Vol",
                     "The resulting 4D effective theory is the Standard Model (gauge + Higgs + Yukawa) plus GR plus dark energy"
                 ],
@@ -2609,7 +2609,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["reduced-lagrangian-13d", "kk-ansatz-7-4"]
             },
             terms={
-                "M_Pl": "4D Planck mass, derived from M_*^{9} Vol(V_7)",
+                "M_Pl": "4D Planck mass, M_Pl^2 = M_{11}^{9} Vol(V_7) = M_*^{11} Vol_9 (effective scale M_{11}^9 = M_*^{11} A_2)",
                 "R_4": "4D Ricci scalar (Einstein gravity)",
                 "chi": "4D fermion fields from Pneuma spinor decomposition",
                 "phi": "Higgs doublet from moduli sector",
@@ -2632,7 +2632,7 @@ class LagrangianMasterDerivation(SimulationBase):
             id="bulk-action-26d-v23",
             label="(2.1.H1)",
             latex=(
-                r"S_{26} = \int d^{26}x \, \sqrt{-G_{26}} \left[ "
+                r"S_{26} = \int d^{26}x \, \sqrt{|G_{26}|} \left[ "
                 r"\frac{R_{26}}{2\kappa_{26}^2} "
                 r"- \frac{1}{2}|F_4|^2 "
                 r"+ V_{\text{mod}} "
@@ -2643,7 +2643,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 r"\right]"
             ),
             plain_text=(
-                "S_26 = integral d^26x sqrt(-G_26) [ R_26/(2 kappa_26^2) "
+                "S_26 = integral d^26x sqrt|G_26| [ R_26/(2 kappa_26^2) "
                 "- (1/2)|F_4|^2 + V_mod + V_tor "
                 "+ sum_n R_n psi_bar_n D_slash psi_n "
                 "+ V_bridge + sum_f V_face^(f) ]"
@@ -2702,9 +2702,9 @@ class LagrangianMasterDerivation(SimulationBase):
                     "(An earlier bookkeeping, 4 + 7 + 14 + 2 = 27 with a "
                     "spacetime M^{26,1}, is retired.)",
                     "Write the Einstein-Hilbert gravitational sector "
-                    "R_26/(2 kappa_26^2) with kappa_26^2 = 8 pi G_27, "
+                    "R_26/(2 kappa_26^2) with kappa_26^2 = 8 pi G_26, "
                     "the 26D Newton constant related to M_* via "
-                    "kappa_26^2 ~ M_*^{-25}",
+                    "kappa_26^2 = M_*^{-24} (dimension 2 - D = -24)",
                     "Include the M-theory 4-form flux kinetic term "
                     "-(1/2)|F_4|^2 where F_4 = dC_3 threads the b_3 = %d "
                     "independent 3-cycle classes of the G2 manifold (b_3 on "
@@ -2751,7 +2751,7 @@ class LagrangianMasterDerivation(SimulationBase):
             terms={
                 "R_{26}": "26D Ricci scalar from the full bulk metric G_{26}",
                 r"\kappa_{26}": (
-                    "26D gravitational coupling; kappa_26^2 = 8 pi G_27 ~ M_*^{-25}"
+                    "26D gravitational coupling; kappa_26^2 = 8 pi G_26 = M_*^{-24}"
                 ),
                 "|F_4|^2": (
                     "Squared norm of the M-theory 4-form flux F_4 = dC_3, "
@@ -2852,7 +2852,7 @@ class LagrangianMasterDerivation(SimulationBase):
             outputParams=[],
             derivation={
                 "steps": [
-                    "The TCS G2 manifold has 4 independent Kahler moduli "
+                    "On the off-path TCS reading (retired; Y7 is a Joyce orbifold resolution, (b2, b3) = (12, 43)), the TCS G2 manifold has 4 independent Kahler moduli "
                     "T_1,...,T_4, one per face of the twisted connected sum, "
                     "controlling the volumes of the 4 independent 2-cycles",
                     "Non-perturbative M2-brane instantons wrapping associative "
@@ -2862,7 +2862,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "The instanton action for wrapping the i-th cycle is "
                     "a_i = b_3/i = 24/i, encoding the geometric scaling: "
                     "a_1 = 24/1 = 24, a_2 = 24/2 = 12, a_3 = 24/3 = 8, "
-                    "a_4 = 24/4 = 6. This follows from the TCS construction "
+                    "a_4 = 24/4 = 6. On the off-path TCS reading this follows from the construction "
                     "where the i-th face subtends 1/i of the total 3-cycle volume",
                     "The tree-level flux contribution Lambda_0 arises from "
                     "G-flux threading the G2 manifold, analogous to W_0 in KKLT. "
@@ -2896,7 +2896,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             terms={
                 "T_i": (
-                    "Kahler modulus for TCS face i (i=1..4), controlling the "
+                    "Kahler modulus for off-path TCS face i (i=1..4), controlling the "
                     "volume of the i-th 2-cycle in the G2 construction. "
                     "Re(T_i) > 0 is required for geometric validity"
                 ),
@@ -3394,7 +3394,7 @@ class LagrangianMasterDerivation(SimulationBase):
                         "integrates out the 7 internal dimensions of V_7. The intended "
                         "4D(3,1) theory is the Standard Model coupled to Einstein "
                         "gravity plus a cosmological constant from flux, with the 4D Planck "
-                        "mass M_Pl^2 = M_*^{9} Vol(V_7) and the cosmological constant "
+                        "mass M_Pl^2 = M_{11}^{9} Vol(V_7) (M_{11}^9 = M_*^{11} A_2) and the cosmological constant "
                         "Lambda = (integral F wedge phi)^2 / Vol set by the internal "
                         "geometry. That is not yet established on Y_7: its chiral sector, "
                         "its moduli (Re(T) included) and dark energy are OPEN, and the "

@@ -78,6 +78,29 @@ EMPTY_INPUTS_ALLOWED = frozenset({
     "geometric_anchors",
 })
 
+# Supplementary sections (D-025) re-present a parent section's narrative and
+# register nothing of their own; the parent registers it. Exempt from the
+# registration rules ONLY while the parent still passes them.
+SUPPLEMENTARY_SECTIONS = frozenset({
+    "abstract_extended_v17_2",
+    "introduction_extended_v16_0",
+})
+
+
+def _supplementary_exempt(sim, rule: "RuleResult", getter: str) -> bool:
+    sim_id = getattr(sim.metadata, "id", "")
+    if sim_id not in SUPPLEMENTARY_SECTIONS:
+        return False
+    parent = type(sim).__mro__[1]
+    if len(getattr(parent(), getter)() or []) < 1:
+        rule.passed = False
+        rule.details = "supplementary %s: parent %s registers no %s" % (
+            sim_id, parent.__name__, getter)
+        return True
+    rule.details = "exempt (supplementary; %s registers it)" % parent.__name__
+    return True
+
+
 MIN_DERIVATION_STEPS = 3
 MIN_PARAGRAPH_LENGTH = 50
 
@@ -163,6 +186,8 @@ def check_rule_1_formulas(sim: SimulationBase) -> RuleResult:
     - Each has category in VALID_FORMULA_CATEGORIES
     """
     rule = RuleResult(rule_number=1, rule_name="Formulas", passed=True)
+    if _supplementary_exempt(sim, rule, "get_formulas"):
+        return rule
     issues: List[str] = []
 
     try:
@@ -324,6 +349,8 @@ def check_rule_4_certificates(sim: SimulationBase) -> RuleResult:
     - Each dict has: id, assertion, condition, status (PASS/FAIL/OFFLINE)
     """
     rule = RuleResult(rule_number=4, rule_name="Certificates", passed=True)
+    if _supplementary_exempt(sim, rule, "get_certificates"):
+        return rule
     issues: List[str] = []
 
     try:
@@ -410,6 +437,8 @@ def check_rule_6_references(sim: SimulationBase) -> RuleResult:
     - Each dict has: id, authors, title, year, and either url or doi
     """
     rule = RuleResult(rule_number=6, rule_name="References", passed=True)
+    if _supplementary_exempt(sim, rule, "get_references"):
+        return rule
     issues: List[str] = []
 
     try:
@@ -454,6 +483,8 @@ def check_rule_7_learning(sim: SimulationBase) -> RuleResult:
     - Each dict has: topic, url, relevance
     """
     rule = RuleResult(rule_number=7, rule_name="Learning", passed=True)
+    if _supplementary_exempt(sim, rule, "get_learning_materials"):
+        return rule
     issues: List[str] = []
 
     try:

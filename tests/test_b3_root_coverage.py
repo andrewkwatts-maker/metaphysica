@@ -206,8 +206,12 @@ _ARITHMA_BASELINE_NO_BACKEND = {"total": 581, "b3_rooted_min": 397,
 #: CG.12 -- it SELECTS the seed, so it is upstream of b_3 and counts as
 #: non-rooted), b3_rooted 101 -> 193, non_b3 467 -> 387, ambiguous 9 -> 1.
 #: Ambiguous is its own bucket; it is NOT folded into rooted.
-_EML_BASELINE = {"total": 581, "b3_rooted_min": 193,
-                 "non_b3_max": 387, "ambiguous_max": 1}
+#: 2026-10-26: total 582 (+1, y7-holonomy-g2-metric, CG.13 -- Joyce's
+#: existence theorem for the holonomy-G2 metric holds for every seed, so it
+#: is seed-independent and counts as non-rooted), non_b3 387 -> 388. Diffed
+#: artifact chains: that id is the only change; rooted and ambiguous hold.
+_EML_BASELINE = {"total": 582, "b3_rooted_min": 193,
+                 "non_b3_max": 388, "ambiguous_max": 1}
 
 
 def _arithma_baseline(d):

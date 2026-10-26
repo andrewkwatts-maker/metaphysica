@@ -15,7 +15,7 @@ class CycleIntersectionNumbers:
     """
     v10.2: Triple intersection numbers for all fermion sectors.
 
-    From TCS G₂ manifold #187 with explicit metric (Braun-Del Zotto 2022).
+    From TCS (retired reading) G₂ manifold #187 with explicit metric (Braun-Del Zotto 2022).
     6 matter curves (3 generations × 2 for 10 + 10-bar chirality).
     """
 
@@ -160,7 +160,7 @@ class TopologicalCPPhaseParameters:
     """
 
     # Topological inputs
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
     ORIENTATION_SUM = 12  # Derived: Net chirality from Z2 structure        # Net chirality from Z₂ structure
 
     # Derived CP phase

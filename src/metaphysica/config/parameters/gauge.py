@@ -16,7 +16,7 @@ class GaugeUnificationParameters:
     Grand Unification parameters for SO(10) GUT.
     """
 
-    # GUT Scale (Geometric Derivation from TCS G2)
+    # GUT Scale (Geometric Derivation from TCS (retired reading) G2)
     M_GUT = 2.118e16            # [GeV] Geometric derivation (was 1.8e16)
     M_GUT_ERROR = 0.09e16       # [GeV] From b3 flux variations (5%)
     ALPHA_GUT = 1/23.54         # Derived: 1/α_GUT from 3-loop RG + threshold corrections
@@ -46,7 +46,7 @@ class XYGaugeBosonParameters:
     These mediate proton decay and are predicted but not yet observed.
 
     GEOMETRICALLY CONSTRAINED:
-    - Masses from M_GUT (TCS torsion logarithms)
+    - Masses from M_GUT (TCS (retired reading) torsion logarithms)
     - Coupling from alpha_GUT (3-loop RG)
     - Charges from SO(10) representation theory
 
@@ -58,7 +58,7 @@ class XYGaugeBosonParameters:
     # Masses (Geometrically Derived from M_GUT)
     M_X = GaugeUnificationParameters.M_GUT      # [GeV] X boson mass = M_GUT
     M_Y = GaugeUnificationParameters.M_GUT      # [GeV] Y boson mass = M_GUT (assume degeneracy)
-    M_X_ERROR = GaugeUnificationParameters.M_GUT_ERROR  # [GeV] From TCS flux variations
+    M_X_ERROR = GaugeUnificationParameters.M_GUT_ERROR  # [GeV] From TCS (retired reading) flux variations
     M_Y_ERROR = GaugeUnificationParameters.M_GUT_ERROR  # [GeV] Same uncertainty
 
     # Couplings (from Gauge Unification)

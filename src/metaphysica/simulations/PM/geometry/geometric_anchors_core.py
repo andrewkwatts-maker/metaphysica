@@ -153,7 +153,7 @@ class GeometricAnchors:
     @property
     def mephorash_chi(self) -> int:
         """
-        Effective Euler characteristic from TCS construction.
+        Effective Euler characteristic from TCS (retired reading) construction.
 
         v20.6 NOTE: This returns chi_eff_total = 144 for backward compatibility.
         Per SSOT dual structure:
@@ -229,7 +229,7 @@ class GeometricAnchors:
         return self.nitzotzin_roots // 2  # 288/2 = 144
 
     # =========================================================================
-    # Hodge Numbers for TCS #187 (Selected Topology)
+    # Hodge Numbers for TCS #187 (retired reading) (Selected Topology)
     # =========================================================================
     # These determine the number of moduli and the Euler characteristic.
     # Formula: chi_eff = 2(h11 - h21 + h31) = 2(4 - 0 + 68) = 144
@@ -294,7 +294,7 @@ class GeometricAnchors:
 
     @property
     def k_matching(self) -> int:
-        """TCS matching number"""
+        """TCS (retired reading) matching number"""
         return self.elder_kads // 6  # = 4
 
     @property
@@ -317,11 +317,12 @@ class GeometricAnchors:
 
         Note: Old DESI DR2 Lambda-CDM value was -0.728.
         Follows the dark_energy_mechanism fork (this value is aliased to
-        cosmology.w0_derived, so it must agree with the simulation).
+        cosmology.w0_derived, so it must agree with the simulation), and n
+        follows the dark_energy_betti fork (b3_24 on main: n = 24, frozen).
         """
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
         return ltr.w0_for_mechanism(
-            ltr.resolve_de_mechanism(), thawing=-1.0 + 1.0/self.elder_kads)
+            ltr.resolve_de_mechanism(), thawing=ltr.thawing_w0())
 
     @property
     def s8_viscosity_scale(self) -> float:
@@ -1338,7 +1339,7 @@ class GeometricAnchors:
             "n_generations": self.n_generations,
             "phi": self.phi,
 
-            # Hodge numbers (TCS #187)
+            # Hodge numbers (TCS #187 (retired reading))
             "h11": self.h11,
             "h21": self.h21,
             "h31": self.h31,
@@ -1522,7 +1523,8 @@ class GeometricAnchors:
                         source="geometric_anchors_v16_1",
                         status="GEOMETRIC",
                         metadata={
-                            "derivation": "Derived from b3=24 topological invariant",
+                            "derivation": ("Computed at the fitted anchor ANCHOR_FIT = 24, "
+                                           "not the live b3; topological provenance OPEN"),
                             "fundamental": True,
                             "tuning_free": True
                         }

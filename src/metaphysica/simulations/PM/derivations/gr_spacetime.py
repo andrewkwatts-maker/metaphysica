@@ -84,9 +84,9 @@ try:
     from metaphysica.simulations.core.FormulasRegistry import get_registry
     _REG = get_registry()
 
-    # G2 Topology (TCS #187) - from SSOT
+    # G2 Topology (retired TCS #187 seed; not re-derived on Y7) - from SSOT
     B3_G2 = _REG.elder_kads             # Third Betti number, from the seed
-    B2_G2 = 4                           # Second Betti number (TCS #187)
+    B2_G2 = 4                           # Second Betti number (retired TCS #187 seed)
     CHI_EFF = _REG.qedem_chi_sum        # effective index chi_eff = 144 (chi(Y_7) = 0)
 
     # v21 Dimensional Chain - from SSOT
@@ -111,7 +111,7 @@ except ImportError:
     D_SPACETIME = 4      # Observable spacetime
 
 # Planck scale (PDG 2024)
-M_PLANCK_GEV = Decimal('1.220890e19')      # Reduced Planck mass in GeV
+M_PLANCK_GEV = Decimal('1.220890e19')      # FULL (not reduced) Planck mass in GeV, CODATA
 L_PLANCK_M = Decimal('1.616255e-35')       # Planck length in meters
 G_NEWTON_M3_KG_S2 = Decimal('6.67430e-11') # Newton's constant in SI
 
@@ -626,7 +626,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # In PM, the relation is:
         # M_Pl^2 ~ M_*^24 * Vol(G2)^{-22/7} * chi_eff^{-1} * f(b3)
         #
-        # For TCS #187:
+        # For the retired TCS #187 seed:
         # chi_eff = 144, b3 = 24
 
         chi_factor = float(self.mephorash_chi)       # 144
@@ -1515,7 +1515,11 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             experimental_bound=6.70883e-39,  # Natural units (GeV^-2), converted from CODATA 2018
             bound_type="measured",
             bound_source="CODATA 2018 (converted to natural units)",
-            uncertainty=1.5e-44  # Relative uncertainty ~2e-5 applied to 6.709e-39
+            uncertainty=1.5e-44,  # Relative uncertainty ~2e-5 applied to 6.709e-39
+            scoring_exclusion="CIRCULAR",
+            scoring_exclusion_reason=(
+                "D-027 ruling 3: G_N = 1/M_Pl^2 with M_Pl the CODATA value "
+                "(gr_spacetime.py G_theory), so it is the measured G_N inverted twice."),
         ))
 
         params.append(Parameter(

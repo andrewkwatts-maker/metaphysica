@@ -80,7 +80,7 @@ class FreudenthalTripleSimulation(SimulationBase):
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
 
         try:
             from eml_spectral.exceptional.freudenthal import FreudenthalTripleSystem
@@ -107,7 +107,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         """EML path — same computation via EML library."""
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
 
         try:
             from eml_spectral.exceptional.freudenthal import FreudenthalTripleSystem
@@ -199,7 +199,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 id="freudenthal-triple-product",
                 label="(A2.3)",
                 latex=r"\{x, y, z\}_i = \langle x, y \rangle_J z_i + \langle z, y \rangle_J x_i - \langle x, z \rangle_J y_i",
-                plain_text="{x,y,z}_i = <x,y>*z_i + <z,y>*x_i - <x,z>*y_i",
+                plain_text="{x,y,z}_i = ⟨x,y⟩*z_i + ⟨z,y⟩*x_i - ⟨x,z⟩*y_i",
                 category="DERIVED",
                 description="Freudenthal triple product — implements Pneuma field bilinears. "
                             "This is the linearized version via the Jordan bilinear form ⟨·,·⟩_J.",
@@ -279,7 +279,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 status="DERIVED",
                 description="Condensate scale = b₃/27 for the symmetric Pneuma element in J₃(𝕆).",
                 no_experimental_value=True,
-                eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (b₃=24 gives s≈0.888…)",
+                eml_description="EML: ops.div(eml_vec('topology.elder_kads'), eml_scalar(27.0)) — condensate scale s = b₃/27 (retired seed_24 value b₃=24 gives s≈0.888…)",
             ),
         ]
 

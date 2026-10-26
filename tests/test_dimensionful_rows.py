@@ -91,6 +91,11 @@ def test_exclusion_without_reason_fails_early():
     ("cosmology/cosmological_constant.py", "cosmology.rho_vacuum", "CIRCULAR"),
     ("particle/higgs_brane_partition.py", "higgs.m_higgs_local", "CIRCULAR"),
     ("particle/higgs_mass.py", "higgs.m_higgs_pred", "CIRCULAR"),
+    # 2026-10-26: the Planck-scale rows are the CODATA M_Pl itself, so they
+    # had scored PASS against their own input.
+    ("cosmology/cosmology_intro.py", "cosmology.M_Pl_4D", "CIRCULAR"),
+    ("geometry/geometric_anchors.py", "geometry.m_planck_4d", "CIRCULAR"),
+    ("derivations/gr_spacetime.py", "gravity.newton_constant_theory", "CIRCULAR"),
 ])
 def test_declared_rows_carry_the_marking(rel, path, kind):
     text = (SRC / rel).read_text(encoding="utf-8")
@@ -107,3 +112,27 @@ def test_patch_scoring_exclusion_on_registered_param():
     assert meta["scoring_exclusion"] == "CIRCULAR"
     with pytest.raises(ValueError):
         reg.patch_scoring_exclusion("t.h0", "CIRCULAR", "")
+
+
+def test_geometric_anchors_applies_its_declared_exclusions():
+    """It registers through set_param, not inject_outputs, so the marking on
+    geometry.m_planck_4d never reached the registry and it still scored PASS."""
+    from metaphysica.simulations.base.registry import PMRegistry
+    from metaphysica.simulations.PM.geometry.geometric_anchors import (
+        GeometricAnchorsSimulation)
+    reg = PMRegistry()
+    GeometricAnchorsSimulation().execute(reg, verbose=False)
+    meta = reg._parameters["geometry.m_planck_4d"].metadata
+    assert meta["scoring_exclusion"] == "CIRCULAR"
+    assert "sqrt(8 pi)" in meta["scoring_exclusion_reason"]
+
+
+def test_anchor_rows_do_not_claim_a_topological_derivation():
+    """Anchors are computed at ANCHOR_FIT = 24, not derived from the live b3."""
+    from metaphysica.simulations.base.registry import PMRegistry
+    from metaphysica.simulations.PM.geometry.geometric_anchors import (
+        GeometricAnchorsSimulation)
+    reg = PMRegistry()
+    GeometricAnchorsSimulation().execute(reg, verbose=False)
+    derivation = reg._parameters["geometry.w_zero"].metadata["derivation"]
+    assert "ANCHOR_FIT = 24" in derivation and "provenance OPEN" in derivation

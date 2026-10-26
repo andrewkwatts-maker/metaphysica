@@ -8,7 +8,7 @@ alpha_leak as 1/sqrt(chi_eff/b_3), and the EML/Arithma track encodes it too.
 Three different derivations are claimed for it across the codebase, and all
 three return 144 at b_3 = 24:
 
-    A  2 (h11 - h21 + h31)   TCS Hodge numbers        g2_geometry
+    A  2 (h11 - h21 + h31)   TCS (retired reading) Hodge numbers        g2_geometry
     B  b_3^2 / 4             FormulasRegistry         registry comment
     C  6 b_3                 EML operator trees       eml_integration
 
@@ -38,7 +38,7 @@ FINDING 3 -- ROUTE A IS A TYPE ERROR ON THE JOYCE PATH
 2(h11 - h21 + h31) is the Euler characteristic of a Calabi-Yau THREEFOLD,
 written in its Hodge numbers. The Joyce orbifold T^7/Gamma is not a CY3 and has
 no h21 and no h31; the only reason the expression evaluates at all is that
-g2_geometry carries TCS #187's Hodge numbers as attributes. On the Joyce path
+g2_geometry carries TCS #187 (retired reading)'s Hodge numbers as attributes. On the Joyce path
 those numbers describe a different manifold. This is the A4 bar in a new place:
 the arithmetic runs, the object it refers to is not there.
 
@@ -85,7 +85,7 @@ ROUTES: Dict[str, Dict[str, Any]] = {
         "type_note": (
             "the Euler characteristic of a Calabi-Yau THREEFOLD in its Hodge "
             "numbers. A Joyce orbifold T^7/Gamma is not a CY3 and has no h21 "
-            "or h31; the expression evaluates only because TCS #187's numbers "
+            "or h31; the expression evaluates only because TCS #187 (retired reading)'s numbers "
             "are carried as attributes."
         ),
     },
@@ -105,7 +105,7 @@ ROUTES: Dict[str, Dict[str, Any]] = {
     },
 }
 
-#: TCS #187's Hodge numbers, carried only so route A can be EVALUATED and shown
+#: TCS #187 (retired reading)'s Hodge numbers, carried only so route A can be EVALUATED and shown
 #: to be type-incorrect on the Joyce path. Not asserted as Joyce data.
 _TCS_HODGE = {"h11": 4, "h21": 0, "h31": 68}
 

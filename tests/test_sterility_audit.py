@@ -88,11 +88,6 @@ class SterilityValidator(ast.NodeVisitor):
             self._check_value(node.value, node.lineno)
         self.generic_visit(node)
 
-    def visit_Num(self, node: ast.Num) -> None:
-        """Check numeric constants (Python < 3.8 compatibility)."""
-        self._check_value(node.n, node.lineno)
-        self.generic_visit(node)
-
     def visit_Call(self, node: ast.Call) -> None:
         """
         Check for Decimal('...') calls with hardcoded literals.

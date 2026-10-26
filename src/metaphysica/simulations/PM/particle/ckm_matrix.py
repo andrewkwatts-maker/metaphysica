@@ -522,8 +522,8 @@ class CKMMatrixSimulation(SimulationBase):
         # V_ud = √(1 − V_us² − V_ub²)
         V_ud = eml_compute(eml_sqrt(eml_sub(eml_scalar(1.0), eml_add(eml_sqr(eml_scalar(V_us)), eml_sqr(eml_scalar(V_ub))))))
 
-        # V_cd = λ,  V_cb = A λ²
-        V_cd = lam
+        # V_cd = -λ (PDG sign, as in run()),  V_cb = A λ²
+        V_cd = eml_compute(_eml_neg(eml_scalar(lam)))
         lam2_pt = eml_pow(eml_scalar(lam), eml_scalar(2.0))
         V_cb = eml_compute(eml_mul(A_pt, lam2_pt))
 

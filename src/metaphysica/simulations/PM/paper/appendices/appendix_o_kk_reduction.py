@@ -936,7 +936,7 @@ class AppendixOKKReduction(SimulationBase):
                         "Begin with 26D(24,2): bosonic string theory with two times (one per shadow) and shadow-time directions",
                         "Decompose 24 G2 dimensions into 12 paired (2,0) Euclidean bridges",
                         "Each bridge pair carries OR reduction operator R_perp_i, warping to 2 x 13D(12,1) shadows",
-                        "Per-shadow G2 holonomy compactification: 13D -> 4D(3,1) via TCS construction",
+                        "Per-shadow G2 holonomy compactification: 13D -> 4D(3,1) via the off-path TCS construction (retired; Y7 is a Joyce orbifold resolution)",
                     ],
                 },
             arithma=_arithma_num(0.0), eml=_eml_scalar(0.0), value=0.0),
@@ -1105,7 +1105,7 @@ class AppendixOKKReduction(SimulationBase):
                 description=(
                     "Order-of-magnitude gauge coupling from KK geometry: "
                     "alpha = 1/(4*pi*R^2*b_3), where R is the compact radius "
-                    "and b_3 = 24 is the third Betti number. This provides the "
+                    "and b_3 = 24 is the third Betti number at the retired seed_24 path. This provides the "
                     "geometric baseline for SM gauge coupling derivations."
                 ),
                 no_experimental_value=True,

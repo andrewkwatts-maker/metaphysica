@@ -122,11 +122,27 @@ EPSILON_SU2 = {  # Levi-Civita for SU(2)
 }
 
 
+def _derived_elsewhere(registry, path: str) -> float:
+    """The value master_action derived for *path*.
+
+    These three outputs used to be the PDG literals (0.1179, 0.6517, 0.3578)
+    under status DERIVED. master_action registers first, so the literals were
+    discarded; in any other order they would publish and score 0 sigma
+    against themselves. This module keeps the paths (it declares their
+    experimental bounds) but derives none of them.
+    """
+    if not registry.has_param(path):
+        raise RuntimeError(f"{path}: master_action must register it first")
+    return float(registry.get_param(path))
+
+
 # =============================================================================
 # DATA CLASSES FOR DERIVATION RESULTS
 # =============================================================================
 
+
 @dataclass
+
 class SU3QCDDerivation:
     """Results from SU(3)_C QCD derivation from G2 geometry."""
     gauge_group: str
@@ -383,7 +399,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             field_strength_form=field_strength,
             covariant_derivative=covariant_d,
             structure_constants=structure_const,
-            cycle_type="Associative 3-cycle",
+            cycle_type="Associative 3-cycle with A2 loci (OPEN: Y7 has only A1 loci, D-011)",
             cycle_dimension=3,
             coupling_origin="g_s^2/(4pi) locked by 3-cycle volume spectral residue",
             confinement_mechanism=(
@@ -463,7 +479,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             field_strength_form=field_strength,
             covariant_derivative=covariant_d,
             chirality_projector=chirality,
-            cycle_type="Co-associative 4-cycle",
+            cycle_type="Co-associative 4-cycle (OPEN: SU(2) only at the unresolved orbifold point, D-011)",
             cycle_dimension=4,
             coupling_origin="g_2 locked by 4-cycle volume (smaller than color cycle)",
             parity_violation_origin=(
@@ -702,7 +718,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         print(f"  Status: {qcd_deriv.status}")
 
         results["gauge.qcd_gluon_count"] = qcd_deriv.gluon_count
-        results["gauge.qcd_alpha_s_mz"] = float(ALPHA_S_MZ)
+        results["gauge.qcd_alpha_s_mz"] = _derived_elsewhere(registry, "gauge.qcd_alpha_s_mz")
         results["gauge.qcd_cycle_type"] = qcd_deriv.cycle_type
 
         # =================================================================
@@ -722,7 +738,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         print(f"  Status: {weak_deriv.status}")
 
         results["gauge.weak_boson_count"] = weak_deriv.boson_count
-        results["gauge.weak_coupling_g2"] = 0.6517  # From EW mixing
+        results["gauge.weak_coupling_g2"] = _derived_elsewhere(registry, "gauge.weak_coupling_g2")
         results["gauge.weak_cycle_type"] = weak_deriv.cycle_type
 
         # =================================================================
@@ -741,7 +757,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         print(f"  Status: {u1_deriv.status}")
 
         results["gauge.hypercharge_y_ratio"] = float(u1_deriv.hypercharge_ratio)
-        results["gauge.hypercharge_coupling_gp"] = 0.3578  # From EW mixing
+        results["gauge.hypercharge_coupling_gp"] = _derived_elsewhere(registry, "gauge.hypercharge_coupling_gp")
 
         # =================================================================
         # SECTION D: ELECTROWEAK MIXING
@@ -936,7 +952,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 r"\sigma \propto \frac{1}{\text{Vol}(\text{3-cycle})}"
             ),
             plain_text=(
-                "<W(C)> = exp(-sigma * Area(C)), sigma ~ 1/Vol(3-cycle)"
+                "⟨W(C)⟩ = exp(-sigma * Area(C)), sigma ~ 1/Vol(3-cycle)"
             ),
             category="DERIVED",
             description=(
@@ -951,7 +967,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             derivation={
                 "method": "wilson_loop",
                 "steps": [
-                    "Confinement is expressed by the Wilson loop obeying an area law, <W(C)> = exp(-sigma A(C))",
+                    "Confinement is expressed by the Wilson loop obeying an area law, ⟨W(C)⟩ = exp(-sigma A(C))",
                     "The coefficient sigma is the string tension of the flux tube",
                     "sigma is stated to scale inversely with the associative 3-cycle volume, sigma ~ 1/Vol(3-cycle)",
                 ],
@@ -1371,8 +1387,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             path="gauge.qcd_cycle_type",
             name="QCD Geometric Origin",
             units="string",
-            status="GEOMETRIC",
-            description="Associative 3-cycle with A2 singularity",
+            status="ANSATZ",
+            description="Associative 3-cycle with A2 singularity: the generic ADE rule, not realised on Y7 (SU(3)_C OPEN, D-011)",
             eml_description="Categorical label identifying QCD as emerging from A2 singularities (generic ADE rule only; Y7 has no A2 loci, SU(3)_C OPEN, D-011)",
             no_experimental_value=True
         ))
@@ -1414,8 +1430,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             path="gauge.weak_cycle_type",
             name="Weak Geometric Origin",
             units="string",
-            status="GEOMETRIC",
-            description="Co-associative 4-cycle with A1 singularity",
+            status="ANSATZ",
+            description="Co-associative 4-cycle with A1 singularity: an ansatz; smooth Y7 gives U(1)^12 (SU(2)_L OPEN, D-011)",
             eml_description="Categorical label identifying SU(2)_L weak force as arising from A1 singularity resolution at the unresolved orbifold point (OPEN on the smooth Y7, D-011) 4-cycles",
             no_experimental_value=True
         ))

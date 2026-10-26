@@ -54,12 +54,12 @@ CHANGELOG v12.5:
   * Pneuma chiral filter: gamma^5 T_mu coupling
   * Comparison to intersecting branes and flux compactification
 - v14.0: Complete gauge sector closure
-  * Proton Decay Rate Uncertainty RESOLVED via TCS cycle separation (d/R=0.12, S=2.1)
+  * Proton Decay Rate Uncertainty RESOLVED via TCS (retired reading) cycle separation (d/R=0.12, S=2.1)
   * Doublet-Triplet Splitting RESOLVED via TCS discrete torsion on b2=4 cycles
   * All gauge unification critiques now geometrically derived
   * τ_p = 8.15×10^34 years (4.9× Super-K, from simulation output)
 - v14.1: Final critique resolution
-  * Doublet-Triplet mechanism upgraded to Native TCS Topological Filter
+  * Doublet-Triplet mechanism upgraded to Native TCS (retired reading) Topological Filter
   * Triplets shunted to shadow sector (not just lifted) - no Wilson line tuning
   * Breaking Chain Selection RESOLVED: Pati-Salam geometrically preferred
   * Pati-Salam arises from SO(24,2) → G₂ projection with Pneuma (54_H) alignment
@@ -239,7 +239,7 @@ HARDCODED BUT DERIVABLE (need new simulations):
    - Simulation needed: matter_multiplicity_index.py
 
 4. DT splitting proof
-   - Currently: Asserted via TCS discrete torsion
+   - Currently: Asserted via TCS (retired reading) discrete torsion
    - Should: Explicit index theorem calculation
    - Simulation needed: dt_splitting_proof.py
 
@@ -249,7 +249,7 @@ CORRECTLY HARDCODED (phenomenological inputs):
 - Gauge couplings at M_Z    → Measured (runs to M_GUT)
 - PMNS angles               → Measured (NuFIT 6.0)
 - Neutrino masses           → Set to match NuFIT 6.0 Δm² values
-- Topological invariants    → Fixed by manifold choice (TCS #187)
+- Topological invariants    → Fixed by manifold choice (TCS #187 (retired reading))
 
 Note: This is a living document. Update as new simulations are added.
 """

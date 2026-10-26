@@ -131,6 +131,7 @@ class CosmologyIntroV16(SimulationBase):
         """Return required input parameter paths."""
         return [
             "constants.M_PLANCK",
+            "codata.M_PLANCK",
             "topology.mephorash_chi",
             "topology.b2",
             "topology.elder_kads",
@@ -180,7 +181,7 @@ class CosmologyIntroV16(SimulationBase):
         self.validate_inputs(registry)
 
         # Read inputs
-        M_Pl = registry.get_param("constants.M_PLANCK")  # 1.22e19 GeV
+        M_Pl = registry.get_param("constants.M_PLANCK")  # REDUCED, 2.435e18 GeV
         chi_eff = registry.get_param("topology.mephorash_chi")  # 144
         b2 = registry.get_param("topology.b2")  # live seed's b_2 (12 adopted)
         b3 = registry.get_param("topology.elder_kads")  # live seed's b_3 (43 adopted)
@@ -195,7 +196,10 @@ class CosmologyIntroV16(SimulationBase):
         # Step 2: 4D Planck mass from compactification
         # M_Pl_4D^2 = M_*^11 × V9
         # NOTE: M_Pl is MEASURED, not derived (PDG 2024)
-        M_Pl_4D = M_Pl  # Use measured value
+        # The FULL mass, as this path is declared (CODATA 1.22089e19). It
+        # used to be M_Pl, the reduced mass, sqrt(8 pi)-fold too small; the
+        # geometric_anchors alias registered first and hid it.
+        M_Pl_4D = registry.get_param("codata.M_PLANCK")
 
         # Step 3: Volume modulus stabilization from racetrack. CALIBRATED at
         # the off-path seed b_3 = 24; no gaugino racetrack exists on Y_7
@@ -854,7 +858,11 @@ class CosmologyIntroV16(SimulationBase):
                 experimental_bound=1.220890e19,
                 bound_type="measured",
                 bound_source="CODATA2022",
-                uncertainty=1.9e15
+                uncertainty=1.9e15,
+                scoring_exclusion="CIRCULAR",
+                scoring_exclusion_reason=(
+                    "D-027 ruling 3: run() returns registry codata.M_PLANCK, "
+                    "the CODATA value this row is scored against."),
             ),
             Parameter(
                 path="cosmology.V_9_internal",

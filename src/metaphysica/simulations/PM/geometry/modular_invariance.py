@@ -669,7 +669,7 @@ class ModularInvarianceV16(SimulationBase):
                     "24": "Modular periodicity: the exponent of eta^24, the modular discriminant"
                 },
                 eml_latex=r"b_3 \equiv \mathrm{ops.mod}(b_3,\, \mathrm{eml\_scalar}(24)) = 0",
-                eml_tree_str="ops.sub(b3_leaf(), eml_scalar(24.0))  # = 0 when modular condition holds (b3=24)",
+                eml_tree_str="ops.sub(b3_leaf(), eml_scalar(24.0))  # = 0 when modular condition holds (retired seed_24 value b3=24)",
                 eml_description="EML: OFF-PATH (b3_seed = seed_24) residue ops.sub(b3_leaf(), eml_scalar(24)); it is 0 only at the retired seed, where b3 was read as the eta exponent n",
                 arithma=_arithma_sub(_arithma_const("b3"), _arithma_num(24.0)),
                 eml=_eml_sub(_b3_leaf(), _eml_scalar(24.0)),

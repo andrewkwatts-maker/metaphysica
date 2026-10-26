@@ -1122,7 +1122,7 @@ class AppendixRVacuumStabilityV19(SimulationBase):
                 terms={
                     "Delta_lambda_G2": "Positive threshold correction to the Higgs quartic coupling",
                     "g_portal": "Portal coupling between Higgs and G2 moduli ~ O(1)",
-                    "b_3": "Third Betti number of the TCS G2 manifold = 24",
+                    "b_3": "Third Betti number of the TCS G2 manifold = 24 (off-path TCS reading, retired; TCS gives 71 <= b3 <= 155, so b3 = 24 is not a TCS value)",
                     "16*pi^2": "Standard one-loop suppression factor",
                     "M_GC": "GUT/compactification scale ~ 2 x 10^16 GeV",
                 }, 

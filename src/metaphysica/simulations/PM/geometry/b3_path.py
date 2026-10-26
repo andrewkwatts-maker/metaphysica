@@ -128,7 +128,7 @@ PATHS: Dict[str, Dict[str, Any]] = {
         "b3": 24,
         "b2": 4,
         "b3_provenance": "INPUT, origin open (2026-09-14 ruling)",
-        "b2_provenance": "h^{1,1} of TCS #187, previously FITTED",
+        "b2_provenance": "h^{1,1} of TCS #187 (retired reading), previously FITTED",
         "n_gen_source": "b3_over_dim_O",
         "reachable_by_joyce": False,
     },
@@ -232,7 +232,8 @@ def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
     # b3_over_dim_O gives 43/8 = 5.375, not a generation count.
     declared = PATHS[key]["n_gen_source"]
     try:
-        from metaphysica.simulations.core.variants import _ENV_PREFIX, resolve
+        from metaphysica.simulations.core.variants import (
+            is_explicit, resolve)
     except ImportError:                    # import cycle: the one real case
         pass
     else:
@@ -243,7 +244,9 @@ def n_gen_report(path: Optional[str] = None) -> Dict[str, Any]:
         # declaration silently in place while the environment says otherwise.
         # resolve() raises KeyError for an undeclared fork and ValueError for
         # an unknown option, and both now surface.
-        if os.environ.get(_ENV_PREFIX + "N_GEN_SOURCE"):
+        # A selection file or a forced choice is as explicit as the per-fork
+        # variable (Track G1).
+        if is_explicit("n_gen_source"):
             declared = resolve("n_gen_source")
 
     value = _n_gen_value(declared, from_b3, from_b2)

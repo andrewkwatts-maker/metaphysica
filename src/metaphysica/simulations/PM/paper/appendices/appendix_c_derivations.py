@@ -837,7 +837,7 @@ class AppendixCExtendedDerivations(SimulationBase):
                     "steps": [
                         "Standard GUT decay amplitude: A_p ~ alpha_GUT^2 * m_p^5 / M_GUT^4",
                         "In G2 compactification, matter and Higgs localize on separated 3-cycles with neck distance d",
-                        "Wavefunction overlap suppression: |<psi_matter|psi_Higgs>|^2 ~ exp(-2*pi*d/R)",
+                        "Wavefunction overlap suppression: |⟨psi_matter|psi_Higgs⟩|^2 ~ exp(-2*pi*d/R)",
                         "OFF-PATH (TCS): with K=4 matching fibres, d/R ~ 1/(2*pi*K), giving suppression exp(1/K)",
                         "Modified lifetime: tau_p = C * M_GUT^4 / (m_p^5 * alpha_GUT^2) * exp(1/K) ~ 3.9e34 years",
                     ],

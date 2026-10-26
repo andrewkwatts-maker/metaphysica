@@ -273,22 +273,13 @@ def _measure() -> Dict[str, Any]:
 def _run_under(selection: Dict[str, str]) -> Dict[str, Any]:
     """Measure with `selection` forced into the environment, then restore it."""
     from metaphysica.simulations.core.preferred_path import _invalidate_caches
-    from metaphysica.simulations.core.variants import _ENV_PREFIX
+    from metaphysica.simulations.core.variants import forced
 
-    saved: Dict[str, Optional[str]] = {}
     try:
-        for fork_id, option in selection.items():
-            key = _ENV_PREFIX + fork_id.upper()
-            saved[key] = os.environ.get(key)
-            os.environ[key] = option
-        _invalidate_caches()
-        return _measure()
+        with forced(selection):
+            _invalidate_caches()
+            return _measure()
     finally:
-        for key, old in saved.items():
-            if old is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = old
         _invalidate_caches()
 
 

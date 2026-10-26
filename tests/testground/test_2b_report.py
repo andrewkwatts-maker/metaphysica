@@ -121,14 +121,18 @@ def test_a_fired_null_control_voids_the_run(run):
 def test_a_change_names_the_comparison_with_the_top(assess):
     active = Configuration.of("toy", {"seed": "a", "render": "r"})
     top = Configuration.of("toy", {"seed": "b", "render": "r"})
-    vectors = [score_configuration(active, _measure(2), assess),
-               score_configuration(top, _measure(0), assess)]
+    # kinds:re_t fails everywhere, so it is standing; without it every
+    # configuration was REJECTED and the verdict was NO_ADOPTABLE_CONFIGURATION.
+    ms = {active.digest: _measure(2), top.digest: _measure(0)}
+    standing = standing_failures(ms)
+    vectors = [score_configuration(c, ms[c.digest], assess, standing)
+               for c in (active, top)]
     rows = {active.digest: [ScoredRow("x", "PASS")],
             top.digest: [ScoredRow("x", "PASS")]}
     rep = build_report(theory="toy", mode="reassess",
                        configurations=[active, top], vectors=vectors,
                        active_digest=active.digest, assess_cfg=assess,
-                       rows=rows)
+                       standing=standing, rows=rows)
     assert rep["verdict"] == "RECOMMEND_CHANGE"
     assert rep["recommendation"]["target"] == top.digest
     assert rep["active"]["comparison_with_top"]["deciding_criterion"] == (
@@ -140,10 +144,13 @@ def test_a_change_names_the_comparison_with_the_top(assess):
 def test_tied_groups_disclose_their_tiebreak(assess):
     a = Configuration.of("toy", {"seed": "a", "render": "r"})
     b = Configuration.of("toy", {"seed": "b", "render": "r"})
-    vectors = [score_configuration(c, _measure(0), assess) for c in (a, b)]
+    ms = {c.digest: _measure(0) for c in (a, b)}
+    standing = standing_failures(ms)
+    vectors = [score_configuration(c, ms[c.digest], assess, standing)
+               for c in (a, b)]
     rep = build_report(theory="toy", mode="assess", configurations=[a, b],
                        vectors=vectors, active_digest=a.digest,
-                       assess_cfg=assess)
+                       assess_cfg=assess, standing=standing)
     tb = rep["ranking"]["tiebreaks"][0]
     assert tb["group"] == 0 and tb["trials_factor_k"] == 2
     assert rep["verdict"] == "ACTIVE_CONFIRMED"

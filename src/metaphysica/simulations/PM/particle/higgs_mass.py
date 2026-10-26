@@ -22,7 +22,7 @@ Key Updates from v12.4:
 References:
 - Acharya (2002): arXiv:hep-th/0212294 (moduli fixing in M-theory)
 - Kachru et al. (2003): arXiv:hep-th/0301240 (KKLT stabilization)
-- CHNP (2013): arXiv:1207.4470 (TCS G2 constructions)
+- CHNP (2013): arXiv:1207.4470 (TCS (retired reading) G2 constructions)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 
@@ -534,7 +534,7 @@ class HiggsMassSimulation(SimulationBase):
                         "derivative. PM employs a pure racetrack mechanism (as opposed to KKLT "
                         "which adds an explicit flux superpotential W_0, or LVS which relies on "
                         "the overall volume modulus). The PM racetrack is selected because the "
-                        "TCS G2 geometry naturally provides two condensing gauge sectors with "
+                        "TCS G2 geometry (retired reading; not re-derived on Y7) provided two condensing gauge sectors with "
                         "distinct ranks from the D5 singularity structure. The racetrack form is:"
                     )
                 ),
@@ -561,7 +561,7 @@ class HiggsMassSimulation(SimulationBase):
                         "A key structural requirement of the Higgs sector is the doublet-triplet "
                         "splitting, which ensures proton stability. In the SO(10) GUT embedding, "
                         "the Higgs 5-plet decomposes into electroweak doublets (H_d, H_u) and "
-                        "color triplets (T, T-bar). The TCS G2 manifold provides a natural "
+                        "color triplets (T, T-bar). The TCS (retired reading) G2 manifold provides a natural "
                         "topological mechanism for this splitting:"
                     )
                 ),
@@ -855,7 +855,7 @@ class HiggsMassSimulation(SimulationBase):
                 category="DERIVED",
                 description=(
                     "Doublet-triplet mass splitting from the topological Z2 x Z2 "
-                    "orbifold projection on the TCS G2 manifold, which localizes "
+                    "orbifold projection on the TCS (retired reading) G2 manifold, which localizes "
                     "electroweak doublets at fixed points while projecting color "
                     "triplets to the shadow sector at GUT-scale masses"
                 ),
@@ -876,10 +876,10 @@ class HiggsMassSimulation(SimulationBase):
                 output_params=["higgs.dt_splitting_ratio"],
                 derivation={
                     "parentFormulas": ["z2-filter-mechanism"],
-                    "method": "Topological Z2 x Z2 orbifold projection on the TCS G2 manifold, splitting the SO(10) Higgs multiplet into light doublets and heavy triplets",
+                    "method": "Topological Z2 x Z2 orbifold projection on the TCS (retired reading) G2 manifold, splitting the SO(10) Higgs multiplet into light doublets and heavy triplets",
                     "steps": [
                         "Start with Higgs 5-plet in SO(10) GUT: (H_d, H_u, T, T-bar, S) forming a complete multiplet",
-                        "Apply Z2 x Z2 topological filter from the TCS twisted connected sum construction",
+                        "Apply Z2 x Z2 topological filter from the TCS (retired reading) twisted connected sum construction",
                         "The Z2 action localizes doublets H_d, H_u at orbifold fixed points in the visible sector",
                         "Color triplets T, T-bar are projected to the shadow sector by the second Z2 factor",
                         "Triplets acquire GUT-scale mass M_T ~ M_GUT ~ 2 x 10^16 GeV from shadow-sector dynamics",
@@ -904,7 +904,7 @@ class HiggsMassSimulation(SimulationBase):
                     },
                     "Z2_x_Z2": {
                         "name": "Orbifold Projection",
-                        "description": "Discrete symmetry group from the TCS construction that topologically separates doublets from triplets without fine-tuning",
+                        "description": "Discrete symmetry group from the TCS (retired reading) construction that topologically separates doublets from triplets without fine-tuning",
                         "symbol": "Z2 x Z2",
                         "units": "dimensionless",
                     },
@@ -939,7 +939,7 @@ class HiggsMassSimulation(SimulationBase):
                 status="DERIVED",
                 description=(
                     "M_triplet / M_doublet = M_GUT / v_EW from the Z2 x Z2 orbifold "
-                    "projection on the TCS G2 manifold. Computed from the registered "
+                    "projection on the TCS (retired reading) G2 manifold. Computed from the registered "
                     "geometric GUT anchor gauge.M_GUT_GEOMETRIC = 2.1e16 GeV and "
                     "higgs.vev = 246 GeV, giving ~8.54e13. Not a measurable quantity: "
                     "it is the hierarchy that keeps the colour triplets heavy enough "
