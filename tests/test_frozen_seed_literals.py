@@ -86,13 +86,13 @@ ABANDONED_SEED = 24
 CORE = (Path(__file__).resolve().parents[1]
         / "src" / "metaphysica" / "simulations" / "core")
 
-#: Modules scanned for declared-derivation constants. `variants.py` is
-#: EXCLUDED, and the exclusion is asserted below rather than left implicit: it
+#: Modules scanned for declared-derivation constants. The `variants` package
+#: (formerly `variants.py`) is EXCLUDED, and the exclusion is asserted below rather than left implicit: it
 #: is the fork registry, so its b_3 expressions describe branches the framework
 #: does NOT take, and scoring those against the live seed would report the
 #: off-path branch's own honest record (`w_0 = -23/24` under `seed_24`) as a
 #: defect.
-SKIP_MODULES = frozenset({"variants.py"})
+SKIP_MODULES = frozenset({"variants"})
 
 # --------------------------------------------------------------------------
 # harvesting the declared formulas out of the source text
@@ -477,7 +477,7 @@ def scan(b3_live: int) -> List[Dict[str, Any]]:
     seen: set = set()
 
     for path in sorted(CORE.glob("*.py")):
-        if path.name in SKIP_MODULES:
+        if path.stem in SKIP_MODULES:
             continue
         src = path.read_text(encoding="utf-8")
         trailing = _trailing_comments(src)
@@ -728,14 +728,14 @@ def test_the_scan_is_not_empty(rows):
 
 
 def test_the_fork_registry_is_deliberately_not_scanned():
-    """`variants.py` describes branches the framework does NOT take.
+    """The `variants` package describes branches the framework does NOT take.
 
     Scoring its b_3 expressions against the live seed would report the
     off-path branch's own honest record as a frozen literal. The exclusion is
     asserted so it stays a decision rather than becoming an oversight.
     """
-    assert "variants.py" in SKIP_MODULES
-    assert (CORE / "variants.py").exists(), (
+    assert "variants" in SKIP_MODULES
+    assert (CORE / "variants").is_dir(), (
         "the fork registry moved; the exclusion above now hides nothing and "
         "should be re-pointed or dropped"
     )

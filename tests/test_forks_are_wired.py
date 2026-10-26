@@ -52,10 +52,20 @@ _SRC = pathlib.Path(__file__).resolve().parents[1] / "src" / "metaphysica"
 #: than to act on one. A fork read only by these is inert as physics: the
 #: sweep reports it, nothing computes differently because of it.
 _NOT_A_CONSUMER = {
-    "variants.py",          # the declaration
+    "variants.py",          # the declaration (now the package below)
     "switch_search.py",     # sweeps every fork by construction
     "fork_implications.py",  # the implication matrix, same
 }
+
+#: The declaration is the package `simulations/core/variants/`; every file in
+#: it is the registry, none is a consumer.
+_REGISTRY_PACKAGE = "variants"
+
+
+def _is_not_a_consumer(path: pathlib.Path) -> bool:
+    return (path.name in _NOT_A_CONSUMER
+            or _REGISTRY_PACKAGE in path.relative_to(_SRC).parts[:-1])
+
 
 #: Forks that no pipeline module resolves. MEASURED, then pinned.
 #: Wiring one up is the fix; editing this set is part of that fix.
@@ -77,7 +87,7 @@ def _consumers() -> dict:
     """
     found = {fid: [] for fid in FORKS}
     for path in _SRC.rglob("*.py"):
-        if path.name in _NOT_A_CONSUMER:
+        if _is_not_a_consumer(path):
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
         for fid in FORKS:
@@ -113,7 +123,7 @@ def test_the_detector_would_notice_a_consumer_disappearing():
     text_hits = []
     fake = "a_fork_no_module_mentions"
     for path in _SRC.rglob("*.py"):
-        if path.name in _NOT_A_CONSUMER:
+        if _is_not_a_consumer(path):
             continue
         text = path.read_text(encoding="utf-8", errors="replace")
         if re.search(r"resolve\(\s*[\"']%s[\"']" % fake, text):

@@ -220,7 +220,7 @@ def test_the_ast_check_can_actually_fire():
 # This detector has the reader's shape: a `*_adopted` function that hands
 # back a string literal when it cannot measure.
 
-_VARIANTS_REL = "simulations/core/variants.py"
+_VARIANTS_REL = "simulations/core/variants"
 
 
 def _literal_fallbacks_in_readers(source: str):
@@ -263,8 +263,11 @@ def test_no_fork_reader_hands_back_a_literal_when_it_cannot_measure():
     never verified.
     """
     path = _SRC / _VARIANTS_REL
-    assert path.is_file(), "%s is the fork registry; it must exist" % _VARIANTS_REL
-    offenders = _literal_fallbacks_in_readers(path.read_text(encoding="utf-8"))
+    assert path.is_dir(), "%s is the fork registry; it must exist" % _VARIANTS_REL
+    offenders = []
+    for module in sorted(path.rglob("*.py")):
+        offenders += _literal_fallbacks_in_readers(
+            module.read_text(encoding="utf-8"))
     assert not offenders, (
         "%s: fork reader(s) return a literal option id without measuring, at "
         "%s. Raise SourceUnmeasurable instead -- 'cannot tell' is not 'the "
