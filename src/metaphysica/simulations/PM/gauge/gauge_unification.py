@@ -1021,7 +1021,7 @@ class GaugeUnificationSimulation(SimulationBase):
                 description=(
                     "Inverse of unified gauge coupling. Two-loop RG value at the "
                     "spread-minimising scale, KK-threshold corrected, then pulled 15% of "
-                    "the way toward the asymptotic-safety fixed point alpha*^-1 = b3 = 24. "
+                    "the way toward the asymptotic-safety fixed point alpha*^-1 = 24 (the value the retired b3 = 24 seed supplied). "
                     "It is NOT the fixed point itself."
                 ),
                 derivation_formula="gauge-coupling-unification",

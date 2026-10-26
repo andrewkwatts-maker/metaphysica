@@ -387,29 +387,29 @@ class CoreFormulas:
             ),
             "b₃": FormulaTerm(
                 name="Third Betti Number",
-                description="G₂ manifold topological invariant counting associative 3-cycles",
+                description="Integer n of the dark_energy_betti option (default b3_24); the geometry's own third Betti number is 43",
                 symbol="b₃",
                 value="24",
                 units="dimensionless",
-                contribution="Fixed by G₂ holonomy - TCS (retired reading) manifold with 24 associative cycles"
+                contribution="The integer n = 24 is set by the dark_energy_betti option (default b3_24), not by the Betti number of the adopted geometry (b3 = 43)"
             ),
         },
-        info_title="Dark Energy from G₂ Topology (STERILE)",
-        info_meaning="v16.2 STERILE: Dark energy's equation of state emerges directly from the G₂ manifold's third Betti number b₃ = 24. The formula w₀ = -(b₃-1)/b₃ = -23/24 = -0.9583 is pure topology with zero free parameters. Against the framework-adopted thawing anchor (w₀ = -0.957 ± 0.05; attribution unverified) this is 0.027σ; against the DESI DR2 w0waCDM headline (w₀ = -0.752 ± 0.057) it is 3.6σ. The comparison is anchor/model dependent.",
+        info_title="Dark Energy from the dark_energy_betti Option (STERILE)",
+        info_meaning="v16.2 STERILE: Dark energy's equation of state is w₀ = -(n-1)/n = -23/24 = -0.9583, where n = 24 is set by the dark_energy_betti option (default b3_24), not by the geometry's own b₃ (43). It has no free parameter beyond that choice. Against the framework-adopted thawing anchor (w₀ = -0.957 ± 0.05; attribution unverified) this is 0.027σ; against the DESI DR2 w0waCDM headline (w₀ = -0.752 ± 0.057) it is 3.6σ. The comparison is anchor/model dependent.",
         info_grid=[
             FormulaInfoItem(title="Predicted Value", content="w₀ = -23/24 = -0.9583"),
             FormulaInfoItem(title="DESI 2025", content="-0.957 ± 0.05"),
             FormulaInfoItem(title="Agreement", content="0.027σ (adopted anchor) / 3.6σ (DESI DR2 w0waCDM headline)"),
-            FormulaInfoItem(title="Mechanism", content="Pure G₂ topology"),
+            FormulaInfoItem(title="Mechanism", content="dark_energy_betti option, n = 24"),
         ],
         expansion_title="w_0 = -\\frac{b_3 - 1}{b_3} = -\\frac{24 - 1}{24} = -\\frac{23}{24} = -0.9583",
         sub_components=[
             FormulaSubComponent(symbol="-1", name="Cosmological Constant", description="Pure vacuum energy contribution", badge="ESTABLISHED", badge_type="established"),
-            FormulaSubComponent(symbol="b₃", name="Third Betti Number", description="G₂ manifold associative 3-cycle count: b₃ = 24", badge="TOPOLOGY", badge_type="theory"),
+            FormulaSubComponent(symbol="b₃", name="Third Betti Number", description="Integer n = 24 of the dark_energy_betti option (default b3_24)", badge="TOPOLOGY", badge_type="theory"),
             FormulaSubComponent(symbol="1/b₃", name="Breathing-Mode Correction", description="Deviation from ΛCDM: w₀ = -1 + 1/b₃", badge="RETRODICTED", badge_type="theory"),
         ],
         derivation_chain=[
-            FormulaDerivationStep(title="G₂ Manifold Topology (b₃ = 24)", badge="GEOMETRY", badge_type="mathematics"),
+            FormulaDerivationStep(title="dark_energy_betti option (n = 24)", badge="GEOMETRY", badge_type="mathematics"),
             FormulaDerivationStep(title="Breathing-Mode Vacuum Relaxation", badge="THEORY", badge_type="theory"),
             FormulaDerivationStep(title="w₀ = -(b₃-1)/b₃ Retrodiction vs DESI", badge="RETRODICTED", badge_type="theory"),
         ],

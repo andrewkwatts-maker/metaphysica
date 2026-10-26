@@ -1390,7 +1390,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
             category="DERIVED",
             description=(
                 "Planck mass from G2 compactification with topology factors. The 4D Planck mass "
-                "depends on 26D scale, G2 volume, and topological invariants chi_eff = 144, b3 = 24. "
+                "depends on 26D scale, G2 volume, and topological invariants chi_eff = 144 and b3 of the active seed. "
                 "This fixes the gravitational coupling in terms of fundamental geometry."
             ),
             input_params=["topology.mephorash_chi", "topology.elder_kads"],

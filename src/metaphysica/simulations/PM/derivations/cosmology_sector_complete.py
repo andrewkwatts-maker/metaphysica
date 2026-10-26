@@ -929,7 +929,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "method": "topological_ratio",
                 "steps": [
                     "Take the contraction/expansion ratio of the tzimtzum pressure as (b3 - 1)/b3",
-                    "With b3 = 24 this is 23/24",
+                    "With n = 24 (the dark_energy_betti default b3_24) this is 23/24",
                     "The equation of state is w_0 = -(1 - 1/b3) = -23/24 = -0.9583, just above -1",
                 ],
                 "note": "Ruled by the dark_energy_betti fork: b2 = 4 would give -3/4 and fit DESI DR2 thirteen times better, but is excluded because the Kahler moduli are stabilised 45 orders of magnitude too heavy to be the rolling field.",
