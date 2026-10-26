@@ -66,6 +66,7 @@ import os
 # Add parent directories to path for imports
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
+from metaphysica.simulations.PM.gauge.master_ladder_render import formula_latex
 
 from metaphysica.simulations.base import (
     SimulationBase,
@@ -852,7 +853,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "L_QCD = -1/4 G^a_mn G^{a mn} + sum_{f=1}^6 q-bar_f (i gamma^mu D_mu - m_f) q_f"
             ),
             category="DERIVED",
-            description=(
+            description="RETIRED (L2c, 2026-10-27): twin of su3-qcd-lagrangian-v22 (same Lagrangian); use that formula. " + (
                 "SU(3)_C QCD Lagrangian derived from G2 associative 3-cycles. "
                 "8 gluons emerge from A2 singularity resolution (generic ADE rule only; Y7 has no A2 loci, OPEN D-011); quarks in color triplet."
             ),
@@ -995,7 +996,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 "L_weak = -1/4 W^a_mn W^{a mn} + psi-bar_L i gamma^mu D_mu psi_L"
             ),
             category="DERIVED",
-            description=(
+            description="RETIRED (L2c, 2026-10-27): twin of su2-weak-lagrangian-v22 (same Lagrangian); use that formula. " + (
                 "SU(2)_L weak gauge Lagrangian at A1 loci of the unresolved orbifold point (OPEN on the smooth Y7, D-011). "
                 "3 weak bosons emerge from A1 singularities; couples only to left-handed fermions."
             ),
@@ -1099,10 +1100,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
         formulas.append(Formula(
             id="u1-hypercharge-lagrangian-v19",
             label="(3.3.8)",
-            latex=(
-                r"\mathcal{L}_{U(1)_Y} = -\frac{1}{4}B_{\mu\nu}B^{\mu\nu} "
-                r"+ \bar{\psi}i\gamma^\mu\left(\partial_\mu - ig'YB_\mu\right)\psi"
-            ),
+            latex=formula_latex("u1-hypercharge-lagrangian-v19"),
             plain_text=(
                 "L_U1 = -1/4 B_mn B^{mn} + psi-bar i gamma^mu (d_mu - i g' Y B_mu) psi"
             ),
@@ -1376,7 +1374,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             # computed nowhere. alpha_s is what the framework carries, so the
             # expression is circular: it derives alpha_s from a quantity defined only
             # as sqrt(4 pi alpha_s).
-            derivation_formula="su3-qcd-lagrangian-g2-v19",
+            derivation_formula="su3-qcd-lagrangian-v22",
             experimental_bound=0.1179,
             bound_type="measured",
             bound_source="PDG2024",
@@ -1401,7 +1399,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             status="DERIVED",
             description="3 weak bosons from SU(2) adjoint: dim = 2^2 - 1 = 3",
             eml_description="Weak gauge boson count N_W = 2^2 - 1 = 3 (W+, W-, Z) from A1 singularity resolution at the unresolved orbifold point (OPEN on the smooth Y7, D-011) 4-cycles",
-            derivation_formula="su2-weak-lagrangian-g2-v19",
+            derivation_formula="su2-weak-lagrangian-v22",
             experimental_bound=3,
             bound_type="measured",
             bound_source="PDG2024"
@@ -1419,7 +1417,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
             # geometric vev, so it is neither a pure measurement nor a pure
             # derivation. The old expression, sqrt(2)*g_weak, named a g_weak that no
             # registry holds.
-            derivation_formula="su2-weak-lagrangian-g2-v19",
+            derivation_formula="su2-weak-lagrangian-v22",
             experimental_bound=0.6517,
             bound_type="measured",
             bound_source="PDG2024",
@@ -1571,8 +1569,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    formula_id="su3-qcd-lagrangian-g2-v19",
-                    label="(3.3.1)"
+                    formula_id="su3-qcd-lagrangian-v22",
+                    label="(3.2)"
                 ),
                 ContentBlock(
                     type="paragraph",
@@ -1605,8 +1603,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ),
                 ContentBlock(
                     type="formula",
-                    formula_id="su2-weak-lagrangian-g2-v19",
-                    label="(3.3.5)"
+                    formula_id="su2-weak-lagrangian-v22",
+                    label="(3.3)"
                 ),
                 ContentBlock(
                     type="formula",
@@ -1807,11 +1805,11 @@ class GaugeSectorCompleteDerivations(SimulationBase):
                 ),
             ],
             formula_refs=[
-                "su3-qcd-lagrangian-g2-v19",
+                "su3-qcd-lagrangian-v22",
                 "su3-field-strength-v19",
                 "su3-gluon-count-v19",
                 "su3-confinement-v19",
-                "su2-weak-lagrangian-g2-v19",
+                "su2-weak-lagrangian-v22",
                 "su2-field-strength-v19",
                 "su2-chirality-v19",
                 "u1-hypercharge-lagrangian-v19",

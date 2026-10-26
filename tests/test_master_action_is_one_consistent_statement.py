@@ -34,8 +34,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 _GAUGE_IDS_26D = ["pneuma-master-action-v23"]
 _LAG_IDS_26D = [
     "master-action-26d-full", "einstein-hilbert-26d", "yang-mills-26d",
-    "dirac-26d", "pneuma-coupling", "master-action-two-layer-or",
-    "bulk-action-26d-v23",
+    "dirac-26d", "pneuma-coupling",
 ]
 
 

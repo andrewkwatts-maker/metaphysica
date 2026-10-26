@@ -94,6 +94,7 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
 
+from metaphysica.simulations.PM.gauge.master_ladder_render import formula_latex, ladder_step
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -1573,7 +1574,7 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="master-action-26d-full",
             label="(2.1.5)",
-            latex=r"S_{26} = \int d^{26}x\,\sqrt{|g_{26}|}\left[\frac{M_*^{24}}{2}R_{26} - \frac{1}{4g^2}\text{Tr}(F^2) + \bar{\Psi}\Gamma^M D_M\Psi - K_{T\bar{T}}|\partial T|^2 - V(T)\right]",
+            latex=formula_latex("master-action-26d-full"),
             plain_text="S_26 = integral d^26x sqrt|g_26| [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
             category="ANSATZ",
             description="Complete 26D master action with gravity, gauge, fermion, and moduli sectors",
@@ -1738,6 +1739,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Add the matter stress-energy tensor T_munu = -(2/sqrt(-g)) delta S_matter / delta g^{mu nu} from variation of the matter Lagrangian",
                     "Set the total variation to zero: G_munu = R_munu - 1/2 g_munu R = (8 pi G_26 / c^4) T_munu (Einstein field equations in 26D)"
                 ],
+                "ladderStep": ladder_step("euler-lagrange-gravity"),
                 "method": "Variational principle (Hilbert 1915): stationary action under metric perturbations",
                 "parentFormulas": ["einstein-hilbert-26d", "variation-metric"]
             },
@@ -1978,7 +1980,7 @@ class LagrangianMasterDerivation(SimulationBase):
             latex=r"\mathcal{L}_{\text{bridge}} = \sum_{i=1}^{12} \left[(\partial y_{1i})^2 + (\partial y_{2i})^2\right]",
             plain_text="L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]",
             category="DERIVED",
-            description=(
+            description="RETIRED (L2c, 2026-10-27): duplicate of bridge-lagrangian-v22; use that formula. " + (
                 "v22 bridge kinetic Lagrangian for 12 I/O pairs. Each bridge pair contributes "
                 "two canonical scalar field kinetic terms, one for each channel (input y_1i and "
                 "output y_2i). The total bridge sector has 24 real scalar degrees of freedom "
@@ -2523,7 +2525,7 @@ class LagrangianMasterDerivation(SimulationBase):
             latex=r"S = \int d^{26}x \sqrt{|G|} \Big[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
             plain_text="S = integral d^26x sqrt|G| [ (M_*^24/2) R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
             category="GEOMETRIC",
-            description=(
+            description="RETIRED (L2c, 2026-10-27): double counts Psi_P and L_bridge; superseded by master-action-26d-full. " + (
                 "Full 26D master action with explicit two-layer OR warping potentials. "
                 "V_bridge governs shadow creation (Layer 1), V_face governs face selection "
                 "(Layer 2). All terms sterile."
@@ -2556,8 +2558,8 @@ class LagrangianMasterDerivation(SimulationBase):
         formulas.append(Formula(
             id="reduced-lagrangian-13d",
             label="(2.1.G2)",
-            latex=r"S_{13D} = \int \sqrt{-g_{13}} \left[ R_{13} + \bar{\Psi}_P i \gamma^m (\partial_m + T_\omega^m) \Psi_P + V_{\text{face}}^{(f)\text{(local OR)}} \right]",
-            plain_text="S_13D = integral sqrt(-g_13) [ R_13 + Psi_P_bar i gamma^m (d_m + T_omega^m) Psi_P + V_face^(f)(local OR) ]",
+            latex=r"S_{13D} = \int \sqrt{-g_{13}} \left[ \frac{M_{13}^{11}}{2} R_{13} + \bar{\Psi}_P i \gamma^m (\partial_m + T_\omega^m) \Psi_P + V_{\text{face}}^{(f)\text{(local OR)}} \right]",
+            plain_text="S_13D = integral sqrt(-g_13) [ (M_13^11/2) R_13 + Psi_P_bar i gamma^m (d_m + T_omega^m) Psi_P + V_face^(f)(local OR) ]",
             category="GEOMETRIC",
             description=(
                 "13D per-shadow Lagrangian -- after bridge/global OR integrates out bridge "
@@ -2574,7 +2576,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "Bridge directions are frozen at their OR-selected values; only face degrees of freedom remain dynamical"
                 ],
                 "method": "Bridge OR dimensional reduction: 26D to 13D per shadow",
-                "parentFormulas": ["master-action-two-layer-or"]
+                "parentFormulas": ["master-action-26d-full"]
             },
             terms={
                 "R_13": "13D Ricci scalar on the per-shadow spacetime",
@@ -2649,7 +2651,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "+ V_bridge + sum_f V_face^(f) ]"
             ),
             category="ANSATZ",
-            description=(
+            description="RETIRED (L2c, 2026-10-27): F_4 is an 11D object in a 26D bulk and the statement is an ANSATZ; superseded by master-action-26d-full. " + (
                 "Full 26D bulk action with explicit two-layer OR structure "
                 "(Topic 03: 26D Master Lagrangian). The 26 dimensions decompose as 26D = (12,1) + (12,1): each 13D "
                 "shadow carries 4D spacetime + 7D G2 holonomy + 2D bridge residual, "
@@ -2742,7 +2744,6 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "parentFormulas": [
                     "master-action-26d-full",
-                    "master-action-two-layer-or",
                     "racetrack-moduli-potential",
                     "torsion-correction-term",
                     "spectral-residue-dressing",
@@ -2809,7 +2810,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "Racetrack moduli potential for the 26D master Lagrangian "
                 "(Topic 03) with explicit geometric scaling a_i = b_3/i. "
                 "This is the leading-order moduli potential V_mod appearing "
-                "in the 26D bulk action (bulk-action-26d-v23). "
+                "in the 26D bulk action (master-action-26d-full). "
                 "Each of the 4 Kahler moduli T_i (i=1..4) corresponds to one "
                 "face of the twisted connected sum (TCS) G2 construction, "
                 "controlling the volume of the i-th 2-cycle. The non-perturbative "
@@ -2890,7 +2891,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 ),
                 "parentFormulas": [
                     "racetrack-moduli-potential",
-                    "bulk-action-26d-v23",
+                    "master-action-26d-full",
                     "g2-holonomy-constraint",
                 ]
             },
@@ -3332,11 +3333,6 @@ class LagrangianMasterDerivation(SimulationBase):
                     )
                 ),
                 ContentBlock(
-                    type="formula",
-                    formula_id="master-action-two-layer-or",
-                    label="(2.1.G1)"
-                ),
-                ContentBlock(
                     type="paragraph",
                     content=(
                         "The reduction chain proceeds in two explicit stages with clear "
@@ -3494,11 +3490,6 @@ class LagrangianMasterDerivation(SimulationBase):
                     )
                 ),
                 ContentBlock(
-                    type="formula",
-                    formula_id="bulk-action-26d-v23",
-                    label="(2.1.H1)"
-                ),
-                ContentBlock(
                     type="heading",
                     level=3,
                     content="Racetrack Moduli Potential with Geometric Scaling"
@@ -3564,7 +3555,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 # v22 bridge system formulas
                 "v22-bulk-structure",
                 "v22-metric-12-pair",
-                "v22-bridge-lagrangian",
+                "bridge-lagrangian-v22",
                 "v22-distributed-or-reduction",
                 "v22-consciousness-io-gate",
                 "ghost-elimination",
@@ -3575,11 +3566,9 @@ class LagrangianMasterDerivation(SimulationBase):
                 "torsion-correction-term",
                 "spectral-residue-dressing",
                 # Part G: Two-Layer OR Integration
-                "master-action-two-layer-or",
                 "reduced-lagrangian-13d",
                 "reduced-lagrangian-4d",
                 # Part H: 26D Master Lagrangian (Topic 03)
-                "bulk-action-26d-v23",
                 "racetrack-moduli-potential-26d-v23",
             ],
             param_refs=[

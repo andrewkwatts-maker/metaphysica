@@ -105,6 +105,7 @@ from .su2_weak_gauge import SU2WeakGauge
 from .u1_hypercharge import U1Hypercharge
 from .electroweak_mixing import ElectroweakMixing
 from metaphysica.simulations.PM.paper.superseded import superseded
+from metaphysica.simulations.PM.gauge.master_ladder_render import formula_latex, ladder_step
 
 
 # =============================================================================
@@ -454,7 +455,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="pneuma-master-action-v23",
                 label="(1.1)",
-                latex=r"S = \int d^{26}X \sqrt{|G|} \left[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P (i \Gamma^M D_M - m) \Psi_P + \lambda (\bar{\Psi}_P \Psi_P)^2 + \sum_{i=1}^{12} \mathcal{L}_{\text{bridge}}^i + \mathcal{L}_{C} \right]",
+                latex=formula_latex("pneuma-master-action-v23"),
                 plain_text="S = integral d^26X sqrt|G| [ (M_*^24/2) R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
                 category="ANSATZ",
                 description=(
@@ -548,7 +549,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="bridge-lagrangian-v22",
                 label="(1.3)",
-                latex=r"\mathcal{L}_{\text{bridge}} = \sum_{i=1}^{12} \int d^2 y_i \sqrt{g_{(2,0)}^i} \left[ \rho_{\text{breath}}^i + \text{OR}^i(\Psi_P) \right]",
+                latex=formula_latex("bridge-lagrangian-v22"),
                 plain_text="L_bridge = sum_{i=1}^{12} int d^2 y_i sqrt(g_{(2,0)}^i) [ rho_breath^i + OR^i(Psi_P) ]",
                 category="DERIVED",
                 description=(
@@ -733,7 +734,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="su3-qcd-lagrangian-v22",
                 label="(3.2)",
-                latex=r"\mathcal{L}_{\text{QCD}} = -\frac{1}{4}G^a_{\mu\nu}G^{a\mu\nu} + \sum_f\bar{q}_f(i\gamma^\mu D_\mu - m_f)q_f",
+                latex=formula_latex("su3-qcd-lagrangian-v22"),
                 plain_text="L_QCD = -1/4 G^a_mn G^a^mn + sum_f q-bar_f (i*gamma^mu*D_mu - m_f) q_f",
                 category="DERIVED",
                 description=(
@@ -790,7 +791,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="su2-weak-lagrangian-v22",
                 label="(3.3)",
-                latex=r"\mathcal{L}_{\text{weak}} = -\frac{1}{4}W^a_{\mu\nu}W^{a\mu\nu} + \bar{\psi}_L i\gamma^\mu D_\mu \psi_L",
+                latex=formula_latex("su2-weak-lagrangian-v22"),
                 eml_tree_str=(
                     "ops.add("
                     "ops.mul(ops.neg(ops.div(eml_scalar(1.0), eml_scalar(4.0))), ops.pow(eml_vec('W_munu_a'), eml_scalar(2.0))), "
@@ -997,6 +998,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Combine all variations and set delta S_26 / delta g^{mu nu} = 0 to obtain the 26D Einstein field equations with source decomposition",
                         "Verify covariant conservation: the contracted Bianchi identity nabla^mu G_{mu nu} = 0 implies nabla^mu T_{mu nu} = 0 (energy-momentum conservation)"
                     ],
+                    "ladderStep": ladder_step("euler-lagrange-metric-variation"),
                     "method": "analytical",
                     "derivation_type": "analytical",
                     "parentFormulas": ["pneuma-master-action-v23"]
@@ -1126,7 +1128,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="dark-matter-portal-lagrangian",
                 label="(MA.TL2)",
-                latex=r"\mathscr{L}_{\text{portal}} = \alpha_{\text{leak}} \phi_{\text{vis}} \phi_{\text{dark}} \phi_{\text{mod}}, \quad \alpha_{\text{sample}} \approx 0.57",
+                latex=formula_latex("dark-matter-portal-lagrangian"),
                 plain_text=("L_portal = alpha_leak * phi_vis * phi_dark * phi_mod, "
                             "alpha_leak = 1/sqrt(6) ≈ 0.4082"),
                 category="GEOMETRIC",
@@ -1191,11 +1193,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="shadow-action-13d-v23",
                 label="(MA.S1)",
-                latex=(
-                    r"S_{13} = \int d^{13}x \sqrt{-g_{13}} "
-                    r"\left[ R_{13} + \bar\Psi_P i\gamma^m D_m \Psi_P "
-                    r"+ V_{face}^{(f)} \right]"
-                ),
+                latex=formula_latex("shadow-action-13d-v23"),
                 plain_text=(
                     "S_13 = integral d^{13}x sqrt(-g_13) "
                     "[ R_13 + Psi-bar_P i*gamma^m D_m Psi_P + V_face^(f) ]"
@@ -1260,11 +1258,7 @@ class MasterActionSimulationV22(SimulationBase):
             Formula(
                 id="effective-action-4d-v23",
                 label="(MA.S2)",
-                latex=(
-                    r"S_4 = \int d^4x \sqrt{-g} \left[ "
-                    r"-\frac{M_{Pl}^2}{2}R + \mathcal{L}_{SM} "
-                    r"+ \mathcal{L}_{portal} + \mathcal{L}_{DM} \right]"
-                ),
+                latex=formula_latex("effective-action-4d-v23"),
                 plain_text=(
                     "S_4 = integral d^4x sqrt(-g) "
                     "[ -(M_Pl^2 / 2) R + L_SM + L_portal + L_DM ]"
@@ -1387,6 +1381,7 @@ class MasterActionSimulationV22(SimulationBase):
                         "Combine all variations and set delta S_4 / delta g^{mu nu} = 0 to obtain G_{mu nu} + Lambda g_{mu nu} = (1/M_Pl^2)(T^SM_{mu nu} + T^portal_{mu nu})",
                         "Verify covariant conservation via the contracted Bianchi identity: nabla^mu G_{mu nu} = 0 implies nabla^mu (T^SM_{mu nu} + T^portal_{mu nu}) = 0",
                     ],
+                    "ladderStep": ladder_step("euler-lagrange-eom-v23"),
                     "method": "metric_variation_of_effective_action",
                     "derivation_type": "analytical",
                     "parentFormulas": [

@@ -83,6 +83,7 @@ class Term:
     derivatives: int = 0
     sign: int = 1
     open: bool = False
+    latex: Optional[str] = None  # display form of the summand, without its sign
 
 
 @dataclass(frozen=True)
