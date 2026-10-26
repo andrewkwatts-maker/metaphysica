@@ -25,18 +25,8 @@
     <link rel="stylesheet" href="../css/pm-ux-consistency.css">
     <link rel="stylesheet" href="../css/mobile-responsive.css">
 
-    <!-- MathJax -->
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true
-            },
-            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../js/mathjax-config.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 
     <style>
         /* ───────────────────────────────
@@ -588,7 +578,7 @@
                         discrepancy that originally invalidated the Orch-OR model.
                     </li>
                     <li>
-                        <strong>$c_\kaf$ constraint → displacement radius</strong>
+                        <strong>$c_{\mathrm{kaf}}$ constraint → displacement radius</strong>
                         $r_\Delta \approx 0.25$ nm derived from $b_3 \cdot (b_3 - 7)/(b_3 - 9)$,
                         matching measured tubulin conformational displacement (Hameroff 2014).
                     </li>

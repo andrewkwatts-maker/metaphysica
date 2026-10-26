@@ -1,0 +1,10 @@
+{
+  "name": "texcheck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Dev-only LaTeX render gate: parses every published math string with MathJax.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "mathjax-full": "3.2.2"
+  }
+}
