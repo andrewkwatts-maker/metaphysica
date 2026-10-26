@@ -73,7 +73,6 @@ generators. Writers, grouped:
 | `config_drift_audit.json` | `generators/generate_config_drift_audit.py` |
 | `hardcode_audit.json` | `generators/generate_hardcode_audit.py` |
 | `reference_check.json`, `reference_integrity.json` | `generators/generate_reference_check.py`, `generate_reference_integrity.py` |
-| `b3_24_census.json` | `generators/generate_b3_24_census.py` |
 | `plots-manifest.json`, `simulations-index.json` | `generators/generate_plots_manifest.py`, `generate_simulations_index.py` |
 | `datasheets/constants/*.json` (33), `datasheets/quarks/*.json` (12) | `generators/generate_datasheets.py` — **also writes into `src/metaphysica/data/`** |
 | `quarks/*.json` (12) | `generators/generate_quark_datasheets.py` |
@@ -149,7 +148,6 @@ DIFFERS (follows the seed): `parameters.json`, `sections.json`, `formulas.json`,
 SEED-BLIND (byte-identical under both seeds, timestamps stripped):
 `derivations/*.json` (all 14), `datasheets/constants/*.json` (all 33),
 `datasheets/quarks/*.json` (all 12), `quarks/*.json` (all 12),
-`b3_24_census.json`, `eml_dependency_chains.json`, `hardcode_audit.json`,
 `improvement_scorecard.json`, `mismatches.json`, `prose_drift_audit.json`,
 `reference_check.json`, `reference_integrity.json`, `references.json`,
 `simulations-index.json`, `simulations.json`, `plots-manifest.json`,

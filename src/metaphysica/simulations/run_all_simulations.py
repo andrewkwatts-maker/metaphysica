@@ -91,8 +91,8 @@ OUTPUT STRUCTURE:
   },
   "derivation_logic": {
     "framework": "Principia Metaphysica - Geometric Unity",
-    "base_manifold": "TCS G2 (Twisted Connected Sum)",
-    "topology_id": "TCS #187",
+    "base_manifold": "TCS G2 (Twisted Connected Sum), retired seed_24 path",
+    "topology_id": "TCS #187 (retired seed_24 label)",
     "key_assumptions": [...]
   },
   "parameter_classification": {
@@ -2514,8 +2514,8 @@ class SimulationRunner:
             },
             "derivation_logic": {
                 "framework": f"Principia Metaphysica v{FormulasRegistry.VERSION} - Sterile G2 Residue Model",
-                "base_manifold": "TCS G2 (Twisted Connected Sum)",
-                "topology_id": "TCS #187",
+                "base_manifold": "TCS G2 (Twisted Connected Sum), retired seed_24 path",
+                "topology_id": "TCS #187 (retired seed_24 label)",
                 "key_assumptions": [
                     "G2 holonomy with torsion-free parallel spinor",
                     "Flux quantization N_flux = χ_eff/6 = 24",
