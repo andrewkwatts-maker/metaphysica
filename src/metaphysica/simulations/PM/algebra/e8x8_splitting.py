@@ -92,7 +92,7 @@ class E8xE8SplittingSimulation(SimulationBase):
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
 
         alpha_leak = registry.get_param("algebra.e7_alpha_leak")
         if alpha_leak is None:

@@ -6,7 +6,7 @@ import pytest
 
 class _Registry:
     def get_param(self, path):
-        return None
+        return 43 if path == "topology.elder_kads" else None
 
     def has_param(self, path):
         return False

@@ -92,7 +92,7 @@ class E7RepresentationSimulation(SimulationBase):
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
 
         try:
             from eml_spectral.exceptional.e7_56 import E7_56
@@ -125,7 +125,7 @@ class E7RepresentationSimulation(SimulationBase):
         """EML path — same computation via EML library."""
         b3 = registry.get_param("topology.elder_kads")
         if b3 is None:
-            b3 = 24
+            raise ValueError("topology.elder_kads is unset: no b3 in force")
 
         try:
             from eml_spectral.exceptional.e7_56 import E7_56
