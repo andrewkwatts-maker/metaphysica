@@ -1,0 +1,21 @@
+metaphysica third-party licences
+================================
+
+Runtime dependencies declared in pyproject.toml [project].dependencies, with the
+version installed when this file was written and the licence read through
+importlib.metadata. All are permissive.
+
+  numpy      2.4.2    BSD-3-Clause (bundled components: 0BSD, MIT, Zlib, CC0-1.0)
+  mpmath     1.3.0    BSD
+  scipy      1.16.3   BSD-3-Clause
+  sympy      1.14.0   BSD-3-Clause
+  eml-math   2.0.11   MIT
+  pyyaml     6.0.2    MIT
+
+Optional extras (not required at runtime; see pyproject.toml):
+
+  arithma       2.0.4    MIT   (extras: sims, full; no Arithma submodule in this repo)
+  eml-spectral  2.0.0a0  MIT   (extras: sims, full)
+  xhtml2pdf, matplotlib, pandas: extras pdf / plots / full; not checked here.
+
+No non-permissive licence found among the runtime dependencies.
