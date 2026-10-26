@@ -23,6 +23,9 @@ APP = SIM + "paper/appendices/"
 CASES = [
     (LAG, "independent Kahler moduli T_1,...,T_4 (one per face"),
     (LAG, "4 independent Kahler moduli "),
+    (LAG, "Kahler modulus for face i (i=1..4)"),
+    (LAG, "instanton action for wrapping the i-th cycle"),
+    (LAG, "TCS face i (i=1..4)"),
     (PD, "Geometric suppression factor from"),
     (PD, "glues two ACyl CY3 blocks"),
     (PD, "K3 fibre matching number (K=4 "),

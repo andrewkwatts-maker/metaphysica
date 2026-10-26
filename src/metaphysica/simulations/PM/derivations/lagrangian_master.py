@@ -2413,7 +2413,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "parentFormulas": ["master-action-26d-full", "pneuma-coupling"]
             },
             terms={
-                r"T_i": {"description": "Kahler modulus for face i (i=1..4), controlling the volume of the i-th 2-cycle in the TCS construction"},
+                r"T_i": {"description": "Kahler modulus for face i (i=1..4), controlling the volume of the i-th 2-cycle in the off-path TCS construction"},
                 r"\Lambda_i": {"description": "Non-perturbative scale for face i, from M2-brane instanton wrapping on associative 3-cycles"},
                 r"a_i": {"description": "Racetrack coefficient a_i = b_3/i = 24/i, calibrated at the off-path seed b_3 = 24 (OFF-PATH)"},
                 r"W_0": {"description": "Tree-level flux superpotential contribution from G-flux through the G2 manifold"},
@@ -2862,7 +2862,7 @@ class LagrangianMasterDerivation(SimulationBase):
                     "The instanton action for wrapping the i-th cycle is "
                     "a_i = b_3/i = 24/i, encoding the geometric scaling: "
                     "a_1 = 24/1 = 24, a_2 = 24/2 = 12, a_3 = 24/3 = 8, "
-                    "a_4 = 24/4 = 6. This follows from the TCS construction "
+                    "a_4 = 24/4 = 6. On the off-path TCS reading this follows from the construction "
                     "where the i-th face subtends 1/i of the total 3-cycle volume",
                     "The tree-level flux contribution Lambda_0 arises from "
                     "G-flux threading the G2 manifold, analogous to W_0 in KKLT. "
@@ -2896,7 +2896,7 @@ class LagrangianMasterDerivation(SimulationBase):
             },
             terms={
                 "T_i": (
-                    "Kahler modulus for TCS face i (i=1..4), controlling the "
+                    "Kahler modulus for off-path TCS face i (i=1..4), controlling the "
                     "volume of the i-th 2-cycle in the G2 construction. "
                     "Re(T_i) > 0 is required for geometric validity"
                 ),
