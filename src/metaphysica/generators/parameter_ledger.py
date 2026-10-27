@@ -19,6 +19,9 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
+from metaphysica.generators.derivation_chain import formula_inputs
+from metaphysica.generators.kill_switch_rows import KILL_SWITCH_REPORT_KEYS, KILL_SWITCH_ROWS, NO_REGISTRY_ROW
+
 # --------------------------------------------------------------------------
 # Classes and the single label table
 # --------------------------------------------------------------------------
@@ -53,6 +56,8 @@ ACTION_SOURCES: frozenset = frozenset()
 _WEAK = {CALIBRATED: 2, FITTED: 3, ANSATZ: 4}
 
 OBSERVED_STATES = ("PASS", "TENSION", "FAIL", "MARGINAL")
+#: Score for a CALIBRATED/FITTED row compared with the datum it was set from.
+CALIBRATION_CHECK = "CALIBRATION_CHECK"
 
 
 class UnknownLabel(ValueError):
@@ -96,9 +101,7 @@ def parents(name: str, prod: Dict[str, List[str]], formulas: Dict[str, Any],
         if f is None:
             problems.append("formula %s not found" % fid)
             continue
-        for i in f.get("input_params") or []:
-            if i == name:
-                continue  # a formula that restates its own output is a check, not a parent
+        for i in formula_inputs(name, f):  # a formula restating its own output is a check
             if i not in params:
                 problems.append("input %s of %s not a row" % (i, fid))
             elif i not in ins:
@@ -238,6 +241,22 @@ def circular_kinds(name: str, row: Dict[str, Any], cls: str, closure: Iterable[s
     return kinds
 
 
+def calibration_check_names(params: Dict[str, Any], formulas: Dict[str, Any]) -> List[str]:
+    """Rows whose PASS is a calibration check: CALIBRATED/FITTED class, scored PASS.
+
+    The exporter relabels these CALIBRATION_CHECK so they stop counting as passes.
+    Prediction rows with their own datum in the chain are reported, not relabelled.
+    """
+    prod = producers(params, formulas)
+    names = []
+    for name, row in params.items():
+        if row.get("validation_status") != "PASS" or not _is_num(row.get("experimental_value")):
+            continue
+        if classify(name, row, prod, formulas, params)["cls"] in (CALIBRATED, FITTED):
+            names.append(name)
+    return names
+
+
 def falsifiability(name: str, row: Dict[str, Any], cls: str,
                    killed: Dict[str, str]) -> Dict[str, Any]:
     """State and record for one row. Only physical observables get a test state."""
@@ -249,6 +268,9 @@ def falsifiability(name: str, row: Dict[str, Any], cls: str,
         return {"state": "TESTED_NOW", "verdict": val, "value": row.get("value"),
                 "experimental_value": exp, "uncertainty": row.get("experimental_uncertainty"),
                 "sigma": row.get("sigma_deviation"), "bound_type": row.get("bound_type")}
+    if val == CALIBRATION_CHECK and _is_num(exp):
+        return {"state": CALIBRATION_CHECK, "value": row.get("value"), "experimental_value": exp,
+                "reason": "set from this datum; agreement is not a test"}
     if name in killed:
         return {"state": "TESTABLE", "kill_switch": killed[name]}
     if _is_num(exp) and row.get("status") in ("PREDICTED", "PREDICTIONS"):
@@ -260,13 +282,10 @@ def falsifiability(name: str, row: Dict[str, Any], cls: str,
     return {"state": "NOT_OBSERVABLE", "reason": "intermediate or unscored quantity"}
 
 
-#: kill switch -> (registry id, scale from the report's unit to the registry's, report key)
+#: kill switch -> (registry id, scale from the report's unit to the registry's, report key).
+#: The ids come from kill_switch_rows, the module the oracle reads its numbers through.
 KILL_SWITCHES: Dict[str, Tuple[str, float, str]] = {
-    "ALP_Principia_Metric": ("alp.mass_meV", 1.0, "predicted_mass_meV"),
-    "Fifth_Force": ("portals.alp_fifth_force_range_m", 1.0, "predicted_value"),
-    "Proton_Decay": ("proton_decay.tau_p_years", 1.0, "predicted_lifetime"),
-    "Sterile_Neutrino": ("portals.sterile_mixing_sin2_2theta", 1.0, "predicted_mixing"),
-    "KK_Gravitons": ("geometry.m_KK_central", 1.0, "predicted_mass"),
+    test: (rid, 1.0, KILL_SWITCH_REPORT_KEYS[test]) for test, rid in KILL_SWITCH_ROWS.items()
 }
 
 
@@ -285,7 +304,8 @@ def link_kill_switches(report: Dict[str, Any], params: Dict[str, Any],
         rec["registry_value"] = reg
         rec["agrees"] = bool(rid) and _close(reg, rec["report_value"], rel)
         if rid is None:
-            rec["finding"] = "no registry id: qualitative or unlinked"
+            rec["finding"] = ("no registry row (qualitative kill switch)"
+                              if key in NO_REGISTRY_ROW else "no registry id: unlinked")
         elif not rec["agrees"]:
             rec["finding"] = "report and registry values differ"
         out.append(rec)
@@ -386,8 +406,9 @@ def _assemble(rows, params, prod, formulas, free_vars, kills, dup) -> Dict[str, 
             ambiguous[lab] = {"count": len(ex), "example": ex[0]}
     return {
         "schema": "parameter_ledger/1",
-        "note": "Measured only. No value or status was changed. derivation_chain is empty "
-                "on every registry row, so chains are rebuilt from formulas.json.",
+        "note": "Measured only. No value was changed. Chains come from each row's declared "
+                "formula (generators/derivation_chain.py); rows with none are rebuilt from "
+                "formulas.json.",
         "counts": counts(rows), "rows": rows, "kill_switches": kills,
         "free_variable_cross_check": {"rows_in_derived_class": fv_bad},
         "ambiguous_labels": ambiguous,
@@ -406,6 +427,7 @@ def counts(rows: Dict[str, Any]) -> Dict[str, Any]:
         "ansatz_plus_fitted": cls.get(ANSATZ, 0) + cls.get(FITTED, 0),
         "unfalsifiable_predictions": st.get("UNFALSIFIABLE", 0),
         "circular": sum(1 for r in rows.values() if r["circular"]),
+        "calibration_checks": st.get(CALIBRATION_CHECK, 0),
     }
 
 
