@@ -32,8 +32,9 @@ betti = None, never guessed.
 
 LIMITS
 ======
-Codimension-7 points are detected (stabiliser with no fixed vector) but their
-local type (C^3/Z_N or otherwise) is not classified here. Only the flat
+Codimension-7 points are detected (stabiliser with no fixed vector); their
+local model R^7/H is described by `codim7_local_type` (character, real
+isotypic blocks, A-type loci through the point), not classified as C^3/Z_N. Only the flat
 orbifold is analysed.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
@@ -712,6 +713,81 @@ def a_type_ks(elems: Sequence[Iso]) -> Dict[int, int]:
     for k in seen.values():
         out[k] = out.get(k, 0) + 1
     return out
+
+
+# ------------------------------------------- L3b: reasons and local types
+
+def invalid_reasons(record: Dict[str, Any]) -> List[str]:
+    """Why a record is not `betti_valid`: any of "crossings", "non_A_strata",
+    "non_free_normal" (a record with an error has no reasons to give)."""
+    if record.get("error") or "strata" not in record:
+        return []
+    why = []
+    if record["crossings"] > 0:
+        why.append("crossings")
+    if record["strata"] and any(r["kind"] != "A" for r in record["strata"]):
+        why.append("non_A_strata")
+    if any(not r["free_normal"] for r in record["strata"]):
+        why.append("non_free_normal")
+    return why
+
+
+def _isotypic_components(mats: Sequence[np.ndarray]) -> List[Dict[str, Any]]:
+    """Isotypic blocks of R^7 under the matrices: eigenspaces of a seeded
+    generic symmetric matrix averaged over the group. `commutant_dim` is
+    <chi,chi> of the block (1 means one real-type irreducible; an abelian
+    block has commutant_dim equal to its number of real irreducibles)."""
+    rng = np.random.default_rng(20261027)
+    S = rng.standard_normal((_N, _N))
+    S = S + S.T
+    avg = sum(A @ S @ A.T for A in mats) / len(mats)
+    w, V = np.linalg.eigh(avg)
+    out, i = [], 0
+    while i < _N:
+        j = i
+        while j + 1 < _N and abs(w[j + 1] - w[i]) < 1e-7:
+            j += 1
+        Vc = V[:, i:j + 1]
+        chi2 = sum(np.trace(Vc.T @ A @ Vc) ** 2 for A in mats) / len(mats)
+        out.append({"dim": j - i + 1, "commutant_dim": int(round(chi2))})
+        i = j + 1
+    return out
+
+
+def codim7_local_type(elems: Sequence[Iso], point: Dict[str, Any],
+                      lat: Lattice,
+                      a_loci: Sequence[Tuple[Dict, int]] = ()) -> Dict[str, Any]:
+    """Local model R^7/H at a 0-dimensional locus: H = pointwise stabiliser,
+    its character, real isotypic blocks, whether H acts freely on S^6
+    (never for G2 maps: det 1 in odd dimension gives eigenvalue 1), the
+    fixed-subspace dimensions of its elements, and which A-type loci
+    (k, as SU(k)) pass through the point (`a_loci` = (locus, k) pairs)."""
+    if point["dim"] != 0:
+        raise ScanError("not a point locus (dim %d)" % point["dim"])
+    H = [h for h in elems if fixes_pointwise(h, point)]
+    mats = [euclid_A(h, lat) for h in H]
+    e = identity()
+    char: Dict[Tuple[int, float], int] = {}
+    fixdims: Dict[int, int] = {}
+    for h, A in zip(H, mats):
+        key = (element_order(h), round(float(np.trace(A)), 6))
+        char[key] = char.get(key, 0) + 1
+        if h != e:
+            d = _N - int(np.linalg.matrix_rank(A - np.eye(_N), tol=1e-7))
+            if d > 0:
+                fixdims[d] = fixdims.get(d, 0) + 1
+    through: Dict[int, int] = {}
+    for loc, k in a_loci:
+        if contains(loc, point):
+            through[k] = through.get(k, 0) + 1
+    return {"order": len(H), "cyclic": _is_cyclic(H),
+            "character": sorted((o, t, n) for (o, t), n in char.items()),
+            "blocks": _isotypic_components(mats),
+            "fixed_vector": bool(_N - np.linalg.matrix_rank(
+                np.vstack([A - np.eye(_N) for A in mats]), tol=1e-7)),
+            "free_on_S6": not fixdims,
+            "fixed_dims": dict(sorted(fixdims.items())),
+            "a_loci_through": dict(sorted(through.items()))}
 
 
 # ------------------------------------------------- Joyce's published example
