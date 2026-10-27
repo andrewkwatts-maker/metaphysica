@@ -20,6 +20,9 @@ FORKS: Dict[str, Fork] = {
         question="Is a cited resolution contribution table available?",
         source="simulations.PM.geometry.joyce_contributions declared table",
         status="OPEN",
+        # Read only to decide the Joyce branch of b3_origin
+        # (switch_search joyce_branch_is_decidable).
+        applies_when=(("b3_origin", "joyce_twisted_sector"),),
         notes=(
             "Opened 2026-09-14. The corrected half-shift survey computes the "
             "singular locus of every admissible (Z/2)^3 assignment -- family "

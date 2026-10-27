@@ -464,7 +464,9 @@ def consistency_checks() -> List[Dict[str, Any]]:
         )
 
         claims_joyce = resolve("b3_origin") == "joyce_twisted_sector"
-        decidable = table_is_supplied()
+        # The table fork is read only on the branch that claims the route
+        # (its gate is b3_origin = joyce_twisted_sector).
+        decidable = table_is_supplied() if claims_joyce else False
         ok = (not claims_joyce) or decidable
         checks.append({
             "name": "joyce_branch_is_decidable",
