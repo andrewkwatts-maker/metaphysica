@@ -51,3 +51,12 @@ def test_a_subprocess_writes_its_reads_at_exit(tmp_path):
     # Import-time consumers (b3_seed) read too; the mechanism read is ours.
     assert data["reads"]["dark_energy_mechanism"] == 1
     assert data["closed_gate_reads"] == {}
+
+
+def test_a_reused_pid_does_not_overwrite_earlier_reads(tmp_path):
+    # Windows reuses PIDs within one build; two writes from the same PID
+    # must land in two files, or the merged fork_reads.json loses reads.
+    first = V.write_reads(tmp_path)
+    second = V.write_reads(tmp_path)
+    assert first != second
+    assert len(list(tmp_path.glob("*.json"))) == 2

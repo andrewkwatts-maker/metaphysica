@@ -11,6 +11,7 @@ import atexit
 import hashlib
 import json
 import os
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -242,10 +243,14 @@ def untracked():
 
 
 def write_reads(directory: Any) -> Path:
-    """Write this process's counters to <directory>/<pid>.json."""
+    """Write this process's counters to <directory>/<pid>-<uuid>.json.
+
+    The uuid matters: Windows reuses PIDs within one build, and a bare
+    <pid>.json let a later step overwrite an earlier step's reads.
+    """
     out = Path(directory)
     out.mkdir(parents=True, exist_ok=True)
-    path = out / ("%d.json" % os.getpid())
+    path = out / ("%d-%s.json" % (os.getpid(), uuid.uuid4().hex))
     path.write_text(json.dumps({"reads": reads(),
                                 "closed_gate_reads": closed_gate_reads()},
                                sort_keys=True), encoding="utf-8")
