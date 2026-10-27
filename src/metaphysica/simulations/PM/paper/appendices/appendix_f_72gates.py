@@ -1713,7 +1713,7 @@ class Appendix72Gates(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the gates validation."""
-        return ["geometry.unity_seal"]
+        return ["geometry.unity_seal", *gate_paths.ROW_OF_KEY.values()]
 
     @property
     def output_params(self) -> List[str]:
