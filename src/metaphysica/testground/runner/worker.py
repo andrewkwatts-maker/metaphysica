@@ -42,6 +42,7 @@ from metaphysica.testground.theory import Stage, Theory
 
 __all__ = [
     "COMPLETED",
+    "COMPLETED_WITH_FAILURES",
     "NOT_RUNNABLE",
     "CANCELLED",
     "RUN_LOG_NAME",
@@ -57,6 +58,7 @@ __all__ = [
 PathLike = Union[str, Path]
 
 COMPLETED = "COMPLETED"
+COMPLETED_WITH_FAILURES = "COMPLETED_WITH_FAILURES"
 CANCELLED = "CANCELLED"
 RUN_LOG_NAME = "run_log.json"
 LOG_DIR = "run_logs"
@@ -136,13 +138,19 @@ class RunResult:
         return self.status == COMPLETED
 
     @property
+    def has_rows(self) -> bool:
+        """True when the run wrote its rows (also with failed steps)."""
+        return self.status in (COMPLETED, COMPLETED_WITH_FAILURES)
+
+    @property
     def timed_out(self) -> bool:
         return any(stage.timed_out for stage in self.stages)
 
     @property
     def cacheable(self) -> bool:
         """Only verdicts about the configuration; never timeouts/cancels."""
-        return self.status in (COMPLETED, NOT_RUNNABLE) and not self.timed_out
+        return (self.status in (COMPLETED, COMPLETED_WITH_FAILURES, NOT_RUNNABLE)
+                and not self.timed_out)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -272,10 +280,24 @@ def run_stage(stage: Stage, root: Path, env: Mapping[str, str], index: int = 0,
         stderr_tail=_tail(err_path, tail_chars), **common)
 
 
-def _outcome(stages: List[StageResult]) -> Tuple[str, str]:
+def _wrote_rows(stage: Stage, result: StageResult, root: Path) -> bool:
+    """True for a stage that exited untolerated but, by the theory's own
+    ``rows_written`` test, wrote its rows first (never for a crash to start,
+    a timeout or a cancel)."""
+    if stage.rows_written is None or result.error or result.timed_out             or result.cancelled or result.exit_code is None:
+        return False
+    return bool(stage.rows_written(root))
+
+
+def _outcome(stages: List[StageResult],
+             declared: Sequence[Stage] = (),
+             root: Optional[Path] = None) -> Tuple[str, str]:
     failed = next((s for s in stages if not s.ok), None)
     if failed is None:
         return COMPLETED, ""
+    stage = next((d for d in declared if d.id == failed.id), None)
+    if stage is not None and root is not None             and _wrote_rows(stage, failed, root):
+        return COMPLETED_WITH_FAILURES, failed.failure_reason()
     status = CANCELLED if failed.cancelled else NOT_RUNNABLE
     return status, failed.failure_reason()
 
@@ -312,12 +334,13 @@ def run_full(theory: Theory, cfg: Configuration, root: PathLike,
                        "configuration is not runnable: " + why, [], started)
     env = stage_env(theory, cfg, unset_env)
     stages: List[StageResult] = []
-    for index, stage in enumerate(theory.pipeline.stages()):
+    declared = list(theory.pipeline.stages())
+    for index, stage in enumerate(declared):
         result = run_stage(stage, root, env, index, timeout, cancel, tail_chars)
         stages.append(result)
         if not result.ok:
             break
-    status, reason = _outcome(stages)
+    status, reason = _outcome(stages, declared, root)
     return _finish(theory, cfg, root, status, reason, stages, started)
 
 

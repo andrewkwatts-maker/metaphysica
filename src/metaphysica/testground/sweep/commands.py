@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from metaphysica.testground.audit import to_markdown
 from metaphysica.testground.runner.fingerprint import engine_fingerprint
@@ -18,8 +18,8 @@ from metaphysica.testground.sweep.auditing import build_report, has_findings
 from metaphysica.testground.sweep.execute import check_jobs, run_selections
 from metaphysica.testground.sweep.loading import load_runs
 from metaphysica.testground.sweep.selections import (BASELINE, sweep_forks, compatible_fn, dedupe,
-                                                     joint_selections, label,
-                                                     parse_only, sampled_selections,
+                                                     constrained_singles, joint_selections, label,
+                                                     parse_only, SinglesPlan, sampled_selections,
                                                      single_selections)
 from metaphysica.testground.audit import footprints
 
@@ -79,25 +79,43 @@ def _joint(theory: Any, args: argparse.Namespace, fingerprint: str) -> List[Dict
                             compatible_fn(theory))
 
 
-def plan(theory: Any, args: argparse.Namespace, fingerprint: str) -> List[Dict[str, str]]:
-    """The deviation selections requested (the default run is added by the caller)."""
+def plan_notes(theory: Any, args: argparse.Namespace, fingerprint: str
+               ) -> Tuple[List[Dict[str, str]], SinglesPlan]:
+    """The deviation selections requested, and the singles' repairs and refusals."""
     forks = sweep_forks(theory)
     if not (args.singles or args.joint or args.sample):
         raise ValueError("choose at least one of --singles, --joint K, --sample N")
     sels: List[Dict[str, str]] = []
+    notes = SinglesPlan()
     if args.singles:
-        sels += single_selections(forks, parse_only(args.only, forks))
+        notes = constrained_singles(
+            forks, single_selections(forks, parse_only(args.only, forks)),
+            list(theory.switches.constraints()))
+        sels += notes.selections
     if args.joint:
         sels += _joint(theory, args, fingerprint)
     if args.sample:
         sels += sampled_selections(forks, args.sample, args.seed, compatible_fn(theory))
-    return dedupe(forks, sels)
+    return dedupe(forks, sels), notes
+
+
+def plan(theory: Any, args: argparse.Namespace, fingerprint: str) -> List[Dict[str, str]]:
+    """The deviation selections requested (the default run is added by the caller)."""
+    return plan_notes(theory, args, fingerprint)[0]
+
+
+def _print_notes(notes: SinglesPlan) -> None:
+    for rid, why in sorted(notes.repaired.items()):
+        print("repaired: %s  <- %s" % (rid, why))
+    for opt, why in notes.refused:
+        print("refused: %s -- %s" % (opt, why))
 
 
 def cmd_sweep(args: argparse.Namespace, theory: Any) -> int:
     check_jobs(theory, args.jobs)
     fingerprint = _fingerprint(args)
-    sels = plan(theory, args, fingerprint)
+    sels, notes = plan_notes(theory, args, fingerprint)
+    _print_notes(notes)
     ids = [BASELINE] + [label(s) for s in sels]
     if args.dry_run:
         print("\n".join(ids))
@@ -106,9 +124,12 @@ def cmd_sweep(args: argparse.Namespace, theory: Any) -> int:
     results = run_selections(theory, [{}] + sels, args.runs_dir, fingerprint,
                              jobs=args.jobs, timeout=args.timeout)
     reused = sum(1 for r in results if getattr(r.value, "cached", False))
-    bad = [r for r in results if r.status != "COMPLETED"]
-    print("%d selections: %d run, %d reused, %d not completed"
-          % (len(results), len(results) - reused, reused, len(bad)))
+    partial = [r for r in results if r.status == "COMPLETED_WITH_FAILURES"]
+    bad = [r for r in results if r.status not in ("COMPLETED",
+                                                  "COMPLETED_WITH_FAILURES")]
+    print("%d selections: %d run, %d reused, %d completed with failed steps, "
+          "%d not completed"
+          % (len(results), len(results) - reused, reused, len(partial), len(bad)))
     return 0
 
 

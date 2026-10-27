@@ -70,6 +70,10 @@ class Stage:
     command: Tuple[str, ...]         # argv, run with cwd = the run root
     tolerated_exit_codes: Tuple[int, ...] = (0,)
     timeout_s: Optional[float] = None
+    #: Given the run root, True when the stage wrote its rows even though it
+    #: exited with an untolerated code: the run is then COMPLETED_WITH_FAILURES
+    #: (compared, and listed under the audit's failures) instead of NOT_RUNNABLE.
+    rows_written: Optional[Callable[[Path], bool]] = None
 
 
 @runtime_checkable
@@ -151,6 +155,8 @@ class Theory:
     narrative: Tuple[Dict[str, Any], ...] = field(default_factory=tuple)
     #: Lineage catalogue (YAML, `metaphysica.lineage/1`); None = no lineage.
     lineage: Optional[Path] = None
+    #: True when runs share state (e.g. a shared junction), so they cannot run in parallel.
+    shared_state: bool = False
 
     def fork_ids(self) -> List[str]:
         return list(self.switches.forks())
