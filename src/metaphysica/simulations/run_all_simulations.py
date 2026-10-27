@@ -2453,8 +2453,30 @@ class SimulationRunner:
                 "status": status,
                 "git_commit": git_metadata["commit_hash"],
             }
+            fid = (param_data.get("metadata") or {}).get("derivation_formula")
+            if fid:
+                enriched_params[param_key]["derivation_formula"] = fid
 
+        self._record_chains_and_calibration_checks(enriched_params)
         return enriched_params
+
+    def _record_chains_and_calibration_checks(self, params: Dict[str, Any]) -> None:
+        """Fill derivation_chain from declared formulas; relabel calibration PASSes.
+
+        The chain is the declared formula's input_params (generators.derivation_chain,
+        the rule the parameter ledger also uses). A CALIBRATED/FITTED row scored PASS
+        against the datum it was set from becomes CALIBRATION_CHECK, so it stops
+        counting among the passes.
+        """
+        from metaphysica.generators.derivation_chain import declared_chain
+        from metaphysica.generators.parameter_ledger import calibration_check_names, CALIBRATION_CHECK
+        formulas = self.registry.export_formulas()
+        for name, row in params.items():
+            chain = declared_chain(name, row.get("derivation_formula"), formulas)
+            if chain:
+                row["derivation_chain"] = chain
+        for name in calibration_check_names(params, formulas):
+            params[name]["validation_status"] = CALIBRATION_CHECK
 
     def _export_to_json(self, validation_report: Dict[str, Any]) -> Dict[str, Any]:
         """
