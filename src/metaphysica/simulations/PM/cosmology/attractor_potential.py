@@ -48,6 +48,7 @@ import numpy as np
 from dataclasses import dataclass
 from datetime import datetime
 
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
@@ -509,6 +510,8 @@ class AttractorPotentialV18(SimulationBase):
             ),
             Formula(
                 id="w0-attractor-v18",
+                value=float(-1.0 + 1.0 / int(_REG.elder_kads)),
+                **closed_form(('add', -1, ('div', 1, 'b3'))),
                 label="(5.6)",
                 latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{int(_REG.elder_kads)}}} = -\frac{{{int(_REG.elder_kads) - 1}}}{{{int(_REG.elder_kads)}}} \approx {-1.0 + 1.0 / int(_REG.elder_kads):.4f}",
                 plain_text=f"w_0 = -1 + 1/b3 = -1 + 1/{int(_REG.elder_kads)} = -{int(_REG.elder_kads) - 1}/{int(_REG.elder_kads)} ~ {-1.0 + 1.0 / int(_REG.elder_kads):.4f}",

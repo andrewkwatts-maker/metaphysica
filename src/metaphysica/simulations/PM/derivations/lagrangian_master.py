@@ -1458,6 +1458,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="vielbein-metric-relation",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.1)",
             latex=r"g_{\mu\nu} = e_a^\mu e_b^\nu \eta^{ab}",
             plain_text="g_munu = e_a^mu e_b^nu eta^ab",
@@ -1484,6 +1485,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="tetrad-postulate",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.2)",
             latex=r"\partial_\mu e_a^\nu + \Gamma^\nu_{\mu\lambda} e_a^\lambda - \omega_\mu{}^b{}_a e_b^\nu = 0",
             plain_text="d_mu e_a^nu + Gamma^nu_mulambda e_a^lambda - omega_mu^b_a e_b^nu = 0",
@@ -1514,6 +1516,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="spin-connection-definition",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.3)",
             latex=r"\omega_\mu{}^{ab} = e^{a\nu}\left(\partial_\mu e_\nu^b + \Gamma^\lambda_{\mu\nu} e_\lambda^b\right)",
             plain_text="omega_mu^ab = e^{a nu}(d_mu e_nu^b + Gamma^lambda_munu e_lambda^b)",
@@ -1539,6 +1542,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="riemann-from-spin-connection",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.4)",
             latex=r"R^{ab}_{\mu\nu} = \partial_\mu\omega_\nu^{ab} - \partial_\nu\omega_\mu^{ab} + \omega_\mu^{ac}\omega_\nu{}^b{}_c - \omega_\nu^{ac}\omega_\mu{}^b{}_c",
             plain_text="R^ab_munu = d_mu omega_nu^ab - d_nu omega_mu^ab + omega_mu^ac omega_nu^b_c - omega_nu^ac omega_mu^b_c",
@@ -1573,6 +1577,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="master-action-26d-full",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.5)",
             latex=formula_latex("master-action-26d-full"),
             plain_text="S_26 = integral d^26x sqrt|g_26| [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
@@ -1603,6 +1608,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="einstein-hilbert-26d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.6)",
             latex=r"S_{EH} = \frac{M_*^{24}}{2}\int d^{26}x\,\sqrt{|g_{26}|}\,R_{26} = \frac{M_*^{24}}{2}\int d^{26}x\,e\,e_a^\mu e_b^\nu R^{ab}_{\mu\nu}",
             plain_text="S_EH = M*^24/2 integral d^26x sqrt|g_26| R_26 = M*^24/2 integral d^26x e e_a^mu e_b^nu R^ab_munu",
@@ -1628,6 +1634,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="yang-mills-26d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.7)",
             latex=r"S_{YM} = -\frac{1}{4g^2}\int d^{26}x\,\sqrt{|g_{26}|}\,\text{Tr}(F_{MN}F^{MN})",
             plain_text="S_YM = -1/4g^2 integral d^26x sqrt|g_26| Tr(F_MN F^MN)",
@@ -1658,6 +1665,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="dirac-26d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.8)",
             latex=r"S_{Dirac} = \int d^{26}x\,\sqrt{|g_{26}|}\,\bar{\Psi}\Gamma^M D_M\Psi",
             plain_text="S_Dirac = integral d^26x sqrt|g_26| Psi_bar Gamma^M D_M Psi",
@@ -1688,6 +1696,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="pneuma-coupling",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.9)",
             latex=r"S_{Pneuma} = \int d^{26}x\,\sqrt{|g_{26}|}\left[-K_{T\bar{T}}|\partial_M T|^2 - V(T,\phi) + \xi R_{26}\phi^2\right]",
             plain_text="S_Pneuma = integral d^26x sqrt|g_26| [-K |dT|^2 - V(T,phi) + xi R_26 phi^2]",
@@ -1725,6 +1734,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="euler-lagrange-gravity",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.10)",
             latex=r"\frac{\delta S}{\delta g^{\mu\nu}} = \sqrt{-g}\left(R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R - \frac{8\pi G_{26}}{c^4}T_{\mu\nu}\right) = 0",
             plain_text="delta S / delta g^munu = sqrt(-g)(R_munu - 1/2 g_munu R - 8 pi G_26 T_munu) = 0",
@@ -1752,6 +1762,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="einstein-equations-26d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.11)",
             latex=r"G_{\mu\nu} \equiv R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = \frac{8\pi G_{26}}{c^4}T_{\mu\nu}",
             plain_text="G_munu = R_munu - 1/2 g_munu R = 8 pi G_26 T_munu",
@@ -1781,6 +1792,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="variation-metric",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.12)",
             latex=r"\delta\sqrt{-g} = -\frac{1}{2}\sqrt{-g}\,g_{\mu\nu}\delta g^{\mu\nu}, \quad \delta R = R_{\mu\nu}\delta g^{\mu\nu} + g^{\mu\nu}\delta R_{\mu\nu}",
             plain_text="delta sqrt(-g) = -1/2 sqrt(-g) g_munu delta g^munu, delta R = R_munu delta g^munu + ...",
@@ -1814,6 +1826,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="sp2r-constraint-xp",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.13)",
             latex=r"X^M P_M = 0 \quad \text{(orthogonality constraint)}",
             plain_text="X^M P_M = 0 (orthogonality constraint)",
@@ -1842,6 +1855,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="sp2r-constraint-x2",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.14)",
             latex=r"X^M X_M = \tau^2 \quad \text{(conformal gauge)}",
             plain_text="X^M X_M = tau^2 (conformal gauge)",
@@ -1874,6 +1888,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="sp2r-gauge-fixed-action",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.15)",
             latex=r"S_{gf} = \int d^{26}x\left[\lambda(X\cdot P) + \zeta(X^2 - \tau^2)\right]",
             plain_text="S_gf = integral d^26x [lambda(X.P) + zeta(X^2 - tau^2)]",
@@ -1943,6 +1958,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="v22-metric-12-pair",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.17)",
             latex=r"ds^2 = -dt^2 + \sum_{i=1}^{12} \left(dy_{1i}^2 + dy_{2i}^2\right)",
             plain_text="ds² = -dt² + Σᵢ₌₁¹² (dy₁ᵢ² + dy₂ᵢ²)",
@@ -1976,6 +1992,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="v22-bridge-lagrangian",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.18)",
             latex=r"\mathcal{L}_{\text{bridge}} = \sum_{i=1}^{12} \left[(\partial y_{1i})^2 + (\partial y_{2i})^2\right]",
             plain_text="L_bridge = Σᵢ₌₁¹² [(∂y₁ᵢ)² + (∂y₂ᵢ)²]",
@@ -2037,6 +2054,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="v22-consciousness-io-gate",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.20)",
             latex=r"B_i^{2,0}: \begin{cases} y_{1i} & \text{input (sensory/perceptual)} \\ y_{2i} & \text{output (motor/cognitive)} \end{cases}",
             plain_text="B_i^{2,0}: y₁ᵢ = input, y₂ᵢ = output (consciousness I/O gate)",
@@ -2143,6 +2161,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="g2-holonomy-constraint",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.18)",
             latex=r"\text{Hol}(g_X) \subseteq G_2 \Leftrightarrow \exists\eta: \nabla\eta = 0",
             plain_text="Hol(g_X) subset G2 iff exists parallel spinor eta: nabla eta = 0",
@@ -2170,6 +2189,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="g2-three-form",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.19)",
             latex=r"\varphi = dx^{123} + dx^{145} + dx^{167} + dx^{246} - dx^{257} - dx^{347} - dx^{356}",
             plain_text="phi = dx^123 + dx^145 + dx^167 + dx^246 - dx^257 - dx^347 - dx^356",
@@ -2200,6 +2220,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="kk-ansatz-26-13",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.20)",
             latex=r"ds^2_{26} = e^{2A(y)}ds^2_{13} + g_{mn}(y)dy^m dy^n",
             plain_text="ds^2_26 = e^{2A(y)} ds^2_13 + g_mn dy^m dy^n",
@@ -2230,6 +2251,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="kk-ansatz-13-7",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.21)",
             latex=r"ds^2_{13} = e^{2B(z)}ds^2_{6} + h_{ab}(z)dz^a dz^b",
             plain_text="ds^2_13 = e^{2B(z)} ds^2_6 + h_ab dz^a dz^b",
@@ -2269,6 +2291,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="kk-ansatz-7-4",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.22)",
             latex=r"ds^2_6 = e^{2C(w)}ds^2_4 + h_{ij}(w)dw^i dw^j",
             plain_text="ds^2_6 = e^{2C(w)} ds^2_4 + h_ij dw^i dw^j",
@@ -2300,6 +2323,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="gauge-from-kk",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.23)",
             latex=r"\frac{1}{g_4^2} = \frac{\text{Vol}(X)}{g_D^2}",
             plain_text="1/g_4^2 = Vol(X) / g_D^2",
@@ -2376,6 +2400,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="racetrack-moduli-potential",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(L.R1)",
             latex=(
                 r"V(\{T_i\}) = e^{K} \left( \sum_{i=1}^{4} \left| \frac{\partial W}{\partial T_i} "
@@ -2426,6 +2451,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="torsion-correction-term",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(L.R2)",
             latex=(
                 r"\delta\mathcal{L}_{\text{torsion}} = \frac{1}{2\kappa^2} T^{abc} T_{abc} "
@@ -2470,6 +2496,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="spectral-residue-dressing",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(L.R3)",
             latex=(
                 r"\mathcal{R}_n = \exp\!\left(-\frac{\lambda_n}{b_3}\right), \quad "
@@ -2521,6 +2548,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="master-action-two-layer-or",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.G1)",
             latex=r"S = \int d^{26}x \sqrt{|G|} \Big[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
             plain_text="S = integral d^26x sqrt|G| [ (M_*^24/2) R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
@@ -2557,6 +2585,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="reduced-lagrangian-13d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.G2)",
             latex=r"S_{13D} = \int \sqrt{-g_{13}} \left[ \frac{M_{13}^{11}}{2} R_{13} + \bar{\Psi}_P i \gamma^m (\partial_m + T_\omega^m) \Psi_P + V_{\text{face}}^{(f)\text{(local OR)}} \right]",
             plain_text="S_13D = integral sqrt(-g_13) [ (M_13^11/2) R_13 + Psi_P_bar i gamma^m (d_m + T_omega^m) Psi_P + V_face^(f)(local OR) ]",
@@ -2588,6 +2617,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="reduced-lagrangian-4d",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.G3)",
             latex=r"\mathscr{L}_{4D} = -\frac{M_{\text{Pl}}^2}{2} R_4 + \bar{\chi} i \slashed{D} \chi + |D_\mu \phi|^2 - V(\phi) - \frac{1}{4} F_{\mu\nu}^a F^{a\mu\nu} + y_f \bar{\psi} \phi \psi + \Lambda",
             plain_text="L_4D = -(M_Pl^2/2) R_4 + chi_bar i D_slash chi + |D_mu phi|^2 - V(phi) - (1/4) F_munu^a F^a_munu + y_f psi_bar phi psi + Lambda",
@@ -2632,6 +2662,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="bulk-action-26d-v23",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(2.1.H1)",
             latex=(
                 r"S_{26} = \int d^{26}x \, \sqrt{|G_{26}|} \left[ "

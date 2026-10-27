@@ -117,6 +117,7 @@ from metaphysica.simulations.base import (
     PMRegistry,
     MetadataBuilder,
 )
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
@@ -554,6 +555,14 @@ class SpeedOfLightV17(SimulationBase):
         return [
             Formula(
                 id="speed-of-light-derivation",
+                value=float(c_derived),
+                **closed_form(
+                    ('mul', ('div', 18, 'b3'),
+                     ('mul', ('add', 10, ('div', 'b3', 10)),
+                      ('mul', ('mul', ('div', 288, 163), ('div', 153, 135)),
+                       ('mul', ('div', ('sub', 288, 'b3'), ('add', 163, 1)),
+                        ('mul', 10000000, ('add', 1, ('div', 1, 28800))))))),
+                ),
                 label="(5.60)",
                 latex=r"c = \frac{\Delta_{\text{eff}}}{b_3} \cdot \mathcal{S}(Z_6) \cdot \frac{N_{\text{root}}}{N_{\text{bdy}}} \cdot \frac{N_{\text{shadow}}}{N_{\text{vis}}} \cdot \frac{N_{\text{root}} - b_3}{N_{\text{bdy}} + 1} \cdot 10^7 \cdot P_{3D}",
                 plain_text="c = (Δ_eff/b₃) · S(Z₆) · (N_root/N_bdy)(N_shadow/N_vis) · (N_root-b₃)/(N_bdy+1) · 10⁷ · P_3D",
@@ -648,6 +657,8 @@ class SpeedOfLightV17(SimulationBase):
             ),
             Formula(
                 id="harmonic-cycle-fraction",
+                value=float(geo_ratio),
+                **closed_form(('div', 18, 'b3')),
                 label="(5.60a)",
                 latex=r"C_{\text{geo}} = \frac{\Delta_{\text{eff}}}{b_3} = \frac{b_3 - 6}{b_3} = \frac{18}{24} = \frac{3}{4}",
                 plain_text="C_geo = Δ_eff/b₃ = 18/24 = 3/4",
@@ -688,6 +699,8 @@ class SpeedOfLightV17(SimulationBase):
             ),
             Formula(
                 id="bulk-metric-ratio",
+                value=float(bulk_visc),
+                **closed_form(('mul', ('div', 288, 163), ('div', 153, 135))),
                 label="(5.60b)",
                 latex=r"B_v = \frac{N_{\text{root}}}{N_{\text{bdy}}} \cdot \frac{N_{\text{shadow}}}{N_{\text{vis}}} = \frac{288}{163} \cdot \frac{153}{135} = 2.00245",
                 plain_text="B_v = (288/163)·(153/135) = 2.00245",
@@ -728,6 +741,8 @@ class SpeedOfLightV17(SimulationBase):
             ),
             Formula(
                 id="metric-conversion",
+                value=float(gnostic_conv),
+                **closed_form(('div', ('sub', 288, 'b3'), ('add', 163, 1))),
                 label="(5.60c)",
                 latex=r"\chi_{\text{gc}} = \frac{N_{\text{root}} - b_3}{N_{\text{bdy}} + 1} = \frac{264}{164} = 1.60976",
                 plain_text="χ_gc = (288-24)/(163+1) = 264/164 = 1.60976",
@@ -765,6 +780,8 @@ class SpeedOfLightV17(SimulationBase):
             ),
             Formula(
                 id="pneuma-tensioner-z6",
+                value=float(_REG.z6_pneuma),
+                **closed_form(('div', 10, 'b3')),
                 label="(5.61)",
                 latex=r"Z_6 = \frac{D_{10}}{b_3} = \frac{10}{24} = 0.41\overline{6}",
                 plain_text="Z₆ = D₁₀/b₃ = 10/24 = 0.4166...",
@@ -811,6 +828,8 @@ class SpeedOfLightV17(SimulationBase):
             ),
             Formula(
                 id="decad3-projection",
+                value=float(spatial_proj),
+                **closed_form(('add', 1, ('div', 1, 28800))),
                 label="(5.62)",
                 latex=r"P_{3D} = 1 + \frac{1}{288 \times D_{10}^2} = 1 + \frac{1}{28800} = 1.0000347222",
                 plain_text=f"P_3D = 1 + 1/(288 × D₁₀²) = 1 + 1/28800 = {spatial_proj:.10f}",

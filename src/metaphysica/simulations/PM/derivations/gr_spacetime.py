@@ -856,6 +856,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # only at the action level via gr-newton-from-g2-v19.
         formulas.append(Formula(
             id="gr-metric-from-vielbein-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.1)",
             latex=r"g_{\mu\nu} = \eta_{AB} e^A_\mu e^B_\nu",
             plain_text="g_munu = eta_AB e^A_mu e^B_nu",
@@ -894,6 +895,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # per §T2.1.C.
         formulas.append(Formula(
             id="gr-vielbein-determinant-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.2)",
             latex=r"\sqrt{-g} = \det(e^A_\mu) = e",
             plain_text="sqrt(-g) = det(e^A_mu) = e",
@@ -928,6 +930,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-tetrad-postulate-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.3)",
             latex=r"D_\mu e^A_\nu = \partial_\mu e^A_\nu + \omega^A{}_{B\mu} e^B_\nu - \Gamma^\rho_{\mu\nu} e^A_\rho = 0",
             plain_text="D_mu e^A_nu = d_mu e^A_nu + omega^A_Bmu e^B_nu - Gamma^rho_munu e^A_rho = 0",
@@ -966,6 +969,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-spin-connection-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.4)",
             latex=r"\omega^{AB}_\mu = e^{A\nu}\left(\partial_\mu e^B_\nu + \Gamma^\lambda_{\mu\nu} e^B_\lambda\right)",
             plain_text="omega^AB_mu = e^{A nu}(d_mu e^B_nu + Gamma^lambda_munu e^B_lambda)",
@@ -1001,6 +1005,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-torsion-free-condition-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.5)",
             latex=r"T^A_{\mu\nu} = D_{[\mu} e^A_{\nu]} = \partial_{[\mu} e^A_{\nu]} + \omega^A{}_{B[\mu} e^B_{\nu]} = 0",
             plain_text="T^A_munu = D_[mu e^A_nu] = d_[mu e^A_nu] + omega^A_B[mu e^B_nu] = 0",
@@ -1039,6 +1044,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-metricity-condition-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.6)",
             latex=r"\nabla_\mu g_{\nu\rho} = 0 \quad \Leftrightarrow \quad D_\mu \eta_{AB} = 0",
             plain_text="nabla_mu g_nu rho = 0  <=>  D_mu eta_AB = 0",
@@ -1078,6 +1084,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-christoffel-symbols-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.7)",
             latex=r"\Gamma^\rho_{\mu\nu} = \frac{1}{2}g^{\rho\sigma}\left(\partial_\mu g_{\sigma\nu} + \partial_\nu g_{\mu\sigma} - \partial_\sigma g_{\mu\nu}\right)",
             plain_text="Gamma^rho_munu = (1/2) g^rho sigma (d_mu g_sigma nu + d_nu g_mu sigma - d_sigma g_munu)",
@@ -1118,6 +1125,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # identity; no b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-riemann-tensor-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.8)",
             latex=r"R^\rho{}_{\sigma\mu\nu} = \partial_\mu\Gamma^\rho_{\nu\sigma} - \partial_\nu\Gamma^\rho_{\mu\sigma} + \Gamma^\rho_{\mu\lambda}\Gamma^\lambda_{\nu\sigma} - \Gamma^\rho_{\nu\lambda}\Gamma^\lambda_{\mu\sigma}",
             plain_text="R^rho_sigma mu nu = d_mu Gamma^rho_nu sigma - d_nu Gamma^rho_mu sigma + Gamma^rho_mu lambda Gamma^lambda_nu sigma - Gamma^rho_nu lambda Gamma^lambda_mu sigma",
@@ -1157,6 +1165,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-ricci-tensor-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.9)",
             latex=r"R_{\mu\nu} = R^\rho{}_{\mu\rho\nu} = \partial_\rho\Gamma^\rho_{\nu\mu} - \partial_\nu\Gamma^\rho_{\rho\mu} + \Gamma^\rho_{\rho\lambda}\Gamma^\lambda_{\nu\mu} - \Gamma^\rho_{\nu\lambda}\Gamma^\lambda_{\rho\mu}",
             plain_text="R_munu = R^rho_mu rho nu (contraction of Riemann tensor)",
@@ -1190,6 +1199,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # GR identity; no b3 dependence. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-ricci-scalar-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.10)",
             latex=r"R = g^{\mu\nu}R_{\mu\nu}",
             plain_text="R = g^munu R_munu (trace of Ricci tensor)",
@@ -1230,6 +1240,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # and gr-planck-from-compactification-v19. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-hilbert-4d-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.11)",
             latex=r"S_{EH} = \frac{1}{16\pi G}\int d^4x\,\sqrt{-g}\,R = \frac{M_{Pl}^2}{2}\int d^4x\,\sqrt{-g}\,R",
             plain_text="S_EH = (1/16 pi G) integral d^4x sqrt(-g) R = (M_Pl^2/2) integral d^4x sqrt(-g) R",
@@ -1272,6 +1283,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-tensor-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.12)",
             latex=r"G_{\mu\nu} \equiv R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R",
             plain_text="G_munu = R_munu - (1/2) g_munu R (Einstein tensor)",
@@ -1309,6 +1321,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
         # in gr-newton-from-g2-v19. Bucket (a) per §T2.1.C.
         formulas.append(Formula(
             id="gr-einstein-field-equations-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.13)",
             latex=r"G_{\mu\nu} = R_{\mu\nu} - \frac{1}{2}g_{\mu\nu}R = \frac{8\pi G}{c^4}T_{\mu\nu}",
             plain_text="G_munu = 8 pi G T_munu (Einstein field equations)",
@@ -1350,6 +1363,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
 
         formulas.append(Formula(
             id="gr-newton-from-g2-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.14)",
             latex=r"G_N = \frac{1}{M_{Pl}^2} = \frac{1}{M_{26D}^{24} \cdot \text{Vol}(X_{22})}",
             plain_text="G_N = 1/M_Pl^2 = 1/(M_26D^24 * Vol(X_22))",
@@ -1384,6 +1398,7 @@ class GRSpacetimeDerivationsV19(SimulationBase):
 
         formulas.append(Formula(
             id="gr-planck-from-compactification-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.2.15)",
             latex=r"M_{Pl} = M_{26D} \cdot \left(\text{Vol}(G_2)\right)^{-1/5} \cdot f(\chi_{eff}, b_3)",
             plain_text="M_Pl = M_26D * (Vol_G2)^(-1/5) * f(chi_eff, b3)",

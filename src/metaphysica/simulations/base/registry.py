@@ -1380,6 +1380,13 @@ class PMRegistry:
         if triple_abs is not None:
             formula.triple_abs = triple_abs
 
+        non_numeric = getattr(formula, "non_numeric", "") or ""
+        if non_numeric and getattr(formula, "value", None) is not None:
+            raise ValueError(
+                "add_formula: %r has a value, so it cannot be non_numeric (%s)"
+                % (formula.id, non_numeric)
+            )
+
         # Triple-track classification + cross-check.
         has_arithma = getattr(formula, "arithma", None) is not None
         has_eml = getattr(formula, "eml", None) is not None
@@ -1659,6 +1666,7 @@ class PMRegistry:
                 'arithma_compact': getattr(f, 'arithma_compact', None),
                 'eml_tree_compact': getattr(f, 'eml_tree_compact', None),
                 'triple_status': getattr(f, 'triple_status', ''),
+                'non_numeric': getattr(f, 'non_numeric', ''),
                 'value': getattr(f, 'value', None),
                 # Formula.references exists in the schema but was never
                 # populated by any simulation, which is why all 230
