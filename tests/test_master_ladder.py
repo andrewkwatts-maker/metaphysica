@@ -148,3 +148,20 @@ def test_g2_zero_modes_and_gauge_source_are_reported_not_patched():
     assert "expected 43 components, child has None" in six["zero_modes:scalar"]["detail"]
     gs = six["nonabelian_gauge_source"]
     assert not gs["holds"] and "SU(2)^12" in gs["detail"] and "A4:L_SM" in gs["detail"]
+
+
+MIN_ESTABLISHED_REPRODUCED = 29  # ratchet: only rises. Recorded 2026-10-27 (E1).
+
+
+def test_established_ratchet_and_blockers_name_open_terms():
+    rep = ML.report()
+    counts = rep["established_counts"]
+    assert counts["REPRODUCED"] >= MIN_ESTABLISHED_REPRODUCED
+    assert counts["FAILS"] == 0  # a FAILS on PM is a finding: report it, do not retune
+    for action, checks in rep["established"].items():
+        for cid, v in checks.items():
+            if cid == "_skipped" or v["verdict"] != "BLOCKED":
+                continue
+            assert v["blocked_on"], (action, cid)
+            for key, _ref in v["blocked_on"]:
+                assert key in S.OPEN_TERMS, (action, cid, key)

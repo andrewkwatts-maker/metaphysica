@@ -156,18 +156,63 @@ def _spinor_counts() -> Dict[str, Any]:
             for k, s in sigs.items()}
 
 
+# gauge and Higgs physics enters the PM ladder only through this OPEN term (D-011)
+ROLE_OPEN = {"vector_kinetic": "A4:L_SM", "gauge_sm": "A4:L_SM", "scalar_potential": "A4:L_SM"}
+_ACTION_CACHE: Dict[Any, Any] = {}
+
+
+def _action_verdicts(action: Action, refs: Mapping[str, str]) -> list:
+    """Verdicts of the per-action catalogue; cached because the sympy work is heavy."""
+    from metaphysica.actions import established as E
+    from metaphysica.actions import established_catalogue as C
+
+    if action not in _ACTION_CACHE:
+        _ACTION_CACHE[action] = E.run(action, C.action_checks(), refs, ROLE_OPEN)
+    return _ACTION_CACHE[action]
+
+
+def established(ladder: Ladder) -> Dict[str, Any]:
+    """Per action, per established-physics check: REPRODUCED, FAILS or BLOCKED."""
+    from metaphysica.actions import established as E
+    from metaphysica.actions import established_catalogue as C
+    from metaphysica.actions.established_matter import reduction_checks
+
+    refs = {k: v[0] for k, v in S.OPEN_TERMS.items()}
+    out: Dict[str, Any] = {}
+    for step in ladder.steps:
+        verdicts = list(_action_verdicts(step.action, refs))
+        if step.reduction is not None:
+            verdicts += E.run(step.action, reduction_checks(step.reduction), refs, ROLE_OPEN)
+        out[step.action.id] = {v.id: v.as_dict() for v in verdicts}
+        out[step.action.id]["_skipped"] = sorted(
+            c.id for c in C.action_checks()
+            if c.max_dim is not None and step.action.dim > c.max_dim)
+    return out
+
+
+def established_counts(est: Mapping[str, Any]) -> Dict[str, int]:
+    counts = {"REPRODUCED": 0, "FAILS": 0, "BLOCKED": 0}
+    for checks in est.values():
+        for k, v in checks.items():
+            if k != "_skipped":
+                counts[v["verdict"]] += 1
+    return counts
+
+
 def report(option_overrides: Optional[Mapping[int, Any]] = None) -> Dict[str, Any]:
     """Ladder report plus owner items used, OPEN terms and spinor counts (JSON-ready)."""
     opts = resolve_options(option_overrides)
     ladder = build_ladder(opts)
     rep = ladder.report()
     open_terms = _open_terms(ladder)
+    est = established(ladder)
     failing = sorted(c["id"] for s in rep["steps"] for c in s["checks"] if not c["holds"])
     return {"ladder": rep,
             "owner_items_used": {str(k): opts[k] for k in (2, 4, 5, 11)},
             "owner_items_unresolved": _unresolved(opts, open_terms),
             "open_terms": open_terms, "failing_checks": failing,
             "counts": {"open_terms": len(open_terms), "failing_checks": len(failing)},
+            "established": est, "established_counts": established_counts(est),
             "spinors": _spinor_counts(), "item_11": item_11()}
 
 
