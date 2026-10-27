@@ -254,7 +254,7 @@ class PneumaMechanismV16(SimulationBase):
         if registry.has_param("topology.mephorash_chi"):
             chi_eff = registry.get_param("topology.mephorash_chi")
         else:
-            chi_eff = 144  # fallback: the K3 reading 48 n at n = 3 (formerly attributed to an off-path 'TCS #187')
+            chi_eff = 144  # H08 PINNED (unreachable fallback, chi_eff_route k3_reading): the K3 reading 48 n at n = 3 (formerly attributed to an off-path 'TCS #187')
 
         if registry.has_param("topology.elder_kads"):
             b3 = registry.get_param("topology.elder_kads")

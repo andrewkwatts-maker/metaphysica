@@ -69,7 +69,7 @@ class AdversarialAxiomTester:
         # OFF-PATH (b3_seed = seed_24): fixed at the off-path seed b_3 = 24
         # (the adopted b_3 is 43); it normalises the bridge energies below.
         self.b3 = 24
-        self.chi_eff = 144  # Total: 2 × χ_eff_sector = 2 × 72 (the K3 reading, 48 n at n = 3)
+        self.chi_eff = self.registry.chi_eff_total  # H08: total, follows chi_eff_route
 
         # Load 125-residue registry from theory
         self.residue_registry = self._load_registry()

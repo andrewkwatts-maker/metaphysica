@@ -1154,8 +1154,11 @@ class FormulasRegistry:
         #
         # Reference: Acharya-Witten 2001 (arXiv:hep-th/0109152)
         # LANDSCAPE SELECTION: chi_eff_sector = 72 yields n_gen = 3 via index theorem
-        self._chi_eff = 72           # Per-sector effective Euler characteristic
-        self._chi_eff_total = 144    # Total manifold: 2 * chi_eff_sector
+        # H07: the value follows the chi_eff_route fork (144 on every option
+        # but the demoted seed_dependent one, so the default build is unchanged).
+        self._chi_eff_total = self._chi_eff_from_route(self._b3)
+        self._chi_eff = (self._chi_eff_total // 2 if isinstance(self._chi_eff_total, int)
+                         else self._chi_eff_total / 2.0)   # Per-sector: total / 2
 
         # Shadow and Christ are the ONLY closure seeds
         self._shadow_sector = 135        # Shadow Gates
@@ -1445,6 +1448,22 @@ class FormulasRegistry:
     def b3(self) -> int:
         """Third Betti number of G2 manifold. LEGACY ALIAS for elder_vessels."""
         return self.elder_vessels
+
+    @staticmethod
+    def _chi_eff_from_route(b3: int):
+        """chi_eff_total under the resolved `chi_eff_route` (H07).
+
+        Integral values stay ints so the default build is bit-identical.
+        """
+        try:
+            from metaphysica.simulations.core.variants.selection import resolve
+            from metaphysica.simulations.PM.geometry.chi_eff_branches import (
+                registry_chi_eff_total,
+            )
+        except ImportError:
+            return 144  # import cycle only; matches the adopted k3_reading
+        value = registry_chi_eff_total(resolve("chi_eff_route"), b3)
+        return int(value) if float(value).is_integer() else value
 
     @property
     def chi_eff(self) -> int:

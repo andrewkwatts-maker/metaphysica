@@ -503,7 +503,9 @@ class AsymptoticSafetySimulation(SimulationBase):
 
     def get_parameters(self) -> List[Parameter]:
         b3 = 24
-        chi_eff = 144
+        # H08: chi_eff_total follows the chi_eff_route fork via the registry.
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+        chi_eff = get_registry().chi_eff_total
         lambda_6 = math.exp(-chi_eff / b3)
         enhancement = 1.0 / (lambda_6 ** 2)
 

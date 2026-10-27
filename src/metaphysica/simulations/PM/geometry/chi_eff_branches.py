@@ -67,6 +67,7 @@ __all__ = [
     "consumers",
     "route_c_is_the_b3_over_8_route",
     "branches_report",
+    "registry_chi_eff_total",
 ]
 
 #: n_gen = chi_eff / 48, the formula every branch is being costed against.
@@ -120,6 +121,27 @@ def chi_eff_on_branch(branch_id: str, b3: int) -> float:
             "unknown chi_eff branch %r; declared: %s"
             % (branch_id, sorted(BRANCHES)))
     return float(BRANCHES[branch_id]["fn"](b3))
+
+
+#: Which executable branch each `chi_eff_route` option stands for. The K3
+#: reading is 48 n at the adopted n = 3 (a constant 144 here); `seed_dependent`
+#: is demoted and has two sub-routes, so the registry follows route B (b_3^2/4),
+#: the one its own comment cites.
+_ROUTE_TO_BRANCH: Dict[str, str] = {
+    "k3_reading": "constant_144",
+    "unruled": "constant_144",
+    "constant_144": "constant_144",
+    "seed_dependent": "b3_squared_over_4",
+}
+
+
+def registry_chi_eff_total(route: str, b3: int) -> float:
+    """chi_eff_total that FormulasRegistry holds under a `chi_eff_route` option."""
+    if route not in _ROUTE_TO_BRANCH:
+        raise ValueError(
+            "no chi_eff branch for route %r; declared: %s"
+            % (route, sorted(_ROUTE_TO_BRANCH)))
+    return chi_eff_on_branch(_ROUTE_TO_BRANCH[route], b3)
 
 
 def downstream_values(branch_id: str, b3: int) -> Dict[str, Any]:

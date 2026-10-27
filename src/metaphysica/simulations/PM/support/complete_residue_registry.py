@@ -423,7 +423,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #     registered as the spectral cross-check.
     v_higgs = 246.22  # GeV
     M_GUT = 2e16  # GeV (hardcoded pending the register 2.2 GUT-scale ruling)
-    chi_eff = 144
+    # H08: chi_eff_total follows the chi_eff_route fork via the registry.
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+    chi_eff = get_registry().chi_eff_total
     m1_predicted = k_gimel * (v_higgs**2 / M_GUT) / np.sqrt(chi_eff) * 1e9  # eV
 
     # Mass eigenvalues (normal hierarchy)

@@ -312,7 +312,7 @@ class HiggsBranePartitionSimulation(SimulationBase):
         """
         # G2 topological inputs
         b3 = int(_REG.elder_kads)   # Betti number, READ from the adopted seed
-        chi_eff = 144            # Euler characteristic
+        chi_eff = _REG.chi_eff_total  # H08: follows the chi_eff_route fork
         kappa_sampler = 2        # Sampler coupling
         T_min = 37.85            # Racetrack-stabilized modulus
 

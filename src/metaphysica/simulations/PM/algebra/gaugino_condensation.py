@@ -84,6 +84,14 @@ from metaphysica.simulations.base import (
 )
 
 
+def _resolved_n_gen() -> float:
+    """Generation count under the resolved n_gen_source (3 on the adopted path)."""
+    from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+
+    value = n_gen_report()["n_gen"]
+    return int(round(value)) if abs(value - round(value)) < 1e-12 else value
+
+
 class GauginoCondensationSimulation(SimulationBase):
     """
     Hidden E₈' gaugino condensation with N₁/N₂ racetrack -- CALIBRATED; Y₇ has no racetrack.
@@ -252,7 +260,7 @@ class GauginoCondensationSimulation(SimulationBase):
         # The formula text is written at the off-path seed b_3 = 24
         # (N1 = 24, N2 = 23); run() follows the seed in force.
         N1, N2 = 24, 23
-        n_gen = 3
+        n_gen = _resolved_n_gen()  # H26: follows n_gen_source (N1 = b3 waits on decision 7)
         W1 = math.exp(-2.0 * math.pi / N1)
         W2 = math.exp(-2.0 * math.pi / N2)
         leff = W1
@@ -672,7 +680,7 @@ class GauginoCondensationSimulation(SimulationBase):
         # calibrations.
         N1 = 24
         N2 = 23
-        n_gen = 3
+        n_gen = _resolved_n_gen()  # H26: follows n_gen_source (N1 = b3 waits on decision 7)
         W1 = math.exp(-2 * math.pi / N1)
         W2 = math.exp(-2 * math.pi / N2)
         leff = W1
