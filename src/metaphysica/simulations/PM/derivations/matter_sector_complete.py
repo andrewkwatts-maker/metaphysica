@@ -83,6 +83,8 @@ getcontext().prec = 50
 # Import FormulasRegistry for Single Source of Truth (SSoT)
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 _REG = get_registry()
+import math
+from metaphysica.simulations.core.triple_helpers import closed_form
 
 # =============================================================================
 # PHYSICAL CONSTANTS AND GEOMETRIC PARAMETERS
@@ -834,6 +836,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="higgs-potential-moduli-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(3.4.1)",
             latex=(
                 r"V(H) = -\mu^2|H|^2 + \lambda|H|^4, \quad "
@@ -972,6 +975,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="higgs-doublet-emergence-v19",
+            non_numeric='structural statement: a parity, texture or ordering assignment with no single number to check',
             label="(3.4.5)",
             latex=(
                 r"H = \left(\begin{smallmatrix} H^+ \\ H^0 \end{smallmatrix}\right) \leftarrow "
@@ -1010,6 +1014,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="fermion-generations-v19",
+            value=float(B2_G2) / float(N_FACES),
+            **closed_form(('div', 'b2g2', 'n_faces'), {'b2g2': float(B2_G2), 'n_faces': float(N_FACES)}),
             label="(3.4.6)",
             latex=(r"N_{\text{gen}} = \frac{b_2}{n_{\text{faces}}} = "
                    r"\frac{%d}{%d} = %d \quad \text{(exact)}"
@@ -1098,6 +1104,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="yukawa-epsilon-cabibbo-v19",
+            value=math.exp(-1.5),
+            **closed_form(('exp', -1.5)),
             label="(3.4.8)",
             latex=(
                 r"\varepsilon = e^{-\lambda} = e^{-1.5} \approx 0.2231 "
@@ -1163,6 +1171,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="yukawa-hierarchy-texture-v19",
+            non_numeric='structural statement: a parity, texture or ordering assignment with no single number to check',
             label="(3.4.10)",
             latex=(
                 r"\mathbf{Y} = \left(\begin{smallmatrix} "
@@ -1199,6 +1208,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="christ-constant-153-v19",
+            value=144.0 + 9.0,
+            **closed_form(('add', 144, 9)),
             label="(3.4.11)",
             latex=r"153 = \chi_{\text{eff}} + 9 = 144 + 9 = 12^2 + 3^2",
             plain_text="153 = chi_eff + 9 = 144 + 9 = 12^2 + 3^2",
@@ -1234,6 +1245,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="seesaw-type-i-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.4.12)",
             latex=(
                 r"m_\nu = -m_D^T M_R^{-1} m_D = \frac{v^2 Y_\nu^2}{M_R}"
@@ -1266,6 +1278,8 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="majorana-scale-v19",
+            value=2.1e16 / math.sqrt(144.0),
+            **closed_form(('div', 2.1e16, ('sqrt', 144))),
             label="(3.4.13)",
             latex=(
                 r"M_R = \frac{M_{\text{GUT}}}{\sqrt{\chi_{\text{eff}}}} "
@@ -1332,6 +1346,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="neutrino-mass-hierarchy-v19",
+            non_numeric='structural statement: a parity, texture or ordering assignment with no single number to check',
             label="(3.4.15)",
             latex=(
                 r"\text{INVERTED: } m_3 < m_1 < m_2, \quad "
