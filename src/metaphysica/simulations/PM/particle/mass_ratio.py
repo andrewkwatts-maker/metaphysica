@@ -427,8 +427,8 @@ if SCHEMA_AVAILABLE:
                 },
                 {
                     "id": "CERT_MASS_RATIO_GEOMETRIC",
-                    "assertion": "Mass ratio derives from b3=24 G2 topology with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
-                    "condition": "b3 = 24, k_gimel = b3/2 + 1/pi, C_kaf = b3*(b3-7)/(b3-9)",
+                    "assertion": "On the retired seed_24 (b3=24) the mass ratio derives from G2 topology with one fitted parameter (holonomy_correction = 1.5428, back-computed from CODATA)",
+                    "condition": "retired seed_24: b3 = 24, k_gimel = b3/2 + 1/pi, C_kaf = b3*(b3-7)/(b3-9)",
                     "tolerance": 1e-6,
                     "status": "PASS",
                     "wolfram_query": "24*(24-7)/(24-9)",
@@ -450,7 +450,7 @@ if SCHEMA_AVAILABLE:
                     "topic": "Calibrated Geometry",
                     "url": "https://en.wikipedia.org/wiki/Calibrated_geometry",
                     "relevance": "Associative 3-cycles (proton) and co-associative 4-cycles (electron) are calibrated submanifolds whose volumes determine masses",
-                    "validation_hint": "Verify that b3=24 is consistently used and k_gimel, C_kaf are derived from it"
+                    "validation_hint": "Verify that b3 (24 on the retired seed_24) is consistently used and k_gimel, C_kaf are derived from it"
                 }
             ]
 
@@ -475,11 +475,11 @@ if SCHEMA_AVAILABLE:
             # Check 2: b3 = 24
             b3_passed = self._solver.elder_kads == 24
             checks.append({
-                "name": "Third Betti number b3 = 24",
+                "name": "Third Betti number b3 = 24 (retired seed_24)",
                 "passed": b3_passed,
                 "confidence_interval": {"lower": 24.0, "upper": 24.0, "sigma": 0.0},
                 "log_level": "INFO" if b3_passed else "ERROR",
-                "message": f"b3 = {self._solver.elder_kads} (expected 24)"
+                "message": f"b3 = {self._solver.elder_kads} (expected 24 on the retired seed_24)"
             })
 
             # Check 3: k_gimel = 12 + 1/pi

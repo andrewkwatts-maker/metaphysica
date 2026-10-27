@@ -862,7 +862,7 @@ class ChiralitySpinorSimulation(SimulationBase):
                     f"ABANDONED ROUTE, kept on the books. Number of fermion "
                     f"generations from spinor saturation: the third Betti number gives "
                     f"flux units and each generation requires 8 spinor DOF (Spin(7) "
-                    f"representation). This yielded exactly 3 only at b_3 = 24. Every "
+                    f"representation). This yielded exactly 3 only on the retired seed_24 (b_3 = 24). Every "
                     f"Joyce-reachable b_3 in {{7, 19, 31, 43}} is ODD, so b_3/8 is "
                     f"non-integral throughout; at the adopted "
                     f"b_3 = {int(_REG.elder_kads)} it gives "

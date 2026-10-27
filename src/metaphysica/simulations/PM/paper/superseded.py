@@ -33,14 +33,19 @@ def _comparison() -> str:
                _path_phrase(_MAIN_PATH)))
 
 
+def _sentence(text: str) -> str:
+    """text with its first letter capitalised, so it can open a sentence."""
+    return text[:1].upper() + text[1:]
+
+
 def superseded_text() -> str:
     """The shared callout statement (HTML), identical wherever it appears."""
     return (
         "<strong>%s.</strong> The text below describes the retired "
         "seed_24/TCS path (b<sub>3</sub> = 24). The active path is "
         "seed_43_joyce, closed by Joyce 11.6.1. seed_24 has no closure "
-        "theorem, but %s (<a href=\"%s\">path comparison</a>)."
-        % (MARK, _comparison(), LINK))
+        "theorem. %s (<a href=\"%s\">path comparison</a>)."
+        % (MARK, _sentence(_comparison()), LINK))
 
 
 def superseded(old_text: str) -> str:

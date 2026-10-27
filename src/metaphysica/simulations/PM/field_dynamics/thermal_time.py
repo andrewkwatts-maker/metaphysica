@@ -736,7 +736,7 @@ class ThermalTimeV16(SimulationBase):
                 ),
                 eml_tree_str=(
                     "# Symbolic cancellation in EML operator trees:\n"
-                    "# alpha_T_base = ops.div(ops.mul(2, pi), b3)   [b3=24, pi=π]\n"
+                    "# alpha_T_base = ops.div(ops.mul(2, pi), b3)   [b3=24 on the retired seed_24, pi=π]\n"
                     "# gamma = ops.div(ops.mul(D, b3), ops.mul(2, D_s, pi))\n"
                     "# alpha_T = ops.mul(alpha_T_base, gamma)\n"
                     "#         = ops.mul(ops.div(ops.mul(2,pi),b3), ops.div(ops.mul(D,b3),ops.mul(2,D_s,pi)))\n"

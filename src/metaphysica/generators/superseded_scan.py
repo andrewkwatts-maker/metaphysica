@@ -19,8 +19,29 @@ from typing import Any, Dict, Iterable, Iterator, List, Optional, Pattern, Tuple
 
 from metaphysica.generators._common import autogen_dir
 
-#: Marker the shared callout puts in its text; hits inside it are fine.
+#: Title of the shared callout (simulations.PM.paper.superseded.MARK).
 SUPERSEDED_MARK = "Superseded path"
+#: How the shared callout opens. Only a string that STARTS with it, a callout
+#: block titled SUPERSEDED_MARK, or markup carrying it is inside the callout;
+#: the words "(Superseded path)" typed into a sentence excuse nothing.
+CALLOUT_LEAD = "<strong>%s.</strong>" % SUPERSEDED_MARK
+
+
+_MARK_WORDS = re.compile(r"superseded[ _-]paths?", re.I)
+
+
+def _says_retired(near: str) -> bool:
+    """True when the text around a hit says the geometry is retired.
+
+    The callout label itself ("Superseded path") is struck out first: a label
+    typed into a sentence is not wording that says the geometry is retired.
+    """
+    return bool(_RETIRED.search(_MARK_WORDS.sub(" ", near)))
+
+
+def _in_shared_callout(text: str, block: bool = False) -> bool:
+    """True when text is the shared callout's own text or sits in its block."""
+    return block or text.lstrip().startswith(CALLOUT_LEAD)
 
 _B3_24 = re.compile(r"\bb\s*(?:_\s*\{?\s*3\s*\}?|₃|3)\s*(?:=|\?equiv|:)\s*24\b"
                     r"|\bb_?\{?3\}?\s*=\s*24\b|\bb₃\s*=\s*24\b"
@@ -112,6 +133,11 @@ def _match(text: str):
 _LABEL_STATUS = re.compile(r"disabled|off[-_ ]?path|retired|superseded|refuted", re.I)
 
 
+def _is_callout_block(node: Dict[str, Any]) -> bool:
+    """True for the content block the shared callout emits."""
+    return node.get("type") == "callout" and node.get("title") == SUPERSEDED_MARK
+
+
 def _is_labelled(node: Dict[str, Any]) -> bool:
     """True when a dict declares its own status as a retired pathway."""
     return any(isinstance(node.get(k), str) and _LABEL_STATUS.search(node[k])
@@ -120,11 +146,14 @@ def _is_labelled(node: Dict[str, Any]) -> bool:
 
 def _strings(node: Any, path: str, labelled: bool = False
              ) -> Iterator[Tuple[str, str, bool]]:
-    """Yield (path, text, labelled) for every string under node."""
+    """Yield (path, text, labelled) for every string under node.
+
+    labelled is True under a retired-status dict or a shared-callout block.
+    """
     if isinstance(node, str):
         yield path, node, labelled
     elif isinstance(node, dict):
-        labelled = labelled or _is_labelled(node)
+        labelled = labelled or _is_labelled(node) or _is_callout_block(node)
         for k, v in node.items():
             if k in ("html", "content_blocks"):
                 continue  # html is derived; content_blocks duplicates contentBlocks
@@ -150,8 +179,8 @@ def scan_sections(sections: Dict[str, Any]) -> List[Dict[str, str]]:
             lo = max(0, m.start() - 60)
             near = text[max(0, m.start() - _WINDOW):m.end() + _WINDOW]
             hits.append({"section": sid, "path": path,
-                         "in_callout": (labelled or SUPERSEDED_MARK in text
-                                        or bool(_RETIRED.search(near))),
+                         "in_callout": (labelled or _in_shared_callout(text)
+                                        or _says_retired(near)),
                          "snippet": text[lo:m.end() + 60].replace("\n", " ")})
     return hits
 
@@ -179,8 +208,8 @@ def _line_hits(text: str, label: str) -> List[Dict[str, str]]:
         if m:
             near = text[max(0, pos + m.start() - _WINDOW):pos + m.end() + _WINDOW]
             hits.append({"section": label, "path": label,
-                         "in_callout": (SUPERSEDED_MARK in near
-                                        or bool(_RETIRED.search(near))),
+                         "in_callout": (CALLOUT_LEAD in near
+                                        or _says_retired(near)),
                          "snippet": line[max(0, m.start() - 60):m.end() + 60]
                          .strip()})
         pos += len(line)

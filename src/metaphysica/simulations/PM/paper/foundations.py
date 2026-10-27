@@ -1125,7 +1125,7 @@ class FoundationsV16_2(SimulationBase):
                     "method": "dimensional_reduction",
                     "steps": [
                         "OFF-PATH reading: V7 was the TCS manifold of the retired seed (b3 = 24); the adopted internal space is Y_7, Joyce's resolution of T^7/(Z/2)^3 with b3 = 43",
-                        "In the TCS reading, the building block's CY3 served as an intermediate step in the dimensional descent (a Joyce orbifold has no such building block)",
+                        "In the retired TCS reading, the building block's CY3 served as an intermediate step in the dimensional descent (a Joyce orbifold has no such building block)",
                         "Projection yields M^4 (Minkowski) x K^6 (internal Calabi-Yau)",
                         "In that reading, CY3 Hodge numbers were said to fix chirality and the gauge group in 4D; on the adopted path chirality is OPEN (D-011)"
                     ],

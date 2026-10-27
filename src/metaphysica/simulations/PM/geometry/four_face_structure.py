@@ -2539,7 +2539,7 @@ class FourFaceG2Structure(SimulationBase):
                     "b2": 4,
                     "source": "TCS #187 (Corti-Haskins-Nordstrom-Pacini 2015); retired reading, not re-derived on Y7",
                 },
-                "assertion": "n_faces = h^{1,1} = b2 = 4 for TCS #187",
+                "assertion": "n_faces = h^{1,1} = b2 = 4 for TCS #187 (retired reading)",
                 "condition": "n_faces == h11 == 4",
                 "sector": "geometry",
             },

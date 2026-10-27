@@ -349,7 +349,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         return [
             {
                 "id": "CERT_FTS_SCALE",
-                "assertion": f"Pneuma condensate scale = b3/27 = {scale:.8f} (b3=24)",
+                "assertion": f"Pneuma condensate scale = b3/27 = {scale:.8f} (b3=24 on the retired seed_24)",
                 "condition": f"abs({scale} - 24/27) < 1e-12",
                 "status": "PASS",
             },
