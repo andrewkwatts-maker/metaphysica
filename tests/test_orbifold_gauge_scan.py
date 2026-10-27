@@ -170,3 +170,55 @@ def test_vectorised_orbit_digests_match_key_orbits(phi):
     H = o.close_group(base3 + [o.from_euclid(A, np.zeros(7), lat3, phi)])
     norm3 = o.normaliser(lat3, phi, base3)
     assert len(o.group_orbit_digests(H, norm3)) == len(o.group_orbit_keys(H, norm3))
+
+
+# ------------------------------------------------------------ L3b additions
+
+def _rec(cross=0, kinds=("A",), free=True):
+    return {"crossings": cross, "error": None,
+            "strata": [{"kind": k, "free_normal": free} for k in kinds]}
+
+
+def test_invalid_reasons_each_and_none():
+    assert o.invalid_reasons(_rec()) == []
+    assert o.invalid_reasons(_rec(cross=3)) == ["crossings"]
+    assert o.invalid_reasons(_rec(kinds=("A", "circle"))) == ["non_A_strata"]
+    assert o.invalid_reasons(_rec(free=False)) == ["non_free_normal"]
+    assert o.invalid_reasons(_rec(2, ("circle",), False)) == [
+        "crossings", "non_A_strata", "non_free_normal"]
+    assert o.invalid_reasons({"order": 9, "error": "boom"}) == []
+
+
+def _unshifted_z2_cubed():
+    """Joyce's Z2^3 sign maps with the translations removed (all fix 0)."""
+    lat, gens = o.joyce_z2_cubed()
+    return lat, o.close_group([o.Iso(g.M, [0] * 7) for g in gens])
+
+
+def test_codim7_local_type_joyce_origin_control():
+    # Z2^3 of sign maps at the origin: seven distinct sign characters, one per
+    # axis; every non-identity element fixes a 3-plane, so S^6 is not free.
+    lat, G = _unshifted_z2_cubed()
+    pt = o.make_locus([0] * 7, np.zeros((7, 0), dtype=np.int64))
+    t = o.codim7_local_type(G, pt, lat)
+    assert t["order"] == 8 and not t["fixed_vector"] and not t["free_on_S6"]
+    assert t["fixed_dims"] == {3: 7}
+    assert [b["dim"] for b in t["blocks"]] == [1] * 7
+    assert all(b["commutant_dim"] == 1 for b in t["blocks"])
+    assert t["character"] == [(1, 7.0, 1), (2, -1.0, 7)]
+
+
+def test_codim7_local_type_fails_on_non_point():
+    lat, G = _unshifted_z2_cubed()
+    line = o.make_locus([0] * 7, np.eye(7, dtype=np.int64)[:, :1])
+    with pytest.raises(o.ScanError):
+        o.codim7_local_type(G, line, lat)
+
+
+def test_codim7_local_type_generic_point_has_trivial_stabiliser():
+    from fractions import Fraction
+    lat, G = _unshifted_z2_cubed()
+    pt = o.make_locus([Fraction(k + 1, 7) for k in range(7)],
+                      np.zeros((7, 0), dtype=np.int64))
+    t = o.codim7_local_type(G, pt, lat)
+    assert t["order"] == 1 and t["fixed_vector"]
