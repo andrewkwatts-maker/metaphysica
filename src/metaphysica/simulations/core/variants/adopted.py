@@ -337,3 +337,26 @@ def _seed_selection_adopted() -> str:
     )
 
     return SELECTION_ROUTE
+
+
+def _owner_recommended(item: int):
+    from metaphysica.simulations.PM.gauge.master_ladder import OWNER_ITEMS
+
+    return OWNER_ITEMS[item][2]
+
+
+def _action_bulk_sectors_adopted() -> str:
+    """Item 1 has no recommendation: build_ladder then treats it as undecided."""
+    return "undecided" if _owner_recommended(1) is None else str(_owner_recommended(1))
+
+
+def _action_bulk_spinor_adopted() -> str:
+    return str(_owner_recommended(2))
+
+
+def _action_planck_exponent_adopted() -> str:
+    return "exponent_%d" % int(_owner_recommended(4))
+
+
+def _action_sign_convention_adopted() -> str:
+    return str(_owner_recommended(5))
