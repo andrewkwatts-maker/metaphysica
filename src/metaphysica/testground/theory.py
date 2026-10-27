@@ -70,6 +70,10 @@ class Stage:
     command: Tuple[str, ...]         # argv, run with cwd = the run root
     tolerated_exit_codes: Tuple[int, ...] = (0,)
     timeout_s: Optional[float] = None
+    #: Given the run root, True when the stage wrote its rows even though it
+    #: exited with an untolerated code: the run is then COMPLETED_WITH_FAILURES
+    #: (compared, and listed under the audit's failures) instead of NOT_RUNNABLE.
+    rows_written: Optional[Callable[[Path], bool]] = None
 
 
 @runtime_checkable

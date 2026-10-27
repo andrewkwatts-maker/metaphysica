@@ -176,7 +176,11 @@ FORKS: Dict[str, Fork] = {
                 # off-path b_2 = 4, so it is wrong on the seed_24 branch";
                 # notes above ("b_2/4 ... 1 at b_2 = 4, so it fails on the
                 # status-quo path").
-                excludes=(("b3_seed", "seed_24"),),
+                # P5a2: n_gen = b_2/4 is 0, 1, 2 at seed_7/19/31 (b_2 = 0, 4, 8),
+                # computed by b3_path._n_gen_value; only b_2 = 12 (seed_43)
+                # gives 3, so build-time require_three_generations refuses them.
+                excludes=(("b3_seed", "seed_24"), ("b3_seed", "seed_7_joyce"),
+                          ("b3_seed", "seed_19_joyce"), ("b3_seed", "seed_31_joyce")),
                 adopted=True,
             ),
             VariantOption(
