@@ -205,3 +205,39 @@ def test_discovery_ignores_non_numeric_entries(params):
             value = params[name]["value"]
             assert isinstance(value, (int, float))
             assert not isinstance(value, bool)
+
+
+# ── H0 follows the chosen route (E4) ────────────────────────────────────────
+
+
+@pytest.mark.parametrize("env,value,off", [
+    (None, None, False),
+    ("METAPHYSICA_VARIANT_H0_ROUTE", "kk_bridge", True),
+    ("METAPHYSICA_VARIANT_H0_ROUTE", "ricci_flow", True),
+    ("METAPHYSICA_VARIANT_B3_SEED", "seed_24", True),
+])
+def test_route_dependent_h0_only_compared_on_adopted_path(
+        params, monkeypatch, env, value, off):
+    """Off the adopted path cosmology.H0_local is the option's own H0, a
+    different quantity from the route-independent SH0ES anchors."""
+    if env:
+        monkeypatch.setenv(env, value)
+    members = effective_groups(params)["H0_local"]
+    assert ("cosmology.H0_local" in members) is (not off)
+    assert "geometry.H0_local" in members
+
+
+@pytest.mark.parametrize("route", ["odowd_composite", "ricci_flow", "kk_bridge"])
+def test_registry_h0_is_the_routes_value(monkeypatch, route):
+    """FormulasRegistry.h0_local reads the fork, no build needed."""
+    from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+    monkeypatch.setenv("METAPHYSICA_VARIANT_H0_ROUTE", route)
+    reg = get_registry()
+    odowd = (reg._roots_total / 4.0
+             - reg.odowd_bulk_derived / reg.pressure_divisor
+             + reg._sophian_drag)
+    expect = ltr.h0_local_for_route(
+        route, odowd=odowd, h0_planck=reg.h0_early, b3=reg.elder_kads)
+    assert reg.h0_local == pytest.approx(expect)

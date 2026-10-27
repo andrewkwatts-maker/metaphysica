@@ -485,5 +485,39 @@ def effective_groups(params):
             disposition = DISPOSITIONS.get(name)
             if disposition and disposition[0] == MEMBER and name not in bucket:
                 bucket.append(name)
+    if h0_off_adopted_path() is not None:
+        groups["H0_local"] = [
+            n for n in groups.get("H0_local", []) if n != H0_ROUTE_DEPENDENT]
     return groups
+
+
+#: The one H0 row that follows the h0_route and b3_seed forks.
+H0_ROUTE_DEPENDENT = "cosmology.H0_local"
+
+#: Why that row leaves the H0 comparison when a fork is off the adopted path.
+H0_OFF_PATH_REASON = (
+    "cosmology.H0_local is the registry's H0 under the chosen h0_route and "
+    "b3_seed (FormulasRegistry.calculate_h0_local). The other H0_local group "
+    "members are route-independent: geometry.H0_local is the SH0ES anchor, "
+    "cosmology.H0_resolved_km_s_Mpc is that anchor plus a ~1e-13 shift, and "
+    "cosmology.H0_late_evolved is built on it. Off the adopted path the "
+    "route's prediction differs from the anchor by design (kk_bridge 67.4, "
+    "ricci_flow 76.34, seed_24 71.55): that is the measured cost of the "
+    "option, scored against SH0ES in sigma by the validation layer and "
+    "recorded in the fork's consequence field, not a shadow derivation. On "
+    "the adopted path the row stays in the comparison at the standing "
+    "tolerance.")
+
+
+def h0_off_adopted_path():
+    """Name the H0-moving fork that is off its adopted option, else None."""
+    from metaphysica.simulations.core.variants.adopted import (
+        _b3_seed_adopted, _h0_route_adopted)
+    from metaphysica.simulations.core.variants import resolve
+
+    if resolve("h0_route") != _h0_route_adopted():
+        return "h0_route"
+    if resolve("b3_seed") != _b3_seed_adopted():
+        return "b3_seed"
+    return None
 
