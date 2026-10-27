@@ -13,7 +13,7 @@ from metaphysica.testground.audit.rows import Option
 
 __all__ = ["SCHEMA", "audit", "to_markdown"]
 
-SCHEMA = "metaphysica.path_audit/1"
+SCHEMA = "metaphysica.path_audit/2"
 
 
 def _opt(o: Option) -> Dict[str, str]:
@@ -27,8 +27,10 @@ def _pair(p) -> Dict[str, str]:
 def audit(*, classes: Iterable[RunClass] = (), no_ops: Iterable[Option] = (),
           interaction_sets: Iterable[Iterable[Option]] = (),
           mismatches: Optional[Mapping[str, List[str]]] = None,
-          reads: Optional[ReadFindings] = None) -> Dict[str, Any]:
-    """One dict with sorted keys. *mismatches* maps run id to its non-additive rows."""
+          reads: Optional[ReadFindings] = None,
+          failures: Optional[Mapping[str, List[str]]] = None) -> Dict[str, Any]:
+    """One dict with sorted keys. *mismatches* maps run id to its non-additive rows;
+    *failures* maps a failure description (failed build step and reason) to run ids."""
     reads = reads or ReadFindings()
     report = {
         "schema": SCHEMA,
@@ -37,6 +39,7 @@ def audit(*, classes: Iterable[RunClass] = (), no_ops: Iterable[Option] = (),
         "no_op_options": [_opt(o) for o in sorted(no_ops)],
         "interaction_sets": [[_opt(o) for o in s]
                              for s in sorted(tuple(x) for x in interaction_sets)],
+        "failures": {k: sorted(v) for k, v in sorted((failures or {}).items()) if v},
         "mismatches": {k: sorted(v) for k, v in sorted((mismatches or {}).items()) if v},
         "never_read": sorted(reads.never_read),
         "undeclared_gates": [_pair(p) for p in sorted(reads.undeclared_gates)],
@@ -68,6 +71,8 @@ def to_markdown(report: Mapping[str, Any]) -> str:
                     [[" + ".join(_name(x) for x in s)] for s in report["interaction_sets"]])
     lines += _table("Non-additive rows", ["run", "rows"],
                     [[k, ", ".join(v)] for k, v in report["mismatches"].items()])
+    lines += _table("Failures", ["failure", "runs"],
+                    [[k, ", ".join(v)] for k, v in report["failures"].items()])
     lines += _table("Never read", ["fork"], [[f] for f in report["never_read"]])
     lines += _table("Undeclared gates", ["fork", "run"],
                     [[p["fork"], p["run"]] for p in report["undeclared_gates"]])
