@@ -22,6 +22,8 @@ from metaphysica.simulations.base import (
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 from metaphysica.simulations.PM.qed._triple_track import qed_epsilon
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_NA = 6.02214076e23  # mol^-1 (exact)
 
@@ -135,6 +137,7 @@ class AvogadroV17(SimulationBase):
         return [
             Formula(
                 id="avogadro-inverse-cubic",
+                **qed_gate_kwargs("avogadro-inverse-cubic"),
                 label="(6.6)",
                 latex=r"N_A = N_{A,bulk}/(1+\epsilon)",
                 plain_text="N_A = N_A_bulk / (1+epsilon)",

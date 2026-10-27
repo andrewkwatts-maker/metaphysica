@@ -632,6 +632,7 @@ class CosmologyIntroV16(SimulationBase):
         return [
             Formula(
                 id="metric-13D",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.1)",
                 latex=r"ds²_{13} = g_{μν}(x)dx^μdx^ν + g_{mn}(x,y)dy^m dy^n + 2A_μ^a(x)K_a^m dx^μ dy^m",
                 plain_text="ds²_13 = g_μν(x)dx^μdx^ν + g_mn(x,y)dy^m dy^n + 2A_μ^a(x)K_a^m dx^μ dy^m",
@@ -673,6 +674,7 @@ class CosmologyIntroV16(SimulationBase):
             ),
             Formula(
                 id="einstein-hilbert-14D",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.2)",
                 latex=r"S_{14} = \frac{1}{2\kappa_{14}^{2}} \int d^{14}x \sqrt{-G} R_{14}",
                 plain_text="S_14 = (1/2kappa^2_14) integral d^14 x sqrt(-G) R_14",
@@ -716,6 +718,7 @@ class CosmologyIntroV16(SimulationBase):
             ),
             Formula(
                 id="sp2r-constraint",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.3)",
                 latex=r"R_{\perp,i} = \left(\begin{smallmatrix} 0 & -1 \\ 1 & 0 \end{smallmatrix}\right), \quad R_{\perp,i}^2 = -I, \quad i = 1,...,12",
                 plain_text="R_perp_i = [[0,-1],[1,0]], R_perp_i^2 = -I, i = 1,...,12",
@@ -748,6 +751,7 @@ class CosmologyIntroV16(SimulationBase):
             ),
             Formula(
                 id="breathing-mode",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.4)",
                 latex=r"g_{mn}(x,y) = e^{2σ(x)} g_{mn}^{(0)}(y)",
                 plain_text="g_mn(x,y) = exp(2σ(x)) g⁰_mn(y)",
@@ -777,6 +781,7 @@ class CosmologyIntroV16(SimulationBase):
             ),
             Formula(
                 id="bps-bound",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.5)",
                 latex=r"T_{BPS} \geq \frac{|Z_{p,q}|}{V_p}",
                 plain_text="T_BPS ≥ |Z_p,q| / V_p",
@@ -806,6 +811,7 @@ class CosmologyIntroV16(SimulationBase):
             ),
             Formula(
                 id="pneuma-reduction",
+                non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
                 label="(5.6)",
                 latex=r"\Psi_{26D} \rightarrow \Psi_{4D} \otimes \chi_{SO(10)} \otimes \eta_{mirror}",
                 plain_text="Ψ_26D → Ψ_4D ⊗ χ_SO(10) ⊗ η_mirror",

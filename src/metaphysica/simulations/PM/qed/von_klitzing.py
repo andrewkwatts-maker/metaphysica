@@ -55,6 +55,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_RK = 25812.80745  # Ohm
 
@@ -149,6 +151,7 @@ class VonKlitzingV17(SimulationBase):
         return [
             Formula(
                 id="rk-direct-expansion",
+                **qed_gate_kwargs("rk-direct-expansion"),
                 label="(6.5)",
                 latex=r"R_K = R_{K,bulk}(1+\epsilon)",
                 plain_text="R_K = R_K_bulk * (1+epsilon)",

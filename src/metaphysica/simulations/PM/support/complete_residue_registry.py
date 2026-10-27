@@ -1114,6 +1114,7 @@ class CompleteResidueRegistryV18(SimulationBase):
         return [
             Formula(
                 id="laplacian-eigenvalue-v18",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.8)",
                 latex=r"-\Delta_{V_7} \phi_n = \lambda_n \phi_n",
                 plain_text="-Delta_V7 phi_n = lambda_n phi_n",
@@ -1146,6 +1147,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             ),
             Formula(
                 id="mass-spectrum-v18",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.9)",
                 latex=r"m_n^2 = \frac{\lambda_n}{L^2}",
                 plain_text="m_n^2 = lambda_n / L^2",
@@ -1178,6 +1180,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             ),
             Formula(
                 id="spectral-zeta-v18",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.10)",
                 latex=r"\zeta_V(s) = \sum_{n=1}^{\infty} \lambda_n^{-s}",
                 plain_text="zeta_V(s) = sum_{n=1}^{inf} lambda_n^{-s}",
@@ -1210,6 +1213,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             ),
             Formula(
                 id="neutrino-mass-seesaw-v18",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.11)",
                 latex=r"m_\nu \sim \frac{k_\gimel}{\sqrt{\chi_{\rm eff}}} \cdot \frac{v^2}{M_{\rm GUT}} \sim 10^{-3}\,\text{eV}",
                 plain_text="m_nu ~ (k_gimel/sqrt(chi_eff)) * (v^2/M_GUT) ~ 10^-3 eV",

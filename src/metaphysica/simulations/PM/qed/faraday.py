@@ -21,6 +21,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_FARADAY = 96485.33212  # C mol^-1
 
@@ -118,6 +120,7 @@ class FaradayV17(SimulationBase):
         return [
             Formula(
                 id="faraday-inverse-cubic",
+                **qed_gate_kwargs("faraday-inverse-cubic"),
                 label="(6.7)",
                 latex=r"F = F_{bulk}/(1+\epsilon)",
                 plain_text="F = F_bulk / (1+epsilon)",

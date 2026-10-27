@@ -1140,6 +1140,7 @@ class FourFaceG2Structure(SimulationBase):
             ),
             Formula(
                 id="face-kk-mass-spectrum",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.3)",
                 latex=(
                     r"m_{\text{KK}}^{(i)} = \frac{M_{\text{Pl}}}{T_i \times V_{G_2}^{1/7}}"
@@ -1349,6 +1350,7 @@ class FourFaceG2Structure(SimulationBase):
             # ─── TwoLayerOR Integration: New formulas (Sprint 1) ───
             Formula(
                 id="two-layer-or-bridge-operator",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.6)",
                 latex=(
                     r"R_\perp^{\text{global}} = \bigotimes_{i=1}^{12} R_{\perp,i}, "
@@ -1403,6 +1405,7 @@ class FourFaceG2Structure(SimulationBase):
             ),
             Formula(
                 id="two-layer-or-face-operator",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.7)",
                 latex=(
                     r"R_{\text{face}}^{(f)} = e^{-i \lambda_f t / b_3} \cdot R_{\text{OR}}, "
@@ -1469,6 +1472,7 @@ class FourFaceG2Structure(SimulationBase):
             ),
             Formula(
                 id="bridge-warping-potential",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.8)",
                 latex=(
                     r"V_{\text{bridge}} = \sum_{i=1}^{12} \Lambda_i e^{-a_i T_{\text{bridge},i}} "
@@ -1547,6 +1551,7 @@ class FourFaceG2Structure(SimulationBase):
             ),
             Formula(
                 id="face-warping-potential",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.9)",
                 latex=(
                     r"V_{\text{face}}^{(f)} = \sum_{i=1}^4 \Lambda_i e^{-a_i T_i^{(f)}} "
@@ -1624,6 +1629,7 @@ class FourFaceG2Structure(SimulationBase):
             ),
             Formula(
                 id="face-sampling-strength",
+                non_numeric='operator or functional with free variables and no single number to check',
                 label="(2.7.10)",
                 latex=(
                     r"\alpha_{\text{sample}}^{(f)} = e^{-T_i^{(f)}/(2 T_{\max})} "

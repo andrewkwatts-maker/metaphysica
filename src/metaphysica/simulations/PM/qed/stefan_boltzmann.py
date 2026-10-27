@@ -42,6 +42,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 
 CODATA_STEFAN = 5.670374419e-8  # W m^-2 K^-4
@@ -156,6 +158,7 @@ class StefanBoltzmannV17(SimulationBase):
         return [
             Formula(
                 id="stefan-quad-gate",
+                **qed_gate_kwargs("stefan-quad-gate"),
                 label="(6.2)",
                 latex=r"\sigma = \sigma_{bulk} \times (1+\epsilon)^4",
                 plain_text="sigma = sigma_bulk * (1+epsilon)^4",

@@ -18,8 +18,8 @@ import pytest
 
 from metaphysica.generators._common import autogen_dir
 
-#: MEASURED 2026-10-27 on a fresh build (582 published formulas).
-_UNCHECKED_CEILING = 177
+#: MEASURED 2026-10-28 on a fresh build (582 published formulas).
+_UNCHECKED_CEILING = 126
 _CHECKED = ("OK", "RULED_DIVERGENCE")
 
 

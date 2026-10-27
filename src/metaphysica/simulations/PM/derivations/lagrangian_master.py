@@ -95,6 +95,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(_
 sys.path.insert(0, project_root)
 
 from metaphysica.simulations.PM.gauge.master_ladder_render import formula_latex, ladder_step
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -1925,6 +1926,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="v22-bulk-structure",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.1.16)",
             latex=r"M^{24,2} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right)",
             plain_text="M^{24,2} = T¹ ×_fiber (⊕_{i=1}^{12} B_i^{2,0})",
@@ -2022,6 +2024,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="v22-distributed-or-reduction",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.1.19)",
             latex=r"R_\perp = \bigotimes_{i=1}^{12} R_{\perp,i}, \quad R_{\perp,i}^2 = -I, \quad R_\perp^2 = (-I)^{12} = +I",
             plain_text="R_⊥ = ⊗ᵢ₌₁¹² R_⊥_i, R_⊥_i² = -I, R_⊥² = (-I)^12 = +I",
@@ -2091,6 +2094,7 @@ class LagrangianMasterDerivation(SimulationBase):
         # 2026-08-31): ghost control of the second time is OPEN.
         formulas.append(Formula(
             id="ghost-elimination",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(2.1.21)",
             latex=r"M^{26}_{(24,2)} = T^1 \times_{\text{fiber}} \left(\bigoplus_{i=1}^{12} B_i^{2,0}\right) \oplus S^{2,0}",
             plain_text="M^{26}(24,2) = T^1 ×_fiber (⊕_{i=1}^{12} B_i^{2,0}) ⊕ S^{2,0}",
@@ -2126,6 +2130,7 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="dof-reduction-sp2r",
+            non_numeric='dimension-count chain (24 real -> 12 complex -> 288 roots), not a single number',
             label="(2.1.22a)",
             latex=r"24 \text{ real} \to 12 \text{ complex} \to 288 \text{ roots}",
             plain_text="24 real -> 12 complex -> 288 roots",
@@ -2354,6 +2359,8 @@ class LagrangianMasterDerivation(SimulationBase):
 
         formulas.append(Formula(
             id="root-lattice-288",
+            value=288.0,
+            **closed_form(('add', ('add', 240, 8), 40)),
             label="(2.1.24)",
             latex=r"288 = 240_{E_8} + 8_{\text{Cartan}} + 40_{E_8'} = 2\chi_{\text{eff}}",
             plain_text="288 = 240 (E8 roots) + 8 (Cartan) + 40 (second E8) = 2 * chi_eff",

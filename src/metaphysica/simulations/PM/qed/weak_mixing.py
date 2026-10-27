@@ -21,6 +21,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_WEAK = 0.23122  # sin^2(theta_W) at Z-pole, MS-bar (PDG 2024)
 
@@ -110,6 +112,7 @@ class WeakMixingV17(SimulationBase):
         return [
             Formula(
                 id="weak-mixing-torsion",
+                **qed_gate_kwargs("weak-mixing-torsion"),
                 label="(6.9)",
                 latex=r"\sin^2\theta_W = \sin^2\theta_{W,bulk}/(1+\epsilon)",
                 plain_text="sin^2(theta_W) = sin^2(theta_W_bulk) / (1+epsilon)",

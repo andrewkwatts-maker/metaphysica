@@ -22,6 +22,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_R = 8.314462618  # J mol^-1 K^-1 (exact)
 
@@ -104,6 +106,7 @@ class MolarGasV17(SimulationBase):
         return [
             Formula(
                 id="molar-gas-neutral",
+                **qed_gate_kwargs("molar-gas-neutral"),
                 label="(6.8)",
                 latex=r"R = N_A \cdot k_B = \text{invariant (Pleromic)}",
                 plain_text="R = N_A * k_B = invariant (Pleromic Still Point)",

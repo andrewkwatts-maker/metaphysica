@@ -27,6 +27,7 @@ _simulations_dir = os.path.dirname(os.path.dirname(_current_dir))
 _project_root = os.path.dirname(_simulations_dir)
 sys.path.insert(0, _project_root)
 
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -428,6 +429,8 @@ class AppendixITerminalStates(SimulationBase):
         return [
             Formula(
                 id="metric-null-potential",
+                value=276.0 / 288.0,
+                **closed_form(('div', 276, 288)),
                 label="(I.2)",
                 latex=r"\Psi_M = \frac{276}{288} \approx 95.83\%",
                 plain_text="Psi_M = 276/288 ≈ 95.83%",
@@ -454,6 +457,8 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="gauge-ghost-potential",
+                value=24.0 / 288.0,
+                **closed_form(('div', 24, 288)),
                 label="(I.3)",
                 latex=r"\Psi_G = \frac{24}{288} \approx 8.33\%",
                 plain_text="Psi_G = 24/288 ≈ 8.33%",
@@ -480,6 +485,8 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="ancestral-restoration",
+                value=(125.0 + 163.0) / 288.0,
+                **closed_form(('div', ('add', 125, 163), 288)),
                 label="(I.4)",
                 latex=r"\Psi_R = \frac{125 + 163}{288} = 1.0",
                 plain_text="Psi_R = (125 + 163)/288 = 1.0",
@@ -506,6 +513,7 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="spectral-trace-saturation",
+                non_numeric='limit of a spectral sum in free variables (c_n, lambda_n, t); no single number to check',
                 label="(I.1)",
                 latex=r"\lim_{t \to \infty} \sum_{n=1}^{\text{ק}_{\text{כה}}} e^{-t\lambda_n} = \text{Vol}(V_7)^{\text{max}}",
                 plain_text="lim(t->inf) Sum exp(-t*lambda_n) = Vol(V7)_max",
@@ -531,6 +539,7 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="terminal-geodesic-curve",
+                non_numeric='a curve gamma(t) in free variables; no single number to check',
                 label="(I.6)",
                 latex=r"\gamma(t) = \left(1 - e^{-\kappa_M t}\right) \oplus \left(1 - e^{-\kappa_G (t - t_c)}\right) \oplus \left(1 - e^{-\kappa_R t}\right)",
                 plain_text="gamma(t) = Terminal geodesic through three states",
@@ -560,6 +569,7 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="shadow-decoupling-rate",
+                non_numeric='rate law in free variables (Lambda, t); no single number to check',
                 label="(I.5)",
                 latex=r"\frac{d\tau}{dt} \propto -e^{-\Lambda t}",
                 plain_text="d(tau)/dt ~ -exp(-Lambda*t)",

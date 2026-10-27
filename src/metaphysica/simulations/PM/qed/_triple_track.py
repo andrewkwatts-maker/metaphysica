@@ -222,4 +222,54 @@ __all__ = [
     "eml_inverse_double_gate",
     "eml_neutral_bridge",
     "qed_epsilon",
+    "qed_gate_kwargs",
 ]
+
+
+# ── Checked values: float + Arithma tree + EML tree per gate ─────────────────
+#
+# Each gate formula is X_bulk * (1+eps)^n (or its inverse) with CODATA inputs.
+# The float is plain Python; the two trees come from one closed_form spec, with
+# eps = 1/(288 * 10^2) = 1/28800 (roots_total * DECAD^2). The 288 is a literal,
+# not 12*b3: the live registry b3 is 43 (elder_kads), which would give 1/51600.
+
+_EPS_PY = 1.0 / 28800.0
+_EPS = ("div", 1, ("mul", 288, ("pow", 10, 2)))
+_UP = ("add", 1, _EPS)
+_DN = ("sub", 1, _EPS)
+_DOUBLE = ("mul", _UP, ("pow", _DN, 2))
+_CODATA_NA = 6.02214076e23
+_CODATA_KB = 1.380649e-23
+
+
+def _gate_table():
+    e = _EPS_PY
+    dbl = (1 + e) * (1 - e) ** 2
+    return {
+        "avogadro-inverse-cubic": (_CODATA_NA, ("div", "x", _UP), {"x": _CODATA_NA * (1 + e)}),
+        "compton-bulk-derivation": (2.42631023867e-12 * (1 + e), ("mul", "x", _UP), {"x": 2.42631023867e-12}),
+        "compton-inverse-cubic-projection": (2.42631023867e-12, ("div", "x", _UP), {"x": 2.42631023867e-12 * (1 + e)}),
+        "faraday-inverse-cubic": (96485.33212, ("div", "x", _UP), {"x": 96485.33212 * (1 + e)}),
+        "hartree-bulk-derivation": (4.3597447222071e-18 / dbl, ("div", "x", _DOUBLE), {"x": 4.3597447222071e-18}),
+        "hartree-inverse-double-gate": (4.3597447222071e-18, ("mul", "x", _DOUBLE), {"x": 4.3597447222071e-18 / dbl}),
+        "flux-direct-expansion": (2.067833848e-15, ("mul", "x", _UP), {"x": 2.067833848e-15 / (1 + e)}),
+        "rk-direct-expansion": (25812.80745, ("mul", "x", _UP), {"x": 25812.80745 / (1 + e)}),
+        "stefan-quad-gate": (5.670374419e-8, ("mul", "x", ("pow", _UP, 4)), {"x": 5.670374419e-8 / (1 + e) ** 4}),
+        "weak-mixing-torsion": (0.23122, ("div", "x", _UP), {"x": 0.23122 * (1 + e)}),
+        # R = N_A * k_B from the exact SI values (N_A contracts, k_B expands).
+        "molar-gas-neutral": (
+            _CODATA_NA * _CODATA_KB,
+            ("mul", ("div", "na", _UP), ("mul", "kb", _UP)),
+            {"na": _CODATA_NA * (1 + e), "kb": _CODATA_KB / (1 + e)},
+        ),
+    }
+
+
+def qed_gate_kwargs(formula_id: str) -> dict:
+    """Return ``value``, ``arithma``, ``eml`` and ``triple_env`` for a QED gate."""
+    from metaphysica.simulations.core.triple_helpers import closed_form
+    table = _gate_table()
+    if formula_id not in table:
+        raise KeyError("qed_gate_kwargs: unknown gate %r" % formula_id)
+    value, spec, env = table[formula_id]
+    return {"value": float(value), **closed_form(spec, env)}
