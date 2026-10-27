@@ -20,7 +20,7 @@ from metaphysica.actions.model import INPUT, Action, Coefficient, Field, Term
 
 T, R, TH, PH = sp.symbols("t r theta phi")
 M = sp.Symbol("M", positive=True)
-X4 = sp.symbols("x0 x1 x2 x3")
+X4_ = X4 = sp.symbols("x0 x1 x2 x3")
 CT, CX, CY, CZ = sp.symbols("t x y z")
 
 
@@ -72,23 +72,25 @@ def _flrw_compute(spatial_power: int):
     return str(res), ok, "G_00 = 3 (adot/a)^2, so H^2 = 8 pi G rho / 3"
 
 
-def _maxwell_residual(control: bool):
-    eta = sp.diag(-1, 1, 1, 1)
-    A = [sp.Function("A%d" % i)(*X4) for i in range(4)]
-    dA = [[sp.Derivative(A[n], X4[m]) for n in range(4)] for m in range(4)]  # d_m A_n
+def _maxwell_residual(control: bool, eta=None):
+    eta = sp.diag(-1, 1, 1, 1) if eta is None else eta
+    n_dim = eta.shape[0]
+    X4 = X4_ if n_dim == 4 else sp.symbols("x0:%d" % n_dim)
+    A = [sp.Function("A%d" % i)(*X4) for i in range(n_dim)]
+    dA = [[sp.Derivative(A[n], X4[m]) for n in range(n_dim)] for m in range(n_dim)]  # d_m A_n
     def F(m, n):
         return dA[m][n] - dA[n][m]
     def up(m, n):
         return eta[m, m] * eta[n, n] * F(m, n)
     if control:
         lag = -sp.Rational(1, 4) * sum(eta[m, m] * eta[n, n] * dA[m][n] ** 2
-                                       for m in range(4) for n in range(4))
+                                       for m in range(n_dim) for n in range(n_dim))
     else:
-        lag = -sp.Rational(1, 4) * sum(F(m, n) * up(m, n) for m in range(4) for n in range(4))
+        lag = -sp.Rational(1, 4) * sum(F(m, n) * up(m, n) for m in range(n_dim) for n in range(n_dim))
     out = []
-    for n in range(4):
-        el = sum(sp.diff(sp.diff(lag, dA[m][n]).doit(), X4[m]) for m in range(4))
-        divf = sum(sp.diff(up(m, n), X4[m]) for m in range(4))
+    for n in range(n_dim):
+        el = sum(sp.diff(sp.diff(lag, dA[m][n]).doit(), X4[m]) for m in range(n_dim))
+        divf = sum(sp.diff(up(m, n), X4[m]) for m in range(n_dim))
         out.append(sp.expand((el + divf).doit()))
     return out
 
