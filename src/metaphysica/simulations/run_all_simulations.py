@@ -2469,8 +2469,12 @@ class SimulationRunner:
         counting among the passes.
         """
         from metaphysica.generators.derivation_chain import declared_chain
-        from metaphysica.generators.parameter_ledger import calibration_check_names, CALIBRATION_CHECK
+        from metaphysica.generators.parameter_ledger import (
+            calibration_check_names, CALIBRATION_CHECK, RESTATED_ANCHORS)
         formulas = self.registry.export_formulas()
+        for name in RESTATED_ANCHORS:  # E4: restated anchors are not predictions
+            if name in params:
+                params[name]["status"] = "CALIBRATED"
         for name, row in params.items():
             chain = declared_chain(name, row.get("derivation_formula"), formulas)
             if chain:

@@ -45,6 +45,7 @@ def test_concurrent_runs_equal_sequential_runs(tmp_path):
     par = run_pool(full_run_tasks(theory, cfgs, tmp_path / "par", FP, 60), 4)
     assert [r.digest for r in seq] == sorted(c.digest for c in cfgs)
     assert [r.digest for r in par] == [r.digest for r in seq]
+    assert [r.error for r in seq + par] == [""] * 8
     assert all(r.status == COMPLETED for r in seq + par)
     assert _outputs(tmp_path / "seq", seq) == _outputs(tmp_path / "par", par)
 
@@ -53,7 +54,9 @@ def test_progress_is_json_lines_with_fixed_keys(tmp_path):
     theory = tiny.make_theory()
     cfgs = [tiny.cfg("a"), tiny.cfg("b")]
     path = tmp_path / "logs" / "progress.jsonl"
-    run_pool(full_run_tasks(theory, cfgs, tmp_path / "runs", FP, 60), 2, path)
+    results = run_pool(full_run_tasks(theory, cfgs, tmp_path / "runs", FP, 60),
+                       2, path)
+    assert [r.error for r in results] == ["", ""]
     events = [json.loads(line) for line in path.read_text().splitlines()]
     assert all(set(e) == _KEYS for e in events)
     assert events[0]["event"] == "pool_start"
@@ -161,3 +164,23 @@ def test_pool_tasks_reuse_the_cache(tmp_path):
                                     cache=cache), 2)
     assert all(r.value.cached for r in again)
     assert cache.stats() == {"hits": 2, "misses": 2}
+
+
+def test_root_for_ignores_the_extended_length_prefix(tmp_path, monkeypatch):
+    """Windows `resolve` prefixes a path whose parents are being created by a
+    concurrent run; that must not make it 'outside the run base' (flaky pool)."""
+    from pathlib import Path
+
+    from metaphysica.testground.runner import isolation
+
+    real = Path.resolve
+    prefix = chr(92) * 2 + "?" + chr(92)
+
+    def resolve(self, *args, **kwargs):
+        out = real(self, *args, **kwargs)
+        return out if self == tmp_path else Path(prefix + str(out))
+
+    monkeypatch.setattr(Path, "resolve", resolve)
+    root = isolation.root_for(tmp_path, "tiny", "ab" * 8, "cd" * 8)
+    assert not str(root).startswith(prefix)
+    assert real(root).is_relative_to(real(tmp_path))

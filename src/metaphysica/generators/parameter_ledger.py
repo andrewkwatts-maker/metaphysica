@@ -60,6 +60,17 @@ OBSERVED_STATES = ("PASS", "TENSION", "FAIL", "MARGINAL")
 CALIBRATION_CHECK = "CALIBRATION_CHECK"
 
 
+#: Rows that restate a data anchor (SH0ES 73.04) as if derived, or reach it only
+#: through a free constant (E4). Labelled CALIBRATED so no score or prose counts
+#: them as predictions; values are untouched.
+RESTATED_ANCHORS = (
+    "cosmology.H0_resolved_km_s_Mpc",  # 73.04 + ~1e-13
+    "cosmology.H0_baseline_km_s_Mpc",  # the 73.04 literal
+    "cosmology.H0_late_evolved",       # built on the baseline
+    "cosmology.H0_physical",           # 73.06 only through a free constant
+)
+
+
 class UnknownLabel(ValueError):
     """A status label the ledger has no class for."""
 

@@ -58,10 +58,30 @@ def safe_segment(value: str, what: str) -> str:
     return value
 
 
+_EXT_PREFIX = chr(92) * 2 + "?" + chr(92)      # the extended-length prefix
+_EXT_UNC = _EXT_PREFIX + "UNC" + chr(92)
+
+
+def _plain(path: Path) -> Path:
+    """``path.resolve()`` without the Windows extended-length prefix.
+
+    ``resolve`` returns the prefixed form for a path whose parents another
+    thread is creating at that moment, and the plain form once they exist, so
+    two resolutions of the same tree could fail ``is_relative_to``.
+    """
+    resolved = path.resolve()
+    text = str(resolved)
+    if text.startswith(_EXT_UNC):
+        return Path(chr(92) * 2 + text[len(_EXT_UNC):])
+    if text.startswith(_EXT_PREFIX):
+        return Path(text[len(_EXT_PREFIX):])
+    return resolved
+
+
 def _inside(base: Path, path: Path) -> Path:
     """Resolve ``path`` and refuse it unless it lies within ``base``."""
-    resolved = path.resolve()
-    if not resolved.is_relative_to(base.resolve()):
+    resolved = _plain(path)
+    if not resolved.is_relative_to(_plain(base)):
         raise ValueError("%s is outside the run base %s" % (resolved, base))
     return resolved
 

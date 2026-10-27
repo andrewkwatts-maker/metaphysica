@@ -595,6 +595,20 @@ def result_unmatched_numbers(result, evaluation):
     return out
 
 
+#: Gates whose `result` string is the live registry value, to 2 decimals, so it
+#: follows the route (h0_route) instead of staying at the default's text.
+_LIVE_RESULT_GATES = {47: "{:.2f}"}
+
+
+def declared_result(gate_id, verif, evaluation):
+    """The certificate's `result` text; gate 47 takes it from the evaluated value."""
+    fmt = _LIVE_RESULT_GATES.get(gate_id)
+    checks = (evaluation or {}).get("checks") or []
+    if fmt and len(checks) == 1 and isinstance(checks[0].get("value"), (int, float)):
+        return fmt.format(checks[0]["value"])
+    return verif.get('result', 'N/A')
+
+
 def create_certificate(gate, existing_certs):
     """Create a certificate for a gate."""
     gate_id = gate['id']
@@ -611,6 +625,7 @@ def create_certificate(gate, existing_certs):
         verif = VERIFIABLE_GATES[gate_id]
         note = verif.get('note', gate.get('validation', ''))
         evaluation = evaluate_gate(gate_id, verif, _load_registry_params())
+        result_text = declared_result(gate_id, verif, evaluation)
         cert = {
             "proof_id": proof_id,
             "gate_id": gate_id,
@@ -621,17 +636,17 @@ def create_certificate(gate, existing_certs):
             "block": gate.get('block', 'A'),
             "version": VERSION_SHORT,
             "wl_code": verif.get('wl_code', gate.get('wolfram', 'N/A')),
-            "result": verif.get('result', 'N/A'),
+            "result": result_text,
             "formula": gate.get('formula', 'N/A'),
             "verification_status": "VERIFIED",
             "evaluation_status": evaluation["status"],
             "evaluation": evaluation,
             "result_unmatched_numbers": result_unmatched_numbers(
-                verif.get('result', 'N/A'), evaluation),
+                result_text, evaluation),
             "derivation_status": get_derivation_status(gate_id),
             "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
             "timestamp": timestamp,
-            "hash": generate_hash({"id": gate_id, "result": verif.get('result')})
+            "hash": generate_hash({"id": gate_id, "result": result_text})
         }
     elif gate_id in MATHEMATICAL_GATES:
         cert = {
