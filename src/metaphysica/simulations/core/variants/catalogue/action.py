@@ -77,7 +77,8 @@ FORKS: Dict[str, Fork] = {
         _action_planck_exponent_adopted,
         [
             _opt("exponent_24", "n = D - 2 = 24",
-                 "The engine convention for D = 26.", adopted=True),
+                 "The engine convention for D = 26: M^24 R has mass dimension 26, so "
+                 "the dimension check on the R term passes.", adopted=True),
             _opt("exponent_23", "n = 23", "Mass dimension of the gravity "
                  "coefficient is 23, so the dimension check on the R term fails."),
             _opt("exponent_25", "n = 25", "Mass dimension of the gravity "
