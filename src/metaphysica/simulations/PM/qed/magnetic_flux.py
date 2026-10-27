@@ -45,6 +45,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 CODATA_FLUX = 2.067833848e-15  # Wb
 
@@ -138,6 +140,7 @@ class MagneticFluxV17(SimulationBase):
         return [
             Formula(
                 id="flux-direct-expansion",
+                **qed_gate_kwargs("flux-direct-expansion"),
                 label="(6.4)",
                 latex=r"\Phi_0 = \Phi_{bulk}(1+\epsilon)",
                 plain_text="Phi_0 = Phi_bulk * (1+epsilon)",

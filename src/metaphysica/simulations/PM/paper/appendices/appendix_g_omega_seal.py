@@ -39,6 +39,7 @@ sys.path.insert(0, _project_root)
 from metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots import (
     MANIFOLD_PROJECTION_COST,
 )
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -738,6 +739,7 @@ class AppendixGOmegaSeal(SimulationBase):
         return [
             Formula(
                 id="geometric-seal-288",
+                non_numeric='SHA-256 digest of the registry: a hash, not a number to check',
                 label="(G.1)",
                 latex=r"\Omega_{\text{seal}} = \text{SHA-256}\left(R_{288} \| \tau_{24} \| P_{12} \| \text{registry}\right)",
                 plain_text="Omega_seal = SHA-256(R_288 || tau_24 || P_12 || registry)",
@@ -770,6 +772,8 @@ class AppendixGOmegaSeal(SimulationBase):
             ),
             Formula(
                 id="4-fold-stabilizer-check",
+                value=6.0,
+                **closed_form(('div', 24, 4)),
                 label="(G.2)",
                 latex=r"\tau_{\text{per-dim}} = \frac{24}{4} = 6 \quad \Rightarrow \quad \text{Isotropic}",
                 plain_text="tau_per_dim = 24/4 = 6 => Isotropic",
@@ -801,6 +805,7 @@ class AppendixGOmegaSeal(SimulationBase):
             ),
             Formula(
                 id="terminal-hash-generation",
+                non_numeric='SHA-256 digest of the registry: a hash, not a number to check',
                 label="(G.3)",
                 latex=r"\Omega_{\text{seal}} = \text{SHA-256}(\text{registry} \| \text{coords} \| \text{tensors})",
                 plain_text="Omega_seal = SHA-256(registry || coords || tensors)",
@@ -832,6 +837,7 @@ class AppendixGOmegaSeal(SimulationBase):
             ),
             Formula(
                 id="holonomy-checksum",
+                non_numeric='sum over free root variables; no single number to check',
                 label="(G.4)",
                 latex=r"\text{Holonomy}(\{R_n\}) = \sum_n \omega_n R_n^2 = \Phi_{G_2}",
                 plain_text="Holonomy({Rn}) = Sum(omega_n * Rn^2) = Phi_G2",
@@ -862,6 +868,7 @@ class AppendixGOmegaSeal(SimulationBase):
             ),
             Formula(
                 id="dead-mans-switch",
+                non_numeric='pass/fail falsification predicate (Delta > epsilon)',
                 label="(G.5)",
                 latex=r"\text{v24.2} \xrightarrow{\Delta > \epsilon} \text{FALSIFIED}",
                 plain_text="v24.2 -> FALSIFIED (if Delta > epsilon)",
@@ -893,6 +900,8 @@ class AppendixGOmegaSeal(SimulationBase):
             ),
             Formula(
                 id="sterile-rigidity-declaration",
+                value=(125.0 / 288.0) * (24.0 / 4.0),
+                **closed_form(('mul', ('div', 125, 288), ('div', 24, 4))),
                 label="(G.6)",
                 latex=r"\text{Sterile} \equiv \frac{125}{288} \cdot \left(\frac{24}{4}\right) = 43.4\% \times 6",
                 plain_text="Sterile = (125/288) * (24/4) = 43.4% x 6 = LOCKED",

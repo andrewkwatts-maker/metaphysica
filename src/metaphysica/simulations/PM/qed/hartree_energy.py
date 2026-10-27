@@ -40,6 +40,8 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 
 # CODATA 2022 values
@@ -259,6 +261,7 @@ class HartreeEnergyV17(SimulationBase):
         return [
             Formula(
                 id="hartree-bulk-derivation",
+                **qed_gate_kwargs("hartree-bulk-derivation"),
                 label="(6.3a)",
                 latex=r"E_{h,bulk} = \frac{E_{h,CODATA}}{(1+\epsilon)(1-\epsilon)^2}",
                 plain_text="E_h_bulk = E_h_CODATA / [(1+epsilon)(1-epsilon)^2]",
@@ -295,6 +298,7 @@ class HartreeEnergyV17(SimulationBase):
             ),
             Formula(
                 id="hartree-inverse-double-gate",
+                **qed_gate_kwargs("hartree-inverse-double-gate"),
                 label="(6.3b)",
                 latex=r"E_{h,manifest} = E_{h,bulk} \times (1+\epsilon)(1-\epsilon)^2",
                 plain_text="E_h_manifest = E_h_bulk * (1+epsilon)(1-epsilon)^2",

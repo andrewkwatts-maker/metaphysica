@@ -50,6 +50,8 @@ from metaphysica.simulations.base import (
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
+from metaphysica.simulations.PM.qed._triple_track import qed_gate_kwargs
+
 _REG = get_registry()
 
 # CODATA 2022 values
@@ -242,6 +244,7 @@ class ComptonWavelengthV17(SimulationBase):
         return [
             Formula(
                 id="compton-bulk-derivation",
+                **qed_gate_kwargs("compton-bulk-derivation"),
                 label="(6.1a)",
                 latex=r"\lambda_{C,bulk} = \lambda_{C,CODATA} \times (1 + \epsilon)",
                 plain_text="lambda_C_bulk = lambda_C_CODATA * (1 + epsilon)",
@@ -273,6 +276,7 @@ class ComptonWavelengthV17(SimulationBase):
             ),
             Formula(
                 id="compton-inverse-cubic-projection",
+                **qed_gate_kwargs("compton-inverse-cubic-projection"),
                 label="(6.1b)",
                 latex=r"\lambda_{C,manifest} = \frac{\lambda_{C,bulk}}{1 + \epsilon}",
                 plain_text="lambda_C_manifest = lambda_C_bulk / (1 + epsilon)",

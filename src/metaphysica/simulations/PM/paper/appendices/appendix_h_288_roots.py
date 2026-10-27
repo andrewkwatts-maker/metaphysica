@@ -35,6 +35,7 @@ _simulations_dir = os.path.dirname(os.path.dirname(_current_dir))
 _project_root = os.path.dirname(_simulations_dir)
 sys.path.insert(0, _project_root)
 
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -634,6 +635,8 @@ class AppendixH288Roots(SimulationBase):
         return [
             Formula(
                 id="so24-generators",
+                value=276.0,
+                **closed_form(('div', ('mul', 24, 23), 2)),
                 label="(H.1)",
                 latex=r"\text{dim}(SO(24)) = \frac{24 \times 23}{2} = 276",
                 plain_text="dim(SO(24)) = 24*23/2 = 276",
@@ -667,6 +670,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="shadow-torsion-sum",
+                value=24.0,
+                **closed_form(('add', 12, 12)),
                 label="(H.2)",
                 latex=r"\tau_{\text{total}} = \tau_A + \tau_B = 12 + 12 = 24",
                 plain_text="tau_total = 12 + 12 = 24",
@@ -703,6 +708,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="ancestral-roots-derivation",
+                value=288.0,
+                **closed_form(('sub', ('add', 276, 24), 12)),
                 label="(H.3)",
                 latex=r"R_{\text{ancestral}} = 276 + 24 - 12 = 288",
                 plain_text="R_ancestral = 276 + 24 - 12 = 288",
@@ -748,6 +755,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="sterile-projection-filter",
+                value=125.0 / 288.0,
+                **closed_form(('div', 125, 288)),
                 label="(H.4)",
                 latex=r"\theta_{\text{sterile}} = \arcsin\left(\frac{125}{288}\right) \approx 25.72°",
                 plain_text="theta_sterile = arcsin(125/288) ≈ 25.72°",
@@ -781,6 +790,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="hidden-support-count",
+                value=163.0,
+                **closed_form(('sub', 288, 125)),
                 label="(H.5)",
                 latex=r"N_{\text{hidden}} = 288 - 125 = 163",
                 plain_text="N_hidden = 288 - 125 = 163",
@@ -815,6 +826,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="e8xe8-root-decomposition",
+                value=288.0,
+                **closed_form(('add', 240, 48)),
                 label="(H.6)",
                 latex=r"R_{\text{ancestral}} = |E_8| + |\tilde{E}_8| = 240 + 48 = 288",
                 plain_text="R_ancestral = |E8| + |E8_tilde| = 240 + 48 = 288",
@@ -857,6 +870,8 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="pressure-divisor-formula",
+                value=144.0,
+                **closed_form(('div', ('pow', 24, 2), 4)),
                 label="(H.7)",
                 latex=r"\chi_{\text{pressure}} = \frac{b_3^2}{4} = \frac{24^2}{4} = \frac{576}{4} = 144",
                 plain_text="chi_pressure = b3^2 / 4 = 24^2 / 4 = 576/4 = 144",
