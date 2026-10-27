@@ -129,6 +129,11 @@ def build_rows(hits, comp):
     return rows
 
 
+def _compact(b1s):
+    c = Counter(b1s)
+    return " ".join("b1=%d x%d" % (k, n) for k, n in sorted(c.items())) or "-"
+
+
 def write_md(path, rows, tally_all, tally_hit, n_hits, n_c7, n_meet):
     L = ["# D-028 gauge source: SU(3) x SU(2) candidates (L3b)", "",
          "Computation only. Nothing is adopted and no D-028 ruling changes.",
@@ -150,7 +155,7 @@ def write_md(path, rows, tally_all, tally_hit, n_hits, n_c7, n_meet):
     for x in rows:
         L.append("| %d | %s | %d | %s | %d | %d | %s | %s | %d | %s |" % (
             x["class"], x["family"], x["order"], x["gauge"],
-            x["codim7_orbits"], x["su3_su2_points"], x["b1_su3"], x["b1_su2"],
+            x["codim7_orbits"], x["su3_su2_points"], _compact(x["b1_su3"]), _compact(x["b1_su2"]),
             x["adjoint_chirals"], ",".join(x["invalid_reasons"])))
     open(path, "w", encoding="utf8").write("\n".join(L) + "\n")
 
