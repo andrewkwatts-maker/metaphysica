@@ -208,6 +208,7 @@ def make_theory(lineage_path: Path = LINEAGE_PATH) -> Theory:
         anchors=PmAnchors(),
         decisions=PmDecisions(),
         lineage=lineage_path,
+        shared_state=True,
     )
 
 

@@ -81,11 +81,19 @@ def test_sample_is_seeded():
 
 
 def test_jobs_refused_for_shared_state_theory():
-    pm_like = type("T", (), {"id": "pm"})()
+    pm_like = type("T", (), {"id": "x", "shared_state": True})()
     with pytest.raises(ValueError, match="shares state"):
         check_jobs(pm_like, 2)
     check_jobs(pm_like, 1)
     check_jobs(_theory(), 4)
+
+
+def test_shared_state_declared_on_theory():
+    from metaphysica.testground.theory import Theory
+    from metaphysica.theories.pm import THEORY
+    assert Theory.__dataclass_fields__["shared_state"].default is False
+    assert THEORY.shared_state is True
+    assert _theory().shared_state is False
 
 
 def test_resume_skips_current_and_reruns_stale(tmp_path):

@@ -151,6 +151,8 @@ class Theory:
     narrative: Tuple[Dict[str, Any], ...] = field(default_factory=tuple)
     #: Lineage catalogue (YAML, `metaphysica.lineage/1`); None = no lineage.
     lineage: Optional[Path] = None
+    #: True when runs share state (e.g. a shared junction), so they cannot run in parallel.
+    shared_state: bool = False
 
     def fork_ids(self) -> List[str]:
         return list(self.switches.forks())
