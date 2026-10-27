@@ -2037,13 +2037,13 @@ class GeometricAnchorsSimulation(SimulationBase):
             {
                 "topic": "G2 manifold topology and Betti numbers",
                 "url": "https://en.wikipedia.org/wiki/G2_manifold",
-                "relevance": "The third Betti number b3=24 is the single topological input from which all geometric anchors are derived",
+                "relevance": "The third Betti number (b3=24 on the retired seed_24) is the single topological input from which all geometric anchors are derived",
                 "validation_hint": "Verify that compact G2 manifolds constructed via TCS (retired reading) have specific Betti number sequences determined by the input CY3 building blocks"
             },
             {
                 "topic": "Fine structure constant",
                 "url": "https://en.wikipedia.org/wiki/Fine-structure_constant",
-                "relevance": "The geometric anchor formula derives alpha^-1 = 137.036... from b3=24; compare against the QED definition alpha = e^2/(4*pi*epsilon_0*hbar*c)",
+                "relevance": "The geometric anchor formula derived alpha^-1 = 137.036... from b3=24 on the retired seed_24; compare against the QED definition alpha = e^2/(4*pi*epsilon_0*hbar*c)",
                 "validation_hint": "The CODATA 2022 value is alpha^-1 = 137.035999177(21); check PM prediction against this"
             },
             {

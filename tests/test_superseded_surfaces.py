@@ -20,7 +20,7 @@ PUBLISHED = Path(os.environ.get("PM_PUBLISHED_ROOT",
                                 "H:/claude-scratch/runs_g/active"))
 
 #: Active-presenting hits permitted per surface. Only goes down.
-CEILINGS = {"autogen": 159, "pages": 0, "website": 0}
+CEILINGS = {"autogen": 98, "pages": 0, "website": 0}
 
 
 def _active(surface: str):
@@ -65,3 +65,23 @@ def test_json_file_scanned_by_string(tmp_path):
     f = tmp_path / "a.json"
     f.write_text('{"k": {"v": "TCS gluing", "w": "fine"}}', encoding="utf-8")
     assert [h["in_callout"] for h in scan.scan_file(f, "j")] == [False]
+
+
+def test_inline_label_in_a_sentence_is_still_a_hit(tmp_path):
+    """Typing "(Superseded path)" into prose does not excuse it."""
+    f = tmp_path / "a.md"
+    f.write_text("The seed has b3 = 24 (Superseded path) and is active.",
+                 encoding="utf-8")
+    assert [h["in_callout"] for h in scan.scan_file(f, "x")] == [False]
+    secs = {"x": {"contentBlocks": [
+        {"content": "The seed has b3 = 24 (Superseded path) and is active."}]}}
+    assert [h["in_callout"] for h in scan.scan_sections(secs)] == [False]
+
+
+def test_hit_inside_the_real_callout_is_covered():
+    from metaphysica.simulations.PM.paper import superseded
+    secs = {"x": {"contentBlocks": [
+        {"type": "callout", "title": "Superseded path",
+         "content": "plain text with b3 = 24 and a TCS"},
+        {"content": superseded.superseded("b3 = 24 TCS")}]}}
+    assert [h["in_callout"] for h in scan.scan_sections(secs)] == [True, True]

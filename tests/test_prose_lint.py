@@ -17,7 +17,7 @@ PUBLISHED = Path(os.environ.get("PM_PUBLISHED_ROOT",
                                 "H:/claude-scratch/runs_g/active"))
 
 #: Findings permitted on the published text. Only goes down.
-CEILINGS = {"long_sentence": 317, "filler": 5, "version_tag": 14,
+CEILINGS = {"long_sentence": 288, "filler": 2, "version_tag": 0,
             "duplicate_paragraph": 2}
 
 

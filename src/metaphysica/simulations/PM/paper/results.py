@@ -811,7 +811,7 @@ class ResultsV16_2(SimulationBase):
                 ),
                 eml_description=(
                     "EML: ops.mul(c, ops.sqrt(ops.div(chi, ops.mul(b3, Vol_V7)))) — "
-                    "H₀ from G₂ topology: χ=144, b₃=24, Vol(V₇) from compactification scale"
+                    "H₀ from G₂ topology: χ=144, b₃=24 (retired seed_24 values), Vol(V₇) from compactification scale"
                 ),
                 derivation={
                     "method": "topological_bridge",

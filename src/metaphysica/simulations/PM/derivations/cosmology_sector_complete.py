@@ -999,7 +999,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
                 "steps": [
                     "Extend Einstein-Hilbert with curvature, trace and torsion terms: R + R^2/b3^2 + T/chi_eff + R tau/(b3 sqrt(chi_eff))",
                     "Fix each coefficient from topology alone: alpha_F = 1/b3^2, beta_F = 1/chi_eff, gamma_F = 1/(b3 sqrt(chi_eff))",
-                    "With b3 = 24 and chi_eff = 144 this gives alpha_F = 1/576, beta_F = 1/144, gamma_F = 1/288",
+                    "With the retired seed_24 values b3 = 24 and chi_eff = 144 this gave alpha_F = 1/576, beta_F = 1/144, gamma_F = 1/288",
                 ],
             },
             terms={

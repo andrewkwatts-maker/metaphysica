@@ -413,7 +413,7 @@ class AttractorPotentialV18(SimulationBase):
                     f"f = M_Pl/sqrt(chi_eff) are all determined by G2 topology "
                     f"(b3 = {int(_REG.elder_kads)} from the adopted Joyce seed; "
                     f"chi_eff = {int(_REG.chi_eff_total)}, which is an UNRULED quantity -- "
-                    f"its three claimed derivations agree only at b_3 = 24)."
+                    f"its three claimed derivations agreed only on the retired seed_24, b_3 = 24)."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["cosmology.V_0_vacuum_scale", "cosmology.A_amplitude", "cosmology.omega_frequency", "cosmology.f_decay_constant"],

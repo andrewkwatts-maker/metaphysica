@@ -1048,7 +1048,7 @@ class ProtonDecaySimulation(SimulationBase):
             {
                 "topic": "G2 Manifold and TCS (retired reading) Construction",
                 "url": "https://ncatlab.org/nlab/show/G2-manifold",
-                "relevance": "The TCS (twisted connected sum) G2 construction creates the cycle separation geometry that suppresses proton decay.",
+                "relevance": "The retired TCS (twisted connected sum) G2 construction creates the cycle separation geometry that suppresses proton decay.",
                 "validation_hint": "Verify d/R = 1/(2*pi*K) with K=4 matching fibres gives S = exp(1/4) ~ 1.28."
             },
         ]
