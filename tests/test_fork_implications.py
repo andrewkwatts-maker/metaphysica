@@ -63,11 +63,12 @@ def test_every_fork_and_every_option_is_enumerated():
     )
     # D-015 (2026-10-01) added seed_selection: 18 -> 19 forks, 51 -> 54 options.
     # D-022 (2026-10-25) added spectral_index_route and two n_gen_source options: 19 -> 20 forks, 54 -> 59 options; then h0_route and dark_energy_mechanism: 22 forks, 64 options.
-    assert len(FORKS) == 22, (
+    # L2b (2026-10-27) added the four action forks: 26 forks, 76 options.
+    assert len(FORKS) == 26, (
         "the fork count moved to %d; the register and switch_search both "
         "state it, so both need re-reading" % len(FORKS)
     )
-    assert len(rows) == 64, (
+    assert len(rows) == 76, (
         "the option count moved to %d; re-read the ruling that moved it"
         % len(rows)
     )

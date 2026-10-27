@@ -2,9 +2,9 @@
 
 WHAT THIS IS FOR
 ================
-Eighteen forks are declared and eleven are OPEN (measured 2026-09-22 from
-`variants.FORKS`, which had drifted from the "eight" this line used to
-assert). Each open fork encodes a decision nobody has been able to make from
+Twenty-six forks are declared and twelve are OPEN (measured 2026-10-28 from
+`variants.FORKS`; this line said eighteen and eleven on 2026-09-22, and
+"eight" before that). Each open fork encodes a decision nobody has been able to make from
 the armchair, and their combinations are a space the theory might close
 somewhere inside. This module enumerates that space and reports what each
 combination does.

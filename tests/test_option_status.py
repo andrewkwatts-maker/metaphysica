@@ -214,5 +214,7 @@ def test_the_status_population_is_pinned_in_both_directions():
     # ones DISABLED (spectral_index x2, h0 x2, mep_11_13, chi_over_24).
     # D-023 (2026-10-25): +3 forks (g2_construction, metric_construction,
     # joyce_contribution_table); seeds 7/19/31 DISABLED (n_gen != 3).
-    assert measured == {ACTIVE: 22, CONSIDERED: 31, DISABLED: 11}, measured
-    assert len(FORKS) == 22
+    # L2b (2026-10-27): +4 action forks (bulk_sectors 5, bulk_spinor 2,
+    # planck_exponent 3, sign_convention 2): 4 active, 8 considered.
+    assert measured == {ACTIVE: 26, CONSIDERED: 39, DISABLED: 11}, measured
+    assert len(FORKS) == 26
