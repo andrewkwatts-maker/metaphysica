@@ -997,11 +997,22 @@ def _cmd_paths_publish(args: argparse.Namespace, theory: Any) -> int:
     return cmd_paths_publish(args, theory)
 
 
+def _cmd_sweep(args: argparse.Namespace, theory: Any) -> int:
+    from .sweep.commands import cmd_sweep
+    return cmd_sweep(args, theory)
+
+
+def _cmd_audit(args: argparse.Namespace, theory: Any) -> int:
+    from .sweep.commands import cmd_audit
+    return cmd_audit(args, theory)
+
+
 HANDLERS: Dict[str, Callable[[argparse.Namespace, Any], int]] = {
     "list": cmd_list, "validate": cmd_validate, "assess": cmd_assess,
     "explain": cmd_explain, "accept": cmd_accept, "retire": cmd_retire,
     "reinstate": cmd_reinstate, "export-graph": cmd_export_graph,
     "run": cmd_run, "paths-publish": _cmd_paths_publish,
+    "sweep": _cmd_sweep, "audit": _cmd_audit,
 }
 
 
@@ -1140,6 +1151,8 @@ def build_parser() -> argparse.ArgumentParser:
                        ("out", "directory to write index.json and paths to")):
         p.add_argument("--" + flag, required=True, help=text,
                        nargs="+" if flag == "volatile-run" else None)
+    from .sweep.commands import add_parsers
+    add_parsers(sub)
     return parser
 
 

@@ -58,12 +58,14 @@ def test_report_shape_and_markdown():
     reads = reconcile_reads([_F("A"), _F("Z")], {"r": ({}, {"A": 1})})
     rep = audit(classes=[RunClass("r1", ["r1", "r2"])], no_ops=[("f", "o")],
                 interaction_sets=[(("a", "1"), ("b", "1"))], mismatches={"j": ["y", "x"], "k": []},
-                reads=reads)
+                reads=reads, failures={"step x: boom": ["r2", "r1"], "none": []})
     assert list(rep) == sorted(rep)
+    assert rep["schema"] == "metaphysica.path_audit/2"
+    assert rep["failures"] == {"step x: boom": ["r1", "r2"]}
     assert rep["mismatches"] == {"j": ["x", "y"]}
     assert rep["no_op_options"] == [{"fork": "f", "option": "o"}]
     assert json.loads(json.dumps(rep)) == rep
     md = to_markdown(rep)
     assert "## No-op options" in md and "a=1 + b=1" in md and "| Z | r |" in md
-    assert "## Closed-gate reads" not in md
+    assert "## Closed-gate reads" not in md and "## Failures" in md
     assert audit() == audit()
