@@ -157,6 +157,11 @@ from metaphysica.simulations.core.FormulasRegistry import get_registry
 _REG = get_registry()
 
 
+def _chi_eff_total() -> int:
+    """Registry chi_eff_total, which follows the chi_eff_route fork (H12)."""
+    return get_registry().chi_eff_total
+
+
 class DynamicalLambdaRelaxation(SimulationBase):
     """
     Dynamical Lambda relaxation via Pneuma entropy suppression (v24.3).
@@ -188,8 +193,10 @@ class DynamicalLambdaRelaxation(SimulationBase):
 
     # Topological constants
     B3 = 24                     # G2 Betti number
-    CHI_EFF = 144               # Effective Euler characteristic (b3^2/4)
-    N_BRIDGES = 12              # Bridge pairs (b3/2)
+    # H12: CHI_EFF reads the chi_eff_route fork through the registry; N_BRIDGES
+    # is chi_eff/12 (12 at the adopted 144). B3 waits on decision 7.
+    CHI_EFF = _chi_eff_total()  # Effective Euler characteristic
+    N_BRIDGES = int(round(_chi_eff_total() / 12.0))  # Bridge pairs (chi_eff/12)
     KAPPA_SAMPLER = 2           # dim(S^{2,0})
 
     # Racetrack parameters (from bridge_geometry.py BridgeSystem).

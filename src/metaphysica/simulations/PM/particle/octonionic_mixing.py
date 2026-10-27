@@ -1776,7 +1776,7 @@ from metaphysica.simulations.PM.geometry.b3_path import (
 _require_three_generations()
 _validation_instance._b2 = _b2_adopted()
 _validation_instance._b3 = int(_REG.elder_kads)
-_validation_instance._chi_eff = 144  # chi_eff_total = 144 for PMNS
+_validation_instance._chi_eff = _REG.chi_eff_total  # H08: chi_eff_total for PMNS, follows chi_eff_route
 _validation_instance._n_gen = 3
 _validation_instance._orientation_sum = 12  # Single unified bridge
 _validation_instance._epsilon_fn = 0.22313

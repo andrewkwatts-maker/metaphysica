@@ -509,7 +509,9 @@ class BridgeSystem:
         # For 1/i hierarchy: ratio = 1 + 1/2 + 1/3 + 1/4 = 25/12 ~ 2.083
         # The topological ratio 6.0 comes from chi_eff/b3 = 144/24
         # Use the topological value since it is the correct geometric origin
-        chi_eff = 144
+        # H08: chi_eff_total follows the chi_eff_route fork via the registry.
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+        chi_eff = get_registry().chi_eff_total
         b3 = 24
         alpha_leak_derived = 1.0 / math.sqrt(chi_eff / b3)
 

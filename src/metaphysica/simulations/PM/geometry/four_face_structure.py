@@ -2411,7 +2411,9 @@ class FourFaceG2Structure(SimulationBase):
         alpha_leak = 1.0 / math.sqrt(6.0)
         b3 = 24
         k_gimel = b3 / 2.0 + 1.0 / math.pi
-        chi_eff = 144
+        # H08: chi_eff_total follows the chi_eff_route fork via the registry.
+        from metaphysica.simulations.core.FormulasRegistry import get_registry
+        chi_eff = get_registry().chi_eff_total
         T = [b3 * k_gimel / (i * math.pi) for i in range(1, 5)]
         racetrack_ok = all(t > 0 for t in T)
         shadow_asymmetry = abs(T[0] - T[3]) / T[0]

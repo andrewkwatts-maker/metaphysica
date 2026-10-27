@@ -169,7 +169,7 @@ class MultiSectorV16(SimulationBase):
         try:
             chi_eff = registry.get_param("topology.mephorash_chi")  # uppercase
         except KeyError:
-            chi_eff = 144  # Default for G2 manifold
+            chi_eff = 144  # H08 PINNED: unreachable fallback (key always present); equals chi_eff_route adopted k3_reading
 
         try:
             b3 = registry.get_param("topology.elder_kads")
