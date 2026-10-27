@@ -11,7 +11,6 @@ from __future__ import annotations
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
 from metaphysica.testground.audit import interaction_sets, sample_selections
-from metaphysica.testground.configurations.lifecycle import Classifier
 from metaphysica.testground.configurations.model import Configuration
 from metaphysica.testground.constraints import is_valid
 from metaphysica.testground.switches.gates import canonical
@@ -109,11 +108,14 @@ def sampled_selections(forks: Mapping[str, Any], n: int, seed: int,
     return dedupe(forks, picks)
 
 
-def configuration_for(theory: Any, classifier: Classifier,
-                      sel: Mapping[str, str]) -> Configuration:
-    """The labelled Configuration of a sparse canonical selection."""
-    full = {**defaults(sweep_forks(theory)), **dict(sel)}
-    standing = classifier.standing(full)
-    return Configuration.of(theory.id, dict(sel), lifecycle=standing.lifecycle,
-                            not_runnable=standing.not_runnable,
-                            reasons=standing.reasons)
+def configuration_for(theory: Any, sel: Mapping[str, str]) -> Configuration:
+    """The Configuration of a sparse canonical selection.
+
+    Not runnable when an option is unimplemented. The Classifier is not used: it
+    needs an adopted option on every fork, which declared-only forks lack.
+    """
+    forks = theory.switches.forks()
+    missing = ["%s=%s is not implemented" % (f, o) for f, o in sorted(sel.items())
+               if not forks[f].option(o).implemented]
+    return Configuration.of(theory.id, dict(sel), not_runnable=bool(missing),
+                            reasons=tuple(missing))

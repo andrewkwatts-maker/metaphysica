@@ -13,7 +13,6 @@ import threading
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Union
 
-from metaphysica.testground.configurations.lifecycle import Classifier
 from metaphysica.testground.runner.cache import RunCache
 from metaphysica.testground.runner.pool import PoolResult, PoolTask, run_pool
 from metaphysica.testground.runner.worker import run_configuration
@@ -61,8 +60,8 @@ def run_selections(theory: Any, sels: Sequence[Mapping[str, str]],
     check_jobs(theory, jobs)
     runs_dir = Path(runs_dir)
     runs_dir.mkdir(parents=True, exist_ok=True)
-    classifier, cache = Classifier(theory), RunCache(runs_dir)
-    cfgs = [configuration_for(theory, classifier, s) for s in sels]
+    cache = RunCache(runs_dir)
+    cfgs = [configuration_for(theory, s) for s in sels]
     tasks = [_task(theory, c, cache, runs_dir, fingerprint, timeout, runner)
              for c in cfgs]
     return run_pool(tasks, jobs, progress)
