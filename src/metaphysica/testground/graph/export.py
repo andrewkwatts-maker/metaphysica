@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Union
 
 from metaphysica.testground.graph.build import (LEGEND, build_graph,
                                                 load_assessment)
+from metaphysica.testground.graph.ranking import load_ranking
 
 __all__ = [
     "SCHEMA_PATH",
@@ -176,7 +177,8 @@ def _atomic_write(path: Path, text: str) -> None:
 def export_graph(theory: Any, out_path: Union[str, Path],
                  assessment_path: Union[None, str, Path] = None,
                  html: Union[bool, str, Path] = False,
-                 decision_log: Union[None, str, Path] = None
+                 decision_log: Union[None, str, Path] = None,
+                 ranking_path: Union[None, str, Path] = None
                  ) -> Dict[str, Any]:
     """Build, validate and write the graph; return it.
 
@@ -186,7 +188,9 @@ def export_graph(theory: Any, out_path: Union[str, Path],
     """
     assessment = (load_assessment(assessment_path)
                   if assessment_path is not None else None)
-    graph = build_graph(theory, assessment, decision_log)
+    ranking = (load_ranking(ranking_path)
+               if ranking_path is not None else None)
+    graph = build_graph(theory, assessment, decision_log, ranking)
     errors = validate_graph(graph)
     if errors:
         raise GraphInvalid(errors)
