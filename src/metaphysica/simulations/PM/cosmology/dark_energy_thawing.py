@@ -84,6 +84,7 @@ from metaphysica.simulations.base import (
     Parameter,
     PMRegistry,
 )
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
@@ -1015,6 +1016,8 @@ class DarkEnergyEvolution(SimulationBase):
         return [
             Formula(
                 id="thawing-w0-derivation",
+                value=float(w0_val),
+                **closed_form(('add', -1, ('div', 1, 'b3'))),
                 label="(5.12)",
                 latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{b3}}} \approx {w0_val:.4f}",
                 plain_text=f"w0 = -1 + 1/b3 = -1 + 1/{b3} ~ {w0_val:.4f}",
@@ -1063,6 +1066,8 @@ class DarkEnergyEvolution(SimulationBase):
             ),
             Formula(
                 id="thawing-wa-derivation",
+                value=float(-4.0 / (b3 ** 0.5)),
+                **closed_form(('neg', ('mul', ('div', 1, ('sqrt', 'b3')), 4))),
                 label="(5.13)",
                 latex=rf"w_a = -\frac{{1}}{{\sqrt{{b_3}}}} \times \dim(\Psi) = -\frac{{1}}{{\sqrt{{{b3}}}}} \times 4 \approx {-4.0 / (b3 ** 0.5):.4f}",
                 plain_text=f"wa = -1/sqrt(b3) × dim(Ψ) = -1/sqrt({b3}) × 4 ~ {-4.0 / (b3 ** 0.5):.4f}",
@@ -1157,6 +1162,11 @@ class DarkEnergyEvolution(SimulationBase):
             ),
             Formula(
                 id="torsional-leakage-formula",
+                value=float((b3 / float(chi_eff_total)) * (1.0 - 1.0 / (b3 ** 0.5))),
+                **closed_form(
+                    ('mul', ('div', 'b3', 'chi_eff'), ('sub', 1, ('div', 1, ('sqrt', 'b3')))),
+                    {'chi_eff': float(chi_eff_total)},
+                ),
                 label="(5.15)",
                 latex=r"\epsilon_T = \frac{b_3}{\chi_{eff}} \left(1 - \frac{1}{\sqrt{b_3}}\right)",
                 plain_text="epsilon_T = (b3/chi_eff) * (1 - 1/sqrt(b3))",
@@ -1295,6 +1305,8 @@ class DarkEnergyEvolution(SimulationBase):
             ),
             Formula(
                 id="4face-w0-prediction",
+                value=float(w0_val),
+                **closed_form(('add', -1, ('div', 1, 'b3'))),
                 label="(DE.4F2)",
                 latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -1 + \frac{{1}}{{{b3}}} = -\frac{{{b3 - 1}}}{{{b3}}}",
                 plain_text=f"w0 = -1 + 1/b3 = -1 + 1/{b3} = {w0_frac}",

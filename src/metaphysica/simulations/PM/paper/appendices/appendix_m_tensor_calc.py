@@ -687,6 +687,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.1: Contravariant transformation
             Formula(
                 id="tensor-contravariant-transform-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.1)",
                 latex=r"V'^\mu = \frac{\partial x'^\mu}{\partial x^\nu} V^\nu",
                 plain_text="V'^mu = (dx'^mu/dx^nu) V^nu",
@@ -716,6 +717,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.2: Covariant transformation (internal reference)
             Formula(
                 id="tensor-covariant-transform-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.2)",
                 latex=r"W'_\mu = \frac{\partial x^\nu}{\partial x'^\mu} W_\nu",
                 plain_text="W'_mu = (dx^nu/dx'^mu) W_nu",
@@ -745,6 +747,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.3: Metric tensor transformation
             Formula(
                 id="tensor-metric-covariant-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.3)",
                 latex=r"g'_{\mu\nu} = \frac{\partial x^\alpha}{\partial x'^\mu} \frac{\partial x^\beta}{\partial x'^\nu} g_{\alpha\beta}",
                 plain_text="g'_munu transforms as (0,2) tensor",
@@ -775,6 +778,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.4: Mixed tensor transformation
             Formula(
                 id="tensor-mixed-transform-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.4)",
                 latex=r"T'^\mu{}_\nu = \frac{\partial x'^\mu}{\partial x^\alpha} \frac{\partial x^\beta}{\partial x'^\nu} T^\alpha{}_\beta",
                 plain_text="T'^mu_nu = (dx'^mu/dx^a)(dx^b/dx'^nu) T^a_b",
@@ -804,6 +808,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.5: Einstein summation
             Formula(
                 id="tensor-einstein-summation-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.5)",
                 latex=r"A^\mu B_\mu \equiv \sum_{\mu=0}^{n-1} A^\mu B_\mu",
                 plain_text="A^mu B_mu = sum over mu of A^mu * B_mu",
@@ -833,6 +838,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.6: Index lowering
             Formula(
                 id="tensor-index-lowering-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.6)",
                 latex=r"V_\mu = g_{\mu\nu} V^\nu",
                 plain_text="V_mu = g_munu V^nu (lowering index)",
@@ -862,6 +868,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.7: Index raising
             Formula(
                 id="tensor-index-raising-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.7)",
                 latex=r"V^\mu = g^{\mu\nu} V_\nu",
                 plain_text="V^mu = g^munu V_nu (raising index)",
@@ -891,6 +898,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.8: Covariant derivative
             Formula(
                 id="tensor-covariant-derivative-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.8)",
                 latex=r"\nabla_\mu V^\nu = \partial_\mu V^\nu + \Gamma^\nu_{\mu\lambda} V^\lambda",
                 plain_text="nabla_mu V^nu = partial_mu V^nu + Gamma^nu_mu,lambda V^lambda",
@@ -921,6 +929,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.9: Christoffel symbol first kind
             Formula(
                 id="tensor-christoffel-first-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.9)",
                 latex=r"\Gamma_{\mu\nu\lambda} = \frac{1}{2} \left( \partial_\nu g_{\mu\lambda} + \partial_\lambda g_{\mu\nu} - \partial_\mu g_{\nu\lambda} \right)",
                 plain_text="Gamma_mu,nu,lambda = (1/2)(dg_mu,lambda/dx^nu + dg_mu,nu/dx^lambda - dg_nu,lambda/dx^mu)",
@@ -951,6 +960,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.10: Christoffel symbol second kind
             Formula(
                 id="tensor-christoffel-second-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.10)",
                 latex=r"\Gamma^\lambda_{\mu\nu} = \frac{1}{2} g^{\lambda\sigma} \left( \partial_\mu g_{\nu\sigma} + \partial_\nu g_{\mu\sigma} - \partial_\sigma g_{\mu\nu} \right)",
                 plain_text="Gamma^lambda_mu,nu = (1/2) g^lambda,sigma (dg_nu,sigma/dx^mu + dg_mu,sigma/dx^nu - dg_mu,nu/dx^sigma)",
@@ -980,6 +990,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.11: Metric compatibility
             Formula(
                 id="tensor-metric-compatible-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.11)",
                 latex=r"\nabla_\lambda g_{\mu\nu} = 0",
                 plain_text="nabla_lambda g_munu = 0 (metric compatibility)",
@@ -1008,6 +1019,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.12: Parallel transport
             Formula(
                 id="tensor-parallel-transport-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.12)",
                 latex=r"u^\mu \nabla_\mu V^\nu = \frac{dV^\nu}{d\lambda} + \Gamma^\nu_{\mu\sigma} u^\mu V^\sigma = 0",
                 plain_text="dV^nu/dlambda + Gamma^nu_mu,sigma u^mu V^sigma = 0",
@@ -1039,6 +1051,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.13: Geodesic equation
             Formula(
                 id="tensor-geodesic-equation-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.13)",
                 latex=r"\frac{d^2 x^\mu}{d\lambda^2} + \Gamma^\mu_{\alpha\beta} \frac{dx^\alpha}{d\lambda} \frac{dx^\beta}{d\lambda} = 0",
                 plain_text="d^2 x^mu / dlambda^2 + Gamma^mu_ab (dx^a/dlambda)(dx^b/dlambda) = 0",
@@ -1070,6 +1083,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.14: Riemann from commutator
             Formula(
                 id="tensor-riemann-commutator-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.14)",
                 latex=r"[\nabla_\mu, \nabla_\nu] V^\lambda = R^\lambda{}_{\sigma\mu\nu} V^\sigma",
                 plain_text="[nabla_mu, nabla_nu] V^lambda = R^lambda_sigma,mu,nu V^sigma",
@@ -1101,6 +1115,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.15: Riemann components
             Formula(
                 id="tensor-riemann-components-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.15)",
                 latex=r"R^\lambda{}_{\sigma\mu\nu} = \partial_\mu \Gamma^\lambda_{\nu\sigma} - \partial_\nu \Gamma^\lambda_{\mu\sigma} + \Gamma^\lambda_{\mu\rho} \Gamma^\rho_{\nu\sigma} - \Gamma^\lambda_{\nu\rho} \Gamma^\rho_{\mu\sigma}",
                 plain_text="R^lambda_sigma,mu,nu = d_mu Gamma^lambda_nu,sigma - d_nu Gamma^lambda_mu,sigma + Gamma*Gamma - Gamma*Gamma",
@@ -1132,6 +1147,7 @@ class AppendixMTensorCalculus(SimulationBase):
             # M.16: Ricci tensor
             Formula(
                 id="tensor-ricci-tensor-v19",
+                non_numeric='symbolic identity: a tensor-calculus definition or transformation law with no numerical value',
                 label="(M.16)",
                 latex=r"R_{\mu\nu} = R^\lambda{}_{\mu\lambda\nu}",
                 plain_text="R_munu = R^lambda_mu,lambda,nu (Ricci tensor)",

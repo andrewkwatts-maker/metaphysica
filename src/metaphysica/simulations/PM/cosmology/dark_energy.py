@@ -187,6 +187,7 @@ from metaphysica.simulations.base import (
     w0_from_b3,
     wa_from_b3,
 )
+from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
@@ -1013,6 +1014,8 @@ class DarkEnergyV16(SimulationBase):
             ),
             Formula(
                 id="dark-energy-eos-derivation",
+                value=float(w0),
+                **closed_form(('add', -1, ('div', 1, 'b3'))),
                 label="(5.10)",
                 latex=rf"w_0 = -1 + \frac{{1}}{{b_3}} = -\frac{{{numerator}}}{{{b3}}} \approx {w0:.4f}",
                 plain_text=f"w_0 = -1 + 1/b3 = {w0_frac} ≈ {w0:.4f}",

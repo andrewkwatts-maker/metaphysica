@@ -150,6 +150,8 @@ class Formula:
         triple_status: After registration, one of
             "OK" (all three legs agree), "ARITHMA_ONLY", "EML_ONLY",
             "FLOAT_ONLY" (no symbolic views supplied), or "" (not yet checked).
+        non_numeric: Optional short reason the formula has no value to check;
+            incompatible with ``value`` (validated at registration).
         arithma_latex: Lazily cached LaTeX rendering of ``arithma`` via .to_latex()
         arithma_compact: Lazily cached compact-form serialization of ``arithma``
             via .to_compact(). Captured only when Arithma's wheel exposes
@@ -181,6 +183,9 @@ class Formula:
     triple_rel: float = 1e-12
     triple_abs: float = 0.0
     triple_status: str = ""
+    # Short reason a formula has no number to check (a definition, an action
+    # density, a symbolic identity). A formula with a ``value`` cannot carry it.
+    non_numeric: str = ""
     arithma_latex: str = ""
     arithma_compact: Optional[Any] = None
     eml_tree_compact: Optional[Any] = None

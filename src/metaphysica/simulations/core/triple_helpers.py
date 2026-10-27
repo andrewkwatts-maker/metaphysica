@@ -211,10 +211,92 @@ def triple_kwargs(value: float, *, label: str = "") -> Dict[str, Any]:
     }
 
 
+# ── Closed forms: one spec, two independent trees ────────────────────────────
+
+_CF_UNARY = {"neg", "sqrt", "exp", "ln"}
+_CF_BINARY = {"add", "sub", "mul", "div", "pow"}
+
+
+def _cf_arithma(spec: Any, E: Any) -> Any:
+    """Build a real Arithma Expression from a closed-form spec."""
+    if isinstance(spec, (int, float)):
+        return E.number(float(spec))
+    if isinstance(spec, str):
+        return E.variable(spec)
+    op, *args = spec
+    xs = [_cf_arithma(a, E) for a in args]
+    if op == "neg":
+        return -xs[0]
+    if op in ("sqrt", "exp", "ln"):
+        return getattr(E, op)(xs[0])
+    if op == "pow":
+        return xs[0].pow_(xs[1])
+    return {"add": lambda a, b: a + b, "sub": lambda a, b: a - b,
+            "mul": lambda a, b: a * b, "div": lambda a, b: a / b}[op](*xs)
+
+
+def _cf_eml(spec: Any, env: Mapping[str, float]) -> Any:
+    """Build the EML tree: b3 through the live b3 leaf, other names from env."""
+    from metaphysica.simulations.core.eml_integration import b3_leaf
+    if isinstance(spec, (int, float)):
+        return _eml_scalar(float(spec))
+    if isinstance(spec, str):
+        if spec == "b3":
+            return b3_leaf()
+        if spec == "pi":
+            return _eml_pi()
+        return _eml_scalar(float(env[spec]))
+    op, *args = spec
+    xs = [_cf_eml(a, env) for a in args]
+    fn = {"neg": _eml_neg, "sqrt": _eml_sqrt, "exp": _eml_exp, "ln": _eml_ln,
+          "add": _eml_add, "sub": _eml_sub, "mul": _eml_mul,
+          "div": _eml_div, "pow": _eml_pow}[op]
+    return fn(*xs)
+
+
+def closed_form(
+    spec: Any, env: Optional[Mapping[str, float]] = None
+) -> Dict[str, Any]:
+    """Return ``arithma``/``eml``/``triple_env`` kwargs for one closed form.
+
+    ``spec`` is a number, a name, or ``(op, arg, ...)`` with ops add, sub,
+    mul, div, pow, neg, sqrt, exp, ln. The Arithma tree uses variables
+    (``b3`` and ``pi`` come from the validator's default environment; any
+    other name must be in ``env``); the EML tree is built separately, so the
+    two legs and the caller's float ``value`` are three independent
+    evaluations. Fails early on an unknown operator or an unbound name.
+    """
+    from metaphysica.simulations.core.arithma_backend import ARITHMA
+    if ARITHMA is None:
+        raise RuntimeError("closed_form: the Arithma backend is unavailable")
+    env = dict(env or {})
+    _cf_check(spec, env)
+    return {
+        "arithma": _cf_arithma(spec, ARITHMA.Expression),
+        "eml": _cf_eml(spec, env),
+        "triple_env": env,
+    }
+
+
+def _cf_check(spec: Any, env: Mapping[str, float]) -> None:
+    if isinstance(spec, str):
+        if spec not in ("b3", "pi") and spec not in env:
+            raise ValueError("closed_form: unbound name %r" % spec)
+        return
+    if isinstance(spec, (int, float)):
+        return
+    op, *args = spec
+    want = 1 if op in _CF_UNARY else 2 if op in _CF_BINARY else None
+    if want is None or len(args) != want:
+        raise ValueError("closed_form: bad node %r" % (spec,))
+    for a in args:
+        _cf_check(a, env)
+
+
 __all__ = [
     "_arithma_num", "_arithma_add", "_arithma_sub", "_arithma_mul",
     "_arithma_div", "_arithma_pow", "_arithma_neg",
     "_eml_scalar", "_eml_add", "_eml_sub", "_eml_mul", "_eml_div",
     "_eml_pow", "_eml_neg", "_eml_sqrt", "_eml_exp", "_eml_ln", "_eml_pi",
-    "triple_kwargs",
+    "triple_kwargs", "closed_form",
 ]
