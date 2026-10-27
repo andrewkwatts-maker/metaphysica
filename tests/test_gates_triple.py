@@ -47,8 +47,11 @@ def test_numeric_gates_agree_across_legs():
 
 def test_validate_gate_runs_for_all_72_on_model_data():
     results = {}
+    model = {"roots": 288, "active": 125, "hidden": 163, "torsion": 24,
+             "per_shadow": 12, "b3": 43,
+             "selection": {"b3_seed": "seed_43_joyce"}}
     for gid in range(1, 73):
-        passed, msg = GateRegistry.validate_gate(gid, {})
+        passed, msg = GateRegistry.validate_gate(gid, model)
         assert isinstance(msg, str) and msg
         results[gid] = bool(passed)
     print("gates pass %d fail %d failing %s" % (

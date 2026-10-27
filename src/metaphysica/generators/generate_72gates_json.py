@@ -436,13 +436,22 @@ def _validation_summary():
 def generate_json():
     """Generate the gates JSON file."""
 
+    from metaphysica.simulations.PM.paper.appendices import gate_paths
+
+    selection = gate_paths.resolve_selection({})
+    not_applicable = [g for g in range(1, 73)
+                      if not gate_paths.applicability(g, selection)[0]]
+
     output = {
         "version": "16.2",
         "title": "Gates of Integrity",
         "description": "Complete sterile certification framework with 72 hard locks organized into 6 symmetry blocks (12 gates each).",
         "timestamp": datetime.now().isoformat(),
         "architecture": {
-            "total_gates": 72,
+            "total_gates": 72 - len(not_applicable),
+            "defined_gates": 72,
+            "not_applicable": not_applicable,
+            "path_id": gate_paths.path_id(selection),
             "blocks": 6,
             "gates_per_block": 12,
             "formula": "72 = 24 × 3 (torsion pin triality)",
