@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import sys
+from dataclasses import replace
 from typing import Any, Dict, List, Mapping, Optional
 
 from metaphysica.actions.correspondence import Correspondence
@@ -51,16 +52,49 @@ OWNER_ITEMS: Dict[int, tuple] = {
 _CONVENTION = {"mostly_plus_mtw": "mostly_plus", "mostly_minus": "mostly_minus"}
 
 
+# owner item -> the fork that carries its choice (items absent here are open questions)
+ITEM_FORKS: Dict[int, str] = {1: "action_bulk_sectors", 2: "action_bulk_spinor",
+                              4: "action_planck_exponent", 5: "action_sign_convention"}
+_ITEM1_IDS = {"E8xE8 YM": "e8xe8_ym", "flux F_4": "flux_f4", "KK tower": "kk_tower",
+              "none": "none", None: "undecided"}
+
+
+def option_id(item: int, value: Any) -> str:
+    """The fork option id for an `OWNER_ITEMS` value."""
+    if item == 1:
+        return _ITEM1_IDS[value]
+    return "exponent_%d" % value if item == 4 else str(value)
+
+
+def option_value(item: int, oid: str) -> Any:
+    """The `OWNER_ITEMS` value for a fork option id (inverse of `option_id`)."""
+    if item == 1:
+        return {v: k for k, v in _ITEM1_IDS.items()}[oid]
+    return int(oid.split("_")[1]) if item == 4 else oid
+
+
 def resolve_options(overrides: Optional[Mapping[int, Any]] = None) -> Dict[int, Any]:
-    """Recommended value per item (None when unresolved), with overrides applied."""
-    opts = {k: v[2] for k, v in OWNER_ITEMS.items()}
-    for k, val in (overrides or {}).items():
+    """Value per item (None when unresolved): forks through `resolve`, then overrides.
+
+    An override is a thin layer over the same path: it is the `resolve` override of the
+    item's fork. Items without a fork keep their recommended value (None when open).
+    """
+    from metaphysica.simulations.core.variants import resolve
+
+    overrides = overrides or {}
+    for k, val in overrides.items():
         if k not in OWNER_ITEMS:
             raise KeyError("unknown owner item %r" % (k,))
         allowed = OWNER_ITEMS[k][1]
-        if allowed and val not in allowed:
+        if allowed and val not in allowed and not (k == 1 and val is None):
             raise ValueError("item %d: %r not in options %r" % (k, val, allowed))
-        opts[k] = val
+    opts: Dict[int, Any] = {k: v[2] for k, v in OWNER_ITEMS.items()}
+    for item, fid in ITEM_FORKS.items():
+        over = option_id(item, overrides[item]) if item in overrides else None
+        opts[item] = option_value(item, resolve(fid, over))
+    for k, val in overrides.items():
+        if k not in ITEM_FORKS:
+            opts[k] = val
     return opts
 
 
@@ -108,10 +142,27 @@ def _internals() -> List[InternalSpace]:
             InternalSpace("KK", 2, False, None, "Vol_2")]  # PM declares no KK space
 
 
+def _item1_terms() -> Dict[str, set]:
+    """Action id -> ids of the terms only item 1 blocks."""
+    out: Dict[str, set] = {}
+    for key, (_ref, items) in S.OPEN_TERMS.items():
+        if 1 in items:
+            out.setdefault(key.split(":")[0], set()).add(key.split(":")[1])
+    return out
+
+
+def _apply_sectors(action: Action, sectors: Any) -> Action:
+    """Under item 1 = 'none' the sector terms are absent from the action."""
+    drop = _item1_terms().get(action.id, set()) if sectors == "none" else set()
+    terms = tuple(t for t in action.terms if t.id not in drop)
+    return replace(action, terms=terms) if drop else action
+
+
 def build_ladder(opts: Mapping[int, Any]) -> Ladder:
     conv = _CONVENTION[opts[5]]
-    a26 = S.action_26(opts[2], int(opts[4]), conv)
-    a13, a6, a4 = S.action_13(conv), S.action_6(conv), S.action_4(conv)
+    a26 = _apply_sectors(S.action_26(opts[2], int(opts[4]), conv), opts[1])
+    a13 = _apply_sectors(S.action_13(conv), opts[1])
+    a6, a4 = S.action_6(conv), S.action_4(conv)
     bridge, g2, kk = _internals()
     r13 = Reduction(a26, a13, bridge, {"M13_11": "M_star_24*Vol_13"}, signature_change=True)
     r6 = Reduction(a13, a6, g2, {"M6_4": "M13_11*Vol_7"},

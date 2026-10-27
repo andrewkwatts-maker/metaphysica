@@ -18,6 +18,7 @@ from . import g2_metric
 from . import flavour
 from . import algebra
 from . import policy
+from . import action
 
 _BY_DOMAIN: Dict[str, Fork] = {}
 _BY_DOMAIN.update(cosmology.FORKS)
@@ -27,6 +28,7 @@ _BY_DOMAIN.update(g2_metric.FORKS)
 _BY_DOMAIN.update(flavour.FORKS)
 _BY_DOMAIN.update(algebra.FORKS)
 _BY_DOMAIN.update(policy.FORKS)
+_BY_DOMAIN.update(action.FORKS)
 
 #: Explicit key order: this is the order the report and every sweep use.
 _ORDER = (
@@ -52,6 +54,10 @@ _ORDER = (
     "theory_uncertainty_policy",
     "face_genericity",
     "seed_selection",
+    "action_bulk_sectors",
+    "action_bulk_spinor",
+    "action_planck_exponent",
+    "action_sign_convention",
 )
 
 FORKS: Dict[str, Fork] = {k: _BY_DOMAIN[k] for k in _ORDER}
