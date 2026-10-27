@@ -210,6 +210,11 @@ FORKS: Dict[str, Fork] = {
                     "also disagree with each other everywhere except b_3 = 24, "
                     "so this branch is not one option but two."
                 ),
+                # chi_eff_total = b_3^2/4 is an Euler characteristic and must
+                # be an integer: b_3 must be even. Every Joyce seed (7, 19, 31,
+                # 43) is odd (462.25 at 43); only seed_24 gives 144.
+                excludes=(("b3_seed", "seed_7_joyce"), ("b3_seed", "seed_19_joyce"),
+                          ("b3_seed", "seed_31_joyce"), ("b3_seed", "seed_43_joyce")),
                 status=DISABLED,
             ),
         ],

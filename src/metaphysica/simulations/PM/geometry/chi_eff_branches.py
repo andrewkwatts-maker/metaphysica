@@ -141,7 +141,13 @@ def registry_chi_eff_total(route: str, b3: int) -> float:
         raise ValueError(
             "no chi_eff branch for route %r; declared: %s"
             % (route, sorted(_ROUTE_TO_BRANCH)))
-    return chi_eff_on_branch(_ROUTE_TO_BRANCH[route], b3)
+    value = chi_eff_on_branch(_ROUTE_TO_BRANCH[route], b3)
+    if not value.is_integer():
+        raise ValueError(
+            "chi_eff_route %r gives chi_eff_total = %s at b_3 = %s, which is "
+            "not an integer; an Euler characteristic is one. The "
+            "chi_eff_route fork must move with b3_seed." % (route, value, b3))
+    return value
 
 
 def downstream_values(branch_id: str, b3: int) -> Dict[str, Any]:
