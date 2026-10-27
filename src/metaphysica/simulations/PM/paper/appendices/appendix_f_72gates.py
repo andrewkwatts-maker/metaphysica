@@ -51,6 +51,7 @@ from metaphysica.simulations.base import (
     Parameter,
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+from metaphysica.simulations.core.triple_helpers import closed_form
 
 
 class GateStatus(Enum):
@@ -1436,6 +1437,47 @@ class GateRegistry:
 GateRegistry.initialize_gates()
 
 
+# ── Gate triple-track classification ──────────────────────────────────
+# A gate is numeric when validate_gate compares a computed quantity with a
+# target; the value is that quantity from the registry constants, and the
+# Arithma/EML trees are an independent closed form (triple_helpers).
+# Every other gate is a pass/fail predicate (non_numeric).
+_GATE_PREDICATE_REASON = "pass/fail gate %d, evaluated by validate_gate"
+
+
+def _gate_numeric_table() -> Dict[int, Tuple[float, Any]]:
+    """gate -> (float value from registry constants, closed-form spec)."""
+    r, a = float(GateRegistry.ROOTS), float(GateRegistry.ACTIVE)
+    h, t = float(GateRegistry.HIDDEN), float(GateRegistry.TORSION_PINS)
+    return {
+        4: (12.0 / r ** 2, ("div", 12, ("pow", "roots", 2))),
+        8: (a / r, ("div", "active", "roots")),   # sin(theta_s); gate tests asin
+        11: (8.0 / a, ("div", 8, "active")),
+        12: (12.0 / t, ("div", 12, "torsion")),
+        18: (1.0 / r, ("div", 1, "roots")),
+        22: (t / r, ("div", "torsion", "roots")),
+        24: (h / r, ("div", "hidden", "roots")),
+        31: ((t / 2 + 1 / np.pi) * (t - 4),
+             ("mul", ("add", ("div", "torsion", 2), ("div", 1, "pi")),
+              ("sub", "torsion", 4))),
+        37: (1.0 / r, ("div", 1, "roots")),
+        40: (h / (a + h), ("div", "hidden", ("add", "active", "hidden"))),
+        66: (1.0 / r, ("div", 1, "roots")),
+    }
+
+
+def gate_triple_kwargs(gate_id: int) -> Dict[str, Any]:
+    """Formula kwargs for one gate: a checked value, or a non_numeric reason."""
+    numeric = _gate_numeric_table().get(gate_id)
+    if numeric is None:
+        return {"non_numeric": _GATE_PREDICATE_REASON % gate_id}
+    value, spec = numeric
+    env = {"roots": float(GateRegistry.ROOTS), "active": float(GateRegistry.ACTIVE),
+           "hidden": float(GateRegistry.HIDDEN),
+           "torsion": float(GateRegistry.TORSION_PINS)}
+    return {"value": float(value), **closed_form(spec, env)}
+
+
 # ── Gate Parameter Mapping ────────────────────────────────────────────
 # Maps each gate number (1-72) to (input_params, output_params) tuples
 # describing what registry parameters each gate consumes and produces.
@@ -1798,6 +1840,7 @@ class Appendix72Gates(SimulationBase):
             )
             formulas.append(Formula(
                 id=gate.formula_id or f"g{gate_id:02d}-gate",
+                **gate_triple_kwargs(gate_id),
                 label=f"(G{gate_id:02d})",
                 latex=f"\\text{{{gate.name}}}",
                 plain_text=gate.name,
@@ -1824,6 +1867,7 @@ class Appendix72Gates(SimulationBase):
         # Add the Omega Hash formula — aggregates all 72 gate statuses
         formulas.append(Formula(
             id="omega-hash-72",
+            non_numeric=_GATE_PREDICATE_REASON % 72,
             label="(Ω)",
             latex=r"\Omega_{\text{hash}} = \prod_{n=1}^{72} G_n \equiv 0.000...",
             plain_text="Omega_hash = Product(G1...G72) = 0.000...",

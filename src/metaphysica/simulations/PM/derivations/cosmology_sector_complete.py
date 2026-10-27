@@ -85,6 +85,7 @@ getcontext().prec = 50
 
 # Import FormulasRegistry for Single Source of Truth (SSoT)
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+from metaphysica.simulations.core.triple_helpers import closed_form
 _REG = get_registry()
 
 # =============================================================================
@@ -769,6 +770,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="dm-lagrangian-mirror-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(5.4.1)",
             latex=formula_latex("dm-lagrangian-mirror-v19"),
             plain_text=(
@@ -837,6 +839,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="dm-z2-parity-v19",
+            non_numeric='structural statement: a parity, texture or ordering assignment with no single number to check',
             label="(5.4.3)",
             latex=(
                 r"\mathbb{Z}_2: \text{visible}(125) \to +1, \quad "
@@ -908,6 +911,8 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="de-w0-tzimtzum-v19",
+            value=-(1.0 - 1.0 / self.elder_kads),
+            **closed_form(('neg', ('sub', 1, ('div', 1, 'b3')))),
             label="(5.4.5)",
             latex=(
                 r"w_0 = -\frac{P}{\rho} = -\left(1 - \frac{1}{b_3}\right) "
@@ -978,6 +983,7 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="de-frt-lagrangian-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(5.4.7)",
             latex=(
                 r"\mathcal{L}_{\rm grav} = R + \frac{1}{b_3^2}R^2 + \frac{1}{\chi_{\rm eff}}T "
@@ -1151,6 +1157,8 @@ class CosmologySectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="cosmo-omega-matter-split-v19",
+            value=0.049 + 0.266,
+            **closed_form(('add', 0.049, 0.266)),
             label="(5.4.12)",
             latex=(
                 r"\Omega_m = \Omega_b + \Omega_{\rm DM} = 0.049 + 0.266 = 0.315"

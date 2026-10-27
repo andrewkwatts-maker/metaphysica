@@ -83,6 +83,7 @@ getcontext().prec = 50
 # Import FormulasRegistry for Single Source of Truth (SSoT)
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 _REG = get_registry()
+from metaphysica.simulations.core.triple_helpers import closed_form
 
 # =============================================================================
 # PHYSICAL CONSTANTS AND GEOMETRIC PARAMETERS
@@ -143,7 +144,6 @@ def _derived_elsewhere(registry, path: str) -> float:
 
 
 @dataclass
-
 class SU3QCDDerivation:
     """Results from SU(3)_C QCD derivation from G2 geometry."""
     gauge_group: str
@@ -844,6 +844,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="su3-qcd-lagrangian-g2-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(3.3.1)",
             latex=(
                 r"\mathcal{L}_{\text{QCD}} = -\frac{1}{4}G^a_{\mu\nu}G^{a\mu\nu} "
@@ -883,6 +884,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="su3-field-strength-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.3.2)",
             latex=(
                 r"G^a_{\mu\nu} = \partial_\mu G^a_\nu - \partial_\nu G^a_\mu "
@@ -918,6 +920,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="su3-gluon-count-v19",
+            value=float(3 ** 2 - 1),
+            **closed_form(('sub', ('pow', 3, 2), 1)),
             label="(3.3.3)",
             latex=r"N_{\text{gluon}} = \dim(\text{SU}(3)) = 3^2 - 1 = 8",
             plain_text="N_gluon = dim(SU(3)) = 3^2 - 1 = 8",
@@ -987,6 +991,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="su2-weak-lagrangian-g2-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(3.3.5)",
             latex=(
                 r"\mathcal{L}_{\text{weak}} = -\frac{1}{4}W^a_{\mu\nu}W^{a\mu\nu} "
@@ -1024,6 +1029,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="su2-field-strength-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.3.6)",
             latex=(
                 r"W^a_{\mu\nu} = \partial_\mu W^a_\nu - \partial_\nu W^a_\mu "
@@ -1099,6 +1105,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="u1-hypercharge-lagrangian-v19",
+            non_numeric='action density or field equation: a functional with no single number to check',
             label="(3.3.8)",
             latex=formula_latex("u1-hypercharge-lagrangian-v19"),
             plain_text=(
@@ -1131,6 +1138,8 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="u1-hypercharge-ratio-v19",
+            value=125.0 / 144.0,
+            **closed_form(('div', 125, 144)),
             label="(3.3.9)",
             latex=(
                 r"Y = \frac{125}{144} = \frac{\chi_{\text{visible}}}{\chi_{\text{eff}}} "
@@ -1242,6 +1251,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="ew-photon-field-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.3.12)",
             latex=r"A_\mu = B_\mu\cos\theta_W + W^3_\mu\sin\theta_W",
             plain_text="A_mu = B_mu cos(theta_W) + W^3_mu sin(theta_W)",
@@ -1272,6 +1282,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="ew-z-boson-field-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.3.13)",
             latex=r"Z_\mu = -B_\mu\sin\theta_W + W^3_\mu\cos\theta_W",
             plain_text="Z_mu = -B_mu sin(theta_W) + W^3_mu cos(theta_W)",
@@ -1300,6 +1311,7 @@ class GaugeSectorCompleteDerivations(SimulationBase):
 
         formulas.append(Formula(
             id="ew-mixing-matrix-v19",
+            non_numeric='symbolic identity: a tensor or field-equation relation with no numerical value to check',
             label="(3.3.14)",
             latex=(
                 r"\left(\begin{smallmatrix}A_\mu\\Z_\mu\end{smallmatrix}\right) = "
