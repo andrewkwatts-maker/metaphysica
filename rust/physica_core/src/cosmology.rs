@@ -648,8 +648,14 @@ mod tests {
         let tau = k_gimel / b3;
         let r0 = b3 / (k_gimel * k_gimel);
         let old_law = r0 * (-50.0_f64 / tau).exp();
-        assert!(old_law < 1e-40, "the exponential no longer underflows at z=50");
-        assert!(ricci_curvature_at(50.0, b3) > 1e-20, "the exponential law is back");
+        assert!(
+            old_law < 1e-40,
+            "the exponential no longer underflows at z=50"
+        );
+        assert!(
+            ricci_curvature_at(50.0, b3) > 1e-20,
+            "the exponential law is back"
+        );
     }
 
     #[test]
