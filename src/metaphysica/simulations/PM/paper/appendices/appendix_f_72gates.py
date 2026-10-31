@@ -52,6 +52,11 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.core.FormulasRegistry import get_registry
 from metaphysica.simulations.core.triple_helpers import closed_form
+from metaphysica.simulations.PM.paper.appendices.appendix_h_288_roots import TORSION_PER_SHADOW
+from metaphysica.simulations.PM.paper.appendices import gate_paths
+from metaphysica.simulations.PM.paper.appendices.gate_paths import (
+    PASS, FAIL, NOT_APPLICABLE, need,
+)
 
 
 class GateStatus(Enum):
@@ -117,7 +122,8 @@ class GateRegistry:
     ROOTS = _reg.nitzotzin_roots           # 288 (octonionic/24D structure, NOT E8xE8)
     ACTIVE = _reg.sophian_modulus         # 125 (5^3) - formerly visible_sector
     HIDDEN = _reg.barbelo_modulus          # 163 (Barbelo Modulus)
-    TORSION_PINS = _reg.elder_kads         # 24 (Betti number)
+    TORSION_PINS = _reg.elder_kads         # b3 of the registry seed (NOT the pin count)
+    SHADOW_PINS = 2 * TORSION_PER_SHADOW   # shadow torsion pins, 12 per brane
     DIMENSIONS = 4
     STERILE_ANGLE = np.degrees(np.arcsin(_reg.sophian_modulus / _reg.nitzotzin_roots))  # ≈ 25.7234°
 
@@ -959,10 +965,12 @@ class GateRegistry:
         gate = cls.GATES[gate_id]
 
         # Extract common parameters - defaults from registry SSoT
-        roots = model_data.get("roots", cls.ROOTS)
-        active = model_data.get("active", cls.ACTIVE)
-        hidden = model_data.get("hidden", cls.HIDDEN)
-        torsion = model_data.get("torsion", cls.TORSION_PINS)
+        # No defaults: a value the path did not publish fails early by row name.
+        roots = need(model_data, "roots")
+        active = need(model_data, "active")
+        hidden = need(model_data, "hidden")
+        torsion = need(model_data, "torsion")
+        shadow = need(model_data, "per_shadow") if gate_id in gate_paths.READS else None
 
         # Gate-specific validation
         if gate_id == 1:  # Integer Root Parity
@@ -987,7 +995,7 @@ class GateRegistry:
             msg = "26D->4D mapping continuous"
 
         elif gate_id == 6:  # Shadow-A/B Parity
-            passed = (torsion == 24) and (torsion / 2 == 12)
+            passed = (torsion == 2 * shadow) and (torsion / 2 == shadow)
             msg = "12+12 shadow parity verified" if passed else "Shadow parity failed"
 
         elif gate_id == 7:  # Torsion Orthogonality
@@ -1000,7 +1008,7 @@ class GateRegistry:
             msg = f"θs = {theta:.4f}°" if passed else f"Sterile angle drift: {theta:.4f}°"
 
         elif gate_id == 9:  # Pin Distribution
-            passed = (torsion % 4 == 0) and (torsion / 4 == 6)
+            passed = (torsion % 4 == 0) and (torsion / 4 == shadow / 2)
             msg = "4×6 matrix verified" if passed else "Pin distribution failed"
 
         elif gate_id == 10:  # Tension Floor
@@ -1017,7 +1025,7 @@ class GateRegistry:
 
         elif gate_id == 12:  # Electroweak Alignment
             # θw locked to Shadow-A/B tilt (12/12 split)
-            shadow_ratio = 12 / torsion
+            shadow_ratio = shadow / torsion
             passed = np.isclose(shadow_ratio, 0.5, rtol=1e-6)
             msg = f"θw aligned to {shadow_ratio:.4f} shadow tilt" if passed else "Electroweak alignment failed"
 
@@ -1074,7 +1082,7 @@ class GateRegistry:
         elif gate_id == 22:  # Gluon String Tension
             # String tension from 24-pin density
             string_tension = torsion / roots
-            passed = np.isclose(string_tension, 24/288, rtol=1e-6)
+            passed = np.isclose(string_tension, 2 * shadow / roots, rtol=1e-6)
             msg = f"String tension: {string_tension:.6f} ({torsion}/{roots})"
 
         elif gate_id == 23:  # Proton Stability Floor
@@ -1112,7 +1120,7 @@ class GateRegistry:
 
         elif gate_id == 29:  # Weak Hypercharge
             # YW mapped to Shadow-A/B handedness
-            shadow_a = 12
+            shadow_a = shadow
             passed = (torsion == 2 * shadow_a)
             msg = f"Hypercharge: Shadow-A/B ({shadow_a}+{shadow_a}) handedness"
 
@@ -1124,8 +1132,9 @@ class GateRegistry:
         elif gate_id == 31:  # Higgs Field VEV - DERIVED via Appendix J
             # v = k_gimel × (b3-4) from G2 topology
             # k_gimel = b3/2 + 1/π = 24/2 + 1/π ≈ 12.318 (pure geometry)
-            k_gimel = torsion / 2 + 1 / np.pi  # 12.318...
-            v_derived = k_gimel * (torsion - 4)  # torsion = b3 = 24, so (b3-4) = 20
+            b3 = need(model_data, "b3")  # the selected path's b3, not shadow torsion
+            k_gimel = b3 / 2 + 1 / np.pi  # 12.318... at b3 = 24
+            v_derived = k_gimel * (b3 - 4)
             v_exp = 246.22  # PDG 2024
             deviation_pct = abs(v_derived - v_exp) / v_exp * 100
             passed = deviation_pct < 0.1  # 0.06% expected
@@ -1297,7 +1306,7 @@ class GateRegistry:
 
         elif gate_id == 63:  # Bell's Gate
             # Non-local correlations via torsion wormholes
-            passed = (torsion == 24)
+            passed = (torsion == 2 * shadow)
             msg = f"Bell's gate: {torsion}-pin connectivity verified"
 
         elif gate_id == 64:  # Holographic Bound
@@ -1346,15 +1355,15 @@ class GateRegistry:
             import hashlib
             gate_bits = ""
             for gid in range(1, 72):
-                g_passed, _ = cls.validate_gate(gid, model_data)
-                gate_bits += "1" if g_passed else "0"
+                status, _ = cls.evaluate_gate(gid, model_data)
+                gate_bits += {PASS: "1", FAIL: "0", NOT_APPLICABLE: "-"}[status]
 
             # SHA-256 hash of the binary gate results
             hash_input = f"{gate_bits}|{roots}|{torsion}|{active}|{hidden}"
             omega_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
 
             # All 71 gates must pass for Omega seal
-            all_71_passed = all(c == "1" for c in gate_bits)
+            all_71_passed = all(c != "0" for c in gate_bits)  # NA is not a failure
             passed = all_71_passed
             msg = f"OMEGA HASH: {omega_hash} → {'LOCKED' if passed else 'OPEN'}"
 
@@ -1366,71 +1375,75 @@ class GateRegistry:
         return passed, msg
 
     @classmethod
+    def evaluate_gate(cls, gate_id: int, model_data: Dict[str, Any]) -> Tuple[str, str]:
+        """(PASS | FAIL | NOT_APPLICABLE, message) on the selected path."""
+        selection = gate_paths.resolve_selection(model_data)
+        applies, reason = gate_paths.applicability(gate_id, selection)
+        if not applies:
+            return NOT_APPLICABLE, reason
+        passed, msg = cls.validate_gate(gate_id, model_data)
+        return (PASS if passed else FAIL), msg
+
+    @classmethod
     def run_full_audit(cls, model_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Run the complete gate audit.
-
-        Args:
-            model_data: Model parameters
-
-        Returns:
-            Audit results dictionary
+        Run the audit on the selected path. Totals are counted, not fixed:
+        applicable = passed + failed; not_applicable gates are listed apart.
         """
+        import hashlib
+
         if not cls.GATES:
             cls.initialize_gates()
 
+        selection = gate_paths.resolve_selection(model_data)
+        model_data = {**model_data, "selection": selection}
         results = {
-            "total_gates": len(cls.GATES),
-            "passed": 0,
-            "failed": 0,
-            "gate_results": {},
+            "path_id": gate_paths.path_id(selection),
+            "passed": 0, "failed": 0, "not_applicable": 0,
+            "gate_results": {}, "failed_gates": [], "not_applicable_gates": [],
             "phase_status": {1: [], 2: [], 3: [], 4: [], 5: []},
-            "block_status": {"A": [], "B": [], "C": [], "D": [], "E": [], "F": []}
+            "block_status": {"A": [], "B": [], "C": [], "D": [], "E": [], "F": []},
         }
-
+        bits = ""
         for gate_id in range(1, 73):
-            passed, msg = cls.validate_gate(gate_id, model_data)
+            state, msg = cls.evaluate_gate(gate_id, model_data)
             gate = cls.GATES[gate_id]
-
             results["gate_results"][gate_id] = {
-                "name": gate.name,
-                "passed": passed,
-                "message": msg,
-                "phase": gate.phase,
-                "block": gate.block
+                "name": gate.name, "status": state, "passed": state == PASS,
+                "message": msg, "phase": gate.phase, "block": gate.block,
             }
+            if state == NOT_APPLICABLE:
+                results["not_applicable"] += 1
+                results["not_applicable_gates"].append(gate_id)
+                continue
+            ok = state == PASS
+            results["passed" if ok else "failed"] += 1
+            if not ok:
+                results["failed_gates"].append(gate_id)
+            gate.status = GateStatus.LOCKED if ok else GateStatus.OPEN
+            results["phase_status"][gate.phase].append(ok)
+            results["block_status"][gate.block].append(ok)
+            if gate_id < 72:
+                bits += "1" if ok else "0"
+        for gate_id in results["not_applicable_gates"]:
+            results["gate_results"][gate_id]["passed"] = None
+        results["applicable"] = results["passed"] + results["failed"]
+        results["total_gates"] = results["applicable"]
 
-            if passed:
-                results["passed"] += 1
-                gate.status = GateStatus.LOCKED
-            else:
-                results["failed"] += 1
-                gate.status = GateStatus.OPEN
-
-            results["phase_status"][gate.phase].append(passed)
-            results["block_status"][gate.block].append(passed)
-
-        # Compute actual Omega Hash from gate 72 validation
-        import hashlib
-        gate_bits = "".join("1" if results["gate_results"][gid]["passed"] else "0"
-                           for gid in range(1, 72))
-        roots = model_data.get("roots", 288)
-        torsion = model_data.get("torsion", 24)
-        active = model_data.get("active", 125)
-        hidden = roots - active
-        hash_input = f"{gate_bits}|{roots}|{torsion}|{active}|{hidden}"
-        omega_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
-
-        # Determine final status
-        total = results["total_gates"]
-        if results["passed"] == total:
-            results["status"] = f"STERILE: {results['passed']}/{total} GATES LOCKED"
-            results["omega_hash"] = omega_hash
+        roots, torsion = model_data["roots"], model_data["torsion"]
+        active, hidden = model_data["active"], model_data["hidden"]
+        digest = hashlib.sha256(
+            f"{bits}|{roots}|{torsion}|{active}|{hidden}|{results['path_id']}".encode()
+        ).hexdigest()[:16]
+        total = results["applicable"]
+        if results["failed"] == 0:
+            results["status"] = f"STERILE: {results['passed']}/{total} APPLICABLE GATES LOCKED"
+            results["omega_hash"] = digest
         else:
-            results["status"] = f"NON-TERMINAL: {results['passed']}/{total} GATES"
-            results["omega_hash"] = f"INCOMPLETE_{omega_hash}"
-
+            results["status"] = f"NON-TERMINAL: {results['passed']}/{total} APPLICABLE GATES"
+            results["omega_hash"] = f"INCOMPLETE_{digest}"
         return results
+
 
 
 # Initialize gates on module load
@@ -1448,7 +1461,8 @@ _GATE_PREDICATE_REASON = "pass/fail gate %d, evaluated by validate_gate"
 def _gate_numeric_table() -> Dict[int, Tuple[float, Any]]:
     """gate -> (float value from registry constants, closed-form spec)."""
     r, a = float(GateRegistry.ROOTS), float(GateRegistry.ACTIVE)
-    h, t = float(GateRegistry.HIDDEN), float(GateRegistry.TORSION_PINS)
+    h, t = float(GateRegistry.HIDDEN), float(GateRegistry.SHADOW_PINS)
+    b = float(GateRegistry.TORSION_PINS)  # b3 of the registry seed
     return {
         4: (12.0 / r ** 2, ("div", 12, ("pow", "roots", 2))),
         8: (a / r, ("div", "active", "roots")),   # sin(theta_s); gate tests asin
@@ -1457,9 +1471,9 @@ def _gate_numeric_table() -> Dict[int, Tuple[float, Any]]:
         18: (1.0 / r, ("div", 1, "roots")),
         22: (t / r, ("div", "torsion", "roots")),
         24: (h / r, ("div", "hidden", "roots")),
-        31: ((t / 2 + 1 / np.pi) * (t - 4),
-             ("mul", ("add", ("div", "torsion", 2), ("div", 1, "pi")),
-              ("sub", "torsion", 4))),
+        31: ((b / 2 + 1 / np.pi) * (b - 4),
+             ("mul", ("add", ("div", "b3", 2), ("div", 1, "pi")),
+              ("sub", "b3", 4))),
         37: (1.0 / r, ("div", 1, "roots")),
         40: (h / (a + h), ("div", "hidden", ("add", "active", "hidden"))),
         66: (1.0 / r, ("div", 1, "roots")),
@@ -1474,7 +1488,8 @@ def gate_triple_kwargs(gate_id: int) -> Dict[str, Any]:
     value, spec = numeric
     env = {"roots": float(GateRegistry.ROOTS), "active": float(GateRegistry.ACTIVE),
            "hidden": float(GateRegistry.HIDDEN),
-           "torsion": float(GateRegistry.TORSION_PINS)}
+           "torsion": float(GateRegistry.SHADOW_PINS),
+           "b3": float(GateRegistry.TORSION_PINS)}
     return {"value": float(value), **closed_form(spec, env)}
 
 
@@ -1675,6 +1690,9 @@ class Appendix72Gates(SimulationBase):
     PARAM_REFS = [
         "gates.total_passed",
         "gates.total_failed",
+        "gates.total_applicable",
+        "gates.total_not_applicable",
+        "gates.path_id",
         "gates.omega_hash",
         "gates.status",
     ]
@@ -1695,7 +1713,7 @@ class Appendix72Gates(SimulationBase):
     @property
     def required_inputs(self) -> List[str]:
         """Registry parameters consumed by the gates validation."""
-        return ["geometry.unity_seal"]
+        return ["geometry.unity_seal", *gate_paths.ROW_OF_KEY.values()]
 
     @property
     def output_params(self) -> List[str]:
@@ -1707,23 +1725,16 @@ class Appendix72Gates(SimulationBase):
 
     def run(self, registry: 'PMRegistry') -> Dict[str, Any]:
         """Execute full gate validation."""
-        roots = registry.get("topology.ancestral_roots", default=288)
-        torsion = registry.get("topology.shadow_torsion_total", default=24)
-        active = registry.get("registry.node_count", default=125)
-        hidden = roots - active
-
-        model_data = {
-            "roots": roots,
-            "torsion": torsion,
-            "active": active,
-            "hidden": hidden,
-        }
+        model_data = gate_paths.read_inputs(registry)
 
         audit = GateRegistry.run_full_audit(model_data)
 
         return {
             "gates.total_passed": audit["passed"],
             "gates.total_failed": audit["failed"],
+            "gates.total_applicable": audit["applicable"],
+            "gates.total_not_applicable": audit["not_applicable"],
+            "gates.path_id": audit["path_id"],
             "gates.omega_hash": audit["omega_hash"],
             "gates.status": audit["status"],
         }
@@ -1918,6 +1929,30 @@ class Appendix72Gates(SimulationBase):
                 status="VALIDATION",
                 description="Number of gates that failed validation",
                 # EML WITHHELD: a tally of gate outcomes -- see gates.total_passed above.
+                no_experimental_value=True,
+            ),
+            Parameter(
+                path="gates.total_applicable",
+                name="Gates Applicable",
+                units="count",
+                status="VALIDATION",
+                description="Gates whose premise the selected path carries (passed + failed)",
+                no_experimental_value=True,
+            ),
+            Parameter(
+                path="gates.total_not_applicable",
+                name="Gates Not Applicable",
+                units="count",
+                status="VALIDATION",
+                description="Gates whose premise the selected path does not carry",
+                no_experimental_value=True,
+            ),
+            Parameter(
+                path="gates.path_id",
+                name="Gate Path Id",
+                units="status",
+                status="VALIDATION",
+                description="Selection digest the gate totals belong to",
                 no_experimental_value=True,
             ),
             Parameter(
@@ -2121,9 +2156,10 @@ if __name__ == "__main__":
 
     results = sim.run(registry)
     print(f"\nStatus: {results['gates.status']}")
-    total_gates = len(GateRegistry.GATES)
-    print(f"Passed: {results['gates.total_passed']}/{total_gates}")
-    print(f"Failed: {results['gates.total_failed']}/{total_gates}")
+    total_gates = results['gates.total_applicable']
+    print(f"Passed: {results['gates.total_passed']}/{total_gates} applicable")
+    print(f"Failed: {results['gates.total_failed']}/{total_gates} applicable")
+    print(f"Not applicable: {results['gates.total_not_applicable']}")
     print(f"Omega Hash: {results['gates.omega_hash']}")
 
     # Run detailed audit
@@ -2131,7 +2167,8 @@ if __name__ == "__main__":
     print("DETAILED GATE AUDIT")
     print("-" * 70)
 
-    model_data = {"roots": 288, "torsion": 24, "active": 125, "hidden": 163}
+    from metaphysica.simulations.base.registry import PMRegistry
+    model_data = gate_paths.read_inputs(PMRegistry())
     audit = GateRegistry.run_full_audit(model_data)
 
     for phase in range(1, 6):

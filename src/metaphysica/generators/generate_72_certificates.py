@@ -720,6 +720,25 @@ def create_certificate(gate, existing_certs):
 
     return cert
 
+def _not_applicable_ids(certs):
+    """Gate ids whose premise the selected path does not carry."""
+    return [c['gate_id'] for c in certs if c.get('evaluation_status') == 'NOT_APPLICABLE']
+
+
+def _apply_path_applicability(certs):
+    """Mark gates whose premise the path lacks; return (selection, path_id)."""
+    from metaphysica.simulations.PM.paper.appendices import gate_paths
+
+    selection = gate_paths.resolve_selection({})
+    for cert in certs:
+        applies, why = gate_paths.applicability(cert['gate_id'], selection)
+        if applies:
+            continue
+        cert['evaluation_status'] = 'NOT_APPLICABLE'
+        cert['evaluation'] = {"tier": "premise", "status": "NOT_APPLICABLE", "basis": why}
+    return selection, gate_paths.path_id(selection)
+
+
 def main():
     print("Loading gates...")
     gates_data = load_gates()
@@ -765,6 +784,8 @@ def main():
         ds = cert.get('derivation_status', 'PARTIAL')
         if ds in derivation_counts:
             derivation_counts[ds] += 1
+
+    selection, path_id = _apply_path_applicability(all_certificates)
 
     # ── G72: computed AND over every executed evaluation (2026-08) ─────
     # Previously an asserted "verification seal"; now it aggregates the
@@ -817,7 +838,10 @@ def main():
             # which, and improvement_scorecard.json was reading this one.
             "tally_type": "declarative_assertions_not_execution_results",
             "authoritative_counts": "see evaluation_summary",
-            "total_gates": 72,
+            "total_gates": len(all_certificates) - len(_not_applicable_ids(all_certificates)),
+            "total_gate_ids": len(all_certificates),
+            "path_id": path_id,
+            "not_applicable": _not_applicable_ids(all_certificates),
             "verified": verified_count,
             "pending_lock": pending_count,
             "not_testable": not_testable_count,

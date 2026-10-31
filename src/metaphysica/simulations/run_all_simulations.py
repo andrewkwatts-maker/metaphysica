@@ -1384,8 +1384,6 @@ class SimulationRunner:
                 ([AppendixDAlignment()] if APPENDIX_D_V16_2_AVAILABLE else []) +
                 # Appendix E: Brane-Intersection Map
                 ([AppendixEBraneMap()] if APPENDIX_E_V16_2_AVAILABLE else []) +
-                # Appendix F: Gates of Integrity (v16.2 architecture)
-                ([Appendix72Gates()] if APPENDIX_F_V16_2_AVAILABLE else []) +
                 # Appendix H runs BEFORE Appendix G. The appendices are
                 # otherwise in alphabetical order, which is not a dependency
                 # order: G's seal consumes topology.torsion_per_shadow, which H
@@ -1395,6 +1393,9 @@ class SimulationRunner:
                 # could not matter. With the path real, the order does.
                 # Appendix H: 288-Root Ancestral Basis (SO(24) + Shadow Torsion)
                 ([AppendixH288Roots()] if APPENDIX_H_V16_2_AVAILABLE else []) +
+                # Appendix F: Gates of Integrity. Runs AFTER H: the gates read the
+                # topology rows H publishes and fail early if they are absent.
+                ([Appendix72Gates()] if APPENDIX_F_V16_2_AVAILABLE else []) +
                 # Appendix G: Omega Seal Cryptographic Protocol
                 ([AppendixGOmegaSeal()] if APPENDIX_G_V16_2_AVAILABLE else []) +
                 # Appendix I: Three Terminal States of the Universe
