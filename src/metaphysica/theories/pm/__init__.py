@@ -31,6 +31,7 @@ from metaphysica.testground.signals.model import (ARTIFACT, FULL,
                                                   SignalContext)
 from metaphysica.testground.switches import model as sw
 from metaphysica.testground.theory import ScoredRow, Stage, Theory
+from metaphysica.theories.pm.ranking import PmRanking
 
 __all__ = ["LINEAGE_PATH", "ENV_DECISION_LOG", "THEORY", "PmSwitches",
            "PmSelections", "PmPipeline", "PmAnchors", "PmSignals",
@@ -212,6 +213,7 @@ def make_theory(lineage_path: Path = LINEAGE_PATH) -> Theory:
         pipeline=PmPipeline(),
         signals=PmSignals(),
         anchors=PmAnchors(),
+        ranking=PmRanking(),
         decisions=PmDecisions(),
         lineage=lineage_path,
         shared_state=True,

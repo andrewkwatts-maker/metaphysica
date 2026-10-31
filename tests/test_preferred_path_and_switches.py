@@ -419,6 +419,7 @@ def test_the_search_still_selects_nothing():
 
     result = search(["g2_form_convention", "re_t_adoption"], cap=8)
     assert result["verdict"] == VERDICT == "NO_SELECTION_MADE"
-    assert "never orders by agreement" in result["what_this_reports"]
+    assert "selects nothing" in result["what_this_reports"]
+    assert "consistency first" in result["what_this_reports"]
     digests = [r["digest"] for r in result["rows"]]
     assert digests == sorted(digests), "rows must stay digest-ordered"

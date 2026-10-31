@@ -61,6 +61,7 @@ from metaphysica.testground.theory import Theory
 from metaphysica.theories.toy import model
 from metaphysica.theories.toy.forks import CONSTRAINTS, FORKS, NARRATIVE
 from metaphysica.theories.toy.pipeline import ToyPipeline
+from metaphysica.theories.toy.ranking import ToyRanking
 from metaphysica.theories.toy.signals import SIGNALS, ToyAnchors, ToySignals
 from metaphysica.theories.toy.store import LazyYamlStore, ToyDecisions
 
@@ -112,6 +113,7 @@ def make_theory(configs_dir: Optional[Path] = None,
         pipeline=ToyPipeline(),
         signals=ToySignals(),
         anchors=ToyAnchors(),
+        ranking=ToyRanking(),
         decisions=ToyDecisions(root / "DECISIONS.md"),
         assessment_config=root / "assessment.yaml",
         invalidate_caches=model.clear_cache,

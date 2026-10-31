@@ -6,7 +6,7 @@ rank / ranked / best / winner / recommend / recommended may appear in CODE
 comments) only in:
 
     assessment/comparator.py, assessment/tiebreak.py, assessment/recommend.py,
-    assessment/report.py, cli.py, graph/build.py
+    assessment/report.py, cli.py, graph/build.py, rank.py (S1: consistency first, fit breaks ties)
 
 The engine's legacy modules switch_search, fork_implications and
 preferred_path stay non-ranking: they still return NO_SELECTION_MADE and do not
@@ -38,6 +38,7 @@ ALLOWED = frozenset({
     "assessment/report.py",
     "cli.py",
     "graph/build.py",
+    "rank.py",
 })
 NON_RANKING_ENGINE = ("switch_search.py", "fork_implications.py",
                       "preferred_path.py")
