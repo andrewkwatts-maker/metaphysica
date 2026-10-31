@@ -41,6 +41,11 @@ from metaphysica.testground.graph.layout import (column_key,
                                                  layout_graph)
 from metaphysica.testground.graph.lineage_graph import (add_lineage,
                                                         merge_declared)
+from metaphysica.testground.graph.ranking import (REASONABLE_CLASS,
+                                                  REASONABLE_LEGEND,
+                                                  mark_edges, mark_options,
+                                                  reasonable_rows)
+from metaphysica.testground.graph.ranking import summary as ranking_summary
 from metaphysica.testground.graph.rationale import (decision_refs,
                                                     rationale_sections)
 from metaphysica.testground.lineage.layout import layout_lineage
@@ -561,6 +566,18 @@ def _configurations(view: Optional[AssessmentView], order: List[str],
     return out
 
 
+def _apply_ranking(b: _Builder, theory_id: str, order: List[str],
+                   ranking: Optional[Mapping[str, Any]]
+                   ) -> Optional[Dict[str, Any]]:
+    """Flag reasonable alternatives on ``b``; the ranking block, or None."""
+    if ranking is None:
+        return None
+    rows = reasonable_rows(ranking)
+    mark_options(b.nodes, rows, option_node_id)
+    mark_edges(b, rows, order, theory_node_id(theory_id), option_node_id)
+    return ranking_summary(ranking, rows)
+
+
 def _load_lineage(theory: Any) -> Optional[Lineage]:
     path = getattr(theory, "lineage", None)
     if path is None:
@@ -569,12 +586,15 @@ def _load_lineage(theory: Any) -> Optional[Lineage]:
 
 
 def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
-                decision_log: Union[None, DecisionLog, str, Path] = None
+                decision_log: Union[None, DecisionLog, str, Path] = None,
+                ranking: Optional[Mapping[str, Any]] = None
                 ) -> Dict[str, Any]:
     """The path graph of ``theory`` (dict valid against path_graph.schema.json).
 
     ``decision_log`` defaults to the theory's own log (its
     DecisionLogProvider); decisions not found there are drawn as NOT IN LOG.
+    ``ranking`` (path_ranking/1) marks the reasonable alternative paths; None
+    adds nothing.
     """
     lineage = _load_lineage(theory)
     forks = merge_declared(theory.switches.forks(), lineage)
@@ -610,6 +630,7 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
             b.cite(option_node_id(fork_id, active[fork_id][0]), ids,
                    ACTIVE_CLASS)
     _add_path(b, theory.id, order, active_sel, ACTIVE_CLASS)
+    ranked = _apply_ranking(b, theory.id, order, ranking)
     if rec_sel:
         _add_path(b, theory.id, order, rec_sel, RECOMMENDED_CLASS)
     decisions = [_decision_node(ref, log) for ref in sorted(b.refs)]
@@ -640,6 +661,9 @@ def build_graph(theory: Any, assessment: Optional[Mapping[str, Any]] = None,
                        ("decision_id", "date", "title", "status", "in_log")}
                       for n in decisions],
     }
+    if ranked is not None:
+        graph["ranking"] = ranked
+        graph["legend"] = dict(LEGEND, **{REASONABLE_CLASS: REASONABLE_LEGEND})
     graph = _json_copy(graph)
     graph["layout"] = layout_graph(graph)
     if lineage is not None:
