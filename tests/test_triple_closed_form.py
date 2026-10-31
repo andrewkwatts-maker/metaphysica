@@ -10,6 +10,7 @@ import math
 import pytest
 
 from metaphysica.simulations.base import Formula
+from metaphysica.simulations.core.arithma_backend import is_usable
 from metaphysica.simulations.core.triple_helpers import closed_form
 from metaphysica.simulations.core.triple_validator import triple_assert
 
@@ -22,7 +23,18 @@ def test_closed_form_legs_agree_with_the_float():
     value = (b3 / 144.0) * (1.0 - 1.0 / math.sqrt(b3))
     res = triple_assert(kw["arithma"], kw["eml"], value,
                         env=kw["triple_env"], name="cf")
-    assert res.arithma_used and res.eml_used
+    assert res.eml_used
+    assert res.arithma_used == is_usable()
+
+
+def test_closed_form_degrades_without_arithma(monkeypatch):
+    # PyPI arithma 2.0.2 is a stub (Expression is None); CI builds with it.
+    from metaphysica.simulations.core import arithma_backend
+    monkeypatch.setattr(arithma_backend, "ARITHMA", None)
+    kw = closed_form(("sqrt", "b3"))
+    assert kw["arithma"] is None and kw["eml"] is not None
+    with pytest.raises(ValueError):
+        closed_form(("add", 1, "nope"))
 
 
 def test_closed_form_rejects_unbound_names_and_bad_nodes():

@@ -265,14 +265,15 @@ def closed_form(
     other name must be in ``env``); the EML tree is built separately, so the
     two legs and the caller's float ``value`` are three independent
     evaluations. Fails early on an unknown operator or an unbound name.
+    Without a usable Arithma backend the ``arithma`` leg is None, which the
+    validator reads as an unused leg (arithma is an optional extra).
     """
     from metaphysica.simulations.core.arithma_backend import ARITHMA
-    if ARITHMA is None:
-        raise RuntimeError("closed_form: the Arithma backend is unavailable")
     env = dict(env or {})
     _cf_check(spec, env)
     return {
-        "arithma": _cf_arithma(spec, ARITHMA.Expression),
+        "arithma": (None if ARITHMA is None
+                    else _cf_arithma(spec, ARITHMA.Expression)),
         "eml": _cf_eml(spec, env),
         "triple_env": env,
     }
