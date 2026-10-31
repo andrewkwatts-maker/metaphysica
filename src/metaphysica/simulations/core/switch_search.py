@@ -1,4 +1,4 @@
-"""Search switch combinations for INTERNAL CONSISTENCY, never for agreement.
+"""Search switch combinations for INTERNAL CONSISTENCY; ranking happens elsewhere.
 
 WHAT THIS IS FOR
 ================
@@ -9,16 +9,21 @@ the armchair, and their combinations are a space the theory might close
 somewhere inside. This module enumerates that space and reports what each
 combination does.
 
-WHAT IT MUST NOT BECOME, AND THE REASON
-=======================================
-variants.py states the rule: a comparison reports EVERY option's outcome, never
-returns "the best one", and never orders options by agreement with experimental
-anchors. A switchboard that ranks combinations by how well they fit DESI or
-NuFIT is a parameter fitter with better tooling, and this repository has already
-retired one advertised agreement that came from exactly that pattern.
+THE RULE (changed 2026-10-28, owner direction)
+==============================================
+Earlier text said: never rank. The rule now is: RANK BY CONSISTENCY FIRST, LET
+THE FIT BREAK TIES, AND DISCLOSE THE SELECTION AND THE NUMBER SEARCHED.
+`python -m metaphysica.testground rank` does that over finished runs, in this
+order: internally consistent (the verdict computed here, which uses no
+measurement), then fewest failing master-action ladder checks, then fewest
+failing gates that apply to the path, then lowest chi-squared against measured
+anchors. A path chosen this way is a fitted choice and the paper says so, with
+how many paths were searched. A switchboard that picks by agreement alone is
+still a parameter fitter; consistency leads so that the fit cannot override it.
 
-So this search deliberately cannot tell you which combination is right. It
-orders by digest, it reports every row, and its verdict field is a constant.
+This module itself stays a reporter: it orders its rows by digest, it reports
+every row, and its verdict field is a constant. It selects nothing; the ranking
+module reads its consistency verdicts.
 
 WHAT IT CAN LEGITIMATELY DECIDE
 ===============================
@@ -605,9 +610,10 @@ def search(fork_ids: Optional[Iterable[str]] = None,
     ]
     return {
         "what_this_reports": (
-            "Every combination's internal consistency and cost. It does not "
-            "say which is right, and it never orders by agreement with "
-            "experiment."
+            "Every combination's internal consistency and cost, ordered by "
+            "digest. It selects nothing; the ranking (consistency first, "
+            "fit breaks ties, selection and number searched disclosed) is "
+            "done by `testground rank`."
         ),
         "forks_searched": ids,
         "n_combinations": len(rows),

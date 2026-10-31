@@ -34,6 +34,8 @@ __all__ = [
     "ScoredRow",
     "AnchorProvider",
     "Claim",
+    "RunReading",
+    "RankingProvider",
     "CertificateProvider",
     "DecisionLogProvider",
     "Theory",
@@ -107,6 +109,31 @@ class AnchorProvider(Protocol):
 
 
 @dataclass(frozen=True)
+class RunReading:
+    """What one finished run says about the four rank tiers.
+
+    A field the run did not publish stays None and is named in ``missing``;
+    nothing is estimated or filled in.
+    """
+
+    consistent: Optional[bool] = None
+    ladder_failed: Optional[int] = None
+    ladder_total: Optional[int] = None
+    gates_failed: Optional[int] = None
+    gates_applicable: Optional[int] = None
+    chi2: Optional[float] = None
+    dof: Optional[int] = None
+    missing: Tuple[str, ...] = ()
+
+
+@runtime_checkable
+class RankingProvider(Protocol):
+    """How the theory reads consistency, ladder, gates and anchors of a run."""
+
+    def read(self, root: Path, selection: Mapping[str, str]) -> RunReading: ...
+
+
+@dataclass(frozen=True)
 class Claim:
     """A certificate statement: what holds, its proof route and falsifier."""
 
@@ -157,6 +184,8 @@ class Theory:
     lineage: Optional[Path] = None
     #: True when runs share state (e.g. a shared junction), so they cannot run in parallel.
     shared_state: bool = False
+    #: Reads a finished run for `rank`; None = the theory cannot be ranked.
+    ranking: Optional[RankingProvider] = None
 
     def fork_ids(self) -> List[str]:
         return list(self.switches.forks())

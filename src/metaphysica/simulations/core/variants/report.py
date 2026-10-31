@@ -36,7 +36,9 @@ def _describe() -> Dict[str, Any]:
             "Open decisions that can be executed either way. Defaults mirror "
             "the value adopted at each fork's source and are checked against "
             "it; this module stores no physics of its own. Comparisons "
-            "report every option and never rank by agreement with anchors."
+            "report every option; paths are ranked by consistency first, with the "
+            "fit to anchors breaking ties (testground rank) and the selection "
+            "and number searched disclosed."
         ),
         "env_prefix": _ENV_PREFIX,
         "forks": {},

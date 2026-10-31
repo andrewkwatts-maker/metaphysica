@@ -35,12 +35,13 @@ anchors, report that. That is anchor-shopping with better tooling, and this
 repo has already retired one advertised agreement that came from exactly
 that pattern.
 
-Three rules follow, and the comparison runner enforces the first two:
+Three rules follow (rule 2 changed 2026-10-28, owner direction):
 
-1. A comparison reports **every** option's outcome. It never returns "the
-   best one".
-2. It never ranks by agreement with experimental anchors. Consequences are
-   recorded; the ordering is declaration order.
+1. A comparison reports **every** option's outcome, never only "the best one".
+2. Paths are ranked by consistency first; the fit to experimental anchors
+   breaks ties only (`testground rank`: consistent, ladder failures, gate
+   failures, then chi-squared). The selection and the number of paths searched
+   are disclosed. A comparison's own ordering stays declaration order.
 3. Adopting an option is an explicit author act recorded at its source (the
    CANON entry or the module switch), not a default quietly changed here.
 
