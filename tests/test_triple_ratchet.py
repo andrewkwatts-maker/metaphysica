@@ -17,6 +17,12 @@ from collections import Counter
 import pytest
 
 from metaphysica.generators._common import autogen_dir
+from metaphysica.simulations.core.arithma_backend import is_usable
+
+#: Without a usable Arithma backend (PyPI arithma 2.0.2 is a stub) every
+#: formula is EML_ONLY, so the count measures the install, not the formulas.
+pytestmark = pytest.mark.skipif(not is_usable(),
+                                reason="arithma backend unusable")
 
 #: MEASURED 2026-10-28 on a fresh build (582 published formulas).
 _UNCHECKED_CEILING = 126

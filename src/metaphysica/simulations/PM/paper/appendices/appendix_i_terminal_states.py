@@ -429,6 +429,7 @@ class AppendixITerminalStates(SimulationBase):
         return [
             Formula(
                 id="metric-null-potential",
+                # 288 E8xE8 roots = 125 visible + 163 sterile (bulk) sector roots
                 value=276.0 / 288.0,
                 **closed_form(('div', 276, 288)),
                 label="(I.2)",
@@ -485,6 +486,7 @@ class AppendixITerminalStates(SimulationBase):
             ),
             Formula(
                 id="ancestral-restoration",
+                # 288 E8xE8 roots = 125 visible + 163 sterile (bulk) sector roots
                 value=(125.0 + 163.0) / 288.0,
                 **closed_form(('div', ('add', 125, 163), 288)),
                 label="(I.4)",

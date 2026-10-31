@@ -7,15 +7,22 @@ from __future__ import annotations
 
 import pytest
 
+from metaphysica.simulations.core.arithma_backend import is_usable
 from metaphysica.simulations.PM.paper.appendices.appendix_f_72gates import (
     Appendix72Gates, GateRegistry,
 )
+
+
+#: Numeric gates carry an Arithma tree only when the backend computes.
+needs_arithma = pytest.mark.skipif(not is_usable(),
+                                   reason="arithma backend unusable")
 
 
 def _formulas():
     return Appendix72Gates().get_formulas()
 
 
+@needs_arithma
 def test_every_gate_formula_is_numeric_or_predicate():
     bad = []
     for f in _formulas():
@@ -33,6 +40,7 @@ def test_predicate_reason_names_the_gate():
             assert f.non_numeric.endswith(", evaluated by validate_gate"), f.id
 
 
+@needs_arithma
 def test_numeric_gates_agree_across_legs():
     from metaphysica.simulations.core.triple_helpers import _to_float
     n = 0

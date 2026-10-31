@@ -71,7 +71,6 @@ def _is_not_a_consumer(path: pathlib.Path) -> bool:
 #: Wiring one up is the fix; editing this set is part of that fix.
 _INERT = {
     "b3_origin",          # OPEN, 5 options
-    "g2_construction",    # OPEN, 2 options
     "moduli_indexing",    # OPEN, 3 options
     "bulk_signature",     # RULED, 3 options
     "face_genericity",    # RULED, 2 options
@@ -92,9 +91,20 @@ def _consumers() -> dict:
         text = path.read_text(encoding="utf-8", errors="replace")
         for fid in FORKS:
             if re.search(r"resolve\(\s*[\"']%s[\"']" % re.escape(fid), text) \
-                    or ("VARIANT_" + fid.upper()) in text:
+                    or ("VARIANT_" + fid.upper()) in text \
+                    or _table_resolves(text, fid):
                 found[fid].append(str(path.relative_to(_SRC)))
     return found
+
+
+def _table_resolves(text: str, fid: str) -> bool:
+    """The fork id sits in a lookup table the module passes to `resolve(name)`.
+
+    master_ladder.ITEM_FORKS maps ladder items to the action forks and calls
+    `resolve(fid, over)`; the literal-call pattern cannot see that.
+    """
+    return (re.search(r"\bresolve\(\s*[A-Za-z_]\w*\s*[,)]", text) is not None
+            and re.search(r"[\"']%s[\"']" % re.escape(fid), text) is not None)
 
 
 def test_the_inert_fork_set_is_exactly_what_is_pinned():
@@ -142,7 +152,10 @@ def test_how_many_options_are_inert_is_recorded():
     # it on every read: 25 -> 22 inert options), and k3_reading plus the new
     # seed_selection fork's two options took the total from 51 to 54.
     # 2026-10-26: dark_energy_betti wired (its 7 options: 22 -> 15 inert).
-    assert (inert_options, total_options) == (15, 64), (
+    # 2026-11-01: the four action forks (12 options, master_ladder ITEM_FORKS)
+    # and g2_construction (g2_closure refuses non-Joyce) are resolved through
+    # lookups the literal pattern missed: 15 -> 13 inert, 64 -> 76 total.
+    assert (inert_options, total_options) == (13, 76), (
         "inert/total option counts moved: %s of %s"
         % (inert_options, total_options)
     )

@@ -45,7 +45,9 @@ jobs:
         # with cp311/cp312/cp313 manylinux wheels, so the pin is satisfiable
         # across this matrix at last. Without sims the build step ran 4 of its
         # 35 steps, skipping the simulations it exists to verify.
-        run: pip install .[dev,sims]
+        # plots: the kept visualization modules import matplotlib
+        # (tests/test_c1_dead_code.py imports every kept module).
+        run: pip install .[dev,sims,plots]
 
       # The build MUST come before the tests. It used to run after them, and
       # the step name says exactly what that cost: it regenerates

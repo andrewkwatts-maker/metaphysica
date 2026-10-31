@@ -790,6 +790,7 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="hidden-support-count",
+                # 288 E8xE8 roots = 125 visible + 163 sterile (bulk) sector roots
                 value=163.0,
                 **closed_form(('sub', 288, 125)),
                 label="(H.5)",
@@ -826,6 +827,7 @@ class AppendixH288Roots(SimulationBase):
             ),
             Formula(
                 id="e8xe8-root-decomposition",
+                # 288 E8xE8 roots = 125 visible + 163 sterile (bulk) sector roots
                 value=288.0,
                 **closed_form(('add', 240, 48)),
                 label="(H.6)",
