@@ -32,5 +32,5 @@ PyPI release published, PrincipiaMetaphysica site rebuilt and pushed.
 - RELEASE.md audit hits that predate this release: 26 hype-word hits (33 at v2.3.0), e.g.
   paper/discussion.py:386 "proof-killer", paper/integrity.py:774 "not tuned";
   proof_completeness_ledger.md lacks "fitted decomposition" wording; PMNS split unverified.
-- Remote branch origin/core-paper is fully merged into main; delete it if no longer wanted.
+- (done) origin/core-paper deleted after merge; only main remains on origin.
 - A working arithma release on PyPI (wide range) would let CI check the arithma leg again.
