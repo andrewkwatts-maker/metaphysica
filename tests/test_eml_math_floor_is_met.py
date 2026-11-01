@@ -17,12 +17,9 @@ version would not fix anything -- it would break the thing the floor exists
 to protect, and it would do so QUIETLY, as a drift in the unevaluable count
 rather than as an error.
 
-Locally the requirement is met because ``eml_math`` resolves to the source
-checkout at 2.4.0, which shadows the older wheel from PyPI. CI has no such
-checkout, so it now installs eml-math from its public git repository before
-installing this package; pip then sees the requirement already satisfied.
-That keeps the PUBLISHED metadata honest -- pyproject still states what the
-code actually needs -- while letting the matrix run.
+CI installed eml-math from its public git repository until 2.4.0 reached
+PyPI (2026-11-01, 3f239e9); it now installs from PyPI. The last test below
+guards that: a PyPI-only workflow is valid only while the floor is published.
 
 This test guards the divergence between the two environments: if the floor
 is ever raised past what is actually installed, it fails loudly here instead
@@ -121,19 +118,34 @@ def test_the_features_the_floor_exists_for_actually_work():
         )
 
 
-def test_ci_installs_eml_math_from_source_while_the_floor_is_unpublished():
-    """The workflow must not silently go back to a PyPI-only install.
+def _published_versions() -> list[str] | None:
+    import json
+    import urllib.request
+    url = "https://pypi.org/pypi/eml-math/json"
+    try:
+        with urllib.request.urlopen(url, timeout=10) as response:
+            return list(json.load(response)["releases"])
+    except Exception:  # noqa: BLE001 - offline means unknown, not failed
+        return None
 
-    If it does, and the floor still exceeds the newest published version,
-    every job in the matrix fails at dependency resolution before a single
-    test runs.
+
+def test_a_pypi_only_ci_install_needs_the_floor_published():
+    """If ci.yml installs eml-math only from PyPI, PyPI must carry the floor.
+
+    Otherwise every job in the matrix fails at dependency resolution in
+    about 20 seconds, before a single test runs.
     """
     workflow = _ROOT / ".github" / "workflows" / "ci.yml"
     if not workflow.is_file():
         pytest.skip("no CI workflow present")
-    text = workflow.read_text(encoding="utf-8")
-    assert "EML-Math.git" in text, (
-        "ci.yml no longer installs eml-math from source. That is correct "
-        "ONLY once the pinned version is published to PyPI -- otherwise the "
-        "whole matrix fails to resolve dependencies in ~20 seconds."
+    if "EML-Math.git" in workflow.read_text(encoding="utf-8"):
+        return  # installed from source; the floor need not be published
+    floor = _declared_floor()
+    published = _published_versions()
+    if floor is None or published is None:
+        pytest.skip("no pin, or PyPI is unreachable")
+    assert max(map(_as_tuple, published)) >= _as_tuple(floor), (
+        f"ci.yml installs eml-math from PyPI, but the floor {floor} is not "
+        f"published (newest: {max(published, key=_as_tuple)}). Publish it, "
+        f"or install eml-math from EML-Math.git in ci.yml."
     )
