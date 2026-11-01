@@ -17,7 +17,7 @@
 #pp-svg { display: block; width: 100%; height: 62vh; min-height: 360px; touch-action: none; cursor: grab; }
 #pp-svg:focus-visible, .pp-node:focus-visible { outline: 2px solid var(--accent-gold, #ffd93d); }
 .pp-node { cursor: pointer; }
-.pp-node:focus-visible rect, .pp-node.is-selected rect { stroke-width: 4; filter: drop-shadow(0 0 4px #ffffff88); }
+.pp-node:focus-visible rect, .pp-node.is-selected rect, .pp-node.is-ancestor rect { stroke-width: 4; filter: drop-shadow(0 0 4px #ffffff88); }
 .pp-inspector { border: 1px solid var(--border-primary, #2a2f4a); border-radius: 8px; padding: 1rem;
   background: var(--glass-bg, rgba(26,31,58,.8)); max-height: 72vh; overflow: auto; }
 .pp-inspector h2 { margin-top: 0; font-size: 1.2rem; }
@@ -35,7 +35,7 @@
   border: 1px solid var(--border-accent, #4a4f6a); border-radius: 4px; font: inherit; }
 #pp-list, #pp-list ul { list-style: none; padding: 0; margin: 0; }
 .pp-group h3 { font-size: .9rem; margin: .8rem 0 .25rem; color: var(--text-secondary, #adb5bd); }
-.pp-item { display: flex; justify-content: space-between; gap: .75rem; width: 100%; text-align: left; background: transparent;
+.pp-item { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; width: 100%; text-align: left; background: transparent;
   color: inherit; border: 1px solid transparent; border-bottom-color: var(--border-primary, #2a2f4a); padding: .35rem .5rem; cursor: pointer; font: inherit; }
 .pp-item:hover, .pp-item.is-selected { background: rgba(139,127,255,.15); border-color: var(--accent, #8b7fff); }
 .pp-item.is-main .pp-item-label { color: var(--accent-gold, #ffd93d); font-weight: 600; }
@@ -65,3 +65,14 @@
 .pp-key-reasonable .pp-swatch { border-color: var(--pp-reasonable); box-shadow: 0 0 6px var(--pp-reasonable-glow); }
 /* The glow is static: nothing pulses, and reduced motion removes any transition. */
 @media (prefers-reduced-motion: reduce) { .pp-node, .pp-reasonable-edge { transition: none; animation: none; } }
+
+/* Selected and glowing together: purple stroke, thicker ring, white halo plus purple glow (beats the two rules above). */
+.pp-node.pp-reasonable.is-selected rect, .pp-node.pp-reasonable:focus-visible rect {
+  stroke: var(--pp-reasonable); stroke-width: 5;
+  filter: drop-shadow(0 0 3px #ffffffcc) drop-shadow(0 0 7px var(--pp-reasonable-glow)); }
+.pp-node.is-ancestor rect { stroke-dasharray: 6 3; }
+.pp-item-reason { flex-basis: 100%; font-size: .8rem; color: var(--text-secondary, #adb5bd); }
+.pp-viewnote { min-height: 1.2em; margin: .25rem 0; color: var(--accent-gold, #ffd93d); font-size: .9rem; }
+.pp-key-decided .pp-swatch, .pp-key-excludes .pp-swatch { border: 0; border-top: 2px dashed #c792ea; height: 0; width: 1.2rem; border-radius: 0; }
+.pp-key-excludes .pp-swatch { border-top-color: #ff6b6b; }
+.pp-key-none { flex-basis: 100%; font-size: .9rem; }
