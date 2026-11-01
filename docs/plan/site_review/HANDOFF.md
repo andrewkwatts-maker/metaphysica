@@ -23,7 +23,16 @@ Partly done; the rest is listed in `F1_PROGRESS.md`. Give it to a fresh executor
 
 **Blocker before publishing: the headline chi2.** `headline_stats.py` binds to the artifacts: chi2 ≈ 2.24e9 over 63 rows, 36/42 gates locked. CHANGELOG [2.4.0] says 126,749 over 65 and 41/43. A chi2 of 2.2e9 means at least one row is off by about 47,000 sigma, which is almost certainly a units or uncertainty bug. Find the dominating rows in `statistical_rigor_report.json` (an Opus or planner task), fix the cause with a test, then reconcile the CHANGELOG. Do not publish the site with the 2.2e9 headline.
 
+## F4 landed (c19b83e)
+198 formulas withheld (89 `*_leaf`, 33 with no operator, 4 AST reprs, 72 gate formulas sharing one placeholder). `pm-eml-offer.js`, `pm-eml-diagram.js`, stat tiles and the optgroup are in. Open items:
+- `eml_param_crosscheck.write_offer_policy` rewrites `eml_offer_policy.json` and drops the `formulas` section if it runs after `generate_eml_trees.py`. Merge, or fix the build order, with a test.
+- The hand-written EML cards on index, foundations and parameters are not on `isOffered` (add `data-eml-id`; F2).
+- The gate placeholder is hard-coded at `appendix_f_72gates.py:1858`; remove it at the source.
+- `certificates.html` `getEMLCodeForGate` static text (F2).
+- The 7 `eml_latex`-only formulas lost their pill. Accept, or give them trees.
+
 ## Watch
+- `tests/test_derivation_chains.py` fails on its own with 3 failures (kill-switch rows). Find which commit on `site-review` caused it (F1's `4f7be9d` is the likely one); fix it before merging.
 - `test_action_forks.py::test_adopted_option_of_each_fork_is_the_ladder_today` fails while F5 changes `adopted.py`; F5 should update it.
 - Full `pytest tests/` failed one test during F3: `tests/test_derivation_chains.py::test_real_chains_match_declared_formulas`, probably from F4's uncommitted `generate_eml_trees.py`. Recheck after F4 lands.
 - metaphysica CI run 41266065464 (commit 3f239e9, "ci: install eml-math from PyPI") was in progress; check it with `gh run view 41266065464`.
