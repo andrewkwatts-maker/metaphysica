@@ -43,7 +43,8 @@ Partly done; the rest is listed in `F1_PROGRESS.md`. Give it to a fresh executor
 - `tests/test_derivation_chains.py` fails on its own with 3 failures (kill-switch rows). Find which commit on `site-review` caused it (F1's `4f7be9d` is the likely one); fix it before merging.
 - `test_action_forks.py::test_adopted_option_of_each_fork_is_the_ladder_today` fails while F5 changes `adopted.py`; F5 should update it.
 - Full `pytest tests/` failed one test during F3: `tests/test_derivation_chains.py::test_real_chains_match_declared_formulas`, probably from F4's uncommitted `generate_eml_trees.py`. Recheck after F4 lands.
-- CI run 41266065464 on 3f239e9 failed on one stale guard (it required a git install of eml-math, but 2.4.0 is on PyPI). Fixed by 827fbfe on main (pushed) and f104065 on `site-review`; check the new run with `gh run list -c 827fbfe -L 1`.
+- CI run 41266065464 on 3f239e9 failed on one stale guard (it required a git install of eml-math, but 2.4.0 is on PyPI). Fixed by 827fbfe on main (pushed) and f104065 on `site-review`; its CI run 41270345785 is green. Main is now 06d9671 (the finished salvage report was dropped).
+- Doc tidy-up: `docs/` holds 12 audit and reference reports. Fold any that are finished into one archive once nothing cites them; `CONSOLIDATION_2026-10-31.md` is still cited by the site review plan.
 - The local server on :8000 serves `../PrincipiaMetaphysica`; lanes copy templates into it for previews (uncommitted there; the final rebuild overwrites them).
 
 ## Next
