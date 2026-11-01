@@ -12,7 +12,19 @@ Start: `docs/plan/SITE_REVIEW_2026-11-01.md`, `BRIEFS.md` (this folder), `docs/p
 - Owner decision made by the planner on request: minimal action (gravity plus Weyl spinor), main path with action forks none/weyl/24/mostly_plus_mtw, one neutrino sum of 0.0605 eV, Re(T) check aligned with D-015. See the selection doc.
 - Chi2 headline: validator 126,749 over 65 rows; the other definitions get scope labels (F2).
 
+## F1 checkpoint (4f7be9d, f210314, e6855ef)
+Partly done; the rest is listed in `F1_PROGRESS.md`. Give it to a fresh executor as F1b with one target per item. Open items:
+- bridge-channel footer links: the generator is not in the engine (the page is built-only). Find its writer or drop the page.
+- "125 constants" and the remaining v24.2 strings in the paper.
+- The `abstract.py` registry literals (`compression_ratio=131`, `validation.*`).
+- The scope wording for "3030.1 over 4 dof".
+- Tests for the conclusions lookup, the mismatches skip and the plots loader.
+- Screenshots.
+
+**Blocker before publishing: the headline chi2.** `headline_stats.py` binds to the artifacts: chi2 ≈ 2.24e9 over 63 rows, 36/42 gates locked. CHANGELOG [2.4.0] says 126,749 over 65 and 41/43. A chi2 of 2.2e9 means at least one row is off by about 47,000 sigma, which is almost certainly a units or uncertainty bug. Find the dominating rows in `statistical_rigor_report.json` (an Opus or planner task), fix the cause with a test, then reconcile the CHANGELOG. Do not publish the site with the 2.2e9 headline.
+
 ## Watch
+- `test_action_forks.py::test_adopted_option_of_each_fork_is_the_ladder_today` fails while F5 changes `adopted.py`; F5 should update it.
 - Full `pytest tests/` failed one test during F3: `tests/test_derivation_chains.py::test_real_chains_match_declared_formulas`, probably from F4's uncommitted `generate_eml_trees.py`. Recheck after F4 lands.
 - metaphysica CI run 41266065464 (commit 3f239e9, "ci: install eml-math from PyPI") was in progress; check it with `gh run view 41266065464`.
 - The local server on :8000 serves `../PrincipiaMetaphysica`; lanes copy templates into it for previews (uncommitted there; the final rebuild overwrites them).
