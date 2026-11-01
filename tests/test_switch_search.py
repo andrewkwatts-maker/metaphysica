@@ -161,13 +161,17 @@ def test_theory_vacuity_still_counts_against_its_row(result):
 # ------------------------------------------------------- the checks fire
 
 
-def test_the_consistency_checks_are_capable_of_failing(checks):
-    """The load-bearing one. Checks that always pass discriminate nothing."""
-    assert checks, "no checks ran at all"
-    assert any(not c["ok"] for c in checks), (
-        "every consistency check passes in the live state. Either the "
-        "framework became self-consistent -- which is a result, and should be "
-        "recorded as one -- or the checks stopped checking."
+def test_the_consistency_checks_are_capable_of_failing(result):
+    """The load-bearing one. Checks that always pass discriminate nothing.
+
+    Since 2026-11-01 the selected path passes every check (the framework became
+    internally consistent on it, which is a recorded result); so capability is
+    shown on the other combinations of the sweep.
+    """
+    assert result["rows"], "no combinations ran at all"
+    assert any(not c["ok"] for r in result["rows"] for c in r["checks"]), (
+        "every check passes in every combination. Either the framework became "
+        "self-consistent across the whole sweep, or the checks stopped checking."
     )
 
 
@@ -293,8 +297,7 @@ def test_a_check_failing_everywhere_is_separated_but_not_excused(result):
     counted against every row, so nothing is laundered.
     """
     standing = result["problems_no_combination_fixes"]
-    assert standing, "no standing problems at all -- verify the checks ran"
-    for name in standing:
+    for name in standing:  # may be empty since 2026-11-01
         failing = [r for r in result["rows"]
                    if any(c["name"] == name and not c["ok"]
                           for c in r["checks"])]

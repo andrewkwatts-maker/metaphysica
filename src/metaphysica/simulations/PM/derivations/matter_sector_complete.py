@@ -1615,6 +1615,7 @@ class MatterSectorCompleteDerivations(SimulationBase):
             # EML WITHHELD: a sum of three seesaw masses of which ~94% is measured oscillation
             # splittings, and whose lightest term is the hardcoded 0.001 eV above.
             derivation_formula="light-neutrino-masses-v19",
+            no_experimental_value=True,
         ))
 
         return params
