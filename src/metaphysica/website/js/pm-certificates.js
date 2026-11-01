@@ -70,12 +70,26 @@
         throw lastErr || new Error('Could not load ' + filename);
     }
 
+    /** Load pm-eml-offer.js beside this script when the page did not, then await its data. */
+    function loadEmlOffer() {
+        if (window.PMEmlOffer) return window.PMEmlOffer.ready;
+        return new Promise(resolve => {
+            const me = document.currentScript || document.querySelector('script[src*="pm-certificates.js"]');
+            const tag = document.createElement('script');
+            tag.src = me && me.src ? me.src.replace('pm-certificates.js', 'pm-eml-offer.js') : '../js/pm-eml-offer.js';
+            tag.onload = () => resolve(window.PMEmlOffer.ready);
+            tag.onerror = () => resolve(null);
+            document.head.appendChild(tag);
+        });
+    }
+
     async function loadAll() {
         if (loadPromise) return loadPromise;
         loadPromise = (async () => {
             const [gatesDoc, formulasDoc] = await Promise.all([
                 fetchFirst('GATES_CERTIFICATES.json'),
-                fetchFirst('formulas.json')
+                fetchFirst('formulas.json'),
+                loadEmlOffer()   // EML offer policy
             ]);
 
             const certs = (gatesDoc && (gatesDoc.certificates || gatesDoc.gates)) || [];
@@ -147,6 +161,9 @@
 
     /** Resolve the EML representation. */
     function pickEml(cert, formula) {
+        // One offer policy (pm-eml-offer.js): a shared placeholder or tree-less formula shows no EML.
+        const fid = formula && formula.id;
+        if (!(window.PMEmlOffer && PMEmlOffer.isOffered(fid))) return { latex: '', text: '', withheld: true };
         if (cert && cert.eml_tree_compact && cert.eml_tree_compact.x) {
             return { latex: cert.eml_tree_compact.x, text: '' };
         }
@@ -229,7 +246,7 @@
             ? `\\(${eml.latex}\\)`
             : (eml.text
                 ? `<code class="pm-cert-trio__code pm-cert-trio__code--eml">${escapeHtml(eml.text)}</code>`
-                : '<div class="pm-tv-panel__empty">No EML</div>');
+                : '<div class="pm-tv-panel__empty">' + (eml.withheld ? 'No EML relation of its own for this gate' : 'No EML') + '</div>');
 
         const valueBody = value.number
             ? `<span class="pm-tv-value__number">${escapeHtml(value.number)}</span>`
