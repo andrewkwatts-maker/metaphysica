@@ -31,6 +31,14 @@ Partly done; the rest is listed in `F1_PROGRESS.md`. Give it to a fresh executor
 - `certificates.html` `getEMLCodeForGate` static text (F2).
 - The 7 `eml_latex`-only formulas lost their pill. Accept, or give them trees.
 
+## F5 landed (39259e1, 0274f13; PrincipiaMetaphysica 65ee733 = D-029, not pushed)
+`none` is adopted. `master-action-26d` is in `master_action.py` with a tree, and the core_formulas entry is a plain Formula. `MASTER_ACTION_DIAGRAM_ID` now points at it. Neutrino: one claim, 0.0605 eV. The Re(T) check applies D-015. Path `4f53cda18c2baa0c` now evaluates as consistent, with 9 open terms and the 3 known failing checks. Tests are in `tests/test_master_action_selection.py`. Open items:
+- **Owner ruling needed: neutrino ordering.** The 0.0605 eV arithmetic gives normal ordering, but `neutrino.ordering` is registered as INVERTED, where the floor is about 0.10 eV. Under inverted ordering, 0.0605 is impossible. Either the ordering row is wrong, or the selection doc's neutrino choice is. Do not publish until it is ruled.
+- `path_ranking.json` is stale: it still shows rank 3 and `consistent: False`. Regenerate it with `python -m metaphysica.testground rank` over the sweep run directories.
+- The two intermediate neutrino rows still say DERIVED until a rebuild.
+- The full suite had 26 failures before F5's last fixes. F5 fixed its own failures and 3 others. The rest were not from this lane: `test_derivation_chains` (3), `test_duplicate_statements`, `test_formula_lint`, `test_output_dir_binding` (2), `test_prose_lint`, `test_published_formula_coverage`, `test_rust_python_parity` (2), `test_superseded_surfaces`, `test_tex_renders` (3). `test_eml_math_floor_is_met` is fixed by f104065. Run the full suite next and triage each against main.
+- Push PrincipiaMetaphysica 65ee733 together with the site regen.
+
 ## Watch
 - `tests/test_derivation_chains.py` fails on its own with 3 failures (kill-switch rows). Find which commit on `site-review` caused it (F1's `4f7be9d` is the likely one); fix it before merging.
 - `test_action_forks.py::test_adopted_option_of_each_fork_is_the_ladder_today` fails while F5 changes `adopted.py`; F5 should update it.
