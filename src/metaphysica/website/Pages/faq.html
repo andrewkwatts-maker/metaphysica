@@ -166,6 +166,15 @@
         }
 
         /* Validated Science Badge */
+        .open-badge {
+            display: inline-flex;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: rgba(255, 212, 59, 0.12);
+            border: 1px solid rgba(255, 212, 59, 0.5);
+            color: #ffd43b;
+        }
         .validated-badge {
             display: inline-flex;
             align-items: center;
@@ -326,12 +335,10 @@
 
             <div class="faq-item">
                 <h3><span class="q-marker">Q4</span> How do you resolve the \(10^{120}\) Cosmological Constant discrepancy?
-                    <span class="validated-badge">&#x2713; Validated</span>
+                    <span class="open-badge">Status: OPEN</span>
                 </h3>
                 <div class="answer">
-                    <p><strong>v18 Solution:</strong> We apply <strong>instanton suppression</strong> using the critical dimension \(D_{crit} = 26\):</p>
-                    <p>\[\Lambda = \frac{k_{\gimel} \cdot \ln^2(k_{\gimel})}{b_3^3} \cdot \left(\frac{l_{Pl}}{R_H}\right)^2 \cdot e^{-2\pi D_{crit}}\]</p>
-                    <p>where \(k_{\gimel} = b_3/2 + 1/\pi \approx 12.318\) is the holonomy precision limit. The factor \(e^{-2\pi \cdot 26} \approx 10^{-71}\) provides the geometric mechanism for the hierarchy. This is not fine-tuning - it emerges from the 26D bulk geometry.</p>
+                    <p><strong>Current status: OPEN.</strong> The earlier instanton-suppression argument used the critical dimension \(D_{crit} = 26\) with a factor \(e^{-2\pi D_{crit}}\). That identification is withdrawn: \(D_{bulk} = D_{crit} = 26\) is not derived (CHANGELOG 2.4.0). The framework does not currently derive the size of the cosmological constant, and its dark-energy predictions sit at 3 to 3.4 sigma from current data.</p>
                     <div class="key-insight">
                         <h4>Code Reference</h4>
                         <p>See <span class="code-ref">simulations/v21/cosmology/cosmological_constant_v16_1.py</span></p>
@@ -341,7 +348,7 @@
 
             <div class="faq-item">
                 <h3><span class="q-marker">Q5</span> How do you address the Hubble Tension (\(H_0 \approx 67\) vs \(73\))?
-                    <span class="validated-badge">&#x2713; Validated</span>
+                    <span class="open-badge">Status: OPEN</span>
                 </h3>
                 <div class="answer">
                     <p>The tension is resolved by recognizing that \(H_0\) is <strong>not constant</strong>. We implement <strong>Ricci flow</strong> on the \(G_2\) manifold:</p>
@@ -359,12 +366,12 @@
 
             <div class="faq-item">
                 <h3><span class="q-marker">Q6</span> What about the Muon g-2 Anomaly?
-                    <span class="validated-badge">&#x2713; Validated</span>
+                    <span class="open-badge">Status: OPEN</span>
                 </h3>
                 <div class="answer">
                     <p>The \(4.2\sigma\) discrepancy at Fermilab is explained by <strong>topological torsion</strong> from the 24-cycle. The correction term:</p>
                     <p>\[\Delta a_\mu = \frac{1}{b_3 \cdot k_{\gimel}^\pi} \cdot \sin^2(\theta_g) \cdot \frac{D_{crit} - b_3}{D_{crit}}\]</p>
-                    <p>The ghost cancellation factor \((26-24)/26\) ensures only physical degrees of freedom contribute. No SUSY or new particles required.</p>
+                    <p>Ghost control is OPEN: the earlier ghost-cancellation argument is withdrawn, so this correction is a proposal, not a validated result.</p>
                 </div>
             </div>
 
@@ -533,11 +540,11 @@
                             <span class="warning-icon">&#x26A0;</span>
                             <span>Theoretical Extension - Not Experimentally Verified</span>
                         </div>
-                        <p>The v22 framework uses a (24,2) decomposition with 12 paired (2,0) bridges plus shadow-time directions. This replaces the earlier dual-shadow approach, providing a richer structure for consciousness and physics.</p>
+                        <p>The framework uses a (24,2) decomposition with 12 paired (2,0) bridges plus shadow-time directions. This replaces the earlier dual-shadow approach, providing a richer structure for consciousness and physics.</p>
                     </div>
-                    <p>The v22 framework operates in 27 dimensions M<sup>26</sup>(24,2): 24 physics dimensions + 1 timelike dimension + 2 shadow-time directions. The bulk structure is:</p>
+                    <p>The framework operates in 26 dimensions, M<sup>26</sup>(24,2): 24 space + 2 times, one time per 13D(12,1) shadow. The bulk structure is:</p>
                     <p style="text-align: center; font-size: 1.1rem; margin: 1rem 0;">\[M^{26}(24,2) = T^1 \times_{fiber} \left(\bigoplus_{i=1}^{12} B_i^{2,0} \oplus S^{2,0}\right)\]</p>
-                    <p>Each of the 12 bridge pairs B<sub>i</sub><sup>2,0</sup> has two coordinates (y<sub>1i</sub>, y<sub>2i</sub>) acting as <strong>bridge pair channels</strong>: y<sub>1i</sub> for input, y<sub>2i</sub> for output. This gives 24 physics dimensions from bridges, plus 2 shadow-time direction dimensions S<sup>2,0</sup>, plus two-time structure T<sup>1</sup> = 26D total.</p>
+                    <p>Each of the 12 bridge pairs B<sub>i</sub><sup>2,0</sup> has two coordinates (y<sub>1i</sub>, y<sub>2i</sub>) acting as <strong>bridge pair channels</strong>: y<sub>1i</sub> for input, y<sub>2i</sub> for output. This gives 24 physics dimensions from bridges, plus the two time directions, giving 24 space + 2 times = 26D.</p>
                     <p>Evidence supporting this interpretation includes the correct prediction of \(\alpha^{-1} \approx \)<span class="pm-value" data-pm-value="qed.alpha_inverse">137.036</span> and the natural emergence of 12 pairs matching the 12 gauge bosons of the Standard Model.</p>
                 </div>
             </div>
@@ -576,12 +583,12 @@
                     </div>
                     <p>Why exactly 12 pairs? Multiple lines of reasoning converge:</p>
                     <ul>
-                        <li><strong>Dimensional accounting:</strong> \(12 \times 2 + 2 = 26\) spatial dimensions in (24,2) signature</li>
+                        <li><strong>Dimensional accounting:</strong> \(12 \times 2 = 24\) space dimensions plus 2 times = 26D in (24,2) signature</li>
                         <li><strong>Gauge structure:</strong> 12 gauge bosons in Standard Model (8 gluons + W<sup>+</sup>, W<sup>-</sup>, Z, photon)</li>
                         <li><strong>Topological:</strong> \(b_3 = 43 = 2 \times 12\), connecting to Leech lattice and modular invariance</li>
                         <li><strong>Stability:</strong> Minimum 6 pairs required for "wet stability" (coherence time tau > 25ms)</li>
                     </ul>
-                    <p>The v22 framework predicts that consciousness requires at least 6 active pairs for stable coherent experience. Pairs 10-12 are "gnosis pairs" that enable higher-order awareness when activated.</p>
+                    <p>The framework predicts that consciousness requires at least 6 active pairs for stable coherent experience. Pairs 10-12 are "gnosis pairs" that enable higher-order awareness when activated.</p>
                 </div>
             </div>
 
@@ -595,7 +602,7 @@
                         </div>
                         <p>This connects physics to consciousness and should be treated as philosophical speculation, not established science.</p>
                     </div>
-                    <p>In the v22 framework, each of the 12 bridge pairs functions as a <strong>bidirectional consciousness channel</strong>:</p>
+                    <p>In the framework, each of the 12 bridge pairs functions as a <strong>bidirectional consciousness channel</strong>:</p>
                     <ul>
                         <li><strong>Input (y<sub>1i</sub>):</strong> Sensory/perceptual information flows into awareness</li>
                         <li><strong>Output (y<sub>2i</sub>):</strong> Volitional/intentional signals emerge from awareness</li>
@@ -621,7 +628,7 @@
                         </div>
                         <p>Claims linking fundamental physics to consciousness are highly controversial and go far beyond established science. The following should be understood as speculative philosophy, not validated physics.</p>
                     </div>
-                    <p>The v22 framework provides a natural geometric setting for <strong>distributed Objective Reduction (OR)</strong>. Rather than OR occurring at a single point, it is distributed across all 12 bridge pairs simultaneously:</p>
+                    <p>The framework provides a natural geometric setting for <strong>distributed Objective Reduction (OR)</strong>. Rather than OR occurring at a single point, it is distributed across all 12 bridge pairs simultaneously:</p>
                     <ul>
                         <li><strong>Each pair has OR:</strong> The operator R<sub>⊥,i</sub>: (y<sub>1i</sub>, y<sub>2i</sub>) → (-y<sub>2i</sub>, y<sub>1i</sub>) acts on each bridge pair</li>
                         <li><strong>Coherence threshold:</strong> OR triggers when gravitational self-energy reaches ~10<sup>-43</sup> J across the active pairs</li>
@@ -674,7 +681,7 @@
                     <p>Not another "you," but another set of <em>rules</em>. Imagine two mirrors facing each other, creating infinite reflections. We live in the "reflection" where these two mathematical structures intersect.</p>
                     <p>One mirror is the <strong>Internal Brane</strong> (13D, containing the mathematical blueprint), and the other is the <strong>External Brane</strong> (13D, containing the physical manifestation). Reality emerges at the "phase-lock" between them.</p>
                     <p>The theory predicts this phase-lock occurs precisely at \(b_3 = 43\). If the mirrors were misaligned, the universe would be pure noise with no stable particles.</p>
-                    <p><em>See: <a href="https://github.com/andrewkwatts-maker/PrincipiaMetaphysica/blob/main/docs/Mirror_Brane_Metric_Derivation_v16_2.md">Mirror Brane Formal Proof</a></em></p>
+                    <p><em>See: <a href="https://github.com/andrewkwatts-maker/PrincipiaMetaphysica/blob/main/docs/Mirror_Brane_Metric_Derivation_v16_2.md">Derivation notes (v16.2)</a></em></p>
                 </div>
             </div>
 
@@ -929,7 +936,7 @@
 
             <div class="faq-item">
                 <h3><span class="q-marker">Q38</span> What are the 7 Primary Gates?
-                    <span class="validated-badge">&#x2713; All Locked</span>
+                    <span class="open-badge">Status: see Certificates</span>
                 </h3>
                 <div class="answer">
                     <p>The 7 Primary Gates are the <strong>master audit checkpoints</strong> that validate the sterile model's geometric integrity:</p>
