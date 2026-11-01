@@ -130,7 +130,7 @@ class CoreFormulas:
         ],
         discussion="The generation number emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS (retired reading) construction (Corti et al. 2015), the G₂ index theorem—which generalizes the F-theory result n_gen = χ/24—yields exactly three generations via the divisor 48. This is a parameter-free geometric prediction that matches observation exactly.",
         derivation=FormulaDerivation(
-            parent_formulas=["tcs-euler-characteristic"],
+            parent_formulas=["effective-euler"],
             established_physics=["f-theory-index"],
             steps=[
                 "Start with G₂ manifold effective Euler characteristic χ_eff = 144",
@@ -308,7 +308,7 @@ class CoreFormulas:
         ],
         discussion="The GUT scale emerges from the geometry of the G₂ compactification. Via dimensional reduction, the effective 4D Planck scale is related to the 26D fundamental scale by M_GUT = M_Pl · V_G₂^(-1/7), where the -1/7 power comes from compactifying 7 dimensions. The TCS (retired reading) topology and moduli stabilization fix V_G₂, yielding M_GUT = 2.118×10¹⁶ GeV—remarkably close to the phenomenologically required unification scale of ~2×10¹⁶ GeV.",
         derivation=FormulaDerivation(
-            parent_formulas=["g2-compactification"],
+            parent_formulas=["g2-holonomy-constraint"],
             established_physics=["kaluza-klein"],
             steps=[
                 "G₂ manifold volume V_G2 determines effective 4D Planck scale",
@@ -604,7 +604,7 @@ class CoreFormulas:
         ],
         discussion="The proton lifetime is calculated from the standard GUT formula τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵), using the geometrically determined values M_GUT = 2.118×10¹⁶ GeV and α_GUT = 1/23.54. The TCS (retired reading) manifold geometry provides an additional suppression factor S ≈ 2.1 from the separation between associative 3-cycles, enhancing the lifetime by S² ≈ 4.4. This yields τ_p = 8.15×10³⁴ years, safely above the Super-Kamiokande bound of 2.4×10³⁴ years and testable at Hyper-Kamiokande in the 2030s.",
         derivation=FormulaDerivation(
-            parent_formulas=["gut-scale", "tcs-suppression"],
+            parent_formulas=["gut-scale", "tcs-topology"],
             established_physics=["yang-mills"],
             steps=[
                 "Standard dimension-6 decay: τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵)",
@@ -774,7 +774,7 @@ class CoreFormulas:
             "R_c": FormulaTerm("Compactification Radius", "G₂ manifold characteristic size"),
         },
         derivation=FormulaDerivation(
-            parent_formulas=["g2-compactification"],
+            parent_formulas=["g2-holonomy-constraint"],
             established_physics=["kaluza-klein"],
             steps=[
                 "KK tower masses: m_n = n/R_c",
@@ -1192,7 +1192,7 @@ class CoreFormulas:
             "4D_(3,1)": FormulaTerm("Observable", "Our spacetime"),
         },
         units="dimensionless",
-        related_formulas=["v21-or-reduction", "g2-compactification"],
+        related_formulas=["v21-or-reduction", "g2-holonomy-constraint"],
         simulation_file="simulations/v21/descent/merged_descent_v21.py",
         references=[
             FormulaReference(
@@ -1329,7 +1329,7 @@ class CoreFormulas:
             "L_KK": FormulaTerm("KK Tower", "Kaluza-Klein excitations"),
         },
         simulation_file="simulations/derivations/dimensional_reduction_derivations.py",
-        related_formulas=["lagrangian-13d-effective", "g2-holonomy-constraint", "warp-factor-ansatz"],
+        related_formulas=["lagrangian-13d-effective", "g2-holonomy-constraint"],
         references=[
             FormulaReference(
                 id="randall1999",

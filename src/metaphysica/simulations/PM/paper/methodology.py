@@ -5,7 +5,7 @@ PRINCIPIA METAPHYSICA v24.2 - Section 2: The Sterile Extraction Methodology
 
 DOI: 10.5281/zenodo.18079602
 
-v24.2 TOPOLOGICALLY ANCHORED: 125 constants from EDOF=3 seeds (116:1 compression).
+v24.2 TOPOLOGICALLY ANCHORED: 125 constants from EDOF=3 seeds (a ledger-derived compression (ratio not available in this build)).
 
 This simulation generates the content for Section 2 of the paper:
   2.1 Principles of Spectral Geometry
@@ -163,7 +163,7 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "In the v24.2 Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations), the transition from empirical observation to "
-                    "first-principles computation is proposed through <strong>Spectral Geometry</strong> with <strong>116:1 compression ratio</strong>. "
+                    "first-principles computation is proposed through <strong>Spectral Geometry</strong> with <strong>a ledger-derived compression ratio (not available in this build)</strong>. "
                     "This methodology posits that the 'constants' of nature are not independent variables, "
                     "but emerge as discrete harmonic frequencies of the V₇ manifold from minimal phenomenological input. By treating the "
                     "universe as a resonant geometric body, we define physical constants as <strong>Laplacian Eigenvalues (λₙ)</strong> "
@@ -221,7 +221,7 @@ class MethodologyV16_2(SimulationBase):
                 type="paragraph",
                 content=(
                     "Traditional physics relies on extensive parameter fitting to match theoretical values to "
-                    "experimental data. The Topologically Anchored Framework (<strong>EDOF=3</strong>) proposes <strong>116:1 compression</strong> "
+                    "experimental data. The Topologically Anchored Framework (<strong>EDOF=3</strong>) proposes <strong>a ledger-derived compression (ratio not available in this build)</strong> "
                     "by showing that λₙ values are <strong>topological invariants</strong> anchored by <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations. "
                     "Because the G₂ manifold is Ricci-flat and torsion-free, its spectrum is rigid with minimal phenomenological input. "
                     "The electron mass and other constants emerge from the volume of the V₇ manifold, "
@@ -269,7 +269,7 @@ class MethodologyV16_2(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "In the Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, with <strong>116:1 compression ratio</strong>), "
+                    "In the Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, with <strong>a ledger-derived compression ratio (not available in this build)</strong>), "
                     "the 125 registry parameters (~26 SM+ν and ~6 ΛCDM parameters plus derived constants) are not 'points' in a data table, "
                     "but <strong>Physical Junctions</strong> in the higher-dimensional manifold. This section defines the Brane-Node Intersection "
                     "Lattice, the geometric structure that hosts the spectral eigenvalues derived in Section 2.1."
@@ -358,7 +358,7 @@ class MethodologyV16_2(SimulationBase):
                     "The v24.2 Topologically Anchored Framework establishes a <strong>Metric Lock</strong> where "
                     "residues are static geometric invariants anchored by <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations. "
                     "This section details the mechanisms—both mathematical and computational—that ensure "
-                    "the 125-residue registry achieves <strong>116:1 compression ratio</strong> and self-consistency."
+                    "the 125-residue registry achieves <strong>a ledger-derived compression ratio (not available in this build)</strong> and self-consistency."
                 )
             ),
             ContentBlock(
@@ -372,7 +372,7 @@ class MethodologyV16_2(SimulationBase):
                     "In previous versions (v15.0–v16.1), the model utilized stochastic optimization "
                     "and gradient descent to minimize tension between theory and observation. In the "
                     "Topologically Anchored Framework (<strong>EDOF=3</strong>), these protocols are <strong>deprecated and physically removed</strong> "
-                    "from the engine. The framework achieves <strong>116:1 compression ratio</strong> from <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations."
+                    "from the engine. The framework achieves <strong>a ledger-derived compression ratio (not available in this build)</strong> from <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations."
                 )
             ),
             ContentBlock(
@@ -592,7 +592,7 @@ class MethodologyV16_2(SimulationBase):
                     "Without the theory, encoding the 125 constants independently requires "
                     "125 × 64 bits = 8000 bits of storage, but provides <em>no predictive power</em>. "
                     "PM satisfies MDL because the theory enables predictions beyond the initial data, "
-                    "the 116:1 ratio uses only the 69-bit seed, not the 32,640-bit ledger (see 2.6.4)."
+                    "the retired 116:1 hand-claim used only the 69-bit seed, not the 32,640-bit ledger (see 2.6.4)."
                 )
             ),
 
@@ -676,7 +676,7 @@ class MethodologyV16_2(SimulationBase):
                 items=[
                     "<strong>Without theory:</strong> 125 constants × 64 bits = 8000 bits (no predictions)",
                     "<strong>With theory:</strong> 2 topological invariants (69 bits) + geometric constraints (amortized)",
-                    "<strong>Compression ratio:</strong> 116:1 (8000 / 69)",
+                    "<strong>Compression ratio:</strong> not available in this build (the 116:1 hand-claim, 8000 / 69, is retired)",
                     "<strong>Information saved:</strong> 7931 bits via Topological Compression"
                 ],
                 label="kolmogorov-analysis"
@@ -856,7 +856,7 @@ class MethodologyV16_2(SimulationBase):
             section_id="2",
             subsection_id="2.6",  # v24.2: Code-Theoretical Integrity section
             title="The Topologically Anchored Methodology (EDOF=3)",
-            abstract="Spectral geometry principles with 131:1 compression ratio (post-v25.0+v26.0) from EDOF=3: 1 geometric seed b₃ + 2 calibrations, the 125-residue port, the global metric lock, and triple-track validation.",
+            abstract="Spectral geometry principles with a ledger-derived compression ratio (not available in this build) (post-v25.0+v26.0) from EDOF=3: 1 geometric seed b₃ + 2 calibrations, the 125-residue port, the global metric lock, and triple-track validation.",
             content_blocks=content_blocks
         )
 

@@ -23,7 +23,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from metaphysica.simulations.base import ContentBlock
-from metaphysica.simulations.core.parameter_artifact import params_source
+from metaphysica.simulations.core.parameter_artifact import (
+    candidate_paths, params_source)
 
 STATUS_TAGS = ("derived", "calibrated", "fitted", "open", "predicted")
 ADOPTED_PATH = "seed_43_joyce"
@@ -102,6 +103,26 @@ def _read_json(path: Path) -> Optional[Dict[str, Any]]:
         return None
 
 
+#: Reader-facing reason; never names a filesystem path.
+_NOT_FOUND_WHY = ("the fit-statistics build artifacts (statistical rigor "
+                  "report and validation report) were not produced in this "
+                  "build")
+
+
+def _find_artifact_dir() -> Optional[Path]:
+    """First artifact directory holding BOTH fit files, or None.
+
+    Searches every directory the parameter artifact may live in, not just the
+    one that happened to supply parameters.json, because the rigor and
+    validation reports are written to sibling build directories.
+    """
+    names = ("statistical_rigor_report.json", "validation_report.json")
+    for path in candidate_paths():
+        if all((path.parent / n).is_file() for n in names):
+            return path.parent
+    return None
+
+
 def load_fit_summary(artifact_dir: Optional[Path] = None) -> Dict[str, Any]:
     """chi^2 and scoreboard counts from the build artifacts, or why absent.
 
@@ -109,10 +130,9 @@ def load_fit_summary(artifact_dir: Optional[Path] = None) -> Dict[str, Any]:
     caller must then print ``why`` and no numbers.
     """
     if artifact_dir is None:
-        src = params_source()
-        if not src["available"]:
-            return {"available": False, "why": src["why"]}
-        artifact_dir = Path(src["path"]).parent
+        artifact_dir = _find_artifact_dir()
+        if artifact_dir is None:
+            return {"available": False, "why": _NOT_FOUND_WHY}
     rigor = _read_json(artifact_dir / "statistical_rigor_report.json")
     report = _read_json(artifact_dir / "validation_report.json")
     try:
@@ -129,11 +149,7 @@ def load_fit_summary(artifact_dir: Optional[Path] = None) -> Dict[str, Any]:
             "n_withdrawn": len(chi.get("withdrawn_rows", [])),
         }
     except (TypeError, KeyError, ValueError):
-        return {"available": False, "why": (
-            "statistical_rigor_report.json / validation_report.json not "
-            "found next to parameters.json, or missing "
-            "chi_squared_from_rows / summary keys (searched %s)" %
-            artifact_dir)}
+        return {"available": False, "why": _NOT_FOUND_WHY}
 
 
 def fit_blocks(fit: Dict[str, Any]) -> List[ContentBlock]:

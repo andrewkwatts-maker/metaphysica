@@ -493,7 +493,7 @@ class IntegrityV16_2(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Net result: 5 closures + 1 seed → honest 121:1 compression",
+                title="Net result: 5 closures + 1 seed → honest compression",
                 content=(
                     "<p>The honest tally of the thirteen v25.0/v26.0 candidates is "
                     "<strong>5 real closures, 4 cross-consistent confirmations, 3 worse-than-prior "
@@ -501,11 +501,8 @@ class IntegrityV16_2(SimulationBase):
                     "genuinely new derived constants (strong CP, Re(T) VEV gap, vacuum landscape "
                     "pruning, mirror DM relic, Higgs mass via MSSM diagonalisation) against the one "
                     "geometric seed b<sub>3</sub> gives "
-                    "<strong><span class=\"pm-value\" data-pm-value=\"meta.compression_ratio\">121:1</span></strong>. "
-                    "This replaces the earlier "
-                    "<span class=\"pm-value\" data-pm-value=\"meta.compression_v24\">116:1</span> / "
-                    "<span class=\"pm-value\" data-pm-value=\"meta.compression_v26\">131:1</span> "
-                    "narrative. The framework's triple-track validation harness flagged the shadow "
+                    "<strong><span class=\"pm-value\" data-pm-value=\"meta.compression_ratio\">not available in this build</span></strong>. "
+                    "This replaces the earlier hand-claimed ratios, which are retired. The framework's triple-track validation harness flagged the shadow "
                     "derivations automatically &mdash; that the machinery surfaced the overcount is "
                     "itself the v2.1.0 methodological lift. The Hysteresis Seal re-locks against the "
                     "honest scorecard; the three OPEN/PARTIAL ledger rows above (n<sub>s</sub>, η_B, "

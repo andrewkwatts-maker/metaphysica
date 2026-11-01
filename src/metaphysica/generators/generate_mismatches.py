@@ -61,8 +61,17 @@ def _extract_numeric_tokens(latex: str) -> list:
     return out
 
 
+def _is_bare_number(latex: str) -> bool:
+    """True when the LaTeX holds no variable: only digits and operators."""
+    stripped = re.sub(r"[\\](?:frac|times|cdot|left|right)", "", latex)
+    return not re.search(r"[A-Za-z_]", stripped)
+
+
 def _check_latex_divergence(arithma_latex: str, eml_latex: str):
     if not arithma_latex or not eml_latex:
+        return None
+    # An Arithma stub that is a bare number carries no expression to compare.
+    if _is_bare_number(arithma_latex):
         return None
     a = _normalize_latex(arithma_latex)
     e = _normalize_latex(eml_latex)
