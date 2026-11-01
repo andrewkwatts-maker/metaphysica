@@ -346,7 +346,7 @@ def _owner_recommended(item: int):
 
 
 def _action_bulk_sectors_adopted() -> str:
-    """Item 1 has no recommendation: build_ladder then treats it as undecided."""
+    """Item 1 recommends "none"; an item with no recommendation reads as undecided."""
     return "undecided" if _owner_recommended(1) is None else str(_owner_recommended(1))
 
 

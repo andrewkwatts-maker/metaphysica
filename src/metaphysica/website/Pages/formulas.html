@@ -1837,8 +1837,8 @@
         <section id="master-action-diagram" class="stats-bar" style="display:none;flex-direction:column;align-items:stretch;margin:1rem 0">
             <h2 style="font-size:1.1rem;margin:0 0 .25rem">Master action as an EML tree</h2>
             <p id="master-action-note" style="margin:0 0 .5rem;font-size:.85rem;color:var(--text-muted)">
-                ANSATZ integrand (1.1); which master action is canonical is an open owner decision
-                (DECISION_LOG Track M, decision 1).</p>
+                ANSATZ integrand; selected 2026-11-01 as the one master action: gravity plus a Weyl spinor of Cl(24,2)
+                (docs/plan/MASTER_ACTION_SELECTION_2026-11-01.md).</p>
             <div id="master-action-host" style="overflow-x:auto"></div>
         </section>
 
@@ -1883,7 +1883,7 @@
     let filteredFormulas = [];
     let sectionNames = {}; // Maps section id -> title from sections.json
     // The one configuration value for the master-action diagram (formula id).
-    const MASTER_ACTION_DIAGRAM_ID = 'pneuma-master-action-v23';
+    const MASTER_ACTION_DIAGRAM_ID = 'master-action-26d';
     let emlTrees = {};     // Maps formula id -> EML tree JSON dict
     let currentFilters = {
         search: '',

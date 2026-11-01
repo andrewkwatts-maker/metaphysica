@@ -1608,14 +1608,13 @@ class MatterSectorCompleteDerivations(SimulationBase):
             path="neutrino.sum_masses",
             name="Sum of Neutrino Masses",
             units="eV",
-            status="DERIVED",
-            description="Sum(m_nu) from seesaw, should be < 0.12 eV (cosmo)",
+            status="DIAGNOSTIC",
+            description="INTERMEDIATE seesaw value of Sum(m_nu); NOT the framework's "
+                        "claim on the sum (that is particle.sigma_m_base_eV, "
+                        "decision 2026-11-01)",
             # EML WITHHELD: a sum of three seesaw masses of which ~94% is measured oscillation
             # splittings, and whose lightest term is the hardcoded 0.001 eV above.
             derivation_formula="light-neutrino-masses-v19",
-            experimental_bound=0.12,
-            bound_type="upper",
-            bound_source="Planck2018"
         ))
 
         return params

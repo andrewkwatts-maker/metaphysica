@@ -840,30 +840,29 @@ class CoreFormulas:
     # =========================================================================
 
     MASTER_ACTION_26D = Formula(
-        id="master-action-27d",  # Updated ID for v23.1
+        id="master-action-26d",  # canonical since 2026-11-01; the id master-action-27d is retired
         output_params=['dimensions.D_BULK'],
         label="(2.1) Master Action",
-        html="S<sub>26</sub> = ∫ d<sup>26</sup>x √|G| [(M<sub>*</sub><sup>24</sup>/2)R<sub>26</sub> + Ψ̄<sub>P</sub>(iΓ<sup>M</sup>D<sub>M</sub> - m)Ψ<sub>P</sub> + ℒ<sub>bridge</sub>]",
-        latex="S_{26} = \\int d^{26}x \\sqrt{|G_{(24,2)}|} \\left[ \\frac{M_*^{24}}{2} R_{26} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
-        plain_text="S_26 = ∫ d²⁶X √|G| [(M*²⁴/2)R₂₆ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
+        html="S<sub>26</sub> = ∫ d<sup>26</sup>X √|G| [(M<sub>*</sub><sup>24</sup>/2)R<sub>26</sub> + Ψ̄ iΓ<sup>M</sup>D<sub>M</sub> Ψ]",
+        latex="S_{26} = \\int d^{26}X \\sqrt{|G_{(24,2)}|} \\left[ \\frac{M_*^{24}}{2} R_{26} + \\bar{\\Psi}\\, i\\Gamma^M D_M \\Psi \\right]",
+        plain_text="S_26 = ∫ d²⁶X √|G| [(M*²⁴/2)R₂₆ + Ψ̄ iΓᴹD_M Ψ]",
         category=FormulaCategory.THEORY,
-        description="v23.1 Master action for 26D(24,2) bulk with Pneuma field and shadow-time directions sector",
+        description="Master action for the 26D(24,2) bulk: gravity plus one Weyl spinor. Selected 2026-11-01 (docs/plan/MASTER_ACTION_SELECTION_2026-11-01.md); statements A to E are SUPERSEDED by it",
         section="2",
-        status="FOUNDATIONAL",
+        status="ANSATZ",
         terms={
             "S_26": FormulaTerm("26D Action", "Full action in the 26D(24,2) two-time bulk", "sections.html#2"),
             "M_*": FormulaTerm("Fundamental Scale", "26D Planck scale, M_*^24 = 1/kappa^2 = 1/(8 pi G_26). Input scale: ~10¹⁶ GeV is a stated size, not derived by any simulation"),
             "R_26": FormulaTerm("Ricci Scalar", "26D curvature scalar"),
-            "Ψ_P": FormulaTerm("Pneuma Field", "4096-component Weyl spinor of Cl(24,2)"),
-            "ℒ_bridge": FormulaTerm("Bridge Lagrangian", "v23.1: 12×(2,0) bridge pairs + two shadow-time directions"),
+            "Ψ": FormulaTerm("Weyl spinor", "4096-component Weyl spinor of Cl(24,2); the Pneuma field"),
         },
         derivation=FormulaDerivation(
             parent_formulas=[],
             established_physics=["virasoro-anomaly", "string-theory"],
             steps=[
                 "Start with 26D(24,2) = 24 space + 2 times (one per shadow)",
-                "Include Pneuma spinor field for fermionic DOF (4096 Weyl components of Cl(24,2))",
-                "v23.1: Add shadow-time directions sector for dual-shadow structure"
+                "Include one Weyl spinor for the fermionic DOF (4096 components of Cl(24,2)); m and the quartic vanish for a Weyl field",
+                "The 12 bridge pairs are geometry of the metric, not a separate Lagrangian; dropped terms return only with a definition, a coefficient source and a ladder check that can fail"
             ],
             verification_page="sections.html#2"
         ),

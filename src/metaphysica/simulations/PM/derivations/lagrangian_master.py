@@ -1583,7 +1583,7 @@ class LagrangianMasterDerivation(SimulationBase):
             latex=formula_latex("master-action-26d-full"),
             plain_text="S_26 = integral d^26x sqrt|g_26| [M*^24/2 R_26 - 1/4g^2 Tr(F^2) + Psi_bar Gamma D Psi - K |dT|^2 - V(T)]",
             category="ANSATZ",
-            description="Complete 26D master action with gravity, gauge, fermion, and moduli sectors",
+            description="SUPERSEDED 2026-11-01 by master-action-26d (statement B; bulk E8xE8, K and V(T) dropped under the selection). Complete 26D master action with gravity, gauge, fermion, and moduli sectors",
             inputParams=["geometry.M_star", "gauge.g_gut"],
             outputParams=["derivations.dof_26d_gravity"],
             derivation={
@@ -2560,7 +2560,7 @@ class LagrangianMasterDerivation(SimulationBase):
             latex=r"S = \int d^{26}x \sqrt{|G|} \Big[ \frac{M_*^{24}}{2} R + \bar{\Psi}_P i \gamma^M (D_M + T_\omega^M) \Psi_P + |\partial \Phi_M|^2 - V(\Phi_M) + \frac{1}{24} \int F \wedge \phi + \sum R_n \bar{\psi}_n \slashed{D} \psi_n - \ln(\text{Vol}) \, dt_{\text{phys}} + V_{\text{bridge}}^{\text{(global OR)}} + \sum_{f=1}^{4} V_{\text{face}}^{(f)\text{(local OR)}} \Big]",
             plain_text="S = integral d^26x sqrt|G| [ (M_*^24/2) R + Psi_P_bar i gamma^M (D_M + T_omega^M) Psi_P + |d Phi_M|^2 - V(Phi_M) + (1/24) F wedge phi + sum R_n psi_n_bar D_slash psi_n - ln(Vol) dt_phys + V_bridge^(global OR) + sum V_face^(f)(local OR) ]",
             category="GEOMETRIC",
-            description="RETIRED (L2c, 2026-10-27): double counts Psi_P and L_bridge; superseded by master-action-26d-full. " + (
+            description="RETIRED (L2c, 2026-10-27): double counts Psi_P and L_bridge; superseded by master-action-26d. SUPERSEDED 2026-11-01 (statement C). " + (
                 "Full 26D master action with explicit two-layer OR warping potentials. "
                 "V_bridge governs shadow creation (Layer 1), V_face governs face selection "
                 "(Layer 2). All terms sterile."
@@ -2689,7 +2689,7 @@ class LagrangianMasterDerivation(SimulationBase):
                 "+ V_bridge + sum_f V_face^(f) ]"
             ),
             category="ANSATZ",
-            description="RETIRED (L2c, 2026-10-27): F_4 is an 11D object in a 26D bulk and the statement is an ANSATZ; superseded by master-action-26d-full. " + (
+            description="RETIRED (L2c, 2026-10-27): F_4 is an 11D object in a 26D bulk and the statement is an ANSATZ; superseded by master-action-26d. SUPERSEDED 2026-11-01 (statement D). " + (
                 "Full 26D bulk action with explicit two-layer OR structure "
                 "(Topic 03: 26D Master Lagrangian). The 26 dimensions decompose as 26D = (12,1) + (12,1): each 13D "
                 "shadow carries 4D spacetime + 7D G2 holonomy + 2D bridge residual, "

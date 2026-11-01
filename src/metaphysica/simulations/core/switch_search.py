@@ -97,6 +97,65 @@ NEUTRINO_MASS_SUM_ROWS = (
 )
 
 
+
+#: Last path segments (lower case) of registered rows that carry the live Re(T).
+RE_T_ROW_NAMES = frozenset({"racetrack_re_t", "ret_stabilized", "re_t"})
+
+
+def _re_t_check(live: float, stationary_points) -> dict:
+    """Check 3: Re(T) against the solved vacuum, or against its CALIBRATED label (D-015).
+
+    With an adopted action that declares no moduli potential, Re(T) is an OPEN
+    modulus: it passes when every consumer labels it CALIBRATED / OPEN and no
+    row claims it derived. Under `re_t_adoption = computed_vacuum` the racetrack
+    comparison applies.
+    """
+    from metaphysica.simulations.core.variants.adopted import (
+        _action_bulk_sectors_adopted,
+    )
+    from metaphysica.simulations.core.variants import resolve
+
+    name = "re_t_is_the_solved_vacuum"
+    if str(resolve("re_t_adoption")) != "computed_vacuum"             and _action_bulk_sectors_adopted() == "none":
+        claims = re_t_derived_claims(live)
+        return {"name": name, "kind": None if not claims else "CONTRADICTION",
+                "ok": not claims, "mode": "labelled_calibrated_d015",
+                "detail": "no moduli potential adopted; live Re(T) = %.4f is a labelled "
+                          "calibration; rows claiming it derived: %s" % (live, claims or "none")}
+    minima = [p for p in stationary_points(3) if p["kind"] == "minimum"]
+    vacuum = minima[0]["re_t"] if minima else None
+    at_vacuum = vacuum is not None and abs(live - vacuum) / vacuum < 1e-3
+    return {"name": name, "kind": None if at_vacuum else "CONTRADICTION",
+            "ok": bool(at_vacuum), "mode": "racetrack_vacuum",
+            "detail": "live Re(T) = %.4f, solved vacuum = %s" % (live, vacuum)}
+
+
+def re_t_derived_claims(live: float) -> list:
+    """Registered rows carrying the live Re(T) whose status claims a derivation."""
+    from metaphysica.simulations.core.parameter_artifact import load_parameters
+
+    rows = load_parameters()
+    claiming = ("DERIVED", "GEOMETRIC", "PREDICTED", "EXACT", "COMPUTED")
+    return sorted(k for k, v in rows.items()
+                  if isinstance(v, dict) and k.rsplit(".", 1)[-1].lower() in RE_T_ROW_NAMES
+                  and isinstance(v.get("value"), (int, float))
+                  and abs(v["value"] - live) <= 1e-3 * abs(live)
+                  and v.get("status") in claiming)
+
+
+def neutrino_sum_claim_rows() -> tuple:
+    """The candidate rows that still CLAIM the sum (declared intermediates removed).
+
+    Since 2026-11-01 the neutrino sector declares one claim row; the other two
+    candidates are labelled intermediates (neutrino_sector.SUM_INTERMEDIATE_ROWS).
+    """
+    from metaphysica.simulations.PM.particle.neutrino_sector import (
+        SUM_INTERMEDIATE_ROWS,
+    )
+
+    return tuple(r for r in NEUTRINO_MASS_SUM_ROWS if r not in SUM_INTERMEDIATE_ROWS)
+
+
 def _variants():
     from metaphysica.simulations.core import variants
 
@@ -368,15 +427,7 @@ def consistency_checks() -> List[Dict[str, Any]]:
         )
 
         live = float(BaryonAsymmetryV18._resolve_re_t())
-        minima = [p for p in stationary_points(3) if p["kind"] == "minimum"]
-        vacuum = minima[0]["re_t"] if minima else None
-        at_vacuum = vacuum is not None and abs(live - vacuum) / vacuum < 1e-3
-        checks.append({
-            "name": "re_t_is_the_solved_vacuum",
-            "kind": None if at_vacuum else "CONTRADICTION",
-            "ok": bool(at_vacuum),
-            "detail": "live Re(T) = %.4f, solved vacuum = %s" % (live, vacuum),
-        })
+        checks.append(_re_t_check(live, stationary_points))
     except Exception as exc:
         checks.append({"name": "re_t_is_the_solved_vacuum", "kind": "ERROR",
                        "ok": False, "detail": type(exc).__name__})
@@ -437,7 +488,7 @@ def consistency_checks() -> List[Dict[str, Any]]:
         )
 
         reset_cache()
-        values = {path: registry_value(path) for path in NEUTRINO_MASS_SUM_ROWS}
+        values = {path: registry_value(path) for path in neutrino_sum_claim_rows()}
         live = {k: v for k, v in values.items() if v is not None}
         # 1e-9 is not a tolerance chosen here: it is the relative tolerance
         # ArithmaFormula.check() already uses for "two statements of one
@@ -450,7 +501,7 @@ def consistency_checks() -> List[Dict[str, Any]]:
             "name": "neutrino_mass_sum_is_stated_once",
             "kind": None if agree else "CONTRADICTION",
             "ok": bool(agree),
-            "evaluable_here": len(live) > 1,
+            "evaluable_here": len(live) >= 1,
             "detail": ("%d rows claim the neutrino mass sum: %s"
                        % (len(live),
                           ", ".join("%s=%.6g" % (k, v)

@@ -46,16 +46,17 @@ FORKS: Dict[str, Fork] = {
         [
             _opt("undecided", "no ruling; every sector term stays OPEN and item 1 "
                  "is reported unresolved",
-                 "The ladder as built today: build_ladder ignores item 1 and the "
-                 "report lists ym, kT, V, L_bridge, L_C and V_face as blocked by it.",
-                 adopted=True),
+                 "The ladder as built before 2026-11-01: build_ladder ignores item 1 "
+                 "and the report lists ym, kT, V, L_bridge, L_C and V_face as blocked "
+                 "by it."),
             _opt("e8xe8_ym", "E8xE8 Yang-Mills is the gauge sector", _KEPT),
             _opt("flux_f4", "the flux F_4 sector", _KEPT),
             _opt("kk_tower", "a KK tower", _KEPT),
             _opt("none", "no extra sectors: drop ym, kT, V, L_bridge, L_C and V_face",
                  "Removes every term item 1 blocks; the bulk action is gravity "
                  "plus the spinor only, so the OPEN count falls and the checks "
-                 "that need those terms are no longer asked."),
+                 "that need those terms are no longer asked. Adopted 2026-11-01.",
+                 adopted=True),
         ],
         "Drop or define L_C, V_bridge, V_face, V_tor, OR^i, rho_breath."),
     "action_bulk_spinor": _fork(

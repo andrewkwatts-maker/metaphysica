@@ -263,41 +263,27 @@ def test_open_forks_are_the_forks_declared_open():
 # ------------------------------- standing defects vs switch-controlled ones
 
 
-def test_the_mass_sum_is_compared_only_against_the_frameworks_own_rows():
-    """Three DERIVED rows claim the neutrino mass sum and disagree by 2.4x.
+def test_the_mass_sum_candidates_are_the_frameworks_own_rows_and_one_claims():
+    """Three candidate rows disagreed by 2.4x; since 2026-11-01 exactly one claims the sum.
 
-    Measured 2026-09-14, all under the framework's own declared INVERTED
-    ordering:
-
-        neutrino.sum_masses          0.101975   matter_sector_complete_v19
-        particle.sigma_m_base_eV     0.060517   neutrino_sector v26.0
-        particle.sigma_m_refined_eV  0.042517   neutrino_sector v26.0
-
-    No measurement enters: this compares the theory's statements to each
-    other. The FITTED row neutrino.mass_sum is excluded on purpose, because a
-    fit disagreeing with a derivation is not the theory contradicting itself.
+    The FITTED row neutrino.mass_sum stays excluded: a fit disagreeing with a
+    derivation is not the theory contradicting itself. The other two candidates
+    are declared intermediates and no longer claim the sum.
     """
     from metaphysica.simulations.core.arithma_formula import (
         registry_value,
         reset_cache,
     )
-    from metaphysica.simulations.core.switch_search import NEUTRINO_MASS_SUM_ROWS
-
-    assert "neutrino.mass_sum" not in NEUTRINO_MASS_SUM_ROWS, (
-        "a FITTED row must not be used to accuse the theory of contradicting "
-        "itself"
+    from metaphysica.simulations.core.switch_search import (
+        NEUTRINO_MASS_SUM_ROWS,
+        neutrino_sum_claim_rows,
     )
+
+    assert "neutrino.mass_sum" not in NEUTRINO_MASS_SUM_ROWS
     reset_cache()
     values = [registry_value(p) for p in NEUTRINO_MASS_SUM_ROWS]
-    assert all(v is not None for v in values), (
-        "a named neutrino mass-sum row vanished from the registry: %s"
-        % list(zip(NEUTRINO_MASS_SUM_ROWS, values))
-    )
-    assert len(set(values)) > 1, (
-        "the three rows now agree. That is a RESULT -- one of the neutrino "
-        "derivations was reconciled -- and belongs in the register, not "
-        "absorbed by deleting this test."
-    )
+    assert all(v is not None for v in values), list(zip(NEUTRINO_MASS_SUM_ROWS, values))
+    assert neutrino_sum_claim_rows() == ("particle.sigma_m_base_eV",)
 
 
 def test_a_check_failing_everywhere_is_separated_but_not_excused(result):

@@ -151,6 +151,7 @@ _OUTPUT_PARAMS = [
 
 # Output formula IDs
 _OUTPUT_FORMULAS = [
+    "master-action-26d",
     "pneuma-master-action-v23",
     "bridge-12-pair-metric-v22",
     "bridge-lagrangian-v22",
@@ -453,12 +454,56 @@ class MasterActionSimulationV22(SimulationBase):
             # v22.0: 12-Pair Bridge System Formulas
             # =================================================================
             Formula(
+                id="master-action-26d",
+                label="(1.0)",
+                latex=(r"S_{26} = \int d^{26}X \sqrt{|G|}\Big[\tfrac{M_*^{24}}{2} R_{26} + "
+                       r"\bar{\Psi}\, i\Gamma^M D_M \Psi\Big],\quad \Psi \in Cl(24,2)\ \text{Weyl}\ (4096)"),
+                plain_text="S_26 = integral d^26X sqrt|G| [ (M_*^24/2) R_26 + Psi-bar i Gamma^M D_M Psi ], Psi Weyl of Cl(24,2) (4096), M_*^24 = 1/(8 pi G_26)",
+                category="ANSATZ",
+                non_numeric="action density: a functional with no single number to check",
+                description=(
+                    "The canonical 26D master action (selected 2026-11-01, "
+                    "docs/plan/MASTER_ACTION_SELECTION_2026-11-01.md): gravity plus a 4096-component Weyl spinor "
+                    "of Cl(24,2), mostly-plus metric with the MTW Riemann sign, Planck exponent 24. "
+                    "Status ANSATZ. M_* is an INPUT scale. The 12 bridge pairs are geometry of the metric, not "
+                    "a separate Lagrangian. Dropped terms (YM, moduli, xi R phi^2, L_bridge, L_C, V_face, "
+                    "V_bridge, V_tor, OR, rho_breath, F_4, KK tower) return only with a definition, a source for "
+                    "the coefficient and a ladder check that can fail. Statements A to E are SUPERSEDED by this one."
+                ),
+                eml_tree_str=(
+                    "ops.mul(eml_vec('sqrt_neg_G'), "
+                    "ops.add(ops.mul(ops.div(eml_vec('M_star_24'), eml_scalar(2.0)), eml_vec('R_26D')), "
+                    "ops.mul(eml_vec('Psi_bar'), ops.mul(eml_vec('i_Gamma_D'), eml_vec('Psi')))))"
+                ),
+                eml_description=(
+                    "26D master action integrand: sqrt(-G) times [(M_*^24/2) R_26 + Weyl-spinor Dirac kinetic term]. "
+                    "ANSATZ; selected 2026-11-01."
+                ),
+                inputParams=["geometry.D_bulk"],
+                outputParams=[],
+                derivation={
+                    "steps": [
+                        "Bulk M^{24,2}: ds^2 = -dt_1^2 - dt_2^2 + sum_{i=1}^{12}(dy_1i^2 + dy_2i^2), mostly-plus, MTW Riemann sign",
+                        "Gravity: (M_*^24/2) R_26 with M_*^24 = (8 pi G_26)^-1, an INPUT scale",
+                        "Matter: one Weyl spinor of Cl(24,2), 4096 components, Dirac kinetic term only (m and the quartic vanish for a Weyl field)",
+                    ],
+                    "method": "common core of statements A, B and E",
+                    "parentFormulas": [],
+                },
+                terms={
+                    "M_*": "26D Planck scale, M_*^24 = 1/(8 pi G_26). INPUT scale, no value derived",
+                    "R_26": "26D Ricci scalar, mostly-plus metric, MTW sign",
+                    "Psi": "4096-component Weyl spinor of Cl(24,2)",
+                },
+            ),
+            Formula(
                 id="pneuma-master-action-v23",
                 label="(1.1)",
                 latex=formula_latex("pneuma-master-action-v23"),
                 plain_text="S = integral d^26X sqrt|G| [ (M_*^24/2) R + Psi-bar_P (i*Gamma^M*D_M - m) Psi_P + lambda*(Psi-bar_P*Psi_P)^2 + sum_{i=1}^{12} L_bridge^i + L_C ]",
                 category="ANSATZ",
                 description=(
+                    "SUPERSEDED 2026-11-01 by master-action-26d (statement A; m and lambda vanish for a Weyl spinor, L_bridge and L_C undefined). "
                     "v24.2: 26D(24,2) Pneuma master action with 12-pair (2,0) bridge system + two shadow-time directions. "
                     "12×(2,0) + S^{2,0} + (0,1) WARP to create 2×13D(12,1) shadows via distributed OR. "
                     "Each L_bridge^i contributes to OR reduction via local R_perp_i operator."
