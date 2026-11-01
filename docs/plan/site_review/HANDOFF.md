@@ -48,6 +48,7 @@ Partly done; the rest is listed in `F1_PROGRESS.md`. Give it to a fresh executor
 - The local server on :8000 serves `../PrincipiaMetaphysica`; lanes copy templates into it for previews (uncommitted there; the final rebuild overwrites them).
 
 ## Next
+Brief rule (token steward): give each executor one target and an outcome stop, for example "after 15 edits or when X passes: commit, write progress, stop". No more 200-turn lanes.
 1. When F1, F4 and F5 have landed: run the full `pytest tests/` (in the background, read the tail), then launch F2 (brief in `BRIEFS.md`, wave 2).
 2. After F2: merge `site-review` into main, push, and delete the branch. Check CI. Rebuild the site from the local engine (`python -m metaphysica.build --out ../PrincipiaMetaphysica`, about 10 min, in the background). Commit it in PrincipiaMetaphysica as "Regen from <sha>: site review" with `--no-verify`, push, and confirm the Pages deploy.
 3. Tick the progress list in `SITE_REVIEW_2026-11-01.md`.
