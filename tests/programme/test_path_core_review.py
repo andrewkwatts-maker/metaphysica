@@ -1,0 +1,90 @@
+"""L1 path-core review round: defects found in the lane's own commits.
+
+Each test fails on the code before the repair:
+* wa: the projection was b2 x wa (-12/sqrt(43)), not the registered
+  dim(Psi) = 4 variant, the seed_24 -0.8165 row was dropped and the 2.06
+  sigma tension went unrecorded;
+* TopologicalCPPhase: pi x 12 (a seed_24 count) / 43 gave 50.23 deg, DERIVED;
+* G2SpinorGeometry: T_topological = -43/24 and T_omega = -1.568 disagreed
+  with TorsionClass (-1.0, -0.875) and were exported as RESOLVED;
+* canon("seed_24") answered H0 and tau_p from an artifact built on seed_43.
+"""
+import math
+
+import pytest
+
+from metaphysica.config.parameters import fermion, fitted, geometry
+from metaphysica.config.path_valued import NotEvaluable
+from metaphysica.simulations.core.canonical_values import canon
+from metaphysica.simulations.core.variants import selection
+from metaphysica.simulations.PM.geometry.b3_path import seed_values
+
+
+def test_wa_projection_is_the_registered_dim_psi_variant():
+    from metaphysica.simulations.PM.geometry.geometric_anchors_core import (
+        GeometricAnchors,
+    )
+
+    anchors = GeometricAnchors()
+    multiplier = anchors.wa_projection_x4 / anchors.wa
+    assert multiplier == pytest.approx(4.0)
+    entry = canon()["wa"]
+    b3, b2 = seed_values()
+    assert b2 != multiplier  # the b2 multiplier was the defect
+    assert "%.4f" % (multiplier * entry["value"]) in entry["superseded"]
+    assert "%.4f" % (b2 * entry["value"]) not in entry["superseded"]
+    assert "seed_24 reading -0.816497" in entry["superseded"]
+
+
+def test_wa_tension_on_the_adopted_seed_is_recorded():
+    entry = canon()["wa"]
+    c = entry["comparison"]
+    sigma = abs(entry["value"] - c["exp"]) / c["unc"]
+    assert seed_values()[0] == 43
+    assert c["sigma"] == sigma and 2.0 < sigma < 2.1
+    assert "2.06 sigma from DESI DR1 at b3 = 43" in entry["note"]
+    assert "0.48 sigma" in entry["note"]  # the x4 projection, -0.6100
+
+
+def test_retired_cp_phase_is_not_evaluable_off_seed_24():
+    cp = fermion.TopologicalCPPhaseParameters
+    assert cp.STATUS == "RETIRED"
+    assert not hasattr(cp, "ORIENTATION_SUM")
+    for name in ("DELTA_CP_RAD", "DELTA_CP_DEG", "MAXIMAL_CP"):
+        with pytest.raises(NotEvaluable, match="seed_24"):
+            getattr(cp, name)
+    with selection.forced({"b3_seed": "seed_24"}):
+        assert cp.DELTA_CP_DEG == pytest.approx(cp.RETIRED_TCS187_DELTA_CP_DEG)
+        assert cp.DELTA_CP_RAD == pytest.approx(math.pi / 2)
+        assert cp.MAXIMAL_CP is True
+
+
+@pytest.mark.parametrize("seed", [None, "seed_24"])
+def test_spinor_torsion_is_the_tcs187_reading_and_agrees(seed):
+    g2 = geometry.G2SpinorGeometryParameters
+    with selection.forced({"b3_seed": seed} if seed else {}):
+        assert g2.T_topological() == fitted.TorsionClass.T_TOPOLOGICAL == -1.0
+        assert g2.T_omega_spinor() == pytest.approx(fitted.TorsionClass.T_OMEGA)
+        data = g2.export_data()
+    assert "T_omega_derived" not in data and "T_topological" not in data
+    assert data["T_omega_tcs187"] == pytest.approx(-0.875)
+    assert data["torsion_status"].startswith("RETIRED")
+    assert not data["status"].startswith("RESOLVED")
+
+
+@pytest.mark.parametrize("symbol", ["H0_km_s_Mpc", "tau_p_years"])
+def test_artifact_entries_are_not_evaluable_on_another_seed(symbol):
+    adopted = canon()[symbol]
+    assert adopted["value"] is not None and adopted["status"] != "NOT_EVALUABLE"
+    retired = canon("seed_24")[symbol]
+    assert retired["value"] is None
+    assert retired["status"] == "NOT_EVALUABLE"
+    assert "(43, 12)" in retired["note"] and "'seed_24'" in retired["note"]
+
+
+def test_artifact_seed_rows_missing_raise(monkeypatch):
+    from metaphysica.simulations.core import parameter_artifact
+
+    monkeypatch.setattr(parameter_artifact, "parameter_value", lambda row: None)
+    with pytest.raises(KeyError, match="topology.elder_kads"):
+        canon()["H0_km_s_Mpc"]

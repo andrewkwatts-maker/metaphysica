@@ -80,7 +80,28 @@ re-exports it) so config/constants.py can use it without an import cycle.
 | core-paths-26 (b3_origin) | core/variants/catalogue/seed.py:217-310 | fixed: question names derived_joyce_a1 as the adopted answer; the four 24 options' summaries start "seed_24 only:" (dark_energy_betti text was already frozen-n) | R6 | N::test_b3_origin_options_for_24_are_marked_seed_24 |
 | core-paths-05 (sum_mnu, M_GUT, MKK) | core/canonical_values.py:304-342 | blocked: no artifact row carries 0.0994, 2.118e16 or 4.5 (nearest: neutrino.sum_masses 0.1020 DIAGNOSTIC, gauge.M_GUT 6.32e15, geometry.m_KK_central 5.0); which row is the claim is an owner/L5 decision | - | - |
 
+## Review
+Round 7 (2026-11-11), reviewer defects in the lane's commits. V =
+tests/programme/test_path_core_review.py. Edited tests: tests/test_canonical_values.py
+test_wa_ruling_minimal_form (pinned the b2 multiplier) and C::test_derived_constants_follow_the_flux
+(pinned pi x 12/b3 on the stub path). New statuses: RETIRED (a reading kept as a record, out of the
+score; TopologicalCPPhase); NOT_EVALUABLE (no value on this path; same meaning as identity_ledger).
+
+| defect | action | commit | test |
+|---|---|---|---|
+| canonical_values._wa_entry projection b2 x wa (-1.83, 3.72 sigma); -0.8165 row dropped | fixed: projection = dim(Psi) x wa = 4 wa (registered wa_projection_x4), -0.6100 at 0.48 sigma; seed_24 rows -0.204124 and -0.816497 kept as retired keys | R7 | V::test_wa_projection_is_the_registered_dim_psi_variant |
+| fermion.TopologicalCPPhase pi x 12 (seed_24 count) / 43 = 50.23 deg, DERIVED | fixed: ORIENTATION_SUM renamed RETIRED_TCS187_ORIENTATION_SUM (no importer); DELTA_CP_RAD/DEG, MAXIMAL_CP raise NotEvaluable off seed_24 (config/path_valued.tcs187_only), 90 deg on seed_24; STATUS RETIRED; docstring drops the maximal-CP claim | R7 | V::test_retired_cp_phase_is_not_evaluable_off_seed_24 |
+| geometry.G2SpinorGeometry T_topological -43/24, T_omega -1.568 exported RESOLVED | fixed: both are the TCS #187 reading from the RETIRED_TCS187 records (-1.0, -0.875 = TorsionClass); export keys T_*_tcs187, torsion_status RETIRED, status ANSATZ (no importer of the old keys) | R7 | V::test_spinor_torsion_is_the_tcs187_reading_and_agrees |
+| canonical_values H0 and tau_p answered for any path from the adopted-path artifact | fixed: artifact seed read from topology.elder_kads, topology.b2 (raises when absent); a path with other (b3, b2) gets status NOT_EVALUABLE, value None | R7 | V::test_artifact_entries_are_not_evaluable_on_another_seed, V::test_artifact_seed_rows_missing_raise |
+| test_wa_ruling_minimal_form dropped the sigma check, pinned b2 | fixed: comparison.sigma recorded and quoted in the note (2.06 at b3 = 43, asserted), projection tested against 4 wa | R7 | tests/test_canonical_values.py::test_wa_ruling_minimal_form, V::test_wa_tension_on_the_adopted_seed_is_recorded |
+
+Review notes: GeometricAnchors.elder_kads is 24 on the adopted path, so the registered
+wa_projection_x4 row reads -0.8165 there (L2). base/established.py registers
+topology.orientation_sum = 12 ESTABLISHED, a TCS #187 count used live by
+PM/particle/neutrino_mixing.py (next round, with L5).
+
 ## Downstream
+- Round 7: V, C, T, P, tests/test_canonical_values.py: 55 passed. None.
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
 - Round 2: R, K, C, T, tests/testground, tests/test_variants.py, tests/test_g2_differential.py: all pass after the rank_effects rename (one D-019 failure before it).
 - Round 3: S, T, R, C, K, tests/testground, test_master_action_is_one_consistent_statement, test_variants, test_canonical_values, test_higgs_sector: 657 passed, 1 skipped. None.
@@ -98,6 +119,8 @@ re-exports it) so config/constants.py can use it without an import cycle.
 - L9: regenerate src/metaphysica/data/path_ranking.json; publish now refuses it (no verdict, option_effects, unranked).
 - L5: PM/particle/higgs_mass.py:1489,1495 registers topology.mephorash_chi / elder_kads from TCSTopologyParameters.CHI_EFF / B3, now the live path (B3 = 43, was 24).
 - L2: move the b3_path seed table into core; critical_dim in modular_invariance.py.
+- L2: GeometricAnchors.elder_kads = 24 on seed_43_joyce, so wa and wa_projection_x4 rows are the seed_24 numbers.
+- L5: neutrino_mixing.py divides topology.orientation_sum (a TCS #187 count, 12) by the live b3 and chi_eff.
 - L2/L3: PM/qed/compton_wavelength.py still types CODATA 2018 2.42631023867e-12 labelled 2022.
 - L3: dark_energy modules use live b3 while dark_energy_betti adopts frozen n = 24.
 - canonical_values importers outside L1: generate_prose_drift_audit.py (all_canonical), tests/test_de_plane_gate.py:35; candidate_closure_gate.py and de_plane_gate.py already import at call time.

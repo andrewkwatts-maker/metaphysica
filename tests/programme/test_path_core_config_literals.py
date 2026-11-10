@@ -12,6 +12,7 @@ import pytest
 
 from metaphysica.config.parameters import fermion, fitted, geometry, moduli
 from metaphysica.config.parameters import proton_decay
+from metaphysica.config.path_valued import NotEvaluable
 from metaphysica.simulations.core import active_path
 from metaphysica.simulations.core.active_path import Topology
 from metaphysica.simulations.core.variants import selection
@@ -62,8 +63,8 @@ def test_derived_constants_follow_the_flux(stub_path):
         assert cls.A_COEFF == pytest.approx(2 * math.pi / n)
         assert cls.B_COEFF == pytest.approx(2 * math.pi / (n + 1))
     cp = fermion.TopologicalCPPhaseParameters
-    assert cp.DELTA_CP_RAD == pytest.approx(math.pi * 12 / STUB.b3)
-    assert cp.MAXIMAL_CP is False
+    with pytest.raises(NotEvaluable):  # the seed_24 count never meets the live b3
+        cp.DELTA_CP_RAD
     assert fitted.AnomalyCancellation.GS_COUNTERTERM == STUB.n_gen
     assert fitted.AnomalyCancellation.is_anomaly_free()
 

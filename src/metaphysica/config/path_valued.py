@@ -15,7 +15,32 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict
 
-__all__ = ["PathValued", "PATH_NAMES"]
+__all__ = ["PathValued", "PATH_NAMES", "NotEvaluable", "TCS187_PATH", "tcs187_only"]
+
+#: The retired seed whose (b3, b2) = (24, 4) the TCS #187 records were read at.
+TCS187_PATH = "seed_24"
+
+
+class NotEvaluable(LookupError):
+    """A value that is defined only on another path than the one in force."""
+
+
+def tcs187_only(cls: type, name: str) -> int:
+    """The retired TCS #187 b3 of *cls* when seed_24 is in force; raises otherwise.
+
+    For values counted on the TCS #187 manifold (an orientation sum, a
+    torsion ratio) that no reader derives on any other path: dividing such a
+    count by the live b3 gives a number nobody derived.
+    """
+    from metaphysica.simulations.core.active_path import topology
+
+    topo = topology()
+    if topo.path != TCS187_PATH:
+        raise NotEvaluable(
+            "%s.%s is the TCS #187 reading, defined only on path %s; path %r "
+            "(b3 = %d) has no derivation of it"
+            % (cls.__name__, name, TCS187_PATH, topo.path, topo.b3))
+    return cls.RETIRED_TCS187_B3
 
 #: Attribute name -> reader of the topology of the path in force.
 PATH_NAMES: Dict[str, Callable[[Any], int]] = {

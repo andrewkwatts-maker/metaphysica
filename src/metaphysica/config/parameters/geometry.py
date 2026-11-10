@@ -235,12 +235,18 @@ class G2SpinorGeometryParameters(metaclass=PathValued):
 
     @staticmethod
     def T_topological():
-        """T_topological = -b3 / N_flux (-1.0 only at the retired TCS #187)"""
-        return -G2SpinorGeometryParameters.B3 / G2SpinorGeometryParameters.n_flux()
+        """TCS #187 only: -b3/N_flux = -24/(144/6) = -1.0 at the retired reading.
+
+        Not re-derived on any other path: -b3/N_flux at the live b3 (e.g.
+        -43/24) is a number nobody derived, so the retired records are used.
+        Agrees with TorsionClass.T_TOPOLOGICAL.
+        """
+        cls = G2SpinorGeometryParameters
+        return -cls.RETIRED_TCS187_B3 / (cls.RETIRED_TCS187_CHI_EFF / 6.0)
 
     @staticmethod
     def T_omega_spinor():
-        """T_omega = T_topological x spinor_fraction (-0.875 at TCS #187)"""
+        """TCS #187 only: T_topological x 7/8 = -0.875 (TorsionClass.T_OMEGA)."""
         return G2SpinorGeometryParameters.T_topological() * G2SpinorGeometryParameters.spinor_fraction()
 
     @staticmethod
@@ -260,13 +266,16 @@ class G2SpinorGeometryParameters(metaclass=PathValued):
             'spinor_fraction': G2SpinorGeometryParameters.spinor_fraction(),
             'spinor_fraction_formula': '7/8 (active/total spinor DOF)',
             'n_flux': G2SpinorGeometryParameters.n_flux(),
-            'T_topological': G2SpinorGeometryParameters.T_topological(),
-            'T_omega_derived': G2SpinorGeometryParameters.T_omega_spinor(),
+            'T_topological_tcs187': G2SpinorGeometryParameters.T_topological(),
+            'T_omega_tcs187': G2SpinorGeometryParameters.T_omega_spinor(),
+            'torsion_status': ('RETIRED - T_topological and T_omega are the '
+                               'TCS #187 reading (b3 = 24, N_flux = 24); not '
+                               're-derived on the path in force'),
             'vielbein_dof': G2SpinorGeometryParameters.vielbein_dof(),
             'geometry_mechanism': 'phi_{mnp} ~ eta_bar Gamma_{mnp} eta (Joyce 2000)',
             'pneuma_role': 'Provides invariant spinor eta after dimensional reduction',
             'signature_protection': 'Sp(2,R) gauge fixing',
-            'status': 'RESOLVED - Geometry emerges from canonical G2 spinor bilinears'
+            'status': 'ANSATZ - geometry from canonical G2 spinor bilinears (mechanism stated, torsion not derived on the path)'
         }
 
 

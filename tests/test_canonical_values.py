@@ -46,9 +46,14 @@ def test_wa_ruling_minimal_form():
     e = get("wa")
     assert abs(e["value"] + 1 / math.sqrt(B3)) < 1e-15
     assert e["spare_vars"] == 0
-    # the retired projection is exactly b2 x the canonical
-    assert any(abs(float(k) - B2 * e["value"]) < 1e-3
-               for k in e["superseded"] if k[0] in "-+0123456789")
+    c = e["comparison"]
+    s = sigma(e["value"], c["exp"], c["unc"])
+    # an honest tension, recorded: 1.88 sigma at seed_24, 2.06 at seed_43
+    assert c["sigma"] == s and "%.2f sigma" % s in e["note"]
+    if B3 == 43:
+        assert 2.0 < s < 2.1
+    # the retired projection is the registered x dim(Psi) = 4 variant
+    assert "%.4f" % (4 * e["value"]) in e["superseded"]
 
 
 def test_h0_is_not_topology_first():

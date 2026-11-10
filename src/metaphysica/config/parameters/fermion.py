@@ -6,7 +6,7 @@ formulas or strings were changed by the move.
 
 import numpy as np
 
-from .path_valued import PathValued
+from .path_valued import PathValued, tcs187_only
 
 
 # ==============================================================================
@@ -152,29 +152,31 @@ class TopologicalCPPhaseParameters(metaclass=PathValued):
         Cycles pair with ±1 orientations.
         Net chirality gives CP phase: δ_CP = π × (Σ orientations) / b₃
 
-    KEY RESULT:
-        δ_CP = π × 12/24 = π/2 = 90° at the retired TCS #187 (b₃ = 24) reading;
-        on another path δ_CP = π × ORIENTATION_SUM / b₃, computed at access.
+    RETIRED READING (TCS #187, b₃ = 24):
+        δ_CP = π × 12/24 = π/2 = 90°, with the orientation sum 12 counted on
+        that manifold. No orientation sum is derived on any other path, so
+        DELTA_CP_RAD, DELTA_CP_DEG and MAXIMAL_CP are evaluated only on the
+        path seed_24 and raise NotEvaluable elsewhere: the seed_24 count is
+        never divided by the live b₃. The maximal-CP claim is not made on
+        the adopted path.
 
-    This correctly predicts that both quark (CKM) and lepton (PMNS)
-    sectors exhibit large CP violation.
-
-    See simulations/cp_phase_topological_v14_2.py for full derivation.
+    See simulations/cp_phase_topological_v14_2.py for the original derivation.
     """
 
     # Topological inputs
     # B3 is that of the path in force, read at access (PathValued).
     RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
-    ORIENTATION_SUM = 12  # Derived: Net chirality from Z2 structure        # Net chirality from Z₂ structure
+    RETIRED_TCS187_ORIENTATION_SUM = 12  # net Z2 chirality counted at TCS #187 only
 
-    # Derived CP phase
-    # DELTA_CP_RAD = π ORIENTATION_SUM / b3 and DELTA_CP_DEG, read at access
-    # (π/2 and 90° at the retired TCS #187 reading).
+    # CP phase of the retired reading: π/2 and 90°, read at access on seed_24
+    # only (tcs187_only raises NotEvaluable on any other path).
     RETIRED_TCS187_DELTA_CP_RAD = 1.5708
     RETIRED_TCS187_DELTA_CP_DEG = 90.0
     _PATH_DERIVED = {
-        "DELTA_CP_RAD": lambda cls: np.pi * cls.ORIENTATION_SUM / cls.B3,
-        "DELTA_CP_DEG": lambda cls: 180.0 * cls.ORIENTATION_SUM / cls.B3,
+        "DELTA_CP_RAD": lambda cls: np.pi * cls.RETIRED_TCS187_ORIENTATION_SUM
+        / tcs187_only(cls, "DELTA_CP_RAD"),
+        "DELTA_CP_DEG": lambda cls: 180.0 * cls.RETIRED_TCS187_ORIENTATION_SUM
+        / tcs187_only(cls, "DELTA_CP_DEG"),
         "MAXIMAL_CP": lambda cls: bool(np.isclose(abs(np.sin(cls.DELTA_CP_RAD)), 1.0)),
     }
 
@@ -184,8 +186,8 @@ class TopologicalCPPhaseParameters(metaclass=PathValued):
 
     # Predictions
     # MAXIMAL_CP (|sin δ| = 1) is computed at access from DELTA_CP_RAD.
-    FORMULA = "δ_CP = π × (Σ orientations) / b₃"
+    FORMULA = "δ_CP = π × (Σ orientations) / b₃ (TCS #187 reading: π × 12/24)"
 
-    # Status
-    STATUS = "DERIVED"
+    # Status: RETIRED (the TCS #187 reading); NOT_EVALUABLE off seed_24.
+    STATUS = "RETIRED"
     SIMULATION = "simulations/cp_phase_topological_v14_2.py"

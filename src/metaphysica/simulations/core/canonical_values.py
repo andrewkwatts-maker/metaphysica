@@ -26,7 +26,9 @@ seed is seed_43_joyce. ``B3``, ``B2``, ``CHI_EFF``, ``CHI_SECTOR`` and
 any path. Entries that depend on the seed (w0, wa, H0, alpha_leak) state
 their form and numbers from the computed values and keep the seed_24
 reading as a labelled retired row in ``superseded``. H0 and tau_p are
-computed quantities: they are read from the parameter artifact, never typed.
+computed quantities: they are read from the parameter artifact, never typed,
+and on a path whose (b3, b2) differ from the artifact's build they are
+NOT_EVALUABLE (value None) rather than the build's numbers.
 """
 from __future__ import annotations
 
@@ -93,31 +95,42 @@ def _sigma(value: float, exp: float, unc: float) -> float:
     return abs(value - exp) / unc
 
 
+#: dim(Psi) = 4: the co-associative 4-form multiplier of the registered
+#: variant cosmology.wa_projection_x4 (GeometricAnchors.wa_projection_x4 =
+#: 4 wa). It is the form degree, not b2, and does not change with the path.
+_WA_PROJECTION_DIM_PSI = 4
+
+
 def _wa_entry(topo: Topology) -> Dict[str, Any]:
     value = -1.0 / math.sqrt(topo.b3)
-    projection = topo.b2 * value
+    projection = _WA_PROJECTION_DIM_PSI * value
     exp, unc = -0.75, 0.29
+    sigma, sigma_projection = _sigma(value, exp, unc), _sigma(projection, exp, unc)
+    retired_value = -1.0 / math.sqrt(24)
     return {
         "value": value,
         "form": "-1/sqrt(b3), b3 = %d" % topo.b3,
         "status": "PREDICTED",
         "spare_vars": 0,
-        "comparison": {"dataset": "DESI DR1 w0waCDM", "exp": exp, "unc": unc},
+        "comparison": {"dataset": "DESI DR1 w0waCDM", "exp": exp, "unc": unc,
+                       "sigma": sigma},
         "note": (
-            "Ruling: the pure form is canonical despite the x b2 projection "
-            "fitting differently (%.2f vs %.2f sigma at b3 = %d, b2 = %d) — "
-            "the multiplier was introduced after DESI and is exactly the "
-            "'spare variable' the elegance principle excludes. The "
-            "projection stays registered as cosmology.wa_projection_x4, "
+            "Ruling: the pure form is canonical, %.2f sigma from DESI DR1 at "
+            "b3 = %d, although the x dim(Psi) = 4 projection (%.4f) sits at "
+            "%.2f sigma: the multiplier was introduced after DESI and is "
+            "exactly the 'spare variable' the elegance principle excludes. "
+            "The projection stays registered as cosmology.wa_projection_x4, "
             "status RETRODICTED."
-            % (_sigma(projection, exp, unc), _sigma(value, exp, unc),
-               topo.b3, topo.b2)),
+            % (sigma, topo.b3, projection, sigma_projection)),
         "superseded": {
-            "%.4f" % projection: "x b2 projection, post-DESI graft -> kept as RETRODICTED variant",
+            "%.4f" % projection: "x dim(Psi) = 4 projection (cosmology.wa_projection_x4), "
+                                 "post-DESI graft -> kept as RETRODICTED variant",
             "+0.27": "thermal alpha_T form (wrong sign vs data)",
             "+0.1": "attractor estimate (wrong sign vs data)",
             "+0.29": "sign-error copy of 1/sqrt(12)",
-            _retired_key(-1.0 / math.sqrt(24)): "-1/sqrt(b3) at the retired seed b3 = 24",
+            _retired_key(retired_value): "-1/sqrt(b3) at the retired seed b3 = 24",
+            _retired_key(_WA_PROJECTION_DIM_PSI * retired_value):
+                "x dim(Psi) = 4 projection -4/sqrt(b3) at the retired seed b3 = 24",
         },
     }
 
@@ -138,8 +151,44 @@ def _artifact_value(row: str) -> float:
     return value
 
 
+#: Artifact rows that record the seed the artifact was built on.
+_ARTIFACT_SEED_ROWS = ("topology.elder_kads", "topology.b2")
+
+
+def _artifact_seed() -> "tuple[int, int]":
+    """(b3, b2) of the path the parameter artifact was built on; raises when absent."""
+    b3, b2 = (_artifact_value(row) for row in _ARTIFACT_SEED_ROWS)
+    return int(b3), int(b2)
+
+
+def _not_evaluable(row: str, topo: Topology) -> Optional[Dict[str, Any]]:
+    """A NOT_EVALUABLE entry when the artifact was built on another seed, else None.
+
+    The artifact holds one build. Read on a path whose (b3, b2) differ from
+    the build's, its value would answer for a path it was not computed on.
+    """
+    built = _artifact_seed()
+    if built == (topo.b3, topo.b2):
+        return None
+    return {
+        "value": None,
+        "status": "NOT_EVALUABLE",
+        "spare_vars": None,
+        "comparison": None,
+        "source": "parameter artifact row %s" % row,
+        "note": ("%s is a computed quantity read from the parameter artifact, "
+                 "which was built at (b3, b2) = %s; path %r has (b3, b2) = "
+                 "(%d, %d), so it is not evaluated here (rebuild the artifact "
+                 "on that path)." % (row, built, topo.path, topo.b3, topo.b2)),
+        "superseded": {},
+    }
+
+
 def _h0_entry(topo: Topology) -> Dict[str, Any]:
     row = "cosmology.H0_local"
+    unevaluated = _not_evaluable(row, topo)
+    if unevaluated is not None:
+        return unevaluated
     value = _artifact_value(row)
     shoes, planck = (73.04, 1.04), (67.4, 0.5)
     return {
@@ -170,6 +219,9 @@ def _h0_entry(topo: Topology) -> Dict[str, Any]:
 
 def _tau_p_entry(topo: Topology) -> Dict[str, Any]:
     row = "proton_decay.tau_p_years"
+    unevaluated = _not_evaluable(row, topo)
+    if unevaluated is not None:
+        return unevaluated
     value = _artifact_value(row)
     bound = 2.4e34
     return {
