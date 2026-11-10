@@ -99,6 +99,12 @@ class PrincipiaValidator(CoreGates, CosmoGates, TopoGates, LatticeGates, G79G80G
             return param
         return default
 
+    def _require_param(self, key: str) -> Any:
+        """Registry value for ``key``; a missing key fails the gate (no default)."""
+        if key not in self.reg:
+            raise KeyError(f"certificate gate: registry key {key!r} is missing")
+        return self._get_param(key)
+
     def run_all(self) -> Dict[str, Any]:
         """Run all 42+ certificate validations including C_PAIRS for 12-PAIR-BRIDGE."""
         print("=" * 70)

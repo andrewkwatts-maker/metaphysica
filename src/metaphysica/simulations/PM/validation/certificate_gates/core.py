@@ -220,7 +220,7 @@ class CoreGates:
         at the off-path seed b_3 = 24), with the Chern-Simons level k set
         equal to it as in TOPO-023 (itself OFF-PATH).
         """
-        b3 = self._get_param('geometry.elder_kads', 24)
+        b3 = self._require_param('geometry.elder_kads')
         k = b3  # Chern-Simons level (k = b3 by anomaly cancellation, cf. TOPO-023)
 
         # beta(Lambda) = 1/(b3^2 * k^2)^4

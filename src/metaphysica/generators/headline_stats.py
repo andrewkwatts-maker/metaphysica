@@ -29,19 +29,21 @@ def _read(path: Path) -> Dict[str, Any]:
 def tally_gates(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Count gates, executed and declarative apart, skipping not-applicable ones.
 
-    ``locked`` and ``open`` follow the evaluated bucket, so a gate that was
-    never executed can still sit in ``locked`` on its declarative status; the
-    summary below says how many gates were actually run.
+    ``locked`` and ``open`` count only gates with an executed evaluation. A
+    gate that never ran, whatever its declarative status says, is ``not_run``.
     """
-    ids: Dict[str, List[str]] = {"locked": [], "open": [], "axiom": [], "other": []}
+    ids: Dict[str, List[str]] = {"locked": [], "open": [], "axiom": [],
+                                 "other": [], "not_run": []}
     n_pass = n_fail = n_exec_axiom = 0
     for cert in certs:
         ev = str(cert.get("evaluation_status") or "").upper()
         if ev == NOT_APPLICABLE_STATUS:
             continue
         bucket = _bucket_certificate(cert)
-        ids[bucket].append(str(cert.get("gate_id")))
         executed = ev.startswith("COMPUTED")
+        if not executed and bucket in ("locked", "open"):
+            bucket = "not_run"
+        ids[bucket].append(str(cert.get("gate_id")))
         n_pass += ev == "COMPUTED_PASS"
         n_fail += ev == "COMPUTED_FAIL"
         n_exec_axiom += executed and bucket == "axiom"
@@ -49,6 +51,7 @@ def tally_gates(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
     n_testable = total - len(ids["axiom"])
     return {
         "total": total, "locked": len(ids["locked"]), "open": len(ids["open"]),
+        "not_run": len(ids["not_run"]),
         "axiom": len(ids["axiom"]), "testable": n_testable,
         "locked_ids": ids["locked"], "open_ids": ids["open"],
         "computed_pass": n_pass, "computed_fail": n_fail,
@@ -75,7 +78,8 @@ def _fit(rigor: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "chi_squared": rows["chi_squared"], "rows": rows["n"],
         "dof": edof["effective_dof"], "dof_is_ansatz": edof["effective_dof_is_ansatz"],
-        "p_value": edof["p_value"], "verdict": edof["status"],
+        "p_value": edof["p_value"],
+        "verdict": rigor["summary"]["status"],
     }
 
 

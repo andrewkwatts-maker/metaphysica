@@ -354,6 +354,15 @@ class StatisticalRigorValidator:
         """Upper-tail p of chi^2 with dof = N scored predictions."""
         return float(1 - chi2.cdf(self.chi_sq, self.dof_claimed))
 
+    @staticmethod
+    def _p_value_status(p_value: float) -> str:
+        """Credibility band of a p-value."""
+        if 0.05 <= p_value <= 0.95:
+            return "CREDIBLE"
+        if p_value > 0.95:
+            return "TOO_GOOD"
+        return "MARGINAL" if p_value >= 0.01 else "POOR_FIT"
+
     def generate_report(self) -> Dict[str, Any]:
         """Generate the statistical rigor report; every number is from rows."""
         logger.info("Generating statistical rigor report...")
@@ -388,7 +397,12 @@ class StatisticalRigorValidator:
             },
             "edof_analysis": edof_results,
             "summary": {
-                "status": edof_results["status"],
+                # The headline verdict comes from the row-count p-value (N
+                # scored rows, nothing subtracted), never from the EDOF=3
+                # ansatz, which stays reported beside it.
+                "status": self._p_value_status(self._row_count_p_value()),
+                "status_basis": "row-count p-value, N scored predictions",
+                "status_edof_ansatz": edof_results["status"],
                 "chi_squared": self.chi_sq,
                 "n_scored": self.dof_claimed,
                 "reduced_chi_squared_n": self.chi_sq / self.dof_claimed,

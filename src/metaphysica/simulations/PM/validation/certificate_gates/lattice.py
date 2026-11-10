@@ -265,7 +265,7 @@ class LatticeGates:
         signature (24, 2).
         """
         pairs = self._get_param('seal.bridge_pairs', self.pairs)
-        b3 = self._get_param('geometry.elder_kads', 24)
+        b3 = self._require_param('geometry.elder_kads')
 
         dims_per_pair, d_time, d_physics_core, d_bulk = 2, 2, 24, 26  # M^{26}(24,2)
 

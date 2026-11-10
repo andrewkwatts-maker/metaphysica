@@ -248,8 +248,12 @@ class DarkEnergyEvolution(SimulationBase):
         # 0.23) nor the framework-adopted thawing row (desi.w0_thawing =
         # -0.957 +/- 0.067, desi.wa_thawing = -0.99 +/- 0.33). They were
         # invented, and they set the published sigma of two predictions.
-        w0_desi_unc = self._desi_uncertainty(registry, "desi.w0")
-        wa_desi_unc = self._desi_uncertainty(registry, "desi.wa")
+        # The registry mean is checked (it must exist and be positive); the
+        # score uses the error on the side of the prediction (VD-21).
+        self._desi_uncertainty(registry, "desi.w0")
+        self._desi_uncertainty(registry, "desi.wa")
+        w0_desi_unc = self._desi_uncertainty_toward("w0", self.w0_derived)
+        wa_desi_unc = self._desi_uncertainty_toward("wa", self.wa_derived)
 
         sigma_w0 = self._compute_sigma_deviation(
             self.w0_derived, w0_desi, w0_desi_unc
@@ -405,6 +409,15 @@ class DarkEnergyEvolution(SimulationBase):
                 f"'{path}' carries no usable 1-sigma uncertainty; refusing to "
                 f"substitute a literal."
             )
+        return float(unc)
+
+    @staticmethod
+    def _desi_uncertainty_toward(key: str, predicted: float) -> float:
+        """DESI error on the side of the central value the prediction lies on."""
+        from metaphysica.simulations.data.experimental_data_loader import get_loader
+        unc = get_loader().get_desi(key).uncertainty_toward(float(predicted))
+        if float(unc) <= 0.0:
+            raise ValueError(f"DESI {key}: no usable 1-sigma uncertainty")
         return float(unc)
 
     def calculate_w_params_w0(self, b3: int) -> float:
@@ -1436,8 +1449,8 @@ class DarkEnergyEvolution(SimulationBase):
             _wa_row = _loader.get_desi("wa")
             w0_desi = float(_w0_row.value)
             wa_desi = float(_wa_row.value)
-            w0_desi_unc = float(_w0_row.uncertainty)
-            wa_desi_unc = float(_wa_row.uncertainty)
+            w0_desi_unc = float(_w0_row.uncertainty_toward(w0))
+            wa_desi_unc = float(_wa_row.uncertainty_toward(wa))
             if not (w0_desi_unc > 0.0 and wa_desi_unc > 0.0):
                 raise ValueError(
                     "DESI w0/wa datasource rows carry no usable 1-sigma "

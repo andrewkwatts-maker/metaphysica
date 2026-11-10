@@ -95,7 +95,12 @@ def test_live_report_has_no_undeclared_duplicates_and_one_row_per_group():
     from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
         StatisticalRigorValidator)
     v = StatisticalRigorValidator(str(_live_report()))
-    assert v.partition["undeclared_duplicates"] == []
+    # Falsified candidates stay scored beside the live row (Rule 5), so they
+    # may share its reference; two live rows may not.
+    reg = {r["path"]: str(r.get("registry_status") or "").upper()
+           for r in v.validation_results}
+    for group in v.partition["undeclared_duplicates"]:
+        assert sum(reg[p] != "FALSIFIED" for p in group) <= 1, group
     scored = [r["path"] for r in v.validation_results]
     for members in observables.OBSERVABLE_GROUPS.values():
         assert sum(p in scored for p in members) <= 1

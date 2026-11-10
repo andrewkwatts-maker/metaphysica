@@ -238,7 +238,7 @@ def _apply_headline(fs: Dict[str, Any]) -> None:
     fs.update({
         "pass_count": h["gates_locked"], "testable_count": h["gates_testable"],
         "total_gates": h["gates_total"], "not_testable_count": h["gates_axiom"],
-        "open_count": h["gates_open"],
+        "open_count": h["gates_open"], "not_run_count": h["gates_not_run"],
         "open_gate_ids": ", ".join(h["gates_open_ids"]),
         "locked_gate_ids": ", ".join(h["gates_locked_ids"]),
         "chi_squared": display_value(h["chi_squared"]),
@@ -371,7 +371,6 @@ def _build_statistics(validation_stats: Dict[str, Any], gate_counts: Dict[str, i
             "total_parameters": total,
             "calibrated_count": free_variables,
             "free_variable_count": free_variables,
-            "constraints_count": 1,
             "exact_matches": validation_stats["exact_matches"],
             "success_rate": f"{success_rate:.1f}%"
         },

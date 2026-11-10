@@ -31,22 +31,11 @@ class G79G80Gates:
         kappa_sampler = 2  # dim(S^{2,0}) from manifold architecture (bulk M^{26}(24,2))
         kappa_expected = 2
         kappa_pass = (kappa_sampler == kappa_expected)
-        try:
-            from metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics import (
-                SamplerEntropyDynamics
-            )
-        except ImportError:
-            # Graceful degradation: only validate kappa_sampler
-            if kappa_pass:
-                status = "LOCKED"
-                metric = (f"kappa_sampler = {kappa_sampler} = dim(S^{{2,0}}) "
-                          f"[ODE module pending]")
-            else:
-                status = "FAILED"
-                metric = (f"kappa_sampler = {kappa_sampler} != {kappa_expected} "
-                          f"[ODE module pending]")
-            self._g79_record(status, metric)
-            return
+        # An absent ODE module raises ImportError: the gate never answers
+        # LOCKED from the typed constant kappa_sampler == kappa_expected.
+        from metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics import (
+            SamplerEntropyDynamics
+        )
         ode = self._g79_ode_checks(SamplerEntropyDynamics())
         all_pass = (kappa_pass and ode["second_law_violations"] == 0
                     and ode["equilibrium_failures"] == 0

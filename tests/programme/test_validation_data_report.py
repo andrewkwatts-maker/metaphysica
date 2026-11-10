@@ -87,7 +87,9 @@ def _certs():
 def test_gate_summary_separates_executed_from_declarative():
     s = hs.gate_summary(_certs())
     assert s == {"total": 6, "axiom": 1, "testable": 5, "executed_pass": 2,
-                 "executed_fail": 1, "declarative": 2, "open": 2}
+                 "executed_fail": 1, "declarative": 2, "open": 1}
+    t = hs.tally_gates(_certs())
+    assert (t["locked"], t["open"], t["not_run"]) == (2, 1, 2)
 
 
 def test_fit_reader_raises_on_missing_keys():
@@ -95,7 +97,8 @@ def test_fit_reader_raises_on_missing_keys():
         hs._fit({})
     with pytest.raises(KeyError):
         hs._fit({"chi_squared_from_rows": {"all_scoring_rows": {}},
-                 "edof_analysis": {}})
+                 "edof_analysis": {}, "summary": {"status": "POOR_FIT",
+                              "p_value_n_dof": 0.0}})
 
 
 def test_statistics_success_counts_use_the_scored_rows():

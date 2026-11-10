@@ -26,7 +26,7 @@ class CosmoGates:
         desi.w0), from which -23/24 sits more than 3 sigma away. A LOCKED
         status means agreement with that anchor only.
         """
-        b3 = self._get_param('geometry.elder_kads', 24)
+        b3 = self._require_param('geometry.elder_kads')
         w0_theory = -1 + 1/b3  # = -23/24
         w0_desi = -0.957  # framework thawing anchor (attribution unverified); not DESI DR2 w0waCDM
         sigma_desi = 0.067
@@ -162,7 +162,7 @@ class CosmoGates:
         sum_m_nu = k_gimel / (2 * math.pi * b3)
 
         # Bounds from established experimental data
-        upper_bound = self._get_param('bounds.sum_m_nu_upper', 0.12)  # Planck+BAO 2018 (eV)
+        upper_bound = self._require_param('bounds.sum_m_nu_upper')  # Planck+BAO 2018 (eV)
         # Oscillation floor for NH: sqrt(dm2_21) + sqrt(dm2_31) ~ 0.058 eV (NuFit 6.0)
         # Note: IO floor is ~0.098 eV, which EXCEEDS this prediction (see honesty block)
         osc_lower_nh = 0.058  # eV, NH oscillation floor (NuFit 6.0 dm^2 splittings)

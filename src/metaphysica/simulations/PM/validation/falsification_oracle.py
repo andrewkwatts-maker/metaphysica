@@ -326,6 +326,13 @@ class FalsificationOracle:
         cast = self.exclusion_thresholds["CAST_current"]["coupling_limit_GeV_inv"]
         results["ALP_Principia_Metric"]["current_helioscope_limit_GeV_inv"] = cast
         results["ALP_Principia_Metric"]["exceeds_current_helioscope_limit"] = alp_coupling >= cast
+        if mass_in_range and alp_coupling >= cast:
+            # The status follows the comparison with the CURRENT bound, not
+            # the projected sensitivity: a point above CAST is excluded now.
+            alp_row = results["ALP_Principia_Metric"]
+            alp_row["projected_sensitivity_status"] = alp_row["status"]
+            alp_row["status"] = "EXCLUDED_BY_CURRENT_BOUND"
+            alp_row["falsification_risk"] = "EXCLUDED"
         if alp_coupling >= cast:
             results["ALP_Principia_Metric"]["current_limit_note"] = (
                 f"Registry coupling {alp_coupling:.3g} GeV^-1 is {alp_coupling / cast:.3g} times the "

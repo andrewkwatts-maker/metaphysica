@@ -102,3 +102,10 @@ def test_registry_load_raises_when_missing(tmp_path, monkeypatch):
     monkeypatch.setattr(g72, "_autogen_dir", lambda: tmp_path)
     with pytest.raises(FileNotFoundError):
         g72._load_registry_params()
+
+
+def test_alp_status_follows_the_current_bound_not_the_projection(report):
+    alp = report["detailed_risk_analysis"]["ALP_Principia_Metric"]
+    assert alp["exceeds_current_helioscope_limit"] is True
+    assert alp["status"] == "EXCLUDED_BY_CURRENT_BOUND"
+    assert alp["status"] not in ("IMMINENT_TEST", "TESTABLE")

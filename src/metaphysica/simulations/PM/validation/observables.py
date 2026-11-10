@@ -15,7 +15,9 @@ from typing import Any, Dict, List, Sequence
 
 from metaphysica.simulations.validation import fit_partition as fp
 
-#: observable -> validation-report paths, primary first.
+#: observable -> validation-report paths, primary first. Falsified candidates
+#: (gaugino_cabibbo_*, neutrino.theta13_derived) are NOT grouped: they stay
+#: scored rows of their own (Rule 5), so the headline carries their failure.
 OBSERVABLE_GROUPS: Dict[str, List[str]] = {
     "alpha_inv": ["electromagnetic.alpha_inv", "geometry.alpha_inverse"],
     "mu_pe": ["fermion.mass_ratio_proton_electron", "geometry.mu_pe"],
@@ -25,14 +27,10 @@ OBSERVABLE_GROUPS: Dict[str, List[str]] = {
     "wa_desi_dr2": ["cosmology.wa_derived", "cosmology.wa_thawing"],
     "n_s": ["cosmology.n_s_slow_roll", "geometry.n_s"],
     "cabibbo": ["ckm.V_us", "ckm.lambda_wolfenstein", "yukawa.epsilon_fn",
-                "ckm.V_us_triality",
-                "algebra.gaugino_cabibbo_derived",
-                "algebra.gaugino_cabibbo_proxy",
-                "algebra.gaugino_cabibbo_refined"],
+                "ckm.V_us_triality"],
     "pmns_theta_12": ["neutrino.theta_12_pred", "pmns.theta_12_triality"],
     "pmns_theta_13": ["neutrino.theta_13_pred", "pmns.theta_13_triality",
-                      "particle.theta_13_deg", "neutrino.theta13_derived",
-                      "neutrino.sin_theta13_derived"],
+                      "particle.theta_13_deg"],
     "pmns_theta_23": ["neutrino.theta_23_pred", "pmns.theta_23_triality"],
 }
 

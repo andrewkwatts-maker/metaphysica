@@ -53,7 +53,8 @@ def test_cosmo_guards_fail_on_missing_and_wrong_anchor():
 
 def test_cosmo_rows_keep_honesty_blocks_at_the_anchor():
     k = 12 + 1 / math.pi
-    v = _validator({"geometry.elder_kads": 24, "geometry.k_gimel": k})
+    v = _validator({"geometry.elder_kads": 24, "geometry.k_gimel": k,
+                    "bounds.sum_m_nu_upper": 0.12})
     v.cert_cosmo_013_wa()
     v.cert_cosmo_014_neutrino_sum()
     v.cert_cosmo_015_h0()
