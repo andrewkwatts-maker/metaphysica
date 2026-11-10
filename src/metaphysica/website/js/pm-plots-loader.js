@@ -73,6 +73,28 @@
     }
 
     /**
+     * Drop repeated plots: same id, or same title within a category.
+     */
+    function uniquePlots(plots) {
+        const seen = new Set();
+        return plots.filter(p => {
+            const keys = [`id:${p.id}`, `t:${p.category}:${p.title}`];
+            if (keys.some(k => seen.has(k))) return false;
+            keys.forEach(k => seen.add(k));
+            return true;
+        });
+    }
+
+    /**
+     * Write the gallery count into any [data-plot-count] badge.
+     */
+    function publishCounts(plots) {
+        document.querySelectorAll('[data-plot-count]').forEach(el => {
+            el.textContent = `${plots.length} ${el.dataset.plotCount}`;
+        });
+    }
+
+    /**
      * Render plots grid
      */
     function renderPlotsGrid(container, category = null) {
@@ -84,9 +106,10 @@
         // Only entries a browser can actually draw. PDF entries carry a
         // preview_file pointing at their PNG sibling; entries with no
         // renderable form are skipped rather than shown as broken images.
-        const displayable = state.manifest.plots.filter(
+        const displayable = uniquePlots(state.manifest.plots.filter(
             p => p.renderable !== false || p.preview_file
-        );
+        ));
+        publishCounts(displayable);
         const plots = category
             ? displayable.filter(p => p.category === category)
             : displayable;
@@ -109,10 +132,10 @@
                 </div>
                 <div class="plot-info">
                     <h3 class="plot-title">${plot.title}</h3>
-                    <p class="plot-description">${plot.description}</p>
+                    ${plot.description ? `<p class="plot-description">${plot.description}</p>` : ''}
                     <div class="plot-meta">
                         <span class="plot-category">${plot.category}</span>
-                        <span class="plot-version">v${plot.version}</span>
+                        ${plot.version ? `<span class="plot-version">v${plot.version}</span>` : ''}
                         <span class="plot-size">${plot.size_kb}KB</span>
                     </div>
                 </div>

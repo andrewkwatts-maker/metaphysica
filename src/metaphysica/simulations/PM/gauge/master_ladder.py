@@ -32,7 +32,10 @@ ITEM6_REF = "master_action_audit.md s5.8, s7 item 6"
 # audit s7 item number -> (question, options, recommended, reason)
 OWNER_ITEMS: Dict[int, tuple] = {
     1: ("Which sectors are in the single bulk action; drop or define L_C, V_bridge, V_face, "
-        "V_tor, OR^i, rho_breath?", ("E8xE8 YM", "flux F_4", "KK tower", "none"), None, ""),
+        "V_tor, OR^i, rho_breath?", ("E8xE8 YM", "flux F_4", "KK tower", "none"), "none",
+        "gravity plus the Weyl spinor is the common core of the nine statements; every term "
+        "is defined; a dropped term returns only with a definition, a coefficient source and "
+        "a ladder check that can fail (MASTER_ACTION_SELECTION_2026-11-01)"),
     2: ("Weyl vs Dirac bulk spinor", ("weyl", "dirac"), "weyl",
         "matches the 2026-08-31 signature ruling; m and lambda vanish for a Weyl field"),
     3: ("What is value 0.4082 (1/sqrt6) attached to pneuma-master-action-v23?", (), None, ""),
@@ -45,7 +48,7 @@ OWNER_ITEMS: Dict[int, tuple] = {
     8: ("Map of the bulk g to g_GUT; dilaton dimension", (), None, ""),
     9: ("Should gauge_sector_complete SU(3)/SU(2) drop DERIVED while OPEN (D-011)?",
         (), None, ""),
-    10: ("Audit items 15 and 17 (master-action-27d id; lagrangian-13d-effective)", (), None, ""),
+    10: ("Audit items 15 and 17 (master-action-27d id, retired for master-action-26d; lagrangian-13d-effective)", (), None, ""),
     11: ("26 = 13 + 13: 2 x 64 shadow spinors versus the 4096 or 8192 bulk count",
          ("computed",), "computed", "decided by product_spinor_dim(13, 13), see report"),
 }

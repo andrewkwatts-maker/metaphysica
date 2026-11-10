@@ -111,6 +111,34 @@ SIGMA_M_WINDOW_HIGH: float = 0.12
 #: DESI 2026 + Planck 95% CL ceiling on Σm_ν, in eV.
 DESI_2026_CEILING: float = 0.072
 
+#: The ONE registered row that claims the neutrino mass sum (decision of
+#: 2026-11-01, docs/plan/MASTER_ACTION_SELECTION_2026-11-01.md s4). It is the
+#: only one of the three candidate values inside the window between the
+#: oscillation floor and the cosmological bound.
+SUM_CLAIM_ROW: str = "particle.sigma_m_base_eV"
+
+#: Rows that carry a sum-like value but are INTERMEDIATE: they no longer claim
+#: the sum. neutrino.sum_masses is the seesaw cross-check (0.1020 eV, passes
+#: only the retired Planck 2018 bound of 0.12); sigma_m_refined_eV is the base
+#: value minus the Z2 mirror shift (0.0425 eV, below the floor of any spectrum).
+SUM_INTERMEDIATE_ROWS: tuple = (
+    "neutrino.sum_masses",
+    "particle.sigma_m_refined_eV",
+)
+
+#: Normal-ordering floor on the sum from the oscillation splittings, in eV
+#: (about 0.059; NuFIT 6.0 splittings).
+SUM_OSCILLATION_FLOOR_EV: float = 0.059
+
+#: DESI DR2 + CMB (LambdaCDM) 95% upper bound on the sum, in eV.
+#: Source: DESI Collaboration, DR2 BAO cosmology results, arXiv:2503.14738.
+SUM_DESI_DR2_BOUND_EV: float = 0.064
+
+
+def sum_claim_in_window(value: float) -> bool:
+    """True when `value` lies between the oscillation floor and the DESI DR2 bound."""
+    return SUM_OSCILLATION_FLOOR_EV <= float(value) <= SUM_DESI_DR2_BOUND_EV
+
 
 # ── Sum-mass refinement -----------------------------------------------------
 
@@ -215,7 +243,9 @@ class NeutrinoSectorRefinement:
         return float(sigma_m)
 
     def apply_mirror_correction(self, sigma_m_base: float) -> float:
-        """Apply the small Z₂ mirror adjustment to relax DESI tension.
+        """Apply the small Z₂ mirror adjustment (an INTERMEDIATE, not the sum claim).
+
+        The sum claim is `sigma_m_base_eV` (see `SUM_CLAIM_ROW`).
 
         Correction is ``0.015 · g_b · 10¹⁰`` eV; for the canonical
         ``g_b = 1.2e-10`` this is ``0.018 eV``, which drops the base
@@ -322,6 +352,11 @@ __all__ = [
     "DELTA_M31_SQ",
     "MIRROR_PREFACTOR",
     "DESI_2026_CEILING",
+    "SUM_CLAIM_ROW",
+    "SUM_INTERMEDIATE_ROWS",
+    "SUM_OSCILLATION_FLOOR_EV",
+    "SUM_DESI_DR2_BOUND_EV",
+    "sum_claim_in_window",
     "SIGMA_M_WINDOW_LOW",
     "SIGMA_M_WINDOW_HIGH",
     "NeutrinoSectorRefinement",

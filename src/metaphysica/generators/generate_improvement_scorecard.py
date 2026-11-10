@@ -96,6 +96,8 @@ def main() -> int:
     open_gates: List[str] = []
 
     n_declarative = 0
+    certs = [c for c in certs
+             if str(c.get("evaluation_status") or "").upper() != "NOT_APPLICABLE"]
     for c in certs:
         if not (c.get("evaluation_status") or "").upper().startswith("COMPUTED"):
             n_declarative += 1

@@ -89,6 +89,10 @@ if (typeof window !== 'undefined') {
     } else {
         initExistingScopes();
     }
+    // Hide the EML control on any [data-eml-id] scope the offer policy withholds.
+    if (window.PMEmlOffer) {
+        window.PMEmlOffer.ready.then(() => window.PMEmlOffer.applyTo(document));
+    }
     // Re-scan whenever new content is injected (formula/param/foundation
     // cards render asynchronously). Debounced with a microtask.
     let scanPending = false;
@@ -97,6 +101,7 @@ if (typeof window !== 'undefined') {
         scanPending = true;
         queueMicrotask(() => {
             scanPending = false;
+            if (window.PMEmlOffer) window.PMEmlOffer.applyTo(document);
             initExistingScopes();
         });
     };

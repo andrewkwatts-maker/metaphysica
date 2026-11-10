@@ -272,7 +272,7 @@ class ResultsV16_2(SimulationBase):
                     "DESI 2025 BAO-only data favor a slight deviation: w₀ = −0.957 ± 0.067 "
                     "(BAO-only) at 0.64σ from −1, consistent with thawing quintessence. "
                     "Principia Metaphysica v24.2 derives w₀ from G₂ manifold topology with "
-                    "<strong>EDOF=3</strong> (1 geometric seed b₃ + 2 calibrations), achieving an honest <strong>121:1 compression ratio</strong> (5 genuinely new derived constants from 1 geometric seed, with classifications ranging from DERIVED through MOTIVATED to FITTED; the earlier thirteen-closure / 131:1 claim is retired). "
+                    "<strong>EDOF=3</strong> (1 geometric seed b₃ + 2 calibrations), achieving <strong>a ledger-derived compression ratio (not available in this build)</strong> (5 genuinely new derived constants from 1 geometric seed, with classifications ranging from DERIVED through MOTIVATED to FITTED; the earlier thirteen-closure / 131:1 claim is retired). "
                     "(The complete geometric derivation from dimensional reduction is presented in Section 5.2; here we summarize the result and experimental comparison.)"
                 )
             ),
@@ -312,7 +312,7 @@ class ResultsV16_2(SimulationBase):
                     "<Normal>w₀ = −23/24 ≈ −0.9583 (from the Topologically Anchored Framework with <strong>EDOF=3</strong>)</Normal>"
                     "<EML>w₀ = ops.div(ops.neg(23), 24) ≈ −0.9583 — from ops.add(ops.neg(1), ops.inv(eml_scalar(24)))</EML> "
                     "can be compared directly with DESI 2025 BAO-only constraints (w₀ = −0.957 ± 0.067). The PM value "
-                    "lies 0.02σ from the DESI central value — well within observational uncertainty. "
+                    "lies 0.02σ from the BAO-only central value, but it is in tension with DESI DR2 (w₀ = −0.752 ± 0.057). "
                     "Crucially, the prediction emerges from minimal phenomenological input; it "
                     "follows from the integer b₃ = 24, which was fixed by the G₂ manifold topology in 2021, "
                     "before DESI reported thawing dark energy evidence."
@@ -323,7 +323,7 @@ class ResultsV16_2(SimulationBase):
                 content=(
                     "<h4>DESI 2025 Consistency (Topologically Anchored, EDOF=3)</h4>"
                     "<p>PM predicts w₀ = −23/24 ≈ −0.9583 from <strong>EDOF=3</strong> (1 geometric seed b₃ + 2 calibrations), "
-                    "consistent with DESI 2025 BAO-only (w₀ = −0.957 ± 0.067, 0.02σ deviation). "
+                    "matches the DESI 2025 BAO-only fit (w₀ = −0.957 ± 0.067, 0.02σ) but is in tension with DESI DR2. "
                     "Both the PM framework and DESI independently favor thawing dark energy (w₀ > −1) over ΛCDM. "
                     "The combined DESI+CMB constraints (w₀ = −0.76 ± 0.09, from the wₐ sector) are tighter, "
                     "but the BAO-only w₀ measurement is the most model-independent comparison point. "
@@ -348,7 +348,7 @@ class ResultsV16_2(SimulationBase):
                     "(ρ<sub>Λ</sub> ≈ 10⁻⁴⁷ GeV⁴) is 120 orders of magnitude smaller than the naive "
                     "Planck-scale estimate (ρ<sub>Pl</sub> ~ 10⁷⁴ GeV⁴)—is one of the deepest unsolved "
                     "problems in theoretical physics. Standard approaches require either "
-                    "extraordinary fine-tuning or anthropic selection. The PM Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, honest <strong>121:1 compression ratio</strong>) "
+                    "extraordinary fine-tuning or anthropic selection. The PM Topologically Anchored Framework (<strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, <strong>a ledger-derived compression ratio (not available in this build)</strong>) "
                     "offers a qualitative geometric mechanism: brane-tension cancellation within the G₂ compactification."
                 )
             ),
@@ -599,13 +599,13 @@ class ResultsV16_2(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="info",
-                title="Net Result: 5 closures, honest 121:1 compression",
+                title="Net Result: 5 closures, honest compression",
                 content=(
                     "<p>Counting only the five genuinely new derived constants (strong CP, "
                     "Re(T) VEV gap, vacuum landscape pruning, mirror DM relic, Higgs mass via MSSM "
                     "diagonalisation) and the one geometric seed b<sub>3</sub>, the framework now "
                     "derives <strong>121 constants from a single integer input</strong> &mdash; an "
-                    "honest <strong>121:1 compression ratio</strong>. This replaces the earlier "
+                    "<strong>a ledger-derived compression ratio (not available in this build)</strong>. This replaces the earlier "
                     "earlier thirteen-closure / 131:1 claim, which counted four cross-consistent confirmations "
                     "as new closures and three worse-than-prior derivations as wins. The triple-track "
                     "validation harness flagged the shadow derivations automatically; that the "
@@ -638,7 +638,7 @@ class ResultsV16_2(SimulationBase):
                     "independent confirmations. <strong>UNTESTED</strong> entries are genuine "
                     "predictions of yet-unmeasured quantities. σ values for CONSISTENT entries "
                     "are theory-level comparisons within PM's estimated theoretical uncertainty "
-                    "(the framework has <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, honest <strong>121:1 compression ratio</strong>); "
+                    "(the framework has <strong>EDOF=3</strong>: 1 geometric seed b₃ + 2 calibrations, <strong>a ledger-derived compression ratio (not available in this build)</strong>); "
                     "they should not be interpreted as standard experimental σ values."
                 )
             ),
@@ -646,7 +646,7 @@ class ResultsV16_2(SimulationBase):
                 type="table",
                 headers=["Observable", "PM Prediction", "Experimental Value", "Deviation", "Status"],
                 rows=[
-                    ["w₀ (dark energy EoS)", "−23/24 ≈ −0.9583", "DESI BAO 2025: −0.957 ± 0.067", "0.02σ (BAO-only)", "CONSISTENT"],
+                    ["w₀ (dark energy EoS)", "−23/24 ≈ −0.9583", "DESI BAO 2025: −0.957 ± 0.067", "0.02σ (BAO-only); >3σ vs DR2", "TENSION"],
                     ["α⁻¹ (fine structure)", "137.0367 (geometric)", "CODATA 2018: 137.035999177", "~0.05σ (theory-level)", "CONSISTENT"],
                     ["n<sub>gen</sub> (fermion generations)", "3 (χ<sub>eff</sub>/48 = 144/48)", "LEP Z-width: 3 exactly", "Exact", "CONSISTENT"],
                     ["sin θ<sub>C</sub> (Cabibbo angle)", "exp(−π/2) ≈ 0.208 (racetrack, N₁=24, k=6)", "PDG 2024: 0.22500 ± 0.00067", "~8% (topology only)", "CONSISTENT"],
@@ -668,7 +668,7 @@ class ResultsV16_2(SimulationBase):
                     "the framework has not been subjected to a rigorous Bayesian model comparison against alternatives. "
                     "<strong>UNTESTED</strong> entries (τ<sub>p</sub>, m<sub>KK</sub>, m<sub>a</sub>, Σm<sub>ν</sub>) represent genuine falsifiable forecasts. "
                     "The framework has <strong>EDOF=3</strong> (effective degrees of freedom): three calibration seeds "
-                    "(VEV coefficient, α<sub>GUT</sub> coefficient, Re(T) from Higgs mass) anchor the honest <strong>121:1 compression ratio</strong> "
+                    "(VEV coefficient, α<sub>GUT</sub> coefficient, Re(T) from Higgs mass) anchor the <strong>a ledger-derived compression ratio (not available in this build)</strong> "
                     "(125 constants from 3 seeds); two PMNS parameters (θ₁₃, δ<sub>CP</sub>) are fitted to NuFIT 6.0 "
                     "pending full Yukawa derivation. "
                     "Note: <Normal>α<sub>leak</sub> = 1/√6 ≈ 0.408</Normal>"
@@ -691,9 +691,9 @@ class ResultsV16_2(SimulationBase):
             abstract=(
                 "Principia Metaphysica v24.2 derives three key cosmological predictions "
                 "from G₂ manifold topology with <strong>EDOF=3</strong> (1 geometric seed b₃ + 2 calibrations), "
-                "achieving an honest <strong>121:1 compression ratio</strong> (5 real closures + 1 seed; 4 cross-consistent confirmations and 3 documented divergences carried to v27.0): H₀ = 71.55 km/s/Mpc "
+                "achieving <strong>a ledger-derived compression ratio (not available in this build)</strong> (5 real closures + 1 seed; 4 cross-consistent confirmations and 3 documented divergences carried to v27.0): H₀ = 71.55 km/s/Mpc "
                 "(1.4σ from SH0ES, between Planck and local distance ladder values), "
-                "w₀ = −23/24 ≈ −0.958 (0.02σ from DESI 2025 BAO-only, consistent with thawing dark energy), "
+                "w₀ = −23/24 ≈ −0.958 (in tension with DESI DR2; 0.02σ only against the BAO-only thawing fit), "
                 "and a vacuum energy floor from brane-tension cancellation. "
                 "The global 0.48σ alignment across 26 Standard Model parameter comparisons reflects the geometric coherence of the framework."
             ),

@@ -216,6 +216,38 @@ def tree_operator_count(tree: Any) -> int:
     return sum(1 for k in kinds if k in OPERATOR_KINDS)
 
 
+#: Substrings that mean a Python AST repr leaked into a tree label or LaTeX.
+AST_REPR_MARKERS = ("Name(", "Call(", "ctx=")
+
+
+def _tree_labels(node: Any, out: list) -> None:
+    """Collect every node label from a serialised tree."""
+    if isinstance(node, (list, tuple)) and node:
+        out.append(str(node[0]))
+        for child in node[2:]:
+            _tree_labels(child, out)
+
+
+def classify_formula_tree(tree: Any, latex: str = "") -> Optional[str]:
+    """Return a withhold reason for one formula's EML tree, or None to offer it.
+
+    Rules: a parse error, a leaked AST repr, a tree with no operator (one
+    constant or symbol depicts no relation), or a ``*_leaf`` placeholder.
+    """
+    if not isinstance(tree, (list, tuple)) or not tree or tree[0] == "<error>":
+        return "parse_error"
+    labels: list = []
+    _tree_labels(tree, labels)
+    text = "".join(labels) + str(latex)
+    if any(m in text for m in AST_REPR_MARKERS):
+        return "ast_repr"
+    if any(lb.endswith("_leaf") for lb in labels):
+        return "leaf_placeholder"
+    if tree_operator_count(tree) == 0:
+        return "no_operator"
+    return None
+
+
 def classify_render(
     renders: dict,
     tree: Optional[Any] = None,

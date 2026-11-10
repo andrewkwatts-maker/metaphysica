@@ -37,8 +37,8 @@ from metaphysica.simulations.PM.gauge.master_action import MasterActionSimulatio
 from metaphysica.simulations.PM.gauge.master_ladder_map import KINDS, MAP
 
 _ROOT = Path(__file__).resolve().parents[1]
-SURVIVOR = {"master-action-two-layer-or": "master-action-26d-full",
-            "bulk-action-26d-v23": "master-action-26d-full",
+SURVIVOR = {"master-action-two-layer-or": "master-action-26d",
+            "bulk-action-26d-v23": "master-action-26d",
             "v22-bridge-lagrangian": "bridge-lagrangian-v22",
             "su3-qcd-lagrangian-g2-v19": "su3-qcd-lagrangian-v22",
             "su2-weak-lagrangian-g2-v19": "su2-weak-lagrangian-v22"}
@@ -59,7 +59,9 @@ def formulas():
 
 @pytest.fixture(scope="module")
 def ladder():
-    return ML.build_ladder(ML.resolve_options())
+    # Statements A to E are SUPERSEDED but keep their full text, so their latex is
+    # rendered with item 1 undecided (the selected action drops the sector terms).
+    return ML.build_ladder({**ML.resolve_options(), 1: None})
 
 
 def _action(ladder, step_id):

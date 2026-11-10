@@ -12,7 +12,7 @@ from metaphysica.simulations.PM.gauge import master_ladder as ML
 
 FORKS = {1: "action_bulk_sectors", 2: "action_bulk_spinor",
          4: "action_planck_exponent", 5: "action_sign_convention"}
-ADOPTED = {"action_bulk_sectors": "undecided", "action_bulk_spinor": "weyl",
+ADOPTED = {"action_bulk_sectors": "none", "action_bulk_spinor": "weyl",
            "action_planck_exponent": "exponent_24",
            "action_sign_convention": "mostly_plus_mtw"}
 
@@ -77,18 +77,26 @@ def test_mostly_minus_flips_established_checks_to_fails(default):
     assert rep["failing_checks"] == default["failing_checks"]
 
 
+@pytest.fixture(scope="module")
+def undecided():
+    """The ladder before 2026-11-01: item 1 undecided."""
+    return _under("action_bulk_sectors", "undecided")
+
+
 @pytest.mark.parametrize("sector", ["e8xe8_ym", "flux_f4", "kk_tower"])
-def test_choosing_a_sector_resolves_item_1_only(default, sector):
+def test_choosing_a_sector_resolves_item_1_only(undecided, sector):
     rep = _under("action_bulk_sectors", sector)
-    assert "1" in default["owner_items_unresolved"]
+    assert "1" in undecided["owner_items_unresolved"]
     assert "1" not in rep["owner_items_unresolved"]
-    assert rep["counts"] == default["counts"]
-    assert rep["established_counts"] == default["established_counts"]
+    assert rep["counts"] == undecided["counts"]
+    assert rep["established_counts"] == undecided["established_counts"]
 
 
-def test_no_sectors_removes_the_item_1_terms(default):
-    rep = _under("action_bulk_sectors", "none")
+def test_no_sectors_removes_the_item_1_terms(default, undecided):
+    """`none` is adopted since 2026-11-01: open terms 15 -> 9, no item 1 left unresolved."""
     gone = {"A26:ym", "A26:kT", "A26:V", "A26:L_bridge", "A26:L_C", "A13:V_face"}
-    assert gone <= set(default["open_terms"])
-    assert not gone & set(rep["open_terms"])
-    assert rep["counts"]["open_terms"] == default["counts"]["open_terms"] - len(gone)
+    assert gone <= set(undecided["open_terms"])
+    assert not gone & set(default["open_terms"])
+    assert undecided["counts"]["open_terms"] == 15
+    assert default["counts"]["open_terms"] == 9
+    assert "1" not in default["owner_items_unresolved"]

@@ -767,7 +767,7 @@ class DiscussionV16(SimulationBase):
                     "w<sub>a</sub> ~ 0.1 (PREDICTED from residual modulus roll toward attractor)",
                     "de Sitter attractor preserved (w → −1 as t → ∞ at Ricci-flat fixed point)",
                     "Z₂ mirror sector provides dark matter candidate from the dual shadow",
-                    "No ghost/tachyon instabilities: (24,2) structure + OR reduction ensures stability"
+                    "Proposed: the (24,2) structure with OR reduction is meant to avoid ghost and tachyon instabilities; ghost control remains OPEN"
                 ]
             ),
 

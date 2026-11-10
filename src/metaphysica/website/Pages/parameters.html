@@ -855,9 +855,9 @@
                 <span class="category-count">Transparency Disclosure</span>
             </div>
             <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.7;">
-                Principia Metaphysica employs a rigorous classification system for its 72 validation gates.
+                Principia Metaphysica employs a rigorous classification system for its <span id="gc-total">not available in this build</span> validation gates.
                 In the interest of scientific transparency, we explicitly categorize each gate by its epistemic status.
-                Approximately <strong>11% of gates (8 gates)</strong> use fitted or calibrated parameters,
+                <strong><span id="gc-fitted-input">not available in this build</span></strong> gates use fitted or input parameters,
                 which is standard practice in theoretical physics model building.
             </p>
 
@@ -866,7 +866,7 @@
                 <div style="background: rgba(0, 200, 83, 0.08); border: 1px solid rgba(0, 200, 83, 0.3); border-radius: 12px; padding: 1.25rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                         <span class="param-status-badge status-RIGOROUS">RIGOROUS</span>
-                        <span style="color: var(--text-primary); font-weight: 600;">~25 gates (35%)</span>
+                        <span style="color: var(--text-primary); font-weight: 600;" id="gc-RIGOROUS">not available in this build</span>
                     </div>
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
                         Pure mathematical results requiring no experimental input. Includes topological constraints,
@@ -878,7 +878,7 @@
                 <div style="background: rgba(139, 127, 255, 0.08); border: 1px solid rgba(139, 127, 255, 0.3); border-radius: 12px; padding: 1.25rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                         <span class="param-status-badge status-DERIVED">DERIVED</span>
-                        <span style="color: var(--text-primary); font-weight: 600;">~35 gates (49%)</span>
+                        <span style="color: var(--text-primary); font-weight: 600;" id="gc-DERIVED">not available in this build</span>
                     </div>
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
                         Derived from PM geometry using established formulas. These follow from the framework
@@ -890,7 +890,7 @@
                 <div style="background: rgba(255, 165, 0, 0.08); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 12px; padding: 1.25rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                         <span class="param-status-badge status-FITTED">FITTED</span>
-                        <span style="color: var(--text-primary); font-weight: 600;">~8 gates (11%)</span>
+                        <span style="color: var(--text-primary); font-weight: 600;" id="gc-FITTED">not available in this build</span>
                     </div>
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
                         Parameters calibrated to experimental data. <strong>Honestly acknowledged:</strong>
@@ -903,7 +903,7 @@
                 <div style="background: rgba(77, 182, 255, 0.08); border: 1px solid rgba(77, 182, 255, 0.3); border-radius: 12px; padding: 1.25rem;">
                     <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                         <span class="param-status-badge status-INPUT">INPUT</span>
-                        <span style="color: var(--text-primary); font-weight: 600;">~3 gates (4%)</span>
+                        <span style="color: var(--text-primary); font-weight: 600;" id="gc-INPUT">not available in this build</span>
                     </div>
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">
                         Direct experimental values used as anchors (e.g., G_N for Planck mass, beta decay data).
@@ -915,9 +915,9 @@
             <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
                 <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0; font-style: italic;">
                     <strong>Note on standard practice:</strong> All effective field theories require some fitted parameters.
-                    The Standard Model has 19+ free parameters; PM reduces this to ~8 calibrated gates while deriving
-                    the remaining ~64 from topology. The key metric is predictive power per free parameter,
-                    not the absence of any calibration.
+                    Gate counts above come from the derivation summary in the gate certificates. Execution status
+                    (<span id="gc-eval">not available in this build</span>) is a separate measure: a gate with no executable form
+                    has never been run.
                 </p>
             </div>
         </div>
@@ -2838,5 +2838,30 @@
             }
         }, 2000);
     </script>
+<script>
+// Fill the gate-classification counts from GATES_CERTIFICATES.json (no static counts).
+(async function () {
+  const NA = 'not available in this build';
+  try {
+    const r = await fetch('../AutoGenerated/GATES_CERTIFICATES.json');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    const ds = d.derivation_summary || {};
+    const keys = ['RIGOROUS', 'DERIVED', 'FITTED', 'INPUT'];
+    const total = (d.certificates || []).length;
+    keys.forEach(k => {
+      const el = document.getElementById('gc-' + k);
+      if (el) el.textContent = (ds[k] === undefined || !total) ? NA
+        : `${ds[k]} gates (${(100 * ds[k] / total).toFixed(0)}%)`;
+    });
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('gc-total', total || NA);
+    set('gc-fitted-input', (ds.FITTED === undefined || ds.INPUT === undefined) ? NA : ds.FITTED + ds.INPUT);
+    const ev = d.evaluation_summary || {};
+    set('gc-eval', ev.computed_pass === undefined ? NA
+      : `${ev.computed_pass} computed pass, ${ev.computed_fail} computed fail, ${ev.declarative} declarative`);
+  } catch (e) { console.info('gate classification unavailable', e); }
+})();
+</script>
 </body>
 </html>

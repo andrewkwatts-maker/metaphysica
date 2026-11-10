@@ -60,6 +60,6 @@ Groups:
 - Tick the progress list below and write a handoff.
 
 ## Progress
-- [ ] Phase 1 R1, R2, R3
+- [x] Phase 1 R1, R2, R3 (findings and lane briefs in `site_review/`)
 - [ ] F1  - [ ] F2  - [ ] F3  - [ ] F4
 - [ ] Site rebuilt, pushed, Pages deployed

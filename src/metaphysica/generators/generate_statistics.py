@@ -20,10 +20,12 @@ This ensures statistics.json is regenerated from source data, not manually edite
 
 import json
 import os
+from pathlib import Path
 import sys
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional, Tuple
 
+from metaphysica.generators.headline_stats import display_value, headline_statistics
 from metaphysica.generators._common import out_dir as _out_dir, autogen_dir as _autogen_dir
 from metaphysica.simulations.core.free_variable_ledger import (
     published_free_variable_count as _free_variable_count,
@@ -241,6 +243,30 @@ def count_gate_statuses(gates_data: Dict[str, Any]) -> Dict[str, int]:
     return counts
 
 
+HEADLINE_KEYS = ("chi_squared", "chi_squared_rows", "degrees_of_freedom",
+                 "p_value", "open_count", "open_gate_ids", "locked_gate_ids",
+                 "formulas_checked_ok")
+
+def _apply_headline(fs: Dict[str, Any]) -> None:
+    """Overwrite the headline fields from the one shared source."""
+    h = headline_statistics(Path(STATISTICAL_RIGOR_FILE), Path(GATES_CERT_FILE))
+    for key in h["missing"]:
+        print(f"  headline_stats: {key} missing from artifacts")
+    fs.update({
+        "pass_count": h["gates_locked"], "testable_count": h["gates_testable"],
+        "total_gates": h["gates_total"], "not_testable_count": h["gates_axiom"],
+        "open_count": h["gates_open"],
+        "open_gate_ids": ", ".join(h["gates_open_ids"]),
+        "locked_gate_ids": ", ".join(h["gates_locked_ids"]),
+        "chi_squared": display_value(h["chi_squared"]),
+        "chi_squared_rows": display_value(h["rows"]),
+        "degrees_of_freedom": display_value(h["dof"]),
+        "p_value": display_value(h["p_value"]),
+        "status": display_value(h["verdict"]),
+        "formulas_checked_ok": display_value(h["formulas_checked_ok"]),
+    })
+
+
 def generate_statistics() -> Dict[str, Any]:
     """Generate complete statistics from all source data."""
     print("Loading source data...")
@@ -351,11 +377,12 @@ def generate_statistics() -> Dict[str, Any]:
             "testable_count": gate_counts["total_gates"] - gate_counts["not_testable"],  # 72 - 30 = 42
             "exact_matches": validation_stats["exact_matches"],
             "chi_squared": validation_stats["chi_squared"],
-            "chi_squared_reduced": validation_stats["chi_squared_reduced"],
             "degrees_of_freedom": validation_stats["degrees_of_freedom"],
             "status": status
         }
     }
+
+    _apply_headline(statistics["framework_statistics"])
 
     # Also update parameters.json with framework_statistics as registered params
     # This ensures the JS loader can find them via standard parameter lookup
@@ -419,43 +446,13 @@ def generate_statistics() -> Dict[str, Any]:
                 'description': 'Number of testable gates (total - axioms)',
                 'eml_description': 'EML: ops.sub(eml_scalar(72), eml_vec(\'framework_statistics.not_testable_count\')) — testable = total_gates − axioms'
             }
-            # Registered because framework_statistics.chi_squared_reduced is
-            # DEFINED as chi_squared / dof and chi_squared was in no registry,
-            # so its eml_description named an operand nothing could resolve.
-            params_data['parameters']['framework_statistics.chi_squared'] = {
-                'value': fs['chi_squared'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'description': 'Sum of squared sigma deviations over all scored predictions',
-                'eml_description': (
-                    "EML: ops.mul(eml_vec('framework_statistics.chi_squared_reduced'), "
-                    "eml_vec('framework_statistics.degrees_of_freedom')) "
-                    "— chi^2 = chi^2_red x dof; the sum itself is a reduction over the "
-                    "per-parameter sigma deviations, which the scalar algebra cannot express"
-                ),
-            }
-            params_data['parameters']['framework_statistics.chi_squared_reduced'] = {
-                'value': fs['chi_squared_reduced'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': (
-                    "EML: ops.div(eml_vec('framework_statistics.chi_squared'), "
-                    "eml_vec('framework_statistics.degrees_of_freedom')) "
-                    "— chi^2_red = sum(sigma_i^2) / dof"
-                )
-            }
-            params_data['parameters']['framework_statistics.degrees_of_freedom'] = {
-                'value': fs['degrees_of_freedom'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': (
-                    "EML: ops.sub(eml_vec('validation.total_predictions'), eml_scalar(1.0)) "
-                    "— dof = N_pred - DOF_SUBTRAHEND_ANSATZ, with the subtrahend "
-                    "asserted as 1 (b3, chi_eff and phi treated as mathematical). "
-                    "This is not the free-variable count; see "
-                    "validation.free_variable_count"
-                )
-            }
+            # Headline fit and tally: values read from the rigor report and
+            # the gate certificates (headline_stats), no EML relation.
+            for key in HEADLINE_KEYS:
+                params_data['parameters']['framework_statistics.' + key] = {
+                    'value': fs[key], 'status': 'COMPUTED',
+                    'source': 'headline_stats.py',
+                }
             params_data['parameters']['framework_statistics.status'] = {
                 'value': fs['status'],
                 'status': 'COMPUTED',
@@ -548,7 +545,7 @@ def main():
     print(f"  Pending gates:     {fs['pending_count']}")
     print(f"  Not testable:      {fs['not_testable_count']} (axioms)")
     print(f"  Mathematical:      {fs['mathematical_count']}")
-    print(f"  Chi-squared (red): {fs['chi_squared_reduced']}")
+    print(f"  Chi-squared:       {fs['chi_squared']} over {fs['chi_squared_rows']} rows")
     print(f"  Degrees of freedom:{fs['degrees_of_freedom']}")
     print(f"  Status:            {fs['status']}")
 

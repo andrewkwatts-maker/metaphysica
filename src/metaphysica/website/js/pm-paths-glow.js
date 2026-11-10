@@ -27,7 +27,7 @@
     if (!isReasonable(node)) return [];
     var a = node.attrs;
     return [['Rank', a.rank === null || a.rank === undefined ? 'n/a' : String(a.rank)],
-      ['\u0394\u03c7\u00b2 against the selected path', fmt(a.delta_chi2)],
+      ['\u0394\u03c7\u00b2 (ranking chi-squared of this path minus the selected path’s, from path_ranking.json)', fmt(a.delta_chi2)],
       ['Why it is reasonable', (ranking && ranking.reasonable_rule) || 'not stated']];
   }
 

@@ -108,7 +108,7 @@ class AbstractV17_2(SimulationBase):
     fermion generations from n_gen = chi_eff/(2*b3) = 144/48 = 3.
 
     The abstract references 26 Standard Model parameter predictions (24 within
-    1-sigma; see results section for full table), 55 pure predictions,
+    1-sigma; see results section for full table),
     reproducibility certificates, and key testable outputs including
     w0 = -23/24 (consistent with DESI 2025 thawing direction).
 

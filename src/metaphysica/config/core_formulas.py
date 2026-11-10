@@ -130,7 +130,7 @@ class CoreFormulas:
         ],
         discussion="The generation number emerges directly from the topology of the G₂ manifold. Using the effective Euler characteristic χ_eff = 144 from the TCS (retired reading) construction (Corti et al. 2015), the G₂ index theorem—which generalizes the F-theory result n_gen = χ/24—yields exactly three generations via the divisor 48. This is a parameter-free geometric prediction that matches observation exactly.",
         derivation=FormulaDerivation(
-            parent_formulas=["tcs-euler-characteristic"],
+            parent_formulas=["effective-euler"],
             established_physics=["f-theory-index"],
             steps=[
                 "Start with G₂ manifold effective Euler characteristic χ_eff = 144",
@@ -308,7 +308,7 @@ class CoreFormulas:
         ],
         discussion="The GUT scale emerges from the geometry of the G₂ compactification. Via dimensional reduction, the effective 4D Planck scale is related to the 26D fundamental scale by M_GUT = M_Pl · V_G₂^(-1/7), where the -1/7 power comes from compactifying 7 dimensions. The TCS (retired reading) topology and moduli stabilization fix V_G₂, yielding M_GUT = 2.118×10¹⁶ GeV—remarkably close to the phenomenologically required unification scale of ~2×10¹⁶ GeV.",
         derivation=FormulaDerivation(
-            parent_formulas=["g2-compactification"],
+            parent_formulas=["g2-holonomy-constraint"],
             established_physics=["kaluza-klein"],
             steps=[
                 "G₂ manifold volume V_G2 determines effective 4D Planck scale",
@@ -604,7 +604,7 @@ class CoreFormulas:
         ],
         discussion="The proton lifetime is calculated from the standard GUT formula τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵), using the geometrically determined values M_GUT = 2.118×10¹⁶ GeV and α_GUT = 1/23.54. The TCS (retired reading) manifold geometry provides an additional suppression factor S ≈ 2.1 from the separation between associative 3-cycles, enhancing the lifetime by S² ≈ 4.4. This yields τ_p = 8.15×10³⁴ years, safely above the Super-Kamiokande bound of 2.4×10³⁴ years and testable at Hyper-Kamiokande in the 2030s.",
         derivation=FormulaDerivation(
-            parent_formulas=["gut-scale", "tcs-suppression"],
+            parent_formulas=["gut-scale", "tcs-topology"],
             established_physics=["yang-mills"],
             steps=[
                 "Standard dimension-6 decay: τ_p ∝ M_GUT⁴/(α_GUT² m_p⁵)",
@@ -774,7 +774,7 @@ class CoreFormulas:
             "R_c": FormulaTerm("Compactification Radius", "G₂ manifold characteristic size"),
         },
         derivation=FormulaDerivation(
-            parent_formulas=["g2-compactification"],
+            parent_formulas=["g2-holonomy-constraint"],
             established_physics=["kaluza-klein"],
             steps=[
                 "KK tower masses: m_n = n/R_c",
@@ -840,30 +840,29 @@ class CoreFormulas:
     # =========================================================================
 
     MASTER_ACTION_26D = Formula(
-        id="master-action-27d",  # Updated ID for v23.1
+        id="master-action-26d",  # canonical since 2026-11-01; the id master-action-27d is retired
         output_params=['dimensions.D_BULK'],
         label="(2.1) Master Action",
-        html="S<sub>26</sub> = ∫ d<sup>26</sup>x √|G| [(M<sub>*</sub><sup>24</sup>/2)R<sub>26</sub> + Ψ̄<sub>P</sub>(iΓ<sup>M</sup>D<sub>M</sub> - m)Ψ<sub>P</sub> + ℒ<sub>bridge</sub>]",
-        latex="S_{26} = \\int d^{26}x \\sqrt{|G_{(24,2)}|} \\left[ \\frac{M_*^{24}}{2} R_{26} + \\bar{\\Psi}_P \\left( i\\Gamma^M D_M - m \\right) \\Psi_P + \\mathcal{L}_{\\text{bridge}} \\right]",
-        plain_text="S_26 = ∫ d²⁶X √|G| [(M*²⁴/2)R₂₆ + Ψ̄_P(iΓᴹD_M - m)Ψ_P + ℒ_bridge]",
+        html="S<sub>26</sub> = ∫ d<sup>26</sup>X √|G| [(M<sub>*</sub><sup>24</sup>/2)R<sub>26</sub> + Ψ̄ iΓ<sup>M</sup>D<sub>M</sub> Ψ]",
+        latex="S_{26} = \\int d^{26}X \\sqrt{|G_{(24,2)}|} \\left[ \\frac{M_*^{24}}{2} R_{26} + \\bar{\\Psi}\\, i\\Gamma^M D_M \\Psi \\right]",
+        plain_text="S_26 = ∫ d²⁶X √|G| [(M*²⁴/2)R₂₆ + Ψ̄ iΓᴹD_M Ψ]",
         category=FormulaCategory.THEORY,
-        description="v23.1 Master action for 26D(24,2) bulk with Pneuma field and shadow-time directions sector",
+        description="Master action for the 26D(24,2) bulk: gravity plus one Weyl spinor. Selected 2026-11-01 (docs/plan/MASTER_ACTION_SELECTION_2026-11-01.md); statements A to E are SUPERSEDED by it",
         section="2",
-        status="FOUNDATIONAL",
+        status="ANSATZ",
         terms={
             "S_26": FormulaTerm("26D Action", "Full action in the 26D(24,2) two-time bulk", "sections.html#2"),
             "M_*": FormulaTerm("Fundamental Scale", "26D Planck scale, M_*^24 = 1/kappa^2 = 1/(8 pi G_26). Input scale: ~10¹⁶ GeV is a stated size, not derived by any simulation"),
             "R_26": FormulaTerm("Ricci Scalar", "26D curvature scalar"),
-            "Ψ_P": FormulaTerm("Pneuma Field", "4096-component Weyl spinor of Cl(24,2)"),
-            "ℒ_bridge": FormulaTerm("Bridge Lagrangian", "v23.1: 12×(2,0) bridge pairs + two shadow-time directions"),
+            "Ψ": FormulaTerm("Weyl spinor", "4096-component Weyl spinor of Cl(24,2); the Pneuma field"),
         },
         derivation=FormulaDerivation(
             parent_formulas=[],
             established_physics=["virasoro-anomaly", "string-theory"],
             steps=[
                 "Start with 26D(24,2) = 24 space + 2 times (one per shadow)",
-                "Include Pneuma spinor field for fermionic DOF (4096 Weyl components of Cl(24,2))",
-                "v23.1: Add shadow-time directions sector for dual-shadow structure"
+                "Include one Weyl spinor for the fermionic DOF (4096 components of Cl(24,2)); m and the quartic vanish for a Weyl field",
+                "The 12 bridge pairs are geometry of the metric, not a separate Lagrangian; dropped terms return only with a definition, a coefficient source and a ladder check that can fail"
             ],
             verification_page="sections.html#2"
         ),
@@ -1192,7 +1191,7 @@ class CoreFormulas:
             "4D_(3,1)": FormulaTerm("Observable", "Our spacetime"),
         },
         units="dimensionless",
-        related_formulas=["v21-or-reduction", "g2-compactification"],
+        related_formulas=["v21-or-reduction", "g2-holonomy-constraint"],
         simulation_file="simulations/v21/descent/merged_descent_v21.py",
         references=[
             FormulaReference(
@@ -1329,7 +1328,7 @@ class CoreFormulas:
             "L_KK": FormulaTerm("KK Tower", "Kaluza-Klein excitations"),
         },
         simulation_file="simulations/derivations/dimensional_reduction_derivations.py",
-        related_formulas=["lagrangian-13d-effective", "g2-holonomy-constraint", "warp-factor-ansatz"],
+        related_formulas=["lagrangian-13d-effective", "g2-holonomy-constraint"],
         references=[
             FormulaReference(
                 id="randall1999",

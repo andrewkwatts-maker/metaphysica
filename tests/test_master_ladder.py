@@ -61,7 +61,8 @@ def test_open_terms_cite_the_audit():
     rep = ML.report()
     assert all("master_action_audit" in v for v in rep["open_terms"].values())
     assert {"undefined:rho_breath", "undefined:OR^i", "undefined:V_bridge",
-            "undefined:V_face", "undefined:V_tor", "A26:L_C"} <= set(rep["open_terms"])
+            "undefined:V_face", "undefined:V_tor"} <= set(rep["open_terms"])
+    assert "A26:L_C" not in rep["open_terms"]  # dropped by the 2026-11-01 selection
 
 
 def test_weyl_and_dirac_differ_only_in_mass_quartic_and_spinor_counts():
