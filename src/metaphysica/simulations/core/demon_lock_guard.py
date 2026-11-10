@@ -53,7 +53,8 @@ class DemonLockGuard:
     """
 
     # v17.2: Ghost Literal elimination - use registry parity_sum property
-    # v23.0+: EXPECTED_PARITY_SUM derived from: sophian_drag (163/239) + tzimtzum_pressure (23/24) = 1.6403...
+    # EXPECTED_PARITY_SUM is the registry's eta_S + sigma_T on the path in force
+    # (163/(10 b3 - 1) + (n-1)/n; 1.6403 only at the retired seed b3 = 24).
     PARITY_TOLERANCE = 0.0001
 
     # =========================================================================
@@ -236,13 +237,12 @@ class DemonLockGuard:
 
     def verify_sterile_parity(self) -> bool:
         """
-        Verify Manifold Parity: Sophian Drag + Tzimtzum Pressure = 1.6403 (derived).
+        Verify Manifold Parity: Sophian Drag + Tzimtzum Pressure.
 
-        v23.0+: eta_S = 163/239, sigma_T = 23/24
-        163/239 + 23/24 = 1.64034169820...
-
-        This is the balance check - the forces pushing out (Pressure)
-        and holding back (Drag) must sum to the parity invariant.
+        eta_S = 163/(10 b3 - 1) and sigma_T = (n-1)/n on the path in force
+        (163/239 + 23/24 = 1.6403 only at the retired seed b3 = 24). An
+        IDENTITY guard: the registry value is compared with itself and with
+        the loaded manifest, not with data.
         """
         # Check registry
         parity_sum = self.registry.parity_sum

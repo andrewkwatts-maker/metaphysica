@@ -46,29 +46,43 @@ re-exports it) so config/constants.py can use it without an import cycle.
 | core-paths-13 | core/FormulasRegistry.py:1145-1149, 1477-1478, 1874-1875 | fixed: literal 43, 144 and n_gen 3 fallbacks removed; no import cycle (eight import orders checked) | bc8dc15 | S::test_registry_has_no_literal_seed_fallbacks |
 | core-paths-26 | core/variants/catalogue/g2_forms.py:264, 294 | fixed: b3_clusters summary says retired seed_24; consequence states the 3-cycle reading fails at every Joyce seed (odd b3); option and adoption kept | bc8dc15 | S::test_b3_clusters_is_not_stated_at_the_active_seed |
 | core-paths-18 | config/parameters/master_action.py:14-35 | fixed in part: PNEUMA_25D renamed PNEUMA_WEYL_26D (no importer), history prose removed; BULK_PLANCK_POWER kept: the source records it is kept for the owner and tests/test_master_action_is_one_consistent_statement.py pins it | bc8dc15 | S::test_master_action_names_the_weyl_spinor |
-| core-paths-21 | core/switch_search.py:589-623 | fixed: row `state` CONSISTENT/INCONSISTENT/ERRORED, `errored_checks`, search `n_errored`; ranking consumer is theories/ (Needs other lane) | R4 | F::test_errored_combination_is_apart_from_inconsistent |
-| core-paths-20 | core/switch_search.py:213-217, 577-583 | fixed: fork.default() raises; free set returns (None, "UNMEASURED: <exc>") as `free_set_status` | R4 | F::test_a_fork_with_no_default_raises, F::test_free_set_failure_is_an_unmeasured_record |
-| core-paths-41 | core/switch_search.py:119 | fixed: resolve("action_bulk_sectors") | R4 | F::test_re_t_check_reads_the_live_action_selection |
-| core-paths-22 | testground/runner/screen.py:117-123; testground/rank.py | fixed: _settle raises; ranking header `n_not_evaluated`/`not_evaluated`, validated | R4 | tests/testground/test_2c_screen.py::test_settle_raises_a_failing_invalidation, F::test_ranking_header_lists_rows_not_evaluated |
-| core-paths-23 | testground/runner/screen.py:163-176 | fixed: _process_key raises on an unreadable store or an import-time fork with no option | R4 | tests/testground/test_2c_screen.py (two tests) |
-| core-paths-24 | testground/runner/worker.py:172-175 | fixed: reason and wall_s required | R4 | F::test_run_log_without_reason_or_wall_time_raises |
-| core-paths-25 | core/preferred_path.py:5 | fixed | R4 | F::test_preferred_path_does_not_count_forks_in_prose |
-| core-paths-35 | core/eml_integration.py:363-379 | fixed: chi_eff = 48 n_gen (n_gen of the path when omitted), n_gen = chi_eff/48; old n_gen = chi_eff/(4 b3) gave 1.5 | R4 | F::test_eml_chi_eff_is_the_k3_reading_of_the_path |
-| core-paths-38 | core/dependency_resolver.py:589-599, 731, build_seed_values | fixed: 153/135/163/288 read from FormulasRegistry; descriptions name the source | R4 | F::test_resolver_seeds_are_read_from_the_registry |
-| core-paths-33 | core/demon_lock_guard.py:168-190, 479 | fixed: RETIRED_FROM_PAPER = ("verify_integer_closure",), labelled IDENTITY; preflight labels built from registry values (H0 71.55, 23/24, 1.6403 were typed) | R4 | F::test_integer_closure_is_retired_and_labels_are_computed |
+| core-paths-21 | core/switch_search.py:589-623 | fixed: row `state` CONSISTENT/INCONSISTENT/ERRORED, `errored_checks`, search `n_errored`; ranking consumer is theories/ (Needs other lane) | abbca46 | F::test_errored_combination_is_apart_from_inconsistent |
+| core-paths-20 | core/switch_search.py:213-217, 577-583 | fixed: fork.default() raises; free set returns (None, "UNMEASURED: <exc>") as `free_set_status` | abbca46 | F::test_a_fork_with_no_default_raises, F::test_free_set_failure_is_an_unmeasured_record |
+| core-paths-41 | core/switch_search.py:119 | fixed: resolve("action_bulk_sectors") | abbca46 | F::test_re_t_check_reads_the_live_action_selection |
+| core-paths-22 | testground/runner/screen.py:117-123; testground/rank.py | fixed: _settle raises; ranking header `n_not_evaluated`/`not_evaluated`, validated | abbca46 | tests/testground/test_2c_screen.py::test_settle_raises_a_failing_invalidation, F::test_ranking_header_lists_rows_not_evaluated |
+| core-paths-23 | testground/runner/screen.py:163-176 | fixed: _process_key raises on an unreadable store or an import-time fork with no option | abbca46 | tests/testground/test_2c_screen.py (two tests) |
+| core-paths-24 | testground/runner/worker.py:172-175 | fixed: reason and wall_s required | abbca46 | F::test_run_log_without_reason_or_wall_time_raises |
+| core-paths-25 | core/preferred_path.py:5 | fixed | abbca46 | F::test_preferred_path_does_not_count_forks_in_prose |
+| core-paths-35 | core/eml_integration.py:363-379 | fixed: chi_eff = 48 n_gen (n_gen of the path when omitted), n_gen = chi_eff/48; old n_gen = chi_eff/(4 b3) gave 1.5 | abbca46 | F::test_eml_chi_eff_is_the_k3_reading_of_the_path |
+| core-paths-38 | core/dependency_resolver.py:589-599, 731, build_seed_values | fixed: 153/135/163/288 read from FormulasRegistry; descriptions name the source | abbca46 | F::test_resolver_seeds_are_read_from_the_registry |
+| core-paths-33 | core/demon_lock_guard.py:168-190, 479 | fixed: RETIRED_FROM_PAPER = ("verify_integer_closure",), labelled IDENTITY; preflight labels built from registry values (H0 71.55, 23/24, 1.6403 were typed) | abbca46 | F::test_integer_closure_is_retired_and_labels_are_computed |
 | core-paths-34 | core/identity_ledger.py:97-256 | refuted: `claimed` is the frozen literal by design and identity_report already evaluates every claim at every seed (per_branch computed, status_on_adopted) | - | - |
-| core-paths-36 | core/free_variable_ledger.py:974-1020 | fixed (text): anchors read at geometric_anchors.ANCHOR_FIT, the value they are registered at; split is wave D | R4 | F::test_free_variable_ledger_names_the_anchor_it_reads |
-| core-paths-39 | config/parameters/bridge.py:125-137, verify_signature | fixed: SHADOW_SIGNATURE (12,1) active; (12,0) kept as RETIRED_SHADOW_SIGNATURE_SPATIAL (no importer); verify_signature sums the two shadows | R4 | F::test_bridge_states_the_two_13d_shadow_reading |
-| core-paths-11 (config/constants.py) | config/constants.py:72-109, config_dict.py:37-39 | fixed: FundamentalConstants PathValued; HODGE_* kept as RETIRED_TCS187_HODGE_*; euler_characteristic, fermion_generations read the path; config_dict exports b2, b3, chi_eff | R4 | F::test_fundamental_constants_follow_the_path |
+| core-paths-36 | core/free_variable_ledger.py:974-1020 | fixed (text): anchors read at geometric_anchors.ANCHOR_FIT, the value they are registered at; split is wave D | abbca46 | F::test_free_variable_ledger_names_the_anchor_it_reads |
+| core-paths-39 | config/parameters/bridge.py:125-137, verify_signature | fixed: SHADOW_SIGNATURE (12,1) active; (12,0) kept as RETIRED_SHADOW_SIGNATURE_SPATIAL (no importer); verify_signature sums the two shadows | abbca46 | F::test_bridge_states_the_two_13d_shadow_reading |
+| core-paths-11 (config/constants.py) | config/constants.py:72-109, config_dict.py:37-39 | fixed: FundamentalConstants PathValued; HODGE_* kept as RETIRED_TCS187_HODGE_*; euler_characteristic, fermion_generations read the path; config_dict exports b2, b3, chi_eff | abbca46 | F::test_fundamental_constants_follow_the_path |
 | core-paths-17 | variants/adopted.py action forks | blocked: brief keeps the four action forks for L4 wave B | - | - |
 | core-paths-28 | topology.critical_dim | blocked: registered in PM/geometry/modular_invariance.py (L2) | - | - |
+| core-paths-05 (tau_p) | core/canonical_values.py | fixed: CANON tau_p_years read from artifact row proton_decay.tau_p_years (raises when absent), PREDICTED against Super-K 2.4e34; 3.9e34/8.15e34/1.0e34 kept as superseded | R5 | P::test_canon_tau_p_is_read_from_the_artifact |
+| core-paths-12 (verify_parity) | core/FormulasRegistry.py verify_parity; core/demon_lock_guard.py | fixed: verify_parity is an IDENTITY against parity_sum_on_path (163/(10 b3 - 1) + fork sigma_T); typed 1.64034 gone; guard prose says IDENTITY | R5 | P::test_parity_check_is_an_identity_on_every_seed |
+| core-paths-12 (named constants text) | core/FormulasRegistry.py generate_named_constants_json | fixed: verification block, c_kaf, hubble_formula, tzimtzum and w0 formulas computed from the path; checks labelled IDENTITY | R5 | P::test_named_constants_verification_text_is_computed |
+| core-paths-11 (nomenclature) | config/nomenclature.py | fixed: BraneNomenclature, HebrewPhysicsNomenclature PathValued; K_GIMEL, C_KAF, C_KAF_APPLICATION, HEBREW_PARAMETERS from FormulasRegistry; 12.31, 27.2 kept as RETIRED_SEED24_* | R5 | P::test_nomenclature_k_gimel_and_c_kaf_follow_the_path |
+| core-paths-44 | core/shape_search.py | fixed: main() command line; primitives read active_path.topology and raise on a missing or non-positive primitive | R5 | P::test_shape_search_primitives_read_the_path, P::test_shape_search_missing_primitive_raises, P::test_shape_search_has_a_command_line_entry |
+| core-paths-45 | CI guards | refuted: tests/test_seed_blindness.py and test_registry_paths.py already guard it; the src references are prose | - | - |
+| core-paths-19, 31, 37 | size splits | blocked: wave D P3 | - | - |
+| core-paths-36 (split) | core/free_variable_ledger.py | blocked: wave D | - | - |
+| core-paths-42 | joint geometry sweep | blocked: needs a sweep run (--singles, --joint 2) and artifact regeneration (L9); seed_24 is refused by constrained_singles (b2_over_faces) | - | - |
+| sim-particle-23 | core/FormulasRegistry.py | blocked: no change needed in the registry; PM/qed/_triple_track.py is L5 | - | - |
 
 ## Downstream
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
 - Round 2: R, K, C, T, tests/testground, tests/test_variants.py, tests/test_g2_differential.py: all pass after the rank_effects rename (one D-019 failure before it).
 - Round 3: S, T, R, C, K, tests/testground, test_master_action_is_one_consistent_statement, test_variants, test_canonical_values, test_higgs_sector: 657 passed, 1 skipped. None.
 
+- Round 5 (P = tests/programme/test_path_core_parity_and_text.py): P, test_canonical_values, test_formulas_registry_core, test_physics_invariants, test_sterility_audit, test_value_context_audit, test_declarative_strategy_a/b, test_racetrack_is_an_ansatz_not_a_vacuum, tests/testground pass. tests/test_frozen_seed_literals.py fails 3: it pins the removed defects (FormulasRegistry prose sterile_sector/denominator rows GONE; verify_parity no longer fails at the live seed). Its docstring requires docs/FROZEN_SEED_LITERALS.md and the register to record the move before repinning; neither is L1, so not edited.
+- Baseline (not L1): tests/test_b3_root_coverage.py 3 fail from AutoGenerated dependency_chains (walker root_seed "b3=24", degraded walks; L9); test_b3_status_versus_the_refutation.py fails because OUTSTANDING_ISSUES.md is now split into docs/issues/.
+
 ## Needs other lane
+- Owner of docs/FROZEN_SEED_LITERALS.md: record the round-5 moves, then repin tests/test_frozen_seed_literals.py inventories and invert its verify_parity test.
 - theories/pm/ranking.py `_consistent`: map switch_search row state ERRORED to None (missing), so ERROR rows leave the ladder tie-break (core-paths-21).
 - L9: run_all_simulations.py:1469-1483 still wraps load_v25/v26_modules in `except Exception`; the loaders now raise, the caller hides it.
 - L5: PM/qed/*.py (nine kernels) register manifest_* as DERIVED; set the status/verdict from FormulasRegistry.QED_ROUNDTRIP_IDENTITIES. PM/qed/_triple_track.py literal 288/28800 (sim-particle-23) should read the registry.
@@ -83,10 +97,9 @@ re-exports it) so config/constants.py can use it without an import cycle.
 
 ## Data to confirm
 - CODATA 2022 electron Compton wavelength 2.42631023538(76)e-12 m (was the 2018 value).
+- Source rows for CANON sum_mnu, M_GUT and MKK in the parameter artifact (none match today).
 
 ## Next round
-- FormulasRegistry verify_parity typed 1.64034 and generate_named_constants_json "verification" block (163/239 + 23/24, c_kaf 27.2, integer_closure status IDENTITY).
-- CANON tau_p, sum_mnu, M_GUT, MKK typed; config/nomenclature.py K_GIMEL 12.31 (24/2 + 1/pi).
-- core-paths-42 joint sweep, 44 (shape_search entry point), 45 (low).
-- Size splits CP-19, 31, 36 (ledger), 37 are wave D P3.
-- Baseline failures: tests/test_b3_root_coverage.py (3), test_b3_status_versus_the_refutation.py (1).
+- generate_named_constants_json seed-24 text left: penrose_hameroff 13 "(B3/2)+1", gate formulas with 24, "|chi| = 72; n_gen = |chi|/24", "1.0 / (1/144) = 144", "sqrt(24)", "D_bulk = 26 = b3 + 2".
+- CANON sum_mnu 0.0994, M_GUT 2.118e16, MKK 4.5 still typed: no artifact row found (see Data to confirm).
+- Size splits CP-19, 31, 36 (ledger), 37 are wave D P3; core-paths-42 waits on L9.

@@ -4339,9 +4339,22 @@ class FormulasRegistry:
         """
         Calculate C_kaf (Flux normalization).
 
-        Formula: C_kaf = b3 * (b3 - 7) / (b3 - 9) = 24 * 17 / 15 = 27.2
+        Formula: C_kaf = b3 * (b3 - 7) / (b3 - 9), b3 of the path in force
+        (27.2 = 24 * 17 / 15 only at the retired seed b3 = 24).
         """
         return self._b3 * (self._b3 - 7) / (self._b3 - 9)
+
+    def _c_kaf_text(self) -> str:
+        """The C_kaf formula with the numbers of this registry's path."""
+        b3 = self._b3
+        return "b3 * (b3-7) / (b3-9) = %s * %s / %s = %.6g" % (
+            b3, b3 - 7, b3 - 9, self.c_kaf)
+
+    def _parity_text(self) -> str:
+        """The parity formula with the numbers of this registry's path."""
+        return "eta_S + sigma_T = %s/%s + %.10f = %.6f" % (
+            self._sterile_sector, 10 * self._b3 - 1,
+            self._tzimtzum_pressure, self.parity_sum)
 
     @property
     def c_kaf(self) -> float:
@@ -4644,19 +4657,28 @@ class FormulasRegistry:
         """
         return (self._shadow_sector + self._christ_constant) == self._roots_total
 
-    def verify_parity(self, tolerance: float = 0.0002) -> bool:
-        """
-        Verify Manifold Parity: eta_S + sigma_T ≈ 1.6403
+    def parity_sum_on_path(self) -> float:
+        """eta_S + sigma_T recomputed from the path in force.
 
-        v23.0+: eta_S is now DERIVED via eta_S = 163/239.
-        The exact derived parity sum is:
-          163/239 + 23/24 = 0.68200836820... + 0.95833333... = 1.64034169820...
-
-        This is 0.014% higher than the old phenomenological target 1.6402 (based on
-        fitted eta_S = 0.6819). The tolerance is set to 0.0002 to verify consistency.
+        eta_S = 163/(10 b3 - 1) with b3 from `active_path.topology()` and
+        sigma_T = (n-1)/n with n from the dark_energy_betti fork. It was
+        1.64034 (163/239 + 23/24) only at the retired seed b3 = 24.
         """
-        expected = 1.64034  # Derived from 163/239 + 23/24 (rounded to 5 decimal places)
-        return abs(self.parity_sum - expected) < tolerance
+        from metaphysica.simulations.core.active_path import topology
+
+        b3 = topology().b3
+        return self._sterile_sector / (10 * b3 - 1) + self._tzimtzum_from_fork()
+
+    def verify_parity(self, tolerance: float = 1e-12) -> bool:
+        """
+        IDENTITY: the registry's eta_S + sigma_T equals `parity_sum_on_path`.
+
+        True by construction when the registry was built on the path in
+        force; it guards the manifest against a stale seed and is not
+        physics validation. The typed target 1.64034 it used to compare
+        against is the retired seed_24 value and failed on the adopted seed.
+        """
+        return abs(self.parity_sum - self.parity_sum_on_path()) < tolerance
 
     @staticmethod
     def _tzimtzum_from_fork() -> float:
@@ -4780,7 +4802,7 @@ class FormulasRegistry:
                     "named_for": "Matt O'Dowd",
                     "legacy_alias": "The Barbelo",
                     "legacy_description": "First Thought; the active force in 26D(24,2) bulk",
-                    "hubble_formula": f"(288/4) - (163/144) + 163/239 = {self.h0_local:.2f}",
+                    "hubble_formula": f"({self._roots_total}/4) - ({self.odowd_bulk_derived:g}/{self.pressure_divisor:g}) + {self._sterile_sector}/{10 * self._b3 - 1} = {self.h0_local:.2f}",
                     "pm_path": "constants.barbelo_modulus"
                 },
                 "penrose_hameroff_bridge": {
@@ -4856,7 +4878,7 @@ class FormulasRegistry:
                     "symbol": "sigma_T",
                     "latex": "\\sigma_T",
                     "value": self.tzimtzum_pressure,
-                    "formula": "23/24 = 1 - 1/B3",
+                    "formula": f"(n-1)/n = {self.tzimtzum_pressure:.10f}, n from the dark_energy_betti fork",
                     "role": "Void Seal / Dark Energy w0",
                     "legacy_alias": "The Tzimtzum Seal",
                     "legacy_description": "The void seal; Kabbalistic contraction that creates space",
@@ -4876,7 +4898,7 @@ class FormulasRegistry:
                     "unit": "km/s/Mpc",
                     "formula": "(288/4) - (P_O/pressure_divisor) + eta_S",
                     "expanded": f"72 - {self.barbelo_modulus/self.pressure_divisor:.4f} + {self.sophian_drag} = {self.h0_local:.4f}",
-                    "note": "pressure_divisor = b3^2/4 = 144 (equals chi_eff_total geometrically)",
+                    "note": f"pressure_divisor = b3^2/4 = {self.pressure_divisor:g} at b3 = {self._b3} (it was 144 = chi_eff only at the retired seed b3 = 24)",
                     "derived_from": ["odowd_bulk_pressure", "pressure_divisor", "sophian_drag"],
                     "pm_path": "cosmology.H0_local"
                 },
@@ -4884,7 +4906,7 @@ class FormulasRegistry:
                     "symbol": "w0",
                     "latex": "w_0",
                     "value": self.w0_dark_energy,
-                    "formula": "-sigma_T = -23/24",
+                    "formula": f"-sigma_T = {self.w0_dark_energy:.10f}",
                     "derived_from": ["tzimtzum_pressure"],
                     "pm_path": "cosmology.w0_derived"
                 },
@@ -5910,23 +5932,31 @@ class FormulasRegistry:
                 "c_kaf": {
                     "symbol": "C_kaf",
                     "value": self.c_kaf,
-                    "formula": "b3 * (b3-7) / (b3-9) = 27.2"
+                    "formula": self._c_kaf_text()
                 }
             },
 
             "verification": {
-                "status": "FULLY_VERIFIED",
+                # Every check below is an IDENTITY (true by construction in
+                # this registry): a manifest-integrity guard, not physics
+                # validation, kept out of the paper and the score.
+                "status": "IDENTITY",
                 "integer_closure": {
-                    "formula": "135 + 153 = 288",
+                    "formula": "%s + %s = %s" % (
+                        self._shadow_sector, self._christ_constant, self._roots_total),
+                    "status": "IDENTITY",
                     "valid": self.verify_integer_closure()
                 },
                 "parity_check": {
-                    "formula": "eta_S + sigma_T = 163/239 + 23/24 = 1.6403",
+                    "formula": self._parity_text(),
                     "value": self.parity_sum,
+                    "status": "IDENTITY",
                     "valid": self.verify_parity()
                 },
                 "tzimtzum_fraction": {
-                    "formula": "23/24",
+                    "formula": "sigma_T = (n-1)/n = %.10f, n from the dark_energy_betti fork"
+                               % self._tzimtzum_pressure,
+                    "status": "IDENTITY",
                     "valid": self.verify_tzimtzum_fraction()
                 },
                 "watts_guard_rail": {
@@ -6088,9 +6118,9 @@ if __name__ == "__main__":
         print(f"  {key}: {value}")
 
     print("\n--- VERIFICATION ---")
-    print(f"  Integer Closure (135+153=288): {registry.verify_integer_closure()}")
-    print(f"  Parity Check (eta_S+sigma_T=1.6403): {registry.verify_parity()}")
-    print(f"  Tzimtzum Fraction (23/24): {registry.verify_tzimtzum_fraction()}")
+    print(f"  Integer Closure (IDENTITY): {registry.verify_integer_closure()}")
+    print(f"  Parity Check ({registry._parity_text()}): {registry.verify_parity()}")
+    print(f"  Tzimtzum Fraction ((n-1)/n = {registry.tzimtzum_pressure:.6f}): {registry.verify_tzimtzum_fraction()}")
     print(f"  Watts Guard Rail (1.0): {registry.verify_watts_constant()}")
     print(f"  JC Identity (Delta_JC = Lambda_JC = 153): {registry.verify_jc_identity()}")
     print(f"  C04 Bulk Stability (R_s = 288/163): {registry.verify_c04_bulk_stability()}")

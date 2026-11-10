@@ -7,6 +7,29 @@ formulas or strings were changed by the move.
 import numpy as np
 
 from .parameters.fitted import FittedParameters
+from .path_valued import PathValued
+
+
+def _registry():
+    """FormulasRegistry on the path in force (imported here: no cycle)."""
+    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+
+    return FormulasRegistry()
+
+
+def _k_gimel(cls) -> float:
+    """k_gimel = b3/2 + 1/pi, the registry's demiurgic_coupling."""
+    return _registry().demiurgic_coupling
+
+
+def _c_kaf(cls) -> float:
+    """C_kaf = b3 (b3-7)/(b3-9), the registry's c_kaf."""
+    return _registry().c_kaf
+
+
+#: k_gimel and C_kaf at the retired seed b3 = 24 (kept as retired rows).
+RETIRED_SEED24_K_GIMEL = 12.31
+RETIRED_SEED24_C_KAF = 27.2
 
 
 # ==============================================================================
@@ -495,7 +518,7 @@ class G2DirectionNomenclature:
 # BRANE NOMENCLATURE (v12.9)
 # ==============================================================================
 
-class BraneNomenclature:
+class BraneNomenclature(metaclass=PathValued):
     """
     Brane Localization Factors (v12.9).
 
@@ -559,10 +582,12 @@ class BraneNomenclature:
         "I went to the north"
     )
 
-    # Warping parameter for brane localization (k_ג)
-    # Calibrated to give warp factors: 1, ~10^-6, ~10^-12, ~10^-17
-    # Formula: Λ = e^(-k_ג×y×π) where y = 0, 1/3, 2/3, 1
-    K_GIMEL = 12.31  # Derived: k_ג = b₃/2 + 1/π = 12 + 0.318 ≈ 12.31
+    # Warping parameter for brane localization (k_ג), read at access
+    # (PathValued): k_ג = b₃/2 + 1/π from FormulasRegistry on the path in
+    # force. Λ = e^(-k_ג×y×π) where y = 0, 1/3, 2/3, 1; the warp factors
+    # follow k_ג. 12.31 was its value at the retired seed b3 = 24
+    # (RETIRED_SEED24_K_GIMEL), where they were 1, ~10^-6, ~10^-12, ~10^-17.
+    _PATH_DERIVED = {"K_GIMEL": _k_gimel}
 
     # Sitra Shadow Coupling
     SITRA_COUPLINGS = {
@@ -637,34 +662,31 @@ class BraneNomenclature:
 # HEBREW PHYSICS NOMENCLATURE (v12.9)
 # ==============================================================================
 
-class HebrewPhysicsNomenclature:
+class HebrewPhysicsNomenclature(metaclass=PathValued):
     """
     Hebrew Letter Naming for Key Physics Parameters (v12.9).
 
     Maps 5 key physics parameters to Hebrew letters:
-    - k_ג (k_gimel): Warping constant ≈ 12.31
-    - C_כ (C_kaf): Flux normalization ≈ 27.2
+    - k_ג (k_gimel): Warping constant b₃/2 + 1/π (path in force)
+    - C_כ (C_kaf): Flux normalization b₃(b₃-7)/(b₃-9) (path in force)
     - f_ה (f_heh): Partition divisor ≈ 4.5
     - S_מ (S_mem): Instanton suppression ≈ 40
     - δ_ל (delta_lamed): Threshold correction ≈ 1.2
     """
 
-    # k_gimel (ג): Warping constant - GEOMETRICALLY DERIVED (v14.1)
-    # Geometric formula: k_ג = b₃/2 + 1/π = 12 + 0.318 = 12.318 ≈ 12.31
-    K_GIMEL = 12.31  # Derived: b₃/2 + 1/π = 24/2 + 1/π = 12.318
+    # k_gimel (ג) and C_kaf (כ), the C_kaf application text and
+    # HEBREW_PARAMETERS are read at access from FormulasRegistry on the path
+    # in force (PathValued, _PATH_DERIVED below). At the retired seed b3 = 24
+    # they were 12.31 and 27.2 (RETIRED_SEED24_K_GIMEL, RETIRED_SEED24_C_KAF).
     K_GIMEL_SYMBOL = "k_ג"
     K_GIMEL_DESCRIPTION = "Warping parameter controlling exponential hierarchy in brane tensions"
     K_GIMEL_FORMULA = "k_ג = b₃/2 + 1/π (geometric: brane spacing + G₂ holonomy)"
     K_GIMEL_APPLICATION = "Λ(y) = exp(-k_ג × y × π)"
     K_GIMEL_SIMULATION = "simulations/k_warp_geometric_v14_1.py"
 
-    # C_kaf (כ): Flux normalization - GEOMETRICALLY DERIVED (v14.1)
-    # Geometric formula: C_כ = b₃ × (b₃-7)/(b₃-9) = 24 × 17/15 = 27.2
-    C_KAF = 27.2  # Derived: b₃(b₃-7)/(b₃-9) = 24×17/15 = 27.2
     C_KAF_SYMBOL = "C_כ"
     C_KAF_DESCRIPTION = "Normalizes flux quanta to give effective torsion T_ω = -b₃ / C_כ"
     C_KAF_FORMULA = "C_כ = b₃ × (b₃-7)/(b₃-9) (geometric: moduli/cycle ratio)"
-    C_KAF_APPLICATION = "T_ω = -b₃ / C_כ = -24 / 27.2 ≈ -0.882"
     C_KAF_SIMULATION = "simulations/c_flux_geometric_v14_1.py"
 
     # f_heh (ה): Partition divisor - GEOMETRICALLY DERIVED (v14.1)
@@ -688,32 +710,9 @@ class HebrewPhysicsNomenclature:
     DELTA_LAMED_DESCRIPTION = "Coefficient for KK/heavy threshold corrections in RG flow"
     DELTA_LAMED_FORMULA = "α_GUT(M_GUT) = α_GUT^tree × (1 + δ_ל × loop_factor)"
 
-    # Complete Hebrew Letter Mapping
-    HEBREW_PARAMETERS = {
-        "k_gimel": {
-            "hebrew": "ג",
-            "symbol": "k_ג",
-            "english_name": "k_gimel",
-            "value": 12.31,
-            "unit": "dimensionless",
-            "meaning": "Bridge between observable and shadow sectors",
-            "physics": "Warping parameter in brane localization Λ(y) = exp(-k_ג × y × π)",
-            "derivation": "k_ג = b₃/2 + 1/π = 12 + 0.318 = 12.318 (GEOMETRIC)",
-            "simulation": "simulations/k_warp_geometric_v14_1.py",
-            "status": "DERIVED"
-        },
-        "C_kaf": {
-            "hebrew": "כ",
-            "symbol": "C_כ",
-            "english_name": "C_kaf",
-            "value": 27.2,
-            "unit": "dimensionless",
-            "meaning": "Shapes flux quanta into effective torsion",
-            "physics": "Flux normalization: T_ω = -b₃ / C_כ",
-            "derivation": "C_כ = b₃ × (b₃-7)/(b₃-9) = 24 × 17/15 (GEOMETRIC)",
-            "simulation": "simulations/c_flux_geometric_v14_1.py",
-            "status": "DERIVED"
-        },
+    # Hebrew letter mapping of the path-independent rows; the k_gimel and
+    # C_kaf rows are added at access (_hebrew_parameters).
+    _STATIC_HEBREW_PARAMETERS = {
         "f_heh": {
             "hebrew": "ה",
             "symbol": "f_ה",
@@ -748,6 +747,14 @@ class HebrewPhysicsNomenclature:
         }
     }
 
+    _PATH_DERIVED = {
+        "K_GIMEL": _k_gimel,
+        "C_KAF": _c_kaf,
+        "C_KAF_APPLICATION": lambda cls: _c_kaf_application(),
+        "HEBREW_PARAMETERS": lambda cls: _hebrew_parameters(
+            cls._STATIC_HEBREW_PARAMETERS),
+    }
+
     @classmethod
     def get_parameter(cls, name: str) -> dict:
         """Get complete parameter info by name."""
@@ -765,3 +772,48 @@ class HebrewPhysicsNomenclature:
             "parameters": cls.HEBREW_PARAMETERS,
             "footnote": "Hebrew letter subscripts provide a consistent naming convention"
         }
+
+
+def _c_kaf_application() -> str:
+    """T_omega = -b3 / C_kaf with the numbers of the path in force."""
+    reg = _registry()
+    b3 = reg.elder_kads
+    return "T_ω = -b₃ / C_כ = -%s / %.6g ≈ %.4g" % (b3, reg.c_kaf, -b3 / reg.c_kaf)
+
+
+def _hebrew_parameters(static: dict) -> dict:
+    """The Hebrew letter mapping on the path in force."""
+    reg = _registry()
+    b3 = reg.elder_kads
+    rows = {
+        "k_gimel": {
+            "hebrew": "ג",
+            "symbol": "k_ג",
+            "english_name": "k_gimel",
+            "value": reg.demiurgic_coupling,
+            "unit": "dimensionless",
+            "meaning": "Bridge between observable and shadow sectors",
+            "physics": "Warping parameter in brane localization Λ(y) = exp(-k_ג × y × π)",
+            "derivation": "k_ג = b₃/2 + 1/π = %s/2 + 1/π = %.6g (GEOMETRIC)"
+                          % (b3, reg.demiurgic_coupling),
+            "simulation": "simulations/k_warp_geometric_v14_1.py",
+            "status": "DERIVED",
+            "superseded": {"12.31": "value at the retired seed b3 = 24"},
+        },
+        "C_kaf": {
+            "hebrew": "כ",
+            "symbol": "C_כ",
+            "english_name": "C_kaf",
+            "value": reg.c_kaf,
+            "unit": "dimensionless",
+            "meaning": "Shapes flux quanta into effective torsion",
+            "physics": "Flux normalization: T_ω = -b₃ / C_כ",
+            "derivation": "C_כ = b₃ × (b₃-7)/(b₃-9) = %s × %s/%s = %.6g (GEOMETRIC)"
+                          % (b3, b3 - 7, b3 - 9, reg.c_kaf),
+            "simulation": "simulations/c_flux_geometric_v14_1.py",
+            "status": "DERIVED",
+            "superseded": {"27.2": "value at the retired seed b3 = 24"},
+        },
+    }
+    rows.update(static)
+    return rows

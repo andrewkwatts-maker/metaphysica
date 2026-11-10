@@ -25,8 +25,8 @@ seed is seed_43_joyce. ``B3``, ``B2``, ``CHI_EFF``, ``CHI_SECTOR`` and
 (module ``__getattr__``, PEP 562), and ``canon(path)`` builds the table for
 any path. Entries that depend on the seed (w0, wa, H0, alpha_leak) state
 their form and numbers from the computed values and keep the seed_24
-reading as a labelled retired row in ``superseded``. H0 is a computed
-quantity: it is read from the parameter artifact, never typed.
+reading as a labelled retired row in ``superseded``. H0 and tau_p are
+computed quantities: they are read from the parameter artifact, never typed.
 """
 from __future__ import annotations
 
@@ -122,15 +122,25 @@ def _wa_entry(topo: Topology) -> Dict[str, Any]:
     }
 
 
-def _h0_entry(topo: Topology) -> Dict[str, Any]:
+def _artifact_value(row: str) -> float:
+    """The parameter artifact's value of *row*; raises when it is absent.
+
+    A computed quantity is never typed into CANON: it is read from the
+    artifact the build wrote (the path the artifact was built on).
+    """
     from metaphysica.simulations.core.parameter_artifact import parameter_value
 
-    row = "cosmology.H0_local"
     value = parameter_value(row)
     if value is None:
         raise KeyError(
-            "%s is not in the parameter artifact; H0 is a computed quantity "
+            "%s is not in the parameter artifact; it is a computed quantity "
             "and is never typed into CANON (build the artifact first)" % row)
+    return value
+
+
+def _h0_entry(topo: Topology) -> Dict[str, Any]:
+    row = "cosmology.H0_local"
+    value = _artifact_value(row)
     shoes, planck = (73.04, 1.04), (67.4, 0.5)
     return {
         "value": value,
@@ -154,6 +164,26 @@ def _h0_entry(topo: Topology) -> Dict[str, Any]:
             "76.34": "ricci-flow variant (3.17 sigma SH0ES) -> cosmology.H0_ricci_variant",
             "70.42": "sterile extraction (2.5 sigma SH0ES, 6.0 Planck)",
             _retired_key(71.55): "288/4 - 163/144 + 0.6819 at the retired seed b3 = 24",
+        },
+    }
+
+
+def _tau_p_entry(topo: Topology) -> Dict[str, Any]:
+    row = "proton_decay.tau_p_years"
+    value = _artifact_value(row)
+    bound = 2.4e34
+    return {
+        "value": value,
+        "form": "registry proton_decay chain, read from %s" % row,
+        "status": "PREDICTED",
+        "spare_vars": 2,
+        "comparison": {"dataset": "Super-K p->e+pi0 bound (PDG 2024)", "exp": bound, "unc": None,
+                        "kind": "lower_bound", "ratio": value / bound},
+        "source": "parameter artifact row %s (the path the artifact was built on)" % row,
+        "superseded": {
+            "3.9e34": "prose rounding drift",
+            "8.15e34": "stale config literal",
+            "1.0e34": "wrong output binding",
         },
     }
 
@@ -185,6 +215,7 @@ _PATH_ENTRIES: Dict[str, Callable[[Topology], Dict[str, Any]]] = {
     "w0": _w0_entry,
     "wa": _wa_entry,
     "H0_km_s_Mpc": _h0_entry,
+    "tau_p_years": _tau_p_entry,
     "alpha_leak": _alpha_leak_entry,
 }
 
@@ -268,19 +299,6 @@ _STATIC: Dict[str, Dict[str, Any]] = {
         "superseded": {
             "0.23190": "geometric spectral candidate -> gauge.sin2_theta_w_geometric",
             "0.2232": "tree-level ratio of registered g',g2 (scheme-inequivalent; keep as consistency row only)",
-        },
-    },
-    "tau_p_years": {
-        "value": 4.757e34,
-        "form": "registry proton_decay chain",
-        "status": "PREDICTED",
-        "spare_vars": 2,
-        "comparison": {"dataset": "Super-K p->e+pi0 bound (PDG 2024)", "exp": 2.4e34, "unc": None,
-                        "kind": "lower_bound", "ratio": 4.757e34 / 2.4e34},
-        "superseded": {
-            "3.9e34": "prose rounding drift",
-            "8.15e34": "stale config literal",
-            "1.0e34": "wrong output binding",
         },
     },
     "sum_mnu_eV": {

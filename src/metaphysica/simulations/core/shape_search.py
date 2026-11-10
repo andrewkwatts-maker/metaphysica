@@ -45,6 +45,7 @@ __all__ = [
     "generate",
     "search_target",
     "search_free_set",
+    "main",
 ]
 
 #: Relative tolerance for calling an expression a match. Deliberately tight:
@@ -53,7 +54,13 @@ DEFAULT_TOL = 1e-4
 
 
 def primitives() -> Dict[str, Tuple[float, str]]:
-    """symbol -> (value, provenance). Derived or structural quantities only."""
+    """symbol -> (value, provenance). Derived or structural quantities only.
+
+    b3 and chi_eff are those of the path in force (`active_path.topology()`);
+    a primitive that cannot be read raises rather than leaving the grammar
+    (a silently smaller grammar understates the trials factor).
+    """
+    from metaphysica.simulations.core.active_path import topology
     from metaphysica.simulations.core.arithma_formula import (
         arithma_constant,
         registry_value,
@@ -62,12 +69,15 @@ def primitives() -> Dict[str, Tuple[float, str]]:
     out: Dict[str, Tuple[float, str]] = {}
 
     def add(symbol: str, value: Optional[float], provenance: str) -> None:
-        if value is not None and value > 0:
-            out[symbol] = (float(value), provenance)
+        if value is None or not value > 0:
+            raise ValueError("shape_search primitive %s (%s) is %r; it must be "
+                             "a positive number" % (symbol, provenance, value))
+        out[symbol] = (float(value), provenance)
 
-    add("b3", registry_value("topology.elder_kads"), "topology.elder_kads (INPUT)")
+    topo = topology()
+    add("b3", topo.b3, "b3 of the path %s (seed_values)" % topo.path)
     add("D_bulk", registry_value("dimensions.D_bulk"), "dimensions.D_bulk")
-    add("chi", registry_value("topology.mephorash_chi"), "topology.mephorash_chi")
+    add("chi", topo.chi_eff, "chi_eff of the path %s (chi_eff_route)" % topo.path)
     add("pi", arithma_constant("pi"), "arithma constant table")
     # Structural counts the framework derives in joyce_orbifold / the Fano work.
     add("n_fano", 7.0, "the 7 Fano points = 7 involutions (R2, derived)")
@@ -289,3 +299,34 @@ def search_free_set(tol: float = DEFAULT_TOL,
             "more than a coincidence with good odds."
         ),
     }
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    """`python -m metaphysica.simulations.core.shape_search [target]`.
+
+    With a target, search it; without one, search the free set. Prints the
+    result (with its trials factor) as JSON.
+    """
+    import argparse
+    import json
+
+    parser = argparse.ArgumentParser(
+        prog="python -m metaphysica.simulations.core.shape_search",
+        description="Candidate formulas for a value, with the trials factor.")
+    parser.add_argument("target", nargs="?", type=float,
+                        help="value to search; omitted: every free-set parameter")
+    parser.add_argument("--name", default="", help="label for the target")
+    parser.add_argument("--tol", type=float, default=DEFAULT_TOL)
+    parser.add_argument("--max-terms", type=int, default=3)
+    args = parser.parse_args(argv)
+    if args.target is None:
+        result = search_free_set(tol=args.tol, max_terms=args.max_terms)
+    else:
+        result = search_target(args.target, name=args.name, tol=args.tol,
+                               max_terms=args.max_terms)
+    print(json.dumps(result, indent=2, default=str))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
