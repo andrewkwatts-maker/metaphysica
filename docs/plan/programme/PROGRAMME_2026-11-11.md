@@ -24,7 +24,7 @@ Branch: `site-review` (not pushed). Nothing is pushed, merged or published witho
 | P1 | Audit (14 read-only lanes, verified) | `audit/<lane>.md`, `AUDIT_SUMMARY.md` | done: 540 findings, 62 critical and 174 high confirmed |
 | P2 | Fix lanes from the audit | `FIX_BRIEFS.md`, `progress/<lane>.md`, commits, a test per fix | wave A running (wf_47affa26-c1a, base 355bfd9) |
 | P3 | SOLID split; every fork option evaluable | `PATHS.md`, sweep artifacts | waiting on P2 |
-| P4 | Close the geometry; solve the master action | `ACTION_SOLUTION.md`, ladder checks | design in progress |
+| P4 | Close the geometry; solve the master action; P4c evaluate each readmission candidate | `ACTION_SOLUTION.md`, ladder checks, option table | design done, owner rulings R1 and R2 given 2026-11-11 |
 | P5 | Falsifiability and data comparison | `FALSIFIABILITY.md`, paper section 6 table | waiting on P4 |
 | P6 | Core paper; generators verified; local rebuild; handoff | `core_paper.json`, `HANDOFF.md` | last |
 

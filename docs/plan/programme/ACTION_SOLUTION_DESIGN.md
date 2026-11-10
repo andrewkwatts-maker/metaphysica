@@ -25,7 +25,8 @@ Evidence: `evidence/weyl_bilinear.py --full` and `evidence/weyl_holomorphic.py -
 8192-dimensional gamma matrices at (24,2); controls (3,1), (9,1), (5,1), (2,2), (4,2), (8,2).
 Same result as Bars' two-time field theory, which needs Psi-bar X-slash D-slash Psi for this reason.
 
-Planner ruling R1 (owner to confirm; recorded as D-030): keep the 4096-component Weyl field
+Ruling R1 (owner, 2026-11-11; record as D-030: "non-vanishing holomorphic form becomes the
+default path; leave the old one as a switch, default off, to revisit if it is needed"): keep the 4096-component Weyl field
 (a Fact that must not drift) and write its kinetic term in the non-vanishing form. Fork
 `action_bulk_spinor` gains the option `weyl_holomorphic` (adopted); `weyl` stays in the
 catalogue with its now-failing check (never deleted); `dirac` stays evaluable (for a Dirac field
@@ -44,7 +45,8 @@ iff every factor is. R^(3,1): flat. Y_7: holonomy G2 implies Ricci-flat (Bonan 1
 closed-geometry certificate. K_2: compact, orientable, Ricci-flat forces genus 1 by
 Gauss-Bonnet, so K_2 = flat T^2. S^2 fails (R = 2/r^2; it would need a flux or a cosmological
 term, and the action has neither).
-Ruling R2: the residual space is a fork `residual_space` with options `flat_t2` (adopted: forced
+Ruling R2 (owner, 2026-11-11: "make it a switch and make flat torus the default path"): the
+residual space is a fork `residual_space` with options `flat_t2` (adopted: forced
 by the field equations), `s2` (evaluated, fails the vacuum check), `undeclared` (the state
 until now, kept).
 
@@ -87,6 +89,27 @@ G_ij is the L2 metric on the moduli (Y_7: harmonic 3-forms; T^2: area and tau).
    tested directly against data (the scoreboard); they are not derived from S_26.
 Paper wording follows from this: two layers, named as such. Layer 1, the action and its solution
 (this file). Layer 2, the ansatz formulas and their scoreboard, falsified rows included.
+
+## What is settled and what is not (owner question, 2026-11-11)
+Settled by proof or explicit computation, so no code fix changes it:
+- no non-abelian gauge field from the metric on Y_7 (compact, Ricci-flat, b1 = 0: no Killing vector);
+- chiral index 0 (13 is odd: the 64-component shadow spinor reduces to Dirac pairs in 4D);
+- b2 counts nothing in this action (no form field), so n_gen = b2/4 has no dynamical carrier;
+- no potential, so the moduli are massless.
+These are the Kaluza-Klein no-go results (Witten 1981, 1983) met inside this model.
+Not settled until the fix waves are done: the score of the ansatz layer (it still mixes
+retired-seed numbers, double counts and mislabelled inputs). Not solved by any fix: 26D -> 13D.
+
+## P4c: evaluate what each readmission candidate would give (after the fix waves)
+The no-go names the missing ingredients. Each becomes an evaluable option, never an adopted one
+without the readmission rule (definition, coefficient source, check that can fail):
+- a form field (`action_bulk_sectors=flux_f4`): b2 vectors and b3 axions through `zero_modes`;
+- a gauge sector (`e8xe8_ym`) and the KK tower (`kk_tower`);
+- the singular limit of Y_7: the 12 in b2 = 12 is the 12 singular T^3 loci of T^7/(Z2)^3 before
+  resolution (b3 = 7 + 3 b2). In 11D M-theory such loci carry SU(2) gauge fields and conical
+  points carry chiral matter (Acharya 1998; Atiyah and Witten 2001). That is literature about a
+  different theory, quoted as a lead: whether the 26D (24,2) action has an analogue is open.
+Output: one table per option: vectors, gauge algebra, chiral index, moduli, potential, verdict.
 
 ## Code (executors; generic first, PM binding second)
 Generic, `src/metaphysica/actions/` (no PM imports):

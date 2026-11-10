@@ -180,12 +180,12 @@ exception or `or 0.0` fallback in your files.
 - **L4 gauge-action with P4b.** Owned `simulations/PM/{gauge,derivations,field_dynamics}/**`,
   `src/metaphysica/theories/**`, `variants/catalogue/action.py`, the action readers in
   `variants/adopted.py`. P4b is the PM binding in `ACTION_SOLUTION_DESIGN.md`: forks
-  `residual_space`, `second_time`, option `weyl_holomorphic`; D-030 recorded as proposed, owner
-  to confirm. m_W, m_Z, alpha_s, v as inputs; rows the adopted action excludes take the
+  `residual_space` (`flat_t2` in force), `second_time`, option `weyl_holomorphic` (in force;
+  `weyl` stays selectable, off by default). Both are owner rulings of 2026-11-11, recorded as D-030. m_W, m_Z, alpha_s, v as inputs; rows the adopted action excludes take the
   superseded status.
 - **L5 particle.** Owned `simulations/PM/{particle,susy,qed}/**`, `variants/catalogue/flavour.py`.
-  New fork `neutrino_ordering` (`normal`, `inverted`, `unruled`; `unruled` in force until the
-  owner rules), one sum row per option; m_h circular; theta_13 text from the value.
+  New fork `neutrino_ordering` (`normal`, `inverted`, `unruled`; `unruled` in force by owner
+  ruling of 2026-11-11, until the rest is sorted), one sum row per option; m_h circular; theta_13 text from the value.
 
 ## Wave C
 - **L8 paper.** Owned `simulations/PM/paper/**`. The 59 rows of `AUDIT_SUMMARY.md` section 3.
