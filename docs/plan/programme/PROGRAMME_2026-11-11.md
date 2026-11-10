@@ -7,7 +7,11 @@ find falsifiability and compare against data; cut the paper to its core concepts
 academic; make sure the backend generates params, sections, paper and website data correctly.
 Standing rule: units, formulas, comments and descriptions match the active path everywhere.
 
-Branch: `site-review` (not pushed). Nothing is pushed, merged or published without the owner.
+Branch: work lands on `main`, merged and pushed at each verified wave boundary (owner,
+2026-11-11). `main` holds the planner state up to 6b2ca1f (merge b820864, pushed). Wave A runs on
+`site-review`; its lane commits merge to `main` once the verifier and the full suite have run,
+then `site-review` is deleted and later waves run on `main`. Publishing the site and cutting a
+release still need the owner.
 
 ## Rules for every lane
 - At most 3 agents at once. Each lane owns its files; `git add <paths>`, never `-A`; no push.
