@@ -971,10 +971,12 @@ def _derived_from_free_variables() -> List[Dict[str, Any]]:
 
     Not ledger rows -- they are consequences, not free variables. Recorded
     because ``register_anchors`` stamps every non-MEASURED anchor with
-    ``"derivation"`` (once "Derived from b3=24 topological invariant") and
-    ``"tuning_free": True``, and for these the b3 input does no work at all:
-    they are arithmetic on experimental numbers.
+    ``"derivation"`` and ``"tuning_free": True``; the anchors are computed at
+    the fitted anchor ``geometric_anchors.ANCHOR_FIT``, not the live b3, and for
+    these the b3 input does no work at all: they are arithmetic on
+    experimental numbers.
     """
+    from metaphysica.simulations.PM.geometry.geometric_anchors import ANCHOR_FIT
     from metaphysica.simulations.PM.geometry.geometric_anchors_core import (
         MEASURED_ANCHORS,
         GeometricAnchors,
@@ -1007,7 +1009,7 @@ def _derived_from_free_variables() -> List[Dict[str, Any]]:
         return found
 
     out = []
-    for name in sorted(GeometricAnchors(24).get_all_anchors()):
+    for name in sorted(GeometricAnchors(ANCHOR_FIT).get_all_anchors()):
         if name in MEASURED_ANCHORS or name == "get_all_anchors":
             continue
         inherited = sorted(taint(name))
@@ -1017,9 +1019,10 @@ def _derived_from_free_variables() -> List[Dict[str, Any]]:
                 "registered_as": "GEOMETRIC (fundamental=True, tuning_free=True)",
                 "inherits_from": [f"geometry.{d}" for d in inherited],
                 "finding": (
-                    "registered as a tuning-free consequence of b3 = 24, but "
-                    "its value is arithmetic on experimental input; b3 does "
-                    "no work in it"
+                    "registered as a tuning-free consequence of b3, computed "
+                    "at the fitted anchor ANCHOR_FIT = %d, but its value is "
+                    "arithmetic on experimental input; b3 does no work in it"
+                    % ANCHOR_FIT
                 ),
             })
     return out

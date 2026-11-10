@@ -96,7 +96,7 @@ def test_the_environment_is_restored_even_on_keyboard_interrupt(monkeypatch):
     assert tiny.SEED_VAR not in os.environ
 
 
-def test_settle_swallows_a_failing_invalidation():
+def test_settle_raises_a_failing_invalidation():
     calls = {"n": 0}
 
     def fails_after_first():
@@ -105,8 +105,9 @@ def test_settle_swallows_a_failing_invalidation():
             raise RuntimeError("late failure")
 
     theory = _call_time_theory(invalidate=fails_after_first)
-    measured = evaluate_configuration(theory, tiny.cfg(), [tiny.MODE_LIVE])
-    assert measured[0].status == MEASURED and calls["n"] == 2
+    with pytest.raises(RuntimeError, match="late failure"):
+        evaluate_configuration(theory, tiny.cfg(), [tiny.MODE_LIVE])
+    assert calls["n"] == 2
 
 
 def test_not_runnable_and_non_measurement_results_are_unmeasured():
@@ -161,22 +162,20 @@ def test_an_in_process_flip_of_an_import_time_fork_would_be_wrong():
     assert out[0].count == 0          # import-time read does not
 
 
-def test_an_unreadable_store_leaves_import_time_groups_unmeasured():
+def test_an_unreadable_store_raises_instead_of_skipping_the_binding_check():
     theory = tiny.make_theory(store=tiny.Store(fail=True))
-    result = screen(theory, [tiny.cfg()])
-    measured = result[tiny.cfg().digest]
-    assert all(m.status == UNMEASURED for m in measured)
-    assert "unknown" in measured[0].reasons[0]
+    with pytest.raises(RuntimeError, match="store unavailable"):
+        screen(theory, [tiny.cfg()])
 
 
-def test_an_import_time_fork_missing_from_the_active_is_unknown(monkeypatch):
+def test_an_import_time_fork_missing_from_the_active_raises(monkeypatch):
     class PartialStore(tiny.Store):
         def active(self):
             return tiny.Configuration.of(tiny.THEORY_ID, {"mode": "a"})
 
     theory = tiny.make_theory(store=PartialStore())
-    measured = screen(theory, [tiny.cfg()])[tiny.cfg().digest]
-    assert "unknown" in measured[0].reasons[0]
+    with pytest.raises(KeyError, match="no option in this process"):
+        screen(theory, [tiny.cfg()])
     monkeypatch.setenv(tiny.SEED_VAR, "low")       # an env override decides
     assert screen(theory, [tiny.cfg()])[tiny.cfg().digest][0].count == 0
 

@@ -115,11 +115,8 @@ def _checked(signal: Signal, value: object) -> Measurement:
 
 
 def _settle(theory: Theory) -> None:
-    """Invalidate caches after restoring the environment (never raises)."""
-    try:
-        theory.invalidate_caches()
-    except Exception:
-        pass
+    """Invalidate caches after restoring the environment; a failure raises."""
+    theory.invalidate_caches()
 
 
 def evaluate_configuration(theory: Theory, cfg: Configuration,
@@ -161,17 +158,20 @@ def _status(measurements: Measurements) -> str:
 
 
 def _process_key(theory: Theory,
-                 forks: Sequence[str]) -> Optional[Tuple[Tuple[str, str], ...]]:
-    """This process's import-time options (env override, else the active)."""
-    try:
-        active = theory.selections.active().mapping if forks else {}
-    except Exception:
-        return None
+                 forks: Sequence[str]) -> Tuple[Tuple[str, str], ...]:
+    """This process's import-time options (env override, else the active).
+
+    Raises when the active selection cannot be read or an import-time fork has
+    no option here: without the key the binding check cannot be made.
+    """
+    active = theory.selections.active().mapping if forks else {}
     key = []
     for fork in sorted(forks):
         value = os.environ.get(theory.env_var(fork), active.get(fork))
         if value is None:
-            return None
+            raise KeyError("import-time fork %r has no option in this process "
+                           "(no %s and no active option)"
+                           % (fork, theory.env_var(fork)))
         key.append((fork, value))
     return tuple(key)
 
@@ -189,7 +189,7 @@ def _screen_in_process(theory: Theory, plan: RunPlan,
             measured[cfg.digest] = _all_unmeasured(signals, (
                 "import-time-bound options %s differ from this process (%s); "
                 "screening them needs a fresh process (give theory_ref)")
-                % (dict(key), dict(here) if here is not None else "unknown"))
+                % (dict(key), dict(here)))
         else:
             measured[cfg.digest] = evaluate_configuration(theory, cfg, signals)
         log.emit("finish", cfg.digest, SCREEN, _status(measured[cfg.digest]))

@@ -14,6 +14,13 @@ resolve() already raised on an unknown fork (KeyError) and unknown option
 
 Round 3 (2026-11-11). S = tests/programme/test_path_core_registry_status.py.
 
+Round 4 (2026-11-11). F = tests/programme/test_path_core_fallbacks_and_text.py.
+tests/testground/test_2c_screen.py edited: three tests asserted the defects of
+core-paths-22/23 (settle swallows, unreadable store or missing import-time
+option becomes "unknown"); they now assert the raise.
+PathValued moved to config/path_valued.py (config/parameters/path_valued.py
+re-exports it) so config/constants.py can use it without an import cycle.
+
 | id | file:line | state | commit | test |
 |---|---|---|---|---|
 | core-paths-05 | core/canonical_values.py (B3/B2/CHI_EFF) | fixed | 12db48f | T::test_topology_and_canonical_names_agree_with_seed_values |
@@ -39,6 +46,20 @@ Round 3 (2026-11-11). S = tests/programme/test_path_core_registry_status.py.
 | core-paths-13 | core/FormulasRegistry.py:1145-1149, 1477-1478, 1874-1875 | fixed: literal 43, 144 and n_gen 3 fallbacks removed; no import cycle (eight import orders checked) | bc8dc15 | S::test_registry_has_no_literal_seed_fallbacks |
 | core-paths-26 | core/variants/catalogue/g2_forms.py:264, 294 | fixed: b3_clusters summary says retired seed_24; consequence states the 3-cycle reading fails at every Joyce seed (odd b3); option and adoption kept | bc8dc15 | S::test_b3_clusters_is_not_stated_at_the_active_seed |
 | core-paths-18 | config/parameters/master_action.py:14-35 | fixed in part: PNEUMA_25D renamed PNEUMA_WEYL_26D (no importer), history prose removed; BULK_PLANCK_POWER kept: the source records it is kept for the owner and tests/test_master_action_is_one_consistent_statement.py pins it | bc8dc15 | S::test_master_action_names_the_weyl_spinor |
+| core-paths-21 | core/switch_search.py:589-623 | fixed: row `state` CONSISTENT/INCONSISTENT/ERRORED, `errored_checks`, search `n_errored`; ranking consumer is theories/ (Needs other lane) | R4 | F::test_errored_combination_is_apart_from_inconsistent |
+| core-paths-20 | core/switch_search.py:213-217, 577-583 | fixed: fork.default() raises; free set returns (None, "UNMEASURED: <exc>") as `free_set_status` | R4 | F::test_a_fork_with_no_default_raises, F::test_free_set_failure_is_an_unmeasured_record |
+| core-paths-41 | core/switch_search.py:119 | fixed: resolve("action_bulk_sectors") | R4 | F::test_re_t_check_reads_the_live_action_selection |
+| core-paths-22 | testground/runner/screen.py:117-123; testground/rank.py | fixed: _settle raises; ranking header `n_not_evaluated`/`not_evaluated`, validated | R4 | tests/testground/test_2c_screen.py::test_settle_raises_a_failing_invalidation, F::test_ranking_header_lists_rows_not_evaluated |
+| core-paths-23 | testground/runner/screen.py:163-176 | fixed: _process_key raises on an unreadable store or an import-time fork with no option | R4 | tests/testground/test_2c_screen.py (two tests) |
+| core-paths-24 | testground/runner/worker.py:172-175 | fixed: reason and wall_s required | R4 | F::test_run_log_without_reason_or_wall_time_raises |
+| core-paths-25 | core/preferred_path.py:5 | fixed | R4 | F::test_preferred_path_does_not_count_forks_in_prose |
+| core-paths-35 | core/eml_integration.py:363-379 | fixed: chi_eff = 48 n_gen (n_gen of the path when omitted), n_gen = chi_eff/48; old n_gen = chi_eff/(4 b3) gave 1.5 | R4 | F::test_eml_chi_eff_is_the_k3_reading_of_the_path |
+| core-paths-38 | core/dependency_resolver.py:589-599, 731, build_seed_values | fixed: 153/135/163/288 read from FormulasRegistry; descriptions name the source | R4 | F::test_resolver_seeds_are_read_from_the_registry |
+| core-paths-33 | core/demon_lock_guard.py:168-190, 479 | fixed: RETIRED_FROM_PAPER = ("verify_integer_closure",), labelled IDENTITY; preflight labels built from registry values (H0 71.55, 23/24, 1.6403 were typed) | R4 | F::test_integer_closure_is_retired_and_labels_are_computed |
+| core-paths-34 | core/identity_ledger.py:97-256 | refuted: `claimed` is the frozen literal by design and identity_report already evaluates every claim at every seed (per_branch computed, status_on_adopted) | - | - |
+| core-paths-36 | core/free_variable_ledger.py:974-1020 | fixed (text): anchors read at geometric_anchors.ANCHOR_FIT, the value they are registered at; split is wave D | R4 | F::test_free_variable_ledger_names_the_anchor_it_reads |
+| core-paths-39 | config/parameters/bridge.py:125-137, verify_signature | fixed: SHADOW_SIGNATURE (12,1) active; (12,0) kept as RETIRED_SHADOW_SIGNATURE_SPATIAL (no importer); verify_signature sums the two shadows | R4 | F::test_bridge_states_the_two_13d_shadow_reading |
+| core-paths-11 (config/constants.py) | config/constants.py:72-109, config_dict.py:37-39 | fixed: FundamentalConstants PathValued; HODGE_* kept as RETIRED_TCS187_HODGE_*; euler_characteristic, fermion_generations read the path; config_dict exports b2, b3, chi_eff | R4 | F::test_fundamental_constants_follow_the_path |
 | core-paths-17 | variants/adopted.py action forks | blocked: brief keeps the four action forks for L4 wave B | - | - |
 | core-paths-28 | topology.critical_dim | blocked: registered in PM/geometry/modular_invariance.py (L2) | - | - |
 
@@ -48,6 +69,7 @@ Round 3 (2026-11-11). S = tests/programme/test_path_core_registry_status.py.
 - Round 3: S, T, R, C, K, tests/testground, test_master_action_is_one_consistent_statement, test_variants, test_canonical_values, test_higgs_sector: 657 passed, 1 skipped. None.
 
 ## Needs other lane
+- theories/pm/ranking.py `_consistent`: map switch_search row state ERRORED to None (missing), so ERROR rows leave the ladder tie-break (core-paths-21).
 - L9: run_all_simulations.py:1469-1483 still wraps load_v25/v26_modules in `except Exception`; the loaders now raise, the caller hides it.
 - L5: PM/qed/*.py (nine kernels) register manifest_* as DERIVED; set the status/verdict from FormulasRegistry.QED_ROUNDTRIP_IDENTITIES. PM/qed/_triple_track.py literal 288/28800 (sim-particle-23) should read the registry.
 - L2: moduli_indexing b3_clusters needs a reading at the adopted seed (owner decision on adoption).
@@ -63,9 +85,8 @@ Round 3 (2026-11-11). S = tests/programme/test_path_core_registry_status.py.
 - CODATA 2022 electron Compton wavelength 2.42631023538(76)e-12 m (was the 2018 value).
 
 ## Next round
-- core-paths-21 (switch_search evaluate_combination: ERRORED state apart from inconsistent), 20, 41.
-- core-paths-22, 23, 24 (testground runner fallbacks), 25, 35, 38 (text), 33, 34, 36, 39.
-- config/constants.py HODGE_H11/H21/H31 = 4/0/68 (#187); master_action.py:387,412 literals (AUDIT_SUMMARY section 5).
-- FormulasRegistry verify_parity typed 1.64034; CANON tau_p, sum_mnu, M_GUT, MKK typed.
-- Size splits (CP-19, 31, 37) are wave D P3; CP-42 joint sweep, 44, 45 low.
+- FormulasRegistry verify_parity typed 1.64034 and generate_named_constants_json "verification" block (163/239 + 23/24, c_kaf 27.2, integer_closure status IDENTITY).
+- CANON tau_p, sum_mnu, M_GUT, MKK typed; config/nomenclature.py K_GIMEL 12.31 (24/2 + 1/pi).
+- core-paths-42 joint sweep, 44 (shape_search entry point), 45 (low).
+- Size splits CP-19, 31, 36 (ledger), 37 are wave D P3.
 - Baseline failures: tests/test_b3_root_coverage.py (3), test_b3_status_versus_the_refutation.py (1).

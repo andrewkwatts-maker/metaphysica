@@ -137,9 +137,12 @@ def rank_entries(entries: Sequence[RankEntry], selected: str,
                  "reason": reasons[e.path_id]}
                 for e in sorted(entries, key=lambda e: e.path_id)
                 if reasons[e.path_id]]
+    not_evaluated = [r["path_id"] for r in rows if r["missing"]]
     return {"schema": SCHEMA, "rule": RULE, "reasonable_rule": REASONABLE_RULE,
             "searched": len(rows), "selected": selected,
-            "verdict": _verdict(rows), "rows": rows, "unranked": unranked,
+            "verdict": _verdict(rows),
+            "n_not_evaluated": len(not_evaluated), "not_evaluated": not_evaluated,
+            "rows": rows, "unranked": unranked,
             "option_effects": option_effects(entries, selected, forks)}
 
 
@@ -163,6 +166,9 @@ def validate_ranking(doc: Mapping[str, Any]) -> List[str]:
         bad.append("selected is not a row")
     if not isinstance(doc.get("unranked"), list):
         bad.append("unranked is not a list")
+    missing = [r.get("path_id") for r in rows if r.get("missing")]
+    if doc.get("not_evaluated") != missing or doc.get("n_not_evaluated") != len(missing):
+        bad.append("not_evaluated does not list the rows with missing parts")
     bad += validate_effects(doc.get("option_effects"))
     for r in rows:
         absent = [k for k in _ROW_KEYS if k not in r]

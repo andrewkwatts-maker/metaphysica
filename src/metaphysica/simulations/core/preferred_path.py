@@ -2,7 +2,7 @@
 
 WHY
 ===
-There are now twelve executable forks. Without a single declared state, three
+There are the declared forks (see variants.json). Without a single declared state, three
 things go wrong: the documentation and theory output silently depend on
 whichever environment variables happened to be set; "what does the theory
 actually say" has no answer; and comparing two configurations means

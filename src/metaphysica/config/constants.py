@@ -5,16 +5,21 @@ formulas or strings were changed by the move.
 """
 
 from .registry import _ssot_dim
+from .path_valued import PathValued
 
 
 # ==============================================================================
 # FUNDAMENTAL CONSTANTS (THEORY-DERIVED)
 # ==============================================================================
 
-class FundamentalConstants:
+class FundamentalConstants(metaclass=PathValued):
     """
     Constants derived from fundamental theoretical principles.
     These should NOT be changed unless the underlying theory is modified.
+
+    B3, B2, CHI_EFF and N_GENERATIONS are read from the path in force at
+    access (metaclass PathValued); the TCS #187 Hodge numbers are kept as
+    RETIRED_TCS187_* rows.
     """
 
     # Dimensional Structure (v21/v22 Dual-Shadow Bridge Framework)
@@ -69,12 +74,11 @@ class FundamentalConstants:
     SPATIAL_DIMS = 3          # Source: Observable spatial dimensions (empirical)
     TIME_DIMS = 1             # Source: Observable time dimension (empirical)
 
-    # TCS (retired reading) G₂ Manifold #187 Topology (Corti et al. 2015)
-    # χ_eff = 2(h¹¹ - h²¹ + h³¹) = 2(4 - 0 + 68) = 144
-    # Also: χ_eff = 6 × b₃ = 6 × 24 = 144 (flux quantization)
-    HODGE_H11 = 4  # Source: CHNP 2015 h^{1,1} = 4 Kahler moduli (= b2)
-    HODGE_H21 = 0  # Source: G2 manifolds have no complex structure moduli (h^{2,1} = 0)
-    HODGE_H31 = 68  # Source: CHNP 2015 h^{3,1} = 68 associative moduli
+    # RETIRED reading: TCS G₂ manifold #187 (Corti et al. 2015), kept as a
+    # record. The path in force is the Joyce resolution of T^7/(Z2)^3.
+    RETIRED_TCS187_HODGE_H11 = 4  # CHNP 2015 h^{1,1} = 4 Kahler moduli
+    RETIRED_TCS187_HODGE_H21 = 0  # G2 manifolds have no complex structure moduli
+    RETIRED_TCS187_HODGE_H31 = 68  # CHNP 2015 h^{3,1} = 68 associative moduli
 
     # Symmetry Factors
     FLUX_REDUCTION = 2  # Derived: Z2 orbifold flux reduction factor
@@ -96,23 +100,18 @@ class FundamentalConstants:
     # Derived Topological Invariants
     @staticmethod
     def euler_characteristic():
-        """χ_eff = 2(h¹¹ - h²¹ + h³¹) for TCS (retired reading) G₂ manifold"""
-        chi_eff = 2 * (FundamentalConstants.HODGE_H11
-                      - FundamentalConstants.HODGE_H21
-                      + FundamentalConstants.HODGE_H31)
-        return chi_eff  # = 2(4 - 0 + 68) = 144
+        """χ_eff of the path in force (chi_eff_route fork; chi_eff = 48 n_gen)."""
+        return FundamentalConstants.CHI_EFF
 
     @staticmethod
     def euler_characteristic_effective():
-        """Effective χ for generation counting: |χ_eff|/48 = 3 generations"""
-        # χ_eff = 144 from Hodge numbers OR 6 × b₃ = 6 × 24 = 144
-        return 144
+        """Effective χ for generation counting, of the path in force."""
+        return FundamentalConstants.CHI_EFF
 
     @staticmethod
     def fermion_generations():
-        """N_gen = floor(χ_eff / (24 × flux_reduce))"""
-        chi_eff = FundamentalConstants.euler_characteristic_effective()
-        return int(chi_eff / (24 * FundamentalConstants.FLUX_REDUCTION))
+        """n_gen of the path in force (n_gen_source fork; n_gen = b2/4)."""
+        return FundamentalConstants.N_GENERATIONS
 
     @staticmethod
     def pneuma_dimension_full():

@@ -590,13 +590,13 @@ def build_pm_dependency_graph() -> DependencyGraph:
     graph.register("seeds.mephorash_chi", depends_on=[],
                    metadata={'level': 0, 'description': 'chi_eff per shadow of the path in force (active_path.topology)'})
     graph.register("seeds.logos_joint", depends_on=[],
-                   metadata={'level': 0, 'description': 'The Christ Constant = 153 (fitted decomposition; see FormulasRegistry)'})
+                   metadata={'level': 0, 'description': 'The Christ Constant (FormulasRegistry.logos_joint; fitted decomposition)'})
     graph.register("seeds.visible_gates", depends_on=[],
-                   metadata={'level': 0, 'description': 'Visible Gates = 135 (fitted decomposition; see FormulasRegistry)'})
+                   metadata={'level': 0, 'description': 'Visible Gates (FormulasRegistry.visible_gates; fitted decomposition)'})
     graph.register("seeds.bulk_pressure", depends_on=[],
-                   metadata={'level': 0, 'description': 'O\'Dowd Bulk Pressure = 163'})
+                   metadata={'level': 0, 'description': 'O\'Dowd Bulk Pressure (FormulasRegistry.sterile_sector = roots_total - 125)'})
     graph.register("seeds.logic_closure", depends_on=[],
-                   metadata={'level': 0, 'description': 'Logic Closure = 288'})
+                   metadata={'level': 0, 'description': 'Logic Closure (FormulasRegistry.roots_total = visible_gates + logos_joint; path-independent)'})
 
     # =========================================================================
     # Level 1: Direct geometric derivations
@@ -728,8 +728,8 @@ def build_pm_dependency_graph() -> DependencyGraph:
     # The actual compute functions are wired in PMRegistry._init_v25_modules()
     # (see simulations/base/registry.py) — we only register the nodes here so
     # that the DAG is aware of them and downstream consumers can list_params().
-    # Each node depends on the b3=24 seed (and other prior derivations) so the
-    # topological order is preserved.
+    # Each node depends on the b3 seed of the path in force (and other prior
+    # derivations) so the topological order is preserved.
 
     # --- Sprint 4 #2: yukawa_derivation.get_geometric_pmns ---
     # T4 / 24-cell geometric derivation of theta_13 and delta_CP.
@@ -931,14 +931,17 @@ def build_seed_values() -> Dict[str, Any]:
     """
     from metaphysica.simulations.core.active_path import topology
 
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+
     topo = topology()
+    registry = get_registry()
     return {
         "seeds.elder_kads": topo.b3,
         "seeds.mephorash_chi": topo.chi_sector,  # chi_eff per 13D shadow
-        "seeds.logos_joint": 153,
-        "seeds.visible_gates": 135,
-        "seeds.bulk_pressure": 163,
-        "seeds.logic_closure": 288,
+        "seeds.logos_joint": registry.logos_joint,
+        "seeds.visible_gates": registry.visible_gates,
+        "seeds.bulk_pressure": registry.sterile_sector,
+        "seeds.logic_closure": registry.roots_total,
     }
 
 

@@ -34,9 +34,9 @@ def get_config_dict():
         'time_dims': FundamentalConstants.TIME_DIMS,
 
         # Topology
-        'h_11': FundamentalConstants.HODGE_H11,
-        'h_21': FundamentalConstants.HODGE_H21,
-        'h_31': FundamentalConstants.HODGE_H31,
+        'b2': FundamentalConstants.B2,
+        'b3': FundamentalConstants.B3,
+        'chi_eff': FundamentalConstants.CHI_EFF,
         'flux_reduce': FundamentalConstants.FLUX_REDUCTION,
         'bridge_dofs': FundamentalConstants.BRIDGE_DOFS,  # v21: was gauging_dofs
         'mirroring': FundamentalConstants.MIRRORING_FACTOR,

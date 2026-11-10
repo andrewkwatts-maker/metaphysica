@@ -72,6 +72,7 @@ __all__ = [
     "evaluate_combination",
     "search",
     "consistency_checks",
+    "combination_state",
 ]
 
 VERDICT = "NO_SELECTION_MADE"
@@ -110,13 +111,10 @@ def _re_t_check(live: float, stationary_points) -> dict:
     row claims it derived. Under `re_t_adoption = computed_vacuum` the racetrack
     comparison applies.
     """
-    from metaphysica.simulations.core.variants.adopted import (
-        _action_bulk_sectors_adopted,
-    )
     from metaphysica.simulations.core.variants import resolve
 
     name = "re_t_is_the_solved_vacuum"
-    if str(resolve("re_t_adoption")) != "computed_vacuum"             and _action_bulk_sectors_adopted() == "none":
+    if str(resolve("re_t_adoption")) != "computed_vacuum"             and str(resolve("action_bulk_sectors")) == "none":
         claims = re_t_derived_claims(live)
         return {"name": name, "kind": None if not claims else "CONTRADICTION",
                 "ok": not claims, "mode": "labelled_calibrated_d015",
@@ -211,10 +209,7 @@ def _option_lists(fork_ids: Iterable[str], include_refuted: bool):
     option_lists = []
     for fid in ids:
         fork = forks[fid]
-        try:
-            adopted = fork.default()
-        except Exception:                  # a fork with no resolvable default
-            adopted = None
+        adopted = fork.default()           # a fork with no default raises
         if include_refuted:
             candidates = list(enumerate(fork.options))
         else:
@@ -574,13 +569,27 @@ def consistency_checks() -> List[Dict[str, Any]]:
     return checks
 
 
-def _free_set_load_bearing() -> Optional[int]:
+def _free_set_load_bearing() -> Tuple[Optional[int], str]:
+    """(free_set_size, status): status is MEASURED, or UNMEASURED with the error."""
     try:
         from metaphysica.simulations.core.free_set import build_free_set
 
-        return int(build_free_set()["free_set_size"])
-    except Exception:
-        return None
+        return int(build_free_set()["free_set_size"]), "MEASURED"
+    except Exception as exc:  # noqa: BLE001 -- reported in the row, not hidden
+        return None, "UNMEASURED: %s: %s" % (type(exc).__name__, exc)
+
+
+def combination_state(problems: List[Dict[str, Any]]) -> str:
+    """CONSISTENT, INCONSISTENT (a check failed) or ERRORED (only checks that raised).
+
+    An ERROR row is a check that could not run; it is not a contradiction, so a
+    combination held back only by errors is ERRORED, apart from INCONSISTENT.
+    """
+    if not problems:
+        return "CONSISTENT"
+    if all(c.get("kind") == "ERROR" for c in problems):
+        return "ERRORED"
+    return "INCONSISTENT"
 
 
 # ------------------------------------------------------------- the search
@@ -596,7 +605,7 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
         with forced(selection):
             reset_cache()
             checks = consistency_checks()
-            free_set_size = _free_set_load_bearing()
+            free_set_size, free_set_status = _free_set_load_bearing()
     finally:
         reset_cache()
 
@@ -617,8 +626,11 @@ def evaluate_combination(selection: Dict[str, str]) -> Dict[str, Any]:
         "n_problems": len(problems),
         "problem_kinds": kinds,
         "internally_consistent": not problems,
+        "state": combination_state(problems),
+        "errored_checks": [c["name"] for c in problems if c.get("kind") == "ERROR"],
         "blocked_only_by_unevaluable_checks": blocked_only_by_unevaluable,
         "free_set_size": free_set_size,
+        "free_set_status": free_set_status,
         "verdict": VERDICT,
     }
 
@@ -637,6 +649,7 @@ def search(fork_ids: Optional[Iterable[str]] = None,
 
     consistent = [r for r in rows if r["internally_consistent"]]
     blocked = [r for r in rows if r["blocked_only_by_unevaluable_checks"]]
+    errored = [r for r in rows if r["state"] == "ERRORED"]
 
     # A check with the same outcome in EVERY combination says nothing about the
     # switches -- it is a standing property of the theory that no setting of
@@ -674,6 +687,8 @@ def search(fork_ids: Optional[Iterable[str]] = None,
         "internally_consistent_digests": [r["digest"] for r in consistent],
         "n_blocked_only_by_unevaluable_checks": len(blocked),
         "blocked_only_by_unevaluable_digests": [r["digest"] for r in blocked],
+        "n_errored": len(errored),
+        "errored_digests": [r["digest"] for r in errored],
         "problems_no_combination_fixes": failing_everywhere,
         "problems_the_switches_control": varies_with_the_switches,
         "n_clean_on_every_switch_controlled_check": len(fork_dependent_clean),

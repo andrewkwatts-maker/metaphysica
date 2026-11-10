@@ -34,6 +34,13 @@ except ImportError:
     from FormulasRegistry import FormulasRegistry, get_registry
 
 
+# RETIRE-FROM-PAPER: the integer closure is an identity, true by construction
+# (FormulasRegistry defines roots_total = shadow_sector + christ_constant), so it
+# is not physics validation. The check stays as a manifest-integrity guard; it is
+# kept out of the paper and out of the score.
+RETIRED_FROM_PAPER = ("verify_integer_closure",)
+
+
 class DemonLockGuard:
     """
     Enforces the 'Demon Lock' by verifying manifest integrity.
@@ -165,14 +172,16 @@ class DemonLockGuard:
 
     def verify_integer_closure(self) -> bool:
         """
-        Verify the 288-root closure: 135 (Shadow) + 153 (Christ) = 288.
+        Integrity check: roots_total = shadow_sector + christ_constant.
 
-        This is the Demon Lock signature - the mathematical seal that
-        verifies the manifold is properly configured.
+        An IDENTITY (true by construction in FormulasRegistry), so it guards
+        the manifest against drift and is not physics validation
+        (RETIRED_FROM_PAPER).
         """
         # Check from registry
         if not self.registry.verify_integer_closure():
-            self.violations.append("CLOSURE ERROR: Registry reports 135 + 153 != 288")
+            self.violations.append(
+                "CLOSURE ERROR: registry shadow_sector + christ_constant != roots_total")
             return False
 
         # Check from JSON if loaded - compare against registry SSoT values
@@ -460,6 +469,23 @@ class DemonLockGuard:
     # MAIN VERIFICATION
     # =========================================================================
 
+    def preflight_checks(self) -> List[Tuple[str, Any]]:
+        """(label, check) pairs; every number in a label is the registry value."""
+        reg = self.registry
+        return [
+            ("Integer identity (%d+%d=%d, by construction)"
+             % (reg.shadow_sector, reg.christ_constant, reg.roots_total),
+             self.verify_integer_closure),
+            ("Tzimtzum Fraction (%.6f)" % reg.tzimtzum_pressure,
+             self.verify_tzimtzum_fraction),
+            ("Sterile Parity (eta_S+sigma_T=%.4f)" % reg.parity_sum,
+             self.verify_sterile_parity),
+            ("Watts Guard Rail (Omega_W=1.0)", self.verify_watts_guard_rail),
+            ("Hubble Formula (H0=%.2f)" % reg.h0_local, self.verify_hubble_formula),
+            ("W0 Seal (active mechanism)", self.verify_w0_seal),
+            ("SSoT Sync", self.verify_ssot_sync),
+        ]
+
     def run_preflight(self) -> bool:
         """
         Run all preflight checks.
@@ -474,17 +500,7 @@ class DemonLockGuard:
         print(f" Status: {self.registry.STATUS}")
         print("-" * 60)
 
-        # Run all verifications
-        checks = [
-            ("Integer Closure (135+153=288)", self.verify_integer_closure),
-            ("Tzimtzum Fraction (23/24)", self.verify_tzimtzum_fraction),
-            ("Sterile Parity (eta_S+sigma_T=1.6403)", self.verify_sterile_parity),
-            ("Watts Guard Rail (Omega_W=1.0)", self.verify_watts_guard_rail),
-            ("Hubble Formula (H0=71.55)", self.verify_hubble_formula),
-            ("W0 Seal (active mechanism)", self.verify_w0_seal),
-            ("SSoT Sync", self.verify_ssot_sync),
-        ]
-
+        checks = self.preflight_checks()
         if self.data:
             checks.insert(0, ("Structure", self.verify_structure))
             checks.insert(1, ("JSON Freshness", self.verify_json_freshness))

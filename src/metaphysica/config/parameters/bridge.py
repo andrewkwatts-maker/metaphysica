@@ -105,7 +105,7 @@ class V21BridgeParameters:
     - 12×(2,0) bridge pairs: Connect corresponding spatial dimension pairs
     - OR reduction: R_perp² = -I implements Möbius topology
 
-    Decomposition: 26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times + two shadow-time directions
+    Decomposition: 26D(24,2) = 12×(2,0) bridge pairs + 2 shadow times
                  = 24D space + 2D time = 26D ✓
     Per shadow: 12 spatial + 1 time (its own) = 13D(12,1)
 
@@ -122,15 +122,17 @@ class V21BridgeParameters:
     # Dual-shadow structure (replaces Sp(2,R) constraints)
     N_SHADOWS = 2             # Normal + Mirror shadows
     D_PER_SHADOW = _ssot_dim("D_shadow_total")
-    SHADOW_SIGNATURE_SPATIAL = (12, 0)  # v22: Shadows are SPATIAL only (12,0)
+    # Active reading: two 13D (12,1) shadows, each with its own time.
+    SHADOW_SIGNATURE = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
 
-    # v21.1 Fibered Time Structure (Issue 4 Resolution)
-    TIME_STRUCTURE = "per-shadow"   # Two-time: each shadow carries its own time
-    TIME_FIBER_SIGNATURE = (0, 2)   # T^2: two times, one per shadow
+    # Time structure: each shadow carries its own time (two times in all)
+    TIME_STRUCTURE = "per-shadow"
+    TIME_FIBER_SIGNATURE = (0, N_SHADOWS * _ssot_dim("D_shadow_time"))
     TIME_SHARED = False             # Two-time ruling: each shadow evolves in its own time
 
-    # Legacy (for backward compatibility - use SHADOW_SIGNATURE_SPATIAL instead)
-    SHADOW_SIGNATURE = (_ssot_dim("D_shadow_space"), _ssot_dim("D_shadow_time"))
+    # RETIRED reading (v22): spatial-only (12,0) shadows over a shared time
+    # fiber. Kept on the books; nothing reads it.
+    RETIRED_SHADOW_SIGNATURE_SPATIAL = (_ssot_dim("D_shadow_space"), 0)
 
     # Euclidean bridge
     D_BRIDGE = 2              # Bridge dimensions
@@ -232,33 +234,15 @@ class V21BridgeParameters:
     @staticmethod
     def verify_signature():
         """
-        Verify: (24,2) signature from fibered time + spatial shadows.
+        Verify: the (24,2) bulk is two 13D (12,1) shadows, one time each.
 
-        v22.0 FIBERED TIME STRUCTURE (12×(2,0) Bridge Architecture):
-        ------------------------------------------------------------
-        M^25 = T^1 ×_fiber (S_normal^12 ⊕ S_mirror^12)
-
-        The key insight is that time is NOT duplicated across shadows.
-        Time T^1 is the shared fiber base with signature (0,1).
-        Shadows are SPATIAL manifolds with signature (12,0) each.
-        12×(2,0) bridge pairs connect corresponding spatial dimensions.
-
-        Correct arithmetic:
-        - Time fiber T^1:        (0,1)   -> 0 spatial, 1 temporal
-        - Normal shadow S^12:    (12,0)  -> 12 spatial, 0 temporal
-        - Mirror shadow S^12:    (12,0)  -> 12 spatial, 0 temporal
-        -------------------------------------------------------
-        Total:                   (24,2)  -> 24 spatial, 2 temporal ✓
-
-        Note: The 12×(2,0) bridge pairs connect dimensions between shadows,
-        not adding new dimensions (they pair up existing ones).
+        Normal shadow (12,1) + mirror shadow (12,1) = (24,2): 2 x 12 spatial,
+        2 x 1 temporal. The 12 x (2,0) bridge pairs connect dimensions between
+        shadows and add none.
         """
-        # Spatial: 2×12 (shadow spatial) = 24 ✓
-        spatial = (V21BridgeParameters.N_SHADOWS *
-                   V21BridgeParameters.SHADOW_SIGNATURE_SPATIAL[0])
-        # Temporal: 2 (one timelike direction per shadow) ✓
-        temporal = V21BridgeParameters.TIME_FIBER_SIGNATURE[1]  # = 2
-        return (spatial, temporal) == V21BridgeParameters.BULK_SIGNATURE
+        space, time = V21BridgeParameters.SHADOW_SIGNATURE
+        n = V21BridgeParameters.N_SHADOWS
+        return (n * space, n * time) == V21BridgeParameters.BULK_SIGNATURE
 
     @staticmethod
     def export_data():

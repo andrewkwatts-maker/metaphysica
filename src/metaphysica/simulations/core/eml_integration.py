@@ -360,22 +360,29 @@ def eml_octonion_norm(components: list) -> float:
     return float(o.norm())
 
 
-def eml_g2_chi_eff(b3: int = 24) -> float:
-    """
-    Compute χ_eff = 4 × b₃ × n_gen = 4 × 24 × 3 = 288 from EML topology.
-    n_gen = χ_eff / (4 × b₃) → χ_eff = 144 for standard PM (6 × 24).
+#: chi_eff per K3 generation: chi_eff = 48 n_gen (the K3 reading).
+K3_CHI_PER_GENERATION = 48
+
+
+def eml_g2_chi_eff(n_gen: Union[int, None] = None) -> float:
+    """χ_eff = 48 × n_gen via EML (the K3 reading).
+
+    ``n_gen`` None reads n_gen of the path in force (active_path.topology).
     """
     require_eml()
-    six = eml_scalar(6.0)
-    b3_pt = eml_scalar(float(b3))
-    return eml_compute(eml_mul(six, b3_pt))
+    if n_gen is None:
+        from metaphysica.simulations.core.active_path import topology
+
+        n_gen = topology().n_gen
+    return eml_compute(eml_mul(eml_scalar(float(K3_CHI_PER_GENERATION)),
+                               eml_scalar(float(n_gen))))
 
 
-def eml_n_gen(chi_eff: float, b3: int = 24) -> float:
-    """n_gen = χ_eff / (4 × b₃) via EML."""
+def eml_n_gen(chi_eff: float) -> float:
+    """n_gen = χ_eff / 48 via EML (the K3 reading, inverse of eml_g2_chi_eff)."""
     require_eml()
     return eml_compute(
-        eml_div(eml_scalar(chi_eff), eml_mul(eml_scalar(4.0), eml_scalar(float(b3))))
+        eml_div(eml_scalar(chi_eff), eml_scalar(float(K3_CHI_PER_GENERATION)))
     )
 
 

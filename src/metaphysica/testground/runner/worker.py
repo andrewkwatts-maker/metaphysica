@@ -169,10 +169,10 @@ class RunResult:
                   cached: bool = False) -> "RunResult":
         return cls(
             theory=data["theory"], digest=data["digest"], root=data["root"],
-            status=data["status"], reason=data.get("reason", ""),
+            status=data["status"], reason=data["reason"],
             stages=tuple(StageResult.from_dict(s)
                          for s in data.get("stages", ())),
-            wall_s=data.get("wall_s", 0.0),
+            wall_s=data["wall_s"],
             fingerprint=data.get("fingerprint"), cached=cached)
 
 
