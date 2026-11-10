@@ -4,7 +4,8 @@ Round 1 (2026-11-11). Test file: tests/programme/test_path_core_topology.py (T).
 tests/test_canonical_values.py was edited: its subject canonical_values.py is
 owned by this lane and it asserted the defect (B3 == 24, w0 DERIVED, H0 typed).
 
-Round 2 (2026-11-11). R = tests/programme/test_path_core_fork_readers.py.
+Round 2 (2026-11-11). R = tests/programme/test_path_core_fork_readers.py,
+K = tests/programme/test_path_core_ranking.py.
 tests/test_variants.py edited: it pinned the unmeasurable set to
 {dark_energy_betti}, so it asserted the literal readers of core-paths-16.
 resolve() already raised on an unknown fork (KeyError) and unknown option
@@ -23,8 +24,10 @@ resolve() already raised on an unknown fork (KeyError) and unknown option
 | sim-particle-20 | core/FormulasRegistry.py CODATA_COMPTON | fixed (2022 value) | 12db48f | T::test_registry_text_has_no_retired_seed_numbers |
 | core-paths-07 | core/dependency_resolver.py H0_base | fixed | 12db48f | T::test_dependency_resolver_seeds_and_h0_follow_the_path |
 | core-paths-11 | config/parameters/geometry.py:38-48, fitted.py | fixed (PathValued; TCS187 rows retired) | this commit | T::test_config_chirality_reads_the_path |
-| core-paths-15 | core/variants/adopted.py:119-143 | fixed (raises SourceUnmeasurable with fork, option, reason) | round 2 A | R::test_metric_reader_raises_when_no_option_matches |
-| core-paths-16 | core/variants/adopted.py:12-21, 51-67 | fixed for re_t_adoption, b3_seed (declared only, raise); the four action readers stay for L4 | round 2 A | R::test_self_referential_readers_are_declared_not_measured |
+| core-paths-15 | core/variants/adopted.py:119-143 | fixed (raises SourceUnmeasurable with fork, option, reason) | 3f067f8 | R::test_metric_reader_raises_when_no_option_matches |
+| core-paths-16 | core/variants/adopted.py:12-21, 51-67 | fixed for re_t_adoption, b3_seed (declared only, raise); the four action readers stay for L4 | 3f067f8 | R::test_self_referential_readers_are_declared_not_measured |
+| core-paths-03 | testground/rank.py, new testground/rank_effects.py | fixed (option_effects: scored, unscored, none (baseline: the adopted option), not_evaluable) | this commit | K::test_every_option_of_every_fork_has_a_measured_effect |
+| core-paths-02 | testground/rank.py; catalogue/policy.py | fixed in part: verdict "no consistent path", policy forks (kind policy) unranked, ties share a rank; joint geometry sweep is core-paths-42 | this commit | K::test_policy_forks_do_not_rank_even_when_they_fit_best |
 | core-paths-17 | variants/adopted.py action forks | blocked: brief keeps the four action forks for L4 wave B | - | - |
 | core-paths-28 | topology.critical_dim | blocked: registered in PM/geometry/modular_invariance.py (L2) | - | - |
 

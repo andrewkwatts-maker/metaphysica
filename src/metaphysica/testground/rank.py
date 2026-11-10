@@ -9,7 +9,11 @@ order is lexicographic:
   4. lowest chi-squared against measured anchors (the tie-break only).
 
 A fitted choice is disclosed as one: the file names the selected path and how
-many paths were searched. The theory declares how a run is read
+many paths were searched. When no ranked path is consistent the ``verdict``
+says "no consistent path" and the selected path is the adopted ruling, not a
+ranking result. Each option of each fork carries its measured
+``output_effect`` (`rank_effects`); runs that depart on a policy or narrative
+fork are listed under ``unranked``, never ordered with the paths. The theory declares how a run is read
 (`Theory.ranking`); this module is theory-agnostic. A tier a run did not publish
 is None and listed under `missing`; it sorts after every known value and is
 never filled in.
@@ -28,6 +32,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
+from metaphysica.testground.rank_effects import (option_effects,
+                                                 unranked_reason,
+                                                 validate_effects)
 from metaphysica.testground.runner.isolation import read_stamp
 from metaphysica.testground.runner.worker import RUN_LOG_NAME
 from metaphysica.testground.theory import RunReading, Theory
@@ -92,23 +99,48 @@ def _row(e: RankEntry, rank: int, chosen: RunReading) -> Dict[str, Any]:
             "missing": sorted(r.missing)}
 
 
-def rank_entries(entries: Sequence[RankEntry], selected: str
-                 ) -> Dict[str, Any]:
-    """The ranking document; ``selected`` is the path id the build adopts now."""
+NO_CONSISTENT_PATH = ("no consistent path: every ranked path fails the "
+                      "consistency check, so the selected path is the adopted "
+                      "ruling, not a ranking result")
+
+
+def _verdict(rows: Sequence[Mapping[str, Any]]) -> str:
+    n = sum(1 for r in rows if r["consistent"] is True)
+    return NO_CONSISTENT_PATH if n == 0 else "%d consistent path(s)" % n
+
+
+def rank_entries(entries: Sequence[RankEntry], selected: str,
+                 forks: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+    """The ranking document; ``selected`` is the path id the build adopts now.
+
+    ``forks`` (fork id -> Fork) gives every option its measured output effect
+    and keeps runs that depart on a non-physics fork out of the order.
+    """
+    forks = forks or {}
     by_id = {e.path_id: e for e in entries}
     if len(by_id) != len(entries):
         raise ValueError("duplicate path ids in the runs to rank")
     if selected not in by_id:
         raise ValueError("the selected path %r is not among the %d finished "
                          "runs" % (selected, len(entries)))
+    reasons = {e.path_id: unranked_reason(e.selection, forks) for e in entries}
+    if reasons[selected]:
+        raise ValueError("the selected path %r %s" % (selected, reasons[selected]))
     chosen = by_id[selected].reading
-    ordered = sorted(entries, key=lambda e: (_sort_key(e.reading), e.path_id))
+    ranked = [e for e in entries if not reasons[e.path_id]]
+    ordered = sorted(ranked, key=lambda e: (_sort_key(e.reading), e.path_id))
     rows: List[Dict[str, Any]] = []
     for i, e in enumerate(ordered):
         tied = i > 0 and _sort_key(e.reading) == _sort_key(ordered[i - 1].reading)
         rows.append(_row(e, rows[-1]["rank"] if tied else i + 1, chosen))
+    unranked = [{"path_id": e.path_id, "selection": dict(e.selection),
+                 "reason": reasons[e.path_id]}
+                for e in sorted(entries, key=lambda e: e.path_id)
+                if reasons[e.path_id]]
     return {"schema": SCHEMA, "rule": RULE, "reasonable_rule": REASONABLE_RULE,
-            "searched": len(rows), "selected": selected, "rows": rows}
+            "searched": len(rows), "selected": selected,
+            "verdict": _verdict(rows), "rows": rows, "unranked": unranked,
+            "option_effects": option_effects(entries, selected, forks)}
 
 
 def validate_ranking(doc: Mapping[str, Any]) -> List[str]:
@@ -116,7 +148,7 @@ def validate_ranking(doc: Mapping[str, Any]) -> List[str]:
     bad: List[str] = []
     if doc.get("schema") != SCHEMA:
         bad.append("schema is not %s" % SCHEMA)
-    for key in ("rule", "reasonable_rule", "selected"):
+    for key in ("rule", "reasonable_rule", "selected", "verdict"):
         if not isinstance(doc.get(key), str):
             bad.append("%s is not a string" % key)
     rows = doc.get("rows")
@@ -129,6 +161,9 @@ def validate_ranking(doc: Mapping[str, Any]) -> List[str]:
         bad.append("duplicate path_id")
     if doc.get("selected") not in ids:
         bad.append("selected is not a row")
+    if not isinstance(doc.get("unranked"), list):
+        bad.append("unranked is not a list")
+    bad += validate_effects(doc.get("option_effects"))
     for r in rows:
         absent = [k for k in _ROW_KEYS if k not in r]
         if absent:
@@ -206,7 +241,8 @@ def add_parsers(sub: Any) -> None:
 def cmd_rank(args: Any, theory: Theory) -> int:
     fp_dir = _fingerprint_dir(theory, Path(args.runs_dir), args.fingerprint)
     entries = load_entries(theory, fp_dir)
-    doc = rank_entries(entries, _selected_id(entries))
+    doc = rank_entries(entries, _selected_id(entries),
+                       forks=theory.switches.forks())
     problems = validate_ranking(doc)
     if problems:
         raise ValueError("ranking does not validate: " + "; ".join(problems))
@@ -215,8 +251,8 @@ def cmd_rank(args: Any, theory: Theory) -> int:
     out.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n",
                    encoding="utf-8")
     n_ok = sum(1 for r in doc["rows"] if r["reasonable"])
-    print("rank: %d paths searched, %d reasonable, selected %s is rank %d"
+    print("rank: %d paths searched, %d reasonable, selected %s is rank %d; %s"
           % (doc["searched"], n_ok, doc["selected"],
              next(r["rank"] for r in doc["rows"]
-                  if r["path_id"] == doc["selected"])))
+                  if r["path_id"] == doc["selected"]), doc["verdict"]))
     return 0

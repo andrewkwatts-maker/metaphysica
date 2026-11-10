@@ -22,6 +22,8 @@ FORKS: Dict[str, Fork] = {
         source="generators.eml_render_validity.REQUIRE_OPERATOR",
         status="RULED",
         read_adopted=_render_policy_adopted,
+        # A build policy, not geometry: never swept and never ranked.
+        kind="policy",
         options=[
             VariantOption(
                 id="strict",
@@ -52,6 +54,8 @@ FORKS: Dict[str, Fork] = {
                ".DEFAULT_THEORY_UNCERTAINTY_POLICY",
         status="OPEN",
         read_adopted=_theory_uncertainty_policy_adopted,
+        # A validation policy, not geometry: never swept and never ranked.
+        kind="policy",
         options=[
             VariantOption(
                 id="cited_only",
