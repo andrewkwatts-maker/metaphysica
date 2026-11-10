@@ -250,51 +250,30 @@ class LatticeGates:
     # ═══════════════════════════════════════════════════════════════════
 
     def cert_pairs_bridge(self):
-        """
-        C_PAIRS: 12-PAIR-BRIDGE Dimensional Consistency
+        """C_PAIRS: 12-PAIR-BRIDGE Dimensional Consistency
 
-        Validates the 12 x (2,0) paired bridge structure against the 26D
-        bulk of signature (24,2): 24 space directions (12 bridge pairs x 2)
-        and 2 times, one per 13D (12,1) shadow:
-          - pairs × 2 = 24 = the bulk's space directions
-          - Total: 24 (bridges) + 2 (times) = 26D, signature (24,2)
+        Validates the 12 x (2,0) bridge pairs against the 26D bulk (24,2):
+        24 space directions plus 2 times, one per 13D (12,1) shadow.
 
-        OFF-PATH (b3_seed = seed_24): check 2 reads geometry.elder_kads, the
-        integer anchor 24, so pairs == b3 // 2 holds; it was written as
-        "12 = b3/2 from the G2 manifold Betti number b3 = 24", which is not
-        the adopted topology (b_3 = 43). On the adopted path the 12 bridges
-        are the 12 resolved A1 components (WA-1), and b_2 = 12. The
-        12×(2,0) decomposition is a framework choice (PLAUSIBLE); the
-        dimensional arithmetic is forced once it is adopted. RETIRED
-        (signature ruling 2026-08-31): the former single shared time and the
-        27D count 24 + 1 + 2.
+        OFF-PATH (b3_seed = seed_24): check 2 reads geometry.elder_kads, the integer
+        anchor 24, so pairs == b3 // 2 holds there; on the adopted path (b_3 = 43)
+        the 12 bridges are the 12 resolved A1 components (WA-1), b_2 = 12. The
+        12x(2,0) decomposition is a framework choice (PLAUSIBLE). RETIRED: the
+        single shared time and the 27D count.
 
-        Gate Logic (5 checks):
-            1. pairs == 12
-            2. pairs == b3 // 2 (half the integer anchor; see OFF-PATH note)
-            3. pairs × 2 == 24 (the bulk's space directions)
-            4. pairs × 2 + 2 == 26 (total bulk dimension, two times)
-            5. signature = (24, 2)
+        Checks: pairs == 12; pairs == b3 // 2; pairs x 2 == 24; pairs x 2 + 2 == 26;
+        signature (24, 2).
         """
         pairs = self._get_param('seal.bridge_pairs', self.pairs)
         b3 = self._get_param('geometry.elder_kads', 24)
 
-        # Dimensional constants from the M^{26}(24,2) architecture
-        dims_per_pair = 2       # Each bridge pair is (2,0) Euclidean
-        d_time = 2              # Two shadow times, one per 13D shadow
-        d_physics_core = 24     # the bulk's 24 space directions (12 pairs x 2)
-        d_bulk = 26             # Total M^{26}(24,2)
+        dims_per_pair, d_time, d_physics_core, d_bulk = 2, 2, 24, 26  # M^{26}(24,2)
 
-        # Check 1: Pair count
         count_ok = (pairs == 12)
-        # Check 2: Derivation chain — pairs = b3/2
         derivation_ok = (pairs == b3 // 2)
-        # Check 3: Dimensional consistency (pairs × 2 = 24D physics core)
         dim_ok = (pairs * dims_per_pair == d_physics_core)
-        # Check 4: Total bulk dimension (24 + 2 = 26, two-time ruling)
         bulk_ok = (pairs * dims_per_pair + d_time == d_bulk)
-        # Check 5: Signature consistency (24 spacelike, 2 timelike)
-        d_spacelike = pairs * dims_per_pair  # = 24
+        d_spacelike = pairs * dims_per_pair
         sig_ok = (d_spacelike + d_time == d_bulk) and (d_spacelike == 24)
 
         all_ok = count_ok and derivation_ok and dim_ok and bulk_ok and sig_ok

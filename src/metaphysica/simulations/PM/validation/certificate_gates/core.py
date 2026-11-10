@@ -117,17 +117,10 @@ class CoreGates:
         n_gen = chi_eff/48 = 3 then restates the ruled route n_gen = b_2/4
         (see C002).
 
-        The former cross-check chi_eff = 6*b3 was removed: it agreed only at
-        the retired anchor b_3 = 24 (at the adopted b_3 = 43 it gives 258) and
-        locked because geometry.elder_kads is that anchor. The gate now tests
-        chi_eff = 48 * (b2/4) with b2 from the active path. It formerly
-        called chi_eff the effective Euler characteristic of the "TCS #187"
-        G2 manifold, from Hodge numbers 2*(h^{1,1} - h^{2,1} + h^{3,1}) =
-        2*(4 - 0 + 68); that route is off-path too (a Joyce orbifold has no
-        h^{2,1} or h^{3,1}, and no published TCS enumeration has a "#187").
-
-        Gate explicitly FAILS if the registry lacks the parameter (no default),
-        preventing vacuous pass on empty/missing registry data.
+        The former cross-check chi_eff = 6*b3 was removed (agrees only at the
+        retired anchor b_3 = 24; 258 at b_3 = 43). The gate tests chi_eff =
+        48 * (b2/4) with b2 from the active path, and fails (no default) when
+        the registry lacks the parameter.
         """
         chi = self._get_param('topology.mephorash_chi')
         from metaphysica.simulations.PM.geometry.b3_path import resolve_path, seed_values
@@ -174,55 +167,36 @@ class CoreGates:
         the correction (1/pi) as a holonomy volume of the associative
         3-cycle; both readings belong to the calibration.
 
-        This parameter appears in (each CALIBRATED with it):
-        - Fine structure constant: alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi)
-        - Higgs VEV: v_tree = k_gimel * (b3 - 4)
-        - Neutrino mass sum: Sum(m_nu) = k_gimel / (2*pi*b3)
-        - CMB temperature: T_tree = phi * k_gimel / (2*pi + 1)
-
-        Gate explicitly FAILS if the registry lacks the parameter (no default),
-        preventing vacuous pass on empty/missing registry data.
-
-        Cross-check: verifies k_gimel = b3/2 + 1/pi from b3 registry value.
+        k_gimel also enters alpha^-1, v_tree, Sum(m_nu) and T_tree (each CALIBRATED
+        with it). Fails (no default) when the registry lacks a parameter.
         """
         k_gimel = self._get_param('geometry.k_gimel')
         b3 = self._get_param('geometry.elder_kads')
 
-        # Also try topology.* keys (canonical registration path)
-        if k_gimel is None:
+        if k_gimel is None:  # canonical topology.* keys
             k_gimel = self._get_param('topology.k_gimel')
         if b3 is None:
             b3 = self._get_param('topology.elder_kads')
 
-        # Fail explicitly if registry data is missing (no vacuous pass)
-        if k_gimel is None or b3 is None:
-            status = "FAILED"
-            missing = []
-            if k_gimel is None:
-                missing.append("k_gimel")
-            if b3 is None:
-                missing.append("b3 (elder_kads)")
+        missing = [label for label, v in (("k_gimel", k_gimel),
+                                          ("b3 (elder_kads)", b3)) if v is None]
+        if missing:
             self.results['C004-KGIM'] = {
-                "status": status,
+                "status": "FAILED",
                 "metric": f"{', '.join(missing)} NOT FOUND in registry",
                 "expected": "b3/2 + 1/pi",
                 "actual": None,
                 "sector": "FOUNDATIONAL"
             }
-            print(f"  C004-KGIM: {status} ({', '.join(missing)} missing from registry)")
+            print(f"  C004-KGIM: FAILED ({', '.join(missing)} missing from registry)")
             return
 
         # Compute expected value from formula (no magic numbers)
         expected = b3 / 2 + 1 / math.pi  # = 12.31830988618379...
 
-        # Primary check: k_gimel matches b3/2 + 1/pi
-        # Both sides are computed from the same formula, so agreement should be
-        # exact to floating-point precision (~1e-14). Tolerance 1e-10 allows for
-        # any intermediate rounding while still catching genuine drift.
-        tolerance = 1e-10
-        value_ok = abs(k_gimel - expected) < tolerance
+        # Same formula both sides: tolerance 1e-10 catches drift, not rounding.
+        value_ok = abs(k_gimel - expected) < 1e-10
 
-        # Cross-check: transcendental part = 1/pi (not just integer floor)
         transcendental_part = k_gimel - b3 / 2
         cross_ok = abs(transcendental_part - 1 / math.pi) < 1e-10
 

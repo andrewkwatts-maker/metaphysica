@@ -43,6 +43,17 @@ class CosmoGates:
         }
         print(f"  COSMO-012: {status} (w0 = {w0_theory:.6f}, tension = {tension:.2f}sigma)")
 
+    def _cosmo_fail(self, gate_id, metric, expected, actual, printed):
+        """Record and print a FAILED COSMOLOGICAL row (guard failures)."""
+        self.results[gate_id] = {
+            "status": "FAILED",
+            "metric": metric,
+            "expected": expected,
+            "actual": actual,
+            "sector": "COSMOLOGICAL"
+        }
+        print(f"  {gate_id}: FAILED ({printed})")
+
     def cert_cosmo_013_wa(self):
         """COSMO-013: Dark Energy wa comparison
 
@@ -62,39 +73,18 @@ class CosmoGates:
         the leading-order formula has the thawing sign (wa < 0) but
         underestimates the amplitude.
 
-        Gate explicitly FAILS if the registry lacks the parameter (no default),
-        preventing vacuous pass on empty/missing registry data.
-
-        Classification recorded below: PREDICTED. On the adopted path the
-        formula is OPEN (no derivation) and written at the off-path seed.
+        Fails (no default) when the registry lacks the parameter.
         """
         b3 = self._get_param('geometry.elder_kads')
-
         if b3 is None:
-            status = "FAILED"
-            self.results['COSMO-013'] = {
-                "status": status,
-                "metric": "geometry.elder_kads NOT FOUND in registry",
-                "expected": "wa = -1/sqrt(b3)",
-                "actual": None,
-                "sector": "COSMOLOGICAL"
-            }
-            print(f"  COSMO-013: {status} (geometry.elder_kads missing from registry)")
+            self._cosmo_fail('COSMO-013', "geometry.elder_kads NOT FOUND in registry",
+                             "wa = -1/sqrt(b3)", None,
+                             "geometry.elder_kads missing from registry")
             return
-
-        # b3 cross-check: requires the integer anchor geometry.elder_kads = 24.
-        # OFF-PATH (b3_seed = seed_24): formerly justified as a TCS G2 value
-        # b2(K3)+2 = 22+2 = 24; the adopted Joyce orbifold is not a TCS.
+        # OFF-PATH (b3_seed = seed_24): the gate requires the integer anchor 24.
         if b3 != 24:
-            status = "FAILED"
-            self.results['COSMO-013'] = {
-                "status": status,
-                "metric": f"b3 cross-check failed: got {b3}, expected 24",
-                "expected": 24,
-                "actual": b3,
-                "sector": "COSMOLOGICAL"
-            }
-            print(f"  COSMO-013: {status} (b3 = {b3} != 24, cross-check failed)")
+            self._cosmo_fail('COSMO-013', f"b3 cross-check failed: got {b3}, expected 24",
+                             24, b3, f"b3 = {b3} != 24, cross-check failed")
             return
 
         # wa = -1/sqrt(b3): leading-order from G2 moduli rolling dynamics
@@ -118,25 +108,30 @@ class CosmoGates:
             "expected": wa_desi,
             "actual": wa_theory,
             "sector": "COSMOLOGICAL",
-            "honesty": {
-                "classification": "PREDICTED",
-                "formula": "wa = -1/sqrt(b3)",
-                "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
-                "fitted_params": 0,
-                "known_limitation": (
-                    "Leading-order formula underestimates |wa|. "
-                    "Non-linear thawing corrections and 12-pair breathing "
-                    "aggregation may improve agreement."
-                ),
-                "previous_version": (
-                    "Prior COSMO-013 used wa_theory*4 = -0.8165 vs DESI DR2 "
-                    "wa = -0.816 +/- 0.25. The x4 'CPL factor' was unjustified "
-                    "and the DESI value was outdated. Corrected to use SSoT "
-                    "DESI 2025 value and honest leading-order formula."
-                ),
-            },
+            "honesty": self._cosmo013_honesty(),
         }
         print(f"  COSMO-013: {status} (wa = {wa_theory:.6f}, DESI = {wa_desi}, tension = {tension:.2f}sigma)")
+
+    @staticmethod
+    def _cosmo013_honesty():
+        """Honesty block of COSMO-013."""
+        return {
+            "classification": "PREDICTED",
+            "formula": "wa = -1/sqrt(b3)",
+            "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
+            "fitted_params": 0,
+            "known_limitation": (
+                "Leading-order formula underestimates |wa|. "
+                "Non-linear thawing corrections and 12-pair breathing "
+                "aggregation may improve agreement."
+            ),
+            "previous_version": (
+                "Prior COSMO-013 used wa_theory*4 = -0.8165 vs DESI DR2 "
+                "wa = -0.816 +/- 0.25. The x4 'CPL factor' was unjustified "
+                "and the DESI value was outdated. Corrected to use SSoT "
+                "DESI 2025 value and honest leading-order formula."
+            ),
+        }
 
     def cert_cosmo_014_neutrino_sum(self):
         """COSMO-014: Neutrino Mass Sum from Hopf Fibration
@@ -149,78 +144,18 @@ class CosmoGates:
         derivation. The "PREDICTED" classification recorded below predates
         that ruling.
 
-        Formula: Sum(m_nu) = k_gimel / (2*pi*b3) = 12.3183... / (2*pi*24) = 0.0817 eV
-        This arises from the S3 Hopf Fibration residue in the G2 compactification
-        (see docs/validation_archives/proofs/Hopf_Fibration_Residue_v16_2.md).
+        Formula: Sum(m_nu) = k_gimel / (2*pi*b3), S3 Hopf residue (see the honesty
+        block for the NH/IO floors and the DESI+CMB+BAO 2024 comparison).
+        Bounds: NH floor 0.058 eV, IO floor 0.098 eV (NuFit 6.0 splittings),
+        Planck+BAO 2018 < 0.12 eV, DESI+CMB+BAO 2024 < 0.072 eV (95% CL).
 
-        Experimental constraints:
-          - Oscillation lower bound (NH): >= 0.058 eV (from NuFit 6.0 dm^2 splittings)
-          - Oscillation lower bound (IO): >= 0.098 eV (from NuFit 6.0 dm^2 splittings)
-          - Planck+BAO 2018: < 0.12 eV (95% CL)
-          - DESI+CMB+BAO 2024: < 0.072 eV (95% CL, tighter)
-
-        The prediction 0.0817 eV satisfies the Planck bound but sits above the
-        DESI+CMB+BAO 2024 bound. This value is consistent with Normal Hierarchy
-        (NH floor ~0.058 eV) but NOT with Inverted Ordering (IO floor ~0.098 eV).
-
-        INTERNAL TENSION: The neutrino_mixing.py simulation predicts Inverted
-        Ordering with Sum(m_nu) ~ 0.10 eV, while this Hopf formula gives 0.0817 eV
-        (consistent only with NH). This discrepancy is documented as an open problem.
-
-        Gate explicitly FAILS if the registry lacks k_gimel or b3 (no defaults),
-        preventing vacuous pass on empty/missing registry data.
-
-        Classification: PREDICTED (geometric derivation from Pillar Seeds, no fitted parameters)
+        INTERNAL TENSION with neutrino_mixing.py (IO, ~0.10 eV) is an open problem.
+        Fails (no default) when the registry lacks k_gimel or b3.
         """
         k_gimel = self._get_param('geometry.k_gimel')
         b3 = self._get_param('geometry.elder_kads')
 
-        # Guard: fail on missing registry parameters (prevent vacuous pass)
-        if k_gimel is None or b3 is None:
-            status = "FAILED"
-            missing = []
-            if k_gimel is None:
-                missing.append("geometry.k_gimel")
-            if b3 is None:
-                missing.append("geometry.elder_kads")
-            self.results['COSMO-014'] = {
-                "status": status,
-                "metric": f"Missing registry params: {', '.join(missing)}",
-                "expected": "Sum(m_nu) = k_gimel / (2*pi*b3)",
-                "actual": None,
-                "sector": "COSMOLOGICAL"
-            }
-            print(f"  COSMO-014: {status} ({', '.join(missing)} missing from registry)")
-            return
-
-        # b3 cross-check: requires the integer anchor geometry.elder_kads = 24.
-        # OFF-PATH (b3_seed = seed_24): formerly justified as a TCS G2 value
-        # b2(K3)+2 = 22+2 = 24; the adopted Joyce orbifold is not a TCS.
-        if b3 != 24:
-            status = "FAILED"
-            self.results['COSMO-014'] = {
-                "status": status,
-                "metric": f"b3 cross-check failed: got {b3}, expected 24",
-                "expected": 24,
-                "actual": b3,
-                "sector": "COSMOLOGICAL"
-            }
-            print(f"  COSMO-014: {status} (b3 = {b3} != 24, cross-check failed)")
-            return
-
-        # k_gimel cross-check: must equal b3/2 + 1/pi (FormulasRegistry derivation)
-        k_gimel_expected = b3 / 2 + 1 / math.pi
-        if abs(k_gimel - k_gimel_expected) > 1e-6:
-            status = "FAILED"
-            self.results['COSMO-014'] = {
-                "status": status,
-                "metric": (f"k_gimel cross-check failed: got {k_gimel}, "
-                           f"expected b3/2+1/pi = {k_gimel_expected}"),
-                "expected": k_gimel_expected,
-                "actual": k_gimel,
-                "sector": "COSMOLOGICAL"
-            }
-            print(f"  COSMO-014: {status} (k_gimel = {k_gimel} != {k_gimel_expected})")
+        if not self._cosmo014_guards_ok(k_gimel, b3):
             return
 
         # Sum(m_nu) = k_gimel / (2*pi*b3): Hopf fibration residue in G2 manifold
@@ -251,33 +186,63 @@ class CosmoGates:
             "expected": f"{osc_lower_nh} < Sum(m_nu) < {upper_bound} eV",
             "actual": sum_m_nu,
             "sector": "COSMOLOGICAL",
-            "honesty": {
-                "classification": "PREDICTED",
-                "formula": "Sum(m_nu) = k_gimel / (2*pi*b3)",
-                "k_gimel_source": "k_gimel = b3/2 + 1/pi (CALIBRATED, k_gimel layer, D-007)",
-                "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
-                "fitted_params": 0,
-                "ordering_note": (
-                    "The Hopf formula predicts Sum(m_nu) = 0.0817 eV, which is "
-                    "compatible with Normal Hierarchy (NH floor ~0.058 eV) but "
-                    "INCOMPATIBLE with Inverted Ordering (IO floor ~0.098 eV). "
-                    "However, the neutrino_mixing.py simulation predicts IO with "
-                    "Sum(m_nu) ~ 0.10 eV. This internal tension between the Hopf "
-                    "formula and the seesaw mechanism is an unresolved open problem."
-                ),
-                "desi_note": (
-                    "Prediction 0.0817 eV exceeds DESI+CMB+BAO 2024 bound "
-                    "(< 0.072 eV at 95% CL) but satisfies Planck+BAO 2018 "
-                    "(< 0.12 eV). The 0.48sigma tension metric uses the DESI "
-                    "bound as a reference point, not as a Gaussian measurement. "
-                    "Near-term falsification risk as bounds tighten with "
-                    "CMB-S4 and DESI full survey."
-                ),
-            },
+            "honesty": self._cosmo014_honesty(),
         }
         print(f"  COSMO-014: {status} (Sum(m_nu) = {sum_m_nu:.4f} eV, "
               f"{osc_lower_nh} < {sum_m_nu:.4f} < {upper_bound}, "
               f"tension = {tension:.2f}sigma)")
+
+    def _cosmo014_guards_ok(self, k_gimel, b3):
+        """Record a FAILED row and return False when a COSMO-014 guard trips."""
+        missing = [name for name, v in (("geometry.k_gimel", k_gimel),
+                                        ("geometry.elder_kads", b3)) if v is None]
+        if missing:
+            self._cosmo_fail('COSMO-014', f"Missing registry params: {', '.join(missing)}",
+                             "Sum(m_nu) = k_gimel / (2*pi*b3)", None,
+                             f"{', '.join(missing)} missing from registry")
+            return False
+        # OFF-PATH (b3_seed = seed_24): the gate requires the integer anchor 24.
+        if b3 != 24:
+            self._cosmo_fail('COSMO-014', f"b3 cross-check failed: got {b3}, expected 24",
+                             24, b3, f"b3 = {b3} != 24, cross-check failed")
+            return False
+        k_gimel_expected = b3 / 2 + 1 / math.pi
+        if abs(k_gimel - k_gimel_expected) > 1e-6:
+            self._cosmo_fail(
+                'COSMO-014',
+                (f"k_gimel cross-check failed: got {k_gimel}, "
+                 f"expected b3/2+1/pi = {k_gimel_expected}"),
+                k_gimel_expected, k_gimel,
+                f"k_gimel = {k_gimel} != {k_gimel_expected}")
+            return False
+        return True
+
+    @staticmethod
+    def _cosmo014_honesty():
+        """Honesty block of COSMO-014."""
+        return {
+            "classification": "PREDICTED",
+            "formula": "Sum(m_nu) = k_gimel / (2*pi*b3)",
+            "k_gimel_source": "k_gimel = b3/2 + 1/pi (CALIBRATED, k_gimel layer, D-007)",
+            "b3_source": "geometry.elder_kads, the integer anchor 24 (calibrated at the off-path seed b_3 = 24)",
+            "fitted_params": 0,
+            "ordering_note": (
+                "The Hopf formula predicts Sum(m_nu) = 0.0817 eV, which is "
+                "compatible with Normal Hierarchy (NH floor ~0.058 eV) but "
+                "INCOMPATIBLE with Inverted Ordering (IO floor ~0.098 eV). "
+                "However, the neutrino_mixing.py simulation predicts IO with "
+                "Sum(m_nu) ~ 0.10 eV. This internal tension between the Hopf "
+                "formula and the seesaw mechanism is an unresolved open problem."
+            ),
+            "desi_note": (
+                "Prediction 0.0817 eV exceeds DESI+CMB+BAO 2024 bound "
+                "(< 0.072 eV at 95% CL) but satisfies Planck+BAO 2018 "
+                "(< 0.12 eV). The 0.48sigma tension metric uses the DESI "
+                "bound as a reference point, not as a Gaussian measurement. "
+                "Near-term falsification risk as bounds tighten with "
+                "CMB-S4 and DESI full survey."
+            ),
+        }
 
     def cert_cosmo_015_h0(self):
         """COSMO-015: Hubble Constant (Early Universe)
@@ -295,11 +260,8 @@ class CosmoGates:
         log-scaling formula (which does NOT use H0_early as input) gives
         H0_inferred ~ 101.4 km/s/Mpc (68sigma from Planck).
 
-        The non-trivial content claimed for this gate is the transition scale
-        z_star = b3/k_gimel ~ 1.95 between early and late regimes. It is
-        computed with b3 = 24 hard-coded below: CALIBRATED at the off-path
-        seed b_3 = 24 (k_gimel is a k_gimel-layer fit, D-007), not the live
-        seed.
+        The non-trivial content is z_star = b3/k_gimel, computed with b3 = 24
+        hard-coded below (CALIBRATED at the off-path seed, k_gimel-layer fit, D-007).
         """
         # Use the COMPUTED value from evolution engine, not the input anchor.
         # cosmology.H0_early_normalized is the H0 inferred at z=1100 after
@@ -316,24 +278,8 @@ class CosmoGates:
         tension = abs(h0 - h0_planck) / sigma
         self.global_tension += tension**2
 
-        # Cross-check: raw v14.2 formula (independent of H0_early input)
-        # H_raw(z) = H0_late * (1+z)^1.5 / (1 + ln(1+z)/b3)
-        # H0_raw_inferred = H_raw(1100) / E(1100)
-        import math
-        b3 = 24  # CALIBRATED at the off-path seed b_3 = 24 (hard-coded; not the live seed)
-        h0_late = 73.04
-        z_cmb = 1100.0
-        relaxation = 1.0 + math.log(1.0 + z_cmb) / b3
-        h_raw = h0_late * (1.0 + z_cmb) ** 1.5 / relaxation
-        omega_m, omega_de = 0.311, 0.689
-        e_z = math.sqrt(omega_m * (1.0 + z_cmb) ** 3 + omega_de)
-        h0_raw_inferred = h_raw / e_z
+        h0_raw_inferred, z_star, f_weight = self._cosmo015_raw_formula()
         raw_tension = abs(h0_raw_inferred - h0_planck) / sigma
-
-        # Interpolation weight diagnostic
-        k_gimel = b3 / 2.0 + 1.0 / math.pi
-        z_star = b3 / k_gimel
-        f_weight = 1.0 / (1.0 + (z_cmb / z_star) ** 2)
 
         status = "LOCKED" if tension < 2.0 else "TENSION"
         self.results['COSMO-015'] = {
@@ -342,49 +288,74 @@ class CosmoGates:
             "expected": h0_planck,
             "actual": h0,
             "sector": "COSMOLOGICAL",
-            "honesty": {
-                "classification": "INTERPOLATION_ENDPOINT",
-                "formula": "H0_eff(z) = H0_late*f(z) + H0_early*(1-f(z)), f=1/(1+(z/z*)^2)",
-                "source_param": "cosmology.H0_early_normalized",
-                "source_simulation": "evolution_engine_v16_2",
-                "H0_late_source": "SH0ES 2022 (73.04 km/s/Mpc, ESTABLISHED)",
-                "b3_source": "hard-coded 24 (calibrated at the off-path seed b_3 = 24)",
-                "experimental_ref": "Planck 2018: 67.4 +/- 0.5 km/s/Mpc",
-                "fitted_params": 0,
-                "circularity_diagnostic": {
-                    "interpolation_weight_on_H0_early": round(1.0 - f_weight, 10),
-                    "interpolation_weight_on_H0_late": round(f_weight, 10),
-                    "z_star_from_b3": round(z_star, 4),
-                    "near_zero_tension_is_structural": True,
-                    "raw_v14_2_H0_inferred": round(h0_raw_inferred, 2),
-                    "raw_v14_2_tension_sigma": round(raw_tension, 1),
-                    "explanation": (
-                        f"At z=1100, interpolation weight on H0_early=67.4 is "
-                        f"{1.0 - f_weight:.7f} (~100%). The near-zero tension "
-                        f"({tension:.4f}sigma) is by construction, not prediction. "
-                        f"The raw log-scaling formula (no H0_early input) gives "
-                        f"H0={h0_raw_inferred:.1f} km/s/Mpc ({raw_tension:.0f}sigma "
-                        f"from Planck). The non-trivial physics content is the "
-                        f"transition scale z*={z_star:.2f}, calibrated at the "
-                        f"off-path seed b3=24."
-                    ),
-                },
-                "note": (
-                    "The v16.1 Ricci flow interpolation uses H0_early=67.4 as "
-                    "a direct input endpoint, making agreement at z=1100 structural. "
-                    "The raw v14.2 log-scaling (b3-only, no H0_early input) gives "
-                    f"H0~{h0_raw_inferred:.0f} km/s/Mpc ({raw_tension:.0f}sigma). "
-                    "The non-trivial content is z*=b3/k_gimel~1.95 as the "
-                    "transition scale between early and late regimes."
-                ),
-                "vacuous_pass_fix": (
-                    "v1: compared hardcoded 67.4 against itself (tension=0). "
-                    "v2: uses cosmology.H0_early_normalized from evolution engine. "
-                    "v3 (current): adds circularity diagnostic showing the "
-                    "interpolation is still ~tautological at z=1100."
-                ),
-            },
+            "honesty": self._cosmo015_honesty(h0_planck, tension, h0_raw_inferred,
+                                              raw_tension, z_star, f_weight),
         }
         print(f"  COSMO-015: {status} (H0_early = {h0:.4f} km/s/Mpc, "
               f"tension = {tension:.4f}sigma, "
               f"raw_v14.2 = {h0_raw_inferred:.1f} [{raw_tension:.0f}sigma])")
+
+    @staticmethod
+    def _cosmo015_raw_formula():
+        """Raw v14.2 H0 (no H0_early input), z_star and the interpolation weight.
+
+        H_raw(z) = H0_late (1+z)^1.5 / (1 + ln(1+z)/b3); H0_raw = H_raw(1100)/E(1100).
+        b3 = 24 is hard-coded: CALIBRATED at the off-path seed, not the live seed.
+        """
+        import math
+        b3 = 24
+        h0_late = 73.04
+        z_cmb = 1100.0
+        relaxation = 1.0 + math.log(1.0 + z_cmb) / b3
+        h_raw = h0_late * (1.0 + z_cmb) ** 1.5 / relaxation
+        omega_m, omega_de = 0.311, 0.689
+        e_z = math.sqrt(omega_m * (1.0 + z_cmb) ** 3 + omega_de)
+        k_gimel = b3 / 2.0 + 1.0 / math.pi
+        z_star = b3 / k_gimel
+        return h_raw / e_z, z_star, 1.0 / (1.0 + (z_cmb / z_star) ** 2)
+
+    @staticmethod
+    def _cosmo015_honesty(h0_planck, tension, h0_raw_inferred, raw_tension, z_star, f_weight):
+        """Honesty block of COSMO-015."""
+        return {
+            "classification": "INTERPOLATION_ENDPOINT",
+            "formula": "H0_eff(z) = H0_late*f(z) + H0_early*(1-f(z)), f=1/(1+(z/z*)^2)",
+            "source_param": "cosmology.H0_early_normalized",
+            "source_simulation": "evolution_engine_v16_2",
+            "H0_late_source": "SH0ES 2022 (73.04 km/s/Mpc, ESTABLISHED)",
+            "b3_source": "hard-coded 24 (calibrated at the off-path seed b_3 = 24)",
+            "experimental_ref": "Planck 2018: 67.4 +/- 0.5 km/s/Mpc",
+            "fitted_params": 0,
+            "circularity_diagnostic": {
+                "interpolation_weight_on_H0_early": round(1.0 - f_weight, 10),
+                "interpolation_weight_on_H0_late": round(f_weight, 10),
+                "z_star_from_b3": round(z_star, 4),
+                "near_zero_tension_is_structural": True,
+                "raw_v14_2_H0_inferred": round(h0_raw_inferred, 2),
+                "raw_v14_2_tension_sigma": round(raw_tension, 1),
+                "explanation": (
+                    f"At z=1100, interpolation weight on H0_early=67.4 is "
+                    f"{1.0 - f_weight:.7f} (~100%). The near-zero tension "
+                    f"({tension:.4f}sigma) is by construction, not prediction. "
+                    f"The raw log-scaling formula (no H0_early input) gives "
+                    f"H0={h0_raw_inferred:.1f} km/s/Mpc ({raw_tension:.0f}sigma "
+                    f"from Planck). The non-trivial physics content is the "
+                    f"transition scale z*={z_star:.2f}, calibrated at the "
+                    f"off-path seed b3=24."
+                ),
+            },
+            "note": (
+                "The v16.1 Ricci flow interpolation uses H0_early=67.4 as "
+                "a direct input endpoint, making agreement at z=1100 structural. "
+                "The raw v14.2 log-scaling (b3-only, no H0_early input) gives "
+                f"H0~{h0_raw_inferred:.0f} km/s/Mpc ({raw_tension:.0f}sigma). "
+                "The non-trivial content is z*=b3/k_gimel~1.95 as the "
+                "transition scale between early and late regimes."
+            ),
+            "vacuous_pass_fix": (
+                "v1: compared hardcoded 67.4 against itself (tension=0). "
+                "v2: uses cosmology.H0_early_normalized from evolution engine. "
+                "v3 (current): adds circularity diagnostic showing the "
+                "interpolation is still ~tautological at z=1100."
+            ),
+        }

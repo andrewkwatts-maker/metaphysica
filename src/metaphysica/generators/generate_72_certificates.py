@@ -665,118 +665,115 @@ def result_basis(evaluation):
     return "declared"
 
 
+def _proof_id(gate):
+    """proof_id from the gate id and name."""
+    proof_id = (f"G{gate['id']:02d}_"
+                f"{gate['name'].lower().replace(' ', '_').replace('-', '_').replace('/', '_')}")
+    return ''.join(c for c in proof_id if c.isalnum() or c == '_')
+
+
+def _cert_head(gate, proof_id, category, wl_code):
+    """The fields every certificate starts with, in the published order."""
+    return {
+        "proof_id": proof_id,
+        "gate_id": gate['id'],
+        "gate_name": gate['name'],
+        "label": gate.get('logic', gate['name']),
+        "category": category,
+        "phase": gate.get('phase', 1),
+        "block": gate.get('block', 'A'),
+        "version": VERSION_SHORT,
+        "wl_code": wl_code,
+    }
+
+
+def _verified_certificate(gate, proof_id, timestamp):
+    """Certificate of a gate with an executable form (arithmetic or registry tier)."""
+    gate_id = gate['id']
+    verif = VERIFIABLE_GATES[gate_id]
+    note = verif.get('note', gate.get('validation', ''))
+    evaluation = evaluate_gate(gate_id, verif, _load_registry_params())
+    result_text = declared_result(gate_id, verif, evaluation)
+    typed_text = str(verif.get("result", "N/A"))
+    cert = _cert_head(gate, proof_id, gate.get('domain', 'TOPOLOGY'),
+                      verif.get('wl_code', gate.get('wolfram', 'N/A')))
+    cert.update({
+        "result": result_text,
+        "result_basis": result_basis(evaluation),
+        "formula": gate.get('formula', 'N/A'),
+        "verification_status": "VERIFIED",
+        "evaluation_status": evaluation["status"],
+        "evaluation": evaluation,
+        "result_unmatched_numbers": result_unmatched_numbers(typed_text, evaluation),
+        "derivation_status": get_derivation_status(gate_id),
+        "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
+        "timestamp": timestamp,
+        "hash": generate_hash({"id": gate_id, "result": result_text})
+    })
+    return cert
+
+
+def _static_certificate(gate, proof_id, timestamp, category, status, reason, note):
+    """Certificate of a MATHEMATICAL or NOT_TESTABLE gate (no evaluation)."""
+    gate_id = gate['id']
+    cert = _cert_head(gate, proof_id, category, gate.get('wolfram', 'N/A'))
+    cert.update({
+        "result": "N/A",
+        "formula": gate.get('formula', 'N/A'),
+        "verification_status": status,
+        "derivation_status": get_derivation_status(gate_id),
+        "reason": reason,
+        "note": note,
+        "timestamp": timestamp,
+        "hash": generate_hash({"id": gate_id, "status": status})
+    })
+    return cert
+
+
+def _pending_certificate(gate, proof_id, timestamp):
+    """PENDING_LOCK certificate: cannot be verified computationally yet."""
+    gate_id = gate['id']
+    cert = _cert_head(gate, proof_id, gate.get('domain', 'PENDING'),
+                      gate.get('wolfram', 'PENDING'))
+    cert.update({
+        "result": "PENDING",
+        "formula": gate.get('formula', 'N/A'),
+        "verification_status": "PENDING_LOCK",
+        "derivation_status": get_derivation_status(gate_id),
+        "reason": "Requires Wolfram Alpha API, experimental data, or advanced computation not yet implemented",
+        "note": f"PENDING: {gate.get('logic', '')}. Validation: {gate.get('validation', 'awaiting implementation')}",
+        "timestamp": timestamp,
+        "hash": generate_hash({"id": gate_id, "status": "PENDING"})
+    })
+    for key, out in (('derived', 'derived_value'), ('experimental', 'experimental_value'),
+                     ('units', 'units')):
+        if key in gate:
+            cert[out] = gate[key]
+    return cert
+
+
 def create_certificate(gate, existing_certs):
     """Create a certificate for a gate."""
     gate_id = gate['id']
-    gate_name = gate['name']
-
-    # Convert gate name to proof_id format
-    proof_id = f"G{gate_id:02d}_{gate_name.lower().replace(' ', '_').replace('-', '_').replace('/', '_')}"
-    proof_id = ''.join(c for c in proof_id if c.isalnum() or c == '_')
-
+    proof_id = _proof_id(gate)
     timestamp = datetime.utcnow().isoformat() + "Z"
-
-    # Check if this is a verifiable gate
     if gate_id in VERIFIABLE_GATES:
-        verif = VERIFIABLE_GATES[gate_id]
-        note = verif.get('note', gate.get('validation', ''))
-        evaluation = evaluate_gate(gate_id, verif, _load_registry_params())
-        result_text = declared_result(gate_id, verif, evaluation)
-        typed_text = str(verif.get("result", "N/A"))
-        cert = {
-            "proof_id": proof_id,
-            "gate_id": gate_id,
-            "gate_name": gate_name,
-            "label": gate.get('logic', gate_name),
-            "category": gate.get('domain', 'TOPOLOGY'),
-            "phase": gate.get('phase', 1),
-            "block": gate.get('block', 'A'),
-            "version": VERSION_SHORT,
-            "wl_code": verif.get('wl_code', gate.get('wolfram', 'N/A')),
-            "result": result_text,
-            "result_basis": result_basis(evaluation),
-            "formula": gate.get('formula', 'N/A'),
-            "verification_status": "VERIFIED",
-            "evaluation_status": evaluation["status"],
-            "evaluation": evaluation,
-            "result_unmatched_numbers": result_unmatched_numbers(
-                typed_text, evaluation),
-            "derivation_status": get_derivation_status(gate_id),
-            "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
-            "timestamp": timestamp,
-            "hash": generate_hash({"id": gate_id, "result": result_text})
-        }
-    elif gate_id in MATHEMATICAL_GATES:
-        cert = {
-            "proof_id": proof_id,
-            "gate_id": gate_id,
-            "gate_name": gate_name,
-            "label": gate.get('logic', gate_name),
-            "category": "MATHEMATICAL",
-            "phase": gate.get('phase', 1),
-            "block": gate.get('block', 'A'),
-            "version": VERSION_SHORT,
-            "wl_code": gate.get('wolfram', 'N/A'),
-            "result": "N/A",
-            "formula": gate.get('formula', 'N/A'),
-            "verification_status": "MATHEMATICAL",
-            "derivation_status": get_derivation_status(gate_id),
-            "reason": MATHEMATICAL_GATES[gate_id]['reason'],
-            "note": f"MATHEMATICAL: {gate.get('logic', '')}. This is a mathematical constraint derivable from the 288-root manifold.",
-            "timestamp": timestamp,
-            "hash": generate_hash({"id": gate_id, "status": "MATHEMATICAL"})
-        }
-    elif gate_id in NOT_TESTABLE_GATES:
-        cert = {
-            "proof_id": proof_id,
-            "gate_id": gate_id,
-            "gate_name": gate_name,
-            "label": gate.get('logic', gate_name),
-            "category": "FOUNDATIONAL_ASSUMPTION",
-            "phase": gate.get('phase', 1),
-            "block": gate.get('block', 'A'),
-            "version": VERSION_SHORT,
-            "wl_code": gate.get('wolfram', 'N/A'),
-            "result": "N/A",
-            "formula": gate.get('formula', 'N/A'),
-            "verification_status": "NOT_TESTABLE",
-            "derivation_status": get_derivation_status(gate_id),
-            "reason": NOT_TESTABLE_GATES[gate_id]['reason'],
-            "note": f"FOUNDATIONAL: {gate.get('logic', '')}. This is a framework assumption, not an empirical prediction.",
-            "timestamp": timestamp,
-            "hash": generate_hash({"id": gate_id, "status": "NOT_TESTABLE"})
-        }
-    else:
-        # PENDING_LOCK - we cannot verify this computationally yet
-        cert = {
-            "proof_id": proof_id,
-            "gate_id": gate_id,
-            "gate_name": gate_name,
-            "label": gate.get('logic', gate_name),
-            "category": gate.get('domain', 'PENDING'),
-            "phase": gate.get('phase', 1),
-            "block": gate.get('block', 'A'),
-            "version": VERSION_SHORT,
-            "wl_code": gate.get('wolfram', 'PENDING'),
-            "result": "PENDING",
-            "formula": gate.get('formula', 'N/A'),
-            "verification_status": "PENDING_LOCK",
-            "derivation_status": get_derivation_status(gate_id),
-            "reason": "Requires Wolfram Alpha API, experimental data, or advanced computation not yet implemented",
-            "note": f"PENDING: {gate.get('logic', '')}. Validation: {gate.get('validation', 'awaiting implementation')}",
-            "timestamp": timestamp,
-            "hash": generate_hash({"id": gate_id, "status": "PENDING"})
-        }
+        return _verified_certificate(gate, proof_id, timestamp)
+    if gate_id in MATHEMATICAL_GATES:
+        return _static_certificate(
+            gate, proof_id, timestamp, "MATHEMATICAL", "MATHEMATICAL",
+            MATHEMATICAL_GATES[gate_id]['reason'],
+            f"MATHEMATICAL: {gate.get('logic', '')}. This is a mathematical constraint derivable from the 288-root manifold.")
+    if gate_id in NOT_TESTABLE_GATES:
+        return _static_certificate(
+            gate, proof_id, timestamp, "FOUNDATIONAL_ASSUMPTION", "NOT_TESTABLE",
+            NOT_TESTABLE_GATES[gate_id]['reason'],
+            f"FOUNDATIONAL: {gate.get('logic', '')}. This is a framework assumption, not an empirical prediction.")
+    return _pending_certificate(gate, proof_id, timestamp)
 
-        # Add derived/experimental values if present
-        if 'derived' in gate:
-            cert['derived_value'] = gate['derived']
-        if 'experimental' in gate:
-            cert['experimental_value'] = gate['experimental']
-        if 'units' in gate:
-            cert['units'] = gate['units']
 
-    return cert
+from collections import Counter  # noqa: E402
+
 
 def _not_applicable_ids(certs):
     """Gate ids whose premise the selected path does not carry."""
@@ -797,58 +794,11 @@ def _apply_path_applicability(certs):
     return selection, gate_paths.path_id(selection)
 
 
-def main():
-    print("Loading gates...")
-    gates_data = load_gates()
-    gates = gates_data.get('gates', [])
+def _apply_g72_seal(all_certificates):
+    """G72: computed AND over every executed evaluation (declarative gates excluded).
 
-    print(f"Found {len(gates)} gates")
-
-    print("Loading existing certificates...")
-    existing = load_existing_certificates()
-    print(f"Found {len(existing)} existing certificates")
-
-    # Generate all certificates
-    all_certificates = []
-    verified_count = 0
-    pending_count = 0
-    not_testable_count = 0
-    mathematical_count = 0
-
-    # Derivation status counters
-    derivation_counts = {
-        "RIGOROUS": 0,
-        "DERIVED": 0,
-        "PARTIAL": 0,
-        "EXPLORATORY": 0,
-        "FITTED": 0,
-        "INPUT": 0
-    }
-
-    for gate in gates:
-        cert = create_certificate(gate, existing)
-        all_certificates.append(cert)
-
-        if cert['verification_status'] == 'VERIFIED':
-            verified_count += 1
-        elif cert['verification_status'] == 'PENDING_LOCK':
-            pending_count += 1
-        elif cert['verification_status'] == 'NOT_TESTABLE':
-            not_testable_count += 1
-        elif cert['verification_status'] == 'MATHEMATICAL':
-            mathematical_count += 1
-
-        # Count derivation status
-        ds = cert.get('derivation_status', 'PARTIAL')
-        if ds in derivation_counts:
-            derivation_counts[ds] += 1
-
-    selection, path_id = _apply_path_applicability(all_certificates)
-
-    # ── G72: computed AND over every executed evaluation (2026-08) ─────
-    # Previously an asserted "verification seal"; now it aggregates the
-    # actual evaluation outcomes. Declarative gates neither pass nor
-    # fail it — G72 asserts only over what was executed.
+    Returns (evaluated certificates, ids of failing gates).
+    """
     evaluated = [c for c in all_certificates
                  if c.get('evaluation_status', '').startswith('COMPUTED')
                  and c['gate_id'] != 72]
@@ -871,18 +821,66 @@ def main():
                 f"evaluations — {'ALL PASS' if not eval_fails else f'FAILS: {eval_fails}'}. "
                 "No longer an asserted seal."
             )
+    return evaluated, eval_fails
 
-    for gate, cert in zip(gates, all_certificates):
-        # Save individual certificate
-        cert_filename = f"G{gate['id']:02d}_{cert['proof_id'].split('_', 1)[-1][:30]}.json"
-        cert_path = os.path.join(CERT_DIR, cert_filename)
-        # Stable timestamps: a no-op build must not rewrite 164 files and bury
-        # a real change in churn. See _common.write_json_stable.
-        from metaphysica.generators._common import write_json_stable
-        write_json_stable(cert_path, cert)
 
-    # Create summary file
-    summary = {
+def _evaluation_summary(all_certificates, eval_fails):
+    """Executed-evaluation tally (what was computed, not what is asserted)."""
+    return {
+        "description": (
+            "Executed evaluation layer (2026-08): gates are no longer "
+            "purely declarative. arithmetic tier = wl_code executed in "
+            "a restricted namespace; registry tier = live parameters.json "
+            "value vs experimental anchor; DECLARATIVE = no executable "
+            "form exists (statement only). G72 is the computed AND over "
+            "executed evaluations."
+        ),
+        "computed_pass": sum(1 for c in all_certificates
+                              if c.get('evaluation_status') == 'COMPUTED_PASS'),
+        "computed_fail": sum(1 for c in all_certificates
+                              if c.get('evaluation_status') == 'COMPUTED_FAIL'),
+        "computed_info": sum(1 for c in all_certificates
+                              if c.get('evaluation_status') == 'COMPUTED_INFO'),
+        "declarative": sum(1 for c in all_certificates
+                            if c.get('evaluation_status') == 'DECLARATIVE'),
+        # The gates that fail ON THEIR OWN. G72 is the AND over these,
+        # so when any of them fails the seal fails too and is counted in
+        # computed_fail above -- which is why that count can exceed the
+        # length of this list by exactly one. Stated explicitly because
+        # "computed_fail: 2, failed_gate_ids: [12]" otherwise reads as
+        # an arithmetic error.
+        "failed_gate_ids": eval_fails,
+        "failed_gate_ids_excludes_seal": True,
+        "seal_gate_id": 72,
+    }
+
+
+def _derivation_summary(derivation_counts):
+    """How each gate's formula was obtained, with counts."""
+    return {
+        "description": "Derivation status indicates how each gate's formula was obtained",
+        "RIGOROUS": derivation_counts["RIGOROUS"],
+        "DERIVED": derivation_counts["DERIVED"],
+        "PARTIAL": derivation_counts["PARTIAL"],
+        "EXPLORATORY": derivation_counts["EXPLORATORY"],
+        "FITTED": derivation_counts["FITTED"],
+        "INPUT": derivation_counts["INPUT"],
+        "definitions": {
+            "RIGOROUS": "Follows from established mathematics (GEOMETRIC, TOPOLOGICAL)",
+            "DERIVED": "Key formula derived from PM parameters",
+            "PARTIAL": "Key steps established, some assumptions remain",
+            "EXPLORATORY": "Formula works but mechanism incomplete",
+            "FITTED": "Uses experimental input (acknowledged)",
+            "INPUT": "Direct experimental value used"
+        }
+    }
+
+
+def _build_summary(all_certificates, path_id, eval_fails, derivation_counts,
+                   verified_count, pending_count, not_testable_count,
+                   mathematical_count):
+    """The gates summary document (declarative tally, evaluation tally, honesty notes)."""
+    return {
         "version": VERSION_SHORT,
         "title": "Gates Certificate Registry",
         "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -905,50 +903,8 @@ def main():
             "not_testable": not_testable_count,
             "mathematical": mathematical_count
         },
-        "evaluation_summary": {
-            "description": (
-                "Executed evaluation layer (2026-08): gates are no longer "
-                "purely declarative. arithmetic tier = wl_code executed in "
-                "a restricted namespace; registry tier = live parameters.json "
-                "value vs experimental anchor; DECLARATIVE = no executable "
-                "form exists (statement only). G72 is the computed AND over "
-                "executed evaluations."
-            ),
-            "computed_pass": sum(1 for c in all_certificates
-                                  if c.get('evaluation_status') == 'COMPUTED_PASS'),
-            "computed_fail": sum(1 for c in all_certificates
-                                  if c.get('evaluation_status') == 'COMPUTED_FAIL'),
-            "computed_info": sum(1 for c in all_certificates
-                                  if c.get('evaluation_status') == 'COMPUTED_INFO'),
-            "declarative": sum(1 for c in all_certificates
-                                if c.get('evaluation_status') == 'DECLARATIVE'),
-            # The gates that fail ON THEIR OWN. G72 is the AND over these,
-            # so when any of them fails the seal fails too and is counted in
-            # computed_fail above -- which is why that count can exceed the
-            # length of this list by exactly one. Stated explicitly because
-            # "computed_fail: 2, failed_gate_ids: [12]" otherwise reads as
-            # an arithmetic error.
-            "failed_gate_ids": eval_fails,
-            "failed_gate_ids_excludes_seal": True,
-            "seal_gate_id": 72,
-        },
-        "derivation_summary": {
-            "description": "Derivation status indicates how each gate's formula was obtained",
-            "RIGOROUS": derivation_counts["RIGOROUS"],
-            "DERIVED": derivation_counts["DERIVED"],
-            "PARTIAL": derivation_counts["PARTIAL"],
-            "EXPLORATORY": derivation_counts["EXPLORATORY"],
-            "FITTED": derivation_counts["FITTED"],
-            "INPUT": derivation_counts["INPUT"],
-            "definitions": {
-                "RIGOROUS": "Follows from established mathematics (GEOMETRIC, TOPOLOGICAL)",
-                "DERIVED": "Key formula derived from PM parameters",
-                "PARTIAL": "Key steps established, some assumptions remain",
-                "EXPLORATORY": "Formula works but mechanism incomplete",
-                "FITTED": "Uses experimental input (acknowledged)",
-                "INPUT": "Direct experimental value used"
-            }
-        },
+        "evaluation_summary": _evaluation_summary(all_certificates, eval_fails),
+        "derivation_summary": _derivation_summary(derivation_counts),
         "honest_status": {
             "description": "This registry honestly reports verification status",
             "verified_note": f"{verified_count} gates have been computationally verified (including G31-G40 with simulation evidence)",
@@ -959,6 +915,54 @@ def main():
         "certificates": all_certificates
     }
 
+
+def _write_certificate_files(gates, all_certificates):
+    """Write one JSON file per certificate."""
+    from metaphysica.generators._common import write_json_stable
+    for gate, cert in zip(gates, all_certificates):
+        # Save individual certificate
+        cert_filename = f"G{gate['id']:02d}_{cert['proof_id'].split('_', 1)[-1][:30]}.json"
+        cert_path = os.path.join(CERT_DIR, cert_filename)
+        # Stable timestamps: a no-op build must not rewrite 164 files and bury
+        # a real change in churn. See _common.write_json_stable.
+        write_json_stable(cert_path, cert)
+
+
+def main():
+    print("Loading gates...")
+    gates_data = load_gates()
+    gates = gates_data.get('gates', [])
+
+    print(f"Found {len(gates)} gates")
+
+    print("Loading existing certificates...")
+    existing = load_existing_certificates()
+    print(f"Found {len(existing)} existing certificates")
+
+    all_certificates = [create_certificate(gate, existing) for gate in gates]
+    status_counts = Counter(c['verification_status'] for c in all_certificates)
+    verified_count = status_counts['VERIFIED']
+    pending_count = status_counts['PENDING_LOCK']
+    not_testable_count = status_counts['NOT_TESTABLE']
+    mathematical_count = status_counts['MATHEMATICAL']
+    derivation_counts = dict.fromkeys(
+        ("RIGOROUS", "DERIVED", "PARTIAL", "EXPLORATORY", "FITTED", "INPUT"), 0)
+    for cert in all_certificates:
+        ds = cert.get('derivation_status', 'PARTIAL')
+        if ds in derivation_counts:
+            derivation_counts[ds] += 1
+
+    selection, path_id = _apply_path_applicability(all_certificates)
+
+    evaluated, eval_fails = _apply_g72_seal(all_certificates)
+
+    _write_certificate_files(gates, all_certificates)
+
+    summary = _build_summary(
+        all_certificates, path_id, eval_fails, derivation_counts,
+        verified_count, pending_count, not_testable_count, mathematical_count)
+
+    from metaphysica.generators._common import write_json_stable
     write_json_stable(OUTPUT_FILE, summary)
 
     print(f"\n=== Gate Certificates Generated ===")

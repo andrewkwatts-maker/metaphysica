@@ -27,39 +27,15 @@ class G79G80Gates:
         2. Convergence to equilibrium S_eq within relaxation time
         3. kappa_sampler = dim(S^{2,0}) = 2 (topologically fixed, not tuned)
         4. Entropy gradient has correct sign for all 3 terms (bridge, OR, sampler)
-
-        Gemini Debate Assessment (3 rounds):
-          Round 1: G79 is falsifiable, not a tautology. Clear failure modes exist:
-                   dS/dt < 0 violates Second Law; kappa != 2 means sampler/manifold
-                   mismatch; non-convergence indicates thermodynamic inconsistency.
-          Round 2: Suggested strengthening with equilibrium S_eq scaling vs bridge
-                   count (12 pairs) and fluctuation-dissipation checks. Current
-                   checks deemed necessary but could be extended.
-          Round 3: Tests (1), (2), (4) are scientifically meaningful (Second Law,
-                   equilibrium convergence). Test (3) is a self-consistency check
-                   for the M^{26}(24,2) manifold architecture. Overall: gate is
-                   meaningful within the framework, not purely tautological.
         """
-        import numpy as np
-
-        # ── Sub-test 3: kappa_sampler = dim(S^{2,0}) = 2 (topological) ──
-        # The count 24 bridge dims + 1 time + 2 sampler = 27 that this comment
-        # used to give is the superseded 27D sampler-pair formulation (one
-        # shared time, RETIRED); the adopted bulk is M^{26}(24,2).
-        kappa_sampler = 2  # dim(S^{2,0}) from manifold architecture
+        kappa_sampler = 2  # dim(S^{2,0}) from manifold architecture (bulk M^{26}(24,2))
         kappa_expected = 2
         kappa_pass = (kappa_sampler == kappa_expected)
-
-        # ── Try to import sampler entropy dynamics for ODE tests ──
         try:
             from metaphysica.simulations.PM.field_dynamics.sampler_entropy_dynamics import (
                 SamplerEntropyDynamics
             )
-            _module_available = True
         except ImportError:
-            _module_available = False
-
-        if not _module_available:
             # Graceful degradation: only validate kappa_sampler
             if kappa_pass:
                 status = "LOCKED"
@@ -69,69 +45,33 @@ class G79G80Gates:
                 status = "FAILED"
                 metric = (f"kappa_sampler = {kappa_sampler} != {kappa_expected} "
                           f"[ODE module pending]")
-            self.results['G79-ENTROPY'] = {
-                "status": status,
-                "metric": metric,
-                "expected": "kappa=2, dS/dt>=0, S_eq finite",
-                "sector": "SAMPLER"
-            }
-            print(f"  G79-ENTROPY: {status} ({metric})")
+            self._g79_record(status, metric)
             return
-
-        # ── Full validation with sampler_entropy_dynamics module ──
-        dynamics = SamplerEntropyDynamics()
-        alpha_T = 2.6  # DERIVED: D_total/D_string = 26/10 (two-time)
-
-        # Sub-test 1: Second Law (integrated over compact S^{2,0})
-        # Diffusion term integrates to zero by divergence theorem,
-        # so total dS/dt = bridge_term + OR_term >= 0
-        second_law_result = dynamics.validate_second_law(
-            alpha_T=alpha_T, n_trials=20, seed=42
-        )
-        second_law_violations = second_law_result["violations"]
-
-        # Sub-test 2: Equilibrium entropy exists and is finite
-        density_matrices = dynamics._generate_bridge_density_matrices(12)
-        S_eq = dynamics.compute_equilibrium_entropy(
-            alpha_T=alpha_T,
-            density_matrices=density_matrices,
-        )
-        equilibrium_failures = 0 if (np.isfinite(S_eq) and S_eq > 0) else 1
-
-        # Sub-test 3: Gradient source terms are non-negative
-        grad_result = dynamics.compute_entropy_gradient(
-            alpha_T=alpha_T,
-            density_matrices=density_matrices,
-        )
-        gradient_sign_failures = 0
-        for component_name in ["bridge_contribution", "or_contribution"]:
-            component_val = grad_result.get(component_name, 0.0)
-            if component_val < -1e-12:
-                gradient_sign_failures += 1
-
-        all_pass = (kappa_pass
-                    and second_law_violations == 0
-                    and equilibrium_failures == 0
-                    and gradient_sign_failures == 0)
-
+        ode = self._g79_ode_checks(SamplerEntropyDynamics())
+        all_pass = (kappa_pass and ode["second_law_violations"] == 0
+                    and ode["equilibrium_failures"] == 0
+                    and ode["gradient_sign_failures"] == 0)
         if all_pass:
             status = "LOCKED"
-            n_2nd = second_law_result["n_trials"]
+            n_2nd = ode["n_trials"]
             metric = (f"kappa={kappa_sampler}, dS/dt>=0 ({n_2nd}/{n_2nd}), "
-                      f"S_eq={S_eq:.4f}")
+                      f"S_eq={ode['S_eq']:.4f}")
         else:
             status = "FAILED"
             failures = []
             if not kappa_pass:
                 failures.append(f"kappa={kappa_sampler}!={kappa_expected}")
-            if second_law_violations > 0:
-                failures.append(f"2ndLaw violated {second_law_violations}x")
-            if equilibrium_failures > 0:
-                failures.append(f"S_eq non-finite {equilibrium_failures}x")
-            if gradient_sign_failures > 0:
-                failures.append(f"grad sign fail {gradient_sign_failures}x")
+            if ode["second_law_violations"] > 0:
+                failures.append(f"2ndLaw violated {ode['second_law_violations']}x")
+            if ode["equilibrium_failures"] > 0:
+                failures.append(f"S_eq non-finite {ode['equilibrium_failures']}x")
+            if ode["gradient_sign_failures"] > 0:
+                failures.append(f"grad sign fail {ode['gradient_sign_failures']}x")
             metric = "; ".join(failures)
+        self._g79_record(status, metric)
 
+    def _g79_record(self, status, metric):
+        """Store and print the G79 results row."""
         self.results['G79-ENTROPY'] = {
             "status": status,
             "metric": metric,
@@ -139,6 +79,29 @@ class G79G80Gates:
             "sector": "SAMPLER"
         }
         print(f"  G79-ENTROPY: {status} ({metric})")
+
+    @staticmethod
+    def _g79_ode_checks(dynamics):
+        """Second Law, equilibrium entropy and gradient-sign sub-tests."""
+        import numpy as np
+        alpha_T = 2.6  # DERIVED: D_total/D_string = 26/10 (two-time)
+        # Diffusion integrates to zero on compact S^{2,0}: dS/dt = bridge + OR >= 0
+        second_law = dynamics.validate_second_law(alpha_T=alpha_T, n_trials=20, seed=42)
+        density_matrices = dynamics._generate_bridge_density_matrices(12)
+        S_eq = dynamics.compute_equilibrium_entropy(
+            alpha_T=alpha_T, density_matrices=density_matrices)
+        grad = dynamics.compute_entropy_gradient(
+            alpha_T=alpha_T, density_matrices=density_matrices)
+        sign_failures = sum(
+            1 for name in ("bridge_contribution", "or_contribution")
+            if grad.get(name, 0.0) < -1e-12)
+        return {
+            "second_law_violations": second_law["violations"],
+            "n_trials": second_law["n_trials"],
+            "S_eq": S_eq,
+            "equilibrium_failures": 0 if (np.isfinite(S_eq) and S_eq > 0) else 1,
+            "gradient_sign_failures": sign_failures,
+        }
 
     # ═══════════════════════════════════════════════════════════════════
     # LAMBDA CERTIFICATES (v24.3 - Torsion Funnel)
@@ -173,78 +136,28 @@ class G79G80Gates:
             from metaphysica.simulations.PM.cosmology.dynamical_lambda import (
                 DynamicalLambdaRelaxation,
             )
-            _module_available = True
         except ImportError:
-            _module_available = False
-
-        if not _module_available:
-            status = "SKIPPED"
-            metric = "dynamical_lambda module unavailable"
-            self.results['G80-LAMBDA'] = {
-                "status": status,
-                "metric": metric,
-                "expected": "V_eff ~ Lambda_obs (FITTED)",
-                "sector": "LAMBDA"
-            }
-            print(f"  G80-LAMBDA: {status} ({metric})")
+            self._g80_record("SKIPPED", "dynamical_lambda module unavailable")
             return
-
-        sim = DynamicalLambdaRelaxation()
-        tf = sim.compute_V_eff_with_torsion_funnel()
-
-        # Check for UNFOUNDED case (V_bare < 0)
+        tf = DynamicalLambdaRelaxation().compute_V_eff_with_torsion_funnel()
         if tf.get('status') == 'UNFOUNDED':
-            status = "FAILED"
-            metric = f"V_bare < 0 (AdS): {tf.get('reason', 'unknown')}"
-            self.results['G80-LAMBDA'] = {
-                "status": status,
-                "metric": metric,
-                "expected": "V_eff ~ Lambda_obs (FITTED)",
-                "sector": "LAMBDA"
-            }
-            print(f"  G80-LAMBDA: {status} ({metric})")
+            self._g80_record(
+                "FAILED", f"V_bare < 0 (AdS): {tf.get('reason', 'unknown')}")
             return
+        status, metric = self._g80_verdict(tf)
+        self._g80_record(status, metric, tf)
 
-        # Test 1: V_bare > 0
-        v_bare_ok = tf['V_bare'] > 0
-
-        # Test 2: S_naive > S_required (mechanism direction)
-        direction_ok = tf['S_naive'] > tf['S_required']
-
-        # Test 3: Corrected V_eff within 1 order of Lambda_obs
-        gap_ok = tf['gap_orders_corrected'] < 1.0
-
-        # Test 4: Classification honestly reports FITTED
-        honesty_ok = tf['classification'] == 'FITTED'
-
-        all_pass = v_bare_ok and direction_ok and gap_ok and honesty_ok
-
-        if all_pass:
-            status = "LOCKED"
-            metric = (
-                f"V_eff={tf['V_eff_corrected']:.2e}, "
-                f"gap={tf['gap_orders_corrected']:.2f}ord, "
-                f"I_torsion={tf['torsion_integral_needed']:.1f} [FITTED]"
-            )
-        else:
-            status = "FAILED"
-            failures = []
-            if not v_bare_ok:
-                failures.append(f"V_bare={tf['V_bare']:.2e}<=0")
-            if not direction_ok:
-                failures.append("S_naive<=S_required")
-            if not gap_ok:
-                failures.append(f"gap={tf['gap_orders_corrected']:.1f}ord>1")
-            if not honesty_ok:
-                failures.append(f"classification={tf['classification']}!=FITTED")
-            metric = "; ".join(failures)
-
-        self.results['G80-LAMBDA'] = {
+    def _g80_record(self, status, metric, tf=None):
+        """Store and print the G80 row; the honesty block needs the funnel dict."""
+        row = {
             "status": status,
             "metric": metric,
-            "expected": "V_eff ~ Lambda_obs (FITTED, not derived)",
-            "sector": "LAMBDA",
-            "honesty": {
+            "expected": "V_eff ~ Lambda_obs (FITTED)",
+            "sector": "LAMBDA"
+        }
+        if tf is not None:
+            row["expected"] = "V_eff ~ Lambda_obs (FITTED, not derived)"
+            row["honesty"] = {
                 "torsion_integral": tf['torsion_integral_needed'],
                 "classification": tf['classification'],
                 "closest_overall": tf['closest_candidate'],
@@ -255,6 +168,29 @@ class G79G80Gates:
                     'closest_natural_deviation_pct', tf['closest_deviation_pct']),
                 "any_natural_match": tf['any_natural_match'],
                 "gemini_verdict": "FITTED (2026-03-20, 3 rounds)",
-            },
-        }
+            }
+        self.results['G80-LAMBDA'] = row
         print(f"  G80-LAMBDA: {status} ({metric})")
+
+    @staticmethod
+    def _g80_verdict(tf):
+        """Status and metric text from the four G80 tests."""
+        tests = [
+            tf['V_bare'] > 0,
+            tf['S_naive'] > tf['S_required'],
+            tf['gap_orders_corrected'] < 1.0,
+            tf['classification'] == 'FITTED',
+        ]
+        if all(tests):
+            return "LOCKED", (
+                f"V_eff={tf['V_eff_corrected']:.2e}, "
+                f"gap={tf['gap_orders_corrected']:.2f}ord, "
+                f"I_torsion={tf['torsion_integral_needed']:.1f} [FITTED]"
+            )
+        texts = [
+            f"V_bare={tf['V_bare']:.2e}<=0",
+            "S_naive<=S_required",
+            f"gap={tf['gap_orders_corrected']:.1f}ord>1",
+            f"classification={tf['classification']}!=FITTED",
+        ]
+        return "FAILED", "; ".join(t for t, ok in zip(texts, tests) if not ok)

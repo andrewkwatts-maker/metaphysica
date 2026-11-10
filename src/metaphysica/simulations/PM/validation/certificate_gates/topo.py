@@ -29,7 +29,7 @@ class TopoGates:
         2. Integer quantization: k must be a non-negative integer
         3. Modular constraint: b3 ≡ 0 (mod 24), met by the anchor 24
 
-        Gate explicitly FAILS if the registry lacks b3, preventing vacuous pass.
+        Fails if the registry lacks b3 (no vacuous pass).
         """
         b3 = self._get_param('geometry.elder_kads')
         if b3 is None:
@@ -44,15 +44,11 @@ class TopoGates:
             print(f"  TOPO-023: {status} (geometry.elder_kads missing from registry)")
             return
 
-        # Anomaly cancellation: k = b3 (not a choice — topologically fixed)
-        k = b3
+        k = b3  # anomaly cancellation reading: k = b3
 
-        # Three independent checks:
-        # 1. k equals the expected CS level (24)
+        # Checks: k = 24; integer quantization; b3 = 0 (mod 24)
         value_ok = (k == 24)
-        # 2. Integer quantization (CS level must be an integer)
         integer_ok = isinstance(k, int) or (isinstance(k, float) and k == int(k))
-        # 3. Modular invariance: b3 ≡ 0 (mod 24)
         modular_ok = (b3 % 24 == 0)
 
         status = "SEALED" if (value_ok and integer_ok and modular_ok) else "FAILED"
