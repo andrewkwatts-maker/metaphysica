@@ -21,7 +21,8 @@ def test_tally_skips_not_applicable_and_reports_open(tmp_path):
          "verification_status": "VERIFIED"},
     ]
     rigor = {"chi_squared_from_rows": {"all_scoring_rows": {"chi_squared": 9.0, "n": 5}},
-             "edof_analysis": {"effective_dof": 3, "p_value": 0.0, "status": "POOR_FIT"}}
+             "edof_analysis": {"effective_dof": 3, "effective_dof_is_ansatz": True,
+                      "p_value": 0.0, "status": "POOR_FIT"}}
     h = headline_statistics(*_write(tmp_path, certs, rigor))
     assert (h["gates_total"], h["gates_locked"], h["gates_open"]) == (3, 1, 1)
     assert h["gates_open_ids"] == ["2"] and h["verdict"] == "POOR_FIT"

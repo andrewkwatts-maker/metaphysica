@@ -27,34 +27,55 @@ def _read(path: Path) -> Dict[str, Any]:
 
 
 def tally_gates(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Count gates by evaluated bucket, skipping gates marked not applicable."""
+    """Count gates, executed and declarative apart, skipping not-applicable ones.
+
+    ``locked`` and ``open`` follow the evaluated bucket, so a gate that was
+    never executed can still sit in ``locked`` on its declarative status; the
+    summary below says how many gates were actually run.
+    """
     ids: Dict[str, List[str]] = {"locked": [], "open": [], "axiom": [], "other": []}
-    n_decl = n_pass = n_fail = 0
+    n_pass = n_fail = n_exec_axiom = 0
     for cert in certs:
         ev = str(cert.get("evaluation_status") or "").upper()
         if ev == NOT_APPLICABLE_STATUS:
             continue
-        ids[_bucket_certificate(cert)].append(str(cert.get("gate_id")))
+        bucket = _bucket_certificate(cert)
+        ids[bucket].append(str(cert.get("gate_id")))
+        executed = ev.startswith("COMPUTED")
         n_pass += ev == "COMPUTED_PASS"
         n_fail += ev == "COMPUTED_FAIL"
-        n_decl += not ev.startswith("COMPUTED")
+        n_exec_axiom += executed and bucket == "axiom"
     total = sum(len(v) for v in ids.values())
+    n_testable = total - len(ids["axiom"])
     return {
         "total": total, "locked": len(ids["locked"]), "open": len(ids["open"]),
-        "axiom": len(ids["axiom"]), "testable": total - len(ids["axiom"]),
+        "axiom": len(ids["axiom"]), "testable": n_testable,
         "locked_ids": ids["locked"], "open_ids": ids["open"],
-        "declarative": n_decl, "computed_pass": n_pass, "computed_fail": n_fail,
+        "computed_pass": n_pass, "computed_fail": n_fail,
+        "declarative": n_testable - (n_pass + n_fail - n_exec_axiom),
     }
 
 
+def gate_summary(certs: List[Dict[str, Any]]) -> Dict[str, int]:
+    """The one gate summary: every count computed from the gate registry."""
+    g = tally_gates(certs)
+    return {"total": g["total"], "axiom": g["axiom"], "testable": g["testable"],
+            "executed_pass": g["computed_pass"], "executed_fail": g["computed_fail"],
+            "declarative": g["declarative"], "open": g["open"]}
+
+
 def _fit(rigor: Dict[str, Any]) -> Dict[str, Any]:
-    """Pull the global-fit numbers from the rigor report, None when absent."""
-    rows = (rigor.get("chi_squared_from_rows") or {}).get("all_scoring_rows") or {}
-    edof = rigor.get("edof_analysis") or {}
+    """Pull the global-fit numbers from the rigor report; a missing key raises.
+
+    ``dof`` is the effective-DOF ANSATZ (3), not a count; ``rows`` is N, the
+    number of scored predictions the chi-squared is over.
+    """
+    rows = rigor["chi_squared_from_rows"]["all_scoring_rows"]
+    edof = rigor["edof_analysis"]
     return {
-        "chi_squared": rows.get("chi_squared"), "rows": rows.get("n"),
-        "dof": edof.get("effective_dof"), "p_value": edof.get("p_value"),
-        "verdict": edof.get("status") or (rigor.get("summary") or {}).get("status"),
+        "chi_squared": rows["chi_squared"], "rows": rows["n"],
+        "dof": edof["effective_dof"], "dof_is_ansatz": edof["effective_dof_is_ansatz"],
+        "p_value": edof["p_value"], "verdict": edof["status"],
     }
 
 
@@ -72,6 +93,7 @@ def headline_statistics(rigor_path: Path, certs_path: Path) -> Dict[str, Any]:
     ok = _formulas_ok(certs_doc)
     out = {**fit, **{f"gates_{k}": v for k, v in gates.items()
                      if not k.endswith("_ids")},
+           "gate_summary": gate_summary(certs_doc.get("certificates") or []),
            "gates_locked_ids": gates["locked_ids"],
            "gates_open_ids": gates["open_ids"],
            "formulas_checked_ok": ok}

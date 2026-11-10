@@ -32,11 +32,8 @@ from metaphysica.simulations.core.free_variable_ledger import (
 )
 # Import version from SSoT
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-try:
-    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
-    VERSION = FormulasRegistry.VERSION_SHORT
-except ImportError:
-    VERSION = "23.0"  # Fallback
+from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+VERSION = FormulasRegistry.VERSION_SHORT
 
 # Paths relative to project root
 PROJECT_ROOT = str(_out_dir())
@@ -113,29 +110,15 @@ def extract_sigma_deviations_from_param_certs(cert_data: Dict[str, Any]) -> List
 
 
 def extract_sigma_deviations_from_statistical_report(report_data: Dict[str, Any]) -> List[float]:
-    """Extract sigma deviations from statistical_rigor_report.json."""
-    sigma_deviations = []
+    """Sigma of each scored prediction in statistical_rigor_report.json.
 
+    These are the same rows chi2 is computed over (one per observable,
+    predictions only), so the success counts and chi2 share one N.
+    """
     if not report_data:
-        return sigma_deviations
-
-    # Extract from jacobian_analysis -> rank_analysis -> theory_uncertainty_results -> detailed_results
-    try:
-        detailed_results = report_data.get('jacobian_analysis', {}).get('rank_analysis', {}).get('theory_uncertainty_results', {}).get('detailed_results', [])
-
-        for result in detailed_results:
-            predicted = result.get('predicted')
-            experimental = result.get('experimental')
-            sigma_total = result.get('sigma_total')
-
-            if predicted is not None and experimental is not None and sigma_total is not None and sigma_total > 0:
-                # Calculate sigma deviation
-                sigma_dev = abs(predicted - experimental) / sigma_total
-                sigma_deviations.append(float(sigma_dev))
-    except (KeyError, TypeError):
-        pass
-
-    return sigma_deviations
+        return []
+    return [float(row["sigma"])
+            for row in report_data["chi_squared_from_rows"]["scored_rows"]]
 
 
 def extract_sigma_deviations_from_parameters(params_data: Dict[str, Any]) -> List[float]:
@@ -261,6 +244,8 @@ def _apply_headline(fs: Dict[str, Any]) -> None:
         "chi_squared": display_value(h["chi_squared"]),
         "chi_squared_rows": display_value(h["rows"]),
         "degrees_of_freedom": display_value(h["dof"]),
+        "degrees_of_freedom_is_ansatz": h["dof_is_ansatz"],
+        "gate_summary": h["gate_summary"],
         "p_value": display_value(h["p_value"]),
         "status": display_value(h["verdict"]),
         "formulas_checked_ok": display_value(h["formulas_checked_ok"]),
@@ -286,14 +271,16 @@ def generate_statistics() -> Dict[str, Any]:
         all_sigma_deviations.extend(report_sigmas)
         print(f"  - Found {len(report_sigmas)} sigma deviations from statistical_rigor_report.json")
 
-    # From parameter certificates (legacy, if exists)
-    if param_cert_data:
+    # From parameter certificates (legacy, if exists). Skipped when the rigor
+    # report supplies the scored rows: mixing sources gave counts over a
+    # different N than the chi-squared (5 predictions beside 63 rows).
+    if param_cert_data and not all_sigma_deviations:
         cert_sigmas = extract_sigma_deviations_from_param_certs(param_cert_data)
         all_sigma_deviations.extend(cert_sigmas)
         print(f"  - Found {len(cert_sigmas)} sigma deviations from CERTIFICATES_v16_2_FINAL.json")
 
     # From gates certificates
-    if gates_data:
+    if gates_data and not all_sigma_deviations:
         gate_sigmas = extract_sigma_deviations_from_gates(gates_data)
         # Avoid duplicates - only add if not already covered
         if gate_sigmas:
@@ -374,7 +361,8 @@ def generate_statistics() -> Dict[str, Any]:
             "not_testable_count": gate_counts["not_testable"],
             "mathematical_count": gate_counts["mathematical"],
             "total_gates": gate_counts["total_gates"],
-            "testable_count": gate_counts["total_gates"] - gate_counts["not_testable"],  # 72 - 30 = 42
+            # Placeholder only: _apply_headline overwrites it from the gate tally.
+            "testable_count": gate_counts["total_gates"] - gate_counts["not_testable"],
             "exact_matches": validation_stats["exact_matches"],
             "chi_squared": validation_stats["chi_squared"],
             "degrees_of_freedom": validation_stats["degrees_of_freedom"],

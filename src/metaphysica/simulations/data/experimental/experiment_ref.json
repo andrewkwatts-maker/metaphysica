@@ -384,6 +384,7 @@
         "uncertainty": 0.067,
         "units": "dimensionless",
         "source": "DESI2025_THAWING",
+        "source_unverified": true,
         "description": "Dark energy EoS (thawing quintessence prior)",
         "pm_note": "PM predicts w0 = -23/24 = -0.9583 (within BAO-only uncertainty)"
       },

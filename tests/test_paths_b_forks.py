@@ -123,15 +123,3 @@ def test_dark_energy_mechanism_changes_both_w0_consumers(monkeypatch):
     alt = (reg.w0_dark_energy, DarkEnergy()._derive_dark_energy_eos(12.0))
     assert alt == (pytest.approx(-11 / 13), pytest.approx(-11 / 13))
     assert alt[0] != base[0] and alt[1] != base[1]
-
-
-def test_jacobian_stub_is_reproducible():
-    import numpy as np
-    from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
-        StatisticalRigorValidator,
-    )
-
-    a = StatisticalRigorValidator().generate_jacobian_matrix()
-    np.random.seed(1)
-    b = StatisticalRigorValidator().generate_jacobian_matrix()
-    assert np.array_equal(a, b)

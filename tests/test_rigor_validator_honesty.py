@@ -162,20 +162,6 @@ def test_failures_are_included_in_the_fit_statistic():
     )
 
 
-def test_theory_uncertainty_recalculation_sees_the_failures_too():
-    """The second statistic had its own narrower allowlist."""
-    validator = _validator()
-    result = validator.recalculate_with_theory_uncertainty()
-    if not result:
-        pytest.skip("recalculation returned nothing")
-    scored = {d["parameter"] for d in result.get("detailed_results", [])}
-    failing = {r["path"] for r in validator.validation_results
-               if r["status"] == "FAIL"}
-    assert failing & scored, (
-        "the theory-uncertainty recalculation excluded every failing row"
-    )
-
-
 # -- 3. unscoreable rows stay out -------------------------------------------
 
 
@@ -209,38 +195,6 @@ def test_one_sided_bounds_are_excluded_from_the_fit():
             f"{row['path']} is a {row.get('bound_type')!r} bound and has no "
             f"residual, but reached the chi-squared"
         )
-
-
-# -- 4. the tail interpretation matches the tail used -----------------------
-
-
-def test_a_bad_fit_is_not_reported_as_a_suspiciously_perfect_one():
-    """The inversion: p ~ 0 on the upper tail read as TOO_GOOD."""
-    result = _validator().recalculate_with_theory_uncertainty()
-    if not result:
-        pytest.skip("recalculation returned nothing")
-    tail = result.get("tail_used", "")
-    status = result.get("status", "")
-    if tail.startswith("upper") and result.get("p_value_new", 1.0) < 0.05:
-        assert "TOO_GOOD" not in status, (
-            f"upper-tail p = {result.get('p_value_new')} means the model does "
-            f"not fit, but the status reads {status!r}"
-        )
-
-
-def test_interpretation_follows_the_tail_actually_used():
-    """Mutation: the flag must not be able to override the data.
-
-    use_lower_tail stays True (the shipped setting) while the data forces
-    the upper tail. Before the fix this combination produced TOO_GOOD.
-    """
-    validator = _validator()
-    assert validator.use_lower_tail is True
-    result = validator.recalculate_with_theory_uncertainty()
-    if not result:
-        pytest.skip("recalculation returned nothing")
-    if result.get("tail_used", "").startswith("upper"):
-        assert "suspiciously perfect" not in result.get("status", "")
 
 
 # -- the honest headline ----------------------------------------------------

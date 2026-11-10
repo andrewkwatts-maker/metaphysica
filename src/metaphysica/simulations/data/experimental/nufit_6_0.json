@@ -1,5 +1,7 @@
 {
   "metadata": {
+    "source_unverified": true,
+    "source_unverified_reason": "values resemble the NuFIT 5.2-era set, not NuFIT 6.0 (arXiv:2410.05380); checksum pending; to be confirmed against the NuFIT release (audit sim-validation-data-05)",
     "source": "NuFIT Collaboration",
     "version": "6.0",
     "date": "2024-11",

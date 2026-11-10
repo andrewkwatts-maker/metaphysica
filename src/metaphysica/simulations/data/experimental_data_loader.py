@@ -37,6 +37,28 @@ class ExperimentalValue:
     units: str
     source: str
     description: str = ""
+    #: Asymmetric errors when the source gives them; ``uncertainty`` is then
+    #: their mean, which is only right for a prediction near the centre. Use
+    #: :meth:`uncertainty_toward` to score a prediction.
+    uncertainty_plus: Optional[float] = None
+    uncertainty_minus: Optional[float] = None
+
+    def uncertainty_toward(self, predicted: float) -> float:
+        """The error on the side of the central value the prediction lies on."""
+        if self.uncertainty_plus is None or self.uncertainty_minus is None:
+            return self.uncertainty
+        return (self.uncertainty_plus if predicted >= self.value
+                else self.uncertainty_minus)
+
+
+def _errors(p: Dict[str, Any], name: str):
+    """Return (mean, plus, minus) from a data entry; a missing error raises."""
+    if "uncertainty_plus" in p or "uncertainty_minus" in p:
+        plus, minus = p["uncertainty_plus"], p["uncertainty_minus"]
+        return (plus + minus) / 2, plus, minus
+    if "uncertainty" not in p:
+        raise KeyError(f"{name}: entry carries no uncertainty")
+    return p["uncertainty"], None, None
 
 
 class ExperimentalDataLoader:
@@ -121,12 +143,14 @@ class ExperimentalDataLoader:
                           f"Available: {list(params.keys())}")
 
         p = params[param_name]
+        unc, plus, minus = _errors(p, f"DESI {param_name}")
         return ExperimentalValue(
             value=p["value"],
-            uncertainty=p.get("uncertainty_plus", p.get("uncertainty", 0)),
+            uncertainty=unc,
             units=p.get("units", ""),
             source=f"DESI 2025 ({data['metadata'].get('arxiv', '')})",
-            description=p.get("description", "")
+            description=p.get("description", ""),
+            uncertainty_plus=plus, uncertainty_minus=minus
         )
 
     def get_desi_w0(self) -> ExperimentalValue:
@@ -171,17 +195,17 @@ class ExperimentalDataLoader:
                           f"Available: {list(params.keys())}")
 
         p = params[param_name]
-        # Use average of asymmetric uncertainties
-        unc = (p.get("uncertainty_plus", 0) + p.get("uncertainty_minus", 0)) / 2
-        if unc == 0:
-            unc = p.get("uncertainty", 0)
+        # The mean of asymmetric errors is kept for display; scoring uses
+        # ExperimentalValue.uncertainty_toward(prediction).
+        unc, plus, minus = _errors(p, f"NuFIT {param_name}")
 
         return ExperimentalValue(
             value=p["value"],
             uncertainty=unc,
             units=p.get("units", ""),
             source=f"NuFIT 6.0 ({data['metadata'].get('date', '')})",
-            description=p.get("description", "")
+            description=p.get("description", ""),
+            uncertainty_plus=plus, uncertainty_minus=minus
         )
 
     def get_mass_ordering_preference(self) -> Dict:
@@ -225,7 +249,7 @@ class ExperimentalDataLoader:
         p = params[param_name]
         return ExperimentalValue(
             value=p["value"],
-            uncertainty=p.get("uncertainty", 0),
+            uncertainty=_errors(p, f"PDG {param_name}")[0],
             units=p.get("units", ""),
             source="PDG 2024",
             description=p.get("description", "")
@@ -354,7 +378,7 @@ class ExperimentalDataLoader:
                     path=f"pdg.{param_name}",
                     value=param_data.get("value"),
                     source="ESTABLISHED:PDG2024",
-                    uncertainty=param_data.get("uncertainty", 0),
+                    uncertainty=_errors(param_data, f"PDG {param_name}")[0],
                     status="ESTABLISHED",
                     metadata={
                         "units": param_data.get("units", ""),
