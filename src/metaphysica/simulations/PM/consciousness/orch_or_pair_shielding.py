@@ -66,7 +66,16 @@ N_PAIRS_GNOSIS = 12  # Full gnosis: 12 active pairs
 PHI = (1 + np.sqrt(5)) / 2  # Golden ratio ~1.618
 
 # Shielding enhancement factor (derived from bridge geometry)
-K_SHIELDING = 2.5  # Dimensionless shielding coefficient
+K_SHIELDING = 2.5  # Dimensionless shielding coefficient (FITTED, no fit target)
+
+
+def shielding_enhancement(n_pairs) -> float:
+    """The one shielding function: exp(K*sqrt(n/12)) * (n/6)^2.
+
+    Value, description, formula and certificate all come from this function.
+    """
+    n = np.asarray(n_pairs, dtype=float)
+    return np.exp(K_SHIELDING * np.sqrt(n / 12)) * (n / 6) ** 2
 
 
 @dataclass
@@ -240,15 +249,13 @@ class PairShieldingModel:
 
         Factor = exp(k * sqrt(n/12)) * (n/6)^2
 
-        For n=6 (baseline): Factor ~ exp(2.5 * 0.707) * 1 = 5.88
+        For n=6 (baseline): Factor ~ exp(2.5 * 0.707) * 1 = 5.86
         For n=12 (gnosis):  Factor ~ exp(2.5 * 1.0) * 4 = 48.7
 
         Returns:
             Dimensionless shielding enhancement factor
         """
-        n = self.n_pairs
-        factor = np.exp(K_SHIELDING * np.sqrt(n / 12)) * (n / 6)**2
-        return factor
+        return shielding_enhancement(self.n_pairs)
 
     def compute_coherence_time(self, tau_0: float = TAU_0) -> float:
         """
@@ -853,7 +860,7 @@ if _SCHEMA_AVAIL:
                 description=(
                     "[SPECULATIVE] Pair-based decoherence protection for Orch-OR. "
                     "Penrose criterion tau = hbar/E_G is DERIVED; pair shielding "
-                    "enhancement exp(k*sqrt(n_pairs)) is SPECULATIVE. Addresses "
+                    "enhancement exp(k*sqrt(n/12))*(n/6)^2 is SPECULATIVE. Addresses "
                     "warm brain problem (thermal decoherence at 310K)."
                 ),
                 section_id="7",
@@ -967,7 +974,7 @@ if _SCHEMA_AVAIL:
                     name="Pair Shielding Factor",
                     units="dimensionless",
                     status="PREDICTED",
-                    description="Shielding enhancement exp(k*sqrt(n_pairs)) (SPECULATIVE, k=2.5 FITTED)",
+                    description="Shielding enhancement exp(k*sqrt(n/12))*(n/6)^2 (SPECULATIVE, k=2.5 FITTED)",
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,
                     eml_description=(
@@ -981,14 +988,13 @@ if _SCHEMA_AVAIL:
         def get_certificates(self):
             """Return validation certificates (SPECULATIVE content)."""
             import numpy as np
-            k_shield = 2.5
             n_pairs = 12
-            factor = np.exp(k_shield * np.sqrt(n_pairs))
+            factor = float(shielding_enhancement(n_pairs))
             return [
                 {
                     "id": "cert_pair_shielding_enhancement",
                     "assertion": "Pair shielding factor > 1 at 12 pairs",
-                    "condition": f"exp(k*sqrt(12)) = {factor:.1f} > 1",
+                    "condition": f"exp(k*sqrt(12/12))*(12/6)^2 = {factor:.1f} > 1",
                     "status": "PASS" if factor > 1.0 else "FAIL",
                 }
             ]
@@ -996,7 +1002,7 @@ if _SCHEMA_AVAIL:
         def validate_self(self):
             """Self-validation checks."""
             import numpy as np
-            factor = np.exp(2.5 * np.sqrt(12))
+            factor = float(shielding_enhancement(12))
             return {
                 "checks": [
                     {"name": "shielding_factor_gt_1", "passed": factor > 1.0, "log_level": "INFO"},
@@ -1064,7 +1070,7 @@ if _SCHEMA_AVAIL:
                             "pairs provide topological protection against thermal "
                             "decoherence. Each pair contributes a shielding factor that "
                             "reduces the effective decoherence rate, with the total "
-                            "enhancement scaling as exp(k * sqrt(n/12)) where k=2.5 is "
+                            "enhancement scaling as exp(k * sqrt(n/12)) * (n/6)^2 where k=2.5 is "
                             "fitted. The warm brain problem (gap of 10^3 to 10^5 between "
                             "required and achieved coherence times at 310K) remains open.</Speculation>"
                         )
@@ -1101,13 +1107,13 @@ if _SCHEMA_AVAIL:
                 _Formula(
                     id="pair-shielding-enhancement",
                     label="(7.6)",
-                    latex=r"\tau_{\text{eff}} = \frac{\hbar}{E_G} \cdot e^{k\sqrt{n_{\text{pairs}}}}",
-                    plain_text="tau_eff = (hbar/E_G) * exp(k * sqrt(n_pairs))",
+                    latex=r"\tau_{\text{eff}} = \frac{\hbar}{E_G} \cdot e^{k\sqrt{n/12}}\,(n/6)^2",
+                    plain_text="tau_eff = (hbar/E_G) * exp(k * sqrt(n/12)) * (n/6)^2",
                     category="PREDICTED",  # SPECULATIVE consciousness hypothesis
                     description=(
                         "Pair-enhanced coherence time. Base Penrose criterion "
                         "tau = hbar/E_G (DERIVED) enhanced by pair shielding "
-                        "exp(k*sqrt(n)). k=2.5 is FITTED. SPECULATIVE mechanism."
+                        "exp(k*sqrt(n/12))*(n/6)^2. k=2.5 is FITTED. SPECULATIVE mechanism."
                     ),
                     input_params=["topology.elder_kads"],
                     output_params=["consciousness.shielded_tau_ms"],
@@ -1116,7 +1122,7 @@ if _SCHEMA_AVAIL:
                             {"description": "Penrose-Diosi base coherence time",
                              "formula": r"\tau_0 = \frac{\hbar}{E_G}"},
                             {"description": "Pair shielding from n active bridge pairs",
-                             "formula": r"\text{shield} = e^{k\sqrt{n_{\text{pairs}}}}"},
+                             "formula": r"\text{shield} = e^{k\sqrt{n/12}}\,(n/6)^2"},
                             {"description": "Enhanced coherence time",
                              "formula": r"\tau_{\text{eff}} = \tau_0 \cdot \text{shield}"},
                         ],
@@ -1132,7 +1138,7 @@ if _SCHEMA_AVAIL:
                         "ops.mul(ops.div(eml_vec('hbar'), eml_vec('E_G')), ops.exp(ops.mul(eml_vec('k'), ops.sqrt(eml_vec('n_pairs')))))"
                     ),
                     eml_description=(
-                        "Pair-shielded coherence time: (hbar/E_G) times exp(k*sqrt(n_pairs)) enhancement."
+                        "Pair-shielded coherence time: (hbar/E_G) times exp(k*sqrt(n/12))*(n/6)^2 enhancement."
                     ),
                 ),
             ]

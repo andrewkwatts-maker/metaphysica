@@ -8,10 +8,10 @@ miss: θ₁₃ is FALSIFIED, and δ_CP scored MARGINAL at the off-path seed
 b₃ = 24, where its construction was written (see Status).
 
 θ₁₃ DERIVATION (E₇ ⊃ E₆ × U(1) branching + SU(2)_L correction):
-    α_leak = 1/√6  (E₇ ⊃ E₆×U(1) Clebsch-Gordan coefficient, DERIVED)
-    SU(2)_L sees n_gen=3 generations → √(2n_gen) suppression
-    sin(θ₁₃) = α_leak / √(2 n_gen) = (1/√6) / √6 = 1/6 ≈ 0.1667
-    θ₁₃ ≈ 9.59°   (NuFIT 6.0 IO: 8.63°, 12% high — FALSIFIED, ~9σ)
+    α_leak = 1/√(chi_eff/b3)  (E₇ ⊃ E₆×U(1) normalisation ansatz)
+    SU(2)_L sees n_gen generations → √(2 n_gen) suppression
+    sin(θ₁₃) = α_leak / √(2 n_gen); the numbers (0.5465, 12.89° on the adopted
+    path) are read from the registry and printed by the section text.
 
 δ_CP CONSTRUCTION (G₂ associative 3-form holonomy angle). It splits b₃
 evenly among the generations; at the adopted b₃ = 43 the split 43/3 is not
@@ -34,7 +34,7 @@ Inputs as written: b₃ = 24 (the off-path seed), χ_eff = 144 (the K3 reading,
 no free parameters.
 
 Status:
-    neutrino.theta13_derived  — FALSIFIED (R1 ruling 2026-08-25: ~9σ from
+    neutrino.theta13_derived  — FALSIFIED (R1 ruling 2026-08-25: about 39σ on the adopted path from
         NuFIT 6.0 given 1σ≈0.25°. Kept on the books labelled -- the
         zero-parameter asin(1/6) candidate died honestly, which is the
         gate system demonstrating it has teeth. Working headline is
@@ -54,6 +54,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
 
 import math
+from dataclasses import dataclass
 import sys
 import os
 from typing import Dict, Any, List, Optional
@@ -74,20 +75,48 @@ from metaphysica.simulations.base import (
 
 
 # ---------------------------------------------------------------------------
-# Pre-computed reference constants (for get_formulas / get_section_content
-# which run without a live registry). They are written at the off-path seed
-# b3 = 24; run() reads the seed in force from topology.elder_kads.
+# Section text, formulas and certificates run without a live registry, so they
+# read the values of the path in force from this one function (no literals):
+# b3, b2 from the b3 path; n_gen = b2/4; chi_eff = 48 n_gen; alpha_leak =
+# 1/sqrt(chi_eff/b3), the rule geometry.alpha_leak uses.
 # ---------------------------------------------------------------------------
-_ALPHA_LEAK = 1.0 / math.sqrt(6.0)      # E₇ ⊃ E₆×U(1) Clebsch-Gordan
-_B3 = 24                                # the off-path seed (Y_7 has b3 = 43)
-_CHI_EFF = 144                          # the K3 reading, chi_eff = 48 n at n = 3
-_N_GEN = 3
-_CYCLES_PER_GEN = _B3 / _N_GEN          # = 8 at the off-path seed only
-_PHI_ASSOC = 2.0 * math.pi / _CYCLES_PER_GEN     # = π/4
-_SIN_THETA13 = _ALPHA_LEAK / math.sqrt(2.0 * _N_GEN)  # = 1/6 ≈ 0.1667
-_THETA13_DEG = math.degrees(math.asin(min(1.0, _SIN_THETA13)))  # ≈ 9.59°
-_DELTA_CP_RAD = -_PHI_ASSOC * (_CHI_EFF / (_B3 * _N_GEN))       # = -π/2
-_DELTA_CP_DEG = math.degrees(_DELTA_CP_RAD)                      # = -90°
+@dataclass(frozen=True)
+class _Derived:
+    b3: int
+    n_gen: float
+    chi_eff: float
+    alpha_leak: float
+    sin13: float
+    theta13_deg: float
+    cycles_per_gen: float
+    phi_assoc: float
+    dcp_rad: float
+    dcp_deg: float
+
+
+def _derive(b3: int, n_gen: float, chi_eff: float) -> _Derived:
+    alpha_leak = 1.0 / math.sqrt(chi_eff / b3)
+    sin13 = min(1.0, alpha_leak / math.sqrt(2.0 * n_gen))
+    cycles = b3 / n_gen
+    phi = 2.0 * math.pi / cycles
+    dcp = -phi * (chi_eff / (b3 * n_gen))
+    return _Derived(b3, n_gen, chi_eff, alpha_leak, sin13,
+                    math.degrees(math.asin(sin13)), cycles, phi, dcp,
+                    math.degrees(dcp))
+
+
+def _derived_values() -> _Derived:
+    """Values of the path in force."""
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path, seed_values)
+    b3, b2 = seed_values(resolve_path())
+    n_gen = b2 / 4.0
+    return _derive(b3, n_gen, 48.0 * n_gen)
+
+
+# The off-path seed the delta_CP construction was written at (b3 = 24, n_gen = 3,
+# chi_eff = 144 the K3 reading). Text that says "at the off-path seed" reads this.
+_OFF_PATH = _derive(24, 3, 144.0)
 
 # NuFIT 6.0 reference values (Normal Ordering)
 # ORDERING CONSISTENCY (2026-08-20): the framework predicted INVERTED
@@ -100,6 +129,11 @@ _DELTA_CP_DEG = math.degrees(_DELTA_CP_RAD)                      # = -90°
 _THETA13_NUFIT = 8.63        # degrees, NuFIT 6.0 IO best fit
 _THETA13_1SIGMA = 0.11       # degrees, NuFIT 6.0 1σ (earlier 0.25 band understated the miss)
 _DELTA_CP_NUFIT = 197.0 - 360.0  # degrees: NuFIT 6.0 NO best fit ~197 deg mapped to (-180, 180]; the earlier -107 was the T2K-only fit
+def _sig13(V: "_Derived") -> float:
+    """|sigma| of the derived theta_13 against NuFIT (computed, never typed)."""
+    return abs(V.theta13_deg - _THETA13_NUFIT) / _THETA13_1SIGMA
+
+
 _DELTA_CP_1SIGMA = 40.0      # degrees, approximate 1σ (range ≈ -180° to 0°)
 
 
@@ -122,19 +156,20 @@ def _seed_split_note() -> str:
         seed_values,
     )
 
-    b3, _b2 = seed_values(resolve_path())
-    if b3 % _N_GEN == 0:
+    b3, b2 = seed_values(resolve_path())
+    n_gen = int(b2 // 4)
+    if b3 % n_gen == 0:
         return ("b_3 = %d, so b_3/n_gen = %d whole 3-cycles per generation"
-                % (b3, b3 // _N_GEN))
+                % (b3, b3 // n_gen))
     return ("b_3 = %d, and %d/%d is not an integer, so no whole number of "
-            "3-cycles is assigned to a generation" % (b3, b3, _N_GEN))
+            "3-cycles is assigned to a generation" % (b3, b3, n_gen))
 
 
 class NeutrinoAlgebraicSimulation(SimulationBase):
     """
     Derives PMNS θ₁₃ and δ_CP from G₂ × E₇ topology.
 
-    Uses α_leak = 1/√6 (from E₇ ⊃ E₆×U(1) algebraic branching) and
+    Uses α_leak = 1/√(chi_eff/b3) (E₇ ⊃ E₆×U(1) normalisation ansatz) and
     the G₂ associative 3-form holonomy structure to estimate the two
     currently-CALIBRATED PMNS parameters.  No free parameters.
 
@@ -153,9 +188,10 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             description=(
                 "Algebraic estimates of PMNS reactor angle theta_13 and CP phase delta_CP "
                 "from G2 topology, written at the off-path seed (b3 = 24; chi_eff = 144, the "
-                "K3 reading; n_gen = 3), and E7 branching (alpha_leak = 1/sqrt(6)). "
+                "K3 reading; n_gen = 3), and E7 branching (alpha_leak = 1/sqrt(chi_eff/b3); "
+                f"{_derived_values().alpha_leak:.4f} on the path in force). "
                 "Zero free parameters, and both candidates miss: neutrino.theta13_derived "
-                "is FALSIFIED (8.8 sigma vs NuFIT 6.0) and neutrino.delta_CP_derived scored "
+                f"is FALSIFIED ({_sig13(_derived_values()):.1f} sigma vs NuFIT 6.0 on the path in force) and neutrino.delta_CP_derived scored "
                 "1.825 sigma MARGINAL at the off-path seed; run() reads the seed in force. "
                 "The 'promotes theta_13 and delta_CP from CALIBRATED "
                 "toward DERIVED' claim is withdrawn. The working theta_13 headline is the "
@@ -306,6 +342,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_formulas(self) -> List[Formula]:
+        V = _derived_values()
         # Prose only: live Betti numbers for the formula text.
         from metaphysica.simulations.PM.geometry.geometry_narration import (
             render as _render,
@@ -317,25 +354,25 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 label="(A5.1)",
                 latex=(
                     r"\sin\theta_{13} = \frac{\alpha_{\rm leak}}{\sqrt{2\,n_{\rm gen}}}"
-                    r"= \frac{1/\sqrt{6}}{\sqrt{6}} = \frac{1}{6} \approx "
-                    + f"{_SIN_THETA13:.4f}"
+                    r"\approx "
+                    + f"{V.sin13:.4f}"
                     + r",\quad \theta_{13} \approx "
-                    + f"{_THETA13_DEG:.2f}°"
+                    + f"{V.theta13_deg:.2f}°"
                 ),
                 plain_text=(
                     f"sin(theta_13) = alpha_leak / sqrt(2*n_gen)"
-                    f" = (1/sqrt(6)) / sqrt(6) = 1/6 ≈ {_SIN_THETA13:.4f},"
-                    f" theta_13 ≈ {_THETA13_DEG:.2f} deg"
+                    f" = {V.alpha_leak:.4f} / sqrt({2*V.n_gen:g}) = {V.sin13:.4f},"
+                    f" theta_13 ≈ {V.theta13_deg:.2f} deg"
                     f" (NuFIT 6.0: {_THETA13_NUFIT} deg)"
                 ),
                 category="DERIVED",
                 description=(
                     f"PMNS reactor angle θ₁₃ derived from E₇ ⊃ E₆×U(1) branching. "
-                    f"α_leak = 1/√6 is the Clebsch-Gordan coefficient for the U(1) "
+                    f"α_leak = 1/√(chi_eff/b3) = {V.alpha_leak:.4f} is the coefficient for the U(1) "
                     f"factor. Leptons are colour singlets, giving an additional "
-                    f"1/√(2n_gen) suppression. Result: θ₁₃ ≈ {_THETA13_DEG:.2f}°; "
+                    f"1/√(2n_gen) suppression. Result: θ₁₃ ≈ {V.theta13_deg:.2f}°; "
                     f"NuFIT 6.0 (IO) gives {_THETA13_NUFIT}°. "
-                    f"FALSIFIED (R1 ruling 2026-08-25): ~12% high, about 9σ at the "
+                    f"FALSIFIED (R1 ruling 2026-08-25): {V.theta13_deg/_THETA13_NUFIT-1:+.0%}, {_sig13(V):.1f}σ at the "
                     f"NuFIT 1σ of {_THETA13_1SIGMA}°."
                 ),
                 inputParams=["geometry.alpha_leak", "topology.n_gen"],
@@ -352,7 +389,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 eml_description=(
                     "θ₁₃ via EML: ops.asin(ops.div(alpha_leak, "
                     "ops.sqrt(ops.mul(2, n_gen)))). "
-                    "alpha_leak = 1/sqrt(6) from E₇ ⊃ E₆×U(1) algebraic branching. "
+                    f"alpha_leak = 1/sqrt(chi_eff/b3) = {V.alpha_leak:.4f} (E₇ ⊃ E₆×U(1) normalisation ANSATZ). "
                     "n_gen = 3 = b₂/4, the number of singular involutions. Zero free parameters."
                 ),
                 derivation={
@@ -362,11 +399,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     ),
                     "steps": [
                         "E₇ ⊃ E₆ × U(1): 56 → 27 + 27* + 1 + 1",
-                        "U(1) Clebsch-Gordan coefficient: α_leak = 1/√6  (purely algebraic)",
+                        f"U(1) normalisation ANSATZ: α_leak = 1/√(chi_eff/b3) = {V.alpha_leak:.4f}",
                         "Leptons are SU(3)_colour singlets: no colour-averaging factor",
                         "n_gen = 3 lepton generations → SU(2)_L factor √(2 n_gen) = √6",
-                        "sin(θ₁₃) = α_leak / √(2 n_gen) = (1/√6) / √6 = 1/6 ≈ 0.1667",
-                        f"θ₁₃ = asin(1/6) ≈ {_THETA13_DEG:.4f}°  (NuFIT 6.0: {_THETA13_NUFIT}°)",
+                        f"sin(θ₁₃) = α_leak / √(2 n_gen) = {V.alpha_leak:.4f} / √{2*V.n_gen:g} = {V.sin13:.4f}",
+                        f"θ₁₃ = asin({V.sin13:.4f}) ≈ {V.theta13_deg:.4f}°  (NuFIT 6.0: {_THETA13_NUFIT}°)",
                     ],
                     "references": [
                         "Buras et al. (1978) E₇ representation theory",
@@ -375,10 +412,10 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 },
                 terms={
                     r"\alpha_{\rm leak}": (
-                        "E₇ ⊃ E₆×U(1) branching coefficient = 1/√6 (DERIVED)"
+                        f"E₇ ⊃ E₆×U(1) branching coefficient = {V.alpha_leak:.4f}"
                     ),
                     r"n_{\rm gen}": "Number of lepton generations = 3 (n_gen = b₂/4, the number of singular involutions)",
-                    r"\theta_{13}": f"PMNS reactor angle ≈ {_THETA13_DEG:.2f}° (NuFIT 6.0: {_THETA13_NUFIT}°)",
+                    r"\theta_{13}": f"PMNS reactor angle ≈ {V.theta13_deg:.2f}° (NuFIT 6.0: {_THETA13_NUFIT}°)",
                 },
             ),
             Formula(
@@ -389,12 +426,12 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     r"\cdot \frac{\chi_{\rm eff}}{b_3\,n_{\rm gen}}"
                     r"= -\frac{\pi}{4}\cdot\frac{144}{72}"
                     r"= -\frac{\pi}{2} \approx "
-                    + f"{_DELTA_CP_DEG:.1f}°"
+                    + f"{_OFF_PATH.dcp_deg:.1f}°"
                     + r"\ \ (\text{off-path seed } b_3 = 24)"
                 ),
                 plain_text=(
                     f"delta_CP = -phi_assoc * chi_eff/(b3*n_gen)"
-                    f" = -(pi/4) * (144/72) = -pi/2 = {_DELTA_CP_DEG:.1f} deg"
+                    f" = -(pi/4) * (144/72) = -pi/2 = {_OFF_PATH.dcp_deg:.1f} deg"
                     f" at the off-path seed b3 = 24"
                     f" (NuFIT 6.0 NO: {_DELTA_CP_NUFIT} deg)"
                 ),
@@ -405,7 +442,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"to b₃/n_gen = 8 associative 3-cycles, the elementary holonomy angle "
                     f"is φ_assoc = 2π/8 = π/4, and the full-manifold modulation factor is "
                     f"χ_eff/(b₃ n_gen) = 144/72 = 2 (χ_eff = 144 is the K3 reading, 48n at "
-                    f"n = 3). Result: δ_CP = −(π/4)×2 = −π/2 = {_DELTA_CP_DEG:.1f}°. "
+                    f"n = 3). Result: δ_CP = −(π/4)×2 = −π/2 = {_OFF_PATH.dcp_deg:.1f}°. "
                     f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°; "
                     f"scored 1.825σ (MARGINAL) — the earlier 'within the 1σ favoured "
                     f"region' claim is withdrawn. The construction is −2π χ_eff/b₃²; "
@@ -446,7 +483,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                         "Elementary holonomy angle: φ_assoc = 2π/8 = π/4",
                         "Full-manifold modulation: χ_eff/(b₃ n_gen) = 144/(24×3) = 144/72 = 2",
                         "CP phase from parallel transport: δ_CP = −φ_assoc × (χ_eff/(b₃ n_gen))",
-                        f"= −(π/4) × 2 = −π/2 = {_DELTA_CP_DEG:.1f}°",
+                        f"= −(π/4) × 2 = −π/2 = {_OFF_PATH.dcp_deg:.1f}°",
                         f"NuFIT 6.0 (NO): {_DELTA_CP_NUFIT}°. At the off-path seed this scores 1.825σ (MARGINAL); the earlier 'within 1σ' reading is withdrawn.",
                     ],
                     "references": [
@@ -460,7 +497,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     r"b_3": _render("Third Betti number: b_3 = {b3} for {manifold}; this formula's 24 is the off-path seed"),
                     r"n_{\rm gen}": "Number of generations = 3",
                     r"\delta_{\rm CP}": (
-                        f"PMNS CP-violation phase ≈ {_DELTA_CP_DEG:.1f}° "
+                        f"PMNS CP-violation phase ≈ {_OFF_PATH.dcp_deg:.1f}° "
                         f"(NuFIT 6.0 NO: {_DELTA_CP_NUFIT}°)"
                     ),
                 },
@@ -472,6 +509,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_output_param_definitions(self) -> List[Parameter]:
+        V = _derived_values()
         split_note = _seed_split_note()      # prose only
         return [
             Parameter(
@@ -481,10 +519,10 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 status="FALSIFIED",
                 description=(
                     f"FALSIFIED (R1 ruling, 2026-08-25): sin(θ₁₃) = "
-                    f"α_leak/√(2 n_gen) = 1/6 gives {_THETA13_DEG:.4f}°, "
-                    f"~9σ from NuFIT 6.0 ({_THETA13_NUFIT}° ± "
+                    f"α_leak/√(2 n_gen) = {V.sin13:.4f} gives {V.theta13_deg:.4f}°, "
+                    f"{_sig13(V):.1f}σ from NuFIT 6.0 ({_THETA13_NUFIT}° ± "
                     f"{_THETA13_1SIGMA}°). A zero-parameter prediction that "
-                    f"misses by 9σ is a falsification, not a tension -- the "
+                    f"misses by {_sig13(V):.0f}σ is a falsification, not a tension -- the "
                     f"row stays on the books as the framework's proof its "
                     f"gates can kill an elegant candidate. Working headline: "
                     f"particle.theta_13_deg = 8.6686°, scored 0.805σ PASS against "
@@ -497,9 +535,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 ),
                 eml_description=(
                     "EML: ops.mul(ops.div(eml_scalar(180.0), eml_pi()), "
-                    "ops.asin(ops.div(eml_scalar(1.0), eml_scalar(6.0)))) — "
-                    "θ₁₃ = (180/π)·asin(1/6) = (180/π)·asin(α_leak/√(2·n_gen)) ≈ 9.59° "
-                    "[FALSIFIED: ~9σ from NuFIT 8.57°±0.11°]"
+                    "ops.asin(ops.div(alpha_leak, ops.sqrt(ops.mul(eml_scalar(2.0), n_gen))))) — "
+                    f"θ₁₃ = (180/π)·asin(α_leak/√(2·n_gen)) ≈ {V.theta13_deg:.2f}° "
+                    f"[FALSIFIED: {_sig13(V):.1f}σ from NuFIT {_THETA13_NUFIT}°±{_THETA13_1SIGMA}°]"
                 ),
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=_THETA13_NUFIT,
@@ -517,7 +555,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     f"PMNS CP-violation phase from G₂ associative 3-form holonomy, "
                     f"δ_CP = −(2π/(b₃/n_gen)) × χ_eff/(b₃ n_gen) = −2π χ_eff/b₃². "
                     f"Written at the off-path seed b₃ = 24, where it is −π/2 = "
-                    f"{_DELTA_CP_DEG:.1f}°. "
+                    f"{_OFF_PATH.dcp_deg:.1f}°. "
                     f"NuFIT 6.0 (NO) best fit: {_DELTA_CP_NUFIT}°, range −180° to 0°. "
                     f"Scored 1.825σ there, verdict MARGINAL — not the '~0.4σ from best fit, "
                     f"within the 1σ favoured region' previously claimed here, which is "
@@ -547,14 +585,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 units="dimensionless",
                 status="FALSIFIED",
                 description=(
-                    f"sin(θ₁₃) = α_leak/√(2 n_gen) = (1/√6)/√6 = 1/6 ≈ {_SIN_THETA13:.6f}. "
+                    f"sin(θ₁₃) = α_leak/√(2 n_gen) = {V.alpha_leak:.4f}/√{2*V.n_gen:g} ≈ {V.sin13:.6f}. "
                     "FALSIFIED with its angle (R1 ruling): the exact rational "
-                    "1/6 is ~9σ from the measured sin θ₁₃ ≈ 0.149. Kept on "
+                    f"{V.sin13:.4f} is {_sig13(V):.1f}σ (in θ₁₃) from the measured sin θ₁₃ ≈ 0.149. Kept on "
                     "the books labelled, per standing policy."
                 ),
                 eml_description=(
                     "EML: ops.div(eml_scalar(1.0), ops.mul(eml_scalar(6.0), eml_scalar(1.0))) — "
-                    "sin(θ₁₃) = α_leak / √(2·n_gen) = (1/√6) / √6 = 1/6 from E₇ branching"
+                    f"sin(θ₁₃) = α_leak / √(2·n_gen) = {V.sin13:.4f} (alpha_leak = {V.alpha_leak:.4f})"
                 ),
                 derivation_formula="pmns-theta13-derived",
                 experimental_bound=math.sin(math.radians(_THETA13_NUFIT)),
@@ -603,8 +641,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 status="VALIDATION",
                 description=(
                     f"(θ₁₃_derived − θ₁₃_NuFIT) / {_THETA13_1SIGMA}°. "
-                    f"Derived: {_THETA13_DEG:.2f}°, NuFIT: {_THETA13_NUFIT}°. "
-                    f"Expected ≈ {(_THETA13_DEG - _THETA13_NUFIT)/_THETA13_1SIGMA:.1f}σ."
+                    f"Derived: {V.theta13_deg:.2f}°, NuFIT: {_THETA13_NUFIT}°. "
+                    f"Expected ≈ {(V.theta13_deg - _THETA13_NUFIT)/_THETA13_1SIGMA:.1f}σ."
                 ),
                 eml_description=(
                     # 8.57 / 0.25 were a superseded NuFIT band; run() divides by
@@ -622,8 +660,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 status="VALIDATION",
                 description=(
                     f"(δ_CP_derived − δ_CP_NuFIT) / {_DELTA_CP_1SIGMA}°. "
-                    f"At the off-path seed b₃ = 24: derived {_DELTA_CP_DEG:.1f}°, NuFIT {_DELTA_CP_NUFIT}°, "
-                    f"≈ {(_DELTA_CP_DEG - _DELTA_CP_NUFIT)/_DELTA_CP_1SIGMA:.2f}σ. "
+                    f"At the off-path seed b₃ = 24: derived {_OFF_PATH.dcp_deg:.1f}°, NuFIT {_DELTA_CP_NUFIT}°, "
+                    f"≈ {(_OFF_PATH.dcp_deg - _DELTA_CP_NUFIT)/_DELTA_CP_1SIGMA:.2f}σ. "
                     f"The registered value follows the seed in force."
                 ),
                 eml_description=(
@@ -643,8 +681,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_section_content(self) -> Optional[SectionContent]:
-        sigma_theta13 = (_THETA13_DEG - _THETA13_NUFIT) / _THETA13_1SIGMA
-        sigma_dcp = (_DELTA_CP_DEG - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
+        V = _derived_values()
+        sigma_theta13 = (V.theta13_deg - _THETA13_NUFIT) / _THETA13_1SIGMA
+        sigma_dcp = (_OFF_PATH.dcp_deg - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
         split_note = _seed_split_note()      # prose only
 
         blocks = [
@@ -663,9 +702,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "This section records an algebraic estimate of both quantities from "
                     "the integers b₃ = 24 (the off-path seed, where it was written), "
                     "χ_eff = 144 (the K3 reading, 48n at n = 3) and n_gen = 3, and the E₇ "
-                    "branching coefficient α_leak = 1/√6. "
-                    "<em>Both estimates miss: θ₁₃ is FALSIFIED (R1 ruling 2026-08-25, "
-                    "about 9σ), and δ_CP scored 1.825σ (MARGINAL) at the off-path seed. "
+                    f"branching coefficient α_leak = 1/√(chi_eff/b₃) = {V.alpha_leak:.4f} on the path in force. "
+                    f"<em>Both estimates miss: θ₁₃ is FALSIFIED (R1 ruling 2026-08-25, "
+                    f"{_sig13(V):.1f}σ), and δ_CP scored 1.825σ (MARGINAL) at the off-path seed. "
                     "The δ_CP construction splits b₃ evenly among the generations, which "
                     f"works only at the off-path seed: on the seed in force {split_note}.</em>"
                 ),
@@ -682,14 +721,14 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 content=(
                     "<Normal>"
                     "The E₇ representation theory produces the portal coupling "
-                    "α_leak = 1/√6 as the Clebsch-Gordan coefficient for the "
+                    f"α_leak = 1/√(chi_eff/b₃) = {V.alpha_leak:.4f} as the normalisation for the "
                     "U(1) factor in E₇ ⊃ E₆ × U(1) (see Appendix A3, "
                     "e7_representation_v1_0). "
                     "In the quark sector, this coupling sets the scale for Yukawa "
                     "textures. In the lepton sector, leptons are SU(3)_colour singlets, "
                     "so there is no colour-averaging factor. Instead, the SU(2)_L "
                     "structure distributes the mixing across n_gen = 3 generations, "
-                    "giving an additional suppression factor of 1/√(2 n_gen) = 1/√6:"
+                    f"giving an additional suppression factor of 1/√(2 n_gen) = {1/math.sqrt(2*V.n_gen):.4f}:"
                     "</Normal>"
                     "<EML>"
                     "ops.asin(ops.div(alpha_leak, ops.sqrt(ops.mul(2, n_gen)))). "
@@ -711,8 +750,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 callout_type="success",
                 title=f"θ₁₃ Algebraic Result — FALSIFIED (R1 ruling)",
                 content=(
-                    f"sin(θ₁₃) = α_leak / √(2 n_gen) = (1/√6) / √6 = 1/6 ≈ {_SIN_THETA13:.4f}\n"
-                    f"θ₁₃_derived ≈ {_THETA13_DEG:.4f}°\n"
+                    f"sin(θ₁₃) = α_leak / √(2 n_gen) = {V.alpha_leak:.4f} / √{2*V.n_gen:g} ≈ {V.sin13:.4f}\n"
+                    f"θ₁₃_derived ≈ {V.theta13_deg:.4f}°\n"
                     f"NuFIT 6.0 (IO): {_THETA13_NUFIT}° ± {_THETA13_1SIGMA}°\n"
                     f"Sigma deviation: {sigma_theta13:+.2f}σ  (~12% high — FALSIFIED)"
                 ),
@@ -764,7 +803,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 content=(
                     f"φ_assoc = 2π/(b₃/n_gen) = 2π/8 = π/4\n"
                     f"Modulation = χ_eff/(b₃ n_gen) = 144/(24×3) = 2\n"
-                    f"δ_CP_derived = −(π/4) × 2 = −π/2 = {_DELTA_CP_DEG:.1f}°\n"
+                    f"δ_CP_derived = −(π/4) × 2 = −π/2 = {_OFF_PATH.dcp_deg:.1f}°\n"
                     f"NuFIT 6.0 (NO): {_DELTA_CP_NUFIT}° (range: −180° to 0°)\n"
                     f"Sigma deviation: {sigma_dcp:+.2f}σ  (MARGINAL; the earlier 'within 1σ' claim is withdrawn)"
                 ),
@@ -779,14 +818,15 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    f"The algebraic estimates give theta_13 = {_THETA13_DEG:.2f} deg "
+                    f"The algebraic estimates give theta_13 = {V.theta13_deg:.2f} deg "
                     f"(NuFIT 6.0 IO: {_THETA13_NUFIT} deg, +12%, {sigma_theta13:+.1f}sigma "
                     f"at 1sigma = {_THETA13_1SIGMA} deg) and, at the off-path seed b3 = 24, "
-                    f"delta_CP = {_DELTA_CP_DEG:.0f} deg "
+                    f"delta_CP = {_OFF_PATH.dcp_deg:.0f} deg "
                     f"(NuFIT 6.0 NO: {_DELTA_CP_NUFIT} deg, {sigma_dcp:+.2f}sigma). "
                     "Neither value is fitted; both were written from the integers "
                     "b3 = 24 (the off-path seed), chi_eff = 144 (the K3 reading) and "
-                    "n_gen = 3, and the algebraic coefficient alpha_leak = 1/sqrt(6). "
+                    "n_gen = 3, and the coefficient alpha_leak = 1/sqrt(chi_eff/b3) (0.4082 at that seed; "
+                    f"{V.alpha_leak:.4f} on the path in force). "
                     "theta_13 is FALSIFIED (R1 ruling 2026-08-25); attributing the ~12% "
                     "overshoot to loop corrections or higher-order E7 branching is "
                     "untested. delta_CP scored MARGINAL with the right sign (inside the "
@@ -824,11 +864,11 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             title="Neutrino PMNS Angles from G₂ Topology (Algebraic Derivation)",
             abstract=(
                 f"Algebraic estimates, written at the off-path seed b₃ = 24, of PMNS "
-                f"θ₁₃ ≈ {_THETA13_DEG:.1f}° (NuFIT: {_THETA13_NUFIT}°, {sigma_theta13:+.1f}σ, "
-                f"FALSIFIED) and δ_CP ≈ {_DELTA_CP_DEG:.0f}° "
+                f"θ₁₃ ≈ {V.theta13_deg:.1f}° (NuFIT: {_THETA13_NUFIT}°, {sigma_theta13:+.1f}σ, "
+                f"FALSIFIED) and δ_CP ≈ {_OFF_PATH.dcp_deg:.0f}° "
                 f"(NuFIT: {_DELTA_CP_NUFIT}°, {sigma_dcp:+.2f}σ, MARGINAL) "
                 "from G₂ × E₇ inputs with no free parameters: b₃ = 24 (the off-path "
-                "seed), χ_eff = 144 (the K3 reading), n_gen = 3, α_leak = 1/√6. "
+                f"seed), χ_eff = 144 (the K3 reading), n_gen = 3; α_leak = {V.alpha_leak:.4f} on the path in force. "
                 f"The δ_CP construction does not carry over to Y₇: {split_note}."
             ),
             content_blocks=blocks,
@@ -842,18 +882,19 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def get_certificates(self) -> List[Dict[str, Any]]:
-        sigma_theta13 = (_THETA13_DEG - _THETA13_NUFIT) / _THETA13_1SIGMA
-        sigma_dcp = (_DELTA_CP_DEG - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
+        V = _derived_values()
+        sigma_theta13 = (V.theta13_deg - _THETA13_NUFIT) / _THETA13_1SIGMA
+        sigma_dcp = (_OFF_PATH.dcp_deg - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
         # theta_13 is 12% above NuFIT; given the tight 1sigma~0.25 deg this is ~4sigma.
         # The derivation is an ORDER-OF-MAGNITUDE prediction — use a 5sigma check to reflect that.
         theta13_within_5sigma = abs(sigma_theta13) <= 5.0
         dcp_within_2sigma = abs(sigma_dcp) <= 2.0
-        dcp_in_preferred_range = -180.0 <= _DELTA_CP_DEG <= 0.0
+        dcp_in_preferred_range = -180.0 <= _OFF_PATH.dcp_deg <= 0.0
         return [
             {
                 "id": "CERT_NEUTRINO_THETA13_WITHIN_5SIGMA",
                 "assertion": (
-                    f"theta_13_derived = {_THETA13_DEG:.4f} deg is within 5sigma of "
+                    f"theta_13_derived = {V.theta13_deg:.4f} deg is within 5sigma of "
                     f"NuFIT 6.0 value {_THETA13_NUFIT} deg "
                     "(order-of-magnitude algebraic derivation, not a precision fit)"
                 ),
@@ -869,7 +910,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             {
                 "id": "CERT_NEUTRINO_DELTA_CP_WITHIN_2SIGMA",
                 "assertion": (
-                    f"delta_CP_derived = {_DELTA_CP_DEG:.1f}° (at the off-path seed b₃ = 24) "
+                    f"delta_CP_derived = {_OFF_PATH.dcp_deg:.1f}° (at the off-path seed b₃ = 24) "
                     f"is within 2σ of NuFIT 6.0 NO best fit {_DELTA_CP_NUFIT}°"
                 ),
                 "condition": f"abs({sigma_dcp:.4f}) <= 2.0",
@@ -883,10 +924,10 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             {
                 "id": "CERT_NEUTRINO_DELTA_CP_SIGN_CORRECT",
                 "assertion": (
-                    f"delta_CP_derived = {_DELTA_CP_DEG:.1f}° is in NuFIT preferred "
+                    f"delta_CP_derived = {_OFF_PATH.dcp_deg:.1f}° is in NuFIT preferred "
                     "range (−180°, 0°)"
                 ),
-                "condition": f"-180.0 <= {_DELTA_CP_DEG:.1f} <= 0.0",
+                "condition": f"-180.0 <= {_OFF_PATH.dcp_deg:.1f} <= 0.0",
                 "status": "PASS" if dcp_in_preferred_range else "FAIL",
                 "detail": (
                     "At the off-path seed the construction gives a negative δ_CP, "
@@ -900,16 +941,17 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def validate_self(self) -> Dict[str, Any]:
-        sigma_theta13 = (_THETA13_DEG - _THETA13_NUFIT) / _THETA13_1SIGMA
-        sigma_dcp = (_DELTA_CP_DEG - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
+        V = _derived_values()
+        sigma_theta13 = (V.theta13_deg - _THETA13_NUFIT) / _THETA13_1SIGMA
+        sigma_dcp = (_OFF_PATH.dcp_deg - _DELTA_CP_NUFIT) / _DELTA_CP_1SIGMA
         return {
             "checks": [
                 {
                     "name": "theta13_from_alpha_leak_and_n_gen",
-                    "passed": abs(_SIN_THETA13 - 1.0 / 6.0) < 1e-12,
+                    "passed": abs(V.sin13 - V.alpha_leak / math.sqrt(2.0 * V.n_gen)) < 1e-12,
                     "log_level": "INFO",
                     "message": (
-                        f"sin(θ₁₃) = α_leak/√(2 n_gen) = 1/6 = {_SIN_THETA13:.8f} "
+                        f"sin(θ₁₃) = α_leak/√(2 n_gen) = {V.sin13:.8f} "
                         "(exact algebraic value)"
                     ),
                 },
@@ -918,17 +960,17 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "passed": abs(sigma_theta13) <= 5.0,
                     "log_level": "INFO" if abs(sigma_theta13) <= 5.0 else "WARNING",
                     "message": (
-                        f"theta13_derived = {_THETA13_DEG:.4f} deg, NuFIT = {_THETA13_NUFIT} deg, "
+                        f"theta13_derived = {V.theta13_deg:.4f} deg, NuFIT = {_THETA13_NUFIT} deg, "
                         f"deviation = {sigma_theta13:+.2f}sigma "
                         "(order-of-magnitude algebraic derivation; 5sigma threshold)"
                     ),
                 },
                 {
                     "name": "delta_CP_from_g2_holonomy",
-                    "passed": abs(_DELTA_CP_RAD - (-math.pi / 2.0)) < 1e-12,
+                    "passed": abs(_OFF_PATH.dcp_rad - (-math.pi / 2.0)) < 1e-12,
                     "log_level": "INFO",
                     "message": (
-                        f"δ_CP = −π/2 = {_DELTA_CP_DEG:.6f}° "
+                        f"δ_CP = −π/2 = {_OFF_PATH.dcp_deg:.6f}° "
                         "(π/4 holonomy × 2 modulation, at the off-path seed b₃ = 24)"
                     ),
                 },
@@ -937,16 +979,16 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                     "passed": abs(sigma_dcp) <= 2.0,
                     "log_level": "INFO" if abs(sigma_dcp) <= 2.0 else "WARNING",
                     "message": (
-                        f"δ_CP_derived = {_DELTA_CP_DEG:.1f}°, NuFIT = {_DELTA_CP_NUFIT}°, "
+                        f"δ_CP_derived = {_OFF_PATH.dcp_deg:.1f}°, NuFIT = {_DELTA_CP_NUFIT}°, "
                         f"deviation = {sigma_dcp:+.2f}σ"
                     ),
                 },
                 {
                     "name": "delta_CP_sign_correct",
-                    "passed": _DELTA_CP_DEG < 0.0,
+                    "passed": _OFF_PATH.dcp_deg < 0.0,
                     "log_level": "INFO",
                     "message": (
-                        f"δ_CP = {_DELTA_CP_DEG:.1f}° is negative "
+                        f"δ_CP = {_OFF_PATH.dcp_deg:.1f}° is negative "
                         "(consistent with NuFIT 6.0 preferred range −180° to 0°)"
                     ),
                 },
@@ -1020,7 +1062,7 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
                 "url": "https://en.wikipedia.org/wiki/E7_(mathematics)",
                 "relevance": (
                     "The branching E₇ ⊃ E₆ × U(1): 56 → 27+27*+1+1 "
-                    "fixes α_leak = 1/√6 as a purely algebraic Clebsch-Gordan coefficient."
+                    "is the branching behind the α_leak normalisation ansatz."
                 ),
             },
         ]

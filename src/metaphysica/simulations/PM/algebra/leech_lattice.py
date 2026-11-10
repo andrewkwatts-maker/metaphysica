@@ -189,29 +189,11 @@ class LeechLattice:
         # But min distance is 8, so no weight-2 codewords exist
         # → No type-1 vectors of this shape
 
-        # Instead, use the three standard types for Leech minimal vectors:
-        # After proper scaling, minimal vectors (norm²=4) come from:
-
-        # Type 2^8: Take a Golay codeword C of weight 8 (octad).
-        # Vector: ±2 at positions in C, 0 elsewhere, with even number of minus signs
-        # and Σvᵢ ≡ 0 (mod 4).
-        # Count per octad: 2^7 sign choices (even minus) × ... but constrained by sum mod 4
-        # 759 octads × 2^7 / 2 ... = 759 × 2^6 = ... let me compute properly
-
-        # Actually, the standard decomposition of 196,560 minimal vectors:
-        # (a) 759 × 2^7 = 97,152 vectors from octads (weight-8 codewords)
-        #     For each octad, place ±2 at the 8 positions with even number of minus signs,
-        #     subject to Σ ≡ 0 (mod 4)
-        #     Each octad gives 2^7 = 128 vectors
-        # (b) 2 × 24 × 2^12 / ... → Actually:
-        #     Shape (3, ±1²³): one coordinate ±3, others ±1
-        #     2 × C(24,2) × 2^11 ... nah
-
-        # Use the explicit three-type decomposition from Conway & Sloane:
-        # Type 2: (2²²0²)  — 97,152 vectors
-        # For each octad (759 weight-8 codewords), put ±2 at octad positions
-        # with constraint: even number of minus signs among the 8
-        # That's 2^7 = 128 sign patterns per octad → 759 × 128 = 97,152
+        # Conway-Sloane decomposition of the 196,560 minimal vectors (norm^2 = 32 in
+        # integer coordinates): 97,152 octad shape (+-2)^8 0^16, 98,304 shape (+-3)(+-1)^23,
+        # and 1,104 shape (+-4)^2 0^22. Enumerated here: the octad and (+-4)^2 shapes.
+        # The 98,304 shape needs the full Leech coset condition and is not enumerated;
+        # kissing_number counts what this code object builds, not the literature value.
 
         for cw in codewords:
             if np.sum(cw) != 8:
@@ -228,105 +210,6 @@ class LeechLattice:
                 if np.sum(v) % 4 == 0:
                     minimal.append(v.astype(np.float64))
 
-        # Type 3: (3, ±1²³) — for each of 24 positions, put ±3 there
-        # and ±1 at remaining 23 positions, constrained by Golay code
-        # v mod 2 must be in C₂₄: the position with ±3 contributes 1 mod 2,
-        # others contribute 1 mod 2 → all-ones minus position = weight 23 mod 2
-        # Actually v mod 2 = (1,1,...,1) (all 24 entries odd) which has weight 24
-        # Weight 24 → the all-ones codeword, which IS in C₂₄ ✓
-        # Constraint: Σvᵢ ≡ 0 (mod 4)
-        # With one ±3 and 23 ±1's: Σ = ±3 + Σ(±1) for 23 terms
-        # Need this ≡ 0 (mod 4)
-        for pos in range(24):
-            for s3 in (+3, -3):
-                # Try all 2^23 sign patterns for the ±1 entries
-                # But 2^23 = 8M is too many. Use the constraint to halve.
-                # Σ(±1 for 23 terms) has same parity as 23 (mod 2) = odd
-                # So s3 + Σ = ±3 + odd = even. Need ≡ 0 (mod 4).
-                # s3 + Σ ≡ 0 mod 4 → Σ ≡ -s3 mod 4
-                # With s3=3: Σ ≡ 1 mod 4, with s3=-3: Σ ≡ 3 mod 4
-                # Among 2^23 sign patterns: half give Σ ≡ 1 mod 4, half ≡ 3 mod 4
-                # Wait, not exactly. Need more careful counting.
-                # Actually: there are 2^23 patterns. The sum ranges from -23 to +23 in steps of 2.
-                # For each target mod 4 class, exactly 2^23/4 = 2^21 patterns.
-                # But 2^21 × 48 = 100,663,296 which is way too many vectors.
-                # This approach is wrong — not all sign patterns give Leech vectors.
-
-                # The correct constraint: v ≡ (1,1,...,1) mod 2 (all odd),
-                # AND the actual vector v must be in the Leech lattice.
-                # For Construction A: v mod 2 ∈ C₂₄ AND Σvᵢ ≡ 0 mod 4.
-                # v mod 2 = (1,1,...,1) which is weight 24 → in C₂₄ ✓
-                # So constraint is just Σvᵢ ≡ 0 mod 4.
-                # But also norm² = 9 + 23 = 32 ≠ 4 (in lattice coords pre-scaling)
-                # Wait — I need to be more careful about the scaling.
-                pass
-
-        # Direct approach: the 196,560 = 97152 + 98304 + 1104 decomposition
-        # uses a specific scaling. Let me use the standard form directly.
-        #
-        # After careful analysis, the Leech lattice minimal vectors in the
-        # standard integral form (before dividing by √8) have norm² = 32.
-        # They decompose as:
-        #
-        # Shape 4²0²²: Two coords ±4, rest 0 → but need v mod 2 = weight-2 support
-        #   in C₂₄, and min distance is 8, so NO vectors of this shape.
-        #
-        # Shape 2⁸0¹⁶: ±2 at 8 positions forming an octad, even signs, Σ≡0 (mod 4)
-        #   Count: 759 × 128 = 97,152 ✓ (already computed above)
-        #
-        # Shape (3)(1²³): One coord ±3, rest ±1, v mod 2 = all-ones ∈ C₂₄
-        #   Σ ≡ 0 (mod 4). The sign pattern of the ±1 entries determines
-        #   a specific coset. Count: 24 × 2 × 2048 = 98,304
-        #
-        # Shape (4²)(2⁸)(0¹⁴): mixed — doesn't occur at this norm.
-        #
-        # So total from octads: 97,152. Remaining: 196,560 - 97,152 = 99,408
-        # The (3,1²³) type gives: we need Σ = ±3 + sum_of_23_signs ≡ 0 mod 4
-        # For each of 24 positions × 2 choices of ±3:
-        #   The 23 ±1 entries have 2^23 patterns. Of these, 1/4 satisfy Σ ≡ target mod 4.
-        #   So 2^23 / 4 = 2^21 = 2,097,152 per (position, sign) pair.
-        #   Total: 48 × 2,097,152 = way too many.
-        #
-        # The issue is that not all of these have norm² = 32.
-        # norm² = 9 + 23×1 = 32. ✓ So they DO all have the right norm.
-        # But that gives 48 × 2^21 ≈ 100M vectors, not 98,304.
-        #
-        # The missing constraint is divisibility by √8 / membership in Construction A.
-        # Construction A: Λ = {x ∈ Z²⁴ | x mod 2 ∈ C₂₄} (no √2 scaling)
-        # and then we scale by 1/√2 to get the conventional normalization.
-        # Wait, I think I was wrong about the (3,1²³) construction.
-        #
-        # Let me reconsider. The Leech lattice in the MOG construction:
-        # Λ = {v/√8 : v ∈ Z²⁴, v ≡ C (mod 2), Σvᵢ ≡ 0 (mod 4)}
-        # Minimal norm² = 4 corresponds to Σvᵢ² = 32 in integer coords.
-        #
-        # For v = (3, ±1, ..., ±1): Σv² = 9 + 23 = 32 ✓
-        # v mod 2 = (1,1,...,1) = weight 24 codeword ∈ C₂₄ ✓
-        # Σv must ≡ 0 (mod 4).
-        #
-        # But this gives too many vectors. Let me check the literature count:
-        # 196,560 = 97,152 + 99,408? No, standard decomposition is:
-        # 196,560 = 97,152 (octad type) + 98,304 (all-ones type) + 1,104 (???)
-        # Hmm, 97,152 + 98,304 + 1,104 = 196,560. ✓
-        # But 1,104 = 24 × 46? That doesn't match any obvious structure.
-        #
-        # Actually, looking at Conway & Sloane more carefully:
-        # 196,560 = 2 × 97,152 + 2 × 1,104? No...
-        #
-        # The correct decomposition (Conway & Sloane, Table 4.13):
-        # Type 1 (shape 0²²(±2)²⁰⁸): 759 × 128 = 97,152  [octads × sign patterns]
-        # Hmm wait, this doesn't add up. Let me just enumerate computationally.
-        #
-        # CORRECTION: The standard decomposition is:
-        # a) 2^7 × 759 = 97,152 from weight-8 Golay octads
-        # b) 2 × 24 × 2^11 = 98,304 from weight-24 (all-ones) codeword
-        # c) 2 × 276 × 2 = 1,104 from weight-0 (zero) codeword
-        #
-        # For (c): shape (±4, ±4, 0²²) with v mod 2 = (0,...,0) ∈ C₂₄
-        # norm² = 16 + 16 = 32, positions: C(24,2) = 276, signs: ++ or -- (Σ≡0 mod 4)
-        # → 276 × 4 = 1,104? Let's check: (4,4,0,...) sum=8 ≡ 0 ✓
-        # (-4,-4,0,...) sum=-8 ≡ 0 ✓, (4,-4,...) sum=0 ≡ 0 ✓, (-4,4,...) sum=0 ≡ 0 ✓
-        # So 276 × 4 = 1,104. ✓
 
         # Type (c): shape (±4)²(0)²² from zero codeword
         for i in range(24):
@@ -339,81 +222,7 @@ class LeechLattice:
                         if int(v.sum()) % 4 == 0:
                             minimal.append(v)
 
-        # Type (b): shape (±3)(±1)²³ from all-ones codeword
-        # 24 positions for the ±3, 2 sign choices, 2^23 sign patterns for ±1
-        # with Σ ≡ 0 mod 4. That's 24 × 2 × 2^21 ≈ 100M.
-        # This is too large to enumerate naively.
-        #
-        # Instead, we note: for fixed position p and sign s3 ∈ {+3,-3},
-        # the 23 ±1 signs must satisfy: s3 + Σᵢ≠ₚ sᵢ ≡ 0 (mod 4)
-        # where sᵢ ∈ {+1,-1}. Let k = number of -1 entries among the 23.
-        # Then Σᵢ≠ₚ sᵢ = 23 - 2k. Sum = s3 + 23 - 2k.
-        # For s3=3: sum = 26-2k, need 26-2k ≡ 0 mod 4 → k ≡ 1 mod 2 (k odd)
-        # For s3=-3: sum = 20-2k, need 20-2k ≡ 0 mod 4 → k ≡ 0 mod 2 (k even)
-        # Half of all 2^23 patterns have k odd, half have k even.
-        # So each (position, sign) gives 2^22 = 4,194,304 vectors.
-        # Total: 48 × 4,194,304 ≈ 200M. Way too many!
-        #
-        # This means my Construction A formula is wrong, or the (3,1²³) type
-        # has additional constraints I'm missing.
-        #
-        # RESOLUTION: The issue is that Construction A for Leech uses a
-        # MORE RESTRICTIVE condition than just "v mod 2 ∈ C₂₄, Σ ≡ 0 mod 4".
-        # The actual construction is:
-        # Λ₂₄ = {x ∈ Z²⁴ | x ≡ c (mod 2) for some c ∈ C₂₄,
-        #         Σxᵢ ≡ 0 (mod 4),
-        #         AND for each Golay codeword c, Σ_{i∈c} xᵢ ≡ 0 (mod 4)}
-        #
-        # No wait, that's also not standard. Let me use a simpler approach:
-        # just compute the vectors and count them.
-        #
-        # SIMPLEST CORRECT APPROACH: Use the Leech lattice generator matrix
-        # and enumerate short vectors by checking all relevant integer combos.
-        # But that's expensive in 24D.
-        #
-        # PRACTICAL APPROACH: For the (3,1²³) type, the additional constraint
-        # comes from the full Leech lattice definition, not just Construction A.
-        # The correct count is 98,304 = 24 × 2 × 2^{11} = 24 × 4096.
-        # This means for each (position, ±3), exactly 2^{11} = 2048 sign patterns work.
-        # The constraint is that the ±1 pattern must form a specific Golay coset.
-        #
-        # For v = (s₃ · 3, s₁, s₂, ..., s₂₃) with sᵢ ∈ {±1}:
-        # v mod 2 = (1, 1, ..., 1) (all ones) ∈ C₂₄ ✓
-        # The ADDITIONAL constraint for Leech: (v - c) / 2 must also satisfy
-        # certain conditions. Specifically, in the standard Construction A:
-        # v = c + 2u where c ∈ C₂₄ (lifted to ±1), u ∈ Z²⁴
-        # For (3, 1²³): c = all-ones lifted to signs, then v = c + 2u
-        # where u has one entry ±1 and rest 0. Then Σu must satisfy...
-        #
-        # This is getting complicated. Let me use a matrix-based approach instead.
-
-        # For the (3,1²³) type: use the Golay code structure directly.
-        # The sign pattern (±1) at the 23 non-special positions, together
-        # with the special position, must form a vector v such that
-        # (v - all_ones)/2 has coordinates in {0, -1} with support in C₂₄,
-        # OR (v + all_ones)/2 has specific properties.
-        #
-        # Concretely: v = ε₁·1 + 2w where ε ∈ {±1}²⁴ (from all-ones codeword)
-        # and w ∈ Z²⁴. Then v = ε + 2w, Σvᵢ² = Σ(εᵢ + 2wᵢ)².
-        # For type (3,1²³): one wᵢ = ±1, rest = 0. So v at that position = ε ± 2 = {3,-1} or {-3,1}.
-        # Actually: if εᵢ = 1, wᵢ = 1 → vᵢ = 3; if εᵢ = 1, wᵢ = -1 → vᵢ = -1
-        # if εᵢ = -1, wᵢ = 1 → vᵢ = 1; if εᵢ = -1, wᵢ = -1 → vᵢ = -3
-        # So vᵢ = 3 when (εᵢ,wᵢ) = (1,1), vᵢ = -3 when (εᵢ,wᵢ) = (-1,-1).
-        # OK this gives one ±3 and 23 ±1's, but the εᵢ signs are constrained.
-        #
-        # ε = ±(codeword lifted to signs). Since the all-ones is a codeword,
-        # ε can be any ±1 vector whose support mod 2 is a codeword.
-        # For all-ones codeword: ε = (±1)²⁴ freely? No — ε IS the codeword
-        # lifted to ±1 signs, so ε must be chosen consistently.
-        #
-        # I think the simplest correct enumeration for the (3,1²³) type:
-        # For each position p and each Golay codeword of weight 12 that contains p:
-        # ... this is getting very complex.
-        #
-        # PRACTICAL SOLUTION: Skip explicit (3,1²³) enumeration.
-        # Instead, verify the kissing number by computing the theta series
-        # coefficient algebraically, and store the octad-type vectors
-        # plus the (4,4,0) vectors as a representative subset.
+        # The (+-3)(+-1)^23 shape (98,304 vectors) is not enumerated here.
 
         if len(minimal) > 0:
             self._minimal_vectors = np.array(minimal, dtype=np.float64)

@@ -184,8 +184,8 @@ class CliffordUnificationSimulation(SimulationBase):
                 path="algebra.clifford_g2_invariant",
                 name="G₂ Clifford Invariant",
                 units="dimensionless",
-                status="DERIVED",
-                description="G₂ quadratic form v·v in Cl(7,0) ≡ Euclidean 7D invariant.",
+                status="IDENTITY",
+                description="G₂ quadratic form v·v in Cl(7,0) ≡ Euclidean 7D invariant. A self-test, true by construction (v·v = 1 for a unit vector); not a physics parameter, not scored.",
                 derivation_formula="clifford-quadratic-unification",
                 no_experimental_value=True,
                 # EML WITHHELD: EML is a scalar tension algebra. A Clifford
@@ -201,8 +201,8 @@ class CliffordUnificationSimulation(SimulationBase):
                 path="algebra.clifford_flrw_invariant",
                 name="FLRW Clifford Invariant",
                 units="dimensionless",
-                status="DERIVED",
-                description="FLRW quadratic form e₀·e₀ = −1 in Cl(0,1) with signature (−1,+1,+1,+1).",
+                status="IDENTITY",
+                description="FLRW quadratic form e₀·e₀ = −1 in Cl(0,1) with signature (−1,+1,+1,+1). A self-test, true by construction; not a physics parameter, not scored.",
                 derivation_formula="clifford-quadratic-unification",
                 no_experimental_value=True,
                 # EML WITHHELD -- see algebra.clifford_g2_invariant above:
@@ -212,8 +212,8 @@ class CliffordUnificationSimulation(SimulationBase):
                 path="algebra.clifford_rotation_check",
                 name="4-Frame Rotation Check (error)",
                 units="dimensionless",
-                status="DERIVED",
-                description="Error |e₂_component − 1| after π/2 rotation of e₁ in 2D Euclidean. Should be ~0.",
+                status="IDENTITY",
+                description="Error |e₂_component − 1| after π/2 rotation of e₁ in 2D Euclidean. Should be ~0. A floating-point self-test, not a physics parameter, not scored.",
                 derivation_formula="clifford-quadratic-unification",
                 no_experimental_value=True,
                 # EML WITHHELD -- see algebra.clifford_g2_invariant above:

@@ -111,11 +111,11 @@ class OctonionAlgebra:
         """
         try:
             from metaphysica.simulations.core.variants import resolve
-
-            if resolve("g2_form_convention") == "all_plus_one":
-                return self._C_geom
-        except Exception:              # fork undeclared, or import cycle
-            pass
+        except ImportError:            # import cycle: the one real case
+            return self._C_mult        # the adopted branch
+        # resolve() raises KeyError for an undeclared fork: that surfaces.
+        if resolve("g2_form_convention") == "all_plus_one":
+            return self._C_geom
         return self._C_mult            # the adopted branch
 
     @staticmethod

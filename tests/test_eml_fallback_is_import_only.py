@@ -6,7 +6,8 @@ import pytest
 
 class _Registry:
     def get_param(self, path):
-        return 43 if path == "topology.elder_kads" else None
+        return {"topology.elder_kads": 43, "topology.mephorash_chi": 144,
+                "topology.n_gen": 3, "geometry.alpha_leak": 0.5465}.get(path)
 
     def has_param(self, path):
         return False

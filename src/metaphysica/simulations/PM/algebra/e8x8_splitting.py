@@ -266,8 +266,8 @@ class E8xE8SplittingSimulation(SimulationBase):
                 path="algebra.e8_hidden_condensate",
                 name="Hidden E₈' Gaugino Condensate",
                 units="dimensionless",
-                status="DERIVED",
-                description="Hidden sector non-perturbative superpotential W_np(N₁=24) from gaugino condensation.",
+                status="CALIBRATED",
+                description="Hidden sector superpotential W_np = exp(-2π/b3), CALIBRATED at the off-path seed b3 = 24 (no gaugino racetrack exists on Y_7); same row as algebra.gaugino_W_np_1.",
                 derivation_formula="e8x8-hidden-condensate",
                 no_experimental_value=True,
                 eml_description="EML: ops.exp(ops.neg(ops.div(ops.mul(eml_scalar(2.0), eml_pi()), eml_vec('topology.elder_kads')))) — W_np = exp(−2π/b₃) hidden E₈' gaugino condensate at the retired seed_24 value b₃=24",
@@ -276,26 +276,24 @@ class E8xE8SplittingSimulation(SimulationBase):
                 path="algebra.e8_portal_coupling",
                 name="E₈ × E₈' Portal Coupling α_leak",
                 units="dimensionless",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
-                    "Dark portal coupling = 1/√6 from E₇ ⊃ E₆ × U(1) algebraic branching. "
-                    "Same as algebra.e7_alpha_leak — registered here for completeness."
+                    "Dark portal coupling = 1/√6, the E₇ normalisation ANSATZ. "
+                    "Same as algebra.e7_alpha_leak; not geometry.alpha_leak, the coupling in force."
                 ),
                 derivation_formula="e8x8-portal-coupling",
-                experimental_bound=_ALPHA_LEAK,
-                bound_type="central_value",
-                bound_source="E7_algebraic_branching",
-                uncertainty=0.0,
+                no_experimental_value=True,
                 eml_description="EML: ops.inv(ops.sqrt(eml_scalar(6.0))) — portal coupling α_leak = 1/√6 from E₇⊃E₆×U(1) shared between visible E₈ and hidden E₈'",
             ),
             Parameter(
                 path="algebra.e8_heterotic_spectral_proxy",
                 name="Heterotic Spectral Proxy",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "Proxy for the heterotic string spectral density: "
-                    "visible action norm × hidden condensate × portal coupling."
+                    "visible action norm × hidden condensate × portal coupling. "
+                    "Inherits CALIBRATED from the hidden condensate; retire from the paper."
                 ),
                 no_experimental_value=True,
                 eml_description="EML: ops.mul(eml_vec('algebra.e8_visible_action_norm'), eml_vec('algebra.e8_hidden_condensate'), eml_vec('algebra.e8_portal_coupling')) — spectral proxy = visible_norm × W_np × α_leak",

@@ -922,8 +922,8 @@ if _SCHEMA_AVAILABLE:
                     path="consciousness.dice_branches",
                     name="Dice Branch Count",
                     units="dimensionless",
-                    status="PREDICTED",
-                    description="Total consciousness branches from 4-dice mod-4 sampling (SPECULATIVE)",
+                    status="ANSATZ",
+                    description="Total branches 4^4 = 256 from a self-chosen 4-dice mod-4 sampling: arithmetic of the chosen model, not a prediction (SPECULATIVE)",
                     derivation_formula="four-dice-branch-count",
                     no_experimental_value=True,
                     eml_description=(
@@ -934,8 +934,8 @@ if _SCHEMA_AVAILABLE:
                     path="consciousness.dice_entropy",
                     name="Dice Sampling Entropy",
                     units="bits",
-                    status="PREDICTED",
-                    description="Shannon entropy of branch probability distribution (SPECULATIVE)",
+                    status="ANSATZ",
+                    description="Shannon entropy of a self-chosen branch probability distribution (SPECULATIVE; not scored)",
                     derivation_formula="four-dice-branch-count",
                     no_experimental_value=True,
                     # EML WITHHELD. The registered value is the Shannon

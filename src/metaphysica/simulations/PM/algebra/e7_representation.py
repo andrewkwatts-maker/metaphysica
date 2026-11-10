@@ -158,9 +158,9 @@ class E7RepresentationSimulation(SimulationBase):
                 label="(A3.1)",
                 latex=r"\alpha_{\text{leak}} = \frac{1}{\sqrt{6}} \approx " + alpha_leak_val,
                 plain_text=f"alpha_leak = 1/sqrt(6) ≈ {alpha_leak_val}",
-                category="DERIVED",
+                category="ANSATZ",
                 description=(
-                    "Dark-force portal coupling α_leak = 1/√6 from E₇ ⊃ E₆ × U(1) algebraic branching. "
+                    "E7 normalisation constant 1/√6 (not geometry.alpha_leak, the coupling in force) from E₇ ⊃ E₆ × U(1) algebraic branching. "
                     "The 56D rep branches as 56 → 27(+1/3) + 27*(−1/3) + 1(+1) + 1(−1). "
                     "The 1/√6 value is a normalization ANSATZ used consistently repo-wide; "
                     "the charge-sum argument previously stated (54·q² = 56) does not hold arithmetically."
@@ -267,19 +267,18 @@ class E7RepresentationSimulation(SimulationBase):
         return [
             Parameter(
                 path="algebra.e7_alpha_leak",
-                name="Dark Portal Coupling α_leak",
+                name="E7 Branching Normalisation 1/sqrt(6) (not the coupling in force)",
                 units="dimensionless",
-                status="DERIVED",
+                status="ANSATZ",
                 description=(
-                    "Dark-force portal coupling α_leak = 1/√6 ≈ 0.40825. "
-                    "DERIVED from E₇ ⊃ E₆ × U(1) algebraic branching — zero free parameters. "
-                    "Promotes this parameter from PHENOMENOLOGICAL to DERIVED."
+                    "The E7 normalisation constant 1/sqrt(6) = 0.40825, a normalisation ANSATZ "
+                    "(the charge-sum argument for it does not hold). It is a different quantity "
+                    "from geometry.alpha_leak = 1/sqrt(chi_eff/b3), the coupling in force "
+                    "(0.5465 on the adopted path); the two agree only at the retired seed "
+                    "b3 = 24, chi_eff = 144. Not scored: it restates its own input."
                 ),
                 derivation_formula="e7-alpha-leak",
-                experimental_bound=0.40825,
-                bound_type="central_value",
-                bound_source="E7_algebraic_branching",
-                uncertainty=0.0,
+                no_experimental_value=True,
                 eml_description="EML: ops.inv(ops.sqrt(eml_scalar(6.0))) — α_leak = 1/√6 from E₇ ⊃ E₆×U(1) Clebsch-Gordan coefficient fixed by dim(27)=27",
             ),
             Parameter(
@@ -312,12 +311,13 @@ class E7RepresentationSimulation(SimulationBase):
             ),
             Parameter(
                 path="algebra.e7_alp_mass_gev",
-                name="ALP Mass from E₇ Quartic (GeV)",
-                units="GeV (nominal; √q/M_Pl is GeV⁻¹-dimensioned — normalization ANSATZ)",
-                status="DERIVED",
+                name="E7 Quartic over Planck Mass (an inverse-GeV number, not an ALP mass)",
+                units="GeV^-1 nominal (√q/M_Pl is GeV⁻¹-dimensioned — normalization ANSATZ)",
+                status="ANSATZ",
                 description=(
-                    "ALP mass m_a = √|q_E₇| / M_Planck derived from the E₇ quartic invariant. "
-                    "Promotes ALP mass scale from PREDICTED (semi-fitted) to DERIVED."
+                    "√|q_E₇| / M_Planck from the E₇ quartic invariant. It is GeV⁻¹-dimensioned, so "
+                    "it is not a mass; the ALP mass in force is portals.alp_mass_ev (about 111 eV, "
+                    "CALIBRATED). Kept as a labelled row, not scored, not in the paper."
                 ),
                 derivation_formula="e7-alp-mass",
                 no_experimental_value=True,

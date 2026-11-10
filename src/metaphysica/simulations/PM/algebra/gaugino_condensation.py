@@ -279,7 +279,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     r"N_1 = b_3 = 24,\; N_2 = b_3 - 1 = 23\ \ (\text{off-path seed})"
                 ),
                 plain_text="W_np = A*exp(-2π T/24) + A*exp(-2π T/23), N1=24, N2=23",
-                category="DERIVED",
+                category="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed: no gaugino racetrack exists on Y₇ (its "
                     "singular loci carry N = 4 SYM, CG.5; holonomy exactly G₂ excludes a confining sector "
@@ -330,7 +330,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 label="(A4.2)",
                 latex=r"\lambda_{\text{eff}} = e^{-2\pi/N_1} = e^{-2\pi/24} \approx " + f"{leff:.6f}",
                 plain_text=f"lambda_eff = exp(-2π/24) ≈ {leff:.6f}",
-                category="DERIVED",
+                category="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). "
                     f"Effective Yukawa texture suppression at the racetrack minimum, "
@@ -364,7 +364,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 label="(A4.3)",
                 latex=r"\varepsilon_{\text{proxy}} = \lambda_{\text{eff}}^3 \approx " + f"{cab:.4f}",
                 plain_text=f"epsilon_proxy = lambda_eff^3 ≈ {cab:.4f}",
-                category="DERIVED",
+                category="CALIBRATED",
                 description=(
                     "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
                     f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} at the "
@@ -488,7 +488,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_W_np_1",
                 name="Dominant Gaugino Condensate W_np(N₁)",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Non-perturbative "
                     "superpotential W_np(N₁) = exp(−2π/N₁), the dominant term, with N₁ read "
@@ -506,7 +506,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_W_np_2",
                 name="Sub-dominant Gaugino Condensate W_np(N₂)",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Non-perturbative "
                     "superpotential W_np(N₂) = exp(−2π/N₂), the sub-dominant term, with "
@@ -524,7 +524,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_lambda_eff",
                 name="Yukawa Texture Suppression λ_eff",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Effective Yukawa "
                     "suppression λ_eff = exp(−2π/N₁) at the racetrack minimum; at the "
@@ -601,7 +601,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_racetrack_T_min",
                 name="Racetrack Minimum Modulus T_min",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Analytic racetrack "
                     "minimum T_min = ln(a₂/a₁)/(a₂−a₁) where aᵢ = 2π/Nᵢ, with N₁ = b₃ and "
@@ -625,7 +625,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 path="algebra.gaugino_condensate_ratio",
                 name="Condensate Ratio W_np(N₁)/W_np(N₂)",
                 units="dimensionless",
-                status="DERIVED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed; no gaugino racetrack exists on Y₇ (CG.5, CG.10). Ratio of dominant "
                     "to sub-dominant condensate strengths; written at the off-path seed "
