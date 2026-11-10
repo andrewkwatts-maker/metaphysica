@@ -511,13 +511,12 @@ H0_OFF_PATH_REASON = (
 
 def h0_off_adopted_path():
     """Name the H0-moving fork that is off its adopted option, else None."""
-    from metaphysica.simulations.core.variants.adopted import (
-        _b3_seed_adopted, _h0_route_adopted)
-    from metaphysica.simulations.core.variants import resolve
+    from metaphysica.simulations.core.variants.adopted import _h0_route_adopted
+    from metaphysica.simulations.core.variants import FORKS, resolve
 
     if resolve("h0_route") != _h0_route_adopted():
         return "h0_route"
-    if resolve("b3_seed") != _b3_seed_adopted():
+    if resolve("b3_seed") != FORKS["b3_seed"].default():
         return "b3_seed"
     return None
 

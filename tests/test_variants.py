@@ -63,7 +63,10 @@ def test_defaults_match_the_value_adopted_at_the_source():
     assert checked, "no fork source was actually read; the guard is inert"
     # Pinned in both directions: a NEW unmeasurable fork fails this, and so
     # does wiring one up, which is the edit that should come with the fix.
-    assert set(unmeasurable) == {"dark_energy_betti"}, (
+    # re_t_adoption and b3_seed are declared only: their sources resolve the
+    # fork itself (L1 path-core, core-paths-16).
+    assert set(unmeasurable) == {"dark_energy_betti", "re_t_adoption",
+                                 "b3_seed"}, (
         "the set of forks whose source cannot be measured in a bare process "
         f"changed: {unmeasurable}"
     )

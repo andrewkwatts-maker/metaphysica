@@ -9,16 +9,21 @@ from __future__ import annotations
 from .model import SourceUnmeasurable
 
 
-def _re_t_adoption_adopted() -> str:
-    """Structural read, no restated numerals: the module's fallback branch
-    returns its declared RE_T_CALIBRATED constant, and computed_vacuum can
-    only arrive via the fork override -- so the source-adopted branch is the
-    calibrated one exactly while that fallback exists. Importing the constant
-    verifies the source is intact without comparing against a magic copy."""
-    from metaphysica.simulations.PM.cosmology import baryon_asymmetry
+def _declared_only(fork_id: str, source: str) -> str:
+    """Raise: *source* follows the fork itself, so nothing independent exists
+    to read and the adopted option is a declaration, not a measurement."""
+    raise SourceUnmeasurable(
+        f"fork {fork_id}: declared, not measured -- {source} selects its "
+        f"branch by resolving this fork, so reading it would compare the "
+        f"declaration with itself")
 
-    assert hasattr(baryon_asymmetry, "RE_T_CALIBRATED")
-    return "calibrated"
+
+def _re_t_adoption_adopted() -> str:
+    """Declared only. baryon_asymmetry._resolve_re_t picks its branch by
+    resolving re_t_adoption, so the old reader (assert the constant exists,
+    return "calibrated") could never disagree with the declaration."""
+    return _declared_only(
+        "re_t_adoption", "PM/cosmology/baryon_asymmetry._resolve_re_t")
 
 
 def _spectral_index_route_adopted() -> str:
@@ -60,11 +65,12 @@ def _b3_seed_adopted() -> str:
 
     The chi_eff dichotomy is NOT decided by this ruling; the EML track stays
     pinned on it.
-    """
-    from metaphysica.simulations.PM.geometry.b3_path import PATHS
 
-    assert "seed_24" in PATHS and "seed_43_joyce" in PATHS
-    return "seed_43_joyce"
+    Declared only: b3_path.resolve_path resolves this fork, so there is no
+    independent source to read (the old reader asserted both seeds exist and
+    returned the literal "seed_43_joyce").
+    """
+    return _declared_only("b3_seed", "PM/geometry/b3_path.resolve_path")
 
 
 def _flavour_seed_coupling_adopted() -> str:
@@ -136,11 +142,17 @@ def _metric_construction_adopted() -> str:
     if np.allclose(live, g2.compute_metric()):
         return "quadratic_contraction"
     try:
-        if np.allclose(live, g2.compute_hitchin_metric()):
-            return "hitchin_cubic"
-    except ValueError:                     # unstable phi: no Hitchin metric
-        pass
-    return "quadratic_contraction"
+        hitchin = g2.compute_hitchin_metric()
+    except ValueError as exc:              # unstable phi: no Hitchin metric
+        raise SourceUnmeasurable(
+            "fork metric_construction, option hitchin_cubic: the live metric "
+            "is not the quadratic contraction and no Hitchin metric exists "
+            f"to compare with ({exc})") from exc
+    if np.allclose(live, hitchin):
+        return "hitchin_cubic"
+    raise SourceUnmeasurable(
+        "fork metric_construction: the live metric matches neither option "
+        "(quadratic_contraction, hitchin_cubic); the dispatcher has changed")
 
 
 def _twisted_norm_convention_adopted() -> str:
