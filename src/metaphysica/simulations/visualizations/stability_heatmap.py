@@ -35,6 +35,10 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+# RETIRE-FROM-PAPER: drawn at the off-path seed (b3 = 24). The module and its output
+# stay; the paper does not use the figure and it is not part of the score.
+RETIRED_FROM_PAPER = True
+
 import numpy as np
 from typing import Dict, Any, Tuple, Optional
 import json

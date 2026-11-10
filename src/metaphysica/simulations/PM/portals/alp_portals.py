@@ -43,7 +43,7 @@ PHYSICS (Part 3, Topic 09):
 
     ALP-photon coupling (Primakoff process):
         g_{a gamma gamma} = alpha_leak * chi_eff / (24 * pi * f_a)
-    (the 24 in 24 * pi is a literal, not read from b3; calibrated at the
+    (the 24 in 24 * pi is the named constant G_AGG_DENOMINATOR, not b3; calibrated at the
     off-path seed b3 = 24)
 
     ALP-nucleon coupling:
@@ -79,6 +79,11 @@ from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
 _REG = get_registry()
+
+# The 24 in g_agg = alpha_leak * chi_eff / (24 pi f_a). A calibrated literal of
+# the formula, NOT b3 and not read from any path; it keeps its value on every
+# path. The worked numbers in the text are those of the off-path seed b3 = 24.
+G_AGG_DENOMINATOR = 24.0
 
 from metaphysica.simulations.base.simulation_base import (
     SimulationBase,
@@ -378,7 +383,7 @@ class ALPPortalsV23(SimulationBase):
         #                     = 29.38 / (7.54e11)
         #                     ~ 3.9e-11 GeV^{-1}
 
-        g_a_gamma_gamma = (self.alpha_leak * chi_eff) / (24.0 * math.pi * f_a_alp)
+        g_a_gamma_gamma = (self.alpha_leak * chi_eff) / (G_AGG_DENOMINATOR * math.pi * f_a_alp)
 
         # ================================================================
         # ALP-NUCLEON COUPLING
@@ -702,7 +707,7 @@ class ALPPortalsV23(SimulationBase):
                         _eml_mul(_eml_scalar(3.0), _b3_leaf()),
                     ),
                     _eml_mul(
-                        _eml_mul(_eml_scalar(24.0), _eml_pi()),
+                        _eml_mul(_eml_scalar(G_AGG_DENOMINATOR), _eml_pi()),
                         _eml_scalar(result.f_a_alp),
                     ),
                 ),

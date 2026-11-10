@@ -69,6 +69,10 @@ OMEGA_DE = 0.689  # Dark energy density
 B3 = _REG.elder_kads  # b3, the live seed (43 adopted; 24 at the off-path seed)
 K_GIMEL = _REG.demiurgic_coupling  # b3/2 + 1/pi, CALIBRATED (12.318 at the off-path seed)
 TAU = K_GIMEL / B3  # ~0.513 at the off-path seed (Ricci flow timescale)
+# Labelled off-path w(z) parameters: named, derived from the off-path seed, not typed
+OFF_PATH_B3 = 24
+W0_OFF_PATH = -1 + 1 / OFF_PATH_B3
+WA_OFF_PATH = -1 / np.sqrt(OFF_PATH_B3)
 Z_STAR = 1 / TAU  # ~1.95 at the off-path seed (transition redshift)
 
 
@@ -133,10 +137,10 @@ def compute_pm_w_correction_H(z, H0_local=H0_SHOES, H0_early=H0_PLANCK, z_star=Z
     Y_7: the leading-order flux potential cannot accelerate (CG.11).
     """
     # w0 frozen at the off-path seed (no derivation; dark energy is OPEN)
-    w0 = -23 / 24  # ~-0.9583, frozen at the off-path seed b3 = 24
+    w0 = W0_OFF_PATH  # ~-0.9583, frozen at the off-path seed
 
     # w(z) evolution (CPL-like parametrization)
-    wa = -1 / np.sqrt(24)  # ~-0.204, frozen at the off-path seed
+    wa = WA_OFF_PATH  # ~-0.204, frozen at the off-path seed
 
     # Dark energy density evolution
     def rho_de(z_val):
@@ -194,7 +198,7 @@ def generate_ricci_flow_evolution():
     ax1.loglog(z_full, H_pm, '-', color=PM_COLORS['purple'], linewidth=3,
                label='PM: Ricci Flow')
     ax1.loglog(z_full, H_pm_wz, '-', color=PM_COLORS['pink'], linewidth=2,
-               label=r'PM: + $w(z)$, $w_0 = -23/24$ (off-path seed)')
+               label=f'PM: + $w(z)$, $w_0 = {W0_OFF_PATH:.4f}$ (off-path seed)')
 
     # Mark key epochs
     # CMB (z ~ 1089)

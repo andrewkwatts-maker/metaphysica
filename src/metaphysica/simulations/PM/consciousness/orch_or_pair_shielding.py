@@ -912,7 +912,8 @@ if _SCHEMA_AVAIL:
                     name="Base Penrose Coherence Time",
                     units="milliseconds",
                     status="PREDICTED",
-                    description="Penrose-Diosi coherence time at 6 pairs (DERIVED physics, SPECULATIVE context)",
+                    description="Penrose-Diosi coherence time at 6 pairs (DERIVED physics, SPECULATIVE context)."
+                    " SPECULATION: separate from the gnosis coherence chain (gnosis_unlocking, tau_0 = 25 ms); the two disagree by orders of magnitude and neither is compared with data.",
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,
                     eml_description=(
@@ -927,7 +928,8 @@ if _SCHEMA_AVAIL:
                     name="Pair-Shielded Coherence Time",
                     units="milliseconds",
                     status="PREDICTED",
-                    description="Enhanced coherence time at 12 pairs with shielding (SPECULATIVE)",
+                    description="Enhanced coherence time at 12 pairs with shielding (SPECULATIVE)."
+                    " SPECULATION: separate from the gnosis coherence chain (gnosis_unlocking, tau_0 = 25 ms); the two disagree by orders of magnitude and neither is compared with data.",
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,
                     eml_description=(
@@ -964,7 +966,7 @@ if _SCHEMA_AVAIL:
                     description=(
                         "Base coherence time before pair shielding, τ_base = "
                         "min(τ_Penrose, τ_decoherence); in the wet regime the environmental "
-                        "term wins (SPECULATIVE context)"
+                        "term wins (SPECULATIVE context)." " SPECULATION: separate from the gnosis coherence chain (gnosis_unlocking, tau_0 = 25 ms); the two disagree by orders of magnitude and neither is compared with data."
                     ),
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,

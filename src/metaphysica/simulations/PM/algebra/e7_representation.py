@@ -27,6 +27,7 @@ from typing import Dict, Any, List, Optional
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, project_root)
 
+from metaphysica.config.reference_data import RealWorldData
 from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.base import (
     SimulationBase,
@@ -38,7 +39,7 @@ from metaphysica.simulations.base import (
 )
 
 _ALPHA_LEAK = 1.0 / math.sqrt(6.0)   # algebraic E₇⊃E₆×U(1) branching coefficient
-_M_PLANCK_GEV = 1.22e19               # Planck mass in GeV
+_M_PLANCK_GEV = RealWorldData.PLANCK_MASS[0]  # full Planck mass in GeV, from the dataset
 
 
 class E7RepresentationSimulation(SimulationBase):

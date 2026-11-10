@@ -1,4 +1,4 @@
-# algebra-portals-viz (L6) progress, rounds 1 and 2
+# algebra-portals-viz (L6) progress, rounds 1 to 3
 
 | id | file:line | state | commit | test |
 |---|---|---|---|---|
@@ -28,6 +28,17 @@
 | sim-algebra-misc-12 | simulations/base/established.py | blocked: not in the L6 set (consciousness.coherence_fraction to status INPUT, out of validation) | | |
 | sim-algebra-misc-34 | paper/appendices/appendix_clifford_algebra.py | blocked: paper lane (signature_count row to INPUT) | | |
 | sim-algebra-misc-08 | docs/claude-context.md | blocked: docs, not in the L6 set | | |
+| sim-algebra-misc-31 | PM/portals/alp_portals.py | fixed: the 24 is the named constant G_AGG_DENOMINATOR (value and EML tree); worked numbers stay labelled off-path seed | | test_algebra_portals_viz_third_round::test_alp_denominator_is_a_named_constant |
+| sim-algebra-misc-32 | visualizations/ricci_flow_evolution.py | fixed: w0, wa derived from named OFF_PATH_B3, curve label built from the value, still labelled off-path | | ::test_ricci_flow_w_parameters_derived_from_named_seed |
+| sim-algebra-misc-33 | goldilocks_plot, stability_heatmap, theory_overview_diagrams | fixed: RETIRED_FROM_PAPER = True, modules and output kept | | ::test_off_path_figures_retired_from_paper |
+| sim-algebra-misc-39 | e7_representation.py | fixed: M_Pl from RealWorldData.PLANCK_MASS; the 0.693 literal in clifford_unification no longer exists | | ::test_e7_planck_mass_read_from_dataset |
+| sim-algebra-misc-10 | consciousness/gnosis_unlocking.py, orch_or_pair_shielding.py | fixed: gnosis chain (tau_0 INPUT, k fitted) is CALIBRATED and the one chain; Penrose rows labelled separate speculation. quantum_bio row is L4 | | ::test_gnosis_chain_is_calibrated_and_penrose_is_labelled_separate |
+| sim-algebra-misc-45 | PM/algebra/shadow_clifford.py | fixed: test builds the 13 64x64 gammas, checks Clifford relations, 64^2 = 4096, quaternionic | | ::test_4096_claim_from_explicit_64x64_gammas |
+| sim-algebra-misc-41 | PM/portals/*.py | refuted: all 12 rows have descriptions in code and bounds where a bound exists (cross-section 1e-45 XENONnT); the empty ones are stale generated parameters.json | | |
+| sim-algebra-misc-17 | PM/geometry/leech_partition.py | blocked: not in the L6 set (n_gen_leech to RETIRED, b3_leech_identification status) | | |
+| sim-algebra-misc-24 | core formulas pneuma-master-action-v23, shadow-action-13d-v23 | blocked: FormulasRegistry/formula data, not in the L6 set | | |
+| sim-algebra-misc-40 | freudenthal_triple.py, e7_representation.py | blocked: freudenthal_quartic is read by core/free_set.py, geometry/b3_candidate_sweep.py, tests/test_free_set.py; removing it needs those lanes | | |
+| sim-algebra-misc-42 | Constants/ad-hoc, extract_supplementary, section_schema | blocked: no importer, but run_all_simulations.py rglob("*.py") lists the folder in its script index, so rule 5 forbids deleting; needs a ruling | | |
 
 Round 2 status vocabulary: reused ANSATZ, CALIBRATED; IDENTITY (the validation verdict word) used as a Parameter status for self-test rows: true by construction.
 
@@ -44,4 +55,4 @@ appendix_clifford_algebra.py (paper lane): drop the boost row. M_GUT ruling (reg
 Stellar bound 1e-10 GeV^-1 (module value) versus HB 6.6e-11 quoted in alp_portals section text.
 
 ## Next round
-Remaining: 10,13 (formula text),14 (M_GUT ruling),16-17,23-28 check,31-33,37-42,45. Next in order: 10 (coherence times), 17 (n_gen_leech RETIRED), 24, 31, 32, 33 (RETIRE-FROM-PAPER), 39, 40, 41, 42 (ad-hoc grep first), 45 (test of the 4096 claim). neutrino_algebraic text is now path-driven; 37/38 file splits last.
+Done in round 3: 10,31,32,33,39,45 fixed; 41 refuted; 17,24,40,42 blocked. Remaining: 13 (formula text check), 14 (M_GUT ruling), 16, 23-28 recheck, 37/38 file splits (last), 43 (gnosis k = 3.2 now CALIBRATED; RETIRE-FROM-PAPER of shielding k still open), plus any finding numbered above 45.
