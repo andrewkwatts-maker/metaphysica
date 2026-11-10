@@ -25,6 +25,7 @@
     "M_PLANCK": {
       "value": 1.220890e19,
       "uncertainty": 1.9e15,
+      "source_unverified": "uncertainty disagrees with G_NEWTON (CODATA relative 2.2e-5; M_Pl goes as G^-1/2, so about 1.1e-5 of the value) and with the other file; to confirm (audit sim-validation-data-23)",
       "units": "GeV",
       "description": "Full Planck mass (sqrt(hbar*c/G)) - EXPERIMENTAL REFERENCE for PM 4D prediction",
       "note": "Compare geometry.m_planck_4d against this value, NOT reduced mass"
@@ -32,6 +33,7 @@
     "M_PLANCK_reduced": {
       "value": 2.435323e18,
       "uncertainty": 3.0e14,
+      "source_unverified": "uncertainty disagrees with G_NEWTON (CODATA relative 2.2e-5; M_Pl goes as G^-1/2, so about 1.1e-5 of the value) and with the other file; to confirm (audit sim-validation-data-23)",
       "units": "GeV",
       "description": "Reduced Planck mass (M_Pl / sqrt(8*pi)) - INPUT for PM 26D string tension",
       "note": "This is constants.M_PLANCK in the registry - the 26D INPUT, not the comparison target. This file stores full precision 2.435323e18; other data files (pdg_2024_values.json M_PLANCK_REDUCED, data/constants/m_planck.json) use the rounded 2.435e18"

@@ -45,7 +45,7 @@ VERIFIABLE_GATES = {
 
     # Block B: Gauge/Particle physics (G11-G20)
     11: {"proof_id": "strong_force_saturation", "wl_code": "8/125", "result": "0.064", "note": "Topological ratio 8/125 verified"},
-    12: {"proof_id": "electroweak_alignment", "wl_code": "sin2_theta_W_geometric = 0.23190; pdg = 0.23122 (MS-bar, Z-pole)", "result": "0.23190 vs 0.23122 (0.68 sigma with 0.001 theory uncertainty)", "note": "Geometric sin²θ_W = 0.23190 vs PDG 2024 0.23122±0.00003 — 0.68σ using the module's 0.001 theory uncertainty. (Previous cert showed Sin[ArcTan[12/24]]²=0.20 labelled 0.2312 — removed as arithmetically false.)"},
+    12: {"proof_id": "electroweak_alignment", "wl_code": "sin2_theta_W_geometric = 0.23190; pdg = 0.23122 (MS-bar, Z-pole)", "result": "see evaluation", "note": "Registry sin2_theta_W_pred against the PDG value, with no theory-uncertainty buffer (R6 ruling); the sigma is computed in the evaluation block. (An earlier cert showed Sin[ArcTan[12/24]]^2 = 0.20 labelled 0.2312: removed as arithmetically false.)"},
     13: {"proof_id": "photon_zero_mass", "wl_code": "m_photon = 0", "result": "0", "note": "Experimental fact confirmed"},
     14: {"proof_id": "su_n_approximation", "wl_code": "72 * 3", "result": "216"},
     17: {"proof_id": "generation_triality", "wl_code": "n_gen = 3", "result": "3", "note": "n_gen=3 exact"},
@@ -390,19 +390,25 @@ def _load_registry_params():
     return _REGISTRY_MEMO
 
 
+_NUFIT_IO = ("nufit_6_0_parameters.json", "inverted_ordering")
+
 # Registry tier: gate_id -> live-value comparison spec. Only gates whose
 # claim maps cleanly onto a registered parameter and a named experimental
 # anchor. kind: 'sigma' (|v-exp|/unc < max_sigma) or 'lower_bound'
 # (v > bound) or 'rel' (|v-exp|/exp < rel_tol).
 GATE_EVAL_SPECS = {
+    # Experimental anchors are read from the data files through
+    # ExperimentalDataLoader.get_value(file, *keys) ("anchor"). A spec with a
+    # literal exp/unc instead carries "source_unverified": the value is in no
+    # data file and is listed under "Data to confirm".
     # R6 ruling (2026-08-25): G12 converts with the PDG uncertainty and NO
     # theory-uncertainty buffer -- an invented tolerance sized to admit the
-    # miss would be the fake-pass disease. The framework's sin2_theta_W_pred
-    # (0.23190) sits ~17 sigma from PDG (0.23122 +/- 0.00004), so this gate
-    # reads COMPUTED_FAIL until a *cited* theory uncertainty exists. An
-    # honest FAIL outranks a declarative shrug.
+    # miss would be the fake-pass disease. So this gate reads COMPUTED_FAIL
+    # until a *cited* theory uncertainty exists. An honest FAIL outranks a
+    # declarative shrug.
     12: {"path": "constants.sin2_theta_W_pred", "kind": "sigma",
-         "exp": 0.23122, "unc": 0.00004, "max_sigma": 3.0,
+         "anchor": ("pdg_2024_values.json", "couplings", "sin2_theta_W"),
+         "max_sigma": 3.0,
          "source": "PDG 2024 sin2(theta_W) MS-bar at M_Z; no theory buffer "
                    "(R6 ruling -- fails honestly pending a cited theory unc)"},
     23: {"path": "proton_decay.lifetime_years", "kind": "lower_bound",
@@ -412,24 +418,28 @@ GATE_EVAL_SPECS = {
     # measured sum is itself ~2 sigma below 1: the Cabibbo-angle anomaly).
     36: {"path": "ckm.unitarity_row1", "kind": "sigma",
          "exp": 0.9985, "unc": 0.0007, "max_sigma": 3.0,
+         "source_unverified": "0.9985 +/- 0.0007 is in no data file",
          "source": "PDG 2024 first-row CKM unitarity 0.9985 +/- 0.0007"},
     27: {"multi": [
-            ("neutrino.theta_12_pred", 33.41, 0.75),
-            ("neutrino.theta_13_pred", 8.63, 0.11),
-            ("neutrino.theta_23_pred", 49.3, 1.0),
-            ("neutrino.delta_CP_pred", 278.0, 26.0),
+            ("neutrino.theta_12_pred", _NUFIT_IO + ("theta_12",)),
+            ("neutrino.theta_13_pred", _NUFIT_IO + ("theta_13",)),
+            ("neutrino.theta_23_pred", _NUFIT_IO + ("theta_23",)),
+            ("neutrino.delta_CP_pred", _NUFIT_IO + ("delta_CP",)),
          ], "kind": "sigma", "max_sigma": 3.0,
-         "source": "NuFIT dataset (5.2-era values, IO block)"},
-    31: {"path": "geometry.higgs_vev", "kind": "rel", "exp": 246.22,
-         "rel_tol": 0.002, "source": "PDG 2024 v_EW"},
-    47: {"path": "cosmology.H0_local", "kind": "sigma", "exp": 73.04,
-         "unc": 1.04, "max_sigma": 2.0, "source": "SH0ES 2022"},
-    48: {"path": "cosmology.w0_derived", "kind": "sigma", "exp": -0.957,
-         "unc": 0.067, "max_sigma": 2.0, "source": "DESI thawing anchor"},
-    50: {"path": "geometry.eta_baryon", "kind": "sigma", "exp": 6.12e-10,
-         "unc": 0.04e-10, "max_sigma": 3.0, "source": "Planck 2018"},
-    60: {"path": "cosmology.wa_derived", "kind": "sigma", "exp": -0.75,
-         "unc": 0.29, "max_sigma": 3.0, "source": "DESI DR1 w0waCDM"},
+         "source": "NuFIT 6.0 dataset, inverted-ordering block"},
+    31: {"path": "geometry.higgs_vev", "kind": "rel",
+         "anchor": ("pdg_2024_values.json", "higgs", "vev"), "rel_tol": 0.002, "source": "PDG 2024 v_EW"},
+    47: {"path": "cosmology.H0_local", "kind": "sigma",
+         "anchor": ("shoes_2025.json", "H0"), "max_sigma": 2.0, "source": "SH0ES 2022"},
+    48: {"path": "cosmology.w0_derived", "kind": "sigma",
+         "anchor": ("desi_2025_constraints.json", "cosmological_parameters", "w0"),
+         "max_sigma": 2.0, "source": "DESI DR2 w0waCDM (the thawing -0.957 is "
+         "ATTRIBUTION_UNVERIFIED in the data file: not for scoring)"},
+    50: {"path": "geometry.eta_baryon", "kind": "sigma",
+         "anchor": ("planck_2018.json", "eta_baryon"), "max_sigma": 3.0, "source": "Planck 2018"},
+    60: {"path": "cosmology.wa_derived", "kind": "sigma",
+         "anchor": ("desi_2025_constraints.json", "cosmological_parameters", "wa"),
+         "max_sigma": 3.0, "source": "DESI DR2 w0waCDM"},
 
     # G19: neutrino neutrality — derived theta_13 from yukawa_derivation vs NuFIT 6.0.
     # NOT the fitted PMNS angle (neutrino.theta_13_pred); this is the geometric
@@ -437,31 +447,31 @@ GATE_EVAL_SPECS = {
     # VERIFIABLE_GATES[19]: "PMNS matches NuFIT" using the key derivation.
     # Current sigma: 0.805 (PASS, §1.1 of OUTSTANDING_ISSUES).
     19: {"path": "particle.theta_13_deg", "kind": "sigma",
-         "exp": 8.58, "unc": 0.11, "max_sigma": 3.0,
-         "source": "NuFIT 6.0 theta_13 IO central 8.58 +/- 0.11 deg"},
+         "anchor": _NUFIT_IO + ("theta_13",), "max_sigma": 3.0,
+         "source": "NuFIT 6.0 theta_13, inverted ordering"},
 
     # G25: asymptotic freedom — framework alpha_s(MZ) vs PDG 2024.
     # The gate claims the UV fixed point alpha* = 1/b3 gives asymptotic freedom;
     # the observable consequence is that running from the UV yields the correct
     # coupling at M_Z.
     25: {"path": "constants.alpha_s_pred", "kind": "sigma",
-         "exp": 0.1180, "unc": 0.0009, "max_sigma": 3.0,
-         "source": "PDG 2024 alpha_s(MZ) = 0.1180 +/- 0.0009"},
+         "anchor": ("pdg_2024_values.json", "constants", "alpha_s"), "max_sigma": 3.0,
+         "source": "PDG 2024 alpha_s(MZ)"},
 
     # G26: electron-mass-to-charge (proton/electron mass ratio) — FITTED parameter.
     # holonomy_correction was back-computed from CODATA; this is a sanity check on
     # implementation correctness, not a zero-parameter prediction.
     26: {"path": "fermion.mass_ratio_proton_electron", "kind": "sigma",
-         "exp": 1836.15267343, "unc": 5e-7, "max_sigma": 3.0,
-         "source": "CODATA 2022 m_p/m_e 1836.15267343 +/- 5e-7 (FITTED param — impl sanity check)"},
+         "anchor": ("codata_2022.json", "mu_pe"), "max_sigma": 3.0,
+         "source": "CODATA 2022 m_p/m_e (FITTED param — impl sanity check)"},
 
     # G39: PMNS angle saturation — theta_23 triality prediction vs NuFIT IO.
     # Gate claims 24-pin cage geometry saturates maximal mixing.  Uses the
     # triality-derived path (pmns.theta_23_triality) distinct from the PMNS fit path
     # already checked by G27.
     39: {"path": "pmns.theta_23_triality", "kind": "sigma",
-         "exp": 49.3, "unc": 1.0, "max_sigma": 3.0,
-         "source": "NuFIT 6.0 theta_23 IO central 49.3 +/- 1.0 deg"},
+         "anchor": _NUFIT_IO + ("theta_23",), "max_sigma": 3.0,
+         "source": "NuFIT 6.0 theta_23, inverted ordering"},
 
     # G56: compactification radius — warped KK mass central value vs LHC exclusion.
     # LHC ATLAS/CMS exclude M_KK < 3.5 TeV (PDG 2024).  The framework predicts
@@ -480,19 +490,39 @@ GATE_EVAL_SPECS = {
     # Gate claims all three gauge couplings match PDG at M_Z; W mass is the sharpest
     # EWSB observable.
     67: {"path": "gauge.m_w_gev", "kind": "sigma",
-         "exp": 80.3692, "unc": 0.0133, "max_sigma": 3.0,
-         "source": "PDG 2024 M_W 80.3692 +/- 0.0133 GeV"},
+         "anchor": ("pdg_2024_values.json", "gauge_bosons", "m_W"), "max_sigma": 3.0,
+         "source": "PDG 2024 M_W"},
 }
+
+
+def _anchor(anchor, v):
+    """(expected, one-sided uncertainty toward v) read from the data files."""
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+    ev = get_loader().get_value(*anchor)
+    return ev.value, ev.uncertainty_toward(v)
+
+
+def _spec_entries(spec):
+    """(path, anchor, exp, unc) per compared quantity; a literal needs the flag."""
+    if spec.get("multi"):
+        return [(p, a, None, None) for p, a in spec["multi"]]
+    if spec.get("anchor"):
+        return [(spec["path"], spec["anchor"], None, None)]
+    if spec["kind"] == "sigma" and not spec.get("source_unverified"):
+        raise KeyError("gate spec %r has a literal anchor without source_unverified"
+                       % spec["path"])
+    return [(spec["path"], None, spec.get("exp"), spec.get("unc"))]
 
 
 def _eval_registry_spec(spec, registry):
     checks = []
-    entries = spec.get("multi") or [(spec["path"], spec.get("exp"), spec.get("unc"))]
-    for path, exp, unc in entries:
+    for path, anchor, exp, unc in _spec_entries(spec):
         rec = registry.get(path)
         v = rec.get("value") if isinstance(rec, dict) else None
         if not isinstance(v, (int, float)):
             return None  # path missing -> cannot evaluate
+        if anchor:
+            exp, unc = _anchor(anchor, v)
         if spec["kind"] == "lower_bound":
             ok = v > spec["bound"]
             checks.append({"path": path, "value": v, "bound": spec["bound"],
@@ -598,18 +628,41 @@ def result_unmatched_numbers(result, evaluation):
     return out
 
 
-#: Gates whose `result` string is the live registry value, to 2 decimals, so it
-#: follows the route (h0_route) instead of staying at the default's text.
-_LIVE_RESULT_GATES = {47: "{:.2f}"}
+def _check_text(c):
+    """One executed check as text, built from its computed numbers."""
+    if "bound" in c:
+        return "%s = %.6g vs bound %.6g (ratio %.4g)" % (
+            c["path"], c["value"], c["bound"], c["ratio"])
+    if "sigma" in c:
+        return "%s = %.6g vs %.6g (%.2f sigma)" % (
+            c["path"], c["value"], c["expected"], c["sigma"])
+    return "%s = %.6g vs %.6g (rel %.3g)" % (
+        c["path"], c["value"], c["expected"], c["rel"])
 
 
 def declared_result(gate_id, verif, evaluation):
-    """The certificate's `result` text; gate 47 takes it from the evaluated value."""
-    fmt = _LIVE_RESULT_GATES.get(gate_id)
+    """The certificate's `result` text.
+
+    A registry-tier gate has its text built from the executed checks, so the
+    text follows the route and cannot disagree with the verdict. Any other
+    gate keeps the hand-typed text, which `result_basis` labels as declared.
+    """
     checks = (evaluation or {}).get("checks") or []
-    if fmt and len(checks) == 1 and isinstance(checks[0].get("value"), (int, float)):
-        return fmt.format(checks[0]["value"])
+    if (evaluation or {}).get("tier") == "registry" and checks:
+        return "; ".join(_check_text(c) for c in checks)
     return verif.get('result', 'N/A')
+
+
+def result_basis(evaluation):
+    """How the `result` text was obtained: computed, or declared by hand."""
+    tier = (evaluation or {}).get("tier")
+    if tier == "registry":
+        return "computed_from_registry"
+    if tier == "semantic":
+        return "declared_text_semantic_check"
+    if tier == "arithmetic":
+        return "declared_text_arithmetic_on_typed_literals"
+    return "declared"
 
 
 def create_certificate(gate, existing_certs):
@@ -629,6 +682,7 @@ def create_certificate(gate, existing_certs):
         note = verif.get('note', gate.get('validation', ''))
         evaluation = evaluate_gate(gate_id, verif, _load_registry_params())
         result_text = declared_result(gate_id, verif, evaluation)
+        typed_text = str(verif.get("result", "N/A"))
         cert = {
             "proof_id": proof_id,
             "gate_id": gate_id,
@@ -640,12 +694,13 @@ def create_certificate(gate, existing_certs):
             "version": VERSION_SHORT,
             "wl_code": verif.get('wl_code', gate.get('wolfram', 'N/A')),
             "result": result_text,
+            "result_basis": result_basis(evaluation),
             "formula": gate.get('formula', 'N/A'),
             "verification_status": "VERIFIED",
             "evaluation_status": evaluation["status"],
             "evaluation": evaluation,
             "result_unmatched_numbers": result_unmatched_numbers(
-                result_text, evaluation),
+                typed_text, evaluation),
             "derivation_status": get_derivation_status(gate_id),
             "note": f"Gate {gate_id}: {note}. {gate.get('logic', '')}",
             "timestamp": timestamp,

@@ -10,6 +10,7 @@
     "M_PLANCK_REDUCED": {
       "value": 2.435e18,
       "uncertainty": 3.0e15,
+      "source_unverified": "uncertainty disagrees with G_NEWTON (CODATA relative 2.2e-5; M_Pl goes as G^-1/2, so about 1.1e-5 of the value) and with the other file; to confirm (audit sim-validation-data-23)",
       "units": "GeV",
       "description": "Reduced Planck mass"
     },

@@ -252,6 +252,134 @@ def _apply_headline(fs: Dict[str, Any]) -> None:
     })
 
 
+def _write_back_parameters(statistics: Dict[str, Any]) -> None:
+    """Register the statistics as parameters for the JS loader.
+
+    A read or write error propagates: a half-updated parameters file must not
+    pass for a finished build (it used to be swallowed as a warning).
+    """
+    with open(PARAMETERS_FILE, 'r', encoding='utf-8') as f:
+        params_data = json.load(f)
+
+    # Add framework_statistics as registered parameters
+    fs = statistics['framework_statistics']
+    params_data['parameters']['framework_statistics.pass_count'] = {
+        'value': fs['pass_count'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of LOCKED gates passing experimental validation. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['framework_statistics.pending_count'] = {
+        'value': fs['pending_count'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of gates in PENDING_LOCK state. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['framework_statistics.not_testable_count'] = {
+        'value': fs['not_testable_count'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        'eml_description': (
+            "EML: ops.sub(eml_scalar(72.0), ops.add(eml_vec('framework_statistics.pass_count'), "
+            "ops.add(eml_vec('framework_statistics.pending_count'), "
+            "eml_vec('framework_statistics.mathematical_count')))) "
+            "— the four gate classes partition the 72 gates, so the axiomatic count is "
+            "the residual 72 - pass - pending - mathematical. The former eml_scalar(N_axiom) "
+            "named an operand that is in no registry"
+        )
+    }
+    params_data['parameters']['framework_statistics.mathematical_count'] = {
+        'value': fs['mathematical_count'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of gates with mathematical (algebraic) status. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['framework_statistics.total_gates'] = {
+        'value': fs['total_gates'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        'eml_description': 'EML: eml_scalar(72) — total number of certification gates (Gates system)'
+    }
+    params_data['parameters']['framework_statistics.testable_count'] = {
+        'value': fs['testable_count'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        'description': 'Number of testable gates (total - axioms)',
+        'eml_description': 'EML: ops.sub(eml_scalar(72), eml_vec(\'framework_statistics.not_testable_count\')) — testable = total_gates − axioms'
+    }
+    # Headline fit and tally: values read from the rigor report and
+    # the gate certificates (headline_stats), no EML relation.
+    for key in HEADLINE_KEYS:
+        params_data['parameters']['framework_statistics.' + key] = {
+            'value': fs[key], 'status': 'COMPUTED',
+            'source': 'headline_stats.py',
+        }
+    params_data['parameters']['framework_statistics.status'] = {
+        'value': fs['status'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        'eml_description': 'EML: eml_scalar(status_string) — overall framework validation status label (PASS/FAIL/PARTIAL)'
+    }
+    params_data['parameters']['framework_statistics.exact_matches'] = {
+        'value': fs['exact_matches'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of predictions with sigma-deviation = 0. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+
+    # Also add validation section
+    vs = statistics['validation']
+    params_data['parameters']['validation.within_1sigma'] = {
+        'value': vs['within_1sigma'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of predictions within 1 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['validation.within_2sigma'] = {
+        'value': vs['within_2sigma'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- count of predictions within 2 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['validation.total_predictions'] = {
+        'value': vs['total_predictions'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        # EML WITHHELD -- total number of verifiable predicted observables. A tally over a collection. Withheld rather than hard-coded as a
+        # scalar literal: the count is whatever the audit returns, and an
+        # eml_scalar(<current value>) would silently become a false claim the
+        # first time the tally moves.
+    }
+    params_data['parameters']['validation.success_rate'] = {
+        'value': vs['success_rate'],
+        'status': 'COMPUTED',
+        'source': 'generate_statistics.py',
+        'eml_description': 'EML: ops.mul(ops.div(eml_vec(\'validation.within_2sigma\'), eml_vec(\'validation.total_predictions\')), eml_scalar(100.0)) — success rate = within_2σ/total × 100%'
+    }
+
+    with open(PARAMETERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(params_data, f, indent=2)
+    print(f"  Updated parameters.json with framework_statistics")
+
+
 def generate_statistics() -> Dict[str, Any]:
     """Generate complete statistics from all source data."""
     print("Loading source data...")
@@ -375,129 +503,7 @@ def generate_statistics() -> Dict[str, Any]:
     # Also update parameters.json with framework_statistics as registered params
     # This ensures the JS loader can find them via standard parameter lookup
     if os.path.exists(PARAMETERS_FILE):
-        try:
-            with open(PARAMETERS_FILE, 'r', encoding='utf-8') as f:
-                params_data = json.load(f)
-
-            # Add framework_statistics as registered parameters
-            fs = statistics['framework_statistics']
-            params_data['parameters']['framework_statistics.pass_count'] = {
-                'value': fs['pass_count'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of LOCKED gates passing experimental validation. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['framework_statistics.pending_count'] = {
-                'value': fs['pending_count'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of gates in PENDING_LOCK state. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['framework_statistics.not_testable_count'] = {
-                'value': fs['not_testable_count'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': (
-                    "EML: ops.sub(eml_scalar(72.0), ops.add(eml_vec('framework_statistics.pass_count'), "
-                    "ops.add(eml_vec('framework_statistics.pending_count'), "
-                    "eml_vec('framework_statistics.mathematical_count')))) "
-                    "— the four gate classes partition the 72 gates, so the axiomatic count is "
-                    "the residual 72 - pass - pending - mathematical. The former eml_scalar(N_axiom) "
-                    "named an operand that is in no registry"
-                )
-            }
-            params_data['parameters']['framework_statistics.mathematical_count'] = {
-                'value': fs['mathematical_count'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of gates with mathematical (algebraic) status. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['framework_statistics.total_gates'] = {
-                'value': fs['total_gates'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(72) — total number of certification gates (Gates system)'
-            }
-            params_data['parameters']['framework_statistics.testable_count'] = {
-                'value': fs['testable_count'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'description': 'Number of testable gates (total - axioms)',
-                'eml_description': 'EML: ops.sub(eml_scalar(72), eml_vec(\'framework_statistics.not_testable_count\')) — testable = total_gates − axioms'
-            }
-            # Headline fit and tally: values read from the rigor report and
-            # the gate certificates (headline_stats), no EML relation.
-            for key in HEADLINE_KEYS:
-                params_data['parameters']['framework_statistics.' + key] = {
-                    'value': fs[key], 'status': 'COMPUTED',
-                    'source': 'headline_stats.py',
-                }
-            params_data['parameters']['framework_statistics.status'] = {
-                'value': fs['status'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': 'EML: eml_scalar(status_string) — overall framework validation status label (PASS/FAIL/PARTIAL)'
-            }
-            params_data['parameters']['framework_statistics.exact_matches'] = {
-                'value': fs['exact_matches'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of predictions with sigma-deviation = 0. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-
-            # Also add validation section
-            vs = statistics['validation']
-            params_data['parameters']['validation.within_1sigma'] = {
-                'value': vs['within_1sigma'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of predictions within 1 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['validation.within_2sigma'] = {
-                'value': vs['within_2sigma'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- count of predictions within 2 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['validation.total_predictions'] = {
-                'value': vs['total_predictions'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                # EML WITHHELD -- total number of verifiable predicted observables. A tally over a collection. Withheld rather than hard-coded as a
-                # scalar literal: the count is whatever the audit returns, and an
-                # eml_scalar(<current value>) would silently become a false claim the
-                # first time the tally moves.
-            }
-            params_data['parameters']['validation.success_rate'] = {
-                'value': vs['success_rate'],
-                'status': 'COMPUTED',
-                'source': 'generate_statistics.py',
-                'eml_description': 'EML: ops.mul(ops.div(eml_vec(\'validation.within_2sigma\'), eml_vec(\'validation.total_predictions\')), eml_scalar(100.0)) — success rate = within_2σ/total × 100%'
-            }
-
-            with open(PARAMETERS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(params_data, f, indent=2)
-            print(f"  Updated parameters.json with framework_statistics")
-        except Exception as e:
-            print(f"  Warning: Could not update parameters.json: {e}")
+        _write_back_parameters(statistics)
 
     return statistics
 

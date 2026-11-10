@@ -42,4 +42,7 @@ def test_create_certificate_carries_the_field():
         cert = g.create_certificate(gate, [])
     finally:
         g.evaluate_gate = orig
-    assert "0.68" in cert["result_unmatched_numbers"]
+    # The result text is now built from the executed check, so the 0.68 sigma
+    # prose of the old hand-typed G12 entry is gone (edited: it asserted the defect).
+    assert cert["result_unmatched_numbers"] == []
+    assert "17.12 sigma" in cert["result"]

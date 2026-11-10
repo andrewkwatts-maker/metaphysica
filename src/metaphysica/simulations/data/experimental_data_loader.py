@@ -115,6 +115,20 @@ class ExperimentalDataLoader:
         with open(filepath, 'r', encoding='utf-8') as f:
             return json.load(f)
 
+    def get_value(self, filename: str, *keys: str) -> ExperimentalValue:
+        """Any entry of a data file by key path; a missing key or error raises."""
+        node = self._load_json(filename)
+        for k in keys:
+            if not isinstance(node, dict) or k not in node:
+                raise KeyError(f"{filename}: no key path {'/'.join(keys)} (stopped at {k!r})")
+            node = node[k]
+        unc, plus, minus = _errors(node, f"{filename}:{'/'.join(keys)}")
+        return ExperimentalValue(
+            value=node["value"], uncertainty=unc, units=node.get("units", ""),
+            source=f"{filename}:{'/'.join(keys)}",
+            description=node.get("description", ""),
+            uncertainty_plus=plus, uncertainty_minus=minus)
+
     # =========================================================================
     # DESI Data
     # =========================================================================
