@@ -378,12 +378,15 @@ _REGISTRY_MEMO = None
 def _load_registry_params():
     global _REGISTRY_MEMO
     if _REGISTRY_MEMO is None:
-        try:
-            path = _autogen_dir() / "parameters.json"
-            with open(path, encoding="utf-8") as f:
-                _REGISTRY_MEMO = json.load(f).get("parameters", {})
-        except Exception:
-            _REGISTRY_MEMO = {}
+        path = _autogen_dir() / "parameters.json"
+        if not path.is_file():
+            raise FileNotFoundError(
+                "registry-tier gates need %s (run the parameter export first)" % path)
+        with open(path, encoding="utf-8") as f:
+            params = json.load(f).get("parameters")
+        if not params:
+            raise KeyError("%s has no 'parameters' table" % path)
+        _REGISTRY_MEMO = params
     return _REGISTRY_MEMO
 
 

@@ -15,7 +15,7 @@ Pipeline stages:
   4. Sphere packing (E8 density, coordination shells)
   5. Spectral geometry (Dirac operator, eigenvalues)
   6. Bridge geometry (12 bridges, 26D metric, moduli stabilization)
-  7. Physical observables (n_gen, α_em, w₀)
+  7. (removed) the b3 = 24 observables stage; observables come from the registry
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -164,9 +164,6 @@ class GeometricPipeline:
             'all_valid': all(bridge_verify.values()),
         }
 
-        # Stage 7: Physical observables
-        results['observables'] = self._derive_observables()
-
         # Pipeline summary
         all_stages_valid = (
             results['e8']['all_valid']
@@ -192,44 +189,6 @@ class GeometricPipeline:
         between Normal Math and EML Math modes.
         """
         return self.run(registry)
-
-    def _derive_observables(self) -> Dict[str, Any]:
-        """Derive physical observables from geometric data."""
-        b3 = 24  # From Leech lattice dimension
-        phi = (1 + math.sqrt(5)) / 2  # Golden ratio
-        k_gimel = b3 / 2 + 1 / math.pi  # Demiurgic coupling
-
-        # Number of generations
-        n_gen = b3 // 8  # = 3
-
-        # Fine structure constant (geometric derivation)
-        # α⁻¹ ≈ k_gimel × (b3 - 1 + phi) / 2 ≈ 137.036
-        alpha_inv_geometric = k_gimel * (b3 - 1 + phi) / 2
-
-        # Dark energy equation of state
-        # w₀ = -1 + 1/b₃ = -23/24
-        w0 = -1.0 + 1.0 / b3
-
-        # Euler characteristic
-        chi_eff = 2 * (4 - 0 + 68)  # 2(h11 - h21 + h31) = 144
-
-        # Strong coupling
-        alpha_s = k_gimel / (b3 * (math.pi + 1) + k_gimel / 2)
-
-        return {
-            'n_gen': n_gen,
-            'n_gen_correct': n_gen == 3,
-            'alpha_inv_geometric': alpha_inv_geometric,
-            'alpha_inv_experimental': 137.035999177,
-            'alpha_inv_error_pct': abs(alpha_inv_geometric - 137.036) / 137.036 * 100,
-            'w0': w0,
-            'w0_experimental': -0.960,  # DESI 2025
-            'chi_eff': chi_eff,
-            'alpha_s_geometric': alpha_s,
-            'alpha_s_experimental': 0.1180,
-            'b3': b3,
-            'k_gimel': k_gimel,
-        }
 
     # ------------------------------------------------------------------
     # Monte Carlo
@@ -366,7 +325,6 @@ class GeometricPipeline:
         checks['bridges_valid'] = results['bridges']['all_valid']
 
         # Key observables
-        checks['n_gen_3'] = results['observables']['n_gen'] == 3
         checks['signature_24_2'] = results['bridges']['signature'] == (24, 2)
         checks['dim_26'] = results['bridges']['total_dim'] == 26
 
@@ -380,10 +338,6 @@ class GeometricPipeline:
         # G2 properties
         checks['g2_torsion_free'] = results['g2']['torsion_free']
         checks['g2_ricci_flat'] = results['g2']['ricci_flat']
-
-        # Alpha inverse within 20% of experimental
-        alpha_inv = results['observables']['alpha_inv_geometric']
-        checks['alpha_inv_20pct'] = abs(alpha_inv - 137.036) / 137.036 < 0.20
 
         # Monte Carlo stability
         mc = self.monte_carlo_moduli(num_samples=50, sigma=0.05)

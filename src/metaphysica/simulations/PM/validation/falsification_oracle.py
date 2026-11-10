@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Falsification Oracle - v24.1 Principia Metaphysica
+Falsification Oracle - Principia Metaphysica
 ===================================================
 
-Quantifies the 'Distance to Falsification' by mapping PM v24.1 predictions
+Quantifies the 'Distance to Falsification' by mapping PM predictions
 against the exclusion limits of active and upcoming experimental physics.
 
 This is THE critical script for peer review - it defines exactly what experimental
@@ -38,13 +38,16 @@ sys.path.insert(0, str(REPO_ROOT))
 from metaphysica.generators.kill_switch_rows import ALP_COUPLING_ROW, KILL_SWITCH_ROWS
 from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
 
+#: Framework label, taken from the registry so it cannot drift from the release.
+FRAMEWORK_LABEL = "Principia Metaphysica v" + FormulasRegistry.VERSION_SHORT
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("FalsificationOracle")
 
 
 class FalsificationOracle:
     """
-    Defines experimental "Kill-Zones" for Principia Metaphysica v24.1.
+    Defines experimental "Kill-Zones" for Principia Metaphysica (version: FRAMEWORK_LABEL).
 
     When a reviewer says "this is just math, it's not falsifiable," we point to
     this script and say: "If ALPS-II sets a limit below X and finds nothing,
@@ -52,7 +55,7 @@ class FalsificationOracle:
     """
 
     def __init__(self):
-        """Initialize with PM v24.1 predictions."""
+        """Initialize with the PM predictions."""
         self.registry = FormulasRegistry()
 
         # Load predictions from PM framework
@@ -91,7 +94,7 @@ class FalsificationOracle:
 
     def _load_predictions(self) -> Dict[str, Dict[str, float]]:
         """
-        Load PM v24.1 predictions from theory.
+        Load PM predictions from the registry rows.
 
         These are the "bets" the theory makes on experimental outcomes.
         Every numeric kill-switch value is read from its registry row (see
@@ -111,16 +114,16 @@ class FalsificationOracle:
                 "coupling_g_agg_GeV_inv": self._registry_value(ALP_COUPLING_ROW),
                 "source": "M²⁶ → M⁴ vacuum residue, Euclidean Information Sector (S_EIS)",
                 "derivation": "SPECULATIVE ANSATZ: estimated from EIS sector topology; not a unique prediction of the (24,0)⊕(0,2) decomposition",
-                "falsification_status": "TESTABLE within BabyIAXO/IAXO window (2025-2028)",
-                "timeline": "2025-2028 (IAXO/BabyIAXO detection window)"
+                "row_status": "INPUT_ANSATZ (mass is a typed OPEN value, not computed by the engine)",
+                "falsification_status": "TESTABLE in the BabyIAXO/IAXO projected-sensitivity window",
+                "timeline": "BabyIAXO / IAXO projected sensitivity (check the experiments' current status)"
             },
 
             # Fifth Force from Euclidean Bridge
             "fifth_force": {
                 "range_lambda_m": self._registry_value(KILL_SWITCH_ROWS["Fifth_Force"]),
-                "strength_relative_to_gravity": 1e-4,  # 0.01% of gravity
                 "source": "T^(0,2) shadow-time leakage (second timelike direction)",
-                "derivation": "Compactification scale from b₃ = 24"
+                "derivation": "Range read from portals.alp_fifth_force_range_m (alp_portals); compactification input follows the active path"
             },
 
             # Proton Decay from GUT scale
@@ -180,14 +183,20 @@ class FalsificationOracle:
         and find nothing, specific sectors of the theory are falsified.
         """
         return {
+            # CAST helioscope (published bound, CAST 2017, Nature Physics 13, 584)
+            "CAST_current": {
+                "coupling_limit_GeV_inv": 6.6e-11,
+                "experiment_type": "Helioscope (completed)",
+                "status": "Published limit; verify against the current review before citing",
+            },
             # BabyIAXO (Pathfinder for IAXO) - FIRST LINE OF DEFENSE
             "BabyIAXO_2025": {
                 "coupling_limit_GeV_inv": 1.5e-11,  # 1.5×10⁻¹¹ GeV⁻¹
-                "mass_range_eV": (1e-3, 1e-2),  # 1 meV to 10 meV (includes 3.51 meV)
+                "mass_range_eV": (1e-3, 1e-2),  # 1 meV to 10 meV
                 "experiment_type": "Helioscope (pathfinder)",
                 "status": "Commissioning phase",
                 "first_results_expected": 2025,
-                "principia_metric_coverage": "YES - covers 3.51 meV prediction"
+                "principia_metric_coverage": "mass window covers the registry ALP mass"
             },
 
             # IAXO (International Axion Observatory) - DEFINITIVE TEST
@@ -197,7 +206,7 @@ class FalsificationOracle:
                 "experiment_type": "Helioscope (full scale)",
                 "status": "Under construction",
                 "first_results_expected": 2028,
-                "principia_metric_coverage": "YES - will definitively test 3.51 meV at g_aγγ ~ 10⁻¹¹"
+                "principia_metric_coverage": "mass window covers the registry ALP mass"
             },
 
             # ALPS-II (Any Light Particle Search II)
@@ -249,10 +258,10 @@ class FalsificationOracle:
     def _load_timeline(self) -> List[Dict[str, Any]]:
         """Load experimental timeline for falsification opportunities."""
         return [
-            {"year": 2025, "experiment": "BabyIAXO", "test": "ALP Principia Metric (FIRST TEST)", "priority": "CRITICAL"},
+            {"year": 2025, "experiment": "BabyIAXO", "test": "ALP Principia Metric (first test; planned year, check status)", "priority": "CRITICAL"},
             {"year": 2026, "experiment": "ALPS-II", "test": "ALP coupling"},
             {"year": 2027, "experiment": "Hyper-K", "test": "Proton decay"},
-            {"year": 2028, "experiment": "IAXO", "test": "ALP Principia Metric (DEFINITIVE)", "priority": "CRITICAL"},
+            {"year": 2028, "experiment": "IAXO", "test": "ALP Principia Metric (definitive; planned year, check status)", "priority": "CRITICAL"},
             {"year": 2028, "experiment": "DUNE", "test": "Sterile neutrino"},
             {"year": 2029, "experiment": "HL-LHC", "test": "KK gravitons"}
         ]
@@ -279,27 +288,27 @@ class FalsificationOracle:
         if mass_in_range and alp_coupling >= baby_iaxo_limit:
             results["ALP_Principia_Metric"] = {
                 "status": "IMMINENT_TEST",
-                "verdict": "THE PRINCIPIA METRIC: Should be detected by BabyIAXO (2025) - This is the Eddington Eclipse moment",
+                "verdict": "THE PRINCIPIA METRIC: predicted coupling lies above the BabyIAXO projected sensitivity",
                 "falsification_risk": "CRITICAL",
                 "predicted_mass_meV": alp_mass * 1e3,  # Convert to meV
                 "predicted_coupling": alp_coupling,
                 "baby_iaxo_limit": baby_iaxo_limit,
                 "iaxo_limit": iaxo_limit,
                 "ratio": alp_coupling / baby_iaxo_limit,
-                "timeline": "2025-2028",
-                "note": "Unavoidable consequence of M²⁶ → M⁴ projection. If not detected, theory is FALSIFIED."
+                "timeline": "BabyIAXO / IAXO projected sensitivity",
+                "note": "Mass and coupling are a speculative ansatz (INPUT_ANSATZ), not a derived consequence; a null result constrains the EIS sector only."
             }
         elif mass_in_range and alp_coupling >= iaxo_limit:
             results["ALP_Principia_Metric"] = {
                 "status": "TESTABLE",
-                "verdict": "THE PRINCIPIA METRIC: Detectable by IAXO (2028) - Definitive falsification test",
+                "verdict": "THE PRINCIPIA METRIC: within IAXO projected sensitivity",
                 "falsification_risk": "CRITICAL",
                 "predicted_mass_meV": alp_mass * 1e3,
                 "predicted_coupling": alp_coupling,
                 "iaxo_limit": iaxo_limit,
                 "ratio": alp_coupling / iaxo_limit,
                 "timeline": "2028",
-                "note": "If IAXO excludes this mass/coupling, G₂ compactification is falsified."
+                "note": "If IAXO excludes this mass/coupling, the EIS-sector ansatz is excluded; the ansatz is not a derived G2 consequence."
             }
         else:
             results["ALP_Principia_Metric"] = {
@@ -310,9 +319,18 @@ class FalsificationOracle:
                 "predicted_coupling": alp_coupling,
                 "iaxo_limit": iaxo_limit,
                 "ratio": alp_coupling / iaxo_limit,
-                "timeline": "2025-2028",
+                "timeline": "BabyIAXO / IAXO projected sensitivity",
                 "note": "Even if below initial sensitivity, improved IAXO phases will test this prediction."
             }
+
+        cast = self.exclusion_thresholds["CAST_current"]["coupling_limit_GeV_inv"]
+        results["ALP_Principia_Metric"]["current_helioscope_limit_GeV_inv"] = cast
+        results["ALP_Principia_Metric"]["exceeds_current_helioscope_limit"] = alp_coupling >= cast
+        if alp_coupling >= cast:
+            results["ALP_Principia_Metric"]["current_limit_note"] = (
+                f"Registry coupling {alp_coupling:.3g} GeV^-1 is {alp_coupling / cast:.3g} times the "
+                f"CAST helioscope bound {cast:.3g} GeV^-1: the ansatz point is already excluded "
+                "if that bound applies at this mass.")
 
         # 2. Fifth Force Range Risk (Eot-Wash current limits)
         fifth_force_range = self.predictions["fifth_force"]["range_lambda_m"]
@@ -324,16 +342,20 @@ class FalsificationOracle:
                 "verdict": "Violates current sub-mm gravity data",
                 "falsification_risk": "CRITICAL",
                 "predicted_value": fifth_force_range,
+                "predicted_value_unit": "m",
                 "experimental_limit": eot_wash_limit,
+                "experimental_limit_unit": "m",
                 "margin": fifth_force_range / eot_wash_limit
             }
         else:
             results["Fifth_Force"] = {
                 "status": "VIABLE",
-                "verdict": f"Predicted at {fifth_force_range*1e6:.1f} microns; needs higher precision",
+                "verdict": f"Predicted range {fifth_force_range*1e9:.3g} nm; needs higher precision",
                 "falsification_risk": "MEDIUM",
                 "predicted_value": fifth_force_range,
+                "predicted_value_unit": "m",
                 "experimental_limit": eot_wash_limit,
+                "experimental_limit_unit": "m",
                 "margin": fifth_force_range / eot_wash_limit
             }
 
@@ -390,7 +412,7 @@ class FalsificationOracle:
         if m_kk < lhc_limit:
             results["KK_Gravitons"] = {
                 "status": "TESTABLE",
-                "verdict": "Accessible to HL-LHC (2029)",
+                "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is accessible to HL-LHC",
                 "falsification_risk": "MEDIUM",
                 "predicted_mass": m_kk,
                 "experimental_reach": lhc_limit,
@@ -399,7 +421,7 @@ class FalsificationOracle:
         else:
             results["KK_Gravitons"] = {
                 "status": "SAFE",
-                "verdict": "Beyond HL-LHC reach",
+                "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is beyond HL-LHC reach",
                 "falsification_risk": "LOW",
                 "predicted_mass": m_kk,
                 "experimental_reach": lhc_limit,
@@ -479,7 +501,7 @@ class FalsificationOracle:
             falsifiability_status = "MARGINALLY FALSIFIABLE (Most predictions beyond current sensitivity)"
 
         report = {
-            "framework": "Principia Metaphysica v24.1",
+            "framework": FRAMEWORK_LABEL,
             "test_date": datetime.now().isoformat(),
             "falsifiability_status": falsifiability_status,
             "summary": {
@@ -492,29 +514,37 @@ class FalsificationOracle:
             "detailed_risk_analysis": risk,
             "experimental_timeline": self.experimental_timeline,
             "peer_review_response": {
-                "principia_metric_statement": (
-                    "THE PRINCIPIA METRIC (SPECULATIVE ANSATZ): This framework estimates a "
-                    "topologically motivated ALP at m_a = 3.51 ± 0.02 meV with coupling "
-                    "g_aγγ ~ 10⁻¹¹ GeV⁻¹. These values are estimated from EIS sector topology "
-                    "and fall within BabyIAXO/IAXO sensitivity (2025-2028), making this the "
-                    "primary near-term experimental test. Note: m_a and g_agg are not uniquely "
-                    "fixed by the M²⁶ decomposition; non-detection would constrain the EIS sector "
-                    "but an independent derivation is needed to elevate this to a firm prediction."
-                ),
-                "falsifiability_criterion": (
-                    f"This theory makes {len(kill_switches)} predictions testable within 5 years, "
-                    f"with the ALP Principia Metric as the primary kill-switch. "
-                    f"Specifically, if BabyIAXO/IAXO reach their projected sensitivities and find no "
-                    f"signal at 3.51 meV, the EIS-sector ansatz is constrained. The 3.51 meV value is OPEN: no engine code computes it (alp_portals gives about 1.11e2 eV on the adopted b3 = 43), so a null result cannot by itself falsify the framework. This is intended to satisfy Popper's "
-                    "criterion for scientific falsifiability with a clear, time-bound experimental test."
-                ),
+                "principia_metric_statement": self._principia_metric_statement(),
+                "falsifiability_criterion": self._falsifiability_criterion(len(kill_switches)),
                 "key_experiments": [k["experiment"] for k in kill_switches],
-                "earliest_test": "2025 (BabyIAXO commissioning)",
-                "definitive_test": "2028 (IAXO full sensitivity)"
+                "earliest_test": "BabyIAXO (planned first results; check current status)",
+                "definitive_test": "IAXO (planned full sensitivity; check current status)"
             }
         }
 
         return report
+
+    def _principia_metric_statement(self) -> str:
+        """Prose for the ALP row, built from the registry values it quotes."""
+        alp = self.predictions["ALP_Principia_Metric"]
+        return (
+            "THE PRINCIPIA METRIC (SPECULATIVE ANSATZ, INPUT_ANSATZ row): this framework "
+            f"estimates a topologically motivated ALP at m_a = {alp['mass_eV'] * 1e3:.3g} meV "
+            f"(uncertainty {alp['mass_uncertainty_eV'] * 1e3:.2g} meV) with coupling "
+            f"g_a_gamma_gamma = {alp['coupling_g_agg_GeV_inv']:.3g} GeV^-1. Both come from the "
+            "registry rows named in kill_switch_rows; neither is uniquely fixed by the M26 "
+            "decomposition, so non-detection would constrain the EIS sector but an independent "
+            "derivation is needed to make this a firm prediction.")
+
+    def _falsifiability_criterion(self, n_switches: int) -> str:
+        """Popper-criterion prose with the registry mass inserted."""
+        alp = self.predictions["ALP_Principia_Metric"]
+        return (
+            f"This theory lists {n_switches} predictions testable within 5 years, with the ALP "
+            "Principia Metric as the primary kill-switch. If a helioscope reaches its projected "
+            f"sensitivity and finds no signal at {alp['mass_eV'] * 1e3:.3g} meV, the EIS-sector "
+            "ansatz is constrained. The mass is an OPEN typed input (no engine code computes "
+            "it), so a null result cannot by itself falsify the framework.")
 
     def save_report(self, report: Dict[str, Any], output_path: Path = None):
         """Save falsification report to JSON."""
@@ -536,7 +566,7 @@ class FalsificationOracle:
 def main():
     """Generate falsification oracle report."""
     print("=" * 70)
-    print(" FALSIFICATION ORACLE - v24.1")
+    print(" FALSIFICATION ORACLE - " + FRAMEWORK_LABEL)
     print("=" * 70)
     print(" Defining Experimental 'Kill-Zones' for PM Theory")
     print("=" * 70)

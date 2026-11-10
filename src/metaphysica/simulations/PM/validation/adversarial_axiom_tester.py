@@ -66,16 +66,16 @@ class AdversarialAxiomTester:
 
         # Load actual PM framework values
         self.registry = FormulasRegistry()
-        # OFF-PATH (b3_seed = seed_24): fixed at the off-path seed b_3 = 24
-        # (the adopted b_3 is 43); it normalises the bridge energies below.
-        self.b3 = 24
+        # b_3 of the active path; it normalises the bridge energies below.
+        from metaphysica.simulations.PM.geometry.b3_path import resolve_path, seed_values
+        self.b3, _b2 = seed_values(resolve_path())
         self.chi_eff = self.registry.chi_eff_total  # H08: total, follows chi_eff_route
 
         # Load 125-residue registry from theory
         self.residue_registry = self._load_registry()
 
         logger.info(f"Initialized with target α⁻¹ = {self.target_alpha_inv}")
-        logger.info(f"PM Framework: b₃ = {self.b3} (off-path seed), χ_eff = {self.chi_eff}")
+        logger.info(f"PM Framework: b₃ = {self.b3} (active path), χ_eff = {self.chi_eff}")
 
     def _load_registry(self) -> np.ndarray:
         """
@@ -129,14 +129,14 @@ class AdversarialAxiomTester:
             - Gemini Physics Guidance (2026-02-22): "Topological Friction term"
         """
         # Pure geometric baseline (from chi_eff)
-        geometric_baseline = self.chi_eff  # 144
+        geometric_baseline = self.chi_eff  # total over both shadows (48 n_gen)
 
         # The Radiative Correction Term (k_rad)
         # Represents the vacuum polarization screening effect
         k_rad = 1 + (alpha_s_z / np.pi)
 
         # Base geometric reduction factor (ANSATZ - tuned so that
-        # 144 * k_geometric_base ≈ 137; not derived from G₂ topology)
+        # chi_eff * k_geometric_base ≈ 137; not derived from G₂ topology)
         k_geometric_base = 0.9514
 
         # Apply radiative correction: the screening effect divides the baseline
@@ -167,8 +167,8 @@ class AdversarialAxiomTester:
         bridge_norms = np.sum(bridge_params**2, axis=1)  # 12 values
         total_energy = np.sum(bridge_norms)
 
-        # Constraint: total energy should equal self.b3 (24, the off-path
-        # seed value; 2.0 per bridge pair)
+        # Constraint: total energy should equal self.b3 (the active-path
+        # seed value; b3/12 per bridge pair)
         energy_deviation = abs(total_energy - self.b3)
 
         # Additional constraint: bridges should be approximately balanced
@@ -216,7 +216,7 @@ class AdversarialAxiomTester:
 
         # For stable G₂ holonomy, bridge norms should be ~√2 (energy 2.0 per bridge)
         # Deviation from this optimal configuration perturbs α
-        optimal_bridge_norm = np.sqrt(self.b3 / 12)  # √2 ≈ 1.414
+        optimal_bridge_norm = np.sqrt(self.b3 / 12)  # sqrt(b3/12)
         bridge_deviations = np.abs(bridge_norms - optimal_bridge_norm)
 
         # CRITICAL: Bridge balance is topologically protected
@@ -258,7 +258,7 @@ class AdversarialAxiomTester:
         Generate a stable G₂ configuration as baseline.
 
         This creates a 26D configuration that exactly satisfies holonomy constraints:
-        - Σ|bridge|² = self.b3 = 24 (the off-path seed value; see __init__)
+        - Σ|bridge|² = self.b3 (b_3 of the active path; see __init__)
         - Bridges are balanced (equal energy distribution)
 
         Returns:
@@ -267,13 +267,13 @@ class AdversarialAxiomTester:
         baseline = np.zeros(26)
 
         # 1. Bridge pairs: Distribute energy equally across 12 bridges
-        # Each bridge should have energy = b₃/12 = 2.0
-        bridge_energy_per_pair = self.b3 / 12  # 2.0
+        # Each bridge should have energy = b₃/12
+        bridge_energy_per_pair = self.b3 / 12
 
         for i in range(12):
             # Each (2,0) bridge pair: assign random direction with fixed norm
             angle = np.random.uniform(0, 2*np.pi)
-            r = np.sqrt(bridge_energy_per_pair)  # √2 ≈ 1.414
+            r = np.sqrt(bridge_energy_per_pair)  # sqrt(b3/12)
             baseline[2*i] = r * np.cos(angle)
             baseline[2*i + 1] = r * np.sin(angle)
 

@@ -431,30 +431,28 @@ def beacon_hbar_c_chain() -> ConsistencyBeacon:
 
 
 def beacon_two_time_bulk_accounting() -> ConsistencyBeacon:
-    """Two-time bulk bookkeeping (2026-08-19 ruling).
+    """Cl(24,2) Weyl bookkeeping (no b3 involved).
 
-    D_bulk = b3 + 2 = D_crit = 26 = 2 x dim(shadow), with the Pneuma
-    spinor equal to the WEYL half of the Cl(24,2) Dirac spinor:
-    2^13 / 2 = 4096. Locks the dimensional accounting that produced the
-    25D/26D/26D drift class — any regression to the sampler-pair
-    formulation breaks this arithmetic identity chain.
+    Bulk signature (24,2): D_bulk = 24 + 2 = 26 = 2 x dim(shadow = 13); the
+    Pneuma spinor equals the WEYL half of the Cl(24,2) Dirac spinor:
+    2^13 / 2 = 4096. Any regression to the sampler-pair formulation breaks
+    this arithmetic chain.
     """
-    b3 = 24
+    space, time = 24, 2
     d_shadow = 13
-    d_bulk = b3 + 2
+    d_bulk = space + time
     weyl = (2 ** (d_bulk // 2)) // 2
-    # Composite check value: all three identities folded into one number
-    # (each term vanishes when its identity holds).
-    residual = abs(d_bulk - 26) + abs(2 * d_shadow - d_bulk) + abs(weyl - 4096)
+    # Composite check value: each term vanishes when its identity holds.
+    residual = abs(2 * d_shadow - d_bulk) + abs(weyl - 4096)
     return _mk(
         beacon_id="beacon.two_time_bulk_accounting",
-        name="Two-time bulk accounting: b3+2 = 26 = 2x13; Weyl(Cl(24,2)) = 4096",
+        name="Cl(24,2) bookkeeping: 24+2 = 26 = 2x13; Weyl(Cl(24,2)) = 4096",
         reference="Bars two-time physics (signature (d,2)); docs/TWO_TIME_ASSESSMENT.md",
         value=float(residual),
         expected=0.0,
         tolerance=0.0,
         note=(
-            "D_bulk = D_crit = b3+2 = 26; shadows (12,1)+(12,1) = 26 "
+            "D_bulk = 24+2 = 26; shadows (12,1)+(12,1) = 26 "
             "exactly; Pneuma spinor = Weyl of Cl(24,2) = 2^13/2 = 4096 "
             "(chiral). Integer-exact by construction once the ruling holds."
         ),

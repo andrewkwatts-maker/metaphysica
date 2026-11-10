@@ -58,7 +58,7 @@ class TestPipelineExecution:
 
     def test_all_stages_present(self, pipeline):
         r = pipeline._results
-        for key in ['e8', 'leech', 'lattice_connections', 'g2', 'packing', 'spectral', 'bridges', 'observables']:
+        for key in ['e8', 'leech', 'lattice_connections', 'g2', 'packing', 'spectral', 'bridges']:
             assert key in r, f"Missing pipeline stage: {key}"
 
     def test_pipeline_valid(self, pipeline):
@@ -136,29 +136,6 @@ class TestBridgesStage:
     def test_signature_24_2(self, pipeline):
         # (24,2): two timelike directions, one per 13D shadow
         assert pipeline._results['bridges']['signature'] == (24, 2)
-
-
-# ------------------------------------------------------------------
-# Physical observables
-# ------------------------------------------------------------------
-
-class TestObservables:
-    def test_n_gen_3(self, pipeline):
-        assert pipeline._results['observables']['n_gen'] == 3
-
-    def test_alpha_inv_within_20pct(self, pipeline):
-        """Geometric α⁻¹ within 20% of 137.036."""
-        alpha = pipeline._results['observables']['alpha_inv_geometric']
-        error = abs(alpha - 137.036) / 137.036
-        assert error < 0.20, f"α⁻¹ = {alpha:.3f}, error = {error*100:.1f}%"
-
-    def test_w0_value(self, pipeline):
-        """w₀ = -23/24 ≈ -0.9583."""
-        w0 = pipeline._results['observables']['w0']
-        assert np.isclose(w0, -23.0 / 24.0)
-
-    def test_chi_eff_144(self, pipeline):
-        assert pipeline._results['observables']['chi_eff'] == 144
 
 
 # ------------------------------------------------------------------

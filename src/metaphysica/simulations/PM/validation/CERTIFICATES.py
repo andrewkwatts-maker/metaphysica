@@ -283,10 +283,10 @@ class PrincipiaValidator:
         n_gen = chi_eff/48 = 3 then restates the ruled route n_gen = b_2/4
         (see C002).
 
-        OFF-PATH (b3_seed = seed_24): the cross-check below, chi_eff = 6*b3,
-        is one of the historical routes that agree only at b_3 = 24. It is
-        applied to geometry.elder_kads, the integer anchor 24, so 6*24 = 144
-        holds; at the adopted b_3 = 43 it would give 258. The gate formerly
+        The former cross-check chi_eff = 6*b3 was removed: it agreed only at
+        the retired anchor b_3 = 24 (at the adopted b_3 = 43 it gives 258) and
+        locked because geometry.elder_kads is that anchor. The gate now tests
+        chi_eff = 48 * (b2/4) with b2 from the active path. It formerly
         called chi_eff the effective Euler characteristic of the "TCS #187"
         G2 manifold, from Hodge numbers 2*(h^{1,1} - h^{2,1} + h^{3,1}) =
         2*(4 - 0 + 68); that route is off-path too (a Joyce orbifold has no
@@ -296,42 +296,34 @@ class PrincipiaValidator:
         preventing vacuous pass on empty/missing registry data.
         """
         chi = self._get_param('topology.mephorash_chi')
-        b3 = self._get_param('geometry.elder_kads')
+        from metaphysica.simulations.PM.geometry.b3_path import resolve_path, seed_values
+        _b3, b2 = seed_values(resolve_path())
+        n_gen, rem = divmod(b2, 4)
+        expected = 48 * n_gen
 
         # Fail explicitly if registry data is missing (no vacuous pass)
-        if chi is None or b3 is None:
-            status = "FAILED"
-            missing = []
-            if chi is None:
-                missing.append("topology.mephorash_chi")
-            if b3 is None:
-                missing.append("geometry.elder_kads")
+        if chi is None:
             self.results['C003-CHI'] = {
-                "status": status,
-                "metric": f"{', '.join(missing)} NOT FOUND in registry",
-                "expected": 144,
+                "status": "FAILED",
+                "metric": "topology.mephorash_chi NOT FOUND in registry",
+                "expected": expected,
                 "actual": None,
                 "sector": "FOUNDATIONAL"
             }
-            print(f"  C003-CHI: {status} ({', '.join(missing)} missing from registry)")
+            print("  C003-CHI: FAILED (topology.mephorash_chi missing from registry)")
             return
 
-        # Primary check: chi_eff == 144
-        value_ok = (chi == 144)
-
-        # Cross-check: chi_eff == 6 * b3 -- an OFF-PATH route that holds only
-        # at the integer anchor 24 (see the docstring)
-        consistent = (chi == 6 * b3)
-
-        status = "LOCKED" if (value_ok and consistent) else "FAILED"
+        # Check: chi_eff == 48 * n_gen with n_gen = b2/4 on the active path
+        # (no b3 route; b2 must be divisible by 4)
+        status = "LOCKED" if (rem == 0 and chi == expected) else "FAILED"
         self.results['C003-CHI'] = {
             "status": status,
-            "metric": f"chi_eff = {chi}, 6*b3 = {6 * b3}, consistent = {consistent}",
-            "expected": 144,
+            "metric": f"chi_eff = {chi}, 48 * (b2/4) = {expected} (b2 = {b2})",
+            "expected": expected,
             "actual": chi,
             "sector": "FOUNDATIONAL"
         }
-        print(f"  C003-CHI: {status} (chi_eff = {chi}, 6*b3 = {6 * b3})")
+        print(f"  C003-CHI: {status} (chi_eff = {chi}, expected 48*b2/4 = {expected})")
 
     def cert_c004_k_gimel(self):
         """C004: k_gimel = b3/2 + 1/pi

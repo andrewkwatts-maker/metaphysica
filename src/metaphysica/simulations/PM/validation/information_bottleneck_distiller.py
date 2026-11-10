@@ -13,7 +13,7 @@ constants, isn't this just a parameter fit in disguise?"
 Theoretical Framework:
     - Algorithmic Symmetry: Code isomorphic to geometric constraints
     - Topological Compression: MDL encoding of M₂₇ bulk phase space
-    - The 288/24/4 structure is derived, not arbitrary
+    - The 288/24/4 structure is a retired off-path reading, not claimed as derived
 
 Purpose:
     - Calculate Kolmogorov complexity of 26D input vs 125 output constants
@@ -469,7 +469,7 @@ class InformationBottleneckDistiller:
         - MDL Principle: Minimal Description Length criterion
         - Topological Compression: Continuous phase space → discrete observables
         - Algorithmic Symmetry: Code complexity = Geometric constraint complexity
-        - 288/24/4 structure is DERIVED, not arbitrary
+        - 288/24/4 structure: retired off-path reading (b3 = 24), not claimed as derived
 
         Returns:
             Code-theoretical integrity analysis
@@ -630,7 +630,7 @@ class InformationBottleneckDistiller:
             "overall_conclusion": (
                 "Code-Theoretical Integrity VERIFIED. The code is isomorphic to geometric constraints "
                 "(Algorithmic Symmetry). The framework achieves Topological Compression via MDL. "
-                "The 288/24/4 structure is derived from topology, not arbitrary fitting."
+                "The 288/24/4 structure is a retired off-path reading (b3 = 24); it is not claimed as derived."
             )
         }
 
@@ -700,7 +700,7 @@ class InformationBottleneckDistiller:
                 "key_insight": (
                     "Algorithmic Symmetry principle: PM achieves Topological Compression, reducing description complexity by "
                     f"{compression['efficiency_percent']} through geometric constraints (MDL). "
-                    "The 288/24/4 structure is DERIVED from G₂ topology, not arbitrary. "
+                    "The 288/24/4 structure is a retired off-path reading (b3 = 24), not a derived result on the adopted path. "
                     "This is the OPPOSITE of overfitting."
                 ),
                 "mdl_justification": (
