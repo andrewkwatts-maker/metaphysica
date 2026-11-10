@@ -27,6 +27,7 @@ from typing import Dict, Any, List, Optional
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, project_root)
 
+from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -302,7 +303,7 @@ class E8xE8SplittingSimulation(SimulationBase):
         ]
 
     def get_section_content(self) -> Optional[SectionContent]:
-        b3 = 24
+        b3 = active_b3()
         scale = float(b3) / 27.0
         vis_norm = scale * 1e-4 * 10
         hid_cond = math.exp(-2.0 * math.pi / float(b3))
@@ -375,7 +376,7 @@ class E8xE8SplittingSimulation(SimulationBase):
         )
 
     def get_certificates(self) -> List[Dict[str, Any]]:
-        b3 = 24
+        b3 = active_b3()
         hid_cond = math.exp(-2.0 * math.pi / float(b3))
         portal = _ALPHA_LEAK
         return [
@@ -387,14 +388,14 @@ class E8xE8SplittingSimulation(SimulationBase):
             },
             {
                 "id": "CERT_E8_HIDDEN_CONDENSATE",
-                "assertion": f"Hidden condensate W_np(N1=24) = exp(-2π/24) = {hid_cond:.10f}",
-                "condition": f"abs({hid_cond} - math.exp(-2*math.pi/24)) < 1e-12",
+                "assertion": f"Hidden condensate W_np(N1={b3}) = exp(-2π/{b3}) = {hid_cond:.10f}",
+                "condition": f"abs({hid_cond} - math.exp(-2*math.pi/{b3})) < 1e-12",
                 "status": "PASS",
             },
         ]
 
     def validate_self(self) -> Dict[str, Any]:
-        b3 = 24
+        b3 = active_b3()
         portal = _ALPHA_LEAK
         hid_cond = math.exp(-2.0 * math.pi / float(b3))
         scale = float(b3) / 27.0
@@ -410,7 +411,7 @@ class E8xE8SplittingSimulation(SimulationBase):
                     "name": "hidden_condensate_finite",
                     "passed": math.isfinite(hid_cond) and hid_cond > 0,
                     "log_level": "INFO",
-                    "message": f"Hidden condensate W_np(24) = {hid_cond:.8f} > 0",
+                    "message": f"Hidden condensate W_np({b3}) = {hid_cond:.8f} > 0",
                 },
                 {
                     "name": "condensate_scale_positive",

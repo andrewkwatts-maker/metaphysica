@@ -112,6 +112,12 @@ from metaphysica.simulations.core.eml_integration import (
 )
 
 
+#: Stellar-cooling (horizontal-branch) upper bound on g_{a gamma gamma}, GeV^-1.
+#: One definition: compute_alp() and the registered row both read it.
+STELLAR_COOLING_BOUND_GEV_INV = 1.0e-10
+STELLAR_COOLING_SOURCE = "stellar cooling bound (HB stars), module bound 1e-10 GeV^-1"
+
+
 @dataclass
 class ALPResult:
     """Results from ALP portal derivation."""
@@ -409,7 +415,7 @@ class ALPPortalsV23(SimulationBase):
 
         # Stellar cooling bound: g_{a gamma gamma} < 10^{-10} GeV^{-1}
         # (from globular cluster and horizontal branch star observations)
-        passes_stellar = g_a_gamma_gamma < 1.0e-10
+        passes_stellar = g_a_gamma_gamma < STELLAR_COOLING_BOUND_GEV_INV
 
         # ALP mass window: 10^{-6} eV < m_ALP < 1 eV
         # (phenomenologically interesting range)
@@ -434,7 +440,7 @@ class ALPPortalsV23(SimulationBase):
             path="portals.alp_mass_ev",
             value=result.m_alp,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",
             metadata={
                 "derivation": "Lambda_QCD^2 / f_a^{ALP} (Face 3 moduli)",
                 "units": "eV",
@@ -450,7 +456,10 @@ class ALPPortalsV23(SimulationBase):
             path="portals.alp_photon_coupling_gev_inv",
             value=result.g_a_gamma_gamma,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",
+            experimental_value=STELLAR_COOLING_BOUND_GEV_INV,
+            experimental_source=STELLAR_COOLING_SOURCE,
+            bound_type="upper",
             metadata={
                 "derivation": "alpha_leak * chi_eff / (24 * pi * f_a)",
                 "units": "GeV^{-1}",
@@ -462,7 +471,7 @@ class ALPPortalsV23(SimulationBase):
             path="portals.alp_nucleon_coupling_gev_inv",
             value=result.g_a_N,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",
             metadata={
                 "derivation": "alpha_leak / f_a",
                 "units": "GeV^{-1}",
@@ -474,7 +483,7 @@ class ALPPortalsV23(SimulationBase):
             path="portals.alp_fifth_force_range_m",
             value=result.fifth_force_range,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",
             metadata={
                 "derivation": "hbar*c / m_ALP",
                 "units": "meters",
@@ -486,7 +495,7 @@ class ALPPortalsV23(SimulationBase):
             path="portals.alp_decay_constant_gev",
             value=result.f_a_alp,
             source=self._metadata.id,
-            status="PREDICTED",
+            status="CALIBRATED",
             metadata={
                 "derivation": (
                     "sqrt(f_a_single * f_a_double) from Face 3 racetrack "
@@ -841,7 +850,7 @@ class ALPPortalsV23(SimulationBase):
                 path="portals.alp_decay_constant_gev",
                 name="ALP Decay Constant",
                 units="GeV",
-                status="PREDICTED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
                     "exists on Y_7 (CG.5, CG.10). "
@@ -877,7 +886,7 @@ class ALPPortalsV23(SimulationBase):
                 path="portals.alp_mass_ev",
                 name="ALP Mass",
                 units="eV",
-                status="PREDICTED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed b3 = 24; no gaugino racetrack "
                     "exists on Y_7 (CG.5, CG.10), and the meV figure is that seed's. "
@@ -899,7 +908,7 @@ class ALPPortalsV23(SimulationBase):
                 path="portals.alp_photon_coupling_gev_inv",
                 name="ALP-Photon Coupling",
                 units="GeV^{-1}",
-                status="PREDICTED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
                     "racetrack value of f_a^ALP (no gaugino racetrack exists on Y_7: "
@@ -928,7 +937,7 @@ class ALPPortalsV23(SimulationBase):
                 path="portals.alp_nucleon_coupling_gev_inv",
                 name="ALP-Nucleon Coupling",
                 units="GeV^{-1}",
-                status="PREDICTED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
                     "racetrack value of f_a^ALP. "
@@ -949,7 +958,7 @@ class ALPPortalsV23(SimulationBase):
                 path="portals.alp_fifth_force_range_m",
                 name="ALP Fifth Force Range",
                 units="meters",
-                status="PREDICTED",
+                status="CALIBRATED",
                 description=(
                     "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
                     "racetrack value of m_ALP. "

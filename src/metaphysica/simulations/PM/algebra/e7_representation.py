@@ -27,6 +27,7 @@ from typing import Dict, Any, List, Optional
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.insert(0, project_root)
 
+from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.base import (
     SimulationBase,
     SimulationMetadata,
@@ -327,8 +328,7 @@ class E7RepresentationSimulation(SimulationBase):
     def get_section_content(self) -> Optional[SectionContent]:
         alpha_leak = _ALPHA_LEAK
         agrees = True
-        # Default quartic from Pneuma condensate (b3=24)
-        b3 = 24.0
+        b3 = float(active_b3())
         scale = b3 / 27.0
         inner = 3.0 * scale * scale
         nx = scale ** 3
@@ -425,7 +425,7 @@ class E7RepresentationSimulation(SimulationBase):
     def validate_self(self) -> Dict[str, Any]:
         alpha_leak = _ALPHA_LEAK
         alpha_leak_sq = alpha_leak ** 2
-        b3 = 24.0
+        b3 = float(active_b3())
         scale = b3 / 27.0
         inner = 3.0 * scale * scale
         nx = scale ** 3

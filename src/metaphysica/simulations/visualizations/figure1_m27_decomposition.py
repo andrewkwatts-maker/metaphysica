@@ -74,7 +74,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
             ha="center", fontsize=13, fontweight="bold")
     ax.text(2.75, 6.5, r"24D G$_2$ Core", ha="center", fontsize=11)
     ax.text(2.75, 6.1, r"12 $\times$ $(2,0)$ Bridge Pairs", ha="center", fontsize=10)
-    ax.text(2.75, 5.65, r"$b_3 = 24$ (Betti Number)", ha="center", fontsize=9)
+    ax.text(2.75, 5.65, r"$b_3$ (Betti number, from the registry)", ha="center", fontsize=9)
     ax.text(2.75, 5.3, r"G$_2$ Holonomy", ha="center", fontsize=9, style="italic")
 
     # Two-Time T1 (1D)

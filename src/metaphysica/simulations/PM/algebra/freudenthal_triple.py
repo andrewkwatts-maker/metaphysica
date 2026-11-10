@@ -8,12 +8,12 @@ Hermitian matrices over the octonions with 27 real degrees of freedom.
 
 Key results:
   - Cubic norm N(A) = c₁c₂c₃ − c₁|x₁|² − c₂|x₂|² − c₃|x₃|² + 2Re(x₁x₂x₃)
-    encodes the racetrack potential V_bridge / V_face
+    is the Jordan determinant (the adopted action has no bridge or racetrack potential)
   - Quartic invariant q(A) from the E₇ 56D rep gives the 125 spectral residue
     proxy and the ALP mass scale
   - The triple product {x,y,z} implements Pneuma field bilinears
 
-Dependencies: g2_geometry_v16_0 (topology.elder_kads = b₃ = 24)
+Dependencies: g2_geometry_v16_0 (topology.elder_kads = b₃, 43 on the adopted Y₇)
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -21,6 +21,7 @@ Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 import math
 import sys
 import os
+from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from typing import Dict, Any, List, Optional
 
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -41,7 +42,7 @@ class FreudenthalTripleSimulation(SimulationBase):
     Freudenthal triple system on J₃(𝕆) — Pneuma condensate in the 27-dimensional Jordan algebra.
 
     Computes cubic norm, quartic invariant, and triple product structure
-    of the Pneuma condensate element derived from b₃ = 24 topology.
+    of the Pneuma condensate element derived from the active b₃ (43 on the adopted Y₇).
     """
 
     @property
@@ -138,7 +139,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 plain_text="N(A) = c1*c2*c3 - c1|x1|^2 - c2|x2|^2 - c3|x3|^2 + 2Re(x1 x2 x3)",
                 category="DERIVED",
                 description="Cubic norm (Jordan determinant) of the exceptional Jordan algebra J₃(𝕆). "
-                            "In PM this equals the racetrack potential V_bridge / V_face.",
+                            "The adopted action has no bridge or racetrack potential term.",
                 inputParams=["topology.elder_kads"],
                 outputParams=["algebra.freudenthal_cubic_norm"],
                 eml_latex=r"\mathrm{ops.sub}(\mathrm{ops.mul}(c_1, c_2, c_3),\; \mathrm{ops.add}(c_1|x_1|^2,\ldots))",
@@ -232,7 +233,7 @@ class FreudenthalTripleSimulation(SimulationBase):
                 units="dimensionless",
                 status="DERIVED",
                 description="Cubic norm (Jordan determinant) of the Pneuma condensate in the 27-dimensional Jordan algebra element in J₃(𝕆). "
-                            "Equals V_bridge / V_face in the racetrack potential.",
+                            "The adopted action has no bridge or racetrack potential term.",
                 derivation_formula="freudenthal-cubic-norm",
                 no_experimental_value=True,
                 eml_description=(
@@ -284,7 +285,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         ]
 
     def get_section_content(self) -> Optional[SectionContent]:
-        b3 = 24
+        b3 = active_b3()
         condensate_scale = b3 / 27.0
         trace = 3.0 * condensate_scale
         cubic = condensate_scale ** 3
@@ -295,10 +296,10 @@ class FreudenthalTripleSimulation(SimulationBase):
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The 27-dimensional Pneuma condensate in the M²⁶(24,2) bulk is identified with "
+                    "The 27-dimensional Pneuma condensate in the M²⁶(24,2) bulk (26D) is identified with "
                     "an element of the Freudenthal triple system over the exceptional Jordan algebra "
                     "J₃(𝕆): 3×3 Hermitian matrices over the octonions. "
-                    "This 27-dimensional algebra has dimension 3 + 3×8 = 27, matching the bulk dimension exactly."
+                    "This algebra has dimension 3 + 3×8 = 27; the bulk is 26-dimensional, so the 27 is the algebra's own dimension and does not match the bulk."
                 ),
             ),
             ContentBlock(
@@ -306,11 +307,11 @@ class FreudenthalTripleSimulation(SimulationBase):
                 content=(
                     "<Normal>"
                     "The cubic norm N(A) = c₁c₂c₃ − c₁|x₁|² − c₂|x₂|² − c₃|x₃|² + 2Re(x₁x₂x₃) "
-                    "is the Jordan determinant and encodes the racetrack potential V_bridge/V_face. "
+                    "is the Jordan determinant. "
                     "</Normal>"
                     "<EML>"
                     "In EML mirror-phase notation: N(A) = ops.add(ops.mul(c₁,c₂,c₃), ops.neg(ops.add(c₁|x₁|², c₂|x₂|², c₃|x₃|²)), ops.mul(2, Re(x₁x₂x₃))). "
-                    "The EML operator tree exposes the cancellation structure of the racetrack potential. "
+                    ""
                     "</EML>"
                 ),
             ),
@@ -332,8 +333,8 @@ class FreudenthalTripleSimulation(SimulationBase):
             subsection_id=None,
             title="Freudenthal Triple System: 26D Pneuma Condensate",
             abstract="The exceptional Jordan algebra J₃(𝕆) models the Pneuma condensate in the 27-dimensional Jordan algebra; "
-                     "its cubic norm encodes the racetrack potential and its quartic invariant "
-                     "gives the ALP mass scale.",
+                     "its cubic norm is the Jordan determinant and its quartic invariant "
+                     "is a scale built from the same condensate.",
             content_blocks=blocks,
             formula_refs=["freudenthal-cubic-norm", "freudenthal-quartic-invariant", "freudenthal-triple-product"],
             param_refs=self.output_params,
@@ -341,7 +342,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         )
 
     def get_certificates(self) -> List[Dict[str, Any]]:
-        b3 = 24
+        b3 = active_b3()
         scale = b3 / 27.0
         trace = 3.0 * scale
         cubic = scale ** 3
@@ -349,14 +350,14 @@ class FreudenthalTripleSimulation(SimulationBase):
         return [
             {
                 "id": "CERT_FTS_SCALE",
-                "assertion": f"Pneuma condensate scale = b3/27 = {scale:.8f} (b3=24 on the retired seed_24)",
-                "condition": f"abs({scale} - 24/27) < 1e-12",
+                "assertion": f"Pneuma condensate scale = b3/27 = {scale:.8f} (active path)",
+                "condition": f"abs({scale} - {b3}/27) < 1e-12",
                 "status": "PASS",
             },
             {
                 "id": "CERT_FTS_CUBIC",
                 "assertion": f"Cubic norm N(A) = (b3/27)^3 = {cubic:.8f}",
-                "condition": f"abs({cubic} - (24/27)**3) < 1e-12",
+                "condition": f"abs({cubic} - ({b3}/27)**3) < 1e-12",
                 "status": "PASS",
             },
             {
@@ -368,7 +369,7 @@ class FreudenthalTripleSimulation(SimulationBase):
         ]
 
     def validate_self(self) -> Dict[str, Any]:
-        b3 = 24
+        b3 = active_b3()
         scale = b3 / 27.0
         trace = 3.0 * scale
         cubic = scale ** 3
@@ -377,7 +378,7 @@ class FreudenthalTripleSimulation(SimulationBase):
             "checks": [
                 {
                     "name": "condensate_scale_from_b3",
-                    "passed": abs(scale - 24.0 / 27.0) < 1e-12,
+                    "passed": abs(scale - float(b3) / 27.0) < 1e-12,
                     "log_level": "INFO",
                     "message": f"Pneuma condensate scale = b3/27 = {scale:.8f}",
                 },

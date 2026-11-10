@@ -103,6 +103,14 @@ _DELTA_CP_NUFIT = 197.0 - 360.0  # degrees: NuFIT 6.0 NO best fit ~197 deg mappe
 _DELTA_CP_1SIGMA = 40.0      # degrees, approximate 1σ (range ≈ -180° to 0°)
 
 
+def _required_param(registry, path: str) -> float:
+    """A registry value that must exist; a missing row raises (get_param), so does None."""
+    raw = registry.get_param(path)
+    if raw is None:
+        raise ValueError(f"{path} is unset: no value in force")
+    return float(raw)
+
+
 def _seed_split_note() -> str:
     """Prose only: does the delta_CP split b3/n_gen work on the seed in force?
 
@@ -161,6 +169,8 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     def required_inputs(self) -> List[str]:
         return [
             "topology.elder_kads",
+            "topology.mephorash_chi",
+            "topology.n_gen",
             "geometry.alpha_leak",
         ]
 
@@ -188,20 +198,17 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
     # ------------------------------------------------------------------
 
     def run(self, registry: "PMRegistry") -> Dict[str, Any]:
-        # --- fetch topology parameters (b3 required; chi_eff and n_gen fall back) ---
+        # --- fetch topology parameters (every one required: a missing row raises) ---
         b3_raw = registry.get_param("topology.elder_kads")
         if b3_raw is None:
             raise ValueError("topology.elder_kads is unset: no b3 in force")
         b3 = float(b3_raw)
 
-        chi_eff_raw = registry.get_param("topology.mephorash_chi")
-        chi_eff = float(chi_eff_raw) if chi_eff_raw is not None else float(_CHI_EFF)
+        chi_eff = _required_param(registry, "topology.mephorash_chi")
 
-        n_gen_raw = registry.get_param("topology.n_gen")
-        n_gen = float(n_gen_raw) if n_gen_raw is not None else float(_N_GEN)
+        n_gen = _required_param(registry, "topology.n_gen")
 
-        alpha_leak_raw = registry.get_param("geometry.alpha_leak")
-        alpha_leak = float(alpha_leak_raw) if alpha_leak_raw is not None else _ALPHA_LEAK
+        alpha_leak = _required_param(registry, "geometry.alpha_leak")
 
         # --- θ₁₃ from E₇ ⊃ E₆ × U(1) branching + SU(2)_L correction ---
         # Leptons are SU(3)_colour singlets; the reactor angle picks up an
@@ -255,12 +262,9 @@ class NeutrinoAlgebraicSimulation(SimulationBase):
             if b3_raw is None:
                 raise ValueError("topology.elder_kads is unset: no b3 in force")
             b3 = float(b3_raw)
-            chi_eff_raw = registry.get_param("topology.mephorash_chi")
-            chi_eff = float(chi_eff_raw) if chi_eff_raw is not None else float(_CHI_EFF)
-            n_gen_raw = registry.get_param("topology.n_gen")
-            n_gen = float(n_gen_raw) if n_gen_raw is not None else float(_N_GEN)
-            alpha_leak_raw = registry.get_param("geometry.alpha_leak")
-            alpha_leak = float(alpha_leak_raw) if alpha_leak_raw is not None else _ALPHA_LEAK
+            chi_eff = _required_param(registry, "topology.mephorash_chi")
+            n_gen = _required_param(registry, "topology.n_gen")
+            alpha_leak = _required_param(registry, "geometry.alpha_leak")
 
             # sin(θ₁₃) = α_leak / √(2 n_gen)
             two_n_gen = eml_mul(eml_scalar(2.0), eml_scalar(n_gen))

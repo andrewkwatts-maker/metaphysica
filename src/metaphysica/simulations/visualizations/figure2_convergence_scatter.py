@@ -57,6 +57,7 @@ def generate_figure2_convergence_scatter(
 
     params = params_data.get("parameters", {})
     testable: List[Dict[str, Any]] = []
+    unplotted: List[str] = []
 
     for param_id, data in params.items():
         if (
@@ -67,11 +68,16 @@ def generate_figure2_convergence_scatter(
             # Skip exact-identity rows (likely inputs).
             if data["value"] == data["experimental_value"]:
                 continue
-            sigma_dev = data.get("sigma_deviation", 0) or 0
-            uncertainty = data.get("experimental_uncertainty", 0) or 0
-            if uncertainty == 0:
-                # 1% default fallback.
-                uncertainty = abs(data["value"] - data["experimental_value"]) * 0.01
+            uncertainty = data.get("experimental_uncertainty")
+            if not uncertainty:
+                # No measured error: the row cannot be drawn as a sigma, so it is
+                # left out (never given an invented 1% error).
+                unplotted.append(param_id)
+                continue
+            sigma_dev = data.get("sigma_deviation")
+            if sigma_dev is None:
+                unplotted.append(param_id)
+                continue
             testable.append({
                 "id": param_id,
                 "predicted": data["value"],
@@ -81,7 +87,7 @@ def generate_figure2_convergence_scatter(
                 "sigma": abs(sigma_dev),
             })
 
-    print(f"  Found {len(testable)} testable parameters")
+    print(f"  Found {len(testable)} testable parameters; {len(unplotted)} left out (no error or sigma)")
     if len(testable) == 0:
         print("  WARNING: No testable parameters found!")
         return None

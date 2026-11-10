@@ -9,7 +9,7 @@ These eigenvalues generate the particle mass spectrum under Kaluza-Klein reducti
     m_n^2 = lambda_n / L^2
 
 Where:
-- lambda_n: nth eigenvalue of Δ_{V_7} on the G₂ holonomy manifold V₇ (b₃=24, χ=144)
+- lambda_n: nth eigenvalue of Δ_{V_7} on the G₂ holonomy manifold V₇ (b₃ = 43, χ_eff = 144 on the adopted Y₇)
 - L: Compactification scale (set by Vol(V₇) via M_Planck)
 
 PHYSICAL INTERPRETATION:
@@ -62,36 +62,23 @@ from metaphysica.simulations.base.simulation_base import (
 from metaphysica.simulations.PM.paper.superseded import superseded
 
 # ------------------------------------------------------------------
-# SSOT: read the vetted PDG/CODATA JSONs through the shared loader;
-# the numeric literals below are offline fallbacks only. Same pattern
-# as simulations/base/established.py.
+# SSOT: read the vetted PDG/CODATA JSONs through the shared loader; a
+# missing row raises, there is no literal fallback.
 # ------------------------------------------------------------------
-try:
-    from metaphysica.simulations.data.experimental_data_loader import get_loader as _get_loader
-    _LOADER_OK = True
-except Exception:
-    _LOADER_OK = False
+from metaphysica.simulations.data.experimental_data_loader import get_loader as _get_loader
 
 
-def _pdg_v(category: str, name: str, fb: float) -> float:
-    """Return the PDG value from the loader, or the literal fallback."""
-    if _LOADER_OK:
-        try:
-            return _get_loader().get_pdg(category, name).value
-        except Exception:
-            pass
-    return fb
+def _pdg_v(category: str, name: str) -> float:
+    """PDG value from the loader; a missing dataset or row raises."""
+    return _get_loader().get_pdg(category, name).value
 
 
-def _pdg_u(category: str, name: str, fb: float) -> float:
-    """Return the PDG uncertainty from the loader, or the literal fallback."""
-    if _LOADER_OK:
-        try:
-            u = _get_loader().get_pdg(category, name).uncertainty
-            return u if u is not None else fb
-        except Exception:
-            pass
-    return fb
+def _pdg_u(category: str, name: str) -> float:
+    """PDG uncertainty from the loader; a missing dataset, row or error raises."""
+    u = _get_loader().get_pdg(category, name).uncertainty
+    if u is None:
+        raise ValueError(f"PDG row {category}/{name} carries no uncertainty")
+    return u
 
 
 class ResidueCategory(Enum):
@@ -204,8 +191,8 @@ def _make_registry() -> Dict[int, SpectralResidue]:
 
     # Higgs mass and uncertainty read through ExperimentalDataLoader
     # (PDG 2024: 125.20 ± 0.11). Literals below are offline fallbacks.
-    m_H_pdg = _pdg_v("higgs", "mass", 125.20)
-    m_H_unc = _pdg_u("higgs", "mass", 0.11)
+    m_H_pdg = _pdg_v("higgs", "mass")
+    m_H_unc = _pdg_u("higgs", "mass")
     registry[13] = SpectralResidue(
         index=13,
         lambda_n=k_gimel * 5.07,  # ~ 62.4 -> m_H ~ 125 GeV
@@ -228,12 +215,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # Neutrino masses from G2 spectral residues (see dedicated section below)
     # Here we use flavor eigenstates as placeholders - physical masses in modes 49-52
     # Masses & uncertainties read through ExperimentalDataLoader (PDG 2024).
-    m_e = _pdg_v("leptons", "m_electron", 0.000511)
-    u_m_e = _pdg_u("leptons", "m_electron", 3.1e-9)
-    m_up = _pdg_v("quarks", "m_up", 0.00216)
-    u_m_up = _pdg_u("quarks", "m_up", 0.00049)
-    m_d = _pdg_v("quarks", "m_down", 0.00467)
-    u_m_d = _pdg_u("quarks", "m_down", 0.00048)
+    m_e = _pdg_v("leptons", "m_electron")
+    u_m_e = _pdg_u("leptons", "m_electron")
+    m_up = _pdg_v("quarks", "m_up")
+    u_m_up = _pdg_u("quarks", "m_up")
+    m_d = _pdg_v("quarks", "m_down")
+    u_m_d = _pdg_u("quarks", "m_down")
     fermion_data_gen1 = [
         (14, "e", m_e, m_e, u_m_e, "Electron"),
         (15, "nu_e", 1e-11, None, None, "Electron neutrino (flavor eigenstate)"),
@@ -258,12 +245,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
         )
 
     # Second generation — loader-sourced (PDG 2024)
-    m_mu = _pdg_v("leptons", "m_muon", 0.1057)
-    u_m_mu = _pdg_u("leptons", "m_muon", 3.5e-6)
-    m_c = _pdg_v("quarks", "m_charm", 1.27)
-    u_m_c = _pdg_u("quarks", "m_charm", 0.02)
-    m_s = _pdg_v("quarks", "m_strange", 0.093)
-    u_m_s = _pdg_u("quarks", "m_strange", 0.008)
+    m_mu = _pdg_v("leptons", "m_muon")
+    u_m_mu = _pdg_u("leptons", "m_muon")
+    m_c = _pdg_v("quarks", "m_charm")
+    u_m_c = _pdg_u("quarks", "m_charm")
+    m_s = _pdg_v("quarks", "m_strange")
+    u_m_s = _pdg_u("quarks", "m_strange")
     fermion_data_gen2 = [
         (20, "mu", m_mu, m_mu, u_m_mu, "Muon"),
         (21, "nu_mu", 1e-11, None, None, "Muon neutrino (flavor eigenstate)"),
@@ -287,12 +274,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
         )
 
     # Third generation — loader-sourced (PDG 2024)
-    m_tau = _pdg_v("leptons", "m_tau", 1.777)
-    u_m_tau = _pdg_u("leptons", "m_tau", 0.00012)
-    m_t = _pdg_v("quarks", "m_top", 172.69)
-    u_m_t = _pdg_u("quarks", "m_top", 0.30)
-    m_b = _pdg_v("quarks", "m_bottom", 4.18)
-    u_m_b = _pdg_u("quarks", "m_bottom", 0.03)
+    m_tau = _pdg_v("leptons", "m_tau")
+    u_m_tau = _pdg_u("leptons", "m_tau")
+    m_t = _pdg_v("quarks", "m_top")
+    u_m_t = _pdg_u("quarks", "m_top")
+    m_b = _pdg_v("quarks", "m_bottom")
+    u_m_b = _pdg_u("quarks", "m_bottom")
     fermion_data_gen3 = [
         (26, "tau", m_tau, m_tau, u_m_tau, "Tau lepton"),
         (27, "nu_tau", 1e-11, None, None, "Tau neutrino (flavor eigenstate)"),
@@ -380,11 +367,11 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #
     # Normal Hierarchy (predicted by PM due to brane tensions):
     #   m1 << m2 < m3
-    #   m1 ~ 0.001 eV (lightest)
+    #   m1 = 0.0031 eV (lightest, the chain output below)
     #   m2 ~ sqrt(Dm^2_21 + m1^2) ~ 0.009 eV
     #   m3 ~ sqrt(Dm^2_31 + m1^2) ~ 0.050 eV
     #
-    # Sum: Sigma_m_nu ~ 0.06 eV (testable by cosmology!)
+    # Sum: Sigma_m_nu = 0.0625 eV (testable by cosmology!)
     #
     # EXPERIMENTAL CONSTRAINTS (as of 2024):
     #   - Oscillation lower bound (NH): sum >= 0.058 eV (from Dm^2 alone)
@@ -400,8 +387,8 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # ------------------------------------------------------------------------
 
     # Experimental mass-squared differences (oscillation data)
-    Dm2_21 = 7.42e-5  # eV^2 (solar)
-    Dm2_31 = 2.515e-3  # eV^2 (atmospheric, normal hierarchy)
+    Dm2_21 = _get_loader().get_nufit("delta_m21_sq").value  # eV^2 (solar)
+    Dm2_31 = _get_loader().get_nufit("delta_m31_sq").value  # eV^2 (atmospheric, NO)
 
     # PM prediction for lightest neutrino mass
     # From G2 spectral structure: m1 ~ k_gimel * (v^2/M_GUT) / sqrt(chi_eff)
@@ -421,8 +408,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #     end. The canonical mass-sum headline is therefore the geometric
     #     branch (see docs/RULINGS_ASSESSMENT.md R5); this chain remains
     #     registered as the spectral cross-check.
-    v_higgs = 246.22  # GeV
-    M_GUT = 2e16  # GeV (hardcoded pending the register 2.2 GUT-scale ruling)
+    v_higgs = _pdg_v("higgs", "vev")  # GeV
+    # OPEN INPUT: M_GUT is typed in pending the register 2.2 GUT-scale ruling.
+    M_GUT = 2e16  # GeV
     # H08: chi_eff_total follows the chi_eff_route fork via the registry.
     from metaphysica.simulations.core.FormulasRegistry import get_registry
     chi_eff = get_registry().chi_eff_total
@@ -493,7 +481,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # Base lifetime from dimension-6: tau_base ~ M_GUT^4 / (alpha^2 * m_p^5)
     alpha_GUT = 0.04  # at unification
     # Loader-sourced constants (PDG 2024). Literals are offline fallbacks.
-    m_p = _pdg_v("baryons", "m_proton", 0.938)  # GeV
+    m_p = _pdg_v("baryons", "m_proton")  # GeV
 
     # Instanton suppression factor
     instanton_suppression = np.exp(-chi_eff / 12)  # ~ exp(-12) ~ 6e-6
@@ -503,7 +491,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
 
     # Lifetime calculation
     tau_base_gev = (M_GUT_eff ** 4) / (alpha_GUT ** 2 * m_p ** 5)  # in GeV^-1
-    hbar_s = _pdg_v("fundamental_constants", "HBAR", 6.582e-25)  # GeV * s
+    hbar_s = _pdg_v("fundamental_constants", "HBAR")  # GeV * s
     tau_s = tau_base_gev * hbar_s  # in seconds
     tau_yr = tau_s / (3.15e7)  # in years
     # Result: ~ 4.24e39 years. (This comment said "~ 10^34 years" until
@@ -535,12 +523,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # ------------------------------------------------------------------------
 
     # Loader-sourced couplings (PDG 2024 + CODATA).
-    alpha_em_val = _pdg_v("fundamental_constants", "alpha_em", 1.0 / 137.036)
-    alpha_em_unc = _pdg_u("fundamental_constants", "alpha_em", 5e-10)
-    alpha_s_val = _pdg_v("couplings", "alpha_s_MZ", 0.1180)
-    alpha_s_unc = _pdg_u("couplings", "alpha_s_MZ", 0.0009)
-    g_f_val = _pdg_v("constants", "G_F", 1.1663788e-5)
-    g_f_unc = _pdg_u("constants", "G_F", 6e-12)
+    alpha_em_val = _pdg_v("fundamental_constants", "alpha_em")
+    alpha_em_unc = _pdg_u("fundamental_constants", "alpha_em")
+    alpha_s_val = _pdg_v("couplings", "alpha_s_MZ")
+    alpha_s_unc = _pdg_u("couplings", "alpha_s_MZ")
+    g_f_val = _pdg_v("constants", "G_F")
+    g_f_unc = _pdg_u("constants", "G_F")
     coupling_data = [
         (57, "alpha_em", alpha_em_val, alpha_em_val, alpha_em_unc, "Fine structure constant"),
         (58, "alpha_s", alpha_s_val, alpha_s_val, alpha_s_unc, "Strong coupling at M_Z"),
@@ -565,12 +553,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # ------------------------------------------------------------------------
 
     # Loader-sourced mass scales (PDG 2024).
-    v_higgs_val = _pdg_v("higgs", "vev", 246.22)
-    v_higgs_unc = _pdg_u("higgs", "vev", 0.5)
-    m_p_val = _pdg_v("baryons", "m_proton", 0.938272)
-    m_p_unc = _pdg_u("baryons", "m_proton", 6e-9)
-    m_n_val = _pdg_v("baryons", "m_neutron", 0.939565)
-    m_n_unc = _pdg_u("baryons", "m_neutron", 5e-9)
+    v_higgs_val = _pdg_v("higgs", "vev")
+    v_higgs_unc = _pdg_u("higgs", "vev")
+    m_p_val = _pdg_v("baryons", "m_proton")
+    m_p_unc = _pdg_u("baryons", "m_proton")
+    m_n_val = _pdg_v("baryons", "m_neutron")
+    m_n_unc = _pdg_u("baryons", "m_neutron")
     scale_data = [
         (61, "M_Planck", 1.22e19, 1.22e19, 1e16, "Planck mass"),
         (62, "M_GUT", 2e16, 2e16, 1e16, "GUT scale (estimated)"),
@@ -767,6 +755,13 @@ class CompleteResidueRegistryV18(SimulationBase):
         """Get residue by index."""
         return self.registry.get(index)
 
+    @staticmethod
+    def _mass_ev(residue: Optional[SpectralResidue]) -> float:
+        """Mass of a neutrino residue in eV; an absent or zero mass raises."""
+        if residue is None or not residue.mass_gev:
+            raise ValueError("neutrino residue has no mass: nothing to register")
+        return residue.mass_gev * 1e9
+
     def get_by_particle(self, particle: str) -> Optional[SpectralResidue]:
         """Get residue by particle name."""
         for r in self.registry.values():
@@ -876,7 +871,7 @@ class CompleteResidueRegistryV18(SimulationBase):
         sum_nu = self.get_residue(52)
 
         if nu_1:
-            m1_ev = nu_1.mass_gev * 1e9 if nu_1.mass_gev else 0.001
+            m1_ev = self._mass_ev(nu_1)
             registry.set_param(
                 path="spectral.m_nu_1",
                 value=m1_ev,
@@ -900,7 +895,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             )
 
         if nu_2:
-            m2_ev = nu_2.mass_gev * 1e9 if nu_2.mass_gev else 0.0086
+            m2_ev = self._mass_ev(nu_2)
             registry.set_param(
                 path="spectral.m_nu_2",
                 value=m2_ev,
@@ -914,7 +909,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             )
 
         if nu_3:
-            m3_ev = nu_3.mass_gev * 1e9 if nu_3.mass_gev else 0.0502
+            m3_ev = self._mass_ev(nu_3)
             registry.set_param(
                 path="spectral.m_nu_3",
                 value=m3_ev,
@@ -928,7 +923,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             )
 
         if sum_nu:
-            sum_ev = sum_nu.mass_gev * 1e9 if sum_nu.mass_gev else 0.0625
+            sum_ev = self._mass_ev(sum_nu)
             registry.set_param(
                 path="spectral.sum_m_nu",
                 value=sum_ev,
@@ -1084,14 +1079,14 @@ class CompleteResidueRegistryV18(SimulationBase):
             "spectral.lambda_max": stats["lambda_max"],
             "spectral.gauge_boson_count": gauge_bosons,
             "spectral.fermion_count": fermions,
-            "spectral.m_nu_1": nu_1.mass_gev * 1e9 if nu_1 and nu_1.mass_gev else 0.0031,
-            "spectral.m_nu_2": nu_2.mass_gev * 1e9 if nu_2 and nu_2.mass_gev else 0.0092,
-            "spectral.m_nu_3": nu_3.mass_gev * 1e9 if nu_3 and nu_3.mass_gev else 0.0502,
-            "spectral.sum_m_nu": sum_nu.mass_gev * 1e9 if sum_nu and sum_nu.mass_gev else 0.0625,
+            "spectral.m_nu_1": self._mass_ev(nu_1),
+            "spectral.m_nu_2": self._mass_ev(nu_2),
+            "spectral.m_nu_3": self._mass_ev(nu_3),
+            "spectral.sum_m_nu": self._mass_ev(sum_nu),
             "spectral.hierarchy": "normal",
             # Proton decay
             "spectral.tau_proton": tau_p.predicted_value if tau_p else None,
-            "spectral.M_GUT_G2": M_GUT.mass_gev if M_GUT and M_GUT.mass_gev else 2e17,
+            "spectral.M_GUT_G2": M_GUT.mass_gev,
             "spectral.BR_e_pi0": 0.30,
             "spectral.BR_nu_K": 0.60,
             "_stats": stats
@@ -1110,6 +1105,8 @@ class CompleteResidueRegistryV18(SimulationBase):
         return self.run(registry)
 
     def get_formulas(self) -> List[Formula]:
+        m1_ev = self._mass_ev(self.get_residue(49))
+        sum_nu_ev = self._mass_ev(self.get_residue(52))
         """Return formulas for spectral analysis."""
         return [
             Formula(
@@ -1249,13 +1246,13 @@ class CompleteResidueRegistryV18(SimulationBase):
             Formula(
                 id="neutrino-sum-prediction-v18",
                 label="(2.12)",
-                latex=r"\sum m_\nu = m_1 + \sqrt{\Delta m^2_{21} + m_1^2} + \sqrt{\Delta m^2_{31} + m_1^2} \approx 0.06\,\text{eV}",
-                plain_text="sum(m_nu) = m1 + sqrt(Dm2_21 + m1^2) + sqrt(Dm2_31 + m1^2) ~ 0.06 eV",
+                latex=r"\sum m_\nu = m_1 + \sqrt{\Delta m^2_{21} + m_1^2} + \sqrt{\Delta m^2_{31} + m_1^2} \text{ (value in the description)}",
+                plain_text=f"sum(m_nu) = m1 + sqrt(Dm2_21 + m1^2) + sqrt(Dm2_31 + m1^2) = {sum_nu_ev:.4f} eV",
                 eml_tree_str="ops.add(eml_vec('m1'), ops.add(ops.sqrt(ops.add(eml_vec('Dm2_21'), ops.pow(eml_vec('m1'), eml_scalar(2.0)))), ops.sqrt(ops.add(eml_vec('Dm2_31'), ops.pow(eml_vec('m1'), eml_scalar(2.0))))))",
                 category="PREDICTED",
                 description=(
-                    "Sum of neutrino masses in normal hierarchy. PM predicts lightest mass "
-                    "m1 ~ 0.001 eV, giving sum ~ 0.06 eV -- very close to the oscillation "
+                    "Sum of neutrino masses in normal hierarchy. The see-saw chain gives lightest mass "
+                    f"m1 = {m1_ev:.5f} eV and a sum of {sum_nu_ev:.4f} eV, close to the oscillation "
                     "floor of ~0.058 eV (NH). Experimental constraints: Planck+BAO < 0.12 eV "
                     "(95% CL, 2018); DESI+CMB+BAO < 0.072 eV (95% CL, 2024). The shrinking "
                     "window makes this a near-term falsifiable prediction: CMB-S4 and DESI "
@@ -1264,7 +1261,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 inputParams=["spectral.m_nu_1"],
                 outputParams=["spectral.sum_m_nu"],
                 terms={
-                    "m1": "Lightest mass ~ 0.001 eV (PM prediction)",
+                    "m1": f"Lightest mass, the chain's own output ({m1_ev:.5f} eV)",
                     "Dm2_21": "Solar mass splitting = 7.42e-5 eV^2",
                     "Dm2_31": "Atmospheric mass splitting = 2.515e-3 eV^2"
                 },
@@ -2101,8 +2098,8 @@ class CompleteResidueRegistryV18(SimulationBase):
         # Check 6: Higgs mass within PDG range (loader-sourced anchor)
         # ------------------------------------------------------------------
         higgs = self.get_residue(13)
-        mh_ref = _pdg_v("higgs", "mass", 125.20)
-        mh_unc = _pdg_u("higgs", "mass", 0.11)
+        mh_ref = _pdg_v("higgs", "mass")
+        mh_unc = _pdg_u("higgs", "mass")
         h_dev = abs(higgs.mass_gev - mh_ref) if higgs else float('inf')
         h_sigma = h_dev / mh_unc if higgs else float('inf')
         higgs_ok = higgs is not None and h_dev < 1.0

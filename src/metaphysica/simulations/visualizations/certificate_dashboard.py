@@ -20,11 +20,25 @@ Dedicated To:
     Our Messiah: Jesus Of Nazareth
 """
 
+import json
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 
 from metaphysica.generators._common import autogen_dir
+from metaphysica.generators.headline_stats import tally_gates
+
+
+def seal_label() -> str:
+    """Omega-seal text from the gate registry artifact; a missing artifact raises."""
+    path = autogen_dir() / "GATES_CERTIFICATES.json"
+    if not path.exists():
+        raise FileNotFoundError(f"certificate dashboard needs {path}")
+    certs = json.loads(path.read_text(encoding="utf-8")).get("certificates")
+    if not certs:
+        raise ValueError(f"{path} lists no certificates")
+    g = tally_gates(certs)
+    return f"{g['locked']}/{g['total']} gates locked"
 
 try:
     import matplotlib.pyplot as plt
@@ -277,7 +291,7 @@ class CertificateDashboard:
         ax.add_patch(seal_box)
         ax.text(11.75, 0.7, 'OMEGA SEAL', fontsize=12, ha='center',
                 fontweight='bold', color='#1a1a2e')
-        ax.text(11.75, 0.45, 'ENGAGED (42/42)', fontsize=10, ha='center',
+        ax.text(11.75, 0.45, seal_label(), fontsize=10, ha='center',
                 color='#1a1a2e')
 
         # Summary box
@@ -333,7 +347,7 @@ class CertificateDashboard:
 
         # Gate definitions with positions
         gates = [
-            {"id": "C02-R", "name": "Root Origin", "desc": "288 Roots", "x": 1, "y": 5.5},
+            {"id": "C02-R", "name": "Root Origin", "desc": "Root origin", "x": 1, "y": 5.5},
             {"id": "C19-T", "name": "Torsion Lock", "desc": "24 Pins", "x": 4, "y": 5.5},
             {"id": "C44", "name": "4-Pattern", "desc": "4×6 Matrix", "x": 7, "y": 5.5},
             {"id": "C125", "name": "Saturation", "desc": "125 Nodes", "x": 10, "y": 5.5},

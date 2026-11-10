@@ -30,8 +30,8 @@ TECHNICAL NOTE ON CSS CONSTRUCTION:
 HONEST MAPPING TABLE (PM concept -> QEC concept):
     | PM Concept          | QEC Concept           | Classification            |
     |---------------------|-----------------------|---------------------------|
-    | b3 = 24 dimensions  | 24 physical qubits    | MOTIVATED_IDENTIFICATION  |
-    | 12 bridge pairs     | 12 logical qubits     | MOTIVATED_IDENTIFICATION  |
+    | b3 (43 on Y_7)      | 24 physical qubits    | MISMATCH (43 != 24)       |
+    | b3/2 (21.5 on Y_7)  | 12 logical qubits     | MISMATCH (21.5 != 12)     |
     | Golay [24,12,8]     | CSS [[24,12,8]]       | DERIVED (theorem)         |
     | 42 certificates     | Stabilizer generators | MISMATCH (12 != 42)       |
     | 288 roots           | Code space dimension  | MISMATCH (4096 != 288)    |
@@ -71,6 +71,7 @@ from metaphysica.simulations.base import (
     Formula,
     Parameter,
 )
+from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.PM.algebra.leech_lattice import GolayCode
 
 
@@ -99,8 +100,8 @@ class QECGolayBridge(SimulationBase):
             title="QEC Golay Bridge: CSS [[24,12,8]] from G2 Topology",
             description=(
                 "Constructs a CSS quantum error-correcting code from the self-dual "
-                "Golay code [24,12,8]. Maps PM algebraic structures (b3=24, 12 bridges) "
-                "to QEC concepts with honest classifications."
+                "Golay code [24,12,8]. Maps PM algebraic structures to QEC concepts with honest "
+                "classifications; the b3 = 24 identification fails on the adopted Y_7 (b3 = 43)."
             ),
             section_id="qec-bridge",
             subsection_id=None,
@@ -227,26 +228,26 @@ class QECGolayBridge(SimulationBase):
         (suggestive numerical coincidence), MISMATCH (the numbers don't match),
         or ANALOGY (conceptual similarity, different mechanisms).
         """
+        b3 = active_b3()
         return [
             {
-                "pm_concept": "b3 = 24 (G2 Betti number)",
+                "pm_concept": f"b3 = {b3} (Betti number of the active Y_7)",
                 "qec_concept": "n = 24 (physical qubits)",
-                "classification": "MOTIVATED_IDENTIFICATION",
+                "classification": "MISMATCH" if b3 != 24 else "MOTIVATED_IDENTIFICATION",
                 "note": (
-                    "The Golay code length n=24 equals the G2 Betti number b3=24. "
-                    "Both arise from the Leech lattice in R^24, so the coincidence "
-                    "has a common mathematical root. However, physical qubits and "
-                    "topological cycles are different mathematical objects."
+                    f"The Golay code length n=24 is the Leech-lattice dimension; the active "
+                    f"path has b3={b3}. The identification n = b3 holds only on the off-path "
+                    "seed_24 and fails on the adopted Y_7. Physical qubits and topological "
+                    "cycles are also different mathematical objects."
                 ),
             },
             {
-                "pm_concept": "12 bridge pairs (b3/2)",
+                "pm_concept": f"b3/2 = {b3 / 2:g} (half the Betti number)",
                 "qec_concept": "k = 12 (logical qubits)",
-                "classification": "MOTIVATED_IDENTIFICATION",
+                "classification": "MISMATCH" if b3 != 24 else "MOTIVATED_IDENTIFICATION",
                 "note": (
-                    "The code encodes 12 logical qubits, matching the 12 bridge pairs. "
-                    "Both numbers derive from 24/2. Geometric bridges and information-"
-                    "theoretic logical qubits operate in different domains."
+                    f"The code encodes 12 logical qubits; b3/2 = {b3 / 2:g} on the active "
+                    "path. The match with 12 bridge pairs holds only at b3 = 24 (seed_24)."
                 ),
             },
             {
@@ -356,9 +357,9 @@ class QECGolayBridge(SimulationBase):
                 "The extended Golay code [24,12,8], which arises naturally from the "
                 "Leech lattice construction in the PM framework, is self-dual and "
                 "gives a valid CSS quantum code [[24,12,8]] (Calderbank-Shor-Steane). "
-                "The numerical coincidence dim=24 = b3 suggests a connection between "
-                "the topological protection of the G2 manifold and quantum error "
-                "correction. The CSS construction is DERIVED (standard mathematics); "
+                "The coincidence dim=24 = b3 holds only on the off-path seed_24 (b3 = 43 "
+                "on the adopted Y_7), so it does not support a link between "
+                "the topology of Y_7 and quantum error correction. The CSS construction is DERIVED (standard mathematics); "
                 "the PM-to-QEC mapping is a MOTIVATED_IDENTIFICATION with notable "
                 "mismatches (42 certificates != 12 stabilizer generators; 288 roots "
                 "!= 4096 codewords)."
@@ -397,8 +398,8 @@ class QECGolayBridge(SimulationBase):
                     content=(
                         "The CSS construction from the self-dual Golay code is standard "
                         "mathematics (DERIVED). The suggestion that PM bridge pairs correspond "
-                        "to logical qubits is a MOTIVATED_IDENTIFICATION: the numbers match "
-                        "(12 bridges = 12 logical qubits, b3=24 = 24 physical qubits), but "
+                        "to logical qubits is a MOTIVATED_IDENTIFICATION only at b3 = 24: the numbers match "
+                        "(on the off-path seed_24 only: b3 = 24 and 12 bridges; the adopted Y_7 has b3 = 43), but "
                         "the mathematical objects are fundamentally different. Notable mismatches: "
                         "the PM framework has 42 certificates while the CSS code has 12 stabilizer "
                         "generators; the 288 ancestral roots do not correspond to the 4096 codewords."
