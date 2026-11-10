@@ -8,6 +8,7 @@ import numpy as np
 
 from .gauge import GaugeUnificationParameters
 from .fitted import TorsionClass
+from .path_valued import PathValued
 
 
 # ==============================================================================
@@ -154,7 +155,7 @@ class GeometricProtonDecayParameters:
         }
 
 
-class DoubletTripletSplittingParameters:
+class DoubletTripletSplittingParameters(metaclass=PathValued):
     """
     v14.1: Doublet-Triplet Splitting via Native TCS (retired reading) Topological Filter.
 
@@ -183,9 +184,10 @@ class DoubletTripletSplittingParameters:
     """
 
     # TCS topology parameters (from TCSTopologyParameters)
-    B2 = 4  # Source: TCS construction h^{1,1} = 4 (CHNP 2015)
+    # B2 and CHI_EFF are those of the path in force, read at access.
+    RETIRED_TCS187_B2 = 4  # h^{1,1} = 4 at TCS #187 (CHNP 2015)
     K_MATCHING = 4              # Source: CHNP 2015 - four matching K3 fibres (calibrated at the retired TCS seed; not re-derived on Y7)
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
+    RETIRED_TCS187_CHI_EFF = 144  # 2(4 - 0 + 68) at CHNP construction #187
 
     # Gauge group structure
     SM_RANK = 4                 # Derived: rank(SU(3)×SU(2)×U(1)) = 3+1+1-1 = 4

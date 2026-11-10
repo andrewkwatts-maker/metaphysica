@@ -21,11 +21,11 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Sequence
 
-__all__ = ["EFFECTS", "RANKED_KIND", "reading_effect", "option_effects",
-           "unranked_reason", "validate_effects"]
+__all__ = ["EFFECTS", "PATH_KIND", "reading_effect", "option_effects",
+           "off_path_reason", "validate_effects"]
 
 EFFECTS = ("scored", "unscored", "none", "not_evaluable")
-RANKED_KIND = "physics"
+PATH_KIND = "physics"
 
 
 def reading_effect(reading: Any, base: Any) -> str:
@@ -75,7 +75,7 @@ def option_effects(entries: Sequence[Any], selected: str,
     return out
 
 
-def unranked_reason(selection: Mapping[str, str],
+def off_path_reason(selection: Mapping[str, str],
                     forks: Mapping[str, Any]) -> str:
     """Why a run with *selection* does not rank, or "" when it does."""
     if not forks:
@@ -84,9 +84,9 @@ def unranked_reason(selection: Mapping[str, str],
     if unknown:
         raise ValueError("selection names undeclared forks %s" % unknown)
     off = sorted("%s (%s)" % (f, forks[f].kind) for f in selection
-                 if forks[f].kind != RANKED_KIND)
+                 if forks[f].kind != PATH_KIND)
     return ("departs on a fork that is not a %s path: %s"
-            % (RANKED_KIND, ", ".join(off))) if off else ""
+            % (PATH_KIND, ", ".join(off))) if off else ""
 
 
 def validate_effects(effects: Any) -> List[str]:

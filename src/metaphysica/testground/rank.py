@@ -33,7 +33,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from metaphysica.testground.rank_effects import (option_effects,
-                                                 unranked_reason,
+                                                 off_path_reason,
                                                  validate_effects)
 from metaphysica.testground.runner.isolation import read_stamp
 from metaphysica.testground.runner.worker import RUN_LOG_NAME
@@ -123,7 +123,7 @@ def rank_entries(entries: Sequence[RankEntry], selected: str,
     if selected not in by_id:
         raise ValueError("the selected path %r is not among the %d finished "
                          "runs" % (selected, len(entries)))
-    reasons = {e.path_id: unranked_reason(e.selection, forks) for e in entries}
+    reasons = {e.path_id: off_path_reason(e.selection, forks) for e in entries}
     if reasons[selected]:
         raise ValueError("the selected path %r %s" % (selected, reasons[selected]))
     chosen = by_id[selected].reading

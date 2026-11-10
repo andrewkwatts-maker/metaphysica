@@ -107,7 +107,7 @@ class FermionChiralityParameters(metaclass=PathValued):
 # EFT VALIDITY & UV COMPLETION (v13.0)
 # ==============================================================================
 
-class EFTValidityParameters:
+class EFTValidityParameters(metaclass=PathValued):
     """
     EFT validity regime with geometric protection.
 
@@ -132,7 +132,8 @@ class EFTValidityParameters:
     M_PLANCK = 1.221e19  # GeV (FULL Planck mass; reduced is 2.435e18)
 
     # Geometric suppression factor from G₂ topology
-    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    # B3 is that of the path in force, read at access (PathValued).
+    RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 at TCS #187 (CHNP 2015)
 
     # Asymptotic Safety parameters
     G_FIXED_POINT = 0.27  # Source: Reuter-Saueressig (2012) asymptotic safety fixed point
@@ -194,7 +195,7 @@ class EFTValidityParameters:
 # G2 SPINOR GEOMETRY PARAMETERS (v13.0)
 # ==============================================================================
 
-class G2SpinorGeometryParameters:
+class G2SpinorGeometryParameters(metaclass=PathValued):
     """
     Parameters for G2 spinor geometry validation.
 
@@ -208,8 +209,9 @@ class G2SpinorGeometryParameters:
     """
 
     # Topological parameters (from TopologicalDerivations)
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    # CHI_EFF and B3 are those of the path in force, read at access.
+    RETIRED_TCS187_CHI_EFF = 144  # 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68)
+    RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
 
     # Spinor representation theory
     SPINOR_DOF_7D = 8  # Source: dim(8_s) = 8 real spinor components (Spin(7) -> G2)
@@ -228,17 +230,17 @@ class G2SpinorGeometryParameters:
 
     @staticmethod
     def n_flux():
-        """N_flux = chi_eff / 6 = 24"""
+        """N_flux = chi_eff / 6 of the path in force"""
         return G2SpinorGeometryParameters.CHI_EFF / 6.0
 
     @staticmethod
     def T_topological():
-        """T_topological = -b3 / N_flux = -1.0"""
+        """T_topological = -b3 / N_flux (-1.0 only at the retired TCS #187)"""
         return -G2SpinorGeometryParameters.B3 / G2SpinorGeometryParameters.n_flux()
 
     @staticmethod
     def T_omega_spinor():
-        """T_omega = T_topological x spinor_fraction = -0.875"""
+        """T_omega = T_topological x spinor_fraction (-0.875 at TCS #187)"""
         return G2SpinorGeometryParameters.T_topological() * G2SpinorGeometryParameters.spinor_fraction()
 
     @staticmethod
@@ -272,7 +274,7 @@ class G2SpinorGeometryParameters:
 # TCS (retired reading) G₂ MANIFOLD TOPOLOGY PARAMETERS (v13.0)
 # ==============================================================================
 
-class TCSTopologyParameters:
+class TCSTopologyParameters(metaclass=PathValued):
     """
     TCS G₂ Manifold #187 Topology (Corti-Haskins-Nordström-Pacini 2015)
 
@@ -288,21 +290,22 @@ class TCSTopologyParameters:
       Fano 3-folds", Geom. Topol. 17(4)
     """
 
-    # Primary topology
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B2 = 4  # Source: TCS (retired reading) construction h^{1,1} = 4 (CHNP 2015)
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    # Primary topology: CHI_EFF, B2 and B3 are those of the path in force,
+    # read at access (PathValued). RETIRED record of manifold #187:
+    RETIRED_TCS187_CHI_EFF = 144  # 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68)
+    RETIRED_TCS187_B2 = 4  # h^{1,1} = 4 (CHNP 2015)
+    RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
     K_MATCHING = 4  # Source: CHNP 2015 - four matching K3 fibres (calibrated at the retired TCS seed; not re-derived on Y7)
 
-    # Hodge numbers
-    HODGE_H11 = 4  # Source: CHNP 2015 h^{1,1} = 4 Kahler moduli
-    HODGE_H21 = 0  # Source: G2 manifolds have no complex structure moduli
-    HODGE_H31 = 68  # Source: CHNP 2015 h^{3,1} = 68 associative 3-cycle moduli
+    # Hodge numbers of the retired manifold #187
+    RETIRED_TCS187_HODGE_H11 = 4  # CHNP 2015 h^{1,1} = 4 Kahler moduli
+    RETIRED_TCS187_HODGE_H21 = 0  # G2 manifolds have no complex structure moduli
+    RETIRED_TCS187_HODGE_H31 = 68  # CHNP 2015 h^{3,1} = 68 associative 3-cycle moduli
 
     # Derived quantities
     @staticmethod
     def n_flux():
-        """N_flux = chi_eff / 6 = 24"""
+        """N_flux = chi_eff / 6 of the path in force"""
         return TCSTopologyParameters.CHI_EFF / 6
 
     @staticmethod
@@ -313,11 +316,17 @@ class TCSTopologyParameters:
             'b2': TCSTopologyParameters.B2,
             'b3': TCSTopologyParameters.B3,
             'k_matching': TCSTopologyParameters.K_MATCHING,
-            'hodge_h11': TCSTopologyParameters.HODGE_H11,
-            'hodge_h21': TCSTopologyParameters.HODGE_H21,
-            'hodge_h31': TCSTopologyParameters.HODGE_H31,
             'n_flux': TCSTopologyParameters.n_flux(),
-            'gluing_formula': 'b₃ = b₂(X₁) + b₂(X₂) + K + 1 = 24',
+            'retired_tcs187': {
+                'chi_eff': TCSTopologyParameters.RETIRED_TCS187_CHI_EFF,
+                'b2': TCSTopologyParameters.RETIRED_TCS187_B2,
+                'b3': TCSTopologyParameters.RETIRED_TCS187_B3,
+                'hodge_h11': TCSTopologyParameters.RETIRED_TCS187_HODGE_H11,
+                'hodge_h21': TCSTopologyParameters.RETIRED_TCS187_HODGE_H21,
+                'hodge_h31': TCSTopologyParameters.RETIRED_TCS187_HODGE_H31,
+                'gluing_formula': ('b₃ = b₂(X₁) + b₂(X₂) + K + 1 = %d (retired)'
+                                   % TCSTopologyParameters.RETIRED_TCS187_B3),
+            },
             'manifold_id': '#187 (CHNP 2015)',
             'construction': 'Twisted Connected Sum of K3-fibred CY3s',
             'literature': 'Corti-Haskins-Nordström-Pacini, Duke Math. J. 164(10) 2015',

@@ -6,6 +6,8 @@ formulas or strings were changed by the move.
 
 import numpy as np
 
+from .path_valued import PathValued
+
 
 # ==============================================================================
 # v10.2 FERMION MATRIX PARAMETERS - YUKAWA FROM G₂ CYCLES
@@ -141,17 +143,18 @@ class GeometricYukawaParameters:
     SIMULATION = "simulations/yukawa_texture_geometric_v14_2.py"
 
 
-class TopologicalCPPhaseParameters:
+class TopologicalCPPhaseParameters(metaclass=PathValued):
     """
     v14.2: CP-violating phase from G₂ cycle orientations.
 
     MECHANISM:
-        The G₂ manifold has b₃ = 24 associative 3-cycles.
+        The G₂ manifold has b₃ associative 3-cycles (b₃ of the path in force).
         Cycles pair with ±1 orientations.
         Net chirality gives CP phase: δ_CP = π × (Σ orientations) / b₃
 
     KEY RESULT:
-        δ_CP = π × 12/24 = π/2 = 90° (maximal CP violation)
+        δ_CP = π × 12/24 = π/2 = 90° at the retired TCS #187 (b₃ = 24) reading;
+        on another path δ_CP = π × ORIENTATION_SUM / b₃, computed at access.
 
     This correctly predicts that both quark (CKM) and lepton (PMNS)
     sectors exhibit large CP violation.
@@ -160,19 +163,27 @@ class TopologicalCPPhaseParameters:
     """
 
     # Topological inputs
-    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    # B3 is that of the path in force, read at access (PathValued).
+    RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
     ORIENTATION_SUM = 12  # Derived: Net chirality from Z2 structure        # Net chirality from Z₂ structure
 
     # Derived CP phase
-    DELTA_CP_RAD = 1.5708       # π/2
-    DELTA_CP_DEG = 90.0         # Maximal
+    # DELTA_CP_RAD = π ORIENTATION_SUM / b3 and DELTA_CP_DEG, read at access
+    # (π/2 and 90° at the retired TCS #187 reading).
+    RETIRED_TCS187_DELTA_CP_RAD = 1.5708
+    RETIRED_TCS187_DELTA_CP_DEG = 90.0
+    _PATH_DERIVED = {
+        "DELTA_CP_RAD": lambda cls: np.pi * cls.ORIENTATION_SUM / cls.B3,
+        "DELTA_CP_DEG": lambda cls: 180.0 * cls.ORIENTATION_SUM / cls.B3,
+        "MAXIMAL_CP": lambda cls: bool(np.isclose(abs(np.sin(cls.DELTA_CP_RAD)), 1.0)),
+    }
 
     # Experimental comparison
     CKM_DELTA_DEG = 67.0        # Quark sector  # Source: PDG 2024 δ_CKM = 67.4° ± 3.4°
     PMNS_DELTA_DEG = 232.0      # Lepton sector  # Source: NuFIT 6.0 (2024) δ_CP = 194° +51°/-25° (NO)
 
     # Predictions
-    MAXIMAL_CP = True           # |sin δ| = 1
+    # MAXIMAL_CP (|sin δ| = 1) is computed at access from DELTA_CP_RAD.
     FORMULA = "δ_CP = π × (Σ orientations) / b₃"
 
     # Status

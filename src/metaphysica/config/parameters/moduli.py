@@ -9,6 +9,7 @@ import numpy as np
 from ..constants import FundamentalConstants
 from .phenomenology import PhenomenologyParameters
 from .bridge import BridgePhysicsParameters
+from .path_valued import PathValued
 
 
 # ==============================================================================
@@ -88,7 +89,7 @@ class ModuliParameters:
 # PNEUMA RACETRACK POTENTIAL (v12.9)
 # ==============================================================================
 
-class PneumaRacetrackParameters:
+class PneumaRacetrackParameters(metaclass=PathValued):
     """
     Pneuma field vacuum via G₂-racetrack potential from competing non-perturbative effects.
 
@@ -109,14 +110,14 @@ class PneumaRacetrackParameters:
     """
 
     # Topological input (from TCS (retired reading) G₂ manifold #187)
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B3 = 24  # Source: TCS construction b₃ = b₂(X₁) + b₂(X₂) + K + 1 (CHNP 2015)
-    N_FLUX = CHI_EFF / 6  # Derived: χ_eff/6 = 144/6 = 24
+    # CHI_EFF, B3 and N_FLUX (chi_eff/6) are those of the path in force, read
+    # at access; A_COEFF, B_COEFF and VEV_PNEUMA follow them (_PATH_DERIVED).
+    RETIRED_TCS187_CHI_EFF = 144  # 2(4 - 0 + 68) at CHNP construction #187
+    RETIRED_TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
 
     # Racetrack coefficients from hidden sector gauge ranks
     # Two competing condensates with rank difference of 1
-    A_COEFF = 2 * np.pi / N_FLUX         # Derived: 2π/N_flux = 2π/24 ≈ 0.2618
-    B_COEFF = 2 * np.pi / (N_FLUX + 1)   # Derived: 2π/(N_flux+1) = 2π/25 ≈ 0.2513
+    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at TCS #187)
 
     # Amplitude prefactors (order unity, slight hierarchy from instanton effects)
     A_AMPLITUDE = 1.0  # Source: Instanton normalization (KKLT 2003)
@@ -125,8 +126,14 @@ class PneumaRacetrackParameters:
     # Derived VEV from ∂V/∂Ψ = 0
     # At minimum: A·a·exp(-a·Ψ) = B·b·exp(-b·Ψ)
     # Solution: Ψ = ln(Aa/Bb) / (a - b)
-    VEV_PNEUMA = np.log((A_AMPLITUDE * A_COEFF) / (B_AMPLITUDE * B_COEFF)) / (A_COEFF - B_COEFF)
-    # ≈ 1.0756
+    # VEV_PNEUMA (≈ 1.0756 at N_flux = 24) is computed at access.
+    _PATH_DERIVED = {
+        "A_COEFF": lambda cls: 2 * np.pi / cls.N_FLUX,
+        "B_COEFF": lambda cls: 2 * np.pi / (cls.N_FLUX + 1),
+        "VEV_PNEUMA": lambda cls: (
+            np.log((cls.A_AMPLITUDE * cls.A_COEFF) / (cls.B_AMPLITUDE * cls.B_COEFF))
+            / (cls.A_COEFF - cls.B_COEFF)),
+    }
 
     # Stability (Hessian > 0)
     VACUUM_STABLE = True  # Proven via V''(VEV) > 0
@@ -176,7 +183,7 @@ class PneumaRacetrackParameters:
 # MASHIACH VOLUME STABILIZATION PARAMETERS (v13.0 - Open Question 3)
 # ==============================================================================
 
-class MashiachStabilizationParameters:
+class MashiachStabilizationParameters(metaclass=PathValued):
     """
     Parameters for Mashiach field (volume modulus) stabilization.
 
@@ -198,12 +205,14 @@ class MashiachStabilizationParameters:
     """
 
     # Topological parameters (same as Pneuma)
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    N_FLUX = 24  # Derived: chi_eff/6 = 144/6 = 24
+    # CHI_EFF and N_FLUX (chi_eff/6) of the path in force are read at access;
+    # A_COEFF and B_COEFF follow them (_PATH_DERIVED).
+    RETIRED_TCS187_CHI_EFF = 144  # CHNP construction #187
+    _PATH_DERIVED = {"A_COEFF": lambda cls: 2 * np.pi / cls.N_FLUX,
+                     "B_COEFF": lambda cls: 2 * np.pi / (cls.N_FLUX + 1)}
 
     # Racetrack coefficients from hidden sector gauge ranks
-    A_COEFF = 2 * np.pi / 24   # Derived: 2π/N_flux = 2π/24 ≈ 0.2618
-    B_COEFF = 2 * np.pi / 25   # Derived: 2π/(N_flux+1) = 2π/25 ≈ 0.2513
+    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at TCS #187)
 
     # Amplitude prefactors
     A_AMPLITUDE = 1.0  # Source: Instanton normalization (KKLT 2003)
@@ -260,7 +269,7 @@ class MashiachStabilizationParameters:
 # QUANTUM FREUND-RUBIN STABILITY PARAMETERS (v13.0 - Open Question 4)
 # ==============================================================================
 
-class QuantumFRStabilityParameters:
+class QuantumFRStabilityParameters(metaclass=PathValued):
     """
     Parameters for quantum-corrected Freund-Rubin stability analysis.
 
@@ -278,8 +287,8 @@ class QuantumFRStabilityParameters:
     """
 
     # Topological parameters
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    N_FLUX = 24  # Derived: chi_eff/6 = 144/6 = 24
+    # CHI_EFF and N_FLUX (chi_eff/6) of the path in force are read at access.
+    RETIRED_TCS187_CHI_EFF = 144  # CHNP construction #187
 
     # Casimir coefficient from zeta-function regularization
     # zeta_G2(-1) ~ O(10^-3) for typical G2 manifolds

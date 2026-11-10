@@ -147,10 +147,11 @@ class TorsionClass(metaclass=PathValued):
     SPINOR_FRACTION = SPIN7_STABILIZED / SPIN7_TOTAL  # Derived: 7/8 = 0.875
 
     # Derived flux quantities
-    N_FLUX = TCS187_CHI_EFF / 6  # chi_eff/6 at the retired TCS #187 reading
+    # N_FLUX (chi_eff/6 of the path in force) is read at access.
+    TCS187_N_FLUX = TCS187_CHI_EFF / 6  # chi_eff/6 at the retired TCS #187 reading
 
     # Torsion class from spinor fraction derivation
-    T_TOPOLOGICAL = -TCS187_B3 / N_FLUX              # -b3/N_flux at TCS #187 = -1.0
+    T_TOPOLOGICAL = -TCS187_B3 / TCS187_N_FLUX              # -b3/N_flux at TCS #187 = -1.0
     T_OMEGA_GEOMETRIC = T_TOPOLOGICAL * SPINOR_FRACTION  # Derived: -1.0 * (7/8) = -0.875
     T_OMEGA = -0.875  # Derived: T_topological * spinor_fraction = -1.0 * (7/8) = -0.875
     T_OMEGA_TARGET = -0.884  # Source: Calibrated from PDG 2024 precision fits
@@ -219,7 +220,7 @@ class FluxQuantization(metaclass=PathValued):
     TCS187_N_GENERATIONS = 3     # chi_eff / 48 at TCS #187
 
 
-class AnomalyCancellation:
+class AnomalyCancellation(metaclass=PathValued):
     """
     v10.0: SO(10) chiral anomaly cancellation via Green-Schwarz mechanism.
 
@@ -229,7 +230,9 @@ class AnomalyCancellation:
     """
 
     # SO(10) representation theory
-    N_GENERATIONS = 3  # Derived: χ_eff / 48 = 144 / 48 = 3 (index theorem)
+    # N_GENERATIONS is that of the path in force (n_gen_source fork), read at
+    # access; GS_COUNTERTERM matches it. RETIRED record of the TCS #187 reading:
+    RETIRED_TCS187_N_GENERATIONS = 3  # chi_eff / 48 = 144 / 48 at TCS #187
     ANOMALY_16_SPINOR = 1        # Tr(T^a{T^b,T^c}) for 16
     ANOMALY_SINGLET = 0          # No contribution from singlets
 
@@ -241,7 +244,8 @@ class AnomalyCancellation:
                 AnomalyCancellation.ANOMALY_SINGLET)
 
     # Green-Schwarz counterterm from G₂ axion
-    GS_COUNTERTERM = 3           # Derived: N_GENERATIONS = 3 (anomaly matching)
+    # GS_COUNTERTERM = N_GENERATIONS (anomaly matching), read at access
+    _PATH_DERIVED = {"GS_COUNTERTERM": lambda cls: cls.N_GENERATIONS}
 
     @staticmethod
     def is_anomaly_free():
