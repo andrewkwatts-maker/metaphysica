@@ -252,6 +252,66 @@ def _apply_headline(fs: Dict[str, Any]) -> None:
     })
 
 
+#: (key, source, description) for a count whose EML is withheld on purpose: a tally
+#: over a collection is whatever the audit returns, and an eml_scalar(<current
+#: value>) would become a false claim the first time the tally moves.
+_TALLY_PARAMS = (
+    ("framework_statistics.pending_count", "framework_statistics", "pending_count"),
+    ("framework_statistics.mathematical_count", "framework_statistics", "mathematical_count"),
+    ("framework_statistics.exact_matches", "framework_statistics", "exact_matches"),
+    ("validation.within_1sigma", "validation", "within_1sigma"),
+    ("validation.within_2sigma", "validation", "within_2sigma"),
+    ("validation.total_predictions", "validation", "total_predictions"),
+)
+
+
+def _registered(value: Any, source: str = 'generate_statistics.py', **extra: str) -> Dict[str, Any]:
+    """One COMPUTED parameter row."""
+    return {'value': value, 'status': 'COMPUTED', 'source': source, **extra}
+
+
+def _eml_parameter_rows(fs: Dict[str, Any], vs: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """Rows that carry an EML relation; the gate total in the text is the computed one."""
+    n = fs['total_gates']
+    return {
+        'framework_statistics.not_testable_count': _registered(
+            fs['not_testable_count'],
+            eml_description=(
+                f"EML: ops.sub(eml_scalar({n}), ops.add(eml_vec('framework_statistics.pass_count'), "
+                "ops.add(eml_vec('framework_statistics.pending_count'), "
+                "eml_vec('framework_statistics.mathematical_count')))) "
+                f"- the gate classes partition the {n} gates, so the axiomatic count is "
+                "the residual total - pass - pending - mathematical")),
+        'framework_statistics.total_gates': _registered(
+            fs['total_gates'],
+            eml_description=f"EML: eml_scalar({n}) - total number of certification gates (Gates system)"),
+        'framework_statistics.testable_count': _registered(
+            fs['testable_count'], description='Number of testable gates (total - axioms)',
+            eml_description=(f"EML: ops.sub(eml_scalar({n}), eml_vec('framework_statistics.not_testable_count'))"
+                             " - testable = total_gates - axioms")),
+        'framework_statistics.status': _registered(
+            fs['status'],
+            eml_description='EML: eml_scalar(status_string) - overall framework validation status label'),
+        'validation.success_rate': _registered(
+            vs['success_rate'],
+            eml_description=("EML: ops.mul(ops.div(eml_vec('validation.within_2sigma'), "
+                             "eml_vec('validation.total_predictions')), eml_scalar(100.0)) "
+                             "- success rate = within_2sigma/total x 100%")),
+    }
+
+
+def _parameter_rows(statistics: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
+    """Every row written to parameters.json, keyed by parameter name."""
+    fs, vs = statistics['framework_statistics'], statistics['validation']
+    rows = {'framework_statistics.pass_count': _registered(fs['pass_count'])}
+    rows.update({key: _registered(statistics[section][field])
+                 for key, section, field in _TALLY_PARAMS})
+    rows.update({'framework_statistics.' + key: _registered(fs[key], 'headline_stats.py')
+                 for key in HEADLINE_KEYS})
+    rows.update(_eml_parameter_rows(fs, vs))
+    return rows
+
+
 def _write_back_parameters(statistics: Dict[str, Any]) -> None:
     """Register the statistics as parameters for the JS loader.
 
@@ -260,203 +320,41 @@ def _write_back_parameters(statistics: Dict[str, Any]) -> None:
     """
     with open(PARAMETERS_FILE, 'r', encoding='utf-8') as f:
         params_data = json.load(f)
-
-    # Add framework_statistics as registered parameters
-    fs = statistics['framework_statistics']
-    params_data['parameters']['framework_statistics.pass_count'] = {
-        'value': fs['pass_count'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of LOCKED gates passing experimental validation. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['framework_statistics.pending_count'] = {
-        'value': fs['pending_count'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of gates in PENDING_LOCK state. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['framework_statistics.not_testable_count'] = {
-        'value': fs['not_testable_count'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        'eml_description': (
-            "EML: ops.sub(eml_scalar(72.0), ops.add(eml_vec('framework_statistics.pass_count'), "
-            "ops.add(eml_vec('framework_statistics.pending_count'), "
-            "eml_vec('framework_statistics.mathematical_count')))) "
-            "— the four gate classes partition the 72 gates, so the axiomatic count is "
-            "the residual 72 - pass - pending - mathematical. The former eml_scalar(N_axiom) "
-            "named an operand that is in no registry"
-        )
-    }
-    params_data['parameters']['framework_statistics.mathematical_count'] = {
-        'value': fs['mathematical_count'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of gates with mathematical (algebraic) status. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['framework_statistics.total_gates'] = {
-        'value': fs['total_gates'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        'eml_description': 'EML: eml_scalar(72) — total number of certification gates (Gates system)'
-    }
-    params_data['parameters']['framework_statistics.testable_count'] = {
-        'value': fs['testable_count'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        'description': 'Number of testable gates (total - axioms)',
-        'eml_description': 'EML: ops.sub(eml_scalar(72), eml_vec(\'framework_statistics.not_testable_count\')) — testable = total_gates − axioms'
-    }
-    # Headline fit and tally: values read from the rigor report and
-    # the gate certificates (headline_stats), no EML relation.
-    for key in HEADLINE_KEYS:
-        params_data['parameters']['framework_statistics.' + key] = {
-            'value': fs[key], 'status': 'COMPUTED',
-            'source': 'headline_stats.py',
-        }
-    params_data['parameters']['framework_statistics.status'] = {
-        'value': fs['status'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        'eml_description': 'EML: eml_scalar(status_string) — overall framework validation status label (PASS/FAIL/PARTIAL)'
-    }
-    params_data['parameters']['framework_statistics.exact_matches'] = {
-        'value': fs['exact_matches'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of predictions with sigma-deviation = 0. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-
-    # Also add validation section
-    vs = statistics['validation']
-    params_data['parameters']['validation.within_1sigma'] = {
-        'value': vs['within_1sigma'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of predictions within 1 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['validation.within_2sigma'] = {
-        'value': vs['within_2sigma'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- count of predictions within 2 sigma of experiment. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['validation.total_predictions'] = {
-        'value': vs['total_predictions'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        # EML WITHHELD -- total number of verifiable predicted observables. A tally over a collection. Withheld rather than hard-coded as a
-        # scalar literal: the count is whatever the audit returns, and an
-        # eml_scalar(<current value>) would silently become a false claim the
-        # first time the tally moves.
-    }
-    params_data['parameters']['validation.success_rate'] = {
-        'value': vs['success_rate'],
-        'status': 'COMPUTED',
-        'source': 'generate_statistics.py',
-        'eml_description': 'EML: ops.mul(ops.div(eml_vec(\'validation.within_2sigma\'), eml_vec(\'validation.total_predictions\')), eml_scalar(100.0)) — success rate = within_2σ/total × 100%'
-    }
-
+    params_data['parameters'].update(_parameter_rows(statistics))
     with open(PARAMETERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(params_data, f, indent=2)
-    print(f"  Updated parameters.json with framework_statistics")
+    print("  Updated parameters.json with framework_statistics")
 
 
-def generate_statistics() -> Dict[str, Any]:
-    """Generate complete statistics from all source data."""
-    print("Loading source data...")
+def _collect_sigmas(gates_data, param_cert_data, statistical_report, parameters_data) -> List[float]:
+    """Sigma deviations from the first source that supplies any.
 
-    # Load all data sources
-    gates_data = load_json_file(GATES_CERT_FILE)
-    param_cert_data = load_json_file(PARAM_CERT_FILE)
-    statistical_report = load_json_file(STATISTICAL_RIGOR_FILE)
-    parameters_data = load_json_file(PARAMETERS_FILE)
+    The rigor report (scored rows) comes first; mixing sources gave counts over
+    a different N than the chi-squared (5 predictions beside 63 rows). No sigma
+    set means an upstream step failed: raise, not KeyError.
+    """
+    sources = (
+        ("statistical_rigor_report.json", statistical_report, extract_sigma_deviations_from_statistical_report),
+        ("CERTIFICATES_v16_2_FINAL.json", param_cert_data, extract_sigma_deviations_from_param_certs),
+        ("GATES_CERTIFICATES.json", gates_data, extract_sigma_deviations_from_gates),
+        ("parameters.json", parameters_data, extract_sigma_deviations_from_parameters),
+    )
+    for name, data, extract in sources:
+        sigmas = extract(data) if data else []
+        if sigmas:
+            print(f"  - Found {len(sigmas)} sigma deviations from {name}")
+            return sigmas
+    raise RuntimeError(
+        "no sigma deviations found (parameters.json or gate certificates "
+        "missing or empty); an earlier build step failed")
 
-    # Collect all sigma deviations
-    all_sigma_deviations = []
 
-    # From statistical rigor report (PRIMARY source for v24+)
-    if statistical_report:
-        report_sigmas = extract_sigma_deviations_from_statistical_report(statistical_report)
-        all_sigma_deviations.extend(report_sigmas)
-        print(f"  - Found {len(report_sigmas)} sigma deviations from statistical_rigor_report.json")
-
-    # From parameter certificates (legacy, if exists). Skipped when the rigor
-    # report supplies the scored rows: mixing sources gave counts over a
-    # different N than the chi-squared (5 predictions beside 63 rows).
-    if param_cert_data and not all_sigma_deviations:
-        cert_sigmas = extract_sigma_deviations_from_param_certs(param_cert_data)
-        all_sigma_deviations.extend(cert_sigmas)
-        print(f"  - Found {len(cert_sigmas)} sigma deviations from CERTIFICATES_v16_2_FINAL.json")
-
-    # From gates certificates
-    if gates_data and not all_sigma_deviations:
-        gate_sigmas = extract_sigma_deviations_from_gates(gates_data)
-        # Avoid duplicates - only add if not already covered
-        if gate_sigmas:
-            all_sigma_deviations.extend(gate_sigmas)
-            print(f"  - Found {len(gate_sigmas)} sigma deviations from GATES_CERTIFICATES.json")
-
-    # Fallback to the registry itself (2026-08 audit): the legacy
-    # CERTIFICATES_v16_2_FINAL.json no longer exists, which used to leave
-    # this generator emitting all-zero statistics while still declaring
-    # MAJORITY_VERIFIED from the declarative gate counts. parameters.json
-    # carries the genuinely computed sigma set — use it whenever the other
-    # sources produced nothing.
-    if not all_sigma_deviations and parameters_data:
-        param_sigmas = extract_sigma_deviations_from_parameters(parameters_data)
-        all_sigma_deviations.extend(param_sigmas)
-        print(f"  - Fallback: {len(param_sigmas)} sigma deviations from parameters.json")
-
-    # Compute main validation statistics. No sigma set means an upstream
-    # step (simulations, parameters.json) failed: say so, not KeyError.
-    if not all_sigma_deviations:
-        raise RuntimeError(
-            "no sigma deviations found (parameters.json or gate certificates "
-            "missing or empty); an earlier build step failed")
-    validation_stats = compute_statistics(all_sigma_deviations)
-
-    # Count gate statuses
-    gate_counts = count_gate_statuses(gates_data)
-
-    # Determine overall status. The gate counts are DECLARATIVE
-    # certificates (see validation audit), so the status string must not
-    # imply computed verification when the sigma set is empty.
-    if validation_stats["total_predictions"] == 0:
-        status = "NO_COMPUTED_SIGMAS (gate counts are declarative only)"
-    elif gate_counts["verified"] >= 30:
-        status = "MAJORITY_VERIFIED (gate certificates declarative; sigma stats computed)"
-    elif gate_counts["verified"] >= 20:
-        status = "SUBSTANTIAL_PROGRESS"
-    elif gate_counts["verified"] >= 10:
-        status = "MODERATE_PROGRESS"
-    else:
-        status = "EARLY_STAGE"
-
-    # Compute success rate for predictions with data
-    total_with_data = validation_stats["total_predictions"]
-    success_rate = (validation_stats["within_2sigma"] / total_with_data * 100) if total_with_data > 0 else 0.0
-
-    # Build output structure
-    statistics = {
+def _build_statistics(validation_stats: Dict[str, Any], gate_counts: Dict[str, int]) -> Dict[str, Any]:
+    """The statistics document; the headline fields are filled by _apply_headline."""
+    total = validation_stats["total_predictions"]
+    success_rate = validation_stats["within_2sigma"] / total * 100 if total > 0 else 0.0
+    free_variables = _free_variable_count()
+    return {
         "version": VERSION,
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "source_files": {
@@ -464,47 +362,42 @@ def generate_statistics() -> Dict[str, Any]:
             "parameter_certificates": PARAM_CERT_FILE,
             "parameters": PARAMETERS_FILE
         },
-        "statistics": {
-            "exact_matches": validation_stats["exact_matches"]
-        },
-        "summary": {
-            "exact_parameters": validation_stats["exact_matches"]
-        },
+        "statistics": {"exact_matches": validation_stats["exact_matches"]},
+        "summary": {"exact_parameters": validation_stats["exact_matches"]},
         "validation": {
             "within_1sigma": validation_stats["within_1sigma"],
             "within_2sigma": validation_stats["within_2sigma"],
-            "total_predictions": validation_stats["total_predictions"],
-            "total_parameters": total_with_data,
-            # Was FITTED_PARAMS_COUNT = 1, a fourth incompatible answer
-            # alongside the 0 and the two 3s. Reads the ledger now.
-            "calibrated_count": _free_variable_count(),
-            "free_variable_count": _free_variable_count(),
+            "total_predictions": total,
+            "total_parameters": total,
+            "calibrated_count": free_variables,
+            "free_variable_count": free_variables,
             "constraints_count": 1,
             "exact_matches": validation_stats["exact_matches"],
             "success_rate": f"{success_rate:.1f}%"
         },
+        # pass, testable, total, axiom counts and status come from _apply_headline.
         "framework_statistics": {
-            "pass_count": gate_counts["verified"],
             "pending_count": gate_counts["pending_lock"],
-            "not_testable_count": gate_counts["not_testable"],
             "mathematical_count": gate_counts["mathematical"],
-            "total_gates": gate_counts["total_gates"],
-            # Placeholder only: _apply_headline overwrites it from the gate tally.
-            "testable_count": gate_counts["total_gates"] - gate_counts["not_testable"],
             "exact_matches": validation_stats["exact_matches"],
             "chi_squared": validation_stats["chi_squared"],
             "degrees_of_freedom": validation_stats["degrees_of_freedom"],
-            "status": status
         }
     }
 
-    _apply_headline(statistics["framework_statistics"])
 
-    # Also update parameters.json with framework_statistics as registered params
-    # This ensures the JS loader can find them via standard parameter lookup
+def generate_statistics() -> Dict[str, Any]:
+    """Generate complete statistics from all source data."""
+    print("Loading source data...")
+    gates_data = load_json_file(GATES_CERT_FILE)
+    sigmas = _collect_sigmas(gates_data, load_json_file(PARAM_CERT_FILE),
+                             load_json_file(STATISTICAL_RIGOR_FILE),
+                             load_json_file(PARAMETERS_FILE))
+    statistics = _build_statistics(compute_statistics(sigmas), count_gate_statuses(gates_data))
+    _apply_headline(statistics["framework_statistics"])
+    # The JS loader finds these through the standard parameter lookup.
     if os.path.exists(PARAMETERS_FILE):
         _write_back_parameters(statistics)
-
     return statistics
 
 
@@ -533,8 +426,8 @@ def main():
     print(f"  Total predictions: {statistics['validation']['total_predictions']}")
     print(f"  Success rate:      {statistics['validation']['success_rate']}")
 
-    print(f"\nFramework Statistics (Gates Total = 72):")
     fs = statistics['framework_statistics']
+    print(f"\nFramework Statistics (Gates Total = {fs['total_gates']}):")
     print(f"  Verified gates:    {fs['pass_count']} of {fs['testable_count']} testable")
     print(f"  Pending gates:     {fs['pending_count']}")
     print(f"  Not testable:      {fs['not_testable_count']} (axioms)")
