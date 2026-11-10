@@ -1136,17 +1136,13 @@ class FormulasRegistry:
         # Two-time: 26D = 24 space + 2 times = (24,2) signature -- unchanged.
         #
         # Reference: Joyce, D. (2000). Compact Manifolds with Special Holonomy
-        try:
-            from metaphysica.simulations.PM.geometry.b3_path import (
-                resolve_path as _resolve_b3_path,
-                seed_values as _seed_values,
-            )
+        # No literal fallback: an import failure here is a real failure.
+        from metaphysica.simulations.PM.geometry.b3_path import (
+            resolve_path as _resolve_b3_path,
+            seed_values as _seed_values,
+        )
 
-            self._b3 = _seed_values(_resolve_b3_path())[0]
-        except ImportError:
-            # Import cycle only. The fallback must MATCH the adopted branch
-            # (same convention as b3_path.resolve_path's own fallback).
-            self._b3 = 43
+        self._b3 = _seed_values(_resolve_b3_path())[0]
 
         # v20.1: DUAL CHI_EFF STRUCTURE
         # ================================================================
@@ -1469,13 +1465,10 @@ class FormulasRegistry:
 
         Integral values stay ints so the default build is bit-identical.
         """
-        try:
-            from metaphysica.simulations.core.variants.selection import resolve
-            from metaphysica.simulations.PM.geometry.chi_eff_branches import (
-                registry_chi_eff_total,
-            )
-        except ImportError:
-            return 144  # import cycle only; matches the adopted k3_reading
+        from metaphysica.simulations.core.variants.selection import resolve
+        from metaphysica.simulations.PM.geometry.chi_eff_branches import (
+            registry_chi_eff_total,
+        )
         value = registry_chi_eff_total(resolve("chi_eff_route"), b3)
         return int(value) if float(value).is_integer() else value
 
@@ -1858,21 +1851,16 @@ class FormulasRegistry:
         must come from the ruled route, not from an unruled numerator over
         a moved denominator.
         """
-        try:
-            from metaphysica.simulations.PM.geometry.b3_path import (
-                n_gen_report,
-            )
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
 
-            # D-022: n_gen_report is the single source for every
-            # n_gen_source option, including the chi_eff routes.
-            n = n_gen_report()["n_gen"]
-            if n != int(n):
-                raise ValueError(
-                    "the resolved n_gen_source yields a non-integral "
-                    "generation count (%r); a count must be an integer" % n)
-            return int(n)
-        except ImportError:                # import cycle only
-            return 3                       # rank(Gamma), the ruled value
+        # D-022: n_gen_report is the single source for every
+        # n_gen_source option, including the chi_eff routes.
+        n = n_gen_report()["n_gen"]
+        if n != int(n):
+            raise ValueError(
+                "the resolved n_gen_source yields a non-integral "
+                "generation count (%r); a count must be an integer" % n)
+        return int(n)
 
     @property
     def decad(self) -> int:
@@ -2260,6 +2248,22 @@ class FormulasRegistry:
     CODATA_MOLAR_GAS = 8.314462618          # J mol⁻¹ K⁻¹ (exact)
     CODATA_WEAK_MIXING = 0.23122            # sin²θ_W at Z-pole, MS-bar (PDG 2024)
 
+    #: manifest_* property -> the CODATA input it returns by construction.
+    #: Each is an IDENTITY: (1 + eps) is applied in bulk_* and removed again,
+    #: so the row restates its input and is never scored against it.
+    QED_ROUNDTRIP_IDENTITIES = {
+        "manifest_compton_wavelength": "CODATA_COMPTON",
+        "manifest_bohr_radius": "CODATA_BOHR_RADIUS",
+        "manifest_hartree_energy": "CODATA_HARTREE",
+        "manifest_stefan_boltzmann": "CODATA_STEFAN_BOLTZMANN",
+        "manifest_magnetic_flux_quantum": "CODATA_MAGNETIC_FLUX",
+        "manifest_von_klitzing": "CODATA_VON_KLITZING",
+        "manifest_avogadro": "CODATA_AVOGADRO",
+        "manifest_faraday": "CODATA_FARADAY",
+        "manifest_molar_gas_constant": "CODATA_MOLAR_GAS",
+        "manifest_weak_mixing_angle": "CODATA_WEAK_MIXING",
+    }
+
     @property
     def bulk_compton_wavelength(self) -> float:
         """
@@ -2282,10 +2286,8 @@ class FormulasRegistry:
         Formula: λ_C_manifest = λ_C_bulk / (1 + ε)
         where ε = 1/(288 × 100) = 1/28800
 
-        Physical Meaning:
-        -----------------
-        The Compton wavelength contracts as it manifests into 3D because
-        both mass and light expand, but length (as inverse) contracts.
+        IDENTITY: bulk_compton_wavelength is CODATA_COMPTON x (1 + eps), so
+        this returns CODATA_COMPTON by construction.
         """
         return self.bulk_compton_wavelength / (1.0 + 1.0 / (self._roots_total * (self.DECAD ** 2)))
 
@@ -2356,10 +2358,8 @@ class FormulasRegistry:
 
         Formula: E_h_manifest = E_h_bulk × 1/[(1+ε)(1-ε)²]
 
-        Physical Meaning:
-        -----------------
-        Binding energy INCREASES when the grid contracts because
-        confinement adds energy. The manifest energy is higher than bulk.
+        IDENTITY: the bulk factor 1/[(1+eps)(1-eps)^2] is multiplied back
+        out, so this returns CODATA_HARTREE by construction.
         """
         return self.bulk_hartree_energy * ((1.0 + 1.0/(self._roots_total * self.DECAD**2)) *
                                             (1.0 - 1.0/(self._roots_total * self.DECAD**2))**2)
@@ -2380,10 +2380,8 @@ class FormulasRegistry:
 
         Formula: σ_manifest = σ_bulk × (1+ε)⁴
 
-        Physical Meaning:
-        -----------------
-        Temperature vibrates in all 4 dimensions (3 space + 1 time),
-        causing a compound expansion effect at the 4th power.
+        IDENTITY: bulk_stefan_boltzmann divides CODATA by (1+eps)^4, so
+        this returns CODATA_STEFAN_BOLTZMANN by construction.
         """
         epsilon = 1.0 / (self._roots_total * (self.DECAD ** 2))
         return self.bulk_stefan_boltzmann * ((1.0 + epsilon) ** 4)
@@ -2473,8 +2471,7 @@ class FormulasRegistry:
 
         Formula: R = N_A × k
 
-        Since N_A contracts [1/(1+ε)] and k expands [(1+ε)],
-        the adjustments cancel perfectly. R is a Pleromic Invariant.
+        IDENTITY: returns CODATA_MOLAR_GAS unchanged.
         """
         return self.CODATA_MOLAR_GAS  # Invariant - no adjustment needed
 
@@ -2494,10 +2491,8 @@ class FormulasRegistry:
 
         Formula: sin²θ_W_manifest = sin²θ_W_bulk / (1+ε)
 
-        Physical Meaning:
-        -----------------
-        The mixing of W and Z bosons becomes slightly "thinner"
-        as the coupling ratio contracts into 3D space.
+        IDENTITY: bulk_weak_mixing_angle is CODATA x (1 + eps), so this
+        returns CODATA_WEAK_MIXING by construction.
         """
         epsilon = 1.0 / (self._roots_total * (self.DECAD ** 2))
         return self.bulk_weak_mixing_angle / (1.0 + epsilon)

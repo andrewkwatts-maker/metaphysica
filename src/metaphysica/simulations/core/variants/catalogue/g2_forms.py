@@ -261,7 +261,9 @@ FORKS: Dict[str, Fork] = {
         options=[
             VariantOption(
                 id="b3_clusters",
-                summary="4 symmetric clusters of the b3 = 24 3-cycles, 6 each",
+                summary=("4 symmetric clusters of the 24 lattice coordinates, "
+                         "6 each; read as 3-cycles only on the retired "
+                         "seed_24 (b3 = 24)"),
                 consequence=(
                     "BUYS: the racetrack stays valid, because T_i then track "
                     "3-cycle volumes. Nothing in the architecture changes -- "
@@ -279,7 +281,13 @@ FORKS: Dict[str, Fork] = {
                     "swapping the lattice for a different one moved no "
                     "published number, so the 24 coordinates carry no lattice "
                     "content and identifying a bare index set with 3-cycles is "
-                    "free."
+                    "free.\n"
+                    "STALE ON THE ACTIVE PATH: the 3-cycle reading needs b3 = "
+                    "24. Every Joyce b3_seed option has b3 = 7 + 3 n_T3 with "
+                    "n_T3 a multiple of 4, so b3 is odd, 4 does not divide it "
+                    "and no 4 x 6 partition of the 3-cycles exists. This "
+                    "option is kept as written for seed_24; a reading at the "
+                    "adopted seed is owed."
                 ),
                 adopted=True,
             ),
@@ -291,7 +299,7 @@ FORKS: Dict[str, Fork] = {
                     "where b2 counts U(1) vector multiplets.\n"
                     "COSTS: T_i cannot enter W at all, so the four-face "
                     "racetrack is abandoned and stabilisation must come from "
-                    "D-terms or flux over the b3 = 24 chiral moduli instead.\n"
+                    "D-terms or flux over the b3 chiral moduli instead.\n"
                     "RE-OPENS ROUTE 1. Route 1 was closed by the racetrack "
                     "giving a_i T_i = k_gimel per face, hence "
                     "m_T = 2 k_gimel m_{3/2} ~ 24.6 TeV against b3 H0 ~ "

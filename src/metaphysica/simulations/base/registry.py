@@ -175,6 +175,21 @@ def _emit(message: str) -> None:
         print(message.encode(encoding, errors="replace").decode(encoding))
 
 
+#: Per-key statuses for entry-point results whose value is not what the
+#: loader's blanket status says. entry point -> {result key: (status, reason)}.
+ENTRY_POINT_KEY_STATUSES: Dict[str, Dict[str, tuple]] = {
+    "re_t_sector": {
+        "ReT": ("CALIBRATED",
+                "Re(T) of an open modulus, solved so that the VEV equals the "
+                "target RE_T_VEV_TARGET by construction (re_t_sector STATUS: "
+                "CALIBRATED, tautological anchor)"),
+        "VEV_gap_percent": ("CALIBRATED",
+                            "solver residual of that calibration; zero by "
+                            "construction (an identity, not a result)"),
+    },
+}
+
+
 class PMRegistry:
     """
     Singleton registry for parameters, formulas, and sections.
@@ -705,16 +720,53 @@ class PMRegistry:
             except Exception as exc:  # pragma: no cover - defensive
                 warnings.warn(f"PMRegistry.update: could not set {full_path!r}: {exc}")
 
+    def _register_entry_point(self, label: str, importer: Callable[[], Any], *,
+                              prefix: str, version: str, status: str,
+                              metadata: Dict[str, Any], verbose: bool,
+                              drop_status_key: bool,
+                              key_statuses: Optional[Dict[str, tuple]] = None,
+                              ) -> Dict[str, Any]:
+        """Run one module entry point and register its result dict.
+
+        Fails early: an import or runtime error in the entry point raises,
+        and so does a non-dict return or a status override naming a key the
+        result does not carry. ``key_statuses`` maps a result key to
+        ``(status, reason)`` for rows whose value is not what ``status`` says
+        (a calibrated anchor, a residual that is zero by construction).
+        """
+        result = importer()
+        if not isinstance(result, dict):
+            raise TypeError(f"{label} returned {type(result).__name__}, not a dict")
+        values = {k: v for k, v in result.items()
+                  if not (drop_status_key and k == "status")}
+        overrides = key_statuses or {}
+        missing = sorted(set(overrides) - set(values))
+        if missing:
+            raise KeyError(f"{label}: status override for keys it does not return: {missing}")
+        source = f"{version}:{label}"
+        meta = dict(metadata, module=label)
+        self.update(values={k: v for k, v in values.items() if k not in overrides},
+                    source=source, status=status, path_prefix=prefix,
+                    metadata=meta)
+        for key, (key_status, reason) in overrides.items():
+            self.update(values={key: values[key]}, source=source,
+                        status=key_status, path_prefix=prefix,
+                        metadata=dict(meta, status_reason=reason))
+        if verbose:
+            # A diagnostic: _emit cannot raise on a cp1252 console.
+            _emit(f"  [OK]   {label}: {', '.join(sorted(result))}")
+        return result
+
     # -------------------------------------------------------------------------
     # v25.0 Sprint 4 module wiring (Sprint 4 task #8)
     # -------------------------------------------------------------------------
 
     def load_v25_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
         """
-        Defensively load and register the v25.0 Sprint 4 physics modules.
+        Load and register the v25.0 Sprint 4 physics modules.
 
-        Imports and calls each of the six new entry points behind a try/except
-        so the build never breaks when a module hasn't landed yet:
+        Imports and calls each of the six entry points; an entry point that
+        fails to import or run raises (no module is skipped silently):
 
             * particle.yukawa_derivation.get_geometric_pmns
             * geometry.re_t_sector.close_vev_gap
@@ -730,47 +782,16 @@ class PMRegistry:
             verbose: If True, print a short report per module.
 
         Returns:
-            Dict mapping module name -> the result dict (or {"error": ...}).
+            Dict mapping module name -> the result dict.
         """
         results: Dict[str, Any] = {}
 
         def _try(module_label: str, importer, prefix: str):
-            try:
-                result = importer()
-            except Exception as exc:  # noqa: BLE001 - we want to swallow everything
-                if verbose:
-                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
-                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
-                return
-            if not isinstance(result, dict):
-                if verbose:
-                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
-                results[module_label] = {"error": "non-dict return"}
-                return
-            self.update(
-                values=result,
-                source=f"v25.0:{module_label}",
-                status="DERIVED",
-                path_prefix=prefix,
-                metadata={"v25_0_sprint4": True, "module": module_label},
-            )
-            results[module_label] = result
-            if verbose:
-                keys = ", ".join(sorted(result.keys()))
-                # This print is a DIAGNOSTIC and must never be able to break a
-                # load. It could, and it did: on a console with a cp1252
-                # codepage, a parameter key containing a non-ASCII character
-                # raised UnicodeEncodeError here. The exception escaped _try,
-                # escaped load_v26_modules, and was caught by the caller's
-                # `except Exception` as "v26.0 module loading failed" -- so a
-                # progress message silently dropped the four modules after
-                # this one and fourteen registry parameters with them,
-                # including the whole cosmological_tensions block
-                # (S8_baseline, S8_resolved, H0_baseline_km_s_Mpc, ...).
-                # The build happened to run under a UTF-8 stream and so
-                # carried them; a bare run did not, and the two artifact
-                # copies silently disagreed by fourteen parameters.
-                _emit(f"  [OK]   {module_label}: {keys}")
+            results[module_label] = self._register_entry_point(
+                module_label, importer, prefix=prefix, version="v25.0",
+                status="DERIVED", metadata={"v25_0_sprint4": True},
+                verbose=verbose, drop_status_key=False,
+                key_statuses=ENTRY_POINT_KEY_STATUSES.get(module_label))
 
         if verbose:
             print("\n[INITIALIZATION] Loading v25.0 Sprint 4 modules")
@@ -833,7 +854,7 @@ class PMRegistry:
 
     def load_v26_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
         """
-        Defensively load and register the v26.0 Sprint 5 physics modules.
+        Load and register the v26.0 Sprint 5 physics modules.
 
         Mirrors :meth:`load_v25_modules` but targets the six new
         falsifiability-strengthening modules from PossibleImprovements.txt:
@@ -846,52 +867,26 @@ class PMRegistry:
             * particle.neutrino_sector.derive_neutrino_sector
 
         Each result dict is funnelled through :meth:`update` so all v26.0
-        params land in the registry with consistent provenance.  Every import
-        and call is wrapped in a try/except so a missing or half-built module
-        skips cleanly without breaking the build.
+        params land in the registry with consistent provenance.  An entry
+        point that fails to import or run raises.
 
         Args:
             verbose: If True, print a short report per module.
 
         Returns:
-            Dict mapping module name -> the result dict (or {"error": ...}).
+            Dict mapping module name -> the result dict.
         """
         results: Dict[str, Any] = {}
 
+        # The generic ``"status"`` key of each derive_* result is dropped:
+        # every v26.0 module also exposes ``<module>_status``, and keeping
+        # the generic one collides as ``cosmology.status`` / ``particle.status``.
         def _try(module_label: str, importer, prefix: str):
-            try:
-                result = importer()
-            except Exception as exc:  # noqa: BLE001 - defensive: swallow everything
-                if verbose:
-                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
-                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
-                return
-            if not isinstance(result, dict):
-                if verbose:
-                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
-                results[module_label] = {"error": "non-dict return"}
-                return
-            # The legacy ``"status"`` key is kept in the result dict each
-            # ``derive_*`` returns (for human display / backwards
-            # compatibility), but every v26.0 module now also exposes a
-            # per-module ``<module>_status`` variant — that is what should
-            # land in the registry.  Dropping the generic ``"status"`` key
-            # here prevents the ``cosmology.status`` / ``particle.status``
-            # collisions that otherwise trigger UserWarnings on load.
-            values_for_registry = {
-                k: v for k, v in result.items() if k != "status"
-            }
-            self.update(
-                values=values_for_registry,
-                source=f"v26.0:{module_label}",
-                status="DERIVED",
-                path_prefix=prefix,
-                metadata={"v26_0_sprint5": True, "module": module_label},
-            )
-            results[module_label] = result
-            if verbose:
-                keys = ", ".join(sorted(result.keys()))
-                _emit(f"  [OK]   {module_label}: {keys}")
+            results[module_label] = self._register_entry_point(
+                module_label, importer, prefix=prefix, version="v26.0",
+                status="DERIVED", metadata={"v26_0_sprint5": True},
+                verbose=verbose, drop_status_key=True,
+                key_statuses=ENTRY_POINT_KEY_STATUSES.get(module_label))
 
         if verbose:
             print("\n[INITIALIZATION] Loading v26.0 Sprint 5 modules")
@@ -976,7 +971,7 @@ class PMRegistry:
 
     def load_v27_modules(self, *, verbose: bool = False) -> Dict[str, Any]:
         """
-        Defensively load and register the v27.0 Sprint T6 physics modules.
+        Load and register the v27.0 Sprint T6 physics modules.
 
         Mirrors :meth:`load_v25_modules` / :meth:`load_v26_modules` but targets
         the Sprint T6 Tier 3 architectural kickoffs:
@@ -984,45 +979,23 @@ class PMRegistry:
             * particle.lhc_predictions.get_lhc_predictions  (Sprint T6 #4, T3.7)
 
         Each result dict is funnelled through :meth:`update` so all v27.0
-        params land in the registry with consistent provenance.  Every import
-        and call is wrapped in a try/except so a missing or half-built module
-        skips cleanly without breaking the build.
+        params land in the registry with consistent provenance.  An entry
+        point that fails to import or run raises.
 
         Args:
             verbose: If True, print a short report per module.
 
         Returns:
-            Dict mapping module name -> the result dict (or {"error": ...}).
+            Dict mapping module name -> the result dict.
         """
         results: Dict[str, Any] = {}
 
         def _try(module_label: str, importer, prefix: str):
-            try:
-                result = importer()
-            except Exception as exc:  # noqa: BLE001 - defensive: swallow everything
-                if verbose:
-                    print(f"  [SKIP] {module_label}: {exc.__class__.__name__}: {exc}")
-                results[module_label] = {"error": f"{exc.__class__.__name__}: {exc}"}
-                return
-            if not isinstance(result, dict):
-                if verbose:
-                    print(f"  [SKIP] {module_label}: returned non-dict ({type(result).__name__})")
-                results[module_label] = {"error": "non-dict return"}
-                return
-            values_for_registry = {
-                k: v for k, v in result.items() if k != "status"
-            }
-            self.update(
-                values=values_for_registry,
-                source=f"v27.0:{module_label}",
-                status="PREDICTED",
-                path_prefix=prefix,
-                metadata={"v27_0_sprint_t6": True, "module": module_label},
-            )
-            results[module_label] = result
-            if verbose:
-                keys = ", ".join(sorted(result.keys()))
-                _emit(f"  [OK]   {module_label}: {keys}")
+            results[module_label] = self._register_entry_point(
+                module_label, importer, prefix=prefix, version="v27.0",
+                status="PREDICTED", metadata={"v27_0_sprint_t6": True},
+                verbose=verbose, drop_status_key=True,
+                key_statuses=ENTRY_POINT_KEY_STATUSES.get(module_label))
 
         if verbose:
             print("\n[INITIALIZATION] Loading v27.0 Sprint T6 modules")
