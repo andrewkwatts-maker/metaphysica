@@ -22,7 +22,7 @@ Branch: `site-review` (not pushed). Nothing is pushed, merged or published witho
 | # | Phase | Output | State |
 |---|-------|--------|-------|
 | P1 | Audit (14 read-only lanes, verified) | `audit/<lane>.md`, `AUDIT_SUMMARY.md` | done: 540 findings, 62 critical and 174 high confirmed |
-| P2 | Fix lanes from the audit | `FIX_BRIEFS.md`, `progress/<lane>.md`, commits, a test per fix | wave A next |
+| P2 | Fix lanes from the audit | `FIX_BRIEFS.md`, `progress/<lane>.md`, commits, a test per fix | wave A running (wf_47affa26-c1a, base 355bfd9) |
 | P3 | SOLID split; every fork option evaluable | `PATHS.md`, sweep artifacts | waiting on P2 |
 | P4 | Close the geometry; solve the master action | `ACTION_SOLUTION.md`, ladder checks | design in progress |
 | P5 | Falsifiability and data comparison | `FALSIFIABILITY.md`, paper section 6 table | waiting on P4 |
