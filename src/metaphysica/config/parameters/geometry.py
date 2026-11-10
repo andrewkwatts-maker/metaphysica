@@ -2,14 +2,20 @@
 
 Extracted verbatim from the former single-file ``config.py``; no values,
 formulas or strings were changed by the move.
+
+2026-11-11: FermionChiralityParameters.CHI_EFF and N_GENERATIONS are read
+from the path in force (``path_valued.PathValued``); the TCS #187 numbers
+they were typed from are kept as RETIRED_TCS187_* rows.
 """
+
+from .path_valued import PathValued
 
 
 # ==============================================================================
 # FERMION CHIRALITY & GENERATION COUNT (v13.0)
 # ==============================================================================
 
-class FermionChiralityParameters:
+class FermionChiralityParameters(metaclass=PathValued):
     """
     Fermion chirality and generation count from G₂ topology via Pneuma mechanism.
 
@@ -35,17 +41,19 @@ class FermionChiralityParameters:
     - Joyce (2000): Spinor structures on G2 manifolds
     """
 
-    # Topological input (from TCS (retired reading) G₂ manifold #187)
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    N_FLUX = CHI_EFF / 6  # Derived: χ_eff/6 = 144/6 = 24 (flux quantization)
+    # CHI_EFF and N_GENERATIONS are read from the path in force at access
+    # (metaclass PathValued: chi_eff_route fork and n_gen_source fork).
+    # RETIRED reading (TCS G2 manifold #187, CHNP 2015), kept as a record:
+    RETIRED_TCS187_CHI_EFF = 144  # 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68)
+    RETIRED_TCS187_N_FLUX = RETIRED_TCS187_CHI_EFF / 6  # chi_eff/6 at TCS #187
 
     # Spinor structure from Spin(7)
     SPIN7_TOTAL = 8  # Source: dim(8_s) = 8 real spinor components in Spin(7)
     SPIN7_STABILIZED = 7  # Derived: 8 - 1 = 7 components after G2 stabilization
     SPINOR_DOF = SPIN7_TOTAL  # Derived: dim(8_s) = 8
 
-    # Generation count from spinor saturation (PARAMETER-FREE!)
-    N_GENERATIONS = int(N_FLUX / SPINOR_DOF)  # Derived: N_FLUX/SPINOR_DOF = 24/8 = 3
+    # RETIRED route: n_gen = N_flux / spinor_DOF at TCS #187 (the b3/dim route)
+    RETIRED_TCS187_N_GENERATIONS = int(RETIRED_TCS187_N_FLUX / SPINOR_DOF)
 
     # Chiral filter strength from spinor stabilization
     CHIRAL_FILTER_STRENGTH = SPIN7_STABILIZED / SPIN7_TOTAL  # Derived: 7/8 = 0.875
@@ -56,19 +64,34 @@ class FermionChiralityParameters:
 
     @staticmethod
     def get_fermion_chirality():
-        """Return all fermion chirality parameters as dictionary"""
+        """Return all fermion chirality parameters as dictionary.
+
+        chi_eff and n_generations are those of the path in force; the
+        retired TCS #187 route (chi_eff/6/8) is reported under 'retired'.
+        """
+        from metaphysica.simulations.core.active_path import topology
+
+        topo = topology()
+        cls = FermionChiralityParameters
         return {
-            'chi_eff': FermionChiralityParameters.CHI_EFF,
-            'n_flux': FermionChiralityParameters.N_FLUX,
-            'spinor_dof': FermionChiralityParameters.SPINOR_DOF,
-            'n_generations': FermionChiralityParameters.N_GENERATIONS,
+            'chi_eff': topo.chi_eff,
+            'n_flux': topo.chi_eff / 6,
+            'spinor_dof': cls.SPINOR_DOF,
+            'n_generations': topo.n_gen,
             'n_generations_derived': True,
+            'path': topo.path,
             'spin7_total': FermionChiralityParameters.SPIN7_TOTAL,
             'spin7_stabilized': FermionChiralityParameters.SPIN7_STABILIZED,
             'chiral_filter_strength': FermionChiralityParameters.CHIRAL_FILTER_STRENGTH,
             'dirac_modification': FermionChiralityParameters.DIRAC_MODIFICATION,
             'torsion_source': FermionChiralityParameters.TORSION_SOURCE,
-            'formula': 'n_gen = N_flux / spinor_DOF = chi_eff / (6 * 8) = 144 / 48 = 3',
+            'formula': ('n_gen = b2/4 = %d/4 = %d on path %s; chi_eff = 48 n_gen = %d'
+                        % (topo.b2, topo.n_gen, topo.path, topo.chi_eff)),
+            'retired': {
+                'chi_eff': cls.RETIRED_TCS187_CHI_EFF,
+                'n_generations': cls.RETIRED_TCS187_N_GENERATIONS,
+                'route': 'TCS #187: n_gen = (chi_eff/6) / 8 (retired)',
+            },
             'modified_dirac': 'D_eff = gamma^mu (d_mu + igA_mu + gamma^5 T_mu)',
             'mechanism': 'Pneuma torsion filter (axial coupling)',
             'comparison': {
@@ -76,7 +99,7 @@ class FermionChiralityParameters:
                 'flux_compactification': 'Global/Topological G4 flux',
                 'pneuma_mechanism': 'Dynamical/Smooth torsion coupling'
             },
-            'status': 'RESOLVED - Parameter-free derivation of n_gen = 3'
+            'status': 'n_gen from the n_gen_source fork, chi_eff from the chi_eff_route fork'
         }
 
 

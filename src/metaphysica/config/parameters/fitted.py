@@ -2,11 +2,17 @@
 
 Extracted verbatim from the former single-file ``config.py``; no values,
 formulas or strings were changed by the move.
+
+2026-11-11: the TCS #187 topology numbers in TorsionClass and
+FluxQuantization are the RETIRED reading and carry the TCS187_ prefix; the
+names B3, B2, CHI_EFF and N_GENERATIONS are read from the path in force
+(``path_valued.PathValued``).
 """
 
 import numpy as np
 
 from ..formula import ParameterCategory
+from .path_valued import PathValued
 from .phenomenology import PhenomenologyParameters
 
 
@@ -104,7 +110,7 @@ class FittedParameters:
 # v12.8 GEOMETRIC DERIVATIONS - TCS (retired reading) G₂ TORSION CLASS (SPINOR FRACTION)
 # ==============================================================================
 
-class TorsionClass:
+class TorsionClass(metaclass=PathValued):
     """
     v12.8: G₂ manifold torsion class T_ω from spinor fraction derivation.
 
@@ -129,8 +135,10 @@ class TorsionClass:
     """
 
     # Geometric constants for T_ω derivation
-    CHI_EFF = 144  # Derived: 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68) = 144 (CHNP construction #187)
-    B3 = 24  # Source: TCS (retired reading) construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    # RETIRED reading (TCS #187, CHNP 2015). T_omega below is derived at this
+    # reading; B3 and CHI_EFF of the path in force are read at access.
+    TCS187_CHI_EFF = 144  # 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68)
+    TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 at TCS #187
     D_INTERNAL = 7  # Source: Joyce (2000) G2 holonomy manifold dimension
 
     # Spinor fraction from Spin(7) structure
@@ -139,10 +147,10 @@ class TorsionClass:
     SPINOR_FRACTION = SPIN7_STABILIZED / SPIN7_TOTAL  # Derived: 7/8 = 0.875
 
     # Derived flux quantities
-    N_FLUX = CHI_EFF / 6         # Derived: χ_eff/6 = 144/6 = 24 (index theorem)
+    N_FLUX = TCS187_CHI_EFF / 6  # chi_eff/6 at the retired TCS #187 reading
 
     # Torsion class from spinor fraction derivation
-    T_TOPOLOGICAL = -B3 / N_FLUX                     # Derived: -b3/N_flux = -24/24 = -1.0
+    T_TOPOLOGICAL = -TCS187_B3 / N_FLUX              # -b3/N_flux at TCS #187 = -1.0
     T_OMEGA_GEOMETRIC = T_TOPOLOGICAL * SPINOR_FRACTION  # Derived: -1.0 * (7/8) = -0.875
     T_OMEGA = -0.875  # Derived: T_topological * spinor_fraction = -1.0 * (7/8) = -0.875
     T_OMEGA_TARGET = -0.884  # Source: Calibrated from PDG 2024 precision fits
@@ -178,7 +186,7 @@ class TorsionClass:
         return np.exp(8 * np.pi * abs(TorsionClass.T_OMEGA))
 
 
-class FluxQuantization:
+class FluxQuantization(metaclass=PathValued):
     """
     v10.0: Flux quantization on G₂ manifold yields χ_eff = 144.
 
@@ -186,10 +194,11 @@ class FluxQuantization:
     G₃ flux quanta reduce raw Euler characteristic via quantization constraints.
     """
 
-    # TCS (retired reading) G₂ topological data
-    B2 = 4  # Source: CHNP 2015 TCS construction h^2 = 4
-    B3 = 24  # Source: TCS construction b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
-    B5 = 4  # Derived: Poincare duality b5 = b2 = 4
+    # RETIRED reading: TCS #187 topological data (CHNP 2015). B2, B3,
+    # CHI_EFF and N_GENERATIONS of the path in force are read at access.
+    TCS187_B2 = 4  # CHNP 2015 TCS construction h^2 = 4
+    TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
+    TCS187_B5 = 4  # Poincare duality b5 = b2 at TCS #187
     CHI_RAW = 300  # Source: CHNP 2015 raw Euler characteristic before flux reduction
 
     # Flux parameters
@@ -205,9 +214,9 @@ class FluxQuantization:
         reduction = FluxQuantization.FLUX_QUANTA**FluxQuantization.REDUCTION_EXPONENT
         return FluxQuantization.CHI_RAW / reduction
 
-    # Derived observables
-    CHI_EFF = 144                # Derived: compute_chi_eff() = CHI_RAW / FLUX_QUANTA^(2/3) = 300 / 3^(2/3)
-    N_GENERATIONS = 3            # Derived: χ_eff / 48 = 144 / 48 = 3
+    # RETIRED observables of the TCS #187 reading (chi_effective() ~ 144.2)
+    TCS187_CHI_EFF = 144
+    TCS187_N_GENERATIONS = 3     # chi_eff / 48 at TCS #187
 
 
 class AnomalyCancellation:
