@@ -214,7 +214,9 @@ FORKS: Dict[str, Fork] = {
     ),
     "b3_origin": Fork(
         id="b3_origin",
-        question="What sets b_3? (asked of whichever seed is live; the options below were written when it was 24)",
+        question=("What sets b_3? (derived_joyce_a1 answers it on the adopted "
+                  "seed; the other options were written for the retired "
+                  "seed_24, b_3 = 24)"),
         source="simulations.run_all_simulations topology.elder_kads status",
         status="OPEN",
         read_adopted=_b3_origin_adopted,
@@ -259,7 +261,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="input_24",
-                summary="b_3 = 24 as a stated input, origin open (off-family)",
+                summary="seed_24 only: b_3 = 24 as a stated input, origin open (off-family)",
                 consequence=(
                     "BUYS: honesty. The seed is registered INPUT, the "
                     "free-variable ledger counts it, and no derivation is "
@@ -272,7 +274,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="arc_flag_stabiliser",
-                summary="24 as the order of a Fano arc stabiliser, 12 flags x 2",
+                summary="seed_24 only: 24 as the order of a Fano arc stabiliser, 12 flags x 2",
                 consequence=(
                     "BUYS: a fully derived orbit-stabiliser identity -- the "
                     "12 flags of an arc biject with (4 faces) x (3 blocks) "
@@ -286,7 +288,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="d4_root_shell",
-                summary="24 as the D4 root count, forced by its Coxeter number",
+                summary="seed_24 only: 24 as the D4 root count, forced by its Coxeter number",
                 consequence=(
                     "BUYS: the count is FORCED rather than matched -- for any "
                     "finite root system |roots| = rank x Coxeter number, and "
@@ -303,7 +305,7 @@ FORKS: Dict[str, Fork] = {
             ),
             VariantOption(
                 id="joyce_twisted_sector",
-                summary="24 = 7 flat + twisted, from an admissible resolution",
+                summary="seed_24 only: 24 = 7 flat + twisted, from an admissible resolution",
                 consequence=(
                     "BUYS: the only candidate that would produce actual "
                     "3-cycles. The flat contribution is derived to be exactly "

@@ -74,6 +74,10 @@ lock_geometric_context()
 #: "value" is None in HEBREW_SYMBOL_REGISTRY and is read from
 #: active_path.topology() by get_latex_term (2026-11-11: elder_kads used to
 #: be typed as the retired seed_24 value).
+#: The frozen integer 24 behind lambda_S = sqrt(24): the b3 of the retired
+#: seed_24, kept as a constant (it is not the b3 of the path in force).
+FROZEN_PLEROMA = 24
+
 _PATH_VALUED_SYMBOLS = {
     "elder_kads": lambda topo: topo.b3,
     "mephorash_chi": lambda topo: topo.chi_sector,
@@ -1382,19 +1386,23 @@ class FormulasRegistry:
         # 1. Watts Constant (Omega_W = 1.0) - Observer Unity
         self._watts_constant = 1.0
 
-        # 2. Reid Invariant (chi_R = 1/144) - Sounding Board Coefficient
-        self._reid_invariant = 1.0 / 144.0
+        # 2. Reid Invariant (chi_R = 1/chi_eff_total) - Sounding Board Coefficient.
+        # chi_eff_total follows the chi_eff_route fork (48 n_gen = 144 adopted);
+        # it was a typed 1/144 before 2026-11-11.
+        self._reid_invariant = 1.0 / self._chi_eff_total
 
         # 3. Weinstein Scale (kappa_E = 12.0) - Spinor Connection Rank
         self._weinstein_scale = 12.0
 
-        # 4. Hossenfelder Root (lambda_S = sqrt(24)) - Hidden Root
-        self._hossenfelder_root = math.sqrt(24)
+        # 4. Hossenfelder Root (lambda_S = sqrt(24)) - Hidden Root. The 24 is
+        # a FROZEN integer (the retired seed_24 b3), not sqrt(b3) of the path.
+        self._hossenfelder_root = math.sqrt(FROZEN_PLEROMA)
 
         # 5. O'Dowd Bulk Pressure (P_O = 163) - Sterile Sector = Bulk Pressure
         self._odowd_bulk_pressure = 163
 
-        # 6. Penrose-Hameroff Bridge (Phi_PH = 13) - Fibonacci Bridge
+        # 6. Penrose-Hameroff Bridge (Phi_PH = 13) - Fibonacci Bridge. A typed
+        # integer: (b3/2) + 1 = 13 held only at the retired seed_24.
         self._penrose_hameroff_bridge = 13
 
         # 7. Christ Constant (Lambda_JC = 153) - Logos Potential
@@ -1885,7 +1893,7 @@ class FormulasRegistry:
         """
         (Z.6) The Pneuma Tensioner - The "Safety Valve" of the manifold.
 
-        Formula: Z.6 = DECAD / PLEROMA = 10/24 = 0.41666...
+        Formula: Z.6 = DECAD / b3 (10/43 on the adopted seed; 10/24 was seed_24).
 
         Purpose: The (Z.6) Pneuma is the "Breath" ratio between the 13D branes.
         It is the Phase-Shift Invariant that bridges the Visible Gates (135)
@@ -1896,23 +1904,23 @@ class FormulasRegistry:
 
         If (Z.6) fluctuates, the "bolts" come loose, causing the C04 Stability Issue.
         """
-        return self.DECAD / self._b3  # 10/24 = 0.41666...
+        return self.DECAD / self._b3
 
     @property
     def geometric_ratio(self) -> float:
         """
-        The Geometric Base (Reid Invariant for Speed of Light) - The 0.75 Harmonic.
+        The Geometric Base (Reid Invariant for Speed of Light).
 
-        Formula: C_geo = SYZYGY_GAP / PLEROMA = 18/24 = 0.75
+        Formula: C_geo = SYZYGY_GAP / b3 (18/43 = 0.4186 on the adopted seed;
+        the "3/4 Harmonic" 18/24 = 0.75 held only at the retired seed_24).
 
         Purpose: This is the base velocity ratio derived from the Syzygy Gap.
         It represents the "resting" speed of the manifold before stretching.
 
-        Note: This is different from the reid_invariant (1/144) which is
-        the Sounding Board Coefficient. This geometric_ratio (0.75) is the
-        "3/4 Harmonic" used in speed of light derivation.
+        Note: This is different from the reid_invariant (1/chi_eff_total),
+        the Sounding Board Coefficient.
         """
-        return self.syzygy_gap / self._b3  # 18/24 = 0.75
+        return self.syzygy_gap / self._b3
 
     @property
     def stretching_factor(self) -> float:
@@ -2596,15 +2604,12 @@ class FormulasRegistry:
         """
         G07: Torsion Alignment Gate - Aligns torsion of hidden dimensions.
 
-        Formula: G07 = (G53 × 24)/153
+        Formula: G07 = (G53 × b3)/153 (b3 of the path; 24 was seed_24)
 
-        Purpose: Normalizes the Torsion Gate (G53) across the 24-dimensional
-        manifold. Prevents "warping" in the G(24,2) metric, addressing the
+        Purpose: Normalizes the Torsion Gate (G53) by b3, addressing the
         root cause of C04 instability.
-
-        v21 NOTE: Metric updated from G(24,2) to G(24,1) for two-time structure.
         """
-        return (self.torsion_gate * self._b3) / self._christ_constant  # (G53×24)/153
+        return (self.torsion_gate * self._b3) / self._christ_constant
 
     @property
     def gate_08_octonian_closure(self) -> float:
@@ -2643,15 +2648,12 @@ class FormulasRegistry:
         """
         G10: Dimensional Anchor - Anchors 24D manifold to 2D temporal plane.
 
-        Formula: G10 = (153 × 24) / 163
+        Formula: G10 = (153 × b3) / 163 (b3 of the path; 24 was seed_24)
 
-        Purpose: Calculates the "Weight" of the Joint Closure across the
-        manifold dimensions relative to the Bulk Pressure. This anchors
-        the 24D manifold to the G(24,2) metric's two-time temporal direction.
-
-        v21 NOTE: Metric updated from G(24,2) to G(24,1) for two-time structure.
+        Purpose: Calculates the "Weight" of the Joint Closure scaled by b3
+        relative to the Bulk Pressure.
         """
-        return (self._christ_constant * self._b3) / self._sterile_sector  # (153×24)/163
+        return (self._christ_constant * self._b3) / self._sterile_sector
 
     @property
     def gate_11_torsion_bridge(self) -> float:
@@ -2836,9 +2838,9 @@ class FormulasRegistry:
         """
         G24: Manifold Completion Gate - Checkpoint for 24D mapping.
 
-        Formula: G24 = (G12 × 24) / 153
+        Formula: G24 = (G12 × b3) / 153 (b3 of the path; 24 was seed_24)
 
-        Purpose: Multiplies Metric Stabilizer (G12) by number of dimensions (24)
+        Purpose: Multiplies Metric Stabilizer (G12) by b3
         and divides by JC Constant. Creates dimensionless constant that
         "signs off" on first 24 gates - Quadrant 1 complete.
         """
@@ -3186,11 +3188,10 @@ class FormulasRegistry:
         """
         G49: Scale Factor Prime - Initial manifold stretch.
 
-        Formula: G49 = (163/153) × √24
+        Formula: G49 = (163/153) × √b3 (b3 of the path; √24 was seed_24)
 
         Purpose: Calculates magnification factor required for Joint Closure
-        to influence macroscopic scale. √24 accounts for degrees of
-        freedom in base manifold.
+        to influence macroscopic scale.
         """
         return (self._sterile_sector / self._christ_constant) * math.sqrt(self._b3)
 
@@ -3507,10 +3508,10 @@ class FormulasRegistry:
         """
         G70: Entropy Reversal Gate - Computational entropy filter.
 
-        Formula: G70 = (163/153)^24
+        Formula: G70 = (163/153)^b3 (b3 of the path; ^24 was seed_24)
 
-        Purpose: Raises Bulk/Joint ratio to 24th power (manifold
-        dimensions) to create "Entropy Trap." Forces system to
+        Purpose: Raises Bulk/Joint ratio to the power b3 to create
+        "Entropy Trap." Forces system to
         maintain Sterile Configuration regardless of load.
         """
         return (self._sterile_sector / self._christ_constant) ** self._b3
@@ -3557,7 +3558,7 @@ class FormulasRegistry:
 
     @property
     def reid_invariant(self) -> float:
-        """chi_R: Sounding Board Coefficient (1/144). LEGACY ALIAS for nitsot_par."""
+        """chi_R: Sounding Board Coefficient (1/chi_eff_total). LEGACY ALIAS for nitsot_par."""
         return self.nitsot_par
 
     @property
@@ -3567,7 +3568,7 @@ class FormulasRegistry:
 
     @property
     def hossenfelder_root(self) -> float:
-        """lambda_S: Hidden Root (sqrt(24))."""
+        """lambda_S: Hidden Root, sqrt(FROZEN_PLEROMA) = sqrt(24), a frozen integer."""
         return self._hossenfelder_root
 
     @property
@@ -3702,7 +3703,7 @@ class FormulasRegistry:
     @property
     def horos_limit(self) -> int:
         """Bulk Boundary Dimension (26) - The Horos."""
-        return self._D_ancestral_total  # D_bulk = 26 = b3 + 2 (two-time)
+        return self._D_ancestral_total  # D_bulk = 26 = 24 space + 2 times, not b3 + 2
 
     @property
     def mephorash_chi(self) -> int:
@@ -3745,7 +3746,7 @@ class FormulasRegistry:
 
     @property
     def nitsot_par(self) -> float:
-        """Spark Pair coupling (1/144) - Hebrew: Nun-Qoph (150)."""
+        """Spark Pair coupling (1/chi_eff_total) - Hebrew: Nun-Qoph (150)."""
         return self._reid_invariant
 
     @property
@@ -4326,7 +4327,8 @@ class FormulasRegistry:
 
     def calculate_parity_product(self) -> float:
         """
-        Calculate CHI = Omega_W / chi_R = 1.0 / (1/144) = 144
+        Calculate CHI = Omega_W / chi_R = 1 / (1/chi_eff_total) = chi_eff_total
+        (an identity: it returns the chi_eff_route value it was built from).
         """
         return self._watts_constant / self._reid_invariant
 
@@ -4387,12 +4389,12 @@ class FormulasRegistry:
         """
         if holonomy is None:
             # holonomy_base DERIVED from G2 geometry (v23.0+)
-            # FORMULA: holonomy_base = phi - dim(G2)/(chi_eff + moduli)
-            #        = phi - 7/(72 + 21) = phi - 7/93
+            # FORMULA: holonomy_base = phi - dim(G2)/(chi_eff_sector + moduli)
+            #        = phi - 7/(72 + 21) = phi - 7/93 on the adopted path
             # Components:
             #   - phi = golden ratio = 1.6180339887...
             #   - 7 = dimension of G2 manifold
-            #   - 93 = chi_eff + moduli = 72 + 21 (topological invariants)
+            #   - chi_eff_sector = chi_eff_total/2 (chi_eff_route fork), moduli 21
             # Result: 1.5427651715... (0.002% error vs fitted 1.5427971665)
             # Physical interpretation: golden ratio symmetry broken by G2 holonomy constraints
             dim_g2 = 7
@@ -4723,6 +4725,8 @@ class FormulasRegistry:
         # Generate volatile metadata for freshness validation
         generation_time = datetime.now()
         session_id = f"PM{generation_time.strftime('%Y%m%d%H%M%S')}"
+        # Formula text quotes the path in force (b3_seed, chi_eff_route forks).
+        b3, chi_tot, chi_sec = self._b3, self._chi_eff_total, self._chi_eff
 
         manifest = {
             "version": self.VERSION,
@@ -4757,7 +4761,7 @@ class FormulasRegistry:
                     "symbol": "chi_R",
                     "latex": "\\chi_R",
                     "value": self.nitsot_par,
-                    "formula": "1/144",
+                    "formula": f"1/chi_eff_total = 1/{chi_tot:g}",
                     "role": "Sounding Board Coefficient",
                     "domain": "Philosophy",
                     "gate": "G72",
@@ -4782,7 +4786,8 @@ class FormulasRegistry:
                     "symbol": "lambda_S",
                     "latex": "\\lambda_S",
                     "value": self.hossenfelder_root,
-                    "formula": "sqrt(24)",
+                    "formula": (f"sqrt({FROZEN_PLEROMA}): {FROZEN_PLEROMA} is a frozen integer "
+                                f"(the retired seed_24 b3), not sqrt(b3) = sqrt({b3})"),
                     "role": "Hidden Root",
                     "domain": "Quantum",
                     "gate": "G08",
@@ -4809,7 +4814,8 @@ class FormulasRegistry:
                     "symbol": "Phi_PH",
                     "latex": "\\Phi_{PH}",
                     "value": self.penrose_hameroff_bridge,
-                    "formula": "(B3/2) + 1 = 13",
+                    "formula": (f"{self.penrose_hameroff_bridge} (typed integer; (b3/2) + 1 "
+                                f"held only at the retired seed_24, it is {b3 / 2 + 1:g} at b3 = {b3})"),
                     "role": "Fibonacci Bridge",
                     "domain": "Consciousness",
                     "gate": "G13",
@@ -4914,7 +4920,7 @@ class FormulasRegistry:
                     "symbol": "mu",
                     "latex": "\\mu",
                     "value": self.mass_ratio,
-                    "formula": "(C_kaf^2 * kappa_Delta/pi) / (holonomy * (1 + gamma/24))",
+                    "formula": f"(C_kaf^2 * kappa_Delta/pi) / (holonomy * (1 + gamma/b3)), b3 = {b3}",
                     "derived_from": ["demiurgic_coupling", "sophian_gamma"],
                     "pm_path": "mass.proton_electron_ratio"
                 },
@@ -4922,7 +4928,8 @@ class FormulasRegistry:
                     "symbol": "CHI",
                     "latex": "\\chi",
                     "value": self.chi_parity_product,
-                    "formula": "Omega_W / chi_R = 1.0 / (1/144) = 144",
+                    "formula": (f"Omega_W / chi_R = 1 / (1/{chi_tot:g}) = {self.chi_parity_product:g} "
+                                "(IDENTITY: chi_R is built from chi_eff_total)"),
                     "derived_from": ["watts_constant", "reid_invariant"],
                     "pm_path": "topology.chi_effective"
                 },
@@ -4947,7 +4954,8 @@ class FormulasRegistry:
                     "symbol": "horos",
                     "latex": "\\text{Horos}",
                     "value": self.horos,
-                    "formula": "D_bulk = 26 = b3 + 2 (24 space + 2 times, one per shadow)",
+                    "formula": (f"D_bulk = {self.horos} = 24 space + 2 times, one per shadow "
+                                f"(not b3 + 2: b3 = {b3})"),
                     "legacy_alias": "The Horos",
                     "legacy_description": "The Limit; boundary of 26D(24,2) bulk frame",
                     "pm_path": "topology.pleroma_boundary"
@@ -4967,7 +4975,7 @@ class FormulasRegistry:
                     "symbol": "Z6",
                     "latex": "Z_{6}",
                     "value": self.z6_pneuma,
-                    "formula": "DECAD / PLEROMA = 10/24 = 0.41666...",
+                    "formula": f"DECAD / b3 = {self.DECAD}/{b3} = {self.z6_pneuma:.5f}",
                     "expanded": f"The Pneuma Tensioner = {self.z6_pneuma:.10f}",
                     "legacy_alias": "The Pneuma Tensioner",
                     "legacy_description": "Safety Valve; Phase-Shift Invariant between 13D branes",
@@ -4978,8 +4986,8 @@ class FormulasRegistry:
                     "symbol": "C_geo",
                     "latex": "C_{geo}",
                     "value": self.geometric_ratio,
-                    "formula": "SYZYGY_GAP / PLEROMA = 18/24 = 0.75",
-                    "expanded": f"The 3/4 Harmonic base velocity = {self.geometric_ratio:.10f}",
+                    "formula": f"SYZYGY_GAP / b3 = {self.syzygy_gap}/{b3} = {self.geometric_ratio:.5f}",
+                    "expanded": f"Base velocity ratio = {self.geometric_ratio:.10f}",
                     "legacy_alias": "The Geometric Base",
                     "legacy_description": "Base velocity ratio for speed of light derivation",
                     "derived_from": ["syzygy_gap", "b3"],
@@ -5149,7 +5157,7 @@ class FormulasRegistry:
                     "symbol": "G07",
                     "latex": "G_{07}",
                     "value": self.gate_07_torsion_alignment,
-                    "formula": "(G53×24)/153",
+                    "formula": f"(G53×b3)/153 = (G53×{b3})/153",
                     "expanded": f"Torsion Gate × B3 / JC Constant = {self.gate_07_torsion_alignment:.10f}",
                     "legacy_alias": "The Torsion Alignment",
                     "legacy_description": "Normalizes torsion across 24D; prevents G(24,1) warping (v21)",
@@ -5183,7 +5191,7 @@ class FormulasRegistry:
                     "symbol": "G10",
                     "latex": "G_{10}",
                     "value": self.gate_10_dimensional_anchor,
-                    "formula": "(153×24)/163",
+                    "formula": f"(153×b3)/163 = (153×{b3})/163",
                     "expanded": f"Weight of Joint Closure = {self.gate_10_dimensional_anchor:.10f}",
                     "legacy_alias": "The Dimensional Anchor",
                     "legacy_description": "Anchors 24D manifold to G(24,1) unified time (v21)",
@@ -5331,7 +5339,7 @@ class FormulasRegistry:
                     "symbol": "G24",
                     "latex": "G_{24}",
                     "value": self.gate_24_manifold_completion,
-                    "formula": "(G12*24)/153",
+                    "formula": f"(G12*b3)/153 = (G12*{b3})/153",
                     "expanded": f"Manifold completion checkpoint = {self.gate_24_manifold_completion:.10f}",
                     "legacy_alias": "The Manifold Completion",
                     "legacy_description": "Quadrant 1 checkpoint; signs off on first 24 gates",
@@ -5613,7 +5621,7 @@ class FormulasRegistry:
                     "symbol": "G49",
                     "latex": "G_{49}",
                     "value": self.gate_49_scale_factor_prime,
-                    "formula": "(163/153)*sqrt(24)",
+                    "formula": f"(163/153)*sqrt(b3) = (163/153)*sqrt({b3})",
                     "expanded": f"Scale factor = {self.gate_49_scale_factor_prime:.10f}",
                     "legacy_alias": "The Scale Factor Prime",
                     "legacy_description": "26D(24,2) to macroscopic magnification",
@@ -5838,7 +5846,7 @@ class FormulasRegistry:
                     "symbol": "G70",
                     "latex": "G_{70}",
                     "value": self.gate_70_entropy_reversal,
-                    "formula": "(163/153)^24",
+                    "formula": f"(163/153)^b3 = (163/153)^{b3}",
                     "expanded": f"Entropy reversal = {self.gate_70_entropy_reversal:.10f}",
                     "legacy_alias": "The Entropy Reversal",
                     "legacy_description": "Entropy trap for Sterile Config",
@@ -5881,7 +5889,8 @@ class FormulasRegistry:
                 "chi_eff": {
                     "value": self.mephorash_chi,
                     "name": "Effective Chiral Index",
-                    "formula": "|chi| = 72; n_gen = |chi|/24 = 3 (standard M-theory)",
+                    "formula": (f"chi_eff_sector = chi_eff_total/2 = {chi_tot:g}/2 = {chi_sec:g} "
+                                f"(chi_eff_route); n_gen = b2/4 = {self.n_gen}"),
                     "legacy_alias": "The Demiurge",
                     "legacy_description": "The Effective Chiral Index; the Craftsman",
                     "pm_path": "topology.chi_effective",

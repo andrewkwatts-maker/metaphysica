@@ -14,6 +14,9 @@ resolve() already raised on an unknown fork (KeyError) and unknown option
 
 Round 3 (2026-11-11). S = tests/programme/test_path_core_registry_status.py.
 
+Round 6 (2026-11-11). N = tests/programme/test_path_core_named_constants_text.py.
+FormulasRegistry.FROZEN_PLEROMA = 24 is the frozen integer behind lambda_S.
+
 Round 4 (2026-11-11). F = tests/programme/test_path_core_fallbacks_and_text.py.
 tests/testground/test_2c_screen.py edited: three tests asserted the defects of
 core-paths-22/23 (settle swallows, unreadable store or missing import-time
@@ -72,6 +75,10 @@ re-exports it) so config/constants.py can use it without an import cycle.
 | core-paths-36 (split) | core/free_variable_ledger.py | blocked: wave D | - | - |
 | core-paths-42 | joint geometry sweep | blocked: needs a sweep run (--singles, --joint 2) and artifact regeneration (L9); seed_24 is refused by constrained_singles (b2_over_faces) | - | - |
 | sim-particle-23 | core/FormulasRegistry.py | blocked: no change needed in the registry; PM/qed/_triple_track.py is L5 | - | - |
+| core-paths-12 (named constants, gates) | core/FormulasRegistry.py generate_named_constants_json; G07/G10/G24/G49/G70, z6_pneuma, geometric_ratio, horos_limit, mass_ratio docstrings | fixed: formula text built from b3, chi_eff_total, n_gen of the path; lambda_S = sqrt(FROZEN_PLEROMA) labelled frozen; Phi_PH 13 labelled typed; parity_product labelled IDENTITY | R6 | N::test_named_constants_formula_text_quotes_the_path |
+| core-paths-12 (chi_R) | core/FormulasRegistry.py:1386 | fixed: reid_invariant = 1/chi_eff_total (chi_eff_route), was typed 1/144 | R6 | N::test_reid_invariant_reads_chi_eff_total |
+| core-paths-26 (b3_origin) | core/variants/catalogue/seed.py:217-310 | fixed: question names derived_joyce_a1 as the adopted answer; the four 24 options' summaries start "seed_24 only:" (dark_energy_betti text was already frozen-n) | R6 | N::test_b3_origin_options_for_24_are_marked_seed_24 |
+| core-paths-05 (sum_mnu, M_GUT, MKK) | core/canonical_values.py:304-342 | blocked: no artifact row carries 0.0994, 2.118e16 or 4.5 (nearest: neutrino.sum_masses 0.1020 DIAGNOSTIC, gauge.M_GUT 6.32e15, geometry.m_KK_central 5.0); which row is the claim is an owner/L5 decision | - | - |
 
 ## Downstream
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
@@ -100,6 +107,6 @@ re-exports it) so config/constants.py can use it without an import cycle.
 - Source rows for CANON sum_mnu, M_GUT and MKK in the parameter artifact (none match today).
 
 ## Next round
-- generate_named_constants_json seed-24 text left: penrose_hameroff 13 "(B3/2)+1", gate formulas with 24, "|chi| = 72; n_gen = |chi|/24", "1.0 / (1/144) = 144", "sqrt(24)", "D_bulk = 26 = b3 + 2".
+- FormulasRegistry module docstring, __init__ comments and the HEBREW symbol-map comments still quote b3 = 24 (e.g. lines 114-151, 1183, 1252, 1282, 1329); torsion_gate G53 types 1/24 (24th root): owner to say whether that 24 is b3 or the 24 space dimensions.
 - CANON sum_mnu 0.0994, M_GUT 2.118e16, MKK 4.5 still typed: no artifact row found (see Data to confirm).
 - Size splits CP-19, 31, 36 (ledger), 37 are wave D P3; core-paths-42 waits on L9.
