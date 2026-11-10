@@ -109,10 +109,7 @@ class OctonionAlgebra:
         coherent -- switching only some of them would leave the framework
         comparing one convention against the other.
         """
-        try:
-            from metaphysica.simulations.core.variants import resolve
-        except ImportError:            # import cycle: the one real case
-            return self._C_mult        # the adopted branch
+        from metaphysica.simulations.core.variants import resolve
         # resolve() raises KeyError for an undeclared fork: that surfaces.
         if resolve("g2_form_convention") == "all_plus_one":
             return self._C_geom

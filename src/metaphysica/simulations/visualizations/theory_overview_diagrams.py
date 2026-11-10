@@ -38,6 +38,7 @@ from matplotlib.collections import PatchCollection
 import matplotlib.patheffects as pe
 import os
 import sys
+from metaphysica.simulations.visualizations._retired import output_dir_for
 
 # PM Colors
 PM_PURPLE = '#8b7fff'  # Primary PM color
@@ -523,7 +524,9 @@ def main():
     """Generate all theory overview diagrams."""
     # Get output directory (relative to this script)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    images_dir = os.path.join(script_dir, '..', '..', 'images')
+    images_dir = str(output_dir_for(
+        sys.modules[__name__], os.path.join(script_dir, '..', '..', 'images')))
+    os.makedirs(images_dir, exist_ok=True)
 
     print("\n" + "="*70)
     print(" THEORY OVERVIEW DIAGRAMS GENERATOR")

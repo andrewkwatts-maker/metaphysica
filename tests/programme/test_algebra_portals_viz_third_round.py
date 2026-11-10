@@ -25,10 +25,13 @@ def test_alp_denominator_is_a_named_constant():
 
 
 def test_ricci_flow_w_parameters_derived_from_named_seed():
-    assert rf.OFF_PATH_B3 == 24
-    assert rf.W0_OFF_PATH == pytest.approx(-23 / 24)
-    assert rf.WA_OFF_PATH == pytest.approx(-1 / math.sqrt(24))
+    from metaphysica.simulations.PM.geometry.b3_path import seed_values
+    b3 = seed_values("seed_24")[0]
+    assert rf.OFF_PATH_B3 == b3
+    assert rf.W0_OFF_PATH == pytest.approx(-1 + 1 / b3)
+    assert rf.WA_OFF_PATH == pytest.approx(-1 / math.sqrt(b3))
     src = open(rf.__file__, encoding="utf-8").read()
+    assert "OFF_PATH_B3 = 24" not in src
     assert "w0 = -23 / 24" not in src
 
 

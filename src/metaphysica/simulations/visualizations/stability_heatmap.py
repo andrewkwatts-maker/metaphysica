@@ -44,6 +44,7 @@ from typing import Dict, Any, Tuple, Optional
 import json
 import os
 import sys
+from metaphysica.simulations.visualizations._retired import output_dir_for
 
 # Add project root for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -453,7 +454,9 @@ def main():
     print(generator.generate_summary_report())
 
     # Generate HTML visualization
-    output_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = str(output_dir_for(
+        sys.modules[__name__], os.path.dirname(os.path.abspath(__file__))))
+    os.makedirs(output_dir, exist_ok=True)
     html_path = os.path.join(output_dir, "stability_heatmap.html")
     generator.generate_plotly_html(html_path)
 

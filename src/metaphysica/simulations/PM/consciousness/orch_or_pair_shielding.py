@@ -82,6 +82,20 @@ def shielding_enhancement(n_pairs) -> float:
     return np.exp(K_SHIELDING * np.sqrt(n / 12)) * (n / 6) ** 2
 
 
+def shielding_certificates():
+    """The pair-shielding certificate (SPECULATIVE content), from shielding_enhancement."""
+    n_pairs = 12
+    factor = float(shielding_enhancement(n_pairs))
+    return [
+        {
+            "id": "cert_pair_shielding_enhancement",
+            "assertion": "Pair shielding factor > 1 at 12 pairs",
+            "condition": f"exp(k*sqrt(12/12))*(12/6)^2 = {factor:.1f} > 1",
+            "status": "PASS" if factor > 1.0 else "FAIL",
+        }
+    ]
+
+
 @dataclass
 class OrchORResult:
     """Results from Orch-OR simulation."""
@@ -992,18 +1006,8 @@ if _SCHEMA_AVAIL:
             ]
 
         def get_certificates(self):
-            """Return validation certificates (SPECULATIVE content)."""
-            import numpy as np
-            n_pairs = 12
-            factor = float(shielding_enhancement(n_pairs))
-            return [
-                {
-                    "id": "cert_pair_shielding_enhancement",
-                    "assertion": "Pair shielding factor > 1 at 12 pairs",
-                    "condition": f"exp(k*sqrt(12/12))*(12/6)^2 = {factor:.1f} > 1",
-                    "status": "PASS" if factor > 1.0 else "FAIL",
-                }
-            ]
+            """Validation certificates; none while retired from the score."""
+            return [] if RETIRED_FROM_PAPER else shielding_certificates()
 
         def validate_self(self):
             """Self-validation checks."""
@@ -1048,6 +1052,8 @@ if _SCHEMA_AVAIL:
             ]
 
         def get_section_content(self):
+            if RETIRED_FROM_PAPER:
+                return None  # retired from the paper: module and rows stay
             return _SecContent(
                 section_id="7",
                 subsection_id="7.6",
@@ -1115,7 +1121,7 @@ if _SCHEMA_AVAIL:
                     label="(7.6)",
                     latex=r"\tau_{\text{eff}} = \frac{\hbar}{E_G} \cdot e^{k\sqrt{n/12}}\,(n/6)^2",
                     plain_text="tau_eff = (hbar/E_G) * exp(k * sqrt(n/12)) * (n/6)^2",
-                    category="PREDICTED",  # SPECULATIVE consciousness hypothesis
+                    category="CALIBRATED",  # k = 2.5 is fitted with no data: CALIBRATED, not PREDICTED
                     description=(
                         "Pair-enhanced coherence time. Base Penrose criterion "
                         "tau = hbar/E_G (DERIVED) enhanced by pair shielding "
@@ -1141,7 +1147,8 @@ if _SCHEMA_AVAIL:
                         r"n_{\text{pairs}}": "Number of active bridge pairs (6-12)",
                     },
                     eml_tree_str=(
-                        "ops.mul(ops.div(eml_vec('hbar'), eml_vec('E_G')), ops.exp(ops.mul(eml_vec('k'), ops.sqrt(eml_vec('n_pairs')))))"
+                        "ops.mul(ops.div(eml_vec('hbar'), eml_vec('E_G')), ops.mul(ops.exp(ops.mul(eml_vec('k'), ops.sqrt(ops.div(eml_vec('n_pairs'), eml_scalar(12.0))))), "
+                        "ops.pow(ops.div(eml_vec('n_pairs'), eml_scalar(6.0)), eml_scalar(2.0))))"
                     ),
                     eml_description=(
                         "Pair-shielded coherence time: (hbar/E_G) times exp(k*sqrt(n/12))*(n/6)^2 enhancement."

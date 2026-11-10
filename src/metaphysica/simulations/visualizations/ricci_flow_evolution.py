@@ -70,7 +70,8 @@ B3 = _REG.elder_kads  # b3, the live seed (43 adopted; 24 at the off-path seed)
 K_GIMEL = _REG.demiurgic_coupling  # b3/2 + 1/pi, CALIBRATED (12.318 at the off-path seed)
 TAU = K_GIMEL / B3  # ~0.513 at the off-path seed (Ricci flow timescale)
 # Labelled off-path w(z) parameters: named, derived from the off-path seed, not typed
-OFF_PATH_B3 = 24
+from metaphysica.simulations.PM.geometry.b3_path import seed_values as _seed_values  # noqa: E402
+OFF_PATH_B3 = _seed_values("seed_24")[0]  # b3 of the named seed_24 option, read
 W0_OFF_PATH = -1 + 1 / OFF_PATH_B3
 WA_OFF_PATH = -1 / np.sqrt(OFF_PATH_B3)
 Z_STAR = 1 / TAU  # ~1.95 at the off-path seed (transition redshift)

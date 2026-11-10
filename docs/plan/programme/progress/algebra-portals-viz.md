@@ -61,3 +61,19 @@ Stellar bound 1e-10 GeV^-1 (module value) versus HB 6.6e-11 quoted in alp_portal
 Round 5: leech_lattice split done. Left: 14 (M_GUT ruling), 37 (gaugino_condensation, neutrino_algebraic), 38 (portals x3, consciousness x3, complete_residue_registry, proof_completeness: one file per round).
 Round 4: 43 and 13 recheck done. Left: 14 (M_GUT ruling), 37/38 file splits (prose to data files; large, one file per round), 16/23-28 appear done.
 Done in round 3: 10,31,32,33,39,45 fixed; 41 refuted; 17,24,40,42 blocked. Remaining: 13 (formula text check), 14 (M_GUT ruling), 16, 23-28 recheck, 37/38 file splits (last), 43 (gnosis k = 3.2 now CALIBRATED; RETIRE-FROM-PAPER of shielding k still open), plus any finding numbered above 45.
+
+## Review
+Review round on 7af0d85, 25f333e, 6bad1bd, 38a9339. Tests: tests/programme/test_algebra_portals_viz_sixth_round.py (new) plus corrected tests in first_round, second_round, third_round (each subject is my file and asserted the defect).
+
+| defect | action | commit |
+|---|---|---|
+| clifford_boost_conservation deleted (0.408 vs 0.1) | row restored: output param, Parameter status FALSIFIED, check in run() with 0.408, section row and callout "FAILS", 3 of 4 checks pass. first_round test inverted to assert presence | review-round |
+| proton-decay text typed 4.24e39 yr, ~2.5e18 GeV | `proton_decay_values()` computes tau_p, M_GUT_base, M_GUT_eff (b3 via active_b3, chi_eff via registry, M_Pl via dataset); `proton_decay_text()` feeds every formula, parameter and section string; test compares text to run() residues | review-round |
+| neutrino text "~12% high", "~4 sigma", "1/sqrt6", `(1/sqrt6)/sqrt6 = 1/6` | `_overshoot(V)` builds "+49%, 38.7 sigma"; formula block, n_gen factor and alpha_leak at the off-path seed built from values; second_round test now rejects "12%", "sqrt6", "~4 sigma" | review-round |
+| neutrino re-derives n_gen = b2/4, chi_eff = 48 n_gen, `_OFF_PATH = _derive(24,3,144.0)` | `_derive(topo, alpha_leak)` takes `core.active_path.topology()` (fork readers) and `canonical_values.canon()["alpha_leak"]` (the one function); `_off_path()` reads named seed_24; `_seed_split_note` reads topology | review-round |
+| ricci_flow OFF_PATH_B3 = 24 | read from `seed_values("seed_24")`; third_round test compares to that read | review-round |
+| RETIRED_FROM_PAPER read by nothing | new `visualizations/_retired.py` (`output_dir_for`, `paper_figures`); the three figure modules write to a `retired` subfolder; orch_or_pair_shielding returns no section and no certificates while flagged (certificate kept as `shielding_certificates()`); test generates the Goldilocks figure and finds it under retired/ and checks all_plots list unchanged | review-round |
+| shielding EML tree exp(k sqrt(n)) and category PREDICTED | tree now exp(k sqrt(n/12)) (n/6)^2, category CALIBRATED; test evaluates the tree against `shielding_enhancement` at n = 6 and 12 | review-round |
+| octonion fork test passed on base | test monkeypatches `variants.resolve` to raise KeyError and asserts it propagates; the `except ImportError: return self._C_mult` fallback also removed; run against the 355bfd9 source the getter returns without raising, so the test fails there | review-round |
+
+Needs other lane (added): all_plots.py, run_all_simulations.py (still builds OrchORPairShieldingSimulation, harmless now: no section, no certificate), website/Pages/visualization-index.html and js/pm-visualization-manifest.js still list the three retired figures (site lane). e7_representation.py and e8x8_splitting.py text still says alpha_leak = 1/sqrt(6) (not in this review's list; next round).

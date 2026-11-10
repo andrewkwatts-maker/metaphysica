@@ -54,15 +54,18 @@ def test_alp_rows_calibrated_and_scored_against_bound():
     assert g.validation_status == "FAIL"  # the failing result is kept
 
 
-def test_clifford_boost_row_removed_and_no_swallowed_errors():
+def test_clifford_boost_row_kept_with_failing_number_and_no_swallowed_errors():
     out = cu.CliffordUnificationSimulation().run(None)
-    assert "algebra.clifford_boost_conservation" not in out
-    assert out["_all_pass"] and out["_checks_passed"] == 3
+    assert out["algebra.clifford_boost_conservation"] == pytest.approx(0.408, abs=1e-3)
+    assert not out["_boost_ok"] and not out["_all_pass"] and out["_checks_passed"] == 3
     src = inspect.getsource(cu.CliffordUnificationSimulation.run)
     assert "except" not in src
     sim = cu.CliffordUnificationSimulation()
-    assert "algebra.clifford_boost_conservation" not in sim.output_params
-    assert "Boost" not in str(sim.get_section_content().content_blocks)
+    assert "algebra.clifford_boost_conservation" in sim.output_params
+    row = {p.path: p for p in sim.get_output_param_definitions()}[
+        "algebra.clifford_boost_conservation"]
+    assert row.status == "FALSIFIED"
+    assert "FAILS" in str(sim.get_section_content().content_blocks)
 
 
 def test_figure3_point_from_registry_rows():

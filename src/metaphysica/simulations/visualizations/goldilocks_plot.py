@@ -38,6 +38,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, Rectangle
 from pathlib import Path
+import sys
+from metaphysica.simulations.visualizations._retired import output_dir_for
 
 # PM Color palette
 PM_COLORS = {
@@ -296,8 +298,9 @@ def generate_goldilocks_plot():
     plt.tight_layout()
 
     # Save
-    output_path = OUTPUT_DIR / "goldilocks-b3-uniqueness.png"
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    out_dir = output_dir_for(sys.modules[__name__], OUTPUT_DIR)  # retired: images/retired
+    output_path = out_dir / "goldilocks-b3-uniqueness.png"
+    out_dir.mkdir(parents=True, exist_ok=True)
     plt.savefig(output_path, dpi=300, facecolor='white', edgecolor='none')
     plt.close()
 

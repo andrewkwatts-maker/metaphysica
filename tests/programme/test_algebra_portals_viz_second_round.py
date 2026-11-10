@@ -25,7 +25,7 @@ def test_shielding_one_function_everywhere():
     assert shield.shielding_enhancement(12) == pytest.approx(48.73, abs=0.01)
     model = shield.PairShielding(12) if hasattr(shield, "PairShielding") else None
     sim = _sim(shield)
-    cert = sim.get_certificates()[0]["condition"]
+    cert = shield.shielding_certificates()[0]["condition"]  # the sim lists none while retired
     assert "48.7" in cert
     text = str(sim.get_formulas()) + str(sim.get_output_param_definitions())
     assert "exp(k*sqrt(n_pairs))" not in text
@@ -40,7 +40,8 @@ def test_neutrino_text_follows_value_not_one_sixth():
     text = " ".join([str(sim.get_section_content().content_blocks),
                      str(sim.get_formulas()), str(sim.get_output_param_definitions()),
                      str(sim.get_certificates()), str(sim.validate_self())])
-    for stale in ("9.59", "1/6 ", "= 1/√6", "= 1/sqrt(6)", "~9σ", "8.8 sigma"):
+    for stale in ("9.59", "1/6 ", "= 1/√6", "= 1/sqrt(6)", "~9σ", "8.8 sigma",
+                  "12%", "sqrt6", "1/sqrt(6) ", "~4 sigma", "~4sigma"):
         assert stale not in text, stale
     v = na._derived_values()
     assert f"{v.theta13_deg:.2f}" in text
@@ -77,9 +78,15 @@ def test_dice_rows_are_ansatz():
     assert ps["consciousness.dice_entropy"].status == "ANSATZ"
 
 
-def test_octonion_fork_read_does_not_swallow_errors():
-    src = inspect.getsource(octonions)
-    assert "except Exception" not in src.split("g2_form_convention")[1][:900]
+def test_octonion_fork_read_does_not_swallow_errors(monkeypatch):
+    import metaphysica.simulations.core.variants as variants
+
+    def broken(fork_id):
+        raise KeyError(fork_id)
+
+    monkeypatch.setattr(variants, "resolve", broken)
+    with pytest.raises(KeyError):
+        octonions.OctonionAlgebra()._phi_tensor()
 
 
 def test_algebra_init_has_no_import_guard():

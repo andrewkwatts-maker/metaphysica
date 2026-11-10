@@ -119,6 +119,31 @@ class SpectralResidue:
 # Fundamental scale
 k_gimel = 12 + 1/np.pi  # ~ 12.318
 
+def proton_decay_values() -> Dict[str, float]:
+    """Proton-decay numbers for the path in force: b3, chi_eff and M_Pl are read."""
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+    chi_eff = get_registry().chi_eff_total
+    M_Planck = RealWorldData.PLANCK_MASS[0]  # GeV, from the dataset
+    b3 = active_b3()  # b3 of the path in force (rule 3)
+    M_GUT_G2 = M_Planck / np.sqrt(b3)
+    alpha_GUT = 0.04  # at unification
+    m_p = _pdg_v("baryons", "m_proton")  # GeV
+    M_GUT_eff = M_GUT_G2 * (np.exp(-chi_eff / 12) ** 0.25)
+    tau_gev = (M_GUT_eff ** 4) / (alpha_GUT ** 2 * m_p ** 5)  # GeV^-1
+    tau_yr = tau_gev * _pdg_v("fundamental_constants", "HBAR") / 3.15e7
+    return {"b3": float(b3), "chi_eff": float(chi_eff), "M_Pl": float(M_Planck),
+            "M_GUT_base": float(M_GUT_G2), "M_GUT_eff": float(M_GUT_eff),
+            "tau_yr": float(tau_yr)}
+
+
+def proton_decay_text() -> Dict[str, str]:
+    """The proton-decay numbers as text, built from the computed values."""
+    v = proton_decay_values()
+    return {"tau": f"{v['tau_yr']:.3g} yr", "base": f"{v['M_GUT_base']:.3g} GeV",
+            "eff": f"{v['M_GUT_eff']:.3g} GeV", "chi": f"{v['chi_eff']:.0f}",
+            "b3": f"{v['b3']:.0f}", "M_Pl": f"{v['M_Pl']:.3g}"}
+
+
 def _make_registry() -> Dict[int, SpectralResidue]:
     """Build the complete 125-residue registry."""
     registry = {}
@@ -458,15 +483,12 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #
     #   Proton lifetime:
     #   tau_p ~ M_GUT^4 / (alpha_GUT^2 * m_p^5)
-    #        ~ (2.5e18)^4 / (0.04^2 * (0.938)^5) GeV^4/GeV^5
-    #        ~ 3.9e73 / 1.5e-3 GeV^-1 ~ 2.6e76 GeV^-1
-    #        ~ 2.6e76 * (6.58e-25 s) ~ 1.7e52 s ~ 5e44 yr
-    #
-    #   This is too long! Need dimension-6 suppression from G2 instantons.
-    #   With instanton suppression factor ~ exp(-S_inst) ~ exp(-chi_eff/12):
-    #   tau_p ~ 4.24e39 yr -- NOT within Hyper-K reach. The "~10^34 yr (within
-    #   Hyper-K reach!)" claim previously written here was never produced by
-    #   the code below; it was the Super-K bound leaking in through set_param.
+    #   Without suppression this is far too long; the G2 instanton factor
+    #   exp(-chi_eff/12) lowers the effective scale. The numbers (M_GUT, M_GUT_eff,
+    #   tau_p) are computed in proton_decay_values() and every text quotes them
+    #   from there; none is typed here. The "~10^34 yr (within Hyper-K reach!)"
+    #   claim once written here was never produced by the code; it was the
+    #   Super-K bound leaking in through set_param.
     #
     # Branching ratios from E8 breaking pattern:
     #   p -> e+ pi0  ~ 30% (dominant)
@@ -474,31 +496,8 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #   p -> mu+ pi0 ~ 10%
     # ------------------------------------------------------------------------
 
-    # GUT scale from G2 geometry
-    M_Planck = RealWorldData.PLANCK_MASS[0]  # GeV, from the dataset
-    b3 = active_b3()  # b3 of the path in force (rule 3)
-    M_GUT_G2 = M_Planck / np.sqrt(b3)  # ~ 2.5e18 GeV
-
-    # Proton decay lifetime (with G2 instanton suppression)
-    # Base lifetime from dimension-6: tau_base ~ M_GUT^4 / (alpha^2 * m_p^5)
-    alpha_GUT = 0.04  # at unification
-    # Loader-sourced constants (PDG 2024). Literals are offline fallbacks.
-    m_p = _pdg_v("baryons", "m_proton")  # GeV
-
-    # Instanton suppression factor
-    instanton_suppression = np.exp(-chi_eff / 12)  # ~ exp(-12) ~ 6e-6
-
-    # Effective GUT scale with suppression
-    M_GUT_eff = M_GUT_G2 * (instanton_suppression ** 0.25)  # ~ 1.24e17 GeV
-
-    # Lifetime calculation
-    tau_base_gev = (M_GUT_eff ** 4) / (alpha_GUT ** 2 * m_p ** 5)  # in GeV^-1
-    hbar_s = _pdg_v("fundamental_constants", "HBAR")  # GeV * s
-    tau_s = tau_base_gev * hbar_s  # in seconds
-    tau_yr = tau_s / (3.15e7)  # in years
-    # Result: ~ 4.24e39 years. (This comment said "~ 10^34 years" until
-    # 2026-09; it never matched the arithmetic above. The 10^34 that used to
-    # be published came from the Super-K field, not from here.)
+    pd = proton_decay_values()
+    tau_yr, M_GUT_eff = pd["tau_yr"], pd["M_GUT_eff"]
 
     proton_decay_data = [
         (53, "tau_proton", tau_yr, 1e34, 0.5e34, "Proton lifetime (years)"),
@@ -967,6 +966,7 @@ class CompleteResidueRegistryV18(SimulationBase):
         BR_e = self.get_residue(55)
         BR_K = self.get_residue(56)
 
+        pt = proton_decay_text()
         if tau_p:
             # This used to read `tau_p.experimental_mass`, shadowing the
             # computed lifetime with the Super-K bound 1e34 yr, so the
@@ -989,13 +989,13 @@ class CompleteResidueRegistryV18(SimulationBase):
                 metadata={
                     "derivation": "Dimension-6 operators with G2 instanton suppression",
                     "units": "years",
-                    "note": "NOT reachable by Hyper-K: 4.24e39 yr is ~5 orders of magnitude beyond its ~10^35 yr sensitivity",
+                    "note": f"NOT reachable by Hyper-K: {pt['tau']} is far beyond its ~10^35 yr sensitivity",
                     # (M_GUT/m_p)^4 = 3.05e68 is dimensionless and is not the
                     # lifetime this module computes. The module computes
                     #   tau_base_gev = M_GUT_eff^4 / (alpha_GUT^2 * m_p^5)   [GeV^-1]
                     #   tau_yr       = tau_base_gev * hbar_s / 3.15e7        [years]
                     # with alpha_GUT = 0.04 and hbar_s = 6.582e-25 GeV*s, giving
-                    # tau_p ~ 4.24e39 yr, which is now what is registered. Until
+                    # tau_p (see proton_decay_values), which is registered. Until
                     # 2026-09 the set_param call read the Super-K experimental
                     # field instead, so the published "prediction" was the bound.
                     "eml_description": (
@@ -1009,16 +1009,15 @@ class CompleteResidueRegistryV18(SimulationBase):
                     ),
                     "note_value_provenance": (
                         "FIXED 2026-09. The registered value is now the module's own "
-                        "computation, tau_p = 4.24e39 yr. It previously published "
+                        f"computation, tau_p = {pt['tau']}. It previously published "
                         "1e34 yr, the Super-K bound, because the enclosing block did "
                         "`tau_yr = tau_p.experimental_mass if tau_p.experimental_mass "
                         "else 1e34` and shadowed the computed tau_yr. CONSEQUENCE: the "
-                        "proton lifetime is 4.24e39 yr, five orders of magnitude beyond "
+                        f"proton lifetime is {pt['tau']}, far beyond "
                         "Hyper-K sensitivity (~1e35 yr) -- this prediction is NOT "
                         "testable by Hyper-K, contrary to what the surrounding comments "
                         "claimed while the bound was being published as the prediction. "
-                        "The inputs alpha_GUT = 0.04 and the instanton exponent "
-                        "chi_eff/12 are hardcoded and unsourced."
+                        "The input alpha_GUT = 0.04 is hardcoded and unsourced."
                     )
                 }
             )
@@ -1037,13 +1036,13 @@ class CompleteResidueRegistryV18(SimulationBase):
                     "derivation": "M_Pl/sqrt(b3) with instanton suppression",
                     "units": "GeV",
                     "eml_description": (
-                        "EML: ops.mul(ops.div(eml_scalar(1.22e19), "
+                        f"EML: ops.mul(ops.div(eml_scalar({pt['M_Pl']}), "
                         "ops.sqrt(eml_vec('topology.elder_kads'))), "
-                        "ops.pow(ops.exp(ops.neg(ops.div(eml_scalar(144.0), "
+                        f"ops.pow(ops.exp(ops.neg(ops.div(eml_scalar({pt['chi']}), "
                         "eml_scalar(12.0)))), eml_scalar(0.25))) "
-                        "— M_GUT_eff = (M_Pl/sqrt(b3)) x exp(-chi_eff/12)^(1/4). The "
-                        "published form gave only M_Pl/sqrt(b3) = 2.49e18 and omitted the "
-                        "instanton suppression that run() applies, a factor of 20"
+                        f"— M_GUT_eff = (M_Pl/sqrt(b3)) x exp(-chi_eff/12)^(1/4) = {pt['eff']}; "
+                        f"M_Pl/sqrt(b3) alone is {pt['base']}, and the instanton "
+                        "suppression that run() applies is part of the value"
                     )
                 }
             )
@@ -1107,6 +1106,7 @@ class CompleteResidueRegistryV18(SimulationBase):
         return self.run(registry)
 
     def get_formulas(self) -> List[Formula]:
+        pt = proton_decay_text()
         m1_ev = self._mass_ev(self.get_residue(49))
         sum_nu_ev = self._mass_ev(self.get_residue(52))
         """Return formulas for spectral analysis."""
@@ -1284,23 +1284,23 @@ class CompleteResidueRegistryV18(SimulationBase):
             Formula(
                 id="proton-decay-lifetime-v18",
                 label="(2.13)",
-                latex=r"\tau_p \sim \frac{M_{\rm GUT}^4}{\alpha_{\rm GUT}^2 m_p^5} \cdot e^{-\chi_{\rm eff}/12} \sim 10^{34}\,\text{yr}",
-                plain_text="tau_p ~ M_GUT^4 / (alpha_GUT^2 * m_p^5) * exp(-chi_eff/12) ~ 10^34 yr",
+                latex=r"\tau_p \sim \frac{M_{\rm GUT}^4}{\alpha_{\rm GUT}^2 m_p^5} \cdot e^{-\chi_{\rm eff}/12} = \text{" + pt['tau'] + "}",
+                plain_text=f"tau_p ~ M_GUT^4 / (alpha_GUT^2 * m_p^5) * exp(-chi_eff/12) = {pt['tau']}",
                 eml_tree_str="ops.mul(ops.div(ops.pow(eml_vec('M_GUT'), eml_scalar(4.0)), ops.mul(ops.pow(eml_vec('alpha_GUT'), eml_scalar(2.0)), ops.pow(eml_vec('m_p'), eml_scalar(5.0)))), ops.exp(ops.neg(ops.div(eml_vec('chi_eff'), eml_scalar(12.0)))))",
                 category="PREDICTED",
                 description=(
                     "Proton lifetime from dimension-6 operators with G2 instanton suppression. "
-                    "Base GUT scale M_GUT ~ M_Pl/sqrt(b3) ~ 2.5e18 GeV is suppressed by "
-                    "G2 instantons, giving effective scale ~1.2e17 GeV and lifetime ~10^34 yr. "
-                    "Testable by Hyper-Kamiokande (sensitivity to 10^35 yr)."
+                    f"Base GUT scale M_GUT = M_Pl/sqrt(b3) = {pt['base']} is suppressed by "
+                    f"G2 instantons, giving effective scale {pt['eff']} and lifetime {pt['tau']}, "
+                    "to be compared with the ~10^35 yr Hyper-Kamiokande sensitivity."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["spectral.tau_proton"],
                 terms={
-                    "M_GUT": "GUT scale ~ M_Pl/sqrt(b3) ~ 2.5e18 GeV (before suppression)",
+                    "M_GUT": f"GUT scale M_Pl/sqrt(b3) = {pt['base']} (before suppression)",
                     "alpha_GUT": "GUT coupling ~ 0.04",
                     "m_p": "Proton mass = 0.938 GeV",
-                    "chi_eff": "Euler characteristic = 144 (instanton suppression)"
+                    "chi_eff": f"Effective Euler characteristic = {pt['chi']} (instanton suppression)"
                 },
                 derivation={
                     "steps": [
@@ -1319,13 +1319,13 @@ class CompleteResidueRegistryV18(SimulationBase):
             Formula(
                 id="gut-scale-g2-v18",
                 label="(2.14)",
-                latex=r"M_{\rm GUT}^{\rm eff} = \frac{M_{\rm Pl}}{\sqrt{b_3}} \cdot e^{-\chi_{\rm eff}/48} \approx 1.2 \times 10^{17}\,\text{GeV}",
-                plain_text="M_GUT_eff = M_Pl/sqrt(b3) * exp(-chi_eff/48) ~ 1.24e17 GeV",
+                latex=r"M_{\rm GUT}^{\rm eff} = \frac{M_{\rm Pl}}{\sqrt{b_3}} \cdot e^{-\chi_{\rm eff}/48} = \text{" + pt['eff'] + "}",
+                plain_text=f"M_GUT_eff = M_Pl/sqrt(b3) * exp(-chi_eff/48) = {pt['eff']}",
                 eml_tree_str="ops.mul(ops.div(eml_vec('M_Pl'), ops.sqrt(eml_vec('b3'))), ops.exp(ops.neg(ops.div(eml_vec('chi_eff'), eml_scalar(48.0)))))",
                 category="DERIVED",
                 description=(
                     "Effective GUT scale from G2 geometry with instanton suppression. "
-                    "The base scale M_Pl/sqrt(24) ~ 2.5e18 GeV is reduced by G2 instantons."
+                    f"The base scale M_Pl/sqrt(b3) = {pt['base']} (b3 = {pt['b3']}) is reduced by G2 instantons."
                 ),
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["spectral.M_GUT_G2"],
@@ -1359,6 +1359,7 @@ class CompleteResidueRegistryV18(SimulationBase):
         reference anchors from the literature, not results of fits performed
         by this simulation.
         """
+        pt = proton_decay_text()
         return [
             Parameter(
                 path="spectral.n_residues",
@@ -1489,8 +1490,8 @@ class CompleteResidueRegistryV18(SimulationBase):
                 status="PREDICTED",
                 description=(
                     "PM prediction for proton lifetime from dimension-6 GUT operators "
-                    "with G2 instanton suppression: tau_p = 4.24e39 yr. This satisfies "
-                    "the Super-K lower limit by five orders of magnitude and is "
+                    f"with G2 instanton suppression: tau_p = {pt['tau']}. This satisfies "
+                    "the Super-K lower limit by many orders of magnitude and is "
                     "correspondingly NOT testable by Hyper-K. The parameter previously "
                     "published 1e34 yr, which was the bound itself, not the prediction. "
                     "NOTE: the cited bound 1e34 is also not the current Super-K limit "
@@ -1509,7 +1510,7 @@ class CompleteResidueRegistryV18(SimulationBase):
                 status="DERIVED",
                 description=(
                     "PM-derived effective GUT scale from G2 geometry: "
-                    "M_Pl/sqrt(b3) with instanton suppression (~1.24e17 GeV). "
+                    f"M_Pl/sqrt(b3) with instanton suppression ({pt['eff']}). "
                     "The standard GUT unification scale (~2e16 GeV) is cited as a "
                     "theoretical reference point, not a fitted value."
                 ),
@@ -1545,6 +1546,7 @@ class CompleteResidueRegistryV18(SimulationBase):
 
     def get_section_content(self) -> Optional[SectionContent]:
         """Return section content for paper."""
+        pt = proton_decay_text()
         return SectionContent(
             section_id="2",
             subsection_id="2.3",
@@ -1789,10 +1791,10 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "M_GUT^eff, the proton lifetime τ_p, and the dominant decay branching "
                         "ratios. In the PM framework, the dimension-6 baryon-number-violating "
                         "operators arise from heavy gauge boson exchange at the scale M_GUT. "
-                        "The base GUT scale M_Pl/√b₃ ≈ 2.5×10¹⁸ GeV is reduced by G₂ instanton "
+                        f"The base GUT scale M_Pl/√b₃ = {pt['base']} is reduced by G₂ instanton "
                         "contributions — non-perturbative corrections from associative 3-cycle "
-                        "instantons — yielding an effective scale M_GUT^eff ~ 2×10¹⁷ GeV and "
-                        "a proton lifetime τ_p ≈ 4.8×10³⁴ years."
+                        f"instantons — yielding an effective scale M_GUT^eff = {pt['eff']} and "
+                        f"a proton lifetime τ_p = {pt['tau']}."
                     )
                 ),
                 ContentBlock(
@@ -1809,9 +1811,9 @@ class CompleteResidueRegistryV18(SimulationBase):
                     title="Proton Decay Predictions (Falsifiable)",
                     content=(
                         "From dimension-6 operators with G₂ instanton suppression:\n"
-                        "  • Lifetime: τ_p ≈ 4.8×10³⁴ years\n"
+                        f"  • Lifetime: τ_p = {pt['tau']}\n"
                         "    Super-Kamiokande lower bound (p→e⁺π⁰): τ_p > 1.67×10³⁴ yr.\n"
-                        "    PM prediction is above the current bound — consistent but testable.\n\n"
+                        "    The computed lifetime is compared with that bound, not restated here.\n\n"
                         "  • Dominant channel: p → ν̄K⁺ (~60%)\n"
                         "    G₂ holonomy favors SUSY-like decay channels via the E₈ breaking "
                         "pattern to the Standard Model gauge group.\n\n"
