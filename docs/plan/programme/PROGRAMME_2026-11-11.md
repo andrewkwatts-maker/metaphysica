@@ -21,8 +21,8 @@ Branch: `site-review` (not pushed). Nothing is pushed, merged or published witho
 ## Phases
 | # | Phase | Output | State |
 |---|-------|--------|-------|
-| P1 | Audit (14 read-only lanes, verified) | `audit/<lane>.md`, `AUDIT_SUMMARY.md` | running (wf_9190d4ca-a7f) |
-| P2 | Fix lanes from the audit | commits, a test per fix | waiting on P1 |
+| P1 | Audit (14 read-only lanes, verified) | `audit/<lane>.md`, `AUDIT_SUMMARY.md` | done: 540 findings, 62 critical and 174 high confirmed |
+| P2 | Fix lanes from the audit | `FIX_BRIEFS.md`, `progress/<lane>.md`, commits, a test per fix | wave A next |
 | P3 | SOLID split; every fork option evaluable | `PATHS.md`, sweep artifacts | waiting on P2 |
 | P4 | Close the geometry; solve the master action | `ACTION_SOLUTION.md`, ladder checks | design in progress |
 | P5 | Falsifiability and data comparison | `FALSIFIABILITY.md`, paper section 6 table | waiting on P4 |
@@ -38,6 +38,16 @@ Branch: `site-review` (not pushed). Nothing is pushed, merged or published witho
 - Ladder today: 9 open terms, 3 failing checks (`nonabelian_gauge_source`, `owner_item_6`,
   `zero_modes:scalar`); established checks 29 reproduced, 0 failing, 16 blocked.
 - Paper: 96 sections, 90,369 words; the 14 core sections are 27,424 words.
+
+## Test baseline (799b559, 2026-11-11)
+22 failed, 4100 passed, 375 skipped, in 86 min with three agents also running. The full suite
+is too slow for a lane: lanes run the test files they touch; the planner runs the full suite
+once per phase, in the background.
+Failing files: `test_b3_root_coverage` (3), `test_b3_status_versus_the_refutation` (1),
+`test_derivation_chains` (3), `test_duplicate_statements` (1), `test_formula_lint` (1),
+`test_issues_index_ratchet` (3), `test_output_dir_binding` (2), `test_prose_lint` (1),
+`test_published_formula_coverage` (1), `test_rust_python_parity` (2),
+`test_superseded_surfaces` (1), `test_tex_renders` (3).
 
 ## P4 design note (planner)
 "Solve" means, for S_26 = Int sqrt|G| [(M_*^24/2) R + Psi-bar i Gamma D Psi]: field equations,
