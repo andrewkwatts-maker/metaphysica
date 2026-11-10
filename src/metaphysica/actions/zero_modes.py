@@ -20,11 +20,14 @@ from __future__ import annotations
 
 from typing import Dict, Iterable, Mapping
 
-from metaphysica.actions.model import Field
+from metaphysica.actions.model import Check, Field
 from metaphysica.actions.spinors import dirac_dim
 
 HOLONOMIES = ("flat", "G2")
 G2_DIM = 7
+K3_DIM = 4
+INDEX_REF = ("Wang 1989 (parallel spinors and holonomy); Atiyah-Singer: index of the internal "
+             "Dirac operator = chiral index of the child fermions")
 
 
 def full_betti(betti: Mapping[int, int], n: int) -> Dict[int, int]:
@@ -111,3 +114,39 @@ def dualise_forms(counts: Mapping[str, int], child_dim: int) -> Dict[str, int]:
     moved = out.pop(kind, 0)
     _add(out, "scalar", moved)
     return out
+
+
+def _parallel_spinors_by_chirality(n: int, holonomy: str):
+    """(n_plus, n_minus) parallel spinors on X; None when n is odd (no chirality on X)."""
+    if n < 1:
+        raise ValueError("internal dimension must be positive, got %d" % n)
+    if holonomy == "flat":
+        return None if n % 2 else (dirac_dim(n) // 2, dirac_dim(n) // 2)
+    if holonomy == "G2":
+        if n != G2_DIM:
+            raise ValueError("G2 holonomy needs internal dimension 7, got %d" % n)
+        return None
+    if holonomy == "SU2":  # K3: two parallel spinors of one chirality
+        if n != K3_DIM:
+            raise ValueError("SU2 holonomy needs internal dimension 4, got %d" % n)
+        return (2, 0)
+    raise ValueError("holonomy %r is not supported; use flat, G2 or SU2" % holonomy)
+
+
+def chiral_index(internal_dim: int, holonomy: str) -> int:
+    """n_+ - n_- of internal spinor zero modes: the chiral index of the child fermions.
+
+    Odd internal dimension has no chirality operator, so the zero modes are ungraded and the
+    child fermions pair into Dirac fermions: index 0. Flat even tori carry both chiralities
+    equally: index 0. K3 (holonomy SU2) gives 2, the chiral control.
+    """
+    pair = _parallel_spinors_by_chirality(internal_dim, holonomy)
+    return 0 if pair is None else pair[0] - pair[1]
+
+
+def chirality_check(name: str, internal_dim: int, holonomy: str) -> Check:
+    """A chiral child spectrum (index != 0) comes out of this internal space; can fail."""
+    idx = chiral_index(internal_dim, holonomy)
+    return Check("chiral_index:%s" % name, idx, idx != 0, True, INDEX_REF,
+                 "%s holonomy, internal dimension %d: chiral index %d"
+                 % (holonomy, internal_dim, idx))
