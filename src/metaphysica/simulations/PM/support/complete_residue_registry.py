@@ -46,6 +46,8 @@ Dedicated To:
 """
 
 from typing import Dict, Any, List, Optional, Tuple
+from metaphysica.config.reference_data import RealWorldData
+from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 import numpy as np
 import datetime
 from dataclasses import dataclass
@@ -452,7 +454,7 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     #   dimension-6 operators: O_6 ~ (qqql) / M_X^2
     #
     #   GUT scale from G2 geometry:
-    #   M_GUT ~ M_Planck / sqrt(b3) ~ 1.22e19 / sqrt(24) ~ 2.5e18 GeV
+    #   M_GUT ~ M_Planck / sqrt(b3); the value follows the b3 of the path in force
     #
     #   Proton lifetime:
     #   tau_p ~ M_GUT^4 / (alpha_GUT^2 * m_p^5)
@@ -473,8 +475,8 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     # ------------------------------------------------------------------------
 
     # GUT scale from G2 geometry
-    M_Planck = 1.22e19  # GeV
-    b3 = 24
+    M_Planck = RealWorldData.PLANCK_MASS[0]  # GeV, from the dataset
+    b3 = active_b3()  # b3 of the path in force (rule 3)
     M_GUT_G2 = M_Planck / np.sqrt(b3)  # ~ 2.5e18 GeV
 
     # Proton decay lifetime (with G2 instanton suppression)

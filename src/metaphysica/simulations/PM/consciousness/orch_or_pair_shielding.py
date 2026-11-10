@@ -68,6 +68,10 @@ PHI = (1 + np.sqrt(5)) / 2  # Golden ratio ~1.618
 # Shielding enhancement factor (derived from bridge geometry)
 K_SHIELDING = 2.5  # Dimensionless shielding coefficient (FITTED, no fit target)
 
+# RETIRE-FROM-PAPER: k = 2.5 is a fitted constant with no data to fit it to. The module and
+# its rows stay; the paper does not quote the shielded times and they are not scored.
+RETIRED_FROM_PAPER = True
+
 
 def shielding_enhancement(n_pairs) -> float:
     """The one shielding function: exp(K*sqrt(n/12)) * (n/6)^2.
@@ -927,7 +931,7 @@ if _SCHEMA_AVAIL:
                     path="consciousness.shielded_tau_ms",
                     name="Pair-Shielded Coherence Time",
                     units="milliseconds",
-                    status="PREDICTED",
+                    status="CALIBRATED",
                     description="Enhanced coherence time at 12 pairs with shielding (SPECULATIVE)."
                     " SPECULATION: separate from the gnosis coherence chain (gnosis_unlocking, tau_0 = 25 ms); the two disagree by orders of magnitude and neither is compared with data.",
                     derivation_formula="pair-shielding-enhancement",
@@ -936,7 +940,7 @@ if _SCHEMA_AVAIL:
                         "EML: ops.mul(eml_vec('consciousness.tau_base_ms'), "
                         "eml_vec('consciousness.shielding_factor')) — "
                         "τ_shielded = τ_base·shielding_factor at 12 pairs, τ_base = "
-                        "min(τ_Penrose, τ_decoherence); SPECULATIVE k=2.5 FITTED"
+                        "min(τ_Penrose, τ_decoherence); SPECULATIVE k=2.5 FITTED, no data it was fitted to"
                     ),
                 ),
                 _Param(
@@ -975,7 +979,7 @@ if _SCHEMA_AVAIL:
                     path="consciousness.shielding_factor",
                     name="Pair Shielding Factor",
                     units="dimensionless",
-                    status="PREDICTED",
+                    status="CALIBRATED",
                     description="Shielding enhancement exp(k*sqrt(n/12))*(n/6)^2 (SPECULATIVE, k=2.5 FITTED)",
                     derivation_formula="pair-shielding-enhancement",
                     no_experimental_value=True,

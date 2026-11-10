@@ -1,4 +1,4 @@
-# algebra-portals-viz (L6) progress, rounds 1 to 3
+# algebra-portals-viz (L6) progress, rounds 1 to 4
 
 | id | file:line | state | commit | test |
 |---|---|---|---|---|
@@ -39,6 +39,8 @@
 | sim-algebra-misc-24 | core formulas pneuma-master-action-v23, shadow-action-13d-v23 | blocked: FormulasRegistry/formula data, not in the L6 set | | |
 | sim-algebra-misc-40 | freudenthal_triple.py, e7_representation.py | blocked: freudenthal_quartic is read by core/free_set.py, geometry/b3_candidate_sweep.py, tests/test_free_set.py; removing it needs those lanes | | |
 | sim-algebra-misc-42 | Constants/ad-hoc, extract_supplementary, section_schema | blocked: no importer, but run_all_simulations.py rglob("*.py") lists the folder in its script index, so rule 5 forbids deleting; needs a ruling | | |
+| sim-algebra-misc-43 | consciousness/orch_or_pair_shielding.py | fixed: shielded_tau_ms and shielding_factor CALIBRATED, RETIRED_FROM_PAPER = True, text says no data it was fitted to (rows kept) | | test_algebra_portals_viz_fourth_round::test_shielding_rows_with_fitted_k_are_calibrated |
+| sim-algebra-misc-13 (recheck) | support/complete_residue_registry.py | fixed: proton-decay block had `b3 = 24` and M_Planck 1.22e19 typed; now active_b3() and RealWorldData.PLANCK_MASS | | ::test_proton_decay_block_reads_b3_from_path |
 
 Round 2 status vocabulary: reused ANSATZ, CALIBRATED; IDENTITY (the validation verdict word) used as a Parameter status for self-test rows: true by construction.
 
@@ -55,4 +57,5 @@ appendix_clifford_algebra.py (paper lane): drop the boost row. M_GUT ruling (reg
 Stellar bound 1e-10 GeV^-1 (module value) versus HB 6.6e-11 quoted in alp_portals section text.
 
 ## Next round
+Round 4: 43 and 13 recheck done. Left: 14 (M_GUT ruling), 37/38 file splits (prose to data files; large, one file per round), 16/23-28 appear done.
 Done in round 3: 10,31,32,33,39,45 fixed; 41 refuted; 17,24,40,42 blocked. Remaining: 13 (formula text check), 14 (M_GUT ruling), 16, 23-28 recheck, 37/38 file splits (last), 43 (gnosis k = 3.2 now CALIBRATED; RETIRE-FROM-PAPER of shielding k still open), plus any finding numbered above 45.
