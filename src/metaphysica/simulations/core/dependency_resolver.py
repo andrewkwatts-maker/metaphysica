@@ -586,9 +586,9 @@ def build_pm_dependency_graph() -> DependencyGraph:
 
     # Core topological invariants
     graph.register("seeds.elder_kads", depends_on=[],
-                   metadata={'level': 0, 'description': 'Dimensional parameter b3 = 24'})
+                   metadata={'level': 0, 'description': 'b3 of the path in force (active_path.topology)'})
     graph.register("seeds.mephorash_chi", depends_on=[],
-                   metadata={'level': 0, 'description': 'Effective chi = 144'})
+                   metadata={'level': 0, 'description': 'chi_eff per shadow of the path in force (active_path.topology)'})
     graph.register("seeds.logos_joint", depends_on=[],
                    metadata={'level': 0, 'description': 'The Christ Constant = 153 (fitted decomposition; see FormulasRegistry)'})
     graph.register("seeds.visible_gates", depends_on=[],
@@ -696,22 +696,22 @@ def build_pm_dependency_graph() -> DependencyGraph:
     # Level 3: Cosmological predictions
     # =========================================================================
 
-    # H0_geometric from geometric parameters (O'Dowd Formula)
-    # DERIVED: H0_base = 24 * 3 - 0.45 = 71.55 km/s/Mpc from b3=24 geometry
-    H0_base = 24 * 3 - 0.45  # Geometric H0 from b3=24
+    # H0 from the registry's O'Dowd composite (FITTED_COMPOSITE) at the
+    # seed b3. The former node typed H0_base = 24 * 3 - 0.45 = 71.55, the
+    # retired seed_24 reading, and scaled it by (k_gimel chi / 153)^0.1.
     graph.register(
         "cosmology.H0_local",
-        depends_on=["geometry.k_gimel", "seeds.mephorash_chi", "seeds.logos_joint"],
-        compute_fn=lambda deps: H0_base * (deps["geometry.k_gimel"] * deps["seeds.mephorash_chi"] / deps["seeds.logos_joint"]) ** 0.1,
-        metadata={'level': 3, 'description': 'Hubble constant from geometry'}
+        depends_on=["seeds.elder_kads"],
+        compute_fn=lambda deps: _h0_local(deps["seeds.elder_kads"]),
+        metadata={'level': 3, 'description': "H0 (O'Dowd composite, fitted) at the seed b3"}
     )
 
-    # w0_geometric from b3
+    # w0 = -1 + 1/n, n from the dark_energy_betti fork (frozen 24 when adopted)
     graph.register(
         "cosmology.w0_derived",
         depends_on=["seeds.elder_kads"],
-        compute_fn=lambda deps: -1.0 + 1.0 / deps["seeds.elder_kads"],
-        metadata={'level': 3, 'description': 'Dark energy equation of state'}
+        compute_fn=lambda deps: _w0_from_fork(deps["seeds.elder_kads"]),
+        metadata={'level': 3, 'description': 'Dark energy w0 from the dark_energy_betti fork'}
     )
 
     # Omega_DE from w0
@@ -895,6 +895,30 @@ def build_pm_dependency_graph() -> DependencyGraph:
     return graph
 
 
+def _h0_local(b3: int) -> float:
+    """H0 from FormulasRegistry.calculate_h0_local; *b3* must be its seed."""
+    from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
+
+    registry = FormulasRegistry()
+    if registry._b3 != b3:
+        raise ValueError(
+            "seeds.elder_kads = %r is not the b3 = %r of the path in force; "
+            "H0 is computed on the path in force only" % (b3, registry._b3))
+    return registry.h0_local
+
+
+def _w0_from_fork(b3: int) -> float:
+    """w0 = -1 + 1/n, n set by the dark_energy_betti fork (b3 when b3_live)."""
+    from metaphysica.simulations.PM.cosmology.late_time_routes import (
+        de_betti_n,
+        resolve_de_betti,
+    )
+
+    option = resolve_de_betti()
+    n = b3 if option == "b3_live" else de_betti_n(option)
+    return -1.0 + 1.0 / n
+
+
 def build_seed_values() -> Dict[str, Any]:
     """
     Build the base seed values from FormulasRegistry constants.
@@ -905,9 +929,12 @@ def build_seed_values() -> Dict[str, Any]:
     Returns:
         Dictionary mapping seed parameter paths to their values
     """
+    from metaphysica.simulations.core.active_path import topology
+
+    topo = topology()
     return {
-        "seeds.elder_kads": 24,
-        "seeds.mephorash_chi": 72,  # chi_eff = 72 per M-theory index theorem (|chi|/24 = 72/24 = 3 generations)
+        "seeds.elder_kads": topo.b3,
+        "seeds.mephorash_chi": topo.chi_sector,  # chi_eff per 13D shadow
         "seeds.logos_joint": 153,
         "seeds.visible_gates": 135,
         "seeds.bulk_pressure": 163,

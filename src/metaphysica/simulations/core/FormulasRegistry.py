@@ -70,6 +70,16 @@ def lock_geometric_context():
 # v17.2: Apply strict context locking on module load
 lock_geometric_context()
 
+#: Symbol-table entries whose value depends on the path in force; their
+#: "value" is None in HEBREW_SYMBOL_REGISTRY and is read from
+#: active_path.topology() by get_latex_term (2026-11-11: elder_kads used to
+#: be typed as the retired seed_24 value).
+_PATH_VALUED_SYMBOLS = {
+    "elder_kads": lambda topo: topo.b3,
+    "mephorash_chi": lambda topo: topo.chi_sector,
+    "qedem_chi_sum": lambda topo: topo.chi_eff,
+}
+
 
 class FormulasRegistry:
     """
@@ -263,9 +273,9 @@ class FormulasRegistry:
     # THE MECHANICAL TRIAD (Coupling Constants):
     # Symbol | Gnostic Name       | Value     | Role
     # -------|--------------------|-----------|---------------------------------
-    # η_S    | The Sophian Breath | 0.6819    | H0 Friction Coefficient
+    # η_S    | The Sophian Breath | 163/(10b3-1) | H0 Friction Coefficient (fitted form)
     # κ_Δ    | The Demiurgic Gear | 12.318... | Mass-Energy Gearbox
-    # σ_T    | The Tzimtzum Seal  | 23/24     | Void Seal / Dark Energy w0
+    # σ_T    | The Tzimtzum Seal  | (n-1)/n   | Void Seal / Dark Energy w0 (n: dark_energy_betti)
     #
     # DERIVED GNOSTIC CONSTANTS:
     # 18     | The Syzygy      | christos - sophia (Divine Pairing Gap)
@@ -494,9 +504,9 @@ class FormulasRegistry:
         "Lambda_JC": "logos_joint",          # Λ_JC: Logos Potential (153) [canonical: logos_joint]
         "Delta_JC": "delta_jc",             # Δ_JC: Joint Closure Delta (≡ 153) = JC Identity
         # Mechanical Triad (3)
-        "eta_S": "sophian_drag",            # η_S: H0 Friction (0.6819)
+        "eta_S": "sophian_drag",            # η_S: H0 Friction, 163/(10 b3 - 1)
         "kappa_Delta": "demiurgic_coupling",  # κ_Δ: Mass-Energy Gearbox
-        "sigma_T": "tzimtzum_pressure",     # σ_T: Void Seal (23/24)
+        "sigma_T": "tzimtzum_pressure",     # σ_T: Void Seal ((n-1)/n, dark_energy_betti)
         # (Z.6) Pneuma Tensioner Constants
         "D_10": "residual_key",              # D_10: Core Flux Residual (10) [canonical: residual_key]
         "Z6": "z6_pneuma",                  # Z.6: Pneuma Tensioner (10/24 = 0.4166...)
@@ -628,9 +638,9 @@ class FormulasRegistry:
     # 1     | monad_unity      | watts_constant      | observer unity constant
     # 10    | residual_key     | decad               | core flux residual
     # 18    | syzygy_gap       | syzygy_gap          | aeon-pair gap
-    # 24    | elder_kads       | b3                  | third Betti number (SSoT seed)
+    # b3    | elder_kads       | b3                  | third Betti number (seed of the path in force)
     # 27    | horos_limit      | horos               | dimensional-boundary limit
-    # 72    | mephorash_chi    | chi_eff             | per-shadow Euler characteristic
+    # chi/2 | mephorash_chi    | chi_eff             | per-shadow chi_eff (chi_eff_route)
     # 135   | demiurgic_Yetts  | shadow_sector       | normal-portal flux integer
     # 153   | logos_joint      | christ_constant     | joint-closure symmetry integer
     # 163   | barbelo_modulus  | odowd_bulk_pressure | ancestral bulk-pressure modulus
@@ -650,9 +660,9 @@ class FormulasRegistry:
         "monad_unity":      {"value": 1.0,           "old_name": "watts_constant",       "symbol": r"\Omega_{\aleph}",                       "scientific_name": "Observer Unity Constant"},
         "residual_key":     {"value": 10,            "old_name": "decad",                 "symbol": r"D_{\iota}",                              "scientific_name": "Core Flux Residual"},
         "syzygy_gap":       {"value": 18,            "old_name": "syzygy_gap",            "symbol": r"\Delta_{\chi\iota}",                     "scientific_name": "Aeon Pair Gap"},
-        "elder_kads":       {"value": 24,            "old_name": "b3",                    "symbol": r"\mathcal{E}_{\text{כד}}",                "scientific_name": "Third Betti number of the G2 manifold"},
+        "elder_kads":       {"value": None,          "old_name": "b3",                    "symbol": r"\mathcal{E}_{\text{כד}}",                "scientific_name": "Third Betti number of the G2 manifold"},
         "horos_limit":      {"value": 27,            "old_name": "horos",                 "symbol": r"\beta_{\text{כז}}",                      "scientific_name": "Dimensional Boundary Limit"},
-        "mephorash_chi":    {"value": 72,            "old_name": "chi_eff",               "symbol": r"\chi_{\text{עב}}",                       "scientific_name": "Per-shadow Euler Characteristic"},
+        "mephorash_chi":    {"value": None,          "old_name": "chi_eff",               "symbol": r"\chi_{\text{עב}}",                       "scientific_name": "Per-shadow Euler Characteristic"},
         "demiurgic_Yetts":  {"value": 135,           "old_name": "shadow_sector",         "symbol": r"\mathcal{S}_{\delta}",                   "scientific_name": "Normal Portal Flux"},
         "logos_joint":      {"value": 153,           "old_name": "christ_constant",       "symbol": r"\Lambda_{\nu}",                          "scientific_name": "Joint Closure Symmetry"},
         "barbelo_modulus":  {"value": 163,           "old_name": "odowd_bulk_pressure",   "symbol": r"\text{ק}_{\text{סג}}",                   "scientific_name": "Ancestral Bulk Pressure Modulus"},
@@ -664,7 +674,7 @@ class FormulasRegistry:
         "gnosis_threshold": {"value": 9,             "old_name": "central_activation_threshold", "symbol": r"\Gamma_{\theta}",                 "scientific_name": "Central Activation Threshold"},
         # Additional v23.2 metadata
         "sophian_modulus":  {"value": 125,           "old_name": "visible_sector",        "symbol": r"\text{ק}_{\text{כה}}",                   "scientific_name": "Visible Residue Modulus"},
-        "qedem_chi_sum":    {"value": 144,           "old_name": "chi_eff_total",         "symbol": r"\text{ק}_{\text{דם}}",                   "scientific_name": "Total Euler Characteristic (72 + 72)"},
+        "qedem_chi_sum":    {"value": None,          "old_name": "chi_eff_total",         "symbol": r"\text{ק}_{\text{דם}}",                   "scientific_name": "Total Euler Characteristic (72 + 72)"},
         "nitzotzin_sector": {"value": 144,           "old_name": "roots_per_sector",      "symbol": r"\xi_{\mu}",                              "scientific_name": "Per-Sector Root Count"},
         "Dodecad_Anchors":  {"value": 12,            "old_name": "total_local_pairs",     "symbol": r"\mathbb{A}_{\text{יב}}",                 "scientific_name": "Local Bridge Pair Count"},
         "Echad_Prime":      {"value": 13,            "old_name": "total_effective_pairs", "symbol": r"\mathbb{U}_{\text{יג}}",                 "scientific_name": "Effective Bridge Pair Count (12 local + 1 sampler)"},
@@ -712,9 +722,9 @@ class FormulasRegistry:
         # ---------------------------------------------------------------
         # MECHANICAL TRIAD
         # ---------------------------------------------------------------
-        "sophian_drag":       r"\eta_S",                        # 0.6819 - H0 Friction
+        "sophian_drag":       r"\eta_S",                        # 163/(10 b3 - 1) - H0 Friction
         "demiurgic_coupling": r"\kappa_\Delta",                 # 12.318 - Mass-Energy Gearbox
-        "tzimtzum_pressure":  r"\sigma_T",                      # 23/24 - Void Seal
+        "tzimtzum_pressure":  r"\sigma_T",                      # (n-1)/n - Void Seal
 
         # ---------------------------------------------------------------
         # BRIDGE ARCHITECTURE (keyed by latest code names)
@@ -912,6 +922,10 @@ class FormulasRegistry:
         if param_name in cls.HEBREW_SYMBOL_REGISTRY:
             entry = cls.HEBREW_SYMBOL_REGISTRY[param_name]
             term["value"] = entry.get("value")
+            if param_name in _PATH_VALUED_SYMBOLS:
+                # Path-dependent: read from the path in force, never typed.
+                from metaphysica.simulations.core.active_path import topology
+                term["value"] = _PATH_VALUED_SYMBOLS[param_name](topology())
             # v2.2.0 honesty polish: stripped the "gnostic_name" mystical
             # alias from the description string. Legacy overlay is kept in
             # the gitignored src/metaphysica/_gnostic_aliases.py for the
@@ -1395,22 +1409,22 @@ class FormulasRegistry:
         # =======================================================================
 
         # 8. Sophian Drag (eta_S) - H0 Friction Coefficient
-        # STATUS: DERIVED from G2 topology (v23.0+)
-        # FORMULA: eta_S = sterile_sector / (b3 * 10 - 1) = 163/239
-        #   - sterile_sector = BULK_PRESSURE = 163 (= 7*b3 - 5)
-        #   - denominator = b3*10 - 1 = 239 (one less than decimal b3 scaling)
-        # RESULT: 163/239 = 0.68200836820... (0.016% from old fitted 0.6819)
-        # H0 VALIDATION: H0 = 72 - 163/144 + eta_S = 71.550 km/s/Mpc
-        # This derivation upgrades G43 from FITTED to DERIVED status.
-        self._sophian_drag = self.BULK_PRESSURE / (self._b3 * 10 - 1)  # 163/239
+        # STATUS: FITTED. eta_S = BULK_PRESSURE / (10 b3 - 1) with the fixed
+        # BULK_PRESSURE = 163 and the live b3 of the path in force. The form
+        # was chosen at the retired seed b3 = 24, where 163/239 = 0.6820
+        # rationalised the fitted 0.6819; on another seed the same form gives
+        # a different number, so it is a fitted form, not a derivation.
+        self._sophian_drag = self.BULK_PRESSURE / (self._b3 * 10 - 1)
 
         # 9. Demiurgic Coupling (kappa_Delta) - Mass-Energy Gearbox
         # Formula: kappa_Delta = B3/2 + 1/pi = 12 + 0.318...
         self._demiurgic_coupling = self._b3 / 2 + 1 / math.pi
 
-        # 10. Tzimtzum Pressure (sigma_T = 23/24) - Void Seal
-        # MUST use fraction, NOT decimal!
-        self._tzimtzum_pressure = 23.0 / 24.0
+        # 10. Tzimtzum Pressure (sigma_T = (n-1)/n) - Void Seal
+        # n is the integer the dark_energy_betti fork sets (the adopted
+        # option is the frozen n = 24, which is no longer b3); one source
+        # with late_time_routes.thawing_w0, so w0 = -sigma_T on every path.
+        self._tzimtzum_pressure = self._tzimtzum_from_fork()
 
         # =======================================================================
         # THE GOLDEN RATIO (φ) - MATHEMATICAL CONSTANT
@@ -2230,8 +2244,8 @@ class FormulasRegistry:
     # - Neutral (no adjustment): R (Molar Gas Constant - NA×k cancellation)
 
     # CODATA 2022 Reference Values
-    CODATA_COMPTON = 2.42631023867e-12      # m (electron Compton wavelength, CODATA 2022)
-    CODATA_COMPTON_SIGMA = 7.3e-22          # m (uncertainty)
+    CODATA_COMPTON = 2.42631023538e-12      # m (electron Compton wavelength, CODATA 2022)
+    CODATA_COMPTON_SIGMA = 7.6e-22          # m (uncertainty, CODATA 2022)
     CODATA_RYDBERG = 10973731.568157        # m⁻¹ (Rydberg constant, CODATA 2022)
     CODATA_RYDBERG_SIGMA = 0.000021         # m⁻¹ (uncertainty)
     CODATA_BOHR_RADIUS = 5.29177210544e-11  # m (Bohr radius, CODATA 2022)
@@ -3672,22 +3686,22 @@ class FormulasRegistry:
 
     @property
     def elder_kads(self) -> int:
-        """Symmetric Governance Energy (24) - Hebrew: כד (Kad). Symbol: E_כד.
+        """Third Betti number b3 of Y_7, the seed of the path in force.
 
-        Kad (24) represents the Pleroma as a 'Vessel.' The 24 Elders governed by
-        the 12:12 syzygy (Yud-Bet) act as the primary regulator for Logic Closure (288).
-        Third Betti number b3 of the G2 manifold.
+        Read from b3_path.seed_values(resolve_path()): 43 on the adopted
+        seed_43_joyce, 24 on the retired seed_24. Symbol: E_כד (the Hebrew
+        name Kad = 24 dates from the retired seed).
         """
         return self._b3
 
     @property
     def elders(self) -> int:
-        """LEGACY ALIAS for elder_kads. Third Betti Number b3 (24)."""
+        """LEGACY ALIAS for elder_kads. Third Betti number b3 of the path in force."""
         return self.elder_kads
 
     @property
     def elder_vessels(self) -> int:
-        """LEGACY ALIAS for elder_kads. Third Betti Number b3 (24)."""
+        """LEGACY ALIAS for elder_kads. Third Betti number b3 of the path in force."""
         return self.elder_kads
 
     @property
@@ -3886,16 +3900,11 @@ class FormulasRegistry:
         """
         eta_S: H0 Friction Coefficient.
 
-        STATUS: FITTED (post-hoc integer rationalization 163/239 of the
-        previously fitted 0.6819; 0.016% match)
-        FORMULA: eta_S = sterile_sector / (b3 * 10 - 1) = 163/239 = 0.68200836820...
-
-        Components:
-        - sterile_sector = 163 (shadow gauge degrees of freedom = 7*b3 - 5)
-        - denominator = 239 = b3*10 - 1 (decimal b3 scaling minus unity)
-
-        Result: H0 = 72 - 163/144 + eta_S = 71.550 km/s/Mpc
-        Error: 0.016% from old fitted value 0.6819
+        STATUS: FITTED. FORMULA: eta_S = BULK_PRESSURE / (10 b3 - 1), with
+        BULK_PRESSURE = 163 fixed and b3 the live seed. The form is a
+        post-hoc integer rationalisation of the fitted 0.6819 made at the
+        retired seed b3 = 24 (163/239); at another seed it gives another
+        number. It enters H0 through calculate_h0_local.
         """
         return self._sophian_drag
 
@@ -3906,7 +3915,7 @@ class FormulasRegistry:
 
     @property
     def tzimtzum_pressure(self) -> float:
-        """sigma_T: Void Seal (23/24 - use FRACTION!)."""
+        """sigma_T: Void Seal, (n-1)/n with n from the dark_energy_betti fork."""
         return self._tzimtzum_pressure
 
     @property
@@ -4247,24 +4256,18 @@ class FormulasRegistry:
         """
         Calculate H0 (local universe) using O'Dowd Formula.
 
-        Formula: H0 = (ROOTS/4) - (P_O/pressure_divisor) + eta_S
-                    = (288/4) - (163/144) + 0.6819
-                    = 72 - 1.1319 + 0.6819
-                    = 71.55 km/s/Mpc
+        Formula: H0 = ROOTS/4 - (7 b3 - 5)/(b3^2/4) + eta_S,
+                 eta_S = 163/(10 b3 - 1), with b3 the seed of the path in force.
 
-        CLARIFICATION:
-        - pressure_divisor = b3^2/4 = 576/4 = 144 (Hexagonal Projection)
-        - This equals chi_eff_total = 144 numerically but has GEOMETRIC origin
-        - The bulk pressure correction is a cross-shadow/global property
-        - Uses DERIVED geometric values for odowd_bulk (7*b3-5 = 163)
-
-        Observational comparison:
-        - Local (SH0ES): 73.0 +/- 1.0 km/s/Mpc
-        - Early (Planck): 67.4 +/- 0.5 km/s/Mpc
-        - PM prediction: 71.55 km/s/Mpc (within 1.5 sigma of both measurements)
+        STATUS: FITTED_COMPOSITE (three fitted inputs: the O'Dowd form, the
+        b3^2/4 divisor and eta_S). The numbers it gives depend on the seed;
+        the retired seed b3 = 24 gave 288/4 - 163/144 + 163/239 = 71.55.
+        The value on any path is this method's return, read through the
+        parameter artifact row cosmology.H0_local; it is never typed in text.
+        Comparison data: SH0ES 73.04 +/- 1.04, Planck 67.4 +/- 0.5 km/s/Mpc.
         """
         base = self._roots_total / 4.0                                # 288/4 = 72
-        bulk_correction = self.odowd_bulk_derived / self.pressure_divisor  # (7*24-5)/(24^2/4)
+        bulk_correction = self.odowd_bulk_derived / self.pressure_divisor  # (7 b3 - 5)/(b3^2/4)
         odowd = base - bulk_correction + self._sophian_drag
         # D-022: h0_route. The adopted route returns the O'Dowd value unchanged.
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
@@ -4293,17 +4296,13 @@ class FormulasRegistry:
         """
         Calculate w0 (dark energy equation of state).
 
-        Formula: w0 = -sigma_T = -23/24 = -0.9583...
+        Formula: w0 = -sigma_T = -(n-1)/n = -1 + 1/n, with n the integer
+        the dark_energy_betti fork sets (late_time_routes.de_betti_n).
 
-        The Tzimtzum Pressure IS the dark energy equation of state.
-
-        BREATHING MECHANISM:
-        w0 = -1 + 1/b3 = -1 + 1/24 = -23/24 = -0.9583...
-        This arises from the breathing mode scalar field phi of the
-        Euclidean bridge (2,0) connecting the dual shadows.
-        The deviation from w0=-1 (cosmological constant) is due to
-        the dynamic size modulus of B^2 bridge.
-        DESI 2025 BAO-only: w0 = -0.957 ± 0.067 (prediction within uncertainty)
+        The adopted option b3_24 freezes n = 24 (w0 = -23/24), which is no
+        longer the live b3, so on the adopted path w0 is an INPUT constant,
+        not a prediction; under the option b3_live, n = b3 of the path in
+        force. Comparison data: DESI 2025 BAO-only w0 = -0.957 +/- 0.067.
         """
         # D-022: dark_energy_mechanism. The adopted mechanism returns -sigma_T unchanged.
         from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
@@ -4317,12 +4316,11 @@ class FormulasRegistry:
 
     def calculate_parity_sum(self) -> float:
         """
-        Calculate Manifold Parity: eta_S + sigma_T ≈ 1.6403 (derived)
+        Calculate Manifold Parity: eta_S + sigma_T.
 
-        v23.0+: With eta_S = 163/239, the exact parity sum is:
-          163/239 + 23/24 = 1.64034169820...
-
-        The Sophian Drag + Tzimtzum Pressure must balance.
+        eta_S = 163/(10 b3 - 1) (fitted form, live b3) and sigma_T = (n-1)/n
+        (n from the dark_energy_betti fork). The sum 1.64034 quoted earlier
+        was its value at the retired seed b3 = 24 (163/239 + 23/24).
         """
         return self._sophian_drag + self._tzimtzum_pressure
 
@@ -4665,12 +4663,22 @@ class FormulasRegistry:
         expected = 1.64034  # Derived from 163/239 + 23/24 (rounded to 5 decimal places)
         return abs(self.parity_sum - expected) < tolerance
 
+    @staticmethod
+    def _tzimtzum_from_fork() -> float:
+        """(n-1)/n with n from the dark_energy_betti fork reader."""
+        from metaphysica.simulations.PM.cosmology.late_time_routes import (
+            de_betti_n,
+            resolve_de_betti,
+        )
+
+        n = de_betti_n(resolve_de_betti())
+        return (n - 1) / n
+
     def verify_tzimtzum_fraction(self) -> bool:
         """
-        Verify Tzimtzum is exactly 23/24.
+        Verify sigma_T is exactly (n-1)/n for the dark_energy_betti fork.
         """
-        expected = 23.0 / 24.0
-        return abs(self._tzimtzum_pressure - expected) < 1e-15
+        return abs(self._tzimtzum_pressure - self._tzimtzum_from_fork()) < 1e-15
 
     def verify_watts_constant(self) -> bool:
         """
@@ -4832,7 +4840,8 @@ class FormulasRegistry:
                     "named_for": "Sophia (Divine Wisdom)",
                     "legacy_alias": "The Sophian Breath",
                     "legacy_description": "Friction from Sophia; the drag on cosmic expansion",
-                    "hubble_role": f"H0 = (288/4) - (163/144) + eta_S = {self.h0_local:.2f}",
+                    "hubble_role": (f"H0 = 288/4 - (7 b3 - 5)/(b3^2/4) + eta_S at b3 = "
+                                    f"{self._b3} = {self.h0_local:.2f}"),
                     "pm_path": "constants.sophian_drag"
                 },
                 "demiurgic_coupling": {

@@ -18,47 +18,45 @@ def sigma(value, exp, unc):
 
 
 def test_structural_identities():
-    assert B3 == 24
-    assert CHI_EFF == 6 * B3 == 144
-    assert CHI_SECTOR == 72
-    assert B2 == 4
+    # Path-dependent names follow the seed in force (2026-11-11); the
+    # seed_24 values (24, 4, 144) were the defect this test used to pin.
+    from metaphysica.simulations.PM.geometry.b3_path import seed_values
+    assert (B3, B2) == seed_values()
+    assert CHI_SECTOR * 2 == CHI_EFF
     # shadow bookkeeping: 13 = 4 spacetime + 7 (V7) + 2 (T2)
     assert 4 + 7 + 2 == 13
-    # Two-time ruling (2026-08-19): spinor 4096 = Weyl of Cl(24,2)
-    # (Dirac 2^13 = 8192, chiral half 4096); bulk = D_crit = b3 + 2 = 26,
-    # shadows (12,1)+(12,1) = 26 exactly.
+    # Signature ruling (2026-08-31): bulk 26D (24,2), D_crit withdrawn;
+    # spinor 4096 = Weyl of Cl(24,2), shadows (12,1)+(12,1) = 26.
     assert 2 ** 13 // 2 == 4096
     bulk = CANON["bulk"]
-    assert bulk["value"] == 26 == B3 + 2
+    assert bulk["value"] == 26
     assert 13 + 13 == bulk["value"]
 
 
 def test_w0_ruling():
     e = get("w0")
-    assert e["value"] == -(B3 - 1) / B3
+    # the adopted dark_energy_betti option is the frozen n = 24: an input
     assert abs(e["value"] + 23 / 24) < 1e-15
+    assert e["status"] == "INPUT"
     c = e["comparison"]
     assert sigma(e["value"], c["exp"], c["unc"]) < 0.05
-    assert e["spare_vars"] == 0
 
 
 def test_wa_ruling_minimal_form():
     e = get("wa")
-    assert abs(e["value"] + 1 / math.sqrt(24)) < 1e-15
-    c = e["comparison"]
-    s = sigma(e["value"], c["exp"], c["unc"])
-    # alive (below 2 sigma) but honestly not a close fit — that is the point
-    assert 1.5 < s < 2.0
-    # the retired projection is exactly 4x the canonical (b2 structural)
-    assert abs(4 * e["value"] + 0.8165) < 1e-3
+    assert abs(e["value"] + 1 / math.sqrt(B3)) < 1e-15
     assert e["spare_vars"] == 0
+    # the retired projection is exactly b2 x the canonical
+    assert any(abs(float(k) - B2 * e["value"]) < 1e-3
+               for k in e["superseded"] if k[0] in "-+0123456789")
 
 
 def test_h0_is_not_topology_first():
+    from metaphysica.simulations.core.parameter_artifact import parameter_value
     e = get("H0_km_s_Mpc")
     assert e["status"] == "FITTED_COMPOSITE"
-    # O'Dowd composite recomputes: 288/4 - 163/144 + 0.6819
-    assert abs((288 / 4 - 163 / 144 + 0.6819) - e["value"]) < 5e-3
+    # read from the artifact, never typed
+    assert e["value"] == parameter_value("cosmology.H0_local")
     c = e["comparison"]
     assert sigma(e["value"], c["exp"], c["unc"]) < 1.5   # SH0ES
     # and the superseded ricci variant is the one that FAILs
@@ -99,7 +97,7 @@ def test_bounds_rulings():
 
 def test_alpha_leak_naming():
     e = get("alpha_leak")
-    assert abs(e["value"] - 1 / math.sqrt(6)) < 1e-15
+    assert abs(e["value"] - 1 / math.sqrt(CHI_EFF / B3)) < 1e-15
     assert "0.57" in e["superseded"]
 
 

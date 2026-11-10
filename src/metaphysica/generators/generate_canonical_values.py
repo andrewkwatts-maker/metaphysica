@@ -17,6 +17,7 @@ import math
 from typing import Any, Dict
 
 from metaphysica.generators._common import autogen_dir
+from metaphysica.simulations.core.active_path import Topology, topology
 from metaphysica.simulations.core.canonical_values import all_canonical
 
 # canonical symbol -> registry path expected to agree (rel tol 1e-3)
@@ -29,6 +30,18 @@ REGISTRY_BINDINGS = {
     "tau_p_years": "proton_decay.lifetime_years",
     "alpha_leak": None,   # multiple consumers; naming ruling only
 }
+
+
+def _note(topo: Topology) -> str:
+    """The table's note, stated at the path it was built on."""
+    return (
+        "Canonical-value rulings (2026-08 peer review, C-1), built on path "
+        "%s (b3 = %d, b2 = %d). Chosen under the minimal-spare-variables "
+        "principle: the candidate derived from the seed + structural "
+        "integers with fewest extra inputs wins unless data falsified it "
+        "— falsified elegant candidates stay on the books labelled "
+        "FALSIFIED. Prose and displays must read this table, never "
+        "restate values." % (topo.path, topo.b3, topo.b2))
 
 
 def main() -> int:
@@ -52,16 +65,12 @@ def main() -> int:
                 drift.append({"symbol": symbol, "registry_path": path,
                               "canonical": cv, "registry": rv, "rel": rel})
 
+    topo = topology()
     payload = {
         "schema_version": 1,
-        "note": (
-            "Canonical-value rulings (2026-08 peer review, C-1). Chosen "
-            "under the minimal-spare-variables principle: the candidate "
-            "derived from b3=24 + structural integers with fewest extra "
-            "inputs wins unless data falsified it — falsified elegant "
-            "candidates stay on the books labelled FALSIFIED. Prose and "
-            "displays must read this table, never restate values."
-        ),
+        "path": {"b3_seed": topo.path, "b3": topo.b3, "b2": topo.b2,
+                 "n_gen": topo.n_gen, "chi_eff": topo.chi_eff},
+        "note": _note(topo),
         "rulings": canon,
         "registry_drift": drift,
     }
