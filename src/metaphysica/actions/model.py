@@ -18,6 +18,8 @@ MOSTLY_PLUS, MOSTLY_MINUS = "mostly_plus", "mostly_minus"
 CONVENTIONS = (MOSTLY_PLUS, MOSTLY_MINUS)
 KINDS = ("scalar", "vector", "spinor", "metric")
 CURVATURE, DERIVATIVE = "R", "d"
+HERMITIAN, HOLOMORPHIC = "hermitian", "holomorphic"
+BILINEARS = (None, HERMITIAN, HOLOMORPHIC)  # None: the hermitian Psi-bar form
 
 
 class ModelError(ValueError):
@@ -84,6 +86,11 @@ class Term:
     sign: int = 1
     open: bool = False
     latex: Optional[str] = None  # display form of the summand, without its sign
+    bilinear: Optional[str] = None  # spinor bilinear form: "hermitian" or "holomorphic"
+
+    def __post_init__(self):
+        if self.bilinear not in BILINEARS:
+            raise ModelError("term %s: unknown bilinear %r" % (self.id, self.bilinear))
 
 
 @dataclass(frozen=True)
