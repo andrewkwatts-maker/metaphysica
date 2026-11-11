@@ -24,7 +24,7 @@ even values 12-48).
 The surface does not select a topology. The formulas are model constructs
 (flavour is OPEN until a chiral sector exists, D-011), and where the minimum
 falls depends on the chi_eff value fed in: the stored
-stability_heatmap_data.json was made with chi_eff = 144 and has its minimum
+retired/stability_heatmap_data.json was made with chi_eff = 144 and has its minimum
 at (4, 24); a run on 2026-10-01 with the registry's per-shadow value 72 put
 it at (5, 28).
 
