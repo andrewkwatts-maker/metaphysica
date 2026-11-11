@@ -115,14 +115,84 @@ def test_the_declarative_tally_says_it_is_declarative():
     assert "evaluation_summary" in str(summary.get("authoritative_counts", ""))
 
 
+def _status(cert: dict) -> str:
+    return str(cert.get("evaluation_status") or "").upper()
+
+
+def _applicable_tally(certs: list) -> tuple:
+    """(gates the selected path carries, of those the ones never run).
+
+    A NOT_APPLICABLE gate has a premise the selected path does not carry
+    (generate_72_certificates._apply_path_applicability). It is neither run
+    nor a declarative gate of this path, so the scorecard leaves it out
+    before it counts anything, as headline_stats.tally_gates does.
+    """
+    applicable = [c for c in certs if _status(c) != "NOT_APPLICABLE"]
+    never_run = sum(1 for c in applicable
+                    if not _status(c).startswith("COMPUTED"))
+    return len(applicable), never_run
+
+
+def _assert_totals_match_the_certificates(totals: dict, certs: list) -> None:
+    applicable, never_run = _applicable_tally(certs)
+    assert totals["total_gates"] == applicable, (
+        f"the scorecard counts {totals['total_gates']} gates; the selected "
+        f"path carries {applicable} of the {len(certs)} certificates"
+    )
+    assert totals["declarative_no_executable_form"] == never_run, (
+        f"the scorecard reports {totals['declarative_no_executable_form']} "
+        f"gates never run; {never_run} applicable certificates have no "
+        f"COMPUTED status"
+    )
+
+
 def test_declarative_gates_are_counted_separately():
-    """Completion over gates that were never run is not a completion rate."""
+    """Completion over gates that were never run is not a completion rate.
+
+    Measured 2026-11-11 on the fresh build of 249f362: 72 certificates, G31
+    NOT_APPLICABLE, 71 applicable, 38 of them never run (31 with no status
+    and 7 DECLARATIVE). The numbers are not pinned here: the test checks
+    that the scorecard agrees with the certificates.
+    """
     scorecard = _load("improvement_scorecard.json")
     certs = _load("GATES_CERTIFICATES.json")["certificates"]
-    never_run = sum(
-        1 for c in certs
-        if not str(c.get("evaluation_status") or "").startswith("COMPUTED"))
-    assert scorecard["totals"]["declarative_no_executable_form"] == never_run
+    _assert_totals_match_the_certificates(scorecard["totals"], certs)
+
+
+_CONTROL_CERTS = [
+    {"gate_id": 1, "evaluation_status": "COMPUTED_PASS"},
+    {"gate_id": 2, "evaluation_status": "COMPUTED_FAIL"},
+    {"gate_id": 3, "evaluation_status": "DECLARATIVE"},
+    {"gate_id": 4},
+    {"gate_id": 5, "evaluation_status": "NOT_APPLICABLE"},
+]
+
+
+@pytest.mark.parametrize("total_gates, never_run", [(5, 3), (4, 3), (5, 2)])
+def test_a_scorecard_that_counts_a_not_applicable_gate_fails(
+        total_gates, never_run):
+    """Control: the exclusion is pinned on both totals, not tolerated."""
+    _assert_totals_match_the_certificates(
+        {"total_gates": 4, "declarative_no_executable_form": 2},
+        _CONTROL_CERTS)
+    with pytest.raises(AssertionError):
+        _assert_totals_match_the_certificates(
+            {"total_gates": total_gates,
+             "declarative_no_executable_form": never_run},
+            _CONTROL_CERTS)
+
+
+def test_the_built_scorecard_fails_if_it_counts_the_not_applicable_gates():
+    """Control on the build: the old count (G31 as never run) is rejected."""
+    totals = _load("improvement_scorecard.json")["totals"]
+    certs = _load("GATES_CERTIFICATES.json")["certificates"]
+    not_applicable = len(certs) - _applicable_tally(certs)[0]
+    if not_applicable == 0:
+        pytest.skip("the selected path marks no gate NOT_APPLICABLE")
+    for key in ("total_gates", "declarative_no_executable_form"):
+        counted = dict(totals, **{key: totals[key] + not_applicable})
+        with pytest.raises(AssertionError):
+            _assert_totals_match_the_certificates(counted, certs)
 
 
 def test_the_seal_accounting_is_explicit():
