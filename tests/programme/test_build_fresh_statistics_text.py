@@ -53,7 +53,8 @@ def test_statistics_json_fit_keys_come_only_from_the_headline(tmp_path, monkeypa
         "chi_squared_from_rows": {
             "scored_rows": [{"sigma": 0.5}, {"sigma": 3.0}],
             "all_scoring_rows": {"chi_squared": 9.25, "n": 2}},
-        "summary": {"p_value_n_dof": 0.01, "status": "POOR_FIT"}}), encoding="utf-8")
+        "summary": {"p_value_n_dof": 0.01, "status": "POOR_FIT", "dof": 2,
+                    "dof_is_ansatz": False}}), encoding="utf-8")
     certs = tmp_path / "GATES_CERTIFICATES.json"
     certs.write_text(json.dumps({"certificates": []}), encoding="utf-8")
     monkeypatch.setattr(gs, "STATISTICAL_RIGOR_FILE", str(rigor))

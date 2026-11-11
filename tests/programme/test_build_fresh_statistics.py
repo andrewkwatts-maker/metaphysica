@@ -28,7 +28,8 @@ REPORT = {
         "all_scoring_rows": {"chi_squared": 9.25, "n": 2}},
     "edof_analysis": {"effective_dof": 3, "effective_dof_is_ansatz": True,
                       "p_value": 0.026},
-    "summary": {"status": "POOR_FIT", "p_value": 0.0098, "p_value_n_dof": 0.0098}}
+    "summary": {"status": "POOR_FIT", "p_value": 0.0098, "p_value_n_dof": 0.0098,
+                "dof": 2, "dof_is_ansatz": False}}
 
 
 def _setup(tmp_path, monkeypatch, report=None):

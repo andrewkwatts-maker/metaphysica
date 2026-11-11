@@ -91,16 +91,21 @@ def gate_summary(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
 def _fit(rigor: Dict[str, Any]) -> Dict[str, Any]:
     """Pull the global-fit numbers from the rigor report; a missing key raises.
 
-    ``rows`` and ``dof`` are both N, the number of scored predictions the
-    chi-squared is over; ``dof_is_ansatz`` is False because N is a count.
-    ``p_value`` is ``summary.p_value_n_dof``, the row-count p-value the
-    verdict ``summary.status`` is taken from. The EDOF ansatz is not read.
+    ``rows`` is N, the number of scored predictions the chi-squared is over;
+    ``dof`` and ``dof_is_ansatz`` are ``summary.dof`` and
+    ``summary.dof_is_ansatz``, and a ``summary.dof`` that differs from N
+    raises. ``p_value`` is ``summary.p_value_n_dof``, the row-count p-value
+    the verdict ``summary.status`` is taken from. The EDOF ansatz is not read.
     """
     rows = rigor["chi_squared_from_rows"]["all_scoring_rows"]
     summary = rigor["summary"]
+    if summary["dof"] != rows["n"]:
+        raise ValueError(
+            f"rigor report summary.dof = {summary['dof']} differs from the "
+            f"all_scoring_rows count n = {rows['n']} the p-value is over")
     return {
         "chi_squared": rows["chi_squared"], "rows": rows["n"],
-        "dof": rows["n"], "dof_is_ansatz": False,
+        "dof": summary["dof"], "dof_is_ansatz": summary["dof_is_ansatz"],
         "p_value": summary["p_value_n_dof"],
         "verdict": summary["status"],
     }
