@@ -56,16 +56,36 @@ def tally_gates(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
         "axiom": len(ids["axiom"]), "testable": n_testable,
         "locked_ids": ids["locked"], "open_ids": ids["open"],
         "computed_pass": n_pass, "computed_fail": n_fail,
+        "executed_axiom": n_exec_axiom,
         "declarative": n_testable - (n_pass + n_fail - n_exec_axiom),
     }
 
 
-def gate_summary(certs: List[Dict[str, Any]]) -> Dict[str, int]:
-    """The one gate summary: every count computed from the gate registry."""
+def gate_formula(g: Dict[str, Any]) -> str:
+    """The gate arithmetic as text, every number taken from the tally ``g``.
+
+    testable = total - axiom; executed testable = executed pass + executed
+    fail - executed axiom; declarative = testable - executed testable.
+    """
+    executed = g["computed_pass"] + g["computed_fail"] - g["executed_axiom"]
+    return (f"testable = total - axiom = {g['total']} - {g['axiom']} = "
+            f"{g['testable']}; executed = executed_pass + executed_fail - "
+            f"executed_axiom = {g['computed_pass']} + {g['computed_fail']} - "
+            f"{g['executed_axiom']} = {executed}; declarative = testable - "
+            f"executed = {g['testable']} - {executed} = {g['declarative']}")
+
+
+def gate_summary(certs: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """The one gate summary: counts from the gate registry and their formula text.
+
+    ``formula`` is built by ``gate_formula`` from the same tally, so the text
+    quotes the counts this summary publishes.
+    """
     g = tally_gates(certs)
     return {"total": g["total"], "axiom": g["axiom"], "testable": g["testable"],
             "executed_pass": g["computed_pass"], "executed_fail": g["computed_fail"],
-            "declarative": g["declarative"], "open": g["open"]}
+            "declarative": g["declarative"], "open": g["open"],
+            "formula": gate_formula(g)}
 
 
 def _fit(rigor: Dict[str, Any]) -> Dict[str, Any]:

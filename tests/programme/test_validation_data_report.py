@@ -86,6 +86,7 @@ def _certs():
 
 def test_gate_summary_separates_executed_from_declarative():
     s = hs.gate_summary(_certs())
+    assert s.pop("formula").endswith("declarative = testable - executed = 5 - 3 = 2")
     assert s == {"total": 6, "axiom": 1, "testable": 5, "executed_pass": 2,
                  "executed_fail": 1, "declarative": 2, "open": 1}
     t = hs.tally_gates(_certs())
