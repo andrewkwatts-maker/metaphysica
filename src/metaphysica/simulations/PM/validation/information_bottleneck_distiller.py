@@ -12,7 +12,9 @@ constants, isn't this just a parameter fit in disguise?"
 
 Theoretical Framework:
     - Algorithmic Symmetry: Code isomorphic to geometric constraints
-    - Topological Compression: MDL encoding of M₂₇ bulk phase space
+    - Topological Compression: MDL tally of the seed and constraint code against
+      the raw constants; as tallied it fails (MDL_STATUS_AS_TALLIED), and the
+      27 input dimensions are the superseded 27D count (adopted bulk: 26D (24,2))
     - The 288/24/4 structure is a retired off-path reading, not claimed as derived
 
 Purpose:
@@ -54,6 +56,53 @@ sys.path.insert(0, str(REPO_ROOT))
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("InformationBottleneck")
+
+#: The MDL status analyze_code_theoretical_integrity records: as tallied,
+#: L(Theory) (seed + constraint code) exceeds L(Data); only the 69-bit seed
+#: accounting, which leaves the constraint code out, gives compression.
+MDL_STATUS_AS_TALLIED = "FAILS_AS_TALLIED (holds only under 69-bit seed accounting)"
+
+_RETIRED_288 = ("The 288/24/4 structure is a retired off-path reading (b3 = 24); "
+                "it is not claimed as derived.")
+
+
+def integrity_conclusion(mdl_status: str) -> str:
+    """Overall code-theoretical conclusion, worded from the recorded MDL status."""
+    if not mdl_status:
+        raise ValueError("integrity conclusion needs the recorded MDL status")
+    verdict = "NOT VERIFIED" if mdl_status.startswith("FAILS") else "as recorded"
+    return (
+        f"Code-theoretical integrity {verdict}: MDL status {mdl_status}. "
+        "That the code is isomorphic to geometric constraints (Algorithmic Symmetry) "
+        "is an interpretation, not a tested property. " + _RETIRED_288
+    )
+
+
+def mdl_interpretation(compression: Dict[str, Any], mdl_status: str,
+                       n_output: int) -> Dict[str, str]:
+    """Report interpretation, built from the computed tally and the MDL status."""
+    if not mdl_status:
+        raise ValueError("MDL interpretation needs the recorded MDL status")
+    c = compression
+    seed_part = (f"Under the 69-bit seed accounting the data ratio is "
+                 f"{c['data_compression_ratio']:.1f}:1 ({c['status']}); counting the "
+                 f"{c['theory_code_bits']}-bit constraint code the first-use ratio is "
+                 f"{c['first_use_ratio']:.2f}:1. ")
+    return {
+        "conclusion": (f"Data compression under the 69-bit seed accounting only; "
+                       f"MDL status as tallied: {mdl_status}"),
+        "peer_review_response": (
+            seed_part + f"MDL status as tallied: {mdl_status}. The input dimension count "
+            "is the superseded 27D count (adopted bulk: 26D of signature (24,2))."),
+        "key_insight": (
+            seed_part + f"MDL status as tallied: {mdl_status}; whether the framework "
+            "avoids overfitting is not established by this tally. " + _RETIRED_288),
+        "mdl_justification": (
+            f"As tallied, L(Theory) = {c['first_use_total_bits']} bits (seed plus "
+            f"constraint code) against L(Data) = {c['without_theory_bits']} bits for "
+            f"{n_output} constants at 64 bits each: MDL status {mdl_status}. "
+            "Compression holds only if the constraint code is left out of the tally."),
+    }
 
 
 class InformationBottleneckDistiller:
@@ -494,7 +543,7 @@ class InformationBottleneckDistiller:
                 "Without theory: L(Data) = 125 constants × 64 bits = 8000 bits (but no predictive power). "
                 "As tallied, L(Theory) = 32,640 bits EXCEEDS L(Data) = 8000 bits — the naive MDL test fails; the claim rests on the 69-bit seed accounting only."
             ),
-            "mdl_status": "FAILS_AS_TALLIED (holds only under 69-bit seed accounting)"
+            "mdl_status": MDL_STATUS_AS_TALLIED
         }
 
         # 2. Topological Compression
@@ -627,11 +676,7 @@ class InformationBottleneckDistiller:
             "algorithmic_symmetry": algorithmic_symmetry,
             "code_is_geometry": code_is_geometry,
             "structure_288_24_4": structure_288_24_4,
-            "overall_conclusion": (
-                "Code-Theoretical Integrity VERIFIED. The code is isomorphic to geometric constraints "
-                "(Algorithmic Symmetry). The framework achieves Topological Compression via MDL. "
-                "The 288/24/4 structure is a retired off-path reading (b3 = 24); it is not claimed as derived."
-            )
+            "overall_conclusion": integrity_conclusion(mdl_principle["mdl_status"])
         }
 
     def generate_report(self) -> Dict[str, Any]:
@@ -652,10 +697,10 @@ class InformationBottleneckDistiller:
 
         if is_efficient and is_compressed:
             overall_status = "TOPOLOGICAL COMPRESSION ACHIEVED (MDL SATISFIED)"
-            conclusion = "Theory achieves Topological Compression via Algorithmic Symmetry, satisfying Minimal Description Length principle"
         else:
             overall_status = "INEFFICIENT (MDL VIOLATED)"
-            conclusion = "Theory shows signs of overfitting or parameter expansion - MDL criterion not satisfied"
+        interpretation = mdl_interpretation(
+            compression, code_theoretical["mdl_principle"]["mdl_status"], self.n_output_params)
 
         report = {
             "framework": "Principia Metaphysica",
@@ -684,32 +729,7 @@ class InformationBottleneckDistiller:
                 "compression_ratio_analysis": compression,
                 "code_theoretical_integrity": code_theoretical
             },
-            "interpretation": {
-                "conclusion": conclusion,
-                "peer_review_response": (
-                    f"The PM framework achieves Topological Compression: {self.n_input_dims}D topology → {self.n_output_params} constants "
-                    f"with compression ratio {compression['data_compression_ratio']:.1f}:1, "
-                    f"saving {compression['bits_saved_data']:.0f} bits (MDL satisfied). "
-                    f"Furthermore, we frame this derivation through the lens of Algorithmic Symmetry. "
-                    f"Under the principle of Minimal Description Length (MDL), the {self.n_output_params} observed constants "
-                    f"are demonstrated to be the most efficient topological compression of the M₂₇ bulk. "
-                    "The code IS NOT a simulation - it IS the geometric constraints expressed as formal symbolic logic. "
-                    "(2 fundamental topological invariants [b₃, k_gimel] → 125 derived constants via 116 geometric constraints), "
-                    "Mutual information I(Input;Output) = 1.0 indicates deterministic, lossless Topological Compression."
-                ),
-                "key_insight": (
-                    "Algorithmic Symmetry principle: PM achieves Topological Compression, reducing description complexity by "
-                    f"{compression['efficiency_percent']} through geometric constraints (MDL). "
-                    "The 288/24/4 structure is a retired off-path reading (b3 = 24), not a derived result on the adopted path. "
-                    "This is the OPPOSITE of overfitting."
-                ),
-                "mdl_justification": (
-                    "Under Minimal Description Length (MDL), the theory's description length "
-                    "(topological invariants + geometric constraints) is LESS than the description "
-                    "length of the data (125 constants). This proves the framework is not overfitting, "
-                    "but rather achieving optimal information compression via Algorithmic Symmetry."
-                )
-            }
+            "interpretation": interpretation
         }
 
         return report

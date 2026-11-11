@@ -103,7 +103,8 @@ class FalsificationOracle:
         return {
             # ALP (Axion-Like Particle) - PRIMARY FALSIFIABILITY TEST
             # LABEL: SPECULATIVE ANSATZ - m_a and g_agg are not uniquely derived
-            # from the M27 topology; they are estimates chosen to fall within
+            # from the adopted 26D (24,2) bulk or from Y_7 (row_status below says
+            # what the code does with them); they are estimates chosen to fall within
             # near-future experimental reach.  If IAXO/BabyIAXO excludes this
             # mass/coupling region it constrains the EIS sector, but non-detection
             # cannot falsify the full framework without an independent derivation.
