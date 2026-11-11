@@ -89,6 +89,7 @@ Round 1 (WAVE_A_CLOSEOUT.md, XA). Tests: tests/programme/test_algebra_portals_vi
 | XA-02 | PM/algebra/clifford_unification.py:224 | fixed: FALSIFIED description quotes `run()`'s boost error; run docstring and comment name BOOST_BOUND, BOOST_RAPIDITY | e3ec3d5 | test_algebra_portals_viz_closeout_clifford::test_falsified_description_is_built_from_run |
 | XA-03 | clifford_unification.py:269 | fixed: TAB + "exttt{" restored to `	exttt{` | e3ec3d5 | ::test_minkowski_row_starts_with_texttt |
 | XA-06 | clifford_unification.get_section_content | fixed: g2_inv, rot_err, checks_passed, all_pass already came from `run()` (since f23f5d7); the typed "/4" total now `run()['_checks_total']` | e3ec3d5 | ::test_section_text_follows_a_changed_run |
-| XA-05 | PM/algebra/gaugino_condensation.py (A4.3) | fixed: category FALSIFIED, as its description and `algebra.gaugino_cabibbo_proxy` say; its sigma built from the value | (this commit) | test_algebra_portals_viz_closeout_gaugino_status.py |
+| XA-05 | PM/algebra/gaugino_condensation.py (A4.3) | fixed: category FALSIFIED, as its description and `algebra.gaugino_cabibbo_proxy` say; its sigma built from the value | 420820f | test_algebra_portals_viz_closeout_gaugino_status.py |
+| XA-08 | PM/algebra/qec_golay_bridge.py | fixed: abstract, callout and metadata text read the computed b3 and classification (MISMATCH at b3 = 43); RETIRED_FROM_PAPER = True: no section, no certificates (kept as `paper_section()`, `qec_certificates()`), rows and formulas kept | (this commit) | test_algebra_portals_viz_closeout_qec_retired.py |
 
 Edited tests: test_algebra_portals_viz_sixth_round.py::test_proton_text_is_built_from_the_computed_values now also rejects "2×10¹⁷" (XA-01 asks for it).

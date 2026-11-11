@@ -74,6 +74,11 @@ from metaphysica.simulations.base import (
 from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.PM.algebra.leech_lattice import GolayCode
 
+# RETIRE-FROM-PAPER (rule 5): the n = b3 identification is MISMATCH on the path in
+# force. The module, its rows and its formulas stay; the paper section and the
+# certificates are withheld while this is True (both stay reachable by name).
+RETIRED_FROM_PAPER = True
+
 
 class QECGolayBridge(SimulationBase):
     """
@@ -100,8 +105,8 @@ class QECGolayBridge(SimulationBase):
             title="QEC Golay Bridge: CSS [[24,12,8]] from G2 Topology",
             description=(
                 "Constructs a CSS quantum error-correcting code from the self-dual "
-                "Golay code [24,12,8]. Maps PM algebraic structures to QEC concepts with honest "
-                "classifications; the b3 = 24 identification fails on the adopted Y_7 (b3 = 43)."
+                "Golay code [24,12,8]. Maps PM algebraic structures to QEC concepts; each "
+                "classification is computed from the b3 of the path in force. Retired from the paper."
             ),
             section_id="qec-bridge",
             subsection_id=None,
@@ -345,9 +350,14 @@ class QECGolayBridge(SimulationBase):
     # =========================================================================
 
     def get_section_content(self) -> Optional[SectionContent]:
-        params = self.compute_code_parameters()
+        """None while RETIRED_FROM_PAPER: the module and its rows stay (rule 5)."""
+        return None if RETIRED_FROM_PAPER else self.paper_section()
+
+    def paper_section(self) -> SectionContent:
+        """The withheld section; b3 and every classification are computed."""
         mapping = self.get_mapping_table()
         power = self.compute_predictive_power()
+        b3_row, half_row = mapping[0], mapping[1]  # n = b3 and k = b3/2 rows
 
         return SectionContent(
             section_id="qec-bridge",
@@ -357,12 +367,12 @@ class QECGolayBridge(SimulationBase):
                 "The extended Golay code [24,12,8], which arises naturally from the "
                 "Leech lattice construction in the PM framework, is self-dual and "
                 "gives a valid CSS quantum code [[24,12,8]] (Calderbank-Shor-Steane). "
-                "The coincidence dim=24 = b3 holds only on the off-path seed_24 (b3 = 43 "
-                "on the adopted Y_7), so it does not support a link between "
-                "the topology of Y_7 and quantum error correction. The CSS construction is DERIVED (standard mathematics); "
-                "the PM-to-QEC mapping is a MOTIVATED_IDENTIFICATION with notable "
-                "mismatches (42 certificates != 12 stabilizer generators; 288 roots "
-                "!= 4096 codewords)."
+                f"The identification n = 24 = b3 is {b3_row['classification']} on the path in "
+                f"force ({b3_row['pm_concept']}); it holds only on the off-path seed_24, so it "
+                "does not support a link between the topology of Y_7 and quantum error "
+                "correction. The CSS construction is DERIVED (standard mathematics); the "
+                "other mapping rows are mismatches (42 certificates != 12 stabilizer "
+                "generators; 288 roots != 4096 codewords)."
             ),
             content_blocks=[
                 ContentBlock(
@@ -398,8 +408,9 @@ class QECGolayBridge(SimulationBase):
                     content=(
                         "The CSS construction from the self-dual Golay code is standard "
                         "mathematics (DERIVED). The suggestion that PM bridge pairs correspond "
-                        "to logical qubits is a MOTIVATED_IDENTIFICATION only at b3 = 24: the numbers match "
-                        "(on the off-path seed_24 only: b3 = 24 and 12 bridges; the adopted Y_7 has b3 = 43), but "
+                        f"to logical qubits is {half_row['classification']} on the path in force "
+                        f"({half_row['pm_concept']} against 12 logical qubits); the numbers match on "
+                        "the off-path seed_24 only (b3 = 24, 12 bridges), and "
                         "the mathematical objects are fundamentally different. Notable mismatches: "
                         "the PM framework has 42 certificates while the CSS code has 12 stabilizer "
                         "generators; the 288 ancestral roots do not correspond to the 4096 codewords."
@@ -564,7 +575,11 @@ class QECGolayBridge(SimulationBase):
         ]
 
     def get_certificates(self) -> List[Dict[str, Any]]:
-        """Return validation certificates for QEC bridge."""
+        """Validation certificates; none while RETIRED_FROM_PAPER (out of the score)."""
+        return [] if RETIRED_FROM_PAPER else self.qec_certificates()
+
+    def qec_certificates(self) -> List[Dict[str, Any]]:
+        """The QEC bridge certificates (Golay code facts), kept by name."""
         params = self.compute_code_parameters()
         return [
             {
