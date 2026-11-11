@@ -3,12 +3,19 @@ in force, read from the ``bulk_signature`` fork: its dimension, its signature an
 No three-sector 27D decomposition, no single time fibre, no "M27" in the printed text.
 
 The labels are read from the label builders; nothing is rendered.
+
+XA-09 and XA-04 (end of the file): ``generators/all_plots.py`` draws ``plot_modules()``, its
+list passed through ``_retired.paper_figures``; that list names this figure module, every entry
+of it imports, and a retired figure placed in the list is not run by ``main``.
 """
+import importlib
 import inspect
 
 import pytest
 
+from metaphysica.generators import all_plots
 from metaphysica.simulations.core import variants
+from metaphysica.simulations.visualizations import _retired
 from metaphysica.simulations.visualizations import figure1_m27_decomposition as f1
 
 B3 = 43  # any integer: the b3 label follows the registry row (close-out test of XA-09)
@@ -123,3 +130,51 @@ def test_no_function_of_the_module_is_oversize():
     for name, func in inspect.getmembers(f1, inspect.isfunction):
         if func.__module__ == f1.__name__:
             assert len(inspect.getsource(func).splitlines()) <= 60, name
+
+
+# XA-09 (the name the plot list imports) and XA-04 (the plot list goes through paper_figures).
+
+VIZ = "metaphysica.simulations.visualizations."
+RETIRED = [VIZ + name for name in ("goldilocks_plot", "stability_heatmap", "theory_overview_diagrams")]
+
+
+def test_plot_list_names_this_figure_module_and_every_entry_imports():
+    """The module this file imports as f1 is drawn, under the name the plot list gives it."""
+    drawn = all_plots.plot_modules()
+    assert f1.__name__ in drawn
+    for dotted in drawn:
+        module = importlib.import_module(dotted)
+        assert module.__name__ == dotted
+        assert callable(getattr(module, "main", None) or getattr(module, "generate", None)), dotted
+
+
+def test_plot_list_is_built_through_paper_figures():
+    """A retired figure placed anywhere in the list is not in what main() draws."""
+    listed = list(all_plots.VISUALIZATION_MODULES)
+    assert all(_retired.is_retired(importlib.import_module(name)) for name in RETIRED)
+    assert all_plots.plot_modules() == _retired.paper_figures(listed) == listed
+    assert all_plots.plot_modules(RETIRED[:1] + listed + RETIRED[1:]) == listed
+
+
+def test_main_does_not_run_a_retired_figure(monkeypatch, tmp_path, capsys):
+    listed = list(all_plots.VISUALIZATION_MODULES)
+    ran = []
+
+    def record(dotted):
+        ran.append(dotted)
+        return True
+
+    monkeypatch.setattr(all_plots, "VISUALIZATION_MODULES", listed + RETIRED[1:2])
+    monkeypatch.setattr(all_plots, "_autogen_dir", lambda: tmp_path)
+    monkeypatch.setattr(all_plots, "_run_module", record)
+    assert all_plots.main() == 0
+    assert ran == listed
+    assert f"{len(listed)}/{len(listed)} successful" in capsys.readouterr().out
+
+
+def test_module_that_does_not_import_stays_listed_and_is_reported(capsys):
+    """plot_modules does not hide an import failure: _run_module still prints the [SKIP] line."""
+    missing = VIZ + "no_such_figure"
+    assert all_plots.plot_modules([missing]) == [missing]
+    assert all_plots._run_module(missing) is False
+    assert f"[SKIP] {missing}" in capsys.readouterr().out
