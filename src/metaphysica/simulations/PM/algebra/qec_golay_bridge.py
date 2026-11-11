@@ -73,11 +73,20 @@ from metaphysica.simulations.base import (
 )
 from metaphysica.simulations.PM.algebra._active_b3 import active_b3
 from metaphysica.simulations.PM.algebra.leech_lattice import GolayCode
+from metaphysica.simulations.PM.geometry.b3_path import PATHS, seed_values
 
 # RETIRE-FROM-PAPER (rule 5): the n = b3 identification is MISMATCH on the path in
 # force. The module, its rows and its formulas stay; the paper section and the
 # certificates are withheld while this is True (both stay reachable by name).
 RETIRED_FROM_PAPER = True
+
+
+def _paths_with_b3(n: int) -> List[str]:
+    """The declared b3 paths whose b3 equals n; no path name is typed here."""
+    paths = sorted(path for path in PATHS if seed_values(path)[0] == n)
+    if not paths:
+        raise ValueError(f"no declared b3 path has b3 = {n}")
+    return paths
 
 
 class QECGolayBridge(SimulationBase):
@@ -357,20 +366,50 @@ class QECGolayBridge(SimulationBase):
         """None while RETIRED_FROM_PAPER: the module and its rows stay (rule 5)."""
         return None if RETIRED_FROM_PAPER else self.paper_section()
 
+    def css_code_facts(self) -> Dict[str, Any]:
+        """What the CSS construction on the self-dual Golay code gives.
+
+        With C1 = C2 = C every parity-check row is used once as an X-type and once
+        as a Z-type generator, so the CSS code has k = n - 2 * rows logical qubits.
+        The claim [[n, k_classical, d]] is tested against the quantum Singleton
+        bound n - k >= 2 (d - 1).
+        """
+        params = self.compute_code_parameters()
+        n, k_classical, d = params["n"], params["k"], params["d"]
+        rows = params["stabilizer_count"]
+        return {
+            "n": n,
+            "k_classical": k_classical,
+            "d": d,
+            "classical_correctable": params["max_correctable"],
+            "generators_per_type": rows,
+            "stabilizer_generators": 2 * rows,
+            "k_css": n - 2 * rows,
+            "singleton_lhs": n - k_classical,
+            "singleton_rhs": 2 * (d - 1),
+            "quantum_claim_obeys_singleton": n - k_classical >= 2 * (d - 1),
+        }
+
     def paper_section(self) -> SectionContent:
-        """The withheld section; b3 and every classification are computed."""
+        """The withheld section; b3, every classification and the code facts are computed."""
         mapping = self.get_mapping_table()
         power = self.compute_predictive_power()
+        facts = self.css_code_facts()
+        if facts["quantum_claim_obeys_singleton"]:
+            raise ValueError(f"the section text needs a failed Singleton bound: {facts}")
         b3_row, half_row = mapping[0], mapping[1]  # n = b3 and k = b3/2 rows
 
         return SectionContent(
             section_id="qec-bridge",
             subsection_id=None,
-            title="Quantum Error Correction from G2 Topology",
-            abstract=self._section_abstract(b3_row),
+            title=(
+                "Golay CSS code and the b3 identification "
+                f"({b3_row['classification']} on the path in force)"
+            ),
+            abstract=self._section_abstract(b3_row, facts),
             content_blocks=[
-                *self._code_blocks(),
-                self._assessment_block(half_row),
+                *self._code_blocks(facts),
+                self._assessment_block(half_row, facts),
                 *self._prediction_blocks(power),
             ],
             formula_refs=["css-code-parameters", "golay-self-duality"],
@@ -383,68 +422,93 @@ class QECGolayBridge(SimulationBase):
         )
 
     @staticmethod
-    def _section_abstract(b3_row: Dict[str, str]) -> str:
+    def _match_scope(row: Dict[str, str], n: int) -> str:
+        """Where the b3 numbers of a mapping row agree, from its computed classification."""
+        if row["classification"] == "MISMATCH":
+            return f"only on {' and '.join(_paths_with_b3(n))}, not on the path in force"
+        return "on this path as a numerical coincidence"
+
+    @staticmethod
+    def _section_abstract(b3_row: Dict[str, str], facts: Dict[str, Any]) -> str:
         """Abstract; the n = b3 classification is read from its mapping row."""
+        n, k, d = facts["n"], facts["k_classical"], facts["d"]
+        verdict = "support" if b3_row["classification"] == "MISMATCH" else "establish"
         return (
-            "The extended Golay code [24,12,8], which arises naturally from the "
-            "Leech lattice construction in the PM framework, is self-dual and "
-            "gives a valid CSS quantum code [[24,12,8]] (Calderbank-Shor-Steane). "
-            f"The identification n = 24 = b3 is {b3_row['classification']} on the path in "
-            f"force ({b3_row['pm_concept']}); it holds only on the off-path seed_24, so it "
-            "does not support a link between the topology of Y_7 and quantum error "
-            "correction. The CSS construction is DERIVED (standard mathematics); the "
-            "other mapping rows are mismatches (42 certificates != 12 stabilizer "
-            "generators; 288 roots != 4096 codewords)."
+            "The extended Golay code, which arises from the Leech lattice construction "
+            f"in the PM framework, is a classical [{n},{k},{d}] code and is self-dual. The "
+            "CSS construction (Calderbank-Shor-Steane) on a self-dual code gives "
+            f"k = {facts['k_css']} logical qubits, and a [[{n},{k},{d}]] quantum code fails "
+            "the quantum Singleton bound n - k >= 2(d - 1) "
+            f"({facts['singleton_lhs']} < {facts['singleton_rhs']}), so that claim is "
+            f"withdrawn. The identification n = {n} = b3 is {b3_row['classification']} on "
+            f"the path in force ({b3_row['pm_concept']}); the numbers agree "
+            f"{QECGolayBridge._match_scope(b3_row, n)}, so it does not {verdict} a link "
+            "between the topology of Y_7 and quantum error correction. The other mapping "
+            f"rows are mismatches (42 certificates != {facts['stabilizer_generators']} "
+            f"stabilizer generators; 288 roots != {2 ** k} classical codewords)."
         )
 
     @staticmethod
-    def _code_blocks() -> List[ContentBlock]:
-        """The code itself: self-duality, [[24,12,8]] and its stabilizers."""
+    def _code_blocks(facts: Dict[str, Any]) -> List[ContentBlock]:
+        """The code itself: the classical parameters, self-duality and k as CSS."""
+        n, k, d = facts["n"], facts["k_classical"], facts["d"]
+        rows = facts["generators_per_type"]
         return [
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The extended binary Golay code C<sub>24</sub> is a [24,12,8] "
-                    "code with 4096 codewords and minimum Hamming distance 8. It is "
-                    "self-dual: every codeword is orthogonal to every other codeword "
-                    "under the standard inner product mod 2. This self-duality property "
-                    "(G &middot; G<sup>T</sup> = 0 mod 2) is the necessary and sufficient "
-                    "condition for the CSS construction."
+                    f"The extended binary Golay code C<sub>{n}</sub> is a classical "
+                    f"[{n},{k},{d}] code with {2 ** k} codewords and minimum Hamming "
+                    f"distance {d}; it corrects up to {facts['classical_correctable']} bit "
+                    "errors. It is self-dual: every codeword is orthogonal to every "
+                    "codeword, itself included, under the standard inner product mod 2 "
+                    "(G &middot; G<sup>T</sup> = 0 mod 2), so the X-type and Z-type "
+                    "stabilizers built from its parity check matrix commute."
                 ),
             ),
             ContentBlock(
                 type="formula",
-                content=r"[[n, k, d]] = [[24, 12, 8]]",
+                content=(
+                    rf"[n, k, d] = [{n}, {k}, {d}], \quad "
+                    rf"k_{{\mathrm{{CSS}}}} = n - 2(n - k) = {facts['k_css']}"
+                ),
                 formula_id="css-code-parameters",
                 label="(QEC.1)",
             ),
             ContentBlock(
                 type="paragraph",
                 content=(
-                    "The CSS code encodes 12 logical qubits into 24 physical qubits "
-                    "with distance 8, correcting up to 3 arbitrary single-qubit errors. "
-                    "The 12 stabilizer generators (X-type and Z-type) are constructed "
-                    "from the Golay parity check matrix."
+                    f"The CSS construction uses the {rows} rows of the Golay parity check "
+                    "matrix once as X-type and once as Z-type stabilizer generators: "
+                    f"{facts['stabilizer_generators']} generators on {n} physical qubits "
+                    f"leave k = {facts['k_css']} logical qubits, a single stabilizer state. "
+                    f"The earlier statement of a [[{n},{k},{d}]] quantum code with {k} "
+                    "logical qubits is withdrawn: it fails the quantum Singleton bound "
+                    f"n - k >= 2(d - 1) ({facts['singleton_lhs']} < {facts['singleton_rhs']})."
                 ),
             ),
         ]
 
     @staticmethod
-    def _assessment_block(half_row: Dict[str, str]) -> ContentBlock:
+    def _assessment_block(half_row: Dict[str, str], facts: Dict[str, Any]) -> ContentBlock:
         """Assessment callout; the k = b3/2 classification is read from its row."""
+        n, k, d = facts["n"], facts["k_classical"], facts["d"]
         return ContentBlock(
             type="callout",
             callout_type="info",
             title="Honest Assessment",
             content=(
-                "The CSS construction from the self-dual Golay code is standard "
-                "mathematics (DERIVED). The suggestion that PM bridge pairs correspond "
-                f"to logical qubits is {half_row['classification']} on the path in force "
-                f"({half_row['pm_concept']} against 12 logical qubits); the numbers match on "
-                "the off-path seed_24 only (b3 = 24, 12 bridges), and "
+                f"The classical facts are standard mathematics: the extended Golay code is "
+                f"[{n},{k},{d}] and self-dual. The quantum-code claim [[{n},{k},{d}]] is "
+                f"withdrawn: as a CSS code it has k = {facts['k_css']} logical qubits. The "
+                "suggestion that PM bridge pairs correspond to logical qubits is "
+                f"{half_row['classification']} on the path in force ({half_row['pm_concept']} "
+                f"against the classical dimension k = {k}); the numbers agree at b3 = {n} "
+                f"(b3/2 = {n / 2:g}) {QECGolayBridge._match_scope(half_row, n)}, and "
                 "the mathematical objects are fundamentally different. Notable mismatches: "
-                "the PM framework has 42 certificates while the CSS code has 12 stabilizer "
-                "generators; the 288 ancestral roots do not correspond to the 4096 codewords."
+                "the PM framework has 42 certificates while the CSS code has "
+                f"{facts['stabilizer_generators']} stabilizer generators; the 288 ancestral "
+                f"roots do not correspond to the {2 ** k} classical codewords."
             ),
         )
 
