@@ -88,8 +88,8 @@ class CliffordUnificationSimulation(SimulationBase):
         """Run the Clifford self-tests; an import or algebra error propagates.
 
         The Minkowski "boost" check applies a cos/sin rotor in a Minkowski
-        plane (a rotation, not a boost). It fails its own bound (0.408 against
-        0.1); the row is kept with that number and the status FALSIFIED.
+        plane (a rotation, not a boost). It fails its own bound BOOST_BOUND; the
+        row is kept with the computed number and the status FALSIFIED.
         """
         from eml_spectral.geometric_algebra import EMLMultivector
         from eml_math.point import EMLPoint
@@ -103,7 +103,7 @@ class CliffordUnificationSimulation(SimulationBase):
         results["algebra.clifford_g2_invariant"] = g2_invariant
         results["_g2_ok"] = abs(g2_invariant - 1.0) < 1e-12
 
-        # Check 1b: Minkowski interval under the cos/sin rotor, rapidity 0.693.
+        # Check 1b: Minkowski interval under the cos/sin rotor, rapidity BOOST_RAPIDITY.
         comps_4d = [EMLPoint(0.0, 1.0)] * 16
         comps_4d[1] = EMLPoint(1.0, 1.0)
         mink_mv = EMLMultivector(comps_4d, signature=(1, -1, -1, -1))
@@ -133,6 +133,7 @@ class CliffordUnificationSimulation(SimulationBase):
                   results["_rotation_ok"]]
         results["_all_pass"] = all(checks)
         results["_checks_passed"] = sum(checks)
+        results["_checks_total"] = len(checks)
         return results
 
     def run_eml(self, registry: "PMRegistry") -> Dict[str, Any]:
@@ -195,6 +196,7 @@ class CliffordUnificationSimulation(SimulationBase):
         ]
 
     def get_output_param_definitions(self) -> List[Parameter]:
+        boost = self.run(None)["algebra.clifford_boost_conservation"]
         return [
             Parameter(
                 path="algebra.clifford_g2_invariant",
@@ -221,7 +223,7 @@ class CliffordUnificationSimulation(SimulationBase):
                 description=(
                     "FALSIFIED self-test. Deviation |s_before - s_after| of the Minkowski "
                     "interval in Cl(1,3) under the cos/sin rotor (a rotation, not a boost), "
-                    f"rapidity {BOOST_RAPIDITY}. Computed 0.408 against the bound "
+                    f"rapidity {BOOST_RAPIDITY}. Computed {boost:.3g} against the bound "
                     f"{BOOST_BOUND}; kept with the failing number."
                 ),
                 derivation_formula="clifford-quadratic-unification",
@@ -264,7 +266,7 @@ class CliffordUnificationSimulation(SimulationBase):
 
         rows = [
             ["G₂ metric (7×7 matrix)", r"\texttt{EMLMultivector.g2(comps).quadratic()}", f"{g2_inv:.6g}", "✓" if abs(g2_inv - 1.0) < 1e-12 else "~"],
-            ["Minkowski interval under cos/sin rotor (FAILS)", r"	exttt{v.rotor(φ, (0,1))} — Minkowski sig", f"Δs={boost:.3g} (bound {BOOST_BOUND})", "✓" if boost < BOOST_BOUND else "✗"],
+            ["Minkowski interval under cos/sin rotor (FAILS)", r"\texttt{v.rotor(φ, (0,1))} — Minkowski sig", f"Δs={boost:.3g} (bound {BOOST_BOUND})", "✓" if boost < BOOST_BOUND else "✗"],
             ["FLRW cosmology metric", r"\texttt{EMLMultivector.flrw(comps, a).quadratic()}", f"{flrw_inv:.4g}", "✓" if abs(flrw_inv + 1.0) < 1e-12 else "~"],
             ["4-frame rotation", r"\texttt{v.rotor(π/2, (0,1))}", f"err={rot_err:.2e}", "✓" if rot_err < 1e-8 else "~"],
             ["Euclidean Δ", r"\texttt{.quadratic()} signature=(1,...)", "σᵢ=+1 all", "—"],
@@ -302,7 +304,7 @@ class CliffordUnificationSimulation(SimulationBase):
             ContentBlock(
                 type="callout",
                 callout_type="success" if all_pass else "info",
-                title=f"Validation: {checks_passed}/4 checks passed {status_sym}",
+                title=f"Validation: {checks_passed}/{res['_checks_total']} checks passed {status_sym}",
                 content=(
                     f"G₂ invariant = {g2_inv:.4g} (expect 1.0)  |  "
                     f"FLRW invariant = {flrw_inv:.4g} (expect −1.0)  |  "

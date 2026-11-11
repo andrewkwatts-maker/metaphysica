@@ -83,8 +83,11 @@ Round 1 (WAVE_A_CLOSEOUT.md, XA). Tests: tests/programme/test_algebra_portals_vi
 
 | id | file:line | state | commit | test |
 |---|---|---|---|---|
-| XA-01 | PM/support/complete_residue_registry.py (2.3.3) | fixed: GUT scale in the text is `pt['eff']`; "2×10¹⁷" added to the strings the proton-text test rejects | (this commit) | test_algebra_portals_viz_closeout_residue_text::test_section_gut_scale_is_the_computed_effective_value |
-| XA-07 | complete_residue_registry.py (Dm2 terms, M_Pl term, row 61, lambda_max EML text) | fixed: `_dm2_term` reads NuFIT; M_Pl, b3, chi_eff terms from `proton_decay_text()`; row 61 value and error from `RealWorldData.PLANCK_MASS`; lambda_max EML text built from the value | (this commit) | ::test_neutrino_splitting_terms_read_the_loader, ::test_planck_mass_text_and_row_read_the_dataset |
-| XA-11 | complete_residue_registry.get_formulas | fixed: docstring first | (this commit) | ::test_get_formulas_docstring_is_first |
+| XA-01 | PM/support/complete_residue_registry.py (2.3.3) | fixed: GUT scale in the text is `pt['eff']`; "2×10¹⁷" added to the strings the proton-text test rejects | 74b6e25 | test_algebra_portals_viz_closeout_residue_text::test_section_gut_scale_is_the_computed_effective_value |
+| XA-07 | complete_residue_registry.py (Dm2 terms, M_Pl term, row 61, lambda_max EML text) | fixed: `_dm2_term` reads NuFIT; M_Pl, b3, chi_eff terms from `proton_decay_text()`; row 61 value and error from `RealWorldData.PLANCK_MASS`; lambda_max EML text built from the value | 74b6e25 | ::test_neutrino_splitting_terms_read_the_loader, ::test_planck_mass_text_and_row_read_the_dataset |
+| XA-11 | complete_residue_registry.get_formulas | fixed: docstring first | 74b6e25 | ::test_get_formulas_docstring_is_first |
+| XA-02 | PM/algebra/clifford_unification.py:224 | fixed: FALSIFIED description quotes `run()`'s boost error; run docstring and comment name BOOST_BOUND, BOOST_RAPIDITY | (this commit) | test_algebra_portals_viz_closeout_clifford::test_falsified_description_is_built_from_run |
+| XA-03 | clifford_unification.py:269 | fixed: TAB + "exttt{" restored to `	exttt{` | (this commit) | ::test_minkowski_row_starts_with_texttt |
+| XA-06 | clifford_unification.get_section_content | fixed: g2_inv, rot_err, checks_passed, all_pass already came from `run()` (since f23f5d7); the typed "/4" total now `run()['_checks_total']` | (this commit) | ::test_section_text_follows_a_changed_run |
 
 Edited tests: test_algebra_portals_viz_sixth_round.py::test_proton_text_is_built_from_the_computed_values now also rejects "2×10¹⁷" (XA-01 asks for it).
