@@ -130,27 +130,22 @@ class StatisticalRigorValidator:
 
     @staticmethod
     def _adapt_validation_rows(data):
-        """Per-parameter rows from validation_report.json.
+        """Return the two-sided, scoring rows of a validation report as a list.
 
-        This read ``data.get("sigma_table", [])``. No such key exists -- the
-        report calls it ``validations`` -- so the list was always empty and
-        every downstream method logged "No validation results available" and
-        returned {}. The failure was quiet because the SUMMARY block does
-        load, so the constructor still reported "Loaded validation data:
-        chi^2 = ..., DoF = ...", which reads like success. The validator has
-        therefore been producing nothing while appearing healthy.
-
-        The field names differ as well as the key, so this adapts rather
-        than merely renaming:
+        Returns ``data["sigma_table"]`` unchanged when that legacy key is
+        present and non-empty. Otherwise it reads ``data["validations"]`` and
+        returns one dict per entry that has a value, an experimental value,
+        an experimental uncertainty above zero, a verdict outside
+        ``NON_SCORING_VERDICTS`` and a bound in ``TWO_SIDED_BOUND_TYPES``,
+        with the fields renamed:
 
             predicted_value  <- value
             uncertainty      <- experimental_uncertainty
             status           <- verdict
 
-        Rows without an experimental uncertainty are dropped: the consumer
-        divides by it, and an INPUT or UNBOUNDED row has nothing to compare
-        against. ``sigma_table`` is still honoured first so an older report
-        keeps working.
+        The constructor does not call this; it uses
+        :meth:`_adapt_report_rows`, which keeps every row and marks
+        ``comparable``.
         """
         legacy = data.get("sigma_table")
         if legacy:
@@ -176,9 +171,7 @@ class StatisticalRigorValidator:
                 continue
             rows.append({
                 "path": entry.get("path"),
-                # recalculate_with_theory_uncertainty reads "name"; the
-                # report calls it "path". Both are emitted so neither
-                # consumer has to know about the other's spelling.
+                # "name" repeats "path" for readers that key rows by name.
                 "name": entry.get("path"),
                 "status": entry.get("verdict"),
                 "predicted_value": predicted,
@@ -187,8 +180,9 @@ class StatisticalRigorValidator:
                 "sigma": entry.get("sigma"),
                 # The REGISTRY label, distinct from the verdict. A row can
                 # be FALSIFIED (the framework has withdrawn the claim) and
-                # still FAIL (it is scored and it misses). Both are needed:
-                # see _chi_squared_split.
+                # still FAIL (it is scored and it misses). Both are kept:
+                # fit_partition.fit_summary reports the fit with and
+                # without the rows recorded as FALSIFIED.
                 "registry_status": entry.get("registry_status"),
                 "bound_type": entry.get("bound_type"),
             })
@@ -223,7 +217,7 @@ class StatisticalRigorValidator:
         return rows
 
     def calculate_effective_dof(self) -> int:
-        """Effective degrees of freedom: an ANSATZ, returned as 3.
+        """Return 3, the effective degrees of freedom: an ANSATZ.
 
         The claim is that the testable parameters descend from three
         independent seeds. It is a judgement about derivation structure, not a
@@ -238,29 +232,22 @@ class StatisticalRigorValidator:
         # seeds) not a numerical computation.  The claim that all other parameters
         # are derived from these three is the theory's central assertion; accepting
         # it as proven would beg the question.  A genuine EDOF estimate would
-        # require computing the rank of the real Jacobian (see generate_jacobian_matrix).
+        # require the rank of a real Jacobian, which no code here computes.
         #
-        # It stays at 3 because moving it moves reduced chi-squared and every
-        # verdict downstream, which is an author ruling. What it no longer
-        # does is double as the free-variable count: the docstring above
-        # asserts "θ₁₃ remains the ONLY fitted parameter", and the ledger
-        # measures the tree instead. See :meth:`free_variable_count` and
-        # ``simulations/core/free_variable_ledger.py``; the two numbers are
-        # reported side by side by :meth:`calculate_p_value_with_edof` so the
-        # gap between the ansatz and the measurement is visible rather than
-        # implicit.
+        # Changing it is an author ruling. It is not the free-variable
+        # count, which the ledger measures (:meth:`free_variable_count`);
+        # :meth:`calculate_p_value_with_edof` reports both side by side.
         return 3
 
     @staticmethod
     def free_variable_count() -> int:
-        """Non-derived quantities in the tree, measured rather than asserted.
+        """Return the count of non-derived quantities the ledger measures.
 
-        This is the number the three published literals (0, 3, 3) and
-        ``generate_statistics``'s fourth (1) were all trying to be. It is
-        NOT the EDOF used by the chi-squared arithmetic: EDOF is an ansatz
-        about how many *independent seeds* the theory has, this is a count
-        of how many quantities it did not derive, and conflating them is
-        what let "zero fitted parameters" stand.
+        The value is ``free_variable_ledger.published_free_variable_count()``
+        (from ``AutoGenerated/free_variables.json``). It is NOT the EDOF
+        used by the chi-squared arithmetic: EDOF is an ansatz about how many
+        independent seeds the theory has; this counts the quantities the
+        tree does not derive.
         """
         from metaphysica.simulations.core.free_variable_ledger import (
             published_free_variable_count,
@@ -279,9 +266,11 @@ class StatisticalRigorValidator:
     }
 
     def calculate_p_value_with_edof(self) -> Dict[str, Any]:
-        """Side figure: upper-tail p of the row chi^2 with dof = EDOF ansatz.
+        """Return the EDOF side-figure dict: p_value, status and reduced chi^2.
 
-        EDOF = 3 is a judgment, not a computation (see
+        ``p_value`` is the upper tail of the row chi^2 with dof = the EDOF
+        ansatz, ``status`` its credibility band; the dict also carries the
+        free-variable count and the dof comparison. EDOF = 3 is a judgment, not a computation (see
         :meth:`calculate_effective_dof`), so this p-value and its band are a
         labelled side figure, never the verdict. The verdict is
         ``summary.status`` from :meth:`_row_count_p_value` (dof = N scored
