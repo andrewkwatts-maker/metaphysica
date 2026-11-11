@@ -108,6 +108,17 @@ def _vs_pdg(value: float) -> str:
     return f"{pdg:.5f} ± {unc:.5f} — {abs(value - pdg) / unc:.1f}σ"
 
 
+def _pdg_lambda_w_reference() -> str:
+    """Reference line for the PDG λ_W input: the loader's source with the loaded value."""
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+
+    source = get_loader().get_pdg("ckm", "V_us").source
+    if not source:
+        raise ValueError("pdg ckm V_us has no source; the reference cannot be built")
+    pdg, unc = _pdg_lambda_w()
+    return f"{source} CKM review: Wolfenstein λ = {pdg:.5f}±{unc:.5f}"
+
+
 class GauginoCondensationSimulation(SimulationBase):
     """
     Hidden E₈' gaugino condensation with N₁/N₂ racetrack -- CALIBRATED; Y₇ has no racetrack.
@@ -479,19 +490,19 @@ class GauginoCondensationSimulation(SimulationBase):
                         f"Off-diagonal Yukawa texture: ε_rt = |W₁ - W₂| = {epsilon_rt:.6f}",
                         "The Wolfenstein parametrization of the CKM matrix has 3 eigenvalues (n_gen=3)",
                         f"Leading mixing angle: λ_W = ε_rt^(1/n_gen) = {epsilon_rt:.6f}^(1/3) = {cab_derived:.6f}",
-                        "PDG Wolfenstein λ_W = 0.22500 ± 0.00067: 37.6σ away, FALSIFIED (the earlier 'agreement ≈ 89%, DERIVED' reading is withdrawn)",
+                        f"PDG Wolfenstein λ_W = {_vs_pdg(cab_derived)} away, FALSIFIED (the earlier 'agreement ≈ 89%, DERIVED' reading is withdrawn)",
                     ],
                     "references": [
                         "Krasnikov (1987); de Carlos, Casas, Quevedo (1993) 'Supersymmetry breaking'",
                         "Wolfenstein, L. (1983) 'Parametrization of the Kobayashi-Maskawa matrix'. Phys. Rev. Lett. 51, 1945",
-                        "PDG 2024 CKM review: Wolfenstein λ = 0.22500±0.00067",
+                        _pdg_lambda_w_reference(),
                     ],
                 },
                 terms={
                     r"T_{\min}": f"Racetrack moduli minimum ≈ {T_min_val:.4f} from ∂W/∂T = 0",
                     r"\varepsilon_{\text{rt}}": f"Off-diagonal Yukawa texture = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.6f}",
                     r"n_{\text{gen}}": "Number of fermion generations = 3 (on Y₇, n_gen = b₂/4, the number of singular involutions)",
-                    r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: 0.22500)",
+                    r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: {_pdg_lambda_w()[0]:.5f})",
                     r"N_1 = 24": "Dominant flux quanta, set to b₃ at the off-path seed b₃ = 24 (no racetrack on Y₇)",
                     r"N_2 = 23": "Sub-dominant flux quanta = N₁ − 1",
                 },
