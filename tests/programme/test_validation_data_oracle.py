@@ -77,10 +77,23 @@ def _chi_gate(chi):
     return v.results["C003-CHI"]
 
 
-def test_c003_follows_b2_not_b3(monkeypatch):
-    _, b2 = seed_values(resolve_path())
-    assert _chi_gate(48 * (b2 // 4))["status"] == "LOCKED"
-    assert _chi_gate(6 * seed_values(resolve_path())[0])["status"] == "FAILED"
+def test_c003_follows_b2_not_b3():
+    """b2 is varied through forced(); the gate's expected chi moves with the path n_gen."""
+    from metaphysica.simulations.PM.geometry.b3_path import PATHS, n_gen_report
+    from metaphysica.simulations.PM.geometry.chi_eff_branches import N_GEN_DIVISOR
+    from metaphysica.simulations.core.variants.selection import forced
+
+    active_b2 = seed_values(resolve_path())[1]
+    active_chi = N_GEN_DIVISOR * n_gen_report()["n_gen"]
+    other = next(k for k, v in PATHS.items()
+                 if v.get("reachable_by_joyce") and v["b2"] and v["b2"] != active_b2)
+    with forced({"b3_seed": other}):
+        b3, b2 = seed_values(resolve_path())
+        chi = N_GEN_DIVISOR * n_gen_report()["n_gen"]
+        assert b2 != active_b2 and chi != active_chi
+        assert _chi_gate(chi)["status"] == "LOCKED"
+        assert _chi_gate(active_chi)["status"] == "FAILED"
+        assert _chi_gate(6 * b3)["status"] == "FAILED"
 
 
 def test_pipeline_has_no_b3_24_observables():

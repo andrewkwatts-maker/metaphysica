@@ -36,7 +36,7 @@ import os
 import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 
 # parents[5], not [4]: [4] is src/, so the no-METAPHYSICA_OUT fallback
@@ -430,31 +430,59 @@ def beacon_hbar_c_chain() -> ConsistencyBeacon:
 # ---------------------------------------------------------------------------
 
 
-def beacon_two_time_bulk_accounting() -> ConsistencyBeacon:
-    """Cl(24,2) Weyl bookkeeping (no b3 involved).
+#: Components of the Pneuma spinor as the framework declares it (the Weyl half
+#: of the bulk Dirac spinor). The beacon recomputes it from the bulk signature.
+PNEUMA_WEYL_COMPONENTS = 4096
 
-    Bulk signature (24,2): D_bulk = 24 + 2 = 26 = 2 x dim(shadow = 13); the
-    Pneuma spinor equals the WEYL half of the Cl(24,2) Dirac spinor:
-    2^13 / 2 = 4096. Any regression to the sampler-pair formulation breaks
-    this arithmetic chain.
+
+def _registry_signatures() -> Tuple[Tuple[int, int], Tuple[int, int]]:
+    """(bulk (space, time), shadow (space, time)) read from FormulasRegistry."""
+    from metaphysica.simulations.core.FormulasRegistry import get_registry
+
+    reg = get_registry()
+    return ((reg.D_ancestral_space, reg.D_ancestral_time),
+            (reg.D_shadow_space, reg.D_shadow_time))
+
+
+def _weyl_components(d: int) -> int:
+    """Weyl spinor components 2^(d/2) / 2 in even d; 0 in odd d, which has none."""
+    return (2 ** (d // 2)) // 2 if d % 2 == 0 else 0
+
+
+def beacon_two_time_bulk_accounting(
+    signatures: Tuple[Tuple[int, int], Tuple[int, int]] | None = None,
+    spinor: int = PNEUMA_WEYL_COMPONENTS,
+) -> ConsistencyBeacon:
+    """Two-time bulk bookkeeping on its inputs (no b3 involved).
+
+    Inputs: ``signatures`` = (bulk (space, time), shadow (space, time)), read
+    from FormulasRegistry when not passed, and the declared Pneuma spinor size.
+    It computes residual = |2 D_shadow - D_bulk| + |2 t_shadow - t_bulk| +
+    |Weyl(D_bulk) - spinor|, which is 0 only when the bulk is two shadows with
+    one time each and its Weyl spinor has the declared size; any other input
+    gives a positive residual and FAIL. A non-positive dimension raises.
     """
-    space, time = 24, 2
-    d_shadow = 13
-    d_bulk = space + time
-    weyl = (2 ** (d_bulk // 2)) // 2
-    # Composite check value: each term vanishes when its identity holds.
-    residual = abs(2 * d_shadow - d_bulk) + abs(weyl - 4096)
+    sig = _registry_signatures() if signatures is None else signatures
+    (space, time), (s_space, s_time) = sig
+    if min(space, time, s_space, s_time) < 1:
+        raise ValueError("signatures need positive dimensions, got %r" % (sig,))
+    d_bulk, d_shadow = space + time, s_space + s_time
+    weyl = _weyl_components(d_bulk)
+    residual = (abs(2 * d_shadow - d_bulk) + abs(2 * s_time - time)
+                + abs(weyl - spinor))
     return _mk(
         beacon_id="beacon.two_time_bulk_accounting",
-        name="Cl(24,2) bookkeeping: 24+2 = 26 = 2x13; Weyl(Cl(24,2)) = 4096",
+        name="Cl(%d,%d) bookkeeping: %d+%d = %d vs 2x%d; Weyl = %d vs %d"
+        % (space, time, space, time, d_bulk, d_shadow, weyl, spinor),
         reference="Bars two-time physics (signature (d,2)); docs/TWO_TIME_ASSESSMENT.md",
         value=float(residual),
         expected=0.0,
         tolerance=0.0,
         note=(
-            "D_bulk = 24+2 = 26; shadows (12,1)+(12,1) = 26 "
-            "exactly; Pneuma spinor = Weyl of Cl(24,2) = 2^13/2 = 4096 "
-            "(chiral). Integer-exact by construction once the ruling holds."
+            "D_bulk = %d+%d = %d; shadows (%d,%d)+(%d,%d) = %d; Weyl spinor "
+            "of Cl(%d,%d) = 2^%d/2 = %d against the declared %d; residual %d."
+            % (space, time, d_bulk, s_space, s_time, s_space, s_time,
+               2 * d_shadow, space, time, d_bulk // 2, weyl, spinor, residual)
         ),
     )
 
