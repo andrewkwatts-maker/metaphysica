@@ -45,7 +45,7 @@ VERIFIABLE_GATES = {
 
     # Block B: Gauge/Particle physics (G11-G20)
     11: {"proof_id": "strong_force_saturation", "wl_code": "8/125", "result": "0.064", "note": "Topological ratio 8/125 verified"},
-    12: {"proof_id": "electroweak_alignment", "wl_code": "sin2_theta_W_geometric = 0.23190; pdg = 0.23122 (MS-bar, Z-pole)", "result": "see evaluation", "note": "Registry sin2_theta_W_pred against the PDG value, with no theory-uncertainty buffer (R6 ruling); the sigma is computed in the evaluation block. (An earlier cert showed Sin[ArcTan[12/24]]^2 = 0.20 labelled 0.2312: removed as arithmetically false.)"},
+    12: {"proof_id": "electroweak_alignment", "wl_code": "registry sin2_theta_W_pred vs PDG sin2_theta_W (MS-bar, Z-pole), both loaded at evaluation", "result": "see evaluation", "note": "Registry sin2_theta_W_pred against the PDG value, with no theory-uncertainty buffer (R6 ruling); the sigma is computed in the evaluation block. (An earlier cert showed Sin[ArcTan[12/24]]^2 = 0.20 labelled 0.2312: removed as arithmetically false.)"},
     13: {"proof_id": "photon_zero_mass", "wl_code": "m_photon = 0", "result": "0", "note": "Experimental fact confirmed"},
     14: {"proof_id": "su_n_approximation", "wl_code": "72 * 3", "result": "216"},
     17: {"proof_id": "generation_triality", "wl_code": "n_gen = 3", "result": "3", "note": "n_gen=3 exact"},
@@ -763,7 +763,7 @@ def create_certificate(gate, existing_certs):
         return _static_certificate(
             gate, proof_id, timestamp, "MATHEMATICAL", "MATHEMATICAL",
             MATHEMATICAL_GATES[gate_id]['reason'],
-            f"MATHEMATICAL: {gate.get('logic', '')}. This is a mathematical constraint derivable from the 288-root manifold.")
+            f"MATHEMATICAL: {gate.get('logic', '')}. This is a mathematical constraint, recorded without a computational evaluation.")
     if gate_id in NOT_TESTABLE_GATES:
         return _static_certificate(
             gate, proof_id, timestamp, "FOUNDATIONAL_ASSUMPTION", "NOT_TESTABLE",

@@ -214,7 +214,7 @@ class AdversarialAxiomTester:
         # Use normalized bridge parameters
         bridge_norms = np.linalg.norm(bridge_params, axis=1)
 
-        # For stable G₂ holonomy, bridge norms should be ~√2 (energy 2.0 per bridge)
+        # Optimal bridge norm sqrt(b3/12), i.e. energy b3/12 per bridge (b3 from the path reader)
         # Deviation from this optimal configuration perturbs α
         optimal_bridge_norm = np.sqrt(self.b3 / 12)  # sqrt(b3/12)
         bridge_deviations = np.abs(bridge_norms - optimal_bridge_norm)
