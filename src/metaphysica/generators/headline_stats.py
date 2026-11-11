@@ -1,7 +1,8 @@
 """One source for the site's headline statistics.
 
 Reads ``statistical_rigor_report.json`` and ``GATES_CERTIFICATES.json`` and
-returns chi2, rows, dof, p, verdict and the gate tally. Every page binding
+returns chi2, rows, dof, p, verdict and the gate tally (``pre_rigor_headline``
+reads the certificates only and marks the fit keys not available). Every page binding
 (index, certificates, sections, parameters, falsification, appendix F) reads
 the values this emits; none may carry a fallback literal.
 """
@@ -89,20 +90,39 @@ def _formulas_ok(certs_doc: Dict[str, Any]) -> Optional[int]:
     return int(value) if value is not None else None
 
 
+#: The keys ``_fit`` reads from the rigor report.
+FIT_KEYS = ("chi_squared", "rows", "dof", "dof_is_ansatz", "p_value", "verdict")
+
+
+def _assemble(fit: Dict[str, Any], certs_doc: Dict[str, Any]) -> Dict[str, Any]:
+    """Join the fit numbers with the gate tally of the certificates document."""
+    certs = certs_doc.get("certificates") or []
+    gates = tally_gates(certs)
+    out = {**fit, **{f"gates_{k}": v for k, v in gates.items()
+                     if not k.endswith("_ids")},
+           "gate_summary": gate_summary(certs),
+           "gates_locked_ids": gates["locked_ids"],
+           "gates_open_ids": gates["open_ids"],
+           "formulas_checked_ok": _formulas_ok(certs_doc)}
+    out["missing"] = sorted(k for k, v in out.items() if v is None)
+    return out
+
+
 def headline_statistics(rigor_path: Path, certs_path: Path) -> Dict[str, Any]:
     """Return the single dict every headline binding reads."""
     rigor, certs_doc = _read(Path(rigor_path)), _read(Path(certs_path))
-    gates = tally_gates(certs_doc.get("certificates") or [])
-    fit = _fit(rigor)
-    ok = _formulas_ok(certs_doc)
-    out = {**fit, **{f"gates_{k}": v for k, v in gates.items()
-                     if not k.endswith("_ids")},
-           "gate_summary": gate_summary(certs_doc.get("certificates") or []),
-           "gates_locked_ids": gates["locked_ids"],
-           "gates_open_ids": gates["open_ids"],
-           "formulas_checked_ok": ok}
-    out["missing"] = sorted(k for k, v in out.items() if v is None)
-    return out
+    return _assemble(_fit(rigor), certs_doc)
+
+
+def pre_rigor_headline(certs_path: Path) -> Dict[str, Any]:
+    """Gate counts only, for the statistics pass that runs before the rigor validator.
+
+    Every fit key carries ``NOT_AVAILABLE``. No rigor report is opened, even
+    when one is present: before the validator runs, a report on disk belongs
+    to a previous build.
+    """
+    fit = {key: NOT_AVAILABLE for key in FIT_KEYS}
+    return _assemble(fit, _read(Path(certs_path)))
 
 
 def display_value(value: Any) -> Any:

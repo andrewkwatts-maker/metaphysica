@@ -3860,33 +3860,11 @@ def main():
             force=args.wolfram_force
         )
 
-    # Generate validation statistics (always run to ensure statistics.json is populated)
-    try:
-        # Ensure PROJECT_ROOT is in sys.path for scripts.* imports
-        project_root_str = str(PROJECT_ROOT)
-        if project_root_str not in sys.path:
-            sys.path.insert(0, project_root_str)
-        from metaphysica.generators.generate_statistics import generate_statistics, OUTPUT_FILE
-
-        if not args.quiet:
-            print("\n" + "=" * 80)
-            print("GENERATING VALIDATION STATISTICS")
-            print("=" * 80)
-
-        statistics = generate_statistics()
-        os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            json.dump(statistics, f, indent=2)
-
-        if not args.quiet:
-            fs = statistics.get('framework_statistics', {})
-            print(f"  Verified gates:    {fs.get('pass_count', 0)}")
-            print(f"  Chi-squared (red): {fs.get('chi_squared_reduced', 'N/A')}")
-            print(f"  Status:            {fs.get('status', 'N/A')}")
-            print(f"  Output: {OUTPUT_FILE}")
-    except Exception as e:
-        if not args.quiet:
-            print(f"[WARN] Could not generate statistics: {e}")
+    # Statistics need the gate certificates and this build's rigor report,
+    # neither of which exists yet on an empty output directory.
+    print("Validation statistics are written by the build steps "
+          "'Build validation statistics' (--pre-rigor) and "
+          "'Refresh validation statistics from this build's rigor report'.")
 
     # Return exit code based on results (simulations AND validations)
     validation = output_data["validation"]

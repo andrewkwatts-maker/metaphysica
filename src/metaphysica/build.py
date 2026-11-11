@@ -192,7 +192,7 @@ STEPS: List[Tuple[str, List[str], bool]] = [
      [sys.executable, "-m", "metaphysica.generators.generate_named_certificates"],
      False),
     ("Build validation statistics",
-     [sys.executable, "-m", "metaphysica.generators.generate_statistics"],
+     [sys.executable, "-m", "metaphysica.generators.generate_statistics", "--pre-rigor"],
      False),
 
     # ── EML cross-check + tree pre-render ────────────────────────────────────
@@ -365,11 +365,11 @@ STEPS: List[Tuple[str, List[str], bool]] = [
     ("Run statistical rigor validator",
      [sys.executable, "-m", "metaphysica.simulations.PM.validation.statistical_rigor_validator"],
      False),
-    # Second statistics pass. "Build validation statistics" runs early (later
-    # steps read framework_statistics) but its sigma source is the rigor
-    # report written just above, so a fresh output dir fell back to
-    # parameters.json while the site dir read the PREVIOUS build's report:
-    # chi^2 3030 on 4 dof vs 1.6e11 on 76 from identical code (2026-10-25).
+    # Second statistics pass. "Build validation statistics" runs early with
+    # --pre-rigor: gate counts only, every fit key NOT_AVAILABLE, and it never
+    # opens a rigor report (one on disk then belongs to a previous build).
+    # This pass reads sigma values only from the scored rows of the report
+    # written just above, and raises when that report is missing or empty.
     ("Refresh validation statistics from this build's rigor report",
      [sys.executable, "-m", "metaphysica.generators.generate_statistics"],
      False),
