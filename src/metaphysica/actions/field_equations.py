@@ -8,13 +8,17 @@ holomorphic kinetic forms give the same equation, C being invertible). Any other
 potential, interaction) raises: these equations are not derived for it. A Weyl kinetic term
 that vanishes identically in the action's signature (`spinor_bilinears`) also raises.
 
-The vacuum Psi = 0 (every matter field zero) has T_MN = 0, so it solves the equations iff the
-metric is Ricci-flat and no potential term spoils phi = 0. A potential term (scalar factors
-only, no derivative) spoils it iff it has 0 or 1 scalar factors: a constant gives V(0) != 0 and
-a linear term V'(0) != 0; a term with 2 or more factors (m^2 phi^2, phi^4) vanishes at phi = 0
-with its first derivative. `vacuum_checks` checks a product vacuum
-factor by factor: an explicit metric through `curvature.ricci_tensor`, otherwise a named
-certificate (a `Check` computed elsewhere, e.g. G2 holonomy implies Ricci-flat).
+The vacuum Psi = 0 (every matter field zero) has T_MN = 0 from the kinetic terms, so it solves
+the equations iff the metric is Ricci-flat and no potential term (scalar factors only, no
+derivative) spoils it. A closed potential term spoils it iff it has 0 or 1 scalar factors: a
+constant gives T_MN proportional to G_MN, not zero, so the Ricci-flat metric fails the Einstein
+equation (phi = 0 still solves Box phi = 0); a linear term gives V'(0) != 0, so phi = 0 fails
+the scalar equation; a term with 2 or more factors (m^2 phi^2, phi^4) vanishes at phi = 0 with
+its first derivative. An open term (`Term.open`) has no fixed form, whatever factors it lists:
+it is reported as not evaluable, apart from the closed terms, and the check does not hold.
+`vacuum_checks` checks a product vacuum factor by factor: an explicit metric through
+`curvature.ricci_tensor`, otherwise a named certificate (a `Check` computed elsewhere, e.g. G2
+holonomy implies Ricci-flat).
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -136,20 +140,50 @@ def _ricci_flat(action: Action, fac: Factor) -> Check:
     return Check(cid, str(scalar), flat, True, REF, "R_MN of the explicit metric; R = %s" % scalar)
 
 
+POTENTIAL_RULES = (
+    ("constant", "T_MN proportional to G_MN, not zero: the Ricci-flat metric fails the Einstein "
+                 "equation"),
+    ("linear", "V'(0) != 0: phi = 0 fails the scalar equation"),
+    ("open", "no fixed form: not evaluable"),
+)
+
+
 def _spoils_vacuum(term: Term, action: Action) -> bool:
-    """A potential term with 0 or 1 scalar factors: V(0) != 0 or V'(0) != 0 at phi = 0."""
-    if CURVATURE in term.factors or DERIVATIVE in term.factors or term.derivatives:
+    """A closed potential term with 0 or 1 scalar factors: constant or linear in phi.
+
+    An open term is never read as a potential: its listed factors are not its form.
+    """
+    if term.open or CURVATURE in term.factors or DERIVATIVE in term.factors or term.derivatives:
         return False
     scalar_only = all(action.field(f).kind == "scalar" for f in term.factors)
     return scalar_only and len(term.factors) <= 1
 
 
+def _potential_check(action: Action) -> Check:
+    """Holds iff no closed constant or linear potential term and no open term is present.
+
+    `measured` names the closed terms, then the open ones under "not evaluable (open)".
+    """
+    spoil = [t for t in action.terms if _spoils_vacuum(t, action)]
+    found = {"constant": [t.id for t in spoil if not t.factors],
+             "linear": [t.id for t in spoil if t.factors],
+             "open": [t.id for t in action.terms if t.open]}
+    parts = [",".join(t.id for t in spoil)] if spoil else []
+    if found["open"]:
+        parts.append("not evaluable (open): " + ",".join(found["open"]))
+    detail = "; ".join("%s term (%s): %s" % (kind, why, ",".join(found[kind]) or "none")
+                       for kind, why in POTENTIAL_RULES)
+    return Check("vacuum_potential:%s" % action.id, "; ".join(parts) or "none", not parts, True,
+                 REF, detail + "; none may be present")
+
+
 def vacuum_checks(action: Action, factors: Sequence[Factor],
                   background: Optional[Mapping[str, object]] = None) -> List[Check]:
-    """Every factor Ricci-flat, every matter field zero, no constant or linear potential term.
+    """Every factor Ricci-flat, every matter field zero, no constant, linear or open term.
 
-    Each check can fail. A potential term of degree 2 or more (m^2 phi^2) passes: it vanishes
-    with its first derivative at phi = 0.
+    Each check can fail. A closed potential term of degree 2 or more (m^2 phi^2) passes: it
+    vanishes with its first derivative at phi = 0. An open term never passes: it is not
+    evaluable.
     """
     if sum(f.dim for f in factors) != action.dim:
         raise ModelError("vacuum of %s: factor dimensions sum to %d, not %d"
@@ -165,8 +199,5 @@ def vacuum_checks(action: Action, factors: Sequence[Factor],
         v = bg.get(f.name, 0)
         out.append(Check("vacuum_matter:%s:%s" % (action.id, f.name), str(v), v == 0, True, REF,
                          "T_MN = 0 needs %s = 0 on this vacuum" % f.name))
-    pots = [t.id for t in action.terms if _spoils_vacuum(t, action)]
-    out.append(Check("vacuum_potential:%s" % action.id, ",".join(pots) or "none", not pots, True,
-                     REF, "a constant or linear potential term gives V(0) != 0 or V'(0) != 0, "
-                     "so phi = 0 is not a vacuum; none may be present"))
+    out.append(_potential_check(action))
     return out
