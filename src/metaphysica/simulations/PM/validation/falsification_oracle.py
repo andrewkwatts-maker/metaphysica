@@ -41,6 +41,12 @@ from metaphysica.simulations.core.FormulasRegistry import FormulasRegistry
 #: Framework label, taken from the registry so it cannot drift from the release.
 FRAMEWORK_LABEL = "Principia Metaphysica v" + FormulasRegistry.VERSION_SHORT
 
+#: The BabyIAXO first-results year is a planned year from no cited source;
+#: it is past and unconfirmed, so every entry that quotes it carries this.
+BABYIAXO_SCHEDULE_UNVERIFIED = (
+    "planned first-results year from no cited source; BabyIAXO's current "
+    "schedule is unconfirmed (to confirm against the collaboration)")
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("FalsificationOracle")
 
@@ -190,13 +196,15 @@ class FalsificationOracle:
                 "experiment_type": "Helioscope (completed)",
                 "status": "Published limit; verify against the current review before citing",
             },
-            # BabyIAXO (Pathfinder for IAXO) - FIRST LINE OF DEFENSE
+            # BabyIAXO (pathfinder for IAXO): projected reach; the planned
+            # first-results year is unconfirmed (source_unverified).
             "BabyIAXO_2025": {
                 "coupling_limit_GeV_inv": 1.5e-11,  # 1.5×10⁻¹¹ GeV⁻¹
                 "mass_range_eV": (1e-3, 1e-2),  # 1 meV to 10 meV
                 "experiment_type": "Helioscope (pathfinder)",
-                "status": "Commissioning phase",
+                "status": "Planned; first-results year unconfirmed",
                 "first_results_expected": 2025,
+                "source_unverified": BABYIAXO_SCHEDULE_UNVERIFIED,
                 "principia_metric_coverage": "mass window covers the registry ALP mass"
             },
 
@@ -257,9 +265,13 @@ class FalsificationOracle:
         }
 
     def _load_timeline(self) -> List[Dict[str, Any]]:
-        """Load experimental timeline for falsification opportunities."""
+        """Planned experimental timeline for falsification opportunities.
+
+        The BabyIAXO year is a planned year, labelled unconfirmed with
+        ``source_unverified``."""
         return [
-            {"year": 2025, "experiment": "BabyIAXO", "test": "ALP Principia Metric (first test; planned year, check status)", "priority": "CRITICAL"},
+            {"year": 2025, "experiment": "BabyIAXO", "test": "ALP Principia Metric (first test; planned year unconfirmed)", "priority": "CRITICAL",
+             "source_unverified": BABYIAXO_SCHEDULE_UNVERIFIED},
             {"year": 2026, "experiment": "ALPS-II", "test": "ALP coupling"},
             {"year": 2027, "experiment": "Hyper-K", "test": "Proton decay"},
             {"year": 2028, "experiment": "IAXO", "test": "ALP Principia Metric (definitive; planned year, check status)", "priority": "CRITICAL"},
@@ -470,10 +482,20 @@ class FalsificationOracle:
 
         return kill_switches
 
+    def _alp_planned_years(self) -> Tuple[int, int]:
+        """Planned first-results years (BabyIAXO, IAXO) from the limits table;
+        a missing entry raises KeyError."""
+        limits = self.exclusion_thresholds
+        return (limits["BabyIAXO_2025"]["first_results_expected"],
+                limits["IAXO_2028"]["first_results_expected"])
+
     def _get_primary_experiment(self, test_name: str) -> str:
-        """Get primary experiment for each test."""
+        """Primary experiment for each test; the ALP years are read from the
+        limits table, the BabyIAXO year labelled unconfirmed."""
+        baby, iaxo = self._alp_planned_years()
         mapping = {
-            "ALP_Principia_Metric": "BabyIAXO (2025) / IAXO (2028) - THE PRIMARY KILL-SWITCH",
+            "ALP_Principia_Metric": (f"BabyIAXO (planned {baby}, unconfirmed) / IAXO "
+                                     f"(planned {iaxo}) - THE PRIMARY KILL-SWITCH"),
             "Fifth_Force": "Eot-Wash / Next-gen torsion balance",
             "Proton_Decay": "Hyper-Kamiokande",
             "Sterile_Neutrino": "DUNE",
@@ -482,9 +504,11 @@ class FalsificationOracle:
         return mapping.get(test_name, "TBD")
 
     def _get_test_timeline(self, test_name: str) -> str:
-        """Get expected timeline for each test."""
+        """Planned timeline for each test; the ALP span is read from the
+        limits table, its BabyIAXO start labelled unconfirmed."""
+        baby, iaxo = self._alp_planned_years()
         mapping = {
-            "ALP_Principia_Metric": "2025-2028 (BabyIAXO → IAXO)",
+            "ALP_Principia_Metric": f"{baby}-{iaxo} planned, {baby} unconfirmed (BabyIAXO → IAXO)",
             "Fifth_Force": "Ongoing (current limits apply)",
             "Proton_Decay": "2027+",
             "Sterile_Neutrino": "2028+",
