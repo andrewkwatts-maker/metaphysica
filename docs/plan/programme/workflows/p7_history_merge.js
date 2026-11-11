@@ -71,7 +71,7 @@ const PART = {
 }
 
 const COMMON = [
-  'Context from the planner: this run is part of the programme of the owner in docs/plan/programme/PROGRAMME_2026-11-11.md, which the owner asked for in this session on 2026-11-11 ("agents as needed to finish all work", recorded there under "Release and publish"). The latest user message of the session, "wrong chat sorry", withdraws only a message about a different project (a renderer; VCSA and STRATA) that the owner sent here by mistake just before it. It does not withdraw this programme, and the planner launched this run after it. Your task below stands.',
+  'Context from the planner: this run is part of the programme of the owner in docs/plan/programme/PROGRAMME_2026-11-11.md, which the owner asked for in this session on 2026-11-11 ("agents as needed to finish all work", recorded there under "Release and publish"). The latest owner messages of the session ("act as scrum master and product owner", "agents on parallel tasks", "get all work done that needs doing", "ensure we are committing, pushing and merging to main, not making lots of worktrees or branches") are instructions to the planner, who runs the programme. They are not your task: you do the one target below and nothing else, on the one checkout of main, with no branch and no worktree.',
   'Repository: H:\\Projects\\MathsPhysicsEcosystem\\metaphysica (bash: cd /h/Projects/MathsPhysicsEcosystem/metaphysica).',
   'Other agents are editing other files in this working tree right now. Do not commit, push, build or run tests; never run git stash, git checkout, git reset or git add.',
   'Windows: prefix python with PYTHONIOENCODING=utf-8. Read narrowly; pipe git commands through head or cut. Never open generated output.',
@@ -94,7 +94,7 @@ const LAYOUT = [
   'No "|" inside a cell. A falsified or withdrawn idea keeps its row. Record, do not judge.',
 ].join('\n')
 
-const opts = (label, ph, schema) => ({ label, phase: ph, schema, agentType: 'executor', model: 'opus' })
+const opts = (label, ph, schema) => ({ label, phase: ph, schema, agentType: 'executor', model: 'fable' })
 
 const merge = ([kind, code]) => agent([
   `Target: write ${IDEAS}/ledger_${kind}.md, the merged ledger of the ideas of kind \`${kind}\`. One target, one file.`,
