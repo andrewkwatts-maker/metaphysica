@@ -292,6 +292,8 @@ class GauginoCondensationSimulation(SimulationBase):
         W2 = math.exp(-2.0 * math.pi / N2)
         leff = W1
         cab = leff ** 3
+        pdg_lw = _pdg_lambda_w()[0]
+        p_match = math.log(pdg_lw) / math.log(leff)  # the p with λ_eff^p = PDG λ_W
         T_min_val = _racetrack_T_min(N1, N2)
         W1_tmin = math.exp(-2.0 * math.pi * T_min_val / N1)
         W2_tmin = math.exp(-2.0 * math.pi * T_min_val / N2)
@@ -375,7 +377,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     "parentFormulas": ["gaugino-racetrack-superpotential"],
                     "steps": [
                         "At the racetrack minimum, the dominant condensate W_np(N₁) = exp(−2π/N₁) sets the scale",
-                        "At the off-path seed N₁ = b₃ = 24, λ_eff = exp(−2π/24) ≈ 0.7697",
+                        f"At the off-path seed N₁ = b₃ = 24, λ_eff = exp(−2π/24) ≈ {leff:.4f}",
                         "As written, this is the Yukawa suppression factor for first-generation fermion masses",
                         "No free parameters: N₁ was the Betti number b₃ read as a gauge-group rank, the reading that fails on Y₇ (no racetrack: CG.5, CG.10)",
                     ],
@@ -410,16 +412,16 @@ class GauginoCondensationSimulation(SimulationBase):
                     "method": "Cabibbo proxy from cubic power of Yukawa suppression",
                     "parentFormulas": ["gaugino-lambda-eff"],
                     "steps": [
-                        "The Wolfenstein parametrization gives the Cabibbo angle as the leading CKM parameter λ_W ≈ 0.2250",
-                        "From the racetrack at the off-path seed, λ_eff ≈ 0.7697 is the suppression scale",
-                        "The third power ε ≈ λ_eff³ ≈ 0.456 is the coarse proxy for Cabibbo suppression",
-                        "The exact matching λ_W ≈ λ_eff^p requires minimization with SM matter content (p ≈ 3.4)",
+                        f"The Wolfenstein parametrization gives the Cabibbo angle as the leading CKM parameter λ_W ≈ {pdg_lw:.4f}",
+                        f"From the racetrack at the off-path seed, λ_eff ≈ {leff:.4f} is the suppression scale",
+                        f"The third power ε ≈ λ_eff³ ≈ {cab:.3f} is the coarse proxy for Cabibbo suppression",
+                        f"The exact matching λ_W ≈ λ_eff^p requires minimization with SM matter content (p ≈ {p_match:.1f})",
                     ],
                     "references": ["Wolfenstein, L. (1983) 'Parametrization of the Kobayashi-Maskawa matrix'. Phys. Rev. Lett. 51, 1945"],
                 },
                 terms={
                     r"\varepsilon_{\text{proxy}}": {
-                        "description": "Coarse proxy for Wolfenstein λ_W ≈ 0.2250; "
+                        "description": f"Coarse proxy for Wolfenstein λ_W ≈ {pdg_lw:.4f}; "
                                        "exact derivation needs racetrack minimization with SM matter content",
                     },
                     r"\lambda_{\text{eff}}": {
@@ -450,9 +452,9 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"Algebraic Wolfenstein parameter λ_W ≈ {cab_derived:.4f} from the racetrack moduli minimum. "
                     f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23 (the off-path seed). "
                     f"ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f} is the off-diagonal Yukawa texture. "
-                    f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
+                    f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/{n_gen}) ≈ {cab_derived:.4f}. "
                     f"PDG: {_vs_pdg(cab_derived)} away. N₁ = 24 was the off-path seed "
-                    "b₃ = 24 read as a gauge-group rank, N₂ = N₁ − 1 = 23 and n_gen = 3: "
+                    f"b₃ = 24 read as a gauge-group rank, N₂ = N₁ − 1 = 23 and n_gen = {n_gen}: "
                     "the construction takes no free parameters, which is why it cannot be "
                     "rescued. The registered value follows the seed in force and also "
                     "fails. The earlier 'agreement ≈ 89%, DERIVED, zero free parameters' "
@@ -471,12 +473,12 @@ class GauginoCondensationSimulation(SimulationBase):
                     "ops.abs(ops.add("
                     "ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, b3_leaf()))))), "
                     "ops.neg(ops.exp(ops.neg(ops.mul(eml_scalar(2), ops.mul(eml_pi(), ops.div(T_min, eml_scalar(23))))))))), "
-                    "ops.inv(eml_scalar(3)))"
+                    f"ops.inv(eml_scalar({n_gen})))"
                 ),
                 eml_description=(
                     "Algebraic Cabibbo via EML: ops.pow(racetrack_epsilon, ops.inv(n_gen)). "
                     "racetrack_epsilon = ops.abs(W1_at_Tmin - W2_at_Tmin). "
-                    "Inputs as written at the off-path seed: N₁ = b₃ = 24, N₂ = 23, n_gen = 3."
+                    f"Inputs as written at the off-path seed: N₁ = b₃ = 24, N₂ = 23, n_gen = {n_gen}."
                 ),
                 derivation={
                     "method": "Racetrack moduli minimum + generation-weighted Yukawa texture",
@@ -488,8 +490,8 @@ class GauginoCondensationSimulation(SimulationBase):
                         f"Evaluate condensates at T_min: W₁ = exp(-2π·T_min/N₁) = {W1_tmin:.6f}",
                         f"  W₂ = exp(-2π·T_min/N₂) = {W2_tmin:.6f}",
                         f"Off-diagonal Yukawa texture: ε_rt = |W₁ - W₂| = {epsilon_rt:.6f}",
-                        "The Wolfenstein parametrization of the CKM matrix has 3 eigenvalues (n_gen=3)",
-                        f"Leading mixing angle: λ_W = ε_rt^(1/n_gen) = {epsilon_rt:.6f}^(1/3) = {cab_derived:.6f}",
+                        f"The Wolfenstein parametrization of the CKM matrix has {n_gen} eigenvalues (n_gen={n_gen})",
+                        f"Leading mixing angle: λ_W = ε_rt^(1/n_gen) = {epsilon_rt:.6f}^(1/{n_gen}) = {cab_derived:.6f}",
                         f"PDG Wolfenstein λ_W = {_vs_pdg(cab_derived)} away, FALSIFIED (the earlier 'agreement ≈ 89%, DERIVED' reading is withdrawn)",
                     ],
                     "references": [
@@ -501,7 +503,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 terms={
                     r"T_{\min}": f"Racetrack moduli minimum ≈ {T_min_val:.4f} from ∂W/∂T = 0",
                     r"\varepsilon_{\text{rt}}": f"Off-diagonal Yukawa texture = |W₁(T_min) − W₂(T_min)| ≈ {epsilon_rt:.6f}",
-                    r"n_{\text{gen}}": "Number of fermion generations = 3 (on Y₇, n_gen = b₂/4, the number of singular involutions)",
+                    r"n_{\text{gen}}": f"Number of fermion generations = {n_gen} (on Y₇, n_gen = b₂/4, the number of singular involutions)",
                     r"\lambda_W": f"Wolfenstein CKM parameter ≈ {cab_derived:.4f} (PDG: {_pdg_lambda_w()[0]:.5f})",
                     r"N_1 = 24": "Dominant flux quanta, set to b₃ at the off-path seed b₃ = 24 (no racetrack on Y₇)",
                     r"N_2 = 23": "Sub-dominant flux quanta = N₁ − 1",
