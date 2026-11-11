@@ -98,11 +98,15 @@ class QECGolayBridge(SimulationBase):
 
     @property
     def metadata(self) -> SimulationMetadata:
+        b3_class = self.get_mapping_table()[0]["classification"]  # the n = b3 row
         return SimulationMetadata(
             id="qec_golay_bridge_v24_2",
             version="24.2",
             domain="algebra",
-            title="QEC Golay Bridge: CSS [[24,12,8]] from G2 Topology",
+            title=(
+                "QEC Golay Bridge: Golay CSS code and the b3 identification "
+                f"({b3_class} on the path in force)"
+            ),
             description=(
                 "Constructs a CSS quantum error-correcting code from the self-dual "
                 "Golay code [24,12,8]. Maps PM algebraic structures to QEC concepts; each "
@@ -363,77 +367,11 @@ class QECGolayBridge(SimulationBase):
             section_id="qec-bridge",
             subsection_id=None,
             title="Quantum Error Correction from G2 Topology",
-            abstract=(
-                "The extended Golay code [24,12,8], which arises naturally from the "
-                "Leech lattice construction in the PM framework, is self-dual and "
-                "gives a valid CSS quantum code [[24,12,8]] (Calderbank-Shor-Steane). "
-                f"The identification n = 24 = b3 is {b3_row['classification']} on the path in "
-                f"force ({b3_row['pm_concept']}); it holds only on the off-path seed_24, so it "
-                "does not support a link between the topology of Y_7 and quantum error "
-                "correction. The CSS construction is DERIVED (standard mathematics); the "
-                "other mapping rows are mismatches (42 certificates != 12 stabilizer "
-                "generators; 288 roots != 4096 codewords)."
-            ),
+            abstract=self._section_abstract(b3_row),
             content_blocks=[
-                ContentBlock(
-                    type="paragraph",
-                    content=(
-                        "The extended binary Golay code C<sub>24</sub> is a [24,12,8] "
-                        "code with 4096 codewords and minimum Hamming distance 8. It is "
-                        "self-dual: every codeword is orthogonal to every other codeword "
-                        "under the standard inner product mod 2. This self-duality property "
-                        "(G &middot; G<sup>T</sup> = 0 mod 2) is the necessary and sufficient "
-                        "condition for the CSS construction."
-                    ),
-                ),
-                ContentBlock(
-                    type="formula",
-                    content=r"[[n, k, d]] = [[24, 12, 8]]",
-                    formula_id="css-code-parameters",
-                    label="(QEC.1)",
-                ),
-                ContentBlock(
-                    type="paragraph",
-                    content=(
-                        "The CSS code encodes 12 logical qubits into 24 physical qubits "
-                        "with distance 8, correcting up to 3 arbitrary single-qubit errors. "
-                        "The 12 stabilizer generators (X-type and Z-type) are constructed "
-                        "from the Golay parity check matrix."
-                    ),
-                ),
-                ContentBlock(
-                    type="callout",
-                    callout_type="info",
-                    title="Honest Assessment",
-                    content=(
-                        "The CSS construction from the self-dual Golay code is standard "
-                        "mathematics (DERIVED). The suggestion that PM bridge pairs correspond "
-                        f"to logical qubits is {half_row['classification']} on the path in force "
-                        f"({half_row['pm_concept']} against 12 logical qubits); the numbers match on "
-                        "the off-path seed_24 only (b3 = 24, 12 bridges), and "
-                        "the mathematical objects are fundamentally different. Notable mismatches: "
-                        "the PM framework has 42 certificates while the CSS code has 12 stabilizer "
-                        "generators; the 288 ancestral roots do not correspond to the 4096 codewords."
-                    ),
-                ),
-                ContentBlock(
-                    type="formula",
-                    content=r"G \cdot G^T = 0 \pmod{2} \quad \text{(Golay self-duality)}",
-                    formula_id="golay-self-duality",
-                    label="(QEC.2)",
-                ),
-                ContentBlock(
-                    type="paragraph",
-                    content=(
-                        f"Falsifiable Prediction (Gate G85): The distance d={power['distance']} "
-                        f"code predicts the framework can tolerate up to {power['correctable_errors']} "
-                        f"simultaneous moduli perturbations without destabilising the "
-                        f"{power['protected_constants']} spectral constants. The vacuum stability "
-                        f"floor 10^{{-50}} is protected by the code distance. If future lattice "
-                        f"calculations show instability under fewer than {power['correctable_errors']} "
-                        f"perturbations, this prediction is falsified."
-                    ),
-                ),
+                *self._code_blocks(),
+                self._assessment_block(half_row),
+                *self._prediction_blocks(power),
             ],
             formula_refs=["css-code-parameters", "golay-self-duality"],
             param_refs=[
@@ -443,6 +381,96 @@ class QECGolayBridge(SimulationBase):
                 "qec.is_self_dual",
             ],
         )
+
+    @staticmethod
+    def _section_abstract(b3_row: Dict[str, str]) -> str:
+        """Abstract; the n = b3 classification is read from its mapping row."""
+        return (
+            "The extended Golay code [24,12,8], which arises naturally from the "
+            "Leech lattice construction in the PM framework, is self-dual and "
+            "gives a valid CSS quantum code [[24,12,8]] (Calderbank-Shor-Steane). "
+            f"The identification n = 24 = b3 is {b3_row['classification']} on the path in "
+            f"force ({b3_row['pm_concept']}); it holds only on the off-path seed_24, so it "
+            "does not support a link between the topology of Y_7 and quantum error "
+            "correction. The CSS construction is DERIVED (standard mathematics); the "
+            "other mapping rows are mismatches (42 certificates != 12 stabilizer "
+            "generators; 288 roots != 4096 codewords)."
+        )
+
+    @staticmethod
+    def _code_blocks() -> List[ContentBlock]:
+        """The code itself: self-duality, [[24,12,8]] and its stabilizers."""
+        return [
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The extended binary Golay code C<sub>24</sub> is a [24,12,8] "
+                    "code with 4096 codewords and minimum Hamming distance 8. It is "
+                    "self-dual: every codeword is orthogonal to every other codeword "
+                    "under the standard inner product mod 2. This self-duality property "
+                    "(G &middot; G<sup>T</sup> = 0 mod 2) is the necessary and sufficient "
+                    "condition for the CSS construction."
+                ),
+            ),
+            ContentBlock(
+                type="formula",
+                content=r"[[n, k, d]] = [[24, 12, 8]]",
+                formula_id="css-code-parameters",
+                label="(QEC.1)",
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    "The CSS code encodes 12 logical qubits into 24 physical qubits "
+                    "with distance 8, correcting up to 3 arbitrary single-qubit errors. "
+                    "The 12 stabilizer generators (X-type and Z-type) are constructed "
+                    "from the Golay parity check matrix."
+                ),
+            ),
+        ]
+
+    @staticmethod
+    def _assessment_block(half_row: Dict[str, str]) -> ContentBlock:
+        """Assessment callout; the k = b3/2 classification is read from its row."""
+        return ContentBlock(
+            type="callout",
+            callout_type="info",
+            title="Honest Assessment",
+            content=(
+                "The CSS construction from the self-dual Golay code is standard "
+                "mathematics (DERIVED). The suggestion that PM bridge pairs correspond "
+                f"to logical qubits is {half_row['classification']} on the path in force "
+                f"({half_row['pm_concept']} against 12 logical qubits); the numbers match on "
+                "the off-path seed_24 only (b3 = 24, 12 bridges), and "
+                "the mathematical objects are fundamentally different. Notable mismatches: "
+                "the PM framework has 42 certificates while the CSS code has 12 stabilizer "
+                "generators; the 288 ancestral roots do not correspond to the 4096 codewords."
+            ),
+        )
+
+    @staticmethod
+    def _prediction_blocks(power: Dict[str, Any]) -> List[ContentBlock]:
+        """Self-duality formula and the Gate G85 statement, from computed values."""
+        return [
+            ContentBlock(
+                type="formula",
+                content=r"G \cdot G^T = 0 \pmod{2} \quad \text{(Golay self-duality)}",
+                formula_id="golay-self-duality",
+                label="(QEC.2)",
+            ),
+            ContentBlock(
+                type="paragraph",
+                content=(
+                    f"Falsifiable Prediction (Gate G85): The distance d={power['distance']} "
+                    f"code predicts the framework can tolerate up to {power['correctable_errors']} "
+                    f"simultaneous moduli perturbations without destabilising the "
+                    f"{power['protected_constants']} spectral constants. The vacuum stability "
+                    f"floor 10^{{-50}} is protected by the code distance. If future lattice "
+                    f"calculations show instability under fewer than {power['correctable_errors']} "
+                    f"perturbations, this prediction is falsified."
+                ),
+            ),
+        ]
 
     def get_formulas(self) -> List[Formula]:
         return [
