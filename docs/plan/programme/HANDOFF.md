@@ -1,7 +1,10 @@
 Next step: collect the running workflows, finish wave A, merge to `main`; agents as needed (owner lifted the cap of 3 on 2026-11-11).
 1. Workflows launched and not yet collected when this was written (a result may be lost with the
    session; each can be resumed or rerun from its script):
-   - `workflows/wave_a_xv.js`, run wf_ea28d7ae-969, args `{base: "79cd6ad", scratch: <scratchpad>}`:
+   - `workflows/wave_a_xv.js`, run wf_86516413-505, args `{base: "5ae9e51", scratch: <scratchpad>}`
+     (the first run, wf_ea28d7ae-969, did no work: its agents read the owner's "wrong chat sorry",
+     meant for a message about another project, as a withdrawal; the script now says so in its
+     context line and runs one small chain as a canary before the fan-out):
      XV-01 to XV-16 and XB-08 to XB-10 in chains, two review lenses per chain, repair, re-check, a
      scribe for `progress/validation-data.md` and `progress/build-fresh.md`. Check with
      `git log --oneline 79cd6ad..HEAD | grep "close-out"`; an item with no commit is rerun.
