@@ -61,6 +61,25 @@ NEWLY_CALIBRATED = {
     "consciousness.coherence_boost": "NON_GEOMETRIC_CALIBRATED",
 }
 
+#: The one row of the same status pass (38a9339) that was never UNCLASSIFIED:
+#: the unanchored `lambda_eff` alternative of the FLAVOUR rule claimed it, and
+#: the ledger had 14 FLAVOUR rows. It takes the layer of the other gaugino
+#: rows (PT-03). Measured 2026-11-11 from closure_report() in the working tree
+#: at a55317c, with METAPHYSICA_OUT on a copy of the fast build of 249f362:
+#: FLAVOUR 14 and OFF_PATH_CALIBRATED 10 with closure_ledger.py as 66a3a55
+#: left it, 13 and 11 with the rule anchored, n_free 62 both times.
+MOVED_OUT_OF_FLAVOUR = {
+    "algebra.gaugino_lambda_eff": "OFF_PATH_CALIBRATED",
+}
+
+#: The Higgs rows the `lambda_0`, `lambda_eff` and `m_higgs` alternatives of
+#: the FLAVOUR rule were written for. Measured the same way, same date.
+HIGGS_FLAVOUR_ROWS = (
+    "higgs.lambda_0",
+    "higgs.lambda_eff_pheno",
+    "higgs.m_higgs_pred",
+)
+
 
 @pytest.fixture(scope="module")
 def report():
@@ -131,10 +150,50 @@ def test_the_buckets_sum_to_n_free(report):
         "METRIC_DEPENDENT", 0)
     assert report["blocked_on_objects_the_framework_lacks"] == (
         by_layer.get("FLAVOUR", 0) + by_layer.get("FLUX_DEPENDENT", 0))
-    named = set(NEWLY_CALIBRATED)
+    # 15 rows that were UNCLASSIFIED and the one that was FLAVOUR by accident
+    # (PT-03): 16 names, and no other row is in the two calibrated layers.
+    named = set(NEWLY_CALIBRATED) | set(MOVED_OUT_OF_FLAVOUR)
+    assert len(named) == 16
     in_new_layers = {r["name"] for r in report["ledger"] if r["layer"] in (
         "OFF_PATH_CALIBRATED", "NON_GEOMETRIC_CALIBRATED")}
     assert in_new_layers == named, sorted(in_new_layers ^ named)
+
+
+def test_the_flavour_rule_is_anchored_to_the_higgs_rows():
+    """`lambda_eff` means the Higgs quartic, not every name that contains it."""
+    calibrated = {"status": "CALIBRATED", "role": "UNRESOLVED"}
+    for name in HIGGS_FLAVOUR_ROWS:
+        assert classify_row(name, calibrated)["layer"] == "FLAVOUR", name
+    gaugino = classify_row("algebra.gaugino_lambda_eff", calibrated)
+    assert gaugino["layer"] != "FLAVOUR", gaugino
+    assert gaugino["layer"] == "OFF_PATH_CALIBRATED", gaugino
+    assert gaugino["layer"] == classify_row(
+        "algebra.gaugino_W_np_1", calibrated)["layer"]
+    assert "gaugino_lambda_eff" in gaugino["why"], gaugino
+    # Relabelled away from CALIBRATED it is unread; it never falls to FLAVOUR.
+    relabelled = classify_row("algebra.gaugino_lambda_eff",
+                              {"status": "DERIVED", "role": "UNRESOLVED"})
+    assert relabelled["layer"] == "UNCLASSIFIED", relabelled
+    for name in ("algebra.some_lambda_eff", "portals.lambda_0_proxy"):
+        assert classify_row(name, calibrated)["layer"] != "FLAVOUR", name
+
+
+def test_the_gaugino_lambda_eff_row_left_the_flavour_layer(report):
+    """In the ledger itself: the row is off-path, and the Higgs rows stay."""
+    rows = {r["name"]: r for r in report["ledger"]}
+    absent = sorted((set(MOVED_OUT_OF_FLAVOUR) | set(HIGGS_FLAVOUR_ROWS))
+                    - set(rows))
+    assert not absent, "rows that left the free set need a new reading: %s" % absent
+    for name, layer in MOVED_OUT_OF_FLAVOUR.items():
+        assert rows[name]["layer"] == layer, rows[name]
+        assert rows[name]["status"] == "CALIBRATED", rows[name]
+    for name in HIGGS_FLAVOUR_ROWS:
+        assert rows[name]["layer"] == "FLAVOUR", rows[name]
+    flavour = sorted(n for n, r in rows.items() if r["layer"] == "FLAVOUR")
+    assert not [n for n in flavour if "gaugino" in n], flavour
+    # Measured 2026-11-11 (see MOVED_OUT_OF_FLAVOUR): the 13 rows that
+    # tests/test_zero_mode_spec.py counts as blocked on zero-mode overlaps.
+    assert report["by_layer"]["FLAVOUR"] == 13, flavour
 
 
 def test_a_calibrated_status_alone_selects_no_layer():

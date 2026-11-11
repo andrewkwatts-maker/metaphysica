@@ -148,6 +148,7 @@ _OFF_PATH_GAUGINO_ROWS = frozenset({
     "algebra.gaugino_W_np_1",
     "algebra.gaugino_W_np_2",
     "algebra.gaugino_condensate_ratio",
+    "algebra.gaugino_lambda_eff",
     "algebra.e8_hidden_condensate",
     "algebra.e8_heterotic_spectral_proxy",
 })
@@ -195,6 +196,8 @@ _RULES = [
      "declare CALIBRATED at the off-path seed: no gaugino racetrack exists "
      "on Y_7 (CG.5, CG.10). e8_hidden_condensate is the same row as "
      "gaugino_W_np_1 and e8_heterotic_spectral_proxy inherits its status. "
+     "gaugino_lambda_eff is the value of gaugino_W_np_1 under another name "
+     "(lambda_eff = W_np(N_1)): a condensate, not a zero-mode overlap. "
      "A quantity is never borrowed from another path"),
 
     ("OFF_PATH_CALIBRATED", _named_calibrated(_OFF_PATH_ALP_ROWS),
@@ -213,11 +216,14 @@ _RULES = [
      "input and fits K_COHERENCE to a chosen boost, with no data compared; "
      "it is not a compactification quantity"),
 
+    # lambda_0 and lambda_eff mean the Higgs quartic rows and are anchored to
+    # the higgs. prefix: unanchored, `lambda_eff` also claimed the condensate
+    # algebra.gaugino_lambda_eff as a flavour row (PT-03, 2026-11-11).
     ("FLAVOUR",
      lambda name, row: bool(re.search(
          r"theta_1[23]|theta_23|delta_cp|delta_CP|wolfenstein|jarlskog|J_CKM"
-         r"|V_[a-z]{2}|yukawa|mass_ratio|dm2|dm21|dm31|mass_sum|lambda_0"
-         r"|lambda_eff|m_higgs|phi_fit", name)),
+         r"|V_[a-z]{2}|yukawa|mass_ratio|dm2|dm21|dm31|mass_sum"
+         r"|higgs\.lambda_0|higgs\.lambda_eff|m_higgs|phi_fit", name)),
      "a mixing angle, mass ratio or Yukawa-sector quantity"),
 
     ("METRIC_DEPENDENT",
