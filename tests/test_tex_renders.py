@@ -3,25 +3,25 @@
 tools/texcheck/check.js (mathjax-full 3.2.2, the site's shared
 website/js/mathjax-config.js) reads formulas.json, sections.json and HTML
 delimited math. Skipped, with the reason, when node or
-tools/texcheck/node_modules is absent. The published build is read from
-PM_PUBLISHED_ROOT (default H:/claude-scratch/runs_g/active), as in
-test_superseded_surfaces.py. Ceilings only go down.
+tools/texcheck/node_modules is absent. The published build is read from the
+published root of tests/conftest.py (PM_PUBLISHED_ROOT, or the output directory
+of the engine), as in test_superseded_surfaces.py. Ceilings only go down.
 """
 from __future__ import annotations
 
 import json
-import os
 import shutil
 import subprocess
 from pathlib import Path
 
 import pytest
 
+from tests.conftest import published_root, require_build
+
 ROOT = Path(__file__).resolve().parents[1]
 TEXCHECK = ROOT / "tools" / "texcheck"
 WEBSITE = ROOT / "src" / "metaphysica" / "website"
-PUBLISHED = Path(os.environ.get("PM_PUBLISHED_ROOT",
-                                "H:/claude-scratch/runs_g/active"))
+PUBLISHED = published_root()
 
 #: Render errors permitted per surface. Only goes down.
 CEILING = 0
@@ -84,9 +84,7 @@ def test_fixture_clean_formula_passes(tmp_path):
 # --- the surfaces ----------------------------------------------------------
 
 def _published(*parts):
-    if not PUBLISHED.is_dir():
-        pytest.skip("no published build at %s" % PUBLISHED)
-    return [PUBLISHED / p for p in parts]
+    return [require_build(PUBLISHED / p) for p in parts]
 
 
 @pytest.mark.parametrize("surface,parts", [
