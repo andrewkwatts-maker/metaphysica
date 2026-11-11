@@ -1,9 +1,11 @@
-Next step: start P7 and finish the wave A close-out, three agents at most in total.
-1. P7 lanes (read-only, two agents): `Workflow({scriptPath: "docs/plan/programme/workflows/p7_history_lanes.js", args: {chains: [["site-2025-11","site-2025-12a","site-2025-12b","site-2026-01a","site-2026-01b","site-2026-02_06","site-2026-07_11","site-decisions"],["engine-2026-03_08","engine-2026-09","engine-2026-10","engine-2026-11","engine-pre-rewrite","engine-docs","site-issues","code-catalogue"]]}})`.
-   Check first that the scratch history repositories exist (`HISTORY_REVIEW.md`, Sources); rebuild them if not.
-2. Wave A (one agent): the items under "Wave A, what is left" below, in order.
-3. When the P7 lanes are done: commit `docs/plan/programme/ideas/`, then run
-   `docs/plan/programme/workflows/p7_history_merge.js` (one agent at a time), commit `IDEAS_LEDGER.md`.
+Next step: finish the wave A close-out and P7, agents as needed (owner lifted the cap of 3 on 2026-11-11).
+1. P7 lanes were launched as wf_1b85d461-836 (16 lanes, 8 chains). If `docs/plan/programme/ideas/`
+   does not hold 16 lane files, rerun the missing lanes with
+   `Workflow({scriptPath: "docs/plan/programme/workflows/p7_history_lanes.js", args: {chains: [[<lane>], ...]}})`
+   (lane names: the Lanes table in `HISTORY_REVIEW.md`; rebuild the scratch history repositories
+   first if they are gone). Then commit `ideas/`, run `workflows/p7_history_merge.js`, commit `IDEAS_LEDGER.md`.
+2. Wave A: the items under "Wave A, what is left" below, in order.
+3. The end state is a release and a live site: `PROGRAMME_2026-11-11.md`, "Release and publish".
 
 # Handoff, 2026-11-11
 
