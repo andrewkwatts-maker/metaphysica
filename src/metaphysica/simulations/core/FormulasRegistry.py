@@ -117,9 +117,10 @@ class FormulasRegistry:
 
     SELECTION PRINCIPLE (not anthropic):
     -----------------------------------
-    chi_eff = 72 is the effective chiral index determined by:
-    1. n_gen = |chi|/24 (standard M-theory index theorem)
-    2. |chi| = 72 yields exactly 3 fermion generations: 72/24 = 3
+    chi_eff is the effective chiral index, read from the chi_eff_route fork
+    (48 n_gen on the path, with n_gen from b2/4), determined by:
+    1. n_gen = |chi_eff_sector|/24 (standard M-theory index theorem per sector)
+    2. the generation count is read from the path, not typed
     3. Singular TCS G2 models CAN exhibit non-zero effective Euler
        characteristic due to singularities (Acharya-Witten 2001)
 
@@ -150,12 +151,13 @@ class FormulasRegistry:
     #   - phi (Golden Ratio): (1 + sqrt(5))/2 - mathematical constant
     #   - pi: Mathematical constant
     #   - gamma_s (Euler-Mascheroni): 0.5772... - mathematical constant
-    #   - b3 = 24: Plausible Betti number for a G2 manifold (unverified)
+    #   - b3: third Betti number of Y_7 from b3_path.seed_values (unverified;
+    #     24 was the retired seed_24 value)
     #
     # SPECULATIVE/NUMEROLOGICAL (NO RIGOROUS BASIS):
-    #   - chi_eff = 72: Effective chiral index; singular TCS G2 models can have
-    #     non-zero effective Euler characteristic (Acharya-Witten 2001)
-    #   - n_gen = |chi|/24 = 72/24 = 3 (standard M-theory index theorem)
+    #   - chi_eff (chi_eff_route fork, 48 n_gen): Effective chiral index; singular
+    #     TCS G2 models can have non-zero effective Euler characteristic (Acharya-Witten 2001)
+    #   - n_gen = |chi_eff_sector|/24 (standard M-theory index theorem)
     #   - roots_total = 288: Octonionic/24D structure (b3*12), NOT E8xE8 roots (480)
     #   - visible_sector = 125: Effective visible residues (NOT gauge generators)
     #   - sterile_sector = 163: Derived from arbitrary values (288 - 125)
@@ -298,7 +300,7 @@ class FormulasRegistry:
     # The v23 framework has TWO 13D shadow sectors connected by Euclidean bridges.
     # Each shadow carries the effective index chi_eff (not the Euler characteristic of Y_7, which is 0):
     #
-    #   chi_eff_shadow = b3^2/8 = 576/8 = 72
+    #   chi_eff_shadow = b3^2/8 = 576/8 = 72 (seed_24 only; on the path chi_eff follows the chi_eff_route fork)
     #
     # From Hodge numbers (retired TCS #187 seed; not re-derived on Y7): chi_eff = h^{1,1} - h^{2,1} + h^{3,1} = 4-0+68 = 72
     #
@@ -314,7 +316,7 @@ class FormulasRegistry:
     # ===========================================================================
     #
     # chi_eff = chi_eff_sector = 72 (per shadow)
-    #   GEOMETRIC: chi_eff_shadow = b3^2/8 = 576/8 = 72
+    #   GEOMETRIC: chi_eff_shadow = b3^2/8 = 576/8 = 72 (seed_24 only)
     #   USE FOR:
     #   - n_gen = chi_eff/24 = 3 (fermion generations per sector)
     #   - gate_transition calculations (fine structure refinement)
@@ -324,16 +326,16 @@ class FormulasRegistry:
     #   PHYSICS: Quarks carry color charge, confined within single shadow
     #
     # chi_eff_total = 144 (both shadows combined)
-    #   GEOMETRIC: chi_eff_total = 72 + 72 = b3^2/4 = 576/4 = 144
+    #   GEOMETRIC: chi_eff_total = 72 + 72 = b3^2/4 = 576/4 = 144 (the b3^2/4 form is seed_24 only)
     #   USE FOR:
     #   - reid_invariant = 1/chi_eff_total = 1/144
     #   - chi_parity_product = watts_constant / reid_invariant = 144
     #   - Cross-shadow processes (PMNS neutrino mixing)
-    #   - N_flux = chi_eff_total/6 = 24 = b3 (flux quantization)
+    #   - N_flux = chi_eff_total/6 = 24 = b3 (flux quantization; equals b3 only at seed_24)
     #   - n_gen = chi_eff_total/48 = 3 (alternative generation formula)
     #   PHYSICS: Neutrinos are electrically neutral, propagate through bridge
     #
-    # pressure_divisor = b3^2/4 = 576/4 = 144
+    # pressure_divisor = b3^2/4 = 576/4 = 144 (seed_24 only; b3^2/4 of the path otherwise)
     #   GEOMETRIC DERIVATION (Hexagonal Projection)
     #   - Numerically equals chi_eff_total but derived from b3 geometry
     #   - Used in H0 O'Dowd formula: H0 = 288/4 - P_O/pressure_divisor + eta_S
@@ -1159,7 +1161,7 @@ class FormulasRegistry:
         # chi_eff_total = 144 = 2 * chi_eff_sector (full manifold)
         #
         # BOTH formulas give n_gen = 3:
-        # - Formula A: n_gen = chi_eff_sector/24 = 72/24 = 3 (M-theory index per sector)
+        # - Formula A: n_gen = chi_eff_sector/24 (M-theory index per sector)
         # - Formula B: n_gen = chi_eff_total/48 = 144/48 = 3 (total manifold)
         #
         # TWO-SECTOR INTERPRETATION:
@@ -1187,10 +1189,10 @@ class FormulasRegistry:
         # DUAL INTERPRETATION OF 288:
         # 1. GNOSTIC: 288 = shadow_sector(135) + christ_constant(153)
         #    - Sophia (135) + Christos (153) = Logic Closure (288)
-        # 2. GEOMETRIC: 288 = b3 * D_space_12 = 24 * 12
-        #    - Octonionic/24D structure (b3=24 times spinor rank 12)
+        # 2. GEOMETRIC: 288 = b3 * D_space_12 = 24 * 12 (seed_24 only)
+        #    - Octonionic/24D structure (b3 times spinor rank 12; 24 x 12 at the retired seed_24)
         #
-        # Both interpretations yield the same value. The Gnostic partition
+        # Both interpretations yield the same value only at the retired seed_24. The Gnostic partition
         # is used for the SSOT computation; the Geometric provides physical context.
         #
         # NOTE: This is NOT E8xE8 roots (480 = 240 + 240).
@@ -1256,7 +1258,7 @@ class FormulasRegistry:
         self._D_G2_space = 7              # All G2 dimensions are spatial (Riemannian)
         self._D_G2_time = 0               # NO temporal dimension - G2 is Euclidean
         # Signature: (7, 0) - Riemannian (Joyce 2000, Kovalev 2003)
-        # b3 = 24 is the Betti number of the G2 manifold (defined above)
+        # b3 is the third Betti number of Y_7, from b3_path.seed_values (defined above)
         # chi_eff relates to G2 topology (defined above)
         # Legacy aliases:
         self._D_compact_G2 = self._D_G2_total
@@ -1286,9 +1288,9 @@ class FormulasRegistry:
         self._D_time_1 = self._D_visible_time
 
         # DERIVED QUANTITIES (connect dimensional levels)
-        # n_gen = chi_eff_sector / b3 = 72/24 = 3 (fermion generations)
-        # n_gen = chi_eff_total / (2*b3) = 144/48 = 3 (same result)
-        # roots_total = b3 * D_shadow_space = 24 * 12 = 288 (octonionic structure)
+        # n_gen = chi_eff_sector / b3 = 72/24 = 3 (seed_24 only; on the path n_gen is b2/4)
+        # n_gen = chi_eff_total / (2*b3) = 144/48 = 3 (seed_24 only; on the path chi_eff is 48 n_gen)
+        # roots_total = b3 * D_shadow_space = 24 * 12 = 288 (octonionic structure; seed_24 only)
 
         # COMPACTIFICATION RELATIONS (5-level chain)
         # D_ancestral(26) = 2 * D_shadow(13) (two 13D shadow branes in 2T-physics)
@@ -1329,7 +1331,7 @@ class FormulasRegistry:
         #   - 2 = timelike, one per 13D shadow: (12,1) + (12,1) = 26
         #
         # Generation formula (per shadow):
-        #   n_gen = chi_eff / (2 * b3) = 144 / 48 = 3
+        #   n_gen = chi_eff / (2 * b3) = 144 / 48 = 3 (seed_24 only; on the path chi_eff is 48 n_gen)
         #   (From per-shadow G2 compactification)
         #
         # Dark Energy (breathing mechanism):
@@ -1487,19 +1489,19 @@ class FormulasRegistry:
     @property
     def chi_eff(self) -> int:
         """
-        Per-sector effective chiral index: chi_eff_sector = 72.
-        LEGACY ALIAS for mephorash_chi.
+        Per-sector effective chiral index chi_eff_sector (half of chi_eff_total,
+        which follows the chi_eff_route fork). LEGACY ALIAS for mephorash_chi.
 
-        n_gen = chi_eff/24 = 72/24 = 3 (M-theory index theorem per sector)
+        n_gen = chi_eff_sector/24 (M-theory index theorem per sector)
 
         v20.1 DUAL STRUCTURE:
-        The framework has TWO sectors, each contributing chi_eff = 72:
-        - chi_eff_sector = 72 (this value, per sector)
-        - chi_eff_total = 144 = 2 * 72 (full manifold)
+        The framework has TWO sectors, each contributing chi_eff_sector:
+        - chi_eff_sector (this value, per sector)
+        - chi_eff_total = 2 * chi_eff_sector (full manifold, 48 n_gen)
 
-        BOTH formulas give n_gen = 3:
-        - n_gen = chi_eff_sector/24 = 72/24 = 3
-        - n_gen = chi_eff_total/48 = 144/48 = 3
+        BOTH formulas give the n_gen of the path:
+        - n_gen = chi_eff_sector/24
+        - n_gen = chi_eff_total/48
 
         Reference: Acharya, B.S. & Witten, E. (2001). arXiv:hep-th/0109152
         """
@@ -1549,7 +1551,7 @@ class FormulasRegistry:
         2. GEOMETRIC: 288 = b3 * D_space_12 = 24 * 12
 
         This represents octonionic/24-dimensional structure counts, NOT E8xE8 roots
-        (which would be 480 = 240 + 240). The 288 arises from b3=24 times the
+        (which would be 480 = 240 + 240). At the retired seed_24 the 288 arose from b3 (24) times the
         spinor connection rank 12, providing a 24D-dimensional basis for parameter projection.
         """
         return self.nitzotzin_roots
@@ -4114,36 +4116,38 @@ class FormulasRegistry:
     @property
     def manifold_area_bulk(self) -> int:
         """
-        Total manifold area: B3^2 = 24^2 = 576
+        Total manifold area: B3^2 of the path (24^2 = 576 at the retired seed_24)
 
         This is the "Area of the Bulk" - the 2D projection of the 24D space.
         Derived, NOT hardcoded.
         """
-        return self._b3 ** 2  # 576
+        return self._b3 ** 2  # b3^2 of the path
 
     @property
     def pressure_divisor(self) -> float:
         """
-        The 144 divisor: B3^2 / 4 = 576 / 4 = 144
+        The pressure divisor: B3^2 / 4 of the path (576 / 4 at the retired seed_24)
 
         Represents the Hexagonal Projection of the bulk.
-        NOTE: This is a geometric projection constant, distinct from chi_eff (72).
+        NOTE: This is a geometric projection constant, distinct from chi_eff.
         """
-        return self.manifold_area_bulk / 4  # 144
+        return self.manifold_area_bulk / 4  # b3^2 / 4 of the path
 
     @property
     def odowd_bulk_derived(self) -> int:
         """
-        O'Dowd Bulk Pressure derived from geometry: (7 * B3) - 5 = 163
+        O'Dowd Bulk Pressure derived from geometry: (7 * B3) - 5 with b3 of
+        the path (163 only at the retired seed_24).
 
         The Heptagonal Scaling constant:
         - 7: The Seven Pillars (Symmetry)
-        - 24: The Manifold Base (Geometry)
+        - b3: The Manifold Base (Geometry), from b3_path.seed_values
         - -5: The Pentagonal Offset (Asymmetry/Residue)
 
-        This MUST equal odowd_bulk_pressure (163) for sterility.
+        verify_bulk_pressure_derivation compares it with the typed
+        odowd_bulk_pressure (163); the two agree only at the retired seed_24.
         """
-        return (self.heptagon_scale * self._b3) - self.pentagonal_offset  # 163
+        return (self.heptagon_scale * self._b3) - self.pentagonal_offset  # (7 b3 - 5) of the path
 
     def verify_bulk_pressure_derivation(self) -> bool:
         """
@@ -4427,9 +4431,12 @@ class FormulasRegistry:
         alpha^-1 = k_gimel^2 - b3/phi + phi/(4*pi) = 137.0367
 
         Where:
-        - k_gimel = b3/2 + 1/pi = 12.3183... (Holonomy Precision Limit)
+        - k_gimel = b3/2 + 1/pi (Holonomy Precision Limit; 12.3183 at the retired seed_24)
         - phi = (1 + sqrt(5))/2 = 1.618... (Golden Ratio)
-        - b3 = 24 (Third Betti number of G2 manifold)
+        - b3: third Betti number of Y_7, from b3_path.seed_values
+
+        Every other number quoted in this docstring (137.0367 and the
+        delta_7D figures) is its value at the retired seed_24, not on the path.
 
         COMPARISON TO EXPERIMENT:
         =========================

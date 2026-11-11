@@ -73,24 +73,31 @@ class DocumentationSynchronizer:
         """
         Generate FORMULAS.md from the Registry.
 
+        Every number that depends on the path (b3, chi_eff, sigma_T, H0) is
+        read from the registry or the fork readers; seed_24 values appear only
+        where they are labelled as the retired seed.
+
         Returns:
             The markdown content as a string.
         """
         reg = self.registry
+        nums = _path_numbers(reg)
+        sections = [
+            self._header_md(reg),
+            self._topology_md(reg, nums),
+            self._anchors_md(reg, nums),
+            self._sterility_md(reg, nums),
+            self._derived_md(reg, nums),
+            self._odowd_md(reg, nums),
+            self._invariants_md(reg, nums),
+            self._hebrew_md(reg),
+        ]
+        return "---\n\n".join(sections) + _FOOTER
+
+    def _header_md(self, reg) -> str:
         timestamp = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-
-        # Calculate derived values
-        h0 = reg.h0_local
-        w0 = reg.w0_dark_energy
-        mu = reg.mass_ratio
-        alpha_inv = reg.alpha_inverse
-        parity_sum = reg.parity_sum
-        parity_valid = reg.verify_parity()
-
-        # Get sovereign hash for documentation
         sovereign_hash = reg.get_sovereign_hash()
-
-        md_content = f"""# Principia Metaphysica: Formula Registry
+        return f"""# Principia Metaphysica: Formula Registry
 
 **Status:** {reg.STATUS} | **Last Sync:** {timestamp}
 **Engine Version:** v{reg.VERSION}
@@ -98,32 +105,33 @@ class DocumentationSynchronizer:
 
 <!-- SOVEREIGN_HASH_FULL: {sovereign_hash} -->
 
----
+"""
 
-## The Mechanical Triad (Active Laws)
+    def _topology_md(self, reg, nums) -> str:
+        return f"""## The Mechanical Triad (Active Laws)
 
 | Law | Symbolic Name | Derivation Logic | Current Value |
 | :--- | :--- | :--- | :--- |
-| **Expansion Rate** | eta_S (Sophian Drag) | (288/4) - (163/144) + eta_S | **{h0:.4f} km/s/Mpc** |
-| **Vacuum Seal** | sigma_T (Tzimtzum) | -23/24 Residue | **{w0:.4f}** |
-| **Mass Coupling** | kappa_Delta (Demiurgic) | (C_kaf^2 * kappa_Delta/pi) / holonomy | **{mu:.2f}** |
-| **Fine Structure** | alpha^-1 (Residue) | Geometric derivation | **{alpha_inv:.6f}** |
+| **Expansion Rate** | eta_S (Sophian Drag) | {nums["h0_formula"]} | **{reg.h0_local:.4f} km/s/Mpc** |
+| **Vacuum Seal** | sigma_T (Tzimtzum) | -{nums["sigma_t"]} Residue (dark_energy_betti fork) | **{reg.w0_dark_energy:.4f}** |
+| **Mass Coupling** | kappa_Delta (Demiurgic) | (C_kaf^2 * kappa_Delta/pi) / holonomy | **{reg.mass_ratio:.2f}** |
+| **Fine Structure** | alpha^-1 (Residue) | Geometric derivation | **{reg.alpha_inverse:.6f}** |
 
 ---
 
 ## The Ten Pillar Seeds (Input Invariants)
 
-These values are the **Level 0 Seeds** hardcoded in the `FormulasRegistry`.
+These values are the **Level 0 Seeds** of the `FormulasRegistry` on the path in force (b3 = {nums["b3"]}).
 All other values are derived from these constants.
 
 ### Topological Invariants
 
 | Name | Symbol | Value | Description |
 | :--- | :--- | :--- | :--- |
-| Governing Elder | E_כד | `{reg.elder_kads}` | Third Betti number of G2 manifold (24 Elders) |
-| Chi Effective (per-shadow) | χ_עב | `{reg.mephorash_chi}` | Per-shadow Euler characteristic (B3^2/8 = 72) |
-| Chi Effective (total) | ק_דם | `{reg.qedem_chi_sum}` | Both shadows combined (72 + 72 = 144) |
-| Total Roots (Nitzotzin) | 𝒩_רפח | `{reg.nitzotzin_roots}` | 12 * B3 = 288 Logic Closure Sum |
+| Governing Elder | E_כד | `{reg.elder_kads}` | Third Betti number b3 of Y_7 on the path |
+| Chi Effective (per-shadow) | χ_עב | `{reg.mephorash_chi}` | Per-shadow effective index (chi_eff_route fork) |
+| Chi Effective (total) | ק_דם | `{reg.qedem_chi_sum}` | Both shadows combined (chi_eff_route fork) |
+| Total Roots (Nitzotzin) | 𝒩_רפח | `{reg.nitzotzin_roots}` | Logic Closure Sum, a typed integer (12 * b3 only at the retired seed_24) |
 | Sophian Modulus | ק_כה | `{reg.sophian_modulus}` | 5^3 = 125 Visible Residue Modulus |
 | Barbelo Modulus | ק_סג | `{reg.barbelo_modulus}` | 288 - 125 = 163 Ancestral Bulk Pressure Modulus |
 
@@ -133,27 +141,30 @@ The framework uses a dual chi_eff structure based on the 12x(2,0) paired bridge 
 
 | Constant | Value | Formula | Usage Domain |
 | :--- | :--- | :--- | :--- |
-| chi_eff | `{reg.mephorash_chi}` | B3^2/8 = 576/8 | Single-shadow (baryon, CKM) |
-| qedem_chi_sum | `{reg.qedem_chi_sum}` | B3^2/4 = 576/4 | Cross-shadow (PMNS, n_gen) |
+| chi_eff | `{reg.mephorash_chi}` | chi_eff_route fork (B3^2/8 only at the retired seed_24) | Single-shadow (baryon, CKM) |
+| qedem_chi_sum | `{reg.qedem_chi_sum}` | chi_eff_route fork (B3^2/4 only at the retired seed_24) | Cross-shadow (PMNS, n_gen) |
 
 **Key Principle:** Does the physics involve one shadow or both?
-- **Single-shadow (chi_eff = 72):** Quarks (CKM mixing), baryon asymmetry, torsional leakage
-- **Cross-shadow (chi_eff_total = 144):** Neutrinos (PMNS mixing), generation counting, flux quantization
+- **Single-shadow (chi_eff = {reg.mephorash_chi}):** Quarks (CKM mixing), baryon asymmetry, torsional leakage
+- **Cross-shadow (chi_eff_total = {reg.qedem_chi_sum}):** Neutrinos (PMNS mixing), generation counting, flux quantization
 
 **Physical Basis:**
-- Quarks carry color charge and are confined within a single 11D shadow
+- Quarks carry color charge and are confined within a single 13D (12,1) shadow
 - Neutrinos are electrically neutral and propagate through the Euclidean bridge
 
 *Reference: docs/appendices/appendix_chi_eff_architecture.md*
 
-### The Sacred Heptagon (7 Intellectual Anchors)
+"""
+
+    def _anchors_md(self, reg, nums) -> str:
+        return f"""### The Sacred Heptagon (7 Intellectual Anchors)
 
 | # | Name | Symbol | Value | Role |
 | :--- | :--- | :--- | :--- | :--- |
 | 1 | Watts Constant | Omega_W | `{reg.monad_unity}` | Observer Unity |
-| 2 | Reid Invariant | chi_R | `{reg.nitsot_par:.16f}` | Sounding Board (1/144) |
+| 2 | Reid Invariant | chi_R | `{reg.nitsot_par:.16f}` | Sounding Board (1/{reg.qedem_chi_sum}) |
 | 3 | Weinstein Scale | kappa_E | `{reg.weinstein_scale}` | Spinor Connection Rank |
-| 4 | Hossenfelder Root | lambda_S | `{reg.hossenfelder_root:.12f}` | sqrt(24) Hidden Root |
+| 4 | Hossenfelder Root | lambda_S | `{reg.hossenfelder_root:.12f}` | sqrt({nums["pleroma"]}) Hidden Root, a frozen ANSATZ integer (not sqrt(b3)) |
 | 5 | O'Dowd Bulk Pressure | P_O | `{reg.barbelo_modulus}` | Bulk Pressure Constant |
 | 6 | Penrose-Hameroff Bridge | Phi_PH | `{reg.penrose_hameroff_bridge}` | Fibonacci Bridge |
 | 7 | Christ Constant | Lambda_JC | `{reg.logos_joint}` | Logos Potential |
@@ -164,7 +175,7 @@ The framework uses a dual chi_eff structure based on the 12x(2,0) paired bridge 
 | :--- | :--- | :--- | :--- | :--- |
 | 8 | Sophian Drag | eta_S | `{reg.sophian_drag}` | H0 Friction Coefficient |
 | 9 | Demiurgic Coupling | kappa_Delta | `{reg.demiurgic_coupling:.16f}` | Mass-Energy Gearbox |
-| 10 | Tzimtzum Pressure | sigma_T | `{reg.tzimtzum_pressure:.16f}` | Void Seal (23/24) |
+| 10 | Tzimtzum Pressure | sigma_T | `{reg.tzimtzum_pressure:.16f}` | Void Seal ({nums["sigma_t"]}, dark_energy_betti fork) |
 
 ---
 
@@ -175,20 +186,21 @@ The framework uses a dual chi_eff structure based on the 12x(2,0) paired bridge 
 | Sophian Gamma | `{reg.sophian_gamma:.16f}` | High-precision Euler-Mascheroni (16 decimals) |
 | C_kaf | `{reg.c_kaf:.4f}` | Flux normalization: B3*(B3-7)/(B3-9) |
 
----
+"""
 
-## Sterility Guard-Rail
+    def _sterility_md(self, reg, nums) -> str:
+        return f"""## Sterility Guard-Rail
 
 The manifold is verified as **Sterile** if the following conditions are met:
 
-### Parity Invariant
-$$\\eta_S + \\sigma_T = \\frac{{163}}{{239}} + \\frac{{23}}{{24}} \\approx 1.6403$$
+### Parity Identity (IDENTITY: true by construction, not counted or scored)
+`{reg._parity_text()}`
 
 **Current Values:**
 - Sophian Drag (eta_S): `{reg.sophian_drag}`
 - Tzimtzum Pressure (sigma_T): `{reg.tzimtzum_pressure:.10f}`
-- **Parity Sum:** `{parity_sum:.4f}`
-- **Status:** `{'PASS' if parity_valid else 'FAIL'}`
+- **Parity Sum:** `{reg.parity_sum:.4f}`
+- **Status:** `{'PASS' if reg.verify_parity() else 'FAIL'}` (IDENTITY)
 
 ### Integer Closure (Demon Lock)
 $$135 (\\text{{Visible}}) + 153 (\\Lambda_{{JC}}) = 288 (\\text{{E8}} \\times \\text{{E8}})$$
@@ -200,7 +212,7 @@ $$135 (\\text{{Visible}}) + 153 (\\Lambda_{{JC}}) = 288 (\\text{{E8}} \\times \\
 - **Status:** `{'PASS' if reg.verify_integer_closure() else 'FAIL'}`
 
 ### Tzimtzum Fraction
-The Tzimtzum Pressure MUST be exactly 23/24, not a decimal approximation.
+The Tzimtzum Pressure MUST be exactly (n-1)/n with n from the dark_energy_betti fork ({nums["sigma_t"]}), not a decimal approximation.
 
 **Status:** `{'PASS' if reg.verify_tzimtzum_fraction() else 'FAIL'}`
 
@@ -209,54 +221,60 @@ The Watts Constant MUST equal exactly 1.0 (immutable).
 
 **Status:** `{'PASS' if reg.verify_watts_constant() else 'FAIL'}`
 
----
+"""
 
-## Derived Physical Constants
+    def _derived_md(self, reg, nums) -> str:
+        return f"""## Derived Physical Constants
 
 | Constant | Value | Formula | Target |
 | :--- | :--- | :--- | :--- |
-| H0 (Local) | `{h0:.4f}` km/s/Mpc | (288/4) - (P_O/chi_eff) + eta_S | 71.55 |
+| H0 (Local) | `{reg.h0_local:.4f}` km/s/Mpc | (288/4) - (P_O/pressure_divisor) + eta_S | SH0ES 73.04 |
 | H0 (Early/Planck) | `{reg.h0_early}` km/s/Mpc | CMB measurement | 67.4 |
-| w0 (Dark Energy) | `{w0:.10f}` | -sigma_T = -23/24 | -0.9583... |
-| alpha^-1 | `{alpha_inv:.4f}` | Geometric derivation | 137.036 |
-| Mass Ratio (mu) | `{mu:.2f}` | Holonomy coupling | 1836.15 |
+| w0 (Dark Energy) | `{reg.w0_dark_energy:.10f}` | -sigma_T = -{nums["sigma_t"]} | see the parameter artifact |
+| alpha^-1 | `{reg.alpha_inverse:.4f}` | Geometric derivation | 137.036 |
+| Mass Ratio (mu) | `{reg.mass_ratio:.2f}` | Holonomy coupling | 1836.15 |
 
----
+"""
 
-## O'Dowd Hubble Formula (v17 Sovereign)
+    def _odowd_md(self, reg, nums) -> str:
+        b3 = nums["b3"]
+        return f"""## O'Dowd Hubble Formula (v17 Sovereign)
 
-The local Hubble constant is derived geometrically from the manifold base at the retired seed_24 value (B3=24; the active seed is seed_43_joyce):
+The local Hubble constant is derived geometrically from the manifold base b3 = {b3} of the path in force:
 
 $$H_0 = \\frac{{ROOTS}}{{4}} - \\frac{{(7 \\times B3) - 5}}{{B3^2 / 4}} + \\eta_S$$
 
-Where all values are derived from the retired seed_24 value B3=24:
-- ROOTS/4 = 288/4 = 72 (octonionic/24D structure: b3*12)
-- P_O = (7 * 24) - 5 = 163 (O'Dowd Bulk Pressure - derived from Heptagonal Scaling)
-- pressure_divisor = 24^2 / 4 = 144 (Hexagonal Projection, distinct from chi_eff = 72)
-- eta_S = 0.6819 (Sophian Drag)
+Where, at b3 = {b3}:
+- ROOTS/4 = {reg.nitzotzin_roots}/4 = {reg.nitzotzin_roots / 4:g} (typed Logic Closure; 12 * b3 only at the retired seed_24)
+- (7 * B3) - 5 = (7 * {b3}) - 5 = {reg.odowd_bulk_derived} (O'Dowd Bulk Pressure from Heptagonal Scaling)
+- pressure_divisor = {b3}^2 / 4 = {reg.pressure_divisor:g} (Hexagonal Projection, distinct from chi_eff = {reg.mephorash_chi})
+- eta_S = {reg.sophian_drag:.4f} (Sophian Drag)
 
-**Result:** 72 - 1.1319 + 0.6819 = **{h0:.4f} km/s/Mpc**
+**Result:** {nums["h0_expanded"]}
 
----
+"""
 
-## v17 Derived Geometric Invariants
+    def _invariants_md(self, reg, nums) -> str:
+        b3 = nums["b3"]
+        return f"""## v17 Derived Geometric Invariants
 
-These values are derived from the manifold base at the retired seed_24 value (B3=24), ensuring absolute geometric sovereignty:
+These values are derived from the manifold base b3 = {b3} of the path in force:
 
 | Invariant | Formula | Value | Verification |
 | :--- | :--- | :--- | :--- |
 | Manifold Area | B3^2 | `{reg.manifold_area_bulk}` | {reg.elder_kads}^2 = {reg.manifold_area_bulk} |
-| Pressure Divisor | B3^2 / 4 | `{reg.pressure_divisor}` | {reg.manifold_area_bulk} / 4 = {reg.pressure_divisor:.0f} |
+| Pressure Divisor | B3^2 / 4 | `{reg.pressure_divisor}` | {reg.manifold_area_bulk} / 4 = {reg.pressure_divisor:g} |
 | O'Dowd Bulk (Derived) | (7 * B3) - 5 | `{reg.odowd_bulk_derived}` | (7 * {reg.elder_kads}) - 5 = {reg.odowd_bulk_derived} |
 | Sterile Sector (Derived) | ROOTS - VISIBLE | `{reg.sterile_sector_derived}` | {reg.nitzotzin_roots} - {reg.sophian_modulus} = {reg.sterile_sector_derived} |
 
 **Verification Status:**
-- Bulk Pressure Derivation (163 = (7*24)-5): `{'PASS' if reg.verify_bulk_pressure_derivation() else 'FAIL'}`
-- Sterile = Bulk (163 = 163): `{'PASS' if reg.verify_sterile_equals_bulk() else 'FAIL'}`
+- Bulk Pressure Derivation ({reg.barbelo_modulus} vs (7*{b3})-5 = {reg.odowd_bulk_derived}): `{'PASS' if reg.verify_bulk_pressure_derivation() else 'FAIL'}`
+- Sterile = Bulk ({reg.sterile_sector_derived} vs {reg.barbelo_modulus}): `{'PASS' if reg.verify_sterile_equals_bulk() else 'FAIL'}`
 
----
+"""
 
-## Hebrew Symbol Reference (v23.2.26 - Final Synthesis)
+    def _hebrew_md(self, reg) -> str:
+        return f"""## Hebrew Symbol Reference (v23.2.26 - Final Synthesis)
 
 The framework uses Hebrew-derived naming for mathematical constants, connecting gematria to geometric invariants.
 
@@ -303,12 +321,7 @@ $$\\mathcal{{S}}_{{\\text{{ד}}}} (135) + \\mathcal{{P}}_{{\\text{{צ}}}} (163) 
 
 Sophia Door + Barbelo Hook = Nitzotzin Sparks (Logic Closure)
 
----
-
-*Note: This file is auto-generated by `sync_docs.py`. Do not edit manually.*
-*Any changes will be overwritten by the FormulasRegistry sync.*
 """
-        return md_content
 
 
     def write_formulas_md(self) -> str:
@@ -356,6 +369,35 @@ Sophia Door + Barbelo Hook = Nitzotzin Sparks (Logic Closure)
         print("=" * 60)
 
         return outputs
+
+
+_FOOTER = """---
+
+*Note: This file is auto-generated by `sync_docs.py`. Do not edit manually.*
+*Any changes will be overwritten by the FormulasRegistry sync.*
+"""
+
+
+def _path_numbers(reg) -> Dict[str, Any]:
+    """Path-dependent numbers FORMULAS.md quotes, read from the path in force."""
+    from metaphysica.simulations.PM.cosmology import late_time_routes as ltr
+    from metaphysica.simulations.core.FormulasRegistry import FROZEN_PLEROMA
+
+    n = ltr.de_betti_n(ltr.resolve_de_betti())
+    base = reg.nitzotzin_roots / 4
+    drag = reg.odowd_bulk_derived / reg.pressure_divisor
+    odowd = base - drag + reg.sophian_drag
+    route = ltr.resolve_h0_route()
+    return {
+        "b3": reg.elder_kads,
+        "sigma_t": f"{n - 1}/{n}",
+        "pleroma": FROZEN_PLEROMA,
+        "h0_formula": (f"({reg.nitzotzin_roots}/4) - ({reg.odowd_bulk_derived}/"
+                       f"{reg.pressure_divisor:g}) + eta_S"),
+        "h0_expanded": (f"{base:g} - {drag:.4f} + {reg.sophian_drag:.4f} = "
+                        f"{odowd:.4f} (O'Dowd sum); H0_local on h0_route "
+                        f"{route} = **{reg.h0_local:.4f} km/s/Mpc**"),
+    }
 
 
 def main():
