@@ -117,7 +117,7 @@ class PneumaRacetrackParameters(metaclass=PathValued):
 
     # Racetrack coefficients from hidden sector gauge ranks
     # Two competing condensates with rank difference of 1
-    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at TCS #187)
+    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at the retired TCS #187 reading)
 
     # Amplitude prefactors (order unity, slight hierarchy from instanton effects)
     A_AMPLITUDE = 1.0  # Source: Instanton normalization (KKLT 2003)

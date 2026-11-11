@@ -138,7 +138,7 @@ class TorsionClass(metaclass=PathValued):
     # RETIRED reading (TCS #187, CHNP 2015). T_omega below is derived at this
     # reading; B3 and CHI_EFF of the path in force are read at access.
     TCS187_CHI_EFF = 144  # 2(h^{1,1} - h^{2,1} + h^{3,1}) = 2(4 - 0 + 68)
-    TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 at TCS #187
+    TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 at the retired TCS #187 reading
     D_INTERNAL = 7  # Source: Joyce (2000) G2 holonomy manifold dimension
 
     # Spinor fraction from Spin(7) structure
@@ -199,7 +199,7 @@ class FluxQuantization(metaclass=PathValued):
     # CHI_EFF and N_GENERATIONS of the path in force are read at access.
     TCS187_B2 = 4  # CHNP 2015 TCS construction h^2 = 4
     TCS187_B3 = 24  # b3 = b2(X1) + b2(X2) + K + 1 (CHNP 2015)
-    TCS187_B5 = 4  # Poincare duality b5 = b2 at TCS #187
+    TCS187_B5 = 4  # Poincare duality b5 = b2 at the retired TCS #187 reading
     CHI_RAW = 300  # Source: CHNP 2015 raw Euler characteristic before flux reduction
 
     # Flux parameters
