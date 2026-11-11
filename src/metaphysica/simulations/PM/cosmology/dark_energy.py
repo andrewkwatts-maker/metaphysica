@@ -104,9 +104,10 @@ Evidence:
 CLASSIFICATION: The numerical value w₀ = -(b₃-1)/b₃ is testable and
 distinguishable from Lambda-CDM (w₀ = -1) with next-generation surveys.
 However, the prediction was retrofitted to DESI 2025 data, not derived
-a priori. The w_a prediction (-0.204 vs DESI DR2 -0.86 +/- 0.22, ~3.0 sigma
-tension) was NOT adjusted, suggesting it may be a more honest test of
-the framework -- and it performs poorly.
+a priori. The w_a prediction -1/sqrt(b3) was NOT adjusted (its tension with
+DESI DR2 is computed in DarkEnergyV16._wa_derived_param from the loaded DESI
+w_a and its error on the prediction's side), suggesting it may be a more
+honest test of the framework -- and it performs poorly.
 
 SCORE: 2/10 (retrofitted formula, non-unique topology, no rigorous
 derivation, one hardcoded parameter; partial credit for falsifiability
@@ -122,10 +123,12 @@ Dedicated To:
 # ============================================================================
 # SENSITIVITY ANALYSIS NOTES
 # Output: cosmology.wa_derived
-# Deviation: 2.98 sigma from experimental (DESI DR2 BAO+CMB+DESY5: w_a = -0.86 +/- 0.22)
-#   [audit note: earlier text paired "2.46 sigma" with the -0.6 +/- 0.3 anchor,
-#    an inconsistent pairing -- |-0.204+0.6|/0.3 = 1.32 sigma vs -0.6 +/- 0.3;
-#    2.46 sigma was computed vs the older -0.99 +/- 0.32 anchor]
+# Deviation: computed, not quoted here. DarkEnergyV16._wa_derived_param scores
+#   w_a against the DESI DR2 (BAO+CMB+DESY5) w_a loaded from
+#   desi_2025_constraints.json, with the asymmetric error on the side the
+#   prediction lies on; the certificate and validate_self use the same anchor.
+#   [audit note: earlier text quoted sigmas computed at the retired b3 = 24
+#    and against older anchors (-0.6 +/- 0.3, -0.99 +/- 0.32)]
 #
 # Classification: PREDICTION (geometric derivation vs new DESI 2025 data)
 #
@@ -136,17 +139,17 @@ Dedicated To:
 #     w_a = -1/sqrt(b_3)
 #   with b_3 read from the adopted seed rather than typed here.
 #
-#   The w_0 prediction agrees well with DESI 2025 data (within ~1 sigma).
-#   However, the w_a prediction (-0.204) differs from the DESI DR2
-#   central value (-0.86 +/- 0.22, BAO+CMB+DESY5) by 2.98 sigma.
+#   The w_a prediction -1/sqrt(b_3) sits well above the DESI DR2
+#   central value (BAO+CMB+DESY5); the deviation is computed at the
+#   adopted b_3 in _wa_derived_param.
 #
-# Why 2.98 sigma on w_a:
+# Why the w_a tension:
 #   - The w_a formula w_a = -1/sqrt(b_3) is a LEADING-ORDER approximation
 #     from the 2T projection of the thawing quintessence field
 #   - It captures the sign (negative, thawing) and order of magnitude
-#   - The DESI w_a measurement has sizeable uncertainties (+/- 0.22)
+#   - The DESI w_a measurement has sizeable, asymmetric uncertainties
 #     and may shift with future data releases
-#   - The 2.98 sigma deviation is a genuine open tension
+#   - The deviation is a genuine open tension
 #
 # Improvement path:
 #   1. Include non-linear thawing corrections beyond leading order
@@ -158,12 +161,12 @@ Dedicated To:
 #   5. The w_0-w_a correlation in the CPL parameterization means both
 #      parameters should be fit simultaneously to DESI contours
 #
-# Note: The DESI 2025 result w_a ~ -0.6 is itself in 2-3 sigma tension
-# with LCDM (which predicts w_a = 0). Our prediction w_a = -0.204 is
-# BETWEEN LCDM and DESI, suggesting the geometric framework captures
-# the correct thawing direction but underestimates the amplitude.
+# Note: The DESI result w_a < 0 is itself in tension with LCDM (which
+# predicts w_a = 0). Our prediction w_a = -1/sqrt(b_3) lies BETWEEN LCDM
+# and DESI, suggesting the geometric framework captures the correct
+# thawing direction but underestimates the amplitude.
 #
-# Status: PREDICTION - competitive with DESI 2025, within ~2.5 sigma
+# Status: PREDICTION, scored against DESI DR2; the sigma is computed
 # ============================================================================
 
 import numpy as np
@@ -192,6 +195,82 @@ from metaphysica.simulations.core.FormulasRegistry import get_registry
 
 # Get registry SSoT
 _REG = get_registry()
+
+
+def _desi_wa_anchor(wa: float):
+    """(value, sigma, errors text) of the loaded DESI DR2 w_a for scoring ``wa``.
+
+    sigma is the error on the side of the central value ``wa`` lies on (DESI
+    gives asymmetric errors on w_a). The scored row, the certificate and
+    validate_self all read this one anchor.
+    """
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+    desi_wa = get_loader().get_desi("wa")
+    sigma = desi_wa.uncertainty_toward(wa)
+    errs = (f"+{desi_wa.uncertainty_plus}/-{desi_wa.uncertainty_minus}"
+            if desi_wa.uncertainty_plus is not None else f"+/- {sigma}")
+    return desi_wa.value, sigma, errs
+
+
+def _desi_wa_reference(wa: float) -> str:
+    value, _, errs = _desi_wa_anchor(wa)
+    return f"DESI DR2 BAO+CMB+DESY5: w_a = {value} {errs}"
+
+
+def _wa_certificate(wa: float) -> Dict[str, Any]:
+    """CERT_WA_DESI_EVOLUTION, scored with the same anchor as the wa_derived row."""
+    desi_wa, desi_wa_sigma, errs = _desi_wa_anchor(wa)
+    wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
+    return {
+        "id": "CERT_WA_DESI_EVOLUTION",
+        "assertion": (
+            f"Dark energy evolution parameter wa = {wa:.6f} is within "
+            f"DESI DR2 (BAO+CMB+DESY5) constraint wa = {desi_wa} {errs}, "
+            f"scored with the error on the side of the prediction, "
+            f"{desi_wa_sigma} (deviation: {wa_dev:.2f}sigma)"
+        ),
+        "condition": f"abs({wa:.6f} - ({desi_wa})) / {desi_wa_sigma} < 3.0",
+        "tolerance": 3.0,
+        "status": "PASS" if wa_dev < 3.0 else "FAIL",
+        "wolfram_query": f"abs({wa:.6f} - ({desi_wa})) / {desi_wa_sigma}",
+        "wolfram_result": f"{wa_dev:.4f}",
+        "sector": "cosmology",
+    }
+
+
+def _desi_deviation_checks(w0: float, wa: float) -> List[Dict[str, Any]]:
+    """validate_self checks 4 and 5: w0 against the CANON anchor (< 2 sigma),
+    wa against the loaded DESI wa with the error toward the prediction (< 3 sigma)."""
+    desi_w0, desi_w0_sigma = _w0_thawing_anchor()
+    desi_wa, desi_wa_sigma, _ = _desi_wa_anchor(wa)
+    w0_dev = MetadataBuilder.compute_sigma(w0, desi_w0, desi_w0_sigma)
+    wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
+    w0_consistent, wa_consistent = w0_dev < 2.0, wa_dev < 3.0
+    return [{
+        "name": "w0 deviation from DESI 2025 < 2sigma",
+        "passed": w0_consistent,
+        "confidence_interval": {"lower": desi_w0 - 2 * desi_w0_sigma,
+                                "upper": desi_w0 + 2 * desi_w0_sigma,
+                                "sigma": w0_dev},
+        "log_level": "INFO" if w0_consistent else "WARNING",
+        "message": f"w0 deviation: {w0_dev:.2f}sigma from DESI thawing",
+    }, {
+        "name": "wa deviation from DESI DR2 (BAO+CMB+DESY5) < 3sigma",
+        "passed": wa_consistent,
+        "confidence_interval": {"lower": desi_wa - 3 * desi_wa_sigma,
+                                "upper": desi_wa + 3 * desi_wa_sigma,
+                                "sigma": wa_dev},
+        "log_level": "INFO" if wa_consistent else "WARNING",
+        "message": f"wa deviation: {wa_dev:.2f}sigma from DESI "
+                   f"(error toward the prediction, {desi_wa_sigma})",
+    }]
+
+
+def _w0_thawing_anchor():
+    """(exp, unc) of the w0 comparison CANON registers (DESI thawing anchor)."""
+    from metaphysica.simulations.core.canonical_values import CANON
+    comparison = CANON["w0"]["comparison"]
+    return comparison["exp"], comparison["unc"]
 
 
 class DarkEnergyV16(SimulationBase):
@@ -561,15 +640,16 @@ class DarkEnergyV16(SimulationBase):
         where the two shared timelike dimensions create a "thawing"
         effect as the G2 manifold relaxes:
 
-            wa = -1/sqrt(b3) = -1/sqrt(24) = -0.2041241...
+            wa = -1/sqrt(b3), b3 from the adopted seed
 
         SIGN CONVENTION (v16.2 Demon-Lock):
         ------------------------------------
-        With w0 = -11/13 = -0.846 and wa = -0.204 (both correctly signed):
+        With w0 > -1 and wa < 0 (both correctly signed), in CPL form
+        w(a) = w0 + wa (1 - a):
 
-        At z=0 (today):      w = w0 = -0.846 (quintessence, w > -1)
-        At z=1:              w = -0.846 + (-0.204)*0.5 = -0.948
-        At z->infinity:      w = w0 + wa = -1.05 (phantom-like, w < -1)
+        At z=0 (today):      w = w0 (quintessence, w > -1)
+        At z=1:              w = w0 + wa/2
+        At z->infinity:      w = w0 + wa (phantom-like when w0 + wa < -1)
 
         This is "THAWING" behavior:
         - In the PAST (high z): w was more negative (phantom-like)
@@ -580,9 +660,9 @@ class DarkEnergyV16(SimulationBase):
         - wa < 0 means w DECREASES going to higher z (back in time)
         - So w INCREASES going forward in time (thawing toward w > -1)
 
-        Note: DESI also measures wa < 0 (DESI DR2 BAO+CMB+DESY5:
-        wa = -0.86 +/- 0.22), confirming thawing behavior is observed
-        in nature.
+        Note: DESI also measures wa < 0 (DESI DR2 BAO+CMB+DESY5; the
+        value and its asymmetric errors are loaded from
+        desi_2025_constraints.json), consistent with thawing behavior.
 
         Args:
             reduction_data: Dimensional reduction cascade data
@@ -1102,7 +1182,7 @@ class DarkEnergyV16(SimulationBase):
                     "method": "CPL_parametrization_with_2T_projection",
                     "parentFormulas": ["dark-energy-eos-derivation"],
                     "references": [
-                        "DESI DR2 BAO+CMB+DESY5: w_a = -0.86 +/- 0.22",
+                        _desi_wa_reference(wa),
                         "Chevallier-Polarski-Linder parametrization"
                     ]
                 },
@@ -1249,29 +1329,8 @@ class DarkEnergyV16(SimulationBase):
         wa_derived = self.wa_derived if self.wa_derived is not None else wa_computed
         D_eff = self.D_eff if self.D_eff is not None else 12.0
 
-        # DESI 2025 thawing constraint (dynamically compute deviation)
-        desi_w0_target = -0.957
-        desi_w0_sigma = 0.067
-        deviation_sigma = MetadataBuilder.compute_sigma(w0_derived, desi_w0_target, desi_w0_sigma)
-
         return [
-            Parameter(
-                path="cosmology.w0_derived",
-                name="Derived Dark Energy Equation of State",
-                units="dimensionless",
-                status="PREDICTED",
-                description=MetadataBuilder.w0_description(
-                    w0_derived,
-                    target=desi_w0_target,
-                    uncertainty=desi_w0_sigma,
-                    source="DESI 2025 (thawing)"
-                ),
-                derivation_formula="dark-energy-eos-derivation",
-                experimental_bound=desi_w0_target,
-                bound_type="central_value",
-                bound_source="DESI2025_thawing",
-                uncertainty=desi_w0_sigma
-            ),
+            self._w0_derived_param(w0_derived),
             self._wa_derived_param(wa_derived),
             Parameter(
                 path="cosmology.D_eff",
@@ -1305,31 +1364,61 @@ class DarkEnergyV16(SimulationBase):
                 no_experimental_value=True,
                 eml_description="EML: eml_scalar(0.576) — alpha_shadow fitted residual DOF from G2 compactification (legacy parameter for D_eff)"
             ),
-            Parameter(
-                path="cosmology.w0_deviation",
-                name="Dark Energy Deviation from DESI",
-                units="sigma",
-                status="VALIDATION",
-                description=(
-                    f"Deviation of predicted w₀ = {w0_derived:.4f} from DESI 2025: "
-                    f"{deviation_sigma:.2f}σ. {'Excellent' if deviation_sigma < 1 else 'Good'} agreement."
-                ),
-                no_experimental_value=True,
-                eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.w0_derived'), eml_vec('desi.w0'))), eml_scalar(0.057)) — σ-deviation of w₀ from the DESI DR2 w0waCDM headline, which is the row _compute_deviation() actually scores against. The previous text used eml_scalar(-0.957)/eml_scalar(0.067), i.e. the desi.w0_thawing row, whose attribution established.py records as UNVERIFIED; 0.057 is the 1-sigma carried on the desi.w0 row (arXiv:2503.14738)"
-            ),
-            Parameter(
-                path="cosmology.w0_validation",
-                name="Dark Energy w0 Validation Result",
-                units="dimensionless",
-                status="VALIDATION",
-                description=(
-                    "Full validation result dictionary for dark energy equation of state: "
-                    "includes derived w0, DESI target, sigma deviation, and pass/fail status."
-                ),
-                no_experimental_value=True,
-                eml_description="EML: eml_vec('cosmology.w0_derived') — w0 validation bundle; key scalar: ops.sub(eml_vec('cosmology.w0_derived'), eml_scalar(-1.0)) gives deviation from Lambda-CDM"
-            ),
+            self._w0_deviation_param(w0_derived),
+            self._w0_validation_param(),
         ]
+
+    @staticmethod
+    def _w0_validation_param() -> Parameter:
+        return Parameter(
+            path="cosmology.w0_validation",
+            name="Dark Energy w0 Validation Result",
+            units="dimensionless",
+            status="VALIDATION",
+            description=(
+                "Full validation result dictionary for dark energy equation of state: "
+                "includes derived w0, DESI target, sigma deviation, and pass/fail status."
+            ),
+            no_experimental_value=True,
+            eml_description="EML: eml_vec('cosmology.w0_derived') — w0 validation bundle; key scalar: ops.sub(eml_vec('cosmology.w0_derived'), eml_scalar(-1.0)) gives deviation from Lambda-CDM"
+        )
+
+    @staticmethod
+    def _w0_derived_param(w0_derived: float) -> Parameter:
+        """The cosmology.w0_derived row against the w0 comparison CANON registers."""
+        target, sigma = _w0_thawing_anchor()
+        return Parameter(
+            path="cosmology.w0_derived",
+            name="Derived Dark Energy Equation of State",
+            units="dimensionless",
+            status="PREDICTED",
+            description=MetadataBuilder.w0_description(
+                w0_derived, target=target, uncertainty=sigma,
+                source="DESI 2025 (thawing)"),
+            derivation_formula="dark-energy-eos-derivation",
+            experimental_bound=target,
+            bound_type="central_value",
+            bound_source="DESI2025_thawing",
+            uncertainty=sigma,
+        )
+
+    @staticmethod
+    def _w0_deviation_param(w0_derived: float) -> Parameter:
+        """The cosmology.w0_deviation row, its sigma computed from the CANON anchor."""
+        target, sigma = _w0_thawing_anchor()
+        deviation_sigma = MetadataBuilder.compute_sigma(w0_derived, target, sigma)
+        return Parameter(
+            path="cosmology.w0_deviation",
+            name="Dark Energy Deviation from DESI",
+            units="sigma",
+            status="VALIDATION",
+            description=(
+                f"Deviation of predicted w₀ = {w0_derived:.4f} from DESI 2025: "
+                f"{deviation_sigma:.2f}σ. {'Excellent' if deviation_sigma < 1 else 'Good'} agreement."
+            ),
+            no_experimental_value=True,
+            eml_description="EML: ops.div(ops.abs(ops.sub(eml_vec('cosmology.w0_derived'), eml_vec('desi.w0'))), eml_scalar(0.057)) — σ-deviation of w₀ from the DESI DR2 w0waCDM headline, which is the row _compute_deviation() actually scores against. The previous text used eml_scalar(-0.957)/eml_scalar(0.067), i.e. the desi.w0_thawing row, whose attribution established.py records as UNVERIFIED; 0.057 is the 1-sigma carried on the desi.w0 row (arXiv:2503.14738)"
+        )
 
     @staticmethod
     def _wa_derived_param(wa_derived: float) -> Parameter:
@@ -1339,12 +1428,8 @@ class DarkEnergyV16(SimulationBase):
         error is the one on the side of the central value the prediction lies
         on (DESI gives asymmetric errors on w_a).
         """
-        from metaphysica.simulations.data.experimental_data_loader import get_loader
-        desi_wa = get_loader().get_desi("wa")
-        sigma = desi_wa.uncertainty_toward(wa_derived)
-        dev = MetadataBuilder.compute_sigma(wa_derived, desi_wa.value, sigma)
-        errs = (f"+{desi_wa.uncertainty_plus}/-{desi_wa.uncertainty_minus}"
-                if desi_wa.uncertainty_plus is not None else f"+/- {sigma}")
+        value, sigma, errs = _desi_wa_anchor(wa_derived)
+        dev = MetadataBuilder.compute_sigma(wa_derived, value, sigma)
         return Parameter(
             path="cosmology.wa_derived",
             name="Derived Dark Energy Evolution Parameter",
@@ -1353,13 +1438,13 @@ class DarkEnergyV16(SimulationBase):
             description=(
                 f"Time evolution parameter for dark energy EoS from 2T projection of "
                 f"G2 thawing dynamics: w_a = -1/sqrt(b3) = {wa_derived:.6f} (leading-order "
-                f"approximation). DESI DR2 (BAO+CMB+DESY5): w_a = {desi_wa.value} {errs}; "
+                f"approximation). DESI DR2 (BAO+CMB+DESY5): w_a = {value} {errs}; "
                 f"scored with the error on the side of the prediction, {sigma}. "
                 f"Deviation: {dev:.2f} sigma, an open tension; the prediction has the "
                 f"thawing sign (w_a < 0)."
             ),
             derivation_formula="dark-energy-time-evolution",
-            experimental_bound=desi_wa.value,
+            experimental_bound=value,
             bound_type="central_value",
             bound_source="DESI DR2 BAO+CMB+DESY5",
             uncertainty=sigma,
@@ -1525,14 +1610,9 @@ class DarkEnergyV16(SimulationBase):
         w0, w0_frac, _ = w0_from_b3(b3)
         wa, _ = wa_from_b3(b3)
 
-        # w0: framework's adopted thawing anchor (unchanged, registry-wide).
-        # wa: standardized DESI DR2 w0waCDM anchor (BAO+CMB+DESY5), audit #18.
-        desi_w0 = -0.957
-        desi_w0_sigma = 0.067
-        desi_wa = -0.86
-        desi_wa_sigma = 0.22
+        # w0: the comparison CANON registers (DESI thawing anchor).
+        desi_w0, desi_w0_sigma = _w0_thawing_anchor()
         w0_dev = MetadataBuilder.compute_sigma(w0, desi_w0, desi_w0_sigma)
-        wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
 
         return [
             {
@@ -1549,20 +1629,7 @@ class DarkEnergyV16(SimulationBase):
                 "wolfram_result": f"{w0_dev:.4f}",
                 "sector": "cosmology"
             },
-            {
-                "id": "CERT_WA_DESI_EVOLUTION",
-                "assertion": (
-                    f"Dark energy evolution parameter wa = {wa:.6f} is within "
-                    f"DESI DR2 (BAO+CMB+DESY5) constraint wa = {desi_wa} +/- {desi_wa_sigma} "
-                    f"(deviation: {wa_dev:.2f}sigma)"
-                ),
-                "condition": f"abs({wa:.6f} - ({desi_wa})) / {desi_wa_sigma} < 3.0",
-                "tolerance": 3.0,
-                "status": "PASS" if wa_dev < 3.0 else "FAIL",
-                "wolfram_query": f"abs({wa:.6f} - ({desi_wa})) / {desi_wa_sigma}",
-                "wolfram_result": f"{wa_dev:.4f}",
-                "sector": "cosmology"
-            },
+            _wa_certificate(wa),
             {
                 "id": "CERT_W0_PHANTOM_DIVIDE",
                 "assertion": (
@@ -1674,14 +1741,6 @@ class DarkEnergyV16(SimulationBase):
         w0, w0_frac, _ = w0_from_b3(b3)
         wa, _ = wa_from_b3(b3)
 
-        desi_w0 = -0.957
-        desi_w0_sigma = 0.067
-        # wa: standardized DESI DR2 w0waCDM anchor (BAO+CMB+DESY5), audit #18.
-        desi_wa = -0.86
-        desi_wa_sigma = 0.22
-        w0_dev = MetadataBuilder.compute_sigma(w0, desi_w0, desi_w0_sigma)
-        wa_dev = MetadataBuilder.compute_sigma(wa, desi_wa, desi_wa_sigma)
-
         checks = []
 
         # Check 1: w0 in physical range for acceleration
@@ -1714,29 +1773,8 @@ class DarkEnergyV16(SimulationBase):
             "message": f"wa = {wa:.6f}, {'thawing' if wa_thawing else 'freezing'} behavior"
         })
 
-        # Check 4: DESI w0 deviation < 2 sigma
-        w0_consistent = w0_dev < 2.0
-        checks.append({
-            "name": "w0 deviation from DESI 2025 < 2sigma",
-            "passed": w0_consistent,
-            "confidence_interval": {"lower": desi_w0 - 2 * desi_w0_sigma,
-                                    "upper": desi_w0 + 2 * desi_w0_sigma,
-                                    "sigma": w0_dev},
-            "log_level": "INFO" if w0_consistent else "WARNING",
-            "message": f"w0 deviation: {w0_dev:.2f}sigma from DESI thawing"
-        })
-
-        # Check 5: DESI wa deviation < 3 sigma
-        wa_consistent = wa_dev < 3.0
-        checks.append({
-            "name": "wa deviation from DESI DR2 (BAO+CMB+DESY5) < 3sigma",
-            "passed": wa_consistent,
-            "confidence_interval": {"lower": desi_wa - 3 * desi_wa_sigma,
-                                    "upper": desi_wa + 3 * desi_wa_sigma,
-                                    "sigma": wa_dev},
-            "log_level": "INFO" if wa_consistent else "WARNING",
-            "message": f"wa deviation: {wa_dev:.2f}sigma from DESI"
-        })
+        # Checks 4 and 5: DESI w0 deviation < 2 sigma, wa deviation < 3 sigma
+        checks.extend(_desi_deviation_checks(w0, wa))
 
         all_passed = all(c["passed"] for c in checks)
         return {"passed": all_passed, "checks": checks}
