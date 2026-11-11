@@ -46,7 +46,6 @@ from pathlib import Path
 import pytest
 
 from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
-    NON_SCORING_VERDICTS,
     SCORING_VERDICTS,
     StatisticalRigorValidator,
 )
@@ -114,10 +113,11 @@ def test_missing_report_raises_rather_than_inventing_one(tmp_path):
     """A missing input is a build failure, not a licence to invent one."""
     with pytest.raises(FileNotFoundError) as excinfo:
         StatisticalRigorValidator(validation_file=str(tmp_path / "absent.json"))
-    assert "0.23" in str(excinfo.value), (
-        "the error should name the literal it replaced, so the next reader "
-        "understands what used to happen here"
-    )
+    # The message names the missing file and the step that writes it; the
+    # historical 0.23 / DoF = 25 literals left it (validation-data close-out).
+    message = str(excinfo.value)
+    assert "absent.json" in message and "validation step" in message
+    assert "0.23" not in message
 
 
 def test_chi_squared_is_computed_from_the_rows_not_a_default():
@@ -147,8 +147,9 @@ def test_the_summary_block_genuinely_lacks_the_key_it_was_read_from():
 # -- 2. the fit ranges over failures too ------------------------------------
 
 
-def test_scoring_and_non_scoring_verdicts_do_not_overlap():
-    assert not (SCORING_VERDICTS & NON_SCORING_VERDICTS)
+def test_non_scoring_verdicts_are_not_scoring_verdicts():
+    assert not (SCORING_VERDICTS & {"UNBOUNDED", "INPUT", "IDENTITY",
+                                    "UNIT_CHECK", "CIRCULAR"})
 
 
 def test_failures_are_included_in_the_fit_statistic():
@@ -168,7 +169,7 @@ def test_failures_are_included_in_the_fit_statistic():
 def test_unbounded_rows_are_excluded():
     """The report's own non-scoring verdicts must be honoured."""
     rows = _validator().validation_results
-    assert all(r["status"] not in NON_SCORING_VERDICTS for r in rows)
+    assert all(r["status"] in SCORING_VERDICTS for r in rows)
 
 
 def test_one_sided_bounds_are_excluded_from_the_fit():

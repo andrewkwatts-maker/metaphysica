@@ -5,6 +5,9 @@ build's ``statistical_rigor_report.json`` in the output directory, and the
 statistics refresh read it as this build's.
 """
 import json
+import os
+import subprocess
+import sys
 
 import pytest
 
@@ -33,3 +36,35 @@ def test_run_without_scored_rows_leaves_no_report(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match="no scored prediction rows"):
         srv.main()
     assert not stale.exists()
+
+
+#: Run the validator as the build does (python -m), with its observables
+#: import made to fail: the failure comes before main() is reached.
+_FAILING_IMPORT_RUN = "; ".join([
+    "import runpy, sys",
+    "sys.modules['metaphysica.simulations.PM.validation.observables'] = None",
+    "runpy.run_module('metaphysica.simulations.PM.validation."
+    "statistical_rigor_validator', run_name='__main__', alter_sys=True)"])
+
+
+def test_import_failure_under_python_m_leaves_no_report(tmp_path, monkeypatch):
+    stale = _stale_report(tmp_path, monkeypatch)
+    env = dict(os.environ, METAPHYSICA_OUT=str(tmp_path), PYTHONIOENCODING="utf-8")
+    run = subprocess.run([sys.executable, "-c", _FAILING_IMPORT_RUN], env=env,
+                         capture_output=True, text=True, timeout=300)
+    assert run.returncode != 0
+    assert "observables" in run.stderr and "Error" in run.stderr, run.stderr[-500:]
+    assert not stale.exists()
+
+
+def test_importing_the_module_does_not_remove_a_report(tmp_path, monkeypatch):
+    # Only a run as __main__ removes the report; an import (a test, a
+    # reader) must not.
+    stale = _stale_report(tmp_path, monkeypatch)
+    env = dict(os.environ, METAPHYSICA_OUT=str(tmp_path), PYTHONIOENCODING="utf-8")
+    run = subprocess.run(
+        [sys.executable, "-c", "import metaphysica.simulations.PM.validation."
+         "statistical_rigor_validator"], env=env, capture_output=True,
+        text=True, timeout=300)
+    assert run.returncode == 0, run.stderr[-500:]
+    assert stale.exists()

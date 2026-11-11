@@ -40,7 +40,8 @@ def test_edof_functions_are_60_lines_or_fewer(name):
     assert len(lines) <= 60, f"{name} is {len(lines)} lines"
 
 
-def test_edof_dict_keys_and_values_after_split(tmp_path):
+def test_edof_dict_keys_and_values_after_split(tmp_path, monkeypatch):
+    monkeypatch.setattr(V, "free_variable_count", staticmethod(lambda: 17))
     v = _validator(tmp_path, [1.0, 2.0])
     out = v.calculate_p_value_with_edof()
     assert set(out) == EDOF_KEYS
@@ -49,7 +50,14 @@ def test_edof_dict_keys_and_values_after_split(tmp_path):
     assert out["p_value"] == pytest.approx(float(1 - chi2.cdf(chi_sq, edof)))
     assert out["reduced_chi_squared"] == pytest.approx(chi_sq / edof)
     assert out["traditional_dof"] == 2
-    assert out["justification"] == V._edof_justification(out["free_variable_count"])
-    assert out["comparison"] == v._dof_comparison(edof, chi_sq / edof)
+    assert out["free_variable_count"] == 17
+    assert f"EDOF = {edof} is an ANSATZ" in out["justification"]
+    assert "the ledger measures 17 non-derived quantities" in out["justification"]
+    trad, side = (out["comparison"]["traditional_approach"],
+                  out["comparison"]["edof_approach"])
+    assert (trad["dof"], side["edof"]) == (2, edof)
+    assert side["reduced_chi_sq"] == pytest.approx(chi_sq / edof)
+    assert trad["role"].startswith("the verdict")
+    assert side["role"].startswith("side figure")
     assert out["comparison"]["traditional_approach"]["reduced_chi_sq"] == (
         pytest.approx(chi_sq / 2))

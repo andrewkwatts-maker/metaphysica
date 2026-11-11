@@ -13,7 +13,7 @@ import pytest
 
 from metaphysica.generators import generate_validation_certificates as gvc
 from metaphysica.simulations.PM.validation.statistical_rigor_validator import (
-    NON_SCORING_VERDICTS, SCORING_VERDICTS)
+    SCORING_VERDICTS)
 
 SRC = Path(gvc.__file__).resolve().parents[1] / "simulations" / "PM"
 
@@ -49,14 +49,14 @@ def test_c_is_unit_check_and_excluded(report):
     _, by = report
     assert by["t.c"]["verdict"] == "UNIT_CHECK"
     assert by["t.c"]["value"] == 299792423.0
-    assert "UNIT_CHECK" in NON_SCORING_VERDICTS
+    assert "UNIT_CHECK" not in SCORING_VERDICTS
 
 
 def test_circular_row_excluded_with_reason(report):
     _, by = report
     assert by["t.circ"]["verdict"] == "CIRCULAR"
     assert by["t.circ"]["scoring_exclusion_reason"] == "scale is measured H0"
-    assert "CIRCULAR" in NON_SCORING_VERDICTS
+    assert "CIRCULAR" not in SCORING_VERDICTS
 
 
 def test_dimensionless_row_still_scored(report):

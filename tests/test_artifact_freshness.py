@@ -361,8 +361,15 @@ def test_rows_without_an_uncertainty_are_dropped_not_zero_filled(tmp_path):
         {"path": "c", "verdict": "UNBOUNDED", "value": 3.0,
          "bound_type": "measured",
          "experimental_value": None, "experimental_uncertainty": 0.5},
+        # PASS, measured rows that differ from "a" only in the uncertainty:
+        # the missing (None) or zero uncertainty alone must exclude them.
+        {"path": "d", "verdict": "PASS", "value": 1.0, "bound_type": "measured",
+         "experimental_value": 1.0, "experimental_uncertainty": None},
+        {"path": "e", "verdict": "PASS", "value": 1.0, "bound_type": "measured",
+         "experimental_value": 1.0, "experimental_uncertainty": 0},
     ]}
     report = tmp_path / "validation_report.json"
     report.write_text(json.dumps(data), encoding="utf-8")
     validator = StatisticalRigorValidator(validation_file=str(report))
     assert [r["path"] for r in validator.validation_results] == ["a"]
+    assert validator.dof_claimed == 1
