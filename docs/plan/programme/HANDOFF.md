@@ -1,4 +1,8 @@
-Next step: collect the four running workflows as their notifications arrive (do not poll), push `main` after each, then run the wave A boundary (clean-clone build 5 and full pytest).
+Next step: collect the five running workflows as their notifications arrive (do not poll), push `main` after each; when the sprint plan (run 5) returns, commit `BOARD.md` and `sprints/`, then launch sprint 1 as one executor workflow (one chain per file-owner group, all on the one checkout of `main`); then run the wave A boundary (clean-clone build 5 and full pytest).
+
+One checkout (owner, 2026-11-11, repeated): `main` is the only branch and the only worktree. No feature branch, no worktree, no `isolation: 'worktree'` in any script. Lanes run side by side by owning different files; `workflows/sprint_check.py` refuses a sprint file where two chains share a file or a file is in flight. Checked at 006540f: one branch, one worktree, local equals `origin/main`.
+
+Scratch (owner rule): new scratch goes in `D:\ClaudeScratch\metaphysica`, nothing new on C:. The older clone `pmv` and the `triage` and `p7try` folders are still in the C: scratchpad because running workflows read them; move them when those runs end.
 
 State on 2026-11-11, about 17:40
 - Branch: `main`. `site-review` was merged into `main` and deleted (merge dd899b4, pushed). All work is on `main` from here; no side branch.
@@ -10,6 +14,8 @@ Running workflows (each can be resumed from its script with `resumeFromRunId`)
 2. P7 gap-fill, `workflows/p7_history_gaps.js`, run wf_5bed9bc7-199 (task w69x8n924), 16 lanes. When done: look at declined lanes and open gaps; commit the lane files in `ideas/`; `p7_rows.py split docs/plan/programme/ideas <scratch>/p7` and `p7_rows.py forks <scratch>/p7`; re-word the context line of `workflows/p7_history_merge.js` (it still says "wrong chat sorry"; use the wording of `wave_a_round2.js` line 80 and set the agents to Fable); launch it with `{rows: <scratch>/p7}`; commit `ideas/ledger_*.md` and `IDEAS_LEDGER.md`; update the P7 row.
 3. Wave A second round, `workflows/wave_a_round2.js`, run wf_72dc6a47-5df (task wqznk5r4x), args `{clone: <scratch>/pmv, triage: <scratch>/triage}`. When done: write `needs_other_lane`, `blocked` and the defects left into `WAVE_A_ROUND2.md`; push.
 4. P8 design, `workflows/p8_model_search_design.js`, run wf_4fdb9802-48e (task wym9xjdg8), args `{scratch: <scratch>}`. Writes `design/p8_map/*.md`, `design/P8_proposal_*.md`, `design/P8_MODEL_SEARCH.md`. When done: read the result, commit `design/`, put the owner questions with their defaults to the owner, turn the work packages into lanes after wave B.
+
+5. Sprint plan, `workflows/sprint_plan.js`, run wf_ef23b0be-905 (task wz98x0dcy), no args. Seven scouts cut waves B, C, D, P9, P10, the leftovers with the release gates, and the programme rows into one-target items (`sprints/items_*.json`); one lists the files in flight (`sprints/inflight.json`); a board agent writes `BOARD.md`, `sprints/sprint1.json` (can start now) and `sprints/sprint2.json` (waits for the wave A boundary); two checks and one repair. When done: read the defaults it took for open decisions, commit, and run sprint 1 with an executor workflow that takes a sprint file as `args` (to write: one `pipeline()` chain per sprint chain, a reviewer and one repair per chain, canary first, the git rules of `wave_a_round2.js`).
 
 Done since the last handoff
 - P9 and P10 designs: `design/P9_PATH_BUILDS.md`, `design/P10_READER_LEVELS.md` (commit 7ae6e0d).
