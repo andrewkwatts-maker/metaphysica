@@ -63,7 +63,7 @@ def _is_bilinear_mass(term) -> bool:
 
 
 def check_spinor_terms(action: Action) -> List[Check]:
-    """A mass or quartic term built only from a Weyl field in even D vanishes.
+    """A Weyl-only mass or quartic term in even D vanishes under the one-time hermitian rule.
 
     This encodes the one-time rule only: it assumes the hermitian form at one time and ignores
     `Term.bilinear`, so a holomorphic mass term is flagged too, though it can survive (the
@@ -79,6 +79,6 @@ def check_spinor_terms(action: Action) -> List[Check]:
         f = action.field(t.factors[0])
         if f.kind != "spinor" or f.chirality != "weyl" or action.dim % 2:
             continue
-        out.append(Check("weyl_mass:%s:%s" % (action.id, t.id), len(t.factors), False, True,
-                         src, "mass term vanishes for a Weyl spinor"))
+        out.append(Check("weyl_mass:%s:%s" % (action.id, t.id), len(t.factors), False, True, src,
+                         "mass term vanishes for a Weyl spinor under the one-time hermitian rule"))
     return out

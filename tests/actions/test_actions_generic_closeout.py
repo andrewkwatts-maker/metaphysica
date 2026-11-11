@@ -11,7 +11,8 @@ import sympy as sp
 from metaphysica.actions import field_equations as fe
 from metaphysica.actions import spinors, zero_modes
 from metaphysica.actions.field_equations import Factor, vacuum_checks
-from metaphysica.actions.model import INPUT, OPEN, Action, Coefficient, Field, Term
+from metaphysica.actions.model import (HERMITIAN, HOLOMORPHIC, INPUT, OPEN, Action, Coefficient,
+                                       Field, Term)
 
 M2 = Coefficient("m_sq", Fraction(2), INPUT, "p")
 C_OPEN = Coefficient("c_open", Fraction(4), OPEN)
@@ -99,10 +100,50 @@ def test_su2_is_chiral_index_only(monkeypatch):
         zero_modes.chiral_index(4, "SU2")
 
 
+def _weyl_action(signature, *factors, bilinear=None):
+    """One Weyl field psi and one term `kin` with the given factors, in the given signature."""
+    psi = Field("psi", "spinor", 1, Fraction(3, 2), "weyl")
+    term = Term("kin", Coefficient("one", Fraction(0), INPUT, "p"), factors, bilinear=bilinear)
+    return Action("w", sum(signature), signature, (psi,), (term,))
+
+
 def test_one_time_rule_docstring():
     doc = spinors.check_spinor_terms.__doc__
     assert "hermitian form at one time" in doc and "holomorphic" in doc and "P4b" in doc
 
 
+def test_weyl_mass_claim_is_qualified_by_the_one_time_hermitian_rule():
+    """R2-04: the docstring headline and the Check description both carry the qualifier."""
+    rule = "under the one-time hermitian rule"
+    headline = spinors.check_spinor_terms.__doc__.splitlines()[0]
+    assert headline.endswith("vanishes %s." % rule)
+    checks = spinors.check_spinor_terms(_weyl_action((3, 1), "psi", "psi"))
+    assert [c.id for c in checks] == ["weyl_mass:w:kin"]
+    assert checks[0].detail == "mass term vanishes for a Weyl spinor %s" % rule
+    assert not checks[0].holds
+
+
 def test_hermitian_constant_not_a_literal():
     assert '"hermitian"' not in inspect.getsource(fe._matter_equation)
+
+
+def test_unset_bilinear_is_the_hermitian_form():
+    """R2-05: behaviour, not source text: bilinear=None raises the message of HERMITIAN."""
+    messages = {}
+    for form in (None, HERMITIAN, HOLOMORPHIC):
+        with pytest.raises(ValueError) as err:
+            fe.field_equations(_weyl_action((4, 2), "psi", "psi", "d", bilinear=form))
+        messages[form] = str(err.value)
+    assert messages[None] == messages[HERMITIAN] == (
+        "term kin: the hermitian Weyl kinetic term is zero in signature (4, 2); "
+        "it gives no field equation")
+    assert messages[HOLOMORPHIC] != messages[None] and "holomorphic" in messages[HOLOMORPHIC]
+
+
+def test_unset_bilinear_gives_the_hermitian_equation_at_one_time():
+    """Passing control for R2-05: at (3, 1) the hermitian form has an equation, None the same."""
+    unset = fe.field_equations(_weyl_action((3, 1), "psi", "psi", "d"))
+    named = fe.field_equations(_weyl_action((3, 1), "psi", "psi", "d", bilinear=HERMITIAN))
+    assert unset == named == {"psi": r"\Gamma^{M} D_{M} \psi = 0"}
+    with pytest.raises(ValueError, match="the holomorphic Weyl kinetic term is zero"):
+        fe.field_equations(_weyl_action((3, 1), "psi", "psi", "d", bilinear=HOLOMORPHIC))
