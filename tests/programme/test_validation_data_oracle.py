@@ -91,7 +91,13 @@ def test_c003_follows_b2_not_b3():
         b3, b2 = seed_values(resolve_path())
         chi = N_GEN_DIVISOR * n_gen_report()["n_gen"]
         assert b2 != active_b2 and chi != active_chi
+        # Independent of n_gen_report: the path table's own b2 on the declared
+        # b2 / 4 route (4 = the faces moved by an involution).
+        assert PATHS[other]["n_gen_source"] == "b2_over_faces"
+        assert b2 == PATHS[other]["b2"] and PATHS[other]["b2"] % 4 == 0
+        assert chi == N_GEN_DIVISOR * (PATHS[other]["b2"] // 4)
         assert _chi_gate(chi)["status"] == "LOCKED"
+        assert _chi_gate(N_GEN_DIVISOR * (PATHS[other]["b2"] // 4))["status"] == "LOCKED"
         assert _chi_gate(active_chi)["status"] == "FAILED"
         assert _chi_gate(6 * b3)["status"] == "FAILED"
 

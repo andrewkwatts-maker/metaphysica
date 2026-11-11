@@ -430,11 +430,6 @@ def beacon_hbar_c_chain() -> ConsistencyBeacon:
 # ---------------------------------------------------------------------------
 
 
-#: Components of the Pneuma spinor as the framework declares it (the Weyl half
-#: of the bulk Dirac spinor). The beacon recomputes it from the bulk signature.
-PNEUMA_WEYL_COMPONENTS = 4096
-
-
 def _registry_signatures() -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """(bulk (space, time), shadow (space, time)) read from FormulasRegistry."""
     from metaphysica.simulations.core.FormulasRegistry import get_registry
@@ -444,45 +439,66 @@ def _registry_signatures() -> Tuple[Tuple[int, int], Tuple[int, int]]:
             (reg.D_shadow_space, reg.D_shadow_time))
 
 
-def _weyl_components(d: int) -> int:
-    """Weyl spinor components 2^(d/2) / 2 in even d; 0 in odd d, which has none."""
-    return (2 ** (d // 2)) // 2 if d % 2 == 0 else 0
+def _bulk_spinor_components(d: int) -> Tuple[str, int]:
+    """(option, components) of the action_bulk_spinor fork in force in d dimensions.
+
+    Dirac: 2^(d/2). Weyl: half of that in even d, 0 in odd d (no Weyl spinor).
+    An option with no rule here raises.
+    """
+    from metaphysica.actions.spinors import dirac_dim
+    from metaphysica.simulations.core.variants import resolve
+
+    option = resolve("action_bulk_spinor")
+    if option == "dirac":
+        return option, dirac_dim(d)
+    if option == "weyl":
+        return option, dirac_dim(d) // 2 if d % 2 == 0 else 0
+    raise ValueError("action_bulk_spinor option %r has no spinor rule" % (option,))
 
 
 def beacon_two_time_bulk_accounting(
     signatures: Tuple[Tuple[int, int], Tuple[int, int]] | None = None,
-    spinor: int = PNEUMA_WEYL_COMPONENTS,
+    spinor: int | None = None,
 ) -> ConsistencyBeacon:
     """Two-time bulk bookkeeping on its inputs (no b3 involved).
 
     Inputs: ``signatures`` = (bulk (space, time), shadow (space, time)), read
-    from FormulasRegistry when not passed, and the declared Pneuma spinor size.
-    It computes residual = |2 D_shadow - D_bulk| + |2 t_shadow - t_bulk| +
-    |Weyl(D_bulk) - spinor|, which is 0 only when the bulk is two shadows with
-    one time each and its Weyl spinor has the declared size; any other input
-    gives a positive residual and FAIL. A non-positive dimension raises.
+    from FormulasRegistry when not passed, and the declared Pneuma spinor size
+    ``spinor``; when not passed it is the action_bulk_spinor fork's count on
+    the registry bulk (Weyl 2^(d/2)/2, Dirac 2^(d/2)), and then that term is
+    an identity. It computes residual = |2 D_shadow - D_bulk| +
+    |2 t_shadow - t_bulk| + |S(D_bulk) - spinor|, S the fork's count on the
+    input bulk. It is 0 only when the bulk dimension is twice the shadow
+    dimension, the bulk time is twice the shadow time, and the fork's spinor
+    has the declared size; any other input gives a positive residual and FAIL.
+    A non-positive dimension raises.
     """
     sig = _registry_signatures() if signatures is None else signatures
     (space, time), (s_space, s_time) = sig
     if min(space, time, s_space, s_time) < 1:
         raise ValueError("signatures need positive dimensions, got %r" % (sig,))
     d_bulk, d_shadow = space + time, s_space + s_time
-    weyl = _weyl_components(d_bulk)
+    option, count = _bulk_spinor_components(d_bulk)
+    if spinor is None:
+        spinor = _bulk_spinor_components(sum(_registry_signatures()[0]))[1]
     residual = (abs(2 * d_shadow - d_bulk) + abs(2 * s_time - time)
-                + abs(weyl - spinor))
+                + abs(count - spinor))
+    halving = "/2" if option == "weyl" else ""
     return _mk(
         beacon_id="beacon.two_time_bulk_accounting",
-        name="Cl(%d,%d) bookkeeping: %d+%d = %d vs 2x%d; Weyl = %d vs %d"
-        % (space, time, space, time, d_bulk, d_shadow, weyl, spinor),
+        name="Cl(%d,%d) bookkeeping: %d+%d = %d vs 2x%d; %s = %d vs %d"
+        % (space, time, space, time, d_bulk, d_shadow, option, count, spinor),
         reference="Bars two-time physics (signature (d,2)); docs/TWO_TIME_ASSESSMENT.md",
         value=float(residual),
         expected=0.0,
         tolerance=0.0,
         note=(
-            "D_bulk = %d+%d = %d; shadows (%d,%d)+(%d,%d) = %d; Weyl spinor "
-            "of Cl(%d,%d) = 2^%d/2 = %d against the declared %d; residual %d."
+            "D_bulk = %d+%d = %d; shadows (%d,%d)+(%d,%d) = %d; %s spinor "
+            "(action_bulk_spinor) of Cl(%d,%d) = 2^%d%s = %d against the "
+            "declared %d; residual %d."
             % (space, time, d_bulk, s_space, s_time, s_space, s_time,
-               2 * d_shadow, space, time, d_bulk // 2, weyl, spinor, residual)
+               2 * d_shadow, option, space, time, d_bulk // 2, halving, count,
+               spinor, residual)
         ),
     )
 
