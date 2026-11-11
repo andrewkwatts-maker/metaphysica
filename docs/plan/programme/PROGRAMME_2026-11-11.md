@@ -46,7 +46,8 @@ release still need the owner.
 
 ## Model space, paths and reader levels (owner, 2026-11-11)
 - "Offline branch" means a disabled option in `simulations/core/variants`, never a git branch.
-  Nothing rejected is deleted; a rejected idea is an option that is off and still runs.
+  Nothing rejected is deleted; a rejected idea is an option that is off and still runs. It keeps
+  its no-go label, and every sweep still runs and validates it (owner confirmed 2026-11-11).
 - History is larger than this repository: the site repository before the split (1152 commits,
   2025-11 to 2026-05, versions v8 to v24) and the pre-rewrite engine backup are in bundles under
   `H:/Github/_retired`. P7 reads them.
