@@ -1272,28 +1272,7 @@ class DarkEnergyV16(SimulationBase):
                 bound_source="DESI2025_thawing",
                 uncertainty=desi_w0_sigma
             ),
-            Parameter(
-                path="cosmology.wa_derived",
-                name="Derived Dark Energy Evolution Parameter",
-                units="dimensionless",
-                status="PREDICTED",
-                description=(
-                    f"Time evolution parameter for dark energy EoS from 2T projection of "
-                    f"G2 thawing dynamics: w_a = -1/sqrt(b₃) = {wa_derived:.6f} (leading-order "
-                    f"approximation). DESI DR2 central value (BAO+CMB+DESY5): "
-                    f"w_a = -0.86 +/- 0.22. "
-                    f"Deviation: {MetadataBuilder.compute_sigma(wa_derived, -0.86, 0.22):.2f} sigma. "
-                    f"The ~3.0 sigma tension is a genuine open tension; "
-                    f"the prediction captures the correct thawing sign (w_a < 0) and order "
-                    f"of magnitude. Non-linear corrections from moduli-quintessence coupling "
-                    f"may reduce this tension."
-                ),
-                derivation_formula="dark-energy-time-evolution",
-                experimental_bound=-0.86,
-                bound_type="central_value",
-                bound_source="DESI DR2 BAO+CMB+DESY5",
-                uncertainty=0.22
-            ),
+            self._wa_derived_param(wa_derived),
             Parameter(
                 path="cosmology.D_eff",
                 name="Effective Dimension",
@@ -1351,6 +1330,40 @@ class DarkEnergyV16(SimulationBase):
                 eml_description="EML: eml_vec('cosmology.w0_derived') — w0 validation bundle; key scalar: ops.sub(eml_vec('cosmology.w0_derived'), eml_scalar(-1.0)) gives deviation from Lambda-CDM"
             ),
         ]
+
+    @staticmethod
+    def _wa_derived_param(wa_derived: float) -> Parameter:
+        """The scored cosmology.wa_derived row, scored against the loaded DESI wa.
+
+        The target and its 1-sigma come from desi_2025_constraints.json; the
+        error is the one on the side of the central value the prediction lies
+        on (DESI gives asymmetric errors on w_a).
+        """
+        from metaphysica.simulations.data.experimental_data_loader import get_loader
+        desi_wa = get_loader().get_desi("wa")
+        sigma = desi_wa.uncertainty_toward(wa_derived)
+        dev = MetadataBuilder.compute_sigma(wa_derived, desi_wa.value, sigma)
+        errs = (f"+{desi_wa.uncertainty_plus}/-{desi_wa.uncertainty_minus}"
+                if desi_wa.uncertainty_plus is not None else f"+/- {sigma}")
+        return Parameter(
+            path="cosmology.wa_derived",
+            name="Derived Dark Energy Evolution Parameter",
+            units="dimensionless",
+            status="PREDICTED",
+            description=(
+                f"Time evolution parameter for dark energy EoS from 2T projection of "
+                f"G2 thawing dynamics: w_a = -1/sqrt(b3) = {wa_derived:.6f} (leading-order "
+                f"approximation). DESI DR2 (BAO+CMB+DESY5): w_a = {desi_wa.value} {errs}; "
+                f"scored with the error on the side of the prediction, {sigma}. "
+                f"Deviation: {dev:.2f} sigma, an open tension; the prediction has the "
+                f"thawing sign (w_a < 0)."
+            ),
+            derivation_formula="dark-energy-time-evolution",
+            experimental_bound=desi_wa.value,
+            bound_type="central_value",
+            bound_source="DESI DR2 BAO+CMB+DESY5",
+            uncertainty=sigma,
+        )
 
     # -------------------------------------------------------------------------
     # Foundations
