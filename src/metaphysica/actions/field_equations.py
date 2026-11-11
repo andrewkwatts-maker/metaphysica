@@ -9,7 +9,10 @@ potential, interaction) raises: these equations are not derived for it. A Weyl k
 that vanishes identically in the action's signature (`spinor_bilinears`) also raises.
 
 The vacuum Psi = 0 (every matter field zero) has T_MN = 0, so it solves the equations iff the
-metric is Ricci-flat and no potential term is present. `vacuum_checks` checks a product vacuum
+metric is Ricci-flat and no potential term spoils phi = 0. A potential term (scalar factors
+only, no derivative) spoils it iff it has 0 or 1 scalar factors: a constant gives V(0) != 0 and
+a linear term V'(0) != 0; a term with 2 or more factors (m^2 phi^2, phi^4) vanishes at phi = 0
+with its first derivative. `vacuum_checks` checks a product vacuum
 factor by factor: an explicit metric through `curvature.ricci_tensor`, otherwise a named
 certificate (a `Check` computed elsewhere, e.g. G2 holonomy implies Ricci-flat).
 
@@ -24,7 +27,8 @@ from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 import sympy as sp
 
 from metaphysica.actions.curvature import ricci_tensor
-from metaphysica.actions.model import CURVATURE, DERIVATIVE, Action, Check, ModelError, Term
+from metaphysica.actions.model import (CURVATURE, DERIVATIVE, HERMITIAN, Action, Check,
+                                       ModelError, Term)
 from metaphysica.actions.spinor_bilinears import NONZERO, weyl_bilinears
 
 REF = "variation of Int sqrt|G| [c R + L_kin]; Wald, General Relativity (1984), App. E"
@@ -65,11 +69,11 @@ def _matter_equation(action: Action, name: str, term: Term) -> str:
     if f.kind == "spinor":
         if f.chirality == "weyl":
             s, t = action.signature
-            part = weyl_bilinears(s, t)[term.bilinear or "hermitian"]["kinetic"]
+            form = term.bilinear or HERMITIAN
+            part = weyl_bilinears(s, t)[form]["kinetic"]
             if part != NONZERO:
                 raise ValueError("term %s: the %s Weyl kinetic term is %s in signature (%d, %d); "
-                                 "it gives no field equation"
-                                 % (term.id, term.bilinear or "hermitian", part, s, t))
+                                 "it gives no field equation" % (term.id, form, part, s, t))
         return r"\Gamma^{M} D_{M} %s = 0" % sym
     if f.kind == "scalar":
         return r"\Box %s = 0" % sym
@@ -132,15 +136,21 @@ def _ricci_flat(action: Action, fac: Factor) -> Check:
     return Check(cid, str(scalar), flat, True, REF, "R_MN of the explicit metric; R = %s" % scalar)
 
 
-def _is_potential(term: Term, action: Action) -> bool:
+def _spoils_vacuum(term: Term, action: Action) -> bool:
+    """A potential term with 0 or 1 scalar factors: V(0) != 0 or V'(0) != 0 at phi = 0."""
     if CURVATURE in term.factors or DERIVATIVE in term.factors or term.derivatives:
         return False
-    return all(action.field(f).kind == "scalar" for f in term.factors)
+    scalar_only = all(action.field(f).kind == "scalar" for f in term.factors)
+    return scalar_only and len(term.factors) <= 1
 
 
 def vacuum_checks(action: Action, factors: Sequence[Factor],
                   background: Optional[Mapping[str, object]] = None) -> List[Check]:
-    """Every factor Ricci-flat, every matter field zero, no potential term; each can fail."""
+    """Every factor Ricci-flat, every matter field zero, no constant or linear potential term.
+
+    Each check can fail. A potential term of degree 2 or more (m^2 phi^2) passes: it vanishes
+    with its first derivative at phi = 0.
+    """
     if sum(f.dim for f in factors) != action.dim:
         raise ModelError("vacuum of %s: factor dimensions sum to %d, not %d"
                          % (action.id, sum(f.dim for f in factors), action.dim))
@@ -155,7 +165,8 @@ def vacuum_checks(action: Action, factors: Sequence[Factor],
         v = bg.get(f.name, 0)
         out.append(Check("vacuum_matter:%s:%s" % (action.id, f.name), str(v), v == 0, True, REF,
                          "T_MN = 0 needs %s = 0 on this vacuum" % f.name))
-    pots = [t.id for t in action.terms if _is_potential(t, action)]
+    pots = [t.id for t in action.terms if _spoils_vacuum(t, action)]
     out.append(Check("vacuum_potential:%s" % action.id, ",".join(pots) or "none", not pots, True,
-                     REF, "a potential term would need V = 0 at the vacuum; none may be present"))
+                     REF, "a constant or linear potential term gives V(0) != 0 or V'(0) != 0, "
+                     "so phi = 0 is not a vacuum; none may be present"))
     return out

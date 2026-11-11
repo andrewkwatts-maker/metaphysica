@@ -12,6 +12,9 @@ Generic and theory-agnostic. Rules (Kaluza-Klein on a compact n-manifold X):
 Counts are per kind: "metric", "scalar", "vector", "form:q" (q >= 2), "spinor".
 A child 0-form is a scalar and a child 1-form a vector. Dualising forms is a separate,
 explicit step (`dualise_forms`); it is never applied here.
+`zero_modes` takes holonomy flat or G2 (`HOLONOMIES`). `chiral_index(internal_dim, holonomy)`
+gives n_+ - n_- of the internal parallel spinors and also accepts SU2 (K3, dimension
+`K3_DIM`), the chiral control; `zero_modes` does not accept SU2.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
@@ -23,9 +26,9 @@ from typing import Dict, Iterable, Mapping
 from metaphysica.actions.model import Check, Field
 from metaphysica.actions.spinors import dirac_dim
 
-HOLONOMIES = ("flat", "G2")
+HOLONOMIES = ("flat", "G2")  # zero_modes; chiral_index also accepts "SU2"
 G2_DIM = 7
-K3_DIM = 4
+K3_DIM = 4  # SU2 holonomy (K3): chiral_index only
 INDEX_REF = ("Wang 1989 (parallel spinors and holonomy); Atiyah-Singer: index of the internal "
              "Dirac operator = chiral index of the child fermions")
 
@@ -68,7 +71,7 @@ def _check_inputs(n: int, b: Mapping[int, int], holonomy: str) -> None:
     if holonomy not in HOLONOMIES:
         raise ValueError("holonomy %r is not supported; use one of %s" % (holonomy, HOLONOMIES))
     if holonomy == "G2" and n != G2_DIM:
-        raise ValueError("G2 holonomy needs internal dimension 7, got %d" % n)
+        raise ValueError("G2 holonomy needs internal dimension %d, got %d" % (G2_DIM, n))
     if holonomy == "G2" and b[1] != 0:
         raise ValueError("full G2 holonomy needs b1 = 0, got b1 = %d" % b[1])
 
@@ -124,13 +127,14 @@ def _parallel_spinors_by_chirality(n: int, holonomy: str):
         return None if n % 2 else (dirac_dim(n) // 2, dirac_dim(n) // 2)
     if holonomy == "G2":
         if n != G2_DIM:
-            raise ValueError("G2 holonomy needs internal dimension 7, got %d" % n)
+            raise ValueError("G2 holonomy needs internal dimension %d, got %d" % (G2_DIM, n))
         return None
     if holonomy == "SU2":  # K3: two parallel spinors of one chirality
         if n != K3_DIM:
-            raise ValueError("SU2 holonomy needs internal dimension 4, got %d" % n)
+            raise ValueError("SU2 holonomy needs internal dimension %d, got %d" % (K3_DIM, n))
         return (2, 0)
-    raise ValueError("holonomy %r is not supported; use flat, G2 or SU2" % holonomy)
+    raise ValueError("holonomy %r is not supported by chiral_index; use one of %s"
+                     % (holonomy, HOLONOMIES + ("SU2",)))
 
 
 def chiral_index(internal_dim: int, holonomy: str) -> int:

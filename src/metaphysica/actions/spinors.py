@@ -65,8 +65,11 @@ def _is_bilinear_mass(term) -> bool:
 def check_spinor_terms(action: Action) -> List[Check]:
     """A mass or quartic term built only from a Weyl field in even D vanishes.
 
-    This encodes the one-time rule only; at two times the hermitian mass survives and the
-    kinetic term vanishes (`spinor_bilinears.check_spinor_bilinears`), which replaces it in P4b.
+    This encodes the one-time rule only: it assumes the hermitian form at one time and ignores
+    `Term.bilinear`, so a holomorphic mass term is flagged too, though it can survive (the
+    Majorana mass in D = 4). At two times the hermitian mass
+    survives and the kinetic term vanishes; `spinor_bilinears.check_spinor_bilinears` decides
+    both forms by signature and replaces this check in P4b.
     """
     src = "spinors:%s" % action.id
     out = []

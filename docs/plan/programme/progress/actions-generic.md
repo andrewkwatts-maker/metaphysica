@@ -10,7 +10,7 @@ names a file of `src/metaphysica/actions/**`; sim-action-gauge rates the package
 | P4a-4 surfaces | actions/surfaces.py | fixed | b5169c0 | tests/actions/test_surfaces.py |
 | P4a-6 chiral_index | actions/zero_modes.py:115 | fixed | b5169c0 | tests/actions/test_chiral_index.py |
 | P4a-5 volume_modulus | actions/controls/volume_modulus.py | fixed | 126c74e | tests/actions/test_volume_modulus.py |
-| P4a-3 field_equations + vacuum_checks | actions/field_equations.py | fixed | (this commit) | tests/actions/test_field_equations.py |
+| P4a-3 field_equations + vacuum_checks | actions/field_equations.py | fixed | 74ce43c | tests/actions/test_field_equations.py |
 
 Notes:
 - `weyl_bilinears` rule equals the oracle at (1,1) (3,1) (5,1) (7,1) (9,1) (2,2) (4,2) (6,2)
@@ -29,6 +29,25 @@ Notes:
   R_MN = 0 per factor (the design names `ricci_scalar`; the tensor is the field equation and
   the scalar is reported as measured), matter fields zero, no potential term.
 - Acceptance: tests/actions 122 passed; tests/test_master_ladder.py 16 passed (ladder unchanged).
+- The lane's tests live in `tests/actions/`, not `tests/programme/`. The (24,2) oracle test is
+  marked `slow`, but `slow` is not deselected (pyproject `addopts` has no `-m`), so it runs in
+  every `pytest tests/`.
+
+## Close-out (WAVE_A_CLOSEOUT.md "XG actions-generic")
+
+| id | file:line | state | commit | test |
+|---|---|---|---|---|
+| XG-01 vacuum_potential degree | actions/field_equations.py:139 `_spoils_vacuum` | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
+| XG-02 SU2 scope, K3_DIM message | actions/zero_modes.py:14-17,29-31,74,130,134 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
+| XG-03 one-time rule docstring | actions/spinors.py:65 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
+| XG-04 HERMITIAN constant | actions/field_equations.py:72 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
+| XG-05 progress corrections | this file | fixed | (this commit) | none (doc) |
+
+- XG-01: a potential term (scalar factors only, no derivative) fails `vacuum_potential` iff it
+  has 0 or 1 factors; m^2 phi^2 and phi^4 pass. XG-02: line 578 of the brief does not exist
+  (file is 152 lines); the literal messages were at 71, 127 and 138, now built from G2_DIM, K3_DIM.
+- No existing test was edited. tests/actions: closeout 5, field_equations 7, spinors 15,
+  chiral_index 8, zero_modes 4 passed.
 
 ## Downstream
 None.
@@ -41,4 +60,4 @@ None.
 None.
 
 ## Next round
-None: all six deliverables are done. P4b binds them in `simulations/PM/gauge/`.
+None: all six deliverables and XG-01..05 are done. P4b binds them in `simulations/PM/gauge/`.
