@@ -1724,12 +1724,12 @@ class CompleteResidueRegistryV18(SimulationBase):
                 ContentBlock(
                     type="paragraph",
                     content=(
-                        "The normalization of eigenvalues to the spectral gap k_ℷ = 12 + 1/π "
-                        "≈ 12.318 (the holonomy warp factor, derived from associative 3-cycle "
-                        "intersection numbers on V₇) sets the mass scale for the entire spectrum. "
-                        "All 125 eigenvalues are expressed in units of k_ℷ, ensuring the mass "
-                        "hierarchy from the electron mass (~0.511 MeV) to the effective GUT scale "
-                        f"({pt['eff']}) is reproduced from a single geometric input."
+                        f"Eigenvalues are normalized to k_ℷ = 12 + 1/π ≈ {k_gimel:.3f} (called the holonomy warp "
+                        "factor). This module types k_ℷ in as an input and types a multiplier into individual "
+                        "rows; no code here computes either from the geometry. Each eigenvalue is a rule typed "
+                        "for the row's category, in most rows a function of k_ℷ and of that multiplier, the "
+                        "row's own value or its index, so the span from the electron mass (~0.511 MeV) to the "
+                        f"effective GUT scale ({pt['eff']}) is reproduced by construction, not predicted."
                     )
                 ),
                 # ============================================================
