@@ -41,6 +41,21 @@ DISCRETE_CHOICE   An ansatz or a selection among options. Not a continuous knob,
                   so "derive it" is the wrong request; the right one is "exhibit
                   the argument that selects it".
 
+Two further layers hold rows that are CALIBRATED but are not continuous knobs
+of the path in force. Each is its own bucket of the report, and every row in
+them is named by a rule (a CALIBRATED status alone selects no layer):
+
+OFF_PATH_CALIBRATED
+                  Calibrated on a path that is not in force: the gaugino, E8
+                  and ALP rows, which their own sims declare CALIBRATED at the
+                  off-path seed because no gaugino racetrack exists on Y_7.
+                  A quantity is never borrowed from another path.
+
+NON_GEOMETRIC_CALIBRATED
+                  The Orch-OR coherence rows: an exponent fitted with no data,
+                  outside the compactification. No geometric layer could
+                  supply them.
+
 WHAT THIS DOES NOT DO
 =====================
 It does not assert that any row IS closable, only which layer would have to
@@ -107,7 +122,59 @@ LAYERS: Dict[str, Dict[str, Any]] = {
         "available": "NOT_APPLICABLE",
         "note": "'derive it' is the wrong request for a discrete selection",
     },
+    "OFF_PATH_CALIBRATED": {
+        "needs": ("a construction that exists on the path in force; the one "
+                  "in hand was calibrated on a path that is not"),
+        "available": False,
+        "note": ("declared CALIBRATED at the off-path seed by its own sim: no "
+                 "gaugino racetrack exists on Y_7 (CG.5, CG.10). Its own "
+                 "bucket, not counted among the continuous knobs of the path "
+                 "in force: a quantity is never borrowed from another path"),
+    },
+    "NON_GEOMETRIC_CALIBRATED": {
+        "needs": ("data to fit against; it is not a compactification "
+                  "quantity, so no geometric object supplies it"),
+        "available": "NOT_APPLICABLE",
+        "note": ("an Orch-OR coherence row whose exponent is fitted with no "
+                 "data to fit it to. Its own bucket, not counted among the "
+                 "continuous knobs of the path in force"),
+    },
 }
+
+#: The rows of the two calibrated layers, named one by one. A CALIBRATED status
+#: alone selects no layer: a newly CALIBRATED row stays UNCLASSIFIED until a
+#: rule names it and says why.
+_OFF_PATH_GAUGINO_ROWS = frozenset({
+    "algebra.gaugino_W_np_1",
+    "algebra.gaugino_W_np_2",
+    "algebra.gaugino_condensate_ratio",
+    "algebra.e8_hidden_condensate",
+    "algebra.e8_heterotic_spectral_proxy",
+})
+_OFF_PATH_ALP_ROWS = frozenset({
+    "portals.alp_mass_ev",
+    "portals.alp_decay_constant_gev",
+    "portals.alp_photon_coupling_gev_inv",
+    "portals.alp_nucleon_coupling_gev_inv",
+    "portals.alp_fifth_force_range_m",
+})
+_ORCH_OR_SHIELDING_ROWS = frozenset({
+    "consciousness.shielding_factor",
+    "consciousness.shielded_tau_ms",
+})
+_GNOSIS_CHAIN_ROWS = frozenset({
+    "consciousness.tau_baseline",
+    "consciousness.tau_gnosis",
+    "consciousness.coherence_boost",
+})
+
+
+def _named_calibrated(names: frozenset):
+    """A rule for rows named one by one that still declare CALIBRATED."""
+    def predicate(name: str, row: Dict[str, Any]) -> bool:
+        return name in names and row.get("status") == "CALIBRATED"
+    return predicate
+
 
 #: Ordered rules. First match wins; each states WHY, so the result is auditable.
 _RULES = [
@@ -120,6 +187,31 @@ _RULES = [
      lambda name, row: row.get("status") == "MEASURED"
      and row.get("role") in ("COMPARISON_ONLY", "LOAD_BEARING_INPUT"),
      "declared MEASURED and consumed as an anchor"),
+
+    # The four named rules sit before the name patterns below, so that a
+    # pattern cannot claim one of these rows by accident.
+    ("OFF_PATH_CALIBRATED", _named_calibrated(_OFF_PATH_GAUGINO_ROWS),
+     "a gaugino-condensate row that gaugino_condensation and e8x8_splitting "
+     "declare CALIBRATED at the off-path seed: no gaugino racetrack exists "
+     "on Y_7 (CG.5, CG.10). e8_hidden_condensate is the same row as "
+     "gaugino_W_np_1 and e8_heterotic_spectral_proxy inherits its status. "
+     "A quantity is never borrowed from another path"),
+
+    ("OFF_PATH_CALIBRATED", _named_calibrated(_OFF_PATH_ALP_ROWS),
+     "an ALP row computed from the Face 3 modulus T_3, which alp_portals "
+     "declares CALIBRATED at the off-path seed: T_3 is a racetrack-type "
+     "value and no gaugino racetrack exists on Y_7 (CG.5, CG.10). A "
+     "quantity is never borrowed from another path"),
+
+    ("NON_GEOMETRIC_CALIBRATED", _named_calibrated(_ORCH_OR_SHIELDING_ROWS),
+     "an Orch-OR pair-shielding row: the shielding coefficient K_SHIELDING "
+     "of orch_or_pair_shielding is fitted with no data to fit it to, and "
+     "it is not a compactification quantity"),
+
+    ("NON_GEOMETRIC_CALIBRATED", _named_calibrated(_GNOSIS_CHAIN_ROWS),
+     "a gnosis coherence-chain row: gnosis_unlocking takes tau_0 as an "
+     "input and fits K_COHERENCE to a chosen boost, with no data compared; "
+     "it is not a compactification quantity"),
 
     ("FLAVOUR",
      lambda name, row: bool(re.search(
@@ -192,6 +284,8 @@ def closure_report() -> Dict[str, Any]:
     partial = counts.get("METRIC_DEPENDENT", 0)
     not_a_knob = counts.get("EXPERIMENTAL", 0) + counts.get("DISCRETE_CHOICE", 0)
     blocked = counts.get("FLAVOUR", 0) + counts.get("FLUX_DEPENDENT", 0)
+    off_path = counts.get("OFF_PATH_CALIBRATED", 0)
+    non_geometric = counts.get("NON_GEOMETRIC_CALIBRATED", 0)
 
     return {
         "n_free": len(ledger),
@@ -203,6 +297,8 @@ def closure_report() -> Dict[str, Any]:
         "partially_open_via_the_glued_metric": partial,
         "not_continuous_knobs_at_all": not_a_knob,
         "blocked_on_objects_the_framework_lacks": blocked,
+        "calibrated_off_the_path_in_force": off_path,
+        "calibrated_outside_the_geometry": non_geometric,
         "the_answer": (
             "The model cannot be closed by geometry alone, and the reason is "
             "structural rather than incomplete work. A G2 compactification "
@@ -211,8 +307,12 @@ def closure_report() -> Dict[str, Any]:
             "and a modulus VEV needs the metric. Of %d free rows, %d are "
             "reachable from topology today, %d sit behind the glued metric "
             "(leading order only), %d are blocked on objects the framework "
-            "does not have, and %d are not continuous knobs at all."
-            % (len(ledger), reachable_now, partial, blocked, not_a_knob)
+            "does not have, and %d are not continuous knobs at all. A further "
+            "%d are calibrated on a path that is not in force and %d are "
+            "fitted outside the compactification with no data; neither group "
+            "is counted among the continuous knobs of the path in force."
+            % (len(ledger), reachable_now, partial, blocked, not_a_knob,
+               off_path, non_geometric)
         ),
         "what_geometry_DID_close": (
             "b_2 and b_3 stop being inputs on the 43 path: n_gen = rank(Gamma) "
