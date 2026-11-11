@@ -3,7 +3,9 @@
 The ranking is written by `python -m metaphysica.testground rank` over a sweep's
 finished runs (it cannot be recomputed inside a build). This step copies the
 committed file after checking it against the contract; when the file is absent
-it skips with a logged line and exits 0.
+it skips with a logged line and exits 0. A present file that fails the contract
+raises. No ranking is committed until a sweep regenerates it (wave D, P3); the
+stale 137dd42 ranking is kept in docs/plan/programme/stale/, not published.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.
 """
