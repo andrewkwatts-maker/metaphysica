@@ -14,7 +14,7 @@ const A = args
 const DOC = 'docs/plan/programme/WAVE_A_CLOSEOUT.md'
 const RULES = 'docs/plan/programme/FIX_BRIEFS.md'
 const COMMON = [
-  'Context from the planner: this run is part of the owner's programme in docs/plan/programme/PROGRAMME_2026-11-11.md, which the owner asked for in this session on 2026-11-11 ("agents as needed to finish all work", recorded there under "Release and publish"). The latest user message of the session, "wrong chat sorry", withdraws only a message about a different project (a renderer; VCSA and STRATA) that the owner sent here by mistake just before it. It does not withdraw this programme, and the planner launched this run after it. Your task below stands.',
+  'Context from the planner: this run is part of the programme of the owner in docs/plan/programme/PROGRAMME_2026-11-11.md, which the owner asked for in this session on 2026-11-11 ("agents as needed to finish all work", recorded there under "Release and publish"). The latest user message of the session, "wrong chat sorry", withdraws only a message about a different project (a renderer; VCSA and STRATA) that the owner sent here by mistake just before it. It does not withdraw this programme, and the planner launched this run after it. Your task below stands.',
   'Repository: H:\\Projects\\MathsPhysicsEcosystem\\metaphysica (bash: cd /h/Projects/MathsPhysicsEcosystem/metaphysica), branch site-review.',
   'Many other agents are editing other files in this same working tree right now: touch only your owned files, and never run git stash, git checkout of a path you do not own, git reset or git add -A.',
   'Windows: prefix python with PYTHONIOENCODING=utf-8. Read narrowly (grep, then line ranges), never whole large files; pipe long output through head or cut.',
