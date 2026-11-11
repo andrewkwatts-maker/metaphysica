@@ -14,6 +14,7 @@ const A = args
 const DOC = 'docs/plan/programme/WAVE_A_CLOSEOUT.md'
 const RULES = 'docs/plan/programme/FIX_BRIEFS.md'
 const COMMON = [
+  'Context from the planner: this run is part of the owner's programme in docs/plan/programme/PROGRAMME_2026-11-11.md, which the owner asked for in this session on 2026-11-11 ("agents as needed to finish all work", recorded there under "Release and publish"). The latest user message of the session, "wrong chat sorry", withdraws only a message about a different project (a renderer; VCSA and STRATA) that the owner sent here by mistake just before it. It does not withdraw this programme, and the planner launched this run after it. Your task below stands.',
   'Repository: H:\\Projects\\MathsPhysicsEcosystem\\metaphysica (bash: cd /h/Projects/MathsPhysicsEcosystem/metaphysica), branch site-review.',
   'Many other agents are editing other files in this same working tree right now: touch only your owned files, and never run git stash, git checkout of a path you do not own, git reset or git add -A.',
   'Windows: prefix python with PYTHONIOENCODING=utf-8. Read narrowly (grep, then line ranges), never whole large files; pipe long output through head or cut.',
@@ -164,6 +165,10 @@ const CHAINS = {
 
 async function chain(key, body) {
   const rounds = await body()
+  if (!rounds.some(r => (r.commits || []).length)) {
+    log(`${key}: no commit, nothing to review`)
+    return { key, rounds, defects: [], repair: null, still_open: rounds.map(r => `${r.key}: not done (${(r.blocked || 'no reason given').slice(0, 160)})`) }
+  }
   const reviews = (await parallel(Object.keys(LENSES).map(lens => () =>
     agent(verifyPrompt(key, lens, rounds), { label: `verify:${key}:${lens}`, phase: 'Verify', schema: VERDICT, model: 'opus' })
   ))).filter(Boolean)
@@ -176,7 +181,15 @@ async function chain(key, body) {
   return { key, rounds, defects, repair, still_open: recheck ? recheck.defects : ['recheck returned nothing'] }
 }
 
-const chains = (await parallel(Object.entries(CHAINS).map(([key, body]) => () => chain(key, body)))).filter(Boolean)
+// Canary: one small chain first. A run whose agents decline the work is stopped before it fans out.
+const canary = await chain('results', CHAINS.results)
+const declined = canary.rounds.every(r => !r.done && !(r.commits || []).length)
+if (declined) {
+  log('canary chain did no work: stopping before the fan-out')
+  return { aborted: true, canary: canary.rounds.map(r => ({ item: r.key, blocked: r.blocked, notes: r.notes })) }
+}
+const others = Object.entries(CHAINS).filter(([key]) => key !== 'results')
+const chains = [canary, ...(await parallel(others.map(([key, body]) => () => chain(key, body)))).filter(Boolean)]
 const missing = Object.keys(CHAINS).filter(k => !chains.some(c => c.key === k))
 if (missing.length) log(`chains with no result: ${missing.join(', ')}`)
 
