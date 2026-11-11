@@ -76,6 +76,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from metaphysica.simulations.core.FormulasRegistry import get_registry
+from metaphysica.simulations.PM.geometry.b3_path import seed_values
 
 # Get registry SSoT
 _REG = get_registry()
@@ -120,11 +121,24 @@ from metaphysica.simulations.core.eml_integration import (
 #: Stellar-cooling (horizontal-branch) upper bound on g_{a gamma gamma}, GeV^-1.
 #: One definition: compute_alp() and the registered row both read it.
 STELLAR_COOLING_BOUND_GEV_INV = 1.0e-10
-STELLAR_COOLING_SOURCE = "stellar cooling bound (HB stars), module bound 1e-10 GeV^-1"
+STELLAR_COOLING_SOURCE = (
+    f"stellar cooling bound (HB stars), module bound {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1")
 #: The bound is in no data file yet and its value is unconfirmed (1e-10 here, the
 #: HB analysis of Ayala et al. 2014 quotes 6.6e-11): flagged for P5.
 STELLAR_COOLING_SOURCE_UNVERIFIED = (
     "stellar-cooling bound on g_agg is in no data file; 1e-10 versus HB 6.6e-11 to confirm (P5)")
+
+#: CAST helioscope upper bound on g_{a gamma gamma}, GeV^-1. A second bound, separate from
+#: the stellar-cooling one: its own source, its own mass range, its own certificate. Typed
+#: from the paper get_references() cites as cast_2017; it is in no data file.
+CAST_BOUND_GEV_INV = 6.6e-11
+CAST_BOUND_MAX_MASS_EV = 0.02
+CAST_BOUND_SOURCE = (
+    "CAST Collaboration (2017), Nature Physics 13, 584, arXiv:1705.02290: g_agg < "
+    f"{CAST_BOUND_GEV_INV:.2g} GeV^-1 at 95% CL for m_a < {CAST_BOUND_MAX_MASS_EV:g} eV")
+
+#: The retired seed whose worked numbers the text quotes; it is off the path in force.
+OFF_PATH_SEED = "seed_24"
 
 
 def stellar_bound_check(g_a_gamma_gamma: float) -> str:
@@ -132,10 +146,23 @@ def stellar_bound_check(g_a_gamma_gamma: float) -> str:
     return "PASS" if g_a_gamma_gamma < STELLAR_COOLING_BOUND_GEV_INV else "FAIL"
 
 
+def cast_bound_check(g_a_gamma_gamma: float) -> str:
+    """PASS or FAIL of the coupling against the CAST bound. It compares the coupling
+    only: the mass range of the bound is stated beside the verdict, not folded into it."""
+    return "PASS" if g_a_gamma_gamma < CAST_BOUND_GEV_INV else "FAIL"
+
+
+def _bound_side(verdict: str) -> str:
+    """The word a bound text uses for a verdict: below for PASS, above for FAIL."""
+    if verdict not in ("PASS", "FAIL"):
+        raise ValueError(f"unknown bound verdict {verdict!r}")
+    return "below" if verdict == "PASS" else "above"
+
+
 def stellar_bound_sentence(g_a_gamma_gamma: float) -> str:
     """The bound check as text: the computed coupling, the one bound and the verdict."""
     verdict = stellar_bound_check(g_a_gamma_gamma)
-    side = "below" if verdict == "PASS" else "above"
+    side = _bound_side(verdict)
     return (f"On the path in force g_aγγ = {g_a_gamma_gamma:.3g} GeV^-1, {side} the "
             f"stellar-cooling upper bound {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1: "
             f"bound check {verdict} (a CALIBRATED row, not scored in chi2; bound "
@@ -171,6 +198,126 @@ _OUTPUT_FORMULAS = [
     "portal-alp-nucleon-v23",
     "portal-alp-fifth-force-v23",
 ]
+
+
+def off_path_label() -> str:
+    """The label a worked number of the retired seed carries, b3 read from the path table."""
+    b3, _b2 = seed_values(OFF_PATH_SEED)
+    return f"retired off-path {OFF_PATH_SEED} with b3 = {b3}"
+
+
+def _latex_sci(x: float) -> str:
+    """A number as LaTeX scientific notation, three significant figures."""
+    mantissa, exponent = f"{x:.2e}".split("e")
+    return rf"{mantissa} \times 10^{{{int(exponent)}}}"
+
+
+def _bound_certificate(cert_id: str, g: float, bound: float, verdict: str,
+                       bound_name: str, source: str, note: str = "") -> Dict[str, Any]:
+    """One certificate for one sourced upper bound on g_{a gamma gamma}."""
+    return {
+        "id": cert_id,
+        "assertion": (
+            f"g_{{a gamma gamma}} = {g:.2e} GeV^-1 is {_bound_side(verdict)} the "
+            f"{bound_name} of {bound:.2g} GeV^-1{note}"
+        ),
+        "condition": f"{g:.2e} < {bound:.2g}",
+        "tolerance": 0.0,
+        "status": verdict,
+        "source": source,
+        "wolfram_query": f"{g:.4e}",
+        "wolfram_result": f"{g:.6e}",
+        "sector": "dark_matter",
+    }
+
+
+def bound_certificates(result: ALPResult) -> List[Dict[str, Any]]:
+    """The two bound certificates: one sourced bound each, each verdict from its own check."""
+    g = result.g_a_gamma_gamma
+    stellar = _bound_certificate(
+        "CERT_ALP_STELLAR_COOLING", g, STELLAR_COOLING_BOUND_GEV_INV,
+        stellar_bound_check(g), "stellar cooling bound", STELLAR_COOLING_SOURCE)
+    stellar["source_unverified"] = STELLAR_COOLING_SOURCE_UNVERIFIED
+    mass_side = "inside" if result.m_alp < CAST_BOUND_MAX_MASS_EV else "outside"
+    cast_note = (
+        " (a second bound, separate from the stellar-cooling one; it holds for m_a < "
+        f"{CAST_BOUND_MAX_MASS_EV:g} eV and m_ALP = {result.m_alp:.3g} eV is {mass_side} "
+        "that range; the verdict compares the coupling only)")
+    cast = _bound_certificate(
+        "CERT_ALP_CAST_BOUND", g, CAST_BOUND_GEV_INV, cast_bound_check(g),
+        "CAST 2017 helioscope bound", CAST_BOUND_SOURCE, cast_note)
+    return [stellar, cast]
+
+
+def photon_formula_description(g: float) -> str:
+    """Description of the photon formula: calibration status and the one computed verdict."""
+    return (
+        f"CALIBRATED at the {off_path_label()}, through the Face 3 "
+        "racetrack value of f_a^ALP; no gaugino racetrack exists on Y_7 "
+        "(CG.5, CG.10). "
+        "ALP-photon coupling from Primakoff process enhanced by inter-face "
+        "leakage. The alpha_leak * chi_eff numerator reflects the G2 "
+        "topological enhancement of the portal coupling, while the "
+        f"{G_AGG_DENOMINATOR:g}*pi*f_a denominator provides the standard suppression "
+        f"(the {G_AGG_DENOMINATOR:g} is a literal, not read from b3). "
+        "The registered value follows the live seed. "
+        + stellar_bound_sentence(g)
+    )
+
+
+def photon_formula_derivation_steps(alpha_leak: float, chi_eff: float,
+                                    g: float) -> List[Dict[str, str]]:
+    """Derivation steps of the photon formula: live values from the readers, the retired
+    seed's worked numbers labelled, the bound and its relation from the one check."""
+    label = off_path_label()
+    relation = "<" if stellar_bound_check(g) == "PASS" else r"\geq"
+    return [
+        {
+            "description": (
+                "Inter-face leakage coupling from chi_eff_total / b3 ratio: "
+                f"{alpha_leak:.3g} on the path in force (1/sqrt(6) at the {label})"),
+            "formula": r"\alpha_{\rm leak} = \frac{1}{\sqrt{\chi_{\rm eff,total}/b_3}}",
+        },
+        {
+            "description": "ALP-photon vertex from leakage through Face 3",
+            "formula": (r"g_{a\gamma\gamma} = \frac{\alpha_{\rm leak} \cdot "
+                        r"\chi_{\rm eff}}{24\pi \, f_a^{\rm ALP}}"),
+        },
+        {
+            "description": (
+                f"Evaluate numerically on the path in force, using alpha_leak = "
+                f"{alpha_leak:.3g}, chi_eff = {chi_eff:g}, and the calibrated Face 3 f_a "
+                "(the worked numbers alpha_leak = 1/sqrt(6) ~ 0.408 and g ~ 1e-11 GeV^-1 "
+                f"are those of the {label}). " + stellar_bound_sentence(g)),
+            "formula": (
+                rf"g_{{a\gamma\gamma}} = \frac{{{alpha_leak:.3f} \times {chi_eff:g}}}"
+                rf"{{24\pi \, f_a^{{\rm ALP}}}} = {_latex_sci(g)}\,\text{{GeV}}^{{-1}} "
+                rf"{relation} {_latex_sci(STELLAR_COOLING_BOUND_GEV_INV)}"
+                r"\,\text{GeV}^{-1}"),
+        },
+    ]
+
+
+def photon_coupling_paragraph(alpha_leak: float, chi_eff: float, g: float) -> str:
+    """Section paragraph on g_agg: live values from the readers, the retired seed's
+    worked numbers labelled, and only the computed bound verdict."""
+    label = off_path_label()
+    return (
+        "The ALP-photon coupling g<sub>aγγ</sub> is generated by "
+        "the inter-face topological leakage. The G₂ portal mechanism "
+        "transfers axion flux between faces through the "
+        "χ<sub>eff</sub>-weighted channel, with amplitude set by "
+        f"α<sub>leak</sub> = {alpha_leak:.3g} on the path in force "
+        f"(1/√6 at the {label}). "
+        f"The topological enhancement factor χ<sub>eff</sub> = {chi_eff:g} per shadow (the K3 "
+        "reading: Σχ(K3) over the three singular involutions; not an Euler "
+        "characteristic of Y₇, which is 0) increases the effective coupling relative "
+        "to a simple f<sub>a</sub><sup>−1</sup> suppression. The worked value "
+        "g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup> is that of the "
+        f"{label}, not the registered value. "
+        + stellar_bound_sentence(g)
+        + " IAXO and ALPS-II reach:"
+    )
 
 
 class ALPPortalsV23(SimulationBase):
@@ -666,39 +813,15 @@ class ALPPortalsV23(SimulationBase):
                     "ops.mul(ops.mul(eml_scalar(24.0), eml_pi()), f_a_ALP)) "
                     "— ALP-photon coupling via Primakoff process"
                 ),
-                category="PREDICTED",
-                description=(
-                    "CALIBRATED at the off-path seed b3 = 24, through the Face 3 "
-                    "racetrack value of f_a^ALP; no gaugino racetrack exists on Y_7 "
-                    "(CG.5, CG.10). "
-                    "ALP-photon coupling from Primakoff process enhanced by inter-face "
-                    "leakage. The alpha_leak * chi_eff numerator reflects the G2 "
-                    "topological enhancement of the portal coupling, while the "
-                    "24*pi*f_a denominator provides the standard suppression (the 24 "
-                    "is a literal, not read from b3). At the off-path seed the "
-                    "resulting coupling is below the stellar cooling bound of "
-                    "10^{-10} GeV^{-1} from globular cluster observations; the "
-                    "registered value follows the live seed."
-                ),
+                category="CALIBRATED",
+                description=photon_formula_description(result.g_a_gamma_gamma),
                 inputParams=["geometry.alpha_leak", "topology.mephorash_chi", "axion.f_a"],
                 outputParams=["portals.alp_photon_coupling_gev_inv"],
                 input_params=["geometry.alpha_leak", "topology.mephorash_chi", "axion.f_a"],
                 output_params=["portals.alp_photon_coupling_gev_inv"],
                 derivation={
-                    "steps": [
-                        {
-                            "description": "Inter-face leakage coupling from chi_eff_total / b3 ratio (1/sqrt(6) at the off-path seed b3 = 24)",
-                            "formula": r"\alpha_{\rm leak} = \frac{1}{\sqrt{\chi_{\rm eff,total}/b_3}} = \frac{1}{\sqrt{6}}"
-                        },
-                        {
-                            "description": "ALP-photon vertex from leakage through Face 3",
-                            "formula": r"g_{a\gamma\gamma} = \frac{\alpha_{\rm leak} \cdot \chi_{\rm eff}}{24\pi \, f_a^{\rm ALP}}"
-                        },
-                        {
-                            "description": "Evaluate numerically at the off-path seed b3 = 24, using alpha_leak = 1/sqrt(6), chi_eff = 72, and the calibrated Face 3 f_a, to obtain g_{a gamma gamma} below the stellar cooling bound of 10^{-10} GeV^{-1}",
-                            "formula": r"g_{a\gamma\gamma} \approx \frac{0.408 \times 72}{24\pi \, f_a^{\rm ALP}} < 10^{-10}\,\text{GeV}^{-1}"
-                        }
-                    ],
+                    "steps": photon_formula_derivation_steps(
+                        self.alpha_leak, self.chi_eff, result.g_a_gamma_gamma),
                     "references": [
                         "Raffelt (1996) Stars as Laboratories for Fundamental Physics",
                         "CAST Collaboration (2017) Nature Physics 13, 584"
@@ -1075,20 +1198,8 @@ class ALPPortalsV23(SimulationBase):
                 ),
                 ContentBlock(
                     type="paragraph",
-                    content=(
-                        "The ALP-photon coupling g<sub>aγγ</sub> is generated by "
-                        "the inter-face topological leakage. The G₂ portal mechanism "
-                        "transfers axion flux between faces through the "
-                        "χ<sub>eff</sub>-weighted channel, with amplitude set by α<sub>leak</sub> = 1/√6. "
-                        "The topological enhancement factor χ<sub>eff</sub> = 72 per shadow (the K3 "
-                        "reading: Σχ(K3) over the three singular involutions; not an Euler "
-                        "characteristic of Y₇, which is 0) increases the effective coupling relative "
-                        "to a simple f<sub>a</sub><sup>−1</sup> suppression. The resulting ALP-photon "
-                        "coupling at that seed, g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup>, falls below "
-                        f"the stellar-cooling bound ({STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV<sup>−1</sup>). "
-                        + stellar_bound_sentence(self.compute_alp().g_a_gamma_gamma)
-                        + " IAXO and ALPS-II reach:"
-                    )
+                    content=photon_coupling_paragraph(
+                        self.alpha_leak, self.chi_eff, self.compute_alp().g_a_gamma_gamma)
                 ),
                 ContentBlock(
                     type="formula",
@@ -1215,33 +1326,7 @@ class ALPPortalsV23(SimulationBase):
         """Return certificate assertions for ALP portal physics."""
         result = self.compute_alp()
 
-        return [
-            {
-                "id": "CERT_ALP_STELLAR_COOLING",
-                "assertion": (
-                    f"g_{{a gamma gamma}} = {result.g_a_gamma_gamma:.2e} GeV^-1 "
-                    f"is below the stellar cooling bound of {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1"
-                ),
-                "condition": f"{result.g_a_gamma_gamma:.2e} < {STELLAR_COOLING_BOUND_GEV_INV:.2g}",
-                "tolerance": 0.0,
-                "status": stellar_bound_check(result.g_a_gamma_gamma),
-                "wolfram_query": f"{result.g_a_gamma_gamma:.4e}",
-                "wolfram_result": f"{result.g_a_gamma_gamma:.6e}",
-                "sector": "dark_matter"
-            },
-            {
-                "id": "CERT_ALP_CAST_BOUND",
-                "assertion": (
-                    f"g_{{a gamma gamma}} = {result.g_a_gamma_gamma:.2e} GeV^-1 "
-                    f"is below the CAST 2017 experimental bound of 6.6e-11 GeV^-1"
-                ),
-                "condition": f"{result.g_a_gamma_gamma:.2e} < 6.6e-11",
-                "tolerance": 0.0,
-                "status": "PASS" if result.g_a_gamma_gamma < 6.6e-11 else "FAIL",
-                "wolfram_query": f"{result.g_a_gamma_gamma:.4e}",
-                "wolfram_result": f"{result.g_a_gamma_gamma:.6e}",
-                "sector": "dark_matter"
-            },
+        return bound_certificates(result) + [
             {
                 "id": "CERT_ALP_MASS_WINDOW",
                 "assertion": (
