@@ -48,6 +48,27 @@ def test_no_row_claims_computed_without_a_value(tmp_path, monkeypatch):
     assert computed == []
 
 
+def test_formulas_checked_ok_note_names_the_certificates(tmp_path, monkeypatch):
+    row = _pre_rigor_rows(tmp_path, monkeypatch)["framework_statistics.formulas_checked_ok"]
+    assert row["status"] == "NOT_EVALUABLE"
+    assert "GATES_CERTIFICATES.json summary has no formulas_checked_ok" in row["note"]
+    assert "rigor report" not in row["note"]
+
+
+def test_fit_rows_note_names_the_rigor_report(tmp_path, monkeypatch):
+    rows = _pre_rigor_rows(tmp_path, monkeypatch)
+    for key in ("framework_statistics.chi_squared", "validation.total_predictions"):
+        assert "statistical rigor report" in rows[key]["note"], key
+
+
+def test_not_evaluable_rows_carry_no_eml_relation(tmp_path, monkeypatch):
+    rows = _pre_rigor_rows(tmp_path, monkeypatch)
+    for key in ("validation.success_rate", "framework_statistics.status"):
+        assert rows[key]["status"] == "NOT_EVALUABLE", key
+        assert "eml_description" not in rows[key], key
+    assert "eml_description" in rows["framework_statistics.total_gates"]
+
+
 def test_gate_counts_stay_computed(tmp_path, monkeypatch):
     rows = _pre_rigor_rows(tmp_path, monkeypatch)
     for key in ("framework_statistics.total_gates", "framework_statistics.pass_count"):
