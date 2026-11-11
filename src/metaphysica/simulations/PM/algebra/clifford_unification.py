@@ -161,9 +161,13 @@ class CliffordUnificationSimulation(SimulationBase):
                     "A single API replaces 12+ separate computation methods."
                 ),
                 inputParams=[],
+                # The boost row is |v·v - (RvR~)·(RvR~)| in signature (+1,-1,-1,-1):
+                # a difference of two values of this quadratic form, so this
+                # formula is the one that computes it (run(), check 1b).
                 outputParams=[
                     "algebra.clifford_g2_invariant",
-                            "algebra.clifford_flrw_invariant",
+                    "algebra.clifford_boost_conservation",
+                    "algebra.clifford_flrw_invariant",
                 ],
                 eml_latex=r"\mathrm{EMLMultivector}(\sigma)\mathrm{.quadratic}()",
                 eml_tree_str="EMLMultivector(comps, signature=sigma).quadratic()",
