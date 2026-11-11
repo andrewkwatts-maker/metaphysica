@@ -1,7 +1,7 @@
 """Tests for the 2D dark-energy plane gate.
 
-The gate replaces two correlated 1D headlines (3.62 sigma on w0, 2.98 on wa)
-with one Mahalanobis number scanned over the unpublished correlation. These
+The gate replaces two correlated 1D headlines (the w0 and wa marginals of the
+registered point) with one Mahalanobis number scanned over the unpublished correlation. These
 tests pin the arithmetic and, critically, the ROBUSTNESS claim -- the whole
 point is that the verdict does not depend on the invented-number-shaped hole
 where rho should be.
@@ -28,33 +28,63 @@ from metaphysica.simulations.PM.validation.de_plane_gate import (
 )
 
 
-# ── the framework point comes from the seed, not from literals ──────────────
+# ── the framework point is the registered one, not literals ─────────────────
 
 
-def test_point_is_derived_from_b3():
-    from metaphysica.simulations.core.canonical_values import B3
+def _registered_uv():
+    """(u, v) of the registered (w0, wa) against the DR2 anchors.
+
+    w0 = -(n-1)/n with n from the dark_energy_betti fork reader; wa =
+    -1/sqrt(b3) with b3 from the seed reader. Nothing typed.
+    """
+    from metaphysica.simulations.PM.cosmology.late_time_routes import (
+        de_betti_n, resolve_de_betti,
+    )
+    from metaphysica.simulations.PM.geometry.b3_path import (
+        resolve_path, seed_values,
+    )
+
+    n = de_betti_n(resolve_de_betti())
+    b3 = seed_values(resolve_path())[0]
+    u = (-(n - 1) / n - _W0_OBS) / _W0_SIG
+    v = (-1.0 / math.sqrt(b3) - _WA_OBS) / _WA_SIG
+    return u, v
+
+
+def test_point_is_the_registered_point():
+    from metaphysica.simulations.core.canonical_values import CANON
 
     p = framework_point()
-    assert p["w0"] == pytest.approx(-(B3 - 1) / B3)          # -23/24
-    assert p["wa"] == pytest.approx(-1 / math.sqrt(B3))      # -1/sqrt(24)
+    assert p["w0"] == pytest.approx(CANON["w0"]["value"])
+    assert p["wa"] == pytest.approx(CANON["wa"]["value"])
 
 
-def test_marginals_match_the_register_headlines():
-    """|u| = 3.62 and |v| = 3.05 are the register's own 1D numbers --
-    reproduced here so the double-counting claim is checkable."""
+def test_marginals_match_the_registered_inputs():
+    """|u| and |v| are the 1D numbers of the registered point, reproduced
+    here so the double-counting claim is checkable."""
     p = framework_point()
     u = (p["w0"] - _W0_OBS) / _W0_SIG
     v = (p["wa"] - _WA_OBS) / _WA_SIG
-    assert abs(u) == pytest.approx(3.620, abs=0.005)
-    assert abs(v) == pytest.approx(3.051, abs=0.005)
+    eu, ev = _registered_uv()
+    assert u == pytest.approx(eu, abs=1e-9)
+    assert v == pytest.approx(ev, abs=1e-9)
 
 
 # ── the chi-square surface ──────────────────────────────────────────────────
 
 
-def test_chi2_at_the_scan_centre():
-    """Pinned: chi2(-0.85) = 13.11, the scan minimum."""
-    assert chi2_at_rho(-0.85) == pytest.approx(13.11, abs=0.02)
+def test_chi2_at_the_scan_minimum():
+    """chi2 at each scanned rho is the Mahalanobis form of the registered
+    (u, v); the scan minimum is the smallest of them."""
+    u, v = _registered_uv()
+    expected = {
+        rho: (u * u - 2.0 * rho * u * v + v * v) / (1.0 - rho * rho)
+        for rho in _RHO_SCAN
+    }
+    for rho, chi2 in expected.items():
+        assert chi2_at_rho(rho) == pytest.approx(chi2, rel=1e-12)
+    assert min(s.chi2 for s in scan_rho()) == pytest.approx(
+        min(expected.values()), rel=1e-12)
 
 
 def test_chi2_rejects_degenerate_correlation():
@@ -65,31 +95,28 @@ def test_chi2_rejects_degenerate_correlation():
 
 
 def test_verdict_is_rho_robust():
-    """The load-bearing claim: 3.19-3.41 sigma across the whole band.
+    """The load-bearing claim: every rho in the band reads 3-3.5 sigma.
 
     If a future anchor update spreads this band past ~0.5 sigma, the
     'rho-robust' language must be withdrawn -- this test is what forces
     that withdrawal to be conscious.
     """
     sigmas = [s.sigma_equivalent for s in scan_rho()]
-    assert min(sigmas) == pytest.approx(3.19, abs=0.02)
-    assert max(sigmas) == pytest.approx(3.41, abs=0.02)
+    assert 3.0 < min(sigmas) <= max(sigmas) < 3.5
     assert max(sigmas) - min(sigmas) < 0.5
 
 
 def test_correlation_reduces_but_does_not_rescue():
-    """The ellipse helps (4.35 -> ~3.2) but the tension survives.
+    """The ellipse lowers the uncorrelated 2D sigma but the tension survives.
 
-    Pinning BOTH sides keeps the narrative honest in both directions:
-    anyone claiming 4.4 sigma is ignoring the correlation, and anyone
-    claiming ~1 sigma is inventing one.
+    Both sides are checked: the uncorrelated number exceeds every scanned
+    one (correlation helps), and every scanned one stays above 3 sigma.
     """
-    p = framework_point()
-    u = (p["w0"] - _W0_OBS) / _W0_SIG
-    v = (p["wa"] - _WA_OBS) / _WA_SIG
+    u, v = _registered_uv()
     uncorrelated = sigma_equivalent(u * u + v * v)
-    assert uncorrelated == pytest.approx(4.35, abs=0.02)
-    assert all(s.sigma_equivalent > 3.0 for s in scan_rho())
+    scanned = [s.sigma_equivalent for s in scan_rho()]
+    assert uncorrelated > max(scanned)
+    assert all(s > 3.0 for s in scanned)
 
 
 def test_gate_can_fail():

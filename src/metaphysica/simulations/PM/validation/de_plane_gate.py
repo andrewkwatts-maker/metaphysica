@@ -84,12 +84,18 @@ class PlaneVerdict:
 
 
 def framework_point() -> Dict[str, float]:
-    """The zero-parameter prediction, from the SSOT seed only."""
-    from metaphysica.simulations.core.canonical_values import B3
+    """The registered (w0, wa) point on the active path, read from CANON.
+
+    w0 is CANON["w0"]: -(n-1)/n with n set by the dark_energy_betti fork
+    (frozen n is an input constant, b3_live uses the live b3). wa is
+    CANON["wa"]: -1/sqrt(b3) at the live b3, leading order. Neither is
+    recomputed here, so the gate scores exactly the registered values.
+    """
+    from metaphysica.simulations.core.canonical_values import CANON
 
     return {
-        "w0": -(B3 - 1.0) / B3,          # -23/24
-        "wa": -1.0 / math.sqrt(B3),      # -1/sqrt(24), leading order
+        "w0": float(CANON["w0"]["value"]),
+        "wa": float(CANON["wa"]["value"]),
     }
 
 
