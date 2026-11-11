@@ -92,6 +92,22 @@ def _resolved_n_gen() -> float:
     return int(round(value)) if abs(value - round(value)) < 1e-12 else value
 
 
+def _pdg_lambda_w() -> tuple:
+    """(value, uncertainty) of PDG |V_us| = Wolfenstein λ_W, read from the data loader."""
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+
+    d = get_loader().get_pdg("ckm", "V_us")
+    if d.uncertainty is None:
+        raise ValueError("pdg ckm V_us has no uncertainty; the sigma cannot be built")
+    return d.value, d.uncertainty
+
+
+def _vs_pdg(value: float) -> str:
+    """'<PDG> ± <unc> — <n>σ' for a λ_W candidate, built from the loader value."""
+    pdg, unc = _pdg_lambda_w()
+    return f"{pdg:.5f} ± {unc:.5f} — {abs(value - pdg) / unc:.1f}σ"
+
+
 class GauginoCondensationSimulation(SimulationBase):
     """
     Hidden E₈' gaugino condensation with N₁/N₂ racetrack -- CALIBRATED; Y₇ has no racetrack.
@@ -368,8 +384,8 @@ class GauginoCondensationSimulation(SimulationBase):
                 description=(
                     "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
                     f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} at the "
-                    "off-path seed b₃ = 24, against PDG λ_W = 0.22500 ± 0.00067 — "
-                    f"{abs(cab - 0.22500) / 0.00067:.1f}σ, off by roughly a factor of two. The 'promotes Cabibbo angle "
+                    f"off-path seed b₃ = 24, against PDG λ_W = {_vs_pdg(cab)}, "
+                    "off by roughly a factor of two. The 'promotes Cabibbo angle "
                     "from CALIBRATED toward DERIVED' claim is withdrawn. Kept with its "
                     "derivation intact, with the refined and derived variants (which "
                     "also fail), so the failure stays reproducible."
@@ -415,7 +431,7 @@ class GauginoCondensationSimulation(SimulationBase):
                 plain_text=(
                     f"T_min = (N1*N2)/(2pi*(N1-N2)) * ln(N1/N2) = {T_min_val:.4f}; "
                     f"epsilon_rt = |exp(-2pi*T_min/N1) - exp(-2pi*T_min/N2)| = {epsilon_rt:.6f}; "
-                    f"lambda_W = epsilon_rt^(1/n_gen) = {cab_derived:.6f} (cf. PDG 0.22500)"
+                    f"lambda_W = epsilon_rt^(1/n_gen) = {cab_derived:.6f} (cf. PDG {_pdg_lambda_w()[0]:.5f})"
                 ),
                 category="FALSIFIED",
                 description=(
@@ -424,7 +440,7 @@ class GauginoCondensationSimulation(SimulationBase):
                     f"T_min = {T_min_val:.4f} from ∂W/∂T = 0 with N₁=24, N₂=23 (the off-path seed). "
                     f"ε_rt = |W₁(T_min) − W₂(T_min)| = {epsilon_rt:.6f} is the off-diagonal Yukawa texture. "
                     f"λ_W = ε_rt^(1/n_gen) = ε_rt^(1/3) ≈ {cab_derived:.4f}. "
-                    "PDG: 0.22500 ± 0.00067 — 37.6σ away. N₁ = 24 was the off-path seed "
+                    f"PDG: {_vs_pdg(cab_derived)} away. N₁ = 24 was the off-path seed "
                     "b₃ = 24 read as a gauge-group rank, N₂ = N₁ − 1 = 23 and n_gen = 3: "
                     "the construction takes no free parameters, which is why it cannot be "
                     "rescued. The registered value follows the seed in force and also "

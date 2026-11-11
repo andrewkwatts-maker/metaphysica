@@ -108,3 +108,10 @@ Rename figure1_m27_decomposition.py to figure1_m26_decomposition.py (XA-09): gen
 Close-out round 2 needs other lane: generators lane (all_plots.py) builds the plot list as `_retired.paper_figures(VISUALIZATION_MODULES)` in `main()`, with a test that a retired module in the list is not run; or the planner grants all_plots.py to this lane.
 
 Close-out next round (round 1 note, XA-04 now partly done): XA-04 (call `paper_figures` where the plot list and index are built inside visualizations/**, test that fails without the call; move stability_heatmap.html and its data file beside the retired figures). gaugino_condensation still types 344.7/37.6/25.6 sigma outside A4.3 (lines ~116, 554, 747, 788, 826, 839); alp section text still says alpha_leak = 1/sqrt(6), chi_eff = 72 unlabelled.
+
+## Close-out review
+| defect | file:line | action | commit | test |
+|---|---|---|---|---|
+| XA-05 test could not detect typed text: the typed 344.7σ equalled the value computed at N1 = 24, so `test_cabibbo_proxy_sigma_is_built_from_the_value` passed on b8cf83e | tests/programme/test_algebra_portals_viz_closeout_gaugino_status.py:17 | fixed: PDG λ_W and its uncertainty read from the loader (`_pdg_lambda_w`, ckm V_us) and the quote built by `_vs_pdg` in A4.3 and A4.4 (A4.4's typed 37.6σ and "cf. PDG 0.22500" too, rule 6); the test patches the PDG input to 0.30000 ± 0.00200 and asserts the description follows it (fails on base: no reader to patch) | see commit "close-out review" | test_algebra_portals_viz_closeout_gaugino_status.py |
+
+Edited tests: test_algebra_portals_viz_closeout_gaugino_status.py, the sigma test replaced (it could not fail on the old code).
