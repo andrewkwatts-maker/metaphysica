@@ -24,6 +24,7 @@ Dedicated To:
 
 import sys
 import os
+import types
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 from dataclasses import dataclass, field
@@ -99,6 +100,32 @@ def _supplementary_exempt(sim, rule: "RuleResult", getter: str) -> bool:
         return True
     rule.details = "exempt (supplementary; %s registers it)" % parent.__name__
     return True
+
+
+# RETIRE-FROM-PAPER (programme rule 5): the module and its rows stay, the
+# paper does not quote them. A retired simulation is not exempt: rules 3 and
+# 4 hold for it in the opposite sense (it must emit no section and no
+# certificates), and rules 1, 2 and 5 to 9 are checked as for any other.
+RETIRED_NO_SECTION = "retired from paper (rule 5): no section"
+RETIRED_NO_CERTS = "retired from paper (rule 5): no certificates, not scored"
+
+
+def _retired_from_paper(sim) -> bool:
+    """True when the module of the simulation sets RETIRED_FROM_PAPER = True."""
+    module = sys.modules[type(sim).__module__]
+    return getattr(module, "RETIRED_FROM_PAPER", False) is True
+
+
+def _retired_result(rule: "RuleResult", emits_nothing: bool, ok: str,
+                    required: str) -> "RuleResult":
+    """A retired simulation passes only when the getter emits nothing."""
+    if emits_nothing:
+        rule.details = ok
+        return rule
+    rule.passed = False
+    rule.details = ("retired from paper (rule 5) but not %s: "
+                    "the retirement has not taken effect" % required)
+    return rule
 
 
 MIN_DERIVATION_STEPS = 3
@@ -298,6 +325,7 @@ def check_rule_3_sections(sim: SimulationBase) -> RuleResult:
     - get_section_content() returns non-None SectionContent
     - content_blocks[] contains >=1 block
     - At least one block has type="paragraph" with content >50 chars
+    - A simulation retired from the paper passes only on None
     """
     rule = RuleResult(rule_number=3, rule_name="Sections", passed=True)
     issues: List[str] = []
@@ -308,6 +336,10 @@ def check_rule_3_sections(sim: SimulationBase) -> RuleResult:
         rule.passed = False
         rule.details = f"get_section_content() raised {type(exc).__name__}: {exc}"
         return rule
+
+    if _retired_from_paper(sim):
+        return _retired_result(rule, section is None, RETIRED_NO_SECTION,
+                               "get_section_content() is None")
 
     if section is None:
         rule.passed = False
@@ -347,6 +379,7 @@ def check_rule_4_certificates(sim: SimulationBase) -> RuleResult:
     Rule 4: Certificates (min 1)
     - get_certificates() returns >=1 dict
     - Each dict has: id, assertion, condition, status (PASS/FAIL/OFFLINE)
+    - A simulation retired from the paper passes only on []
     """
     rule = RuleResult(rule_number=4, rule_name="Certificates", passed=True)
     if _supplementary_exempt(sim, rule, "get_certificates"):
@@ -359,6 +392,10 @@ def check_rule_4_certificates(sim: SimulationBase) -> RuleResult:
         rule.passed = False
         rule.details = f"get_certificates() raised {type(exc).__name__}: {exc}"
         return rule
+
+    if _retired_from_paper(sim):
+        return _retired_result(rule, certs == [], RETIRED_NO_CERTS,
+                               "get_certificates() == []")
 
     if not certs or len(certs) < 1:
         rule.passed = False
@@ -846,6 +883,78 @@ class TestSSOTFullCompliance:
             f"Only {len(all_sims)} simulations found in pipeline, expected >= 10. "
             f"Check SimulationRunner.phases for missing imports."
         )
+
+
+# ===========================================================================
+# The retired case is strict (PT-07)
+# ===========================================================================
+_STUB_SECTION = types.SimpleNamespace(content_blocks=[types.SimpleNamespace(
+    type="paragraph", content="p" * (MIN_PARAGRAPH_LENGTH + 1))])
+_STUB_CERT = {"id": "CERT_STUB", "assertion": "a", "condition": "c",
+              "status": "PASS"}
+# The simulation PT-07 is about. Rule 5 keeps it in SimulationRunner.phases.
+RETIRED_IN_PHASES = "orch_or_pair_shielding_v22"
+
+
+def _stub(monkeypatch, retired, section, certs):
+    """A simulation stub whose module sets RETIRED_FROM_PAPER = retired."""
+    module = types.ModuleType("_pt07_stub_module")
+    module.RETIRED_FROM_PAPER = retired
+    monkeypatch.setitem(sys.modules, module.__name__, module)
+    cls = type("Pt07Stub", (), {
+        "__module__": module.__name__,
+        "metadata": types.SimpleNamespace(id="pt07_stub"),
+        "get_section_content": lambda self: section,
+        "get_certificates": lambda self: certs,
+    })
+    return cls()
+
+
+class TestRetiredFromPaper:
+    """Rules 3 and 4 for a simulation retired from the paper (rule 5)."""
+
+    def test_retired_stub_with_a_section_fails_rule_3(self, monkeypatch):
+        live = check_rule_3_sections(_stub(monkeypatch, False, _STUB_SECTION, []))
+        assert live.passed, live.details
+        retired = check_rule_3_sections(_stub(monkeypatch, True, _STUB_SECTION, []))
+        assert not retired.passed
+        assert "retirement has not taken effect" in retired.details
+
+    @pytest.mark.parametrize("certs", [[_STUB_CERT], None])
+    def test_retired_stub_with_certificates_fails_rule_4(self, monkeypatch, certs):
+        live = check_rule_4_certificates(_stub(monkeypatch, False, None, [_STUB_CERT]))
+        assert live.passed, live.details
+        retired = check_rule_4_certificates(_stub(monkeypatch, True, None, certs))
+        assert not retired.passed
+        assert "retirement has not taken effect" in retired.details
+
+    def test_retired_stub_that_emits_nothing_is_reported_retired(self, monkeypatch):
+        sim = _stub(monkeypatch, True, None, [])
+        rule_3, rule_4 = check_rule_3_sections(sim), check_rule_4_certificates(sim)
+        assert rule_3.passed and rule_3.details == RETIRED_NO_SECTION
+        assert rule_4.passed and rule_4.details == RETIRED_NO_CERTS
+
+    @pytest.mark.parametrize("flag", [False, "yes", 1])
+    def test_only_the_flag_true_retires(self, monkeypatch, flag):
+        sim = _stub(monkeypatch, flag, None, [])
+        assert not check_rule_3_sections(sim).passed
+        assert not check_rule_4_certificates(sim).passed
+
+    def test_the_retired_simulation_in_phases(self, monkeypatch):
+        """Reported as retired; with the flag lifted its own section and
+        certificates pass rules 3 and 4, so the retired branch hides nothing."""
+        sims = [s for s in get_all_simulations()
+                if s.metadata.id == RETIRED_IN_PHASES]
+        assert len(sims) == 1, "%s is not in SimulationRunner.phases" % RETIRED_IN_PHASES
+        sim = sims[0]
+        assert _retired_from_paper(sim)
+        assert check_rule_3_sections(sim).details == RETIRED_NO_SECTION
+        assert check_rule_4_certificates(sim).details == RETIRED_NO_CERTS
+        monkeypatch.setattr(sys.modules[type(sim).__module__],
+                            "RETIRED_FROM_PAPER", False)
+        rule_3, rule_4 = check_rule_3_sections(sim), check_rule_4_certificates(sim)
+        assert rule_3.passed and rule_3.details == "", rule_3.details
+        assert rule_4.passed and rule_4.details == "", rule_4.details
 
 
 # ===========================================================================
