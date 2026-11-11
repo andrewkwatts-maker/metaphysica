@@ -30,10 +30,11 @@ N_GEN_TARGET = 3
 # compute: the step that runs every simulation. Others (audits, certificates)
 # only land in ``failed_steps``.
 REQUIRED_STEPS = ("run_all_simulations",)
-# Subtrees that are still a STUB, not physics: generate_jacobian_matrix fills them with
-# placeholder entries from a generator seeded with JACOBIAN_STUB_SEED (D-022), so two
-# builds now agree, but the entries remain noise. Publish keeps masking them as volatile.
-STOCHASTIC = {"statistical_rigor_report.json": ("/jacobian_analysis",)}
+# Subtrees publish masks as volatile even when the twin builds agree: none. The rigor
+# report no longer carries the seeded Jacobian stub (``/jacobian_analysis`` and
+# ``generate_jacobian_matrix`` are gone), so nothing in it is declared stochastic;
+# run-to-run noise is still caught by comparing main with its twin builds.
+STOCHASTIC: Dict[str, tuple] = {}
 MAX_KEY_VALUES = 40
 HEADLINE = (
     "geometry.alpha_inverse",                # fine-structure constant, inverse
