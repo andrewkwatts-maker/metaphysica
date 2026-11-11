@@ -52,81 +52,76 @@ class CoreGates:
         }
         print(f"  C001-B3: {status} (integer anchor geometry.elder_kads = {b3}; off-path seed value, not b_3)")
 
+    @staticmethod
+    def _path_generation_count():
+        """(n_gen, divisor): n_gen from b3_path.n_gen_report() on the active path
+        (n_gen_source fork included) and the chi_eff-per-generation divisor
+        N_GEN_DIVISOR of chi_eff_branches. Neither is typed in this file."""
+        from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
+        from metaphysica.simulations.PM.geometry.chi_eff_branches import N_GEN_DIVISOR
+        return n_gen_report()["n_gen"], N_GEN_DIVISOR
+
     def cert_c002_three_generations(self):
-        """C002: n_gen = chi_eff / 48 = 3, a restatement of the ruled route.
+        """C002: n_gen = chi_eff / N_GEN_DIVISOR against the path's n_gen.
 
-        chi_eff = 2 x sum chi(K3) = 48 n (the K3 reading: the Kummer K3
-        surfaces transverse to the n singular involutions, counted once per
-        shadow); 144 at n = 3. So n_gen = chi_eff / 48 = n = 3 RESTATES the
-        ruled route n_gen = b_2/4 = 3, the number of singular involutions.
-        It is not a second derivation, and not an index theorem for chiral
-        generations: chirality is OPEN (D-011).
+        Reads topology.mephorash_chi (chi_eff_total) from the registry,
+        computes chi_eff / N_GEN_DIVISOR (chi_eff = 2 x sum chi(K3) =
+        N_GEN_DIVISOR * n, the K3 reading: Kummer K3 surfaces transverse to
+        the n singular involutions, counted once per shadow) and compares it
+        with n_gen from b3_path.n_gen_report() on the active path (the ruled
+        n_gen_source route, b_2 / 4 on the adopted path). Agreement RESTATES
+        that route; it is not a second derivation, and not an index theorem
+        for chiral generations: chirality is OPEN (D-011).
 
-        Formerly this gate cited an Atiyah-Singer index theorem with TCS
-        Hodge numbers, chi_eff = 2*(h11 - h21 + h31) = 2*(4 - 0 + 68), and
-        the shortcut n_gen = b3/8 = 24/8 via chi_eff = 6*b3 for "TCS #187".
-        Both are OFF-PATH: a Joyce orbifold has no h21 or h31, 6*b3 = 144
-        only at the off-path seed b_3 = 24, and n_gen = b3/8 is ABANDONED
-        (8 divides no reachable b_3; all are odd).
+        The former Atiyah-Singer reading with TCS Hodge numbers and the
+        shortcut n_gen = b3/8 are OFF-PATH: a Joyce orbifold has no h21 or
+        h31, and n_gen = b3/8 is ABANDONED (8 divides no reachable b_3).
 
         Gate explicitly FAILS if the registry lacks the parameter (no default),
         preventing vacuous pass on missing registry data.
         """
-        b3 = self._get_param('geometry.elder_kads')
         chi_eff = self._get_param('topology.mephorash_chi')
-
-        if b3 is None or chi_eff is None:
-            status = "FAILED"
-            missing = []
-            if b3 is None:
-                missing.append("geometry.elder_kads")
-            if chi_eff is None:
-                missing.append("topology.mephorash_chi")
+        expected, divisor = self._path_generation_count()
+        if chi_eff is None:
             self.results['C002-GEN'] = {
-                "status": status,
-                "metric": f"{', '.join(missing)} NOT FOUND in registry",
-                "expected": 3,
+                "status": "FAILED",
+                "metric": "topology.mephorash_chi NOT FOUND in registry",
+                "expected": expected,
                 "actual": None,
                 "sector": "FOUNDATIONAL"
             }
-            print(f"  C002-GEN: {status} ({', '.join(missing)} missing from registry)")
+            print("  C002-GEN: FAILED (topology.mephorash_chi missing from registry)")
             return
 
-        n_gen = chi_eff // 48
-        status = "LOCKED" if n_gen == 3 else "FAILED"
+        n_gen = chi_eff / divisor
+        status = "LOCKED" if n_gen == expected else "FAILED"
         self.results['C002-GEN'] = {
             "status": status,
-            "metric": f"N_gen = chi_eff/48 = {chi_eff}/48 = {n_gen}",
-            "expected": 3,
+            "metric": f"N_gen = chi_eff/{divisor} = {chi_eff}/{divisor} = {n_gen}; path n_gen = {expected}",
+            "expected": expected,
             "actual": n_gen,
             "sector": "FOUNDATIONAL"
         }
-        print(f"  C002-GEN: {status} (N_gen = {chi_eff}/48 = {n_gen})")
+        print(f"  C002-GEN: {status} (N_gen = {chi_eff}/{divisor} = {n_gen}, path n_gen = {expected})")
 
     def cert_c003_chi_effective(self):
-        """C003: the effective index chi_eff = 144
+        """C003: chi_eff = N_GEN_DIVISOR * n_gen with n_gen from the active path
 
-        chi_eff = 2 x sum chi(K3) = 48 n (the K3 reading: the Kummer K3
-        surfaces transverse to the n singular involutions, counted once per
-        shadow); 144 at n = 3. It is an effective index, not the Euler
-        characteristic of Y_7, which is 0 (CG.2).
+        Reads topology.mephorash_chi (chi_eff_total, summed over both
+        shadows) and compares it with N_GEN_DIVISOR * n_gen, n_gen from
+        b3_path.n_gen_report() (the ruled n_gen_source route). chi_eff =
+        2 x sum chi(K3) is the K3 reading: Kummer K3 surfaces transverse to
+        the n singular involutions, counted once per shadow. It is an
+        effective index, not the Euler characteristic of Y_7, which is 0
+        (CG.2). A non-integer path n_gen fails the gate.
 
-        This is the TOTAL over both shadows:
-            chi_eff_total = chi_eff_normal + chi_eff_mirror = 72 + 72 = 144
-
-        n_gen = chi_eff/48 = 3 then restates the ruled route n_gen = b_2/4
-        (see C002).
-
-        The former cross-check chi_eff = 6*b3 was removed (agrees only at the
-        retired anchor b_3 = 24; 258 at b_3 = 43). The gate tests chi_eff =
-        48 * (b2/4) with b2 from the active path, and fails (no default) when
-        the registry lacks the parameter.
+        The former cross-check chi_eff = 6*b3 was removed: it agrees only at
+        the retired anchor b_3 = 24. The gate fails (no default) when the
+        registry lacks the parameter.
         """
         chi = self._get_param('topology.mephorash_chi')
-        from metaphysica.simulations.PM.geometry.b3_path import resolve_path, seed_values
-        _b3, b2 = seed_values(resolve_path())
-        n_gen, rem = divmod(b2, 4)
-        expected = 48 * n_gen
+        n_gen, divisor = self._path_generation_count()
+        expected = divisor * n_gen
 
         # Fail explicitly if registry data is missing (no vacuous pass)
         if chi is None:
@@ -140,17 +135,16 @@ class CoreGates:
             print("  C003-CHI: FAILED (topology.mephorash_chi missing from registry)")
             return
 
-        # Check: chi_eff == 48 * n_gen with n_gen = b2/4 on the active path
-        # (no b3 route; b2 must be divisible by 4)
-        status = "LOCKED" if (rem == 0 and chi == expected) else "FAILED"
+        integral = n_gen == int(n_gen)
+        status = "LOCKED" if (integral and chi == expected) else "FAILED"
         self.results['C003-CHI'] = {
             "status": status,
-            "metric": f"chi_eff = {chi}, 48 * (b2/4) = {expected} (b2 = {b2})",
+            "metric": f"chi_eff = {chi}, {divisor} * n_gen = {expected} (path n_gen = {n_gen})",
             "expected": expected,
             "actual": chi,
             "sector": "FOUNDATIONAL"
         }
-        print(f"  C003-CHI: {status} (chi_eff = {chi}, expected 48*b2/4 = {expected})")
+        print(f"  C003-CHI: {status} (chi_eff = {chi}, expected {divisor}*n_gen = {expected})")
 
     def cert_c004_k_gimel(self):
         """C004: k_gimel = b3/2 + 1/pi
