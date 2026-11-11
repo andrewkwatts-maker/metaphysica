@@ -3487,6 +3487,16 @@ def run_wolfram_executor(verbose: bool = True, force: bool = False) -> bool:
 # ---------------------------------------------------------------------------
 
 
+# Statistics need the gate certificates and this build's rigor report,
+# neither of which exists yet on an empty output directory, so main() only
+# names the build steps that write them.
+VALIDATION_STATISTICS_NOTE = (
+    "Validation statistics are written by the build steps "
+    "'Build validation statistics' (--pre-rigor) and "
+    "'Refresh validation statistics from this build's rigor report'."
+)
+
+
 def main():
     """Main entry point for running all simulations."""
     import argparse
@@ -3861,12 +3871,8 @@ def main():
             force=args.wolfram_force
         )
 
-    # Statistics need the gate certificates and this build's rigor report,
-    # neither of which exists yet on an empty output directory.
     if not args.quiet:
-        print("Validation statistics are written by the build steps "
-              "'Build validation statistics' (--pre-rigor) and "
-              "'Refresh validation statistics from this build's rigor report'.")
+        print(VALIDATION_STATISTICS_NOTE)
 
     # Return exit code based on results (simulations AND validations)
     validation = output_data["validation"]
