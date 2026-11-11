@@ -4,14 +4,31 @@ Each test fails on the code before the fix:
 * R2-20 topology.orientation_sum kept source "ESTABLISHED:V21_BRIDGE_REDUCTION"
   while its status (ANSATZ) and description said it is a typed count of the
   retired TCS #187 reading, so the source label claimed more than the row does.
+* Review of R2-20: the fix repeated the comment of ORIENTATION_SUM_SOURCE at
+  its use, growing _load_theory_constants from 108 to 110 lines.
+* Review of R2-20: with the INPUT: source the override guard of the registry
+  is as before only when the established loader sets the row first; over a
+  row already set with status ESTABLISHED the loader is now refused (the test
+  of that order fails on the code before R2-20, where the prefix let it pass).
 """
+import ast
+import inspect
+import re
+
 import pytest
 
 from metaphysica.simulations.base import established
 from metaphysica.simulations.base.established import (
     UNMEASURED_STATUSES, EstablishedPhysics)
+from metaphysica.simulations.base.registry import PMRegistry
 
 ORIENTATION_SUM = "topology.orientation_sum"
+
+#: Lines of EstablishedPhysics._load_theory_constants, def line to last line.
+#: Measured 2026-11-11 with ast over base/established.py: 108 at a52fb71^,
+#: 110 at a52fb71 (R2-20), 108 after the review fix. The function is older
+#: than the 60-line cap; the pin stops it growing.
+LOAD_THEORY_CONSTANTS_LINES = 108
 
 
 class _Recorder:
@@ -56,3 +73,40 @@ def test_no_unmeasured_theory_row_has_an_established_source(theory_rows):
     claimed = sorted(path for path, row in unmeasured.items()
                      if row["source"].startswith("ESTABLISHED"))
     assert claimed == []
+
+
+def _function_lines(name):
+    tree = ast.parse(inspect.getsource(established))
+    found = [node for node in ast.walk(tree)
+             if isinstance(node, ast.FunctionDef) and node.name == name]
+    assert len(found) == 1, f"{name}: {len(found)} definitions"
+    return found[0].end_lineno - found[0].lineno + 1
+
+
+def test_load_theory_constants_has_not_grown():
+    assert _function_lines("_load_theory_constants") <= LOAD_THEORY_CONSTANTS_LINES
+
+
+@pytest.fixture
+def fresh_registry(monkeypatch):
+    """A registry of its own: the singleton slot is emptied, and restored after."""
+    monkeypatch.setattr(PMRegistry, "_instance", None)
+    return PMRegistry()
+
+
+def test_override_guard_passes_when_the_loader_sets_the_row_first(fresh_registry, theory_rows):
+    EstablishedPhysics._load_theory_constants(fresh_registry)
+    assert fresh_registry.get_entry(ORIENTATION_SUM).status == "ANSATZ"
+    fresh_registry.set_param(**theory_rows[ORIENTATION_SUM])  # the call of the loader, again
+    entry = fresh_registry.get_entry(ORIENTATION_SUM)
+    assert (entry.status, entry.source) == ("ANSATZ", established.ORIENTATION_SUM_SOURCE)
+
+
+def test_override_guard_refuses_the_loader_over_an_established_row(fresh_registry):
+    """The order of a registry where the row was first set as ESTABLISHED."""
+    fresh_registry.set_param(ORIENTATION_SUM, 12, source="ESTABLISHED:set_before_the_loader",
+                             status="ESTABLISHED")
+    refusal = re.escape(f"Cannot override ESTABLISHED param '{ORIENTATION_SUM}'")
+    with pytest.raises(ValueError, match=refusal):
+        EstablishedPhysics._load_theory_constants(fresh_registry)
+    assert fresh_registry.get_entry(ORIENTATION_SUM).status == "ESTABLISHED"

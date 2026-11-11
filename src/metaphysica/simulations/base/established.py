@@ -583,8 +583,6 @@ class EstablishedPhysics:
                 value=12,
                 uncertainty=0.5,
                 units="dimensionless",
-                # A typed input, not an established result: the source says so
-                # (INPUT:, as consciousness.coherence_fraction), matching the status.
                 source=ORIENTATION_SUM_SOURCE,
                 status="ANSATZ",  # count of the retired TCS #187 reading, not derived on the adopted path: out of validation
                 description=("Orientation sum from v21 dual-shadow bridge - determines flux winding in theta_23. "
