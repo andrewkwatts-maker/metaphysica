@@ -11,13 +11,16 @@ The build runs it twice:
    directory's statistical_rigor_report.json; a missing report or one with no
    scored rows raises.
 
-Statistics computed:
-- within_1sigma: count of predictions within 1 sigma of experimental values
-- within_2sigma: count within 2 sigma
-- exact_matches: count where sigma_deviation = 0.0
-- total_predictions: total verifiable predictions
-- chi_squared_reduced: computed from sigma deviations
-- degrees_of_freedom: number of verified gates - fitted parameters
+Statistics computed (default pass, over the report's scored rows):
+- within_1sigma, within_2sigma: scored rows with |sigma| <= 1 and <= 2
+- exact_matches: scored rows with sigma == 0.0
+- total_predictions: the number of scored rows
+- compute_statistics also returns chi_squared = sum(sigma^2) and its own
+  degrees_of_freedom = max(1, scored rows - DOF_SUBTRAHEND_ANSATZ); in
+  statistics.json framework_statistics.chi_squared, chi_squared_rows and
+  degrees_of_freedom are then overwritten by headline_stats from the rigor
+  report (all_scoring_rows chi-squared and n, edof_analysis.effective_dof,
+  an ANSATZ flagged by degrees_of_freedom_is_ansatz).
 
 This ensures statistics.json is regenerated from source data, not manually edited.
 """
@@ -80,11 +83,15 @@ def extract_sigma_deviations_from_statistical_report(report_data: Dict[str, Any]
 
     These are the same rows chi2 is computed over (one per observable,
     predictions only), so the success counts and chi2 share one N.
+    A report without scored rows means the rigor validator failed: raise.
     """
-    if not report_data:
-        return []
-    return [float(row["sigma"])
-            for row in report_data["chi_squared_from_rows"]["scored_rows"]]
+    block = (report_data or {}).get("chi_squared_from_rows")
+    rows = block.get("scored_rows") if isinstance(block, dict) else None
+    if not rows:
+        raise ValueError(
+            f"generate_statistics: {STATISTICAL_RIGOR_FILE} has no scored rows "
+            "(chi_squared_from_rows.scored_rows); the rigor validator step failed")
+    return [float(row["sigma"]) for row in rows]
 
 
 def load_simulation_results() -> List[Dict[str, Any]]:
@@ -105,17 +112,13 @@ def load_simulation_results() -> List[Dict[str, Any]]:
 
 
 def compute_statistics(sigma_deviations: List[float]) -> Dict[str, Any]:
-    """Compute validation statistics from sigma deviations."""
+    """Success counts, chi-squared and its reduced value over the scored-row sigmas.
+
+    An empty list raises: there is no statistic over zero scored rows.
+    """
     if not sigma_deviations:
-        return {
-            "within_1sigma": 0,
-            "within_2sigma": 0,
-            "exact_matches": 0,
-            "total_predictions": 0,
-            "chi_squared_reduced": None,
-            "degrees_of_freedom": 0,
-            "note": "No sigma deviation data available"
-        }
+        raise ValueError("generate_statistics.compute_statistics: no sigma deviations "
+                         "(the rigor report has no scored rows)")
 
     # Count predictions within sigma thresholds
     within_1sigma = sum(1 for s in sigma_deviations if abs(s) <= 1.0)
@@ -123,16 +126,14 @@ def compute_statistics(sigma_deviations: List[float]) -> Dict[str, Any]:
     exact_matches = sum(1 for s in sigma_deviations if s == 0.0)
     total_predictions = len(sigma_deviations)
 
-    # Compute reduced chi-squared: sum(sigma^2) / degrees_of_freedom
-    # degrees_of_freedom = n_predictions - n_fitted_params
-    #
-    # NOTE: High sigma values indicate parameters that need geometric refinement.
-    # Do NOT cap or mask sigma - improve the formulas instead.
+    # Reduced chi-squared: sum(sigma^2) / degrees_of_freedom, where
+    # degrees_of_freedom = max(1, scored rows - DOF_SUBTRAHEND_ANSATZ).
+    # Sigma is neither capped nor masked.
     degrees_of_freedom = max(1, total_predictions - DOF_SUBTRAHEND_ANSATZ)
     chi_squared = sum(s ** 2 for s in sigma_deviations)
     chi_squared_reduced = chi_squared / degrees_of_freedom
 
-    # Count high-sigma parameters needing geometric refinement
+    # Scored rows with |sigma| > 5
     high_sigma_count = sum(1 for s in sigma_deviations if abs(s) > 5.0)
 
     return {
@@ -144,7 +145,8 @@ def compute_statistics(sigma_deviations: List[float]) -> Dict[str, Any]:
         "chi_squared_reduced": round(chi_squared_reduced, 4),
         "degrees_of_freedom": degrees_of_freedom,
         "high_sigma_count": high_sigma_count,
-        "note": "High sigma parameters need geometric refinement - see CERTIFICATES_v16_2_FINAL.json"
+        "note": ("high_sigma_count counts scored rows with |sigma| > 5; the per-row sigmas "
+                 "are in statistical_rigor_report.json (chi_squared_from_rows.scored_rows)")
     }
 
 
@@ -299,14 +301,8 @@ def _collect_sigmas(statistical_report: Dict[str, Any]) -> List[float]:
     """Sigma of each scored row of this build's statistical_rigor_report.json.
 
     The one sigma source: the success counts and the chi-squared share one N.
-    A report without scored rows means the rigor validator failed: raise.
+    A report without scored rows raises (in the extractor).
     """
-    block = statistical_report.get("chi_squared_from_rows")
-    rows = block.get("scored_rows") if isinstance(block, dict) else None
-    if not rows:
-        raise ValueError(
-            f"generate_statistics: {STATISTICAL_RIGOR_FILE} has no scored rows "
-            "(chi_squared_from_rows.scored_rows); the rigor validator step failed")
     sigmas = extract_sigma_deviations_from_statistical_report(statistical_report)
     print(f"  - Found {len(sigmas)} sigma deviations from statistical_rigor_report.json")
     return sigmas
@@ -319,11 +315,17 @@ _PRE_RIGOR_VALIDATION = {key: NOT_AVAILABLE for key in (
 
 
 def _success_rate(validation_stats: Dict[str, Any]) -> str:
-    """within_2sigma / total as a percentage; NOT_AVAILABLE before the rigor report."""
+    """within_2sigma / total as a percentage; NOT_AVAILABLE before the rigor report.
+
+    A total of zero scored rows raises.
+    """
     total = validation_stats["total_predictions"]
     if total == NOT_AVAILABLE:
         return NOT_AVAILABLE
-    rate = validation_stats["within_2sigma"] / total * 100 if total > 0 else 0.0
+    if total <= 0:
+        raise ValueError("generate_statistics._success_rate: no scored rows "
+                         f"(total_predictions={total})")
+    rate = validation_stats["within_2sigma"] / total * 100
     return f"{rate:.1f}%"
 
 
