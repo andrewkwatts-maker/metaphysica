@@ -364,12 +364,12 @@ class GauginoCondensationSimulation(SimulationBase):
                 label="(A4.3)",
                 latex=r"\varepsilon_{\text{proxy}} = \lambda_{\text{eff}}^3 \approx " + f"{cab:.4f}",
                 plain_text=f"epsilon_proxy = lambda_eff^3 ≈ {cab:.4f}",
-                category="CALIBRATED",
+                category="FALSIFIED",
                 description=(
                     "FALSIFIED. The racetrack is a calibration at the off-path seed; Y₇ has none (CG.5, CG.10). "
                     f"Cabibbo-like suppression proxy ε ≈ λ_eff³ ≈ {cab:.4f} at the "
                     "off-path seed b₃ = 24, against PDG λ_W = 0.22500 ± 0.00067 — "
-                    "344.7σ, off by roughly a factor of two. The 'promotes Cabibbo angle "
+                    f"{abs(cab - 0.22500) / 0.00067:.1f}σ, off by roughly a factor of two. The 'promotes Cabibbo angle "
                     "from CALIBRATED toward DERIVED' claim is withdrawn. Kept with its "
                     "derivation intact, with the refined and derived variants (which "
                     "also fail), so the failure stays reproducible."
