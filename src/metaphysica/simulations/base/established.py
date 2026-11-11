@@ -57,6 +57,10 @@ except ImportError as e:
 #: so it is never validated against itself.
 UNMEASURED_STATUSES = frozenset({"ANSATZ", "SPECULATIVE"})
 
+#: Source label of topology.orientation_sum: the 12 is typed in from the retired
+#: TCS #187 reading, so the label is INPUT:, never ESTABLISHED:.
+ORIENTATION_SUM_SOURCE = "INPUT:TCS187_RETIRED_READING"
+
 
 @dataclass
 class EstablishedParameter:
@@ -579,11 +583,13 @@ class EstablishedPhysics:
                 value=12,
                 uncertainty=0.5,
                 units="dimensionless",
-                source="ESTABLISHED:V21_BRIDGE_REDUCTION",
-                status="ANSATZ",  # TCS #187 count, not derived on the adopted path: out of validation
+                # A typed input, not an established result: the source says so
+                # (INPUT:, as consciousness.coherence_fraction), matching the status.
+                source=ORIENTATION_SUM_SOURCE,
+                status="ANSATZ",  # count of the retired TCS #187 reading, not derived on the adopted path: out of validation
                 description=("Orientation sum from v21 dual-shadow bridge - determines flux winding in theta_23. "
-                             "Typed TCS #187 count (seed_24), not derived on the adopted path"),
-                eml_description="EML: eml_scalar(12) — orientation sum from v21 dual-shadow bridge (12 bridge pairs, geometric input)"
+                             "Typed count of the retired TCS #187 reading (seed_24), not derived on the adopted path"),
+                eml_description="EML: eml_scalar(12) — orientation sum from v21 dual-shadow bridge (12 bridge pairs; typed input of the retired TCS #187 reading)"
             ),
             # Consciousness parameters for Appendix M (Speculative Extensions)
             EstablishedParameter(
