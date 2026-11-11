@@ -54,3 +54,28 @@ def test_ledger_builds_a_diagnostic_row():
                                       "source": "x"}}
     rows = pl.build_ledger(params, {}, {"rows": []}, {})["rows"]
     assert len(rows) == 1
+
+
+# PT-11: IDENTITY (three algebra.clifford_* rows, true by construction) is kept
+# at export and classed CONVENTION, so it never ships as DERIVED and the ledger
+# step does not raise UnknownLabel.
+def test_identity_is_preserved_at_export():
+    assert "IDENTITY" in _preserved_statuses()
+
+
+def test_identity_is_a_convention():
+    assert "IDENTITY" not in pl.UNCLASSED_PRESERVED_LABELS
+    assert pl.label_class("IDENTITY") == pl.CONVENTION
+
+
+def test_ledger_builds_an_identity_row_as_convention():
+    name = "algebra.clifford_g2_invariant"
+    params = {name: {"value": 1.0, "status": "IDENTITY", "source": "x",
+                     "experimental_value": 1.0, "validation_status": "PASS"}}
+    rows = pl.build_ledger(params, {}, {"rows": []}, {})["rows"]
+    assert set(rows) == {name}
+    row = rows[name]
+    assert row["label"] == "IDENTITY"
+    assert row["class"] == pl.CONVENTION
+    # An identity is never scored: a PASS against a datum is not a test of it.
+    assert row["falsifiability"]["state"] == "NOT_OBSERVABLE"

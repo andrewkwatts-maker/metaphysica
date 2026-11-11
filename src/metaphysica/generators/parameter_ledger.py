@@ -41,6 +41,9 @@ LABEL_CLASS: Dict[str, str] = {
     "SYSTEM": CONVENTION, "VALIDATION": CONVENTION, "COMPUTED": CONVENTION,
     # A diagnostic output is bookkeeping, never a prediction.
     "DIAGNOSTIC": CONVENTION,
+    # An identity is true by construction: bookkeeping, never a prediction,
+    # and never counted as agreement.
+    "IDENTITY": CONVENTION,
     "DERIVED": CHAIN, "GEOMETRIC": CHAIN, "PREDICTED": CHAIN,
     "PREDICTIONS": CHAIN, "TOPOLOGY_CANDIDATE": CHAIN, "TERMINAL": CHAIN,
     "ANCHORED": CHAIN, "FALSIFIED": CHAIN, "EXACT": CHAIN, "FOUNDATIONAL": CHAIN,
