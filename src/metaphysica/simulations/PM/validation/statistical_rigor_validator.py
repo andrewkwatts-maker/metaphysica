@@ -117,6 +117,17 @@ class StatisticalRigorValidator:
         out = fit_partition.chi_squared(rows)
         return out["chi_squared"], out["n"]
 
+    def _require_scored_rows(self) -> None:
+        """Raise when there is no scored row: chi^2 / N would divide by zero."""
+        if self.dof_claimed:
+            return
+        raise ValueError(
+            f"{self.validation_file} has no scored prediction rows (a row "
+            "with an experimental value, an uncertainty above zero, a "
+            "measured or central_value bound and a scoring verdict), so "
+            "reduced chi^2 = chi^2 / N and the p-values cannot be computed. "
+            "Run the validation step that writes scored rows first.")
+
     @staticmethod
     def _adapt_validation_rows(data):
         """Per-parameter rows from validation_report.json.
@@ -274,6 +285,7 @@ class StatisticalRigorValidator:
         Returns:
             Dictionary with chi-squared, EDOF, reduced chi-squared, p-value, status
         """
+        self._require_scored_rows()
         edof = self.calculate_effective_dof()
         chi_sq = self.chi_sq  # Use original chi-squared (NO theory uncertainty injection)
         reduced_chi_sq = chi_sq / edof
@@ -366,6 +378,7 @@ class StatisticalRigorValidator:
     def generate_report(self) -> Dict[str, Any]:
         """Generate the statistical rigor report; every number is from rows."""
         logger.info("Generating statistical rigor report...")
+        self._require_scored_rows()
         edof_results = self.calculate_p_value_with_edof()
         fit = fit_partition.fit_summary(self.validation_results)
         part = self.partition
