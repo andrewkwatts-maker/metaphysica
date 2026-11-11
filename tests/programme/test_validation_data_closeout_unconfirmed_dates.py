@@ -51,3 +51,28 @@ def test_missing_planned_year_raises(oracle):
     o.exclusion_thresholds = {"IAXO_2028": oracle.exclusion_thresholds["IAXO_2028"]}
     with pytest.raises(KeyError):
         o._get_primary_experiment("ALP_Principia_Metric")
+
+
+def test_timeline_years_are_read_from_the_limits_table(oracle):
+    limits = oracle.exclusion_thresholds
+    keys = {"BabyIAXO": "BabyIAXO_2025", "ALPS-II": "ALPS_II_2026",
+            "Hyper-K": "Hyper_K_2027", "IAXO": "IAXO_2028",
+            "DUNE": "DUNE_2028", "HL-LHC": "HL_LHC_2029"}
+    for row in oracle.experimental_timeline:
+        assert row["year"] == limits[keys[row["experiment"]]]["first_results_expected"]
+
+
+def test_timeline_follows_a_changed_planned_year(oracle):
+    o = fo.FalsificationOracle.__new__(fo.FalsificationOracle)
+    o.exclusion_thresholds = {k: dict(v) for k, v in oracle.exclusion_thresholds.items()}
+    o.exclusion_thresholds["BabyIAXO_2025"]["first_results_expected"] = 2031
+    o.exclusion_thresholds["IAXO_2028"]["first_results_expected"] = 2034
+    years = {r["experiment"]: r["year"] for r in o._load_timeline()}
+    assert (years["BabyIAXO"], years["IAXO"]) == o._alp_planned_years() == (2031, 2034)
+
+
+def test_alps_ii_status_is_labelled_unconfirmed(oracle):
+    entry = oracle.exclusion_thresholds["ALPS_II_2026"]
+    assert entry.get("source_unverified")
+    rows = [r for r in oracle.experimental_timeline if r["experiment"] == "ALPS-II"]
+    assert len(rows) == 1 and rows[0].get("source_unverified")

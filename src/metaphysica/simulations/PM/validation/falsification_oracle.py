@@ -47,6 +47,12 @@ BABYIAXO_SCHEDULE_UNVERIFIED = (
     "planned first-results year from no cited source; BabyIAXO's current "
     "schedule is unconfirmed (to confirm against the collaboration)")
 
+#: ALPS-II's "Commissioning" status and 2026 first-results year are from no
+#: cited source; every entry that quotes them carries this.
+ALPS_II_STATUS_UNVERIFIED = (
+    "status and first-results year from no cited source; ALPS-II's current "
+    "run status is unconfirmed (to confirm against the collaboration)")
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("FalsificationOracle")
 
@@ -223,8 +229,9 @@ class FalsificationOracle:
                 "coupling_limit_GeV_inv": 2.0e-11,  # 2×10⁻¹¹ GeV⁻¹
                 "mass_range_eV": (1e-4, 1e-2),  # 0.1 meV to 10 meV
                 "experiment_type": "Light-shining-through-wall",
-                "status": "Commissioning",
-                "first_results_expected": 2026
+                "status": "Commissioning (as written; unconfirmed)",
+                "first_results_expected": 2026,
+                "source_unverified": ALPS_II_STATUS_UNVERIFIED
             },
 
             # Eot-Wash (Sub-millimeter gravity tests)
@@ -267,16 +274,20 @@ class FalsificationOracle:
     def _load_timeline(self) -> List[Dict[str, Any]]:
         """Planned experimental timeline for falsification opportunities.
 
-        The BabyIAXO year is a planned year, labelled unconfirmed with
-        ``source_unverified``."""
+        Every year is read from the limits table (``first_results_expected``),
+        so the two cannot drift; a missing entry raises KeyError. The BabyIAXO
+        and ALPS-II years are labelled unconfirmed with ``source_unverified``."""
+        limits = self.exclusion_thresholds
+        baby, iaxo = self._alp_planned_years()
         return [
-            {"year": 2025, "experiment": "BabyIAXO", "test": "ALP Principia Metric (first test; planned year unconfirmed)", "priority": "CRITICAL",
+            {"year": baby, "experiment": "BabyIAXO", "test": "ALP Principia Metric (first test; planned year unconfirmed)", "priority": "CRITICAL",
              "source_unverified": BABYIAXO_SCHEDULE_UNVERIFIED},
-            {"year": 2026, "experiment": "ALPS-II", "test": "ALP coupling"},
-            {"year": 2027, "experiment": "Hyper-K", "test": "Proton decay"},
-            {"year": 2028, "experiment": "IAXO", "test": "ALP Principia Metric (definitive; planned year, check status)", "priority": "CRITICAL"},
-            {"year": 2028, "experiment": "DUNE", "test": "Sterile neutrino"},
-            {"year": 2029, "experiment": "HL-LHC", "test": "KK gravitons"}
+            {"year": limits["ALPS_II_2026"]["first_results_expected"], "experiment": "ALPS-II", "test": "ALP coupling",
+             "source_unverified": ALPS_II_STATUS_UNVERIFIED},
+            {"year": limits["Hyper_K_2027"]["first_results_expected"], "experiment": "Hyper-K", "test": "Proton decay"},
+            {"year": iaxo, "experiment": "IAXO", "test": "ALP Principia Metric (definitive; planned year, check status)", "priority": "CRITICAL"},
+            {"year": limits["DUNE_2028"]["first_results_expected"], "experiment": "DUNE", "test": "Sterile neutrino"},
+            {"year": limits["HL_LHC_2029"]["first_results_expected"], "experiment": "HL-LHC", "test": "KK gravitons"}
         ]
 
     def evaluate_risk_profile(self) -> Dict[str, Any]:
