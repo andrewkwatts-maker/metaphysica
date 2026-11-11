@@ -129,66 +129,6 @@ class StatisticalRigorValidator:
             "Run the validation step that writes scored rows first.")
 
     @staticmethod
-    def _adapt_validation_rows(data):
-        """Return the two-sided, scoring rows of a validation report as a list.
-
-        Returns ``data["sigma_table"]`` unchanged when that legacy key is
-        present and non-empty. Otherwise it reads ``data["validations"]`` and
-        returns one dict per entry that has a value, an experimental value,
-        an experimental uncertainty above zero, a verdict outside
-        ``NON_SCORING_VERDICTS`` and a bound in ``TWO_SIDED_BOUND_TYPES``,
-        with the fields renamed:
-
-            predicted_value  <- value
-            uncertainty      <- experimental_uncertainty
-            status           <- verdict
-
-        The constructor does not call this; it uses
-        :meth:`_adapt_report_rows`, which keeps every row and marks
-        ``comparable``.
-        """
-        legacy = data.get("sigma_table")
-        if legacy:
-            return legacy
-
-        rows = []
-        for entry in data.get("validations", []):
-            uncertainty = entry.get("experimental_uncertainty")
-            predicted = entry.get("value")
-            experimental = entry.get("experimental_value")
-            if uncertainty in (None, 0) or predicted is None or experimental is None:
-                continue
-            if entry.get("verdict") in NON_SCORING_VERDICTS:
-                continue
-            # One-sided bounds carry an uncertainty but no sigma: the
-            # registry declines to compute one because "how far above the
-            # floor" is not a residual. Including them would contribute
-            # ((value - bound)/unc)^2 terms that mean nothing --
-            # gauge.M_GUT_GEOMETRIC sits 20x above its inferred 1e15 GeV
-            # floor, which is a PASS, not a 23-sigma discrepancy. Same test
-            # the registry uses when deciding to compute sigma at all.
-            if entry.get("bound_type") not in TWO_SIDED_BOUND_TYPES:
-                continue
-            rows.append({
-                "path": entry.get("path"),
-                # "name" repeats "path" for readers that key rows by name.
-                "name": entry.get("path"),
-                "status": entry.get("verdict"),
-                "predicted_value": predicted,
-                "experimental_value": experimental,
-                "uncertainty": uncertainty,
-                "sigma": entry.get("sigma"),
-                # The REGISTRY label, distinct from the verdict. A row can
-                # be FALSIFIED (the framework has withdrawn the claim) and
-                # still FAIL (it is scored and it misses). Both are kept:
-                # fit_partition.fit_summary reports the fit with and
-                # without the rows recorded as FALSIFIED.
-                "registry_status": entry.get("registry_status"),
-                "bound_type": entry.get("bound_type"),
-            })
-        return rows
-
-    @staticmethod
     def _adapt_report_rows(data):
         """Every report row in the validator's field names, with ``comparable``.
 

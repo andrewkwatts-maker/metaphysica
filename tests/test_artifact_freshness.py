@@ -319,7 +319,9 @@ def test_validation_report_rows_reach_the_rigor_validator(tmp_path):
     if shipped.is_file():
         data = json.loads(shipped.read_text(encoding="utf-8"))
         if data.get("generator") != "placeholder":
-            assert StatisticalRigorValidator._adapt_validation_rows(data), (
+            shipped_validator = StatisticalRigorValidator(
+                validation_file=str(shipped))
+            assert shipped_validator.validation_results, (
                 "a published, non-placeholder report reaches the validator "
                 "with no rows -- regenerate it or fix the adapter"
             )
@@ -333,11 +335,11 @@ def test_rigor_validator_still_honours_a_legacy_sigma_table():
 
     legacy = {"sigma_table": [{"status": "PASS", "predicted_value": 1.0,
                                "experimental_value": 1.0, "uncertainty": 0.1}]}
-    rows = StatisticalRigorValidator._adapt_validation_rows(legacy)
-    assert rows == legacy["sigma_table"]
+    rows = StatisticalRigorValidator._adapt_report_rows(legacy)
+    assert rows == [dict(legacy["sigma_table"][0], comparable=True)]
 
 
-def test_rows_without_an_uncertainty_are_dropped_not_zero_filled():
+def test_rows_without_an_uncertainty_are_dropped_not_zero_filled(tmp_path):
     """INPUT and UNBOUNDED rows have nothing to compare against.
 
     Zero-filling would inject spurious infinite-sigma contributions into the
@@ -360,5 +362,7 @@ def test_rows_without_an_uncertainty_are_dropped_not_zero_filled():
          "bound_type": "measured",
          "experimental_value": None, "experimental_uncertainty": 0.5},
     ]}
-    rows = StatisticalRigorValidator._adapt_validation_rows(data)
-    assert [r["path"] for r in rows] == ["a"]
+    report = tmp_path / "validation_report.json"
+    report.write_text(json.dumps(data), encoding="utf-8")
+    validator = StatisticalRigorValidator(validation_file=str(report))
+    assert [r["path"] for r in validator.validation_results] == ["a"]

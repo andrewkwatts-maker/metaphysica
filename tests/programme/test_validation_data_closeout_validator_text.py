@@ -55,7 +55,6 @@ def test_named_methods_really_are_gone(name):
     ("calculate_effective_dof", ("Return 3",)),
     ("free_variable_count", ("Return", "published_free_variable_count")),
     ("calculate_p_value_with_edof", ("Return", "p_value", "status")),
-    ("_adapt_validation_rows", ("Return", "sigma_table", "validations")),
 ])
 def test_docstring_names_what_the_method_returns(method, words):
     doc = getattr(CLASS, method).__doc__
