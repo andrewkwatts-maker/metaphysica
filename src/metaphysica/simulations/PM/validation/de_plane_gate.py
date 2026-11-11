@@ -3,19 +3,27 @@
 
 WHY THIS EXISTS
 ---------------
-The outstanding-issues register reports the dark-energy tension as TWO
-separate headlines: w0 = -23/24 at 3.62 sigma and wa = -1/sqrt(24) at 2.98
-sigma against DESI DR2. But the DR2 (w0, wa) posterior is a strongly
-anti-correlated ellipse, and two 1D sigmas computed from correlated marginals
-DOUBLE-COUNT a single displacement. The honest statement is one number: the
-Mahalanobis distance of the framework's point in the 2D plane.
+The registered point is (w0, wa) from CANON: w0 = -(n-1)/n with n set by the
+dark_energy_betti fork, wa = -1/sqrt(b3) at the adopted b3. Scored one at a
+time against DESI DR2 it gives two 1D sigmas. But the DR2 (w0, wa) posterior
+is a strongly anti-correlated ellipse, and two 1D sigmas computed from
+correlated marginals DOUBLE-COUNT a single displacement. The honest statement
+is one number: the Mahalanobis distance of the point in the 2D plane.
+
+The anchors are read from the experimental loader (desi_2025_constraints.json).
+DESI gives asymmetric errors on wa; each coordinate is scaled by the error on
+the side of the central value the point lies on, as the scored
+cosmology.wa_derived row does, so the gate and the row report one wa tension.
 
 The correlation coefficient rho is not published as a scalar, so this gate
 does not invent one. It scans the plausible range and reports the verdict's
-sensitivity. The conclusion is rho-robust: the framework point sits at
-roughly 3.2-3.4 sigma equivalent for every rho in [-0.95, -0.60], which
-neither of the 1D numbers correctly conveys (uncorrelated 2D would claim
-4.3 sigma; the marginals suggest 3.6 + 3.0 as if independent).
+sensitivity; every sigma it quotes (the marginals, the scan band, the
+uncorrelated 2D value) is computed in write_report, never typed here.
+
+STATUS: only predictions are scored. CANON gives w0 the status INPUT under a
+frozen dark_energy_betti option (n is a typed integer, not the live b3) and
+PREDICTED under b3_live. With an INPUT w0 the plane distance is reported as
+INPUT_CONDITIONED and only the 1D wa marginal is the scored prediction.
 
 This REPLACES anchor-shopping. An earlier advertised "0.027 sigma agreement"
 rested on an anchor whose attribution could not be verified; the register
@@ -23,9 +31,9 @@ demands a decision between defending that anchor and accepting the honest
 headline. This gate is the honest headline, computed rather than chosen.
 
 KILL CONDITION (stated in advance, per the falsification-first posture):
-if future BAO+CMB+SNe releases tighten to w0 < -0.99 or push the 2D distance
-past 5 sigma under this same scan, w0 = -23/24 is dead -- there is no knob to
-turn, which is precisely what makes it worth testing.
+if future BAO+CMB+SNe releases tighten to w0 below _KILL_W0 or push the 2D
+distance past _KILL_SIGMA under this same scan, the registered point is dead
+-- there is no knob to turn, which is precisely what makes it worth testing.
 
 ALSO HERE: the neutrino-mass-sum conditional. The framework's mass sums
 exceed the DESI LCDM bound but sit inside the relaxed bound that applies in
@@ -41,32 +49,35 @@ import math
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 __all__ = [
     "PlaneVerdict",
     "framework_point",
+    "framework_status",
+    "anchors",
+    "standardized",
+    "mahalanobis",
     "chi2_at_rho",
     "sigma_equivalent",
     "scan_rho",
+    "plane_verdict",
     "mass_sum_rows",
+    "build_payload",
     "write_report",
     "main",
 ]
-
-# ── DESI DR2 anchors (inline with source attribution, per SSOT policy) ──────
-#: w0waCDM best fit, DESI DR2 BAO + CMB + DESY5. Source: DESI DR2 (2025);
-#: identical numbers quoted in docs/OUTSTANDING_ISSUES.md section 1.2.
-_W0_OBS = -0.752
-_W0_SIG = 0.057
-#: wa best fit and symmetrised sigma (+0.23 / -0.20). Same source.
-_WA_OBS = -0.86
-_WA_SIG = 0.215
 
 #: rho scan bounds. The DR2 (w0, wa) contour is strongly anti-correlated;
 #: the exact coefficient needs the public chain, so the verdict is reported
 #: across the plausible band rather than at an invented point value.
 _RHO_SCAN = [-0.95, -0.90, -0.85, -0.80, -0.75, -0.70, -0.65, -0.60]
+#: A scan band narrower than this (in sigma) is called rho-robust.
+_RHO_ROBUST_SPREAD = 0.5
+#: Kill thresholds stated in advance (not fitted): a tightened w0 below
+#: this value, or a 2D distance past this many sigma, kills the point.
+_KILL_W0 = -0.99
+_KILL_SIGMA = 5.0
 
 #: DESI 2024 LCDM neutrino-mass bound (eV). Source: DESI 2024 VI.
 _SUM_MNU_LCDM_BOUND = 0.072
@@ -99,14 +110,54 @@ def framework_point() -> Dict[str, float]:
     }
 
 
+def framework_status() -> Dict[str, Dict[str, str]]:
+    """CANON status and form of each coordinate (INPUT or PREDICTED for w0)."""
+    from metaphysica.simulations.core.canonical_values import CANON
+
+    return {key: {"status": CANON[key]["status"], "form": CANON[key]["form"]}
+            for key in ("w0", "wa")}
+
+
+def anchors(point: Optional[Dict[str, float]] = None
+            ) -> Dict[str, Tuple[float, float]]:
+    """(central value, sigma) of DESI DR2 w0 and wa from the loader.
+
+    sigma is the error on the side of the central value the point lies on
+    (ExperimentalValue.uncertainty_toward), the convention of the scored
+    cosmology.wa_derived row.
+    """
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+
+    p = point or framework_point()
+    loader = get_loader()
+    out = {}
+    for key in ("w0", "wa"):
+        ev = loader.get_desi(key)
+        out[key] = (float(ev.value), float(ev.uncertainty_toward(p[key])))
+    return out
+
+
+def standardized(point: Optional[Dict[str, float]] = None) -> Tuple[float, float]:
+    """(u, v): the point's offsets from the anchors in units of their sigma."""
+    p = point or framework_point()
+    a = anchors(p)
+    return ((p["w0"] - a["w0"][0]) / a["w0"][1],
+            (p["wa"] - a["wa"][0]) / a["wa"][1])
+
+
+def mahalanobis(u: float, v: float, rho: float) -> float:
+    """Chi-square (2 dof) of standardized offsets (u, v) at correlation rho."""
+    if not -1.0 < rho < 1.0:
+        raise ValueError(f"correlation must be in (-1, 1), got {rho}")
+    return (u * u - 2.0 * rho * u * v + v * v) / (1.0 - rho * rho)
+
+
 def chi2_at_rho(rho: float, point: Optional[Dict[str, float]] = None) -> float:
     """Mahalanobis chi-square (2 dof) of the framework point at given rho."""
     if not -1.0 < rho < 1.0:
         raise ValueError(f"correlation must be in (-1, 1), got {rho}")
-    p = point or framework_point()
-    u = (p["w0"] - _W0_OBS) / _W0_SIG
-    v = (p["wa"] - _WA_OBS) / _WA_SIG
-    return (u * u - 2.0 * rho * u * v + v * v) / (1.0 - rho * rho)
+    u, v = standardized(point)
+    return mahalanobis(u, v, rho)
 
 
 def sigma_equivalent(chi2: float) -> float:
@@ -127,15 +178,31 @@ def sigma_equivalent(chi2: float) -> float:
     return (lo + hi) / 2.0
 
 
-def scan_rho() -> List[PlaneVerdict]:
+def scan_rho(point: Optional[Dict[str, float]] = None) -> List[PlaneVerdict]:
+    u, v = standardized(point)
     out = []
     for rho in _RHO_SCAN:
-        c = chi2_at_rho(rho)
+        c = mahalanobis(u, v, rho)
         out.append(PlaneVerdict(
             rho=rho, chi2=c, p_value=math.exp(-c / 2.0),
             sigma_equivalent=sigma_equivalent(c),
         ))
     return out
+
+
+def plane_verdict(w0_status: str, sigmas: List[float]) -> str:
+    """The plane verdict, computed from the w0 status and the scan band.
+
+    An INPUT w0 is not a prediction, so the plane distance is only
+    INPUT_CONDITIONED. With a PREDICTED w0 the verdict names the floor of the
+    smallest scanned sigma and whether the band is narrower than
+    _RHO_ROBUST_SPREAD (ROBUST) or not (RHO_DEPENDENT).
+    """
+    if w0_status != "PREDICTED":
+        return "INPUT_CONDITIONED"
+    lo, hi = min(sigmas), max(sigmas)
+    robust = hi - lo < _RHO_ROBUST_SPREAD
+    return "TENSION_%dSIGMA_%s" % (int(lo), "ROBUST" if robust else "RHO_DEPENDENT")
 
 
 def _registry_params() -> Optional[Dict[str, Any]]:
@@ -183,83 +250,110 @@ def mass_sum_rows() -> List[Dict[str, Any]]:
     return rows
 
 
+def _kill_condition(status: Dict[str, Dict[str, str]]) -> str:
+    return (
+        f"w0 < {_KILL_W0} in a future tightened fit, or 2D distance past "
+        f"{_KILL_SIGMA:g} sigma under this same scan, kills the registered point "
+        f"(w0 = {status['w0']['form']}, status {status['w0']['status']}; "
+        f"wa = {status['wa']['form']}, status {status['wa']['status']}) outright"
+    )
+
+
+def _note(u: float, v: float, sigmas: List[float], uncorrelated: float,
+          status: Dict[str, Dict[str, str]]) -> str:
+    lo, hi = min(sigmas), max(sigmas)
+    band = ("rho-robust" if hi - lo < _RHO_ROBUST_SPREAD else "rho-dependent")
+    text = (
+        f"One number instead of two correlated ones: the 1D marginals "
+        f"{abs(u):.2f}-sigma (w0) and {abs(v):.2f}-sigma (wa) double-count a "
+        f"single displacement. In the 2D plane the point sits at "
+        f"{lo:.2f}-{hi:.2f} sigma equivalent across the scanned correlation "
+        f"band ({band}, spread {hi - lo:.2f} sigma; uncorrelated 2D would "
+        f"read {uncorrelated:.2f}). The exact rho awaits the public DR2 chain. "
+    )
+    w0 = status["w0"]
+    if w0["status"] != "PREDICTED":
+        return text + (
+            f"w0 = {w0['form']} has CANON status {w0['status']} on this path: "
+            f"it is not scored as a prediction, so the plane distance is "
+            f"INPUT_CONDITIONED and only wa ({abs(v):.2f}-sigma) is scored.")
+    return text + "Both coordinates are PREDICTED on this path."
+
+
+def build_payload() -> Dict[str, Any]:
+    """The report payload; every sigma and text number is computed here."""
+    point = framework_point()
+    status = framework_status()
+    a = anchors(point)
+    u, v = standardized(point)
+    scan = scan_rho(point)
+    sigmas = [s.sigma_equivalent for s in scan]
+    uncorrelated = sigma_equivalent(u * u + v * v)
+    mass_rows = mass_sum_rows()
+    w0_scored = status["w0"]["status"] == "PREDICTED"
+    return {
+        "schema_version": 1,
+        "framework_point": point,
+        "framework_status": status,
+        "anchors": {"w0": list(a["w0"]), "wa": list(a["wa"]),
+                    "source": "DESI DR2 BAO+CMB+DESY5 (2025), "
+                              "desi_2025_constraints.json; sigma on the "
+                              "side of the point"},
+        "one_d_marginals_sigma": {"w0": abs(u), "wa": abs(v)},
+        "uncorrelated_2d_sigma": uncorrelated,
+        "rho_scan": [asdict(s) for s in scan],
+        "sigma_range": [min(sigmas), max(sigmas)],
+        "verdict": plane_verdict(status["w0"]["status"], sigmas),
+        "scored": "plane" if w0_scored else "wa",
+        "scored_sigma": min(sigmas) if w0_scored else abs(v),
+        "kill_condition": _kill_condition(status),
+        "mass_sum_conditional": mass_rows,
+        "count": 1 + len(mass_rows),
+        "n_pass": 0,
+        "n_fail": sum(1 for r in mass_rows if r.get("under_lcdm") == "FAIL"),
+        "note": _note(u, v, sigmas, uncorrelated, status),
+    }
+
+
 def write_report(out_path: Optional[Path] = None) -> Path:
     if out_path is None:
         raw = os.environ.get("METAPHYSICA_OUT")
         base = Path(raw).resolve() if raw else Path(__file__).resolve().parents[5]
         out_path = base / "AutoGenerated" / "de_plane_gate.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
-
-    point = framework_point()
-    scan = scan_rho()
-    sigmas = [s.sigma_equivalent for s in scan]
-    u = (point["w0"] - _W0_OBS) / _W0_SIG
-    v = (point["wa"] - _WA_OBS) / _WA_SIG
-    mass_rows = mass_sum_rows()
-    mass_fails_lcdm = sum(
-        1 for r in mass_rows if r.get("under_lcdm") == "FAIL"
-    )
-
-    payload: Dict[str, Any] = {
-        "schema_version": 1,
-        "framework_point": point,
-        "anchors": {"w0": [_W0_OBS, _W0_SIG], "wa": [_WA_OBS, _WA_SIG],
-                    "source": "DESI DR2 BAO+CMB+DESY5 (2025)"},
-        "one_d_marginals_sigma": {"w0": abs(u), "wa": abs(v)},
-        "uncorrelated_2d_sigma": sigma_equivalent(u * u + v * v),
-        "rho_scan": [asdict(s) for s in scan],
-        "sigma_range": [min(sigmas), max(sigmas)],
-        "verdict": "TENSION_3SIGMA_ROBUST",
-        "kill_condition": (
-            "w0 < -0.99 in a future tightened fit, or 2D distance past "
-            "5 sigma under this same scan, kills w0 = -23/24 outright"
-        ),
-        "mass_sum_conditional": mass_rows,
-        "count": 1 + len(mass_rows),
-        "n_pass": 0,
-        "n_fail": mass_fails_lcdm,
-        "note": (
-            "One honest number instead of two correlated ones: the register's "
-            "3.62-sigma (w0) and 2.98-sigma (wa) marginals double-count a "
-            "single displacement. In the 2D plane the framework point sits at "
-            f"{min(sigmas):.2f}-{max(sigmas):.2f} sigma equivalent across the "
-            "plausible correlation band -- a genuine, rho-robust ~3-sigma "
-            "tension. This neither rescues the prediction nor overstates it. "
-            "The exact rho awaits the public DR2 chain; the conclusion does "
-            "not depend on it."
-        ),
-    }
     out_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(build_payload(), indent=2, ensure_ascii=False), encoding="utf-8"
     )
     return out_path
 
 
 def main() -> int:
-    point = framework_point()
+    payload = build_payload()
+    point, a = payload["framework_point"], payload["anchors"]
+    marg = payload["one_d_marginals_sigma"]
     print("=" * 70)
     print(" DARK-ENERGY PLANE GATE -- (w0, wa) against DESI DR2, rho scan")
     print("=" * 70)
     print(f"  framework point : w0 = {point['w0']:+.6f}  wa = {point['wa']:+.6f}")
-    print(f"  DR2 anchors     : w0 = {_W0_OBS} +/- {_W0_SIG}   "
-          f"wa = {_WA_OBS} +/- {_WA_SIG}")
-    u = (point["w0"] - _W0_OBS) / _W0_SIG
-    v = (point["wa"] - _WA_OBS) / _WA_SIG
-    print(f"  1D marginals    : |u| = {abs(u):.2f} sigma (w0)   "
-          f"|v| = {abs(v):.2f} sigma (wa)   <- double-counted")
-    print(f"  uncorrelated 2D : {sigma_equivalent(u*u + v*v):.2f} sigma "
+    print(f"  CANON status    : w0 {payload['framework_status']['w0']['status']}"
+          f"   wa {payload['framework_status']['wa']['status']}")
+    print(f"  DR2 anchors     : w0 = {a['w0'][0]} +/- {a['w0'][1]}   "
+          f"wa = {a['wa'][0]} +/- {a['wa'][1]} (side of the point)")
+    print(f"  1D marginals    : |u| = {marg['w0']:.2f} sigma (w0)   "
+          f"|v| = {marg['wa']:.2f} sigma (wa)   <- double-counted")
+    print(f"  uncorrelated 2D : {payload['uncorrelated_2d_sigma']:.2f} sigma "
           "<- ignores the ellipse")
     print()
     print("   rho     chi2    sigma-equivalent")
-    for s in scan_rho():
-        print(f"  {s.rho:+.2f}   {s.chi2:6.2f}    {s.sigma_equivalent:.2f}")
-    sigmas = [s.sigma_equivalent for s in scan_rho()]
+    for s in payload["rho_scan"]:
+        print(f"  {s['rho']:+.2f}   {s['chi2']:6.2f}    {s['sigma_equivalent']:.2f}")
+    lo, hi = payload["sigma_range"]
     print()
-    print(f"  VERDICT: {min(sigmas):.2f}-{max(sigmas):.2f} sigma across the "
-          "scan -- a rho-robust ~3-sigma tension")
+    print(f"  VERDICT: {payload['verdict']} ({lo:.2f}-{hi:.2f} sigma across "
+          f"the scan; scored: {payload['scored']})")
     print()
     print("  Neutrino mass-sum conditional:")
-    for r in mass_sum_rows():
+    for r in payload["mass_sum_conditional"]:
         if r.get("parameter") is None:
             print(f"    {r['status']}: {r['note']}")
             continue

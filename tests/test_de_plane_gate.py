@@ -14,11 +14,10 @@ import math
 import pytest
 
 from metaphysica.simulations.PM.validation.de_plane_gate import (
+    _RHO_ROBUST_SPREAD,
     _RHO_SCAN,
-    _W0_OBS,
-    _W0_SIG,
-    _WA_OBS,
-    _WA_SIG,
+    anchors,
+    build_payload,
     chi2_at_rho,
     framework_point,
     mass_sum_rows,
@@ -31,12 +30,8 @@ from metaphysica.simulations.PM.validation.de_plane_gate import (
 # ── the framework point is the registered one, not literals ─────────────────
 
 
-def _registered_uv():
-    """(u, v) of the registered (w0, wa) against the DR2 anchors.
-
-    w0 = -(n-1)/n with n from the dark_energy_betti fork reader; wa =
-    -1/sqrt(b3) with b3 from the seed reader. Nothing typed.
-    """
+def _registered_point():
+    """(w0, wa) from the fork reader (n) and the seed reader (b3), not CANON."""
     from metaphysica.simulations.PM.cosmology.late_time_routes import (
         de_betti_n, resolve_de_betti,
     )
@@ -44,30 +39,42 @@ def _registered_uv():
         resolve_path, seed_values,
     )
 
-    n = de_betti_n(resolve_de_betti())
     b3 = seed_values(resolve_path())[0]
-    u = (-(n - 1) / n - _W0_OBS) / _W0_SIG
-    v = (-1.0 / math.sqrt(b3) - _WA_OBS) / _WA_SIG
+    option = resolve_de_betti()
+    n = b3 if option == "b3_live" else de_betti_n(option)
+    return {"w0": -(n - 1) / n, "wa": -1.0 / math.sqrt(b3)}
+
+
+def _registered_uv():
+    """(u, v) of the registered (w0, wa) against the loaded DESI DR2 anchors,
+    each scaled by the error on the side of the point. Nothing typed."""
+    from metaphysica.simulations.data.experimental_data_loader import get_loader
+
+    p = _registered_point()
+    w0, wa = get_loader().get_desi("w0"), get_loader().get_desi("wa")
+    u = (p["w0"] - w0.value) / w0.uncertainty_toward(p["w0"])
+    v = (p["wa"] - wa.value) / wa.uncertainty_toward(p["wa"])
     return u, v
 
 
-def test_point_is_the_registered_point():
-    from metaphysica.simulations.core.canonical_values import CANON
+def _chi2(u, v, rho):
+    return (u * u - 2.0 * rho * u * v + v * v) / (1.0 - rho * rho)
 
+
+def test_point_is_the_registered_point():
     p = framework_point()
-    assert p["w0"] == pytest.approx(CANON["w0"]["value"])
-    assert p["wa"] == pytest.approx(CANON["wa"]["value"])
+    expected = _registered_point()
+    assert p["w0"] == pytest.approx(expected["w0"], abs=1e-12)
+    assert p["wa"] == pytest.approx(expected["wa"], abs=1e-12)
 
 
 def test_marginals_match_the_registered_inputs():
     """|u| and |v| are the 1D numbers of the registered point, reproduced
     here so the double-counting claim is checkable."""
-    p = framework_point()
-    u = (p["w0"] - _W0_OBS) / _W0_SIG
-    v = (p["wa"] - _WA_OBS) / _WA_SIG
+    payload = build_payload()
     eu, ev = _registered_uv()
-    assert u == pytest.approx(eu, abs=1e-9)
-    assert v == pytest.approx(ev, abs=1e-9)
+    assert payload["one_d_marginals_sigma"]["w0"] == pytest.approx(abs(eu), abs=1e-9)
+    assert payload["one_d_marginals_sigma"]["wa"] == pytest.approx(abs(ev), abs=1e-9)
 
 
 # ── the chi-square surface ──────────────────────────────────────────────────
@@ -75,16 +82,15 @@ def test_marginals_match_the_registered_inputs():
 
 def test_chi2_at_the_scan_minimum():
     """chi2 at each scanned rho is the Mahalanobis form of the registered
-    (u, v); the scan minimum is the smallest of them."""
+    (u, v), and the scan minimum sits at the rho the registered inputs pick."""
     u, v = _registered_uv()
-    expected = {
-        rho: (u * u - 2.0 * rho * u * v + v * v) / (1.0 - rho * rho)
-        for rho in _RHO_SCAN
-    }
+    expected = {rho: _chi2(u, v, rho) for rho in _RHO_SCAN}
     for rho, chi2 in expected.items():
         assert chi2_at_rho(rho) == pytest.approx(chi2, rel=1e-12)
-    assert min(s.chi2 for s in scan_rho()) == pytest.approx(
-        min(expected.values()), rel=1e-12)
+    scan = scan_rho()
+    best = min(scan, key=lambda s: s.chi2)
+    assert best.rho == min(expected, key=expected.get)
+    assert best.chi2 == pytest.approx(min(expected.values()), rel=1e-12)
 
 
 def test_chi2_rejects_degenerate_correlation():
@@ -95,25 +101,33 @@ def test_chi2_rejects_degenerate_correlation():
 
 
 def test_verdict_is_rho_robust():
-    """The load-bearing claim: every rho in the band reads 3-3.5 sigma.
+    """Each scanned sigma is sigma_equivalent of the registered Mahalanobis
+    chi2; the band on the active path is narrower than _RHO_ROBUST_SPREAD.
 
-    If a future anchor update spreads this band past ~0.5 sigma, the
-    'rho-robust' language must be withdrawn -- this test is what forces
-    that withdrawal to be conscious.
+    If a future anchor update spreads this band, the 'rho-robust' language
+    must be withdrawn -- this test is what forces that withdrawal to be
+    conscious.
     """
-    sigmas = [s.sigma_equivalent for s in scan_rho()]
-    assert 3.0 < min(sigmas) <= max(sigmas) < 3.5
-    assert max(sigmas) - min(sigmas) < 0.5
+    u, v = _registered_uv()
+    scan = scan_rho()
+    for s in scan:
+        assert s.sigma_equivalent == pytest.approx(
+            sigma_equivalent(_chi2(u, v, s.rho)), rel=1e-9)
+    sigmas = [s.sigma_equivalent for s in scan]
+    assert max(sigmas) - min(sigmas) < _RHO_ROBUST_SPREAD
+    assert 3.0 < min(sigmas) <= max(sigmas) < 3.5  # the band, second check
 
 
 def test_correlation_reduces_but_does_not_rescue():
     """The ellipse lowers the uncorrelated 2D sigma but the tension survives.
 
-    Both sides are checked: the uncorrelated number exceeds every scanned
-    one (correlation helps), and every scanned one stays above 3 sigma.
+    The uncorrelated number is sigma_equivalent(u^2 + v^2) of the registered
+    point and exceeds every scanned one (correlation helps).
     """
     u, v = _registered_uv()
+    payload = build_payload()
     uncorrelated = sigma_equivalent(u * u + v * v)
+    assert payload["uncorrelated_2d_sigma"] == pytest.approx(uncorrelated, rel=1e-9)
     scanned = [s.sigma_equivalent for s in scan_rho()]
     assert uncorrelated > max(scanned)
     assert all(s > 3.0 for s in scanned)
@@ -121,7 +135,8 @@ def test_correlation_reduces_but_does_not_rescue():
 
 def test_gate_can_fail():
     """Mutation: a point AT the DR2 best fit must read as no tension."""
-    at_best_fit = {"w0": _W0_OBS, "wa": _WA_OBS}
+    a = anchors()
+    at_best_fit = {"w0": a["w0"][0], "wa": a["wa"][0]}
     assert chi2_at_rho(-0.85, at_best_fit) == pytest.approx(0.0, abs=1e-12)
     assert sigma_equivalent(0.0) == pytest.approx(0.0, abs=1e-6)
 
@@ -175,8 +190,14 @@ def test_report_schema(tmp_path):
     out = write_report(out_path=tmp_path / "de_plane_gate.json")
     payload = json.loads(out.read_text(encoding="utf-8"))
     assert payload["schema_version"] == 1
-    assert payload["verdict"] == "TENSION_3SIGMA_ROBUST"
+    from metaphysica.simulations.core.canonical_values import CANON
+    from metaphysica.simulations.PM.validation.de_plane_gate import plane_verdict
+
+    u, v = _registered_uv()
+    sigmas = [sigma_equivalent(_chi2(u, v, rho)) for rho in _RHO_SCAN]
+    assert payload["verdict"] == plane_verdict(CANON["w0"]["status"], sigmas)
     assert "kill_condition" in payload
     lo, hi = payload["sigma_range"]
-    assert 3.0 < lo <= hi < 3.5
+    assert lo == pytest.approx(min(sigmas), rel=1e-9)
+    assert hi == pytest.approx(max(sigmas), rel=1e-9)
     assert len(payload["rho_scan"]) == len(_RHO_SCAN)
