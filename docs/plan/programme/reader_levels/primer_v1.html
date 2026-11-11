@@ -1,0 +1,717 @@
+<title>Principia Metaphysica Primer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: one reading column on squared paper. Figures are white cards set into the column.
+   Stops are numbered because each idea is needed by the next one. */
+:root{
+  --bg:#F2F5F1; --paper:#FBFCFA; --fg:#16222E; --muted:#55636E; --rule:#C9D3CC; --grid:#E1E8E2;
+  --accent:#B3246B; --accent-wash:#F7DCE9;
+  --geo:#1E5AA8; --geo-wash:#DCE8F7;
+  --time:#9A4A00; --time-wash:#FBE6CC;
+  --ok:#1F7A4D; --bad:#B4301F; --warn:#7A5A00;
+  --display:"Bricolage Grotesque","Trebuchet MS","Segoe UI",sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101A1D; --paper:#17252A; --fg:#E6EEEA; --muted:#9FB0AC; --rule:#2C3D42; --grid:#18262A;
+    --accent:#F27BAE; --accent-wash:#4A1F33;
+    --geo:#7DB2FF; --geo-wash:#1B3350;
+    --time:#F2A55A; --time-wash:#4A3215;
+    --ok:#5FD39A; --bad:#FF8A75; --warn:#E6C35C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101A1D; --paper:#17252A; --fg:#E6EEEA; --muted:#9FB0AC; --rule:#2C3D42; --grid:#18262A;
+  --accent:#F27BAE; --accent-wash:#4A1F33;
+  --geo:#7DB2FF; --geo-wash:#1B3350;
+  --time:#F2A55A; --time-wash:#4A3215;
+  --ok:#5FD39A; --bad:#FF8A75; --warn:#E6C35C;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:1.0625rem;line-height:1.6}
+.col{max-width:44rem;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+p,h1,h2,h3,ul,ol,dl,dd,figure{margin:0}
+a{color:var(--geo)}
+a:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.hero{background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:20px 20px;border-bottom:1px solid var(--rule)}
+.hero .col{display:grid;gap:1rem;padding-block:2.5rem 2rem}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(1.9rem,6vw,2.9rem);line-height:1.08;text-wrap:balance}
+.lede{font-size:1.15rem;max-width:38rem}
+.stamp{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+
+.glance{display:grid;gap:.5rem;background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:1rem}
+.glance div{display:grid;grid-template-columns:8.5rem 1fr;gap:.75rem}
+.glance dt{font-family:var(--mono);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
+.glance dd{min-width:0}
+@media (max-width:520px){.glance div{grid-template-columns:1fr;gap:.1rem}}
+
+.key{display:flex;flex-wrap:wrap;gap:.5rem;font-family:var(--mono);font-size:.78rem}
+.key span{padding:.15rem .55rem;border-radius:4px}
+.k-pic{background:var(--accent-wash)} .k-math{background:var(--geo-wash)} .k-status{background:var(--time-wash)}
+
+nav ol{padding-left:1.4rem;columns:2;column-gap:2rem;font-size:.98rem}
+@media (max-width:520px){nav ol{columns:1}}
+
+main section{display:grid;gap:1rem;padding-block:2.25rem;border-top:1px solid var(--rule)}
+main section:first-child{border-top:0}
+main section > *{min-width:0}
+h2{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1.15;text-wrap:balance;display:flex;gap:.7rem;align-items:baseline}
+h2 .num{font-family:var(--mono);font-weight:500;font-size:.95rem;color:var(--accent);flex:none}
+h3{font-family:var(--display);font-weight:500;font-size:1.1rem}
+main ul,main ol{padding-left:1.3rem;display:grid;gap:.35rem}
+
+.note{display:grid;gap:.3rem;padding:.8rem 1rem;border-radius:4px}
+.note .tag{font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.note.pic{background:var(--accent-wash)} .note.pic .tag{color:var(--accent)}
+.note.math{background:var(--geo-wash)} .note.math .tag{color:var(--geo)}
+.note.status{background:var(--time-wash)} .note.status .tag{color:var(--time)}
+
+.m{font-style:italic;white-space:nowrap}
+.bar{text-decoration:overline}
+.eq{font-size:1.2rem;text-align:center;padding:.8rem .5rem;border-block:1px solid var(--rule);overflow-x:auto;white-space:nowrap}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.85em;line-height:1.2}
+.frac > span:first-child{border-bottom:1px solid currentColor;padding:0 .3em}
+.frac > span:last-child{padding:0 .3em}
+
+figure{background:var(--paper);border:1px solid var(--rule);border-radius:6px;padding:1rem;display:grid;gap:.7rem}
+figure .sv{overflow-x:auto}
+figure svg{display:block;width:100%;min-width:440px;max-width:540px;height:auto;margin-inline:auto}
+figcaption{font-size:.92rem;color:var(--muted)}
+svg text{font-family:var(--mono);font-size:13px;fill:var(--fg)}
+svg .sm{font-size:11.5px} svg .mut{fill:var(--muted)} svg .b{font-weight:500}
+svg .ln{stroke:var(--fg);stroke-width:1.5;fill:none}
+svg .thin{stroke:var(--muted);stroke-width:1;fill:none}
+svg .dash{stroke-dasharray:4 4}
+svg .s-geo{fill:var(--geo-wash);stroke:var(--geo);stroke-width:1.5}
+svg .s-time{fill:var(--time-wash);stroke:var(--time);stroke-width:1.5}
+svg .s-plain{fill:var(--paper);stroke:var(--fg);stroke-width:1.5}
+svg .hid{stroke-dasharray:3 3}
+svg .l-acc{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg .l-geo{stroke:var(--geo);stroke-width:2.5;fill:none}
+svg .f-fg{fill:var(--fg)} svg .f-acc{fill:var(--accent)} svg .f-geo{fill:var(--geo)} svg .f-ok{fill:var(--ok)}
+svg .r-sand{fill:var(--time-wash)} svg .r-water{fill:var(--geo-wash)}
+svg .t-ok{fill:var(--ok)} svg .t-bad{fill:var(--bad)}
+
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.97rem}
+th,td{padding:.5rem .6rem;border-bottom:1px solid var(--rule);text-align:left;vertical-align:top}
+thead th{font-family:var(--mono);font-size:.74rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+tbody th{font-weight:600}
+.pill{display:inline-block;font-family:var(--mono);font-size:.78rem;padding:.05rem .5rem;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.bad{color:var(--bad)} .pill.warn{color:var(--warn)}
+
+.ctl{display:grid;gap:.6rem}
+.ctl label{font-family:var(--mono);font-size:.85rem}
+.ctl input[type=range]{width:100%;accent-color:var(--accent)}
+.readout{display:flex;flex-wrap:wrap;gap:.4rem 1.5rem;font-family:var(--mono);font-size:.9rem;font-variant-numeric:tabular-nums}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}
+@media (max-width:520px){.fields{grid-template-columns:1fr}}
+.fields label{display:grid;gap:.25rem;font-family:var(--mono);font-size:.8rem}
+.fields input{font:inherit;font-family:var(--mono);padding:.4rem .5rem;border:1px solid var(--rule);border-radius:4px;background:var(--bg);color:var(--fg);min-width:0}
+.result{font-family:var(--mono);font-size:.95rem}
+
+.gloss{display:grid;gap:.6rem}
+.gloss div{display:grid;grid-template-columns:9rem 1fr;gap:.75rem}
+.gloss dt{font-weight:600}
+@media (max-width:520px){.gloss div{grid-template-columns:1fr;gap:0}}
+footer .col{padding-block:1.5rem 3rem;border-top:1px solid var(--rule);font-size:.9rem;color:var(--muted);display:grid;gap:.5rem}
+</style>
+
+<header class="hero">
+  <div class="col">
+    <p class="eyebrow">Principia Metaphysica · a primer for beginners</p>
+    <h1>The 26-dimensional model, from the ground up</h1>
+    <p class="lede">Principia Metaphysica is a speculative model of physics. It has not been validated, and its fit to measurements is poor today. This page explains its ideas with school-level maths and pictures, and says which parts are worked out, which are assumed and which fail.</p>
+    <dl class="glance">
+      <div><dt>The idea</dt><dd>Space has hidden dimensions curled into small shapes. The holes in those shapes are meant to set the particles and forces we see.</dd></div>
+      <div><dt>Worked out</dt><dd>The model's central formula (its action) has now been solved. It gives gravity. It does not give the known forces or particle families.</dd></div>
+      <div><dt>Not settled</dt><dd>A second layer of formulas is tested directly against data. Its score is poor and is being re-counted after an audit found 540 defects.</dd></div>
+    </dl>
+    <div class="key" aria-label="How the coloured boxes on this page are used">
+      <span class="k-pic">Picture it: an everyday comparison</span>
+      <span class="k-math">The maths: a short calculation</span>
+      <span class="k-status">Status: how solid this part is</span>
+    </div>
+    <p class="stamp">State of the project on 11 November 2026. Figures come from the project's own audit and will change as fixes land.</p>
+  </div>
+</header>
+
+<nav class="col" aria-label="Contents" style="padding-block:1.5rem 0">
+  <ol>
+    <li><a href="#dimensions">Dimensions you cannot see</a></li>
+    <li><a href="#waves">Why the hidden shape matters</a></li>
+    <li><a href="#holes">Counting holes</a></li>
+    <li><a href="#curvature">Curvature and the flat torus</a></li>
+    <li><a href="#action">The master action</a></li>
+    <li><a href="#two-clocks">Two clocks and a term that cancels</a></li>
+    <li><a href="#spectrum">What the solved action gives</a></li>
+    <li><a href="#size">A size that nothing fixes</a></li>
+    <li><a href="#score">Two layers and the scoreboard</a></li>
+    <li><a href="#next">What would change the picture</a></li>
+  </ol>
+</nav>
+
+<main class="col">
+
+<section id="dimensions">
+  <h2><span class="num">1</span>Dimensions you cannot see</h2>
+  <p>You can move left and right, forward and back, up and down. Add time and you have the four dimensions of everyday physics. The model says there are more: 26 in total, 24 of space and 2 of time.</p>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>A garden hose seen from across a field looks like a line. An ant on the hose knows better: it can walk along the hose and also around it. A hidden dimension is the "around" direction, curled so small that we only notice the "along".</p>
+  </div>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 140" role="img" aria-label="A hose looks like a line from far away and like a tube with two directions up close">
+      <defs><marker id="ah-hose" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-fg"/></marker></defs>
+      <text x="120" y="30" text-anchor="middle">from far away</text>
+      <line x1="30" y1="72" x2="210" y2="72" class="l-geo"/>
+      <text x="120" y="126" text-anchor="middle" class="mut">a line: 1 direction</text>
+      <line x1="226" y1="72" x2="268" y2="72" class="ln" marker-end="url(#ah-hose)"/>
+      <text x="247" y="60" text-anchor="middle" class="sm mut">zoom in</text>
+      <text x="382" y="30" text-anchor="middle">up close</text>
+      <path d="M296,47 H466 A10,25 0 0 1 466,97 H296 A10,25 0 0 1 296,47 Z" class="s-geo"/>
+      <ellipse cx="296" cy="72" rx="10" ry="25" class="s-plain"/>
+      <path d="M382,47 A10,25 0 0 1 382,97" class="l-acc"/>
+      <path d="M382,97 A10,25 0 0 1 382,47" class="l-acc dash"/>
+      <circle cx="392" cy="72" r="4" class="f-acc"/>
+      <text x="366" y="76" text-anchor="end" class="sm">around</text>
+      <line x1="410" y1="72" x2="450" y2="72" class="ln" marker-end="url(#ah-hose)"/>
+      <text x="430" y="62" text-anchor="middle" class="sm">along</text>
+      <text x="382" y="126" text-anchor="middle" class="mut">a tube: 2 directions</text>
+    </svg>
+    </div>
+    <figcaption>The pink loop is the hidden direction. If the loop is far smaller than an atom, the tube passes for a line.</figcaption>
+  </figure>
+  <p>The model arranges its 26 dimensions in a particular way. It splits them into two halves of 13, which it calls shadows. Each shadow has 12 dimensions of space and 1 of time. Inside one shadow, 4 dimensions are the world we see and 9 are hidden.</p>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 270" role="img" aria-label="26 dimensions split into two shadows of 13; one shadow splits into 4 visible dimensions, a 2-dimensional torus and a 7-dimensional shape">
+      <defs>
+        <pattern id="pg" x="29" y="0" width="17" height="22" patternUnits="userSpaceOnUse"><rect x="0.75" y="0.75" width="13.5" height="20.5" rx="2" class="s-geo"/></pattern>
+        <pattern id="pt" x="29" y="0" width="17" height="22" patternUnits="userSpaceOnUse"><rect x="0.75" y="0.75" width="13.5" height="20.5" rx="2" class="s-time"/></pattern>
+      </defs>
+      <text x="29" y="34" class="b">26 dimensions</text>
+      <rect x="360" y="24" width="11" height="11" rx="2" class="s-geo"/><text x="376" y="34" class="sm">space</text>
+      <rect x="425" y="24" width="11" height="11" rx="2" class="s-time"/><text x="441" y="34" class="sm">time</text>
+      <rect x="29" y="44" width="406" height="22" fill="url(#pg)" stroke="none"/>
+      <rect x="437" y="44" width="32" height="22" fill="url(#pt)" stroke="none"/>
+      <text x="29" y="100">shadow A: 12 space + 1 time</text>
+      <text x="267" y="100">shadow B: 12 space + 1 time</text>
+      <rect x="29" y="110" width="202" height="22" fill="url(#pg)" stroke="none"/>
+      <rect x="233" y="110" width="15" height="22" fill="url(#pt)" stroke="none"/>
+      <rect x="267" y="110" width="202" height="22" fill="url(#pg)" stroke="none"/>
+      <rect x="471" y="110" width="15" height="22" fill="url(#pt)" stroke="none"/>
+      <line x1="29" y1="134" x2="29" y2="196" class="thin dash"/>
+      <line x1="248" y1="134" x2="467" y2="196" class="thin dash"/>
+      <text x="486" y="158" text-anchor="end" class="sm mut">one shadow opened</text>
+      <rect x="29" y="198" width="30" height="30" rx="3" class="s-geo"/>
+      <rect x="63" y="198" width="30" height="30" rx="3" class="s-geo"/>
+      <rect x="97" y="198" width="30" height="30" rx="3" class="s-geo"/>
+      <rect x="131" y="198" width="30" height="30" rx="3" class="s-time"/>
+      <rect x="165" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="199" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="233" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="267" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="301" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="335" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="369" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="403" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <rect x="437" y="198" width="30" height="30" rx="3" class="s-geo hid"/>
+      <path d="M29,234 v6 H161 v-6" class="thin"/>
+      <path d="M165,234 v6 H229 v-6" class="thin"/>
+      <path d="M233,234 v6 H467 v-6" class="thin"/>
+      <text x="95" y="258" text-anchor="middle">3 + 1 we see</text>
+      <text x="197" y="258" text-anchor="middle">2 torus</text>
+      <text x="350" y="258" text-anchor="middle">7 in the G₂ shape</text>
+    </svg>
+    </div>
+    <figcaption>One square is one dimension. Dashed squares are hidden. The 2 hidden dimensions form a torus (a doughnut surface) and the other 7 form a shape called a G₂ manifold.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p><span class="m">26 = 13 + 13</span>. Each <span class="m">13 = 12 + 1</span> (space plus time), and each <span class="m">13 = 4 + 2 + 7</span>. The matter field of the model is a spinor, a kind of list of numbers at every point. In <span class="m">D</span> dimensions (<span class="m">D</span> even) it has <span class="m">2<sup>D/2</sup></span> entries: <span class="m">2<sup>13</sup> = 8192</span>. The model keeps one handedness, which is half: <span class="m">4096</span>.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>The split of 26 into two halves with one time each is assumed. The model borrows a symmetry called Sp(2,R) to do it and has not derived that symmetry from its own equations. Two earlier arguments, one for why the number is 26 and one for why two times are safe, have been withdrawn.</p>
+  </div>
+</section>
+
+<section id="waves">
+  <h2><span class="num">2</span>Why the hidden shape matters</h2>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>A guitar string can only play certain notes, because a wave has to fit its length. A hidden dimension works the same way. A wave travelling around the hidden loop has to join up with itself, so only whole numbers of waves fit.</p>
+  </div>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 205" role="img" aria-label="One, two and three waves fitting around a circle, giving particles of one, two and three units of mass">
+      <line x1="40" y1="18" x2="40" y2="178" class="thin"/><line x1="280" y1="18" x2="280" y2="178" class="thin"/>
+      <line x1="40" y1="45" x2="280" y2="45" class="thin dash"/>
+      <line x1="40" y1="100" x2="280" y2="100" class="thin dash"/>
+      <line x1="40" y1="155" x2="280" y2="155" class="thin dash"/>
+      <path d="M40,45 Q100,5 160,45 T280,45" class="l-acc"/>
+      <path d="M40,100 Q70,60 100,100 T160,100 T220,100 T280,100" class="l-acc"/>
+      <path d="M40,155 Q60,115 80,155 T120,155 T160,155 T200,155 T240,155 T280,155" class="l-acc"/>
+      <text x="4" y="49">n=1</text><text x="4" y="104">n=2</text><text x="4" y="159">n=3</text>
+      <text x="310" y="38">mass = 1 × ħ/Rc</text><rect x="310" y="46" width="45" height="8" rx="4" class="f-geo"/>
+      <text x="310" y="93">mass = 2 × ħ/Rc</text><rect x="310" y="101" width="90" height="8" rx="4" class="f-geo"/>
+      <text x="310" y="148">mass = 3 × ħ/Rc</text><rect x="310" y="156" width="135" height="8" rx="4" class="f-geo"/>
+      <text x="160" y="197" text-anchor="middle" class="mut">once around the loop: length 2πR</text>
+    </svg>
+    </div>
+    <figcaption>The loop is cut open and laid flat. More waves around the loop means more hidden motion, which we would measure as a heavier particle.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>A loop of radius <span class="m">R</span> has length <span class="m">2πR</span>. Fitting <span class="m">n</span> waves needs <span class="m">nλ = 2πR</span>. De Broglie's rule from school physics says momentum is <span class="m">p = h/λ</span>, so <span class="m">p = nh/2πR = nħ/R</span>. We cannot see motion around the loop. It shows up as mass: <span class="m">m = nħ/(Rc)</span>. A smaller loop gives heavier steps, which is why nobody would have seen them yet.</p>
+  </div>
+  <p>The step <span class="m">n = 0</span> has no mass at all. Those massless pieces are what everyday physics is made of, and how many there are depends on the holes in the hidden shape.</p>
+</section>
+
+<section id="holes">
+  <h2><span class="num">3</span>Counting holes</h2>
+  <p>Mathematicians tell shapes apart by counting their holes. Stretching and bending do not change the count, so it is a very robust number.</p>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 170" role="img" aria-label="A sphere has no holes, a doughnut one and a double doughnut two; the Euler number is 2, 0 and minus 2">
+      <circle cx="85" cy="58" r="38" class="s-geo"/><ellipse cx="85" cy="58" rx="38" ry="10" class="thin dash"/>
+      <ellipse cx="250" cy="58" rx="55" ry="32" class="s-geo"/>
+      <path d="M222,54 Q250,74 278,54" class="ln"/><path d="M230,60 Q250,46 270,60" class="ln"/>
+      <ellipse cx="415" cy="58" rx="68" ry="32" class="s-geo"/>
+      <path d="M368,55 Q386,71 404,55" class="ln"/><path d="M374,60 Q386,49 398,60" class="ln"/>
+      <path d="M426,55 Q444,71 462,55" class="ln"/><path d="M432,60 Q444,49 456,60" class="ln"/>
+      <text x="85" y="118" text-anchor="middle" class="b">sphere</text>
+      <text x="250" y="118" text-anchor="middle" class="b">doughnut (torus)</text>
+      <text x="415" y="118" text-anchor="middle" class="b">double doughnut</text>
+      <text x="85" y="140" text-anchor="middle">holes: 0</text>
+      <text x="250" y="140" text-anchor="middle">holes: 1</text>
+      <text x="415" y="140" text-anchor="middle">holes: 2</text>
+      <text x="85" y="160" text-anchor="middle">χ = 2 − 2×0 = 2</text>
+      <text x="250" y="160" text-anchor="middle">χ = 2 − 2×1 = 0</text>
+      <text x="415" y="160" text-anchor="middle">χ = 2 − 2×2 = −2</text>
+    </svg>
+    </div>
+    <figcaption>The Euler number χ drops by 2 for every hole.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>Take a cube and count corners minus edges plus faces: <span class="m">8 − 12 + 6 = 2</span>. Any solid you could inflate into a ball gives 2. Shapes with <span class="m">g</span> holes give <span class="m">χ = 2 − 2g</span>.</p>
+  </div>
+  <p>Shapes with more dimensions have more kinds of hole. They are counted by the Betti numbers <span class="m">b<sub>1</sub>, b<sub>2</sub>, b<sub>3</sub></span> and so on. <span class="m">b<sub>1</sub></span> counts loops that cannot be shrunk to a point: none on a sphere, two on a doughnut (around the tube, and around the hole). <span class="m">b<sub>2</sub></span> and <span class="m">b<sub>3</sub></span> count the same thing for two- and three-dimensional surfaces inside the shape.</p>
+  <p>The model's 7-dimensional shape was built by the mathematician Dominic Joyce in 1996. Start with a 7-dimensional torus. Fold it using three symmetries. The folding leaves 12 creases. Smooth each crease.</p>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>Before smoothing, <span class="m">b<sub>2</sub> = 0</span> and <span class="m">b<sub>3</sub> = 7</span>. Each of the 12 smoothed creases adds 1 to <span class="m">b<sub>2</sub></span> and 3 to <span class="m">b<sub>3</sub></span>. So <span class="m">b<sub>2</sub> = 12</span> and <span class="m">b<sub>3</sub> = 7 + 3 × 12 = 43</span>. These two whole numbers are the model's starting data.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>The model then guesses that the number of particle families is <span class="m">b<sub>2</sub>/4 = 3</span>. Nature does have three families (the electron, the muon and the tau, each with relatives). The division by 4 is a chosen rule. Stop 7 shows that the model's own central formula does not produce it.</p>
+  </div>
+</section>
+
+<section id="curvature">
+  <h2><span class="num">4</span>Curvature and the flat torus</h2>
+  <p>Curvature measures how far a surface is from flat. You can test it by drawing a triangle and adding up its angles.</p>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 150" role="img" aria-label="Triangle angles add to more than 180 degrees on a ball, exactly 180 on flat paper and less than 180 on a saddle">
+      <path d="M50,100 Q85,114 120,100 Q114,60 85,35 Q56,60 50,100 Z" class="s-geo"/>
+      <polygon points="215,100 285,100 250,35" class="s-geo"/>
+      <path d="M380,100 Q415,88 450,100 Q424,72 415,35 Q406,72 380,100 Z" class="s-geo"/>
+      <text x="85" y="126" text-anchor="middle" class="b">on a ball</text>
+      <text x="250" y="126" text-anchor="middle" class="b">on flat paper</text>
+      <text x="415" y="126" text-anchor="middle" class="b">on a saddle</text>
+      <text x="85" y="144" text-anchor="middle">more than 180°</text>
+      <text x="250" y="144" text-anchor="middle">exactly 180°</text>
+      <text x="415" y="144" text-anchor="middle">less than 180°</text>
+    </svg>
+    </div>
+    <figcaption>Positive curvature fattens a triangle, negative curvature thins it.</figcaption>
+  </figure>
+  <p>A theorem of Gauss and Bonnet links curvature to holes. However you dent or stretch a closed surface, its curvature added up over the whole surface depends only on the number of holes.</p>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>Total curvature <span class="m">= 2πχ = 4π(1 − g)</span>. Check it on a sphere of radius <span class="m">r</span>: the curvature is <span class="m">1/r<sup>2</sup></span> everywhere and the area is <span class="m">4πr<sup>2</sup></span>, so the total is <span class="m">4π</span>, as the formula says for <span class="m">g = 0</span>.</p>
+  </div>
+  <p>The model's equations for empty space demand zero curvature at every point of the hidden 2-dimensional piece. Zero everywhere means zero in total, so <span class="m">4π(1 − g) = 0</span> and <span class="m">g = 1</span>. Only one shape passes.</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Shape</th><th>Holes</th><th>Total curvature</th><th>Can it be flat everywhere?</th></tr></thead>
+    <tbody>
+      <tr><th>Sphere</th><td>0</td><td>4π</td><td><span class="pill bad">✗ no</span></td></tr>
+      <tr><th>Torus</th><td>1</td><td>0</td><td><span class="pill ok">✓ yes</span></td></tr>
+      <tr><th>Double doughnut</th><td>2</td><td>−4π</td><td><span class="pill bad">✗ no</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>A flat torus is the screen of an old arcade game. Fly off the right edge and you come back on the left. Fly off the top and you come back at the bottom. The screen is perfectly flat, and yet it has the hole count of a doughnut.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>Until this audit the model had not said which 2-dimensional shape it uses. The owner's decision of 11 November 2026 makes the flat torus the default. The sphere stays in the code as a switchable option, where it fails this check.</p>
+  </div>
+</section>
+
+<section id="action">
+  <h2><span class="num">5</span>The master action</h2>
+  <p>Physics has a compact way to state a theory. You write one quantity, the action, and declare that nature follows the path that makes it stationary (usually smallest). Every equation of motion follows from that one line.</p>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>A lifeguard sees a swimmer in trouble. Running is faster than swimming, so the quickest route is a bent one: more sand, less water. Light does the same thing when it enters glass. The action is the quantity being minimised, here the travel time.</p>
+  </div>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 200" role="img" aria-label="The straight path from a lifeguard to a swimmer is the shortest; a bent path with more running and less swimming is the quickest">
+      <rect x="0" y="0" width="500" height="100" class="r-sand"/>
+      <rect x="0" y="100" width="500" height="100" class="r-water"/>
+      <line x1="0" y1="100" x2="500" y2="100" class="thin"/>
+      <line x1="60" y1="30" x2="430" y2="170" class="ln dash"/>
+      <polyline points="60,30 330,100 430,170" class="l-acc"/>
+      <circle cx="60" cy="30" r="5" class="f-fg"/><text x="28" y="35">you</text>
+      <circle cx="430" cy="170" r="5" class="f-fg"/><text x="440" y="175">swimmer</text>
+      <text x="16" y="92" class="sm">sand: fast</text>
+      <text x="16" y="118" class="sm">water: slow</text>
+      <line x1="330" y1="20" x2="358" y2="20" class="ln dash"/><text x="366" y="24" class="sm">shortest path</text>
+      <line x1="330" y1="40" x2="358" y2="40" class="l-acc"/><text x="366" y="44" class="sm">quickest path</text>
+    </svg>
+    </div>
+    <figcaption>Nature picks the path that makes one quantity stationary. For the lifeguard that quantity is time. For a physical theory it is the action.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>For a thrown ball the action is <span class="m">S = ∫ (½mv<sup>2</sup> − mgh) dt</span>: kinetic energy minus potential energy, added up over the flight. Asking for the path that makes <span class="m">S</span> stationary gives back <span class="m">a = −g</span>, which is Newton's law for the ball.</p>
+  </div>
+  <p>The model's master action has the same structure, with the geometry of 26 dimensions in place of the ball:</p>
+  <p class="eq"><span class="m">S = ∫ d<sup>26</sup>X √|G| [ ½ M<sub>*</sub><sup>24</sup> R + <span class="bar">Ψ</span> iΓ<sup>M</sup>D<sub>M</sub> Ψ ]</span></p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Symbol</th><th>Meaning in plain words</th></tr></thead>
+    <tbody>
+      <tr><th><span class="m">∫ d<sup>26</sup>X √|G|</span></th><td>Add up over every point of the 26 dimensions, counting each small cell by its volume.</td></tr>
+      <tr><th><span class="m">R</span></th><td>The curvature of space and time. This term is gravity, as in Einstein's theory.</td></tr>
+      <tr><th><span class="m">M<sub>*</sub></span></th><td>A mass scale that sets how stiff space is.</td></tr>
+      <tr><th><span class="m">Ψ</span></th><td>The matter field: the spinor with 4096 entries from stop 1.</td></tr>
+      <tr><th><span class="m">Γ<sup>M</sup>D<sub>M</sub></span></th><td>How the matter field changes from point to point. This is its motion term.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Solving the action means four steps, each of which can fail:</p>
+  <ol>
+    <li>Derive the equations of motion.</li>
+    <li>Find a solution for empty space (the vacuum).</li>
+    <li>List the massless fields that live on that vacuum. These are the particles.</li>
+    <li>Compare with experiment.</li>
+  </ol>
+  <p>The project did this in November 2026. Stops 6 to 8 are the results.</p>
+</section>
+
+<section id="two-clocks">
+  <h2><span class="num">6</span>Two clocks and a term that cancels</h2>
+  <p>The first result is about the matter term. Particles like the electron come in two mirror versions, left-handed and right-handed. The model's matter field has one handedness only.</p>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>Every term in the action is a handshake between two copies of the field. With one time dimension, the motion term is a handshake between two copies of the same hand, so a one-handed field can have it. A second time dimension adds one more flip. The motion term then needs a left hand and a right hand, and a one-handed field has no partner.</p>
+  </div>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Term for a one-handed field</th><th>One time (everyday physics)</th><th>Two times (this model)</th></tr></thead>
+    <tbody>
+      <tr><th>Motion term</th><td><span class="pill ok">✓ allowed</span></td><td><span class="pill bad">✗ exactly zero</span></td></tr>
+      <tr><th>Mass term</th><td><span class="pill bad">✗ exactly zero</span></td><td><span class="pill ok">✓ allowed</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>The calculation ends with the term equal to minus itself: <span class="m">x = −x</span>, so <span class="m">2x = 0</span> and <span class="m">x = 0</span>. The general rule: the usual motion term for a one-handed field exists when the number of time dimensions is odd, and vanishes when it is even.</p>
+  </div>
+  <p>So the matter term, as the model had written it, was zero. The project's code had the rule the wrong way round in five places, copied from one-time physics. The repair is a different way of pairing the field with itself, called the holomorphic form. It does not vanish in 26 dimensions.</p>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>The holomorphic form works when the number of dimensions leaves remainder 2 on division by 8. <span class="m">26 = 3 × 8 + 2</span>, so it does. The project checked both statements by direct calculation with the full 8192 × 8192 matrices, and on six smaller test cases.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>Owner's decision of 11 November 2026: the non-vanishing form is the default. The old form stays in the code as a switch, off by default, in case it is needed later.</p>
+  </div>
+</section>
+
+<section id="spectrum">
+  <h2><span class="num">7</span>What the solved action gives</h2>
+  <p>In 1921 Theodor Kaluza found something remarkable: gravity in five dimensions looks, in four, like gravity plus electromagnetism. The force comes from a symmetry of the hidden shape.</p>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 190" role="img" aria-label="A circle has one turning symmetry and gives one force; a flat torus has two and gives two; the 7-dimensional G2 shape has none and gives none">
+      <defs><marker id="ah-sym" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+      <circle cx="85" cy="62" r="32" class="s-geo"/>
+      <path d="M60.9,27.6 A42,42 0 0 1 109.1,27.6" class="l-acc" marker-end="url(#ah-sym)"/>
+      <ellipse cx="250" cy="62" rx="55" ry="32" class="s-geo"/>
+      <path d="M222,58 Q250,78 278,58" class="ln"/><path d="M230,64 Q250,50 270,64" class="ln"/>
+      <path d="M215,26 Q250,10 285,26" class="l-acc" marker-end="url(#ah-sym)"/>
+      <path d="M309,48 Q325,62 309,76" class="l-acc" marker-end="url(#ah-sym)"/>
+      <path d="M385,57 Q380,32 405,30 Q425,22 440,40 Q458,52 446,72 Q440,97 415,92 Q395,100 388,80 Q378,70 385,57 Z" class="s-geo"/>
+      <text x="85" y="122" text-anchor="middle" class="b">circle</text>
+      <text x="250" y="122" text-anchor="middle" class="b">flat torus</text>
+      <text x="415" y="122" text-anchor="middle" class="b">the G₂ shape</text>
+      <text x="85" y="142" text-anchor="middle">1 symmetry</text>
+      <text x="250" y="142" text-anchor="middle">2 symmetries</text>
+      <text x="415" y="142" text-anchor="middle">no symmetry</text>
+      <text x="85" y="162" text-anchor="middle">1 force field</text>
+      <text x="250" y="162" text-anchor="middle">2 force fields</text>
+      <text x="415" y="162" text-anchor="middle">0 force fields</text>
+      <text x="85" y="181" text-anchor="middle" class="sm mut">(Kaluza, 1921)</text>
+      <text x="250" y="181" text-anchor="middle" class="sm mut">(what the model has)</text>
+      <text x="415" y="181" text-anchor="middle" class="sm mut">(no strong, no weak)</text>
+    </svg>
+    </div>
+    <figcaption>A force appears for each way the hidden shape can be turned without changing it. The 7-dimensional shape is like a lumpy potato: no turn leaves it unchanged. This is a theorem for shapes of its kind.</figcaption>
+  </figure>
+  <p>Handedness is the second problem. The weak force treats left-handed and right-handed particles differently. A shadow has 13 dimensions, and in an odd number of dimensions a spinor has no handedness of its own. Curling up the hidden dimensions then gives left and right in equal numbers.</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Ingredient</th><th>Nature needs</th><th>The solved action gives</th><th>Match</th></tr></thead>
+    <tbody>
+      <tr><th>Gravity</th><td>1 graviton</td><td>1 graviton</td><td><span class="pill ok">✓ yes</span></td></tr>
+      <tr><th>Forces</th><td>12 force fields: 8 gluons, W⁺, W⁻, Z and the photon, with charged matter</td><td>2 photon-like fields, and nothing that carries their charge</td><td><span class="pill bad">✗ no</span></td></tr>
+      <tr><th>Matter</th><td>3 families, with left and right treated differently</td><td>2 matter particles, each a mirror-symmetric pair</td><td><span class="pill bad">✗ no</span></td></tr>
+      <tr><th>Masses</th><td>A Higgs field that gives particles mass</td><td>No Higgs, and everything is massless</td><td><span class="pill bad">✗ no</span></td></tr>
+      <tr><th>Extra massless fields</th><td>None are seen</td><td>46 of them (stop 8)</td><td><span class="pill bad">✗ no</span></td></tr>
+      <tr><th>Dark energy</th><td>A small positive energy of empty space</td><td>Exactly zero</td><td><span class="pill bad">✗ no</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>The 46 extra fields are <span class="m">b<sub>3</sub> + 3 = 43 + 3</span>. Each of the 43 three-dimensional holes of the G₂ shape can change size on its own, and the torus adds three more numbers: its area and two for its slant. The count <span class="m">b<sub>2</sub> = 12</span> appears nowhere. The action has no field that can feel two-dimensional holes.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>These results are theorems and explicit calculations, so fixing bugs will not change them. Physicists met the same obstacles in the 1980s when they tried to get all forces from gravity in extra dimensions (Edward Witten's papers of 1981 and 1983). The model has now run into them by its own calculation. Choosing a different smooth 7-dimensional shape of the same kind would not help. The action needs more ingredients, or the shape needs creases.</p>
+  </div>
+</section>
+
+<section id="size">
+  <h2><span class="num">8</span>A size that nothing fixes</h2>
+  <div class="note pic"><span class="tag">Picture it</span>
+    <p>Think of a balloon whose rubber has no stretchiness at all. Nothing sets its size, so it can be a little bigger here and a little smaller there at no cost. In the solved action the hidden dimensions are like that. Their overall size is one of the 46 massless fields, free to vary from place to place.</p>
+  </div>
+  <p>A freely varying size acts like an extra part of gravity, and that can be tested. Einstein's theory says how much the Sun bends light, through a number called <span class="m">γ</span>. General relativity predicts <span class="m">γ = 1</span>. In 2003 radio signals from the Cassini spacecraft, passing close to the Sun, measured it.</p>
+  <figure>
+    <div class="ctl">
+      <label for="n-slider">Hidden dimensions whose size is free: <span id="n-val">9</span></label>
+      <input type="range" id="n-slider" min="1" max="9" step="1" value="9">
+      <div class="readout"><span>ω = −1 + 1/n = <span id="omega-val">−0.889</span></span><span>γ = 1/(n + 1) = <span id="gamma-val">0.100</span></span></div>
+      <p class="result" id="n-note">This is the model: 2 torus + 7 G₂ dimensions.</p>
+    </div>
+    <div class="sv">
+    <svg viewBox="0 0 500 120" role="img" aria-label="Number line of gamma from 0 to 1: the measured value sits at 1, the action's value at 1 divided by n plus 1">
+      <line x1="40" y1="72" x2="440" y2="72" class="ln"/>
+      <line x1="40" y1="66" x2="40" y2="78" class="ln"/><text x="40" y="98" text-anchor="middle">0</text>
+      <line x1="120" y1="66" x2="120" y2="78" class="ln"/><text x="120" y="98" text-anchor="middle">0.2</text>
+      <line x1="200" y1="66" x2="200" y2="78" class="ln"/><text x="200" y="98" text-anchor="middle">0.4</text>
+      <line x1="280" y1="66" x2="280" y2="78" class="ln"/><text x="280" y="98" text-anchor="middle">0.6</text>
+      <line x1="360" y1="66" x2="360" y2="78" class="ln"/><text x="360" y="98" text-anchor="middle">0.8</text>
+      <line x1="440" y1="66" x2="440" y2="78" class="ln"/><text x="440" y="98" text-anchor="middle">1</text>
+      <text x="240" y="116" text-anchor="middle" class="sm mut">light-bending number γ</text>
+      <line x1="440" y1="26" x2="440" y2="64" class="thin"/>
+      <circle cx="440" cy="72" r="6" class="f-ok"><title>Measured by Cassini: 1.00002 ± 0.00002</title></circle>
+      <text x="486" y="20" text-anchor="end">measured: 1.00002 ± 0.00002</text>
+      <circle id="g-mark" cx="80" cy="72" r="6" class="f-acc"><title>Value from the solved action</title></circle>
+      <text id="g-label" x="80" y="52" text-anchor="middle">this action: 0.10</text>
+    </svg>
+    </div>
+    <figcaption>Move the slider to see how the answer depends on the number of free hidden dimensions. No whole number of them gets close to the measured value.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>With <span class="m">n</span> hidden dimensions of free size, the reduced theory has a parameter <span class="m">ω = −1 + 1/n</span>. The light-bending number is <span class="m">γ = <span class="frac"><span>1 + ω</span><span>2 + ω</span></span> = <span class="frac"><span>1/n</span><span>1 + 1/n</span></span> = <span class="frac"><span>1</span><span>n + 1</span></span></span>. For <span class="m">n = 9</span> that is <span class="m">1/10</span>. The measurement is <span class="m">γ − 1 = (2.1 ± 2.3) × 10<sup>−5</sup></span>.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>Taken as the whole theory, the action is ruled out by this one measurement. The model needs something that pins the size of the hidden dimensions, which physicists call a potential. The adopted action has none. The project now records this as a failed prediction and keeps it on the books.</p>
+  </div>
+</section>
+
+<section id="score">
+  <h2><span class="num">9</span>Two layers and the scoreboard</h2>
+  <p>The model's published numbers (the strength of forces, particle masses, mixing angles) do not come from solving the action. They come from a second layer: formulas whose form was chosen, built from the hole counts 12 and 43 and the family number 3. A chosen form like this is called an ansatz. Each formula is tested directly against a measurement.</p>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 215" role="img" aria-label="The shape numbers feed two layers: the solved action and a set of chosen formulas; nothing yet derives the second from the first">
+      <defs><marker id="ah-lay" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-fg"/></marker></defs>
+      <rect x="150" y="10" width="200" height="40" rx="4" class="s-geo"/>
+      <text x="250" y="35" text-anchor="middle" class="b">shape numbers: 12, 43</text>
+      <line x1="210" y1="50" x2="130" y2="92" class="ln" marker-end="url(#ah-lay)"/>
+      <line x1="290" y1="50" x2="370" y2="92" class="ln" marker-end="url(#ah-lay)"/>
+      <rect x="20" y="95" width="210" height="88" rx="4" class="s-plain"/>
+      <text x="125" y="116" text-anchor="middle" class="b">Layer 1: the action</text>
+      <text x="125" y="136" text-anchor="middle">solve its equations</text>
+      <text x="125" y="154" text-anchor="middle">gravity, 2 photon-likes,</text>
+      <text x="125" y="172" text-anchor="middle">46 massless fields</text>
+      <rect x="270" y="95" width="210" height="88" rx="4" class="s-plain"/>
+      <text x="375" y="116" text-anchor="middle" class="b">Layer 2: the formulas</text>
+      <text x="375" y="136" text-anchor="middle">chosen forms built</text>
+      <text x="375" y="154" text-anchor="middle">from 12, 43 and 3,</text>
+      <text x="375" y="172" text-anchor="middle">scored against data</text>
+      <line x1="232" y1="139" x2="268" y2="139" class="l-acc dash"/>
+      <text x="250" y="206" text-anchor="middle">nothing yet derives layer 2 from layer 1</text>
+    </svg>
+    </div>
+    <figcaption>Both layers start from the same two whole numbers. The dashed pink link is the missing derivation.</figcaption>
+  </figure>
+  <h3>How a prediction is scored</h3>
+  <p>Every measurement comes with an uncertainty. The score of a prediction is how many uncertainties it sits away from the measured value. Physicists call that number σ (sigma).</p>
+  <figure>
+    <div class="ctl">
+      <p class="result">Example: you predict a table is 2.00 m long, then measure it.</p>
+      <div class="fields">
+        <label for="sig-p">Prediction<input id="sig-p" type="number" step="any" value="2.00" inputmode="decimal"></label>
+        <label for="sig-m">Measurement<input id="sig-m" type="number" step="any" value="2.03" inputmode="decimal"></label>
+        <label for="sig-u">Uncertainty (±)<input id="sig-u" type="number" step="any" value="0.01" inputmode="decimal"></label>
+      </div>
+      <p class="result" id="sig-out" aria-live="polite">3.0 σ. Worth a second look.</p>
+    </div>
+    <figcaption>A rule of thumb: under 2σ is agreement, 2σ to 5σ deserves a second look, and over 5σ is a clear miss.</figcaption>
+  </figure>
+  <div class="note math"><span class="tag">The maths</span>
+    <p><span class="m">σ = |prediction − measurement| / uncertainty</span>. The overall score, chi-square, adds the squares: <span class="m">χ<sup>2</sup> = σ<sub>1</sub><sup>2</sup> + σ<sub>2</sub><sup>2</sup> + …</span> For a good fit, <span class="m">χ<sup>2</sup></span> comes out near the number of rows.</p>
+  </div>
+  <figure>
+    <div class="sv">
+    <svg viewBox="0 0 500 120" role="img" aria-label="Chi-square on a scale of powers of ten: a good fit is about 48, the best case today is 12,649, and the published totals are 1.12 and 2.24 billion">
+      <line x1="30" y1="80" x2="444" y2="80" class="ln"/>
+      <line x1="30" y1="75" x2="30" y2="85" class="thin"/><text x="30" y="104" text-anchor="middle" class="sm mut">10</text>
+      <line x1="76" y1="75" x2="76" y2="85" class="thin"/><text x="76" y="104" text-anchor="middle" class="sm mut">10²</text>
+      <line x1="122" y1="75" x2="122" y2="85" class="thin"/><text x="122" y="104" text-anchor="middle" class="sm mut">10³</text>
+      <line x1="168" y1="75" x2="168" y2="85" class="thin"/><text x="168" y="104" text-anchor="middle" class="sm mut">10⁴</text>
+      <line x1="214" y1="75" x2="214" y2="85" class="thin"/><text x="214" y="104" text-anchor="middle" class="sm mut">10⁵</text>
+      <line x1="260" y1="75" x2="260" y2="85" class="thin"/><text x="260" y="104" text-anchor="middle" class="sm mut">10⁶</text>
+      <line x1="306" y1="75" x2="306" y2="85" class="thin"/><text x="306" y="104" text-anchor="middle" class="sm mut">10⁷</text>
+      <line x1="352" y1="75" x2="352" y2="85" class="thin"/><text x="352" y="104" text-anchor="middle" class="sm mut">10⁸</text>
+      <line x1="398" y1="75" x2="398" y2="85" class="thin"/><text x="398" y="104" text-anchor="middle" class="sm mut">10⁹</text>
+      <line x1="444" y1="75" x2="444" y2="85" class="thin"/><text x="444" y="104" text-anchor="middle" class="sm mut">10¹⁰</text>
+      <line x1="61.3" y1="56" x2="61.3" y2="74" class="thin"/>
+      <circle cx="61.3" cy="80" r="5" class="f-ok"><title>A good fit: about 48</title></circle>
+      <text x="30" y="50">≈ 48: good fit</text>
+      <line x1="172.7" y1="34" x2="172.7" y2="74" class="thin"/>
+      <circle cx="172.7" cy="80" r="5" class="f-acc"><title>12,649 over 48 rows</title></circle>
+      <text x="150" y="28">12,649: best case</text>
+      <line x1="400.3" y1="58" x2="400.3" y2="74" class="thin"/>
+      <circle cx="400.3" cy="80" r="5" class="f-acc"><title>1,119,785,455 over 54 rows</title></circle>
+      <text x="395" y="54" text-anchor="end">1.12 × 10⁹: deduplicated</text>
+      <line x1="414.1" y1="34" x2="414.1" y2="74" class="thin"/>
+      <circle cx="414.1" cy="80" r="5" class="f-acc"><title>2,239,162,103 over 63 rows</title></circle>
+      <text x="486" y="28" text-anchor="end">2.24 × 10⁹: published</text>
+    </svg>
+    </div>
+    <figcaption>Each step to the right is ten times worse. Audit figures of 11 November 2026, before the fixes.</figcaption>
+  </figure>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Count</th><th>χ²</th><th>Rows</th><th>What it includes</th></tr></thead>
+    <tbody>
+      <tr><th>Published</th><td>2,239,162,103</td><td>63</td><td>Everything, including one quantity scored twice.</td></tr>
+      <tr><th>Deduplicated</th><td>1,119,785,455</td><td>54</td><td>Each quantity scored once.</td></tr>
+      <tr><th>Best case</th><td>12,649</td><td>48</td><td>Also leaving out the fine-structure constant and rows already recorded as falsified.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note math"><span class="tag">The maths</span>
+    <p>One row explains the giant totals. The model's value for the fine-structure constant (the strength of electromagnetism, about 1/137) sits 33,457σ from the measurement, and <span class="m">33,457<sup>2</sup> ≈ 1.12 × 10<sup>9</sup></span>. The same quantity was listed under two names, which doubles it to <span class="m">2.24 × 10<sup>9</sup></span>. That constant is measured to better than one part in a billion, so a formula that misses by a few parts in a million lands tens of thousands of σ away. Even the best case is poor: <span class="m">√(12,649 / 48) ≈ 16</span>, an average miss of 16σ per row.</p>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>The audit found 540 defects in the code, paper and website. Of the confirmed ones, 62 are critical and 174 high. They include quantities scored twice, measured values typed in and then scored as predictions, and numbers left over from an older choice of shape. The fine-structure formula may itself contain a setting tuned for that older shape. The score will be re-counted when the fixes are in. Nothing on this scale turns a 16σ average into a good fit, so the verdict of a poor fit stands for now.</p>
+  </div>
+</section>
+
+<section id="next">
+  <h2><span class="num">10</span>What would change the picture</h2>
+  <p>The solved action shows exactly which ingredients are missing. Each one becomes an option that can be switched on and evaluated. None is adopted unless it comes with a definition, a source for its strength and a check that can fail.</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>Missing</th><th>Idea to test</th><th>State</th></tr></thead>
+    <tbody>
+      <tr><th>Something that feels the 12 two-dimensional holes</th><td>A form field: a relative of the electromagnetic field that responds to surfaces instead of loops.</td><td><span class="pill warn">? to be evaluated</span></td></tr>
+      <tr><th>The strong and weak forces</th><td>Add a force sector by hand, or let forces live on the 12 creases of the shape before smoothing.</td><td><span class="pill warn">? to be evaluated</span></td></tr>
+      <tr><th>A left and right difference</th><td>Matter sitting at special points of a creased shape.</td><td><span class="pill warn">? a lead only</span></td></tr>
+      <tr><th>A fixed size</th><td>A potential that pins the 46 free fields.</td><td><span class="pill bad">✗ open</span></td></tr>
+      <tr><th>The split 26 → 13 + 13</th><td>Derive the borrowed symmetry from the model's own equations.</td><td><span class="pill bad">✗ open</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="note status"><span class="tag">Status</span>
+    <p>The crease idea comes from M-theory, a different theory in 11 dimensions, where creases of exactly this kind carry forces and special points carry one-handed matter (Acharya 1998; Atiyah and Witten 2001). The number 12 in this model is the number of creases. Whether anything similar holds in a 26-dimensional theory with two times is not known. It is a lead to investigate, and the project does not claim it as a result.</p>
+  </div>
+  <h3>How the model can be shown wrong</h3>
+  <ul>
+    <li>Every scored row is a prediction with a measurement next to it. Rows that fail stay on the books, marked as falsified. Nothing is deleted.</li>
+    <li>The light-bending result of stop 8 is a test the bare action has already failed.</li>
+    <li>The model has not yet committed to an ordering of the neutrino masses. Its two earlier statements contradicted each other, so the question is marked undecided until the fixes are done.</li>
+  </ul>
+  <h3>What happens next in the project</h3>
+  <ol>
+    <li>Fix the audited defects, with a test for each fix.</li>
+    <li>Re-count the scoreboard with each quantity scored once.</li>
+    <li>Evaluate each missing ingredient as a switchable option and publish one table of results.</li>
+    <li>Cut the paper to its core and state the two layers by name.</li>
+  </ol>
+</section>
+
+<section id="glossary">
+  <h2>Words used on this page</h2>
+  <dl class="gloss">
+    <div><dt>Action</dt><dd>One quantity that defines a theory. Nature follows the path that makes it stationary.</dd></div>
+    <div><dt>Ansatz</dt><dd>A formula whose form is chosen and then tested, as opposed to derived.</dd></div>
+    <div><dt>Betti number</dt><dd>A count of holes of a given dimension in a shape.</dd></div>
+    <div><dt>Chi-square (χ²)</dt><dd>The sum of all σ² values. Near the number of rows for a good fit.</dd></div>
+    <div><dt>G₂ manifold</dt><dd>A 7-dimensional shape with zero Ricci curvature and a special kind of symmetry in how directions rotate as you move around it.</dd></div>
+    <div><dt>Graviton</dt><dd>The particle of gravity.</dd></div>
+    <div><dt>Handedness</dt><dd>Whether a particle spins like a left-handed or a right-handed screw. Also called chirality.</dd></div>
+    <div><dt>Potential</dt><dd>An energy cost that pushes a field toward a preferred value.</dd></div>
+    <div><dt>Ricci-flat</dt><dd>Having zero curvature of the kind that enters Einstein's equations for empty space.</dd></div>
+    <div><dt>Sigma (σ)</dt><dd>The distance between prediction and measurement, counted in uncertainties.</dd></div>
+    <div><dt>Spinor</dt><dd>The mathematical object that describes matter particles such as the electron.</dd></div>
+    <div><dt>Torus</dt><dd>The surface of a doughnut. A flat torus is a rectangle with opposite edges joined.</dd></div>
+  </dl>
+</section>
+
+</main>
+
+<footer>
+  <div class="col">
+    <p>Sources for the standard physics: Kaluza (1921) and Klein (1926) on hidden dimensions; the Gauss–Bonnet theorem; Joyce (1996) on compact G₂ shapes; Witten (1981, 1983) on forces and handedness from extra dimensions; Bertotti, Iess and Tortora (2003) for the Cassini measurement.</p>
+    <p>Sources for the model's results: the project's action-solution design and audit summary of 11 November 2026. The model is speculative and unvalidated.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var slider = document.getElementById('n-slider');
+  function minus(s) { return s.replace('-', '−'); }
+  function updateGamma() {
+    var n = Number(slider.value);
+    var omega = -1 + 1 / n;
+    var gamma = 1 / (n + 1);
+    var x = (40 + 400 * gamma).toFixed(1);
+    document.getElementById('n-val').textContent = n;
+    document.getElementById('omega-val').textContent = minus(omega.toFixed(3));
+    document.getElementById('gamma-val').textContent = gamma.toFixed(3);
+    document.getElementById('g-mark').setAttribute('cx', x);
+    var label = document.getElementById('g-label');
+    label.setAttribute('x', x);
+    label.textContent = 'this action: ' + gamma.toFixed(2);
+    var note = 'A what-if with ' + n + ' free hidden dimensions.';
+    if (n === 9) { note = 'This is the model: 2 torus + 7 G₂ dimensions.'; }
+    if (n === 1) { note = 'One hidden circle, as in Kaluza and Klein’s original idea.'; }
+    document.getElementById('n-note').textContent = note;
+  }
+  slider.addEventListener('input', updateGamma);
+  updateGamma();
+
+  var p = document.getElementById('sig-p');
+  var m = document.getElementById('sig-m');
+  var u = document.getElementById('sig-u');
+  var out = document.getElementById('sig-out');
+  function updateSigma() {
+    var P = parseFloat(p.value), M = parseFloat(m.value), U = parseFloat(u.value);
+    if (!isFinite(P) || !isFinite(M) || !(U > 0)) {
+      out.textContent = 'Enter three numbers. The uncertainty must be greater than zero.';
+      return;
+    }
+    var s = Math.abs(P - M) / U;
+    var verdict = s < 2 ? 'Agreement.' : (s <= 5 ? 'Worth a second look.' : 'A clear miss.');
+    out.textContent = s.toLocaleString('en', { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + ' σ. ' + verdict;
+  }
+  [p, m, u].forEach(function (el) { el.addEventListener('input', updateSigma); });
+  updateSigma();
+})();
+</script>
