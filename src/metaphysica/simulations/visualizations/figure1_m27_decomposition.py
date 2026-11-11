@@ -23,12 +23,27 @@ import numpy as np
 
 from metaphysica.simulations.visualizations._submission_common import (
     apply_publication_rcparams,
+    load_parameters,
     plots_dir,
 )
 
+B3_ROW = "topology.elder_kads"
 
-def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
+
+def b3_from_registry(params_data: dict) -> int:
+    """b3 of Y_7 from the registry row; a missing row or value raises KeyError."""
+    value = params_data["parameters"][B3_ROW]["value"]
+    if value is None:
+        raise KeyError(f"{B3_ROW} has no value")
+    return int(value)
+
+
+def generate_figure1_m27_decomposition(
+        params_data: dict | None = None) -> tuple[Path, Path] | None:
     """Generate Figure 1 as both PNG and PDF.
+
+    Args:
+        params_data: parsed ``parameters.json``; read from disk when omitted.
 
     Returns:
         ``(png_path, pdf_path)`` on success, ``None`` if matplotlib is
@@ -41,6 +56,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
         print("Warning: matplotlib not available.")
         return None
 
+    b3 = b3_from_registry(params_data if params_data is not None else load_parameters())
     apply_publication_rcparams()
     print("\n[Figure 1] Generating M27 Bulk Decomposition Diagram...")
 
@@ -64,7 +80,7 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
     ax.text(5, 8.0, r"$M^{26}(24,2)$ - 26D Spacetime",
             ha="center", fontsize=15, fontweight="bold")
 
-    # Leech Lattice Λ24 (24D G2 core)
+    # Leech Lattice Λ24: the 24 spatial dimensions (Y_7 with G2 holonomy sits inside)
     leech_box = FancyBboxPatch((1.0, 5.0), 3.5, 2.5,
                                boxstyle="round,pad=0.08",
                                edgecolor="darkblue", facecolor="lightcyan",
@@ -72,10 +88,10 @@ def generate_figure1_m27_decomposition() -> tuple[Path, Path] | None:
     ax.add_patch(leech_box)
     ax.text(2.75, 7.0, r"$\Lambda_{24}$ (Leech Lattice)",
             ha="center", fontsize=13, fontweight="bold")
-    ax.text(2.75, 6.5, r"24D G$_2$ Core", ha="center", fontsize=11)
+    ax.text(2.75, 6.5, r"24D Spatial Core", ha="center", fontsize=11)
     ax.text(2.75, 6.1, r"12 $\times$ $(2,0)$ Bridge Pairs", ha="center", fontsize=10)
-    ax.text(2.75, 5.65, r"$b_3$ (Betti number, from the registry)", ha="center", fontsize=9)
-    ax.text(2.75, 5.3, r"G$_2$ Holonomy", ha="center", fontsize=9, style="italic")
+    ax.text(2.75, 5.65, rf"$b_3 = {b3}$ of $Y_7$ (registry)", ha="center", fontsize=9)
+    ax.text(2.75, 5.3, r"$Y_7$: G$_2$ Holonomy", ha="center", fontsize=9, style="italic")
 
     # Two-Time T1 (1D)
     time_box = FancyBboxPatch((5.2, 5.0), 2.0, 2.5,
