@@ -43,5 +43,5 @@
 ## Review
 | defect | action | commit |
 |---|---|---|
-| `docs/plan/programme/stale/README.md` (added in f09ebed) is outside the XB owned set; XB-04 grants only the `git mv` | README removed (`git rm`); its text (origin 137dd42, failed contract keys, pre-wave-A scores, publish step skips, regeneration by `python -m metaphysica.testground rank`, wave D P3) carried into the XB-04 row above. Doc only, no code or test reads it; `tests/programme/test_build_fresh_path_ranking.py` unchanged and re-run | see git log |
+| `docs/plan/programme/stale/README.md` (added in f09ebed) is outside the XB owned set; XB-04 grants only the `git mv` | README removed (`git rm`); its text (origin 137dd42, failed contract keys, pre-wave-A scores, publish step skips, regeneration by `python -m metaphysica.testground rank`, wave D P3) carried into the XB-04 row above. Doc only, no code or test reads it; `tests/programme/test_build_fresh_path_ranking.py` unchanged and re-run | fcffa04 |
 
