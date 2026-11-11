@@ -42,6 +42,11 @@ BOOST_RAPIDITY = 0.693
 BOOST_BOUND = 0.1
 
 
+def _boost_verdict(boost_ok: bool) -> str:
+    """Word the section prints for the Minkowski rotor check, from run()["_boost_ok"]."""
+    return "passes" if boost_ok else "FAILS"
+
+
 class CliffordUnificationSimulation(SimulationBase):
     """
     Unified Clifford algebra demonstration for PM framework.
@@ -265,12 +270,14 @@ class CliffordUnificationSimulation(SimulationBase):
         rot_err = res["algebra.clifford_rotation_check"]
         checks_passed = res["_checks_passed"]
         all_pass = res["_all_pass"]
+        boost_ok = res["_boost_ok"]
+        boost_word = _boost_verdict(boost_ok)
 
         status_sym = "✓" if all_pass else "~"
 
         rows = [
             ["G₂ metric (7×7 matrix)", r"\texttt{EMLMultivector.g2(comps).quadratic()}", f"{g2_inv:.6g}", "✓" if abs(g2_inv - 1.0) < 1e-12 else "~"],
-            ["Minkowski interval under cos/sin rotor (FAILS)", r"\texttt{v.rotor(φ, (0,1))} — Minkowski sig", f"Δs={boost:.3g} (bound {BOOST_BOUND})", "✓" if boost < BOOST_BOUND else "✗"],
+            [f"Minkowski interval under cos/sin rotor ({boost_word})", r"\texttt{v.rotor(φ, (0,1))} — Minkowski sig", f"Δs={boost:.3g} (bound {BOOST_BOUND})", "✓" if boost_ok else "✗"],
             ["FLRW cosmology metric", r"\texttt{EMLMultivector.flrw(comps, a).quadratic()}", f"{flrw_inv:.4g}", "✓" if abs(flrw_inv + 1.0) < 1e-12 else "~"],
             ["4-frame rotation", r"\texttt{v.rotor(π/2, (0,1))}", f"err={rot_err:.2e}", "✓" if rot_err < 1e-8 else "~"],
             ["Euclidean Δ", r"\texttt{.quadratic()} signature=(1,...)", "σᵢ=+1 all", "—"],
@@ -312,7 +319,7 @@ class CliffordUnificationSimulation(SimulationBase):
                 content=(
                     f"G₂ invariant = {g2_inv:.4g} (expect 1.0)  |  "
                     f"FLRW invariant = {flrw_inv:.4g} (expect −1.0)  |  "
-                    f"Boost Δs = {boost:.3g} (bound {BOOST_BOUND}, FAILS)  |  "
+                    f"Boost Δs = {boost:.3g} (bound {BOOST_BOUND}, {boost_word})  |  "
                     f"Rotation error = {rot_err:.2e}"
                 ),
             ),
