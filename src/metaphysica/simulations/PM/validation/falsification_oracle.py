@@ -268,29 +268,46 @@ class FalsificationOracle:
 
     def evaluate_risk_profile(self) -> Dict[str, Any]:
         """
-        Calculate how close the theory is to being proven wrong.
+        Compare each registry prediction with its experimental threshold.
 
-        A 'Robust' prediction is one that is testable within 5 years.
+        Returns one row per test (ALP Principia Metric, fifth force, proton
+        decay, sterile neutrino, KK gravitons, cross-shadow Bell), each with
+        a status, a verdict and a falsification risk built from that
+        comparison. Each row is computed by its own ``_*_risk`` helper.
         """
-        results = {}
+        return {
+            "ALP_Principia_Metric": self._alp_risk(),
+            "Fifth_Force": self._fifth_force_risk(),
+            "Proton_Decay": self._proton_decay_risk(),
+            "Sterile_Neutrino": self._sterile_neutrino_risk(),
+            "KK_Gravitons": self._kk_graviton_risk(),
+            "Cross_Pair_Bell": self._cross_pair_bell_risk(),
+        }
 
-        # 1. ALP PRINCIPIA METRIC - THE PRIMARY KILL-SWITCH (BabyIAXO 2025, IAXO 2028)
+    def _alp_risk(self) -> Dict[str, Any]:
+        """ALP Principia Metric row: the projected BabyIAXO/IAXO status, then
+        the comparison with the current CAST helioscope bound."""
         alp = self.predictions["ALP_Principia_Metric"]
         alp_mass = alp["mass_eV"]
         alp_coupling = alp["coupling_g_agg_GeV_inv"]
-        baby_iaxo_limit = self.exclusion_thresholds["BabyIAXO_2025"]["coupling_limit_GeV_inv"]
-        iaxo_limit = self.exclusion_thresholds["IAXO_2028"]["coupling_limit_GeV_inv"]
-
-        # Check if mass is in detection range
         baby_mass_min, baby_mass_max = self.exclusion_thresholds["BabyIAXO_2025"]["mass_range_eV"]
         mass_in_range = baby_mass_min <= alp_mass <= baby_mass_max
+        row = self._alp_projection_row(alp_mass, alp_coupling, mass_in_range)
+        self._apply_current_helioscope_bound(row, alp_coupling, mass_in_range)
+        return row
 
+    def _alp_projection_row(self, alp_mass: float, alp_coupling: float,
+                            mass_in_range: bool) -> Dict[str, Any]:
+        """Status of the ALP point against the projected BabyIAXO and IAXO
+        coupling sensitivities (IMMINENT_TEST, TESTABLE or MARGINAL)."""
+        baby_iaxo_limit = self.exclusion_thresholds["BabyIAXO_2025"]["coupling_limit_GeV_inv"]
+        iaxo_limit = self.exclusion_thresholds["IAXO_2028"]["coupling_limit_GeV_inv"]
         if mass_in_range and alp_coupling >= baby_iaxo_limit:
-            results["ALP_Principia_Metric"] = {
+            return {
                 "status": "IMMINENT_TEST",
                 "verdict": "THE PRINCIPIA METRIC: predicted coupling lies above the BabyIAXO projected sensitivity",
                 "falsification_risk": "CRITICAL",
-                "predicted_mass_meV": alp_mass * 1e3,  # Convert to meV
+                "predicted_mass_meV": alp_mass * 1e3,  # eV -> meV
                 "predicted_coupling": alp_coupling,
                 "baby_iaxo_limit": baby_iaxo_limit,
                 "iaxo_limit": iaxo_limit,
@@ -298,8 +315,8 @@ class FalsificationOracle:
                 "timeline": "BabyIAXO / IAXO projected sensitivity",
                 "note": "Mass and coupling are a speculative ansatz (INPUT_ANSATZ), not a derived consequence; a null result constrains the EIS sector only."
             }
-        elif mass_in_range and alp_coupling >= iaxo_limit:
-            results["ALP_Principia_Metric"] = {
+        if mass_in_range and alp_coupling >= iaxo_limit:
+            return {
                 "status": "TESTABLE",
                 "verdict": "THE PRINCIPIA METRIC: within IAXO projected sensitivity",
                 "falsification_risk": "CRITICAL",
@@ -310,134 +327,119 @@ class FalsificationOracle:
                 "timeline": "2028",
                 "note": "If IAXO excludes this mass/coupling, the EIS-sector ansatz is excluded; the ansatz is not a derived G2 consequence."
             }
-        else:
-            results["ALP_Principia_Metric"] = {
-                "status": "MARGINAL",
-                "verdict": "THE PRINCIPIA METRIC: Near BabyIAXO/IAXO sensitivity threshold",
-                "falsification_risk": "HIGH",
-                "predicted_mass_meV": alp_mass * 1e3,
-                "predicted_coupling": alp_coupling,
-                "iaxo_limit": iaxo_limit,
-                "ratio": alp_coupling / iaxo_limit,
-                "timeline": "BabyIAXO / IAXO projected sensitivity",
-                "note": "Even if below initial sensitivity, improved IAXO phases will test this prediction."
-            }
+        return {
+            "status": "MARGINAL",
+            "verdict": "THE PRINCIPIA METRIC: Near BabyIAXO/IAXO sensitivity threshold",
+            "falsification_risk": "HIGH",
+            "predicted_mass_meV": alp_mass * 1e3,
+            "predicted_coupling": alp_coupling,
+            "iaxo_limit": iaxo_limit,
+            "ratio": alp_coupling / iaxo_limit,
+            "timeline": "BabyIAXO / IAXO projected sensitivity",
+            "note": "Even if below initial sensitivity, improved IAXO phases will test this prediction."
+        }
 
+    def _apply_current_helioscope_bound(self, row: Dict[str, Any], alp_coupling: float,
+                                        mass_in_range: bool) -> None:
+        """Add the CAST comparison to the ALP row. A point in the mass range
+        and above CAST is EXCLUDED_BY_CURRENT_BOUND; the projected status is
+        kept under ``projected_sensitivity_status``."""
         cast = self.exclusion_thresholds["CAST_current"]["coupling_limit_GeV_inv"]
-        results["ALP_Principia_Metric"]["current_helioscope_limit_GeV_inv"] = cast
-        results["ALP_Principia_Metric"]["exceeds_current_helioscope_limit"] = alp_coupling >= cast
+        row["current_helioscope_limit_GeV_inv"] = cast
+        row["exceeds_current_helioscope_limit"] = alp_coupling >= cast
         if mass_in_range and alp_coupling >= cast:
             # The status follows the comparison with the CURRENT bound, not
             # the projected sensitivity: a point above CAST is excluded now.
-            alp_row = results["ALP_Principia_Metric"]
-            alp_row["projected_sensitivity_status"] = alp_row["status"]
-            alp_row["status"] = "EXCLUDED_BY_CURRENT_BOUND"
-            alp_row["falsification_risk"] = "EXCLUDED"
+            row["projected_sensitivity_status"] = row["status"]
+            row["status"] = "EXCLUDED_BY_CURRENT_BOUND"
+            row["falsification_risk"] = "EXCLUDED"
         if alp_coupling >= cast:
-            results["ALP_Principia_Metric"]["current_limit_note"] = (
+            row["current_limit_note"] = (
                 f"Registry coupling {alp_coupling:.3g} GeV^-1 is {alp_coupling / cast:.3g} times the "
                 f"CAST helioscope bound {cast:.3g} GeV^-1: the ansatz point is already excluded "
                 "if that bound applies at this mass.")
 
-        # 2. Fifth Force Range Risk (Eot-Wash current limits)
+    def _fifth_force_risk(self) -> Dict[str, Any]:
+        """Fifth-force range against the current Eot-Wash range limit:
+        FALSIFIED when the predicted range exceeds it, else VIABLE."""
         fifth_force_range = self.predictions["fifth_force"]["range_lambda_m"]
         eot_wash_limit = self.exclusion_thresholds["Eot_Wash_current"]["range_limit_m"]
-
+        row = {
+            "predicted_value": fifth_force_range,
+            "predicted_value_unit": "m",
+            "experimental_limit": eot_wash_limit,
+            "experimental_limit_unit": "m",
+            "margin": fifth_force_range / eot_wash_limit
+        }
         if fifth_force_range > eot_wash_limit:
-            results["Fifth_Force"] = {
-                "status": "FALSIFIED",
-                "verdict": "Violates current sub-mm gravity data",
-                "falsification_risk": "CRITICAL",
-                "predicted_value": fifth_force_range,
-                "predicted_value_unit": "m",
-                "experimental_limit": eot_wash_limit,
-                "experimental_limit_unit": "m",
-                "margin": fifth_force_range / eot_wash_limit
-            }
+            head = {"status": "FALSIFIED",
+                    "verdict": "Violates current sub-mm gravity data",
+                    "falsification_risk": "CRITICAL"}
         else:
-            results["Fifth_Force"] = {
-                "status": "VIABLE",
-                "verdict": f"Predicted range {fifth_force_range*1e9:.3g} nm; needs higher precision",
-                "falsification_risk": "MEDIUM",
-                "predicted_value": fifth_force_range,
-                "predicted_value_unit": "m",
-                "experimental_limit": eot_wash_limit,
-                "experimental_limit_unit": "m",
-                "margin": fifth_force_range / eot_wash_limit
-            }
+            head = {"status": "VIABLE",
+                    "verdict": f"Predicted range {fifth_force_range*1e9:.3g} nm; needs higher precision",
+                    "falsification_risk": "MEDIUM"}
+        return {**head, **row}
 
-        # 3. Proton Decay Risk (Hyper-K 2027)
+    def _proton_decay_risk(self) -> Dict[str, Any]:
+        """Proton lifetime against the Hyper-K sensitivity: IMMINENT_TEST
+        when the predicted lifetime is below it, else SAFE."""
         tau_p = self.predictions["proton_decay"]["tau_p_years"]
         hyper_k_limit = self.exclusion_thresholds["Hyper_K_2027"]["tau_p_limit_years"]
-
         if tau_p < hyper_k_limit:
-            results["Proton_Decay"] = {
-                "status": "IMMINENT_TEST",
-                "verdict": "Should be detected by Hyper-K (2027)",
-                "falsification_risk": "HIGH",
-                "predicted_lifetime": tau_p,
-                "experimental_sensitivity": hyper_k_limit,
-                "ratio": tau_p / hyper_k_limit
-            }
+            head = {"status": "IMMINENT_TEST",
+                    "verdict": "Should be detected by Hyper-K (2027)",
+                    "falsification_risk": "HIGH"}
         else:
-            results["Proton_Decay"] = {
-                "status": "SAFE",
-                "verdict": "Beyond Hyper-K sensitivity",
-                "falsification_risk": "LOW",
+            head = {"status": "SAFE",
+                    "verdict": "Beyond Hyper-K sensitivity",
+                    "falsification_risk": "LOW"}
+        return {**head,
                 "predicted_lifetime": tau_p,
                 "experimental_sensitivity": hyper_k_limit,
-                "ratio": tau_p / hyper_k_limit
-            }
+                "ratio": tau_p / hyper_k_limit}
 
-        # 4. Sterile Neutrino Risk (DUNE 2028)
+    def _sterile_neutrino_risk(self) -> Dict[str, Any]:
+        """Sterile mixing angle against the DUNE limit: TESTABLE when the
+        predicted mixing exceeds it, else MARGINAL."""
         sterile_mixing = self.predictions["sterile_neutrino"]["mixing_angle_rad"]
         dune_limit = self.exclusion_thresholds["DUNE_2028"]["sterile_mixing_limit"]
-
         if sterile_mixing > dune_limit:
-            results["Sterile_Neutrino"] = {
-                "status": "TESTABLE",
-                "verdict": "Detectable by DUNE (2028)",
-                "falsification_risk": "MEDIUM",
-                "predicted_mixing": sterile_mixing,
-                "experimental_limit": dune_limit,
-                "ratio": sterile_mixing / dune_limit
-            }
+            head = {"status": "TESTABLE",
+                    "verdict": "Detectable by DUNE (2028)",
+                    "falsification_risk": "MEDIUM"}
         else:
-            results["Sterile_Neutrino"] = {
-                "status": "MARGINAL",
-                "verdict": "Near DUNE sensitivity threshold",
-                "falsification_risk": "LOW",
+            head = {"status": "MARGINAL",
+                    "verdict": "Near DUNE sensitivity threshold",
+                    "falsification_risk": "LOW"}
+        return {**head,
                 "predicted_mixing": sterile_mixing,
                 "experimental_limit": dune_limit,
-                "ratio": sterile_mixing / dune_limit
-            }
+                "ratio": sterile_mixing / dune_limit}
 
-        # 5. KK Gravitons Risk (HL-LHC 2029)
+    def _kk_graviton_risk(self) -> Dict[str, Any]:
+        """Benchmark M_KK (an OPEN input) against the HL-LHC reach: TESTABLE
+        when below the reach, else SAFE."""
         m_kk = self.predictions["kaluza_klein"]["M_KK_TeV"]
         lhc_limit = self.exclusion_thresholds["HL_LHC_2029"]["M_KK_limit_TeV"]
-
         if m_kk < lhc_limit:
-            results["KK_Gravitons"] = {
-                "status": "TESTABLE",
-                "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is accessible to HL-LHC",
-                "falsification_risk": "MEDIUM",
-                "predicted_mass": m_kk,
-                "experimental_reach": lhc_limit,
-                "margin": lhc_limit / m_kk
-            }
+            head = {"status": "TESTABLE",
+                    "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is accessible to HL-LHC",
+                    "falsification_risk": "MEDIUM"}
         else:
-            results["KK_Gravitons"] = {
-                "status": "SAFE",
-                "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is beyond HL-LHC reach",
-                "falsification_risk": "LOW",
+            head = {"status": "SAFE",
+                    "verdict": "Benchmark M_KK (OPEN input, not computed on the adopted path) is beyond HL-LHC reach",
+                    "falsification_risk": "LOW"}
+        return {**head,
                 "predicted_mass": m_kk,
                 "experimental_reach": lhc_limit,
-                "margin": lhc_limit / m_kk
-            }
+                "margin": lhc_limit / m_kk}
 
-        # 6. Cross-shadow Bell correlations (two-time signature; SPECULATIVE)
+    def _cross_pair_bell_risk(self) -> Dict[str, Any]:
+        """Cross-shadow Bell correlations (two-time signature): always
+        SPECULATIVE, with the registry signature and kill condition."""
         bell = self.predictions["cross_pair_bell"]
-        results["Cross_Pair_Bell"] = {
+        return {
             "status": "SPECULATIVE",
             "verdict": ("Qualitative two-time signature: cross-shadow Bell "
                         "correlations (Pettini 2026, arXiv:2606.12457); no "
@@ -446,8 +448,6 @@ class FalsificationOracle:
             "predicted_signature": bell["signature"],
             "kill_condition": bell["expected_if_false"],
         }
-
-        return results
 
     def identify_kill_switches(self, risk_profile: Dict[str, Any]) -> List[Dict[str, str]]:
         """
