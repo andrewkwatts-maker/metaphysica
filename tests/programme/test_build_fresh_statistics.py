@@ -28,7 +28,7 @@ REPORT = {
         "all_scoring_rows": {"chi_squared": 9.25, "n": 2}},
     "edof_analysis": {"effective_dof": 3, "effective_dof_is_ansatz": True,
                       "p_value": 0.026},
-    "summary": {"status": "POOR_FIT"}}
+    "summary": {"status": "POOR_FIT", "p_value": 0.0098, "p_value_n_dof": 0.0098}}
 
 
 def _setup(tmp_path, monkeypatch, report=None):
@@ -81,7 +81,7 @@ def test_default_pass_reads_the_fit_from_the_report(tmp_path, monkeypatch):
     stats = gs.generate_statistics()
     fs, vs = stats["framework_statistics"], stats["validation"]
     assert (fs["chi_squared"], fs["chi_squared_rows"]) == (9.25, 2)
-    assert (fs["degrees_of_freedom"], fs["p_value"], fs["status"]) == (3, 0.026, "POOR_FIT")
+    assert (fs["degrees_of_freedom"], fs["p_value"], fs["status"]) == (2, 0.0098, "POOR_FIT")
     assert (vs["total_predictions"], vs["within_2sigma"]) == (2, 1)
 
 
