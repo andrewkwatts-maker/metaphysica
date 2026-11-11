@@ -27,7 +27,8 @@ Notes:
   (mass, potential, interaction, open L_bridge/V): call it on the adopted R + kinetic action
   only. A Weyl kinetic term that vanishes in the signature raises. `vacuum_checks` checks
   R_MN = 0 per factor (the design names `ricci_scalar`; the tensor is the field equation and
-  the scalar is reported as measured), matter fields zero, no potential term.
+  the scalar is reported as measured), matter fields zero, no constant or linear potential
+  term (XG-01).
 - Acceptance: tests/actions 122 passed; tests/test_master_ladder.py 16 passed (ladder unchanged).
 - The lane's tests live in `tests/actions/`, not `tests/programme/`. The (24,2) oracle test is
   marked `slow`, but `slow` is not deselected (pyproject `addopts` has no `-m`), so it runs in
