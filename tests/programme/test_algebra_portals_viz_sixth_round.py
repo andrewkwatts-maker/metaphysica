@@ -28,7 +28,7 @@ def test_proton_text_is_built_from_the_computed_values():
     assert sim.get_residue(54).mass_gev == pytest.approx(v["M_GUT_eff"])
     text = " ".join([str(sim.get_formulas()), str(sim.get_output_param_definitions()),
                     str(sim.get_section_content().content_blocks)])
-    for typed in ("4.24e39", "2.5e18", "1.24e17", "4.8×10³⁴", "M_Pl/sqrt(24)"):
+    for typed in ("4.24e39", "2.5e18", "1.24e17", "4.8×10³⁴", "M_Pl/sqrt(24)", "2×10¹⁷"):
         assert typed not in text, typed
     for key in ("tau", "base", "eff"):
         assert t[key] in text, key

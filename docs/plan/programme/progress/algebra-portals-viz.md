@@ -77,3 +77,14 @@ Review round on 7af0d85, 25f333e, 6bad1bd, 38a9339. Tests: tests/programme/test_
 | octonion fork test passed on base | test monkeypatches `variants.resolve` to raise KeyError and asserts it propagates; the `except ImportError: return self._C_mult` fallback also removed; run against the 355bfd9 source the getter returns without raising, so the test fails there | review-round |
 
 Needs other lane (added): all_plots.py, run_all_simulations.py (still builds OrchORPairShieldingSimulation, harmless now: no section, no certificate), website/Pages/visualization-index.html and js/pm-visualization-manifest.js still list the three retired figures (site lane). e7_representation.py and e8x8_splitting.py text still says alpha_leak = 1/sqrt(6) (not in this review's list; next round).
+
+## Close-out
+Round 1 (WAVE_A_CLOSEOUT.md, XA). Tests: tests/programme/test_algebra_portals_viz_closeout_*.py.
+
+| id | file:line | state | commit | test |
+|---|---|---|---|---|
+| XA-01 | PM/support/complete_residue_registry.py (2.3.3) | fixed: GUT scale in the text is `pt['eff']`; "2×10¹⁷" added to the strings the proton-text test rejects | (this commit) | test_algebra_portals_viz_closeout_residue_text::test_section_gut_scale_is_the_computed_effective_value |
+| XA-07 | complete_residue_registry.py (Dm2 terms, M_Pl term, row 61, lambda_max EML text) | fixed: `_dm2_term` reads NuFIT; M_Pl, b3, chi_eff terms from `proton_decay_text()`; row 61 value and error from `RealWorldData.PLANCK_MASS`; lambda_max EML text built from the value | (this commit) | ::test_neutrino_splitting_terms_read_the_loader, ::test_planck_mass_text_and_row_read_the_dataset |
+| XA-11 | complete_residue_registry.get_formulas | fixed: docstring first | (this commit) | ::test_get_formulas_docstring_is_first |
+
+Edited tests: test_algebra_portals_viz_sixth_round.py::test_proton_text_is_built_from_the_computed_values now also rejects "2×10¹⁷" (XA-01 asks for it).

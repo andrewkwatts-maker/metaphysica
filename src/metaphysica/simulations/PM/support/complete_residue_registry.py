@@ -136,6 +136,11 @@ def proton_decay_values() -> Dict[str, float]:
             "tau_yr": float(tau_yr)}
 
 
+def _dm2_term(key: str, label: str) -> str:
+    """A neutrino mass-splitting term, its value read from the NuFIT loader."""
+    return f"{label} = {_get_loader().get_nufit(key).value:.4g} eV^2 (NuFIT)"
+
+
 def proton_decay_text() -> Dict[str, str]:
     """The proton-decay numbers as text, built from the computed values."""
     v = proton_decay_values()
@@ -560,8 +565,9 @@ def _make_registry() -> Dict[int, SpectralResidue]:
     m_p_unc = _pdg_u("baryons", "m_proton")
     m_n_val = _pdg_v("baryons", "m_neutron")
     m_n_unc = _pdg_u("baryons", "m_neutron")
+    m_pl_val, m_pl_unc = RealWorldData.PLANCK_MASS[0], RealWorldData.PLANCK_MASS[1]
     scale_data = [
-        (61, "M_Planck", 1.22e19, 1.22e19, 1e16, "Planck mass"),
+        (61, "M_Planck", m_pl_val, m_pl_val, m_pl_unc, "Planck mass"),
         (62, "M_GUT", 2e16, 2e16, 1e16, "GUT scale (estimated)"),
         (63, "v_Higgs", v_higgs_val, v_higgs_val, v_higgs_unc, "Higgs VEV"),
         (64, "Lambda_QCD", 0.217, 0.217, 0.025, "QCD scale"),
@@ -821,7 +827,7 @@ class CompleteResidueRegistryV18(SimulationBase):
             metadata={
                 "derivation": "max(lambda_n) over the residue registry; the winner is residue 61 (M_Planck), whose lambda_n rule is value/k_gimel",
                 "units": "GeV (M_Planck[GeV] / k_gimel) -- NOT dimensionless",
-                "eml_description": "EML: ops.div(eml_scalar(1.22e19), eml_vec('constants.k_gimel')) — max(lambda_n) is attained by residue 61 (M_Planck), whose lambda_n is assigned as value/k_gimel because value >= 1e10; so this parameter is M_Planck/k_gimel = 9.904e17 GeV. The previous text, k_gimel x 80.5, is withdrawn: 80.5 was an INVENTED constant (no derivation from b₃ or anything else), and the ~1e15 said to separate it from the registered value is not a normalisation — it is the residual of reverse-fitting 80.5 to M_Planck/k_gimel². TWO THINGS NEED AN AUTHOR RULING: (a) this is not a Laplace-Beltrami eigenvalue and not dimensionless, so the parameter name \"Maximum Eigenvalue\" and its declared units are both wrong; (b) lambda_n is assigned by at least seven mutually incompatible rules across the registry (value/k_gimel, (value/k_gimel)^2, value*k_gimel, log10(value)*k_gimel, ...), so max() over that column selects whichever rule produced the largest float, not any physical maximum"
+                "eml_description": f"EML: ops.div(eml_scalar({RealWorldData.PLANCK_MASS[0]:.5g}), eml_vec('constants.k_gimel')) — max(lambda_n) is attained by residue 61 (M_Planck), whose lambda_n is assigned as value/k_gimel because value >= 1e10; so this parameter is M_Planck/k_gimel = {stats['lambda_max']:.4g} GeV. The previous text, k_gimel x 80.5, is withdrawn: 80.5 was an INVENTED constant (no derivation from b₃ or anything else), and the ~1e15 said to separate it from the registered value is not a normalisation — it is the residual of reverse-fitting 80.5 to M_Planck/k_gimel². TWO THINGS NEED AN AUTHOR RULING: (a) this is not a Laplace-Beltrami eigenvalue and not dimensionless, so the parameter name \"Maximum Eigenvalue\" and its declared units are both wrong; (b) lambda_n is assigned by at least seven mutually incompatible rules across the registry (value/k_gimel, (value/k_gimel)^2, value*k_gimel, log10(value)*k_gimel, ...), so max() over that column selects whichever rule produced the largest float, not any physical maximum"
             }
         )
 
@@ -1106,10 +1112,10 @@ class CompleteResidueRegistryV18(SimulationBase):
         return self.run(registry)
 
     def get_formulas(self) -> List[Formula]:
+        """Return formulas for spectral analysis."""
         pt = proton_decay_text()
         m1_ev = self._mass_ev(self.get_residue(49))
         sum_nu_ev = self._mass_ev(self.get_residue(52))
-        """Return formulas for spectral analysis."""
         return [
             Formula(
                 id="laplacian-eigenvalue-v18",
@@ -1264,8 +1270,8 @@ class CompleteResidueRegistryV18(SimulationBase):
                 outputParams=["spectral.sum_m_nu"],
                 terms={
                     "m1": f"Lightest mass, the chain's own output ({m1_ev:.5f} eV)",
-                    "Dm2_21": "Solar mass splitting = 7.42e-5 eV^2",
-                    "Dm2_31": "Atmospheric mass splitting = 2.515e-3 eV^2"
+                    "Dm2_21": _dm2_term("delta_m21_sq", "Solar mass splitting"),
+                    "Dm2_31": _dm2_term("delta_m31_sq", "Atmospheric mass splitting")
                 },
                 derivation={
                     "steps": [
@@ -1330,9 +1336,9 @@ class CompleteResidueRegistryV18(SimulationBase):
                 inputParams=["topology.elder_kads", "topology.mephorash_chi"],
                 outputParams=["spectral.M_GUT_G2"],
                 terms={
-                    "M_Pl": "Planck mass = 1.22e19 GeV",
-                    "b3": "Third Betti number = 24",
-                    "chi_eff": "Euler characteristic = 144"
+                    "M_Pl": f"Planck mass = {pt['M_Pl']} GeV (dataset)",
+                    "b3": f"Third Betti number = {pt['b3']} (path in force)",
+                    "chi_eff": f"Euler characteristic = {pt['chi']} (registry)"
                 },
                 derivation={
                     "steps": [
@@ -1722,8 +1728,8 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "≈ 12.318 (the holonomy warp factor, derived from associative 3-cycle "
                         "intersection numbers on V₇) sets the mass scale for the entire spectrum. "
                         "All 125 eigenvalues are expressed in units of k_ℷ, ensuring the mass "
-                        "hierarchy from the electron mass (~0.511 MeV) to the GUT scale "
-                        "(~2×10¹⁷ GeV) is reproduced from a single geometric input."
+                        "hierarchy from the electron mass (~0.511 MeV) to the effective GUT scale "
+                        f"({pt['eff']}) is reproduced from a single geometric input."
                     )
                 ),
                 # ============================================================
