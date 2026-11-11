@@ -3863,9 +3863,10 @@ def main():
 
     # Statistics need the gate certificates and this build's rigor report,
     # neither of which exists yet on an empty output directory.
-    print("Validation statistics are written by the build steps "
-          "'Build validation statistics' (--pre-rigor) and "
-          "'Refresh validation statistics from this build's rigor report'.")
+    if not args.quiet:
+        print("Validation statistics are written by the build steps "
+              "'Build validation statistics' (--pre-rigor) and "
+              "'Refresh validation statistics from this build's rigor report'.")
 
     # Return exit code based on results (simulations AND validations)
     validation = output_data["validation"]
