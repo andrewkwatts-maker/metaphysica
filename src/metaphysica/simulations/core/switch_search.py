@@ -646,32 +646,6 @@ def search(fork_ids: Optional[Iterable[str]] = None,
     combos = combinations_for(ids, cap=cap)
     rows = [evaluate_combination(c) for c in combos]
     rows.sort(key=lambda r: r["digest"])
-
-    consistent = [r for r in rows if r["internally_consistent"]]
-    blocked = [r for r in rows if r["blocked_only_by_unevaluable_checks"]]
-    errored = [r for r in rows if r["state"] == "ERRORED"]
-
-    # A check with the same outcome in EVERY combination says nothing about the
-    # switches -- it is a standing property of the theory that no setting of
-    # these forks addresses. Reporting it per row buries the structure the
-    # search exists to expose: one fork-independent contradiction makes all
-    # sixteen rows inconsistent and the sweep stops discriminating.
-    #
-    # Separated, NOT excused. A standing contradiction still makes every row
-    # internally inconsistent, and `internally_consistent` is unchanged.
-    names = sorted({c["name"] for r in rows for c in r["checks"]})
-    outcomes = {n: {tuple(c["ok"] for c in r["checks"] if c["name"] == n)
-                    for r in rows} for n in names}
-    failing_everywhere = sorted(
-        n for n in names
-        if outcomes[n] == {(False,)} )
-    varies_with_the_switches = sorted(
-        n for n in names if len(outcomes[n]) > 1)
-    fork_dependent_clean = [
-        r for r in rows
-        if not [c for c in r["checks"]
-                if not c["ok"] and c["name"] in varies_with_the_switches]
-    ]
     return {
         "what_this_reports": (
             "Every combination's internal consistency and cost, ordered by "
@@ -683,38 +657,86 @@ def search(fork_ids: Optional[Iterable[str]] = None,
         "n_combinations": len(rows),
         "capped": cap is not None and len(combos) >= cap,
         "rows": rows,
-        "n_internally_consistent": len(consistent),
-        "internally_consistent_digests": [r["digest"] for r in consistent],
-        "n_blocked_only_by_unevaluable_checks": len(blocked),
-        "blocked_only_by_unevaluable_digests": [r["digest"] for r in blocked],
-        "n_errored": len(errored),
-        "errored_digests": [r["digest"] for r in errored],
-        "problems_no_combination_fixes": failing_everywhere,
-        "problems_the_switches_control": varies_with_the_switches,
-        "n_clean_on_every_switch_controlled_check": len(fork_dependent_clean),
-        "clean_on_every_switch_controlled_check_digests": [
-            r["digest"] for r in fork_dependent_clean],
-        "why_those_are_separated": (
-            "A check failing in every combination is a standing property of "
-            "the theory that no setting of these forks addresses. It is "
-            "reported apart so one such defect does not flatten the sweep, "
-            "and it is NOT excused: those rows remain internally "
-            "inconsistent. The last count is 'as good as these switches can "
-            "make it', which is a structural statement and not a ranking -- "
-            "no row is ordered ahead of another and the digests are sorted."
-        ),
-        "why_that_second_count_exists": (
-            "A check that cannot be evaluated is not a check that failed. "
-            "With no usable arithma the third-track check is VACUOUS for every "
-            "combination, so n_internally_consistent reads 0 for a reason "
-            "about the environment rather than the theory. These rows have "
-            "nothing else against them."
-        ),
-        "ordering": "digest; never by residual or agreement",
-        "closure_would_look_like": (
-            "exactly one internally consistent combination whose free set has "
-            "no load-bearing input left. Both numbers are reported per row so "
-            "that state is recognisable; this module does not declare it."
-        ),
-        "verdict": VERDICT,
+        **_state_counts(rows),
+        **_standing_and_switched(rows),
+        **_SEARCH_NOTES,
     }
+
+
+def _digests_where(rows: List[Dict[str, Any]], keep) -> List[str]:
+    return [r["digest"] for r in rows if keep(r)]
+
+
+def _state_counts(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Consistent, blocked-only-by-unevaluable and ERRORED rows, by digest.
+
+    An ERRORED row (a check raised) is its own state: counted and listed
+    apart, never consistent and never folded into the blocked rows.
+    """
+    consistent = _digests_where(rows, lambda r: r["internally_consistent"])
+    blocked = _digests_where(
+        rows, lambda r: r["blocked_only_by_unevaluable_checks"])
+    errored = _digests_where(rows, lambda r: r["state"] == "ERRORED")
+    return {
+        "n_internally_consistent": len(consistent),
+        "internally_consistent_digests": consistent,
+        "n_blocked_only_by_unevaluable_checks": len(blocked),
+        "blocked_only_by_unevaluable_digests": blocked,
+        "n_errored": len(errored),
+        "errored_digests": errored,
+    }
+
+
+def _standing_and_switched(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Checks failing in every row apart from checks the switches control.
+
+    A check with the same outcome in EVERY combination says nothing about the
+    switches -- it is a standing property of the theory that no setting of
+    these forks addresses. Reporting it per row buries the structure the
+    search exists to expose: one fork-independent contradiction makes all
+    sixteen rows inconsistent and the sweep stops discriminating.
+
+    Separated, NOT excused. A standing contradiction still makes every row
+    internally inconsistent, and `internally_consistent` is unchanged.
+    """
+    names = sorted({c["name"] for r in rows for c in r["checks"]})
+    outcomes = {n: {tuple(c["ok"] for c in r["checks"] if c["name"] == n)
+                    for r in rows} for n in names}
+    failing_everywhere = sorted(
+        n for n in names if outcomes[n] == {(False,)})
+    varies = sorted(n for n in names if len(outcomes[n]) > 1)
+    clean = _digests_where(rows, lambda r: not [
+        c for c in r["checks"] if not c["ok"] and c["name"] in varies])
+    return {
+        "problems_no_combination_fixes": failing_everywhere,
+        "problems_the_switches_control": varies,
+        "n_clean_on_every_switch_controlled_check": len(clean),
+        "clean_on_every_switch_controlled_check_digests": clean,
+    }
+
+
+_SEARCH_NOTES: Dict[str, Any] = {
+    "why_those_are_separated": (
+        "A check failing in every combination is a standing property of "
+        "the theory that no setting of these forks addresses. It is "
+        "reported apart so one such defect does not flatten the sweep, "
+        "and it is NOT excused: those rows remain internally "
+        "inconsistent. The last count is 'as good as these switches can "
+        "make it', which is a structural statement and not a ranking -- "
+        "no row is ordered ahead of another and the digests are sorted."
+    ),
+    "why_that_second_count_exists": (
+        "A check that cannot be evaluated is not a check that failed. "
+        "With no usable arithma the third-track check is VACUOUS for every "
+        "combination, so n_internally_consistent reads 0 for a reason "
+        "about the environment rather than the theory. These rows have "
+        "nothing else against them."
+    ),
+    "ordering": "digest; never by residual or agreement",
+    "closure_would_look_like": (
+        "exactly one internally consistent combination whose free set has "
+        "no load-bearing input left. Both numbers are reported per row so "
+        "that state is recognisable; this module does not declare it."
+    ),
+    "verdict": VERDICT,
+}
