@@ -100,10 +100,10 @@ def test_su2_is_chiral_index_only(monkeypatch):
         zero_modes.chiral_index(4, "SU2")
 
 
-def _weyl_action(signature, *factors, bilinear=None):
-    """One Weyl field psi and one term `kin` with the given factors, in the given signature."""
+def _weyl_action(signature, *factors, bilinear=None, term_id="kin"):
+    """One Weyl field psi and one term `term_id` with the given factors, in the given signature."""
     psi = Field("psi", "spinor", 1, Fraction(3, 2), "weyl")
-    term = Term("kin", Coefficient("one", Fraction(0), INPUT, "p"), factors, bilinear=bilinear)
+    term = Term(term_id, Coefficient("one", Fraction(0), INPUT, "p"), factors, bilinear=bilinear)
     return Action("w", sum(signature), signature, (psi,), (term,))
 
 
@@ -117,8 +117,8 @@ def test_weyl_mass_claim_is_qualified_by_the_one_time_hermitian_rule():
     rule = "under the one-time hermitian rule"
     headline = spinors.check_spinor_terms.__doc__.splitlines()[0]
     assert headline.endswith("vanishes %s." % rule)
-    checks = spinors.check_spinor_terms(_weyl_action((3, 1), "psi", "psi"))
-    assert [c.id for c in checks] == ["weyl_mass:w:kin"]
+    checks = spinors.check_spinor_terms(_weyl_action((3, 1), "psi", "psi", term_id="mass"))
+    assert [c.id for c in checks] == ["weyl_mass:w:mass"]
     assert checks[0].detail == "mass term vanishes for a Weyl spinor %s" % rule
     assert not checks[0].holds
 

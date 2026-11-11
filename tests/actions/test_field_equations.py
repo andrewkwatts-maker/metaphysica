@@ -8,7 +8,7 @@ import pytest
 import sympy as sp
 
 from metaphysica.actions.field_equations import Factor, field_equations, vacuum_checks
-from metaphysica.actions.model import INPUT, OPEN, Action, Check, Coefficient, Field, ModelError, Term
+from metaphysica.actions.model import INPUT, Action, Check, Coefficient, Field, ModelError, Term
 from metaphysica.actions.surfaces import flat_torus, sphere
 
 ONE = Coefficient("one", Fraction(0), INPUT, "p")
@@ -66,11 +66,13 @@ def test_certificate_background_and_potential():
     cert = Check("g2_closure", "torsion 0", True, True, "certificate")
     good = vacuum_checks(_action((9, 1)), [_flat(3, "x"), Factor("Y7", 7, certificate=cert)])
     assert all(c.holds for c in good)
-    lam = Term("V", Coefficient("c_V", Fraction(10), OPEN), (), open=True)
+    lam = Term("V", Coefficient("c_V", Fraction(10), INPUT, "p"), ())
     bad = vacuum_checks(_action((9, 1), extra=(lam,)), [_flat(3, "x"),
                         Factor("Y7", 7, certificate=cert)], {"Psi": 1})
     assert sorted(c.id for c in bad if not c.holds) == ["vacuum_matter:a:Psi",
                                                         "vacuum_potential:a"]
+    # the closed constant is named as such, not reported as an open term that is not evaluable
+    assert [c.measured for c in bad if c.id == "vacuum_potential:a"] == ["V"]
 
 
 def test_bad_factors_raise():
