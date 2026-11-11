@@ -39,6 +39,8 @@ LABEL_CLASS: Dict[str, str] = {
     "FITTED": FITTED, "FITTED_COMPOSITE": FITTED, "RETRODICTED_VARIANT": FITTED,
     "ANSATZ": ANSATZ, "SPECULATIVE": ANSATZ,
     "SYSTEM": CONVENTION, "VALIDATION": CONVENTION, "COMPUTED": CONVENTION,
+    # A diagnostic output is bookkeeping, never a prediction.
+    "DIAGNOSTIC": CONVENTION,
     "DERIVED": CHAIN, "GEOMETRIC": CHAIN, "PREDICTED": CHAIN,
     "PREDICTIONS": CHAIN, "TOPOLOGY_CANDIDATE": CHAIN, "TERMINAL": CHAIN,
     "ANCHORED": CHAIN, "FALSIFIED": CHAIN, "EXACT": CHAIN, "FOUNDATIONAL": CHAIN,
@@ -47,6 +49,11 @@ LABEL_CLASS: Dict[str, str] = {
 AMBIGUOUS_LABELS = ("VALIDATION", "SYSTEM", "COMPUTED", "TERMINAL", "FOUNDATIONAL",
                     "EXACT", "ANCHORED", "PREDICTIONS", "TOPOLOGY_CANDIDATE",
                     "RETRODICTED_VARIANT", "FITTED_COMPOSITE", "SPECULATIVE")
+#: Statuses that run_all_simulations.PRESERVED_PARAMETER_STATUSES keeps at export
+#: but no exported row carries today. They are deliberately not classed: the
+#: ledger raises UnknownLabel when a row carries one, so the owner must class it.
+UNCLASSED_PRESERVED_LABELS = ("COMPUTATIONAL", "INPUT", "PLAUSIBLE", "TABULATED",
+                              "TARGET", "VALIDATED")
 #: Sources whose rows are the framework's geometric anchors (leaves are accepted).
 ANCHOR_SOURCES = frozenset({"geometric_anchors", "four_face_g2_structure",
                             "g2_geometry_v16_0", "closed_geometry_certificate"})
