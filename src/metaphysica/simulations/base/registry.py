@@ -1097,10 +1097,11 @@ class PMRegistry:
 
         Example:
             registry.register_dependency(
-                "cosmology.H0_local",
+                "example.ratio",
                 depends_on=["geometry.k_gimel", "seeds.mephorash_chi"],
-                compute_fn=lambda deps: 71.55 * (deps["geometry.k_gimel"] * deps["seeds.mephorash_chi"]) ** 0.1
+                compute_fn=lambda deps: deps["geometry.k_gimel"] / deps["seeds.mephorash_chi"]
             )
+            (an illustration of the signature; no seed value is quoted)
         """
         if self._dependency_graph is None:
             raise RuntimeError("Dependency resolver not available")

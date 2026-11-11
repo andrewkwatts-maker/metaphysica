@@ -37,8 +37,11 @@ except ImportError:
 # RETIRE-FROM-PAPER: the integer closure is an identity, true by construction
 # (FormulasRegistry defines roots_total = shadow_sector + christ_constant), so it
 # is not physics validation. The check stays as a manifest-integrity guard; it is
-# kept out of the paper and out of the score.
-RETIRED_FROM_PAPER = ("verify_integer_closure",)
+# kept out of the paper and out of the score. The sterile parity check is the
+# same kind: eta_S + sigma_T compared with the registry's own sum (the
+# FormulasRegistry.verify_parity IDENTITY), so it is run and reported but never
+# counted in the preflight tally.
+RETIRED_FROM_PAPER = ("verify_integer_closure", "verify_sterile_parity")
 
 
 class DemonLockGuard:
@@ -206,16 +209,25 @@ class DemonLockGuard:
 
     def verify_tzimtzum_fraction(self) -> bool:
         """
-        Verify Tzimtzum Pressure is exactly 23/24.
+        Verify Tzimtzum Pressure is exactly (n-1)/n for the dark_energy_betti fork.
 
-        The Tzimtzum MUST be represented as a fraction (23/24),
-        not a floating-point decimal like 0.9583.
+        n is read from the fork as FormulasRegistry.verify_parity does; the
+        fraction must be written as "(n-1)/n", not a decimal. 23/24 is the
+        value only while the fork's option gives n = 24.
         """
-        expected = 23.0 / 24.0
+        from metaphysica.simulations.PM.cosmology.late_time_routes import (
+            de_betti_n,
+            resolve_de_betti,
+        )
+
+        n = de_betti_n(resolve_de_betti())
+        expected = (n - 1) / n
+        fraction = "%d/%d" % (n - 1, n)
 
         # Check registry
         if abs(self.registry.tzimtzum_pressure - expected) > 1e-10:
-            self.violations.append("TZIMTZUM ERROR: Registry drift detected. Must be 23/24.")
+            self.violations.append(
+                "TZIMTZUM ERROR: Registry drift detected. Must be %s." % fraction)
             return False
 
         # Check JSON
@@ -223,13 +235,14 @@ class DemonLockGuard:
             try:
                 sigma_t = self._get_constant_value('tzimtzum_pressure')
                 if abs(sigma_t - expected) > 1e-10:
-                    self.violations.append(f"TZIMTZUM ERROR: JSON value {sigma_t} != 23/24")
+                    self.violations.append(f"TZIMTZUM ERROR: JSON value {sigma_t} != {fraction}")
                     return False
 
                 # Check for the string formula
                 formula = self.data.get('constants', {}).get('tzimtzum_pressure', {}).get('formula', '')
-                if '23/24' not in formula and '23 / 24' not in formula:
-                    self.warnings.append("WARNING: Tzimtzum formula should explicitly show '23/24'")
+                if fraction not in formula.replace(' ', ''):
+                    self.warnings.append(
+                        "WARNING: Tzimtzum formula should explicitly show '%s'" % fraction)
             except (KeyError, TypeError):
                 self.warnings.append("WARNING: Could not verify Tzimtzum from JSON")
 
@@ -297,7 +310,9 @@ class DemonLockGuard:
         """
         Verify H0 is correctly derived from O'Dowd formula.
 
-        Formula: H0 = (288/4) - (P_O/chi_eff) + eta_S = 71.55
+        Formula: H0 = roots_total/4 - P_O/pressure_divisor + eta_S, the value
+        `registry.h0_local` on the path in force (compared with its own
+        rounding, so this guard cannot fire).
         """
         # v17.2: Ghost Literal elimination - use registry h0_local
         expected_h0 = round(self.registry.h0_local, 2)
@@ -486,12 +501,39 @@ class DemonLockGuard:
             ("SSoT Sync", self.verify_ssot_sync),
         ]
 
+    @staticmethod
+    def _run_scored(name: str, check_fn) -> bool:
+        """Run one counted check and print its result."""
+        try:
+            passed = bool(check_fn())
+        except Exception as e:  # noqa: BLE001 -- printed and counted as a failure
+            print(f"  {name}: [ERROR] {e}")
+            return False
+        print(f"  {name}: {'[PASS]' if passed else '[FAIL]'}")
+        return passed
+
+    def _run_identity(self, name: str, check_fn) -> None:
+        """Run an IDENTITY (RETIRED_FROM_PAPER) and keep it out of the verdict.
+
+        Its violations move to warnings, so it neither counts in the tally nor
+        blocks the lock; an exception from it raises.
+        """
+        before = len(self.violations)
+        held = check_fn()
+        moved = self.violations[before:]
+        del self.violations[before:]
+        self.warnings.extend("IDENTITY (not scored): %s" % v for v in moved)
+        print(f"  {name}: [IDENTITY {'holds' if held else 'BROKEN'}, not counted]")
+
     def run_preflight(self) -> bool:
         """
         Run all preflight checks.
 
+        Identities (RETIRED_FROM_PAPER) are run and reported but are not
+        counted and do not block; `self.tally` holds the count.
+
         Returns:
-            True if all checks pass, False if any violations detected.
+            True if no scored check recorded a violation.
         """
         print("=" * 60)
         print(" PRINCIPIA METAPHYSICA: PRE-FLIGHT GUARD RAIL")
@@ -505,17 +547,15 @@ class DemonLockGuard:
             checks.insert(0, ("Structure", self.verify_structure))
             checks.insert(1, ("JSON Freshness", self.verify_json_freshness))
 
-        all_passed = True
-        for name, check_fn in checks:
-            try:
-                passed = check_fn()
-                status = "[PASS]" if passed else "[FAIL]"
-                print(f"  {name}: {status}")
-                if not passed:
-                    all_passed = False
-            except Exception as e:
-                print(f"  {name}: [ERROR] {e}")
-                all_passed = False
+        scored = [(n, f) for n, f in checks if f.__name__ not in RETIRED_FROM_PAPER]
+        identities = [(n, f) for n, f in checks if f.__name__ in RETIRED_FROM_PAPER]
+        n_passed = sum(self._run_scored(name, fn) for name, fn in scored)
+        for name, fn in identities:
+            self._run_identity(name, fn)
+        self.tally = {"scored_passed": n_passed, "scored_total": len(scored),
+                      "identities_not_counted": len(identities)}
+        print(" Scored checks: %d of %d passed; %d identities run, not counted"
+              % (n_passed, len(scored), len(identities)))
 
         print("-" * 60)
 

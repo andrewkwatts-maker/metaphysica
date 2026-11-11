@@ -112,9 +112,13 @@ state, and the moves are recorded first in docs/FROZEN_SEED_LITERALS.md "Moves r
 |---|---|---|---|---|
 | XP-08 | theories/pm/ranking.py:68-79 `_consistent` | fixed: an ERRORED row is None (missing); every exception and a row without `state` raise | this | X ranking_consistent (5 tests) |
 | XP-09 | four audit tests | fixed: test_frozen_seed_literals 3 failures were wave A moves (12db48f text, acebadd verify_parity), recorded in FROZEN_SEED_LITERALS.md then repinned; test_sterility_audit, test_value_context_audit, test_seed_blindness pass unchanged | this | the four files: 18, 11, 3, 6 passed |
+| XP-01 | core/demon_lock_guard.py verify_tzimtzum_fraction | fixed: expected (n-1)/n with n from de_betti_n(resolve_de_betti()) (the reader verify_parity uses); violation and formula warning name the fork fraction | this (group 2) | X guard::test_tzimtzum_fraction_reads_the_dark_energy_fork, ::test_tzimtzum_fraction_flags_a_registry_off_the_fork, ::test_tzimtzum_formula_warning_names_the_fork_fraction |
+| XP-04 | core/demon_lock_guard.py verify_hubble_formula; base/registry.py register_dependency | fixed: docstring names the formula and h0_local, no 71.55 or 288/4; example uses a ratio with no seed value | this (group 2) | X guard::test_docstrings_do_not_quote_the_seed_24_hubble_value |
+| XP-07 | core/demon_lock_guard.py RETIRED_FROM_PAPER, run_preflight; FormulasRegistry.py __main__ | fixed: verify_sterile_parity (the guard's form of the verify_parity identity) joins RETIRED_FROM_PAPER; run_preflight runs identities apart, moves their violations to warnings, and records `tally` (scored_passed, scored_total, identities_not_counted); registry __main__ all_verified drops verify_parity | this (group 2) | X guard::test_parity_identity_is_not_counted_in_the_preflight, ::test_a_broken_parity_identity_does_not_block_the_lock, ::test_registry_main_tally_leaves_verify_parity_out |
 
 ## Downstream
 - Close-out: X ranking_consistent, test_frozen_seed_literals, test_sterility_audit, test_value_context_audit, test_seed_blindness pass. None.
+- Close-out group 2: X guard, test_demon_lock_guard, test_path_core_fallbacks_and_text, test_dark_energy_betti_gate pass. None.
 - Round 7: V, C, T, P, tests/test_canonical_values.py: 55 passed. None.
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
 - Round 2: R, K, C, T, tests/testground, tests/test_variants.py, tests/test_g2_differential.py: all pass after the rank_effects rename (one D-019 failure before it).

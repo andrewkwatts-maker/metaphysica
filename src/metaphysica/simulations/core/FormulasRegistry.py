@@ -6128,7 +6128,7 @@ if __name__ == "__main__":
 
     print("\n--- VERIFICATION ---")
     print(f"  Integer Closure (IDENTITY): {registry.verify_integer_closure()}")
-    print(f"  Parity Check ({registry._parity_text()}): {registry.verify_parity()}")
+    print(f"  Parity Check (IDENTITY, not counted; {registry._parity_text()}): {registry.verify_parity()}")
     print(f"  Tzimtzum Fraction ((n-1)/n = {registry.tzimtzum_pressure:.6f}): {registry.verify_tzimtzum_fraction()}")
     print(f"  Watts Guard Rail (1.0): {registry.verify_watts_constant()}")
     print(f"  JC Identity (Delta_JC = Lambda_JC = 153): {registry.verify_jc_identity()}")
@@ -6155,7 +6155,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     all_verified = all([
         registry.verify_integer_closure(),
-        registry.verify_parity(),
+        # verify_parity is an IDENTITY on the path: reported above, not counted
         registry.verify_tzimtzum_fraction(),
         registry.verify_watts_constant(),
         registry.verify_jc_identity(),
