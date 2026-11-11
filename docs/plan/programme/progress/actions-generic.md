@@ -37,11 +37,11 @@ Notes:
 
 | id | file:line | state | commit | test |
 |---|---|---|---|---|
-| XG-01 vacuum_potential degree | actions/field_equations.py:139 `_spoils_vacuum` | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
-| XG-02 SU2 scope, K3_DIM message | actions/zero_modes.py:14-17,29-31,74,130,134 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
-| XG-03 one-time rule docstring | actions/spinors.py:65 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
-| XG-04 HERMITIAN constant | actions/field_equations.py:72 | fixed | (this commit) | tests/actions/test_actions_generic_closeout.py |
-| XG-05 progress corrections | this file | fixed | (this commit) | none (doc) |
+| XG-01 vacuum_potential degree | actions/field_equations.py:139 `_spoils_vacuum` | fixed | 838e7ac | tests/actions/test_actions_generic_closeout.py |
+| XG-02 SU2 scope, K3_DIM message | actions/zero_modes.py:14-17,29-31,74,130,134 | fixed | 838e7ac | tests/actions/test_actions_generic_closeout.py |
+| XG-03 one-time rule docstring | actions/spinors.py:65 | fixed | 838e7ac | tests/actions/test_actions_generic_closeout.py |
+| XG-04 HERMITIAN constant | actions/field_equations.py:72 | fixed | 838e7ac | tests/actions/test_actions_generic_closeout.py |
+| XG-05 progress corrections | this file | fixed | 838e7ac | none (doc) |
 
 - XG-01: a potential term (scalar factors only, no derivative) fails `vacuum_potential` iff it
   has 0 or 1 factors; m^2 phi^2 and phi^4 pass. XG-02: line 578 of the brief does not exist
