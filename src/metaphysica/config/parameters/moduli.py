@@ -212,7 +212,7 @@ class MashiachStabilizationParameters(metaclass=PathValued):
                      "B_COEFF": lambda cls: 2 * np.pi / (cls.N_FLUX + 1)}
 
     # Racetrack coefficients from hidden sector gauge ranks
-    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at TCS #187)
+    # A_COEFF = 2π/N_flux, B_COEFF = 2π/(N_flux+1) (2π/24, 2π/25 at the retired TCS #187 reading)
 
     # Amplitude prefactors
     A_AMPLITUDE = 1.0  # Source: Instanton normalization (KKLT 2003)
