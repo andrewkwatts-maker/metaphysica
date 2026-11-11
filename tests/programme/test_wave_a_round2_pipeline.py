@@ -23,7 +23,8 @@ STATISTICS_NOTE = "Validation statistics are written by the build steps"
 NOTE_CONSTANT = "VALIDATION_STATISTICS_NOTE"
 # Measured 2026-11-11 with ast on run_all_simulations.py: main() spans 426
 # lines after the note moved to the module constant (429 before the XB-11
-# guard at 19153d8~1, 430 with the guard at 19153d8).
+# guard at 19153d8~1, 430 with the guard at 19153d8). A ceiling: main() is
+# over the 60-line rule and may only get shorter.
 MAIN_LINES = 426
 
 
@@ -138,7 +139,7 @@ def test_review_d_note_text_is_a_module_constant():
 
 
 def test_review_d_main_prints_the_constant_and_did_not_grow():
-    """main() prints the note by name, in one guarded print, and is 426 lines."""
+    """main() prints the note by name, in one guarded print, and did not grow."""
     main = _main(_runner_tree())
     literals = [
         node.lineno for node in ast.walk(main)
@@ -148,4 +149,4 @@ def test_review_d_main_prints_the_constant_and_did_not_grow():
     ]
     assert literals == [], f"main() still types the note text at line(s) {literals}"
     assert [g for _, g in _note_prints(main)] == [True]
-    assert main.end_lineno - main.lineno + 1 == MAIN_LINES
+    assert main.end_lineno - main.lineno + 1 <= MAIN_LINES
