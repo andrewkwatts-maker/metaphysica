@@ -599,7 +599,8 @@ FROZEN_AT_24: List[Tuple[str, str, str, float]] = [
     ("FormulasRegistry.py", "chi_eff_shadow", "b3**2/8", 72.0),
     ("FormulasRegistry.py", "chi_eff_total", "b3**2/4", 144.0),
     # 163 = 7*b_3 - 5. Also 288 - 125, which carries no b_3 -- a dichotomy.
-    ("FormulasRegistry.py", "sterile_sector", "7*b3 - 5", 163.0),
+    # The FormulasRegistry.py annotation moved in 12db48f (eta_S labelled
+    # FITTED); the value is still 163. Recorded in docs/FROZEN_SEED_LITERALS.md.
     ("identify_ghost_literals.py", "sterile_sector", "(7*b3)-5", 163.0),
     # D_bulk - b_3 = 2. b3_path already records this identity as BROKEN on the
     # adopted path (26 - 43 = -17); the registry docstring still asserts it.
@@ -613,7 +614,7 @@ FROZEN_AT_24: List[Tuple[str, str, str, float]] = [
 #: Only a comment carries the number; no live reading does. Stale narration.
 PROSE_STALE_AT_24: List[Tuple[str, str, str, float]] = [
     ("FormulasRegistry.py", "N_flux", "b3", 24.0),
-    ("FormulasRegistry.py", "denominator", "b3*10 - 1", 239.0),
+    # "denominator = 239" left in 12db48f; recorded in FROZEN_SEED_LITERALS.md.
     # w_0 = -1 + 1/b_3 = -23/24: the frozen sigma_T reached through the w_0
     # identity. `calculate_w0` returns -self._tzimtzum_pressure, and the
     # literal itself is annotated "sigma_T = 23/24" with no b_3 in it, so the
@@ -999,20 +1000,21 @@ def test_the_hubble_guard_also_cannot_fire():
     )
 
 
-def test_the_registry_parity_check_is_already_failing_at_the_live_seed():
-    """`FormulasRegistry.verify_parity` pins 1.64034 = 163/239 + 23/24.
+def test_the_registry_parity_check_is_an_identity_on_the_path():
+    """`FormulasRegistry.verify_parity` is an IDENTITY since acebadd.
 
-    eta_S follows the seed to 163/429, so the live parity sum is 1.33829 and
-    this check returns False. Nothing else asserts it, so it fails silently
-    into `sync_docs` and the sterility report. Recorded here, not repaired:
-    what the parity invariant is on the 43 path is a physics ruling.
+    It used to pin 1.64034 = 163/239 + 23/24 and returned False at the live
+    seed (163/429 + 23/24 = 1.33829). It now compares the registry's
+    eta_S + sigma_T with `parity_sum_on_path()`, so it is True on the path in
+    force and is not physics validation. The move is recorded in
+    docs/FROZEN_SEED_LITERALS.md ("Moves recorded 2026-11-11").
     """
     registry = _live_registry()
     assert registry.parity_sum == pytest.approx(163 / 429 + 23 / 24)
     assert registry.parity_sum == pytest.approx(1.3382867132867133, rel=1e-12)
-    assert registry.verify_parity() is False, (
-        "verify_parity passes again -- either its pinned 1.64034 moved or "
-        "eta_S / sigma_T did, and the register must say which"
-    )
-    # ... and it passed at the abandoned seed, which is the whole point.
+    assert registry.parity_sum_on_path() == pytest.approx(registry.parity_sum)
+    assert registry.verify_parity() is True
+    # the retired target is not what the live sum is compared with
+    assert abs(registry.parity_sum - 1.64034) > 0.3
+    # ... and 1.64034 was the abandoned seed's sum, which is the record.
     assert abs((163 / 239 + 23 / 24) - 1.64034) < 2e-4

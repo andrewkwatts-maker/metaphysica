@@ -100,7 +100,21 @@ wa_projection_x4 row reads -0.8165 there (L2). base/established.py registers
 topology.orientation_sum = 12 ESTABLISHED, a TCS #187 count used live by
 PM/particle/neutrino_mixing.py (next round, with L5).
 
+## Close-out
+Round 1 (2026-11-11), WAVE_A_CLOSEOUT.md section XP. X = tests/programme/test_path_core_closeout_<topic>.py.
+Commit "this" means the commit that carries the row; the last close-out commit fills the hashes.
+Edited test: tests/test_frozen_seed_literals.py (XP-09): FROZEN_AT_24 drops FormulasRegistry
+sterile_sector, PROSE_STALE_AT_24 drops denominator, and the parity test is inverted
+(test_the_registry_parity_check_is_an_identity_on_the_path); it asserted the pre-12db48f/acebadd
+state, and the moves are recorded first in docs/FROZEN_SEED_LITERALS.md "Moves recorded 2026-11-11".
+
+| id | file:line | state | commit | test |
+|---|---|---|---|---|
+| XP-08 | theories/pm/ranking.py:68-79 `_consistent` | fixed: an ERRORED row is None (missing); every exception and a row without `state` raise | this | X ranking_consistent (5 tests) |
+| XP-09 | four audit tests | fixed: test_frozen_seed_literals 3 failures were wave A moves (12db48f text, acebadd verify_parity), recorded in FROZEN_SEED_LITERALS.md then repinned; test_sterility_audit, test_value_context_audit, test_seed_blindness pass unchanged | this | the four files: 18, 11, 3, 6 passed |
+
 ## Downstream
+- Close-out: X ranking_consistent, test_frozen_seed_literals, test_sterility_audit, test_value_context_audit, test_seed_blindness pass. None.
 - Round 7: V, C, T, P, tests/test_canonical_values.py: 55 passed. None.
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
 - Round 2: R, K, C, T, tests/testground, tests/test_variants.py, tests/test_g2_differential.py: all pass after the rank_effects rename (one D-019 failure before it).

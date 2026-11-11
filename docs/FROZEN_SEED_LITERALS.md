@@ -29,6 +29,21 @@ moved: `_demiurgic_coupling` (b_3/2 + 1/π) is 21.818, `pressure_divisor`
 (7·b_3 − 5) is 296, `c_kaf` is 45.529, `_sophian_drag` (163/(10·b_3 − 1)) is
 163/429 = 0.37995. The rows below are the ones that did not.
 
+## Moves recorded 2026-11-11 (wave A, lane L1 path-core)
+
+Three entries moved. None is an author ruling: each is a text or guard repair
+of the lane's audit findings, and no served value changed. The tests were
+repinned after this record (close-out item XP-09).
+
+| Row | What moved | Commit | Served value | Population change |
+|---|---|---|---|---|
+| 5 | The `FormulasRegistry.py` annotation `sterile_sector = BULK_PRESSURE = 163 (= 7*b3 - 5)` on the η_S block was replaced by a FITTED label: η_S = BULK_PRESSURE/(10 b_3 − 1) with the fixed 163 and the live b_3, a form chosen at the retired seed (core-paths-12). The annotation moved; the value did not. | 12db48f | 163, unchanged (still frozen) | `FormulasRegistry.py sterile_sector` leaves FROZEN_LITERAL; the `identify_ghost_literals.py` entry stays |
+| 10 | The worked example `denominator = 239 = b3*10 - 1` was removed from the η_S text (core-paths-12). The code already rode the seed (163/429). | 12db48f | 163/429, unchanged | `FormulasRegistry.py denominator` leaves PROSE_ONLY_STALE |
+| parity | `verify_parity()` no longer compares against the typed 1.64034. It is an IDENTITY: the registry's η_S + σ_T against `parity_sum_on_path()` (163/(10 b_3 − 1) + σ_T from the `dark_energy_betti` fork), so it returns True on every seed and is not physics validation. | acebadd | parity_sum 1.3382867 at b_3 = 43, unchanged | `test_the_registry_parity_check_is_already_failing_at_the_live_seed` is replaced by `test_the_registry_parity_check_is_an_identity_on_the_path` |
+
+The register entry (`PrincipiaMetaphysica/docs/issues/`) is not updated by
+this lane; the planner carries it.
+
 ## FROZEN_LITERAL — a value the framework *serves* satisfies its declared formula only at 24
 
 | # | Constant | Literal / served value | Declared formula (quoted from source) | Declared at | @ b_3 = 24 | @ live b_3 = 43 | holds@24 | holds@live | Consumers | Guard pinning it |
@@ -130,6 +145,11 @@ before this pass; the False flows into `get_certificate()["parity_valid"]`
 report. `test_the_registry_parity_check_is_already_failing_at_the_live_seed`
 now pins the failure so it cannot be rediscovered as a surprise.
 
+**Moved 2026-11-11 (acebadd):** `verify_parity()` is now an IDENTITY against
+`parity_sum_on_path()` and returns True on every seed; the typed 1.64034 is
+gone. `test_the_registry_parity_check_is_an_identity_on_the_path` pins that.
+The paragraph above is kept as the record of the earlier state.
+
 ## Blind spots of the detector — stated, not hidden
 
 * A constant whose annotation contains **no b_3** is invisible to the named
@@ -230,7 +250,8 @@ Per the standing rule, nothing below was removed:
 * `D_bulk − b_3 = 2` — BROKEN (26 − 43 = −17), already recorded in `b3_path`.
 * `σ_T = 23/24` as a b_3-derived seal — false at the live seed. Kept, guarded.
 * `η_S + σ_T = 1.64034` — false at the live seed (1.3382867).
-  `FormulasRegistry.verify_parity()` returns False. Kept, labelled.
+  Kept, labelled. Since acebadd `FormulasRegistry.verify_parity()` no longer
+  tests this claim: it is an IDENTITY on the path (see "Moves recorded").
 * `H0 = 71.55` — the live `h0_local` is 71.7396. Kept, labelled.
 
 Copyright (c) 2025-2026 Andrew Keith Watts. All rights reserved.

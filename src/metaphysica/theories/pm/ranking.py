@@ -66,11 +66,17 @@ def gates_of(params: Mapping[str, Any]) -> Tuple[int, int]:
 
 
 def _consistent(selection: Mapping[str, str]) -> Optional[bool]:
+    """The switch_search verdict; None (missing) only for an ERRORED row.
+
+    An ERRORED row is one held back only by checks that could not run, which is
+    not a contradiction, so it leaves the tie-break as missing. Any exception
+    from the search itself is a defect and raises.
+    """
     from metaphysica.simulations.core.switch_search import evaluate_combination
-    try:
-        return bool(evaluate_combination(dict(selection))["internally_consistent"])
-    except Exception:  # noqa: BLE001 -- unevaluable is reported as missing
+    row = evaluate_combination(dict(selection))
+    if row["state"] == "ERRORED":
         return None
+    return bool(row["internally_consistent"])
 
 
 class PmRanking:
