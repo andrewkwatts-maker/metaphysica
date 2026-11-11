@@ -42,15 +42,41 @@ def test_c003_expected_is_the_path_n_gen(monkeypatch):
     assert row["expected"] == N_GEN_DIVISOR * 4 and row["status"] == "LOCKED"
 
 
-def test_forced_n_gen_source_moves_both_gates():
-    chi = _path_chi()
+def _forced_b3_over_dim_o():
+    """n_gen under forced b3_over_dim_O on the active seed; it must be non-integer there."""
     with forced({"n_gen_source": "b3_over_dim_O"}):
-        n_gen = b3_path.n_gen_report()["n_gen"]
+        report = b3_path.n_gen_report()
+    assert not report["is_integer"] and report["n_gen"] != int(report["n_gen"])
+    return report["n_gen"]
+
+
+def test_forced_n_gen_source_moves_both_gates():
+    n_gen = _forced_b3_over_dim_o()
+    chi = N_GEN_DIVISOR * n_gen          # chi agrees with the forced n_gen: only integrality fails
+    with forced({"n_gen_source": "b3_over_dim_O"}):
         c002 = _run("cert_c002_three_generations", "C002-GEN", chi)
         c003 = _run("cert_c003_chi_effective", "C003-CHI", chi)
-    assert c002["expected"] == n_gen and c003["expected"] == N_GEN_DIVISOR * n_gen
-    if n_gen != int(n_gen):
-        assert c002["status"] == "FAILED" and c003["status"] == "FAILED"
+    assert c002["expected"] == n_gen and c003["expected"] == chi
+    assert c002["actual"] == n_gen and c003["actual"] == chi
+    assert c002["status"] == "FAILED" and c003["status"] == "FAILED"
+
+
+def test_c002_fails_a_non_integer_n_gen_that_chi_agrees_with(monkeypatch):
+    real = b3_path.n_gen_report()
+    monkeypatch.setattr(b3_path, "n_gen_report",
+                        lambda path=None: {**real, "n_gen": 2.5, "is_integer": False})
+    row = _run("cert_c002_three_generations", "C002-GEN", N_GEN_DIVISOR * 2.5)
+    assert row["actual"] == row["expected"] == 2.5 and row["status"] == "FAILED"
+
+
+def test_integral_counts_are_reported_as_ints():
+    c002 = _run("cert_c002_three_generations", "C002-GEN", float(_path_chi()))
+    c003 = _run("cert_c003_chi_effective", "C003-CHI", _path_chi())
+    for value in (c002["expected"], c002["actual"], c003["expected"]):
+        assert type(value) is int
+    n = c002["expected"]
+    assert "/%d = %d; path n_gen = %d" % (N_GEN_DIVISOR, n, n) in c002["metric"]
+    assert "%d * n_gen = %d " % (N_GEN_DIVISOR, c003["expected"]) in c003["metric"]
 
 
 def test_missing_registry_value_fails():

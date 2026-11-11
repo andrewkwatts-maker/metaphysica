@@ -54,12 +54,20 @@ class CoreGates:
 
     @staticmethod
     def _path_generation_count():
-        """(n_gen, divisor): n_gen from b3_path.n_gen_report() on the active path
-        (n_gen_source fork included) and the chi_eff-per-generation divisor
+        """(n_gen, is_integer, divisor): n_gen and its integrality from
+        b3_path.n_gen_report() on the active path (n_gen_source fork included),
+        n_gen an int when integral, and the chi_eff-per-generation divisor
         N_GEN_DIVISOR of chi_eff_branches. Neither is typed in this file."""
         from metaphysica.simulations.PM.geometry.b3_path import n_gen_report
         from metaphysica.simulations.PM.geometry.chi_eff_branches import N_GEN_DIVISOR
-        return n_gen_report()["n_gen"], N_GEN_DIVISOR
+        report = n_gen_report()
+        n_gen, integral = report["n_gen"], report["is_integer"]
+        return (int(round(n_gen)) if integral else n_gen), integral, N_GEN_DIVISOR
+
+    @staticmethod
+    def _as_count(x):
+        """x as an int when it is integral (same 1e-12 tolerance as n_gen_report), else x."""
+        return int(round(x)) if abs(x - round(x)) < 1e-12 else x
 
     def cert_c002_three_generations(self):
         """C002: n_gen = chi_eff / N_GEN_DIVISOR against the path's n_gen.
@@ -71,7 +79,8 @@ class CoreGates:
         with n_gen from b3_path.n_gen_report() on the active path (the ruled
         n_gen_source route, b_2 / 4 on the adopted path). Agreement RESTATES
         that route; it is not a second derivation, and not an index theorem
-        for chiral generations: chirality is OPEN (D-011).
+        for chiral generations: chirality is OPEN (D-011). A non-integer path
+        n_gen fails the gate, whatever chi_eff is.
 
         The former Atiyah-Singer reading with TCS Hodge numbers and the
         shortcut n_gen = b3/8 are OFF-PATH: a Joyce orbifold has no h21 or
@@ -81,7 +90,7 @@ class CoreGates:
         preventing vacuous pass on missing registry data.
         """
         chi_eff = self._get_param('topology.mephorash_chi')
-        expected, divisor = self._path_generation_count()
+        expected, integral, divisor = self._path_generation_count()
         if chi_eff is None:
             self.results['C002-GEN'] = {
                 "status": "FAILED",
@@ -93,8 +102,8 @@ class CoreGates:
             print("  C002-GEN: FAILED (topology.mephorash_chi missing from registry)")
             return
 
-        n_gen = chi_eff / divisor
-        status = "LOCKED" if n_gen == expected else "FAILED"
+        n_gen = self._as_count(chi_eff / divisor)
+        status = "LOCKED" if (integral and n_gen == expected) else "FAILED"
         self.results['C002-GEN'] = {
             "status": status,
             "metric": f"N_gen = chi_eff/{divisor} = {chi_eff}/{divisor} = {n_gen}; path n_gen = {expected}",
@@ -120,8 +129,8 @@ class CoreGates:
         registry lacks the parameter.
         """
         chi = self._get_param('topology.mephorash_chi')
-        n_gen, divisor = self._path_generation_count()
-        expected = divisor * n_gen
+        n_gen, integral, divisor = self._path_generation_count()
+        expected = self._as_count(divisor * n_gen)
 
         # Fail explicitly if registry data is missing (no vacuous pass)
         if chi is None:
@@ -135,7 +144,6 @@ class CoreGates:
             print("  C003-CHI: FAILED (topology.mephorash_chi missing from registry)")
             return
 
-        integral = n_gen == int(n_gen)
         status = "LOCKED" if (integral and chi == expected) else "FAILED"
         self.results['C003-CHI'] = {
             "status": status,
