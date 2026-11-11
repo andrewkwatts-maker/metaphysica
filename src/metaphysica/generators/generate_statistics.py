@@ -223,8 +223,17 @@ _TALLY_PARAMS = (
 )
 
 
+#: Note on a row whose value this build could not compute.
+_NOT_EVALUABLE_NOTE = ("no value in this build: the statistical rigor report is not read "
+                       "(pre-rigor pass) or does not supply this key")
+
+
 def _registered(value: Any, source: str = 'generate_statistics.py', **extra: str) -> Dict[str, Any]:
-    """One COMPUTED parameter row."""
+    """One parameter row: COMPUTED when it carries a value, NOT_EVALUABLE when
+    the value is the NOT_AVAILABLE text (the pre-rigor fit and sigma keys)."""
+    if isinstance(value, str) and value == NOT_AVAILABLE:
+        return {'value': value, 'status': 'NOT_EVALUABLE', 'source': source,
+                'note': _NOT_EVALUABLE_NOTE, **extra}
     return {'value': value, 'status': 'COMPUTED', 'source': source, **extra}
 
 
@@ -273,6 +282,8 @@ def _parameter_rows(statistics: Dict[str, Any]) -> Dict[str, Dict[str, Any]]:
 def _write_back_parameters(statistics: Dict[str, Any]) -> None:
     """Register the statistics as parameters for the JS loader.
 
+    A row whose value is not available in this build (every fit and sigma key
+    of the pre-rigor pass) is written with status NOT_EVALUABLE, not COMPUTED.
     A read or write error propagates: a half-updated parameters file must not
     pass for a finished build (it used to be swallowed as a warning).
     """
