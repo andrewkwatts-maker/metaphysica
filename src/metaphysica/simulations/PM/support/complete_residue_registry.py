@@ -48,6 +48,7 @@ Dedicated To:
 from typing import Dict, Any, List, Optional, Tuple
 from metaphysica.config.reference_data import RealWorldData
 from metaphysica.simulations.PM.algebra._active_b3 import active_b3
+from metaphysica.simulations.PM.geometry.b3_path import seed_values
 import numpy as np
 import datetime
 from dataclasses import dataclass
@@ -116,7 +117,8 @@ class SpectralResidue:
 # COMPLETE 125-RESIDUE REGISTRY
 # ============================================================================
 
-# Fundamental scale
+# Fundamental scale. Typed: 12 is b3/2 at the retired seed_24 reading (b3 = 24). It is not
+# read from the path in force, where the engine's k_gimel is active_b3()/2 + 1/pi.
 k_gimel = 12 + 1/np.pi  # ~ 12.318
 
 def proton_decay_values() -> Dict[str, float]:
@@ -1716,19 +1718,25 @@ class CompleteResidueRegistryV18(SimulationBase):
                         "complex s-plane has simple poles whose residues are the Seeley-DeWitt "
                         "heat-kernel coefficients a_k, encoding geometric data: Vol(V₇) at s = 7/2, "
                         "the integrated scalar curvature at s = 5/2, and the Euler characteristic "
-                        "χ(V₇) = 144 at s = 3/2. This topological encoding is what makes the "
-                        "residues <em>sterile</em>: they are determined by the manifold's topology, "
-                        "not by free parameters."
+                        f"χ(V₇) = {pt['chi']} at s = 3/2. The proposal is that this topological "
+                        "encoding makes the residues <em>sterile</em>: determined by the manifold's "
+                        "topology, not by free parameters. This module does not compute them from "
+                        "the topology: its eigenvalues are typed rules with typed inputs (next "
+                        "paragraph)."
                     )
                 ),
                 ContentBlock(
                     type="paragraph",
                     content=(
                         f"Eigenvalues are normalized to k_ℷ = 12 + 1/π ≈ {k_gimel:.3f} (called the holonomy warp "
-                        "factor). This module types k_ℷ in as an input and types a multiplier into individual "
-                        "rows; no code here computes either from the geometry. Each eigenvalue is a rule typed "
-                        "for the row's category, in most rows a function of k_ℷ and of that multiplier, the "
-                        "row's own value or its index, so the span from the electron mass (~0.511 MeV) to the "
+                        "factor). 12 + 1/π is the value b₃/2 + 1/π takes at the retired seed_24 reading "
+                        f"(b₃ = {seed_values('seed_24')[0]}); on the path in force (b₃ = {pt['b3']}) the "
+                        f"engine's k_ℷ is {active_b3() / 2 + 1 / np.pi:.3f}. "
+                        "This module types k_ℷ in as an input and types a multiplier into individual "
+                        "rows; no code here computes either from the geometry. Each eigenvalue is set by a rule "
+                        "typed for its block of rows (one category can carry several rules), in most rows a "
+                        "function of k_ℷ and of that multiplier, the row's own value or its index, so the span "
+                        f"from the electron mass (~{_pdg_v('leptons', 'm_electron') * 1e3:.3f} MeV) to the "
                         f"effective GUT scale ({pt['eff']}) is reproduced by construction, not predicted."
                     )
                 ),
