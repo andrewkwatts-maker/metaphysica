@@ -1,72 +1,29 @@
-Next step: collect the running workflows, finish wave A, merge to `main`; agents as needed (owner lifted the cap of 3 on 2026-11-11).
-1. Workflows launched and not yet collected when this was written (a result may be lost with the
-   session; each can be resumed or rerun from its script):
-   - `workflows/wave_a_xv.js`, run wf_86516413-505, args `{base: "5ae9e51", scratch: <scratchpad>}`
-     (the first run, wf_ea28d7ae-969, did no work: its agents read the owner's "wrong chat sorry",
-     meant for a message about another project, as a withdrawal; the script now says so in its
-     context line and runs one small chain as a canary before the fan-out):
-     XV-01 to XV-16 and XB-08 to XB-10 in chains, two review lenses per chain, repair, re-check, a
-     scribe for `progress/validation-data.md` and `progress/build-fresh.md`. Check with
-     `git log --oneline 79cd6ad..HEAD | grep "close-out"`; an item with no commit is rerun.
-   - lane close-outs, run wf_db2bff49-97f: actions-generic done, algebra-portals-viz and
-     path-core finishing (see `progress/<lane>.md`, heading "Close-out").
-   - P7 history lanes, run wf_1b85d461-836 (`workflows/p7_history_lanes.js`, 16 lanes): files land
-     in `docs/plan/programme/ideas/` (uncommitted). Missing lanes are rerun with
-     `args: {chains: [[<lane>], ...]}` (lane names: `HISTORY_REVIEW.md`). Then commit `ideas/`,
-     run `workflows/p7_history_merge.js`, commit `IDEAS_LEDGER.md`.
-   - P9 and P10 design panel, run wf_9b3d158a-1ae: proposals and the two designs land in
-     `docs/plan/programme/design/` (`P9_PATH_BUILDS.md`, `P10_READER_LEVELS.md`); commit them.
-2. Wave A: the items under "Wave A, what is left" below, in order.
-3. The end state is a release and a live site: `PROGRAMME_2026-11-11.md`, "Release and publish".
+Next step: collect the four running workflows as their notifications arrive (do not poll), push `main` after each, then run the wave A boundary (clean-clone build 5 and full pytest).
 
-# Handoff, 2026-11-11
+State on 2026-11-11, about 17:40
+- Branch: `main`. `site-review` was merged into `main` and deleted (merge dd899b4, pushed). All work is on `main` from here; no side branch.
+- Owner, this session: no usage limit to plan around; agents on Fable 5.2 (in a workflow script leave `model` out or set `model: 'fable'`); as many parallel agents as the todos need; keep committing, pushing and merging to `main`.
+- `main` CI will stay red on pytest until the second round lands (47 known failures, diagnosed in `PYTEST_TRIAGE.md`). Check the Actions run once after the second round is pushed.
 
-Plan: `PROGRAMME_2026-11-11.md` (phases P1 to P12). Rules: its "Rules for every lane", and
-`FIX_BRIEFS.md` rules 1 to 12. Briefs are one target each; executors read narrowly.
+Running workflows (each can be resumed from its script with `resumeFromRunId`)
+1. `workflows/wave_a_xv.js`, run wf_86516413-505 (task w0ljkoff7): validation-data close-out. Its scribe writes `progress/validation-data.md` and `progress/build-fresh.md`. When done: PT-09 (candidate closure gate, planner default 1 in `PYTEST_TRIAGE.md`), what XV-16 leaves of PT-10, the XA-10 loader data entry (L7, `source_unverified`).
+2. P7 gap-fill, `workflows/p7_history_gaps.js`, run wf_5bed9bc7-199 (task w69x8n924), 16 lanes. When done: look at declined lanes and open gaps; commit the lane files in `ideas/`; `p7_rows.py split docs/plan/programme/ideas <scratch>/p7` and `p7_rows.py forks <scratch>/p7`; re-word the context line of `workflows/p7_history_merge.js` (it still says "wrong chat sorry"; use the wording of `wave_a_round2.js` line 80 and set the agents to Fable); launch it with `{rows: <scratch>/p7}`; commit `ideas/ledger_*.md` and `IDEAS_LEDGER.md`; update the P7 row.
+3. Wave A second round, `workflows/wave_a_round2.js`, run wf_72dc6a47-5df (task wqznk5r4x), args `{clone: <scratch>/pmv, triage: <scratch>/triage}`. When done: write `needs_other_lane`, `blocked` and the defects left into `WAVE_A_ROUND2.md`; push.
+4. P8 design, `workflows/p8_model_search_design.js`, run wf_4fdb9802-48e (task wym9xjdg8), args `{scratch: <scratch>}`. Writes `design/p8_map/*.md`, `design/P8_proposal_*.md`, `design/P8_MODEL_SEARCH.md`. When done: read the result, commit `design/`, put the owner questions with their defaults to the owner, turn the work packages into lanes after wave B.
 
-## State
-- Branch `site-review`; `main` = `origin/main` = b820864, CI red there. The cause (statistics
-  step needs the rigor report; CANON bootstrap on an empty output directory) is fixed on
-  `site-review` (XB-01 0348545, XB-02 bc63bb4).
-- Fresh-clone fast build (`--keep-going`): 26 failed steps at 205b1f4, 4 at f860be6, 2 at 8aebd1f
-  ("Publish the path ranking", "Parameter ledger"); both are fixed since (XB-04 f09ebed, XB-07
-  64000da). A fourth build and a full pytest were started in the clone: `pmv_build4.log` and
-  `pmv_pytest1.log` in the scratchpad. The render gate passes in the clone once `npm ci` has run
-  in `tools/texcheck`; CI skips that gate (wave C item).
-- XB tail (wf_24c2a391-ab1) is done: XB-03 2eb361f, XB-04 f09ebed, XB-07 64000da; review found one
-  out-of-scope file, repaired in fcffa04; its medium and low findings are rows XB-08 to XB-13 of
-  `WAVE_A_CLOSEOUT.md`. Known and not XB's: `tests/test_free_variable_ledger.py` (2, stale
-  `free_variables.json` in the default output directory) and `tests/test_derivation_chains.py`
-  (3, baseline).
-- Owner rulings 2026-11-11 (D-030), in code from wave B: `action_bulk_spinor` default
-  `weyl_holomorphic` (old `weyl` kept, off); fork `residual_space` default `flat_t2`; fork
-  `neutrino_ordering` with `unruled` in force; Standard Model numbers are an ansatz layer.
-- Release and the live site push are authorised (owner, 2026-11-11) once the five gates of
-  "Release and publish" hold. Nothing is released or pushed live yet.
+Done since the last handoff
+- P9 and P10 designs: `design/P9_PATH_BUILDS.md`, `design/P10_READER_LEVELS.md` (commit 7ae6e0d).
+- Pytest triage with planner defaults: `PYTEST_TRIAGE.md`; lane leftovers: `WAVE_A_ROUND2.md` (commit 621bda5).
+- The owner's directive on generic checks, sweep speed and the model search is a section of `PROGRAMME_2026-11-11.md` (gates G1 to G6, tolerance default, stop rule).
+- Disk incident: `tests/conftest.py` copied `AutoGenerated` (41 MB) into a new temp folder at every pytest start and never removed it; C: reached 0 bytes and blocked other sessions. Fixed in 4371243 (`tests/_artifact_staging.py`: removed at exit, orphans swept at the next start, `METAPHYSICA_TEST_STAGE_DIR` moves it). 359 orphaned copies deleted, 15 GB free.
 
-## Wave A, what is left
-1. Collect the workflows above; rerun what is missing; deal with every `still_open` and `blocked`.
-2. After the path-core lane has finished: XB-06, XB-11, XB-12 (one executor each, then a reviewer).
-3. Rebuild in a clean clone until the fast build has no failed step (`WAVE_A_CLOSEOUT.md`, Gate).
-4. Full pytest in the clean clone, in the background (70 to 86 minutes); triage by lane; one fix
-   round; final fresh build and pytest.
-5. Merge `site-review` into `main`, push, look at CI once, delete `site-review`, remove the clone.
-6. Update the P2 and P7 rows of the programme; refine the wave B briefs in `FIX_BRIEFS.md` from
-   the "Later waves" table of `WAVE_A_CLOSEOUT.md` and the three rulings.
+After the four runs
+1. Wave A boundary: clean clone of `main` in the scratchpad, full build (not `--fast`), full pytest with `PM_PUBLISHED_ROOT` set to the clone; rebuild the native extension first (PT-19: `cargo` is present, `maturin` is not). Zero failed steps and a green suite close wave A; update the P2 row.
+2. Refine the wave B briefs in `FIX_BRIEFS.md` (blocked XP and XA items, rulings D-030, the probable racetrack duplicate, the readers of the closure-ledger layers), then wave B (L2, L3, L4 with P4b, then L5), wave C (L8, L9, L10 with the P10 reader levels), wave D.
+3. Release R1 (2.5.0) when the gates of "Release and publish" hold; then the P8 search rounds, P9 path builds and site switcher, P11 findings paper, release R2, the live site.
 
-## After that
-Wave B (L2 geometry, L3 cosmology, L4 gauge-action with P4b, then L5 particle), wave C (L8 paper
-cut, L9 pipeline, L10 website with P10 reader levels), wave D (size splits, P5 data check, path
-ranking sweep), release R1 (2.5.0 unless the owner names another), then P8 model space, P9 a
-build per path with the site switcher, P11 findings paper, release R2.
-
-## For the owner (not blocking)
-- The eight decisions in `WAVE_A_CLOSEOUT.md`, "Owner decisions".
-- Sibling repositories: Arithma 14 behind and 1 ahead; EML-Spectral and periodica-app one
-  unpushed commit each; `claude/sheets` branch and the `periodica-sheets` worktree.
-
-## Scratch (session-bound, rebuildable)
-`C:/Users/Andrew/AppData/Local/Temp/claude/5c9ec1ed0a1c70e1/b8e64ed1-91e9-4f2c-85ca-5fe89f0d5611/scratchpad`:
-`pmv/` clean clone for the CI replica (needs the `.pyd` copied in and `npm ci` in
-`tools/texcheck`), `pmv_build1.log` to `pmv_build4.log`, `pmv_pytest1.log`, `hist/site_old.git`
-and `hist/engine_old.git` for P7 (rebuild: `HISTORY_REVIEW.md`, Sources).
+Shell notes
+- Every Bash command starts with `cd /h/Projects/MathsPhysicsEcosystem/metaphysica && `; git commands need a long timeout under load.
+- `git rev-parse --short` takes one revision.
+- Workflow script syntax check: wrap the body in `(async()=>{ ... })()` with stub `args`, `log`, `phase`, `agent`, `pipeline`, `parallel`, replace `export const meta` by `const meta`, then `node --check`.
+- Commits: owner as author and committer, no attribution; `git add -- <paths> && git commit -m ... -- <paths>`.
