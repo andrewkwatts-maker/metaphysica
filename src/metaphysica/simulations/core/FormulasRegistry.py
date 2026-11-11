@@ -169,7 +169,7 @@ class FormulasRegistry:
     # 288 / 135 / 153 sector split (fitted decomposition, NOT a first-principles
     # derivation from G2 topology alone).
     # ===========================================================================
-    # The total logic-closure integer 288 = 12 x b3 is topological.  Its
+    # The total logic-closure integer 288 is typed (12 x b3 at the retired seed_24 only).  Its
     # split into a "visible" 135 and a "sterile / joint-closure" 153
     # component is phenomenological: it was chosen so downstream
     # cosmological quantities (H0, dark-energy coupling) match observation
@@ -183,14 +183,14 @@ class FormulasRegistry:
     # under the v2.2.0 honesty polish.  A first-principles derivation of the
     # split is queued as an open question for the roadmap.
     #
-    #   Total (topological):   C     = 288                (12 x b3)
+    #   Total (typed):         C     = 288                (12 x b3 at seed_24 only)
     #   Split A (fitted):      G_v   = 135                (visible-sector integer)
     #   Split B (fitted):      Δ_jc  = 153 = 288 - 135    (joint-closure integer)
     # ===========================================================================
     # Fitted decomposition (not first-principles).  See block comment above.
     JC_CONSTANT = 153        # joint-closure integer (fitted; = 288 - VISIBLE_GATES)
     VISIBLE_GATES = 135      # visible-sector integer (fitted decomposition)
-    LOGIC_CLOSURE = 288      # topological: 12 x b3 (first-principles from G2 topology)
+    LOGIC_CLOSURE = 288      # typed (135 + 153); the 12 x b3 reading held at the retired seed_24 only
 
     # ===========================================================================
     # C04 BULK STABILITY: Integer-Lock Strategy
@@ -217,23 +217,23 @@ class FormulasRegistry:
     # Value  | Gnostic Name    | Mathematical Identity
     # -------|-----------------|----------------------
     # 1.0    | The Monad       | watts_constant (Absolute Precision Anchor)
-    # 24     | The Pleroma     | b3 (Dimensional Totality)
+    # b3     | The Pleroma     | b3 of the path in force (Dimensional Totality; 24 at the retired seed_24)
     # 135    | The Sophia      | shadow_sector (Visible Gates / Wisdom)
-    # 144    | The Demiurge    | chi_eff (Pressure Divisor / Craftsman)
+    # 144    | The Demiurge    | chi_eff_total (both shadows / Craftsman; the pressure divisor at seed_24 only)
     # 153    | The Christos    | christ_constant (Joint Closure / Redeemer)
     # 163    | The Barbelo     | odowd_bulk_pressure (Bulk Pressure / First Thought)
     # 288    | The Ennoia      | roots_total (Logic Closure / Universal Mind)
     #
     # Derived:
-    # 18     | The Syzygy      | christos - sophia (Divine Pairing Gap)
-    # 26     | The Horos       | D_bulk (The Limit / Dimensional Boundary)
+    # 18     | The Syzygy      | syzygy_gap (christos - sophia: Divine Pairing Gap)
+    # 26     | The Horos       | horos_limit (D_bulk: The Limit / Dimensional Boundary)
     # ===========================================================================
 
     # ===========================================================================
     # DERIVED GNOSTIC CONSTANTS
     # ===========================================================================
     SYZYGY_GAP = 18          # The Syzygy: Christos - Sophia = 153 - 135
-    HOROS = 27               # The Horos: Dimensional Boundary (26D bulk frame)
+    HOROS = 27               # unread literal of the retired seed_24; the registry serves horos_limit = 26 (D_bulk)
     DECAD = 10               # The Decad: Residual Pressure Key (163 - 153 = 10)
 
     # ===========================================================================
@@ -261,7 +261,7 @@ class FormulasRegistry:
     # Value  | Gnostic Name    | Mathematical Identity
     # -------|-----------------|----------------------
     # 1.0    | The Monad       | watts_constant (Absolute Precision Anchor)
-    # 24     | The Pleroma     | b3 (Dimensional Totality)
+    # b3     | The Pleroma     | b3 of the path in force (Dimensional Totality; 24 at the retired seed_24)
     # 135    | The Sophia      | shadow_sector (Visible Gates / Wisdom)
     # 72     | The Demiurge    | chi_eff (Effective Chiral Index / Craftsman)
     # 153    | The Christos    | christ_constant (Joint Closure / Redeemer)
@@ -287,8 +287,8 @@ class FormulasRegistry:
     # σ_T    | The Tzimtzum Seal  | (n-1)/n   | Void Seal / Dark Energy w0 (n: dark_energy_betti)
     #
     # DERIVED GNOSTIC CONSTANTS:
-    # 18     | The Syzygy      | christos - sophia (Divine Pairing Gap)
-    # 26     | The Horos       | D_bulk (The Limit / Dimensional Boundary)
+    # 18     | The Syzygy      | syzygy_gap (christos - sophia: Divine Pairing Gap)
+    # 26     | The Horos       | horos_limit (D_bulk: The Limit / Dimensional Boundary)
     # ===========================================================================
 
     # ===========================================================================
@@ -337,7 +337,8 @@ class FormulasRegistry:
     #
     # pressure_divisor = b3^2/4 = 576/4 = 144 (seed_24 only; b3^2/4 of the path otherwise)
     #   GEOMETRIC DERIVATION (Hexagonal Projection)
-    #   - Numerically equals chi_eff_total but derived from b3 geometry
+    #   - Numerically equals chi_eff_total at seed_24 only; on the path in force the
+    #     two differ (pressure_divisor is derived from b3 geometry)
     #   - Used in H0 O'Dowd formula: H0 = 288/4 - P_O/pressure_divisor + eta_S
     #   - Represents cross-shadow/global bulk pressure correction
     #
@@ -648,20 +649,20 @@ class FormulasRegistry:
     # 10    | residual_key     | decad               | core flux residual
     # 18    | syzygy_gap       | syzygy_gap          | aeon-pair gap
     # b3    | elder_kads       | b3                  | third Betti number (seed of the path in force)
-    # 27    | horos_limit      | horos               | dimensional-boundary limit
+    # 26    | horos_limit      | horos               | dimensional-boundary limit (D_bulk; the older 27 dates from seed_24)
     # chi/2 | mephorash_chi    | chi_eff             | per-shadow chi_eff (chi_eff_route)
     # 135   | demiurgic_Yetts  | shadow_sector       | normal-portal flux integer
     # 153   | logos_joint      | christ_constant     | joint-closure symmetry integer
     # 163   | barbelo_modulus  | odowd_bulk_pressure | ancestral bulk-pressure modulus
-    # 288   | nitzotzin_roots  | roots_total         | logic-closure sum (12 x b3)
+    # 288   | nitzotzin_roots  | roots_total         | logic-closure sum (typed; 12 x b3 at seed_24 only)
     #
     # SAMPLER DATA FIELDS (Reid Architecture):
-    # Value | Key              | Old alias                     | Role
-    # ------|------------------|-------------------------------|--------------------
-    # 1/144 | nitsot_par       | reid_invariant                | mirror-parity invariant
-    # 1     | reid_merkabah    | central_pair                  | tetramorphic basis
-    # phi/12| watts_echud      | central_pair_weight           | harmonic damping modulus
-    # 9     | gnosis_threshold | central_activation_threshold  | activation threshold
+    # Value        | Key              | Old alias                     | Role
+    # -------------|------------------|-------------------------------|--------------------
+    # 1/144        | nitsot_par       | reid_invariant                | mirror-parity invariant
+    # 1            | reid_merkabah    | central_pair                  | tetramorphic basis
+    # phi/sqrt(12) | watts_echud      | central_pair_weight           | harmonic damping modulus
+    # 9            | gnosis_threshold | central_activation_threshold  | activation threshold
     # ===========================================================================
     HEBREW_SYMBOL_REGISTRY = {
         # Topological Invariants — mystical/rationale fields moved to the
@@ -670,12 +671,12 @@ class FormulasRegistry:
         "residual_key":     {"value": 10,            "old_name": "decad",                 "symbol": r"D_{\iota}",                              "scientific_name": "Core Flux Residual"},
         "syzygy_gap":       {"value": 18,            "old_name": "syzygy_gap",            "symbol": r"\Delta_{\chi\iota}",                     "scientific_name": "Aeon Pair Gap"},
         "elder_kads":       {"value": None,          "old_name": "b3",                    "symbol": r"\mathcal{E}_{\text{כד}}",                "scientific_name": "Third Betti number of the G2 manifold"},
-        "horos_limit":      {"value": 27,            "old_name": "horos",                 "symbol": r"\beta_{\text{כז}}",                      "scientific_name": "Dimensional Boundary Limit"},
+        "horos_limit":      {"value": 26,            "old_name": "horos",                 "symbol": r"\beta_{\text{כז}}",                      "scientific_name": "Dimensional Boundary Limit"},
         "mephorash_chi":    {"value": None,          "old_name": "chi_eff",               "symbol": r"\chi_{\text{עב}}",                       "scientific_name": "Per-shadow Euler Characteristic"},
         "demiurgic_Yetts":  {"value": 135,           "old_name": "shadow_sector",         "symbol": r"\mathcal{S}_{\delta}",                   "scientific_name": "Normal Portal Flux"},
         "logos_joint":      {"value": 153,           "old_name": "christ_constant",       "symbol": r"\Lambda_{\nu}",                          "scientific_name": "Joint Closure Symmetry"},
         "barbelo_modulus":  {"value": 163,           "old_name": "odowd_bulk_pressure",   "symbol": r"\text{ק}_{\text{סג}}",                   "scientific_name": "Ancestral Bulk Pressure Modulus"},
-        "nitzotzin_roots":  {"value": 288,           "old_name": "roots_total",           "symbol": r"\mathcal{N}_{\text{רפח}}",               "scientific_name": "Logic Closure Sum (12 x b3)"},
+        "nitzotzin_roots":  {"value": 288,           "old_name": "roots_total",           "symbol": r"\mathcal{N}_{\text{רפח}}",               "scientific_name": "Logic Closure Sum (typed integer; 12 x b3 only at the retired seed_24)"},
         # Sampler Data Fields
         "nitsot_par":       {"value": "1/144",       "old_name": "reid_invariant",        "symbol": r"\chi_{\text{ק}}^{-1}",                   "scientific_name": "Mirror Parity Invariant"},
         "reid_merkabah":    {"value": 1.0,           "old_name": "central_pair",          "symbol": r"\vec{\mathbb{M}}_{\text{אד}}",           "scientific_name": "Tetramorphic Normalization Basis"},
