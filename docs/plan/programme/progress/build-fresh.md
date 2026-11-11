@@ -5,9 +5,9 @@
 | id | what was done | commit | test |
 |---|---|---|---|
 | XB-01 | `canonical_values`: H0 computed at access by `dependency_resolver._h0_local` (FormulasRegistry.calculate_h0_local), NOT_EVALUABLE off the path in force, form text built from the registry; tau_p read only from the output directory's artifact, NOT_EVALUABLE with no artifact, raises on missing seed or tau_p rows; `get(symbol)` builds that entry only | 0348545 | `tests/programme/test_build_fresh_canon.py` |
-| XB-02 | not started (executor stopped at the context limit); findings below | - | - |
+| XB-02 | `generate_statistics --pre-rigor` (build step "Build validation statistics"): gate counts only via `headline_stats.pre_rigor_headline`, fit and sigma keys NOT_AVAILABLE, no rigor report opened; default pass reads sigma only from this output directory's `statistical_rigor_report.json` scored rows, FileNotFoundError when missing, ValueError with no scored rows; `load_json_file` raises; gates / parameter-certificate / parameters.json sigma extractors removed; `run_all_simulations` drops its statistics block and prints one line naming the two build steps | bc63bb4 | `tests/programme/test_build_fresh_statistics.py` |
 
-## XB-02 handoff (findings, no code edited yet)
+## XB-02 handoff (findings; done in bc63bb4)
 - Steps between the two passes (build.py 194 and 373) that read `framework_statistics`: none by
   name. Generic parameter copiers there (generate_js_constants maps a fixed list without
   statistics; interactive_html, named_constants, validation_certificates, eml_param_crosscheck)
@@ -24,6 +24,9 @@
   the pre-rigor pass or drop the call.
 
 ## Existing tests edited
+- `tests/test_statistics_fail_early.py::test_empty_inputs_raise_a_clear_error`: asserted RuntimeError
+  "earlier build step failed" from the four-source fallback (removed by XB-02); now asserts
+  FileNotFoundError naming `statistical_rigor_report.json`. Added `test_report_without_scored_rows_raises`.
 - `tests/programme/test_path_core_review.py::test_artifact_seed_rows_missing_raise`: asserted
   that H0 reads the artifact seed rows (the defect XB-01 removes); now asserts the same raise on
   tau_p, the artifact-backed entry, with an artifact in a temporary output directory.
