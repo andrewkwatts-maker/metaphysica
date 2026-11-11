@@ -45,6 +45,19 @@ back the tracebacks of the steps that still fail.
 | XB-04 | high | `data/path_ranking.json`, `generate_path_ranking.py` | The committed ranking is from 137dd42: it fails the contract wave A added (`verdict`, `unranked`, `not_evaluated`, `option_effects`) and its scores predate the wave A scoring fixes. A sweep is not run in wave A. `git mv` the file to `docs/plan/programme/stale/path_ranking_137dd42.json` (kept, not published); the publish step then skips with its logged line. Update any test that pins the committed file, listing each edit with its reason. Regeneration by `python -m metaphysica.testground` is a wave D item (P3 sweep artifacts). |
 | XB-05 | - | "Report executable forks" | Exit 1 with "9 fork(s) could not be checked against their source": the source readers import `CANON`, so this follows XB-01. Confirm after XB-01 from the planner's rebuild; no edit expected. |
 | XB-06 | low | `tests/programme/test_path_core_topology.py::test_canon_h0_is_read_from_the_artifact`, `tests/test_canonical_values.py::test_h0_is_not_topology_first` | Both pass only while a stored artifact equals the computed H0. Rename the first, and make both run against an empty temporary output directory and compare with `FormulasRegistry().h0_local`. Worked after the XP lane has finished (it owns those test files). |
+| XB-07 | high | `generators/parameter_ledger.py` `LABEL_CLASS` (granted for this row only) | Second fresh build (f860be6): "Parameter ledger" raises `UnknownLabel: no class for status label 'DIAGNOSTIC'`; the one exported row is `neutrino.sum_masses`. Add `DIAGNOSTIC` to `LABEL_CLASS` as `CONVENTION` (a diagnostic output is bookkeeping, never a prediction). Six more labels of `run_all_simulations.PRESERVED_PARAMETER_STATUSES` have no class and no exported row today (COMPUTATIONAL, INPUT, PLAUSIBLE, TABULATED, TARGET, VALIDATED): name them in one tuple in the ledger with a comment that the ledger raises when a row carries one, do not class them. Test: every preserved status is classed or in that tuple; `label_class('DIAGNOSTIC')`. |
+
+Second fresh build (f860be6, after XB-01): the simulations run (97) and four steps fail:
+"Build validation statistics" (XB-02, fixed in bc63bb4), "Publish the path ranking" (XB-04),
+"Parameter ledger" (XB-07), and "Check every formula renders". The last one is the clone, not
+the code: a checkout needs `npm ci` in `tools/texcheck`; the planner ran it. In CI the package is
+installed, `tools/texcheck` is not beside it, and the gate prints SKIPPED: CI has never run the
+render gate (recorded for wave C).
+Printed by "Run all simulations" without failing it, recorded for wave C (L9), not worked now:
+certificate dashboards need `GATES_CERTIFICATES.json` before the step that writes it; publication
+figures need the rigor report; `[OMEGA HASH] FAILED - Model is NOT sterile (OMEGA = 4)`.
+Kept as results, for P5: exterior degree gate `[FAIL] flux-13d-original`;
+`neutrino.delta_CP_pred` 148.46 outside [180, 320]; `neutrino.theta_23_pred` 1.69 sigma.
 
 ## XV validation-data
 Granted: `src/metaphysica/simulations/PM/cosmology/dark_energy.py` (the wa rows near 1276-1295
