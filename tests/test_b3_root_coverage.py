@@ -144,9 +144,48 @@ def _load(name: str):
 # roots agree: total 569 -> 581 (the twelve formulas registered since
 # 2026-09-22, the last being y7-selection, CG.12), b3_rooted 380 -> 392
 # (TIGHTENED), non_b3 181, ambiguous 8, degraded 51 -> 45 (TIGHTENED).
-_ARITHMA_BASELINE_WITH_BACKEND = {"total": 581, "b3_rooted_min": 392,
-                                  "non_b3_max": 181, "ambiguous_max": 8,
-                                  "degraded_max": 45}
+#
+# RE-MEASURED 2026-11-11 (PT-05) on a fresh fast build of 249f362 (arithma
+# 2.0.4, arithma_available true): total 583, b3_rooted 377, non_b3 194,
+# ambiguous 12, degraded 148. b3_rooted_min FALLS 392 -> 377 and the three
+# ceilings RISE. The walker did not change; each step has a named cause.
+#
+# (1) c19b83e (2026-11-01, one EML offer policy) withholds 198 placeholder
+#     trees from eml_trees.json (eml_offer_policy.json of the same build:
+#     leaf_placeholder 89, shared_placeholder 72, no_operator 33, ast_repr 4).
+#     The walker reads that file when a formula has no arithma tree, so 103
+#     more formulas have no tree in either dialect: degraded 45 -> 148.
+#     Diffed against the site chains committed at 604cc0e (v2.4.0: 582 / 388
+#     / 184 / 10 / 45), ELEVEN formulas lost their rooting and none gained
+#     one. All eleven are now degraded walks and every one is on the withheld
+#     list. Nine went rooted -> non:
+#       c-torsion-derivation, g13-photon-mass, g14-sun-approx,
+#       g15-gauge-invariant, gauge-unitarity-condition,
+#       hierarchy-spectral-gap, omega-hash-72, shadow-decoupling-rate,
+#       symmetry-shattering-rule
+#     and two went rooted -> ambiguous:
+#       gauge-ghost-basin, torsion-funnel-bottleneck
+#     They counted as rooted only through a placeholder tree with a b3 leaf
+#     in it (the triage diagnosis quotes chi_eff/b3 for g13-photon-mass): the
+#     pattern of 2026-09-05 and 2026-09-06 (c) again. A withheld placeholder
+#     tree gives no b3 provenance (planner default 3 in
+#     docs/plan/programme/PYTEST_TRIAGE.md; the owner may overturn it).
+# (2) 393 -> 388 came before that and is taken from the triage diagnosis of
+#     the site history, not re-measured: between the site rebuilds a36d503
+#     (engine c294094, 2026-10-27) and 604cc0e (v2.4.0, 2026-11-01) five
+#     formulas lost their b3 leaf with no change in degradation --
+#     g11-strong-force, shadow-torsion-sum, e8xe8-root-decomposition,
+#     4-fold-stabilizer-check, gauge-ghost-potential. Measured in this build:
+#     the first three are non-rooted, the last two ambiguous, none degraded.
+# (3) master-action-26d (registered in 7d4602a) is the 583rd formula:
+#     non-rooted, not degraded.
+# The sum closes on the 604cc0e chains: rooted 388 - 11 = 377, non_b3
+# 184 + 9 + 1 = 194, ambiguous 10 + 2 = 12. The ratchet bites in both
+# directions from here: rooted may only grow, the other three may only fall.
+# Tighten all four when real trees replace the placeholders.
+_ARITHMA_BASELINE_WITH_BACKEND = {"total": 583, "b3_rooted_min": 377,
+                                  "non_b3_max": 194, "ambiguous_max": 12,
+                                  "degraded_max": 148}
 #: Measured 2026-09-14 on a build with the PyPI stub arithma. b3_rooted is
 #: HIGHER here and that is not better coverage: with no tree to walk the
 #: walker falls back to scanning human-written latex, where prose mentioning
@@ -172,9 +211,21 @@ _ARITHMA_BASELINE_WITH_BACKEND = {"total": 581, "b3_rooted_min": 392,
 #: 2026-10-02: total 569 -> 581 only, because the total does not depend on
 #: the backend (pinned by the test below); the other four numbers need a
 #: stub-backend build to re-measure and are left as they were.
-_ARITHMA_BASELINE_NO_BACKEND = {"total": 581, "b3_rooted_min": 397,
+#: 2026-11-11 (PT-05): total 581 -> 583, as above. degraded_max 66 -> 264 is
+#: COUNTED in the fresh fast build of 249f362, not measured on a stub-backend
+#: build. With no arithma tree anywhere the walker has only eml_trees.json,
+#: and 264 of that build's 583 formulas have no tree there: the 148 with no
+#: tree in either dialect plus 116 whose only tree is an arithma tree (45 + 21
+#: before c19b83e withheld the placeholder trees). The stale 66 sat below the
+#: WITH_BACKEND ceiling of 148, and a build without the backend cannot
+#: degrade less than a build with it. The equality in
+#: test_arithma_walk_degradation_is_bounded recomputes the count on whichever
+#: build runs. b3_rooted_min, non_b3_max and ambiguous_max are NOT
+#: re-measured: they still need a stub-backend build and keep their
+#: 2026-09-22 values.
+_ARITHMA_BASELINE_NO_BACKEND = {"total": 583, "b3_rooted_min": 397,
                                 "non_b3_max": 161, "ambiguous_max": 11,
-                                "degraded_max": 66}
+                                "degraded_max": 264}
 #: UNSTABLE, and that instability is the finding. Measured three times on
 #: 2026-09-22/23 over the same tree: b3_rooted 101, then 134, then 113.
 #: A coverage metric that swings 33% between runs of identical code is not
@@ -210,8 +261,14 @@ _ARITHMA_BASELINE_NO_BACKEND = {"total": 581, "b3_rooted_min": 397,
 #: existence theorem for the holonomy-G2 metric holds for every seed, so it
 #: is seed-independent and counts as non-rooted), non_b3 387 -> 388. Diffed
 #: artifact chains: that id is the only change; rooted and ambiguous hold.
-_EML_BASELINE = {"total": 582, "b3_rooted_min": 193,
-                 "non_b3_max": 388, "ambiguous_max": 1}
+#: 2026-11-11 (PT-05), fresh fast build of 249f362: total 583 (+1,
+#: master-action-26d, registered in 7d4602a), non_b3 388 -> 389. Its EML
+#: chain is parsed, not degraded, and carries no b3 leaf (b3_rooted false,
+#: ambiguous false); the triage diagnosis reads it as seed-independent.
+#: Diffed against the site chains committed at 604cc0e: that id is the only
+#: change; rooted (193) and ambiguous (1) hold.
+_EML_BASELINE = {"total": 583, "b3_rooted_min": 193,
+                 "non_b3_max": 389, "ambiguous_max": 1}
 
 
 def _arithma_baseline(d):
@@ -283,11 +340,23 @@ def test_the_availability_flag_means_the_trees_are_there():
 
 
 #: Formulas that supply NO symbolic tree in either dialect, so the walker has
-#: nothing to walk and must fall back to scanning a latex string. Every one is
-#: a Jordan-algebra, E7/E8 or Clifford construction whose content is a
-#: reduction over an indexed family -- the same quantities withheld from the
-#: EML cross-check, for the same reason.
+#: nothing to walk and must fall back to scanning a latex string.
+# RE-MEASURED 2026-11-11 (PT-05) on a fresh fast build of 249f362: 148, in
+# two groups, and only the first is a floor.
+#
+#    45  not on the EML withheld list: the same 45 ids that degrade in the
+#        site chains committed at 604cc0e. The note below is about these.
+#   103  on the withheld list of eml_offer_policy.json (shared_placeholder
+#        61, leaf_placeholder 36, no_operator 6). Each declared an EML
+#        description that c19b83e (2026-11-01) withholds as a placeholder,
+#        and has no arithma tree. They count as treeless because the tree
+#        they declared was not a real one, NOT because they have no scalar
+#        form. This group is a backlog: it shrinks as real trees are written.
+#
 # The 45 formulas that carry no symbolic tree in EITHER dialect, and why.
+# Every one is a Jordan-algebra, E7/E8 or Clifford construction whose content
+# is a reduction over an indexed family -- the same quantities withheld from
+# the EML cross-check, for the same reason.
 # This is a PRINCIPLED floor, not a backlog: each kind below has no scalar
 # form to supply, so writing one would mean inventing content.
 #
@@ -303,23 +372,26 @@ def test_the_availability_flag_means_the_trees_are_there():
 # and given trees: harmonic-cycle-fraction (18/24), bulk-metric-ratio,
 # metric-conversion and root-lattice-288 (2 chi_eff). Those were genuine
 # omissions. The remainder are not.
-_NO_SYMBOLIC_TREE_COUNT = 45  # see test_arithma_walk_degradation_is_bounded
+_NO_SYMBOLIC_TREE_COUNT = 148  # see test_arithma_walk_degradation_is_bounded
 
 
 def test_arithma_walk_degradation_is_bounded():
     """Degradation has TWO causes, and this test long asserted only one.
 
     It said "degradation is caused by MISSING EXPRESSIONS, not a missing
-    package", and on a build with a working arithma that is true: the 45 that
-    degrade there declare no symbolic expression in either dialect, and no
-    install can change that.
+    package", and on a build with a working arithma that is true: the formulas
+    that degrade there carry no symbolic tree in either dialect, and no
+    install can change that. They were 45 until c19b83e withheld the
+    placeholder EML trees; on the 2026-11-11 build of 249f362 they are 148
+    (see _NO_SYMBOLIC_TREE_COUNT for the two groups).
 
     2026-09-14 correction: it is false on a build without one. arithma on PyPI
     -- every version the pin admits, 2.0.1 and 2.0.2 -- binds ``Expression``
     to None, so no formula can carry an arithma tree at all, and 21 formulas
     whose ONLY tree is an arithma tree degrade for exactly the reason this
     docstring denied. They are the ``kk-*`` Kaluza-Klein family and the
-    ``*-index-v19`` index theorems.
+    ``*-index-v19`` index theorems. (Counted in the 2026-11-11 build of
+    249f362: 116 formulas now have an arithma tree and no EML tree.)
 
     So the ceiling is selected by the artifact's own ``arithma_available``
     flag. The equality below is the real invariant and holds either way:
