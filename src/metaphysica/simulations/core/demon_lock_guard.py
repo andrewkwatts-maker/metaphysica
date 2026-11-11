@@ -22,6 +22,7 @@ import json
 import math
 import sys
 from datetime import datetime
+from fractions import Fraction
 from pathlib import Path
 from typing import List, Dict, Any, Tuple, Optional
 
@@ -39,9 +40,19 @@ except ImportError:
 # is not physics validation. The check stays as a manifest-integrity guard; it is
 # kept out of the paper and out of the score. The sterile parity check is the
 # same kind: eta_S + sigma_T compared with the registry's own sum (the
-# FormulasRegistry.verify_parity IDENTITY), so it is run and reported but never
-# counted in the preflight tally.
-RETIRED_FROM_PAPER = ("verify_integer_closure", "verify_sterile_parity")
+# FormulasRegistry.verify_parity IDENTITY). So are the Tzimtzum fraction (the
+# registry's sigma_T compared with the (n-1)/n of the fork reader it is built
+# from; status IDENTITY in generate_named_constants_json) and the Hubble
+# formula (registry.h0_local compared with its own rounding). Each is run and
+# reported but never counted as scored in the preflight tally. A violation one
+# of them records (a registry off the path, a stale or drifted manifest JSON)
+# still blocks the lock.
+RETIRED_FROM_PAPER = (
+    "verify_integer_closure",
+    "verify_sterile_parity",
+    "verify_tzimtzum_fraction",
+    "verify_hubble_formula",
+)
 
 
 class DemonLockGuard:
@@ -211,18 +222,20 @@ class DemonLockGuard:
         """
         Verify Tzimtzum Pressure is exactly (n-1)/n for the dark_energy_betti fork.
 
-        n is read from the fork as FormulasRegistry.verify_parity does; the
-        fraction must be written as "(n-1)/n", not a decimal. 23/24 is the
-        value only while the fork's option gives n = 24.
+        The value comes from the registry's own fork reader
+        (FormulasRegistry._tzimtzum_from_fork), so the guard and the registry
+        cannot read the fork differently; the fraction must be written as
+        "(n-1)/n", not a decimal. 23/24 is the value only while the fork's
+        option gives n = 24. An IDENTITY guard (RETIRED_FROM_PAPER): the
+        registry value is compared with the reader it is built from and with
+        the loaded manifest, not with data.
         """
-        from metaphysica.simulations.PM.cosmology.late_time_routes import (
-            de_betti_n,
-            resolve_de_betti,
-        )
-
-        n = de_betti_n(resolve_de_betti())
-        expected = (n - 1) / n
-        fraction = "%d/%d" % (n - 1, n)
+        expected = self.registry._tzimtzum_from_fork()
+        ratio = Fraction(expected).limit_denominator(10 ** 6)
+        if ratio.numerator != ratio.denominator - 1:
+            raise ValueError(
+                "sigma_T from the fork is %r, not of the form (n-1)/n" % expected)
+        fraction = "%d/%d" % (ratio.numerator, ratio.denominator)
 
         # Check registry
         if abs(self.registry.tzimtzum_pressure - expected) > 1e-10:
@@ -312,7 +325,9 @@ class DemonLockGuard:
 
         Formula: H0 = roots_total/4 - P_O/pressure_divisor + eta_S, the value
         `registry.h0_local` on the path in force (compared with its own
-        rounding, so this guard cannot fire).
+        rounding, so on the registry side this guard cannot fire). An IDENTITY
+        guard (RETIRED_FROM_PAPER): only its manifest branch can fire, on a
+        stale or drifted JSON.
         """
         # v17.2: Ghost Literal elimination - use registry h0_local
         expected_h0 = round(self.registry.h0_local, 2)
@@ -501,39 +516,44 @@ class DemonLockGuard:
             ("SSoT Sync", self.verify_ssot_sync),
         ]
 
-    @staticmethod
-    def _run_scored(name: str, check_fn) -> bool:
-        """Run one counted check and print its result."""
+    def _run_scored(self, name: str, check_fn) -> bool:
+        """Run one counted check and print its result.
+
+        A check that raises has not passed: the violation names the check and
+        the exception, so the lock is blocked.
+        """
         try:
             passed = bool(check_fn())
-        except Exception as e:  # noqa: BLE001 -- printed and counted as a failure
+        except Exception as e:  # noqa: BLE001 -- recorded as a violation, so it blocks
+            self.violations.append(
+                "CHECK ERROR: %s raised %s: %s" % (name, type(e).__name__, e))
             print(f"  {name}: [ERROR] {e}")
             return False
         print(f"  {name}: {'[PASS]' if passed else '[FAIL]'}")
         return passed
 
-    def _run_identity(self, name: str, check_fn) -> None:
-        """Run an IDENTITY (RETIRED_FROM_PAPER) and keep it out of the verdict.
+    @staticmethod
+    def _run_identity(name: str, check_fn) -> bool:
+        """Run an IDENTITY (RETIRED_FROM_PAPER): not counted as scored, still blocking.
 
-        Its violations move to warnings, so it neither counts in the tally nor
-        blocks the lock; an exception from it raises.
+        The violations it records stay in `self.violations`, so a registry off
+        the path or a stale or drifted manifest JSON blocks the lock; an
+        exception from it raises.
         """
-        before = len(self.violations)
-        held = check_fn()
-        moved = self.violations[before:]
-        del self.violations[before:]
-        self.warnings.extend("IDENTITY (not scored): %s" % v for v in moved)
-        print(f"  {name}: [IDENTITY {'holds' if held else 'BROKEN'}, not counted]")
+        held = bool(check_fn())
+        print(f"  {name}: [IDENTITY {'holds' if held else 'BROKEN, blocks'}, not counted]")
+        return held
 
     def run_preflight(self) -> bool:
         """
         Run all preflight checks.
 
         Identities (RETIRED_FROM_PAPER) are run and reported but are not
-        counted and do not block; `self.tally` holds the count.
+        counted as scored; a broken one records a violation and blocks like
+        any other. `self.tally` holds the counts.
 
         Returns:
-            True if no scored check recorded a violation.
+            True if no check, scored or identity, recorded a violation.
         """
         print("=" * 60)
         print(" PRINCIPIA METAPHYSICA: PRE-FLIGHT GUARD RAIL")
@@ -550,12 +570,13 @@ class DemonLockGuard:
         scored = [(n, f) for n, f in checks if f.__name__ not in RETIRED_FROM_PAPER]
         identities = [(n, f) for n, f in checks if f.__name__ in RETIRED_FROM_PAPER]
         n_passed = sum(self._run_scored(name, fn) for name, fn in scored)
-        for name, fn in identities:
-            self._run_identity(name, fn)
+        n_held = sum(self._run_identity(name, fn) for name, fn in identities)
         self.tally = {"scored_passed": n_passed, "scored_total": len(scored),
-                      "identities_not_counted": len(identities)}
+                      "identities_not_counted": len(identities),
+                      "identities_broken": len(identities) - n_held}
         print(" Scored checks: %d of %d passed; %d identities run, not counted"
-              % (n_passed, len(scored), len(identities)))
+              " (%d broken)"
+              % (n_passed, len(scored), len(identities), len(identities) - n_held))
 
         print("-" * 60)
 
