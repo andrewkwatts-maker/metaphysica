@@ -19,10 +19,23 @@ def test_g12_wl_code_types_no_number():
     assert "sin2_theta_W_pred" in wl_code
 
 
-def test_mathematical_certificate_note_names_no_288_root_manifold():
-    gate_id = next(iter(g72.MATHEMATICAL_GATES))
-    gate = {"id": gate_id, "name": "Mass Gap", "logic": "discrete spectrum"}
-    cert = g72.create_certificate(gate, {})
-    assert cert["verification_status"] == "MATHEMATICAL"
-    assert "288-root manifold" not in cert["note"]
-    assert "without a computational evaluation" in cert["note"]
+def test_mathematical_certificates_name_no_288_root_structure():
+    for gate_id in g72.MATHEMATICAL_GATES:
+        gate = {"id": gate_id, "name": f"G{gate_id}", "logic": "discrete spectrum"}
+        cert = g72.create_certificate(gate, {})
+        assert cert["verification_status"] == "MATHEMATICAL"
+        assert "without a computational evaluation" in cert["note"]
+        for field in ("note", "reason"):
+            assert "288" not in cert[field], (gate_id, field, cert[field])
+
+
+def test_not_testable_reasons_name_no_288_root_structure():
+    for gate_id, entry in g72.NOT_TESTABLE_GATES.items():
+        assert "288-root" not in entry["reason"], (gate_id, entry["reason"])
+
+
+def test_spectral_loss_types_no_bridge_count_or_chi_eff():
+    source = inspect.getsource(aat.AdversarialAxiomTester.spectral_loss)
+    assert "chi_eff = 144" not in source
+    assert "self.b3 / 12" not in source
+    assert "bridge_params.shape[0]" in source

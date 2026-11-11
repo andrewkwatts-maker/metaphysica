@@ -216,7 +216,8 @@ class AdversarialAxiomTester:
 
         # Optimal bridge norm sqrt(b3/12), i.e. energy b3/12 per bridge (b3 from the path reader)
         # Deviation from this optimal configuration perturbs α
-        optimal_bridge_norm = np.sqrt(self.b3 / 12)  # sqrt(b3/12)
+        n_bridges = bridge_params.shape[0]  # 12 bridges in the 24 spatial coordinates
+        optimal_bridge_norm = np.sqrt(self.b3 / n_bridges)  # sqrt(b3/12)
         bridge_deviations = np.abs(bridge_norms - optimal_bridge_norm)
 
         # CRITICAL: Bridge balance is topologically protected
@@ -240,7 +241,7 @@ class AdversarialAxiomTester:
         total_correction = 0.05 * holonomy_correction + 0.01 * central_correction + 0.001 * time_correction
 
         # v24.1: Use physics-based radiative correction instead of ad hoc k_geometric
-        # The bare Unity Identity (chi_eff = 144) is "dressed" by QCD vacuum polarization
+        # The bare Unity Identity (self.chi_eff, read from the registry) is "dressed" by QCD vacuum polarization
         # at the Z-pole energy scale, represented by k_rad = 1 + alpha_s/π
         baseline_alpha_inv = self.calculate_unity_identity_v24_1()
 

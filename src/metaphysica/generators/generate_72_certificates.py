@@ -153,8 +153,8 @@ VERIFIABLE_GATES = {
 
 # Gates that are mathematical theorems derivable from the framework (MATHEMATICAL)
 MATHEMATICAL_GATES = {
-    18: {"reason": "Mathematical theorem about discrete mass spectrum from 288-root structure"},
-    70: {"reason": "Mathematical consequence of G18 (Mass-Gap Quantization). The spectral gap Δm >= 1/288 is the same theorem restated - discrete eigenvalue spectrum with gaps > 0 is guaranteed by G18's theorem."},
+    18: {"reason": "Mathematical statement that the mass spectrum is discrete; recorded without a computational evaluation"},
+    70: {"reason": "Mathematical consequence of G18 (Mass-Gap Quantization). A spectral gap Δm > 0 is the same statement restated - a discrete eigenvalue spectrum with gaps > 0 follows from G18. No gap value is computed."},
 }
 
 # Gates that are foundational assumptions (NOT_TESTABLE)
@@ -179,7 +179,7 @@ NOT_TESTABLE_GATES = {
     42: {"reason": "Equivalence principle is foundational physics, not PM-specific"},
     43: {"reason": "Schwarzschild quantization requires quantum gravity theory. The claim that black hole formation shifts matter to '163 hidden bulk' is not derivable from PM topology alone - it requires experimental quantum gravity data that does not exist."},
     44: {"reason": "Frame-dragging (Lense-Thirring effect) is standard GR confirmed by Gravity Probe B. Gate validation returns True unconditionally without deriving frame-dragging from 24-pin torsion topology. No simulation exists that computes frame-dragging from PM geometry."},
-    45: {"reason": "Geodesic deviation equation (d^2x/dt^2 + Gamma = 0) is standard GR, not a PM-specific prediction. Gate validation returns True unconditionally. The V7 geodesic claim is not computationally verified from the 288-root manifold."},
+    45: {"reason": "Geodesic deviation equation (d^2x/dt^2 + Gamma = 0) is standard GR, not a PM-specific prediction. Gate validation returns True unconditionally. The V7 geodesic claim is not computationally verified from the framework geometry."},
     51: {"reason": "Unitary time evolution is quantum mechanical axiom"},
     52: {"reason": "Entropy floor is thermodynamic assumption"},
     53: {"reason": "Causality horizon is relativistic constraint"},
@@ -192,7 +192,7 @@ NOT_TESTABLE_GATES = {
 
     # Block F: Information/Closure axioms
     61: {"reason": "Bit parity is information theoretic axiom"},
-    62: {"reason": "Von Neumann entropy ceiling assumes QM entropy axioms. No derivation from 288-root structure - gate validation just returns True unconditionally. Entropy bounds are not computed from the framework."},
+    62: {"reason": "Von Neumann entropy ceiling assumes QM entropy axioms. No derivation from the framework geometry - gate validation just returns True unconditionally. Entropy bounds are not computed from the framework."},
     63: {"reason": "Bell's Gate assumes QM violates Bell inequalities. Gate validation only checks torsion=24, does not derive Bell violations from V7 connectivity. CHSH predictions exist separately in predictions_aggregator but G63 does not verify them."},
     64: {"reason": "Holographic bound S<=A/(4G) is Bekenstein-Hawking physics (1970s-1990s), not PM-derived. PM uses this bound as input to derive Lambda, not as an output."},
     65: {"reason": "Landauer's principle is fundamental thermodynamics, not PM-specific"},
