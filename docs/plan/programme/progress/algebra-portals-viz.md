@@ -33,7 +33,7 @@
 | sim-algebra-misc-33 | goldilocks_plot, stability_heatmap, theory_overview_diagrams | fixed: RETIRED_FROM_PAPER = True, modules and output kept | | ::test_off_path_figures_retired_from_paper |
 | sim-algebra-misc-39 | e7_representation.py | fixed: M_Pl from RealWorldData.PLANCK_MASS; the 0.693 literal in clifford_unification no longer exists | | ::test_e7_planck_mass_read_from_dataset |
 | sim-algebra-misc-10 | consciousness/gnosis_unlocking.py, orch_or_pair_shielding.py | fixed: gnosis chain (tau_0 INPUT, k fitted) is CALIBRATED and the one chain; Penrose rows labelled separate speculation. quantum_bio row is L4 | | ::test_gnosis_chain_is_calibrated_and_penrose_is_labelled_separate |
-| sim-algebra-misc-45 | PM/algebra/shadow_clifford.py | fixed: test builds the 13 64x64 gammas, checks Clifford relations, 64^2 = 4096, quaternionic | | ::test_4096_claim_from_explicit_64x64_gammas |
+| sim-algebra-misc-45 | PM/algebra/shadow_clifford.py | verification test (no code defect; XA-14): test builds the 13 64x64 gammas, checks Clifford relations, 64^2 = 4096, quaternionic | | ::test_4096_claim_from_explicit_64x64_gammas |
 | sim-algebra-misc-41 | PM/portals/*.py | refuted: all 12 rows have descriptions in code and bounds where a bound exists (cross-section 1e-45 XENONnT); the empty ones are stale generated parameters.json | | |
 | sim-algebra-misc-17 | PM/geometry/leech_partition.py | blocked: not in the L6 set (n_gen_leech to RETIRED, b3_leech_identification status) | | |
 | sim-algebra-misc-24 | core formulas pneuma-master-action-v23, shadow-action-13d-v23 | blocked: FormulasRegistry/formula data, not in the L6 set | | |
@@ -45,7 +45,7 @@
 
 Round 2 status vocabulary: reused ANSATZ, CALIBRATED; IDENTITY (the validation verdict word) used as a Parameter status for self-test rows: true by construction.
 
-Status vocabulary: reused CALIBRATED and bound_type "upper"; no new status.
+Status vocabulary: reused CALIBRATED and bound_type "upper". IDENTITY is the accepted status for a row true by construction (rule 4; path-core uses it for the qed rows), so the clifford self-test rows use it as an existing status, not a new one (corrected in close-out XA-13).
 
 ## Downstream
 tests/test_eml_fallback_is_import_only.py fixture supplied chi_eff, n_gen, alpha_leak (round 1 made them required); edited, subject is my file. test_simulations_do_not_need_plotting fails independent of this lane (matplotlib present).
@@ -63,18 +63,18 @@ Round 4: 43 and 13 recheck done. Left: 14 (M_GUT ruling), 37/38 file splits (pro
 Done in round 3: 10,31,32,33,39,45 fixed; 41 refuted; 17,24,40,42 blocked. Remaining: 13 (formula text check), 14 (M_GUT ruling), 16, 23-28 recheck, 37/38 file splits (last), 43 (gnosis k = 3.2 now CALIBRATED; RETIRE-FROM-PAPER of shielding k still open), plus any finding numbered above 45.
 
 ## Review
-Review round on 7af0d85, 25f333e, 6bad1bd, 38a9339. Tests: tests/programme/test_algebra_portals_viz_sixth_round.py (new) plus corrected tests in first_round, second_round, third_round (each subject is my file and asserted the defect).
+Review round on 7af0d85, 25f333e, 6bad1bd, 38a9339; the review-round commit is f23f5d7. Tests: tests/programme/test_algebra_portals_viz_sixth_round.py (new) plus corrected tests in first_round, second_round, third_round (each subject is my file and asserted the defect).
 
 | defect | action | commit |
 |---|---|---|
-| clifford_boost_conservation deleted (0.408 vs 0.1) | row restored: output param, Parameter status FALSIFIED, check in run() with 0.408, section row and callout "FAILS", 3 of 4 checks pass. first_round test inverted to assert presence | review-round |
-| proton-decay text typed 4.24e39 yr, ~2.5e18 GeV | `proton_decay_values()` computes tau_p, M_GUT_base, M_GUT_eff (b3 via active_b3, chi_eff via registry, M_Pl via dataset); `proton_decay_text()` feeds every formula, parameter and section string; test compares text to run() residues | review-round |
-| neutrino text "~12% high", "~4 sigma", "1/sqrt6", `(1/sqrt6)/sqrt6 = 1/6` | `_overshoot(V)` builds "+49%, 38.7 sigma"; formula block, n_gen factor and alpha_leak at the off-path seed built from values; second_round test now rejects "12%", "sqrt6", "~4 sigma" | review-round |
-| neutrino re-derives n_gen = b2/4, chi_eff = 48 n_gen, `_OFF_PATH = _derive(24,3,144.0)` | `_derive(topo, alpha_leak)` takes `core.active_path.topology()` (fork readers) and `canonical_values.canon()["alpha_leak"]` (the one function); `_off_path()` reads named seed_24; `_seed_split_note` reads topology | review-round |
-| ricci_flow OFF_PATH_B3 = 24 | read from `seed_values("seed_24")`; third_round test compares to that read | review-round |
-| RETIRED_FROM_PAPER read by nothing | new `visualizations/_retired.py` (`output_dir_for`, `paper_figures`); the three figure modules write to a `retired` subfolder; orch_or_pair_shielding returns no section and no certificates while flagged (certificate kept as `shielding_certificates()`); test generates the Goldilocks figure and finds it under retired/ and checks all_plots list unchanged | review-round |
-| shielding EML tree exp(k sqrt(n)) and category PREDICTED | tree now exp(k sqrt(n/12)) (n/6)^2, category CALIBRATED; test evaluates the tree against `shielding_enhancement` at n = 6 and 12 | review-round |
-| octonion fork test passed on base | test monkeypatches `variants.resolve` to raise KeyError and asserts it propagates; the `except ImportError: return self._C_mult` fallback also removed; run against the 355bfd9 source the getter returns without raising, so the test fails there | review-round |
+| clifford_boost_conservation deleted (0.408 vs 0.1) | row restored: output param, Parameter status FALSIFIED, check in run() with 0.408, section row and callout "FAILS", 3 of 4 checks pass. first_round test inverted to assert presence | f23f5d7 |
+| proton-decay text typed 4.24e39 yr, ~2.5e18 GeV | `proton_decay_values()` computes tau_p, M_GUT_base, M_GUT_eff (b3 via active_b3, chi_eff via registry, M_Pl via dataset); `proton_decay_text()` feeds every formula, parameter and section string; test compares text to run() residues | f23f5d7 |
+| neutrino text "~12% high", "~4 sigma", "1/sqrt6", `(1/sqrt6)/sqrt6 = 1/6` | `_overshoot(V)` builds "+49%, 38.7 sigma"; formula block, n_gen factor and alpha_leak at the off-path seed built from values; second_round test now rejects "12%", "sqrt6", "~4 sigma" | f23f5d7 |
+| neutrino re-derives n_gen = b2/4, chi_eff = 48 n_gen, `_OFF_PATH = _derive(24,3,144.0)` | `_derive(topo, alpha_leak)` takes `core.active_path.topology()` (fork readers) and `canonical_values.canon()["alpha_leak"]` (the one function); `_off_path()` reads named seed_24; `_seed_split_note` reads topology | f23f5d7 |
+| ricci_flow OFF_PATH_B3 = 24 | read from `seed_values("seed_24")`; third_round test compares to that read | f23f5d7 |
+| RETIRED_FROM_PAPER read by nothing | new `visualizations/_retired.py` (`output_dir_for`, `paper_figures`); the three figure modules write to a `retired` subfolder; orch_or_pair_shielding returns no section and no certificates while flagged (certificate kept as `shielding_certificates()`); test generates the Goldilocks figure and finds it under retired/ and checks all_plots list unchanged | f23f5d7 |
+| shielding EML tree exp(k sqrt(n)) and category PREDICTED | tree now exp(k sqrt(n/12)) (n/6)^2, category CALIBRATED; test evaluates the tree against `shielding_enhancement` at n = 6 and 12 | f23f5d7 |
+| octonion fork test passed on base | test monkeypatches `variants.resolve` to raise KeyError and asserts it propagates; the `except ImportError: return self._C_mult` fallback also removed; run against the 355bfd9 source the getter returns without raising, so the test fails there | f23f5d7 |
 
 Needs other lane (added): all_plots.py, run_all_simulations.py (still builds OrchORPairShieldingSimulation, harmless now: no section, no certificate), website/Pages/visualization-index.html and js/pm-visualization-manifest.js still list the three retired figures (site lane). e7_representation.py and e8x8_splitting.py text still says alpha_leak = 1/sqrt(6) (not in this review's list; next round).
 
@@ -92,9 +92,17 @@ Round 1 (WAVE_A_CLOSEOUT.md, XA). Tests: tests/programme/test_algebra_portals_vi
 | XA-05 | PM/algebra/gaugino_condensation.py (A4.3) | fixed: category FALSIFIED, as its description and `algebra.gaugino_cabibbo_proxy` say; its sigma built from the value | 420820f | test_algebra_portals_viz_closeout_gaugino_status.py |
 | XA-08 | PM/algebra/qec_golay_bridge.py | fixed: abstract, callout and metadata text read the computed b3 and classification (MISMATCH at b3 = 43); RETIRED_FROM_PAPER = True: no section, no certificates (kept as `paper_section()`, `qec_certificates()`), rows and formulas kept | f0ed6e8 | test_algebra_portals_viz_closeout_qec_retired.py |
 | XA-10 | PM/portals/alp_portals.py | partly: one bound `STELLAR_COOLING_BOUND_GEV_INV` in the registered row, the Parameter (was CAST 6.6e-11), the section text (was HB 6.6e-11), certificate and self-check; `stellar_bound_sentence` shows the live value and "bound check FAIL"; row stays CALIBRATED (upper bounds are not in chi2), metadata `source_unverified`. Blocked part: reading the bound from the loader needs an L7 data entry (Needs other lane) | d5c3792 | test_algebra_portals_viz_closeout_alp_bound.py |
-| XA-09 | visualizations/figure1_m27_decomposition.py | fixed: label `b_3 = <value>` read from registry row topology.elder_kads (`b3_from_registry`, raises when missing); "24D G2 Core" now "24D Spatial Core", G2 holonomy labelled Y_7's. Not renamed: `src/metaphysica/generators/all_plots.py:27` imports it (outside the lane) | (this commit) | test_algebra_portals_viz_closeout_figure1_b3.py |
+| XA-09 | visualizations/figure1_m27_decomposition.py | fixed: label `b_3 = <value>` read from registry row topology.elder_kads (`b3_from_registry`, raises when missing); "24D G2 Core" now "24D Spatial Core", G2 holonomy labelled Y_7's. Not renamed: `src/metaphysica/generators/all_plots.py:27` imports it (outside the lane) | 2d7d955 | test_algebra_portals_viz_closeout_figure1_b3.py |
+| XA-13 | this progress file | fixed: IDENTITY note corrected (accepted status, rule 4); review-round rows carry commit f23f5d7 (8 rows) | (this commit) | none (docs) |
+| XA-14 | tests/programme | fixed: 196,560 = 1104 + 759*2^7 + 24*4096 counted on the Golay object and equal to `kissing_number`; misc-45 marked a verification test | (this commit) | test_algebra_portals_viz_closeout_leech_count.py |
+| XA-12 | tests/test_eml_fallback_is_import_only.py | fixed: fixture b3, chi_eff, n_gen from `active_path.topology()`, alpha_leak from `canon()` | (this commit) | the file itself (fixture only, no assertion changed) |
+| XA-15 | PM/algebra/neutrino_algebraic.py | refuted: no `_B3 = 24` or 9.59 degree constant at HEAD (removed under misc-20, 38a9339/f23f5d7); the module constants left are NuFIT inputs | | |
+| XA-16 | oversize functions | recorded, wave D: not worked; no listed function grew this round (new logic went to `_dm2_term`, `stellar_bound_sentence`, `paper_section`, `b3_from_registry`) | | |
+| XA-04 | visualizations/_retired.py, stability_heatmap.html | not handled this round (tool budget); next round | | |
 
 Edited tests: test_algebra_portals_viz_sixth_round.py::test_proton_text_is_built_from_the_computed_values now also rejects "2×10¹⁷" (XA-01 asks for it).
 
 Close-out needs other lane: L7 (validation-data, owns simulations/data/**): add the stellar-cooling g_agg upper bound to a data file with `source_unverified` (1e-10 versus HB 6.6e-11), then alp_portals reads it with `get_loader().get_value(...)` (XA-10 rest).
 Rename figure1_m27_decomposition.py to figure1_m26_decomposition.py (XA-09): generators lane edits all_plots.py:27 in the same commit (`git mv` then the import); AutoGenerated indexes regenerate.
+
+Close-out next round: XA-04 (call `paper_figures` where the plot list and index are built inside visualizations/**, test that fails without the call; move stability_heatmap.html and its data file beside the retired figures). gaugino_condensation still types 344.7/37.6/25.6 sigma outside A4.3 (lines ~116, 554, 747, 788, 826, 839); alp section text still says alpha_leak = 1/sqrt(6), chi_eff = 72 unlabelled.

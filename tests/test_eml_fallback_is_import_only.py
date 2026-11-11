@@ -6,8 +6,13 @@ import pytest
 
 class _Registry:
     def get_param(self, path):
-        return {"topology.elder_kads": 43, "topology.mephorash_chi": 144,
-                "topology.n_gen": 3, "geometry.alpha_leak": 0.5465}.get(path)
+        # Fixture values from the path readers of the path in force, not typed.
+        from metaphysica.simulations.core.active_path import topology
+        from metaphysica.simulations.core.canonical_values import canon
+        topo = topology()
+        return {"topology.elder_kads": topo.b3, "topology.mephorash_chi": topo.chi_eff,
+                "topology.n_gen": topo.n_gen,
+                "geometry.alpha_leak": canon()["alpha_leak"]["value"]}.get(path)
 
     def has_param(self, path):
         return False
