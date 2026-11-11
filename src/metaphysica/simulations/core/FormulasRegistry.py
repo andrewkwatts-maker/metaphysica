@@ -158,7 +158,7 @@ class FormulasRegistry:
     #   - chi_eff (chi_eff_route fork, 48 n_gen): Effective chiral index; singular
     #     TCS G2 models can have non-zero effective Euler characteristic (Acharya-Witten 2001)
     #   - n_gen = |chi_eff_sector|/24 (standard M-theory index theorem)
-    #   - roots_total = 288: Octonionic/24D structure (b3*12), NOT E8xE8 roots (480)
+    #   - roots_total = 288: Octonionic/24D structure (b3*12), NOT E8xE8 roots (480); the b3 reading is seed_24 only
     #   - visible_sector = 125: Effective visible residues (NOT gauge generators)
     #   - sterile_sector = 163: Derived from arbitrary values (288 - 125)
     #
@@ -283,7 +283,7 @@ class FormulasRegistry:
     # Symbol | Gnostic Name       | Value     | Role
     # -------|--------------------|-----------|---------------------------------
     # η_S    | The Sophian Breath | 163/(10b3-1) | H0 Friction Coefficient (fitted form)
-    # κ_Δ    | The Demiurgic Gear | 12.318... | Mass-Energy Gearbox
+    # κ_Δ    | The Demiurgic Gear | b3/2+1/π  | Mass-Energy Gearbox (12.318 at seed_24)
     # σ_T    | The Tzimtzum Seal  | (n-1)/n   | Void Seal / Dark Energy w0 (n: dark_energy_betti)
     #
     # DERIVED GNOSTIC CONSTANTS:
@@ -706,7 +706,7 @@ class FormulasRegistry:
         # ---------------------------------------------------------------
         # TOPOLOGICAL INVARIANTS (Hebrew Symbols — keyed by latest code names)
         # ---------------------------------------------------------------
-        "elder_kads":        r"\mathcal{E}_{\text{כד}}",       # 24 - Pleroma / Elder Vessels
+        "elder_kads":        r"\mathcal{E}_{\text{כד}}",       # b3 of the path (Kad = 24 names seed_24) - Elder Vessels
         "mephorash_chi":     r"\chi_{\text{עב}}",               # 72 - Shem HaMephorash (per-shadow)
         "qedem_chi_sum":     r"\text{ק}_{\text{דם}}",           # 144 - Qedem Chi (both shadows)
         "sophian_modulus":   r"\text{ק}_{\text{כה}}",           # 125 - Sophia Assembly
@@ -715,7 +715,7 @@ class FormulasRegistry:
         "demiurgic_Yetts":   r"\mathcal{S}_{\delta}",            # 135 - Sophia Door
         "logos_joint":       r"\Lambda_{\nu}",                   # 153 - Logos Fish
         "n_gen":             r"n_{\text{gen}}",                  # 3 - generations (derived)
-        "horos_limit":       r"\beta_{\text{כז}}",               # 27 - Boundary
+        "horos_limit":       r"\beta_{\text{כז}}",               # 26 - Boundary (D_bulk; 27 was b3 + 3 at seed_24)
         "residual_key":      r"D_{\iota}",                       # 10 - Core Flux Residual
         "syzygy_gap":        r"\Delta_{\chi\iota}",              # 18 - Life Delta
 
@@ -732,7 +732,7 @@ class FormulasRegistry:
         # MECHANICAL TRIAD
         # ---------------------------------------------------------------
         "sophian_drag":       r"\eta_S",                        # 163/(10 b3 - 1) - H0 Friction
-        "demiurgic_coupling": r"\kappa_\Delta",                 # 12.318 - Mass-Energy Gearbox
+        "demiurgic_coupling": r"\kappa_\Delta",                 # b3/2 + 1/pi (12.318 at seed_24) - Mass-Energy Gearbox
         "tzimtzum_pressure":  r"\sigma_T",                      # (n-1)/n - Void Seal
 
         # ---------------------------------------------------------------
@@ -1543,16 +1543,13 @@ class FormulasRegistry:
     @property
     def roots_total(self) -> int:
         """
-        Logic Closure Total (288 = b3 * 12 = 24 * 12).
+        Logic Closure Total: shadow_sector + christ_constant, both typed.
         LEGACY ALIAS for nitzotzin_roots.
 
-        DUAL INTERPRETATION:
-        1. GNOSTIC: 288 = shadow_sector(135) + christ_constant(153)
-        2. GEOMETRIC: 288 = b3 * D_space_12 = 24 * 12
-
-        This represents octonionic/24-dimensional structure counts, NOT E8xE8 roots
-        (which would be 480 = 240 + 240). At the retired seed_24 the 288 arose from b3 (24) times the
-        spinor connection rank 12, providing a 24D-dimensional basis for parameter projection.
+        The sum carries no b3, so it does not move with the path. The older
+        reading as b3 times the spinor connection rank 12 held only at the
+        retired seed_24 (24 * 12); on the path in force b3 * 12 is a different
+        number. NOT E8xE8 roots (which would be 480 = 240 + 240).
         """
         return self.nitzotzin_roots
 
@@ -3973,7 +3970,7 @@ class FormulasRegistry:
         This demonstrates that 288 is a sum, not an assumption.
 
         Returns:
-            288 - Octonionic/24D structure total (same as roots_total = b3*12)
+            288 - Octonionic/24D structure total (same as roots_total = b3*12 at seed_24 only)
         """
         return self._roots_total  # Alias for clarity
 
@@ -4470,7 +4467,7 @@ class FormulasRegistry:
         phi = (1.0 + math.sqrt(5.0)) / 2.0  # φ = 1.618033988749895
 
         # k_gimel from G2 holonomy (derived from b3)
-        k_gimel = self._demiurgic_coupling  # b3/2 + 1/π = 12.3183...
+        k_gimel = self._demiurgic_coupling  # b3/2 + 1/π (12.3183 at seed_24)
 
         # Pure geometric formula: α⁻¹ = k_gimel² - b3/φ + φ/(4π)
         tree_level = k_gimel**2 - self._b3/phi + phi/(4.0 * math.pi)
@@ -4504,7 +4501,7 @@ class FormulasRegistry:
 
         TREE-LEVEL FORMULA:
         ===================
-        v_tree = k_gimel × (b3 - 4) = 12.318 × 20 = 246.37 GeV
+        v_tree = k_gimel × (b3 - 4)  (at seed_24: 12.318 × 20 = 246.37 GeV)
 
         v24.2: Apply three-loop correction using pure SSoT constants
 
@@ -5914,7 +5911,10 @@ class FormulasRegistry:
                 "roots": {
                     "value": self.nitzotzin_roots,
                     "name": "Logic Closure Total",
-                    "description": "Octonionic/24D structure (288 = b3 * 12)",
+                    "description": (
+                        f"shadow_sector + christ_constant = {self._shadow_sector} + "
+                        f"{self._christ_constant} = {self._roots_total}; "
+                        "the b3 * 12 reading held at the retired seed_24 only"),
                     "legacy_alias": "The Ennoia",
                     "legacy_description": "Universal Mind; Logic Closure",
                     "pm_path": "topology.ancestral_roots"

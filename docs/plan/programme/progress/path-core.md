@@ -127,7 +127,18 @@ state, and the moves are recorded first in docs/FROZEN_SEED_LITERALS.md "Moves r
 
 Close-out section XP is complete: every id is fixed, partly fixed or blocked (XP-03, XP-11 wait on wave B consumers; XP-10 parts on L2, L4, L9).
 
+## Close-out review
+Repair round for the reviewer's two defects. Commit "this" is the commit that carries these rows.
+Edited tests (both are this lane's close-out tests and asserted the defect or missed it):
+X registry_rows asserted status INPUT; X seed_text's pattern missed 24 * 12, b3 * 12 and 12.318.
+
+| defect | where | action | commit | test |
+|---|---|---|---|---|
+| R-1 (high) status INPUT has no parameter_ledger LABEL_CLASS entry, so the ledger raises UnknownLabel | base/established.py coherence_fraction, orientation_sum, _register_param (bffd882) | fixed: coherence_fraction is SPECULATIVE, orientation_sum is ANSATZ (both ledger class ANSATZ, both kept at export); _register_param keys the no-experimental-value branch on UNMEASURED_STATUSES = {ANSATZ, SPECULATIVE}, which only these two rows in the file carry. No new status: INPUT is no longer used by this lane | this | X registry_rows::test_typed_inputs_are_not_validated_against_themselves (statuses), ::test_every_theory_row_status_has_a_ledger_class (5 passed) |
+| R-2 (high) XP-05 left seed-24 values in the symbol map and the roots_total docstring | core/FormulasRegistry.py LATEX_REGISTRY elder_kads, horos_limit (27 = b3 + 3 at seed_24; the code returns D_bulk 26), demiurgic_coupling; roots_total docstring; the widened scan also found the module comment roots_total (b3*12), the kappa_Delta table row, logic_closure Returns, calculate_alpha_inverse k_gimel comment, calculate_higgs_vev v_tree line and the named-constants "roots" description (fdeaa41) | fixed: symbol-map comments name b3 of the path or the D_bulk value and label the seed_24 numbers; roots_total docstring says the sum of the two typed sectors carries no b3 and the b3 * 12 reading held only at seed_24; the named-constants description is built from the computed sectors; the other hits carry a seed_24 label on the line. The frozen-seed inventories are unchanged (test_frozen_seed_literals 18 passed) | this | X seed_text: pattern widened, plus ::test_symbol_map_comments_quote_the_path_value (a numbered LATEX_REGISTRY comment must equal the registry value on the path), ::test_symbol_map_scan_reads_the_numbered_comments, ::test_roots_total_docstring_is_path_generic (8 passed) |
+
 ## Downstream
+- Close-out review: X registry_rows 5, X seed_text 8, test_frozen_seed_literals 18 pass. None.
 - Close-out: X ranking_consistent, test_frozen_seed_literals, test_sterility_audit, test_value_context_audit, test_seed_blindness pass. None.
 - Close-out group 2: X guard, test_demon_lock_guard, test_path_core_fallbacks_and_text, test_dark_energy_betti_gate pass. None.
 - Close-out group 3: X registry_rows 4 passed. None run beyond it.

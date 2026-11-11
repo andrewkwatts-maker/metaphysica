@@ -4,7 +4,8 @@ Each test fails on the code before the close-out:
 * XP-02 the lambda_S named constant (sqrt of the frozen 24) carried no status;
 * XP-10 consciousness.coherence_fraction and topology.orientation_sum were
   registered ESTABLISHED with themselves as the experimental value, so a typed
-  input was validated at sigma 0.
+  input was validated at sigma 0. The close-out review moved their status from
+  INPUT (no ledger class) to the ledger's SPECULATIVE and ANSATZ.
 """
 import pytest
 
@@ -31,13 +32,24 @@ def theory_rows():
     return rec.rows
 
 
-@pytest.mark.parametrize("path", ["consciousness.coherence_fraction",
-                                  "topology.orientation_sum"])
-def test_typed_inputs_are_not_validated_against_themselves(theory_rows, path):
+@pytest.mark.parametrize("path, status", [
+    ("consciousness.coherence_fraction", "SPECULATIVE"),
+    ("topology.orientation_sum", "ANSATZ")])
+def test_typed_inputs_are_not_validated_against_themselves(theory_rows, path, status):
     row = theory_rows[path]
-    assert row["status"] == "INPUT"
+    assert row["status"] == status
     assert "experimental_value" not in row
     assert "bound_type" not in row
+
+
+def test_every_theory_row_status_has_a_ledger_class(theory_rows):
+    """Close-out review: the INPUT status raised UnknownLabel in the ledger."""
+    from metaphysica.generators.parameter_ledger import ANSATZ, label_class
+
+    for path, row in theory_rows.items():
+        label_class(row["status"])  # raises UnknownLabel on an unclassed status
+    for path in ("consciousness.coherence_fraction", "topology.orientation_sum"):
+        assert label_class(theory_rows[path]["status"]) == ANSATZ
 
 
 def test_orientation_sum_says_it_is_not_derived_on_the_path(theory_rows):
