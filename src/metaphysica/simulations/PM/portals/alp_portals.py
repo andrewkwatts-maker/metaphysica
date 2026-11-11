@@ -121,6 +121,25 @@ from metaphysica.simulations.core.eml_integration import (
 #: One definition: compute_alp() and the registered row both read it.
 STELLAR_COOLING_BOUND_GEV_INV = 1.0e-10
 STELLAR_COOLING_SOURCE = "stellar cooling bound (HB stars), module bound 1e-10 GeV^-1"
+#: The bound is in no data file yet and its value is unconfirmed (1e-10 here, the
+#: HB analysis of Ayala et al. 2014 quotes 6.6e-11): flagged for P5.
+STELLAR_COOLING_SOURCE_UNVERIFIED = (
+    "stellar-cooling bound on g_agg is in no data file; 1e-10 versus HB 6.6e-11 to confirm (P5)")
+
+
+def stellar_bound_check(g_a_gamma_gamma: float) -> str:
+    """PASS or FAIL of the one stellar-cooling upper bound on g_{a gamma gamma}."""
+    return "PASS" if g_a_gamma_gamma < STELLAR_COOLING_BOUND_GEV_INV else "FAIL"
+
+
+def stellar_bound_sentence(g_a_gamma_gamma: float) -> str:
+    """The bound check as text: the computed coupling, the one bound and the verdict."""
+    verdict = stellar_bound_check(g_a_gamma_gamma)
+    side = "below" if verdict == "PASS" else "above"
+    return (f"On the path in force g_aγγ = {g_a_gamma_gamma:.3g} GeV^-1, {side} the "
+            f"stellar-cooling upper bound {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1: "
+            f"bound check {verdict} (a CALIBRATED row, not scored in chi2; bound "
+            "source unverified).")
 
 
 @dataclass
@@ -420,7 +439,7 @@ class ALPPortalsV23(SimulationBase):
 
         # Stellar cooling bound: g_{a gamma gamma} < 10^{-10} GeV^{-1}
         # (from globular cluster and horizontal branch star observations)
-        passes_stellar = g_a_gamma_gamma < STELLAR_COOLING_BOUND_GEV_INV
+        passes_stellar = stellar_bound_check(g_a_gamma_gamma) == "PASS"
 
         # ALP mass window: 10^{-6} eV < m_ALP < 1 eV
         # (phenomenologically interesting range)
@@ -468,7 +487,8 @@ class ALPPortalsV23(SimulationBase):
             metadata={
                 "derivation": "alpha_leak * chi_eff / (24 * pi * f_a)",
                 "units": "GeV^{-1}",
-                "note": "ALP-photon coupling via Primakoff process"
+                "note": "ALP-photon coupling via Primakoff process",
+                "source_unverified": STELLAR_COOLING_SOURCE_UNVERIFIED,
             }
         )
 
@@ -919,15 +939,12 @@ class ALPPortalsV23(SimulationBase):
                     "racetrack value of f_a^ALP (no gaugino racetrack exists on Y_7: "
                     "CG.5, CG.10). "
                     "ALP-photon coupling g_{a gamma gamma} from Primakoff process "
-                    "enhanced by inter-face leakage. The value at that seed, "
-                    "~2.9e-11 GeV^{-1}, "
-                    "is below both the stellar cooling bound (1e-10 GeV^{-1}) and "
-                    "the CAST 2017 experimental upper limit (6.6e-11 GeV^{-1}); the "
-                    "registered value follows the live seed."
+                    "enhanced by inter-face leakage. "
+                    + stellar_bound_sentence(self.compute_alp().g_a_gamma_gamma)
                 ),
-                experimental_bound=6.6e-11,
+                experimental_bound=STELLAR_COOLING_BOUND_GEV_INV,
                 bound_type="upper",
-                bound_source="CAST2017",
+                bound_source=STELLAR_COOLING_SOURCE,
                 uncertainty=None,
                 eml_description=(
                     "EML: ops.div(ops.mul(eml_vec('geometry.alpha_leak'), "
@@ -1067,9 +1084,10 @@ class ALPPortalsV23(SimulationBase):
                         "reading: Σχ(K3) over the three singular involutions; not an Euler "
                         "characteristic of Y₇, which is 0) increases the effective coupling relative "
                         "to a simple f<sub>a</sub><sup>−1</sup> suppression. The resulting ALP-photon "
-                        "coupling g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup> falls below "
-                        "current stellar-cooling bounds (HB stars: &lt; 6.6 × 10<sup>−11</sup> GeV<sup>−1</sup>) "
-                        "and within reach of IAXO and ALPS-II:"
+                        "coupling at that seed, g<sub>aγγ</sub> ~ 10<sup>−11</sup> GeV<sup>−1</sup>, falls below "
+                        f"the stellar-cooling bound ({STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV<sup>−1</sup>). "
+                        + stellar_bound_sentence(self.compute_alp().g_a_gamma_gamma)
+                        + " IAXO and ALPS-II reach:"
                     )
                 ),
                 ContentBlock(
@@ -1202,11 +1220,11 @@ class ALPPortalsV23(SimulationBase):
                 "id": "CERT_ALP_STELLAR_COOLING",
                 "assertion": (
                     f"g_{{a gamma gamma}} = {result.g_a_gamma_gamma:.2e} GeV^-1 "
-                    f"is below the stellar cooling bound of 10^-10 GeV^-1"
+                    f"is below the stellar cooling bound of {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1"
                 ),
-                "condition": f"{result.g_a_gamma_gamma:.2e} < 1.0e-10",
+                "condition": f"{result.g_a_gamma_gamma:.2e} < {STELLAR_COOLING_BOUND_GEV_INV:.2g}",
                 "tolerance": 0.0,
-                "status": "PASS" if result.passes_stellar_bound else "FAIL",
+                "status": stellar_bound_check(result.g_a_gamma_gamma),
                 "wolfram_query": f"{result.g_a_gamma_gamma:.4e}",
                 "wolfram_result": f"{result.g_a_gamma_gamma:.6e}",
                 "sector": "dark_matter"
@@ -1314,9 +1332,9 @@ class ALPPortalsV23(SimulationBase):
         # Check 2: Stellar cooling bound satisfied
         stellar_ok = result.passes_stellar_bound
         checks.append({
-            "name": "ALP-photon coupling below stellar bound (< 1e-10 GeV^-1)",
+            "name": f"ALP-photon coupling below stellar bound (< {STELLAR_COOLING_BOUND_GEV_INV:.2g} GeV^-1)",
             "passed": stellar_ok,
-            "confidence_interval": {"lower": 0.0, "upper": 1e-10, "sigma": 0.0},
+            "confidence_interval": {"lower": 0.0, "upper": STELLAR_COOLING_BOUND_GEV_INV, "sigma": 0.0},
             "log_level": "INFO" if stellar_ok else "ERROR",
             "message": f"g_{{a gamma gamma}} = {result.g_a_gamma_gamma:.2e} GeV^-1"
         })
