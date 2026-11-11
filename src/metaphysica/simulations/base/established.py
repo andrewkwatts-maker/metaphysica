@@ -574,7 +574,9 @@ class EstablishedPhysics:
                 uncertainty=0.5,
                 units="dimensionless",
                 source="ESTABLISHED:V21_BRIDGE_REDUCTION",
-                description="Orientation sum from v21 dual-shadow bridge - determines flux winding in theta_23",
+                status="INPUT",  # TCS #187 count, not derived on the adopted path: out of validation
+                description=("Orientation sum from v21 dual-shadow bridge - determines flux winding in theta_23. "
+                             "Typed TCS #187 count (seed_24), not derived on the adopted path"),
                 eml_description="EML: eml_scalar(12) — orientation sum from v21 dual-shadow bridge (12 bridge pairs, geometric input)"
             ),
             # Consciousness parameters for Appendix M (Speculative Extensions)
@@ -584,6 +586,7 @@ class EstablishedPhysics:
                 uncertainty=0.5e-5,
                 units="dimensionless",
                 source="INPUT:SPECULATIVE",
+                status="INPUT",  # speculative, not measured: out of validation
                 description="Fraction of neurons in quantum-coherent state (Penrose-Hameroff Orch-OR)",
                 eml_description="EML: eml_scalar(1e-5) — speculative coherent neuron fraction for Orch-OR (Penrose-Hameroff, speculative input)"
             ),
@@ -699,6 +702,13 @@ class EstablishedPhysics:
         meta = {'description': param.description, 'units': param.units}
         if param.eml_description:
             meta['eml_description'] = param.eml_description
+        if param.status == "INPUT":
+            # A typed input is not a measurement: no experimental value, so it
+            # is never validated against itself (sigma 0).
+            registry.set_param(
+                path=param.path, value=param.value, source=param.source,
+                uncertainty=param.uncertainty, status=param.status, metadata=meta)
+            return
         registry.set_param(
             path=param.path,
             value=param.value,

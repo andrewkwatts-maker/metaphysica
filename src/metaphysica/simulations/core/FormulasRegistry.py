@@ -70,14 +70,17 @@ def lock_geometric_context():
 # v17.2: Apply strict context locking on module load
 lock_geometric_context()
 
+#: The frozen integer 24 behind lambda_S = sqrt(24): the b3 of the retired
+#: seed_24, kept as a constant (it is not the b3 of the path in force).
+#: Status ANSATZ (asserted with a stated reason, no derivation); whether it
+#: stays frozen or follows b3 is an open owner decision, so there is no fork.
+FROZEN_PLEROMA = 24
+FROZEN_PLEROMA_STATUS = "ANSATZ"
+
 #: Symbol-table entries whose value depends on the path in force; their
 #: "value" is None in HEBREW_SYMBOL_REGISTRY and is read from
 #: active_path.topology() by get_latex_term (2026-11-11: elder_kads used to
 #: be typed as the retired seed_24 value).
-#: The frozen integer 24 behind lambda_S = sqrt(24): the b3 of the retired
-#: seed_24, kept as a constant (it is not the b3 of the path in force).
-FROZEN_PLEROMA = 24
-
 _PATH_VALUED_SYMBOLS = {
     "elder_kads": lambda topo: topo.b3,
     "mephorash_chi": lambda topo: topo.chi_sector,
@@ -1395,7 +1398,8 @@ class FormulasRegistry:
         self._weinstein_scale = 12.0
 
         # 4. Hossenfelder Root (lambda_S = sqrt(24)) - Hidden Root. The 24 is
-        # a FROZEN integer (the retired seed_24 b3), not sqrt(b3) of the path.
+        # a FROZEN integer (the retired seed_24 b3), not sqrt(b3) of the path;
+        # status FROZEN_PLEROMA_STATUS (ANSATZ), see the module constant.
         self._hossenfelder_root = math.sqrt(FROZEN_PLEROMA)
 
         # 5. O'Dowd Bulk Pressure (P_O = 163) - Sterile Sector = Bulk Pressure
@@ -4788,6 +4792,10 @@ class FormulasRegistry:
                     "value": self.hossenfelder_root,
                     "formula": (f"sqrt({FROZEN_PLEROMA}): {FROZEN_PLEROMA} is a frozen integer "
                                 f"(the retired seed_24 b3), not sqrt(b3) = sqrt({b3})"),
+                    "status": FROZEN_PLEROMA_STATUS,
+                    "status_reason": ("frozen ansatz input: the integer %d is typed, "
+                                      "not derived on the path; whether it follows b3 "
+                                      "is an open owner decision" % FROZEN_PLEROMA),
                     "role": "Hidden Root",
                     "domain": "Quantum",
                     "gate": "G08",

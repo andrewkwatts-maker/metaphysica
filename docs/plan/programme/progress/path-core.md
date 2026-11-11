@@ -115,10 +115,17 @@ state, and the moves are recorded first in docs/FROZEN_SEED_LITERALS.md "Moves r
 | XP-01 | core/demon_lock_guard.py verify_tzimtzum_fraction | fixed: expected (n-1)/n with n from de_betti_n(resolve_de_betti()) (the reader verify_parity uses); violation and formula warning name the fork fraction | this (group 2) | X guard::test_tzimtzum_fraction_reads_the_dark_energy_fork, ::test_tzimtzum_fraction_flags_a_registry_off_the_fork, ::test_tzimtzum_formula_warning_names_the_fork_fraction |
 | XP-04 | core/demon_lock_guard.py verify_hubble_formula; base/registry.py register_dependency | fixed: docstring names the formula and h0_local, no 71.55 or 288/4; example uses a ratio with no seed value | this (group 2) | X guard::test_docstrings_do_not_quote_the_seed_24_hubble_value |
 | XP-07 | core/demon_lock_guard.py RETIRED_FROM_PAPER, run_preflight; FormulasRegistry.py __main__ | fixed: verify_sterile_parity (the guard's form of the verify_parity identity) joins RETIRED_FROM_PAPER; run_preflight runs identities apart, moves their violations to warnings, and records `tally` (scored_passed, scored_total, identities_not_counted); registry __main__ all_verified drops verify_parity | this (group 2) | X guard::test_parity_identity_is_not_counted_in_the_preflight, ::test_a_broken_parity_identity_does_not_block_the_lock, ::test_registry_main_tally_leaves_verify_parity_out |
+| XP-02 | core/FormulasRegistry.py FROZEN_PLEROMA, named constant hossenfelder_root | fixed: FROZEN_PLEROMA_STATUS = "ANSATZ" (no fork; owner decision open); lambda_S entry carries status and status_reason; misplaced _PATH_VALUED_SYMBOLS comment restored | this (group 3) | X registry_rows::test_lambda_s_named_constant_is_an_ansatz |
+| XP-10 | base/established.py coherence_fraction, orientation_sum, _register_param | partly fixed: sim-algebra-misc-12 coherence_fraction and orientation_sum (TCS #187 count) are INPUT, registered with no experimental value; sim-algebra-misc-24 blocked (text in PM/gauge/master_action.py L4, formulas.json L9); VD-19 blocked (geometry.m_KK_central status set in PM/geometry/geometric_anchors.py L2) | this (group 3) | X registry_rows::test_typed_inputs_are_not_validated_against_themselves, ::test_orientation_sum_says_it_is_not_derived_on_the_path |
+| XP-03 | config/path_valued.py tcs187_only for TorsionClass.T_OMEGA | blocked: raising off seed_24 breaks live consumers on the adopted path (config/parameters/proton_decay.py:45 class body, PM/particle/higgs_mass.py:1501, fitted.py derive_alpha_sum, derive_M_GUT, torsion_enhancement_factor) and the fresh-clone gate; convert consumers first (wave B) | - | - |
+| XP-11 | config/path_valued.py retired TCS #187 readers | blocked: same reason; consumers g2_geometry.py, ckm_matrix.py, proton_decay.py, appendix_c_derivations.py | - | - |
+
+Not done this round (tool-call cap): XP-05 (FormulasRegistry seed_24 comments), XP-12 (core/sync_docs.py seed_24 text, parity to reg._parity_text() as IDENTITY), XP-06 (split switch_search.search ERRORED handling), XP-13 (fill "this" commit cells: close-out f860be6, group 2 8ccbfc3, group 3 its hash; R5 acebadd, R6 7808641, R7 205b1f4).
 
 ## Downstream
 - Close-out: X ranking_consistent, test_frozen_seed_literals, test_sterility_audit, test_value_context_audit, test_seed_blindness pass. None.
 - Close-out group 2: X guard, test_demon_lock_guard, test_path_core_fallbacks_and_text, test_dark_energy_betti_gate pass. None.
+- Close-out group 3: X registry_rows 4 passed. None run beyond it.
 - Round 7: V, C, T, P, tests/test_canonical_values.py: 55 passed. None.
 - None: T, tests/test_canonical_values.py, tests/testground, tests/test_dependency_resolver.py: 588 passed, 1 skipped.
 - Round 2: R, K, C, T, tests/testground, tests/test_variants.py, tests/test_g2_differential.py: all pass after the rank_effects rename (one D-019 failure before it).
@@ -141,6 +148,7 @@ state, and the moves are recorded first in docs/FROZEN_SEED_LITERALS.md "Moves r
 - L5: neutrino_mixing.py divides topology.orientation_sum (a TCS #187 count, 12) by the live b3 and chi_eff.
 - L2/L3: PM/qed/compton_wavelength.py still types CODATA 2018 2.42631023867e-12 labelled 2022.
 - L3: dark_energy modules use live b3 while dark_energy_betti adopts frozen n = 24.
+- Close-out XP-03/XP-11: L5 and others convert TorsionClass and TCS #187 consumers before tcs187_only can raise. XP-10: L4 master_action.py text and L9 formulas.json (sim-algebra-misc-24); L2 geometric_anchors.py m_KK_central status (VD-19). Register in PrincipiaMetaphysica/docs/issues/ to record the wave A moves. verify_w0_seal still types thawing = -23/24.
 - canonical_values importers outside L1: generate_prose_drift_audit.py (all_canonical), tests/test_de_plane_gate.py:35; candidate_closure_gate.py and de_plane_gate.py already import at call time.
 
 ## Data to confirm
