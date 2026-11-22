@@ -1,6 +1,6 @@
 # P9 design: a build per path, a site that switches paths (2026-11-11, revised)
 
-Merged from `P9_proposal_smallest-change.md` (SC), `P9_proposal_incremental.md` (IN) and `P9_proposal_site-first.md` (SF), then revised for the review of 2026-11-11. Read-only survey on branch `site-review`. Paths are relative to `src/metaphysica/` unless they start with `docs/`, `tests/`, `.github/` or `PrincipiaMetaphysica/`. This is a design; it asks for no code.
+Merged from three proposals (SC smallest-change, IN incremental, SF site-first; since removed), then revised for the review of 2026-11-11. Read-only survey on branch `site-review`. Paths are relative to `src/metaphysica/` unless they start with `docs/`, `tests/`, `.github/` or `PrincipiaMetaphysica/`. This is a design; it asks for no code.
 
 **The model is speculative and unvalidated.** No path, rank or score is a prediction or a validation. Section 5 prints that statement on every path page, and T5 checks that it is there.
 
