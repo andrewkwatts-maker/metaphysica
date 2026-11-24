@@ -117,6 +117,23 @@ const EIGENVALUE_MERGE_TOL: f64 = 1e-12;
 /// has no modes".
 #[must_use]
 pub fn flat_torus_dirac_spectrum(periods: &[f64], max_mode: u32) -> Option<Vec<f64>> {
+    let (side, total) = validated_mode_grid(periods, max_mode)?;
+    let distinct_sq = distinct_lambda_squared(periods, max_mode, side, total);
+    debug_assert!(
+        !distinct_sq.is_empty(),
+        "the zero mode is always in the grid"
+    );
+    let mut signed = signed_spectrum(&distinct_sq);
+
+    // Collapse eigenvalues the Python's `round(lam, 12)` would have merged.
+    signed.dedup_by(|a, b| (*a - *b).abs() <= EIGENVALUE_MERGE_TOL);
+
+    Some(repeat_per_spinor_component(&signed, periods.len()))
+}
+
+/// Validate a torus request; returns `(side, total)` = per-axis mode count and
+/// total mode-vector count, or `None` for any unusable input.
+fn validated_mode_grid(periods: &[f64], max_mode: u32) -> Option<(u64, u64)> {
     let dim = periods.len();
     if dim == 0 || dim > MAX_TORUS_DIM {
         return None;
@@ -134,41 +151,53 @@ pub fn flat_torus_dirac_spectrum(periods: &[f64], max_mode: u32) -> Option<Vec<f
         dim <= MAX_TORUS_DIM,
         "dimension survived validation but exceeds the fixed bound"
     );
+    Some((side, total))
+}
 
-    // Distinct lambda^2 values, kept sorted. For positive finite doubles the
-    // IEEE-754 bit pattern is monotonic in the value, so ordering and equality
-    // on `to_bits()` are exact -- no epsilon, no hashing.
+/// Distinct `lambda^2` values over the mode grid, as sorted `f64` bit patterns.
+///
+/// For positive finite doubles the IEEE-754 bit pattern is monotonic in the
+/// value, so ordering and equality on `to_bits()` are exact -- no epsilon, no
+/// hashing. The odometer over `[-max_mode, max_mode]^dim` uses no recursion and
+/// its trip count is fixed at `total` before the loop starts.
+fn distinct_lambda_squared(periods: &[f64], max_mode: u32, side: u64, total: u64) -> Vec<u64> {
     let mut distinct_sq: Vec<u64> = Vec::new();
-
-    // Odometer over [-max_mode, max_mode]^dim: no recursion, and the trip
-    // count is fixed at `total` before the loop starts.
-    let mut digits = vec![0_u32; dim];
+    let mut digits = vec![0_u32; periods.len()];
     let offset = f64::from(max_mode);
     for _ in 0..total {
-        let mut lambda_sq = 0.0_f64;
-        for (d, &digit) in digits.iter().enumerate() {
-            let n = f64::from(digit) - offset;
-            let term = 2.0 * PI * n / periods[d];
-            lambda_sq += term * term;
-        }
+        let lambda_sq = mode_lambda_squared(periods, &digits, offset);
         if let Err(pos) = distinct_sq.binary_search(&lambda_sq.to_bits()) {
             distinct_sq.insert(pos, lambda_sq.to_bits());
         }
-        // Increment the odometer, last axis fastest.
-        for digit in digits.iter_mut().rev() {
-            *digit += 1;
-            if u64::from(*digit) < side {
-                break;
-            }
-            *digit = 0;
-        }
+        advance_odometer(&mut digits, side);
     }
-    debug_assert!(
-        !distinct_sq.is_empty(),
-        "the zero mode is always in the grid"
-    );
+    distinct_sq
+}
 
-    // Signed eigenvalues, ascending: -lambda_max .. 0 .. +lambda_max.
+/// `lambda^2` of the mode vector `digits - offset` on the given periods.
+fn mode_lambda_squared(periods: &[f64], digits: &[u32], offset: f64) -> f64 {
+    let mut lambda_sq = 0.0_f64;
+    for (d, &digit) in digits.iter().enumerate() {
+        let n = f64::from(digit) - offset;
+        let term = 2.0 * PI * n / periods[d];
+        lambda_sq += term * term;
+    }
+    lambda_sq
+}
+
+/// Increment the odometer, last axis fastest, wrapping each digit at `side`.
+fn advance_odometer(digits: &mut [u32], side: u64) {
+    for digit in digits.iter_mut().rev() {
+        *digit += 1;
+        if u64::from(*digit) < side {
+            break;
+        }
+        *digit = 0;
+    }
+}
+
+/// Signed eigenvalues, ascending: `-lambda_max .. 0 .. +lambda_max`.
+fn signed_spectrum(distinct_sq: &[u64]) -> Vec<f64> {
     let mut signed: Vec<f64> = Vec::with_capacity(distinct_sq.len() * 2);
     for bits in distinct_sq.iter().rev() {
         let lambda = f64::from_bits(*bits).sqrt();
@@ -176,7 +205,7 @@ pub fn flat_torus_dirac_spectrum(periods: &[f64], max_mode: u32) -> Option<Vec<f
             signed.push(-lambda);
         }
     }
-    for bits in &distinct_sq {
+    for bits in distinct_sq {
         let lambda = f64::from_bits(*bits).sqrt();
         signed.push(if lambda > 0.0 { lambda } else { 0.0 });
     }
@@ -184,18 +213,19 @@ pub fn flat_torus_dirac_spectrum(periods: &[f64], max_mode: u32) -> Option<Vec<f
         signed.windows(2).all(|w| w[0] <= w[1]),
         "the signed spectrum was built out of order"
     );
+    signed
+}
 
-    // Collapse eigenvalues the Python's `round(lam, 12)` would have merged.
-    signed.dedup_by(|a, b| (*a - *b).abs() <= EIGENVALUE_MERGE_TOL);
-
+/// Repeat each eigenvalue `spinor_dim = 2^(dim/2)` times, keeping order.
+fn repeat_per_spinor_component(signed: &[f64], dim: usize) -> Vec<f64> {
     let spinor_dim = 1_usize << (dim / 2);
     let mut out = Vec::with_capacity(signed.len() * spinor_dim);
-    for lambda in signed {
+    for &lambda in signed {
         for _ in 0..spinor_dim {
             out.push(lambda);
         }
     }
-    Some(out)
+    out
 }
 
 #[cfg(test)]
@@ -294,3 +324,6 @@ mod tests {
         assert!(15_u64.pow(7) > MAX_MODE_VECTORS);
     }
 }
+
+#[cfg(test)]
+mod pins;

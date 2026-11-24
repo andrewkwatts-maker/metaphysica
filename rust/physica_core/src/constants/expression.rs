@@ -45,6 +45,79 @@ enum Tok {
     RParen,
 }
 
+/// Single-character operator or bracket token for `c`, if it is one.
+fn punctuation_token(c: char) -> Option<Tok> {
+    match c {
+        '+' => Some(Tok::Plus),
+        '-' => Some(Tok::Minus),
+        '*' => Some(Tok::Star),
+        '/' => Some(Tok::Slash),
+        '(' => Some(Tok::LParen),
+        ')' => Some(Tok::RParen),
+        _ => None,
+    }
+}
+
+/// Scan a numeric literal starting at `*i` (a digit or `.`); advances `*i`.
+fn scan_number(chars: &[char], i: &mut usize, src: &str) -> Result<Tok, ConstantError> {
+    let start = *i;
+    let mut saw_dot = chars[start] == '.';
+    let mut saw_exp = false;
+    *i += 1;
+    while *i < chars.len() {
+        let n = chars[*i];
+        if n.is_ascii_digit() {
+            *i += 1;
+        } else if n == '.' && !saw_dot && !saw_exp {
+            saw_dot = true;
+            *i += 1;
+        } else if (n == 'e' || n == 'E') && !saw_exp {
+            saw_exp = true;
+            *i += 1;
+            if *i < chars.len() && (chars[*i] == '+' || chars[*i] == '-') {
+                *i += 1;
+            }
+        } else {
+            break;
+        }
+    }
+    let lit: String = chars[start..*i].iter().collect();
+    let v: f64 = lit.parse().map_err(|_| ConstantError::BadExpression {
+        name: src.to_string(),
+        detail: format!("bad number `{lit}`"),
+    })?;
+    Ok(Tok::Num(v))
+}
+
+/// Scan an identifier starting at `*i` (a letter or `_`); advances `*i`.
+fn scan_ident(chars: &[char], i: &mut usize) -> Tok {
+    let start = *i;
+    *i += 1;
+    while *i < chars.len() && (chars[*i].is_ascii_alphanumeric() || chars[*i] == '_') {
+        *i += 1;
+    }
+    Tok::Ident(chars[start..*i].iter().collect())
+}
+
+/// Scan the token starting at `*i` (non-whitespace); advances `*i` past it.
+fn next_token(chars: &[char], i: &mut usize, src: &str) -> Result<Tok, ConstantError> {
+    let c = chars[*i];
+    if let Some(tok) = punctuation_token(c) {
+        *i += 1;
+        return Ok(tok);
+    }
+    if c.is_ascii_digit() || c == '.' {
+        return scan_number(chars, i, src);
+    }
+    if c.is_ascii_alphabetic() || c == '_' {
+        return Ok(scan_ident(chars, i));
+    }
+    Err(ConstantError::BadExpression {
+        name: src.to_string(),
+        detail: format!("unexpected character `{c}` at {}", *i),
+    })
+}
+
 fn tokenize(src: &str) -> Result<Vec<Tok>, ConstantError> {
     debug_assert!(!src.is_empty());
     let mut out: Vec<Tok> = Vec::with_capacity(src.len());
@@ -60,81 +133,11 @@ fn tokenize(src: &str) -> Result<Vec<Tok>, ConstantError> {
                 detail: "tokenizer runaway".to_string(),
             });
         }
-        let c = bytes[i];
-        if c.is_whitespace() {
+        if bytes[i].is_whitespace() {
             i += 1;
             continue;
         }
-        match c {
-            '+' => {
-                out.push(Tok::Plus);
-                i += 1;
-            }
-            '-' => {
-                out.push(Tok::Minus);
-                i += 1;
-            }
-            '*' => {
-                out.push(Tok::Star);
-                i += 1;
-            }
-            '/' => {
-                out.push(Tok::Slash);
-                i += 1;
-            }
-            '(' => {
-                out.push(Tok::LParen);
-                i += 1;
-            }
-            ')' => {
-                out.push(Tok::RParen);
-                i += 1;
-            }
-            d if d.is_ascii_digit() || d == '.' => {
-                let start = i;
-                let mut saw_dot = c == '.';
-                let mut saw_exp = false;
-                i += 1;
-                while i < bytes.len() {
-                    let n = bytes[i];
-                    if n.is_ascii_digit() {
-                        i += 1;
-                    } else if n == '.' && !saw_dot && !saw_exp {
-                        saw_dot = true;
-                        i += 1;
-                    } else if (n == 'e' || n == 'E') && !saw_exp {
-                        saw_exp = true;
-                        i += 1;
-                        if i < bytes.len() && (bytes[i] == '+' || bytes[i] == '-') {
-                            i += 1;
-                        }
-                    } else {
-                        break;
-                    }
-                }
-                let lit: String = bytes[start..i].iter().collect();
-                let v: f64 = lit.parse().map_err(|_| ConstantError::BadExpression {
-                    name: src.to_string(),
-                    detail: format!("bad number `{lit}`"),
-                })?;
-                out.push(Tok::Num(v));
-            }
-            a if a.is_ascii_alphabetic() || a == '_' => {
-                let start = i;
-                i += 1;
-                while i < bytes.len() && (bytes[i].is_ascii_alphanumeric() || bytes[i] == '_') {
-                    i += 1;
-                }
-                let id: String = bytes[start..i].iter().collect();
-                out.push(Tok::Ident(id));
-            }
-            _ => {
-                return Err(ConstantError::BadExpression {
-                    name: src.to_string(),
-                    detail: format!("unexpected character `{c}` at {i}"),
-                });
-            }
-        }
+        out.push(next_token(&bytes, &mut i, src)?);
     }
     Ok(out)
 }
@@ -248,3 +251,6 @@ impl Parser {
         }
     }
 }
+
+#[cfg(test)]
+mod pins;

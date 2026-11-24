@@ -36,6 +36,9 @@
 
 use std::sync::OnceLock;
 
+mod lattice_scan;
+use lattice_scan::{advance_odometer, classify_position, coordinate_bound, radius_sq_threshold};
+
 /// Cached 240-root enumeration. Populated on first call to [`enumerate_e8_roots`].
 static ROOTS: OnceLock<Vec<[f64; 8]>> = OnceLock::new();
 
@@ -172,19 +175,8 @@ pub fn e8_lattice_points(radius: f64) -> Option<Vec<[f64; 8]>> {
     if !(radius.is_finite() && radius >= 0.0) {
         return None;
     }
-    // Saturating cast: a huge radius clamps to the cap, which is what the
-    // Python's `min(..., 3)` does too.
-    let bound = (radius.ceil() as i64 + 1).min(i64::from(LATTICE_COORD_CAP)) as i32;
-    debug_assert!(
-        bound >= 1,
-        "the bound must admit at least the origin's neighbours"
-    );
-    debug_assert!(
-        bound <= LATTICE_COORD_CAP,
-        "the coordinate bound escaped its cap"
-    );
-
-    let r_sq = radius * radius + NORM_SQ_TOL;
+    let bound = coordinate_bound(radius);
+    let r_sq = radius_sq_threshold(radius);
     let side = (2 * bound + 1) as usize;
     let total = side.checked_pow(8)?;
 
@@ -194,39 +186,10 @@ pub fn e8_lattice_points(radius: f64) -> Option<Vec<[f64; 8]>> {
     // Odometer over [-bound, bound]^8; fixed trip count, no recursion.
     let mut digits = [0_usize; 8];
     for _ in 0..total {
-        let mut coord_sum = 0_i32;
-        let mut norm_sq = 0.0_f64;
-        let mut half_norm_sq = 0.0_f64;
-        let mut v = [0.0_f64; 8];
-        for k in 0..8 {
-            let n = digits[k] as i32 - bound;
-            coord_sum += n;
-            let x = f64::from(n);
-            v[k] = x;
-            norm_sq += x * x;
-            let xh = x + 0.5;
-            half_norm_sq += xh * xh;
-        }
-        // Sum(n_i + 1/2) = Sum(n_i) + 4, so both cosets test the same parity.
-        if coord_sum % 2 == 0 {
-            if norm_sq <= r_sq {
-                integer_points.push(v);
-            }
-            if half_norm_sq <= r_sq {
-                let mut h = v;
-                for c in &mut h {
-                    *c += 0.5;
-                }
-                half_points.push(h);
-            }
-        }
-        for digit in digits.iter_mut().rev() {
-            *digit += 1;
-            if *digit < side {
-                break;
-            }
-            *digit = 0;
-        }
+        let (integer_hit, half_hit) = classify_position(&digits, bound, r_sq);
+        integer_points.extend(integer_hit);
+        half_points.extend(half_hit);
+        advance_odometer(&mut digits, side);
     }
 
     integer_points.extend_from_slice(&half_points);
@@ -475,3 +438,6 @@ mod tests {
         assert!(rows.iter().all(|r| r.1.is_finite() && r.1 >= 0.0));
     }
 }
+
+#[cfg(test)]
+mod pins;

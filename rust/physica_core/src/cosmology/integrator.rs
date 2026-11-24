@@ -173,6 +173,40 @@ pub(super) struct StepGrid {
     pub(super) dys: Vec<Vec<f64>>,
 }
 
+/// Step growth factor after an accepted step with error norm `err`.
+fn accepted_growth_factor(err: f64) -> f64 {
+    if err == 0.0 {
+        MAX_STEP_GROWTH
+    } else {
+        (SAFETY_FACTOR * err.powf(-0.2)).min(MAX_STEP_GROWTH)
+    }
+}
+
+/// Step shrink factor after a rejected step with error norm `err`.
+fn rejected_shrink_factor(err: f64) -> f64 {
+    (SAFETY_FACTOR * err.powf(-0.25)).max(MAX_STEP_SHRINK)
+}
+
+/// Post-conditions of a finished drive: step cap respected, `t_end` reached.
+fn check_drive_finished(steps: usize, accepted_points: usize, t: f64, t_end: f64) {
+    debug_assert!(
+        steps < MAX_INTEGRATION_STEPS,
+        "integration hit its step cap"
+    );
+    debug_assert!(
+        accepted_points > MIN_ACCEPTED_STEPS,
+        "the h_max cap must force more than MIN_ACCEPTED_STEPS grid points"
+    );
+
+    // Not a debug_assert: falling short of t_end means the step cap was hit
+    // and every interpolated value past the last step would silently be the
+    // clamped endpoint rather than a solution.
+    assert!(
+        t >= t_end - 1e-9,
+        "adaptive_integrate: failed to reach t_end within its step cap"
+    );
+}
+
 /// Adaptive RKF45 driver from `t0` to `t_end`.
 ///
 /// Step-size control mirrors scipy's classic PI controller with safety
@@ -216,33 +250,12 @@ where
             ts.push(t);
             dys.push(rhs(&y, t));
             ys.push(y.clone());
-            let factor = if err == 0.0 {
-                MAX_STEP_GROWTH
-            } else {
-                (SAFETY_FACTOR * err.powf(-0.2)).min(MAX_STEP_GROWTH)
-            };
-            h = (h * factor).min(h_max);
+            h = (h * accepted_growth_factor(err)).min(h_max);
         } else {
-            let factor = (SAFETY_FACTOR * err.powf(-0.25)).max(MAX_STEP_SHRINK);
-            h *= factor;
+            h *= rejected_shrink_factor(err);
         }
     }
-    debug_assert!(
-        steps < MAX_INTEGRATION_STEPS,
-        "integration hit its step cap"
-    );
-    debug_assert!(
-        ts.len() > MIN_ACCEPTED_STEPS,
-        "the h_max cap must force more than MIN_ACCEPTED_STEPS grid points"
-    );
-
-    // Not a debug_assert: falling short of t_end means the step cap was hit
-    // and every interpolated value past the last step would silently be the
-    // clamped endpoint rather than a solution.
-    assert!(
-        t >= t_end - 1e-9,
-        "adaptive_integrate: failed to reach t_end within its step cap"
-    );
+    check_drive_finished(steps, ts.len(), t, t_end);
     StepGrid { ts, ys, dys }
 }
 
@@ -307,3 +320,6 @@ pub(super) fn hermite_interp(grid: &StepGrid, component: usize, z: f64) -> f64 {
         + h01 * grid.ys[hi][component]
         + h11 * h * grid.dys[hi][component]
 }
+
+#[cfg(test)]
+mod pins;
