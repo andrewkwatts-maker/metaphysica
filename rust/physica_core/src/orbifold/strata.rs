@@ -140,7 +140,7 @@ pub fn avg_forms(mats: &[Mat], dim: usize, w: Option<&[i64]>) -> Vec<Rat> {
 
 pub fn as_ints(v: &[Rat]) -> Res<Vec<i64>> {
     if v.iter().any(|x| !x.is_int()) {
-        return Err(format!("non-integer invariant dimension {:?}", v));
+        return Err(format!("non-integer invariant dimension {v:?}"));
     }
     Ok(v.iter().map(|x| x.n as i64).collect())
 }

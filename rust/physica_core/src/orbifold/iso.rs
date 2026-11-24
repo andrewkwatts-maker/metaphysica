@@ -1,6 +1,7 @@
 //! Affine isometries x -> M x + c/DEN of the torus in lattice coordinates,
 //! and group closure from generators (same BFS order as the Python reference).
 
+use std::ops::{Div, Mul, Sub};
 use super::num::{Rat, N};
 use std::collections::HashMap;
 

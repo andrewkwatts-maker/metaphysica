@@ -5,6 +5,8 @@
 //! `metaphysica.simulations.PM.geometry.orbifold_gauge_scan`, including the
 //! pivot order of the Smith form, so that results agree record for record.
 
+use std::ops::{Add, Div, Mul, Sub};
+
 pub const N: usize = 7;
 /// Integer matrix, row major.
 pub type Mat = Vec<Vec<i128>>;
@@ -38,18 +40,6 @@ impl Rat {
     pub fn int(n: i128) -> Rat {
         Rat { n, d: 1 }
     }
-    pub fn add(self, o: Rat) -> Rat {
-        Rat::new(self.n * o.d + o.n * self.d, self.d * o.d)
-    }
-    pub fn sub(self, o: Rat) -> Rat {
-        Rat::new(self.n * o.d - o.n * self.d, self.d * o.d)
-    }
-    pub fn mul(self, o: Rat) -> Rat {
-        Rat::new(self.n * o.n, self.d * o.d)
-    }
-    pub fn div(self, o: Rat) -> Rat {
-        Rat::new(self.n * o.d, self.d * o.n)
-    }
     /// Fractional part in [0, 1).
     pub fn frac(self) -> Rat {
         Rat { n: self.n.rem_euclid(self.d), d: self.d }
@@ -59,6 +49,34 @@ impl Rat {
     }
     pub fn is_zero(self) -> bool {
         self.n == 0
+    }
+}
+
+impl Add for Rat {
+    type Output = Rat;
+    fn add(self, o: Rat) -> Rat {
+        Rat::new(self.n * o.d + o.n * self.d, self.d * o.d)
+    }
+}
+
+impl Sub for Rat {
+    type Output = Rat;
+    fn sub(self, o: Rat) -> Rat {
+        Rat::new(self.n * o.d - o.n * self.d, self.d * o.d)
+    }
+}
+
+impl Mul for Rat {
+    type Output = Rat;
+    fn mul(self, o: Rat) -> Rat {
+        Rat::new(self.n * o.n, self.d * o.d)
+    }
+}
+
+impl Div for Rat {
+    type Output = Rat;
+    fn div(self, o: Rat) -> Rat {
+        Rat::new(self.n * o.d, self.d * o.n)
     }
 }
 
@@ -116,7 +134,7 @@ fn pivot(a: &Mat, r: usize) -> Option<(usize, usize)> {
     for i in r..a.len() {
         for j in r..a[0].len() {
             let v = a[i][j].abs();
-            if v != 0 && best.map_or(true, |b| v < b.0) {
+            if v != 0 && best.is_none_or(|b| v < b.0) {
                 best = Some((v, i, j));
             }
         }

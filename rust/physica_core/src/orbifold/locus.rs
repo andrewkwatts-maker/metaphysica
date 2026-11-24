@@ -1,6 +1,7 @@
 //! Fixed loci of affine maps on the torus R^7/Z^7 (lattice coordinates) and
 //! their images, intersections and pointwise-fixing tests.
 
+use std::ops::{Add, Div, Mul, Sub};
 use super::iso::{Iso, DEN};
 use super::num::{hnf_rows, smith, Mat, Rat, N};
 use std::collections::HashMap;

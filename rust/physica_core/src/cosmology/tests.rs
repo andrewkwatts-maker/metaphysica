@@ -1,5 +1,6 @@
 //! Unit tests for the `cosmology` module.
 
+use super::integrator::{bracket, StepGrid, MIN_ACCEPTED_STEPS};
 use super::*;
 
 /// Standard Python parameter set: b3 = 24, H0_late = 73.04.
